@@ -17,7 +17,7 @@ import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { memoryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { memoryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { memoryRhythmNotes } from "@/lib/memory/rhythm-memory";
-import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
+import { memoryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { memoryRevisitationNotes } from "@/lib/memory/revisitation";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
@@ -42,7 +42,7 @@ export default function MemoryPage() {
       const entries = getAllEntries();
       setSnapshot(buildEntityMemory());
       setNotes(buildMemoryNotesReport(entries, { context: "memory", maxTotal: limits.notes }));
-      setResurfacing(archiveResurfacingNotes(entries, limits.resurfacing));
+      setResurfacing(memoryResurfacingNotes(entries, limits.resurfacing));
       setChangeMoments(memoryChangeMomentsNotes(entries, limits.changeMoments));
       setFamiliarity(memoryFamiliarityNotes(entries, limits.familiarity));
       setRhythm(memoryRhythmNotes(entries, limits.rhythm));
@@ -114,7 +114,7 @@ export default function MemoryPage() {
               />
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-              <RevisitationNotes notes={revisitation} max={2} />
+              <RevisitationNotes notes={revisitation} max={1} />
 
               {snapshot.totalEntities > 0 ? (
                 <div className="space-y-12 border-t border-white/5 pt-12">

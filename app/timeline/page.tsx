@@ -118,7 +118,7 @@ export default function TimelinePage() {
               />
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-              <RevisitationNotes notes={revisitation} max={2} />
+              <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
 
               <section className="space-y-4 border-t border-white/5 pt-12">

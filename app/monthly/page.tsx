@@ -107,7 +107,7 @@ export default function MonthlyPage() {
               />
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-              <RevisitationNotes notes={revisitation} max={2} />
+              <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
               {hasNotes ? (
                 <MemoryNotesOverview

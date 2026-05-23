@@ -1,4 +1,11 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import {
+  applyResurfacingRarity,
+  candidateFromRevisitationNote,
+  gapDaysBetweenEntries,
+  RESURFACING_MIN_WEIGHT,
+  type ResurfacingSurface,
+} from "@/lib/memory/resurfacing-priority";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import type {
   RevisitationContext,
@@ -53,6 +60,7 @@ function pushCandidate(
   item: Omit<RevisitationNote, "strength"> & { strength?: number },
 ): void {
   const strength = item.strength ?? 55;
+  if (strength < RESURFACING_MIN_WEIGHT) return;
   if (!helpsOrient(item.text, strength)) return;
   bucket.push({ ...item, strength });
 }
@@ -348,9 +356,7 @@ export function buildRevisitationReport(
   entries: JournalEntry[],
   options: RevisitationOptions,
 ): RevisitationReport {
-  const limit =
-    options.limit ??
-    (options.context === "homepage" || options.context === "entry" ? 1 : 2);
+  const limit = options.limit ?? 1;
   const sorted = sortedEntries(entries);
 
   if (sorted.length < 2) {
@@ -369,7 +375,7 @@ export function buildRevisitationReport(
   }
 
   const candidates = detectForAnchor(anchor, prior, sorted, latest);
-  const notes = pickForContext(candidates, options.context, limit);
+  const notes = pickForContext(candidates, options.context, limit * 4);
   return { notes, hasData: notes.length > 0 };
 }
 
@@ -386,35 +392,48 @@ export function revisitationToNotes(notes: RevisitationNote[]): MemoryNote[] {
   }));
 }
 
-export function homepageRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
-  return revisitationToNotes(
-    buildRevisitationReport(entries, { context: "homepage", limit: 1 }).notes,
+function applyRevisitationRarity(
+  entries: JournalEntry[],
+  notes: RevisitationNote[],
+  surface: ResurfacingSurface,
+  limit = 1,
+): MemoryNote[] {
+  return applyResurfacingRarity(
+    notes.map((note) =>
+      candidateFromRevisitationNote(
+        note,
+        revisitationToNotes([note])[0],
+        gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
+      ),
+    ),
+    { surface, limit, record: true },
   );
+}
+
+export function homepageRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
+  const report = buildRevisitationReport(entries, { context: "homepage", limit: 1 });
+  return applyRevisitationRarity(entries, report.notes, "homepage", 1);
 }
 
 export function entryRevisitationNotes(
   entries: JournalEntry[],
   entryId: string,
 ): MemoryNote[] {
-  return revisitationToNotes(
-    buildRevisitationReport(entries, { context: "entry", entryId, limit: 1 }).notes,
-  );
+  const report = buildRevisitationReport(entries, { context: "entry", entryId, limit: 1 });
+  return applyRevisitationRarity(entries, report.notes, "entry", 1);
 }
 
 export function timelineRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
-  return revisitationToNotes(
-    buildRevisitationReport(entries, { context: "timeline", limit: 2 }).notes,
-  );
+  const report = buildRevisitationReport(entries, { context: "timeline", limit: 1 });
+  return applyRevisitationRarity(entries, report.notes, "timeline", 1);
 }
 
 export function monthlyRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
-  return revisitationToNotes(
-    buildRevisitationReport(entries, { context: "monthly", limit: 2 }).notes,
-  );
+  const report = buildRevisitationReport(entries, { context: "monthly", limit: 1 });
+  return applyRevisitationRarity(entries, report.notes, "monthly", 1);
 }
 
 export function memoryRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
-  return revisitationToNotes(
-    buildRevisitationReport(entries, { context: "memory", limit: 2 }).notes,
-  );
+  const report = buildRevisitationReport(entries, { context: "memory", limit: 1 });
+  return applyRevisitationRarity(entries, report.notes, "memory", 1);
 }

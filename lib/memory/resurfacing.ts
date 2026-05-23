@@ -1,5 +1,14 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { buildEntityMemoryFromEntries } from "@/lib/entity-memory";
+import {
+  applyResurfacingRarity,
+  candidateFromResurfacingNote,
+  gapDaysBetweenEntries,
+  RESURFACING_LONG_SILENCE_DAYS,
+  RESURFACING_MIN_ABSENCE_DAYS,
+  RESURFACING_MIN_WEIGHT,
+  type ResurfacingSurface,
+} from "@/lib/memory/resurfacing-priority";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import { formatRelativeDate } from "@/lib/utils";
@@ -7,8 +16,8 @@ import type { ResurfacingKind, ResurfacingNote, ResurfacingReport } from "@/type
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
-const ABSENCE_DAYS = 7;
-const LONG_SILENCE_DAYS = 14;
+const ABSENCE_DAYS = RESURFACING_MIN_ABSENCE_DAYS;
+const LONG_SILENCE_DAYS = RESURFACING_LONG_SILENCE_DAYS;
 const LOOP_RE =
   /\b(same loop|loop came back|came back briefly|keep coming back|again before|that loop)\b/i;
 const HEDGE_RE =
@@ -19,6 +28,7 @@ const DIRECT_RE =
 export interface ResurfacingOptions {
   entryId?: string;
   limit?: number;
+  surface?: ResurfacingSurface;
 }
 
 function sortedEntries(entries: JournalEntry[]): JournalEntry[] {
@@ -81,6 +91,7 @@ function pushCandidate(
   item: Omit<ResurfacingNote, "strength"> & { strength?: number },
 ): void {
   const strength = item.strength ?? 55;
+  if (strength < RESURFACING_MIN_WEIGHT) return;
   if (!hasEvidence(item)) return;
   if (!helpsOrient(item.text, strength)) return;
   bucket.push({ ...item, strength });
@@ -102,7 +113,7 @@ function detectTopicSilence(
 
     const lastPrior = priorMatches[priorMatches.length - 1];
     const gap = daysBetweenKeys(toDayKey(lastPrior.createdAt), currentDay);
-    if (gap < ABSENCE_DAYS) continue;
+    if (gap < LONG_SILENCE_DAYS) continue;
 
     const evidence = evidencePair(lastPrior, current);
     if (!hasEvidence(evidence)) continue;
@@ -110,11 +121,8 @@ function detectTopicSilence(
     pushCandidate(notes, {
       id: `resurface-topic-${themeKey}-${current.id}`,
       kind: "topic_silence",
-      text:
-        gap >= LONG_SILENCE_DAYS
-          ? "This came back after a quiet stretch."
-          : "This came back today.",
-      strength: 58 + Math.min(gap, 14) + (priorMatches.length >= 2 ? 4 : 0),
+      text: "This came back after a quiet stretch.",
+      strength: 64 + Math.min(gap, 14) + (priorMatches.length >= 2 ? 4 : 0),
       ...evidence,
     });
   }
@@ -138,7 +146,7 @@ function detectToneShift(
 
     const lastPrior = priorMatches[priorMatches.length - 1];
     const gap = daysBetweenKeys(toDayKey(lastPrior.createdAt), currentDay);
-    if (gap < ABSENCE_DAYS) continue;
+    if (gap < LONG_SILENCE_DAYS) continue;
 
     const priorAvg = roundAvg(priorMatches.map((e) => e.reflection.emotionalIntensity));
     const delta = priorAvg - current.reflection.emotionalIntensity;
@@ -178,14 +186,6 @@ function detectToneShift(
         strength: 63 + Math.min(gap, 8),
         ...evidence,
       });
-    } else if (priorDirect >= 1 && nowHedge > priorHedge && nowDirect < priorDirect) {
-      pushCandidate(notes, {
-        id: `resurface-vague-${themeKey}-${current.id}`,
-        kind: "vague_return",
-        text: "This returned more vaguely than before.",
-        strength: 60 + Math.min(gap, 6),
-        ...evidence,
-      });
     }
   }
 
@@ -211,7 +211,7 @@ function detectPhraseReturns(
 
     const lastPrior = priorOccurrences[priorOccurrences.length - 1];
     const gap = daysBetweenKeys(lastPrior.dateKey, currentDay);
-    if (gap < ABSENCE_DAYS) continue;
+    if (gap < LONG_SILENCE_DAYS) continue;
 
     const priorEntry = allSorted.find((e) => e.id === lastPrior.entryId);
     if (!priorEntry) continue;
@@ -226,11 +226,8 @@ function detectPhraseReturns(
     pushCandidate(notes, {
       id: `resurface-phrase-${record.phrase}-${current.id}`,
       kind: "phrase_return",
-      text:
-        gap >= LONG_SILENCE_DAYS
-          ? "This came back after a quiet stretch."
-          : "This came back today.",
-      strength: 59 + Math.min(gap, 12) + Math.min(record.count, 4),
+      text: "This came back after a quiet stretch.",
+      strength: 66 + Math.min(gap, 12) + Math.min(record.count, 4),
       ...evidence,
     });
   }
@@ -274,8 +271,8 @@ function detectPersonSilence(
       text:
         gap >= LONG_SILENCE_DAYS
           ? "You had not named this for a while."
-          : "This came back today.",
-      strength: 62 + Math.min(gap, 14) + Math.min(person.mentionCount, 4),
+          : "You had not named this for a while.",
+      strength: 64 + Math.min(gap, 14) + Math.min(person.mentionCount, 4),
       ...evidence,
     });
   }
@@ -304,7 +301,7 @@ function detectEntityReturns(
 
     const lastPrior = chronological[idx - 1];
     const gap = daysBetweenKeys(toDayKey(lastPrior.createdAt), currentDay);
-    if (gap < ABSENCE_DAYS) continue;
+    if (gap < LONG_SILENCE_DAYS) continue;
 
     const evidence = evidencePair(
       lastPrior,
@@ -316,11 +313,8 @@ function detectEntityReturns(
     pushCandidate(notes, {
       id: `resurface-entity-${entity.id}-${current.id}`,
       kind: "topic_silence",
-      text:
-        gap >= LONG_SILENCE_DAYS
-          ? "This came back after a quiet stretch."
-          : "This came back today.",
-      strength: 60 + Math.min(gap, 12),
+      text: "This came back after a quiet stretch.",
+      strength: 64 + Math.min(gap, 12),
       ...evidence,
     });
   }
@@ -358,8 +352,11 @@ function detectLoopReturns(
     pushCandidate(notes, {
       id: `resurface-loop-${themeKey}-${current.id}`,
       kind: "loop_return",
-      text: "This loop came back.",
-      strength: 65 + Math.min(gap, 8),
+      text:
+        gap >= LONG_SILENCE_DAYS
+          ? "This loop came back."
+          : "This loop came back.",
+      strength: 66 + Math.min(gap, 10),
       ...evidence,
     });
   }
@@ -380,7 +377,7 @@ function detectLoopReturns(
       id: `resurface-loop-generic-${current.id}`,
       kind: "loop_return",
       text: "This loop came back.",
-      strength: 63 + Math.min(gap, 8),
+      strength: 64 + Math.min(gap, 10),
       ...evidence,
     });
   }
@@ -409,9 +406,8 @@ const KIND_PRIORITY: ResurfacingKind[] = [
   "heavier_return",
   "direct_return",
   "person_silence",
-  "phrase_return",
   "topic_silence",
-  "vague_return",
+  "phrase_return",
 ];
 
 function dedupeNotes(notes: ResurfacingNote[]): ResurfacingNote[] {
@@ -454,11 +450,28 @@ function reportForEntry(
   sorted: JournalEntry[],
   entryId: string,
   limit: number,
+  surface: ResurfacingSurface,
 ): ResurfacingReport {
   const idx = sorted.findIndex((e) => e.id === entryId);
   if (idx <= 0) return { notes: [], hasData: false };
 
-  const notes = pickBest(detectForEntry(sorted[idx], sorted.slice(0, idx), sorted), limit);
+  const raw = pickBest(detectForEntry(sorted[idx], sorted.slice(0, idx), sorted), limit * 4);
+  const memoryNotes = applyResurfacingRarity(
+    raw.map((note) => {
+      const gap = gapDaysBetweenEntries(sorted, note.pastEntryId, note.entryId);
+      return candidateFromResurfacingNote(
+        note,
+        resurfacingToMemoryNotes([note])[0],
+        gap,
+      );
+    }),
+    { surface, limit, record: true },
+  );
+
+  const notes = raw.filter((note) =>
+    memoryNotes.some((memory) => memory.id === note.id),
+  );
+
   return { notes, hasData: notes.length > 0 };
 }
 
@@ -468,6 +481,7 @@ export function buildResurfacingReport(
   options: ResurfacingOptions = {},
 ): ResurfacingReport {
   const limit = options.limit ?? 1;
+  const surface = options.surface ?? "homepage";
   const sorted = sortedEntries(entries);
 
   if (sorted.length < 2) {
@@ -475,11 +489,11 @@ export function buildResurfacingReport(
   }
 
   if (options.entryId) {
-    return reportForEntry(sorted, options.entryId, limit);
+    return reportForEntry(sorted, options.entryId, limit, surface);
   }
 
   const latest = sorted[sorted.length - 1];
-  return reportForEntry(sorted, latest.id, limit);
+  return reportForEntry(sorted, latest.id, limit, surface);
 }
 
 export function resurfacingToMemoryNotes(notes: ResurfacingNote[]): MemoryNote[] {
@@ -503,34 +517,42 @@ export function entryResurfacingNotes(
   limit = 1,
 ): MemoryNote[] {
   return resurfacingToMemoryNotes(
-    buildResurfacingReport(entries, { entryId, limit }).notes,
+    buildResurfacingReport(entries, { entryId, limit, surface: "entry" }).notes,
   );
 }
 
 export function latestResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
+  surface: ResurfacingSurface = "homepage",
 ): MemoryNote[] {
-  return resurfacingToMemoryNotes(buildResurfacingReport(entries, { limit }).notes);
+  return resurfacingToMemoryNotes(buildResurfacingReport(entries, { limit, surface }).notes);
 }
 
 export function homepageResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return latestResurfacingNotes(entries, limit);
+  return latestResurfacingNotes(entries, limit, "homepage");
 }
 
 export function archiveResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return latestResurfacingNotes(entries, limit);
+  return latestResurfacingNotes(entries, limit, "timeline");
+}
+
+export function memoryResurfacingNotes(
+  entries: JournalEntry[],
+  limit = 1,
+): MemoryNote[] {
+  return latestResurfacingNotes(entries, limit, "memory");
 }
 
 export function monthlyResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return latestResurfacingNotes(entries, limit);
+  return latestResurfacingNotes(entries, limit, "monthly");
 }

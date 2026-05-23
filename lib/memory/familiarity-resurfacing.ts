@@ -1,5 +1,11 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import {
+  applyResurfacingRarity,
+  candidateFromFamiliarityResurfacingNote,
+  gapDaysBetweenEntries,
+  type ResurfacingSurface,
+} from "@/lib/memory/resurfacing-priority";
+import {
   hasTheme,
   languageShiftOnTheme,
 } from "@/lib/patterns/emotional-evolution";
@@ -478,7 +484,6 @@ function collectCandidates(
   return [
     ...detectSoundDifferent(current, prior),
     ...detectEmotionallyOpposite(current, prior),
-    ...detectEmotionallySimilar(current, prior),
     ...detectEarlierLoop(current, prior),
     ...detectFirstCalmerTopic(current, prior, sorted),
     ...detectBeforeDirectNaming(current, prior),
@@ -507,7 +512,7 @@ export function buildFamiliarityResurfacingReport(
   }
 
   const candidates = collectCandidates(sorted, anchorIdx);
-  const notes = pickForContext(candidates, options.context, limit);
+  const notes = pickForContext(candidates, options.context, (options.limit ?? 1) * 4);
   return { notes, hasData: notes.length > 0 };
 }
 
@@ -528,13 +533,34 @@ export function familiarityResurfacingToNotes(
   }));
 }
 
+function surfaceForContext(context: FamiliarityResurfacingContext): ResurfacingSurface {
+  return context;
+}
+
+function applyFamiliarityResurfacingRarity(
+  entries: JournalEntry[],
+  notes: FamiliarityResurfacingNote[],
+  context: FamiliarityResurfacingContext,
+  limit = 1,
+): MemoryNote[] {
+  return applyResurfacingRarity(
+    notes.map((note) =>
+      candidateFromFamiliarityResurfacingNote(
+        note,
+        familiarityResurfacingToNotes([note])[0],
+        gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
+      ),
+    ),
+    { surface: surfaceForContext(context), limit, record: true },
+  );
+}
+
 export function homepageFamiliarityResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return familiarityResurfacingToNotes(
-    buildFamiliarityResurfacingReport(entries, { context: "homepage", limit }).notes,
-  );
+  const report = buildFamiliarityResurfacingReport(entries, { context: "homepage", limit });
+  return applyFamiliarityResurfacingRarity(entries, report.notes, "homepage", limit);
 }
 
 export function entryFamiliarityResurfacingNotes(
@@ -542,34 +568,30 @@ export function entryFamiliarityResurfacingNotes(
   entryId: string,
   limit = 1,
 ): MemoryNote[] {
-  return familiarityResurfacingToNotes(
-    buildFamiliarityResurfacingReport(entries, { context: "entry", entryId, limit }).notes,
-  );
+  const report = buildFamiliarityResurfacingReport(entries, { context: "entry", entryId, limit });
+  return applyFamiliarityResurfacingRarity(entries, report.notes, "entry", limit);
 }
 
 export function timelineFamiliarityResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return familiarityResurfacingToNotes(
-    buildFamiliarityResurfacingReport(entries, { context: "timeline", limit }).notes,
-  );
+  const report = buildFamiliarityResurfacingReport(entries, { context: "timeline", limit });
+  return applyFamiliarityResurfacingRarity(entries, report.notes, "timeline", limit);
 }
 
 export function monthlyFamiliarityResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return familiarityResurfacingToNotes(
-    buildFamiliarityResurfacingReport(entries, { context: "monthly", limit }).notes,
-  );
+  const report = buildFamiliarityResurfacingReport(entries, { context: "monthly", limit });
+  return applyFamiliarityResurfacingRarity(entries, report.notes, "monthly", limit);
 }
 
 export function memoryFamiliarityResurfacingNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return familiarityResurfacingToNotes(
-    buildFamiliarityResurfacingReport(entries, { context: "memory", limit }).notes,
-  );
+  const report = buildFamiliarityResurfacingReport(entries, { context: "memory", limit });
+  return applyFamiliarityResurfacingRarity(entries, report.notes, "memory", limit);
 }

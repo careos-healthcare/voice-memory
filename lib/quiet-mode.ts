@@ -62,7 +62,7 @@ export function getQuietLimits(quiet: boolean): {
     landmarks: 4,
     observations: 3,
     notes: 9,
-    resurfacing: 2,
+      resurfacing: 1,
     changeMoments: 2,
     familiarity: 1,
     rhythm: 1,

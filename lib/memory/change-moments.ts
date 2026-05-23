@@ -1,5 +1,11 @@
 import { addDaysToKey, daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { detectRecoveryCandidates } from "@/lib/memory/recovery-memory";
+import {
+  applyResurfacingRarity,
+  candidateFromChangeMomentNote,
+  gapDaysBetweenEntries,
+  type ResurfacingSurface,
+} from "@/lib/memory/resurfacing-priority";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import {
   getThemeIntensityTrend,
@@ -322,7 +328,7 @@ export function buildChangeMomentsReport(
     prior = sorted.slice(0, idx);
   }
 
-  const notes = pickBest(detectForAnchor(anchor, prior, sorted), limit);
+  const notes = pickBest(detectForAnchor(anchor, prior, sorted), limit * 4);
   return { notes, hasData: notes.length > 0 };
 }
 
@@ -341,39 +347,53 @@ export function changeMomentsToNotes(notes: ChangeMomentNote[]): MemoryNote[] {
   }));
 }
 
+function applyChangeMomentsRarity(
+  entries: JournalEntry[],
+  notes: ChangeMomentNote[],
+  surface: ResurfacingSurface,
+  limit = 1,
+): MemoryNote[] {
+  return applyResurfacingRarity(
+    notes.map((note) =>
+      candidateFromChangeMomentNote(
+        note,
+        changeMomentsToNotes([note])[0],
+        gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
+      ),
+    ),
+    { surface, limit, record: true },
+  );
+}
+
 export function entryChangeMomentsNotes(
   entries: JournalEntry[],
   entryId: string,
   limit = 1,
 ): MemoryNote[] {
-  return changeMomentsToNotes(
-    buildChangeMomentsReport(entries, { context: "entry", entryId, limit }).notes,
-  );
+  const report = buildChangeMomentsReport(entries, { context: "entry", entryId, limit });
+  return applyChangeMomentsRarity(entries, report.notes, "entry", limit);
 }
 
 export function timelineChangeMomentsNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return changeMomentsToNotes(
-    buildChangeMomentsReport(entries, { context: "timeline", limit }).notes,
-  );
+  const report = buildChangeMomentsReport(entries, { context: "timeline", limit });
+  return applyChangeMomentsRarity(entries, report.notes, "timeline", limit);
 }
 
 export function monthlyChangeMomentsNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return changeMomentsToNotes(
-    buildChangeMomentsReport(entries, { context: "monthly", limit }).notes,
-  );
+  const report = buildChangeMomentsReport(entries, { context: "monthly", limit });
+  return applyChangeMomentsRarity(entries, report.notes, "monthly", limit);
 }
 
 export function memoryChangeMomentsNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return changeMomentsToNotes(
-    buildChangeMomentsReport(entries, { context: "memory", limit }).notes,
-  );
+  const report = buildChangeMomentsReport(entries, { context: "memory", limit });
+  return applyChangeMomentsRarity(entries, report.notes, "memory", limit);
 }
