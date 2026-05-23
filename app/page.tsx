@@ -69,6 +69,9 @@ export default function HomePage() {
           <Link href="/journal" className="hover:text-zinc-400">
             Journal →
           </Link>
+          <Link href="/export" className="hover:text-zinc-400">
+            Export →
+          </Link>
           <Link href="/memory" className="hover:text-zinc-400">
             Memory →
           </Link>

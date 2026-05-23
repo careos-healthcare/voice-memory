@@ -12,6 +12,7 @@ import {
   Tag,
 } from "lucide-react";
 
+import { ExportSummaryButton } from "@/components/export/ExportSummaryButton";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +87,14 @@ export default function InsightsPage() {
           <p className="mt-2 text-sm text-zinc-400">
             Patterns from your journal — analyzed on this device only.
           </p>
+          {!loading && insights?.hasData ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <ExportSummaryButton variant="insights" />
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/export">All export options</Link>
+              </Button>
+            </div>
+          ) : null}
         </motion.div>
 
         <div className="mt-8 space-y-6">

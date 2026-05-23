@@ -42,8 +42,14 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           Insights
         </Link>
         <Link
-          href="/search"
+          href="/export"
           className="rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:px-4"
+        >
+          Export
+        </Link>
+        <Link
+          href="/search"
+          className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
         >
           Search
         </Link>
