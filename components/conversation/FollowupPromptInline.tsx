@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
+import { recordFollowupContinued } from "@/lib/callback-interaction-signals";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 
 interface FollowupPromptInlineProps {
@@ -22,7 +23,10 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
             variant="ghost"
             size="sm"
             className="h-auto px-0 text-sm text-zinc-400 hover:bg-transparent hover:text-zinc-200"
-            onClick={() => onContinue(prompt)}
+            onClick={() => {
+              if (prompt.noteId) recordFollowupContinued(prompt.noteId);
+              onContinue(prompt);
+            }}
           >
             Continue this thought
           </Button>

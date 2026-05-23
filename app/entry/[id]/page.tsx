@@ -38,6 +38,7 @@ import { resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-cont
 import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
+import { recordEntryDwell, recordEntryView } from "@/lib/callback-interaction-signals";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -71,6 +72,15 @@ export default function EntryPage() {
     setEntry(found ?? undefined);
     setLoading(false);
   }, [params.id]);
+
+  useEffect(() => {
+    if (!entry) return;
+    recordEntryView(entry.id);
+    const started = Date.now();
+    return () => {
+      recordEntryDwell(entry.id, Date.now() - started);
+    };
+  }, [entry?.id]);
 
   const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry]);
   const pending = entry ? isReflectionPending(entry) : false;
