@@ -8,6 +8,7 @@ import { Brain } from "lucide-react";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryArchiveGrowthNotes } from "@/lib/memory/archive-growth";
+import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
 import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { memoryFamiliarityNotes } from "@/lib/memory/familiarity";
@@ -31,6 +33,7 @@ import {
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getAllEntries } from "@/lib/storage";
+import type { RelationshipContinuityNote } from "@/types/relationship-continuity";
 import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
@@ -49,6 +52,7 @@ export default function MemoryPage() {
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
   const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
+  const [relationshipNotes, setRelationshipNotes] = useState<RelationshipContinuityNote[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -78,6 +82,7 @@ export default function MemoryPage() {
         memoryArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
       setThreadHighlights(memoryThreadHighlights(entries, 4));
+      setRelationshipNotes(memoryRelationshipNotes(entries, 4));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -162,6 +167,11 @@ export default function MemoryPage() {
               <ThreadMentionsSection
                 threads={threadHighlights}
                 subtitle="Recurring topics that span more than one reflection."
+              />
+              <RelationshipContinuityNotes
+                notes={relationshipNotes}
+                max={4}
+                subtitle="How people and places appear differently across your archive."
               />
               <FollowupPromptInline
                 prompt={followupPrompt}

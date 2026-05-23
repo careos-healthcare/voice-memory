@@ -18,6 +18,7 @@ import {
   RevisitationNotes,
   TimeMemoryNotes,
 } from "@/components/patterns/MemoryNote";
+import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
@@ -30,6 +31,7 @@ import {
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
+import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
@@ -280,6 +282,11 @@ export default function EntryPage() {
     return threadsForEntry(allEntries, entry.id, 3);
   }, [entry, allEntries]);
 
+  const relationshipNotes = useMemo(() => {
+    if (!entry) return [];
+    return entryRelationshipNotes(allEntries, entry.id, 2);
+  }, [entry, allEntries]);
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -328,6 +335,13 @@ export default function EntryPage() {
             <ThreadMentionsSection
               threads={entryThreads}
               title="Part of these conversations"
+              subtitle=""
+            />
+
+            <RelationshipContinuityNotes
+              notes={relationshipNotes}
+              max={2}
+              title="People in this reflection"
               subtitle=""
             />
 
