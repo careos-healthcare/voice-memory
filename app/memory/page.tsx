@@ -12,6 +12,9 @@ import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
+import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
+import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,12 +29,22 @@ import {
   buildPatternEngineReport,
   type PatternInsight,
 } from "@/lib/patterns/pattern-engine";
+import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
+import { detectAllAvoidanceSignals, type AvoidanceSignal } from "@/lib/patterns/avoidance";
+import { getEmotionalCycleInsights, type EvolutionInsight } from "@/lib/patterns/emotional-evolution";
+import {
+  hasStrongPatternEvidence,
+  countsFromInsights,
+} from "@/lib/patterns/evidence-priority";
 import { getAllEntries } from "@/lib/storage";
 
 export default function MemoryPage() {
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
   const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
+  const [contradictions, setContradictions] = useState<Contradiction[]>([]);
+  const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
+  const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -40,11 +53,60 @@ export default function MemoryPage() {
       setSnapshot(buildEntityMemory());
       setPhrases(getTopPhrases(entries, 8));
       setPatternInsights(buildPatternEngineReport(entries, { scope: "memory", limit: 8 }).insights);
+      setContradictions(detectAllContradictions(entries));
+      setAvoidanceSignals(detectAllAvoidanceSignals(entries));
+      setCycleInsights(getEmotionalCycleInsights(entries));
     });
     return () => cancelAnimationFrame(id);
   }, []);
 
   const loading = snapshot === null;
+  const strongPatterns = hasStrongPatternEvidence({
+    ...countsFromInsights(patternInsights),
+    contradictionCount: contradictions.length,
+    phraseCount: phrases.length,
+    avoidanceCount: avoidanceSignals.length,
+    evolutionCount: cycleInsights.length,
+  });
+
+  const memoryPatternSections = (
+    <>
+      <PatternInsightCard
+        insights={patternInsights}
+        title="Memory pattern insights"
+        subtitle="Entities, recurring themes, phrases, and indirect language — ranked by evidence"
+        maxItems={8}
+      />
+
+      <ContradictionContinuityCard
+        contradictions={contradictions}
+        title="Contradictions in your memory"
+        subtitle="Tension and reversals across your archive"
+        maxItems={4}
+      />
+
+      <PhraseMemoryCard
+        phrases={phrases}
+        title="Words you keep returning to"
+        subtitle="Repeated phrases, metaphors, and self-labels from your transcripts"
+        maxItems={8}
+      />
+
+      <AvoidanceCard
+        signals={avoidanceSignals}
+        title="What stays vague"
+        subtitle="Indirect language patterns across your archive"
+        maxItems={5}
+      />
+
+      <EmotionalEvolutionCard
+        insights={cycleInsights}
+        title="Emotional evolution"
+        subtitle="Cycles, intensity drift, and trigger contexts"
+        maxItems={5}
+      />
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -107,18 +169,7 @@ export default function MemoryPage() {
             </>
           ) : snapshot.totalEntities === 0 ? (
             <>
-              <PatternInsightCard
-                insights={patternInsights}
-                title="Memory pattern insights"
-                subtitle="Entities, recurring themes, phrases, and indirect language — ranked by evidence"
-                maxItems={8}
-              />
-              <PhraseMemoryCard
-                phrases={phrases}
-                title="Words you keep returning to"
-                subtitle="Repeated phrases, metaphors, and self-labels from your transcripts"
-                maxItems={8}
-              />
+              {memoryPatternSections}
               <Card className="border-dashed">
                 <CardContent className="px-6 py-12 text-center">
                   <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
@@ -138,7 +189,9 @@ export default function MemoryPage() {
             </>
           ) : (
             <>
-              {snapshot.mentionHighlights.length > 0 ? (
+              {memoryPatternSections}
+
+              {!strongPatterns && snapshot.mentionHighlights.length > 0 ? (
                 <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base">Recurring mentions</CardTitle>
@@ -169,20 +222,6 @@ export default function MemoryPage() {
                   </CardContent>
                 </Card>
               ) : null}
-
-              <PatternInsightCard
-                insights={patternInsights}
-                title="Memory pattern insights"
-                subtitle="Entities, recurring themes, phrases, and indirect language — ranked by evidence"
-                maxItems={8}
-              />
-
-              <PhraseMemoryCard
-                phrases={phrases}
-                title="Words you keep returning to"
-                subtitle="Repeated phrases, metaphors, and self-labels from your transcripts"
-                maxItems={8}
-              />
 
               <ShareMemoryCardButton kind="dominant_theme" />
 

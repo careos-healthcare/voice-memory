@@ -32,6 +32,8 @@ interface InsightCardProps {
   showContradictionCard?: boolean;
   showPhraseCard?: boolean;
   showAvoidanceCard?: boolean;
+  hideMoodSummary?: boolean;
+  hideObservations?: boolean;
 }
 
 function SafetyNotice() {
@@ -99,6 +101,8 @@ export function InsightCard({
   showContradictionCard = true,
   showPhraseCard = true,
   showAvoidanceCard = true,
+  hideMoodSummary = false,
+  hideObservations = false,
 }: InsightCardProps) {
   const patternInsights = useMemo(() => {
     if (patternInsightsProp) return patternInsightsProp;
@@ -134,7 +138,7 @@ export function InsightCard({
     >
       <SafetyNotice />
 
-      {observations.length > 0 ? (
+      {observations.length > 0 && !hideObservations ? (
         <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
           <CardHeader className="pb-2">
             <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
@@ -231,6 +235,7 @@ export function InsightCard({
         </Card>
       ) : null}
 
+      {!hideMoodSummary ? (
       <Card className="overflow-hidden border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between gap-4">
@@ -273,6 +278,7 @@ export function InsightCard({
           </div>
         </CardContent>
       </Card>
+      ) : null}
 
       {showTranscript && transcript ? (
         <Card>

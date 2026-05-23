@@ -15,6 +15,7 @@ interface PhraseMemoryCardProps {
   maxItems?: number;
   highlightEntryId?: string;
   showOccurrences?: boolean;
+  hideWhenEmpty?: boolean;
   className?: string;
 }
 
@@ -39,11 +40,13 @@ export function PhraseMemoryCard({
   maxItems = 6,
   highlightEntryId,
   showOccurrences = true,
+  hideWhenEmpty = false,
   className,
 }: PhraseMemoryCardProps) {
   const items = phrases.slice(0, maxItems);
 
   if (items.length === 0) {
+    if (hideWhenEmpty) return null;
     return (
       <Card className={`border-dashed border-white/10 ${className ?? ""}`}>
         <CardHeader className="pb-2">

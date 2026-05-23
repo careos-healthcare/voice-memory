@@ -5,6 +5,7 @@ import { Sparkles, Shield } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { insightConfidenceLabel } from "@/lib/patterns/evidence-priority";
 import {
   type PatternInsight,
   typeLabel,
@@ -85,6 +86,9 @@ export function PatternInsightCard({
                 <Badge variant="secondary" className="text-[10px]">
                   {typeLabel(item.type)}
                 </Badge>
+                <Badge variant="secondary" className="text-[10px]">
+                  {insightConfidenceLabel(item.scores.total)}
+                </Badge>
                 {showScores ? (
                   <Badge variant="secondary" className="text-[10px]">
                     {item.scores.total}/100
@@ -92,10 +96,19 @@ export function PatternInsightCard({
                 ) : null}
               </div>
             </div>
+
+            <p className="mt-2 text-xs text-zinc-500">
+              {item.entryIds.length} entr{item.entryIds.length === 1 ? "y" : "ies"} ·
+              recurrence signal {item.scores.recurrenceCount}%
+            </p>
+
             <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.detail}</p>
 
             {item.evidence.length > 0 ? (
               <div className="mt-3 space-y-2">
+                <p className="text-[10px] uppercase tracking-wider text-zinc-600">
+                  Exact phrase evidence
+                </p>
                 {item.evidence.slice(0, 3).map((ev) => (
                   <div
                     key={`${item.id}-${ev.entryId}-${ev.phrase.slice(0, 20)}`}
@@ -121,6 +134,30 @@ export function PatternInsightCard({
                     </p>
                   </div>
                 ))}
+              </div>
+            ) : null}
+
+            {item.entryIds.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="text-[10px] text-zinc-600">Related entries:</span>
+                {item.entryIds.slice(0, 5).map((id) => (
+                  <Link
+                    key={`${item.id}-link-${id}`}
+                    href={`/entry/${id}`}
+                    className={`text-[10px] ${
+                      highlightEntryId === id
+                        ? "font-medium text-violet-300"
+                        : "text-violet-400 hover:text-violet-300"
+                    }`}
+                  >
+                    {highlightEntryId === id ? "This entry" : "View"}
+                  </Link>
+                ))}
+                {item.entryIds.length > 5 ? (
+                  <span className="text-[10px] text-zinc-600">
+                    +{item.entryIds.length - 5} more
+                  </span>
+                ) : null}
               </div>
             ) : null}
           </div>

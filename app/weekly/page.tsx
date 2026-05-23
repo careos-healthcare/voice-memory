@@ -38,6 +38,7 @@ import { ContradictionContinuityCard } from "@/components/patterns/Contradiction
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
 import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
+import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { detectRecentContradictions } from "@/lib/patterns/contradictions";
 import type { Contradiction } from "@/lib/patterns/contradictions";
 import {
@@ -52,6 +53,11 @@ import {
   buildPatternEngineReport,
   type PatternInsight,
 } from "@/lib/patterns/pattern-engine";
+import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
+import {
+  hasStrongPatternEvidence,
+  countsFromInsights,
+} from "@/lib/patterns/evidence-priority";
 import { getAllEntries } from "@/lib/storage";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
@@ -72,6 +78,7 @@ export default function WeeklyPage() {
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
   const [weekEvolution, setWeekEvolution] = useState<WeeklyEvolutionComparison | null>(null);
   const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
+  const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
@@ -82,11 +89,21 @@ export default function WeeklyPage() {
       setAvoidanceSignals(detectRecentAvoidanceSignals(entries, 7));
       setWeekEvolution(buildWeeklyEvolutionComparison(entries));
       setPatternInsights(buildPatternEngineReport(entries, { scope: "weekly", limit: 8 }).insights);
+      setPhrases(getTopPhrases(entries, 6));
     });
     return () => cancelAnimationFrame(id);
   }, []);
 
   const loading = report === null;
+  const strongPatterns = report
+    ? hasStrongPatternEvidence({
+        ...countsFromInsights(patternInsights),
+        contradictionCount: contradictions.length,
+        phraseCount: phrases.length,
+        avoidanceCount: avoidanceSignals.length,
+        evolutionCount: (weekEvolution?.insights.length ?? 0) + (weekEvolution?.lines.length ?? 0),
+      })
+    : false;
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -167,31 +184,7 @@ export default function WeeklyPage() {
             </>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <TrendStatCard
-                  label="Entries"
-                  value={String(report.thisWeek.entryCount)}
-                  hint="Last 7 days"
-                />
-                <TrendStatCard
-                  label="Avg intensity"
-                  value={
-                    report.thisWeek.avgIntensity !== null
-                      ? `${report.thisWeek.avgIntensity}/10`
-                      : "—"
-                  }
-                />
-                <div className="col-span-2 sm:col-span-1">
-                  <TrendStatCard
-                    label="Top mood"
-                    value={
-                      report.thisWeek.dominantEmotions[0]?.label ?? "—"
-                    }
-                    hint="Dominant emotion"
-                  />
-                </div>
-              </div>
-
+              {/* 1. Pattern-first insights */}
               <PatternInsightCard
                 insights={patternInsights}
                 title="This week's pattern insights"
@@ -199,57 +192,20 @@ export default function WeeklyPage() {
                 maxItems={8}
               />
 
-              <Card
-                className={
-                  report.emotionalShift.direction === "calmer"
-                    ? "border-emerald-500/20 bg-emerald-500/5"
-                    : report.emotionalShift.direction === "intenser"
-                      ? "border-amber-500/20 bg-amber-500/5"
-                      : "border-white/10"
-                }
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp
-                      className={`h-4 w-4 ${shiftAccent[report.emotionalShift.direction]}`}
-                    />
-                    <CardTitle className="text-base">Emotional shift</CardTitle>
-                  </div>
-                  <p className="text-xs text-zinc-500">Vs previous 7 days</p>
-                </CardHeader>
-                <CardContent>
-                  <p
-                    className={`text-sm font-medium ${shiftAccent[report.emotionalShift.direction]}`}
-                  >
-                    {report.emotionalShift.label}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-                    {report.emotionalShift.detail}
-                  </p>
-                  {report.emotionalShift.intensityDelta !== null ? (
-                    <Badge className="mt-3" variant="secondary">
-                      Δ intensity{" "}
-                      {report.emotionalShift.intensityDelta > 0 ? "+" : ""}
-                      {report.emotionalShift.intensityDelta}
-                    </Badge>
-                  ) : null}
-                </CardContent>
-              </Card>
-
-              <EmotionalEvolutionCard
-                insights={weekEvolution?.insights ?? []}
-                weekComparison={weekEvolution}
-                showWeekComparison
-                title="This week vs previous week"
-                subtitle="Intensity shift and topic-level changes from your words"
-                maxItems={4}
-              />
-
+              {/* 2. Contradictions */}
               <ContradictionContinuityCard
                 contradictions={contradictions}
                 title="This week's contradictions"
                 subtitle="Tension and reversals from the last 7 days — not a diagnosis"
                 maxItems={4}
+              />
+
+              {/* 3. Repeated language */}
+              <PhraseMemoryCard
+                phrases={phrases}
+                title="Repeated language this week"
+                subtitle="Phrases that recur across your recent reflections"
+                maxItems={6}
               />
 
               <AvoidanceCard
@@ -259,23 +215,105 @@ export default function WeeklyPage() {
                 maxItems={4}
               />
 
+              {/* 4. Emotional evolution */}
+              <EmotionalEvolutionCard
+                insights={weekEvolution?.insights ?? []}
+                weekComparison={weekEvolution}
+                showWeekComparison
+                title="This week vs previous week"
+                subtitle="Intensity shift and topic-level changes from your words"
+                maxItems={4}
+              />
+
+              {/* 5. Entity memory */}
+              <RankedListCard
+                title="Recurring themes"
+                subtitle="Patterns that kept returning"
+                items={report.thisWeek.recurringThemes}
+                emptyLabel="Themes appear as you add voice reflections."
+                capitalize
+              />
+
+              <RankedListCard
+                title="People & entities"
+                subtitle="Names and relationships you mentioned"
+                items={report.thisWeek.repeatedEntities}
+                emptyLabel="No names or relationships surfaced this week."
+                capitalize
+              />
+
               <WeekComparisonCard
                 comparison={report.comparison}
                 thisWeekLabel={report.weekRangeLabel}
                 lastWeekLabel={report.previousWeekRangeLabel}
               />
 
-              <WeeklyAiReflection report={report} />
+              {/* 6. Mood summaries — hidden when stronger pattern evidence exists */}
+              {!strongPatterns ? (
+                <>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <TrendStatCard
+                      label="Entries"
+                      value={String(report.thisWeek.entryCount)}
+                      hint="Last 7 days"
+                    />
+                    <TrendStatCard
+                      label="Avg intensity"
+                      value={
+                        report.thisWeek.avgIntensity !== null
+                          ? `${report.thisWeek.avgIntensity}/10`
+                          : "—"
+                      }
+                    />
+                    <div className="col-span-2 sm:col-span-1">
+                      <TrendStatCard
+                        label="Top mood"
+                        value={
+                          report.thisWeek.dominantEmotions[0]?.label ?? "—"
+                        }
+                        hint="Dominant emotion"
+                      />
+                    </div>
+                  </div>
 
-              <FeedbackPrompt
-                kind="weekly_summary"
-                targetKey={report.weekEndingKey}
-                label="Were these weekly pattern observations useful?"
-              />
-
-              <ShareMemoryCardRow
-                kinds={["weekly_summary", "timeline_compression", "memory_continuity", "dominant_theme"]}
-              />
+                  <Card
+                    className={
+                      report.emotionalShift.direction === "calmer"
+                        ? "border-emerald-500/20 bg-emerald-500/5"
+                        : report.emotionalShift.direction === "intenser"
+                          ? "border-amber-500/20 bg-amber-500/5"
+                          : "border-white/10"
+                    }
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp
+                          className={`h-4 w-4 ${shiftAccent[report.emotionalShift.direction]}`}
+                        />
+                        <CardTitle className="text-base">Emotional shift</CardTitle>
+                      </div>
+                      <p className="text-xs text-zinc-500">Vs previous 7 days</p>
+                    </CardHeader>
+                    <CardContent>
+                      <p
+                        className={`text-sm font-medium ${shiftAccent[report.emotionalShift.direction]}`}
+                      >
+                        {report.emotionalShift.label}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                        {report.emotionalShift.detail}
+                      </p>
+                      {report.emotionalShift.intensityDelta !== null ? (
+                        <Badge className="mt-3" variant="secondary">
+                          Δ intensity{" "}
+                          {report.emotionalShift.intensityDelta > 0 ? "+" : ""}
+                          {report.emotionalShift.intensityDelta}
+                        </Badge>
+                      ) : null}
+                    </CardContent>
+                  </Card>
+                </>
+              ) : null}
 
               <Card>
                 <CardHeader className="pb-2">
@@ -307,29 +345,28 @@ export default function WeeklyPage() {
                 </CardContent>
               </Card>
 
-              <RankedListCard
-                title="Recurring themes"
-                subtitle="Patterns that kept returning"
-                items={report.thisWeek.recurringThemes}
-                emptyLabel="Themes appear as you add voice reflections."
-                capitalize
+              {!strongPatterns ? (
+                <RankedListCard
+                  title="Dominant emotions"
+                  subtitle="How you described feeling — not a diagnosis"
+                  items={report.thisWeek.dominantEmotions}
+                  emptyLabel="No mood data this week."
+                  capitalize
+                />
+              ) : null}
+
+              <FeedbackPrompt
+                kind="weekly_summary"
+                targetKey={report.weekEndingKey}
+                label="Were these weekly pattern observations useful?"
               />
 
-              <RankedListCard
-                title="People & entities"
-                subtitle="Names and relationships you mentioned"
-                items={report.thisWeek.repeatedEntities}
-                emptyLabel="No names or relationships surfaced this week."
-                capitalize
+              <ShareMemoryCardRow
+                kinds={["weekly_summary", "timeline_compression", "memory_continuity", "dominant_theme"]}
               />
 
-              <RankedListCard
-                title="Dominant emotions"
-                subtitle="How you described feeling — not a diagnosis"
-                items={report.thisWeek.dominantEmotions}
-                emptyLabel="No mood data this week."
-                capitalize
-              />
+              {/* 7. Recommendations / AI summary last */}
+              <WeeklyAiReflection report={report} />
 
               <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 text-xs text-zinc-500">
                 <Users className="h-3.5 w-3.5 shrink-0" />

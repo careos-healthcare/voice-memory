@@ -19,6 +19,7 @@ interface EmotionalEvolutionCardProps {
   maxItems?: number;
   weekComparison?: WeeklyEvolutionComparison | null;
   showWeekComparison?: boolean;
+  hideWhenEmpty?: boolean;
   className?: string;
 }
 
@@ -41,12 +42,14 @@ export function EmotionalEvolutionCard({
   maxItems = 8,
   weekComparison = null,
   showWeekComparison = false,
+  hideWhenEmpty = false,
   className,
 }: EmotionalEvolutionCardProps) {
   const items = insights.slice(0, maxItems);
   const hasWeekLines = showWeekComparison && weekComparison && weekComparison.lines.length > 0;
 
   if (items.length === 0 && !hasWeekLines) {
+    if (hideWhenEmpty) return null;
     return (
       <Card className={`border-dashed border-white/10 ${className ?? ""}`}>
         <CardHeader className="pb-2">
