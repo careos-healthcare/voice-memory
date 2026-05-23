@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Download, RotateCcw, Trash2 } from "lucide-react";
+import { Download, Moon, RotateCcw, Trash2 } from "lucide-react";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -20,6 +20,7 @@ import {
   slugExportDate,
 } from "@/lib/memory-export";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import { isQuietModeEnabled, setQuietModeEnabled } from "@/lib/quiet-mode";
 import {
   DATA_DELETION_SUMMARY,
   DATA_EXPORT_SUMMARY,
@@ -31,6 +32,7 @@ export default function SettingsPage() {
   const [entryCount, setEntryCount] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [quietMode, setQuietMode] = useState(false);
 
   const refreshCount = () => {
     setEntryCount(getStoredEntryCount());
@@ -38,6 +40,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     refreshCount();
+    setQuietMode(isQuietModeEnabled());
   }, []);
 
   const showMessage = (text: string) => {
@@ -168,6 +171,33 @@ export default function SettingsPage() {
               >
                 <Trash2 className="h-4 w-4" />
                 Delete all entries
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Quiet mode</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-zinc-400">
+                Low-density view — one observation at a time, more whitespace, less detail
+                until you ask for it.
+              </p>
+              <Button
+                type="button"
+                variant={quietMode ? "default" : "secondary"}
+                size="sm"
+                className="mt-4"
+                onClick={() => {
+                  const next = !quietMode;
+                  setQuietModeEnabled(next);
+                  setQuietMode(next);
+                  showMessage(next ? "Quiet mode on." : "Quiet mode off.");
+                }}
+              >
+                <Moon className="h-4 w-4" />
+                {quietMode ? "Quiet mode on" : "Enable quiet mode"}
               </Button>
             </CardContent>
           </Card>

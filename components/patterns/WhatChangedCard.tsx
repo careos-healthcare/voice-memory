@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ChangeDetectionReport, LongitudinalChange } from "@/types/changes";
+import { helpsOrient } from "@/lib/patterns/usefulness-filter";
 
 interface WhatChangedCardProps {
   report: ChangeDetectionReport;
@@ -12,6 +13,7 @@ interface WhatChangedCardProps {
   subtitle?: string;
   hideWhenEmpty?: boolean;
   showEvidence?: boolean;
+  quiet?: boolean;
   className?: string;
 }
 
@@ -81,9 +83,13 @@ export function WhatChangedCard({
   subtitle,
   hideWhenEmpty = true,
   showEvidence = false,
+  quiet = false,
   className,
 }: WhatChangedCardProps) {
-  if (!report.hasData) {
+  const oriented = report.changes.filter((c) => helpsOrient(c.summary, c.confidence));
+  const changes = quiet ? oriented.slice(0, 1) : oriented.slice(0, 3);
+
+  if (changes.length === 0) {
     if (hideWhenEmpty) return null;
     return (
       <Card className={`border-white/5 bg-white/[0.02] ${className ?? ""}`}>
@@ -94,17 +100,19 @@ export function WhatChangedCard({
     );
   }
 
+  const spacing = quiet ? "space-y-12" : "space-y-10";
+
   return (
     <Card className={`border-white/5 bg-white/[0.02] ${className ?? ""}`}>
-      <CardHeader className="pb-4">
+      <CardHeader className={quiet ? "pb-6" : "pb-4"}>
         <CardTitle className="text-lg font-medium text-zinc-100">{title}</CardTitle>
         {subtitle ? (
           <p className="mt-1 text-sm leading-relaxed text-zinc-500">{subtitle}</p>
         ) : null}
       </CardHeader>
       <CardContent>
-        <ul className="space-y-10">
-          {report.changes.map((change) => (
+        <ul className={spacing}>
+          {changes.map((change) => (
             <ChangeItem key={change.id} change={change} showEvidence={showEvidence} />
           ))}
         </ul>

@@ -16,6 +16,10 @@ import { ContradictionContinuityCard } from "@/components/patterns/Contradiction
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
 import { WhatChangedCard } from "@/components/patterns/WhatChangedCard";
+import {
+  ContinuityCallbacks,
+  MemoryLandmarksStrip,
+} from "@/components/patterns/ContinuityCallbacks";
 import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { LongitudinalContinuityCard } from "@/components/patterns/LongitudinalContinuityCard";
@@ -39,8 +43,11 @@ import { getEmotionalCycleInsights, type EvolutionInsight } from "@/lib/patterns
 import { buildContinuityReport } from "@/lib/patterns/continuity-engine";
 import { buildCalmnessReport } from "@/lib/patterns/calmness";
 import { buildChangeReport } from "@/lib/patterns/changes";
+import { getContinuityForMemory } from "@/lib/patterns/continuity-moments";
+import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import type { CalmnessReport } from "@/types/calmness";
 import type { ChangeDetectionReport } from "@/types/changes";
+import type { ContinuityMomentsReport } from "@/types/continuity-moments";
 import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
@@ -49,6 +56,7 @@ import {
 import { getAllEntries } from "@/lib/storage";
 
 export default function MemoryPage() {
+  const { quiet, limits } = useQuietMode();
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
   const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
@@ -58,6 +66,7 @@ export default function MemoryPage() {
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
   const [calm, setCalm] = useState<CalmnessReport | null>(null);
   const [changes, setChanges] = useState<ChangeDetectionReport | null>(null);
+  const [continuityMoments, setContinuityMoments] = useState<ContinuityMomentsReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -71,10 +80,11 @@ export default function MemoryPage() {
       setCycleInsights(getEmotionalCycleInsights(entries));
       setContinuity(buildContinuityReport(entries, { scope: "archive", limit: 6 }));
       setCalm(buildCalmnessReport(entries, { scope: "archive", limit: 3 }));
-      setChanges(buildChangeReport(entries, { scope: "archive", limit: 3 }));
+      setChanges(buildChangeReport(entries, { scope: "archive", limit: limits.changes }));
+      setContinuityMoments(getContinuityForMemory(entries, limits));
     });
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [limits.changes, limits.callbacks, limits.landmarks]);
 
   const loading = snapshot === null;
   const strongPatterns = hasStrongPatternEvidence({
@@ -133,7 +143,7 @@ export default function MemoryPage() {
           </p>
         </motion.div>
 
-        <div className="mt-12 space-y-12">
+        <div className={quiet ? "mt-12 space-y-16" : "mt-12 space-y-12"}>
           <UpgradeCta
             source="memory"
             feature="entity_memory"
@@ -175,16 +185,22 @@ export default function MemoryPage() {
                     generatedAt: "",
                   }
                 }
+                quiet={quiet}
               />
+              {continuityMoments?.callbacks.length ? (
+                <ContinuityCallbacks callbacks={continuityMoments.callbacks} quiet={quiet} />
+              ) : null}
               {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard report={calm} title="What stands out" />
               ) : null}
+              {!quiet ? (
               <SeeMorePanel label="See more detail">
                 {changes?.hasData && calm?.hasData ? (
                   <CalmUnderstandingCard report={calm} title="Further context" />
                 ) : null}
                 {memoryPatternSections}
               </SeeMorePanel>
+              ) : null}
               <Card className="border-dashed">
                 <CardContent className="px-6 py-12 text-center">
                   <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
@@ -213,7 +229,18 @@ export default function MemoryPage() {
                     generatedAt: "",
                   }
                 }
+                quiet={quiet}
               />
+              {continuityMoments?.callbacks.length ? (
+                <ContinuityCallbacks
+                  callbacks={continuityMoments.callbacks}
+                  title="What faded"
+                  quiet={quiet}
+                />
+              ) : null}
+              {continuityMoments?.landmarks.length ? (
+                <MemoryLandmarksStrip landmarks={continuityMoments.landmarks} quiet={quiet} />
+              ) : null}
               {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard
                   report={calm}
@@ -222,6 +249,7 @@ export default function MemoryPage() {
                 />
               ) : null}
 
+              {!quiet ? (
               <SeeMorePanel label="See more detail">
                 {changes?.hasData && calm?.hasData ? (
                   <CalmUnderstandingCard
@@ -232,6 +260,7 @@ export default function MemoryPage() {
                 ) : null}
                 {memoryPatternSections}
               </SeeMorePanel>
+              ) : null}
 
               {!strongPatterns && snapshot.mentionHighlights.length > 0 ? (
                 <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">

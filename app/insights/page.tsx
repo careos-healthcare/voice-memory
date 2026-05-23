@@ -133,9 +133,9 @@ export default function InsightsPage() {
           className="mt-4"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Patterns</p>
-          <h1 className="mt-3 text-3xl font-semibold text-white">Insights</h1>
+          <h1 className="mt-3 text-3xl font-semibold text-white">Over time</h1>
           <p className="mt-3 text-sm text-zinc-500">
-            What repeats and what fades across your archive — held locally, read quietly.
+            What returned, what faded, and what became clearer — held locally.
           </p>
           {!loading && insights?.hasData ? (
             <div className="mt-4 flex flex-wrap gap-2">

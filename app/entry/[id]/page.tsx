@@ -10,16 +10,22 @@ import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { InsightCard } from "@/components/InsightCard";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
-import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
+import {
+  ContinuityCallbacks,
+  MemoryLandmarksStrip,
+} from "@/components/patterns/ContinuityCallbacks";
+import { ThenVsNowCard } from "@/components/patterns/ThenVsNowCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCalmnessForEntry } from "@/lib/patterns/calmness";
+import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { getContinuityForEntry } from "@/lib/patterns/continuity-moments";
 import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
 import { getPatternInsights } from "@/lib/patterns/pattern-engine";
+import { helpsOrient } from "@/lib/patterns/usefulness-filter";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -27,21 +33,25 @@ import type { JournalEntry } from "@/types/journal";
 export default function EntryPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const [entry, setEntry] = useState<JournalEntry | null>(null);
+  const [entry, setEntry] = useState<JournalEntry | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const { quiet, limits } = useQuietMode();
 
   useEffect(() => {
     const found = getEntry(params.id);
-    setEntry(found ?? null);
+    setEntry(found ?? undefined);
     setLoading(false);
   }, [params.id]);
 
   const allEntries = useMemo(() => getAllEntries(), [entry]);
 
-  const calmReport = useMemo(() => {
+  const continuity = useMemo(() => {
     if (!entry) return null;
-    return getCalmnessForEntry(allEntries, entry.id);
-  }, [entry, allEntries]);
+    return getContinuityForEntry(allEntries, entry.id, {
+      callbacks: limits.callbacks,
+      landmarks: limits.landmarks,
+    });
+  }, [entry, allEntries, limits.callbacks, limits.landmarks]);
 
   const relatedContradictions = useMemo(() => {
     if (!entry) return [];
@@ -50,7 +60,9 @@ export default function EntryPage() {
 
   const entryPatternInsights = useMemo(() => {
     if (!entry) return [];
-    return getPatternInsights(allEntries, "entry", entry.id, 8);
+    return getPatternInsights(allEntries, "entry", entry.id, 8).filter((i) =>
+      helpsOrient(i.title + " " + (i.detail ?? ""), i.scores.total),
+    );
   }, [entry, allEntries]);
 
   const handleDelete = () => {
@@ -59,9 +71,11 @@ export default function EntryPage() {
     router.push("/journal");
   };
 
+  const sectionGap = quiet ? "space-y-16" : "space-y-12";
+
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
         <div className="mt-4 flex items-center justify-between gap-4">
@@ -99,7 +113,7 @@ export default function EntryPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 space-y-12"
+            className={`mt-8 ${sectionGap}`}
           >
             <header>
               <h1 className="text-2xl font-semibold text-white">
@@ -108,20 +122,24 @@ export default function EntryPage() {
               <p className="mt-2 text-sm text-zinc-600">{entry.durationSeconds}s · saved locally</p>
             </header>
 
+            {continuity?.callbacks.length ? (
+              <ContinuityCallbacks
+                callbacks={continuity.callbacks}
+                title="What sounds different now"
+                highlightEntryId={entry.id}
+                quiet={quiet}
+              />
+            ) : null}
+
+            {continuity?.thenVsNow ? (
+              <ThenVsNowCard comparison={continuity.thenVsNow} />
+            ) : null}
+
             <VoicePlayback
               entryId={entry.id}
               audioId={entry.audioId}
               durationSeconds={entry.durationSeconds}
             />
-
-            {calmReport?.hasData ? (
-              <CalmUnderstandingCard
-                report={calmReport}
-                title="In context"
-                subtitle="How this reflection sits in your archive"
-                highlightEntryId={entry.id}
-              />
-            ) : null}
 
             <InsightCard
               reflection={entry.reflection}
@@ -135,13 +153,18 @@ export default function EntryPage() {
               calmMode
             />
 
-            {(entryPatternInsights.length > 0 || relatedContradictions.length > 0) ? (
-              <SeeMorePanel label="See more detail">
+            {continuity?.landmarks.length ? (
+              <MemoryLandmarksStrip landmarks={continuity.landmarks} quiet={quiet} />
+            ) : null}
+
+            {!quiet &&
+            (entryPatternInsights.length > 0 || relatedContradictions.length > 0) ? (
+              <SeeMorePanel label="See more">
                 <PatternInsightCard
                   insights={entryPatternInsights}
-                  title="Related patterns"
-                  maxItems={6}
-                  primaryCount={2}
+                  title="What returned"
+                  maxItems={4}
+                  primaryCount={1}
                   highlightEntryId={entry.id}
                   hideWhenEmpty
                 />

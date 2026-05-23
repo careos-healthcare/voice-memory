@@ -74,7 +74,7 @@ function SilenceView({
 export function CalmUnderstandingCard({
   report,
   title = "Over time",
-  subtitle = "What your words suggest — quietly, from your archive",
+  subtitle = "What your archive remembers — quietly",
   highlightEntryId,
   hideWhenEmpty = true,
   showLandmarks = false,

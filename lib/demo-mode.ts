@@ -131,7 +131,7 @@ function buildDemoEntries(): JournalEntry[] {
           "Pre-standup dread did not match how the update actually went.",
         tensionOrContradiction:
           "Same loop before the meeting; fine outcome after.",
-        repeatedSignal: "Judgment story before standups",
+        repeatedSignal: "Standup judgment loop — same pattern, faster recovery lately",
         nextSmallAction: "After the next standup, write one factual outcome line",
       }),
     },
@@ -274,7 +274,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(0, 7),
       durationSeconds: 48,
       transcript:
-        "Today I'm hopeful about the week. Side project got a kind note from a user. Sarah project has a plan. Still aware of family pressure around the holidays but I'm not carrying it alone in my head anymore.",
+        "Today I'm hopeful about the week. Side project got a kind note from a user. Sarah project has a plan. The standup loop came back briefly this morning but passed quicker than last time. Still aware of family pressure around the holidays but I'm not carrying it alone in my head anymore.",
       reflection: reflection({
         mood: "hopeful",
         emotionalIntensity: 4,
@@ -370,7 +370,7 @@ export function enterDemoMode(): void {
   const weekEnding = todayKey();
   setCachedWeeklySummary(
     weekEnding,
-    "This week mixed work pressure with real wins: Sarah's project moved from dread to curiosity after rest, and you named money worries with concrete numbers instead of spiraling. Family pressure around the holidays is still present, but you're pausing before auto-yes — a pattern of clearer boundaries showing up across entries.",
+    "Work pressure peaked mid-month, then eased — Sarah's project moved from dread to curiosity. Money shifted from vague worry to named numbers. Family pressure became direct (Mum, Dad) instead of indirect. The standup loop returned once, but recovery came faster than before.",
   );
 
   localStorage.setItem(DEMO_ACTIVE_KEY, "1");

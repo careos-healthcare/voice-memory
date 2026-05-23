@@ -34,6 +34,10 @@ import {
   type WeeklyIntelligenceReport,
 } from "@/lib/weekly-intelligence";
 import { WhatChangedCard } from "@/components/patterns/WhatChangedCard";
+import {
+  ContinuityCallbacks,
+  MemoryLandmarksStrip,
+} from "@/components/patterns/ContinuityCallbacks";
 import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
@@ -60,11 +64,14 @@ import {
   type PatternInsight,
 } from "@/lib/patterns/pattern-engine";
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
-import { getContinuityForWeekly } from "@/lib/patterns/continuity-engine";
+import { getContinuityForWeekly as getWeeklyContinuityReport } from "@/lib/patterns/continuity-engine";
 import { buildCalmnessReport } from "@/lib/patterns/calmness";
 import { getChangesForWeekly } from "@/lib/patterns/changes";
+import { getContinuityForWeekly as getWeeklyContinuityMoments } from "@/lib/patterns/continuity-moments";
+import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import type { CalmnessReport } from "@/types/calmness";
 import type { ChangeDetectionReport } from "@/types/changes";
+import type { ContinuityMomentsReport } from "@/types/continuity-moments";
 import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
@@ -85,6 +92,7 @@ const shiftAccent: Record<
 };
 
 export default function WeeklyPage() {
+  const { quiet, limits } = useQuietMode();
   const [report, setReport] = useState<WeeklyIntelligenceReport | null>(null);
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
@@ -94,6 +102,7 @@ export default function WeeklyPage() {
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
   const [calm, setCalm] = useState<CalmnessReport | null>(null);
   const [changes, setChanges] = useState<ChangeDetectionReport | null>(null);
+  const [continuityMoments, setContinuityMoments] = useState<ContinuityMomentsReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
@@ -105,12 +114,13 @@ export default function WeeklyPage() {
       setWeekEvolution(buildWeeklyEvolutionComparison(entries));
       setPatternInsights(buildPatternEngineReport(entries, { scope: "weekly", limit: 8 }).insights);
       setPhrases(getTopPhrases(entries, 6));
-      setContinuity(getContinuityForWeekly(entries, 8));
+      setContinuity(getWeeklyContinuityReport(entries, 8));
       setCalm(buildCalmnessReport(entries, { scope: "weekly", limit: 3 }));
-      setChanges(getChangesForWeekly(entries, 3));
+      setChanges(getChangesForWeekly(entries, limits.changes));
+      setContinuityMoments(getWeeklyContinuityMoments(entries, limits));
     });
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [quiet, limits.changes, limits.callbacks, limits.landmarks]);
 
   const loading = report === null;
   const strongPatterns = report
@@ -156,7 +166,7 @@ export default function WeeklyPage() {
           ) : null}
         </motion.div>
 
-        <div className="mt-12 space-y-12">
+        <div className={quiet ? "mt-12 space-y-16" : "mt-12 space-y-12"}>
           <UpgradeCta
             source="weekly"
             feature="weekly_intelligence"
@@ -201,7 +211,20 @@ export default function WeeklyPage() {
                   }
                 }
                 subtitle={report.weekRangeLabel}
+                quiet={quiet}
               />
+
+              {continuityMoments?.callbacks.length ? (
+                <ContinuityCallbacks
+                  callbacks={continuityMoments.callbacks}
+                  title="What returned"
+                  quiet={quiet}
+                />
+              ) : null}
+
+              {continuityMoments?.landmarks.length ? (
+                <MemoryLandmarksStrip landmarks={continuityMoments.landmarks} quiet={quiet} />
+              ) : null}
 
               {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard
@@ -212,6 +235,7 @@ export default function WeeklyPage() {
                 />
               ) : null}
 
+              {!quiet ? (
               <SeeMorePanel label="See more detail">
                 {changes?.hasData && calm?.hasData ? (
                   <CalmUnderstandingCard
@@ -384,6 +408,7 @@ export default function WeeklyPage() {
                 ) : null}
                 <WeeklyAiReflection report={report} />
               </SeeMorePanel>
+              ) : null}
 
               <FeedbackPrompt
                 kind="weekly_summary"
