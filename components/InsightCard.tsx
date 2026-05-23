@@ -34,6 +34,7 @@ interface InsightCardProps {
   showAvoidanceCard?: boolean;
   hideMoodSummary?: boolean;
   hideObservations?: boolean;
+  calmMode?: boolean;
 }
 
 function SafetyNotice() {
@@ -103,6 +104,7 @@ export function InsightCard({
   showAvoidanceCard = true,
   hideMoodSummary = false,
   hideObservations = false,
+  calmMode = false,
 }: InsightCardProps) {
   const patternInsights = useMemo(() => {
     if (patternInsightsProp) return patternInsightsProp;
@@ -125,6 +127,7 @@ export function InsightCard({
   const intensityPercent = reflection.emotionalIntensity * 10;
 
   const mirrorRead = getStructuredAnalysis(reflection);
+  const calmMirror = calmMode ? mirrorRead.slice(0, 1) : mirrorRead;
 
   const observations =
     patternInsights?.observations.length
@@ -138,30 +141,40 @@ export function InsightCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
-      className="space-y-4"
+      className={calmMode ? "space-y-8" : "space-y-4"}
     >
-      <SafetyNotice />
+      {!calmMode ? <SafetyNotice /> : null}
 
-      {mirrorRead.length > 0 && !hideObservations ? (
-        <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
+      {calmMirror.length > 0 && !hideObservations ? (
+        <Card className={calmMode ? "border-white/5 bg-white/[0.02]" : "border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent"}>
           <CardHeader className="pb-2">
-            <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
-              Reflective mirror
-            </p>
-            <CardTitle className="text-lg">What your words show</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {mirrorRead.map((row) => (
-              <div key={row.key}>
-                <p className="text-[10px] uppercase tracking-wider text-zinc-500">
-                  {row.label}
+            {!calmMode ? (
+              <>
+                <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
+                  Reflective mirror
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-zinc-200">{row.detail}</p>
+                <CardTitle className="text-lg">What your words show</CardTitle>
+              </>
+            ) : (
+              <CardTitle className="text-base font-medium text-zinc-300">This entry</CardTitle>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {calmMirror.map((row) => (
+              <div key={row.key}>
+                {!calmMode ? (
+                  <p className="text-[10px] uppercase tracking-wider text-zinc-500">
+                    {row.label}
+                  </p>
+                ) : null}
+                <p className={`leading-relaxed text-zinc-200 ${calmMode ? "text-base" : "mt-1 text-sm"}`}>
+                  {row.detail}
+                </p>
               </div>
             ))}
           </CardContent>
         </Card>
-      ) : observations.length > 0 && !hideObservations ? (
+      ) : observations.length > 0 && !hideObservations && !calmMode ? (
         <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
           <CardHeader className="pb-2">
             <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
@@ -179,70 +192,74 @@ export function InsightCard({
         </Card>
       ) : null}
 
-      <PatternSection
-        title="Recurring patterns"
-        icon={Repeat2}
-        accent="text-violet-300"
-        items={(patternInsights?.recurringPatterns ?? []).map((detail, i) => ({
-          key: `pattern-${i}`,
-          detail,
-        }))}
-        emptyLabel={
-          reflection.recurringThemes.length > 0
-            ? `Themes in this entry: ${reflection.recurringThemes.join(", ")}`
-            : "Patterns emerge as you add more reflections."
-        }
-      />
+      {!calmMode ? (
+        <>
+          <PatternSection
+            title="Recurring patterns"
+            icon={Repeat2}
+            accent="text-violet-300"
+            items={(patternInsights?.recurringPatterns ?? []).map((detail, i) => ({
+              key: `pattern-${i}`,
+              detail,
+            }))}
+            emptyLabel={
+              reflection.recurringThemes.length > 0
+                ? `Themes in this entry: ${reflection.recurringThemes.join(", ")}`
+                : "Patterns emerge as you add more reflections."
+            }
+          />
 
-      {showContradictionCard ? (
-        <ContradictionContinuityCard
-          contradictions={entryContradictions}
-          maxItems={3}
-          highlightEntryId={resolvedEntry?.id}
-        />
+          {showContradictionCard ? (
+            <ContradictionContinuityCard
+              contradictions={entryContradictions}
+              maxItems={3}
+              highlightEntryId={resolvedEntry?.id}
+            />
+          ) : null}
+
+          {showPhraseCard ? (
+            <PatternSection
+              title="Repeated phrases"
+              icon={MessageSquareQuote}
+              accent="text-emerald-300"
+              items={(patternInsights?.repeatedPhrases ?? []).map((p) => ({
+                key: p.phrase,
+                label: p.phrase,
+                detail: `${p.category.replace("_", " ")} · ${p.count} uses across ${p.entryCount} entries · e.g. ${p.example}`,
+              }))}
+              emptyLabel="Phrase habits appear as you accumulate entries."
+            />
+          ) : null}
+
+          {showAvoidanceCard && (patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
+            <PatternSection
+              title="Indirect language & hedging"
+              icon={EyeOff}
+              accent="text-zinc-400"
+              items={(patternInsights?.avoidanceSignals ?? []).map((a) => ({
+                key: a.id,
+                label: a.label,
+                detail: a.detail,
+              }))}
+            />
+          ) : null}
+
+          {(patternInsights?.emotionalEvolution.length ?? 0) > 0 ? (
+            <PatternSection
+              title="Emotional shift"
+              icon={TrendingUp}
+              accent="text-sky-300"
+              items={(patternInsights?.emotionalEvolution ?? []).map((e) => ({
+                key: e.id,
+                label: e.label,
+                detail: e.detail,
+              }))}
+            />
+          ) : null}
+        </>
       ) : null}
 
-      {showPhraseCard ? (
-        <PatternSection
-          title="Repeated phrases"
-          icon={MessageSquareQuote}
-          accent="text-emerald-300"
-          items={(patternInsights?.repeatedPhrases ?? []).map((p) => ({
-            key: p.phrase,
-            label: p.phrase,
-            detail: `${p.category.replace("_", " ")} · ${p.count} uses across ${p.entryCount} entries · e.g. ${p.example}`,
-          }))}
-          emptyLabel="Phrase habits appear as you accumulate entries."
-        />
-      ) : null}
-
-      {showAvoidanceCard && (patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
-        <PatternSection
-          title="Indirect language & hedging"
-          icon={EyeOff}
-          accent="text-zinc-400"
-          items={(patternInsights?.avoidanceSignals ?? []).map((a) => ({
-            key: a.id,
-            label: a.label,
-            detail: a.detail,
-          }))}
-        />
-      ) : null}
-
-      {(patternInsights?.emotionalEvolution.length ?? 0) > 0 ? (
-        <PatternSection
-          title="Emotional shift"
-          icon={TrendingUp}
-          accent="text-sky-300"
-          items={(patternInsights?.emotionalEvolution ?? []).map((e) => ({
-            key: e.id,
-            label: e.label,
-            detail: e.detail,
-          }))}
-        />
-      ) : null}
-
-      {!hideMoodSummary ? (
+      {!hideMoodSummary && !calmMode ? (
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-start justify-between gap-4">

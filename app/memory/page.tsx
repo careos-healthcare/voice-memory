@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Brain, Shield, Sparkles } from "lucide-react";
+import { Brain, Sparkles } from "lucide-react";
 
 import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
@@ -15,6 +15,8 @@ import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
+import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { LongitudinalContinuityCard } from "@/components/patterns/LongitudinalContinuityCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -34,6 +36,8 @@ import { detectAllContradictions, type Contradiction } from "@/lib/patterns/cont
 import { detectAllAvoidanceSignals, type AvoidanceSignal } from "@/lib/patterns/avoidance";
 import { getEmotionalCycleInsights, type EvolutionInsight } from "@/lib/patterns/emotional-evolution";
 import { buildContinuityReport } from "@/lib/patterns/continuity-engine";
+import { buildCalmnessReport } from "@/lib/patterns/calmness";
+import type { CalmnessReport } from "@/types/calmness";
 import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
@@ -49,6 +53,7 @@ export default function MemoryPage() {
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
   const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
+  const [calm, setCalm] = useState<CalmnessReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -60,7 +65,8 @@ export default function MemoryPage() {
       setContradictions(detectAllContradictions(entries));
       setAvoidanceSignals(detectAllAvoidanceSignals(entries));
       setCycleInsights(getEmotionalCycleInsights(entries));
-      setContinuity(buildContinuityReport(entries, { scope: "archive", limit: 10 }));
+      setContinuity(buildContinuityReport(entries, { scope: "archive", limit: 6 }));
+      setCalm(buildCalmnessReport(entries, { scope: "archive", limit: 3 }));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -78,50 +84,30 @@ export default function MemoryPage() {
     <>
       <PatternInsightCard
         insights={patternInsights}
-        title="Memory pattern insights"
-        subtitle="Entities, recurring themes, phrases, and indirect language — ranked by evidence"
-        maxItems={8}
+        title="Further patterns"
+        maxItems={6}
+        primaryCount={2}
       />
-
       <ContradictionContinuityCard
         contradictions={contradictions}
-        title="Contradictions in your memory"
-        subtitle="Tension and reversals across your archive"
-        maxItems={4}
+        title="Tension across entries"
+        subtitle=""
+        maxItems={2}
       />
-
       {continuity?.hasData ? (
         <LongitudinalContinuityCard
           report={continuity}
-          title="How your memory evolved"
-          subtitle="Themes, phrases, and intensity shifts across your full archive"
-          maxItems={8}
-          showSummaries
-          showArcs
-          showIdentity
+          title="Continuity"
+          subtitle=""
+          maxItems={3}
+          showSummaries={false}
+          showArcs={false}
+          showIdentity={false}
         />
       ) : null}
-
-      <PhraseMemoryCard
-        phrases={phrases}
-        title="Words you keep returning to"
-        subtitle="Repeated phrases, metaphors, and self-labels from your transcripts"
-        maxItems={8}
-      />
-
-      <AvoidanceCard
-        signals={avoidanceSignals}
-        title="What stays vague"
-        subtitle="Indirect language patterns across your archive"
-        maxItems={5}
-      />
-
-      <EmotionalEvolutionCard
-        insights={cycleInsights}
-        title="Emotional evolution"
-        subtitle="Cycles, intensity drift, and trigger contexts"
-        maxItems={5}
-      />
+      <PhraseMemoryCard phrases={phrases} title="Repeated language" maxItems={4} />
+      <AvoidanceCard signals={avoidanceSignals} title="What stayed vague" maxItems={3} />
+      <EmotionalEvolutionCard insights={cycleInsights} title="Intensity over time" maxItems={3} />
     </>
   );
 
@@ -135,25 +121,14 @@ export default function MemoryPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-2"
         >
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Entity memory
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Memory
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Recurring people, topics, and phrases from your voice reflections —
-            extracted locally on this device.
+          <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Memory</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Your archive</h1>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+            People, themes, and phrases that recur — held locally, read quietly.
           </p>
         </motion.div>
 
-        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-zinc-500">
-          <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
-          Reflective mirror only — not therapy, not a diagnosis. Entity memory maps
-          what you named, not what a clinician would label.
-        </div>
-
-        <div className="mt-6 space-y-5">
+        <div className="mt-12 space-y-12">
           <UpgradeCta
             source="memory"
             feature="entity_memory"
@@ -186,7 +161,10 @@ export default function MemoryPage() {
             </>
           ) : snapshot.totalEntities === 0 ? (
             <>
-              {memoryPatternSections}
+              {calm?.hasData ? (
+                <CalmUnderstandingCard report={calm} title="What stands out" />
+              ) : null}
+              <SeeMorePanel label="See more detail">{memoryPatternSections}</SeeMorePanel>
               <Card className="border-dashed">
                 <CardContent className="px-6 py-12 text-center">
                   <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
@@ -206,7 +184,15 @@ export default function MemoryPage() {
             </>
           ) : (
             <>
-              {memoryPatternSections}
+              {calm?.hasData ? (
+                <CalmUnderstandingCard
+                  report={calm}
+                  title="What stands out"
+                  showLandmarks
+                />
+              ) : null}
+
+              <SeeMorePanel label="See more detail">{memoryPatternSections}</SeeMorePanel>
 
               {!strongPatterns && snapshot.mentionHighlights.length > 0 ? (
                 <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">

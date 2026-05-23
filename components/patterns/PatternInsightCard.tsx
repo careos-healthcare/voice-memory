@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   type PatternInsight,
@@ -16,152 +17,120 @@ interface PatternInsightCardProps {
   subtitle?: string;
   emptyLabel?: string;
   maxItems?: number;
+  primaryCount?: number;
   highlightEntryId?: string;
   hideWhenEmpty?: boolean;
   showScores?: boolean;
   className?: string;
 }
 
+function InsightRow({
+  item,
+  index,
+  highlightEntryId,
+  showScores,
+}: {
+  item: PatternInsight;
+  index: number;
+  highlightEntryId?: string;
+  showScores?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-white/5 bg-black/10 p-5">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="text-sm leading-relaxed text-zinc-300">{item.title}</p>
+        {showScores ? (
+          <Badge variant="secondary" className="shrink-0 text-[10px]">
+            {typeLabel(item.type)}
+          </Badge>
+        ) : null}
+      </div>
+      <p className="mt-3 text-sm leading-relaxed text-zinc-500">{item.detail}</p>
+      {item.evidence.length > 0 ? (
+        <div className="mt-4 space-y-2">
+          {item.evidence.slice(0, 2).map((ev) => (
+            <div
+              key={`${item.id}-${ev.entryId}`}
+              className={`rounded-lg border px-3 py-2 ${
+                highlightEntryId === ev.entryId
+                  ? "border-violet-400/20 bg-violet-500/5"
+                  : "border-white/5"
+              }`}
+            >
+              <Link
+                href={`/entry/${ev.entryId}`}
+                className="text-xs text-zinc-500 hover:text-zinc-300"
+              >
+                {ev.dateLabel ?? "View entry"}
+              </Link>
+              <p className="mt-1 text-xs italic text-zinc-600">{ev.phrase.slice(0, 120)}</p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function PatternInsightCard({
   insights,
-  title = "Pattern insights",
-  subtitle = "From your words, ranked by specificity",
-  emptyLabel = "Pattern insights appear as you accumulate voice reflections.",
+  title = "Further patterns",
+  subtitle,
+  emptyLabel = "More patterns appear as your archive grows.",
   maxItems = 8,
+  primaryCount = 3,
   highlightEntryId,
   hideWhenEmpty = false,
   showScores = false,
   className,
 }: PatternInsightCardProps) {
-  const items = insights.slice(0, maxItems);
+  const [expanded, setExpanded] = useState(false);
+  const primary = insights.slice(0, primaryCount);
+  const rest = insights.slice(primaryCount, maxItems);
+  const items = expanded ? [...primary, ...rest] : primary;
 
-  if (items.length === 0) {
+  if (insights.length === 0) {
     if (hideWhenEmpty) return null;
 
     return (
-      <Card className={`border-dashed border-white/10 ${className ?? ""}`}>
+      <Card className={`border-dashed border-white/5 ${className ?? ""}`}>
         <CardHeader className="pb-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-violet-300" />
-            <CardTitle className="text-base">{title}</CardTitle>
-          </div>
-          {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
+          <CardTitle className="text-base text-zinc-400">{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-zinc-500">{emptyLabel}</p>
+          <p className="text-sm text-zinc-600">{emptyLabel}</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className={`border-violet-500/20 bg-violet-950/10 ${className ?? ""}`}>
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-violet-300" />
-          <CardTitle className="text-base">{title}</CardTitle>
-        </div>
-        {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
+    <Card className={`border-white/5 bg-transparent ${className ?? ""}`}>
+      <CardHeader className="pb-4">
+        <CardTitle className="text-base font-medium text-zinc-400">{title}</CardTitle>
+        {subtitle ? <p className="mt-1 text-xs text-zinc-600">{subtitle}</p> : null}
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {items.map((item, index) => (
-          <div
+          <InsightRow
             key={item.id}
-            className="rounded-xl border border-white/10 bg-black/20 p-4"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="flex items-start gap-2">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-[10px] font-medium text-violet-300">
-                  {index + 1}
-                </span>
-                <p className="text-sm font-medium leading-relaxed text-white">{item.title}</p>
-              </div>
-              <div className="flex shrink-0 flex-wrap gap-1">
-                <Badge variant="secondary" className="text-[10px]">
-                  {typeLabel(item.type)}
-                </Badge>
-                {showScores ? (
-                  <Badge variant="secondary" className="text-[10px]">
-                    {item.specificity.specificityScore}/100
-                  </Badge>
-                ) : null}
-              </div>
-            </div>
-
-            {showScores ? (
-              <p className="mt-2 text-xs text-zinc-500">
-                {item.specificity.evidenceCount} evidence item
-                {item.specificity.evidenceCount === 1 ? "" : "s"} ·{" "}
-                {item.entryIds.length} entr{item.entryIds.length === 1 ? "y" : "ies"}
-              </p>
-            ) : null}
-
-            {showScores && item.specificity.whyThisFeltSpecific[0] ? (
-              <p className="mt-1 text-xs text-zinc-600">
-                {item.specificity.whyThisFeltSpecific[0]}
-              </p>
-            ) : null}
-
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.detail}</p>
-
-            {item.evidence.length > 0 ? (
-              <div className="mt-3 space-y-2">
-                <p className="text-[10px] uppercase tracking-wider text-zinc-600">
-                  Exact phrase evidence
-                </p>
-                {item.evidence.slice(0, 3).map((ev) => (
-                  <div
-                    key={`${item.id}-${ev.entryId}-${ev.phrase.slice(0, 20)}`}
-                    className={`rounded-lg border px-3 py-2 ${
-                      highlightEntryId === ev.entryId
-                        ? "border-violet-400/30 bg-violet-500/10"
-                        : "border-white/5 bg-white/[0.02]"
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <Link
-                        href={`/entry/${ev.entryId}`}
-                        className="text-xs text-violet-300 hover:text-violet-200"
-                      >
-                        {ev.dateLabel ?? "View entry"}
-                      </Link>
-                      {ev.mood ? (
-                        <span className="text-[10px] capitalize text-zinc-600">{ev.mood}</span>
-                      ) : null}
-                    </div>
-                    <p className="mt-1 text-xs italic leading-relaxed text-zinc-400">
-                      {ev.phrase}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-
-            {item.entryIds.length > 0 ? (
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span className="text-[10px] text-zinc-600">Related entries:</span>
-                {item.entryIds.slice(0, 5).map((id) => (
-                  <Link
-                    key={`${item.id}-link-${id}`}
-                    href={`/entry/${id}`}
-                    className={`text-[10px] ${
-                      highlightEntryId === id
-                        ? "font-medium text-violet-300"
-                        : "text-violet-400 hover:text-violet-300"
-                    }`}
-                  >
-                    {highlightEntryId === id ? "This entry" : "View"}
-                  </Link>
-                ))}
-                {item.entryIds.length > 5 ? (
-                  <span className="text-[10px] text-zinc-600">
-                    +{item.entryIds.length - 5} more
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
+            item={item}
+            index={index}
+            highlightEntryId={highlightEntryId}
+            showScores={showScores}
+          />
         ))}
+        {!expanded && rest.length > 0 ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="w-full text-zinc-600 hover:text-zinc-400"
+            onClick={() => setExpanded(true)}
+          >
+            See more ({rest.length})
+          </Button>
+        ) : null}
       </CardContent>
     </Card>
   );

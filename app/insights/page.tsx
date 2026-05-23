@@ -9,7 +9,6 @@ import {
   LineChart,
   MessageSquareQuote,
   Repeat2,
-  Shield,
   Tag,
 } from "lucide-react";
 
@@ -23,6 +22,8 @@ import { WhyThisMatters } from "@/components/WhyThisMatters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
+import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
@@ -43,6 +44,8 @@ import {
   buildPatternEngineReport,
   type PatternInsight,
 } from "@/lib/patterns/pattern-engine";
+import { buildCalmnessReport } from "@/lib/patterns/calmness";
+import type { CalmnessReport } from "@/types/calmness";
 import {
   hasStrongPatternEvidence,
   countsFromInsights,
@@ -94,6 +97,7 @@ export default function InsightsPage() {
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
   const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
   const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
+  const [calm, setCalm] = useState<CalmnessReport | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -104,6 +108,7 @@ export default function InsightsPage() {
       setAvoidanceSignals(detectAllAvoidanceSignals(entries));
       setCycleInsights(getEmotionalCycleInsights(entries));
       setPatternInsights(buildPatternEngineReport(entries, { scope: "archive", limit: 10 }).insights);
+      setCalm(buildCalmnessReport(entries, { scope: "archive", limit: 3 }));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -127,13 +132,10 @@ export default function InsightsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-4"
         >
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Pattern intelligence
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Insights</h1>
-          <p className="mt-2 text-sm text-zinc-400">
-            Recurring patterns, repeated language, and emotional shifts — computed
-            locally from your words.
+          <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Patterns</p>
+          <h1 className="mt-3 text-3xl font-semibold text-white">Insights</h1>
+          <p className="mt-3 text-sm text-zinc-500">
+            What repeats and what fades across your archive — held locally, read quietly.
           </p>
           {!loading && insights?.hasData ? (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -145,15 +147,7 @@ export default function InsightsPage() {
           ) : null}
         </motion.div>
 
-        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-          <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
-          <p className="text-xs leading-relaxed text-zinc-500">
-            Reflective mirror only — not therapy, not a diagnosis. These are
-            patterns in what you said, not clinical labels.
-          </p>
-        </div>
-
-        <div className="mt-8 space-y-6">
+        <div className="mt-12 space-y-12">
           <HabitLoopCard />
 
           {loading ? null : !insights.hasData ? (
@@ -175,90 +169,169 @@ export default function InsightsPage() {
             </>
           ) : (
             <>
-              {/* 1. Pattern-first insights */}
-              <PatternInsightCard
-                insights={patternInsights}
-                title="Top pattern insights"
-                subtitle="Ranked by specificity, recurrence, cross-entry evidence, and usefulness"
-                maxItems={10}
-                showScores
-              />
+              {calm?.hasData ? (
+                <CalmUnderstandingCard
+                  report={calm}
+                  title="What stands out"
+                  showLandmarks
+                />
+              ) : null}
 
-              {/* 2. Contradictions / tensions */}
-              <ContradictionContinuityCard
-                contradictions={contradictions}
-                title="Contradictions across your archive"
-                subtitle="Conflicting statements, reversals, and tension between aims and behavior"
-                maxItems={5}
-              />
-
-              {/* 3. Repeated language */}
-              <PhraseMemoryCard
-                phrases={phrases}
-                title="Repeated language"
-                subtitle="Phrases, metaphors, and self-labels that recur across your archive"
-                maxItems={10}
-              />
-
-              <AvoidanceCard
-                signals={avoidanceSignals}
-                title="What stays vague"
-                subtitle="Indirect references, hedging, and unnamed stressors — pattern observation only"
-                maxItems={6}
-              />
-
-              {/* 4. Emotional evolution */}
-              <EmotionalEvolutionCard
-                insights={cycleInsights}
-                title="Emotional cycles"
-                subtitle="Day-of-week patterns, intensity drift, and recurring trigger contexts"
-                maxItems={8}
-              />
-
-              {/* 5. Entity memory */}
-              {!strongPatterns || insights.recurringThemes.length > 0 ? (
+              <SeeMorePanel label="See more detail">
+                <PatternInsightCard
+                  insights={patternInsights}
+                  title="Further patterns"
+                  maxItems={6}
+                  primaryCount={2}
+                />
+                <ContradictionContinuityCard
+                  contradictions={contradictions}
+                  title="Tension across entries"
+                  subtitle=""
+                  maxItems={3}
+                />
+                <PhraseMemoryCard
+                  phrases={phrases}
+                  title="Repeated language"
+                  maxItems={5}
+                />
+                <AvoidanceCard
+                  signals={avoidanceSignals}
+                  title="What stayed vague"
+                  maxItems={4}
+                />
+                <EmotionalEvolutionCard
+                  insights={cycleInsights}
+                  title="Intensity over time"
+                  maxItems={4}
+                />
+                {!strongPatterns || insights.recurringThemes.length > 0 ? (
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-violet-300" />
+                        <CardTitle className="text-base">Recurring themes</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex flex-wrap gap-2">
+                      {insights.recurringThemes.map((row) => (
+                        <Badge key={row.theme} variant="secondary" className="capitalize">
+                          {row.theme} · {row.count}
+                        </Badge>
+                      ))}
+                    </CardContent>
+                  </Card>
+                ) : null}
+                {!strongPatterns ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center gap-2">
+                          <BarChart3 className="h-4 w-4 text-violet-300" />
+                          <CardTitle className="text-base">Total entries</CardTitle>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-4xl font-semibold tabular-nums text-white">
+                          {insights.totalEntries}
+                        </p>
+                      </CardContent>
+                    </Card>
+                    {insights.mostRepeatedPattern ? (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center gap-2">
+                            <Repeat2 className="h-4 w-4 text-fuchsia-300" />
+                            <CardTitle className="text-base">Most repeated pattern</CardTitle>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm capitalize leading-relaxed text-zinc-300">
+                            {insights.mostRepeatedPattern}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : null}
+                  </div>
+                ) : null}
                 <Card>
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-2">
-                      <Tag className="h-4 w-4 text-violet-300" />
-                      <CardTitle className="text-base">Recurring themes</CardTitle>
+                      <LineChart className="h-4 w-4 text-sky-300" />
+                      <CardTitle className="text-base">Intensity trend</CardTitle>
                     </div>
-                    <p className="text-xs text-zinc-500">Topics that keep returning in your words</p>
+                    <p className="text-xs text-zinc-500">Last 14 days</p>
                   </CardHeader>
-                  <CardContent className="flex flex-wrap gap-2">
-                    {insights.recurringThemes.map((row) => (
-                      <Badge key={row.theme} variant="secondary" className="capitalize">
-                        {row.theme} · {row.count}
-                      </Badge>
-                    ))}
+                  <CardContent>
+                    <IntensityTrendChart points={insights.intensityTrend} />
                   </CardContent>
                 </Card>
-              ) : null}
+                {!strongPatterns ? (
+                  <>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center gap-2">
+                          <ArrowLeftRight className="h-4 w-4 text-fuchsia-300" />
+                          <CardTitle className="text-base">Mood distribution</CardTitle>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex flex-wrap gap-2">
+                        {insights.dominantMoods.map((row) => (
+                          <Badge key={row.mood} variant="default" className="capitalize">
+                            {row.mood} · {row.count} ({row.share}%)
+                          </Badge>
+                        ))}
+                      </CardContent>
+                    </Card>
+                    {insights.observationsOverTime.length > 0 ? (
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center gap-2">
+                            <MessageSquareQuote className="h-4 w-4 text-emerald-300" />
+                            <CardTitle className="text-base">Observations over time</CardTitle>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {insights.observationsOverTime.map((point) => (
+                            <div
+                              key={point.date}
+                              className="border-l-2 border-emerald-500/40 pl-4"
+                            >
+                              <p className="text-xs text-zinc-500">
+                                {point.label} · <span className="capitalize">{point.mood}</span>
+                              </p>
+                              <p className="mt-1 text-sm leading-relaxed text-zinc-300">
+                                {point.observation}
+                              </p>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    ) : null}
+                  </>
+                ) : null}
+              </SeeMorePanel>
 
               {insights.weeklyMentions.length > 0 ? (
-                <Card className="border-violet-400/20 bg-violet-500/5">
+                <Card className="border-white/5 bg-transparent">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Evidence from this week</CardTitle>
-                    <p className="text-xs text-zinc-500">What showed up repeatedly in the last 7 days</p>
+                    <CardTitle className="text-base text-zinc-400">This week</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {insights.weeklyMentions.map((mention) => (
-                      <p key={mention.label} className="text-sm text-zinc-300">
+                      <p key={mention.label} className="text-sm text-zinc-400">
                         You mentioned{" "}
-                        <span className="font-medium capitalize text-white">
+                        <span className="font-medium capitalize text-zinc-200">
                           {mention.label}
                         </span>{" "}
-                        <span className="text-violet-300">
-                          {mention.count} time{mention.count === 1 ? "" : "s"}
-                        </span>{" "}
-                        this week
+                        {mention.count} time{mention.count === 1 ? "" : "s"}
                       </p>
                     ))}
-                    <ShareMemoryCardButton kind="memory_continuity" className="mt-4 border-violet-500/20" />
+                    <ShareMemoryCardButton kind="memory_continuity" className="mt-4 border-white/5" />
                     <FeedbackPrompt
                       kind="memory_continuity"
                       targetKey="global"
-                      label="Were these pattern observations useful?"
+                      label="Did this read feel useful?"
                       className="mt-4"
                     />
                   </CardContent>
@@ -269,109 +342,13 @@ export default function InsightsPage() {
                   <FeedbackPrompt
                     kind="memory_continuity"
                     targetKey="global"
-                    label="Were these pattern observations useful?"
+                    label="Did this read feel useful?"
                     className="mt-4"
                   />
                 </>
               )}
 
-              {/* 6. Mood summaries — deprioritized when pattern evidence is strong */}
-              {!strongPatterns ? (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4 text-violet-300" />
-                        <CardTitle className="text-base">Total entries</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-4xl font-semibold tabular-nums text-white">
-                        {insights.totalEntries}
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  {insights.mostRepeatedPattern ? (
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center gap-2">
-                          <Repeat2 className="h-4 w-4 text-fuchsia-300" />
-                          <CardTitle className="text-base">Most repeated pattern</CardTitle>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm capitalize leading-relaxed text-zinc-300">
-                          {insights.mostRepeatedPattern}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ) : null}
-                </div>
-              ) : null}
-
               <ShareMemoryCardButton kind="dominant_theme" />
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <LineChart className="h-4 w-4 text-sky-300" />
-                    <CardTitle className="text-base">Emotional intensity trend</CardTitle>
-                  </div>
-                  <p className="text-xs text-zinc-500">Last 14 days · average per day</p>
-                </CardHeader>
-                <CardContent>
-                  <IntensityTrendChart points={insights.intensityTrend} />
-                </CardContent>
-              </Card>
-
-              {!strongPatterns ? (
-                <>
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2">
-                        <ArrowLeftRight className="h-4 w-4 text-fuchsia-300" />
-                        <CardTitle className="text-base">Mood distribution</CardTitle>
-                      </div>
-                      <p className="text-xs text-zinc-500">How you described feeling — not a diagnosis</p>
-                    </CardHeader>
-                    <CardContent className="flex flex-wrap gap-2">
-                      {insights.dominantMoods.map((row) => (
-                        <Badge key={row.mood} variant="default" className="capitalize">
-                          {row.mood} · {row.count} ({row.share}%)
-                        </Badge>
-                      ))}
-                    </CardContent>
-                  </Card>
-
-                  {insights.observationsOverTime.length > 0 ? (
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center gap-2">
-                          <MessageSquareQuote className="h-4 w-4 text-emerald-300" />
-                          <CardTitle className="text-base">Observations over time</CardTitle>
-                        </div>
-                        <p className="text-xs text-zinc-500">Concrete pattern notes from recent entries</p>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {insights.observationsOverTime.map((point) => (
-                          <div
-                            key={point.date}
-                            className="border-l-2 border-emerald-500/40 pl-4"
-                          >
-                            <p className="text-xs text-zinc-500">
-                              {point.label} · <span className="capitalize">{point.mood}</span>
-                            </p>
-                            <p className="mt-1 text-sm leading-relaxed text-zinc-300">
-                              {point.observation}
-                            </p>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  ) : null}
-                </>
-              ) : null}
 
               <WhyThisMatters compact />
             </>
