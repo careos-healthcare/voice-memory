@@ -7,6 +7,7 @@ import { Brain, Sparkles } from "lucide-react";
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
+import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -117,9 +118,12 @@ export default function MemoryPage() {
                         </span>
                       </p>
                     ))}
+                    <ShareMemoryCardButton kind="memory_continuity" className="mt-4" />
                   </CardContent>
                 </Card>
               ) : null}
+
+              <ShareMemoryCardButton kind="dominant_theme" />
 
               <EntityMemorySection
                 title="Recurring people"

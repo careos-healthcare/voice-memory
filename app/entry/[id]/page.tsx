@@ -8,6 +8,7 @@ import { ArrowLeft, Trash2 } from "lucide-react";
 
 import { InsightCard } from "@/components/InsightCard";
 import { VoicePlayback } from "@/components/VoicePlayback";
+import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -104,6 +105,12 @@ export default function EntryPage() {
               reflection={entry.reflection}
               transcript={entry.transcript}
               showTranscript
+            />
+
+            <ShareMemoryCardButton
+              kind="entry_observation"
+              entry={entry}
+              className="mt-6"
             />
           </motion.div>
         )}

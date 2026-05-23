@@ -13,6 +13,7 @@ import {
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { ExportSummaryButton } from "@/components/export/ExportSummaryButton";
+import { ShareMemoryCardRow } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WeekComparisonCard } from "@/components/weekly/WeekComparisonCard";
 import { WeeklyAiReflection } from "@/components/weekly/WeeklyAiReflection";
@@ -192,6 +193,10 @@ export default function WeeklyPage() {
               />
 
               <WeeklyAiReflection report={report} />
+
+              <ShareMemoryCardRow
+                kinds={["weekly_summary", "timeline_compression", "memory_continuity", "dominant_theme"]}
+              />
 
               <Card>
                 <CardHeader className="pb-2">

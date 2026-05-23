@@ -14,6 +14,7 @@ import {
 
 import { ExportSummaryButton } from "@/components/export/ExportSummaryButton";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
+import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -167,9 +168,12 @@ export default function InsightsPage() {
                         this week
                       </p>
                     ))}
+                    <ShareMemoryCardButton kind="memory_continuity" className="mt-4 border-violet-500/20" />
                   </CardContent>
                 </Card>
-              ) : null}
+              ) : (
+                <ShareMemoryCardButton kind="memory_continuity" />
+              )}
 
               <Card>
                 <CardHeader className="pb-2">
@@ -202,6 +206,8 @@ export default function InsightsPage() {
                   ))}
                 </CardContent>
               </Card>
+
+              <ShareMemoryCardButton kind="dominant_theme" />
 
               <Card>
                 <CardHeader className="pb-2">
