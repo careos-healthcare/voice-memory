@@ -121,7 +121,7 @@ function detectTopicSilence(
     pushCandidate(notes, {
       id: `resurface-topic-${themeKey}-${current.id}`,
       kind: "topic_silence",
-      text: "This came back after a quiet stretch.",
+      text: "You came back to the same place.",
       strength: 64 + Math.min(gap, 14) + (priorMatches.length >= 2 ? 4 : 0),
       ...evidence,
     });
@@ -157,7 +157,7 @@ function detectToneShift(
       pushCandidate(notes, {
         id: `resurface-calmer-${themeKey}-${current.id}`,
         kind: "calmer_return",
-        text: "This returned with less tension.",
+        text: "You came back with less tension.",
         strength: 64 + Math.round(delta * 4) + Math.min(gap, 8),
         ...evidence,
       });
@@ -167,7 +167,7 @@ function detectToneShift(
       pushCandidate(notes, {
         id: `resurface-heavier-${themeKey}-${current.id}`,
         kind: "heavier_return",
-        text: "This came back with more weight than before.",
+        text: "This carried more weight this time.",
         strength: 62 + Math.round((current.reflection.emotionalIntensity - priorAvg) * 4),
         ...evidence,
       });
@@ -182,7 +182,7 @@ function detectToneShift(
       pushCandidate(notes, {
         id: `resurface-direct-${themeKey}-${current.id}`,
         kind: "direct_return",
-        text: "This returned more directly than before.",
+        text: "You named this more directly.",
         strength: 63 + Math.min(gap, 8),
         ...evidence,
       });
@@ -226,7 +226,7 @@ function detectPhraseReturns(
     pushCandidate(notes, {
       id: `resurface-phrase-${record.phrase}-${current.id}`,
       kind: "phrase_return",
-      text: "This came back after a quiet stretch.",
+      text: "You came back to the same place.",
       strength: 66 + Math.min(gap, 12) + Math.min(record.count, 4),
       ...evidence,
     });
@@ -313,7 +313,7 @@ function detectEntityReturns(
     pushCandidate(notes, {
       id: `resurface-entity-${entity.id}-${current.id}`,
       kind: "topic_silence",
-      text: "This came back after a quiet stretch.",
+      text: "You came back to the same place.",
       strength: 64 + Math.min(gap, 12),
       ...evidence,
     });
@@ -352,10 +352,7 @@ function detectLoopReturns(
     pushCandidate(notes, {
       id: `resurface-loop-${themeKey}-${current.id}`,
       kind: "loop_return",
-      text:
-        gap >= LONG_SILENCE_DAYS
-          ? "This loop came back."
-          : "This loop came back.",
+      text: "You came back to the same loop.",
       strength: 66 + Math.min(gap, 10),
       ...evidence,
     });
@@ -376,7 +373,7 @@ function detectLoopReturns(
     pushCandidate(notes, {
       id: `resurface-loop-generic-${current.id}`,
       kind: "loop_return",
-      text: "This loop came back.",
+      text: "You came back to the same loop.",
       strength: 64 + Math.min(gap, 10),
       ...evidence,
     });

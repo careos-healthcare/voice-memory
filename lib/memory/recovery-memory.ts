@@ -70,7 +70,7 @@ export function detectRecoveryCandidates(
       results.push({
         id: `recovery-topic-${themeKey}-${current.id}`,
         kind: "recovery_after_topic",
-        text: "Back with less tension.",
+        text: "You came back with less tension.",
         strength: 66 + Math.round(delta * 4) + priorMatches.length,
         ...ev,
       });
@@ -82,8 +82,8 @@ export function detectRecoveryCandidates(
         kind: "calmer_return",
         text:
           gap >= 14
-            ? "Less pressure before."
-            : "Back with less tension.",
+            ? "There was more pressure before."
+            : "You came back with less tension.",
         strength: 64 + Math.round(delta * 3) + Math.min(gap, 10),
         ...ev,
       });
@@ -103,7 +103,7 @@ export function detectRecoveryCandidates(
       results.push({
         id: `recovery-spiral-${themeKey}-${current.id}`,
         kind: "shorter_spiral",
-        text: "Different here.",
+        text: "This reads differently here.",
         strength: 63 + Math.round(priorLoop.length * 2),
         ...loopEv,
       });

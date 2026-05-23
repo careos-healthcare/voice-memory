@@ -71,12 +71,12 @@ const CONTEXT_KIND_PRIORITY: Record<
 };
 
 const COPY: Record<ConversationContinuityKind, string> = {
-  came_back: "Back to this.",
-  left_unresolved: "Left unresolved last time.",
-  sounds_like_continuation: "Sounds like a continuation.",
-  stopped_here: "Stopped here before.",
-  returned_differently: "Returned differently.",
-  thread_changed: "This thread changed quietly.",
+  came_back: "You came back to the same place.",
+  left_unresolved: "You had not finished this.",
+  sounds_like_continuation: "This sounds like the next part.",
+  stopped_here: "You stopped here last time.",
+  returned_differently: "This reads differently now.",
+  thread_changed: "You left this in a different place.",
 };
 
 function isBrowser(): boolean {

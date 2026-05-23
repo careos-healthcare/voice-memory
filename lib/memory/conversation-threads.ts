@@ -280,7 +280,7 @@ function analyzeEvolution(entries: JournalEntry[]): ConversationThreadEvolution 
       toDayKey(last.createdAt),
     );
     if (returnGap >= GAP_DAYS) {
-      whatCameBack = "This came back in a later reflection.";
+      whatCameBack = "You picked this up again later.";
     }
   }
 
