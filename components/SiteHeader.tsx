@@ -24,8 +24,20 @@ export function SiteHeader({ className }: SiteHeaderProps) {
       </Link>
       <nav className="flex items-center gap-1 sm:gap-2">
         <Link
-          href="/insights"
+          href="/memory"
           className="rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:px-4"
+        >
+          Memory
+        </Link>
+        <Link
+          href="/weekly"
+          className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
+        >
+          Weekly
+        </Link>
+        <Link
+          href="/insights"
+          className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
         >
           Insights
         </Link>
