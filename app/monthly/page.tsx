@@ -32,6 +32,7 @@ import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { MemoryNote } from "@/types/memory-note";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
+import type { JournalEntry } from "@/types/journal";
 
 export default function MonthlyPage() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function MonthlyPage() {
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
   const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -74,6 +76,7 @@ export default function MonthlyPage() {
         monthlyArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
       setMilestones(monthlyMilestoneNotes(entries, limits.milestones));
+      setEntries(entries);
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -154,7 +157,7 @@ export default function MonthlyPage() {
               <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
               <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
-              <MilestoneNotes milestones={milestones} max={limits.milestones} />
+              <MilestoneNotes milestones={milestones} entries={entries} max={limits.milestones} />
               <FollowupPromptInline
                 prompt={followupPrompt}
                 onContinue={handleContinueFollowup}

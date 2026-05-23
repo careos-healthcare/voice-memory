@@ -12,6 +12,7 @@ export const LAUNCH_EVENTS = {
   memoryPageOpened: "memory_page_opened",
   exportUsed: "export_used",
   shareCardCopied: "share_card_copied",
+  memoryMomentCopied: "memory_moment_copied",
   upgradeClicked: "upgrade_clicked",
   feedbackSubmitted: "feedback_submitted",
   demoModeEntered: "demo_mode_entered",

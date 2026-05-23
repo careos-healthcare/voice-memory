@@ -25,6 +25,7 @@ export interface RetentionDashboard {
     memoryPageOpened: number;
     exportUsed: number;
     shareCardCopied: number;
+    memoryMomentCopied: number;
     upgradeClicked: number;
     feedbackSubmitted: number;
   };
@@ -92,6 +93,7 @@ export function buildRetentionDashboard(): RetentionDashboard {
       memoryPageOpened: countLocalEvents(LAUNCH_EVENTS.memoryPageOpened),
       exportUsed: countLocalEvents(LAUNCH_EVENTS.exportUsed),
       shareCardCopied: countLocalEvents(LAUNCH_EVENTS.shareCardCopied),
+      memoryMomentCopied: countLocalEvents(LAUNCH_EVENTS.memoryMomentCopied),
       upgradeClicked: Math.max(upgradeClicksFromEvents, upgradeClicksFromStore),
       feedbackSubmitted: countLocalEvents(LAUNCH_EVENTS.feedbackSubmitted),
     },

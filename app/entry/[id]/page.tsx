@@ -19,6 +19,7 @@ import {
   TimeMemoryNotes,
 } from "@/components/patterns/MemoryNote";
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
+import { CopyMemoryMomentButton } from "@/components/memory/CopyMemoryMomentButton";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
@@ -338,6 +339,13 @@ export default function EntryPage() {
                 {formatEntryDate(entry.createdAt)}
               </h1>
               <MarkReflectionButton entryId={entry.id} />
+              {!pending ? (
+                <CopyMemoryMomentButton
+                  source="entry"
+                  entry={entry}
+                  allEntries={allEntries}
+                />
+              ) : null}
             </header>
 
             {entry.audioId || entry.transcript ? (
@@ -379,7 +387,11 @@ export default function EntryPage() {
                   subtitle=""
                 />
 
-                <MilestoneNotes milestones={milestoneNotes} max={limits.milestones} />
+                <MilestoneNotes
+                  milestones={milestoneNotes}
+                  entries={allEntries}
+                  max={limits.milestones}
+                />
 
                 <MotionNoteList className="space-y-20">
                   {notes?.primaryCallback ? (

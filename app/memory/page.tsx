@@ -41,6 +41,7 @@ import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
+import type { JournalEntry } from "@/types/journal";
 
 export default function MemoryPage() {
   const router = useRouter();
@@ -57,6 +58,7 @@ export default function MemoryPage() {
   const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
   const [relationshipNotes, setRelationshipNotes] = useState<RelationshipContinuityNote[]>([]);
   const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -88,6 +90,7 @@ export default function MemoryPage() {
       setThreadHighlights(memoryThreadHighlights(entries, 4));
       setRelationshipNotes(memoryRelationshipNotes(entries, 4));
       setMilestones(memoryMilestoneNotes(entries, limits.milestones));
+      setEntries(entries);
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -181,6 +184,7 @@ export default function MemoryPage() {
               />
               <MilestoneNotes
                 milestones={milestones}
+                entries={entries}
                 max={limits.milestones}
                 subtitle="Rare moments when something shifted — shown sparingly."
               />

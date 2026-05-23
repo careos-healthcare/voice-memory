@@ -167,7 +167,7 @@ export default function TimelinePage() {
                 subtitle="Topics that keep showing up across your timeline."
               />
 
-              <MilestoneNotes milestones={milestones} max={limits.milestones} />
+              <MilestoneNotes milestones={milestones} entries={entries} max={limits.milestones} />
 
               <section className="space-y-6 pt-4">
                 <h2 className="text-xs font-normal tracking-wide text-zinc-600">Reflections</h2>
