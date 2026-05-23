@@ -7,10 +7,11 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { MemoryReminderNote } from "@/components/memory/MemoryReminderNote";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
-import { OnboardingBanner } from "@/components/OnboardingBanner";
+import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { PersonalisationProgressNote } from "@/components/PersonalisationProgressNote";
+import { ReflectionGoalHint } from "@/components/ReflectionGoalHint";
 import { ArchiveGrowthNotes, ContinuationNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
@@ -156,8 +157,9 @@ export default function HomePage() {
         <SiteHeader />
 
         <div className="mt-6 space-y-10 py-2">
-          <OnboardingBanner />
-          <EmptyStateIntelligence hideWhenRich />
+          <ActivationOnboarding />
+          <PersonalisationProgressNote />
+          <ReflectionGoalHint />
           <MemoryReminderNote reminder={memoryReminder} />
           <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={limits.continuation} />

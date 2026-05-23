@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Headphones, Download, Moon, RotateCcw, Trash2 } from "lucide-react";
 
+import { ReflectionGoalSetting } from "@/components/settings/ReflectionGoalSetting";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -179,6 +180,19 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader className="pb-2">
+              <CardTitle className="text-base">Reflection goal</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-zinc-400">
+                Optional. A quiet intention for how often you might return — not a target
+                to hit and not a streak to keep.
+              </p>
+              <ReflectionGoalSetting />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
               <CardTitle className="text-base">Listening mode</CardTitle>
             </CardHeader>
             <CardContent>
@@ -211,6 +225,9 @@ export default function SettingsPage() {
               <p className="text-sm text-zinc-400">
                 Off by default. Turn on only if you want charts, pattern cards, and longer reads.
                 Debug views live at{" "}
+                <Link href="/debug/callbacks" className="text-zinc-500 hover:text-zinc-300">
+                  /debug/callbacks
+                </Link>
                 <Link href="/debug/changes" className="text-zinc-500 hover:text-zinc-300">
                   /debug/changes
                 </Link>
