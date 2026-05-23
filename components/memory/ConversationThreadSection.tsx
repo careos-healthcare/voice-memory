@@ -3,11 +3,13 @@
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
+import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
 import {
   formatThreadDateRange,
   formatThreadSourceLabel,
   threadRecencyLabel,
 } from "@/lib/memory/conversation-threads";
+import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import type { ConversationThread } from "@/types/conversation-thread";
 
 export function ThreadMentionsSection({
@@ -110,6 +112,7 @@ export function ThreadDetail({
   thread: ConversationThread;
 }) {
   const { evolution } = thread;
+  const bookmarkedIds = useBookmarkedEntryIds();
 
   return (
     <div className="space-y-20">
@@ -178,7 +181,13 @@ export function ThreadDetail({
                 href={`/entry/${related.entryId}`}
                 className="group block space-y-2 px-1 py-2 transition-colors"
               >
-                <p className="text-xs text-zinc-600">{related.dateLabel}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-xs text-zinc-600">{related.dateLabel}</p>
+                  <BookmarkIndicator
+                    entryId={related.entryId}
+                    bookmarkedIds={bookmarkedIds}
+                  />
+                </div>
                 {related.snippet ? (
                   <p className="text-sm leading-[1.75] text-zinc-500/90 transition-colors group-hover:text-zinc-400">
                     {related.snippet}

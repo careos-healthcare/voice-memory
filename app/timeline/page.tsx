@@ -7,6 +7,7 @@ import { CalendarRange } from "lucide-react";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
+import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
@@ -25,6 +26,7 @@ import {
   buildFollowupPrompt,
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
@@ -48,6 +50,7 @@ export default function TimelinePage() {
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
+  const bookmarkedIds = useBookmarkedEntryIds();
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -164,9 +167,13 @@ export default function TimelinePage() {
                     <li key={entry.id}>
                       <Link
                         href={`/entry/${entry.id}`}
-                        className="block px-1 py-3 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
+                        className="flex items-center gap-3 px-1 py-3 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
                       >
-                        {formatEntryDate(entry.createdAt)}
+                        <span>{formatEntryDate(entry.createdAt)}</span>
+                        <BookmarkIndicator
+                          entryId={entry.id}
+                          bookmarkedIds={bookmarkedIds}
+                        />
                       </Link>
                     </li>
                   ))}

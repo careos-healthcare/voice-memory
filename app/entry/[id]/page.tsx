@@ -18,6 +18,7 @@ import {
   RevisitationNotes,
   TimeMemoryNotes,
 } from "@/components/patterns/MemoryNote";
+import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -313,10 +314,11 @@ export default function EntryPage() {
           </MotionPage>
         ) : (
           <MotionPage className="mt-10 space-y-20">
-            <header>
+            <header className="space-y-4">
               <h1 className="text-xl font-normal tracking-tight text-zinc-100 sm:text-2xl">
                 {formatEntryDate(entry.createdAt)}
               </h1>
+              <MarkReflectionButton entryId={entry.id} />
             </header>
 
             {continuationOpener ? (
