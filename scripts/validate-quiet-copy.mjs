@@ -23,6 +23,7 @@ const SKIP_PATH_PARTS = [
   "lib/observation-language.ts",
   "lib/weekly-intelligence.ts",
   "lib/memory/resurfacing.ts",
+  "lib/memory/time-memory.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",

@@ -5,28 +5,34 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
-import { MemoryNotesOverview } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
+import type { MemoryNote } from "@/types/memory-note";
 import type { MemoryNotesReport } from "@/types/memory-note";
 
 export default function MonthlyPage() {
   const { limits } = useQuietMode();
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
+  const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getAllEntries();
       setNotes(buildMemoryNotesReport(entries, { context: "monthly", maxTotal: limits.notes }));
+      setTimeMemory(monthlyTimeMemoryNotes(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);
 
   const loading = notes === null;
+  const hasTimeMemory = timeMemory.length > 0;
+  const hasNotes = notes?.hasData ?? false;
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -45,7 +51,7 @@ export default function MonthlyPage() {
                 Reading your archive…
               </CardContent>
             </Card>
-          ) : !notes?.hasData ? (
+          ) : !hasNotes && !hasTimeMemory ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="px-6 py-16 text-center">
                 <CalendarDays className="mx-auto h-8 w-8 text-zinc-600" />
@@ -59,14 +65,19 @@ export default function MonthlyPage() {
               </CardContent>
             </Card>
           ) : (
-            <MemoryNotesOverview
-              changed={notes.changed}
-              faded={notes.faded}
-              returned={notes.returned}
-              landmarks={notes.landmarks}
-              maxPerSection={2}
-              maxLandmarks={4}
-            />
+            <>
+              <TimeMemoryNotes notes={timeMemory} max={2} />
+              {hasNotes ? (
+                <MemoryNotesOverview
+                  changed={notes!.changed}
+                  faded={notes!.faded}
+                  returned={notes!.returned}
+                  landmarks={notes!.landmarks}
+                  maxPerSection={2}
+                  maxLandmarks={4}
+                />
+              ) : null}
+            </>
           )}
         </div>
       </div>

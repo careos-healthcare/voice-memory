@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { CalendarRange } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
-import { MemoryNotesOverview, ResurfacingNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ResurfacingNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
+import { timelineTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -23,6 +24,7 @@ export default function TimelinePage() {
   const { limits } = useQuietMode();
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
+  const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function TimelinePage() {
       setEntries(all);
       setNotes(buildMemoryNotesReport(all, { context: "timeline", maxTotal: limits.notes }));
       setResurfacing(archiveResurfacingNotes(all));
+      setTimeMemory(timelineTimeMemoryNotes(all));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);
@@ -84,6 +87,7 @@ export default function TimelinePage() {
               ) : null}
 
               <ResurfacingNotes notes={resurfacing} />
+              <TimeMemoryNotes notes={timeMemory} max={2} />
 
               <section className="space-y-4 border-t border-white/5 pt-12">
                 <h2 className="text-sm font-medium text-zinc-500">Reflections</h2>

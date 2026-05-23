@@ -121,6 +121,27 @@ export function MemoryLandmarksSection({
   );
 }
 
+export function TimeMemoryNotes({
+  notes,
+  max = 2,
+}: {
+  notes: MemoryNote[];
+  max?: number;
+}) {
+  const visible = notes.slice(0, max);
+  if (visible.length === 0) return null;
+
+  return (
+    <ul className="space-y-12">
+      {visible.map((note) => (
+        <li key={note.id}>
+          <MemoryNoteView note={note} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function ResurfacingNotes({
   notes,
   max = 1,

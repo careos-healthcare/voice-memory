@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ResurfacingNotes } from "@/components/patterns/MemoryNote";
+import { ResurfacingNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
+import { homepageTimeMemoryNotes } from "@/lib/memory/time-memory";
 import {
   HONESTY_LINE,
   POSITIONING_EYEBROW,
@@ -24,10 +25,13 @@ import type { MemoryNote } from "@/types/memory-note";
 
 export default function HomePage() {
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
+  const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      setResurfacing(homepageResurfacingNotes(getAllEntries()));
+      const entries = getAllEntries();
+      setResurfacing(homepageResurfacingNotes(entries));
+      setTimeMemory(homepageTimeMemoryNotes(entries));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -46,6 +50,7 @@ export default function HomePage() {
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
           <ResurfacingNotes notes={resurfacing} />
+          <TimeMemoryNotes notes={timeMemory} max={1} />
         </div>
 
         <main className="flex flex-1 flex-col items-center justify-center py-8 text-center">
