@@ -15,6 +15,12 @@ import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
+import type { MemoryNote } from "@/types/memory-note";
+
+function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boolean {
+  if (!b) return false;
+  return a.id === b.id || a.text === b.text;
+}
 
 export default function EntryPage() {
   const params = useParams<{ id: string }>();
@@ -41,12 +47,14 @@ export default function EntryPage() {
     router.push("/journal");
   };
 
-  const whatChangedLine =
-    notes?.whatChanged &&
-    notes.whatChanged.id !== notes.callback?.id &&
-    notes.whatChanged.id !== notes.thenVsNow?.id
-      ? notes.whatChanged
-      : null;
+  const whatChangedLine = useMemo(() => {
+    if (!notes?.whatChanged) return null;
+    const wc = notes.whatChanged;
+    if (isDuplicateNote(wc, notes.primaryCallback)) return null;
+    if (isDuplicateNote(wc, notes.secondaryCallback)) return null;
+    if (notes.thenVsNow.some((t) => isDuplicateNote(wc, t))) return null;
+    return wc;
+  }, [notes]);
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -96,9 +104,16 @@ export default function EntryPage() {
               </h1>
             </header>
 
-            {notes?.callback ? <MemoryNoteView note={notes.callback} /> : null}
+            {notes?.primaryCallback ? <MemoryNoteView note={notes.primaryCallback} /> : null}
 
-            {notes?.thenVsNow ? <MemoryNoteView note={notes.thenVsNow} /> : null}
+            {notes?.secondaryCallback &&
+            !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) ? (
+              <MemoryNoteView note={notes.secondaryCallback} />
+            ) : null}
+
+            {notes?.thenVsNow.map((note) => (
+              <MemoryNoteView key={note.id} note={note} />
+            ))}
 
             <VoicePlayback
               entryId={entry.id}
@@ -107,9 +122,7 @@ export default function EntryPage() {
             />
 
             {entry.transcript ? (
-              <div className="space-y-3">
-                <p className="text-sm leading-relaxed text-zinc-400">{entry.transcript}</p>
-              </div>
+              <p className="text-sm leading-relaxed text-zinc-400">{entry.transcript}</p>
             ) : null}
 
             {whatChangedLine ? (

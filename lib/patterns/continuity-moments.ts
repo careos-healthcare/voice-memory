@@ -1,5 +1,11 @@
 import { addDaysToKey, daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
+import {
+  applyStrongExtraLimit,
+  MAX_LANDMARKS,
+  MAX_THEN_VS_NOW,
+  STRONG_THEN_VS_NOW_SECOND,
+} from "@/lib/patterns/note-limits";
 import { filterOrienting, pickStrongest, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import { formatEntryDate } from "@/lib/utils";
 import type {
@@ -118,7 +124,7 @@ function detectEntryCallbacks(
     if (delta >= 1.5) {
       pushCallback(callbacks, {
         id: `cb-calmer-${themeKey}-${entryId}`,
-        text: "This sounds lighter than before.",
+        text: "This got quieter.",
         kind: "sounds_calmer",
         confidence: 60 + Math.round(delta * 4),
         entryIds: [...priorTheme.slice(-2).map((e) => e.id), current.id],
@@ -127,7 +133,7 @@ function detectEntryCallbacks(
     } else if (Math.abs(delta) >= 2 || priorTheme[priorTheme.length - 1].reflection.mood !== current.reflection.mood) {
       pushCallback(callbacks, {
         id: `cb-different-${themeKey}-${entryId}`,
-        text: "This came up differently before.",
+        text: "This came up before.",
         kind: "came_up_differently",
         confidence: 58 + Math.round(Math.abs(delta) * 3),
         entryIds: [priorTheme[priorTheme.length - 1].id, current.id],
@@ -163,7 +169,7 @@ function detectEntryCallbacks(
       if (priorDirectOnTheme.length === 0 && prior.some((e) => e.reflection.recurringThemes.some((t) => t.toLowerCase() === themeKey))) {
         pushCallback(callbacks, {
           id: `cb-first-direct-${themeKey}-${entryId}`,
-          text: "You named this directly this time.",
+          text: "You named it this time.",
           kind: "first_direct",
           confidence: 64,
           entryIds: [current.id],
@@ -181,7 +187,7 @@ function detectEntryCallbacks(
     if (monthAvg - current.reflection.emotionalIntensity >= 1.2) {
       pushCallback(callbacks, {
         id: `cb-calmer-month-${entryId}`,
-        text: "This sounds lighter than before.",
+        text: "This got quieter.",
         kind: "sounds_calmer",
         confidence: 61,
         entryIds: [...monthPrior.slice(-2).map((e) => e.id), current.id],
@@ -209,7 +215,7 @@ function detectArchiveCallbacks(
       const month = monthName(last.dateKey);
       pushCallback(callbacks, {
         id: `cb-phrase-stopped-${phrase.phrase}`,
-        text: `This has not appeared for a while.`,
+        text: "This has been absent for a while.",
         kind: "topic_stopped",
         confidence: 60 + phrase.count,
         entryIds: phrase.entryIds,
@@ -235,7 +241,7 @@ function detectArchiveCallbacks(
     if (lateAvg <= earlyAvg - 1.2) {
       pushCallback(callbacks, {
         id: `cb-theme-calmer-${theme}`,
-        text: "This used to come with more tension.",
+        text: "This got quieter.",
         kind: "sounds_different",
         confidence: 59 + Math.round((earlyAvg - lateAvg) * 4),
         entryIds: [...early.slice(-1), ...late.slice(0, 1)].map((e) => e.id),
@@ -313,7 +319,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
         pushMoment(moments, {
           id: "moment-money-calm",
           kind: "first_calmer_mention",
-          text: "This was the first calmer conversation about money.",
+          text: "This was the first calmer money entry.",
           detail: formatEntryDate(first.entry.createdAt),
           confidence: 64,
           entryIds: [first.entry.id],
@@ -387,7 +393,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: "moment-family-direct",
         kind: "first_direct_mention",
-        text: "You stopped describing family pressure indirectly here.",
+        text: "This was when family became named, not vague.",
         detail: pivot ? formatEntryDate(pivot.createdAt) : undefined,
         confidence: 65,
         entryIds: familyEntries.slice(mid).map((e) => e.id).slice(0, 3),
@@ -399,16 +405,56 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
   return moments;
 }
 
-function detectThenVsNow(
+function selectEntryCallbacks(raw: ContinuityCallback[]): ContinuityCallback[] {
+  if (raw.length === 0) return [];
+
+  const beforeKinds = new Set<ContinuityCallbackKind>(["came_up_differently", "sounds_calmer"]);
+  const differentKinds = new Set<ContinuityCallbackKind>([
+    "first_direct",
+    "used_to_be_vague",
+    "sounds_different",
+  ]);
+  const fadedKinds = new Set<ContinuityCallbackKind>(["topic_stopped"]);
+
+  const bestOf = (pool: ContinuityCallback[], kinds: Set<ContinuityCallbackKind>) =>
+    pool
+      .filter((c) => kinds.has(c.kind))
+      .sort((a, b) => b.confidence - a.confidence)[0];
+
+  const sorted = [...raw].sort((a, b) => b.confidence - a.confidence);
+  const primary =
+    bestOf(sorted, beforeKinds) ||
+    bestOf(sorted, differentKinds) ||
+    bestOf(sorted, fadedKinds) ||
+    sorted[0];
+
+  const rest = sorted.filter((c) => c.id !== primary.id);
+  const secondary =
+    bestOf(rest, beforeKinds) ||
+    bestOf(rest, differentKinds) ||
+    bestOf(rest, fadedKinds);
+
+  if (secondary && secondary.confidence >= USEFULNESS_MIN_CONFIDENCE) {
+    return [primary, secondary];
+  }
+  return [primary];
+}
+
+function selectArchiveCallbacks(raw: ContinuityCallback[]): ContinuityCallback[] {
+  const sorted = pickStrongest(filterOrienting(raw, (c) => c.text), raw.length);
+  if (sorted.length <= 2) return sorted;
+  return selectEntryCallbacks(sorted);
+}
+
+function detectThenVsNowAll(
   sorted: JournalEntry[],
   entryId: string,
-): ThenVsNowComparison | undefined {
+): ThenVsNowComparison[] {
   const ctx = entriesForEntryContext(sorted, entryId);
-  if (!ctx || ctx.prior.length === 0) return undefined;
+  if (!ctx || ctx.prior.length === 0) return [];
 
   const { current, prior } = ctx;
-  let best: ThenVsNowComparison | undefined;
-  let bestScore = 0;
+  const candidates: ThenVsNowComparison[] = [];
 
   for (const theme of current.reflection.recurringThemes) {
     const themeKey = theme.toLowerCase();
@@ -418,8 +464,8 @@ function detectThenVsNow(
     if (priorMatches.length === 0) continue;
 
     const thenEntry = priorMatches[priorMatches.length - 1];
-    const thenSnippet = snippet(thenEntry);
-    const nowSnippet = snippet(current);
+    const thenSnippet = snippet(thenEntry).slice(0, 140);
+    const nowSnippet = snippet(current).slice(0, 140);
     if (thenSnippet === nowSnippet) continue;
 
     const intensityDelta =
@@ -427,9 +473,9 @@ function detectThenVsNow(
     const hedgeDelta =
       countMatches(thenEntry.transcript, HEDGE_RE) - countMatches(current.transcript, HEDGE_RE);
 
-    let headline = "This sounds different from before.";
-    if (intensityDelta >= 1.5) headline = "This sounds lighter than before.";
-    else if (hedgeDelta >= 1) headline = "You named this directly this time.";
+    let headline = "You sound different here.";
+    if (intensityDelta >= 1.5) headline = "This got quieter.";
+    else if (hedgeDelta >= 1) headline = "You named it this time.";
 
     const confidence =
       55 +
@@ -437,9 +483,8 @@ function detectThenVsNow(
       Math.max(0, hedgeDelta) * 4 +
       (thenSnippet.length > 20 && nowSnippet.length > 20 ? 8 : 0);
 
-    if (confidence > bestScore && confidence >= 65) {
-      bestScore = confidence;
-      best = {
+    if (confidence >= 65) {
+      candidates.push({
         headline,
         then: {
           entryId: thenEntry.id,
@@ -452,12 +497,37 @@ function detectThenVsNow(
           snippet: nowSnippet,
         },
         confidence,
-        subject: theme,
-      };
+        subject: themeKey,
+      });
     }
   }
 
-  return best;
+  candidates.sort((a, b) => b.confidence - a.confidence);
+  const subjects = new Set<string>();
+  const picked: ThenVsNowComparison[] = [];
+
+  for (const c of candidates) {
+    if (subjects.has(c.subject)) continue;
+    if (picked.length === 0) {
+      picked.push(c);
+      subjects.add(c.subject);
+      continue;
+    }
+    if (picked.length === 1 && c.confidence >= STRONG_THEN_VS_NOW_SECOND) {
+      picked.push(c);
+      subjects.add(c.subject);
+    }
+    if (picked.length >= MAX_THEN_VS_NOW) break;
+  }
+
+  return picked;
+}
+
+function detectThenVsNow(
+  sorted: JournalEntry[],
+  entryId: string,
+): ThenVsNowComparison | undefined {
+  return detectThenVsNowAll(sorted, entryId)[0];
 }
 
 /** Build continuity callbacks, moments, landmarks, and optional then-vs-now. */
@@ -475,6 +545,7 @@ export function buildContinuityMomentsReport(
       callbacks: [],
       moments: [],
       landmarks: [],
+      thenVsNowList: [],
       hasData: false,
       context,
       generatedAt: new Date().toISOString(),
@@ -483,14 +554,14 @@ export function buildContinuityMomentsReport(
 
   let callbacks: ContinuityCallback[] = [];
   if (context === "entry" && options.entryId) {
-    callbacks = detectEntryCallbacks(sorted, options.entryId);
+    callbacks = selectEntryCallbacks(detectEntryCallbacks(sorted, options.entryId));
   } else {
-    callbacks = detectArchiveCallbacks(sorted, context);
+    callbacks = selectArchiveCallbacks(detectArchiveCallbacks(sorted, context));
   }
 
   callbacks = pickStrongest(
     filterOrienting(callbacks, (c) => c.text),
-    callbackLimit,
+    context === "entry" ? 2 : callbackLimit,
   );
 
   const moments = detectMoments(sorted);
@@ -501,15 +572,19 @@ export function buildContinuityMomentsReport(
     "recovery_after_spike",
     "phrase_disappearance",
   ];
-  const landmarks = pickStrongest(
-    moments.filter((m) => landmarkKinds.includes(m.kind)),
-    landmarkLimit,
+  const landmarks = applyStrongExtraLimit(
+    pickStrongest(
+      moments.filter((m) => landmarkKinds.includes(m.kind)),
+      MAX_LANDMARKS,
+    ),
+    MAX_LANDMARKS,
   );
 
-  const thenVsNow =
+  const thenVsNowList =
     context === "entry" && options.entryId
-      ? detectThenVsNow(sorted, options.entryId)
-      : undefined;
+      ? detectThenVsNowAll(sorted, options.entryId)
+      : [];
+  const thenVsNow = thenVsNowList[0];
 
   const hasData =
     callbacks.length > 0 || landmarks.length > 0 || Boolean(thenVsNow);
@@ -519,6 +594,7 @@ export function buildContinuityMomentsReport(
     moments,
     landmarks,
     thenVsNow,
+    thenVsNowList,
     hasData,
     context,
     generatedAt: new Date().toISOString(),

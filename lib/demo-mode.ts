@@ -278,7 +278,7 @@ function buildDemoEntries(): JournalEntry[] {
       reflection: reflection({
         mood: "hopeful",
         emotionalIntensity: 4,
-        recurringThemes: ["momentum", "relationships", "family"],
+        recurringThemes: ["momentum", "relationships", "family", "money"],
         exactLanguagePattern: "not carrying it alone in my head anymore",
         concreteObservation:
           "Side-project note, Sarah plan, and holiday pressure are all named out loud.",

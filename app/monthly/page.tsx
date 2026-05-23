@@ -63,7 +63,9 @@ export default function MonthlyPage() {
               changed={notes.changed}
               faded={notes.faded}
               returned={notes.returned}
-              maxPerSection={1}
+              landmarks={notes.landmarks}
+              maxPerSection={2}
+              maxLandmarks={4}
             />
           )}
         </div>

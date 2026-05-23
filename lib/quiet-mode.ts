@@ -38,7 +38,7 @@ export function getQuietLimits(quiet: boolean): {
   notes: number;
 } {
   if (quiet) {
-    return { callbacks: 1, changes: 1, landmarks: 1, observations: 1, notes: 3 };
+    return { callbacks: 2, changes: 2, landmarks: 4, observations: 1, notes: 4 };
   }
-  return { callbacks: 3, changes: 3, landmarks: 2, observations: 3, notes: 9 };
+  return { callbacks: 3, changes: 3, landmarks: 4, observations: 3, notes: 9 };
 }

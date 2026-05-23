@@ -16,5 +16,6 @@ export interface MemoryNotesReport {
   faded: MemoryNote[];
   returned: MemoryNote[];
   all: MemoryNote[];
+  landmarks: MemoryNote[];
   hasData: boolean;
 }

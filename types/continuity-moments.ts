@@ -57,6 +57,7 @@ export interface ContinuityMomentsReport {
   moments: ContinuityMoment[];
   landmarks: ContinuityMoment[];
   thenVsNow?: ThenVsNowComparison;
+  thenVsNowList?: ThenVsNowComparison[];
   hasData: boolean;
   context: ContinuityContext;
   generatedAt: string;

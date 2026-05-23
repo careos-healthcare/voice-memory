@@ -42,7 +42,7 @@ export interface FieldMatch {
 export interface LifeSearchResult {
   entry: JournalEntry;
   score: number;
-  confidence: ConfidenceLabel;
+  matchLabel: ConfidenceLabel;
   matches: FieldMatch[];
 }
 
@@ -502,7 +502,7 @@ export function semanticLifeSearch(
       results.push({
         entry,
         score: 1,
-        confidence: "low",
+        matchLabel: "low",
         matches: [
           {
             field: "mood",
@@ -546,7 +546,7 @@ export function semanticLifeSearch(
     results.push({
       entry,
       score: totalScore,
-      confidence: toConfidence(totalScore, fieldMatches.length),
+      matchLabel: toConfidence(totalScore, fieldMatches.length),
       matches: fieldMatches.slice(0, 4),
     });
   }

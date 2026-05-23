@@ -1,8 +1,17 @@
 import { buildChangeReport } from "@/lib/patterns/changes";
 import { buildContinuityMomentsReport } from "@/lib/patterns/continuity-moments";
+import {
+  applyStrongExtraLimit,
+  MAX_MEMORY_NOTES,
+  MAX_LANDMARKS,
+} from "@/lib/patterns/note-limits";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import type { ChangeDetectionReport } from "@/types/changes";
-import type { ContinuityCallbackKind, ContinuityMomentsReport, ThenVsNowComparison } from "@/types/continuity-moments";
+import type {
+  ContinuityCallbackKind,
+  ContinuityMomentsReport,
+  ThenVsNowComparison,
+} from "@/types/continuity-moments";
 import type { MemoryNote, MemoryNoteCategory, MemoryNotesReport } from "@/types/memory-note";
 import type { JournalEntry } from "@/types/journal";
 
@@ -17,7 +26,7 @@ function categoryForCallback(kind: ContinuityCallbackKind): MemoryNoteCategory {
 
 function categoryForChangeKind(kind: string): MemoryNoteCategory {
   if (/disappeared|faded|stopped|less_hedged|phrase_stopped|topic_less/.test(kind)) return "faded";
-  if (/returned|reappeared|pattern_returned/.test(kind)) return "returned";
+  if (/returned|reappeared|pattern_returned|loop/.test(kind)) return "returned";
   return "changed";
 }
 
@@ -42,31 +51,76 @@ function pushNote(bucket: MemoryNote[], note: MemoryNote | null): void {
   if (note) bucket.push(note);
 }
 
+function dedupeNotes(notes: MemoryNote[]): MemoryNote[] {
+  const seen = new Set<string>();
+  return notes
+    .filter((n) => n.confidence >= USEFULNESS_MIN_CONFIDENCE)
+    .sort((a, b) => b.confidence - a.confidence)
+    .filter((n) => {
+      const key = n.text.slice(0, 40);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function splitByCategory(notes: MemoryNote[]): Pick<MemoryNotesReport, "changed" | "faded" | "returned" | "all"> {
+  const limited = applyStrongExtraLimit(notes, MAX_MEMORY_NOTES);
+  return {
+    all: limited,
+    changed: limited.filter((n) => n.category === "changed"),
+    faded: limited.filter((n) => n.category === "faded"),
+    returned: limited.filter((n) => n.category === "returned"),
+  };
+}
+
+function landmarksToNotes(continuity: ContinuityMomentsReport): MemoryNote[] {
+  return applyStrongExtraLimit(
+    dedupeNotes(
+      continuity.landmarks.map((lm) =>
+        noteFromText(lm.id, lm.text, "changed", lm.confidence, {
+          entryId: lm.entryIds[0],
+        }),
+      ).filter((n): n is MemoryNote => n !== null),
+    ),
+    MAX_LANDMARKS,
+  );
+}
+
+export function thenVsNowToNote(comparison: ThenVsNowComparison): MemoryNote | null {
+  if (comparison.confidence < 65) return null;
+  const text = comparison.headline.trim() || "You sound different here.";
+  return noteFromText(`tvn-${comparison.then.entryId}-${comparison.subject}`, text, "changed", comparison.confidence, {
+    pastQuote: comparison.then.snippet,
+    currentQuote: comparison.now.snippet,
+    pastEntryId: comparison.then.entryId,
+    entryId: comparison.now.entryId,
+  });
+}
+
 export function buildMemoryNotesReport(
   entries: JournalEntry[],
   options: {
     context?: "entry" | "weekly" | "monthly" | "memory" | "timeline";
     entryId?: string;
     maxTotal?: number;
+    includeLandmarks?: boolean;
   } = {},
 ): MemoryNotesReport {
   const context = options.context ?? "memory";
-  const maxTotal = options.maxTotal ?? 3;
+  const maxTotal = options.maxTotal ?? MAX_MEMORY_NOTES;
 
   const continuity = buildContinuityMomentsReport(entries, {
     context,
     entryId: options.entryId,
     callbackLimit: maxTotal,
-    landmarkLimit: 2,
+    landmarkLimit: MAX_LANDMARKS,
   });
 
-  const changes =
-    context === "entry" && options.entryId
-      ? buildChangeReport(entries, { scope: "archive", limit: 1 })
-      : buildChangeReport(entries, {
-          scope: context === "weekly" ? "weekly" : context === "monthly" ? "monthly" : "archive",
-          limit: maxTotal,
-        });
+  const changes = buildChangeReport(entries, {
+    scope: context === "weekly" ? "weekly" : context === "monthly" ? "monthly" : "archive",
+    limit: maxTotal,
+  });
 
   const all: MemoryNote[] = [];
 
@@ -80,16 +134,8 @@ export function buildMemoryNotesReport(
     );
   }
 
-  for (const lm of continuity.landmarks) {
-    pushNote(
-      all,
-      noteFromText(lm.id, lm.text, "changed", lm.confidence, {
-        entryId: lm.entryIds[0],
-      }),
-    );
-  }
-
   for (const m of continuity.moments) {
+    if (continuity.landmarks.some((l) => l.id === m.id)) continue;
     const cat: MemoryNoteCategory =
       m.kind === "phrase_disappearance" || m.kind === "last_concern_appearance"
         ? "faded"
@@ -116,72 +162,46 @@ export function buildMemoryNotesReport(
     );
   }
 
-  const seen = new Set<string>();
-  const deduped = all
-    .filter((n) => n.confidence >= USEFULNESS_MIN_CONFIDENCE)
-    .sort((a, b) => b.confidence - a.confidence)
-    .filter((n) => {
-      const key = n.text.slice(0, 40);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .slice(0, maxTotal);
-
-  const changed = deduped.filter((n) => n.category === "changed");
-  const faded = deduped.filter((n) => n.category === "faded");
-  const returned = deduped.filter((n) => n.category === "returned");
+  const split = splitByCategory(dedupeNotes(all));
+  const landmarks =
+    options.includeLandmarks !== false ? landmarksToNotes(continuity) : [];
 
   return {
-    changed,
-    faded,
-    returned,
-    all: deduped,
-    hasData: deduped.length > 0,
+    ...split,
+    landmarks,
+    hasData: split.all.length > 0 || landmarks.length > 0,
   };
 }
 
-export function thenVsNowToNote(comparison: ThenVsNowComparison): MemoryNote | null {
-  if (comparison.confidence < 65) return null;
-  const text =
-    comparison.headline.replace(/intensity|mood|pattern|signal/gi, "").trim() ||
-    "This sounds different from before.";
-  return noteFromText(`tvn-${comparison.then.entryId}`, text, "changed", comparison.confidence, {
-    pastQuote: comparison.then.snippet,
-    currentQuote: comparison.now.snippet,
-    pastEntryId: comparison.then.entryId,
-    entryId: comparison.now.entryId,
-  });
+export interface EntryMemoryNotesResult {
+  primaryCallback: MemoryNote | null;
+  secondaryCallback: MemoryNote | null;
+  thenVsNow: MemoryNote[];
+  whatChanged: MemoryNote | null;
 }
 
 export function entryMemoryNotes(
   entries: JournalEntry[],
   entryId: string,
-): {
-  callback: MemoryNote | null;
-  thenVsNow: MemoryNote | null;
-  whatChanged: MemoryNote | null;
-} {
+): EntryMemoryNotesResult {
   const continuity = buildContinuityMomentsReport(entries, {
     context: "entry",
     entryId,
-    callbackLimit: 1,
+    callbackLimit: 2,
     landmarkLimit: 0,
   });
 
-  const callback = continuity.callbacks[0]
-    ? noteFromText(
-        continuity.callbacks[0].id,
-        continuity.callbacks[0].text,
-        categoryForCallback(continuity.callbacks[0].kind),
-        continuity.callbacks[0].confidence,
-        { entryId },
-      )
-    : null;
+  const callbacks = continuity.callbacks
+    .map((cb) =>
+      noteFromText(cb.id, cb.text, categoryForCallback(cb.kind), cb.confidence, { entryId }),
+    )
+    .filter((n): n is MemoryNote => n !== null);
 
-  const thenVsNow = continuity.thenVsNow ? thenVsNowToNote(continuity.thenVsNow) : null;
+  const thenVsNow = (continuity.thenVsNowList ?? [])
+    .map(thenVsNowToNote)
+    .filter((n): n is MemoryNote => n !== null);
 
-  const changes = buildChangeReport(entries, { scope: "archive", limit: 3 });
+  const changes = buildChangeReport(entries, { scope: "archive", limit: 4 });
   const top = changes.changes.find((c) => c.entryIds.includes(entryId));
   const whatChanged = top
     ? noteFromText(top.id, top.summary, "changed", top.confidence, {
@@ -191,7 +211,12 @@ export function entryMemoryNotes(
       })
     : null;
 
-  return { callback, thenVsNow, whatChanged };
+  return {
+    primaryCallback: callbacks[0] ?? null,
+    secondaryCallback: callbacks[1] ?? null,
+    thenVsNow,
+    whatChanged,
+  };
 }
 
 export type { ChangeDetectionReport, ContinuityMomentsReport };

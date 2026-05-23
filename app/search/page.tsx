@@ -21,7 +21,7 @@ import {
 } from "@/lib/semantic-life-search";
 import { formatRelativeDate } from "@/lib/utils";
 
-const CONFIDENCE_STYLES: Record<
+const MATCH_STYLES: Record<
   ConfidenceLabel,
   { label: string; className: string }
 > = {
@@ -322,7 +322,7 @@ export default function SearchPage() {
                 {results.length} result{results.length === 1 ? "" : "s"}
               </p>
               {results.map((result, index) => {
-                const conf = CONFIDENCE_STYLES[result.confidence];
+                const matchStyle = MATCH_STYLES[result.matchLabel];
                 const primary = result.matches[0];
 
                 return (
@@ -348,9 +348,9 @@ export default function SearchPage() {
                                   {formatRelativeDate(result.entry.createdAt)}
                                 </span>
                                 <span
-                                  className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${conf.className}`}
+                                  className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${matchStyle.className}`}
                                 >
-                                  {conf.label}
+                                  {matchStyle.label}
                                 </span>
                               </div>
 

@@ -73,23 +73,81 @@ interface MemoryNotesOverviewProps {
   changed: MemoryNote[];
   faded: MemoryNote[];
   returned: MemoryNote[];
+  landmarks?: MemoryNote[];
   maxPerSection?: number;
+  maxTotal?: number;
+  maxLandmarks?: number;
+}
+
+function capNotesAcrossSections(
+  changed: MemoryNote[],
+  faded: MemoryNote[],
+  returned: MemoryNote[],
+  maxTotal: number,
+): { changed: MemoryNote[]; faded: MemoryNote[]; returned: MemoryNote[] } {
+  let remaining = maxTotal;
+  const take = (notes: MemoryNote[]) => {
+    const slice = notes.slice(0, remaining);
+    remaining -= slice.length;
+    return slice;
+  };
+  return {
+    changed: take(changed),
+    faded: take(faded),
+    returned: take(returned),
+  };
+}
+
+export function MemoryLandmarksSection({
+  landmarks,
+  max = 4,
+}: {
+  landmarks: MemoryNote[];
+  max?: number;
+}) {
+  const visible = landmarks.slice(0, max);
+  if (visible.length === 0) return null;
+
+  return (
+    <section className="space-y-8 border-t border-white/5 pt-12">
+      <ul className="space-y-10">
+        {visible.map((note) => (
+          <li key={note.id}>
+            <MemoryNoteView note={note} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 export function MemoryNotesOverview({
   changed,
   faded,
   returned,
-  maxPerSection = 1,
+  landmarks = [],
+  maxPerSection = 2,
+  maxTotal = 4,
+  maxLandmarks = 4,
 }: MemoryNotesOverviewProps) {
-  const hasAny = changed.length > 0 || faded.length > 0 || returned.length > 0;
-  if (!hasAny) return null;
+  const capped = capNotesAcrossSections(changed, faded, returned, maxTotal);
+  const hasNotes =
+    capped.changed.length > 0 || capped.faded.length > 0 || capped.returned.length > 0;
+  const hasLandmarks = landmarks.length > 0;
+  if (!hasNotes && !hasLandmarks) return null;
 
   return (
     <div className="space-y-16">
-      <MemoryNotesSection title="What changed" notes={changed} max={maxPerSection} />
-      <MemoryNotesSection title="What faded" notes={faded} max={maxPerSection} />
-      <MemoryNotesSection title="What came back" notes={returned} max={maxPerSection} />
+      {hasNotes ? (
+        <>
+          <MemoryNotesSection title="What changed" notes={capped.changed} max={maxPerSection} />
+          <MemoryNotesSection title="What faded" notes={capped.faded} max={maxPerSection} />
+          <MemoryNotesSection title="What came back" notes={capped.returned} max={maxPerSection} />
+        </>
+      ) : null}
+      {hasLandmarks ? (
+        <MemoryLandmarksSection landmarks={landmarks} max={maxLandmarks} />
+      ) : null}
     </div>
   );
 }

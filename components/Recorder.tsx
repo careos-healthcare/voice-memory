@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 
 import {
   ErrorBanner,
-  InsightCard,
   ProcessingStatus,
 } from "@/components/InsightCard";
 import { Button } from "@/components/ui/button";
@@ -303,9 +302,10 @@ export function Recorder({ autoStart = false, onComplete }: RecorderProps) {
             key="complete"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
+            className="text-center"
           >
-            <InsightCard reflection={entry.reflection} entry={entry} />
-            <p className="mt-4 text-center text-sm text-zinc-400">
+            <p className="text-sm text-zinc-400">Saved.</p>
+            <p className="mt-2 text-center text-sm text-zinc-500">
               Opening your entry…
             </p>
           </motion.div>
