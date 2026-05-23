@@ -25,7 +25,7 @@ import {
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { MemoryNote } from "@/types/memory-note";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
@@ -45,7 +45,7 @@ export default function MonthlyPage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const entries = getAllEntries();
+      const entries = getMemoryEligibleEntries();
       const resurfacingNotes = monthlyResurfacingNotes(entries, limits.resurfacing);
       const revisitationNotes = monthlyRevisitationNotes(entries);
       const changeMomentNotes = monthlyChangeMomentsNotes(entries, limits.changeMoments);

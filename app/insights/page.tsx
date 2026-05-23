@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { MemoryNotesReport } from "@/types/memory-note";
 
 export default function InsightsPage() {
@@ -19,7 +19,7 @@ export default function InsightsPage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      setNotes(buildMemoryNotesReport(getAllEntries(), { context: "memory", maxTotal: limits.notes }));
+      setNotes(buildMemoryNotesReport(getMemoryEligibleEntries(), { context: "memory", maxTotal: limits.notes }));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);

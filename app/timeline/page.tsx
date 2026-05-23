@@ -29,7 +29,7 @@ import {
 import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
-import { getAllEntries } from "@/lib/storage";
+import { getAllEntries, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
@@ -54,19 +54,20 @@ export default function TimelinePage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const all = getAllEntries();
-      setEntries(all);
-      setNotes(buildMemoryNotesReport(all, { context: "timeline", maxTotal: limits.notes }));
-      setResurfacing(archiveResurfacingNotes(all, limits.resurfacing));
-      setChangeMoments(timelineChangeMomentsNotes(all, limits.changeMoments));
-      setFamiliarity(timelineFamiliarityNotes(all, limits.familiarity));
+      const allEntries = getAllEntries();
+      const memoryEntries = getMemoryEligibleEntries();
+      setEntries(allEntries);
+      setNotes(buildMemoryNotesReport(memoryEntries, { context: "timeline", maxTotal: limits.notes }));
+      setResurfacing(archiveResurfacingNotes(memoryEntries, limits.resurfacing));
+      setChangeMoments(timelineChangeMomentsNotes(memoryEntries, limits.changeMoments));
+      setFamiliarity(timelineFamiliarityNotes(memoryEntries, limits.familiarity));
       setFamiliarityResurfacing(
-        timelineFamiliarityResurfacingNotes(all, limits.familiarityResurfacing),
+        timelineFamiliarityResurfacingNotes(memoryEntries, limits.familiarityResurfacing),
       );
-      setRhythm(timelineRhythmNotes(all, limits.rhythm));
-      setTimeMemory(timelineTimeMemoryNotes(all));
-      setRevisitation(timelineRevisitationNotes(all));
-      setThreadHighlights(timelineThreadHighlights(all, 3));
+      setRhythm(timelineRhythmNotes(memoryEntries, limits.rhythm));
+      setTimeMemory(timelineTimeMemoryNotes(memoryEntries));
+      setRevisitation(timelineRevisitationNotes(memoryEntries));
+      setThreadHighlights(timelineThreadHighlights(memoryEntries, 3));
     });
     return () => cancelAnimationFrame(id);
   }, [

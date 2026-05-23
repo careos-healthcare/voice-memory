@@ -32,6 +32,8 @@ export interface JournalEntry {
   durationSeconds: number;
   /** Set when original recording is stored in IndexedDB. */
   audioId?: string;
+  /** Saved in listening mode — reflection generated later on request. */
+  reflectionPending?: boolean;
 }
 
 export type ProcessingStage = "transcribing" | "analyzing" | "saving";

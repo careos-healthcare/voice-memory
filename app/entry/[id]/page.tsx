@@ -21,6 +21,8 @@ import {
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
+import { ReflectOnEntryButton } from "@/components/ReflectOnEntryButton";
+import { VoicePlayback } from "@/components/VoicePlayback";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -41,7 +43,8 @@ import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
-import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
+import { isReflectionPending } from "@/lib/pending-reflection";
+import { deleteEntry, getEntry, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -65,15 +68,16 @@ export default function EntryPage() {
     setLoading(false);
   }, [params.id]);
 
-  const allEntries = useMemo(() => getAllEntries(), [entry]);
+  const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry]);
+  const pending = entry ? isReflectionPending(entry) : false;
 
   const notes = useMemo(() => {
-    if (!entry) return null;
+    if (!entry || pending) return null;
     return entryMemoryNotes(allEntries, entry.id);
-  }, [entry, allEntries]);
+  }, [entry, allEntries, pending]);
 
   const continuationOpener = useMemo(() => {
-    if (!entry) return null;
+    if (!entry || pending) return null;
     const opener = entryContinuationOpener(allEntries, entry.id);
     if (!opener) return null;
     if (isDuplicateNote(opener, notes?.primaryCallback)) return null;
@@ -81,7 +85,7 @@ export default function EntryPage() {
     if (notes?.thenVsNow.some((t) => isDuplicateNote(opener, t))) return null;
     if (isDuplicateNote(opener, notes?.whatChanged)) return null;
     return opener;
-  }, [entry, allEntries, notes]);
+  }, [entry, allEntries, notes, pending]);
 
   const handleDelete = () => {
     if (!entry) return;
@@ -90,7 +94,7 @@ export default function EntryPage() {
   };
 
   const resurfacing = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     const raw = entryResurfacingNotes(allEntries, entry.id, limits.resurfacing);
     const shown = [
       continuationOpener,
@@ -103,7 +107,7 @@ export default function EntryPage() {
   }, [entry, allEntries, notes, continuationOpener, limits.resurfacing]);
 
   const timeMemory = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     const raw = entryTimeMemoryNotes(allEntries, entry.id);
     const shown = [
       continuationOpener,
@@ -117,7 +121,7 @@ export default function EntryPage() {
   }, [entry, allEntries, notes, continuationOpener, resurfacing]);
 
   const revisitation = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     const raw = entryRevisitationNotes(allEntries, entry.id);
     const shown = [
       continuationOpener,
@@ -132,7 +136,7 @@ export default function EntryPage() {
   }, [entry, allEntries, notes, continuationOpener, resurfacing, timeMemory]);
 
   const changeMoments = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     const raw = entryChangeMomentsNotes(allEntries, entry.id, limits.changeMoments);
     const shown = [
       continuationOpener,
@@ -148,7 +152,7 @@ export default function EntryPage() {
   }, [entry, allEntries, notes, continuationOpener, resurfacing, timeMemory, revisitation, limits.changeMoments]);
 
   const familiarity = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     const raw = entryFamiliarityNotes(allEntries, entry.id, limits.familiarity);
     const shown = [
       continuationOpener,
@@ -175,7 +179,7 @@ export default function EntryPage() {
   ]);
 
   const familiarityResurfacing = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     const raw = entryFamiliarityResurfacingNotes(
       allEntries,
       entry.id,
@@ -219,7 +223,7 @@ export default function EntryPage() {
   }, [notes]);
 
   const followupNotes = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     return [
       continuationOpener,
       notes?.primaryCallback,
@@ -251,7 +255,7 @@ export default function EntryPage() {
   };
 
   const voicePlaybackPair = useMemo(() => {
-    if (!entry) return null;
+    if (!entry || pending) return null;
     return resolveVoicePlaybackPair(entry, allEntries, {
       thenVsNow: notes?.thenVsNow ?? [],
       relatedNotes: [
@@ -278,12 +282,12 @@ export default function EntryPage() {
   ]);
 
   const entryThreads = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     return threadsForEntry(allEntries, entry.id, 3);
   }, [entry, allEntries]);
 
   const relationshipNotes = useMemo(() => {
-    if (!entry) return [];
+    if (!entry || pending) return [];
     return entryRelationshipNotes(allEntries, entry.id, 2);
   }, [entry, allEntries]);
 
@@ -328,66 +332,86 @@ export default function EntryPage() {
               <MarkReflectionButton entryId={entry.id} />
             </header>
 
-            {continuationOpener ? (
-              <ContinuationNotes notes={[continuationOpener]} max={1} />
+            {entry.audioId || entry.transcript ? (
+              <section className="space-y-8">
+                {entry.audioId ? (
+                  <VoicePlayback
+                    entryId={entry.id}
+                    audioId={entry.audioId}
+                    durationSeconds={entry.durationSeconds}
+                  />
+                ) : null}
+                {entry.transcript ? (
+                  <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
+                ) : null}
+              </section>
             ) : null}
 
-            <ThreadMentionsSection
-              threads={entryThreads}
-              title="Part of these conversations"
-              subtitle=""
-            />
-
-            <RelationshipContinuityNotes
-              notes={relationshipNotes}
-              max={2}
-              title="People in this reflection"
-              subtitle=""
-            />
-
-            <MotionNoteList className="space-y-20">
-              {notes?.primaryCallback ? (
-                <AnimatedMemoryNote note={notes.primaryCallback} index={0} />
-              ) : null}
-
-              {notes?.secondaryCallback &&
-              !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) ? (
-                <AnimatedMemoryNote note={notes.secondaryCallback} index={1} />
-              ) : null}
-
-              {notes?.thenVsNow.map((note, index) => (
-                <AnimatedMemoryNote key={note.id} note={note} index={index + 2} />
-              ))}
-            </MotionNoteList>
-
-            <div className="space-y-20">
-              <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
-              <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
-              <FamiliarityResurfacingNotes
-                notes={familiarityResurfacing}
-                max={limits.familiarityResurfacing}
+            {pending ? (
+              <ReflectOnEntryButton
+                entryId={entry.id}
+                onComplete={(updated) => setEntry(updated)}
               />
-              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-              <RevisitationNotes notes={revisitation} max={1} />
-              <TimeMemoryNotes notes={timeMemory} max={1} />
-            </div>
+            ) : (
+              <>
+                {continuationOpener ? (
+                  <ContinuationNotes notes={[continuationOpener]} max={1} />
+                ) : null}
 
-            <FollowupPromptInline
-              prompt={followupPrompt}
-              onContinue={handleContinueFollowup}
-            />
+                <ThreadMentionsSection
+                  threads={entryThreads}
+                  title="Part of these conversations"
+                  subtitle=""
+                />
 
-            {voicePlaybackPair ? (
-              <VoicePlaybackContinuity pair={voicePlaybackPair} />
-            ) : null}
+                <RelationshipContinuityNotes
+                  notes={relationshipNotes}
+                  max={2}
+                  title="People in this reflection"
+                  subtitle=""
+                />
 
-            {entry.transcript ? (
-              <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
-            ) : null}
+                <MotionNoteList className="space-y-20">
+                  {notes?.primaryCallback ? (
+                    <AnimatedMemoryNote note={notes.primaryCallback} index={0} />
+                  ) : null}
 
-            {whatChangedLine ? (
-              <p className="text-sm leading-[1.75] text-zinc-500/90">{whatChangedLine.text}</p>
-            ) : null}
+                  {notes?.secondaryCallback &&
+                  !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) ? (
+                    <AnimatedMemoryNote note={notes.secondaryCallback} index={1} />
+                  ) : null}
+
+                  {notes?.thenVsNow.map((note, index) => (
+                    <AnimatedMemoryNote key={note.id} note={note} index={index + 2} />
+                  ))}
+                </MotionNoteList>
+
+                <div className="space-y-20">
+                  <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
+                  <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+                  <FamiliarityResurfacingNotes
+                    notes={familiarityResurfacing}
+                    max={limits.familiarityResurfacing}
+                  />
+                  <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
+                  <RevisitationNotes notes={revisitation} max={1} />
+                  <TimeMemoryNotes notes={timeMemory} max={1} />
+                </div>
+
+                <FollowupPromptInline
+                  prompt={followupPrompt}
+                  onContinue={handleContinueFollowup}
+                />
+
+                {voicePlaybackPair ? (
+                  <VoicePlaybackContinuity pair={voicePlaybackPair} />
+                ) : null}
+
+                {whatChangedLine ? (
+                  <p className="text-sm leading-[1.75] text-zinc-500/90">{whatChangedLine.text}</p>
+                ) : null}
+              </>
+            )}
           </MotionPage>
         )}
       </div>

@@ -12,7 +12,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { threadsRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { listConversationThreads } from "@/lib/memory/conversation-threads";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { RelationshipContinuityNote } from "@/types/relationship-continuity";
 import type { ConversationThread } from "@/types/conversation-thread";
 
@@ -22,7 +22,7 @@ export default function ThreadsPage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const entries = getAllEntries();
+      const entries = getMemoryEligibleEntries();
       setThreads(listConversationThreads(entries));
       setRelationshipNotes(threadsRelationshipNotes(entries, 3));
     });

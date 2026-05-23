@@ -35,7 +35,7 @@ import {
   POSITIONING_SUPPORT,
   POSITIONING_TAGLINE,
 } from "@/lib/product-copy";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
@@ -59,7 +59,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const entries = getAllEntries();
+      const entries = getMemoryEligibleEntries();
       const resurfacingNotes = homepageResurfacingNotes(entries, limits.resurfacing);
       const revisitationNotes = homepageRevisitationNotes(entries);
       const familiarityResurfacingNotes = homepageFamiliarityResurfacingNotes(

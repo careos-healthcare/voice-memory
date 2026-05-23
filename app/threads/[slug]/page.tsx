@@ -9,7 +9,7 @@ import { ThreadDetail } from "@/components/memory/ConversationThreadSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { getConversationThreadBySlug } from "@/lib/memory/conversation-threads";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { ConversationThread } from "@/types/conversation-thread";
 
 export default function ThreadDetailPage() {
@@ -20,7 +20,7 @@ export default function ThreadDetailPage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const found = getConversationThreadBySlug(getAllEntries(), params.slug);
+      const found = getConversationThreadBySlug(getMemoryEligibleEntries(), params.slug);
       setThread(found ?? null);
     });
     return () => cancelAnimationFrame(id);

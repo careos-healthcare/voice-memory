@@ -12,7 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { MOTION } from "@/lib/motion/tokens";
 import { presenceFade } from "@/lib/motion/variants";
+import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import { saveAudio } from "@/lib/audio-storage";
+import { LISTENING_SAVED_COPY } from "@/lib/listening-mode";
+import { createListeningModeEntry } from "@/lib/pending-reflection";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, saveEntry } from "@/lib/storage";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
@@ -40,6 +43,7 @@ export function Recorder({
   reflectionPrompt,
 }: RecorderProps) {
   const router = useRouter();
+  const { listeningMode } = useListeningMode();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
@@ -91,6 +95,37 @@ export function Recorder({
           throw new Error(
             transcribeData.error ?? "Could not transcribe your recording",
           );
+        }
+
+        const listeningModeActive = listeningMode;
+
+        if (listeningModeActive) {
+          setStage("saving");
+
+          const entryId = crypto.randomUUID();
+
+          try {
+            await saveAudio(entryId, blob, blob.type || "audio/webm");
+          } catch {
+            // Transcript still saved if audio storage fails
+          }
+
+          const newEntry = createListeningModeEntry(
+            entryId,
+            transcribeData.transcript,
+            durationSeconds,
+            entryId,
+          );
+
+          saveEntry(newEntry);
+          setEntry(newEntry);
+          setState("complete");
+          onComplete?.(newEntry);
+
+          window.setTimeout(() => {
+            router.push(`/entry/${newEntry.id}`);
+          }, 1200);
+          return;
         }
 
         setStage("analyzing");
@@ -154,7 +189,7 @@ export function Recorder({
         );
       }
     },
-    [onComplete, router],
+    [onComplete, router, listeningMode],
   );
 
   const stopRecording = useCallback(() => {
@@ -295,13 +330,15 @@ export function Recorder({
                 {formatTime(seconds)}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-zinc-500">
-                Speak freely — we&apos;ll reflect when you stop
+                {listeningMode
+                  ? "Speak freely — we'll save when you stop"
+                  : "Speak freely — we'll reflect when you stop"}
               </p>
             </div>
 
             <Button variant="destructive" size="lg" onClick={stopRecording}>
               <Square className="h-4 w-4 fill-current" />
-              Stop & Reflect
+              {listeningMode ? "Stop & Save" : "Stop & Reflect"}
             </Button>
           </motion.div>
         )}
@@ -326,7 +363,9 @@ export function Recorder({
             animate="animate"
             className="text-center"
           >
-            <p className="text-sm text-zinc-400">Saved.</p>
+            <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
+              {listeningMode ? LISTENING_SAVED_COPY : "Saved."}
+            </p>
             <p className="mt-2 text-center text-sm text-zinc-500">
               Opening your entry…
             </p>

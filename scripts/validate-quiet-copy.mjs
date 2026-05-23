@@ -41,6 +41,8 @@ const SKIP_PATH_PARTS = [
   "lib/memory/seasons.ts",
   "lib/memory/relationship-continuity.ts",
   "lib/reflection-bookmarks.ts",
+  "lib/listening-mode.ts",
+  "lib/pending-reflection.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",

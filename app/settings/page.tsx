@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Download, Moon, RotateCcw, Trash2 } from "lucide-react";
+import { Headphones, Download, Moon, RotateCcw, Trash2 } from "lucide-react";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -21,6 +21,7 @@ import {
 } from "@/lib/memory-export";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { isFullDetailEnabled, setFullDetailEnabled } from "@/lib/quiet-mode";
+import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import {
   DATA_DELETION_SUMMARY,
   DATA_EXPORT_SUMMARY,
@@ -33,6 +34,7 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [fullDetail, setFullDetail] = useState(false);
+  const { listeningMode, setListeningMode } = useListeningMode();
 
   const refreshCount = () => {
     setEntryCount(getStoredEntryCount());
@@ -171,6 +173,32 @@ export default function SettingsPage() {
               >
                 <Trash2 className="h-4 w-4" />
                 Delete all entries
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Listening mode</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-zinc-400">
+                Save recordings without immediate reflection. Your transcript and audio
+                are kept — you can reflect later when it feels right.
+              </p>
+              <Button
+                type="button"
+                variant={listeningMode ? "default" : "secondary"}
+                size="sm"
+                className="mt-4"
+                onClick={() => {
+                  const next = !listeningMode;
+                  setListeningMode(next);
+                  showMessage(next ? "Listening mode on." : "Listening mode off.");
+                }}
+              >
+                <Headphones className="h-4 w-4" />
+                {listeningMode ? "Listening mode on" : "Enable listening mode"}
               </Button>
             </CardContent>
           </Card>

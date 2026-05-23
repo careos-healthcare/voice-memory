@@ -24,7 +24,7 @@ import {
   saveReminderPreferences,
   type ReminderPreferences,
 } from "@/lib/reminder-preferences";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { MemoryReminder } from "@/types/memory-reminder";
 
 function ToggleRow({
@@ -69,7 +69,7 @@ export default function RemindersPage() {
       const current = getReminderPreferences();
       setPrefs(current);
       setPreviewCount(evaluateContextualReminders(current).length);
-      setMemoryReminders(listMemoryReminders(getAllEntries(), 4));
+      setMemoryReminders(listMemoryReminders(getMemoryEligibleEntries(), 4));
       setLoaded(true);
     });
     return () => cancelAnimationFrame(id);

@@ -32,7 +32,7 @@ import {
 } from "@/lib/conversation/followup-prompts";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { RelationshipContinuityNote } from "@/types/relationship-continuity";
 import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
@@ -57,7 +57,7 @@ export default function MemoryPage() {
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
     const id = requestAnimationFrame(() => {
-      const entries = getAllEntries();
+      const entries = getMemoryEligibleEntries();
       const resurfacingNotes = memoryResurfacingNotes(entries, limits.resurfacing);
       const revisitationNotes = memoryRevisitationNotes(entries);
       const changeMomentNotes = memoryChangeMomentsNotes(entries, limits.changeMoments);

@@ -15,7 +15,7 @@ import {
   MEMORY_SEASON_COPY_EXAMPLES,
   monthlyPeriodsOnly,
 } from "@/lib/memory/seasons";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { MemorySeason } from "@/types/memory-season";
 
 export default function SeasonsPage() {
@@ -23,7 +23,7 @@ export default function SeasonsPage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      setSeasons(listMemorySeasons(getAllEntries()));
+      setSeasons(listMemorySeasons(getMemoryEligibleEntries()));
     });
     return () => cancelAnimationFrame(id);
   }, []);

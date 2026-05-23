@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { analyzeWeeklyIntelligence } from "@/lib/weekly-intelligence";
-import { getAllEntries } from "@/lib/storage";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { MemoryNotesReport } from "@/types/memory-note";
 
 export default function WeeklyPage() {
@@ -24,7 +24,7 @@ export default function WeeklyPage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const entries = getAllEntries();
+      const entries = getMemoryEligibleEntries();
       const report = analyzeWeeklyIntelligence();
       setWeekLabel(report.weekRangeLabel);
       setHasData(report.hasData);

@@ -40,6 +40,15 @@ export function getAllEntries(): JournalEntry[] {
   return loadAllEntries();
 }
 
+/** Entries with a completed reflection — used for memory pattern surfacing. */
+export function getMemoryEligibleEntries(): JournalEntry[] {
+  return loadAllEntries().filter((entry) => entry.reflectionPending !== true);
+}
+
+export function isReflectionPendingEntry(entry: JournalEntry): boolean {
+  return entry.reflectionPending === true;
+}
+
 /** Entries visible for the current plan (Free: latest 7). */
 export function getEntries(): JournalEntry[] {
   const all = loadAllEntries();
