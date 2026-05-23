@@ -28,6 +28,7 @@ const SKIP_PATH_PARTS = [
   "lib/memory/change-moments.ts",
   "lib/memory/recovery-memory.ts",
   "lib/memory/familiarity.ts",
+  "lib/memory/rhythm-memory.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",

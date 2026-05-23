@@ -39,6 +39,7 @@ export function getQuietLimits(quiet: boolean): {
   resurfacing: number;
   changeMoments: number;
   familiarity: number;
+  rhythm: number;
 } {
   if (quiet) {
     return {
@@ -50,6 +51,7 @@ export function getQuietLimits(quiet: boolean): {
       resurfacing: 1,
       changeMoments: 1,
       familiarity: 1,
+      rhythm: 1,
     };
   }
   return {
@@ -61,5 +63,6 @@ export function getQuietLimits(quiet: boolean): {
     resurfacing: 2,
     changeMoments: 2,
     familiarity: 1,
+    rhythm: 1,
   };
 }

@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes } from "@/components/patterns/MemoryNote";
+import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
+import { homepageRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
 import { homepageRevisitationNotes } from "@/lib/memory/revisitation";
 import { homepageTimeMemoryNotes } from "@/lib/memory/time-memory";
@@ -32,6 +33,7 @@ export default function HomePage() {
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
   const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
+  const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -40,9 +42,10 @@ export default function HomePage() {
       setTimeMemory(homepageTimeMemoryNotes(entries));
       setRevisitation(homepageRevisitationNotes(entries));
       setFamiliarity(homepageFamiliarityNotes(entries, limits.familiarity));
+      setRhythm(homepageRhythmNotes(entries, limits.rhythm));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.resurfacing, limits.familiarity]);
+  }, [limits.resurfacing, limits.familiarity, limits.rhythm]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
@@ -59,6 +62,7 @@ export default function HomePage() {
           <EmptyStateIntelligence hideWhenRich />
           <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
           <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+          <RhythmNotes notes={rhythm} max={limits.rhythm} />
           <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />
         </div>
