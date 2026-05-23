@@ -361,6 +361,53 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+const HEDGE_RE =
+  /\b(maybe|sort of|kind of|probably|not sure|something|stuff|indirectly|i guess)\b/gi;
+const DIRECT_RE =
+  /\b(i will|decided|named|wrote down|mum|dad|mother|father|clearly|for sure|definitely|plan)\b/gi;
+
+function countMatches(text: string, re: RegExp): number {
+  return text.match(re)?.length ?? 0;
+}
+
+/** Whether an entry tags a recurring theme (case-insensitive). */
+export function hasTheme(entry: JournalEntry, themeKey: string): boolean {
+  return entry.reflection.recurringThemes.some((t) => t.toLowerCase() === themeKey);
+}
+
+/** Hedge vs direct language shift between two entries on the same thread. */
+export function languageShiftOnTheme(
+  prior: JournalEntry,
+  current: JournalEntry,
+): { hedgeDelta: number; directDelta: number } {
+  const priorHedge = countMatches(prior.transcript, HEDGE_RE);
+  const nowHedge = countMatches(current.transcript, HEDGE_RE);
+  const priorDirect = countMatches(prior.transcript, DIRECT_RE);
+  const nowDirect = countMatches(current.transcript, DIRECT_RE);
+  return {
+    hedgeDelta: priorHedge - nowHedge,
+    directDelta: nowDirect - priorDirect,
+  };
+}
+
+/** Peak-to-now intensity drop for a theme across chronological mentions. */
+export function getThemeIntensityTrend(
+  entries: JournalEntry[],
+  themeKey: string,
+): { peakEntry: JournalEntry; delta: number; mentions: number } | null {
+  const hits = entries.filter((e) => hasTheme(e, themeKey));
+  if (hits.length < 3) return null;
+
+  const peakEntry = hits.reduce((best, e) =>
+    e.reflection.emotionalIntensity > best.reflection.emotionalIntensity ? e : best,
+  );
+  const latest = hits[hits.length - 1];
+  const delta = peakEntry.reflection.emotionalIntensity - latest.reflection.emotionalIntensity;
+  if (delta < 1.5) return null;
+
+  return { peakEntry, delta, mentions: hits.length };
+}
+
 function buildInsightsForWindow(
   allEntries: JournalEntry[],
   window: EvolutionWindow,

@@ -6,11 +6,12 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { MemoryNoteView, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNoteView, ChangeMomentsNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
@@ -91,6 +92,21 @@ export default function EntryPage() {
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, 1);
   }, [entry, allEntries, notes, resurfacing, timeMemory]);
 
+  const changeMoments = useMemo(() => {
+    if (!entry) return [];
+    const raw = entryChangeMomentsNotes(allEntries, entry.id, limits.changeMoments);
+    const shown = [
+      notes?.primaryCallback,
+      notes?.secondaryCallback,
+      ...(notes?.thenVsNow ?? []),
+      notes?.whatChanged,
+      ...resurfacing,
+      ...timeMemory,
+      ...revisitation,
+    ].filter(Boolean) as MemoryNote[];
+    return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.changeMoments);
+  }, [entry, allEntries, notes, resurfacing, timeMemory, revisitation, limits.changeMoments]);
+
   const whatChangedLine = useMemo(() => {
     if (!notes?.whatChanged) return null;
     const wc = notes.whatChanged;
@@ -159,6 +175,7 @@ export default function EntryPage() {
               <MemoryNoteView key={note.id} note={note} />
             ))}
 
+            <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
             <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
             <RevisitationNotes notes={revisitation} max={1} />
             <TimeMemoryNotes notes={timeMemory} max={1} />
