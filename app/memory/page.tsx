@@ -9,6 +9,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
+import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
@@ -20,6 +21,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { memoryMilestoneNotes } from "@/lib/memory/milestones";
+import { memoryContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
 import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
 import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
@@ -42,6 +44,7 @@ import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { JournalEntry } from "@/types/journal";
+import type { ContinuityDepthIndicator } from "@/types/continuity-depth";
 
 export default function MemoryPage() {
   const router = useRouter();
@@ -59,6 +62,7 @@ export default function MemoryPage() {
   const [relationshipNotes, setRelationshipNotes] = useState<RelationshipContinuityNote[]>([]);
   const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -91,6 +95,7 @@ export default function MemoryPage() {
       setRelationshipNotes(memoryRelationshipNotes(entries, 4));
       setMilestones(memoryMilestoneNotes(entries, limits.milestones));
       setEntries(entries);
+      setContinuityDepth(memoryContinuityDepthIndicator(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -162,6 +167,8 @@ export default function MemoryPage() {
                   maxLandmarks={4}
                 />
               ) : null}
+
+              <ContinuityDepthNote indicator={continuityDepth} />
 
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
               <FamiliarityNotes notes={familiarity} max={limits.familiarity} />

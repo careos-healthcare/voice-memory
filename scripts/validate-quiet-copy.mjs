@@ -42,6 +42,7 @@ const SKIP_PATH_PARTS = [
   "lib/memory/relationship-continuity.ts",
   "lib/memory/milestones.ts",
   "lib/memory/shared-moments.ts",
+  "lib/memory/continuity-depth.ts",
   "lib/reflection-bookmarks.ts",
   "lib/listening-mode.ts",
   "lib/pending-reflection.ts",

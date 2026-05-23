@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MemoryReminderNote } from "@/components/memory/MemoryReminderNote";
+import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
@@ -21,6 +22,7 @@ import {
   consumeStoredFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { homepageMemoryReminder } from "@/lib/memory/memory-reminders";
+import { homepageContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
 import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -41,6 +43,7 @@ import { MOTION } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { MemoryReminder } from "@/types/memory-reminder";
+import type { ContinuityDepthIndicator } from "@/types/continuity-depth";
 
 export default function HomePage() {
   const { limits } = useQuietMode();
@@ -55,6 +58,7 @@ export default function HomePage() {
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
   const [memoryReminder, setMemoryReminder] = useState<MemoryReminder | null>(null);
+  const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,6 +89,7 @@ export default function HomePage() {
         homepageArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
       setMemoryReminder(homepageMemoryReminder(entries));
+      setContinuityDepth(homepageContinuityDepthIndicator(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -154,6 +159,7 @@ export default function HomePage() {
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
           <MemoryReminderNote reminder={memoryReminder} />
+          <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={limits.continuation} />
           <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
           <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
