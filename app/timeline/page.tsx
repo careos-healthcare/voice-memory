@@ -7,6 +7,7 @@ import { CalendarRange } from "lucide-react";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
+import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
@@ -24,9 +25,11 @@ import {
   buildFollowupPrompt,
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
+import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
 import type { JournalEntry } from "@/types/journal";
@@ -44,6 +47,7 @@ export default function TimelinePage() {
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -59,6 +63,7 @@ export default function TimelinePage() {
       setRhythm(timelineRhythmNotes(all, limits.rhythm));
       setTimeMemory(timelineTimeMemoryNotes(all));
       setRevisitation(timelineRevisitationNotes(all));
+      setThreadHighlights(timelineThreadHighlights(all, 3));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -145,6 +150,11 @@ export default function TimelinePage() {
               <FollowupPromptInline
                 prompt={followupPrompt}
                 onContinue={handleContinueFollowup}
+              />
+
+              <ThreadMentionsSection
+                threads={threadHighlights}
+                subtitle="Topics that keep showing up across your timeline."
               />
 
               <section className="space-y-6 pt-4">

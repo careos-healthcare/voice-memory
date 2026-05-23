@@ -18,6 +18,7 @@ import {
   RevisitationNotes,
   TimeMemoryNotes,
 } from "@/components/patterns/MemoryNote";
+import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
+import { threadsForEntry } from "@/lib/memory/conversation-threads";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -272,6 +274,11 @@ export default function EntryPage() {
     timeMemory,
   ]);
 
+  const entryThreads = useMemo(() => {
+    if (!entry) return [];
+    return threadsForEntry(allEntries, entry.id, 3);
+  }, [entry, allEntries]);
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -315,6 +322,12 @@ export default function EntryPage() {
             {continuationOpener ? (
               <ContinuationNotes notes={[continuationOpener]} max={1} />
             ) : null}
+
+            <ThreadMentionsSection
+              threads={entryThreads}
+              title="Part of these conversations"
+              subtitle=""
+            />
 
             <MotionNoteList className="space-y-20">
               {notes?.primaryCallback ? (

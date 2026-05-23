@@ -8,6 +8,7 @@ import { Brain } from "lucide-react";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
@@ -16,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryArchiveGrowthNotes } from "@/lib/memory/archive-growth";
+import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
 import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { memoryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { memoryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -29,6 +31,7 @@ import {
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getAllEntries } from "@/lib/storage";
+import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
@@ -45,6 +48,7 @@ export default function MemoryPage() {
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
+  const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -73,6 +77,7 @@ export default function MemoryPage() {
       setArchiveGrowth(
         memoryArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
+      setThreadHighlights(memoryThreadHighlights(entries, 4));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -154,6 +159,10 @@ export default function MemoryPage() {
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={1} />
               <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+              <ThreadMentionsSection
+                threads={threadHighlights}
+                subtitle="Recurring topics that span more than one reflection."
+              />
               <FollowupPromptInline
                 prompt={followupPrompt}
                 onContinue={handleContinueFollowup}
