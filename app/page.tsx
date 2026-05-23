@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ResurfacingNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
+import { homepageRevisitationNotes } from "@/lib/memory/revisitation";
 import { homepageTimeMemoryNotes } from "@/lib/memory/time-memory";
 import {
   HONESTY_LINE,
@@ -26,12 +27,14 @@ import type { MemoryNote } from "@/types/memory-note";
 export default function HomePage() {
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
+  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getAllEntries();
       setResurfacing(homepageResurfacingNotes(entries));
       setTimeMemory(homepageTimeMemoryNotes(entries));
+      setRevisitation(homepageRevisitationNotes(entries));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -50,6 +53,7 @@ export default function HomePage() {
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
           <ResurfacingNotes notes={resurfacing} />
+          <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />
         </div>
 

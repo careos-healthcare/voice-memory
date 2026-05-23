@@ -5,11 +5,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
-import { MemoryNotesOverview, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { monthlyRevisitationNotes } from "@/lib/memory/revisitation";
 import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
@@ -20,18 +21,21 @@ export default function MonthlyPage() {
   const { limits } = useQuietMode();
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
+  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getAllEntries();
       setNotes(buildMemoryNotesReport(entries, { context: "monthly", maxTotal: limits.notes }));
       setTimeMemory(monthlyTimeMemoryNotes(entries));
+      setRevisitation(monthlyRevisitationNotes(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);
 
   const loading = notes === null;
   const hasTimeMemory = timeMemory.length > 0;
+  const hasRevisitation = revisitation.length > 0;
   const hasNotes = notes?.hasData ?? false;
 
   return (
@@ -51,7 +55,7 @@ export default function MonthlyPage() {
                 Reading your archive…
               </CardContent>
             </Card>
-          ) : !hasNotes && !hasTimeMemory ? (
+          ) : !hasNotes && !hasTimeMemory && !hasRevisitation ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="px-6 py-16 text-center">
                 <CalendarDays className="mx-auto h-8 w-8 text-zinc-600" />
@@ -66,6 +70,7 @@ export default function MonthlyPage() {
             </Card>
           ) : (
             <>
+              <RevisitationNotes notes={revisitation} max={2} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
               {hasNotes ? (
                 <MemoryNotesOverview

@@ -24,6 +24,7 @@ const SKIP_PATH_PARTS = [
   "lib/weekly-intelligence.ts",
   "lib/memory/resurfacing.ts",
   "lib/memory/time-memory.ts",
+  "lib/memory/revisitation.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",

@@ -7,13 +7,14 @@ import { Brain } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
-import { MemoryNotesOverview, ResurfacingNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
+import { memoryRevisitationNotes } from "@/lib/memory/revisitation";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getAllEntries } from "@/lib/storage";
@@ -25,6 +26,7 @@ export default function MemoryPage() {
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
+  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -33,6 +35,7 @@ export default function MemoryPage() {
       setSnapshot(buildEntityMemory());
       setNotes(buildMemoryNotesReport(entries, { context: "memory", maxTotal: limits.notes }));
       setResurfacing(archiveResurfacingNotes(entries));
+      setRevisitation(memoryRevisitationNotes(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);
@@ -83,6 +86,7 @@ export default function MemoryPage() {
               ) : null}
 
               <ResurfacingNotes notes={resurfacing} />
+              <RevisitationNotes notes={revisitation} max={2} />
 
               {snapshot.totalEntities > 0 ? (
                 <div className="space-y-12 border-t border-white/5 pt-12">

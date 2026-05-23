@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { CalendarRange } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
-import { MemoryNotesOverview, ResurfacingNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
+import { timelineRevisitationNotes } from "@/lib/memory/revisitation";
 import { timelineTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
@@ -25,6 +26,7 @@ export default function TimelinePage() {
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
+  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function TimelinePage() {
       setNotes(buildMemoryNotesReport(all, { context: "timeline", maxTotal: limits.notes }));
       setResurfacing(archiveResurfacingNotes(all));
       setTimeMemory(timelineTimeMemoryNotes(all));
+      setRevisitation(timelineRevisitationNotes(all));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);
@@ -87,6 +90,7 @@ export default function TimelinePage() {
               ) : null}
 
               <ResurfacingNotes notes={resurfacing} />
+              <RevisitationNotes notes={revisitation} max={2} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
 
               <section className="space-y-4 border-t border-white/5 pt-12">
