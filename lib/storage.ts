@@ -1,4 +1,5 @@
 import { deleteAudio } from "@/lib/audio-storage";
+import { clearHabitState } from "@/lib/habit-storage";
 import { recordReflectionDay } from "@/lib/habit-storage";
 import { normalizeReflection } from "@/lib/reflection";
 import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
@@ -73,4 +74,20 @@ export function deleteEntry(id: string): void {
   const entries = loadAllEntries().filter((entry) => entry.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   void deleteAudio(id);
+}
+
+/** Remove all journal entries from localStorage (call clearAllAudio separately). */
+export async function deleteAllEntries(): Promise<number> {
+  if (!isBrowser()) return 0;
+
+  const entries = loadAllEntries();
+  const count = entries.length;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+  clearHabitState();
+
+  for (const entry of entries) {
+    await deleteAudio(entry.id);
+  }
+
+  return count;
 }

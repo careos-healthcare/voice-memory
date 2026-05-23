@@ -65,6 +65,10 @@ export function syncHabitFromEntries(): void {
   saveHabitState({ reflectionDayKeys: dayKeys });
 }
 
+export function clearHabitState(): void {
+  saveHabitState({ reflectionDayKeys: [] });
+}
+
 export function recordReflectionDay(iso: string): void {
   const key = toDayKey(iso);
   const state = loadHabitState();

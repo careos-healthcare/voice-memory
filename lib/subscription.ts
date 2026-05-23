@@ -139,3 +139,9 @@ export function getUpgradeClickEvents(): UpgradeClickEvent[] {
 export function requiresProForExportReports(): boolean {
   return !isProUser();
 }
+
+/** Reset local Pro preview toggle (development / settings). */
+export function clearProPreview(): void {
+  if (!isBrowser()) return;
+  localStorage.setItem(PLAN_KEY, "free");
+}

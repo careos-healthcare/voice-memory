@@ -1,0 +1,27 @@
+import type { Metadata } from "next";
+
+import { TrustPageShell, TrustSection } from "@/components/trust/TrustPageShell";
+import { CRISIS_DISCLAIMER, SAFETY_SECTIONS } from "@/lib/trust-copy";
+
+export const metadata: Metadata = {
+  title: "Safety — VoiceMemory",
+  description: "VoiceMemory is not therapy, not a diagnosis, and not crisis support. Crisis resources included.",
+};
+
+export default function SafetyPage() {
+  return (
+    <TrustPageShell
+      eyebrow="Trust"
+      title="Safety"
+      description="VoiceMemory helps you notice patterns in your own words. It does not replace professional care."
+    >
+      <section className="rounded-2xl border border-amber-500/20 bg-amber-950/20 p-5">
+        <h2 className="text-base font-semibold text-amber-100">If you need urgent help</h2>
+        <p className="mt-2 text-sm leading-relaxed text-amber-100/90">{CRISIS_DISCLAIMER}</p>
+      </section>
+      {SAFETY_SECTIONS.map((section) => (
+        <TrustSection key={section.title} title={section.title} body={section.body} />
+      ))}
+    </TrustPageShell>
+  );
+}

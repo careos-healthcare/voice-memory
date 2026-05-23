@@ -56,3 +56,8 @@ export function saveReminderPreferences(prefs: ReminderPreferences): void {
   if (!isBrowser()) return;
   localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
 }
+
+export function clearReminderPreferences(): void {
+  if (!isBrowser()) return;
+  localStorage.removeItem(PREFERENCES_KEY);
+}

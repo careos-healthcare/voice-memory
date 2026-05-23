@@ -59,6 +59,12 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           Pricing
         </Link>
         <Link
+          href="/settings"
+          className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
+        >
+          Settings
+        </Link>
+        <Link
           href="/export"
           className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
         >

@@ -111,3 +111,26 @@ export async function deleteAudio(entryId: string): Promise<void> {
     // Best-effort cleanup
   }
 }
+
+export async function clearAllAudio(): Promise<void> {
+  if (typeof indexedDB === "undefined") return;
+
+  try {
+    const db = await openDb();
+
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+      tx.onerror = () => {
+        db.close();
+        reject(tx.error ?? new Error("Failed to clear audio"));
+      };
+      tx.objectStore(STORE).clear();
+    });
+  } catch {
+    // Best-effort
+  }
+}

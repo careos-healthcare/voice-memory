@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   HONESTY_LINE,
@@ -95,32 +95,7 @@ export default function HomePage() {
           </motion.p>
         </main>
 
-        <footer className="mt-auto flex flex-wrap justify-center gap-4 pt-8 text-center text-xs text-zinc-600">
-          <Link href="/pricing" className="hover:text-zinc-400">
-            Pricing →
-          </Link>
-          <Link href="/reminders" className="hover:text-zinc-400">
-            Reminders →
-          </Link>
-          <Link href="/journal" className="hover:text-zinc-400">
-            Reflections →
-          </Link>
-          <Link href="/export" className="hover:text-zinc-400">
-            Export →
-          </Link>
-          <Link href="/memory" className="hover:text-zinc-400">
-            Memory →
-          </Link>
-          <Link href="/weekly" className="hover:text-zinc-400">
-            Weekly →
-          </Link>
-          <Link href="/insights" className="hover:text-zinc-400">
-            Insights →
-          </Link>
-          <Link href="/search" className="hover:text-zinc-400">
-            Search →
-          </Link>
-        </footer>
+        <SiteFooter className="mt-auto pt-8" />
       </div>
     </div>
   );
