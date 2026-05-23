@@ -3,6 +3,7 @@ import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulnes
 import type { TimeMemoryContext, TimeMemoryKind, TimeMemoryNote, TimeMemoryReport } from "@/types/time-memory";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const DAY_NAMES = [
   "Sunday",
@@ -567,19 +568,35 @@ export function timeMemoryToNotes(notes: TimeMemoryNote[]): MemoryNote[] {
 }
 
 export function homepageTimeMemoryNotes(entries: JournalEntry[]): MemoryNote[] {
-  return timeMemoryToNotes(buildTimeMemoryReport(entries, { context: "homepage", limit: 1 }).notes);
+  return applyMemoryHierarchy(
+    timeMemoryToNotes(buildTimeMemoryReport(entries, { context: "homepage", limit: 1 }).notes),
+    entries,
+    1,
+  );
 }
 
 export function timelineTimeMemoryNotes(entries: JournalEntry[]): MemoryNote[] {
-  return timeMemoryToNotes(buildTimeMemoryReport(entries, { context: "timeline", limit: 2 }).notes);
+  return applyMemoryHierarchy(
+    timeMemoryToNotes(buildTimeMemoryReport(entries, { context: "timeline", limit: 2 }).notes),
+    entries,
+    1,
+  );
 }
 
 export function monthlyTimeMemoryNotes(entries: JournalEntry[]): MemoryNote[] {
-  return timeMemoryToNotes(buildTimeMemoryReport(entries, { context: "monthly", limit: 2 }).notes);
+  return applyMemoryHierarchy(
+    timeMemoryToNotes(buildTimeMemoryReport(entries, { context: "monthly", limit: 2 }).notes),
+    entries,
+    1,
+  );
 }
 
 export function entryTimeMemoryNotes(entries: JournalEntry[], entryId: string): MemoryNote[] {
-  return timeMemoryToNotes(
-    buildTimeMemoryReport(entries, { context: "entry", entryId, limit: 1 }).notes,
+  return applyMemoryHierarchy(
+    timeMemoryToNotes(
+      buildTimeMemoryReport(entries, { context: "entry", entryId, limit: 1 }).notes,
+    ),
+    entries,
+    1,
   );
 }

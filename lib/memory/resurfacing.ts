@@ -15,6 +15,7 @@ import { formatRelativeDate } from "@/lib/utils";
 import type { ResurfacingKind, ResurfacingNote, ResurfacingReport } from "@/types/resurfacing";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const ABSENCE_DAYS = RESURFACING_MIN_ABSENCE_DAYS;
 const LONG_SILENCE_DAYS = RESURFACING_LONG_SILENCE_DAYS;
@@ -513,8 +514,12 @@ export function entryResurfacingNotes(
   entryId: string,
   limit = 1,
 ): MemoryNote[] {
-  return resurfacingToMemoryNotes(
-    buildResurfacingReport(entries, { entryId, limit, surface: "entry" }).notes,
+  return applyMemoryHierarchy(
+    resurfacingToMemoryNotes(
+      buildResurfacingReport(entries, { entryId, limit, surface: "entry" }).notes,
+    ),
+    entries,
+    limit,
   );
 }
 
@@ -523,7 +528,11 @@ export function latestResurfacingNotes(
   limit = 1,
   surface: ResurfacingSurface = "homepage",
 ): MemoryNote[] {
-  return resurfacingToMemoryNotes(buildResurfacingReport(entries, { limit, surface }).notes);
+  return applyMemoryHierarchy(
+    resurfacingToMemoryNotes(buildResurfacingReport(entries, { limit, surface }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function homepageResurfacingNotes(

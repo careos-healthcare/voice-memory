@@ -10,6 +10,10 @@ import {
   MAX_LANDMARKS,
 } from "@/lib/patterns/note-limits";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
+import {
+  applyMemoryHierarchy,
+  pickStrongestMemoryNote,
+} from "@/lib/refinement/memory-hierarchy";
 import type { ChangeDetectionReport } from "@/types/changes";
 import type {
   ContinuityCallbackKind,
@@ -187,9 +191,11 @@ export function buildMemoryNotesReport(
     );
   }
 
-  const split = splitByCategory(all, sorted);
+  const split = splitByCategory(applyMemoryHierarchy(all, sorted, maxTotal), sorted);
   const landmarks =
-    options.includeLandmarks !== false ? landmarksToNotes(continuity, sorted) : [];
+    options.includeLandmarks !== false
+      ? applyMemoryHierarchy(landmarksToNotes(continuity, sorted), sorted, MAX_LANDMARKS)
+      : [];
 
   return {
     ...split,
@@ -216,33 +222,40 @@ export function entryMemoryNotes(
     landmarkLimit: 0,
   });
 
-  const callbacks = pickStrongestByWeight(
+  const callbacks = applyMemoryHierarchy(
     continuity.callbacks
       .map((cb) =>
         noteFromText(cb.id, cb.text, categoryForCallback(cb.kind), cb.confidence, { entryId }),
       )
       .filter((n): n is MemoryNote => n !== null),
-    (note) => weightMemoryNote(note, entries),
-    2,
+    entries,
+    1,
   );
 
-  const thenVsNow = (continuity.thenVsNowList ?? [])
-    .map((comparison) => thenVsNowToNote(comparison, entries))
-    .filter((n): n is MemoryNote => n !== null);
+  const thenVsNow = applyMemoryHierarchy(
+    (continuity.thenVsNowList ?? [])
+      .map((comparison) => thenVsNowToNote(comparison, entries))
+      .filter((n): n is MemoryNote => n !== null),
+    entries,
+    1,
+  );
 
   const changes = buildChangeReport(entries, { scope: "archive", limit: 4 });
   const top = changes.changes.find((c) => c.entryIds.includes(entryId));
-  const whatChanged = top
+  const whatChangedCandidate = top
     ? noteFromText(top.id, top.summary, "changed", top.confidence, {
         entryId,
         pastQuote: top.beforeEvidence[0]?.snippet,
         currentQuote: top.afterEvidence[0]?.snippet,
       })
     : null;
+  const whatChanged = whatChangedCandidate
+    ? pickStrongestMemoryNote([whatChangedCandidate], entries)
+    : null;
 
   return {
     primaryCallback: callbacks[0] ?? null,
-    secondaryCallback: callbacks[1] ?? null,
+    secondaryCallback: null,
     thenVsNow,
     whatChanged,
   };

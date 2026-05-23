@@ -22,6 +22,7 @@ import type {
 } from "@/types/change-moments";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const STRONG_MIN = 62;
 const ABSENCE_DAYS = 14;
@@ -371,7 +372,11 @@ export function entryChangeMomentsNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildChangeMomentsReport(entries, { context: "entry", entryId, limit });
-  return applyChangeMomentsRarity(entries, report.notes, "entry", limit);
+  return applyMemoryHierarchy(
+    applyChangeMomentsRarity(entries, report.notes, "entry", limit),
+    entries,
+    limit,
+  );
 }
 
 export function timelineChangeMomentsNotes(
@@ -379,7 +384,11 @@ export function timelineChangeMomentsNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildChangeMomentsReport(entries, { context: "timeline", limit });
-  return applyChangeMomentsRarity(entries, report.notes, "timeline", limit);
+  return applyMemoryHierarchy(
+    applyChangeMomentsRarity(entries, report.notes, "timeline", limit),
+    entries,
+    limit,
+  );
 }
 
 export function monthlyChangeMomentsNotes(
@@ -387,7 +396,11 @@ export function monthlyChangeMomentsNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildChangeMomentsReport(entries, { context: "monthly", limit });
-  return applyChangeMomentsRarity(entries, report.notes, "monthly", limit);
+  return applyMemoryHierarchy(
+    applyChangeMomentsRarity(entries, report.notes, "monthly", limit),
+    entries,
+    limit,
+  );
 }
 
 export function memoryChangeMomentsNotes(
@@ -395,5 +408,9 @@ export function memoryChangeMomentsNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildChangeMomentsReport(entries, { context: "memory", limit });
-  return applyChangeMomentsRarity(entries, report.notes, "memory", limit);
+  return applyMemoryHierarchy(
+    applyChangeMomentsRarity(entries, report.notes, "memory", limit),
+    entries,
+    limit,
+  );
 }

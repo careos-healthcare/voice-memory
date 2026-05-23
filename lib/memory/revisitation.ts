@@ -19,6 +19,7 @@ import type {
 } from "@/types/revisitation";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const OLDER_GAP_DAYS = 12;
 const LOOP_GAP_DAYS = 7;
@@ -426,7 +427,11 @@ function applyRevisitationRarity(
 
 export function homepageRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
   const report = buildRevisitationReport(entries, { context: "homepage", limit: 1 });
-  return applyRevisitationRarity(entries, report.notes, "homepage", 1);
+  return applyMemoryHierarchy(
+    applyRevisitationRarity(entries, report.notes, "homepage", 1),
+    entries,
+    1,
+  );
 }
 
 export function entryRevisitationNotes(
@@ -434,20 +439,36 @@ export function entryRevisitationNotes(
   entryId: string,
 ): MemoryNote[] {
   const report = buildRevisitationReport(entries, { context: "entry", entryId, limit: 1 });
-  return applyRevisitationRarity(entries, report.notes, "entry", 1);
+  return applyMemoryHierarchy(
+    applyRevisitationRarity(entries, report.notes, "entry", 1),
+    entries,
+    1,
+  );
 }
 
 export function timelineRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
   const report = buildRevisitationReport(entries, { context: "timeline", limit: 1 });
-  return applyRevisitationRarity(entries, report.notes, "timeline", 1);
+  return applyMemoryHierarchy(
+    applyRevisitationRarity(entries, report.notes, "timeline", 1),
+    entries,
+    1,
+  );
 }
 
 export function monthlyRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
   const report = buildRevisitationReport(entries, { context: "monthly", limit: 1 });
-  return applyRevisitationRarity(entries, report.notes, "monthly", 1);
+  return applyMemoryHierarchy(
+    applyRevisitationRarity(entries, report.notes, "monthly", 1),
+    entries,
+    1,
+  );
 }
 
 export function memoryRevisitationNotes(entries: JournalEntry[]): MemoryNote[] {
   const report = buildRevisitationReport(entries, { context: "memory", limit: 1 });
-  return applyRevisitationRarity(entries, report.notes, "memory", 1);
+  return applyMemoryHierarchy(
+    applyRevisitationRarity(entries, report.notes, "memory", 1),
+    entries,
+    1,
+  );
 }

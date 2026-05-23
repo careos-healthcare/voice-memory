@@ -10,6 +10,7 @@ import type {
 } from "@/types/familiarity";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const MIN_BASELINE_ENTRIES = 5;
 const FAMILIAR_MIN = 60;
@@ -533,7 +534,11 @@ export function familiarityToNotes(notes: FamiliarityNote[]): MemoryNote[] {
 }
 
 export function homepageFamiliarityNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return familiarityToNotes(buildFamiliarityReport(entries, { context: "homepage", limit }).notes);
+  return applyMemoryHierarchy(
+    familiarityToNotes(buildFamiliarityReport(entries, { context: "homepage", limit }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function entryFamiliarityNotes(
@@ -541,19 +546,35 @@ export function entryFamiliarityNotes(
   entryId: string,
   limit = 1,
 ): MemoryNote[] {
-  return familiarityToNotes(
-    buildFamiliarityReport(entries, { context: "entry", entryId, limit }).notes,
+  return applyMemoryHierarchy(
+    familiarityToNotes(
+      buildFamiliarityReport(entries, { context: "entry", entryId, limit }).notes,
+    ),
+    entries,
+    limit,
   );
 }
 
 export function timelineFamiliarityNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return familiarityToNotes(buildFamiliarityReport(entries, { context: "timeline", limit }).notes);
+  return applyMemoryHierarchy(
+    familiarityToNotes(buildFamiliarityReport(entries, { context: "timeline", limit }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function monthlyFamiliarityNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return familiarityToNotes(buildFamiliarityReport(entries, { context: "monthly", limit }).notes);
+  return applyMemoryHierarchy(
+    familiarityToNotes(buildFamiliarityReport(entries, { context: "monthly", limit }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function memoryFamiliarityNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return familiarityToNotes(buildFamiliarityReport(entries, { context: "memory", limit }).notes);
+  return applyMemoryHierarchy(
+    familiarityToNotes(buildFamiliarityReport(entries, { context: "memory", limit }).notes),
+    entries,
+    limit,
+  );
 }

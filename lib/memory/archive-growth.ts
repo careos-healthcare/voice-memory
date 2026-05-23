@@ -10,6 +10,7 @@ import type {
 } from "@/types/archive-growth";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const ACCUMULATION_KEY = "voicememory_archive_accumulation";
 const MIN_ENTRIES = 12;
@@ -596,11 +597,15 @@ export function homepageArchiveGrowthNotes(
   entries: JournalEntry[],
   meaningfulTiming = false,
 ): MemoryNote[] {
-  return archiveGrowthToNotes(
-    buildArchiveGrowthReport(entries, {
-      context: "homepage",
-      meaningfulTiming,
-    }).notes,
+  return applyMemoryHierarchy(
+    archiveGrowthToNotes(
+      buildArchiveGrowthReport(entries, {
+        context: "homepage",
+        meaningfulTiming,
+      }).notes,
+    ),
+    entries,
+    1,
   );
 }
 
@@ -608,11 +613,15 @@ export function monthlyArchiveGrowthNotes(
   entries: JournalEntry[],
   meaningfulTiming = false,
 ): MemoryNote[] {
-  return archiveGrowthToNotes(
-    buildArchiveGrowthReport(entries, {
-      context: "monthly",
-      meaningfulTiming,
-    }).notes,
+  return applyMemoryHierarchy(
+    archiveGrowthToNotes(
+      buildArchiveGrowthReport(entries, {
+        context: "monthly",
+        meaningfulTiming,
+      }).notes,
+    ),
+    entries,
+    1,
   );
 }
 
@@ -620,10 +629,14 @@ export function memoryArchiveGrowthNotes(
   entries: JournalEntry[],
   meaningfulTiming = false,
 ): MemoryNote[] {
-  return archiveGrowthToNotes(
-    buildArchiveGrowthReport(entries, {
-      context: "memory",
-      meaningfulTiming,
-    }).notes,
+  return applyMemoryHierarchy(
+    archiveGrowthToNotes(
+      buildArchiveGrowthReport(entries, {
+        context: "memory",
+        meaningfulTiming,
+      }).notes,
+    ),
+    entries,
+    1,
   );
 }

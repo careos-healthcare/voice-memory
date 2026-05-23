@@ -12,6 +12,7 @@ import type {
   RelationshipContinuityReport,
 } from "@/types/relationship-continuity";
 import type { JournalEntry } from "@/types/journal";
+import { applyRelationshipHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const MIN_ENTRIES = 3;
 const MIN_ENTITY_MENTIONS = 2;
@@ -501,7 +502,11 @@ export function memoryRelationshipNotes(
   entries: JournalEntry[],
   limit = 4,
 ): RelationshipContinuityNote[] {
-  return buildRelationshipContinuityReport(entries, { context: "memory", limit }).notes;
+  return applyRelationshipHierarchy(
+    buildRelationshipContinuityReport(entries, { context: "memory", limit }).notes,
+    entries,
+    limit,
+  );
 }
 
 export function threadsRelationshipNotes(
@@ -516,9 +521,13 @@ export function entryRelationshipNotes(
   entryId: string,
   limit = 2,
 ): RelationshipContinuityNote[] {
-  return buildRelationshipContinuityReport(entries, {
-    context: "entry",
-    entryId,
+  return applyRelationshipHierarchy(
+    buildRelationshipContinuityReport(entries, {
+      context: "entry",
+      entryId,
+      limit,
+    }).notes,
+    entries,
     limit,
-  }).notes;
+  );
 }

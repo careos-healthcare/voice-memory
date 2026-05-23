@@ -9,6 +9,7 @@ import type {
   MemoryReminderReport,
 } from "@/types/memory-reminder";
 import type { JournalEntry } from "@/types/journal";
+import { applyReminderHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const REMINDER_KEY = "voicememory_memory_reminders";
 const MIN_ENTRIES = 3;
@@ -481,7 +482,9 @@ export function buildMemoryRemindersReport(
 }
 
 export function homepageMemoryReminder(entries: JournalEntry[]): MemoryReminder | null {
-  return buildMemoryRemindersReport(entries, { context: "homepage", limit: 1 }).reminders[0] ?? null;
+  const reminder =
+    buildMemoryRemindersReport(entries, { context: "homepage", limit: 1 }).reminders[0] ?? null;
+  return applyReminderHierarchy(reminder, entries);
 }
 
 export function listMemoryReminders(

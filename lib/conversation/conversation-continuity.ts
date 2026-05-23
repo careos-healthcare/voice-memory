@@ -1,5 +1,6 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
+import { applyMemoryHierarchy, pickStrongestMemoryNote } from "@/lib/refinement/memory-hierarchy";
 import { formatRelativeDate } from "@/lib/utils";
 import type {
   ConversationContinuityContext,
@@ -635,22 +636,28 @@ export function homepageContinuationNotes(
   entries: JournalEntry[],
   limit = 1,
 ): MemoryNote[] {
-  return conversationContinuityToNotes(
-    buildConversationContinuityReport(entries, { context: "homepage" }).notes,
-  ).slice(0, limit);
+  return applyMemoryHierarchy(
+    conversationContinuityToNotes(
+      buildConversationContinuityReport(entries, { context: "homepage" }).notes,
+    ),
+    entries,
+    limit,
+  );
 }
 
 export function entryContinuationOpener(
   entries: JournalEntry[],
   entryId: string,
 ): MemoryNote | null {
-  const notes = conversationContinuityToNotes(
-    buildConversationContinuityReport(entries, {
-      context: "entry",
-      entryId,
-    }).notes,
+  return pickStrongestMemoryNote(
+    conversationContinuityToNotes(
+      buildConversationContinuityReport(entries, {
+        context: "entry",
+        entryId,
+      }).notes,
+    ),
+    entries,
   );
-  return notes[0] ?? null;
 }
 
 /** Optional quiet line before recording — call only when homepage continuation is empty. */

@@ -19,6 +19,7 @@ import type {
 } from "@/types/familiarity-resurfacing";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const MIN_ENTRIES = 4;
 const STRONG_MIN = 62;
@@ -560,7 +561,11 @@ export function homepageFamiliarityResurfacingNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildFamiliarityResurfacingReport(entries, { context: "homepage", limit });
-  return applyFamiliarityResurfacingRarity(entries, report.notes, "homepage", limit);
+  return applyMemoryHierarchy(
+    applyFamiliarityResurfacingRarity(entries, report.notes, "homepage", limit),
+    entries,
+    limit,
+  );
 }
 
 export function entryFamiliarityResurfacingNotes(
@@ -569,7 +574,11 @@ export function entryFamiliarityResurfacingNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildFamiliarityResurfacingReport(entries, { context: "entry", entryId, limit });
-  return applyFamiliarityResurfacingRarity(entries, report.notes, "entry", limit);
+  return applyMemoryHierarchy(
+    applyFamiliarityResurfacingRarity(entries, report.notes, "entry", limit),
+    entries,
+    limit,
+  );
 }
 
 export function timelineFamiliarityResurfacingNotes(
@@ -577,7 +586,11 @@ export function timelineFamiliarityResurfacingNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildFamiliarityResurfacingReport(entries, { context: "timeline", limit });
-  return applyFamiliarityResurfacingRarity(entries, report.notes, "timeline", limit);
+  return applyMemoryHierarchy(
+    applyFamiliarityResurfacingRarity(entries, report.notes, "timeline", limit),
+    entries,
+    limit,
+  );
 }
 
 export function monthlyFamiliarityResurfacingNotes(
@@ -585,7 +598,11 @@ export function monthlyFamiliarityResurfacingNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildFamiliarityResurfacingReport(entries, { context: "monthly", limit });
-  return applyFamiliarityResurfacingRarity(entries, report.notes, "monthly", limit);
+  return applyMemoryHierarchy(
+    applyFamiliarityResurfacingRarity(entries, report.notes, "monthly", limit),
+    entries,
+    limit,
+  );
 }
 
 export function memoryFamiliarityResurfacingNotes(
@@ -593,5 +610,9 @@ export function memoryFamiliarityResurfacingNotes(
   limit = 1,
 ): MemoryNote[] {
   const report = buildFamiliarityResurfacingReport(entries, { context: "memory", limit });
-  return applyFamiliarityResurfacingRarity(entries, report.notes, "memory", limit);
+  return applyMemoryHierarchy(
+    applyFamiliarityResurfacingRarity(entries, report.notes, "memory", limit),
+    entries,
+    limit,
+  );
 }

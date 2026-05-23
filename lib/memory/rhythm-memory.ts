@@ -10,6 +10,7 @@ import type {
 } from "@/types/rhythm-memory";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const MIN_ENTRIES = 6;
 const RHYTHM_MIN = 60;
@@ -549,17 +550,33 @@ export function rhythmToNotes(notes: RhythmNote[]): MemoryNote[] {
 }
 
 export function homepageRhythmNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return rhythmToNotes(buildRhythmReport(entries, { context: "homepage", limit }).notes);
+  return applyMemoryHierarchy(
+    rhythmToNotes(buildRhythmReport(entries, { context: "homepage", limit }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function timelineRhythmNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return rhythmToNotes(buildRhythmReport(entries, { context: "timeline", limit }).notes);
+  return applyMemoryHierarchy(
+    rhythmToNotes(buildRhythmReport(entries, { context: "timeline", limit }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function monthlyRhythmNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return rhythmToNotes(buildRhythmReport(entries, { context: "monthly", limit }).notes);
+  return applyMemoryHierarchy(
+    rhythmToNotes(buildRhythmReport(entries, { context: "monthly", limit }).notes),
+    entries,
+    limit,
+  );
 }
 
 export function memoryRhythmNotes(entries: JournalEntry[], limit = 1): MemoryNote[] {
-  return rhythmToNotes(buildRhythmReport(entries, { context: "memory", limit }).notes);
+  return applyMemoryHierarchy(
+    rhythmToNotes(buildRhythmReport(entries, { context: "memory", limit }).notes),
+    entries,
+    limit,
+  );
 }
