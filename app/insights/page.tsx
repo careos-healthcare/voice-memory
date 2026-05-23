@@ -27,6 +27,7 @@ import { ContradictionContinuityCard } from "@/components/patterns/Contradiction
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
 import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
@@ -38,6 +39,10 @@ import {
   getEmotionalCycleInsights,
   type EvolutionInsight,
 } from "@/lib/patterns/emotional-evolution";
+import {
+  buildPatternEngineReport,
+  type PatternInsight,
+} from "@/lib/patterns/pattern-engine";
 import { getAllEntries } from "@/lib/storage";
 
 function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTrend"] }) {
@@ -84,6 +89,7 @@ export default function InsightsPage() {
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
   const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
+  const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -93,6 +99,7 @@ export default function InsightsPage() {
       setPhrases(getTopPhrases(entries, 10));
       setAvoidanceSignals(detectAllAvoidanceSignals(entries));
       setCycleInsights(getEmotionalCycleInsights(entries));
+      setPatternInsights(buildPatternEngineReport(entries, { scope: "archive", limit: 10 }).insights);
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -157,6 +164,14 @@ export default function InsightsPage() {
             </>
           ) : (
             <>
+              <PatternInsightCard
+                insights={patternInsights}
+                title="Top pattern insights"
+                subtitle="Ranked by specificity, recurrence, cross-entry evidence, and usefulness"
+                maxItems={10}
+                showScores
+              />
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <Card>
                   <CardHeader className="pb-2">

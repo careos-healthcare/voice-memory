@@ -448,8 +448,9 @@ function buildMentionHighlights(entities: TrackedEntity[]): MentionHighlight[] {
     }));
 }
 
-export function buildEntityMemory(): EntityMemorySnapshot {
-  const entries = getEntries();
+export function buildEntityMemoryFromEntries(
+  entries: JournalEntry[],
+): EntityMemorySnapshot {
   const mentions = collectMentions(entries);
   const all = aggregateMentions(mentions);
 
@@ -477,6 +478,10 @@ export function buildEntityMemory(): EntityMemorySnapshot {
     totalEntities: all.length,
     hasData: entries.length > 0,
   };
+}
+
+export function buildEntityMemory(): EntityMemorySnapshot {
+  return buildEntityMemoryFromEntries(getEntries());
 }
 
 export function formatEntityTypeLabel(type: EntityType): string {

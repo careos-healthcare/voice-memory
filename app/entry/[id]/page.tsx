@@ -13,6 +13,7 @@ import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
+import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +21,7 @@ import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
 import { detectAvoidanceForEntry } from "@/lib/patterns/avoidance";
 import { getPhrasesForEntry } from "@/lib/patterns/phrase-memory";
+import { getPatternInsights, type PatternInsight } from "@/lib/patterns/pattern-engine";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
@@ -48,6 +50,11 @@ export default function EntryPage() {
   const relatedAvoidance = useMemo(() => {
     if (!entry) return [];
     return detectAvoidanceForEntry(getAllEntries(), entry.id);
+  }, [entry]);
+
+  const entryPatternInsights = useMemo(() => {
+    if (!entry) return [];
+    return getPatternInsights(getAllEntries(), "entry", entry.id, 8);
   }, [entry]);
 
   const handleDelete = () => {
@@ -132,6 +139,16 @@ export default function EntryPage() {
               showContradictionCard={false}
               showPhraseCard={false}
               showAvoidanceCard={false}
+            />
+
+            <PatternInsightCard
+              insights={entryPatternInsights}
+              title="Pattern insights for this reflection"
+              subtitle="Ranked signals tied to this entry across your archive"
+              maxItems={8}
+              highlightEntryId={entry.id}
+              hideWhenEmpty
+              className="mt-6"
             />
 
             <ContradictionContinuityCard

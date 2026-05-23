@@ -11,6 +11,7 @@ import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
+import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,11 +22,16 @@ import {
 } from "@/lib/entity-memory";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
+import {
+  buildPatternEngineReport,
+  type PatternInsight,
+} from "@/lib/patterns/pattern-engine";
 import { getAllEntries } from "@/lib/storage";
 
 export default function MemoryPage() {
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
+  const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -33,6 +39,7 @@ export default function MemoryPage() {
       const entries = getAllEntries();
       setSnapshot(buildEntityMemory());
       setPhrases(getTopPhrases(entries, 8));
+      setPatternInsights(buildPatternEngineReport(entries, { scope: "memory", limit: 8 }).insights);
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -100,6 +107,12 @@ export default function MemoryPage() {
             </>
           ) : snapshot.totalEntities === 0 ? (
             <>
+              <PatternInsightCard
+                insights={patternInsights}
+                title="Memory pattern insights"
+                subtitle="Entities, recurring themes, phrases, and indirect language — ranked by evidence"
+                maxItems={8}
+              />
               <PhraseMemoryCard
                 phrases={phrases}
                 title="Words you keep returning to"
@@ -156,6 +169,13 @@ export default function MemoryPage() {
                   </CardContent>
                 </Card>
               ) : null}
+
+              <PatternInsightCard
+                insights={patternInsights}
+                title="Memory pattern insights"
+                subtitle="Entities, recurring themes, phrases, and indirect language — ranked by evidence"
+                maxItems={8}
+              />
 
               <PhraseMemoryCard
                 phrases={phrases}

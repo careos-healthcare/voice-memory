@@ -37,6 +37,7 @@ import {
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { detectRecentContradictions } from "@/lib/patterns/contradictions";
 import type { Contradiction } from "@/lib/patterns/contradictions";
 import {
@@ -47,6 +48,10 @@ import {
   buildWeeklyEvolutionComparison,
   type WeeklyEvolutionComparison,
 } from "@/lib/patterns/emotional-evolution";
+import {
+  buildPatternEngineReport,
+  type PatternInsight,
+} from "@/lib/patterns/pattern-engine";
 import { getAllEntries } from "@/lib/storage";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
@@ -66,6 +71,7 @@ export default function WeeklyPage() {
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
   const [weekEvolution, setWeekEvolution] = useState<WeeklyEvolutionComparison | null>(null);
+  const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
@@ -75,6 +81,7 @@ export default function WeeklyPage() {
       setContradictions(detectRecentContradictions(entries, 7));
       setAvoidanceSignals(detectRecentAvoidanceSignals(entries, 7));
       setWeekEvolution(buildWeeklyEvolutionComparison(entries));
+      setPatternInsights(buildPatternEngineReport(entries, { scope: "weekly", limit: 8 }).insights);
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -184,6 +191,13 @@ export default function WeeklyPage() {
                   />
                 </div>
               </div>
+
+              <PatternInsightCard
+                insights={patternInsights}
+                title="This week's pattern insights"
+                subtitle="Ranked signals from the last 7 days — contradictions, phrases, cycles, and shifts"
+                maxItems={8}
+              />
 
               <Card
                 className={
