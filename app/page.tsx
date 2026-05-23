@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
+import { MemoryReminderNote } from "@/components/memory/MemoryReminderNote";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
@@ -19,6 +20,7 @@ import {
   buildFollowupPrompt,
   consumeStoredFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import { homepageMemoryReminder } from "@/lib/memory/memory-reminders";
 import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -38,6 +40,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
+import type { MemoryReminder } from "@/types/memory-reminder";
 
 export default function HomePage() {
   const { limits } = useQuietMode();
@@ -51,6 +54,7 @@ export default function HomePage() {
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
+  const [memoryReminder, setMemoryReminder] = useState<MemoryReminder | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,6 +84,7 @@ export default function HomePage() {
       setArchiveGrowth(
         homepageArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
+      setMemoryReminder(homepageMemoryReminder(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -148,6 +153,7 @@ export default function HomePage() {
         <div className="mt-6 space-y-10 py-2">
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
+          <MemoryReminderNote reminder={memoryReminder} />
           <ContinuationNotes notes={continuation} max={limits.continuation} />
           <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
           <FamiliarityNotes notes={familiarity} max={limits.familiarity} />

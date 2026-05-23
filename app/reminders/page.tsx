@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Bell, BellOff, Smartphone } from "lucide-react";
 
+import { MemoryReminderList } from "@/components/memory/MemoryReminderNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,11 +15,17 @@ import {
   REMINDER_COPY_EXAMPLES,
 } from "@/lib/contextual-reminders";
 import {
+  listMemoryReminders,
+  MEMORY_REMINDER_COPY_EXAMPLES,
+} from "@/lib/memory/memory-reminders";
+import {
   DEFAULT_REMINDER_PREFERENCES,
   getReminderPreferences,
   saveReminderPreferences,
   type ReminderPreferences,
 } from "@/lib/reminder-preferences";
+import { getAllEntries } from "@/lib/storage";
+import type { MemoryReminder } from "@/types/memory-reminder";
 
 function ToggleRow({
   label,
@@ -55,12 +62,14 @@ export default function RemindersPage() {
   );
   const [loaded, setLoaded] = useState(false);
   const [previewCount, setPreviewCount] = useState(0);
+  const [memoryReminders, setMemoryReminders] = useState<MemoryReminder[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const current = getReminderPreferences();
       setPrefs(current);
       setPreviewCount(evaluateContextualReminders(current).length);
+      setMemoryReminders(listMemoryReminders(getAllEntries(), 4));
       setLoaded(true);
     });
     return () => cancelAnimationFrame(id);
@@ -191,6 +200,40 @@ export default function RemindersPage() {
                 </Button>
               </CardContent>
             </Card>
+
+            <section className="space-y-4">
+              <div>
+                <h2 className="text-sm font-medium text-white">Memory reminders</h2>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-500">
+                  Sparse nudges from your archive — not daily prompts. Shown on the homepage
+                  when a pattern is strong enough.
+                </p>
+              </div>
+
+              {memoryReminders.length === 0 ? (
+                <p className="text-sm text-zinc-500">
+                  No memory reminders match your archive right now.
+                </p>
+              ) : (
+                <MemoryReminderList reminders={memoryReminders} />
+              )}
+
+              <ul className="mt-4 space-y-3">
+                {MEMORY_REMINDER_COPY_EXAMPLES.map((example) => (
+                  <li
+                    key={example.kind}
+                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"
+                  >
+                    <p className="text-sm font-medium text-zinc-300">
+                      &ldquo;{example.message}&rdquo;
+                    </p>
+                    <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+                      {example.whenShown}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
             <section>
               <h2 className="text-sm font-medium text-white">Example copy</h2>

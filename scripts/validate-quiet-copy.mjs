@@ -36,6 +36,7 @@ const SKIP_PATH_PARTS = [
   "lib/conversation/conversation-continuity.ts",
   "lib/conversation/followup-prompts.ts",
   "lib/conversation/voice-playback-continuity.ts",
+  "lib/memory/memory-reminders.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",
