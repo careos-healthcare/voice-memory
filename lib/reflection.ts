@@ -1,5 +1,8 @@
 import type { Reflection } from "@/types/journal";
-import { getPrimaryObservation } from "@/lib/observation-language";
+import {
+  buildPatternObservationsFromAnalysis,
+  getPrimaryObservation,
+} from "@/lib/observation-language";
 
 /** Normalize reflections loaded from localStorage (legacy entries may omit new fields). */
 export function normalizeReflection(
@@ -11,7 +14,7 @@ export function normalizeReflection(
 
   const intensity = Number(raw.emotionalIntensity);
 
-  return {
+  const normalized: Reflection = {
     mood: String(raw.mood ?? "").trim(),
     emotionalIntensity: Math.min(
       10,
@@ -24,6 +27,8 @@ export function normalizeReflection(
     exactLanguagePattern: optionalString(raw.exactLanguagePattern),
     concreteObservation: optionalString(raw.concreteObservation),
     repeatedSignal: optionalString(raw.repeatedSignal),
+    tensionOrContradiction: optionalString(raw.tensionOrContradiction),
+    avoidedOrVagueArea: optionalString(raw.avoidedOrVagueArea),
     nextSmallAction: optionalString(raw.nextSmallAction),
     patternObservations: Array.isArray(raw.patternObservations)
       ? raw.patternObservations
@@ -33,6 +38,17 @@ export function normalizeReflection(
           .slice(0, 6)
       : undefined,
   };
+
+  if (normalized.patternObservations && normalized.patternObservations.length > 0) {
+    return normalized;
+  }
+
+  const derived = buildPatternObservationsFromAnalysis(normalized);
+  if (derived.length > 0) {
+    return { ...normalized, patternObservations: derived };
+  }
+
+  return normalized;
 }
 
 function optionalString(value: unknown): string | undefined {
@@ -55,7 +71,9 @@ export function getSpecificReflectionView(
   const hasNew =
     Boolean(reflection.exactLanguagePattern) ||
     Boolean(reflection.concreteObservation) ||
+    Boolean(reflection.tensionOrContradiction) ||
     Boolean(reflection.repeatedSignal) ||
+    Boolean(reflection.avoidedOrVagueArea) ||
     Boolean(reflection.nextSmallAction);
 
   return {
@@ -68,9 +86,7 @@ export function getSpecificReflectionView(
       (reflection.recurringThemes.length > 0
         ? `Themes noted: ${reflection.recurringThemes.join(", ")}`
         : null),
-    nextSmallAction:
-      reflection.nextSmallAction?.trim() ||
-      "",
+    nextSmallAction: reflection.nextSmallAction?.trim() || "",
     isLegacyFormat: !hasNew,
   };
 }
@@ -85,7 +101,9 @@ export function hasEnhancedReflection(reflection: Reflection): boolean {
   return Boolean(
     reflection.exactLanguagePattern ||
       reflection.concreteObservation ||
+      reflection.tensionOrContradiction ||
       reflection.repeatedSignal ||
+      reflection.avoidedOrVagueArea ||
       reflection.nextSmallAction,
   );
 }

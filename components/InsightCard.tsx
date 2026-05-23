@@ -10,13 +10,13 @@ import {
   Shield,
   Sparkles,
   TrendingUp,
-  Waves,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { buildEntryPatternInsights } from "@/lib/pattern-detection";
+import { getStructuredAnalysis } from "@/lib/observation-language";
 import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
 import { getAllEntries } from "@/lib/storage";
 import type { EntryPatternInsights } from "@/types/pattern-insights";
@@ -124,10 +124,14 @@ export function InsightCard({
 
   const intensityPercent = reflection.emotionalIntensity * 10;
 
+  const mirrorRead = getStructuredAnalysis(reflection);
+
   const observations =
     patternInsights?.observations.length
       ? patternInsights.observations
-      : reflection.patternObservations ?? [];
+      : mirrorRead.length > 0
+        ? mirrorRead.map((row) => row.detail)
+        : reflection.patternObservations ?? [];
 
   return (
     <motion.div
@@ -138,7 +142,26 @@ export function InsightCard({
     >
       <SafetyNotice />
 
-      {observations.length > 0 && !hideObservations ? (
+      {mirrorRead.length > 0 && !hideObservations ? (
+        <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
+          <CardHeader className="pb-2">
+            <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
+              Reflective mirror
+            </p>
+            <CardTitle className="text-lg">What your words show</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {mirrorRead.map((row) => (
+              <div key={row.key}>
+                <p className="text-[10px] uppercase tracking-wider text-zinc-500">
+                  {row.label}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-zinc-200">{row.detail}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ) : observations.length > 0 && !hideObservations ? (
         <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
           <CardHeader className="pb-2">
             <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
@@ -219,65 +242,49 @@ export function InsightCard({
         />
       ) : null}
 
-      {reflection.exactLanguagePattern ? (
-        <Card className="border-white/10 bg-white/[0.02]">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <Waves className="h-4 w-4 text-violet-300" />
-              <CardTitle className="text-base">Exact language</CardTitle>
+      {!hideMoodSummary ? (
+        <Card>
+          <CardHeader className="pb-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
+                  Mood snapshot
+                </p>
+                <CardTitle className="mt-2 text-2xl capitalize">
+                  {reflection.mood}
+                </CardTitle>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-right">
+                <p className="text-xs text-zinc-400">Intensity</p>
+                <p className="text-2xl font-semibold text-white">
+                  {reflection.emotionalIntensity}
+                  <span className="text-sm font-normal text-zinc-500">/10</span>
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${intensityPercent}%` }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"
+              />
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm italic leading-relaxed text-zinc-300">
-              &ldquo;{reflection.exactLanguagePattern}&rdquo;
-            </p>
+            <div className="flex flex-wrap gap-2">
+              {reflection.recurringThemes.length > 0 ? (
+                reflection.recurringThemes.map((theme) => (
+                  <Badge key={theme} variant="default">
+                    {theme}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm text-zinc-500">No themes tagged</span>
+              )}
+            </div>
           </CardContent>
         </Card>
-      ) : null}
-
-      {!hideMoodSummary ? (
-      <Card className="overflow-hidden border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
-        <CardHeader className="pb-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Mood snapshot
-              </p>
-              <CardTitle className="mt-2 text-2xl capitalize">
-                {reflection.mood}
-              </CardTitle>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-right">
-              <p className="text-xs text-zinc-400">Intensity</p>
-              <p className="text-2xl font-semibold text-white">
-                {reflection.emotionalIntensity}
-                <span className="text-sm font-normal text-zinc-500">/10</span>
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${intensityPercent}%` }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {reflection.recurringThemes.length > 0 ? (
-              reflection.recurringThemes.map((theme) => (
-                <Badge key={theme} variant="default">
-                  {theme}
-                </Badge>
-              ))
-            ) : (
-              <span className="text-sm text-zinc-500">No themes tagged</span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
       ) : null}
 
       {showTranscript && transcript ? (

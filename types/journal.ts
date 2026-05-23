@@ -14,6 +14,10 @@ export interface Reflection {
   concreteObservation?: string;
   /** Pattern that showed up more than once in this entry. */
   repeatedSignal?: string;
+  /** Tension or contradiction within this entry's language. */
+  tensionOrContradiction?: string;
+  /** Topic circled without direct naming — vague or indirect phrasing. */
+  avoidedOrVagueArea?: string;
   /** Legacy action field — de-emphasized in UI. */
   nextSmallAction?: string;
   /** Observation-style statements: "You repeatedly…", "You tend to…" */
