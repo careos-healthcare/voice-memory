@@ -2,10 +2,36 @@ import { readLocalEvents } from "@/lib/local-analytics";
 import { getAllBookmarks, getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { formatEntryDate } from "@/lib/utils";
 import { getEntry } from "@/lib/storage";
-import type { CallbackInteractionSignals } from "@/types/callback-quality-review";
+import type { CallbackInteractionSignals, CallbackRetentionSummary } from "@/types/callback-quality-review";
 
 const INTERACTION_KEY = "voicememory_callback_interactions";
 const FOLLOWUP_KEY = "voicememory_followup_continuations";
+const RETENTION_KEY = "voicememory_callback_retention";
+
+export type CallbackRetentionOutcome =
+  | "surfaced"
+  | "ignored"
+  | "reread"
+  | "revisit"
+  | "recording"
+  | "bookmark"
+  | "copied";
+
+interface CallbackRetentionRecord {
+  callbackId: string;
+  outcome: CallbackRetentionOutcome;
+  at: string;
+}
+
+interface InteractionStore {
+  entries: EntryInteractionRecord[];
+  followups: Array<{ noteId: string; continuedAt: string }>;
+  retention: CallbackRetentionRecord[];
+}
+
+function isBrowser(): boolean {
+  return typeof window !== "undefined";
+}
 
 interface EntryInteractionRecord {
   entryId: string;
@@ -14,27 +40,19 @@ interface EntryInteractionRecord {
   lastViewedAt: string;
 }
 
-interface InteractionStore {
-  entries: EntryInteractionRecord[];
-  followups: Array<{ noteId: string; continuedAt: string }>;
-}
-
-function isBrowser(): boolean {
-  return typeof window !== "undefined";
-}
-
 function readStore(): InteractionStore {
-  if (!isBrowser()) return { entries: [], followups: [] };
+  if (!isBrowser()) return { entries: [], followups: [], retention: [] };
   try {
     const raw = localStorage.getItem(INTERACTION_KEY);
-    if (!raw) return { entries: [], followups: [] };
+    if (!raw) return { entries: [], followups: [], retention: [] };
     const parsed = JSON.parse(raw) as Partial<InteractionStore>;
     return {
       entries: Array.isArray(parsed.entries) ? parsed.entries : [],
       followups: Array.isArray(parsed.followups) ? parsed.followups : [],
+      retention: Array.isArray(parsed.retention) ? parsed.retention : [],
     };
   } catch {
-    return { entries: [], followups: [] };
+    return { entries: [], followups: [], retention: [] };
   }
 }
 
@@ -45,6 +63,7 @@ function writeStore(store: InteractionStore): void {
     JSON.stringify({
       entries: store.entries.slice(-400),
       followups: store.followups.slice(-200),
+      retention: store.retention.slice(-600),
     }),
   );
 }
@@ -85,6 +104,49 @@ export function recordFollowupContinued(noteId: string): void {
   const store = readStore();
   store.followups.push({ noteId, continuedAt: new Date().toISOString() });
   writeStore(store);
+}
+
+function pushRetention(callbackId: string, outcome: CallbackRetentionOutcome): void {
+  if (!isBrowser()) return;
+  const store = readStore();
+  store.retention.push({ callbackId, outcome, at: new Date().toISOString() });
+  writeStore(store);
+}
+
+export function recordCallbackSurfaced(callbackId: string): void {
+  pushRetention(callbackId, "surfaced");
+}
+
+export function recordCallbackIgnored(callbackId: string): void {
+  pushRetention(callbackId, "ignored");
+}
+
+export function recordRecordingAfterCallback(callbackId: string): void {
+  pushRetention(callbackId, "recording");
+}
+
+export function readCallbackRetention(callbackId: string): CallbackRetentionRecord[] {
+  return readStore().retention.filter((row) => row.callbackId === callbackId);
+}
+
+export function summarizeCallbackRetention(
+  callbackId: string,
+  entryIds: string[] = [],
+): CallbackRetentionSummary {
+  const records = readCallbackRetention(callbackId);
+  const signals = callbackInteractionSignals(callbackId, entryIds);
+  const count = (outcome: CallbackRetentionOutcome) =>
+    records.filter((row) => row.outcome === outcome).length;
+
+  return {
+    surfaced: count("surfaced"),
+    ignored: count("ignored"),
+    reread: Math.max(count("reread"), signals.rereadCount),
+    revisit: Math.max(count("revisit"), signals.revisitCount),
+    recording: count("recording"),
+    bookmark: Math.max(count("bookmark"), signals.bookmarked ? 1 : 0),
+    copied: Math.max(count("copied"), signals.memoryMomentCopied ? 1 : 0),
+  };
 }
 
 export function clearCallbackInteractionSignals(): void {

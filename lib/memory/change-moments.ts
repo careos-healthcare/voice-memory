@@ -101,7 +101,7 @@ function detectLanguageShifts(
       pushCandidate(notes, {
         id: `change-hedge-${themeKey}-${current.id}`,
         kind: "less_hedging",
-        text: "You named this more directly than before.",
+        text: "Named this more directly.",
         strength: 64 + shift.hedgeDelta * 3,
         ...ev,
       });
@@ -111,7 +111,7 @@ function detectLanguageShifts(
       pushCandidate(notes, {
         id: `change-direct-${themeKey}-${current.id}`,
         kind: "more_direct",
-        text: "You named this more directly than before.",
+        text: "Named this more directly.",
         strength: 63 + shift.directDelta * 3,
         ...ev,
       });
@@ -122,7 +122,7 @@ function detectLanguageShifts(
       pushCandidate(notes, {
         id: `change-charged-${themeKey}-${current.id}`,
         kind: "less_charged",
-        text: "This used to carry more pressure.",
+        text: "Less pressure before.",
         strength: 65 + Math.round(trend.delta * 3),
         pastQuote: snippet(trend.peakEntry),
         currentQuote: snippet(current),
@@ -139,7 +139,7 @@ function detectLanguageShifts(
       pushCandidate(notes, {
         id: `change-future-${themeKey}-${current.id}`,
         kind: "future_forward",
-        text: "You sound different here.",
+        text: "Different here.",
         strength: 62 + nowFuture * 2,
         ...ev,
       });
@@ -177,7 +177,7 @@ function detectAbsentConcerns(allSorted: JournalEntry[]): ChangeMomentNote[] {
     pushCandidate(notes, {
       id: `change-absent-${themeKey}`,
       kind: "concern_absent",
-      text: "This concern has been absent lately.",
+      text: "Absent lately.",
       strength: 63 + Math.min(gap, 12) + hits.length,
       pastQuote: snippet(last),
       currentQuote: snippet(latest),
@@ -212,7 +212,7 @@ function detectPhraseDisappeared(allSorted: JournalEntry[]): ChangeMomentNote[] 
     pushCandidate(notes, {
       id: `change-phrase-gone-${record.phrase}`,
       kind: "phrase_disappeared",
-      text: "This concern has been absent lately.",
+      text: "Absent lately.",
       strength: 62 + Math.min(record.count, 5) + Math.min(gap, 8),
       pastQuote: snippet(priorEntry),
       currentQuote: snippet(latest),

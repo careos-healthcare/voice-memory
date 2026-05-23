@@ -23,12 +23,12 @@ const SOURCE_PRIORITY: Record<FollowupSource, number> = {
 };
 
 const DEFAULT_PROMPTS: Record<FollowupSource, string> = {
-  then_vs_now: "What changed between then and now?",
+  then_vs_now: "What changed?",
   recovery: "What feels different now?",
-  continuity: "Do you want to say more about this?",
-  resurfacing: "Does this still feel true?",
+  continuity: "Say more?",
+  resurfacing: "Still true?",
   familiarity_resurfacing: "What feels different now?",
-  revisitation: "Did this resolve or return?",
+  revisitation: "Resolved or returned?",
 };
 
 function isRecoveryNote(note: MemoryNote): boolean {
@@ -74,7 +74,7 @@ function promptForSource(note: MemoryNote, source: FollowupSource): string {
   const text = note.text.toLowerCase();
 
   if (source === "then_vs_now" || (note.pastQuote && note.currentQuote)) {
-    return "What changed between then and now?";
+    return "What changed?";
   }
 
   if (
@@ -82,12 +82,12 @@ function promptForSource(note: MemoryNote, source: FollowupSource): string {
     /\b(continuation|came back|returned|unresolved|left this)\b/i.test(text)
   ) {
     if (/\b(unresolved|left this)\b/i.test(text)) {
-      return "Did this resolve or return?";
+      return "Resolved or returned?";
     }
     if (/\b(different|changed|differently)\b/i.test(text)) {
       return "What feels different now?";
     }
-    return "Do you want to say more about this?";
+    return "Say more?";
   }
 
   if (source === "recovery" || /\b(calmer|quieter|recovery|resolved)\b/i.test(text)) {
@@ -95,7 +95,7 @@ function promptForSource(note: MemoryNote, source: FollowupSource): string {
   }
 
   if (/\b(return|came back|again|revisit)\b/i.test(text)) {
-    return "Did this resolve or return?";
+    return "Resolved or returned?";
   }
 
   if (/\b(different|changed|read differently|sound different)\b/i.test(text)) {
@@ -103,7 +103,7 @@ function promptForSource(note: MemoryNote, source: FollowupSource): string {
   }
 
   if (/\b(familiar|before|then|now|older)\b/i.test(text)) {
-    return "Does this still feel true?";
+    return "Still true?";
   }
 
   return DEFAULT_PROMPTS[source];
@@ -141,7 +141,7 @@ export function buildFollowupPrompt(notes: MemoryNote[]): FollowupPrompt | null 
   const best = [...candidates].sort((a, b) => scoreCandidate(b) - scoreCandidate(a))[0];
   const text = promptForSource(best.note, best.source).trim();
 
-  if (text.length < 12 || BANNED_PROMPT_RE.test(text)) return null;
+  if (text.length < 8 || BANNED_PROMPT_RE.test(text)) return null;
 
   return {
     id: `followup-${best.source}-${best.note.id}`,

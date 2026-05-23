@@ -43,10 +43,10 @@ interface ReminderState {
 }
 
 const COPY: Record<MemoryReminderKind, string> = {
-  old_reflection_revisit: "An older reflection may feel different now.",
-  topic_absent: "This has been quiet for a while.",
-  resurfaced_loop: "This came back softly.",
-  calmer_return: "This came back softly.",
+  old_reflection_revisit: "This feels different now.",
+  topic_absent: "Quiet for a while.",
+  resurfaced_loop: "Came back softly.",
+  calmer_return: "Came back softly.",
 };
 
 const KIND_PRIORITY: MemoryReminderKind[] = [

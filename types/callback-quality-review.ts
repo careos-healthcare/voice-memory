@@ -25,7 +25,9 @@ export type CallbackReviewLabel =
   | "invasive"
   | "cold"
   | "comforting"
-  | "worth_revisiting";
+  | "worth_revisiting"
+  | "high_emotional_residue"
+  | "forgettable";
 
 export type RewriteCandidateFlag =
   | "generic_wording"
@@ -34,6 +36,16 @@ export type RewriteCandidateFlag =
   | "lacks_specificity"
   | "lacks_emotional_contrast"
   | "could_apply_to_many";
+
+export interface CallbackRetentionSummary {
+  surfaced: number;
+  ignored: number;
+  reread: number;
+  revisit: number;
+  recording: number;
+  bookmark: number;
+  copied: number;
+}
 
 export interface CallbackInteractionSignals {
   rereadCount: number;
@@ -67,6 +79,7 @@ export interface CallbackReviewItem {
   confidence: number;
   rewriteFlags: RewriteCandidateFlag[];
   signals: CallbackInteractionSignals;
+  retention: CallbackRetentionSummary;
   followupNoteId?: string;
   followupPrompt?: string;
   continuedFollowup: boolean;
@@ -93,6 +106,8 @@ export const CALLBACK_REVIEW_LABELS: Array<{
   { value: "cold", label: "Cold" },
   { value: "comforting", label: "Comforting" },
   { value: "worth_revisiting", label: "Worth revisiting" },
+  { value: "high_emotional_residue", label: "High emotional residue" },
+  { value: "forgettable", label: "Forgettable" },
 ];
 
 export const REWRITE_FLAG_LABELS: Record<RewriteCandidateFlag, string> = {

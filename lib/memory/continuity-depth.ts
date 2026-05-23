@@ -23,9 +23,9 @@ const TEXT_COOLDOWN_DAYS = 28;
 const SURFACE_COOLDOWN_DAYS = 10;
 
 const COPY: Record<ContinuityDepthKind, string> = {
-  reflections_connecting: "More of your reflections are starting to connect.",
-  threads_worth_returning: "Your archive has a few threads worth returning to.",
-  older_entries_context: "Older entries are beginning to carry context.",
+  reflections_connecting: "Reflections starting to connect.",
+  threads_worth_returning: "Threads worth returning to.",
+  older_entries_context: "Older entries carry context.",
 };
 
 const KIND_PRIORITY: ContinuityDepthKind[] = [

@@ -1,6 +1,7 @@
 import {
   buildSourceEntry,
   callbackInteractionSignals,
+  summarizeCallbackRetention,
 } from "@/lib/callback-interaction-signals";
 import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildArchiveGrowthReport } from "@/lib/memory/archive-growth";
@@ -113,6 +114,7 @@ function noteToItem(
     kind,
   });
   const signals = callbackInteractionSignals(note.id, entryIds);
+  const retention = summarizeCallbackRetention(note.id, entryIds);
   const followup = buildFollowupPrompt([note]);
   const followupPrompt = followup?.text;
 
@@ -131,6 +133,7 @@ function noteToItem(
     confidence: note.confidence,
     rewriteFlags,
     signals,
+    retention,
     followupNoteId: note.id,
     followupPrompt,
     continuedFollowup: signals.followupContinued,
@@ -149,6 +152,7 @@ function lineToItem(
 ): CallbackReviewItem {
   const rewriteFlags = detectRewriteCandidateFlags({ text, kind });
   const signals = callbackInteractionSignals(id, entryIds);
+  const retention = summarizeCallbackRetention(id, entryIds);
   return {
     id,
     kind,
@@ -160,6 +164,7 @@ function lineToItem(
     confidence: strength,
     rewriteFlags,
     signals,
+    retention,
     continuedFollowup: signals.followupContinued,
   };
 }

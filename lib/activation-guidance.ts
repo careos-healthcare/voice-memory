@@ -12,7 +12,7 @@ export const ACTIVATION_QUIET_EARLY =
   "Early reflections may feel quiet. That is intentional.";
 
 export const ACTIVATION_PATTERNS =
-  "After a few entries, it starts remembering your patterns.";
+  "After a few entries, it starts remembering you.";
 
 export const ACTIVATION_CONVERSATION =
   "This is a remembered conversation — not generic advice.";
@@ -26,7 +26,7 @@ export const ACTIVATION_ONBOARDING_STEPS: ActivationOnboardingStep[] = [
   {
     id: "after-three",
     label: "After 3 reflections",
-    body: "It starts noticing recurring threads.",
+    body: "It starts noticing what returns.",
   },
   {
     id: "after-seven",

@@ -43,7 +43,7 @@ export default function JournalPage() {
               </p>
               <h1 className="mt-2 text-3xl font-semibold text-white">Reflections</h1>
               <p className="mt-2 text-sm text-zinc-400">
-                Voice reflections and patterns — local-first on this device only.
+                Voice reflections — local-first on this device only.
               </p>
             </div>
             <Button asChild variant="secondary" size="sm">

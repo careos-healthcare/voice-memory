@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
+import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
 import {
@@ -46,6 +47,8 @@ import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
+import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
+import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { isReflectionPending } from "@/lib/pending-reflection";
 import { deleteEntry, getEntry, getMemoryEligibleEntries } from "@/lib/storage";
@@ -63,9 +66,10 @@ function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boole
 export default function EntryPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const { limits } = useQuietMode();
+  const { quiet, limits } = useQuietMode();
   const [entry, setEntry] = useState<JournalEntry | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const [presentation, setPresentation] = useState<QuietEntryPresentation | null>(null);
 
   useEffect(() => {
     const found = getEntry(params.id);
@@ -84,6 +88,32 @@ export default function EntryPage() {
 
   const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry]);
   const pending = entry ? isReflectionPending(entry) : false;
+
+  useEffect(() => {
+    if (!entry || pending) {
+      setPresentation(null);
+      return;
+    }
+    const id = requestAnimationFrame(() => {
+      setPresentation(
+        buildQuietEntryPresentation(allEntries, entry.id, {
+          changeMoments: limits.changeMoments,
+          familiarity: limits.familiarity,
+          familiarityResurfacing: limits.familiarityResurfacing,
+          resurfacing: limits.resurfacing,
+        }),
+      );
+    });
+    return () => cancelAnimationFrame(id);
+  }, [
+    entry,
+    allEntries,
+    pending,
+    limits.changeMoments,
+    limits.familiarity,
+    limits.familiarityResurfacing,
+    limits.resurfacing,
+  ]);
 
   const notes = useMemo(() => {
     if (!entry || pending) return null;
@@ -263,6 +293,8 @@ export default function EntryPage() {
     [followupNotes],
   );
 
+  const activeFollowup = presentation?.followupPrompt ?? followupPrompt;
+
   const handleContinueFollowup = (prompt: FollowupPrompt) => {
     storeFollowupPrompt(prompt.text);
     router.push("/#recorder");
@@ -380,6 +412,68 @@ export default function EntryPage() {
               />
             ) : (
               <>
+                {quiet && presentation?.revisitMode ? (
+                  <>
+                    <PrimaryCallbackNote note={presentation.primaryMoment} />
+                    {presentation.continuation ? (
+                      <ContinuationNotes notes={[presentation.continuation]} max={1} />
+                    ) : null}
+                    <FollowupPromptInline
+                      prompt={activeFollowup}
+                      onContinue={handleContinueFollowup}
+                    />
+                  </>
+                ) : quiet ? (
+                  <>
+                    {presentation?.continuation ? (
+                      <ContinuationNotes notes={[presentation.continuation]} max={1} />
+                    ) : continuationOpener ? (
+                      <ContinuationNotes notes={[continuationOpener]} max={1} />
+                    ) : null}
+
+                    <ThreadMentionsSection
+                      threads={entryThreads}
+                      title="Part of these conversations"
+                      subtitle=""
+                    />
+
+                    <MotionNoteList className="space-y-20">
+                      {presentation?.primaryMoment &&
+                      !isDuplicateNote(presentation.primaryMoment, notes?.primaryCallback) ? (
+                        <AnimatedMemoryNote note={presentation.primaryMoment} index={0} />
+                      ) : null}
+                      {notes?.primaryCallback ? (
+                        <AnimatedMemoryNote note={notes.primaryCallback} index={0} />
+                      ) : null}
+
+                      {notes?.secondaryCallback &&
+                      !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) &&
+                      !isDuplicateNote(notes.secondaryCallback, presentation?.primaryMoment) ? (
+                        <AnimatedMemoryNote note={notes.secondaryCallback} index={1} />
+                      ) : null}
+
+                      {notes?.thenVsNow.map((note, index) => (
+                        <AnimatedMemoryNote key={note.id} note={note} index={index + 2} />
+                      ))}
+                    </MotionNoteList>
+
+                    <FollowupPromptInline
+                      prompt={activeFollowup}
+                      onContinue={handleContinueFollowup}
+                    />
+
+                    {voicePlaybackPair ? (
+                      <VoicePlaybackContinuity pair={voicePlaybackPair} />
+                    ) : null}
+
+                    {whatChangedLine ? (
+                      <p className="text-sm leading-[1.75] text-zinc-500/90">
+                        {whatChangedLine.text}
+                      </p>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
                 {continuationOpener ? (
                   <ContinuationNotes notes={[continuationOpener]} max={1} />
                 ) : null}
@@ -431,7 +525,7 @@ export default function EntryPage() {
                 </div>
 
                 <FollowupPromptInline
-                  prompt={followupPrompt}
+                  prompt={activeFollowup}
                   onContinue={handleContinueFollowup}
                 />
 
@@ -442,6 +536,8 @@ export default function EntryPage() {
                 {whatChangedLine ? (
                   <p className="text-sm leading-[1.75] text-zinc-500/90">{whatChangedLine.text}</p>
                 ) : null}
+                  </>
+                )}
               </>
             )}
           </MotionPage>

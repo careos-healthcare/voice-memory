@@ -160,7 +160,7 @@ function detectSoundDifferent(
     pushCandidate(notes, {
       id: `fam-resurface-different-${past.id}-${current.id}`,
       kind: "sound_different",
-      text: "You sound very different from this version of yourself.",
+      text: "Very different from before.",
       strength: 64 + Math.round(intensityDelta * 3) + (languageFlip ? 4 : 0),
       ...evidence(past, current),
     });
@@ -188,7 +188,7 @@ function detectEmotionallyOpposite(
     pushCandidate(notes, {
       id: `fam-resurface-opposite-${past.id}-${current.id}`,
       kind: "emotionally_opposite",
-      text: "You sound very different from this version of yourself.",
+      text: "Very different from before.",
       strength: 63 + Math.round(delta * 2),
       ...evidence(past, current),
     });
@@ -216,7 +216,7 @@ function detectEmotionallySimilar(
     pushCandidate(notes, {
       id: `fam-resurface-similar-${past.id}-${current.id}`,
       kind: "emotionally_similar",
-      text: "This sounds close to how you spoke about this before.",
+      text: "Close to how you spoke before.",
       strength: 61 + Math.round((1.2 - delta) * 4),
       ...evidence(past, current),
     });
@@ -251,7 +251,7 @@ function detectEarlierLoop(
     pushCandidate(notes, {
       id: `fam-resurface-loop-${past.id}-${current.id}`,
       kind: "earlier_loop",
-      text: "This was an earlier version of this same loop.",
+      text: "An earlier version of this.",
       strength: 65 + Math.min(gapDays(past, current), 14),
       ...evidence(past, current),
     });
@@ -332,7 +332,7 @@ function detectBeforeDirectNaming(
     pushCandidate(notes, {
       id: `fam-resurface-before-direct-${themeKey}-${current.id}`,
       kind: "before_direct_naming",
-      text: "You had not started naming this directly yet.",
+      text: "Not naming this directly yet.",
       strength: 63 + priorHits.length,
       ...evidence(hedgedPrior, current),
     });
@@ -372,7 +372,7 @@ function detectBeforeMajorShift(
   pushCandidate(notes, {
     id: `fam-resurface-shift-${best.entry.id}-${current.id}`,
     kind: "before_major_shift",
-    text: "You sound very different from this version of yourself.",
+    text: "Very different from before.",
     strength: 64 + Math.round(best.magnitude * 3),
     ...evidence(best.entry, current),
   });
@@ -417,7 +417,7 @@ function detectMonthlyContrast(
   pushCandidate(notes, {
     id: `fam-resurface-month-${compareMonth}-${current.id}`,
     kind: "monthly_contrast",
-    text: "This reads differently from a couple of months ago.",
+    text: "Reads differently now.",
     strength: 62 + Math.round(delta * 3),
     ...evidence(past, current),
   });

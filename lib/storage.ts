@@ -2,6 +2,7 @@ import { deleteAudio } from "@/lib/audio-storage";
 import { clearHabitState } from "@/lib/habit-storage";
 import { recordReflectionDay } from "@/lib/habit-storage";
 import { trackReflectionMilestones } from "@/lib/local-analytics";
+import { bumpTimingFromEntry } from "@/lib/refinement/emotional-timing";
 import { removeBookmark } from "@/lib/reflection-bookmarks";
 import { normalizeReflection } from "@/lib/reflection";
 import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
@@ -78,6 +79,7 @@ export function saveEntry(entry: JournalEntry): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   recordReflectionDay(entry.createdAt);
   trackReflectionMilestones(entries.length);
+  bumpTimingFromEntry(entry);
 }
 
 export function deleteEntry(id: string): void {

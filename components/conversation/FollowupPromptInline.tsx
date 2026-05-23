@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
 import { recordFollowupContinued } from "@/lib/callback-interaction-signals";
+import { markFollowupBoost } from "@/lib/refinement/emotional-timing";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 
 interface FollowupPromptInlineProps {
@@ -24,7 +25,10 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
             size="sm"
             className="h-auto px-0 text-sm text-zinc-400 hover:bg-transparent hover:text-zinc-200"
             onClick={() => {
-              if (prompt.noteId) recordFollowupContinued(prompt.noteId);
+              if (prompt.noteId) {
+                recordFollowupContinued(prompt.noteId);
+                markFollowupBoost();
+              }
               onContinue(prompt);
             }}
           >

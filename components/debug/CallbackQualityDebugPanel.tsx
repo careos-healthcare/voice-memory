@@ -120,6 +120,21 @@ function CallbackReviewCard({
 
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
+            Retention observation
+          </p>
+          <div className="mt-2 space-y-1.5 rounded-xl bg-white/[0.03] p-3">
+            <SignalRow label="Surfaced" value={String(item.retention.surfaced)} />
+            <SignalRow label="Ignored" value={String(item.retention.ignored)} />
+            <SignalRow label="Rereads" value={String(item.retention.reread)} />
+            <SignalRow label="Revisits" value={String(item.retention.revisit)} />
+            <SignalRow label="New recordings" value={String(item.retention.recording)} />
+            <SignalRow label="Bookmarked" value={String(item.retention.bookmark)} />
+            <SignalRow label="Copied / shared" value={String(item.retention.copied)} />
+          </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
             Interaction signals
           </p>
           <div className="mt-2 space-y-1.5 rounded-xl bg-white/[0.03] p-3">

@@ -87,7 +87,7 @@ function detectRelatedOlder(
     pushCandidate(notes, {
       id: `revisit-related-${old.id}-${anchor.id}`,
       kind: "related_older",
-      text: "This older reflection may read differently now.",
+      text: "This feels different now.",
       strength: 60 + Math.min(gap, 14) + overlap.length * 3,
       pastQuote: snippet(old),
       currentQuote: snippet(anchor),
@@ -182,7 +182,7 @@ function detectReadsDifferently(
       pushCandidate(notes, {
         id: `revisit-diff-now-${anchor.id}`,
         kind: "reads_differently",
-        text: "You sound different from this entry now.",
+        text: "Different from this entry now.",
         strength: 62 + overlap.length * 3 + Math.round(intensityDelta * 2),
         pastQuote: snippet(anchor),
         currentQuote: snippet(latest),
@@ -208,7 +208,7 @@ function detectReadsDifferently(
     pushCandidate(notes, {
       id: `revisit-diff-${old.id}-${anchor.id}`,
       kind: "reads_differently",
-      text: "You sound different from this entry now.",
+      text: "Different from this entry now.",
       strength: 60 + overlap.length * 3 + Math.round(intensityDelta * 2),
       pastQuote: snippet(old),
       currentQuote: snippet(anchor),
@@ -238,7 +238,7 @@ function detectLoopReturn(
   pushCandidate(notes, {
     id: `revisit-loop-${lastLoop.id}-${anchor.id}`,
     kind: "loop_return",
-    text: "This older reflection may read differently now.",
+    text: "This feels different now.",
     strength: 61 + Math.min(gap, 10),
     pastQuote: snippet(lastLoop),
     currentQuote: snippet(anchor),
@@ -277,7 +277,7 @@ function detectWorthRevisit(
     pushCandidate(notes, {
       id: `revisit-changed-${candidate.id}-${anchor.id}`,
       kind: "worth_revisit",
-      text: "This older reflection may read differently now.",
+      text: "This feels different now.",
       strength: 59 + Math.round(beforeIntensity - afterAvg) * 3,
       pastQuote: snippet(candidate),
       currentQuote: snippet(anchor),

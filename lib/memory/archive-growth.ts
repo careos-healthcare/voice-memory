@@ -53,11 +53,11 @@ const CONTEXT_KIND_PRIORITY: Record<ArchiveGrowthContext, ArchiveGrowthKind[]> =
 };
 
 const COPY: Record<ArchiveGrowthKind, string> = {
-  connecting_older: "Older reflections are beginning to connect.",
+  connecting_older: "Older reflections connecting.",
   read_differently: "Some entries read differently now.",
-  more_familiar: "This archive feels more familiar over time.",
-  more_continuity: "There is more continuity here now.",
-  starting_to_relate: "These reflections are starting to relate to each other.",
+  more_familiar: "This archive feels familiar.",
+  more_continuity: "More returned here.",
+  starting_to_relate: "These reflections relate to each other.",
 };
 
 function isBrowser(): boolean {

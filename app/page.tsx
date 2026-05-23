@@ -1,36 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
-import { MemoryReminderNote } from "@/components/memory/MemoryReminderNote";
-import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
-
-import { HabitLoopCard } from "@/components/HabitLoopCard";
-import { MotionPage } from "@/components/motion/MotionPage";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { PersonalisationProgressNote } from "@/components/PersonalisationProgressNote";
 import { ReflectionGoalHint } from "@/components/ReflectionGoalHint";
-import { ArchiveGrowthNotes, ContinuationNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
+import { ContinuationNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
-import {
-  buildFollowupPrompt,
-  consumeStoredFollowupPrompt,
-} from "@/lib/conversation/followup-prompts";
-import { homepageMemoryReminder } from "@/lib/memory/memory-reminders";
-import { homepageContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
-import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
-import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
-import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
-import { homepageRhythmNotes } from "@/lib/memory/rhythm-memory";
-import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
-import { homepageRevisitationNotes } from "@/lib/memory/revisitation";
-import { homepageTimeMemoryNotes } from "@/lib/memory/time-memory";
+import { HabitLoopCard } from "@/components/HabitLoopCard";
+import { MotionPage } from "@/components/motion/MotionPage";
+import { consumeStoredFollowupPrompt } from "@/lib/conversation/followup-prompts";
+import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
 import {
   HONESTY_LINE,
   POSITIONING_EYEBROW,
@@ -41,56 +27,26 @@ import {
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
-import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
-import type { MemoryReminder } from "@/types/memory-reminder";
-import type { ContinuityDepthIndicator } from "@/types/continuity-depth";
+import type { MemoryNote } from "@/types/memory-note";
 
 export default function HomePage() {
   const { limits } = useQuietMode();
-  const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
-  const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
-  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
-  const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
-  const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
-  const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
-  const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
+  const [primaryNote, setPrimaryNote] = useState<MemoryNote | null>(null);
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
+  const [followupPrompt, setFollowupPrompt] = useState<FollowupPrompt | null>(null);
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
-  const [memoryReminder, setMemoryReminder] = useState<MemoryReminder | null>(null);
-  const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getMemoryEligibleEntries();
-      const resurfacingNotes = homepageResurfacingNotes(entries, limits.resurfacing);
-      const revisitationNotes = homepageRevisitationNotes(entries);
-      const familiarityResurfacingNotes = homepageFamiliarityResurfacingNotes(
-        entries,
-        limits.familiarityResurfacing,
-      );
-      const continuationNotes = homepageContinuationNotes(entries, limits.continuation);
-      setResurfacing(resurfacingNotes);
-      setTimeMemory(homepageTimeMemoryNotes(entries));
-      setRevisitation(revisitationNotes);
-      setFamiliarity(homepageFamiliarityNotes(entries, limits.familiarity));
-      setRhythm(homepageRhythmNotes(entries, limits.rhythm));
-      setFamiliarityResurfacing(familiarityResurfacingNotes);
-      setContinuation(continuationNotes);
-      setRecorderLine(
-        continuationNotes.length === 0 ? recorderPreRecordLine(entries) : null,
-      );
-      const meaningfulTiming =
-        resurfacingNotes.length > 0 ||
-        revisitationNotes.length > 0 ||
-        familiarityResurfacingNotes.length > 0;
-      setArchiveGrowth(
-        homepageArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
-      );
-      setMemoryReminder(homepageMemoryReminder(entries));
-      setContinuityDepth(homepageContinuityDepthIndicator(entries));
+      const presentation = buildQuietHomepagePresentation(entries, limits);
+      setPrimaryNote(presentation.primaryNote);
+      setContinuation(presentation.continuation);
+      setFollowupPrompt(presentation.followupPrompt);
+      setRecorderLine(presentation.recorderLine);
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -101,33 +57,6 @@ export default function HomePage() {
     limits.archiveGrowth,
     limits.continuation,
   ]);
-
-  const visibleNotesForFollowup = useMemo(
-    () =>
-      [
-        ...continuation,
-        ...resurfacing,
-        ...familiarityResurfacing,
-        ...revisitation,
-        ...familiarity,
-        ...rhythm,
-        ...timeMemory,
-      ] satisfies MemoryNote[],
-    [
-      continuation,
-      resurfacing,
-      familiarityResurfacing,
-      revisitation,
-      familiarity,
-      rhythm,
-      timeMemory,
-    ],
-  );
-
-  const followupPrompt = useMemo(
-    () => buildFollowupPrompt(visibleNotesForFollowup),
-    [visibleNotesForFollowup],
-  );
 
   useEffect(() => {
     const stored = consumeStoredFollowupPrompt();
@@ -160,19 +89,8 @@ export default function HomePage() {
           <ActivationOnboarding />
           <PersonalisationProgressNote />
           <ReflectionGoalHint />
-          <MemoryReminderNote reminder={memoryReminder} />
-          <ContinuityDepthNote indicator={continuityDepth} />
-          <ContinuationNotes notes={continuation} max={limits.continuation} />
-          <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-          <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
-          <FamiliarityResurfacingNotes
-            notes={familiarityResurfacing}
-            max={limits.familiarityResurfacing}
-          />
-          <RhythmNotes notes={rhythm} max={limits.rhythm} />
-          <RevisitationNotes notes={revisitation} max={1} />
-          <TimeMemoryNotes notes={timeMemory} max={1} />
-          <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+          <PrimaryCallbackNote note={primaryNote} />
+          <ContinuationNotes notes={continuation} max={1} />
           <FollowupPromptInline prompt={followupPrompt} onContinue={handleContinueFollowup} />
         </div>
 
@@ -245,8 +163,8 @@ export default function HomePage() {
             transition={{ duration: MOTION.duration.fade, delay: 0.45, ease: MOTION.ease }}
             className="mt-12 max-w-md text-sm leading-[1.75] text-zinc-500"
           >
-            Speak for up to 60 seconds. We transcribe, surface patterns in mood and
-            themes, and keep everything on this device — your private memory layer.
+            Speak for up to 60 seconds. Your words stay on this device — a private memory
+            layer that grows familiar over time.
           </motion.p>
 
           <motion.p

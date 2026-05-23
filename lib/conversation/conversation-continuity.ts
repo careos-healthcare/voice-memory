@@ -71,11 +71,11 @@ const CONTEXT_KIND_PRIORITY: Record<
 };
 
 const COPY: Record<ConversationContinuityKind, string> = {
-  came_back: "You came back to this.",
-  left_unresolved: "You left this unresolved last time.",
-  sounds_like_continuation: "This sounds like a continuation.",
-  stopped_here: "You stopped here before.",
-  returned_differently: "You returned to this differently.",
+  came_back: "Back to this.",
+  left_unresolved: "Left unresolved last time.",
+  sounds_like_continuation: "Sounds like a continuation.",
+  stopped_here: "Stopped here before.",
+  returned_differently: "Returned differently.",
   thread_changed: "This thread changed quietly.",
 };
 
