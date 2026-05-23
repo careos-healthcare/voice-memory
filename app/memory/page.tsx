@@ -10,6 +10,7 @@ import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
+import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,14 +20,19 @@ import {
   type EntityMemorySnapshot,
 } from "@/lib/entity-memory";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
+import { getAllEntries } from "@/lib/storage";
 
 export default function MemoryPage() {
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
+  const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
     const id = requestAnimationFrame(() => {
+      const entries = getAllEntries();
       setSnapshot(buildEntityMemory());
+      setPhrases(getTopPhrases(entries, 8));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -93,22 +99,30 @@ export default function MemoryPage() {
             </Card>
             </>
           ) : snapshot.totalEntities === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="px-6 py-12 text-center">
-                <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
-                <p className="mt-4 text-lg font-medium text-white">
-                  Still learning your world
-                </p>
-                <p className="mt-2 text-sm text-zinc-400">
-                  Add a few more entries with clear names, themes, or concerns. We
-                  only surface entities mentioned more than once (except close
-                  relationships).
-                </p>
-                <Button asChild className="mt-6 w-full sm:w-auto" variant="secondary">
-                  <Link href="/journal">View reflections</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <>
+              <PhraseMemoryCard
+                phrases={phrases}
+                title="Words you keep returning to"
+                subtitle="Repeated phrases, metaphors, and self-labels from your transcripts"
+                maxItems={8}
+              />
+              <Card className="border-dashed">
+                <CardContent className="px-6 py-12 text-center">
+                  <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
+                  <p className="mt-4 text-lg font-medium text-white">
+                    Still learning your world
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    Add a few more entries with clear names, themes, or concerns. We
+                    only surface entities mentioned more than once (except close
+                    relationships).
+                  </p>
+                  <Button asChild className="mt-6 w-full sm:w-auto" variant="secondary">
+                    <Link href="/journal">View reflections</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
           ) : (
             <>
               {snapshot.mentionHighlights.length > 0 ? (
@@ -142,6 +156,13 @@ export default function MemoryPage() {
                   </CardContent>
                 </Card>
               ) : null}
+
+              <PhraseMemoryCard
+                phrases={phrases}
+                title="Words you keep returning to"
+                subtitle="Repeated phrases, metaphors, and self-labels from your transcripts"
+                maxItems={8}
+              />
 
               <ShareMemoryCardButton kind="dominant_theme" />
 

@@ -30,6 +30,7 @@ interface InsightCardProps {
   entry?: JournalEntry;
   patternInsights?: EntryPatternInsights;
   showContradictionCard?: boolean;
+  showPhraseCard?: boolean;
 }
 
 function SafetyNotice() {
@@ -95,6 +96,7 @@ export function InsightCard({
   entry,
   patternInsights: patternInsightsProp,
   showContradictionCard = true,
+  showPhraseCard = true,
 }: InsightCardProps) {
   const patternInsights = useMemo(() => {
     if (patternInsightsProp) return patternInsightsProp;
@@ -171,17 +173,19 @@ export function InsightCard({
         />
       ) : null}
 
-      <PatternSection
-        title="Repeated phrases"
-        icon={MessageSquareQuote}
-        accent="text-emerald-300"
-        items={(patternInsights?.repeatedPhrases ?? []).map((p) => ({
-          key: p.phrase,
-          label: p.phrase,
-          detail: `${p.category.replace("_", " ")} · ${p.count} uses across ${p.entryCount} entries · e.g. ${p.example}`,
-        }))}
-        emptyLabel="Phrase habits appear as you accumulate entries."
-      />
+      {showPhraseCard ? (
+        <PatternSection
+          title="Repeated phrases"
+          icon={MessageSquareQuote}
+          accent="text-emerald-300"
+          items={(patternInsights?.repeatedPhrases ?? []).map((p) => ({
+            key: p.phrase,
+            label: p.phrase,
+            detail: `${p.category.replace("_", " ")} · ${p.count} uses across ${p.entryCount} entries · e.g. ${p.example}`,
+          }))}
+          emptyLabel="Phrase habits appear as you accumulate entries."
+        />
+      ) : null}
 
       {(patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
         <PatternSection

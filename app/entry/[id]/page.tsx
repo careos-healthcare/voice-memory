@@ -11,11 +11,13 @@ import { InsightCard } from "@/components/InsightCard";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
+import { getPhrasesForEntry } from "@/lib/patterns/phrase-memory";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
@@ -34,6 +36,11 @@ export default function EntryPage() {
   const relatedContradictions = useMemo(() => {
     if (!entry) return [];
     return detectContradictionsForEntry(getAllEntries(), entry.id);
+  }, [entry]);
+
+  const relatedPhrases = useMemo(() => {
+    if (!entry) return [];
+    return getPhrasesForEntry(getAllEntries(), entry.id);
   }, [entry]);
 
   const handleDelete = () => {
@@ -116,6 +123,7 @@ export default function EntryPage() {
               showTranscript
               entry={entry}
               showContradictionCard={false}
+              showPhraseCard={false}
             />
 
             <ContradictionContinuityCard
@@ -123,6 +131,15 @@ export default function EntryPage() {
               title="Related continuity"
               subtitle="How this entry connects to tension or reversals elsewhere in your archive"
               maxItems={4}
+              highlightEntryId={entry.id}
+              className="mt-6"
+            />
+
+            <PhraseMemoryCard
+              phrases={relatedPhrases}
+              title="Related repeated phrases"
+              subtitle="Language from this entry that also appears elsewhere in your archive"
+              maxItems={6}
               highlightEntryId={entry.id}
               className="mt-6"
             />

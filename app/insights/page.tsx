@@ -24,8 +24,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
 import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
+import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
 import { getAllEntries } from "@/lib/storage";
 
 function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTrend"] }) {
@@ -69,11 +71,14 @@ function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTren
 export default function InsightsPage() {
   const [insights, setInsights] = useState<MemoryInsights | null>(null);
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
+  const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
+      const entries = getAllEntries();
       setInsights(analyzeJournalEntries());
-      setContradictions(detectAllContradictions(getAllEntries()));
+      setContradictions(detectAllContradictions(entries));
+      setPhrases(getTopPhrases(entries, 10));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -192,6 +197,13 @@ export default function InsightsPage() {
                 title="Contradictions across your archive"
                 subtitle="Conflicting statements, reversals, and tension between aims and behavior"
                 maxItems={5}
+              />
+
+              <PhraseMemoryCard
+                phrases={phrases}
+                title="Repeated language"
+                subtitle="Phrases, metaphors, and self-labels that recur across your archive"
+                maxItems={10}
               />
 
               {insights.weeklyMentions.length > 0 ? (
