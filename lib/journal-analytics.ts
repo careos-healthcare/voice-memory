@@ -1,4 +1,5 @@
 import { addDaysToKey, todayKey, toDayKey } from "@/lib/dates";
+import { getPrimaryObservation } from "@/lib/observation-language";
 import { getEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 
@@ -20,10 +21,10 @@ export interface IntensityPoint {
   entryCount: number;
 }
 
-export interface PositiveSignalPoint {
+export interface ObservationPoint {
   date: string;
   label: string;
-  signal: string;
+  observation: string;
   mood: string;
 }
 
@@ -37,8 +38,8 @@ export interface MemoryInsights {
   dominantMoods: MoodCount[];
   recurringThemes: ThemeCount[];
   intensityTrend: IntensityPoint[];
-  mostMentionedConcern: string | null;
-  positiveSignalsOverTime: PositiveSignalPoint[];
+  mostRepeatedPattern: string | null;
+  observationsOverTime: ObservationPoint[];
   weeklyMentions: WeeklyMention[];
   hasData: boolean;
 }
@@ -60,36 +61,28 @@ function topFromMap(map: Map<string, number>, limit = 5): { key: string; count: 
     .map(([key, count]) => ({ key, count }));
 }
 
-function tokenizeConcern(text: string): string[] {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s'-]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 3);
-}
+function mostRepeatedPattern(entries: JournalEntry[]): string | null {
+  const themeMap = countMap(entries.flatMap((e) => e.reflection.recurringThemes));
+  const topTheme = topFromMap(themeMap, 1)[0];
+  if (topTheme && topTheme.count >= 2) {
+    return `"${topTheme.key}" across ${topTheme.count} entries`;
+  }
 
-function concernPhrase(entries: JournalEntry[]): string | null {
   const phraseCounts = new Map<string, number>();
-
   for (const entry of entries) {
-    const concern = entry.reflection.hiddenConcern.trim();
-    if (!concern) continue;
-
-    const normalized = concern.toLowerCase();
-    phraseCounts.set(normalized, (phraseCounts.get(normalized) ?? 0) + 1);
-
-    for (const token of tokenizeConcern(concern)) {
-      phraseCounts.set(token, (phraseCounts.get(token) ?? 0) + 1);
+    const obs = entry.reflection.patternObservations?.[0];
+    if (obs) {
+      const key = obs.slice(0, 60).toLowerCase();
+      phraseCounts.set(key, (phraseCounts.get(key) ?? 0) + 1);
     }
   }
 
-  const top = topFromMap(phraseCounts, 1)[0];
-  if (!top) return null;
-
-  if (top.key.length > 40) {
-    return top.key.slice(0, 40) + "…";
+  const topPhrase = topFromMap(phraseCounts, 1)[0];
+  if (topPhrase && topPhrase.count >= 2) {
+    return topPhrase.key.slice(0, 80);
   }
-  return top.key;
+
+  return topTheme ? `"${topTheme.key}"` : null;
 }
 
 function buildIntensityTrend(entries: JournalEntry[], days = 14): IntensityPoint[] {
@@ -145,11 +138,6 @@ function buildWeeklyMentions(entries: JournalEntry[]): WeeklyMention[] {
       if (!key) continue;
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
-
-    const concernTokens = tokenizeConcern(entry.reflection.hiddenConcern);
-    for (const token of concernTokens.slice(0, 3)) {
-      counts.set(token, (counts.get(token) ?? 0) + 1);
-    }
   }
 
   return topFromMap(counts, 5).map(({ key, count }) => ({
@@ -167,8 +155,8 @@ export function analyzeJournalEntries(): MemoryInsights {
       dominantMoods: [],
       recurringThemes: [],
       intensityTrend: buildIntensityTrend([]),
-      mostMentionedConcern: null,
-      positiveSignalsOverTime: [],
+      mostRepeatedPattern: null,
+      observationsOverTime: [],
       weeklyMentions: [],
       hasData: false,
     };
@@ -188,7 +176,7 @@ export function analyzeJournalEntries(): MemoryInsights {
     count,
   }));
 
-  const positiveSignalsOverTime: PositiveSignalPoint[] = [...entries]
+  const observationsOverTime: ObservationPoint[] = [...entries]
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .slice(-8)
     .map((entry) => ({
@@ -197,7 +185,7 @@ export function analyzeJournalEntries(): MemoryInsights {
         month: "short",
         day: "numeric",
       }).format(new Date(entry.createdAt)),
-      signal: entry.reflection.positiveSignal,
+      observation: getPrimaryObservation(entry.reflection) ?? entry.reflection.mood,
       mood: entry.reflection.mood,
     }));
 
@@ -206,8 +194,8 @@ export function analyzeJournalEntries(): MemoryInsights {
     dominantMoods,
     recurringThemes,
     intensityTrend: buildIntensityTrend(entries),
-    mostMentionedConcern: concernPhrase(entries),
-    positiveSignalsOverTime,
+    mostRepeatedPattern: mostRepeatedPattern(entries),
+    observationsOverTime,
     weeklyMentions: buildWeeklyMentions(entries),
     hasData: true,
   };

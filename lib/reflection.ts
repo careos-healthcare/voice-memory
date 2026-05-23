@@ -1,4 +1,5 @@
 import type { Reflection } from "@/types/journal";
+import { getPrimaryObservation } from "@/lib/observation-language";
 
 /** Normalize reflections loaded from localStorage (legacy entries may omit new fields). */
 export function normalizeReflection(
@@ -61,7 +62,6 @@ export function getSpecificReflectionView(
     exactLanguagePattern: reflection.exactLanguagePattern ?? null,
     concreteObservation:
       reflection.concreteObservation?.trim() ||
-      reflection.hiddenConcern.trim() ||
       "No concrete observation saved for this entry.",
     repeatedSignal:
       reflection.repeatedSignal?.trim() ||
@@ -76,12 +76,10 @@ export function getSpecificReflectionView(
 }
 
 export function getEntryPreviewLine(reflection: Reflection): string {
-  const obs = reflection.patternObservations?.[0];
-  if (obs) return obs;
-  if (reflection.concreteObservation?.trim()) return reflection.concreteObservation;
-  if (reflection.repeatedSignal?.trim()) return reflection.repeatedSignal;
-  return reflection.positiveSignal || reflection.hiddenConcern || "Voice reflection";
+  return getPrimaryObservation(reflection) ?? "Voice reflection";
 }
+
+export { getPrimaryObservation };
 
 export function hasEnhancedReflection(reflection: Reflection): boolean {
   return Boolean(

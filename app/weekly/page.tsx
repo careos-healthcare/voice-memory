@@ -9,6 +9,7 @@ import {
   LineChart,
   TrendingUp,
   Users,
+  Shield,
 } from "lucide-react";
 
 import { FeedbackPrompt } from "@/components/FeedbackPrompt";
@@ -76,8 +77,8 @@ export default function WeeklyPage() {
             Your week in memory
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Rolling 7-day patterns from your voice reflections — compared to the
-            week before, on this device only.
+            Rolling 7-day patterns — emotional shifts, repeated language, and
+            contradictions compared to the week before. Local only.
           </p>
           {!loading && report ? (
             <>
@@ -98,6 +99,12 @@ export default function WeeklyPage() {
         </motion.div>
 
         <div className="mt-6 space-y-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-zinc-500">
+            <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
+            Reflective mirror only — not therapy, not a diagnosis. Weekly patterns
+            describe what you said, not clinical labels.
+          </div>
+
           <UpgradeCta
             source="weekly"
             feature="weekly_intelligence"
@@ -205,7 +212,7 @@ export default function WeeklyPage() {
               <FeedbackPrompt
                 kind="weekly_summary"
                 targetKey={report.weekEndingKey}
-                label="Was this weekly summary useful?"
+                label="Were these weekly pattern observations useful?"
               />
 
               <ShareMemoryCardRow
@@ -243,26 +250,10 @@ export default function WeeklyPage() {
               </Card>
 
               <RankedListCard
-                title="Dominant emotions"
-                subtitle="How you felt most often"
-                items={report.thisWeek.dominantEmotions}
-                emptyLabel="No mood data this week."
-                capitalize
-              />
-
-              <RankedListCard
                 title="Recurring themes"
-                subtitle="Topics that kept returning"
+                subtitle="Patterns that kept returning"
                 items={report.thisWeek.recurringThemes}
                 emptyLabel="Themes appear as you add voice reflections."
-                capitalize
-              />
-
-              <RankedListCard
-                title="Repeated concerns"
-                subtitle="Undercurrents in your words"
-                items={report.thisWeek.repeatedConcerns}
-                emptyLabel="No repeated concerns detected yet."
                 capitalize
               />
 
@@ -271,6 +262,14 @@ export default function WeeklyPage() {
                 subtitle="Names and relationships you mentioned"
                 items={report.thisWeek.repeatedEntities}
                 emptyLabel="No names or relationships surfaced this week."
+                capitalize
+              />
+
+              <RankedListCard
+                title="Dominant emotions"
+                subtitle="How you described feeling — not a diagnosis"
+                items={report.thisWeek.dominantEmotions}
+                emptyLabel="No mood data this week."
                 capitalize
               />
 

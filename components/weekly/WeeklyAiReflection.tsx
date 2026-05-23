@@ -100,10 +100,10 @@ export function WeeklyAiReflection({ report }: WeeklyAiReflectionProps) {
           <div>
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-violet-300" />
-              <CardTitle className="text-base">Weekly reflection</CardTitle>
+              <CardTitle className="text-base">Weekly pattern summary</CardTitle>
             </div>
             <p className="mt-1 text-xs text-zinc-500">
-              Weekly intelligence from your local patterns — never stored on a server
+              Pattern observations from your local data — not therapy, not stored on a server
             </p>
           </div>
           {report.hasData && state === "ready" ? (
@@ -124,8 +124,8 @@ export function WeeklyAiReflection({ report }: WeeklyAiReflectionProps) {
         {state === "idle" && report.hasData ? (
           <div className="space-y-3">
             <p className="text-sm text-zinc-400">
-              Generate a personalized paragraph from this week&apos;s emotional
-              patterns and how they compare to last week.
+              Generate a pattern observation paragraph from this week&apos;s emotional
+              shifts and recurring language.
             </p>
             <Button
               type="button"
@@ -133,7 +133,7 @@ export function WeeklyAiReflection({ report }: WeeklyAiReflectionProps) {
               onClick={() => void generate()}
             >
               <Sparkles className="h-4 w-4" />
-              Generate weekly reflection
+              Generate weekly patterns
             </Button>
           </div>
         ) : null}

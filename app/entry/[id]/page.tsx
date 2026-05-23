@@ -84,13 +84,14 @@ export default function EntryPage() {
           >
             <div className="mb-8">
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Reflection
+                Pattern detection
               </p>
               <h1 className="mt-2 text-3xl font-semibold text-white">
                 {formatEntryDate(entry.createdAt)}
               </h1>
               <p className="mt-2 text-sm text-zinc-500">
-                {entry.durationSeconds}s voice reflection · saved locally
+                {entry.durationSeconds}s voice note · recurring patterns, contradictions,
+                and evidence from past entries · saved locally
               </p>
             </div>
 
@@ -112,6 +113,7 @@ export default function EntryPage() {
             <FeedbackPrompt
               kind="entry_reflection"
               targetKey={entry.id}
+              label="Were these pattern observations useful?"
               className="mt-6"
             />
 

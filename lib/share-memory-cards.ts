@@ -161,8 +161,8 @@ export function buildMemoryContinuityShareCard(options: ShareCardOptions = {}): 
     }
   }
 
-  if (insights.mostMentionedConcern) {
-    lines.push(`A recurring undercurrent: ${insights.mostMentionedConcern}.`);
+  if (insights.mostRepeatedPattern) {
+    lines.push(`A recurring pattern: ${insights.mostRepeatedPattern}.`);
   }
 
   if (lines.length === 0) {

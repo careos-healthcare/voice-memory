@@ -121,7 +121,7 @@ export function InsightCard({
         <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
           <CardHeader className="pb-2">
             <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
-              Pattern observations
+              Concrete observations
             </p>
             <CardTitle className="text-lg">What repeats in your words</CardTitle>
           </CardHeader>
@@ -163,7 +163,7 @@ export function InsightCard({
       />
 
       <PatternSection
-        title="Repeated language"
+        title="Repeated phrases"
         icon={MessageSquareQuote}
         accent="text-emerald-300"
         items={(patternInsights?.repeatedPhrases ?? []).map((p) => ({
@@ -176,7 +176,7 @@ export function InsightCard({
 
       {(patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
         <PatternSection
-          title="Indirect & hedged language"
+          title="Avoided topics & hedging"
           icon={EyeOff}
           accent="text-zinc-400"
           items={(patternInsights?.avoidanceSignals ?? []).map((a) => ({
@@ -189,7 +189,7 @@ export function InsightCard({
 
       {(patternInsights?.emotionalEvolution.length ?? 0) > 0 ? (
         <PatternSection
-          title="Emotional evolution"
+          title="Emotional shift"
           icon={TrendingUp}
           accent="text-sky-300"
           items={(patternInsights?.emotionalEvolution ?? []).map((e) => ({

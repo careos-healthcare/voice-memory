@@ -2,6 +2,7 @@ import { toDayKey } from "@/lib/dates";
 import { buildEntityMemory } from "@/lib/entity-memory";
 import { analyzeJournalEntries } from "@/lib/journal-analytics";
 import { getSpecificReflectionView } from "@/lib/reflection";
+import { getPrimaryObservation } from "@/lib/observation-language";
 import { getEntries } from "@/lib/storage";
 import {
   analyzeWeeklyIntelligence,
@@ -176,8 +177,8 @@ export function buildInsightsSummaryText(): string {
       .map((p) => `- ${p.label}: ${p.avgIntensity}/10 (${p.entryCount} entries)`),
   ];
 
-  if (insights.mostMentionedConcern) {
-    lines.push("", `Most mentioned concern: ${insights.mostMentionedConcern}`);
+  if (insights.mostRepeatedPattern) {
+    lines.push("", `Most repeated pattern: ${insights.mostRepeatedPattern}`);
   }
 
   if (insights.weeklyMentions.length > 0) {
@@ -197,9 +198,9 @@ export function buildInsightsSummaryText(): string {
 function entryExcerpt(entry: JournalEntry): PrintableEntryExcerpt {
   const specific = getSpecificReflectionView(entry.reflection);
   const text =
-    entry.reflection.concreteObservation?.trim() ||
+    getPrimaryObservation(entry.reflection) ||
     entry.transcript.trim().slice(0, 280) ||
-    entry.reflection.positiveSignal;
+    entry.reflection.mood;
 
   return {
     id: entry.id,

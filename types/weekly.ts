@@ -10,7 +10,7 @@ export interface WeeklyReflectionPayload {
   avgIntensityThisWeek: number | null;
   avgIntensityLastWeek: number | null;
   emotionalShiftLabel: string;
-  positiveHighlights: string[];
+  observationHighlights: string[];
 }
 
 export interface WeeklyReflectionResponse {

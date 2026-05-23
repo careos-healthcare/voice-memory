@@ -1,4 +1,5 @@
 import { addDaysToKey, todayKey, toDayKey } from "@/lib/dates";
+import { getPrimaryObservation } from "@/lib/observation-language";
 import { getEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { WeeklyReflectionPayload } from "@/types/weekly";
@@ -223,14 +224,21 @@ function extractConcerns(weekEntries: JournalEntry[]): RankedItem[] {
   const counts = new Map<string, number>();
 
   for (const entry of weekEntries) {
-    const concern = entry.reflection.hiddenConcern.trim();
-    if (!concern) continue;
+    const sources = [
+      entry.reflection.concreteObservation,
+      entry.reflection.repeatedSignal,
+      ...(entry.reflection.patternObservations ?? []),
+      entry.transcript.slice(0, 200),
+    ].filter(Boolean) as string[];
 
-    const phrase = concern.toLowerCase();
-    counts.set(phrase, (counts.get(phrase) ?? 0) + 1);
+    for (const source of sources) {
+      const phrase = source.trim().toLowerCase();
+      if (phrase.length < 8) continue;
+      counts.set(phrase.slice(0, 80), (counts.get(phrase.slice(0, 80)) ?? 0) + 1);
 
-    for (const token of tokenizeConcern(concern)) {
-      counts.set(token, (counts.get(token) ?? 0) + 1);
+      for (const token of tokenizeConcern(source)) {
+        counts.set(token, (counts.get(token) ?? 0) + 1);
+      }
     }
   }
 
@@ -241,7 +249,7 @@ function extractEntities(weekEntries: JournalEntry[]): RankedItem[] {
   const counts = new Map<string, number>();
 
   for (const entry of weekEntries) {
-    const text = `${entry.transcript}\n${entry.reflection.hiddenConcern}`;
+    const text = `${entry.transcript}\n${entry.reflection.concreteObservation ?? ""}`;
 
     for (const match of text.matchAll(RELATIONSHIP_PATTERN)) {
       const label = match[0].toLowerCase();
@@ -464,10 +472,10 @@ export function buildWeeklyReflectionPayload(
     avgIntensityThisWeek: report.thisWeek.avgIntensity,
     avgIntensityLastWeek: report.lastWeek.avgIntensity,
     emotionalShiftLabel: report.emotionalShift.label,
-    positiveHighlights: entries
+    observationHighlights: entries
       .slice(0, 5)
-      .map((e) => e.reflection.positiveSignal.trim())
-      .filter(Boolean),
+      .map((e) => getPrimaryObservation(e.reflection))
+      .filter((o): o is string => Boolean(o)),
   };
 }
 

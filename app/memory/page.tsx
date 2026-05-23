@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Brain, Sparkles } from "lucide-react";
+import { Brain, Shield, Sparkles } from "lucide-react";
 
 import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
@@ -50,10 +50,16 @@ export default function MemoryPage() {
             Memory
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            People, concerns, goals, and topics from your voice reflections —
+            Recurring people, topics, and phrases from your voice reflections —
             extracted locally on this device.
           </p>
         </motion.div>
+
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-zinc-500">
+          <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
+          Reflective mirror only — not therapy, not a diagnosis. Entity memory maps
+          what you named, not what a clinician would label.
+        </div>
 
         <div className="mt-6 space-y-5">
           <UpgradeCta
@@ -108,7 +114,8 @@ export default function MemoryPage() {
               {snapshot.mentionHighlights.length > 0 ? (
                 <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Often on your mind</CardTitle>
+                    <CardTitle className="text-base">Recurring mentions</CardTitle>
+                    <p className="text-xs text-zinc-500">Evidence from past entries on this device</p>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {snapshot.mentionHighlights.map((item) => (
@@ -129,7 +136,7 @@ export default function MemoryPage() {
                     <FeedbackPrompt
                       kind="memory_continuity"
                       targetKey="global"
-                      label="Is memory continuity useful?"
+                      label="Were these pattern observations useful?"
                       className="mt-4"
                     />
                   </CardContent>
@@ -146,17 +153,17 @@ export default function MemoryPage() {
               />
 
               <EntityMemorySection
-                title="Recurring concerns"
-                subtitle="Worries and fears you named"
+                title="Repeated threads"
+                subtitle="Topics you circled without always naming directly"
                 entities={snapshot.concerns}
-                emptyLabel="No recurring concerns detected yet."
+                emptyLabel="No repeated threads detected yet."
               />
 
               <EntityMemorySection
-                title="Recurring goals"
-                subtitle="Intentions and hopes you expressed"
+                title="Stated intentions"
+                subtitle="Goals and aims you expressed out loud"
                 entities={snapshot.goals}
-                emptyLabel="No recurring goals detected yet."
+                emptyLabel="No stated intentions detected yet."
               />
 
               <EntityMemorySection

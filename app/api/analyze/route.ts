@@ -21,39 +21,34 @@ const BANNED_PHRASES = [
   "be kind to yourself",
   "healing journey",
   "inner child",
+  "positive signal",
+  "hidden concern",
+  "underlying worry",
+  "gentle intention",
+  "take care of yourself",
 ];
 
-const SYSTEM_PROMPT = `You detect language patterns in voice reflection transcripts for VoiceMemory — private memory intelligence, NOT therapy.
+const SYSTEM_PROMPT = `You detect language patterns in voice reflection transcripts for VoiceMemory — a reflective mirror, NOT therapy.
 
-SAFETY (follow strictly):
+SAFETY:
 - Not therapy, counseling, or medical advice. No diagnosis or clinical labels.
-- Describe patterns in what they said — never prescribe, motivate, or encourage.
+- Describe patterns in what they said. Never prescribe, motivate, encourage, or advise.
 
-STYLE (follow strictly):
-- Prioritize observations over advice. NEVER write "You should…", "Consider trying…", or motivational coaching.
+STYLE:
+- Concrete observation language only: repeated phrase, recurring pattern, emotional shift, contradiction, avoided topic.
 - Quote or closely paraphrase their exact words.
-- Name specific topics, people, situations they mentioned.
-- Ban vague therapy clichés: "deep-seated", "hold space", "emotional journey", "seeking balance".
-- If the transcript is thin, say what is missing instead of inventing depth.
+- NEVER: "You should…", "Consider trying…", praise, encouragement, motivational coaching, therapy clichés.
+- If the transcript is thin, say what is missing.
 
-Return a JSON object with exactly these keys:
+Return JSON with exactly these keys:
 
-Context (required, minimal):
-- mood: 2-4 word emotional label grounded in their words
+- mood: 2-4 word label from their words
 - emotionalIntensity: integer 1-10
 - recurringThemes: array of 2-4 short theme strings from the transcript
-
-Legacy (required but minimal — factual only, no advice or encouragement):
-- hiddenConcern: one factual sentence about what they named as worrying (or "" if none)
-- positiveSignal: one factual detail they named (or "" if none) — NOT praise or encouragement
-- recommendation: always "" (empty string — do not give advice)
-
-Pattern detection (required):
-- exactLanguagePattern: short quote OR tight paraphrase of distinctive phrasing (max 25 words)
-- concreteObservation: one sentence — who, what, when, feeling — grounded in transcript
-- repeatedSignal: one sentence on a pattern repeated IN this entry (or "No clear repeat in this short entry")
-- nextSmallAction: always "" (empty string — do not suggest actions)
-- patternObservations: array of 2-4 strings. Each MUST start with "You repeatedly…", "You tend to…", "You describe…", or "You use…" — pattern observations only, zero advice.
+- exactLanguagePattern: short quote or paraphrase (max 25 words)
+- concreteObservation: one sentence — who, what, when, feeling — from transcript
+- repeatedSignal: one sentence on a pattern repeated IN this entry, or "No clear repeat in this short entry"
+- patternObservations: array of 2-4 strings. Each MUST start with "You repeatedly…", "You tend to…", "You describe…", "You use…", or "You avoid naming…". Observations only — zero advice.
 
 Respond with valid JSON only. Never mention being an AI.`;
 
@@ -77,13 +72,9 @@ function parseReflection(raw: string): Reflection {
   if (
     typeof parsed.mood !== "string" ||
     !Number.isFinite(intensity) ||
-    typeof parsed.hiddenConcern !== "string" ||
-    typeof parsed.positiveSignal !== "string" ||
-    typeof parsed.recommendation !== "string" ||
     typeof parsed.exactLanguagePattern !== "string" ||
     typeof parsed.concreteObservation !== "string" ||
-    typeof parsed.repeatedSignal !== "string" ||
-    typeof parsed.nextSmallAction !== "string"
+    typeof parsed.repeatedSignal !== "string"
   ) {
     throw new Error("Invalid reflection structure from model");
   }
@@ -92,23 +83,19 @@ function parseReflection(raw: string): Reflection {
     mood: parsed.mood,
     emotionalIntensity: intensity,
     recurringThemes: themes,
-    hiddenConcern: parsed.hiddenConcern,
-    positiveSignal: parsed.positiveSignal,
-    recommendation: parsed.recommendation,
+    hiddenConcern: "",
+    positiveSignal: "",
+    recommendation: "",
     exactLanguagePattern: parsed.exactLanguagePattern,
     concreteObservation: parsed.concreteObservation,
     repeatedSignal: parsed.repeatedSignal,
-    nextSmallAction: parsed.nextSmallAction,
+    nextSmallAction: "",
     patternObservations: observations,
   });
 
   const textFields = [
-    reflection.hiddenConcern,
-    reflection.positiveSignal,
-    reflection.recommendation,
     reflection.concreteObservation ?? "",
     reflection.repeatedSignal ?? "",
-    reflection.nextSmallAction ?? "",
     ...(reflection.patternObservations ?? []),
   ];
 
@@ -127,7 +114,7 @@ function formatPriorContext(
     (s, i) =>
       `[Prior ${i + 1} — ${s.date}] themes: ${s.themes.join(", ") || "none"}\n"${s.excerpt.slice(0, 200)}"`,
   );
-  return `\n\nPrior reflections for cross-entry pattern context (observations only — do not give advice):\n${lines.join("\n\n")}`;
+  return `\n\nPrior entries for cross-entry pattern context (observations only):\n${lines.join("\n\n")}`;
 }
 
 export async function POST(request: Request) {
@@ -156,7 +143,7 @@ export async function POST(request: Request) {
         { role: "system", content: SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Detect patterns in this voice reflection transcript. Observations only — no advice:\n\n${transcript}${priorBlock}`,
+          content: `Detect patterns in this voice reflection. Observations only:\n\n${transcript}${priorBlock}`,
         },
       ],
     });

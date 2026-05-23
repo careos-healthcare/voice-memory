@@ -44,17 +44,17 @@ This week (${body.weekEndingKey} window):
 - Entries: ${body.entryCount}
 - Dominant emotions: ${body.dominantEmotions.join(", ") || "none"}
 - Recurring themes: ${body.recurringThemes.join(", ") || "none"}
-- Repeated concerns: ${body.repeatedConcerns.join("; ") || "none"}
+- Repeated threads: ${body.repeatedConcerns.join("; ") || "none"}
 - People/entities mentioned: ${body.repeatedEntities.join(", ") || "none"}
 - Average emotional intensity: ${body.avgIntensityThisWeek ?? "n/a"}/10
 - Emotional shift vs last week: ${body.emotionalShiftLabel}
-- Positive signals: ${body.positiveHighlights.join(" | ") || "none"}
+- Pattern observations: ${body.observationHighlights.join(" | ") || "none"}
 
 Last week:
 - Entries: ${body.lastWeekEntryCount}
 - Average intensity: ${body.avgIntensityLastWeek ?? "n/a"}/10
 
-Write the weekly reflection summary.`;
+Write the weekly pattern observation summary.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
