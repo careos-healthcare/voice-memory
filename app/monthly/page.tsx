@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
+import { WhatChangedCard } from "@/components/patterns/WhatChangedCard";
 import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { LongitudinalContinuityCard } from "@/components/patterns/LongitudinalContinuityCard";
@@ -12,19 +13,23 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMonthlyReflection } from "@/lib/patterns/calmness";
+import { getChangesForMonthly } from "@/lib/patterns/changes";
 import { buildContinuityReport } from "@/lib/patterns/continuity-engine";
 import { getAllEntries } from "@/lib/storage";
 import type { CalmnessReport } from "@/types/calmness";
+import type { ChangeDetectionReport } from "@/types/changes";
 import type { ContinuityReport } from "@/types/continuity";
 
 export default function MonthlyPage() {
   const [calm, setCalm] = useState<CalmnessReport | null>(null);
+  const [changes, setChanges] = useState<ChangeDetectionReport | null>(null);
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getAllEntries();
       setCalm(getMonthlyReflection(entries));
+      setChanges(getChangesForMonthly(entries, 3));
       setContinuity(buildContinuityReport(entries, { scope: "archive", limit: 6 }));
     });
     return () => cancelAnimationFrame(id);
@@ -53,7 +58,7 @@ export default function MonthlyPage() {
                 Reading your archive…
               </CardContent>
             </Card>
-          ) : !calm?.hasData ? (
+          ) : !calm?.hasData && !changes?.hasData ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="px-6 py-16 text-center">
                 <CalendarDays className="mx-auto h-8 w-8 text-zinc-600" />
@@ -68,14 +73,28 @@ export default function MonthlyPage() {
             </Card>
           ) : (
             <>
-              <CalmUnderstandingCard
-                report={calm}
-                title="How your thinking changed"
+              <WhatChangedCard
+                report={
+                  changes ?? {
+                    changes: [],
+                    hasData: false,
+                    scope: "monthly",
+                    generatedAt: "",
+                  }
+                }
                 subtitle="Last 30 days · from your words only"
-                showLandmarks
               />
 
-              {calm.smallEvolution.length > 0 ? (
+              {!changes?.hasData && calm?.hasData ? (
+                <CalmUnderstandingCard
+                  report={calm}
+                  title="How your thinking changed"
+                  subtitle="Last 30 days · from your words only"
+                  showLandmarks
+                />
+              ) : null}
+
+              {calm?.smallEvolution.length > 0 && !changes?.hasData ? (
                 <div className="space-y-6">
                   <p className="text-xs text-zinc-600">Small shifts</p>
                   <ul className="space-y-6">
@@ -88,17 +107,26 @@ export default function MonthlyPage() {
                 </div>
               ) : null}
 
-              {continuity?.hasData ? (
+              {continuity?.hasData || (changes?.hasData && calm?.hasData) ? (
                 <SeeMorePanel label="See continuity details">
-                  <LongitudinalContinuityCard
-                    report={continuity}
-                    title="Threads across the month"
-                    subtitle=""
-                    maxItems={4}
-                    showSummaries
-                    showArcs={false}
-                    showIdentity={false}
-                  />
+                  {changes?.hasData && calm?.hasData ? (
+                    <CalmUnderstandingCard
+                      report={calm}
+                      title="Further context"
+                      showLandmarks
+                    />
+                  ) : null}
+                  {continuity?.hasData ? (
+                    <LongitudinalContinuityCard
+                      report={continuity}
+                      title="Threads across the month"
+                      subtitle=""
+                      maxItems={4}
+                      showSummaries
+                      showArcs={false}
+                      showIdentity={false}
+                    />
+                  ) : null}
                 </SeeMorePanel>
               ) : null}
             </>

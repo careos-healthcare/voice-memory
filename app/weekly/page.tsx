@@ -33,6 +33,7 @@ import {
   analyzeWeeklyIntelligence,
   type WeeklyIntelligenceReport,
 } from "@/lib/weekly-intelligence";
+import { WhatChangedCard } from "@/components/patterns/WhatChangedCard";
 import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
@@ -61,7 +62,9 @@ import {
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
 import { getContinuityForWeekly } from "@/lib/patterns/continuity-engine";
 import { buildCalmnessReport } from "@/lib/patterns/calmness";
+import { getChangesForWeekly } from "@/lib/patterns/changes";
 import type { CalmnessReport } from "@/types/calmness";
+import type { ChangeDetectionReport } from "@/types/changes";
 import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
@@ -90,6 +93,7 @@ export default function WeeklyPage() {
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
   const [calm, setCalm] = useState<CalmnessReport | null>(null);
+  const [changes, setChanges] = useState<ChangeDetectionReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
@@ -103,6 +107,7 @@ export default function WeeklyPage() {
       setPhrases(getTopPhrases(entries, 6));
       setContinuity(getContinuityForWeekly(entries, 8));
       setCalm(buildCalmnessReport(entries, { scope: "weekly", limit: 3 }));
+      setChanges(getChangesForWeekly(entries, 3));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -186,7 +191,19 @@ export default function WeeklyPage() {
             </>
           ) : (
             <>
-              {calm?.hasData ? (
+              <WhatChangedCard
+                report={
+                  changes ?? {
+                    changes: [],
+                    hasData: false,
+                    scope: "weekly",
+                    generatedAt: "",
+                  }
+                }
+                subtitle={report.weekRangeLabel}
+              />
+
+              {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard
                   report={calm}
                   title="What stands out"
@@ -196,6 +213,13 @@ export default function WeeklyPage() {
               ) : null}
 
               <SeeMorePanel label="See more detail">
+                {changes?.hasData && calm?.hasData ? (
+                  <CalmUnderstandingCard
+                    report={calm}
+                    title="Further context"
+                    showLandmarks
+                  />
+                ) : null}
                 <PatternInsightCard
                   insights={patternInsights}
                   title="Further patterns"

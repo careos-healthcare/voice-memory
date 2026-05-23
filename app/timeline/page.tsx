@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { CalendarRange, Clock3 } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { WhatChangedCard } from "@/components/patterns/WhatChangedCard";
 import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
@@ -14,6 +15,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildCalmnessReport } from "@/lib/patterns/calmness";
+import { getChangesForTimeline } from "@/lib/patterns/changes";
 import {
   buildEmotionalEvolutionReport,
   type EmotionalEvolutionReport,
@@ -22,12 +24,14 @@ import { getTimelineContinuity } from "@/lib/patterns/continuity-engine";
 import { getAllEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { CalmnessReport } from "@/types/calmness";
+import type { ChangeDetectionReport } from "@/types/changes";
 import type { ContinuityReport } from "@/types/continuity";
 import type { JournalEntry } from "@/types/journal";
 
 export default function TimelinePage() {
   const [report, setReport] = useState<EmotionalEvolutionReport | null>(null);
   const [calm, setCalm] = useState<CalmnessReport | null>(null);
+  const [changes, setChanges] = useState<ChangeDetectionReport | null>(null);
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
 
@@ -37,6 +41,7 @@ export default function TimelinePage() {
       setEntries(all);
       setReport(buildEmotionalEvolutionReport(all));
       setCalm(buildCalmnessReport(all, { scope: "archive", limit: 3 }));
+      setChanges(getChangesForTimeline(all, 3));
       setContinuity(getTimelineContinuity(all, 8));
     });
     return () => cancelAnimationFrame(id);
@@ -82,7 +87,18 @@ export default function TimelinePage() {
             </>
           ) : (
             <>
-              {calm?.hasData ? (
+              <WhatChangedCard
+                report={
+                  changes ?? {
+                    changes: [],
+                    hasData: false,
+                    scope: "timeline",
+                    generatedAt: "",
+                  }
+                }
+              />
+
+              {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard
                   report={calm}
                   title="What stands out"
@@ -91,8 +107,15 @@ export default function TimelinePage() {
                 />
               ) : null}
 
-              {(continuity?.hasData || (report?.insights.length ?? 0) > 0) ? (
+              {(continuity?.hasData || (report?.insights.length ?? 0) > 0 || (changes?.hasData && calm?.hasData)) ? (
                 <SeeMorePanel label="See more">
+                  {changes?.hasData && calm?.hasData ? (
+                    <CalmUnderstandingCard
+                      report={calm}
+                      title="Further context"
+                      showLandmarks
+                    />
+                  ) : null}
                   {continuity?.hasData ? (
                     <LongitudinalContinuityCard
                       report={continuity}

@@ -43,7 +43,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(20, 8),
       durationSeconds: 42,
       transcript:
-        "Started the week feeling scattered. Sarah called about the project timeline and I noticed my chest tighten — classic anxious response when deadlines stack up. Still, I got one hard thing done before lunch.",
+        "Started the week feeling scattered. Sarah called about the project timeline and I noticed my chest tighten — classic anxious response when deadlines stack up. I should get ahead of this before it snowballs. Still, I got one hard thing done before lunch.",
       reflection: reflection({
         mood: "anxious",
         emotionalIntensity: 6,
@@ -102,7 +102,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(14, 21),
       durationSeconds: 45,
       transcript:
-        "Family pressure showed up at dinner — Dad asking about career plans again. I stayed calm but felt that old knot in my stomach. Grateful I didn't snap. Need to set a boundary about how often we have this conversation.",
+        "Family pressure showed up at dinner — Dad asking about career plans again. I should have a better answer by now. I stayed calm but felt that old knot in my stomach. Grateful I didn't snap. Need to set a boundary about how often we have this conversation.",
       reflection: reflection({
         mood: "conflicted",
         emotionalIntensity: 6,
@@ -121,7 +121,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(12, 8),
       durationSeconds: 33,
       transcript:
-        "Quick note — anxious again before the standup. Same loop: imagining everyone judging the update. The update went fine. Writing that down so I remember next time.",
+        "Quick note — anxious again before the standup. Same loop: imagining everyone judging the update. I should remember the update went fine last time. The update went fine. Writing that down so I remember next time.",
       reflection: reflection({
         mood: "anxious",
         emotionalIntensity: 5,
@@ -160,7 +160,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(9, 9),
       durationSeconds: 40,
       transcript:
-        "Sarah checked in again — appreciative tone this time. Felt lighter. Still work pressure but less alone in it. Noticed I breathe easier when collaboration feels mutual.",
+        "Sarah checked in again — appreciative tone this time. I will send her the plan by end of day. Felt lighter. Still work pressure but less alone in it. Noticed I breathe easier when collaboration feels mutual.",
       reflection: reflection({
         mood: "relieved",
         emotionalIntensity: 3,
@@ -178,7 +178,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(7, 20),
       durationSeconds: 44,
       transcript:
-        "Mum called — family pressure about the holidays. I said I'd think about it instead of yes-or-no on the spot. Small win. Money is still tight but I'm proud I paused.",
+        "Mum called — she asked directly about holiday plans and budget. I said I'd think about it instead of yes-or-no on the spot. Small win. Money is still tight but I'm proud I paused.",
       reflection: reflection({
         mood: "steady",
         emotionalIntensity: 5,
@@ -236,7 +236,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(2, 8),
       durationSeconds: 41,
       transcript:
-        "Calmer weekend. Walked without podcasts. Thought about Sarah project — less dread, more curiosity. Money still on my mind but not loud today.",
+        "Calmer weekend. Walked without podcasts. Thought about the Sarah project — less dread, more curiosity. I decided to propose a weekly sync. Money still on my mind but not loud today.",
       reflection: reflection({
         mood: "calm",
         emotionalIntensity: 3,
@@ -254,7 +254,7 @@ function buildDemoEntries(): JournalEntry[] {
       createdAt: daysAgoIso(1, 21),
       durationSeconds: 39,
       transcript:
-        "Checked accounts — money worry spiked but I stayed with it. Wrote down three numbers I actually know. Family text can wait until tomorrow. Feeling slightly more in control.",
+        "Checked accounts — money worry spiked but I stayed with it. I wrote down three numbers I actually know. Mum's text can wait until tomorrow. Feeling slightly more in control.",
       reflection: reflection({
         mood: "grounded",
         emotionalIntensity: 5,

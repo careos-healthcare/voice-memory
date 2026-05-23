@@ -4,21 +4,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { PatternSpecificityDebugPanel } from "@/components/debug/PatternSpecificityDebugPanel";
+import { ChangeDebugPanel } from "@/components/debug/ChangeDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  buildSpecificityDebugReport,
-  type SpecificityDebugReport,
-} from "@/lib/patterns/specificity-debug";
+import { CHANGE_MIN_CONFIDENCE, buildChangeDebugReport } from "@/lib/patterns/changes";
+import type { ChangeDebugReport } from "@/types/changes";
 import { getAllEntries } from "@/lib/storage";
 
-export default function PatternsDebugPage() {
-  const [report, setReport] = useState<SpecificityDebugReport | null>(null);
+export default function ChangesDebugPage() {
+  const [report, setReport] = useState<ChangeDebugReport | null>(null);
 
   const refresh = () => {
-    setReport(buildSpecificityDebugReport(getAllEntries(), 20));
+    setReport(buildChangeDebugReport(getAllEntries()));
   };
 
   useEffect(() => {
@@ -32,15 +30,13 @@ export default function PatternsDebugPage() {
 
         <header className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-              Pattern engine debug
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              Insight specificity
+            <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Change detection debug</p>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
+              Longitudinal changes
             </h1>
-            <p className="mt-2 text-sm text-zinc-400">
-              Local scoring for exact phrases, recurrence, cross-entry grounding,
-              cross-week evidence, contradictions, entities, and date/time anchors.
+            <p className="mt-3 text-sm text-zinc-500">
+              All candidate changes, scores, accept/reject reasons, and before/after evidence.
+              Minimum to show: {CHANGE_MIN_CONFIDENCE}.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -50,78 +46,75 @@ export default function PatternsDebugPage() {
         </header>
 
         {!report ? (
-          <Card className="mt-6">
+          <Card className="mt-12">
             <CardContent className="py-12 text-center text-sm text-zinc-500">
               Loading…
             </CardContent>
           </Card>
         ) : (
-          <div className="mt-6 space-y-6">
+          <div className="mt-12 space-y-8">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <Card>
                 <CardHeader className="pb-1">
                   <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
-                    Insights scored
+                    Candidates
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-semibold tabular-nums text-white">
-                    {report.insights.length}
+                    {report.candidates.length}
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="pb-1">
                   <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
-                    Avg specificity
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-semibold tabular-nums text-white">
-                    {report.averageSpecificity}
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-1">
-                  <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
-                    Strong
+                    Accepted
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-semibold tabular-nums text-emerald-300">
-                    {report.strongInsights.length}
+                    {report.accepted.length}
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="pb-1">
                   <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
-                    Weak / generic
+                    Rejected
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-semibold tabular-nums text-amber-300">
-                    {report.weakInsights.length}
+                    {report.rejected.length}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-1">
+                  <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                    Avg confidence
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-semibold tabular-nums text-white">
+                    {report.averageConfidence}
                   </p>
                 </CardContent>
               </Card>
             </div>
 
-            <PatternSpecificityDebugPanel insights={report.insights} />
+            <ChangeDebugPanel candidates={report.candidates} />
 
             <div className="flex flex-wrap gap-3 text-sm">
-              <Link href="/debug/changes" className="text-violet-300 hover:text-violet-200">
-                Change detection →
+              <Link href="/debug/patterns" className="text-violet-300 hover:text-violet-200">
+                Pattern specificity →
               </Link>
-              <Link href="/debug/retention" className="text-zinc-500 hover:text-zinc-300">
-                Retention dashboard →
-              </Link>
-              <Link href="/insights" className="text-zinc-500 hover:text-zinc-300">
-                Insights →
+              <Link href="/timeline" className="text-zinc-500 hover:text-zinc-300">
+                Timeline →
               </Link>
               <Link href="/demo" className="text-zinc-500 hover:text-zinc-300">
-                Demo mode →
+                Demo →
               </Link>
             </div>
           </div>

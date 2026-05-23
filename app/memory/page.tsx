@@ -15,6 +15,7 @@ import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import { WhatChangedCard } from "@/components/patterns/WhatChangedCard";
 import { CalmUnderstandingCard } from "@/components/patterns/CalmUnderstandingCard";
 import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
 import { LongitudinalContinuityCard } from "@/components/patterns/LongitudinalContinuityCard";
@@ -37,7 +38,9 @@ import { detectAllAvoidanceSignals, type AvoidanceSignal } from "@/lib/patterns/
 import { getEmotionalCycleInsights, type EvolutionInsight } from "@/lib/patterns/emotional-evolution";
 import { buildContinuityReport } from "@/lib/patterns/continuity-engine";
 import { buildCalmnessReport } from "@/lib/patterns/calmness";
+import { buildChangeReport } from "@/lib/patterns/changes";
 import type { CalmnessReport } from "@/types/calmness";
+import type { ChangeDetectionReport } from "@/types/changes";
 import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
@@ -54,6 +57,7 @@ export default function MemoryPage() {
   const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
   const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
   const [calm, setCalm] = useState<CalmnessReport | null>(null);
+  const [changes, setChanges] = useState<ChangeDetectionReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -67,6 +71,7 @@ export default function MemoryPage() {
       setCycleInsights(getEmotionalCycleInsights(entries));
       setContinuity(buildContinuityReport(entries, { scope: "archive", limit: 6 }));
       setCalm(buildCalmnessReport(entries, { scope: "archive", limit: 3 }));
+      setChanges(buildChangeReport(entries, { scope: "archive", limit: 3 }));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -161,10 +166,25 @@ export default function MemoryPage() {
             </>
           ) : snapshot.totalEntities === 0 ? (
             <>
-              {calm?.hasData ? (
+              <WhatChangedCard
+                report={
+                  changes ?? {
+                    changes: [],
+                    hasData: false,
+                    scope: "archive",
+                    generatedAt: "",
+                  }
+                }
+              />
+              {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard report={calm} title="What stands out" />
               ) : null}
-              <SeeMorePanel label="See more detail">{memoryPatternSections}</SeeMorePanel>
+              <SeeMorePanel label="See more detail">
+                {changes?.hasData && calm?.hasData ? (
+                  <CalmUnderstandingCard report={calm} title="Further context" />
+                ) : null}
+                {memoryPatternSections}
+              </SeeMorePanel>
               <Card className="border-dashed">
                 <CardContent className="px-6 py-12 text-center">
                   <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
@@ -184,7 +204,17 @@ export default function MemoryPage() {
             </>
           ) : (
             <>
-              {calm?.hasData ? (
+              <WhatChangedCard
+                report={
+                  changes ?? {
+                    changes: [],
+                    hasData: false,
+                    scope: "archive",
+                    generatedAt: "",
+                  }
+                }
+              />
+              {!changes?.hasData && calm?.hasData ? (
                 <CalmUnderstandingCard
                   report={calm}
                   title="What stands out"
@@ -192,7 +222,16 @@ export default function MemoryPage() {
                 />
               ) : null}
 
-              <SeeMorePanel label="See more detail">{memoryPatternSections}</SeeMorePanel>
+              <SeeMorePanel label="See more detail">
+                {changes?.hasData && calm?.hasData ? (
+                  <CalmUnderstandingCard
+                    report={calm}
+                    title="Further context"
+                    showLandmarks
+                  />
+                ) : null}
+                {memoryPatternSections}
+              </SeeMorePanel>
 
               {!strongPatterns && snapshot.mentionHighlights.length > 0 ? (
                 <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
