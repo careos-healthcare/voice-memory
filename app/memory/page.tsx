@@ -7,7 +7,7 @@ import { Brain } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
-import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { memoryFamiliarityNotes } from "@/lib/memory/familiarity";
+import { memoryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { memoryRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
 import { memoryRevisitationNotes } from "@/lib/memory/revisitation";
@@ -33,6 +34,7 @@ export default function MemoryPage() {
   const [changeMoments, setChangeMoments] = useState<MemoryNote[]>([]);
   const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
+  const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -44,10 +46,20 @@ export default function MemoryPage() {
       setChangeMoments(memoryChangeMomentsNotes(entries, limits.changeMoments));
       setFamiliarity(memoryFamiliarityNotes(entries, limits.familiarity));
       setRhythm(memoryRhythmNotes(entries, limits.rhythm));
+      setFamiliarityResurfacing(
+        memoryFamiliarityResurfacingNotes(entries, limits.familiarityResurfacing),
+      );
       setRevisitation(memoryRevisitationNotes(entries));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.notes, limits.resurfacing, limits.changeMoments, limits.familiarity, limits.rhythm]);
+  }, [
+    limits.notes,
+    limits.resurfacing,
+    limits.changeMoments,
+    limits.familiarity,
+    limits.rhythm,
+    limits.familiarityResurfacing,
+  ]);
 
   const loading = snapshot === null;
 
@@ -96,6 +108,10 @@ export default function MemoryPage() {
 
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
               <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+              <FamiliarityResurfacingNotes
+                notes={familiarityResurfacing}
+                max={limits.familiarityResurfacing}
+              />
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={2} />

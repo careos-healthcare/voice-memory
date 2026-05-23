@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes } from "@/components/patterns/MemoryNote";
+import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
+import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { homepageRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
 import { homepageRevisitationNotes } from "@/lib/memory/revisitation";
@@ -34,6 +35,7 @@ export default function HomePage() {
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
   const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
+  const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -43,9 +45,12 @@ export default function HomePage() {
       setRevisitation(homepageRevisitationNotes(entries));
       setFamiliarity(homepageFamiliarityNotes(entries, limits.familiarity));
       setRhythm(homepageRhythmNotes(entries, limits.rhythm));
+      setFamiliarityResurfacing(
+        homepageFamiliarityResurfacingNotes(entries, limits.familiarityResurfacing),
+      );
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.resurfacing, limits.familiarity, limits.rhythm]);
+  }, [limits.resurfacing, limits.familiarity, limits.rhythm, limits.familiarityResurfacing]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
@@ -62,6 +67,10 @@ export default function HomePage() {
           <EmptyStateIntelligence hideWhenRich />
           <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
           <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+          <FamiliarityResurfacingNotes
+            notes={familiarityResurfacing}
+            max={limits.familiarityResurfacing}
+          />
           <RhythmNotes notes={rhythm} max={limits.rhythm} />
           <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />

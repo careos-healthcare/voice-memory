@@ -6,13 +6,14 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { MemoryNoteView, ChangeMomentsNotes, FamiliarityNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNoteView, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
+import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
@@ -133,6 +134,39 @@ export default function EntryPage() {
     limits.familiarity,
   ]);
 
+  const familiarityResurfacing = useMemo(() => {
+    if (!entry) return [];
+    const raw = entryFamiliarityResurfacingNotes(
+      allEntries,
+      entry.id,
+      limits.familiarityResurfacing,
+    );
+    const shown = [
+      notes?.primaryCallback,
+      notes?.secondaryCallback,
+      ...(notes?.thenVsNow ?? []),
+      notes?.whatChanged,
+      ...resurfacing,
+      ...timeMemory,
+      ...revisitation,
+      ...changeMoments,
+      ...familiarity,
+    ].filter(Boolean) as MemoryNote[];
+    return raw
+      .filter((r) => !shown.some((s) => isDuplicateNote(r, s)))
+      .slice(0, limits.familiarityResurfacing);
+  }, [
+    entry,
+    allEntries,
+    notes,
+    resurfacing,
+    timeMemory,
+    revisitation,
+    changeMoments,
+    familiarity,
+    limits.familiarityResurfacing,
+  ]);
+
   const whatChangedLine = useMemo(() => {
     if (!notes?.whatChanged) return null;
     const wc = notes.whatChanged;
@@ -203,6 +237,10 @@ export default function EntryPage() {
 
             <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
             <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+            <FamiliarityResurfacingNotes
+              notes={familiarityResurfacing}
+              max={limits.familiarityResurfacing}
+            />
             <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
             <RevisitationNotes notes={revisitation} max={1} />
             <TimeMemoryNotes notes={timeMemory} max={1} />

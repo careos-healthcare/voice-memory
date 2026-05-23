@@ -6,13 +6,14 @@ import { motion } from "framer-motion";
 import { CalendarRange } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
-import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { timelineChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { timelineFamiliarityNotes } from "@/lib/memory/familiarity";
+import { timelineFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { timelineRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
 import { timelineRevisitationNotes } from "@/lib/memory/revisitation";
@@ -33,6 +34,7 @@ export default function TimelinePage() {
   const [changeMoments, setChangeMoments] = useState<MemoryNote[]>([]);
   const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
+  const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
@@ -43,12 +45,22 @@ export default function TimelinePage() {
       setResurfacing(archiveResurfacingNotes(all, limits.resurfacing));
       setChangeMoments(timelineChangeMomentsNotes(all, limits.changeMoments));
       setFamiliarity(timelineFamiliarityNotes(all, limits.familiarity));
+      setFamiliarityResurfacing(
+        timelineFamiliarityResurfacingNotes(all, limits.familiarityResurfacing),
+      );
       setRhythm(timelineRhythmNotes(all, limits.rhythm));
       setTimeMemory(timelineTimeMemoryNotes(all));
       setRevisitation(timelineRevisitationNotes(all));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.notes, limits.resurfacing, limits.changeMoments, limits.familiarity, limits.rhythm]);
+  }, [
+    limits.notes,
+    limits.resurfacing,
+    limits.changeMoments,
+    limits.familiarity,
+    limits.familiarityResurfacing,
+    limits.rhythm,
+  ]);
 
   const loading = notes === null;
   const sorted = [...entries].sort(
@@ -100,6 +112,10 @@ export default function TimelinePage() {
 
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
               <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+              <FamiliarityResurfacingNotes
+                notes={familiarityResurfacing}
+                max={limits.familiarityResurfacing}
+              />
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={2} />
