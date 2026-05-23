@@ -20,6 +20,7 @@ const MAX_SECONDS = 60;
 interface RecorderProps {
   autoStart?: boolean;
   onComplete?: (entry: JournalEntry) => void;
+  preRecordLine?: string | null;
 }
 
 type RecorderState =
@@ -29,7 +30,7 @@ type RecorderState =
   | "complete"
   | "error";
 
-export function Recorder({ autoStart = false, onComplete }: RecorderProps) {
+export function Recorder({ autoStart = false, onComplete, preRecordLine }: RecorderProps) {
   const router = useRouter();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -245,6 +246,11 @@ export function Recorder({ autoStart = false, onComplete }: RecorderProps) {
               <Mic className="h-5 w-5" />
               Start reflection
             </Button>
+            {preRecordLine ? (
+              <p className="max-w-sm text-center text-sm leading-relaxed text-zinc-500">
+                {preRecordLine}
+              </p>
+            ) : null}
             <p className="text-sm text-zinc-500">
               Up to {MAX_SECONDS} seconds · local-first on your device
             </p>

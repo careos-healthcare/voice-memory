@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ArchiveGrowthNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
+import { ArchiveGrowthNotes, ContinuationNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
 import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -38,6 +39,8 @@ export default function HomePage() {
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
+  const [continuation, setContinuation] = useState<MemoryNote[]>([]);
+  const [recorderLine, setRecorderLine] = useState<string | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -48,12 +51,17 @@ export default function HomePage() {
         entries,
         limits.familiarityResurfacing,
       );
+      const continuationNotes = homepageContinuationNotes(entries, limits.continuation);
       setResurfacing(resurfacingNotes);
       setTimeMemory(homepageTimeMemoryNotes(entries));
       setRevisitation(revisitationNotes);
       setFamiliarity(homepageFamiliarityNotes(entries, limits.familiarity));
       setRhythm(homepageRhythmNotes(entries, limits.rhythm));
       setFamiliarityResurfacing(familiarityResurfacingNotes);
+      setContinuation(continuationNotes);
+      setRecorderLine(
+        continuationNotes.length === 0 ? recorderPreRecordLine(entries) : null,
+      );
       const meaningfulTiming =
         resurfacingNotes.length > 0 ||
         revisitationNotes.length > 0 ||
@@ -69,6 +77,7 @@ export default function HomePage() {
     limits.rhythm,
     limits.familiarityResurfacing,
     limits.archiveGrowth,
+    limits.continuation,
   ]);
 
   return (
@@ -84,6 +93,7 @@ export default function HomePage() {
         <div className="mt-4 space-y-4">
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
+          <ContinuationNotes notes={continuation} max={limits.continuation} />
           <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
           <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
           <FamiliarityResurfacingNotes
@@ -142,7 +152,7 @@ export default function HomePage() {
             transition={{ duration: 0.55, delay: 0.1 }}
             className="mt-8 w-full"
           >
-            <Recorder />
+            <Recorder preRecordLine={recorderLine} />
           </motion.div>
 
           <motion.p

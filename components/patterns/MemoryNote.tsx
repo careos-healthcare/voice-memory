@@ -295,6 +295,27 @@ export function ArchiveGrowthNotes({
   );
 }
 
+export function ContinuationNotes({
+  notes,
+  max = 1,
+}: {
+  notes: MemoryNote[];
+  max?: number;
+}) {
+  const visible = notes.slice(0, max);
+  if (visible.length === 0) return null;
+
+  return (
+    <ul className="space-y-12">
+      {visible.map((note) => (
+        <li key={note.id}>
+          <p className="text-sm leading-relaxed text-zinc-500">{note.text}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function MemoryNotesOverview({
   changed,
   faded,

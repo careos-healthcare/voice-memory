@@ -6,11 +6,12 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { MemoryNoteView, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNoteView, ChangeMomentsNotes, ContinuationNotes, FamiliarityNotes, FamiliarityResurfacingNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -49,6 +50,17 @@ export default function EntryPage() {
     return entryMemoryNotes(allEntries, entry.id);
   }, [entry, allEntries]);
 
+  const continuationOpener = useMemo(() => {
+    if (!entry) return null;
+    const opener = entryContinuationOpener(allEntries, entry.id);
+    if (!opener) return null;
+    if (isDuplicateNote(opener, notes?.primaryCallback)) return null;
+    if (isDuplicateNote(opener, notes?.secondaryCallback)) return null;
+    if (notes?.thenVsNow.some((t) => isDuplicateNote(opener, t))) return null;
+    if (isDuplicateNote(opener, notes?.whatChanged)) return null;
+    return opener;
+  }, [entry, allEntries, notes]);
+
   const handleDelete = () => {
     if (!entry) return;
     deleteEntry(entry.id);
@@ -59,18 +71,20 @@ export default function EntryPage() {
     if (!entry) return [];
     const raw = entryResurfacingNotes(allEntries, entry.id, limits.resurfacing);
     const shown = [
+      continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
       notes?.whatChanged,
     ].filter(Boolean) as MemoryNote[];
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.resurfacing);
-  }, [entry, allEntries, notes, limits.resurfacing]);
+  }, [entry, allEntries, notes, continuationOpener, limits.resurfacing]);
 
   const timeMemory = useMemo(() => {
     if (!entry) return [];
     const raw = entryTimeMemoryNotes(allEntries, entry.id);
     const shown = [
+      continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
@@ -78,12 +92,13 @@ export default function EntryPage() {
       ...resurfacing,
     ].filter(Boolean) as MemoryNote[];
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, 1);
-  }, [entry, allEntries, notes, resurfacing]);
+  }, [entry, allEntries, notes, continuationOpener, resurfacing]);
 
   const revisitation = useMemo(() => {
     if (!entry) return [];
     const raw = entryRevisitationNotes(allEntries, entry.id);
     const shown = [
+      continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
@@ -92,12 +107,13 @@ export default function EntryPage() {
       ...timeMemory,
     ].filter(Boolean) as MemoryNote[];
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, 1);
-  }, [entry, allEntries, notes, resurfacing, timeMemory]);
+  }, [entry, allEntries, notes, continuationOpener, resurfacing, timeMemory]);
 
   const changeMoments = useMemo(() => {
     if (!entry) return [];
     const raw = entryChangeMomentsNotes(allEntries, entry.id, limits.changeMoments);
     const shown = [
+      continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
@@ -107,12 +123,13 @@ export default function EntryPage() {
       ...revisitation,
     ].filter(Boolean) as MemoryNote[];
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.changeMoments);
-  }, [entry, allEntries, notes, resurfacing, timeMemory, revisitation, limits.changeMoments]);
+  }, [entry, allEntries, notes, continuationOpener, resurfacing, timeMemory, revisitation, limits.changeMoments]);
 
   const familiarity = useMemo(() => {
     if (!entry) return [];
     const raw = entryFamiliarityNotes(allEntries, entry.id, limits.familiarity);
     const shown = [
+      continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
@@ -127,6 +144,7 @@ export default function EntryPage() {
     entry,
     allEntries,
     notes,
+    continuationOpener,
     resurfacing,
     timeMemory,
     revisitation,
@@ -142,6 +160,7 @@ export default function EntryPage() {
       limits.familiarityResurfacing,
     );
     const shown = [
+      continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
@@ -159,6 +178,7 @@ export default function EntryPage() {
     entry,
     allEntries,
     notes,
+    continuationOpener,
     resurfacing,
     timeMemory,
     revisitation,
@@ -223,6 +243,10 @@ export default function EntryPage() {
                 {formatEntryDate(entry.createdAt)}
               </h1>
             </header>
+
+            {continuationOpener ? (
+              <ContinuationNotes notes={[continuationOpener]} max={1} />
+            ) : null}
 
             {notes?.primaryCallback ? <MemoryNoteView note={notes.primaryCallback} /> : null}
 
