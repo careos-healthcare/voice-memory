@@ -11,12 +11,14 @@ import { InsightCard } from "@/components/InsightCard";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
+import { detectAvoidanceForEntry } from "@/lib/patterns/avoidance";
 import { getPhrasesForEntry } from "@/lib/patterns/phrase-memory";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -41,6 +43,11 @@ export default function EntryPage() {
   const relatedPhrases = useMemo(() => {
     if (!entry) return [];
     return getPhrasesForEntry(getAllEntries(), entry.id);
+  }, [entry]);
+
+  const relatedAvoidance = useMemo(() => {
+    if (!entry) return [];
+    return detectAvoidanceForEntry(getAllEntries(), entry.id);
   }, [entry]);
 
   const handleDelete = () => {
@@ -124,6 +131,7 @@ export default function EntryPage() {
               entry={entry}
               showContradictionCard={false}
               showPhraseCard={false}
+              showAvoidanceCard={false}
             />
 
             <ContradictionContinuityCard
@@ -141,6 +149,16 @@ export default function EntryPage() {
               subtitle="Language from this entry that also appears elsewhere in your archive"
               maxItems={6}
               highlightEntryId={entry.id}
+              className="mt-6"
+            />
+
+            <AvoidanceCard
+              signals={relatedAvoidance}
+              title="Indirect language in this reflection"
+              subtitle="Vague or hedging phrasing connected to patterns elsewhere in your archive"
+              maxItems={4}
+              highlightEntryId={entry.id}
+              hideWhenEmpty
               className="mt-6"
             />
 

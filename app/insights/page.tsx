@@ -24,10 +24,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
 import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
+import {
+  detectAllAvoidanceSignals,
+  type AvoidanceSignal,
+} from "@/lib/patterns/avoidance";
 import { getAllEntries } from "@/lib/storage";
 
 function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTrend"] }) {
@@ -72,6 +77,7 @@ export default function InsightsPage() {
   const [insights, setInsights] = useState<MemoryInsights | null>(null);
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
+  const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -79,6 +85,7 @@ export default function InsightsPage() {
       setInsights(analyzeJournalEntries());
       setContradictions(detectAllContradictions(entries));
       setPhrases(getTopPhrases(entries, 10));
+      setAvoidanceSignals(detectAllAvoidanceSignals(entries));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -204,6 +211,13 @@ export default function InsightsPage() {
                 title="Repeated language"
                 subtitle="Phrases, metaphors, and self-labels that recur across your archive"
                 maxItems={10}
+              />
+
+              <AvoidanceCard
+                signals={avoidanceSignals}
+                title="What stays vague"
+                subtitle="Indirect references, hedging, and unnamed stressors — pattern observation only"
+                maxItems={6}
               />
 
               {insights.weeklyMentions.length > 0 ? (

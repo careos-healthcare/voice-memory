@@ -31,6 +31,7 @@ interface InsightCardProps {
   patternInsights?: EntryPatternInsights;
   showContradictionCard?: boolean;
   showPhraseCard?: boolean;
+  showAvoidanceCard?: boolean;
 }
 
 function SafetyNotice() {
@@ -97,6 +98,7 @@ export function InsightCard({
   patternInsights: patternInsightsProp,
   showContradictionCard = true,
   showPhraseCard = true,
+  showAvoidanceCard = true,
 }: InsightCardProps) {
   const patternInsights = useMemo(() => {
     if (patternInsightsProp) return patternInsightsProp;
@@ -187,9 +189,9 @@ export function InsightCard({
         />
       ) : null}
 
-      {(patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
+      {showAvoidanceCard && (patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
         <PatternSection
-          title="Avoided topics & hedging"
+          title="Indirect language & hedging"
           icon={EyeOff}
           accent="text-zinc-400"
           items={(patternInsights?.avoidanceSignals ?? []).map((a) => ({

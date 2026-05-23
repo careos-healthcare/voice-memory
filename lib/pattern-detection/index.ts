@@ -174,7 +174,7 @@ export function buildEntryPatternInsights(
 ): EntryPatternInsights {
   const contradictions = detectContradictions(allEntries, entry.id);
   const repeatedPhrases = detectRepeatedPhrases(allEntries, entry.id);
-  const avoidanceSignals = detectAvoidanceSignals(entry);
+  const avoidanceSignals = detectAvoidanceSignals(entry, allEntries);
   const emotionalEvolution = detectEmotionalEvolution(allEntries, entry.id);
   const recurringPatterns = buildRecurringPatterns(entry, allEntries);
   const observations = buildObservations(

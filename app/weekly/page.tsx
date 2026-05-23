@@ -35,8 +35,13 @@ import {
   type WeeklyIntelligenceReport,
 } from "@/lib/weekly-intelligence";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { detectRecentContradictions } from "@/lib/patterns/contradictions";
 import type { Contradiction } from "@/lib/patterns/contradictions";
+import {
+  detectRecentAvoidanceSignals,
+  type AvoidanceSignal,
+} from "@/lib/patterns/avoidance";
 import { getAllEntries } from "@/lib/storage";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
@@ -54,12 +59,15 @@ const shiftAccent: Record<
 export default function WeeklyPage() {
   const [report, setReport] = useState<WeeklyIntelligenceReport | null>(null);
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
+  const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
     const id = requestAnimationFrame(() => {
+      const entries = getAllEntries();
       setReport(analyzeWeeklyIntelligence());
-      setContradictions(detectRecentContradictions(getAllEntries(), 7));
+      setContradictions(detectRecentContradictions(entries, 7));
+      setAvoidanceSignals(detectRecentAvoidanceSignals(entries, 7));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -211,6 +219,13 @@ export default function WeeklyPage() {
                 contradictions={contradictions}
                 title="This week's contradictions"
                 subtitle="Tension and reversals from the last 7 days — not a diagnosis"
+                maxItems={4}
+              />
+
+              <AvoidanceCard
+                signals={avoidanceSignals}
+                title="What stays vague this week"
+                subtitle="Indirect language from the last 7 days — not a clinical claim"
                 maxItems={4}
               />
 
