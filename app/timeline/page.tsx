@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarRange } from "lucide-react";
 
+import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
+
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
@@ -174,8 +176,9 @@ export default function TimelinePage() {
                 <ul className="space-y-2">
                   {sorted.slice(0, 12).map((entry) => (
                     <li key={entry.id}>
-                      <Link
-                        href={`/entry/${entry.id}`}
+                      <RevisitEntryLink
+                        entryId={entry.id}
+                        source="timeline"
                         className="flex items-center gap-3 px-1 py-3 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
                       >
                         <span>{formatEntryDate(entry.createdAt)}</span>
@@ -183,7 +186,7 @@ export default function TimelinePage() {
                           entryId={entry.id}
                           bookmarkedIds={bookmarkedIds}
                         />
-                      </Link>
+                      </RevisitEntryLink>
                     </li>
                   ))}
                 </ul>

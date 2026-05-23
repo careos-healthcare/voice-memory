@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
+import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import {
   formatThreadDateRange,
   formatThreadSourceLabel,
@@ -177,8 +178,9 @@ export function ThreadDetail({
         <ul className="space-y-6">
           {thread.relatedEntries.map((related) => (
             <li key={related.entryId}>
-              <Link
-                href={`/entry/${related.entryId}`}
+              <RevisitEntryLink
+                entryId={related.entryId}
+                source="thread"
                 className="group block space-y-2 px-1 py-2 transition-colors"
               >
                 <div className="flex flex-wrap items-center gap-2">
@@ -197,7 +199,7 @@ export function ThreadDetail({
                     View reflection
                   </p>
                 )}
-              </Link>
+              </RevisitEntryLink>
             </li>
           ))}
         </ul>

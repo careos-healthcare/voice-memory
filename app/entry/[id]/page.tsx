@@ -49,11 +49,17 @@ import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
+import {
+  buildRevisitExperience,
+  trackRevisitFollowupStarted,
+  trackRevisitOpened,
+  trackRevisitThenNowSeen,
+  type RevisitExperiencePresentation,
+} from "@/lib/refinement/revisit-experience";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { isReflectionPending } from "@/lib/pending-reflection";
 import { deleteEntry, getEntry, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
-import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
@@ -70,6 +76,8 @@ export default function EntryPage() {
   const [entry, setEntry] = useState<JournalEntry | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [presentation, setPresentation] = useState<QuietEntryPresentation | null>(null);
+  const [revisitExperience, setRevisitExperience] =
+    useState<RevisitExperiencePresentation | null>(null);
 
   useEffect(() => {
     const found = getEntry(params.id);
@@ -92,17 +100,28 @@ export default function EntryPage() {
   useEffect(() => {
     if (!entry || pending) {
       setPresentation(null);
+      setRevisitExperience(null);
       return;
     }
     const id = requestAnimationFrame(() => {
-      setPresentation(
-        buildQuietEntryPresentation(allEntries, entry.id, {
-          changeMoments: limits.changeMoments,
-          familiarity: limits.familiarity,
-          familiarityResurfacing: limits.familiarityResurfacing,
-          resurfacing: limits.resurfacing,
-        }),
-      );
+      const limitsPayload = {
+        changeMoments: limits.changeMoments,
+        familiarityResurfacing: limits.familiarityResurfacing,
+        resurfacing: limits.resurfacing,
+      };
+      const revisit = buildRevisitExperience(allEntries, entry.id, limitsPayload);
+      setRevisitExperience(revisit);
+      if (revisit.isRevisit) {
+        setPresentation(null);
+        trackRevisitOpened(entry.id, revisit.sources);
+      } else {
+        setPresentation(
+          buildQuietEntryPresentation(allEntries, entry.id, {
+            ...limitsPayload,
+            familiarity: limits.familiarity,
+          }),
+        );
+      }
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -114,6 +133,11 @@ export default function EntryPage() {
     limits.familiarityResurfacing,
     limits.resurfacing,
   ]);
+
+  useEffect(() => {
+    if (!entry?.id || !revisitExperience?.thenVsNow) return;
+    trackRevisitThenNowSeen(entry.id, revisitExperience.thenVsNow.id);
+  }, [entry?.id, revisitExperience?.thenVsNow?.id]);
 
   const notes = useMemo(() => {
     if (!entry || pending) return null;
@@ -293,9 +317,13 @@ export default function EntryPage() {
     [followupNotes],
   );
 
-  const activeFollowup = presentation?.followupPrompt ?? followupPrompt;
+  const activeFollowup =
+    revisitExperience?.followupPrompt ?? presentation?.followupPrompt ?? followupPrompt;
 
   const handleContinueFollowup = (prompt: FollowupPrompt) => {
+    if (entry && revisitExperience?.isRevisit) {
+      trackRevisitFollowupStarted(entry.id, prompt.id);
+    }
     storeFollowupPrompt(prompt.text);
     router.push("/#recorder");
   };
@@ -412,11 +440,28 @@ export default function EntryPage() {
               />
             ) : (
               <>
-                {quiet && presentation?.revisitMode ? (
+                {revisitExperience?.isRevisit ? (
                   <>
-                    <PrimaryCallbackNote note={presentation.primaryMoment} />
-                    {presentation.continuation ? (
-                      <ContinuationNotes notes={[presentation.continuation]} max={1} />
+                    <PrimaryCallbackNote note={revisitExperience.primaryCallback} />
+                    {revisitExperience.thenVsNow ? (
+                      <MotionNoteList className="space-y-16 py-1">
+                        <AnimatedMemoryNote note={revisitExperience.thenVsNow} index={0} />
+                      </MotionNoteList>
+                    ) : null}
+                    {revisitExperience.quietRealization ? (
+                      revisitExperience.quietRealization.pastQuote ||
+                      revisitExperience.quietRealization.currentQuote ? (
+                        <MotionNoteList className="space-y-16 py-1">
+                          <AnimatedMemoryNote
+                            note={revisitExperience.quietRealization}
+                            index={1}
+                          />
+                        </MotionNoteList>
+                      ) : (
+                        <p className="text-sm leading-[1.75] text-zinc-500/90">
+                          {revisitExperience.quietRealization.text}
+                        </p>
+                      )
                     ) : null}
                     <FollowupPromptInline
                       prompt={activeFollowup}

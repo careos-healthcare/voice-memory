@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
-
 import {
   BookmarkIndicator,
   BookmarkTypeHint,
 } from "@/components/memory/ReflectionBookmarkMark";
+import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import { formatBookmarkTypeLabel } from "@/lib/reflection-bookmarks";
 import type {
   ReflectionBookmarkType,
@@ -51,8 +50,9 @@ export function ReflectionBookmarkList({
           <ul className="space-y-8">
             {section.items.map((bookmark) => (
               <li key={`${bookmark.entryId}-${bookmark.type}`}>
-                <Link
-                  href={bookmark.href}
+                <RevisitEntryLink
+                  entryId={bookmark.entryId}
+                  source="bookmark"
                   className="group block space-y-2 px-1 py-2 transition-colors"
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -69,7 +69,7 @@ export function ReflectionBookmarkList({
                       View reflection
                     </p>
                   )}
-                </Link>
+                </RevisitEntryLink>
               </li>
             ))}
           </ul>

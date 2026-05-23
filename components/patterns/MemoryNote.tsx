@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
+import { revisitSourceFromNote } from "@/lib/refinement/revisit-experience";
 import { MOTION, type NoteMotionTone } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -39,12 +41,13 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
             <span className="block text-xs text-zinc-600/90">{note.pastDateLabel}</span>
           ) : null}
           {note.pastEntryId ? (
-            <Link
-              href={`/entry/${note.pastEntryId}`}
+            <RevisitEntryLink
+              entryId={note.pastEntryId}
+              source={revisitSourceFromNote(note)}
               className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
               before
-            </Link>
+            </RevisitEntryLink>
           ) : null}
         </motion.blockquote>
       ) : null}
@@ -61,12 +64,13 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
             <span className="block text-xs text-zinc-600/90">{note.currentDateLabel}</span>
           ) : null}
           {note.entryId ? (
-            <Link
-              href={`/entry/${note.entryId}`}
+            <RevisitEntryLink
+              entryId={note.entryId}
+              source={revisitSourceFromNote(note)}
               className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
               now
-            </Link>
+            </RevisitEntryLink>
           ) : null}
         </motion.blockquote>
       ) : null}
