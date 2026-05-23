@@ -1,12 +1,19 @@
 import { addDaysToKey, daysBetweenKeys, toDayKey } from "@/lib/dates";
+import {
+  EMOTIONAL_WEIGHT_MIN,
+  EMOTIONAL_WEIGHT_STRONG,
+  pickStrongestByWeight,
+  rankByEmotionalWeight,
+  weightContinuityCallback,
+  weightContinuityMoment,
+  weightThenVsNow,
+} from "@/lib/memory/emotional-weight";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import {
-  applyStrongExtraLimit,
   MAX_LANDMARKS,
   MAX_THEN_VS_NOW,
-  STRONG_THEN_VS_NOW_SECOND,
 } from "@/lib/patterns/note-limits";
-import { filterOrienting, pickStrongest, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
+import { filterOrienting, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import { formatEntryDate } from "@/lib/utils";
 import type {
   ContinuityCallback,
@@ -405,8 +412,19 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
   return moments;
 }
 
-function selectEntryCallbacks(raw: ContinuityCallback[]): ContinuityCallback[] {
+function selectEntryCallbacks(
+  raw: ContinuityCallback[],
+  sorted: JournalEntry[],
+): ContinuityCallback[] {
   if (raw.length === 0) return [];
+
+  const ranked = rankByEmotionalWeight(
+    raw,
+    (callback) => weightContinuityCallback(callback, sorted),
+    raw.length,
+    EMOTIONAL_WEIGHT_MIN,
+  );
+  if (ranked.length === 0) return [];
 
   const beforeKinds = new Set<ContinuityCallbackKind>(["came_up_differently", "sounds_calmer"]);
   const differentKinds = new Set<ContinuityCallbackKind>([
@@ -419,31 +437,44 @@ function selectEntryCallbacks(raw: ContinuityCallback[]): ContinuityCallback[] {
   const bestOf = (pool: ContinuityCallback[], kinds: Set<ContinuityCallbackKind>) =>
     pool
       .filter((c) => kinds.has(c.kind))
-      .sort((a, b) => b.confidence - a.confidence)[0];
+      .sort(
+        (a, b) =>
+          weightContinuityCallback(b, sorted) - weightContinuityCallback(a, sorted),
+      )[0];
 
-  const sorted = [...raw].sort((a, b) => b.confidence - a.confidence);
   const primary =
-    bestOf(sorted, beforeKinds) ||
-    bestOf(sorted, differentKinds) ||
-    bestOf(sorted, fadedKinds) ||
-    sorted[0];
+    bestOf(ranked, beforeKinds) ||
+    bestOf(ranked, differentKinds) ||
+    bestOf(ranked, fadedKinds) ||
+    ranked[0];
 
-  const rest = sorted.filter((c) => c.id !== primary.id);
+  const rest = ranked.filter((c) => c.id !== primary.id);
   const secondary =
     bestOf(rest, beforeKinds) ||
     bestOf(rest, differentKinds) ||
     bestOf(rest, fadedKinds);
 
-  if (secondary && secondary.confidence >= USEFULNESS_MIN_CONFIDENCE) {
+  if (
+    secondary &&
+    weightContinuityCallback(secondary, sorted) >= EMOTIONAL_WEIGHT_STRONG
+  ) {
     return [primary, secondary];
   }
   return [primary];
 }
 
-function selectArchiveCallbacks(raw: ContinuityCallback[]): ContinuityCallback[] {
-  const sorted = pickStrongest(filterOrienting(raw, (c) => c.text), raw.length);
-  if (sorted.length <= 2) return sorted;
-  return selectEntryCallbacks(sorted);
+function selectArchiveCallbacks(
+  raw: ContinuityCallback[],
+  sorted: JournalEntry[],
+): ContinuityCallback[] {
+  const oriented = filterOrienting(raw, (c) => c.text);
+  const ranked = pickStrongestByWeight(
+    oriented,
+    (callback) => weightContinuityCallback(callback, sorted),
+    oriented.length,
+  );
+  if (ranked.length <= 2) return ranked.slice(0, 2);
+  return selectEntryCallbacks(ranked, sorted);
 }
 
 function detectThenVsNowAll(
@@ -502,18 +533,24 @@ function detectThenVsNowAll(
     }
   }
 
-  candidates.sort((a, b) => b.confidence - a.confidence);
+  candidates.sort(
+    (a, b) => weightThenVsNow(b, sorted) - weightThenVsNow(a, sorted),
+  );
   const subjects = new Set<string>();
   const picked: ThenVsNowComparison[] = [];
 
   for (const c of candidates) {
+    if (weightThenVsNow(c, sorted) < EMOTIONAL_WEIGHT_MIN) continue;
     if (subjects.has(c.subject)) continue;
     if (picked.length === 0) {
       picked.push(c);
       subjects.add(c.subject);
       continue;
     }
-    if (picked.length === 1 && c.confidence >= STRONG_THEN_VS_NOW_SECOND) {
+    if (
+      picked.length === 1 &&
+      weightThenVsNow(c, sorted) >= EMOTIONAL_WEIGHT_STRONG
+    ) {
       picked.push(c);
       subjects.add(c.subject);
     }
@@ -554,13 +591,14 @@ export function buildContinuityMomentsReport(
 
   let callbacks: ContinuityCallback[] = [];
   if (context === "entry" && options.entryId) {
-    callbacks = selectEntryCallbacks(detectEntryCallbacks(sorted, options.entryId));
+    callbacks = selectEntryCallbacks(detectEntryCallbacks(sorted, options.entryId), sorted);
   } else {
-    callbacks = selectArchiveCallbacks(detectArchiveCallbacks(sorted, context));
+    callbacks = selectArchiveCallbacks(detectArchiveCallbacks(sorted, context), sorted);
   }
 
-  callbacks = pickStrongest(
+  callbacks = pickStrongestByWeight(
     filterOrienting(callbacks, (c) => c.text),
+    (callback) => weightContinuityCallback(callback, sorted),
     context === "entry" ? 2 : callbackLimit,
   );
 
@@ -572,12 +610,12 @@ export function buildContinuityMomentsReport(
     "recovery_after_spike",
     "phrase_disappearance",
   ];
-  const landmarks = applyStrongExtraLimit(
-    pickStrongest(
-      moments.filter((m) => landmarkKinds.includes(m.kind)),
-      MAX_LANDMARKS,
-    ),
+  const landmarks = pickStrongestByWeight(
+    moments.filter((moment) => landmarkKinds.includes(moment.kind)),
+    (moment) => weightContinuityMoment(moment, sorted),
     MAX_LANDMARKS,
+    EMOTIONAL_WEIGHT_MIN,
+    EMOTIONAL_WEIGHT_STRONG,
   );
 
   const thenVsNowList =

@@ -1,5 +1,9 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import {
+  rankByEmotionalWeight,
+  weightRevisitationKind,
+} from "@/lib/memory/emotional-weight";
+import {
   applyResurfacingRarity,
   candidateFromRevisitationNote,
   gapDaysBetweenEntries,
@@ -327,22 +331,32 @@ function pickForContext(
   notes: RevisitationNote[],
   context: RevisitationContext,
   limit: number,
+  sorted: JournalEntry[],
 ): RevisitationNote[] {
-  const sorted = dedupeNotes(notes);
+  const ranked = rankByEmotionalWeight(
+    dedupeNotes(notes),
+    (note) =>
+      weightRevisitationKind(
+        note.kind,
+        note.strength,
+        gapDaysBetweenEntries(sorted, note.pastEntryId, note.entryId),
+      ),
+    notes.length,
+  );
   const priority = CONTEXT_PRIORITY[context];
   const picked: RevisitationNote[] = [];
   const usedKinds = new Set<RevisitationKind>();
 
   for (const kind of priority) {
     if (picked.length >= limit) break;
-    const match = sorted.find((n) => n.kind === kind && !usedKinds.has(kind));
+    const match = ranked.find((n) => n.kind === kind && !usedKinds.has(kind));
     if (match) {
       picked.push(match);
       usedKinds.add(kind);
     }
   }
 
-  for (const note of sorted) {
+  for (const note of ranked) {
     if (picked.length >= limit) break;
     if (picked.some((p) => p.id === note.id)) continue;
     picked.push(note);
@@ -375,7 +389,7 @@ export function buildRevisitationReport(
   }
 
   const candidates = detectForAnchor(anchor, prior, sorted, latest);
-  const notes = pickForContext(candidates, options.context, limit * 4);
+  const notes = pickForContext(candidates, options.context, limit * 4, sorted);
   return { notes, hasData: notes.length > 0 };
 }
 

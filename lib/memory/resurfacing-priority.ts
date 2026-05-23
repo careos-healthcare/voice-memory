@@ -5,6 +5,7 @@ import type { MemoryNote } from "@/types/memory-note";
 import type { ResurfacingKind, ResurfacingNote } from "@/types/resurfacing";
 import type { RevisitationKind, RevisitationNote } from "@/types/revisitation";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { weightResurfacingNote, weightRevisitationKind } from "@/lib/memory/emotional-weight";
 
 const FATIGUE_KEY = "voicememory_resurfacing_fatigue";
 const MAX_FATIGUE_RECORDS = 48;
@@ -336,7 +337,18 @@ export function candidateFromResurfacingNote(
       break;
   }
 
-  return baseCandidate(memoryNote, category, note.strength, gap);
+  return baseCandidate(
+    memoryNote,
+    category,
+    weightResurfacingNote(note.strength, {
+      gapDays: gap,
+      isLoop: category === "loop_long_silence" || category === "loop_return",
+      isCalmer: category === "first_calmer",
+      isContrast: category === "emotional_contrast",
+      isDirect: note.kind === "direct_return",
+    }),
+    gap,
+  );
 }
 
 export function candidateFromFamiliarityResurfacingNote(
@@ -370,7 +382,20 @@ export function candidateFromFamiliarityResurfacingNote(
   }
 
   const weight =
-    note.kind === "emotionally_similar" ? note.strength - 4 : note.strength;
+    note.kind === "emotionally_similar"
+      ? weightResurfacingNote(note.strength - 8, { gapDays: gapDays ?? 0 })
+      : weightResurfacingNote(note.strength, {
+          gapDays: gapDays ?? 0,
+          isLoop: note.kind === "earlier_loop",
+          isCalmer: note.kind === "first_calmer_topic",
+          isContrast:
+            note.kind === "sound_different" ||
+            note.kind === "emotionally_opposite" ||
+            note.kind === "before_major_shift" ||
+            note.kind === "monthly_contrast" ||
+            note.kind === "before_direct_naming",
+          isDirect: note.kind === "before_direct_naming",
+        });
 
   return baseCandidate(memoryNote, category, weight, gapDays);
 }
@@ -381,7 +406,7 @@ export function candidateFromRevisitationNote(
   gapDays?: number,
 ): ResurfacingCandidate {
   let category: ResurfacingFatigueCategory = "revisitation";
-  let weight = note.strength;
+  let weight = weightRevisitationKind(note.kind, note.strength, gapDays ?? 0);
 
   switch (note.kind) {
     case "loop_return":
@@ -389,10 +414,17 @@ export function candidateFromRevisitationNote(
         gapDays && gapDays >= RESURFACING_LONG_SILENCE_DAYS
           ? "loop_long_silence"
           : "loop_return";
+      weight = weightResurfacingNote(weight, {
+        gapDays: gapDays ?? 0,
+        isLoop: true,
+      });
       break;
     case "reads_differently":
       category = "emotional_contrast";
-      weight += 2;
+      weight = weightResurfacingNote(weight, {
+        gapDays: gapDays ?? 0,
+        isContrast: true,
+      });
       break;
     case "related_older":
     case "worth_revisit":
@@ -401,6 +433,7 @@ export function candidateFromRevisitationNote(
       break;
     case "before_quieter":
       category = "first_calmer";
+      weight = weightResurfacingNote(weight, { gapDays: gapDays ?? 0, isCalmer: true });
       break;
   }
 
@@ -412,7 +445,21 @@ export function candidateFromChangeMomentNote(
   memoryNote: MemoryNote,
   gapDays?: number,
 ): ResurfacingCandidate {
-  return baseCandidate(memoryNote, "change_moment", note.strength, gapDays);
+  return baseCandidate(
+    memoryNote,
+    "change_moment",
+    weightResurfacingNote(note.strength, {
+      gapDays: gapDays ?? 0,
+      isContrast: true,
+      isCalmer:
+        note.kind === "calmer_return" ||
+        note.kind === "less_charged" ||
+        note.kind === "recovery_after_topic",
+      isDirect: note.kind === "less_hedging" || note.kind === "more_direct",
+      isLoop: note.kind === "shorter_spiral" || note.kind === "concern_absent",
+    }),
+    gapDays,
+  );
 }
 
 export function categoryForMemoryNote(note: MemoryNote): ResurfacingFatigueCategory {

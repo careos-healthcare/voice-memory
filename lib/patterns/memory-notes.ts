@@ -1,7 +1,11 @@
 import { buildChangeReport } from "@/lib/patterns/changes";
 import { buildContinuityMomentsReport } from "@/lib/patterns/continuity-moments";
 import {
-  applyStrongExtraLimit,
+  pickStrongestByWeight,
+  weightMemoryNote,
+  weightThenVsNow,
+} from "@/lib/memory/emotional-weight";
+import {
   MAX_MEMORY_NOTES,
   MAX_LANDMARKS,
 } from "@/lib/patterns/note-limits";
@@ -51,11 +55,11 @@ function pushNote(bucket: MemoryNote[], note: MemoryNote | null): void {
   if (note) bucket.push(note);
 }
 
-function dedupeNotes(notes: MemoryNote[]): MemoryNote[] {
+function dedupeNotes(notes: MemoryNote[], sorted: JournalEntry[]): MemoryNote[] {
   const seen = new Set<string>();
   return notes
     .filter((n) => n.confidence >= USEFULNESS_MIN_CONFIDENCE)
-    .sort((a, b) => b.confidence - a.confidence)
+    .sort((a, b) => weightMemoryNote(b, sorted) - weightMemoryNote(a, sorted))
     .filter((n) => {
       const key = n.text.slice(0, 40);
       if (seen.has(key)) return false;
@@ -64,8 +68,15 @@ function dedupeNotes(notes: MemoryNote[]): MemoryNote[] {
     });
 }
 
-function splitByCategory(notes: MemoryNote[]): Pick<MemoryNotesReport, "changed" | "faded" | "returned" | "all"> {
-  const limited = applyStrongExtraLimit(notes, MAX_MEMORY_NOTES);
+function splitByCategory(
+  notes: MemoryNote[],
+  sorted: JournalEntry[],
+): Pick<MemoryNotesReport, "changed" | "faded" | "returned" | "all"> {
+  const limited = pickStrongestByWeight(
+    dedupeNotes(notes, sorted),
+    (note) => weightMemoryNote(note, sorted),
+    MAX_MEMORY_NOTES,
+  );
   return {
     all: limited,
     changed: limited.filter((n) => n.category === "changed"),
@@ -74,22 +85,33 @@ function splitByCategory(notes: MemoryNote[]): Pick<MemoryNotesReport, "changed"
   };
 }
 
-function landmarksToNotes(continuity: ContinuityMomentsReport): MemoryNote[] {
-  return applyStrongExtraLimit(
+function landmarksToNotes(
+  continuity: ContinuityMomentsReport,
+  sorted: JournalEntry[],
+): MemoryNote[] {
+  return pickStrongestByWeight(
     dedupeNotes(
-      continuity.landmarks.map((lm) =>
-        noteFromText(lm.id, lm.text, "changed", lm.confidence, {
-          entryId: lm.entryIds[0],
-        }),
-      ).filter((n): n is MemoryNote => n !== null),
+      continuity.landmarks
+        .map((lm) =>
+          noteFromText(lm.id, lm.text, "changed", lm.confidence, {
+            entryId: lm.entryIds[0],
+          }),
+        )
+        .filter((n): n is MemoryNote => n !== null),
+      sorted,
     ),
+    (note) => weightMemoryNote(note, sorted),
     MAX_LANDMARKS,
   );
 }
 
-export function thenVsNowToNote(comparison: ThenVsNowComparison): MemoryNote | null {
+export function thenVsNowToNote(
+  comparison: ThenVsNowComparison,
+  sorted: JournalEntry[],
+): MemoryNote | null {
   if (comparison.confidence < 65) return null;
   const text = comparison.headline.trim() || "You sound different here.";
+  if (weightThenVsNow(comparison, sorted) < 65) return null;
   return noteFromText(`tvn-${comparison.then.entryId}-${comparison.subject}`, text, "changed", comparison.confidence, {
     pastQuote: comparison.then.snippet,
     currentQuote: comparison.now.snippet,
@@ -109,6 +131,9 @@ export function buildMemoryNotesReport(
 ): MemoryNotesReport {
   const context = options.context ?? "memory";
   const maxTotal = options.maxTotal ?? MAX_MEMORY_NOTES;
+  const sorted = [...entries].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  );
 
   const continuity = buildContinuityMomentsReport(entries, {
     context,
@@ -162,9 +187,9 @@ export function buildMemoryNotesReport(
     );
   }
 
-  const split = splitByCategory(dedupeNotes(all));
+  const split = splitByCategory(all, sorted);
   const landmarks =
-    options.includeLandmarks !== false ? landmarksToNotes(continuity) : [];
+    options.includeLandmarks !== false ? landmarksToNotes(continuity, sorted) : [];
 
   return {
     ...split,
@@ -191,14 +216,18 @@ export function entryMemoryNotes(
     landmarkLimit: 0,
   });
 
-  const callbacks = continuity.callbacks
-    .map((cb) =>
-      noteFromText(cb.id, cb.text, categoryForCallback(cb.kind), cb.confidence, { entryId }),
-    )
-    .filter((n): n is MemoryNote => n !== null);
+  const callbacks = pickStrongestByWeight(
+    continuity.callbacks
+      .map((cb) =>
+        noteFromText(cb.id, cb.text, categoryForCallback(cb.kind), cb.confidence, { entryId }),
+      )
+      .filter((n): n is MemoryNote => n !== null),
+    (note) => weightMemoryNote(note, entries),
+    2,
+  );
 
   const thenVsNow = (continuity.thenVsNowList ?? [])
-    .map(thenVsNowToNote)
+    .map((comparison) => thenVsNowToNote(comparison, entries))
     .filter((n): n is MemoryNote => n !== null);
 
   const changes = buildChangeReport(entries, { scope: "archive", limit: 4 });
