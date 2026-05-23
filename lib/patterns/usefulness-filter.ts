@@ -25,7 +25,7 @@ const ORIENTATION_SIGNALS = [
   /more (direct|clear|calm|forward)/i,
   /came (back|up differently)/i,
   /faded|disappeared|returned|resolved|recovery|peaked/i,
-  /before|after|used to|lately|now|this time|for a while|absent|named it|got quieter|came up before|sound different|not appeared for a while|came back today|quieter than last time|last talked about|days ago|sundays|mondays|last monday|last month|end of the week|lighter than|heavier lately|feels similar|this month sounds|tends to return|couple of weeks|read differently|first time this topic|sound different from this entry|before things got quieter|older reflection|quiet stretch|had not named|less tension|more directly|loop came back|more weight|more vaguely|carry more pressure|named this more directly|concern has been absent|you changed|you sound different here/i,
+  /before|after|used to|lately|now|this time|for a while|absent|named it|got quieter|came up before|sound different|not appeared for a while|came back today|quieter than last time|last talked about|days ago|sundays|mondays|last monday|last month|end of the week|lighter than|heavier lately|feels similar|this month sounds|tends to return|couple of weeks|read differently|first time this topic|sound different from this entry|before things got quieter|older reflection|quiet stretch|had not named|less tension|more directly|loop came back|more weight|more vaguely|carry more pressure|named this more directly|concern has been absent|you changed|you sound different here|more settled than usual|circle this topic longer|returned to this more quickly|more direct than your usual|more than you usually leave|take longer before this comes back/i,
   /\d+\/10/,
 ];
 

@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
 import { homepageRevisitationNotes } from "@/lib/memory/revisitation";
 import { homepageTimeMemoryNotes } from "@/lib/memory/time-memory";
@@ -30,6 +31,7 @@ export default function HomePage() {
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
+  const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -37,9 +39,10 @@ export default function HomePage() {
       setResurfacing(homepageResurfacingNotes(entries, limits.resurfacing));
       setTimeMemory(homepageTimeMemoryNotes(entries));
       setRevisitation(homepageRevisitationNotes(entries));
+      setFamiliarity(homepageFamiliarityNotes(entries, limits.familiarity));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.resurfacing]);
+  }, [limits.resurfacing, limits.familiarity]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
@@ -55,6 +58,7 @@ export default function HomePage() {
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
           <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
+          <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
           <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />
         </div>

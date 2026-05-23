@@ -5,12 +5,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
-import { MemoryNotesOverview, ChangeMomentsNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { monthlyChangeMomentsNotes } from "@/lib/memory/change-moments";
+import { monthlyFamiliarityNotes } from "@/lib/memory/familiarity";
 import { monthlyResurfacingNotes } from "@/lib/memory/resurfacing";
 import { monthlyRevisitationNotes } from "@/lib/memory/revisitation";
 import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
@@ -26,6 +27,7 @@ export default function MonthlyPage() {
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [changeMoments, setChangeMoments] = useState<MemoryNote[]>([]);
+  const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -35,15 +37,17 @@ export default function MonthlyPage() {
       setRevisitation(monthlyRevisitationNotes(entries));
       setResurfacing(monthlyResurfacingNotes(entries, limits.resurfacing));
       setChangeMoments(monthlyChangeMomentsNotes(entries, limits.changeMoments));
+      setFamiliarity(monthlyFamiliarityNotes(entries, limits.familiarity));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.notes, limits.resurfacing, limits.changeMoments]);
+  }, [limits.notes, limits.resurfacing, limits.changeMoments, limits.familiarity]);
 
   const loading = notes === null;
   const hasTimeMemory = timeMemory.length > 0;
   const hasRevisitation = revisitation.length > 0;
   const hasResurfacing = resurfacing.length > 0;
   const hasChangeMoments = changeMoments.length > 0;
+  const hasFamiliarity = familiarity.length > 0;
   const hasNotes = notes?.hasData ?? false;
 
   return (
@@ -63,7 +67,7 @@ export default function MonthlyPage() {
                 Reading your archive…
               </CardContent>
             </Card>
-          ) : !hasNotes && !hasTimeMemory && !hasRevisitation && !hasResurfacing && !hasChangeMoments ? (
+          ) : !hasNotes && !hasTimeMemory && !hasRevisitation && !hasResurfacing && !hasChangeMoments && !hasFamiliarity ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="px-6 py-16 text-center">
                 <CalendarDays className="mx-auto h-8 w-8 text-zinc-600" />
@@ -79,6 +83,7 @@ export default function MonthlyPage() {
           ) : (
             <>
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
+              <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={2} />
               <TimeMemoryNotes notes={timeMemory} max={2} />

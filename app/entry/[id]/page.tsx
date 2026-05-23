@@ -6,12 +6,13 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { MemoryNoteView, ChangeMomentsNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNoteView, ChangeMomentsNotes, FamiliarityNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
+import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
@@ -107,6 +108,31 @@ export default function EntryPage() {
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.changeMoments);
   }, [entry, allEntries, notes, resurfacing, timeMemory, revisitation, limits.changeMoments]);
 
+  const familiarity = useMemo(() => {
+    if (!entry) return [];
+    const raw = entryFamiliarityNotes(allEntries, entry.id, limits.familiarity);
+    const shown = [
+      notes?.primaryCallback,
+      notes?.secondaryCallback,
+      ...(notes?.thenVsNow ?? []),
+      notes?.whatChanged,
+      ...resurfacing,
+      ...timeMemory,
+      ...revisitation,
+      ...changeMoments,
+    ].filter(Boolean) as MemoryNote[];
+    return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.familiarity);
+  }, [
+    entry,
+    allEntries,
+    notes,
+    resurfacing,
+    timeMemory,
+    revisitation,
+    changeMoments,
+    limits.familiarity,
+  ]);
+
   const whatChangedLine = useMemo(() => {
     if (!notes?.whatChanged) return null;
     const wc = notes.whatChanged;
@@ -176,6 +202,7 @@ export default function EntryPage() {
             ))}
 
             <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
+            <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
             <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
             <RevisitationNotes notes={revisitation} max={1} />
             <TimeMemoryNotes notes={timeMemory} max={1} />
