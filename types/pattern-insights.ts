@@ -11,7 +11,12 @@ export interface ContradictionMatch {
   label: string;
   detail: string;
   priorEntryId?: string;
-  kind: "conflicting_statement" | "failed_intention" | "emotional_reversal" | "goal_behavior_tension";
+  kind:
+    | "conflicting_statement"
+    | "failed_intention"
+    | "emotional_reversal"
+    | "goal_behavior_tension"
+    | "want_vs_keep_doing";
 }
 
 export interface AvoidanceSignal {

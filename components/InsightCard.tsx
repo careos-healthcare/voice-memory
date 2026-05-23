@@ -4,7 +4,6 @@ import { useMemo, type ComponentType } from "react";
 import { motion } from "framer-motion";
 import {
   AlertCircle,
-  ArrowLeftRight,
   EyeOff,
   MessageSquareQuote,
   Repeat2,
@@ -16,7 +15,9 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { buildEntryPatternInsights } from "@/lib/pattern-detection";
+import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
 import { getAllEntries } from "@/lib/storage";
 import type { EntryPatternInsights } from "@/types/pattern-insights";
 import type { JournalEntry, Reflection } from "@/types/journal";
@@ -28,6 +29,7 @@ interface InsightCardProps {
   entryId?: string;
   entry?: JournalEntry;
   patternInsights?: EntryPatternInsights;
+  showContradictionCard?: boolean;
 }
 
 function SafetyNotice() {
@@ -92,6 +94,7 @@ export function InsightCard({
   entryId,
   entry,
   patternInsights: patternInsightsProp,
+  showContradictionCard = true,
 }: InsightCardProps) {
   const patternInsights = useMemo(() => {
     if (patternInsightsProp) return patternInsightsProp;
@@ -100,6 +103,16 @@ export function InsightCard({
     if (!resolvedEntry) return null;
     return buildEntryPatternInsights(resolvedEntry, getAllEntries());
   }, [patternInsightsProp, entry, entryId]);
+
+  const resolvedEntry = useMemo(
+    () => entry ?? (entryId ? getAllEntries().find((e) => e.id === entryId) : undefined),
+    [entry, entryId],
+  );
+
+  const entryContradictions = useMemo(() => {
+    if (!resolvedEntry) return [];
+    return detectContradictionsForEntry(getAllEntries(), resolvedEntry.id);
+  }, [resolvedEntry]);
 
   const intensityPercent = reflection.emotionalIntensity * 10;
 
@@ -150,17 +163,13 @@ export function InsightCard({
         }
       />
 
-      <PatternSection
-        title="Contradictions & reversals"
-        icon={ArrowLeftRight}
-        accent="text-amber-300"
-        items={(patternInsights?.contradictions ?? []).map((c) => ({
-          key: c.id,
-          label: c.label,
-          detail: c.detail,
-        }))}
-        emptyLabel="No cross-entry contradictions detected yet."
-      />
+      {showContradictionCard ? (
+        <ContradictionContinuityCard
+          contradictions={entryContradictions}
+          maxItems={3}
+          highlightEntryId={resolvedEntry?.id}
+        />
+      ) : null}
 
       <PatternSection
         title="Repeated phrases"

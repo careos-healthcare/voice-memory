@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -10,10 +10,12 @@ import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { InsightCard } from "@/components/InsightCard";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
+import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { deleteEntry, getEntry } from "@/lib/storage";
+import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
+import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
@@ -28,6 +30,11 @@ export default function EntryPage() {
     setEntry(found ?? null);
     setLoading(false);
   }, [params.id]);
+
+  const relatedContradictions = useMemo(() => {
+    if (!entry) return [];
+    return detectContradictionsForEntry(getAllEntries(), entry.id);
+  }, [entry]);
 
   const handleDelete = () => {
     if (!entry) return;
@@ -108,6 +115,16 @@ export default function EntryPage() {
               transcript={entry.transcript}
               showTranscript
               entry={entry}
+              showContradictionCard={false}
+            />
+
+            <ContradictionContinuityCard
+              contradictions={relatedContradictions}
+              title="Related continuity"
+              subtitle="How this entry connects to tension or reversals elsewhere in your archive"
+              maxItems={4}
+              highlightEntryId={entry.id}
+              className="mt-6"
             />
 
             <FeedbackPrompt

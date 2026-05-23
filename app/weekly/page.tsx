@@ -34,6 +34,10 @@ import {
   analyzeWeeklyIntelligence,
   type WeeklyIntelligenceReport,
 } from "@/lib/weekly-intelligence";
+import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
+import { detectRecentContradictions } from "@/lib/patterns/contradictions";
+import type { Contradiction } from "@/lib/patterns/contradictions";
+import { getAllEntries } from "@/lib/storage";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
 const shiftAccent: Record<
@@ -49,11 +53,13 @@ const shiftAccent: Record<
 
 export default function WeeklyPage() {
   const [report, setReport] = useState<WeeklyIntelligenceReport | null>(null);
+  const [contradictions, setContradictions] = useState<Contradiction[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
     const id = requestAnimationFrame(() => {
       setReport(analyzeWeeklyIntelligence());
+      setContradictions(detectRecentContradictions(getAllEntries(), 7));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -200,6 +206,13 @@ export default function WeeklyPage() {
                   ) : null}
                 </CardContent>
               </Card>
+
+              <ContradictionContinuityCard
+                contradictions={contradictions}
+                title="This week's contradictions"
+                subtitle="Tension and reversals from the last 7 days — not a diagnosis"
+                maxItems={4}
+              />
 
               <WeekComparisonCard
                 comparison={report.comparison}

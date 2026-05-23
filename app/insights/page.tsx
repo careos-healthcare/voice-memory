@@ -23,7 +23,10 @@ import { WhyThisMatters } from "@/components/WhyThisMatters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
+import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
+import { getAllEntries } from "@/lib/storage";
 
 function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTrend"] }) {
   const withData = points.filter((p) => p.entryCount > 0);
@@ -65,10 +68,12 @@ function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTren
 
 export default function InsightsPage() {
   const [insights, setInsights] = useState<MemoryInsights | null>(null);
+  const [contradictions, setContradictions] = useState<Contradiction[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       setInsights(analyzeJournalEntries());
+      setContradictions(detectAllContradictions(getAllEntries()));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -181,6 +186,13 @@ export default function InsightsPage() {
                   ))}
                 </CardContent>
               </Card>
+
+              <ContradictionContinuityCard
+                contradictions={contradictions}
+                title="Contradictions across your archive"
+                subtitle="Conflicting statements, reversals, and tension between aims and behavior"
+                maxItems={5}
+              />
 
               {insights.weeklyMentions.length > 0 ? (
                 <Card className="border-violet-400/20 bg-violet-500/5">
