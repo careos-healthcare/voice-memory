@@ -22,9 +22,11 @@ import {
   POSITIONING_TAGLINE,
 } from "@/lib/product-copy";
 import { getAllEntries } from "@/lib/storage";
+import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import type { MemoryNote } from "@/types/memory-note";
 
 export default function HomePage() {
+  const { limits } = useQuietMode();
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
@@ -32,12 +34,12 @@ export default function HomePage() {
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getAllEntries();
-      setResurfacing(homepageResurfacingNotes(entries));
+      setResurfacing(homepageResurfacingNotes(entries, limits.resurfacing));
       setTimeMemory(homepageTimeMemoryNotes(entries));
       setRevisitation(homepageRevisitationNotes(entries));
     });
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [limits.resurfacing]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
@@ -52,7 +54,7 @@ export default function HomePage() {
         <div className="mt-4 space-y-4">
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
-          <ResurfacingNotes notes={resurfacing} />
+          <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
           <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />
         </div>

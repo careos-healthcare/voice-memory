@@ -34,12 +34,12 @@ export default function TimelinePage() {
       const all = getAllEntries();
       setEntries(all);
       setNotes(buildMemoryNotesReport(all, { context: "timeline", maxTotal: limits.notes }));
-      setResurfacing(archiveResurfacingNotes(all));
+      setResurfacing(archiveResurfacingNotes(all, limits.resurfacing));
       setTimeMemory(timelineTimeMemoryNotes(all));
       setRevisitation(timelineRevisitationNotes(all));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.notes]);
+  }, [limits.notes, limits.resurfacing]);
 
   const loading = notes === null;
   const sorted = [...entries].sort(
@@ -89,7 +89,7 @@ export default function TimelinePage() {
                 />
               ) : null}
 
-              <ResurfacingNotes notes={resurfacing} />
+              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={2} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
 

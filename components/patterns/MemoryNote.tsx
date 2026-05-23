@@ -17,6 +17,9 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
         <blockquote className="border-l border-white/10 pl-4 text-sm leading-relaxed text-zinc-500">
           &ldquo;{note.pastQuote.slice(0, 160)}
           {note.pastQuote.length > 160 ? "…" : ""}&rdquo;
+          {note.pastDateLabel ? (
+            <span className="mt-1 block text-xs text-zinc-600">{note.pastDateLabel}</span>
+          ) : null}
           {note.pastEntryId ? (
             <Link
               href={`/entry/${note.pastEntryId}`}
@@ -31,6 +34,9 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
         <blockquote className="border-l border-white/5 pl-4 text-sm leading-relaxed text-zinc-400">
           &ldquo;{note.currentQuote.slice(0, 160)}
           {note.currentQuote.length > 160 ? "…" : ""}&rdquo;
+          {note.currentDateLabel ? (
+            <span className="mt-1 block text-xs text-zinc-600">{note.currentDateLabel}</span>
+          ) : null}
           {note.entryId ? (
             <Link
               href={`/entry/${note.entryId}`}

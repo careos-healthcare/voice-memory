@@ -15,6 +15,7 @@ import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
+import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -28,6 +29,7 @@ function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boole
 export default function EntryPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const { limits } = useQuietMode();
   const [entry, setEntry] = useState<JournalEntry | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
@@ -52,15 +54,15 @@ export default function EntryPage() {
 
   const resurfacing = useMemo(() => {
     if (!entry) return [];
-    const raw = entryResurfacingNotes(allEntries, entry.id);
+    const raw = entryResurfacingNotes(allEntries, entry.id, limits.resurfacing);
     const shown = [
       notes?.primaryCallback,
       notes?.secondaryCallback,
       ...(notes?.thenVsNow ?? []),
       notes?.whatChanged,
     ].filter(Boolean) as MemoryNote[];
-    return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, 1);
-  }, [entry, allEntries, notes]);
+    return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.resurfacing);
+  }, [entry, allEntries, notes, limits.resurfacing]);
 
   const timeMemory = useMemo(() => {
     if (!entry) return [];
@@ -157,7 +159,7 @@ export default function EntryPage() {
               <MemoryNoteView key={note.id} note={note} />
             ))}
 
-            <ResurfacingNotes notes={resurfacing} />
+            <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
             <RevisitationNotes notes={revisitation} max={1} />
             <TimeMemoryNotes notes={timeMemory} max={1} />
 

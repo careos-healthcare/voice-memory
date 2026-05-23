@@ -34,11 +34,11 @@ export default function MemoryPage() {
       const entries = getAllEntries();
       setSnapshot(buildEntityMemory());
       setNotes(buildMemoryNotesReport(entries, { context: "memory", maxTotal: limits.notes }));
-      setResurfacing(archiveResurfacingNotes(entries));
+      setResurfacing(archiveResurfacingNotes(entries, limits.resurfacing));
       setRevisitation(memoryRevisitationNotes(entries));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.notes]);
+  }, [limits.notes, limits.resurfacing]);
 
   const loading = snapshot === null;
 
@@ -85,7 +85,7 @@ export default function MemoryPage() {
                 />
               ) : null}
 
-              <ResurfacingNotes notes={resurfacing} />
+              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={2} />
 
               {snapshot.totalEntities > 0 ? (

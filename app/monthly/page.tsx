@@ -5,11 +5,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
 
-import { MemoryNotesOverview, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { monthlyResurfacingNotes } from "@/lib/memory/resurfacing";
 import { monthlyRevisitationNotes } from "@/lib/memory/revisitation";
 import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
@@ -22,6 +23,7 @@ export default function MonthlyPage() {
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
+  const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -29,13 +31,15 @@ export default function MonthlyPage() {
       setNotes(buildMemoryNotesReport(entries, { context: "monthly", maxTotal: limits.notes }));
       setTimeMemory(monthlyTimeMemoryNotes(entries));
       setRevisitation(monthlyRevisitationNotes(entries));
+      setResurfacing(monthlyResurfacingNotes(entries, limits.resurfacing));
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.notes]);
+  }, [limits.notes, limits.resurfacing]);
 
   const loading = notes === null;
   const hasTimeMemory = timeMemory.length > 0;
   const hasRevisitation = revisitation.length > 0;
+  const hasResurfacing = resurfacing.length > 0;
   const hasNotes = notes?.hasData ?? false;
 
   return (
@@ -55,7 +59,7 @@ export default function MonthlyPage() {
                 Reading your archive…
               </CardContent>
             </Card>
-          ) : !hasNotes && !hasTimeMemory && !hasRevisitation ? (
+          ) : !hasNotes && !hasTimeMemory && !hasRevisitation && !hasResurfacing ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="px-6 py-16 text-center">
                 <CalendarDays className="mx-auto h-8 w-8 text-zinc-600" />
@@ -70,6 +74,7 @@ export default function MonthlyPage() {
             </Card>
           ) : (
             <>
+              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={2} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
               {hasNotes ? (

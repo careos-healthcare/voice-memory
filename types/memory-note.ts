@@ -5,6 +5,8 @@ export interface MemoryNote {
   text: string;
   pastQuote?: string;
   currentQuote?: string;
+  pastDateLabel?: string;
+  currentDateLabel?: string;
   entryId?: string;
   pastEntryId?: string;
   category: MemoryNoteCategory;

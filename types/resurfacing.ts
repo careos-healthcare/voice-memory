@@ -1,12 +1,12 @@
 export type ResurfacingKind =
-  | "topic_return"
+  | "topic_silence"
+  | "person_silence"
   | "phrase_return"
-  | "entity_return"
-  | "quieter_return"
+  | "loop_return"
+  | "calmer_return"
   | "heavier_return"
-  | "unresolved_loop"
-  | "similar_to_today"
-  | "last_appeared";
+  | "direct_return"
+  | "vague_return";
 
 export interface ResurfacingNote {
   id: string;
@@ -15,6 +15,8 @@ export interface ResurfacingNote {
   strength: number;
   pastQuote?: string;
   currentQuote?: string;
+  pastDateLabel?: string;
+  currentDateLabel?: string;
   pastEntryId?: string;
   entryId: string;
 }
