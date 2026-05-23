@@ -1,66 +1,299 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Filter, Search, Sparkles } from "lucide-react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  SEARCH_FIELD_LABELS,
-  searchJournalEntries,
-  type SearchField,
-} from "@/lib/journal-search";
+  EMPTY_LIFE_SEARCH_FILTERS,
+  EXAMPLE_LIFE_QUERIES,
+  getLifeSearchFilterOptions,
+  LIFE_SEARCH_FIELD_LABELS,
+  semanticLifeSearch,
+  type ConfidenceLabel,
+  type LifeSearchFilters,
+} from "@/lib/semantic-life-search";
 import { formatRelativeDate } from "@/lib/utils";
+
+const CONFIDENCE_STYLES: Record<
+  ConfidenceLabel,
+  { label: string; className: string }
+> = {
+  high: {
+    label: "Strong match",
+    className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+  },
+  medium: {
+    label: "Good match",
+    className: "border-violet-400/30 bg-violet-500/10 text-violet-200",
+  },
+  low: {
+    label: "Possible match",
+    className: "border-white/10 bg-white/5 text-zinc-400",
+  },
+};
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+      <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-white/10 bg-zinc-900 px-3 py-2.5 text-sm text-white focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+      >
+        {options.map((opt) => (
+          <option key={opt.value || "all"} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState<LifeSearchFilters>(EMPTY_LIFE_SEARCH_FILTERS);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterOptions, setFilterOptions] = useState<{
+    moods: string[];
+    themes: string[];
+  }>({ moods: [], themes: [] });
 
-  const results = useMemo(() => searchJournalEntries(query), [query]);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setFilterOptions(getLifeSearchFilterOptions());
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const results = useMemo(
+    () => semanticLifeSearch(query, filters),
+    [query, filters],
+  );
+
+  const hasInput =
+    query.trim().length > 0 ||
+    filters.mood ||
+    filters.theme ||
+    filters.dateFrom ||
+    filters.dateTo ||
+    filters.intensityMin !== null ||
+    filters.intensityMax !== null;
+
+  const clearFilters = () => setFilters(EMPTY_LIFE_SEARCH_FILTERS);
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         <SiteHeader />
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4"
+          className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Search your life
+            Semantic life search
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Search</h1>
-          <p className="mt-2 text-sm text-zinc-400">
-            Find moments across transcript, mood, themes, concerns, and positive
-            signals — all stored locally.
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+            Search
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+            Ask in plain language. We match mood, themes, concerns, and entity
+            memory locally — no embeddings, no cloud index.
           </p>
         </motion.div>
 
-        <div className="relative mt-8">
+        <div className="relative mt-6">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try “anxious”, “work”, or a theme…"
+            placeholder='Try "when did I feel anxious?"'
             className="w-full rounded-2xl border border-white/10 bg-white/[0.04] py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-600 focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             autoFocus
           />
         </div>
 
-        <p className="mt-3 text-xs text-zinc-600">
-          Searches transcript · mood · themes · hidden concern · positive signal
+        <div className="mt-3 flex flex-wrap gap-2">
+          {EXAMPLE_LIFE_QUERIES.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => setQuery(example)}
+              className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-left text-xs text-zinc-400 transition-colors hover:border-violet-400/30 hover:text-violet-200"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="w-full sm:w-auto"
+            onClick={() => setShowFilters((v) => !v)}
+          >
+            <Filter className="h-4 w-4" />
+            {showFilters ? "Hide filters" : "Filters"}
+          </Button>
+        </div>
+
+        {showFilters ? (
+          <Card className="mt-3 border-white/10">
+            <CardContent className="space-y-4 p-4">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <FilterSelect
+                  label="Mood"
+                  value={filters.mood}
+                  onChange={(mood) => setFilters((f) => ({ ...f, mood }))}
+                  options={[
+                    { value: "", label: "Any mood" },
+                    ...filterOptions.moods.map((m) => ({
+                      value: m,
+                      label: m,
+                    })),
+                  ]}
+                />
+                <FilterSelect
+                  label="Theme"
+                  value={filters.theme}
+                  onChange={(theme) => setFilters((f) => ({ ...f, theme }))}
+                  options={[
+                    { value: "", label: "Any theme" },
+                    ...filterOptions.themes.map((t) => ({
+                      value: t,
+                      label: t,
+                    })),
+                  ]}
+                />
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                    From
+                  </span>
+                  <input
+                    type="date"
+                    value={filters.dateFrom}
+                    onChange={(e) =>
+                      setFilters((f) => ({ ...f, dateFrom: e.target.value }))
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-3 py-2.5 text-sm text-white focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                  />
+                </label>
+                <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                    To
+                  </span>
+                  <input
+                    type="date"
+                    value={filters.dateTo}
+                    onChange={(e) =>
+                      setFilters((f) => ({ ...f, dateTo: e.target.value }))
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-3 py-2.5 text-sm text-white focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                  />
+                </label>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                    Min intensity
+                  </span>
+                  <select
+                    value={filters.intensityMin ?? ""}
+                    onChange={(e) =>
+                      setFilters((f) => ({
+                        ...f,
+                        intensityMin: e.target.value
+                          ? Number(e.target.value)
+                          : null,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-3 py-2.5 text-sm text-white focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                  >
+                    <option value="">Any</option>
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={n}>
+                        {n}/10
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                    Max intensity
+                  </span>
+                  <select
+                    value={filters.intensityMax ?? ""}
+                    onChange={(e) =>
+                      setFilters((f) => ({
+                        ...f,
+                        intensityMax: e.target.value
+                          ? Number(e.target.value)
+                          : null,
+                      }))
+                    }
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900 px-3 py-2.5 text-sm text-white focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                  >
+                    <option value="">Any</option>
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                      <option key={n} value={n}>
+                        {n}/10
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+              >
+                Clear filters
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-zinc-600">
+          <Sparkles className="h-3.5 w-3.5" />
+          Transcript · mood · themes · concerns · signals · recommendations ·
+          entities
         </p>
 
-        <div className="mt-8 space-y-3">
-          {query.trim().length === 0 ? (
+        <div className="mt-6 space-y-3">
+          {!hasInput ? (
             <Card className="border-dashed">
               <CardContent className="px-6 py-10 text-center text-sm text-zinc-500">
-                Type to search your journal entries on this device.
+                Ask a question or apply filters to search your life on this device.
               </CardContent>
             </Card>
           ) : results.length === 0 ? (
@@ -68,52 +301,85 @@ export default function SearchPage() {
               <CardContent className="px-6 py-10 text-center">
                 <p className="text-sm font-medium text-white">No matches</p>
                 <p className="mt-2 text-sm text-zinc-500">
-                  Nothing in your local journal matched &ldquo;{query}&rdquo;.
+                  Try a shorter phrase, an example query, or loosen your filters.
                 </p>
               </CardContent>
             </Card>
           ) : (
-            results.map((result, index) => (
-              <motion.div
-                key={result.entry.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.03 }}
-              >
-                <Link href={`/entry/${result.entry.id}`} className="group block">
-                  <Card className="transition-colors hover:border-violet-400/30 hover:bg-white/[0.04]">
-                    <CardContent className="p-5">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge className="capitalize">
-                              {result.entry.reflection.mood}
-                            </Badge>
-                            <span className="text-xs text-zinc-500">
-                              {formatRelativeDate(result.entry.createdAt)}
-                            </span>
+            <>
+              <p className="text-xs text-zinc-500">
+                {results.length} result{results.length === 1 ? "" : "s"}
+              </p>
+              {results.map((result, index) => {
+                const conf = CONFIDENCE_STYLES[result.confidence];
+                const primary = result.matches[0];
+
+                return (
+                  <motion.div
+                    key={result.entry.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                  >
+                    <Link
+                      href={`/entry/${result.entry.id}`}
+                      className="group block"
+                    >
+                      <Card className="transition-colors hover:border-violet-400/30 hover:bg-white/[0.04]">
+                        <CardContent className="p-4 sm:p-5">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge className="capitalize">
+                                  {result.entry.reflection.mood}
+                                </Badge>
+                                <span className="text-xs text-zinc-500">
+                                  {formatRelativeDate(result.entry.createdAt)}
+                                </span>
+                                <span
+                                  className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${conf.className}`}
+                                >
+                                  {conf.label}
+                                </span>
+                              </div>
+
+                              {primary ? (
+                                <div className="mt-3 rounded-xl bg-white/[0.03] px-3 py-2.5">
+                                  <p className="text-[10px] uppercase tracking-wider text-violet-300/90">
+                                    Matched &ldquo;{primary.matchedPhrase}&rdquo; in{" "}
+                                    {LIFE_SEARCH_FIELD_LABELS[primary.field]}
+                                  </p>
+                                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">
+                                    {primary.snippet}
+                                  </p>
+                                </div>
+                              ) : null}
+
+                              {result.matches.length > 1 ? (
+                                <ul className="mt-3 space-y-1.5">
+                                  {result.matches.slice(1).map((match) => (
+                                    <li
+                                      key={`${match.field}-${match.matchedPhrase}`}
+                                      className="text-xs text-zinc-500"
+                                    >
+                                      <span className="text-zinc-400">
+                                        {LIFE_SEARCH_FIELD_LABELS[match.field]}:
+                                      </span>{" "}
+                                      &ldquo;{match.matchedPhrase}&rdquo;
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                            </div>
+                            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-zinc-600 transition-transform group-hover:translate-x-0.5 group-hover:text-violet-300" />
                           </div>
-                          <p className="mt-3 text-sm leading-relaxed text-zinc-300">
-                            {result.snippet}
-                          </p>
-                          <div className="mt-3 flex flex-wrap gap-1.5">
-                            {result.matchedFields.map((field: SearchField) => (
-                              <span
-                                key={field}
-                                className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500"
-                              >
-                                {SEARCH_FIELD_LABELS[field]}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-zinc-600 transition-transform group-hover:translate-x-0.5 group-hover:text-violet-300" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </>
           )}
         </div>
       </div>
