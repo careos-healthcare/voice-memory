@@ -15,6 +15,10 @@ import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import {
+  ContinuityChangeMomentsCard,
+  LongitudinalContinuityCard,
+} from "@/components/patterns/LongitudinalContinuityCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,6 +28,8 @@ import { detectAvoidanceForEntry } from "@/lib/patterns/avoidance";
 import { getPhrasesForEntry } from "@/lib/patterns/phrase-memory";
 import { getEvolutionForEntry } from "@/lib/patterns/emotional-evolution";
 import { getPatternInsights, type PatternInsight } from "@/lib/patterns/pattern-engine";
+import { getContinuityForEntry } from "@/lib/patterns/continuity-engine";
+import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
   countsFromInsights,
@@ -66,6 +72,11 @@ export default function EntryPage() {
   const relatedEvolution = useMemo(() => {
     if (!entry) return [];
     return getEvolutionForEntry(getAllEntries(), entry.id);
+  }, [entry]);
+
+  const entryContinuity = useMemo((): ContinuityReport | null => {
+    if (!entry) return null;
+    return getContinuityForEntry(getAllEntries(), entry.id, 8);
   }, [entry]);
 
   const strongPatterns = useMemo(
@@ -179,6 +190,28 @@ export default function EntryPage() {
                 maxItems={4}
                 highlightEntryId={entry.id}
               />
+
+              {entryContinuity?.hasData ? (
+                <>
+                  <ContinuityChangeMomentsCard
+                    report={entryContinuity}
+                    title="Change moments tied to this entry"
+                    maxItems={3}
+                    highlightEntryId={entry.id}
+                  />
+                  <LongitudinalContinuityCard
+                    report={entryContinuity}
+                    title="How this thread changed over time"
+                    subtitle="Before/after shifts and continuity linked to this reflection"
+                    maxItems={5}
+                    highlightEntryId={entry.id}
+                    hideWhenEmpty
+                    showSummaries={false}
+                    showArcs
+                    showIdentity
+                  />
+                </>
+              ) : null}
 
               {/* 3. Repeated language */}
               <PhraseMemoryCard

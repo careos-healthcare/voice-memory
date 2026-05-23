@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { LineChart, Shield, TrendingUp } from "lucide-react";
+import { LineChart, TrendingUp } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  confidenceLabel,
   type EvolutionInsight,
   type WeeklyEvolutionComparison,
 } from "@/lib/patterns/emotional-evolution";
@@ -37,7 +36,7 @@ function windowLabel(window: EvolutionInsight["window"]): string {
 export function EmotionalEvolutionCard({
   insights,
   title = "Emotional evolution",
-  subtitle = "Patterns in mood and intensity — not a diagnosis",
+  subtitle = "How mood and intensity move across your entries",
   emptyLabel = "Emotional patterns emerge as you add voice reflections.",
   maxItems = 8,
   weekComparison = null,
@@ -76,11 +75,6 @@ export function EmotionalEvolutionCard({
         {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-xs text-zinc-500">
-          <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Observed from your words — not therapy, not a clinical assessment.
-        </div>
-
         {hasWeekLines ? (
           <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-sky-300/80">
@@ -104,14 +98,9 @@ export function EmotionalEvolutionCard({
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <p className="text-sm font-medium leading-relaxed text-white">{item.line}</p>
-              <div className="flex shrink-0 flex-wrap gap-1">
-                <Badge variant="secondary" className="text-[10px]">
-                  {windowLabel(item.window)}
-                </Badge>
-                <Badge variant="secondary" className="text-[10px]">
-                  {confidenceLabel(item.confidence)}
-                </Badge>
-              </div>
+              <Badge variant="secondary" className="shrink-0 text-[10px]">
+                {windowLabel(item.window)}
+              </Badge>
             </div>
             {item.detail ? (
               <p className="mt-2 text-xs leading-relaxed text-zinc-500">{item.detail}</p>

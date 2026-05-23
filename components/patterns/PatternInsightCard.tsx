@@ -1,16 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Shield } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { insightConfidenceLabel } from "@/lib/patterns/evidence-priority";
 import {
   type PatternInsight,
   typeLabel,
 } from "@/lib/patterns/pattern-engine";
-import { specificityLabel } from "@/lib/patterns/specificity-score";
 
 interface PatternInsightCardProps {
   insights: PatternInsight[];
@@ -27,7 +25,7 @@ interface PatternInsightCardProps {
 export function PatternInsightCard({
   insights,
   title = "Pattern insights",
-  subtitle = "Ranked by specificity, recurrence, and cross-entry evidence",
+  subtitle = "From your words, ranked by specificity",
   emptyLabel = "Pattern insights appear as you accumulate voice reflections.",
   maxItems = 8,
   highlightEntryId,
@@ -66,11 +64,6 @@ export function PatternInsightCard({
         {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-xs text-zinc-500">
-          <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Pattern-first mirror — not therapy, not a diagnosis. Ranked from your words only.
-        </div>
-
         {items.map((item, index) => (
           <div
             key={item.id}
@@ -87,25 +80,21 @@ export function PatternInsightCard({
                 <Badge variant="secondary" className="text-[10px]">
                   {typeLabel(item.type)}
                 </Badge>
-                <Badge variant="secondary" className="text-[10px]">
-                  {insightConfidenceLabel(item.scores.total)}
-                </Badge>
-                <Badge variant="secondary" className="text-[10px]">
-                  {specificityLabel(item.specificity.specificityScore)}
-                </Badge>
                 {showScores ? (
                   <Badge variant="secondary" className="text-[10px]">
-                    {item.specificity.specificityScore}/100 spec
+                    {item.specificity.specificityScore}/100
                   </Badge>
                 ) : null}
               </div>
             </div>
 
-            <p className="mt-2 text-xs text-zinc-500">
-              {item.specificity.evidenceCount} evidence item
-              {item.specificity.evidenceCount === 1 ? "" : "s"} ·{" "}
-              {item.entryIds.length} entr{item.entryIds.length === 1 ? "y" : "ies"}
-            </p>
+            {showScores ? (
+              <p className="mt-2 text-xs text-zinc-500">
+                {item.specificity.evidenceCount} evidence item
+                {item.specificity.evidenceCount === 1 ? "" : "s"} ·{" "}
+                {item.entryIds.length} entr{item.entryIds.length === 1 ? "y" : "ies"}
+              </p>
+            ) : null}
 
             {showScores && item.specificity.whyThisFeltSpecific[0] ? (
               <p className="mt-1 text-xs text-zinc-600">

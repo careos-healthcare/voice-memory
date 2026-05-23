@@ -133,8 +133,8 @@ function analyzeDayOfWeekPatterns(
     {
       id: `dow-${best.key.replace(/\s+/g, "-").toLowerCase()}-${window}`,
       kind: "day_of_week",
-      line: `Your highest intensity entries cluster on ${day} ${slotLabel}.`,
-      detail: `${best.row.entryIds.length} reflections averaged ${best.avg}/10 intensity — pattern in your words, not a clinical label.`,
+      line: `Your highest-intensity entries cluster on ${day} ${slotLabel}.`,
+      detail: `${best.row.entryIds.length} reflections averaged ${best.avg}/10 — your charged language tends to land ${day} ${slotLabel}.`,
       window,
       confidence: confidenceScore(best.row.entryIds.length, best.avg - 4),
       entryIds: best.row.entryIds,
@@ -167,12 +167,12 @@ function analyzeIntensityDrift(
       kind: "intensity_drift",
       line:
         delta > 0
-          ? `Intensity drifted upward over ${windowLabel} (${firstAvg} → ${secondAvg}/10).`
-          : `Intensity drifted downward over ${windowLabel} (${firstAvg} → ${secondAvg}/10).`,
+          ? `Intensity climbed over ${windowLabel} (${firstAvg} → ${secondAvg}/10).`
+          : `Intensity eased over ${windowLabel} (${firstAvg} → ${secondAvg}/10).`,
       detail:
         delta > 0
-          ? "Your later reflections in this window carry more emotional weight in your language."
-          : "Your later reflections in this window sound less charged than earlier ones.",
+          ? `Earlier entries in this window averaged ${firstAvg}/10; recent ones hit ${secondAvg}/10.`
+          : `Earlier entries averaged ${firstAvg}/10; recent ones dropped to ${secondAvg}/10.`,
       window,
       confidence: confidenceScore(entries.length, Math.abs(delta)),
       entryIds: entries.map((e) => e.id),
@@ -202,8 +202,8 @@ function analyzeEmotionalCycles(
     {
       id: `cycle-${window}`,
       kind: "emotional_cycle",
-      line: `Your recent entries shift mood often (${sequence}).`,
-      detail: "A back-and-forth cycle in how you describe your days — observed from your words only.",
+      line: `Recent moods swing often (${sequence}).`,
+      detail: `Last ${recent.length} reflections cycle through ${alternations + 1} distinct moods without settling.`,
       window,
       confidence: confidenceScore(recent.length, alternations),
       entryIds: recent.map((e) => e.id),
@@ -238,8 +238,8 @@ function analyzeTriggerContexts(
     results.push({
       id: `trigger-${theme}-${window}`,
       kind: "recurring_trigger",
-      line: `${capitalize(theme)}-related entries averaged ${avg}/10 intensity.`,
-      detail: `${row.entryIds.length} reflections where "${theme}" appeared — a recurring emotional context in your language.`,
+      line: `"${capitalize(theme)}" entries run ${avg}/10 — hotter than your typical reflections.`,
+      detail: `${row.entryIds.length} entries tag "${theme}" when your language carries more charge.`,
       window,
       confidence: confidenceScore(row.entryIds.length, avg - 4),
       entryIds: [...new Set(row.entryIds)],
@@ -294,7 +294,7 @@ function analyzeTopicIntensityShift(entries: JournalEntry[]): EvolutionInsight[]
         delta < 0
           ? `${capitalize(theme)} mentions became less intense over the last 2 weeks (${priorAvg} → ${recentAvg}/10).`
           : `${capitalize(theme)} mentions became more intense over the last 2 weeks (${priorAvg} → ${recentAvg}/10).`,
-      detail: "Comparing intensity when this theme appeared — not a diagnosis of how you should feel.",
+      detail: `Week-over-week intensity when "${theme}" appeared: ${priorAvg}/10 → ${recentAvg}/10.`,
       window: "30d",
       confidence: confidenceScore(recentInts.length + priorInts.length, Math.abs(delta)),
       entryIds: [...recentWeek, ...priorWeek]
@@ -330,7 +330,7 @@ function analyzePeriodComparison(entries: JournalEntry[]): EvolutionInsight[] {
         id: "period-stable",
         kind: "period_comparison",
         line: `Intensity stayed steady this week vs last (${thisAvg}/10 both periods).`,
-        detail: "Your emotional language carried similar weight across both weeks.",
+        detail: "Both weeks landed at similar average intensity in your words.",
         window: "7d",
         confidence: confidenceScore(thisWeek.length + lastWeek.length, 1),
         entryIds: [...thisWeek, ...lastWeek].map((e) => e.id),
@@ -346,7 +346,10 @@ function analyzePeriodComparison(entries: JournalEntry[]): EvolutionInsight[] {
         delta < 0
           ? `This week was calmer than last week (${thisAvg}/10 vs ${lastAvg}/10 average intensity).`
           : `This week was more intense than last week (${thisAvg}/10 vs ${lastAvg}/10 average intensity).`,
-      detail: "Week-over-week shift in how charged your reflections sound — pattern observation only.",
+      detail:
+        delta < 0
+          ? `This week's entries averaged ${thisAvg}/10 vs ${lastAvg}/10 last week — less charged overall.`
+          : `This week's entries averaged ${thisAvg}/10 vs ${lastAvg}/10 last week — more charged overall.`,
       window: "7d",
       confidence: confidenceScore(thisWeek.length + lastWeek.length, Math.abs(delta)),
       entryIds: [...thisWeek, ...lastWeek].map((e) => e.id),

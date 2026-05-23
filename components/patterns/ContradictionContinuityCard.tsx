@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftRight, Shield } from "lucide-react";
+import { ArrowLeftRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Contradiction } from "@/lib/patterns/contradictions";
 
@@ -17,22 +16,16 @@ interface ContradictionContinuityCardProps {
   className?: string;
 }
 
-function confidenceLabel(score: number): string {
-  if (score >= 70) return "Strong pattern";
-  if (score >= 50) return "Moderate pattern";
-  return "Possible pattern";
-}
-
 export function ContradictionContinuityCard({
   contradictions,
   title = "Contradictions & continuity",
-  subtitle = "Tension between your words over time — not a diagnosis",
+  subtitle = "Where your words pull in two directions",
   emptyLabel = "No contradictions detected yet. They appear as patterns accumulate across entries.",
   maxItems = 4,
   highlightEntryId,
   className,
 }: ContradictionContinuityCardProps) {
-  const items = contradictions.slice(0, maxItems);
+  const items = contradictions.filter((c) => c.confidence >= 50).slice(0, maxItems);
 
   if (items.length === 0) {
     return (
@@ -61,11 +54,6 @@ export function ContradictionContinuityCard({
         {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-xs text-zinc-500">
-          <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Reflective mirror only — these note language patterns, not clinical labels.
-        </div>
-
         {items.map((item) => (
           <div
             key={item.id}
@@ -73,9 +61,6 @@ export function ContradictionContinuityCard({
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <p className="text-sm font-medium text-white">{item.title}</p>
-              <Badge variant="secondary" className="shrink-0 text-[10px]">
-                {confidenceLabel(item.confidence)} · {item.confidence}%
-              </Badge>
             </div>
             <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.explanation}</p>
             <div className="mt-3 space-y-2">

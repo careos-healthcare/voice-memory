@@ -8,7 +8,7 @@ import { countFeedbackByRating, readAllFeedback } from "@/lib/feedback-storage";
 import { detectAllAvoidanceSignals } from "@/lib/patterns/avoidance";
 import { detectAllContradictions } from "@/lib/patterns/contradictions";
 import { buildEmotionalEvolutionReport } from "@/lib/patterns/emotional-evolution";
-import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
+import { buildPhraseMemory, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
 import { analyzeWeeklyIntelligence } from "@/lib/weekly-intelligence";
 import {
   scoreInsightSpecificity,
@@ -86,6 +86,46 @@ const MEMORY_TYPES = new Set<PatternInsightType>([
   "entity_trigger",
   "avoidance_signal",
 ]);
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function phraseInsightCopy(p: PhraseMemoryRecord): { title: string; detail: string } {
+  const hedgePhrases = new Set([
+    "maybe",
+    "i guess",
+    "eventually",
+    "sort of",
+    "probably",
+    "i don't know",
+  ]);
+  const lower = p.phrase.toLowerCase();
+  const example = p.occurrences[0]?.snippet ?? p.phrase;
+
+  if (p.category === "linguistic_habit" && hedgePhrases.has(lower)) {
+    return {
+      title: `You soften uncertainty with "${p.phrase}."`,
+      detail: `${p.count} uses across ${p.entryIds.length} entries · e.g. ${example.slice(0, 100)}`,
+    };
+  }
+  if (p.category === "self_label") {
+    return {
+      title: `You reach for "${p.phrase}" when describing yourself.`,
+      detail: `${p.count} uses · often when mood reads ${p.dominantMood ?? "charged"}`,
+    };
+  }
+  if (p.category === "metaphor") {
+    return {
+      title: `"${p.phrase}" — a bodily metaphor you return to.`,
+      detail: `${p.count} uses across ${p.entryIds.length} entries`,
+    };
+  }
+  return {
+    title: `"${p.phrase}" keeps showing up in your words.`,
+    detail: `${p.count} uses across ${p.entryIds.length} entries · ${example.slice(0, 100)}`,
+  };
+}
 
 function scoreInsight(
   input: {
@@ -206,12 +246,13 @@ function collectContradictionInsights(entries: JournalEntry[]): PatternInsight[]
 }
 
 function collectPhraseInsights(entries: JournalEntry[]): PatternInsight[] {
-  return buildPhraseMemory(entries).map((p) =>
-    insightFromParts(
+  return buildPhraseMemory(entries).map((p) => {
+    const copy = phraseInsightCopy(p);
+    return insightFromParts(
       `phrase:${p.category}:${p.phrase}`,
       "repeated_phrase",
-      `"${p.phrase}" returns across your archive`,
-      `${p.count} uses in ${p.entryIds.length} entries · ${p.category.replace("_", " ")}${p.dominantMood ? ` · often around ${p.dominantMood}` : ""}`,
+      copy.title,
+      copy.detail,
       p.occurrences.map((o) => ({
         entryId: o.entryId,
         dateLabel: o.dateLabel,
@@ -222,8 +263,8 @@ function collectPhraseInsights(entries: JournalEntry[]): PatternInsight[] {
       p.count,
       p.phrase,
       entries,
-    ),
-  );
+    );
+  });
 }
 
 function collectAvoidanceInsights(entries: JournalEntry[]): PatternInsight[] {
@@ -294,7 +335,7 @@ function collectEvolutionInsights(entries: JournalEntry[]): PatternInsight[] {
         `improvement:${line.slice(0, 32)}`,
         "improvement_signal",
         line,
-        "Week-over-week shift in how charged your reflections sound — pattern observation only.",
+        report.weekComparison.lines[0] ?? line,
         [],
         entries.slice(-14).map((e) => e.id),
         2,
@@ -319,12 +360,13 @@ function collectEntityInsights(entries: JournalEntry[]): PatternInsight[] {
   ];
 
   for (const entity of allEntities.filter((e) => e.mentionCount >= 2).slice(0, 8)) {
+    const moodHint = entity.relatedMoods[0] ? `, often when you sound ${entity.relatedMoods[0]}` : "";
     results.push(
       insightFromParts(
         `entity:${entity.id}`,
         "entity_trigger",
-        `You mentioned ${entity.name} ${entity.mentionCount} times`,
-        `Recurring ${formatEntityTypeLabel(entity.type).toLowerCase()} across your archive${entity.relatedMoods.length ? ` · moods like ${entity.relatedMoods.slice(0, 3).join(", ")}` : ""}`,
+        `${entity.name} — ${entity.mentionCount} mentions${moodHint}`,
+        `${capitalize(formatEntityTypeLabel(entity.type))} threaded through ${entity.entryIds.length} reflections.`,
         entity.sampleEntryIds.map((id) => {
           const entry = entries.find((e) => e.id === id);
           return {
@@ -358,12 +400,17 @@ function collectEntityInsights(entries: JournalEntry[]): PatternInsight[] {
 
   for (const [theme, row] of themeMap.entries()) {
     if (row.count < 2) continue;
+    const sampleEntry = entries.find((e) => e.id === row.entryIds[0]);
+    const quote =
+      sampleEntry?.reflection.exactLanguagePattern ??
+      sampleEntry?.transcript.slice(0, 80) ??
+      theme;
     results.push(
       insightFromParts(
         `theme:${theme}`,
         "recurring_pattern",
-        `"${theme}" keeps returning in your words`,
-        `Appeared in ${row.entryIds.length} reflections — a recurring thread in your archive.`,
+        `"${capitalize(theme)}" keeps returning in your archive`,
+        `${row.entryIds.length} entries · e.g. "${quote}"`,
         row.entryIds.slice(0, 4).map((id) => {
           const entry = entries.find((e) => e.id === id);
           return {
@@ -401,7 +448,7 @@ function collectWeeklyInsights(entries: JournalEntry[]): PatternInsight[] {
         `weekly-theme:${theme.label}`,
         "recurring_pattern",
         `"${theme.label}" surfaced ${theme.count} time${theme.count === 1 ? "" : "s"} this week`,
-        `Dominant recurring theme in the last 7 days — from your words only.`,
+        `Dominant theme in the last 7 days — tagged in ${theme.count} reflection${theme.count === 1 ? "" : "s"}.`,
         [],
         weekEntryIds,
         theme.count,
@@ -547,6 +594,10 @@ export function buildPatternEngineReport(
   }
 
   insights = insights
+    .filter(
+      (i) =>
+        !i.specificity.isWeakOrGeneric && i.specificity.specificityScore >= 52,
+    )
     .sort(
       (a, b) =>
         b.specificity.specificityScore - a.specificity.specificityScore ||

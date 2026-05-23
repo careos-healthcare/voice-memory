@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MessageSquareQuote, Shield } from "lucide-react";
+import { MessageSquareQuote } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +35,7 @@ function categoryLabel(category: PhraseMemoryRecord["category"]): string {
 export function PhraseMemoryCard({
   phrases,
   title = "Repeated language",
-  subtitle = "Words and phrases you keep returning to — not a diagnosis",
+  subtitle = "Phrases you return to across entries",
   emptyLabel = "Repeated phrases appear as you accumulate voice reflections.",
   maxItems = 6,
   highlightEntryId,
@@ -73,11 +73,6 @@ export function PhraseMemoryCard({
         {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-xs text-zinc-500">
-          <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Pattern in your language — not a clinical label or judgment.
-        </div>
-
         {items.map((item) => (
           <div
             key={`${item.category}-${item.phrase}`}

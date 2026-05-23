@@ -214,12 +214,12 @@ function detectVagueReferences(entries: JournalEntry[]): AvoidanceSignal[] {
     "vague_reference",
     (label, entryCount) =>
       entryCount >= 2
-        ? `"${label}" appears without specifics across several reflections`
-        : `"${label}" appears without naming what you mean`,
+        ? `You say "${label}" instead of naming the thing directly`
+        : `"${label}" — you describe the feeling without the referent`,
     (label, entryCount, evidenceCount) =>
       entryCount >= 2
-        ? `This topic appears indirectly several times — "${label}" showed up in ${entryCount} reflections (${evidenceCount} uses) without naming the person, place, or detail directly. This is language pattern observation only, not a clinical claim.`
-        : `"${label}" appears in your words without a clear referent — the subject stays off-record while you describe the feeling around it.`,
+        ? `"${label}" in ${entryCount} reflections (${evidenceCount} uses) while the person, place, or detail stays off-record.`
+        : `"${label}" points at something you don't name — the subject stays implicit.`,
   );
 
   return [...store.values()].map(finalizeSignal);
@@ -249,9 +249,9 @@ function detectHedging(entries: JournalEntry[]): AvoidanceSignal[] {
       store.set(key, {
         id: key,
         kind: "emotional_hedging",
-        title: "Hedging language clusters in this reflection",
+        title: "Several hedging phrases stack in this entry",
         explanation:
-          "Several softening phrases appear together — you defer certainty while still circling the topic. This notes wording, not a judgment about what you should discuss.",
+          "Softeners cluster in one reflection — you defer certainty while still circling the topic.",
         evidence: [...labels].flatMap((l) => hedgeHits.get(l) ?? []).slice(0, 4),
         entryIds: new Set([entry.id]),
         trigger: [...labels].join(", "),
@@ -271,8 +271,8 @@ function detectHedging(entries: JournalEntry[]): AvoidanceSignal[] {
     store.set("emotional_hedging:cross", {
       id: "emotional_hedging:cross",
       kind: "emotional_hedging",
-      title: "Hedging language recurs across reflections",
-      explanation: `Phrases like ${labels.slice(0, 4).join(", ")} appear in multiple entries — you soften or defer certainty while the subject stays partly indirect.`,
+      title: `You soften with ${labels.slice(0, 3).join(", ")} across entries`,
+      explanation: `Phrases like ${labels.slice(0, 4).join(", ")} recur — uncertainty stays hedged while the subject stays partly indirect.`,
       evidence,
       entryIds,
       trigger: labels.join(", "),
@@ -295,11 +295,11 @@ function detectIndirectReferences(entries: JournalEntry[]): AvoidanceSignal[] {
     (label, entryCount) =>
       entryCount >= 2
         ? `"${label}" recurs without naming who or what`
-        : `Indirect reference: "${label}"`,
+        : `"${label}" — indirect reference`,
     (label, entryCount, evidenceCount) =>
       entryCount >= 2
-        ? `This topic appears indirectly several times — "${label}" showed up in ${entryCount} reflections. The person or topic stays unnamed even while you describe the context around it.`
-        : `"${label}" points to someone or something without naming them directly.`,
+        ? `"${label}" in ${entryCount} reflections; the person or topic stays unnamed.`
+        : `"${label}" points at someone or something you don't name directly.`,
   );
 
   return [...store.values()].map(finalizeSignal);
@@ -333,11 +333,11 @@ function detectUnnamedStressors(entries: JournalEntry[]): AvoidanceSignal[] {
     finalizeSignal({
       id: "unnamed_stressor:recurring",
       kind: "unnamed_stressor",
-      title: "Stress language without a named source",
+      title: "Stress language without naming the source",
       explanation:
         entryIds.size >= 2
-          ? `Pressure or tension language appears in ${entryIds.size} reflections without naming who, what, or where — the stressor stays implicit in your words. This is pattern observation only.`
-          : "You describe pressure or tension more than once without naming the source — the stressor stays implicit in your words.",
+          ? `Pressure or tension words in ${entryIds.size} reflections — no named who, what, or where.`
+          : "Pressure or tension appears more than once without naming the source.",
       evidence,
       entryIds,
       trigger: "unnamed stress",
@@ -388,8 +388,8 @@ function detectTopicProximity(entries: JournalEntry[]): AvoidanceSignal[] {
       finalizeSignal({
         id: `topic_proximity:${theme}`,
         kind: "topic_proximity",
-        title: `"${theme}" appears indirectly several times`,
-        explanation: `A recurring theme ("${theme}") shows up in your reflections, but your words often circle it with vague phrasing instead of naming it directly — ${uniqueEntries.size} entries with this pattern.`,
+        title: `You circle "${theme}" with vague phrasing`,
+        explanation: `"${theme}" tags the entry, but your words use vague phrasing instead of naming it head-on — ${uniqueEntries.size} entries with this pattern.`,
         evidence: rows.map((r) => r.evidence).slice(0, 6),
         entryIds: uniqueEntries,
         trigger: theme,

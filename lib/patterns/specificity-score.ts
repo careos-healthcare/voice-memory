@@ -44,6 +44,16 @@ const GENERIC_PHRASES = [
   /\bhold space\b/i,
   /\bgeneral stress\b/i,
   /\boverall mood\b/i,
+  /\bpattern in your (?:words|language)\b/i,
+  /\bobserved from your words\b/i,
+  /\bnot a diagnosis\b/i,
+  /\bnot a clinical\b/i,
+  /\brecurring emotional context\b/i,
+  /\blanguage pattern observation only\b/i,
+  /\bpattern observation only\b/i,
+  /\bfrom your words only\b/i,
+  /\bemotional shift around\b/i,
+  /\bthere may be tension\b/i,
 ];
 
 const DAY_TIME_RE =
@@ -166,8 +176,8 @@ export function scoreInsightSpecificity(
   const evidenceCount = Math.max(evidence.length, uniqueEntries.length, exactPhraseCount);
 
   const isWeakOrGeneric =
-    specificityScore < 45 ||
-    (exactPhraseCount === 0 && uniqueEntries.length < 2) ||
+    specificityScore < 52 ||
+    (exactPhraseCount === 0 && uniqueEntries.length < 2 && !/\d+\/\d+|\d+ → \d+/.test(text)) ||
     warnings.length >= 2;
 
   if (isWeakOrGeneric && !warnings.some((w) => w.includes("generic"))) {

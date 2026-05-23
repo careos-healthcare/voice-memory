@@ -37,6 +37,10 @@ import {
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import {
+  ContinuityChangeMomentsCard,
+  LongitudinalContinuityCard,
+} from "@/components/patterns/LongitudinalContinuityCard";
 import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
 import { detectRecentContradictions } from "@/lib/patterns/contradictions";
@@ -54,6 +58,8 @@ import {
   type PatternInsight,
 } from "@/lib/patterns/pattern-engine";
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
+import { getContinuityForWeekly } from "@/lib/patterns/continuity-engine";
+import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
   countsFromInsights,
@@ -79,6 +85,7 @@ export default function WeeklyPage() {
   const [weekEvolution, setWeekEvolution] = useState<WeeklyEvolutionComparison | null>(null);
   const [patternInsights, setPatternInsights] = useState<PatternInsight[]>([]);
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
+  const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
@@ -90,6 +97,7 @@ export default function WeeklyPage() {
       setWeekEvolution(buildWeeklyEvolutionComparison(entries));
       setPatternInsights(buildPatternEngineReport(entries, { scope: "weekly", limit: 8 }).insights);
       setPhrases(getTopPhrases(entries, 6));
+      setContinuity(getContinuityForWeekly(entries, 8));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -224,6 +232,25 @@ export default function WeeklyPage() {
                 subtitle="Intensity shift and topic-level changes from your words"
                 maxItems={4}
               />
+
+              {continuity?.hasData ? (
+                <>
+                  <ContinuityChangeMomentsCard
+                    report={continuity}
+                    title="Change moments this week"
+                    maxItems={4}
+                  />
+                  <LongitudinalContinuityCard
+                    report={continuity}
+                    title="Continuity this week"
+                    subtitle="What shifted, faded, or intensified in the last 7 days"
+                    maxItems={6}
+                    showSummaries={false}
+                    showArcs
+                    showIdentity={false}
+                  />
+                </>
+              ) : null}
 
               {/* 5. Entity memory */}
               <RankedListCard

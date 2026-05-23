@@ -157,6 +157,10 @@ function dedupeContradictions(items: Contradiction[]): Contradiction[] {
     });
 }
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function detectEmotionalReversals(sorted: JournalEntry[]): Contradiction[] {
   const results: Contradiction[] = [];
 
@@ -185,8 +189,8 @@ function detectEmotionalReversals(sorted: JournalEntry[]): Contradiction[] {
       results.push({
         id: `reversal-${prev.id}-${current.id}`,
         kind: "emotional_reversal",
-        title: `Emotional shift around "${theme}"`,
-        explanation: `You described this differently over time — ${prev.reflection.mood} earlier and ${current.reflection.mood} later when "${theme}" came up. This notes a shift in your language, not a diagnosis.`,
+        title: `${capitalize(theme)} went from ${prev.reflection.mood} to ${current.reflection.mood}.`,
+        explanation: `${formatEntryDate(prev.createdAt)}: "${supportingPhrase(prev).slice(0, 90)}" · ${formatEntryDate(current.createdAt)}: "${supportingPhrase(current).slice(0, 90)}"`,
         evidence,
         confidence: scoreConfidence(evidence, {
           sharedTheme: true,
@@ -229,8 +233,8 @@ function detectFailedIntentions(sorted: JournalEntry[]): Contradiction[] {
         results.push({
           id: `intention-${prev.id}-${current.id}-${stem}`,
           kind: "failed_intention",
-          title: "Repeated or stalled intention",
-          explanation: `There may be tension between stating "${intention}" and how you describe things later. This flags a language pattern — not a personal failure.`,
+          title: `You named "${intention.slice(0, 45)}${intention.length > 45 ? "…" : ""}" — still circling it later.`,
+          explanation: `${formatEntryDate(prev.createdAt)} you said you would ${intention.slice(0, 60)}; ${formatEntryDate(current.createdAt)} the same thread reads stalled or repeated.`,
           evidence,
           confidence: scoreConfidence(evidence, {
             phraseOverlap: wordOverlap(intention, currentText),
@@ -271,8 +275,8 @@ function detectGoalBehaviorTension(sorted: JournalEntry[]): Contradiction[] {
       results.push({
         id: `goal-behavior-${prev.id}-${current.id}`,
         kind: "goal_behavior_tension",
-        title: `Stated aim vs described behavior`,
-        explanation: `There may be tension between a stated aim around "${theme}" and behavior you describe later (avoidance, delay, or repetition). This compares your words over time — not a clinical assessment.`,
+        title: `You named an aim around ${theme}; later you describe delay or repetition.`,
+        explanation: `Around "${theme}": goal language on ${formatEntryDate(prev.createdAt)}, then avoidance or "again" language on ${formatEntryDate(current.createdAt)}.`,
         evidence,
         confidence: scoreConfidence(evidence, { sharedTheme: true }),
         entryIds: [prev.id, current.id],
@@ -300,8 +304,8 @@ function detectWantVsKeepDoing(sorted: JournalEntry[]): Contradiction[] {
           results.push({
             id: `want-keep-${entry.id}-${want.slice(0, 8)}`,
             kind: "want_vs_keep_doing",
-            title: `"I want" vs "I keep" in the same thread`,
-            explanation: `There may be tension between wanting "${want}" and describing that you keep "${keep}". This surfaces both framings in your words — not a judgment about what you should do.`,
+            title: `Same entry: you want "${want.slice(0, 40)}" and keep "${keep.slice(0, 40)}".`,
+            explanation: `Both framings sit in one reflection — wanting "${want.slice(0, 50)}" while describing that you keep "${keep.slice(0, 50)}".`,
             evidence,
             confidence: scoreConfidence(evidence, { phraseOverlap: 2 }),
             entryIds: [entry.id],
@@ -323,8 +327,8 @@ function detectWantVsKeepDoing(sorted: JournalEntry[]): Contradiction[] {
           results.push({
             id: `want-keep-cross-${entry.id}-${later.id}`,
             kind: "want_vs_keep_doing",
-            title: `Wanting one thing, describing another`,
-            explanation: `You said you want "${want}" in one entry and later describe that you keep "${keep}". There may be tension between those two ways of framing the same thread.`,
+            title: `You wanted "${want.slice(0, 35)}"; later you keep "${keep.slice(0, 35)}".`,
+            explanation: `${formatEntryDate(entry.createdAt)}: want "${want.slice(0, 55)}" · ${formatEntryDate(later.createdAt)}: keep "${keep.slice(0, 55)}"`,
             evidence,
             confidence: scoreConfidence(evidence, {
               phraseOverlap: wordOverlap(want, keep),
@@ -375,8 +379,8 @@ function detectConflictingStatements(sorted: JournalEntry[]): Contradiction[] {
       results.push({
         id: `conflict-${prev.id}-${current.id}`,
         kind: "conflicting_statement",
-        title: `Different framing of "${theme}"`,
-        explanation: `You described this differently over time around "${theme}". The entries below use overlapping language but point in different directions — a pattern in your words, not a diagnosis.`,
+        title: `"${theme}" reads two different ways across these entries.`,
+        explanation: `${formatEntryDate(prev.createdAt)}: "${prevObs.slice(0, 90)}" · ${formatEntryDate(current.createdAt)}: "${currentObs.slice(0, 90)}"`,
         evidence,
         confidence: scoreConfidence(evidence, {
           sharedTheme: true,

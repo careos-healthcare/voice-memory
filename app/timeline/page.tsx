@@ -7,6 +7,7 @@ import { CalendarRange, Clock3, Shield } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import { LongitudinalContinuityCard } from "@/components/patterns/LongitudinalContinuityCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,12 +15,15 @@ import {
   buildEmotionalEvolutionReport,
   type EmotionalEvolutionReport,
 } from "@/lib/patterns/emotional-evolution";
+import { getTimelineContinuity } from "@/lib/patterns/continuity-engine";
+import type { ContinuityReport } from "@/types/continuity";
 import { getAllEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
 export default function TimelinePage() {
   const [report, setReport] = useState<EmotionalEvolutionReport | null>(null);
+  const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
 
   useEffect(() => {
@@ -27,6 +31,7 @@ export default function TimelinePage() {
       const all = getAllEntries();
       setEntries(all);
       setReport(buildEmotionalEvolutionReport(all));
+      setContinuity(getTimelineContinuity(all, 14));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -47,14 +52,14 @@ export default function TimelinePage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Emotional timeline
+            Longitudinal timeline
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Timeline
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            How mood and intensity shift across your reflections — computed locally
-            from your words.
+            How mood, themes, and language evolve across your reflections — computed
+            locally from your words.
           </p>
         </motion.div>
 
@@ -90,6 +95,18 @@ export default function TimelinePage() {
             </>
           ) : (
             <>
+              {continuity?.hasData ? (
+                <LongitudinalContinuityCard
+                  report={continuity}
+                  title="Continuity over time"
+                  subtitle="What changed, faded, intensified, or came back across your archive"
+                  maxItems={10}
+                  showSummaries
+                  showArcs
+                  showIdentity
+                />
+              ) : null}
+
               <EmotionalEvolutionCard
                 insights={report.insights}
                 title="Emotional evolution"

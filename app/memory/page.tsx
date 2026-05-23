@@ -15,6 +15,7 @@ import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
+import { LongitudinalContinuityCard } from "@/components/patterns/LongitudinalContinuityCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +33,8 @@ import {
 import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
 import { detectAllAvoidanceSignals, type AvoidanceSignal } from "@/lib/patterns/avoidance";
 import { getEmotionalCycleInsights, type EvolutionInsight } from "@/lib/patterns/emotional-evolution";
+import { buildContinuityReport } from "@/lib/patterns/continuity-engine";
+import type { ContinuityReport } from "@/types/continuity";
 import {
   hasStrongPatternEvidence,
   countsFromInsights,
@@ -45,6 +48,7 @@ export default function MemoryPage() {
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
   const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
+  const [continuity, setContinuity] = useState<ContinuityReport | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -56,6 +60,7 @@ export default function MemoryPage() {
       setContradictions(detectAllContradictions(entries));
       setAvoidanceSignals(detectAllAvoidanceSignals(entries));
       setCycleInsights(getEmotionalCycleInsights(entries));
+      setContinuity(buildContinuityReport(entries, { scope: "archive", limit: 10 }));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -84,6 +89,18 @@ export default function MemoryPage() {
         subtitle="Tension and reversals across your archive"
         maxItems={4}
       />
+
+      {continuity?.hasData ? (
+        <LongitudinalContinuityCard
+          report={continuity}
+          title="How your memory evolved"
+          subtitle="Themes, phrases, and intensity shifts across your full archive"
+          maxItems={8}
+          showSummaries
+          showArcs
+          showIdentity
+        />
+      ) : null}
 
       <PhraseMemoryCard
         phrases={phrases}

@@ -1,14 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { EyeOff, Shield } from "lucide-react";
+import { EyeOff } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  confidenceLabel,
-  type AvoidanceSignal,
-} from "@/lib/patterns/avoidance";
+import { type AvoidanceSignal } from "@/lib/patterns/avoidance";
 
 interface AvoidanceCardProps {
   signals: AvoidanceSignal[];
@@ -24,14 +20,14 @@ interface AvoidanceCardProps {
 export function AvoidanceCard({
   signals,
   title = "What stays vague",
-  subtitle = "Indirect language patterns — not a diagnosis or judgment",
+  subtitle = "Where you name the feeling but not the thing",
   emptyLabel = "Indirect phrasing appears as you accumulate voice reflections.",
   maxItems = 5,
   highlightEntryId,
   hideWhenEmpty = false,
   className,
 }: AvoidanceCardProps) {
-  const items = signals.slice(0, maxItems);
+  const items = signals.filter((s) => s.confidence >= 50).slice(0, maxItems);
 
   if (items.length === 0) {
     if (hideWhenEmpty) return null;
@@ -62,23 +58,12 @@ export function AvoidanceCard({
         {subtitle ? <p className="text-xs text-zinc-500">{subtitle}</p> : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-xs text-zinc-500">
-          <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Pattern in your language — we note indirect phrasing, never clinical claims
-          about what you are or are not facing.
-        </div>
-
         {items.map((item) => (
           <div
             key={item.id}
             className="rounded-xl border border-white/10 bg-black/20 p-4"
           >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <p className="text-sm font-medium text-white">{item.title}</p>
-              <Badge variant="secondary" className="shrink-0 text-[10px]">
-                {confidenceLabel(item.confidence)} · {item.confidence}%
-              </Badge>
-            </div>
+            <p className="text-sm font-medium text-white">{item.title}</p>
             <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.explanation}</p>
             <div className="mt-3 space-y-2">
               {item.evidence.map((ev) => (

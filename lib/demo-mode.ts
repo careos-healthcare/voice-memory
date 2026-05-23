@@ -11,17 +11,21 @@ function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
-function reflection(partial: Partial<Reflection> & Pick<Reflection, "mood" | "emotionalIntensity">): Reflection {
+function reflection(
+  partial: Partial<Reflection> & Pick<Reflection, "mood" | "emotionalIntensity">,
+): Reflection {
   return {
     mood: partial.mood,
     emotionalIntensity: partial.emotionalIntensity,
     recurringThemes: partial.recurringThemes ?? [],
-    hiddenConcern: partial.hiddenConcern ?? "",
-    positiveSignal: partial.positiveSignal ?? "",
-    recommendation: partial.recommendation ?? "",
+    hiddenConcern: "",
+    positiveSignal: "",
+    recommendation: "",
     exactLanguagePattern: partial.exactLanguagePattern,
     concreteObservation: partial.concreteObservation,
     repeatedSignal: partial.repeatedSignal,
+    tensionOrContradiction: partial.tensionOrContradiction,
+    avoidedOrVagueArea: partial.avoidedOrVagueArea,
     nextSmallAction: partial.nextSmallAction,
   };
 }
@@ -44,12 +48,12 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "anxious",
         emotionalIntensity: 6,
         recurringThemes: ["work pressure", "deadlines"],
-        hiddenConcern: "Fear of falling behind on the Sarah project",
-        positiveSignal: "Finished one difficult task before lunch despite stress",
-        recommendation: "Block 25 minutes tomorrow morning for the timeline review only",
         exactLanguagePattern: "my chest tighten when deadlines stack up",
-        concreteObservation: "Sarah's call triggered a physical stress response tied to project timing",
-        repeatedSignal: "Deadline stacking as an anxiety trigger",
+        concreteObservation:
+          "Sarah's call about the project timeline landed as a physical stress response.",
+        tensionOrContradiction:
+          "You got one hard thing done before lunch, but the timeline call still tightened your chest.",
+        repeatedSignal: "Deadlines stacking as the trigger phrase",
         nextSmallAction: "Send Sarah a realistic timeline update by noon tomorrow",
       }),
     },
@@ -63,11 +67,14 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "worried",
         emotionalIntensity: 7,
         recurringThemes: ["money", "family"],
-        hiddenConcern: "Tension between wanting to see family and financial limits",
-        positiveSignal: "Named the money worry out loud instead of avoiding it",
-        recommendation: "Sketch a simple visit budget before replying to Mum",
         exactLanguagePattern: "that familiar squeeze after rent",
-        concreteObservation: "Family visit desire conflicts with post-rent account balance",
+        concreteObservation:
+          "Mum's visit invite landed right after you checked the account post-rent.",
+        tensionOrContradiction:
+          "You want to say yes to Mum while the post-rent balance says wait.",
+        avoidedOrVagueArea:
+          "Money 'came up again' without naming what changed in the numbers.",
+        repeatedSignal: "Rent-then-squeeze as the money shorthand",
         nextSmallAction: "Draft a one-line budget for Mum's visit tonight",
       }),
     },
@@ -81,11 +88,12 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "hopeful",
         emotionalIntensity: 4,
         recurringThemes: ["creative work", "self-trust"],
-        hiddenConcern: "Perfectionism slowing down shipping",
-        positiveSignal: "Connected good sleep to clearer optimism about the side project",
-        recommendation: "Define the smallest shippable slice of the side project",
         exactLanguagePattern: "don't need perfection, just something real",
-        concreteObservation: "Hope followed rest — energy shifted after sleeping well",
+        concreteObservation:
+          "Good sleep preceded clearer optimism about shipping the side project.",
+        tensionOrContradiction:
+          "Perfectionism is the brake; 'something real people can try' is the release.",
+        repeatedSignal: "Shipping vs perfection framing",
         nextSmallAction: "Write three bullet points for the smallest shippable version",
       }),
     },
@@ -99,12 +107,12 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "conflicted",
         emotionalIntensity: 6,
         recurringThemes: ["family pressure", "boundaries"],
-        hiddenConcern: "Repeating career conversations with Dad without progress",
-        positiveSignal: "Stayed calm at dinner despite internal tension",
-        recommendation: "Prepare one sentence for redirecting the career topic",
         exactLanguagePattern: "that old knot in my stomach",
-        concreteObservation: "Dad's career questions still land physically even when you respond calmly",
-        repeatedSignal: "Family pressure around career direction",
+        concreteObservation:
+          "Dad's career questions still land physically even when you answer calmly.",
+        tensionOrContradiction:
+          "You stayed calm at dinner while your stomach stayed knotted.",
+        repeatedSignal: "Career-plan questions from Dad",
         nextSmallAction: "Practice one redirect sentence before the next family call",
       }),
     },
@@ -118,12 +126,12 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "anxious",
         emotionalIntensity: 5,
         recurringThemes: ["work anxiety", "self-judgment"],
-        hiddenConcern: "Anticipatory anxiety before meetings",
-        positiveSignal: "Standup went fine — evidence against the judgment story",
-        recommendation: "Keep a one-line 'what actually happened' log after anxious meetings",
         exactLanguagePattern: "imagining everyone judging the update",
-        concreteObservation: "Pre-meeting anxiety did not match post-meeting outcome",
-        repeatedSignal: "Judgment anticipation before standups",
+        concreteObservation:
+          "Pre-standup dread did not match how the update actually went.",
+        tensionOrContradiction:
+          "Same loop before the meeting; fine outcome after.",
+        repeatedSignal: "Judgment story before standups",
         nextSmallAction: "After the next standup, write one factual outcome line",
       }),
     },
@@ -137,11 +145,13 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "reflective",
         emotionalIntensity: 4,
         recurringThemes: ["career", "money", "relationships"],
-        hiddenConcern: "Career move impact on mortgage and stability",
-        positiveSignal: "Conversation with Alex clarified need for concrete numbers",
-        recommendation: "List financial constraints before exploring team changes",
         exactLanguagePattern: "need numbers before any decision",
-        concreteObservation: "Social conversation surfaced mortgage as a decision gate",
+        concreteObservation:
+          "Alex's team-change talk surfaced the mortgage as the decision gate.",
+        tensionOrContradiction:
+          "The conversation felt open; the mortgage constraint stayed unspoken until you named it.",
+        avoidedOrVagueArea:
+          "Money came up 'indirectly' before you said you need numbers.",
         nextSmallAction: "Write down three financial constraints for a potential team move",
       }),
     },
@@ -155,11 +165,11 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "relieved",
         emotionalIntensity: 3,
         recurringThemes: ["collaboration", "work relationships"],
-        hiddenConcern: "Carrying project stress solo",
-        positiveSignal: "Sarah's appreciative check-in reduced isolation",
-        recommendation: "Ask for one explicit collaboration touchpoint per week",
         exactLanguagePattern: "breathe easier when collaboration feels mutual",
-        concreteObservation: "Mutual tone from Sarah shifted physical tension downward",
+        concreteObservation:
+          "Sarah's appreciative check-in dropped the isolation around the project.",
+        tensionOrContradiction:
+          "Work pressure is still there; mutual tone made it feel lighter.",
         nextSmallAction: "Propose a weekly 15-minute sync with Sarah",
       }),
     },
@@ -173,11 +183,11 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "steady",
         emotionalIntensity: 5,
         recurringThemes: ["family", "boundaries", "money"],
-        hiddenConcern: "Holiday expectations vs budget",
-        positiveSignal: "Paused instead of auto-yes to Mum's holiday ask",
-        recommendation: "Reply with a timeline for a decision, not immediate commitment",
         exactLanguagePattern: "think about it instead of yes-or-no",
-        concreteObservation: "Chose pause over automatic agreement on family holiday plans",
+        concreteObservation:
+          "You paused on Mum's holiday ask instead of auto-committing.",
+        tensionOrContradiction:
+          "Family pressure is present; money is still tight — you chose delay over immediate yes.",
         repeatedSignal: "Money and family expectations intersecting",
         nextSmallAction: "Tell Mum you'll reply by Friday with a clear plan",
       }),
@@ -192,11 +202,12 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "hopeful",
         emotionalIntensity: 4,
         recurringThemes: ["creative work", "money", "body awareness"],
-        hiddenConcern: "Physical tension when money topics arise",
-        positiveSignal: "Shipped a tiny side-project feature",
-        recommendation: "Notice jaw tension the next time money comes up in conversation",
         exactLanguagePattern: "when I mention money I tense my jaw",
-        concreteObservation: "Positive creative momentum coexists with money-related body tension",
+        concreteObservation:
+          "Side-project momentum and money-related jaw tension showed up in the same entry.",
+        tensionOrContradiction:
+          "Upbeat about shipping; body still clenches when money is named.",
+        repeatedSignal: "Jaw tension tied to money mentions",
         nextSmallAction: "Do a 30-second jaw release before checking accounts",
       }),
     },
@@ -210,11 +221,13 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "anxious",
         emotionalIntensity: 7,
         recurringThemes: ["work", "family pressure", "boundaries"],
-        hiddenConcern: "Home stress bleeding into work conversations",
-        positiveSignal: "Team responded with kindness when family pressure surfaced",
-        recommendation: "Take lunch away from desk on heavy meeting days",
         exactLanguagePattern: "separate work self from home worries",
-        concreteObservation: "Skipped lunch on a meeting-heavy day and family stress leaked into work",
+        concreteObservation:
+          "No lunch on a meeting-heavy day; family pressure leaked into the team retro.",
+        tensionOrContradiction:
+          "People were kind when home stress surfaced at work — you still felt embarrassed.",
+        avoidedOrVagueArea:
+          "Family pressure 'by accident' — named the leak, not the specific worry.",
         nextSmallAction: "Block 20 minutes for lunch before the next heavy meeting day",
       }),
     },
@@ -228,11 +241,11 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "calm",
         emotionalIntensity: 3,
         recurringThemes: ["rest", "work reframing"],
-        hiddenConcern: "Whether calm is temporary without structural change",
-        positiveSignal: "Sarah project felt curious instead of dreadful after rest",
-        recommendation: "Protect one podcast-free walk this week",
         exactLanguagePattern: "less dread, more curiosity",
-        concreteObservation: "Rest shifted Sarah project from dread to curiosity",
+        concreteObservation:
+          "Podcast-free walk shifted the Sarah project from dread to curiosity.",
+        tensionOrContradiction:
+          "Money still on your mind, but quieter today than earlier in the week.",
         nextSmallAction: "Schedule one walk without input before Monday",
       }),
     },
@@ -246,11 +259,13 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "grounded",
         emotionalIntensity: 5,
         recurringThemes: ["money", "self-regulation"],
-        hiddenConcern: "Avoidance of concrete financial numbers",
-        positiveSignal: "Named three known numbers instead of spiraling",
-        recommendation: "Keep a short list of 'numbers I know' visible this week",
         exactLanguagePattern: "wrote down three numbers I actually know",
-        concreteObservation: "Concrete numbers reduced money spiral intensity",
+        concreteObservation:
+          "Naming three known numbers cut the money spiral short.",
+        tensionOrContradiction:
+          "Account check spiked worry; writing numbers brought you back down.",
+        avoidedOrVagueArea:
+          "Family text 'can wait' — the reply is deferred, not drafted.",
         nextSmallAction: "Update the three-number list after any account check",
       }),
     },
@@ -264,11 +279,12 @@ function buildDemoEntries(): JournalEntry[] {
         mood: "hopeful",
         emotionalIntensity: 4,
         recurringThemes: ["momentum", "relationships", "family"],
-        hiddenConcern: "Holiday decisions still unresolved",
-        positiveSignal: "External validation on side project plus clearer Sarah plan",
-        recommendation: "Capture what's working this week before it fades",
         exactLanguagePattern: "not carrying it alone in my head anymore",
-        concreteObservation: "Multiple threads feel named and shared rather than silent",
+        concreteObservation:
+          "Side-project note, Sarah plan, and holiday pressure are all named out loud.",
+        tensionOrContradiction:
+          "Holiday decisions are still open — but they're shared, not silent.",
+        avoidedOrVagueArea: "",
         nextSmallAction: "Send Sarah the written plan before end of day",
       }),
     },
