@@ -1,0 +1,178 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Flame, Mic, TrendingDown, TrendingUp } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  formatLastReflectionLabel,
+  getHabitStats,
+  type HabitStats,
+} from "@/lib/habit-storage";
+
+function ComparisonRow({
+  label,
+  today,
+  yesterday,
+}: {
+  label: string;
+  today: string;
+  yesterday: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 text-sm">
+      <span className="text-zinc-500">{label}</span>
+      <div className="flex items-center gap-3 tabular-nums">
+        <span className="text-white">{today}</span>
+        <span className="text-zinc-600">vs</span>
+        <span className="text-zinc-400">{yesterday}</span>
+      </div>
+    </div>
+  );
+}
+
+export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
+  const [stats, setStats] = useState<HabitStats | null>(null);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setStats(getHabitStats());
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  if (!stats) return null;
+
+  const intensityDelta =
+    stats.today.avgIntensity !== null && stats.yesterday.avgIntensity !== null
+      ? stats.today.avgIntensity - stats.yesterday.avgIntensity
+      : null;
+
+  const recap = stats.weeklyRecap;
+
+  if (compact && stats.streak === 0 && !stats.reflectedToday && recap.entryCount === 0) {
+    return (
+      <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 to-transparent">
+        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-white">Start your reflection habit</p>
+            <p className="mt-1 text-xs text-zinc-400">
+              One minute a day builds a private memory timeline.
+            </p>
+          </div>
+          <Button asChild size="sm">
+            <Link href="/">
+              <Mic className="h-4 w-4" />
+              Record today&apos;s reflection
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className={compact ? "space-y-3" : "space-y-4"}>
+      <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
+        <CardHeader className="pb-2">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
+                Daily habit
+              </p>
+              <CardTitle className="mt-2 flex items-center gap-2 text-2xl">
+                <Flame className="h-6 w-6 text-amber-400" />
+                {stats.streak} day{stats.streak === 1 ? "" : "s"} streak
+              </CardTitle>
+              <p className="mt-2 text-sm text-zinc-400">
+                Last reflection · {formatLastReflectionLabel(stats.lastReflectionDate)}
+              </p>
+            </div>
+            {!stats.reflectedToday ? (
+              <Button asChild size="sm" className="shrink-0">
+                <Link href="/">
+                  <Mic className="h-4 w-4" />
+                  Record today
+                </Link>
+              </Button>
+            ) : (
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
+                Reflected today
+              </span>
+            )}
+          </div>
+        </CardHeader>
+        {!compact ? (
+          <CardContent className="space-y-3 border-t border-white/5 pt-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+              Today vs yesterday
+            </p>
+            <ComparisonRow
+              label="Entries"
+              today={String(stats.today.entryCount)}
+              yesterday={String(stats.yesterday.entryCount)}
+            />
+            <ComparisonRow
+              label="Avg intensity"
+              today={
+                stats.today.avgIntensity !== null
+                  ? `${stats.today.avgIntensity}/10`
+                  : "—"
+              }
+              yesterday={
+                stats.yesterday.avgIntensity !== null
+                  ? `${stats.yesterday.avgIntensity}/10`
+                  : "—"
+              }
+            />
+            {intensityDelta !== null && intensityDelta !== 0 ? (
+              <p className="flex items-center gap-1.5 text-xs text-zinc-500">
+                {intensityDelta > 0 ? (
+                  <TrendingUp className="h-3.5 w-3.5 text-amber-400" />
+                ) : (
+                  <TrendingDown className="h-3.5 w-3.5 text-emerald-400" />
+                )}
+                Emotional intensity{" "}
+                {intensityDelta > 0 ? "higher" : "lower"} than yesterday
+              </p>
+            ) : null}
+          </CardContent>
+        ) : null}
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Weekly recap</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-zinc-400">
+          {recap.entryCount === 0 ? (
+            <p>No reflections this week yet. Your recap appears after your first entry.</p>
+          ) : (
+            <ul className="space-y-2">
+              <li>
+                <span className="text-white">{recap.entryCount}</span> reflection
+                {recap.entryCount === 1 ? "" : "s"} logged
+              </li>
+              {recap.dominantMood ? (
+                <li>
+                  Dominant mood ·{" "}
+                  <span className="capitalize text-zinc-200">{recap.dominantMood}</span>
+                </li>
+              ) : null}
+              {recap.topTheme ? (
+                <li>
+                  Top theme · <span className="text-zinc-200">{recap.topTheme}</span>
+                </li>
+              ) : null}
+              {recap.avgIntensity !== null ? (
+                <li>Average intensity · {recap.avgIntensity}/10</li>
+              ) : null}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
