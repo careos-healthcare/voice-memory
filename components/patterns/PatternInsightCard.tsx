@@ -10,6 +10,7 @@ import {
   type PatternInsight,
   typeLabel,
 } from "@/lib/patterns/pattern-engine";
+import { specificityLabel } from "@/lib/patterns/specificity-score";
 
 interface PatternInsightCardProps {
   insights: PatternInsight[];
@@ -89,18 +90,28 @@ export function PatternInsightCard({
                 <Badge variant="secondary" className="text-[10px]">
                   {insightConfidenceLabel(item.scores.total)}
                 </Badge>
+                <Badge variant="secondary" className="text-[10px]">
+                  {specificityLabel(item.specificity.specificityScore)}
+                </Badge>
                 {showScores ? (
                   <Badge variant="secondary" className="text-[10px]">
-                    {item.scores.total}/100
+                    {item.specificity.specificityScore}/100 spec
                   </Badge>
                 ) : null}
               </div>
             </div>
 
             <p className="mt-2 text-xs text-zinc-500">
-              {item.entryIds.length} entr{item.entryIds.length === 1 ? "y" : "ies"} ·
-              recurrence signal {item.scores.recurrenceCount}%
+              {item.specificity.evidenceCount} evidence item
+              {item.specificity.evidenceCount === 1 ? "" : "s"} ·{" "}
+              {item.entryIds.length} entr{item.entryIds.length === 1 ? "y" : "ies"}
             </p>
+
+            {showScores && item.specificity.whyThisFeltSpecific[0] ? (
+              <p className="mt-1 text-xs text-zinc-600">
+                {item.specificity.whyThisFeltSpecific[0]}
+              </p>
+            ) : null}
 
             <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.detail}</p>
 

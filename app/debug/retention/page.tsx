@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BarChart3, Bug, RefreshCw } from "lucide-react";
 
+import { PatternSpecificityDebugPanel } from "@/components/debug/PatternSpecificityDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildAllEntryDebugSummaries } from "@/lib/pattern-detection";
+import { buildSpecificityDebugReport } from "@/lib/patterns/specificity-debug";
 import { buildRetentionDashboard, type RetentionDashboard } from "@/lib/retention-metrics";
 import { getAllEntries } from "@/lib/storage";
 
@@ -33,11 +35,15 @@ export default function RetentionDebugPage() {
   const [patternScores, setPatternScores] = useState<
     ReturnType<typeof buildAllEntryDebugSummaries>
   >([]);
+  const [specificityReport, setSpecificityReport] = useState<
+    ReturnType<typeof buildSpecificityDebugReport> | null
+  >(null);
 
   const refresh = () => {
     setData(buildRetentionDashboard());
     const entries = getAllEntries();
     setPatternScores(buildAllEntryDebugSummaries(entries));
+    setSpecificityReport(buildSpecificityDebugReport(entries, 12));
   };
 
   useEffect(() => {
@@ -155,38 +161,49 @@ export default function RetentionDebugPage() {
                   contradictions — &ldquo;This felt specific because…&rdquo;
                 </p>
               </CardHeader>
-              {showPatternDebug ? (
-                <CardContent className="space-y-2">
-                  {patternScores.length === 0 ? (
-                    <p className="text-sm text-zinc-500">No entries to score yet.</p>
-                  ) : (
-                    patternScores
-                      .sort((a, b) => b.score - a.score)
-                      .map((row) => (
-                        <div
-                          key={row.entryId}
-                          className="rounded-xl bg-white/[0.03] px-3 py-2 text-sm"
-                        >
-                          <div className="flex items-center justify-between gap-2">
-                            <Link
-                              href={`/entry/${row.entryId}`}
-                              className="text-violet-300 hover:text-violet-200"
-                            >
-                              {new Date(row.date).toLocaleDateString()}
-                            </Link>
-                            <span className="font-medium tabular-nums text-white">
-                              {row.score}/100
-                            </span>
-                          </div>
-                          <p className="mt-1 text-xs text-zinc-500">{row.topReason}</p>
+              {showPatternDebug && specificityReport ? (
+              <CardContent className="space-y-4">
+                <PatternSpecificityDebugPanel
+                  insights={specificityReport.insights}
+                  title="Ranked insight specificity"
+                  compact
+                />
+                <p className="text-xs text-zinc-600">
+                  Per-entry legacy scores (pattern-detection module):
+                </p>
+                {patternScores.length === 0 ? (
+                  <p className="text-sm text-zinc-500">No entries to score yet.</p>
+                ) : (
+                  patternScores
+                    .sort((a, b) => b.score - a.score)
+                    .map((row) => (
+                      <div
+                        key={row.entryId}
+                        className="rounded-xl bg-white/[0.03] px-3 py-2 text-sm"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <Link
+                            href={`/entry/${row.entryId}`}
+                            className="text-violet-300 hover:text-violet-200"
+                          >
+                            {new Date(row.date).toLocaleDateString()}
+                          </Link>
+                          <span className="font-medium tabular-nums text-white">
+                            {row.score}/100
+                          </span>
                         </div>
-                      ))
-                  )}
-                </CardContent>
-              ) : null}
+                        <p className="mt-1 text-xs text-zinc-500">{row.topReason}</p>
+                      </div>
+                    ))
+                )}
+              </CardContent>
+            ) : null}
             </Card>
 
             <div className="flex flex-wrap gap-3 text-sm">
+              <Link href="/debug/patterns" className="text-violet-300 hover:text-violet-200">
+                Full pattern debug →
+              </Link>
               <Link href="/launch" className="text-violet-300 hover:text-violet-200">
                 Launch checklist →
               </Link>

@@ -10,7 +10,13 @@ import { detectAllContradictions } from "@/lib/patterns/contradictions";
 import { buildEmotionalEvolutionReport } from "@/lib/patterns/emotional-evolution";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { analyzeWeeklyIntelligence } from "@/lib/weekly-intelligence";
+import {
+  scoreInsightSpecificity,
+  type SpecificityScoreResult,
+} from "@/lib/patterns/specificity-score";
 import type { JournalEntry } from "@/types/journal";
+
+export type { SpecificityScoreResult as PatternInsightSpecificity };
 
 export type PatternInsightType =
   | "recurring_pattern"
@@ -47,6 +53,7 @@ export interface PatternInsight {
   evidence: PatternInsightEvidence[];
   entryIds: string[];
   scores: PatternInsightScores;
+  specificity: SpecificityScoreResult;
   sourceKey: string;
 }
 
@@ -80,29 +87,24 @@ const MEMORY_TYPES = new Set<PatternInsightType>([
   "avoidance_signal",
 ]);
 
-function scoreInsight(input: {
-  type: PatternInsightType;
-  title: string;
-  detail: string;
-  evidence: PatternInsightEvidence[];
-  entryIds: string[];
-  recurrenceCount: number;
-}): PatternInsightScores {
-  const { type, title, detail, evidence, entryIds, recurrenceCount } = input;
-  const text = `${title} ${detail}`;
-  const hasQuotes = /"[^"]{3,}"/.test(text) || evidence.some((e) => e.phrase.length > 20);
-  const hasNumbers = /\d+(\.\d+)?\/10|\d+ (times|entries|reflections)/.test(text);
-
-  const specificity = Math.min(
-    100,
-    20 + (hasQuotes ? 28 : 8) + (hasNumbers ? 22 : 0) + Math.min(30, detail.length / 4),
-  );
+function scoreInsight(
+  input: {
+    type: PatternInsightType;
+    title: string;
+    detail: string;
+    evidence: PatternInsightEvidence[];
+    entryIds: string[];
+    recurrenceCount: number;
+  },
+  specificity: SpecificityScoreResult,
+): PatternInsightScores {
+  const { type, evidence, entryIds, recurrenceCount } = input;
 
   const recurrence = Math.min(100, recurrenceCount * 18);
   const crossEntryGrounding = Math.min(100, entryIds.length * 28);
   const exactPhraseEvidence = Math.min(
     100,
-    evidence.length * 18 + (hasQuotes ? 25 : 0),
+    evidence.length * 18 + (specificity.evidenceSources.includes("exact_phrase") ? 25 : 0),
   );
 
   const feedback = countFeedbackByRating();
@@ -116,16 +118,16 @@ function scoreInsight(input: {
   const total = Math.min(
     100,
     Math.round(
-      specificity * 0.25 +
-        recurrence * 0.25 +
-        crossEntryGrounding * 0.25 +
+      specificity.specificityScore * 0.35 +
+        recurrence * 0.2 +
+        crossEntryGrounding * 0.2 +
         exactPhraseEvidence * 0.15 +
         userUsefulness * 0.1,
     ),
   );
 
   return {
-    specificity,
+    specificity: specificity.specificityScore,
     recurrenceCount: recurrence,
     crossEntryGrounding,
     exactPhraseEvidence,
@@ -143,15 +145,41 @@ function insightFromParts(
   entryIds: string[],
   recurrenceCount: number,
   sourceKey: string,
+  entries: JournalEntry[],
 ): PatternInsight {
+  const entriesById = new Map(entries.map((e) => [e.id, e]));
+  const slicedEvidence = evidence.slice(0, 6);
+  const uniqueEntryIds = [...new Set(entryIds)];
+
+  const specificity = scoreInsightSpecificity({
+    type,
+    title,
+    detail,
+    evidence: slicedEvidence,
+    entryIds: uniqueEntryIds,
+    recurrenceCount,
+    entriesById,
+  });
+
   return {
     id,
     type,
     title,
     detail,
-    evidence: evidence.slice(0, 6),
-    entryIds: [...new Set(entryIds)],
-    scores: scoreInsight({ type, title, detail, evidence, entryIds, recurrenceCount }),
+    evidence: slicedEvidence,
+    entryIds: uniqueEntryIds,
+    specificity,
+    scores: scoreInsight(
+      {
+        type,
+        title,
+        detail,
+        evidence: slicedEvidence,
+        entryIds: uniqueEntryIds,
+        recurrenceCount,
+      },
+      specificity,
+    ),
     sourceKey,
   };
 }
@@ -172,6 +200,7 @@ function collectContradictionInsights(entries: JournalEntry[]): PatternInsight[]
       c.entryIds,
       c.evidence.length,
       c.id,
+      entries,
     ),
   );
 }
@@ -192,6 +221,7 @@ function collectPhraseInsights(entries: JournalEntry[]): PatternInsight[] {
       p.entryIds,
       p.count,
       p.phrase,
+      entries,
     ),
   );
 }
@@ -212,6 +242,7 @@ function collectAvoidanceInsights(entries: JournalEntry[]): PatternInsight[] {
       s.entryIds,
       s.evidence.length,
       s.id,
+      entries,
     ),
   );
 }
@@ -251,6 +282,7 @@ function collectEvolutionInsights(entries: JournalEntry[]): PatternInsight[] {
         item.entryIds,
         item.entryIds.length,
         item.id,
+        entries,
       ),
     );
   }
@@ -267,6 +299,7 @@ function collectEvolutionInsights(entries: JournalEntry[]): PatternInsight[] {
         entries.slice(-14).map((e) => e.id),
         2,
         "week-comparison",
+        entries,
       ),
     );
   }
@@ -306,6 +339,7 @@ function collectEntityInsights(entries: JournalEntry[]): PatternInsight[] {
         entity.entryIds,
         entity.mentionCount,
         entity.id,
+        entries,
       ),
     );
   }
@@ -341,6 +375,7 @@ function collectEntityInsights(entries: JournalEntry[]): PatternInsight[] {
         row.entryIds,
         row.count,
         theme,
+        entries,
       ),
     );
   }
@@ -371,6 +406,7 @@ function collectWeeklyInsights(entries: JournalEntry[]): PatternInsight[] {
         weekEntryIds,
         theme.count,
         `weekly:${theme.label}`,
+        entries,
       ),
     );
   }
@@ -386,6 +422,7 @@ function collectWeeklyInsights(entries: JournalEntry[]): PatternInsight[] {
         weekEntryIds,
         weekly.thisWeek.entryCount,
         "weekly:shift",
+        entries,
       ),
     );
   } else if (weekly.emotionalShift.direction === "intenser") {
@@ -399,6 +436,7 @@ function collectWeeklyInsights(entries: JournalEntry[]): PatternInsight[] {
         weekEntryIds,
         weekly.thisWeek.entryCount,
         "weekly:shift",
+        entries,
       ),
     );
   }
@@ -509,7 +547,12 @@ export function buildPatternEngineReport(
   }
 
   insights = insights
-    .sort((a, b) => b.scores.total - a.scores.total || b.entryIds.length - a.entryIds.length)
+    .sort(
+      (a, b) =>
+        b.specificity.specificityScore - a.specificity.specificityScore ||
+        b.scores.total - a.scores.total ||
+        b.entryIds.length - a.entryIds.length,
+    )
     .slice(0, limit);
 
   return {
