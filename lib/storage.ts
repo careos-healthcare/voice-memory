@@ -1,6 +1,7 @@
 import { deleteAudio } from "@/lib/audio-storage";
 import { recordReflectionDay } from "@/lib/habit-storage";
-import type { JournalEntry } from "@/types/journal";
+import { normalizeReflection } from "@/lib/reflection";
+import type { JournalEntry, Reflection } from "@/types/journal";
 
 const STORAGE_KEY = "voicememory_entries";
 
@@ -16,10 +17,15 @@ export function getEntries(): JournalEntry[] {
     if (!raw) return [];
 
     const parsed = JSON.parse(raw) as JournalEntry[];
-    return parsed.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    );
+    return parsed
+      .map((entry) => ({
+        ...entry,
+        reflection: normalizeReflection(entry.reflection as Reflection),
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
   } catch {
     return [];
   }

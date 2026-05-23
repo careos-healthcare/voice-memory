@@ -1,21 +1,59 @@
 import { NextResponse } from "next/server";
 
+import { normalizeReflection } from "@/lib/reflection";
 import { getOpenAIClient } from "@/lib/openai";
 import type { Reflection } from "@/types/journal";
 
 export const runtime = "nodejs";
 
-const SYSTEM_PROMPT = `You are an emotionally intelligent journal companion for VoiceMemory.
-Given a spoken journal transcript, return a JSON object with exactly these keys:
-- mood: a concise emotional label (2-4 words)
-- emotionalIntensity: integer from 1 to 10
-- recurringThemes: array of 2-4 short theme strings
-- hiddenConcern: one sentence about an underlying worry they may not have named directly
-- positiveSignal: one sentence about a strength, hope, or healthy signal in what they shared
-- recommendation: one gentle, actionable recommendation for the next 24 hours
+const BANNED_PHRASES = [
+  "deep-seated",
+  "deep seated",
+  "seeking balance",
+  "resilience and commitment",
+  "inner journey",
+  "hold space",
+  "self-care journey",
+  "emotional landscape",
+  "navigate your feelings",
+];
 
-Be warm, precise, and non-clinical. Never diagnose. Never mention being an AI.
-Respond with valid JSON only.`;
+const SYSTEM_PROMPT = `You reflect on voice journal transcripts for VoiceMemory — a private reflective mirror, NOT therapy.
+
+SAFETY (follow strictly):
+- This is not therapy, counseling, or medical advice.
+- Do not diagnose, label disorders, or claim clinical insight.
+- You are a reflective mirror: describe what the person actually said and did emotionally.
+
+STYLE (follow strictly):
+- Be concrete and specific to THIS transcript only.
+- Quote or closely paraphrase their exact words where possible.
+- Name specific topics, people, situations, and actions they mentioned.
+- NEVER use vague therapy clichés or filler such as: "deep-seated fear", "you may be seeking balance", "resilience and commitment", "hold space for yourself", "your emotional journey", "inner landscape".
+- If the transcript is thin, say what is missing instead of inventing depth.
+
+Return a JSON object with exactly these keys:
+
+Legacy (required, keep concise):
+- mood: 2-4 word emotional label grounded in their words
+- emotionalIntensity: integer 1-10
+- recurringThemes: array of 2-4 short theme strings from the transcript
+- hiddenConcern: one sentence — a specific worry implied by what they said (not generic)
+- positiveSignal: one sentence — a specific strength or hopeful detail they named
+- recommendation: one gentle sentence (legacy field; keep practical)
+
+Specific (required, must cite transcript):
+- exactLanguagePattern: a short quote OR tight paraphrase of their distinctive phrasing (max 25 words)
+- concreteObservation: one sentence describing what happened in their story — who, what, when, feeling (no vague generalities)
+- repeatedSignal: one sentence on a pattern they repeated or emphasized in this entry (or "No clear repeat in this short entry" if true)
+- nextSmallAction: one tiny, specific action for the next 24 hours tied to their words (under 20 words)
+
+Respond with valid JSON only. Never mention being an AI.`;
+
+function containsBannedPhrase(text: string): boolean {
+  const lower = text.toLowerCase();
+  return BANNED_PHRASES.some((phrase) => lower.includes(phrase));
+}
 
 function parseReflection(raw: string): Reflection {
   const parsed = JSON.parse(raw) as Partial<Reflection>;
@@ -30,19 +68,42 @@ function parseReflection(raw: string): Reflection {
     !Number.isFinite(intensity) ||
     typeof parsed.hiddenConcern !== "string" ||
     typeof parsed.positiveSignal !== "string" ||
-    typeof parsed.recommendation !== "string"
+    typeof parsed.recommendation !== "string" ||
+    typeof parsed.exactLanguagePattern !== "string" ||
+    typeof parsed.concreteObservation !== "string" ||
+    typeof parsed.repeatedSignal !== "string" ||
+    typeof parsed.nextSmallAction !== "string"
   ) {
     throw new Error("Invalid reflection structure from model");
   }
 
-  return {
-    mood: parsed.mood.trim(),
-    emotionalIntensity: Math.min(10, Math.max(1, Math.round(intensity))),
-    recurringThemes: themes.slice(0, 4),
-    hiddenConcern: parsed.hiddenConcern.trim(),
-    positiveSignal: parsed.positiveSignal.trim(),
-    recommendation: parsed.recommendation.trim(),
-  };
+  const reflection = normalizeReflection({
+    mood: parsed.mood,
+    emotionalIntensity: intensity,
+    recurringThemes: themes,
+    hiddenConcern: parsed.hiddenConcern,
+    positiveSignal: parsed.positiveSignal,
+    recommendation: parsed.recommendation,
+    exactLanguagePattern: parsed.exactLanguagePattern,
+    concreteObservation: parsed.concreteObservation,
+    repeatedSignal: parsed.repeatedSignal,
+    nextSmallAction: parsed.nextSmallAction,
+  });
+
+  const textFields = [
+    reflection.hiddenConcern,
+    reflection.positiveSignal,
+    reflection.recommendation,
+    reflection.concreteObservation ?? "",
+    reflection.repeatedSignal ?? "",
+    reflection.nextSmallAction ?? "",
+  ];
+
+  if (textFields.some(containsBannedPhrase)) {
+    throw new Error("Reflection contained generic therapy language");
+  }
+
+  return reflection;
 }
 
 export async function POST(request: Request) {
@@ -61,12 +122,12 @@ export async function POST(request: Request) {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       response_format: { type: "json_object" },
-      temperature: 0.7,
+      temperature: 0.55,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Reflect on this voice journal entry:\n\n${transcript}`,
+          content: `Analyze this voice journal transcript. Ground every field in what they actually said:\n\n${transcript}`,
         },
       ],
     });

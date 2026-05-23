@@ -5,7 +5,10 @@ import {
 import type { JournalEntry } from "@/types/journal";
 
 /** @deprecated Use semanticLifeSearch from lib/semantic-life-search */
-export type SearchField = Exclude<LifeSearchField, "entity" | "recommendation">;
+export type SearchField = Exclude<
+  LifeSearchField,
+  "entity" | "recommendation" | "concreteObservation"
+>;
 
 export interface SearchResult {
   entry: JournalEntry;
@@ -22,7 +25,9 @@ export function searchJournalEntries(query: string): SearchResult[] {
       .map((m) => m.field)
       .filter(
         (f): f is SearchField =>
-          f !== "entity" && f !== "recommendation",
+          f !== "entity" &&
+          f !== "recommendation" &&
+          f !== "concreteObservation",
       );
     const primary =
       result.matches.find((m) => m.field === "transcript") ?? result.matches[0];

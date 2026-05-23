@@ -10,6 +10,7 @@ export type LifeSearchField =
   | "hiddenConcern"
   | "positiveSignal"
   | "recommendation"
+  | "concreteObservation"
   | "entity";
 
 export type ConfidenceLabel = "high" | "medium" | "low";
@@ -64,6 +65,7 @@ export const LIFE_SEARCH_FIELD_LABELS: Record<LifeSearchField, string> = {
   hiddenConcern: "Hidden concern",
   positiveSignal: "Positive signal",
   recommendation: "Recommendation",
+  concreteObservation: "Concrete observation",
   entity: "Entity memory",
 };
 
@@ -296,7 +298,16 @@ function haystack(entry: JournalEntry, field: LifeSearchField, entities: string[
     case "positiveSignal":
       return entry.reflection.positiveSignal;
     case "recommendation":
-      return entry.reflection.recommendation;
+      return [
+        entry.reflection.recommendation,
+        entry.reflection.nextSmallAction ?? "",
+      ].join(" ");
+    case "concreteObservation":
+      return [
+        entry.reflection.concreteObservation ?? "",
+        entry.reflection.exactLanguagePattern ?? "",
+        entry.reflection.repeatedSignal ?? "",
+      ].join(" ");
     case "entity":
       return entities.join(" ");
   }
@@ -431,6 +442,7 @@ const SEARCH_FIELDS: LifeSearchField[] = [
   "transcript",
   "mood",
   "themes",
+  "concreteObservation",
   "hiddenConcern",
   "positiveSignal",
   "recommendation",

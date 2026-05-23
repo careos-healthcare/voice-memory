@@ -6,12 +6,20 @@ import {
   Brain,
   Heart,
   Lightbulb,
+  MessageSquareQuote,
+  Repeat2,
+  Shield,
   Sparkles,
   Target,
+  Zap,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  getSpecificReflectionView,
+  hasEnhancedReflection,
+} from "@/lib/reflection";
 import type { Reflection } from "@/types/journal";
 
 interface InsightCardProps {
@@ -20,10 +28,10 @@ interface InsightCardProps {
   showTranscript?: boolean;
 }
 
-const sections = [
+const legacySections = [
   {
     key: "hiddenConcern" as const,
-    label: "Hidden concern",
+    label: "Underlying worry",
     icon: Brain,
     accent: "text-amber-300",
   },
@@ -35,11 +43,99 @@ const sections = [
   },
   {
     key: "recommendation" as const,
-    label: "One recommendation",
+    label: "Broader suggestion",
     icon: Lightbulb,
     accent: "text-violet-300",
   },
 ];
+
+function SafetyNotice() {
+  return (
+    <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+      <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
+      <p className="text-xs leading-relaxed text-zinc-500">
+        VoiceMemory is a reflective mirror only — not therapy, not medical advice,
+        and not a diagnosis. These notes describe patterns in what you said.
+      </p>
+    </div>
+  );
+}
+
+function SpecificObservations({
+  reflection,
+}: {
+  reflection: Reflection;
+}) {
+  const specific = getSpecificReflectionView(reflection);
+  const enhanced = hasEnhancedReflection(reflection);
+
+  const items = [
+    {
+      label: "Exact language",
+      icon: MessageSquareQuote,
+      value: specific.exactLanguagePattern,
+      accent: "text-violet-300",
+    },
+    {
+      label: "Concrete observation",
+      icon: Target,
+      value: specific.concreteObservation,
+      accent: "text-white",
+    },
+    {
+      label: "Repeated signal",
+      icon: Repeat2,
+      value: specific.repeatedSignal,
+      accent: "text-fuchsia-300",
+    },
+    {
+      label: "Next small action",
+      icon: Zap,
+      value: specific.nextSmallAction,
+      accent: "text-emerald-300",
+    },
+  ].filter((item) => item.value);
+
+  return (
+    <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent">
+      <CardHeader className="pb-2">
+        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80">
+          Grounded in your words
+        </p>
+        <CardTitle className="text-lg">Specific observations</CardTitle>
+        {!enhanced ? (
+          <p className="text-xs text-zinc-500">
+            This entry uses an earlier format — showing the closest saved notes.
+          </p>
+        ) : null}
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div key={item.label} className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Icon className={`h-4 w-4 ${item.accent}`} />
+                <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+                  {item.label}
+                </p>
+              </div>
+              <p
+                className={`text-sm leading-relaxed ${
+                  item.label === "Exact language"
+                    ? "italic text-zinc-300"
+                    : "text-zinc-200"
+                }`}
+              >
+                {item.value}
+              </p>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+}
 
 export function InsightCard({
   reflection,
@@ -47,6 +143,14 @@ export function InsightCard({
   showTranscript = false,
 }: InsightCardProps) {
   const intensityPercent = reflection.emotionalIntensity * 10;
+  const specific = getSpecificReflectionView(reflection);
+
+  const showLegacyConcern =
+    reflection.hiddenConcern.trim() !== specific.concreteObservation.trim();
+  const showLegacyRecommendation =
+    hasEnhancedReflection(reflection) &&
+    Boolean(reflection.nextSmallAction) &&
+    reflection.recommendation.trim() !== reflection.nextSmallAction!.trim();
 
   return (
     <motion.div
@@ -55,12 +159,15 @@ export function InsightCard({
       transition={{ duration: 0.45, ease: "easeOut" }}
       className="space-y-4"
     >
+      <SafetyNotice />
+      <SpecificObservations reflection={reflection} />
+
       <Card className="overflow-hidden border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Mood
+                Mood snapshot
               </p>
               <CardTitle className="mt-2 text-2xl capitalize">
                 {reflection.mood}
@@ -89,16 +196,25 @@ export function InsightCard({
             <span>Recurring themes</span>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
-            {reflection.recurringThemes.map((theme) => (
-              <Badge key={theme} variant="default">
-                {theme}
-              </Badge>
-            ))}
+            {reflection.recurringThemes.length > 0 ? (
+              reflection.recurringThemes.map((theme) => (
+                <Badge key={theme} variant="default">
+                  {theme}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-sm text-zinc-500">No themes tagged</span>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {sections.map((section, index) => {
+      {legacySections.map((section, index) => {
+        if (section.key === "hiddenConcern" && !showLegacyConcern) return null;
+        if (section.key === "recommendation" && !showLegacyRecommendation) {
+          return null;
+        }
+
         const Icon = section.icon;
 
         return (
@@ -145,6 +261,10 @@ export function InsightCard({
 export function InsightCardSkeleton() {
   return (
     <div className="space-y-4">
+      <div className="h-16 animate-pulse rounded-2xl bg-white/5" />
+      <Card className="p-6">
+        <div className="h-24 animate-pulse rounded-xl bg-white/10" />
+      </Card>
       <Card className="p-6">
         <div className="flex justify-between">
           <div className="h-8 w-32 animate-pulse rounded-lg bg-white/10" />
@@ -152,12 +272,6 @@ export function InsightCardSkeleton() {
         </div>
         <div className="mt-4 h-2 animate-pulse rounded-full bg-white/10" />
       </Card>
-      {[1, 2, 3].map((item) => (
-        <Card key={item} className="p-6">
-          <div className="h-4 w-28 animate-pulse rounded bg-white/10" />
-          <div className="mt-4 h-16 animate-pulse rounded-xl bg-white/10" />
-        </Card>
-      ))}
     </div>
   );
 }
@@ -169,7 +283,7 @@ export function ProcessingStatus({
 }) {
   const labels = {
     transcribing: "Listening to your voice…",
-    analyzing: "Finding patterns in what you shared…",
+    analyzing: "Pulling specific patterns from what you said…",
     saving: "Saving your reflection…",
   };
 
@@ -189,7 +303,7 @@ export function ProcessingStatus({
       <div>
         <p className="text-lg font-medium text-white">{labels[stage]}</p>
         <p className="mt-1 text-sm text-zinc-400">
-          This usually takes a few seconds.
+          Reflective mirror only — not therapy or diagnosis.
         </p>
       </div>
     </motion.div>
