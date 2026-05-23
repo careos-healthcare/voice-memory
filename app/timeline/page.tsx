@@ -7,6 +7,7 @@ import { CalendarRange } from "lucide-react";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
+import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
@@ -27,10 +28,12 @@ import {
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
+import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
+import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
@@ -50,6 +53,7 @@ export default function TimelinePage() {
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
+  const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
   const bookmarkedIds = useBookmarkedEntryIds();
 
   useEffect(() => {
@@ -68,6 +72,7 @@ export default function TimelinePage() {
       setTimeMemory(timelineTimeMemoryNotes(memoryEntries));
       setRevisitation(timelineRevisitationNotes(memoryEntries));
       setThreadHighlights(timelineThreadHighlights(memoryEntries, 3));
+      setMilestones(timelineMilestoneNotes(memoryEntries, limits.milestones));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -77,6 +82,7 @@ export default function TimelinePage() {
     limits.familiarity,
     limits.familiarityResurfacing,
     limits.rhythm,
+    limits.milestones,
   ]);
 
   const loading = notes === null;
@@ -160,6 +166,8 @@ export default function TimelinePage() {
                 threads={threadHighlights}
                 subtitle="Topics that keep showing up across your timeline."
               />
+
+              <MilestoneNotes milestones={milestones} max={limits.milestones} />
 
               <section className="space-y-6 pt-4">
                 <h2 className="text-xs font-normal tracking-wide text-zinc-600">Reflections</h2>

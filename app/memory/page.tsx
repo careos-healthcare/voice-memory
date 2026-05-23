@@ -8,6 +8,7 @@ import { Brain } from "lucide-react";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
@@ -18,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryArchiveGrowthNotes } from "@/lib/memory/archive-growth";
+import { memoryMilestoneNotes } from "@/lib/memory/milestones";
 import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
 import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
@@ -33,6 +35,7 @@ import {
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getMemoryEligibleEntries } from "@/lib/storage";
+import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { RelationshipContinuityNote } from "@/types/relationship-continuity";
 import type { ConversationThread } from "@/types/conversation-thread";
 import type { MemoryNotesReport } from "@/types/memory-note";
@@ -53,6 +56,7 @@ export default function MemoryPage() {
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
   const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
   const [relationshipNotes, setRelationshipNotes] = useState<RelationshipContinuityNote[]>([]);
+  const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -83,6 +87,7 @@ export default function MemoryPage() {
       );
       setThreadHighlights(memoryThreadHighlights(entries, 4));
       setRelationshipNotes(memoryRelationshipNotes(entries, 4));
+      setMilestones(memoryMilestoneNotes(entries, limits.milestones));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -93,6 +98,7 @@ export default function MemoryPage() {
     limits.rhythm,
     limits.familiarityResurfacing,
     limits.archiveGrowth,
+    limits.milestones,
   ]);
 
   const loading = snapshot === null;
@@ -172,6 +178,11 @@ export default function MemoryPage() {
                 notes={relationshipNotes}
                 max={4}
                 subtitle="How people and places appear differently across your archive."
+              />
+              <MilestoneNotes
+                milestones={milestones}
+                max={limits.milestones}
+                subtitle="Rare moments when something shifted — shown sparingly."
               />
               <FollowupPromptInline
                 prompt={followupPrompt}

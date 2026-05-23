@@ -7,11 +7,13 @@ import { CalendarDays } from "lucide-react";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
+import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { monthlyMilestoneNotes } from "@/lib/memory/milestones";
 import { monthlyArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { monthlyChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { monthlyFamiliarityNotes } from "@/lib/memory/familiarity";
@@ -26,6 +28,7 @@ import {
 } from "@/lib/conversation/followup-prompts";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getMemoryEligibleEntries } from "@/lib/storage";
+import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { MemoryNote } from "@/types/memory-note";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
@@ -42,6 +45,7 @@ export default function MonthlyPage() {
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
+  const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -69,6 +73,7 @@ export default function MonthlyPage() {
       setArchiveGrowth(
         monthlyArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
+      setMilestones(monthlyMilestoneNotes(entries, limits.milestones));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -79,6 +84,7 @@ export default function MonthlyPage() {
     limits.rhythm,
     limits.familiarityResurfacing,
     limits.archiveGrowth,
+    limits.milestones,
   ]);
 
   const loading = notes === null;
@@ -148,6 +154,7 @@ export default function MonthlyPage() {
               <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
               <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+              <MilestoneNotes milestones={milestones} max={limits.milestones} />
               <FollowupPromptInline
                 prompt={followupPrompt}
                 onContinue={handleContinueFollowup}

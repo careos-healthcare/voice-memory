@@ -18,6 +18,7 @@ import {
   RevisitationNotes,
   TimeMemoryNotes,
 } from "@/components/patterns/MemoryNote";
+import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
@@ -33,6 +34,7 @@ import {
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
+import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
@@ -46,6 +48,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { isReflectionPending } from "@/lib/pending-reflection";
 import { deleteEntry, getEntry, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
+import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 import type { FollowupPrompt } from "@/types/followup-prompt";
@@ -289,7 +292,12 @@ export default function EntryPage() {
   const relationshipNotes = useMemo(() => {
     if (!entry || pending) return [];
     return entryRelationshipNotes(allEntries, entry.id, 2);
-  }, [entry, allEntries]);
+  }, [entry, allEntries, pending]);
+
+  const milestoneNotes = useMemo(() => {
+    if (!entry || pending) return [];
+    return entryMilestoneNotes(allEntries, entry.id, limits.milestones);
+  }, [entry, allEntries, pending, limits.milestones]);
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -370,6 +378,8 @@ export default function EntryPage() {
                   title="People in this reflection"
                   subtitle=""
                 />
+
+                <MilestoneNotes milestones={milestoneNotes} max={limits.milestones} />
 
                 <MotionNoteList className="space-y-20">
                   {notes?.primaryCallback ? (

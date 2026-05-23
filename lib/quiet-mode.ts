@@ -43,6 +43,7 @@ export function getQuietLimits(quiet: boolean): {
   familiarityResurfacing: number;
   archiveGrowth: number;
   continuation: number;
+  milestones: number;
 } {
   if (quiet) {
     return {
@@ -58,6 +59,7 @@ export function getQuietLimits(quiet: boolean): {
       familiarityResurfacing: 1,
       archiveGrowth: 1,
       continuation: 1,
+      milestones: 1,
     };
   }
   return {
@@ -73,5 +75,6 @@ export function getQuietLimits(quiet: boolean): {
     familiarityResurfacing: 1,
     archiveGrowth: 1,
     continuation: 1,
+    milestones: 1,
   };
 }
