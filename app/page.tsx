@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 import { HabitLoopCard } from "@/components/HabitLoopCard";
+import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -39,8 +40,17 @@ export default function HomePage() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.06 }}
+            className="mt-8 w-full text-left"
+          >
+            <ContextualReminderCards />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="mt-10 w-full text-left"
+            className="mt-6 w-full text-left"
           >
             <HabitLoopCard compact />
           </motion.div>
@@ -66,6 +76,9 @@ export default function HomePage() {
         </main>
 
         <footer className="mt-auto flex flex-wrap justify-center gap-4 pt-8 text-center text-xs text-zinc-600">
+          <Link href="/reminders" className="hover:text-zinc-400">
+            Reminders →
+          </Link>
           <Link href="/journal" className="hover:text-zinc-400">
             Journal →
           </Link>
