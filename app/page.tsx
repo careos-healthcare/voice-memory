@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
-import { ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
+import { ArchiveGrowthNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { homepageRhythmNotes } from "@/lib/memory/rhythm-memory";
@@ -36,21 +37,39 @@ export default function HomePage() {
   const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
+  const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getAllEntries();
-      setResurfacing(homepageResurfacingNotes(entries, limits.resurfacing));
+      const resurfacingNotes = homepageResurfacingNotes(entries, limits.resurfacing);
+      const revisitationNotes = homepageRevisitationNotes(entries);
+      const familiarityResurfacingNotes = homepageFamiliarityResurfacingNotes(
+        entries,
+        limits.familiarityResurfacing,
+      );
+      setResurfacing(resurfacingNotes);
       setTimeMemory(homepageTimeMemoryNotes(entries));
-      setRevisitation(homepageRevisitationNotes(entries));
+      setRevisitation(revisitationNotes);
       setFamiliarity(homepageFamiliarityNotes(entries, limits.familiarity));
       setRhythm(homepageRhythmNotes(entries, limits.rhythm));
-      setFamiliarityResurfacing(
-        homepageFamiliarityResurfacingNotes(entries, limits.familiarityResurfacing),
+      setFamiliarityResurfacing(familiarityResurfacingNotes);
+      const meaningfulTiming =
+        resurfacingNotes.length > 0 ||
+        revisitationNotes.length > 0 ||
+        familiarityResurfacingNotes.length > 0;
+      setArchiveGrowth(
+        homepageArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
       );
     });
     return () => cancelAnimationFrame(id);
-  }, [limits.resurfacing, limits.familiarity, limits.rhythm, limits.familiarityResurfacing]);
+  }, [
+    limits.resurfacing,
+    limits.familiarity,
+    limits.rhythm,
+    limits.familiarityResurfacing,
+    limits.archiveGrowth,
+  ]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
@@ -74,6 +93,7 @@ export default function HomePage() {
           <RhythmNotes notes={rhythm} max={limits.rhythm} />
           <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />
+          <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
         </div>
 
         <main className="flex flex-1 flex-col items-center justify-center py-8 text-center">

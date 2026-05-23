@@ -32,6 +32,7 @@ const SKIP_PATH_PARTS = [
   "lib/memory/familiarity-resurfacing.ts",
   "lib/memory/resurfacing-priority.ts",
   "lib/memory/emotional-weight.ts",
+  "lib/memory/archive-growth.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",
