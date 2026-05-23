@@ -25,21 +25,21 @@ export default function CallbacksDebugPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
         <SiteHeader />
 
         <header className="mt-2 flex items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">
-              Callback quality review
+              Callback tuning
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
-              Continuity moments
+              Memory lines
             </h1>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-              Review surfaced callbacks with source evidence, interaction signals, and manual
-              labels. Find which lines create pauses, rereads, and emotional recognition — not
-              more feature breadth.
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
+              Rank callbacks by emotional residue. Find which exact lines create pauses, rereads,
+              revisits, bookmarks, copied moments, and follow-up continuations — then cut or double
+              down.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>

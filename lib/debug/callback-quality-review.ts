@@ -19,8 +19,10 @@ import { buildTimeMemoryReport } from "@/lib/memory/time-memory";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { buildContinuityMomentsReport } from "@/lib/patterns/continuity-moments";
 import { buildMemoryNotesReport, thenVsNowToNote } from "@/lib/patterns/memory-notes";
-import { countLabeledCallbacks } from "@/lib/debug/callback-review-labels";
+import { countLabeledCallbacks, getCallbackReviewLabels } from "@/lib/debug/callback-review-labels";
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
+import { enrichCallbackReviewItem } from "@/lib/debug/callback-quality-score";
+import { resolveCallbackSource } from "@/lib/debug/callback-source-map";
 import type {
   CallbackQualityReviewReport,
   CallbackReviewItem,
@@ -118,12 +120,13 @@ function noteToItem(
   const followup = buildFollowupPrompt([note]);
   const followupPrompt = followup?.text;
 
-  return {
+  const base: CallbackReviewItem = {
     id: note.id,
     kind,
     text: note.text,
     surfaces: surfaces ?? surfacesForKind(kind),
     sourceEntries: sourceEntriesForIds(entryIds),
+    sourceLocation: resolveCallbackSource(kind, note.id),
     beforeQuote: note.pastQuote,
     afterQuote: note.currentQuote,
     beforeDateLabel: note.pastDateLabel,
@@ -137,7 +140,14 @@ function noteToItem(
     followupNoteId: note.id,
     followupPrompt,
     continuedFollowup: signals.followupContinued,
+    manualLabels: [],
+    emotionalResidueScore: 0,
+    qualityScore: 0,
+    cutCandidate: false,
+    doubleDown: false,
   };
+
+  return enrichCallbackReviewItem(base, getCallbackReviewLabels(note.id));
 }
 
 function lineToItem(
@@ -153,12 +163,13 @@ function lineToItem(
   const rewriteFlags = detectRewriteCandidateFlags({ text, kind });
   const signals = callbackInteractionSignals(id, entryIds);
   const retention = summarizeCallbackRetention(id, entryIds);
-  return {
+  const base: CallbackReviewItem = {
     id,
     kind,
     text,
     surfaces: surfaces ?? surfacesForKind(kind),
     sourceEntries: sourceEntriesForIds(entryIds),
+    sourceLocation: resolveCallbackSource(kind, id),
     whySurfaced,
     emotionalWeight: strength,
     confidence: strength,
@@ -166,7 +177,14 @@ function lineToItem(
     signals,
     retention,
     continuedFollowup: signals.followupContinued,
+    manualLabels: [],
+    emotionalResidueScore: 0,
+    qualityScore: 0,
+    cutCandidate: false,
+    doubleDown: false,
   };
+
+  return enrichCallbackReviewItem(base, getCallbackReviewLabels(id));
 }
 
 function dedupeItems(items: CallbackReviewItem[]): CallbackReviewItem[] {
@@ -185,7 +203,14 @@ export function buildCallbackQualityReviewReport(
 ): CallbackQualityReviewReport {
   const sorted = sortedEntries(entries);
   if (sorted.length === 0) {
-    return { items: [], rewriteCandidateCount: 0, labeledCount: 0, hasData: false };
+    return {
+      items: [],
+      rewriteCandidateCount: 0,
+      labeledCount: 0,
+      cutCandidateCount: 0,
+      doubleDownCount: 0,
+      hasData: false,
+    };
   }
 
   const items: CallbackReviewItem[] = [];
@@ -505,15 +530,22 @@ export function buildCallbackQualityReviewReport(
   }
 
   const deduped = dedupeItems(items).sort(
-    (a, b) => b.emotionalWeight - a.emotionalWeight || b.confidence - a.confidence,
+    (a, b) =>
+      b.emotionalResidueScore - a.emotionalResidueScore ||
+      b.qualityScore - a.qualityScore ||
+      b.emotionalWeight - a.emotionalWeight,
   );
 
   const rewriteCandidateCount = deduped.filter((item) => item.rewriteFlags.length > 0).length;
+  const cutCandidateCount = deduped.filter((item) => item.cutCandidate).length;
+  const doubleDownCount = deduped.filter((item) => item.doubleDown).length;
 
   return {
     items: deduped,
     rewriteCandidateCount,
     labeledCount: countLabeledCallbacks(),
+    cutCandidateCount,
+    doubleDownCount,
     hasData: deduped.length > 0,
   };
 }

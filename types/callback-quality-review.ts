@@ -64,12 +64,19 @@ export interface CallbackSourceEntry {
   href: string;
 }
 
+export interface CallbackSourceLocation {
+  file: string;
+  function: string;
+  note?: string;
+}
+
 export interface CallbackReviewItem {
   id: string;
   kind: CallbackReviewKind;
   text: string;
   surfaces: string[];
   sourceEntries: CallbackSourceEntry[];
+  sourceLocation: CallbackSourceLocation;
   beforeQuote?: string;
   afterQuote?: string;
   beforeDateLabel?: string;
@@ -83,12 +90,19 @@ export interface CallbackReviewItem {
   followupNoteId?: string;
   followupPrompt?: string;
   continuedFollowup: boolean;
+  manualLabels: CallbackReviewLabel[];
+  emotionalResidueScore: number;
+  qualityScore: number;
+  cutCandidate: boolean;
+  doubleDown: boolean;
 }
 
 export interface CallbackQualityReviewReport {
   items: CallbackReviewItem[];
   rewriteCandidateCount: number;
   labeledCount: number;
+  cutCandidateCount: number;
+  doubleDownCount: number;
   hasData: boolean;
 }
 
