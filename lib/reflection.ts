@@ -24,6 +24,13 @@ export function normalizeReflection(
     concreteObservation: optionalString(raw.concreteObservation),
     repeatedSignal: optionalString(raw.repeatedSignal),
     nextSmallAction: optionalString(raw.nextSmallAction),
+    patternObservations: Array.isArray(raw.patternObservations)
+      ? raw.patternObservations
+          .filter((o): o is string => typeof o === "string")
+          .map((o) => o.trim())
+          .filter(Boolean)
+          .slice(0, 6)
+      : undefined,
   };
 }
 
@@ -63,10 +70,17 @@ export function getSpecificReflectionView(
         : null),
     nextSmallAction:
       reflection.nextSmallAction?.trim() ||
-      reflection.recommendation.trim() ||
-      "No next step saved.",
+      "",
     isLegacyFormat: !hasNew,
   };
+}
+
+export function getEntryPreviewLine(reflection: Reflection): string {
+  const obs = reflection.patternObservations?.[0];
+  if (obs) return obs;
+  if (reflection.concreteObservation?.trim()) return reflection.concreteObservation;
+  if (reflection.repeatedSignal?.trim()) return reflection.repeatedSignal;
+  return reflection.positiveSignal || reflection.hiddenConcern || "Voice reflection";
 }
 
 export function hasEnhancedReflection(reflection: Reflection): boolean {

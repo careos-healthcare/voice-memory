@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BarChart3, RefreshCw } from "lucide-react";
+import { BarChart3, Bug, RefreshCw } from "lucide-react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { buildAllEntryDebugSummaries } from "@/lib/pattern-detection";
 import { buildRetentionDashboard, type RetentionDashboard } from "@/lib/retention-metrics";
+import { getAllEntries } from "@/lib/storage";
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
@@ -27,9 +29,15 @@ function StatCard({ label, value, hint }: { label: string; value: string; hint?:
 
 export default function RetentionDebugPage() {
   const [data, setData] = useState<RetentionDashboard | null>(null);
+  const [showPatternDebug, setShowPatternDebug] = useState(false);
+  const [patternScores, setPatternScores] = useState<
+    ReturnType<typeof buildAllEntryDebugSummaries>
+  >([]);
 
   const refresh = () => {
     setData(buildRetentionDashboard());
+    const entries = getAllEntries();
+    setPatternScores(buildAllEntryDebugSummaries(entries));
   };
 
   useEffect(() => {
@@ -125,6 +133,58 @@ export default function RetentionDebugPage() {
                 </CardContent>
               </Card>
             )}
+
+            <Card className="border-amber-500/20">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Bug className="h-4 w-4 text-amber-300" />
+                    <CardTitle className="text-base">Pattern specificity debug</CardTitle>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPatternDebug((v) => !v)}
+                  >
+                    {showPatternDebug ? "Hide" : "Show"}
+                  </Button>
+                </div>
+                <p className="text-xs text-zinc-500">
+                  Scores exact phrase grounding, recurrence, cross-entry evidence, and
+                  contradictions — &ldquo;This felt specific because…&rdquo;
+                </p>
+              </CardHeader>
+              {showPatternDebug ? (
+                <CardContent className="space-y-2">
+                  {patternScores.length === 0 ? (
+                    <p className="text-sm text-zinc-500">No entries to score yet.</p>
+                  ) : (
+                    patternScores
+                      .sort((a, b) => b.score - a.score)
+                      .map((row) => (
+                        <div
+                          key={row.entryId}
+                          className="rounded-xl bg-white/[0.03] px-3 py-2 text-sm"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <Link
+                              href={`/entry/${row.entryId}`}
+                              className="text-violet-300 hover:text-violet-200"
+                            >
+                              {new Date(row.date).toLocaleDateString()}
+                            </Link>
+                            <span className="font-medium tabular-nums text-white">
+                              {row.score}/100
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-zinc-500">{row.topReason}</p>
+                        </div>
+                      ))
+                  )}
+                </CardContent>
+              ) : null}
+            </Card>
 
             <div className="flex flex-wrap gap-3 text-sm">
               <Link href="/launch" className="text-violet-300 hover:text-violet-200">

@@ -1,137 +1,85 @@
 "use client";
 
+import { useMemo, type ComponentType } from "react";
 import { motion } from "framer-motion";
 import {
   AlertCircle,
-  Brain,
-  Heart,
-  Lightbulb,
+  ArrowLeftRight,
+  EyeOff,
   MessageSquareQuote,
   Repeat2,
   Shield,
   Sparkles,
-  Target,
-  Zap,
+  TrendingUp,
+  Waves,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  getSpecificReflectionView,
-  hasEnhancedReflection,
-} from "@/lib/reflection";
-import type { Reflection } from "@/types/journal";
+import { buildEntryPatternInsights } from "@/lib/pattern-detection";
+import { getAllEntries } from "@/lib/storage";
+import type { EntryPatternInsights } from "@/types/pattern-insights";
+import type { JournalEntry, Reflection } from "@/types/journal";
 
 interface InsightCardProps {
   reflection: Reflection;
   transcript?: string;
   showTranscript?: boolean;
+  entryId?: string;
+  entry?: JournalEntry;
+  patternInsights?: EntryPatternInsights;
 }
-
-const legacySections = [
-  {
-    key: "hiddenConcern" as const,
-    label: "Underlying worry",
-    icon: Brain,
-    accent: "text-amber-300",
-  },
-  {
-    key: "positiveSignal" as const,
-    label: "Positive signal",
-    icon: Heart,
-    accent: "text-emerald-300",
-  },
-  {
-    key: "recommendation" as const,
-    label: "Broader suggestion",
-    icon: Lightbulb,
-    accent: "text-violet-300",
-  },
-];
 
 function SafetyNotice() {
   return (
     <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
       <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
       <p className="text-xs leading-relaxed text-zinc-500">
-        VoiceMemory is a reflective mirror only — not therapy, not medical advice,
-        and not a diagnosis. These notes describe patterns in what you said.
+        Pattern detection in your words — not therapy, not medical advice, not a
+        diagnosis.
       </p>
     </div>
   );
 }
 
-function SpecificObservations({
-  reflection,
+function PatternSection({
+  title,
+  icon: Icon,
+  accent,
+  items,
+  emptyLabel,
 }: {
-  reflection: Reflection;
+  title: string;
+  icon: ComponentType<{ className?: string }>;
+  accent: string;
+  items: Array<{ key: string; label?: string; detail: string }>;
+  emptyLabel?: string;
 }) {
-  const specific = getSpecificReflectionView(reflection);
-  const enhanced = hasEnhancedReflection(reflection);
-
-  const items = [
-    {
-      label: "Exact language",
-      icon: MessageSquareQuote,
-      value: specific.exactLanguagePattern,
-      accent: "text-violet-300",
-    },
-    {
-      label: "Concrete observation",
-      icon: Target,
-      value: specific.concreteObservation,
-      accent: "text-white",
-    },
-    {
-      label: "Repeated signal",
-      icon: Repeat2,
-      value: specific.repeatedSignal,
-      accent: "text-fuchsia-300",
-    },
-    {
-      label: "Next small action",
-      icon: Zap,
-      value: specific.nextSmallAction,
-      accent: "text-emerald-300",
-    },
-  ].filter((item) => item.value);
+  if (items.length === 0 && !emptyLabel) return null;
 
   return (
-    <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent">
+    <Card>
       <CardHeader className="pb-2">
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80">
-          Grounded in your words
-        </p>
-        <CardTitle className="text-lg">Specific observations</CardTitle>
-        {!enhanced ? (
-          <p className="text-xs text-zinc-500">
-            This entry uses an earlier format — showing the closest saved notes.
-          </p>
-        ) : null}
+        <div className="flex items-center gap-2">
+          <Icon className={`h-4 w-4 ${accent}`} />
+          <CardTitle className="text-base">{title}</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {items.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div key={item.label} className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <Icon className={`h-4 w-4 ${item.accent}`} />
+      <CardContent className="space-y-3">
+        {items.length === 0 ? (
+          <p className="text-sm text-zinc-500">{emptyLabel}</p>
+        ) : (
+          items.map((item) => (
+            <div key={item.key} className="space-y-1">
+              {item.label ? (
                 <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
                   {item.label}
                 </p>
-              </div>
-              <p
-                className={`text-sm leading-relaxed ${
-                  item.label === "Exact language"
-                    ? "italic text-zinc-300"
-                    : "text-zinc-200"
-                }`}
-              >
-                {item.value}
-              </p>
+              ) : null}
+              <p className="text-sm leading-relaxed text-zinc-300">{item.detail}</p>
             </div>
-          );
-        })}
+          ))
+        )}
       </CardContent>
     </Card>
   );
@@ -141,16 +89,24 @@ export function InsightCard({
   reflection,
   transcript,
   showTranscript = false,
+  entryId,
+  entry,
+  patternInsights: patternInsightsProp,
 }: InsightCardProps) {
-  const intensityPercent = reflection.emotionalIntensity * 10;
-  const specific = getSpecificReflectionView(reflection);
+  const patternInsights = useMemo(() => {
+    if (patternInsightsProp) return patternInsightsProp;
+    const resolvedEntry =
+      entry ?? (entryId ? getAllEntries().find((e) => e.id === entryId) : undefined);
+    if (!resolvedEntry) return null;
+    return buildEntryPatternInsights(resolvedEntry, getAllEntries());
+  }, [patternInsightsProp, entry, entryId]);
 
-  const showLegacyConcern =
-    reflection.hiddenConcern.trim() !== specific.concreteObservation.trim();
-  const showLegacyRecommendation =
-    hasEnhancedReflection(reflection) &&
-    Boolean(reflection.nextSmallAction) &&
-    reflection.recommendation.trim() !== reflection.nextSmallAction!.trim();
+  const intensityPercent = reflection.emotionalIntensity * 10;
+
+  const observations =
+    patternInsights?.observations.length
+      ? patternInsights.observations
+      : reflection.patternObservations ?? [];
 
   return (
     <motion.div
@@ -160,7 +116,105 @@ export function InsightCard({
       className="space-y-4"
     >
       <SafetyNotice />
-      <SpecificObservations reflection={reflection} />
+
+      {observations.length > 0 ? (
+        <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
+          <CardHeader className="pb-2">
+            <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
+              Pattern observations
+            </p>
+            <CardTitle className="text-lg">What repeats in your words</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {observations.map((obs) => (
+              <p key={obs} className="text-sm leading-relaxed text-zinc-200">
+                {obs}
+              </p>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      <PatternSection
+        title="Recurring patterns"
+        icon={Repeat2}
+        accent="text-violet-300"
+        items={(patternInsights?.recurringPatterns ?? []).map((detail, i) => ({
+          key: `pattern-${i}`,
+          detail,
+        }))}
+        emptyLabel={
+          reflection.recurringThemes.length > 0
+            ? `Themes in this entry: ${reflection.recurringThemes.join(", ")}`
+            : "Patterns emerge as you add more reflections."
+        }
+      />
+
+      <PatternSection
+        title="Contradictions & reversals"
+        icon={ArrowLeftRight}
+        accent="text-amber-300"
+        items={(patternInsights?.contradictions ?? []).map((c) => ({
+          key: c.id,
+          label: c.label,
+          detail: c.detail,
+        }))}
+        emptyLabel="No cross-entry contradictions detected yet."
+      />
+
+      <PatternSection
+        title="Repeated language"
+        icon={MessageSquareQuote}
+        accent="text-emerald-300"
+        items={(patternInsights?.repeatedPhrases ?? []).map((p) => ({
+          key: p.phrase,
+          label: p.phrase,
+          detail: `${p.category.replace("_", " ")} · ${p.count} uses across ${p.entryCount} entries · e.g. ${p.example}`,
+        }))}
+        emptyLabel="Phrase habits appear as you accumulate entries."
+      />
+
+      {(patternInsights?.avoidanceSignals.length ?? 0) > 0 ? (
+        <PatternSection
+          title="Indirect & hedged language"
+          icon={EyeOff}
+          accent="text-zinc-400"
+          items={(patternInsights?.avoidanceSignals ?? []).map((a) => ({
+            key: a.id,
+            label: a.label,
+            detail: a.detail,
+          }))}
+        />
+      ) : null}
+
+      {(patternInsights?.emotionalEvolution.length ?? 0) > 0 ? (
+        <PatternSection
+          title="Emotional evolution"
+          icon={TrendingUp}
+          accent="text-sky-300"
+          items={(patternInsights?.emotionalEvolution ?? []).map((e) => ({
+            key: e.id,
+            label: e.label,
+            detail: e.detail,
+          }))}
+        />
+      ) : null}
+
+      {reflection.exactLanguagePattern ? (
+        <Card className="border-white/10 bg-white/[0.02]">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <Waves className="h-4 w-4 text-violet-300" />
+              <CardTitle className="text-base">Exact language</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm italic leading-relaxed text-zinc-300">
+              &ldquo;{reflection.exactLanguagePattern}&rdquo;
+            </p>
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card className="overflow-hidden border-violet-400/20 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent">
         <CardHeader className="pb-4">
@@ -191,11 +245,7 @@ export function InsightCard({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 text-sm text-zinc-400">
-            <Target className="h-4 w-4" />
-            <span>Recurring themes</span>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
             {reflection.recurringThemes.length > 0 ? (
               reflection.recurringThemes.map((theme) => (
                 <Badge key={theme} variant="default">
@@ -208,38 +258,6 @@ export function InsightCard({
           </div>
         </CardContent>
       </Card>
-
-      {legacySections.map((section, index) => {
-        if (section.key === "hiddenConcern" && !showLegacyConcern) return null;
-        if (section.key === "recommendation" && !showLegacyRecommendation) {
-          return null;
-        }
-
-        const Icon = section.icon;
-
-        return (
-          <motion.div
-            key={section.key}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 * (index + 1) }}
-          >
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Icon className={`h-4 w-4 ${section.accent}`} />
-                  <CardTitle className="text-base">{section.label}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed text-zinc-300">
-                  {reflection[section.key]}
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        );
-      })}
 
       {showTranscript && transcript ? (
         <Card>
@@ -283,7 +301,7 @@ export function ProcessingStatus({
 }) {
   const labels = {
     transcribing: "Listening to your voice…",
-    analyzing: "Pulling specific patterns from what you said…",
+    analyzing: "Detecting patterns in what you said…",
     saving: "Saving your reflection…",
   };
 
@@ -303,7 +321,7 @@ export function ProcessingStatus({
       <div>
         <p className="text-lg font-medium text-white">{labels[stage]}</p>
         <p className="mt-1 text-sm text-zinc-400">
-          Reflective mirror only — not therapy or diagnosis.
+          Pattern detection — not therapy or diagnosis.
         </p>
       </div>
     </motion.div>

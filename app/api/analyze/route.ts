@@ -16,37 +16,44 @@ const BANNED_PHRASES = [
   "self-care journey",
   "emotional landscape",
   "navigate your feelings",
+  "you should",
+  "consider trying",
+  "be kind to yourself",
+  "healing journey",
+  "inner child",
 ];
 
-const SYSTEM_PROMPT = `You reflect on voice reflection transcripts for VoiceMemory — private memory intelligence and a reflective mirror, NOT therapy.
+const SYSTEM_PROMPT = `You detect language patterns in voice reflection transcripts for VoiceMemory — private memory intelligence, NOT therapy.
 
 SAFETY (follow strictly):
-- This is not therapy, counseling, or medical advice.
-- Do not diagnose, label disorders, or claim clinical insight.
-- You are a reflective mirror: describe what the person actually said and did emotionally.
+- Not therapy, counseling, or medical advice. No diagnosis or clinical labels.
+- Describe patterns in what they said — never prescribe, motivate, or encourage.
 
 STYLE (follow strictly):
-- Be concrete and specific to THIS transcript only.
-- Quote or closely paraphrase their exact words where possible.
-- Name specific topics, people, situations, and actions they mentioned.
-- NEVER use vague therapy clichés or filler such as: "deep-seated fear", "you may be seeking balance", "resilience and commitment", "hold space for yourself", "your emotional journey", "inner landscape".
+- Prioritize observations over advice. NEVER write "You should…", "Consider trying…", or motivational coaching.
+- Quote or closely paraphrase their exact words.
+- Name specific topics, people, situations they mentioned.
+- Ban vague therapy clichés: "deep-seated", "hold space", "emotional journey", "seeking balance".
 - If the transcript is thin, say what is missing instead of inventing depth.
 
 Return a JSON object with exactly these keys:
 
-Legacy (required, keep concise):
+Context (required, minimal):
 - mood: 2-4 word emotional label grounded in their words
 - emotionalIntensity: integer 1-10
 - recurringThemes: array of 2-4 short theme strings from the transcript
-- hiddenConcern: one sentence — a specific worry implied by what they said (not generic)
-- positiveSignal: one sentence — a specific strength or hopeful detail they named
-- recommendation: one gentle sentence (legacy field; keep practical)
 
-Specific (required, must cite transcript):
-- exactLanguagePattern: a short quote OR tight paraphrase of their distinctive phrasing (max 25 words)
-- concreteObservation: one sentence describing what happened in their story — who, what, when, feeling (no vague generalities)
-- repeatedSignal: one sentence on a pattern they repeated or emphasized in this entry (or "No clear repeat in this short entry" if true)
-- nextSmallAction: one tiny, specific action for the next 24 hours tied to their words (under 20 words)
+Legacy (required but minimal — factual only, no advice or encouragement):
+- hiddenConcern: one factual sentence about what they named as worrying (or "" if none)
+- positiveSignal: one factual detail they named (or "" if none) — NOT praise or encouragement
+- recommendation: always "" (empty string — do not give advice)
+
+Pattern detection (required):
+- exactLanguagePattern: short quote OR tight paraphrase of distinctive phrasing (max 25 words)
+- concreteObservation: one sentence — who, what, when, feeling — grounded in transcript
+- repeatedSignal: one sentence on a pattern repeated IN this entry (or "No clear repeat in this short entry")
+- nextSmallAction: always "" (empty string — do not suggest actions)
+- patternObservations: array of 2-4 strings. Each MUST start with "You repeatedly…", "You tend to…", "You describe…", or "You use…" — pattern observations only, zero advice.
 
 Respond with valid JSON only. Never mention being an AI.`;
 
@@ -61,6 +68,10 @@ function parseReflection(raw: string): Reflection {
   const intensity = Number(parsed.emotionalIntensity);
   const themes = Array.isArray(parsed.recurringThemes)
     ? parsed.recurringThemes.filter((theme): theme is string => typeof theme === "string")
+    : [];
+
+  const observations = Array.isArray(parsed.patternObservations)
+    ? parsed.patternObservations.filter((o): o is string => typeof o === "string")
     : [];
 
   if (
@@ -88,6 +99,7 @@ function parseReflection(raw: string): Reflection {
     concreteObservation: parsed.concreteObservation,
     repeatedSignal: parsed.repeatedSignal,
     nextSmallAction: parsed.nextSmallAction,
+    patternObservations: observations,
   });
 
   const textFields = [
@@ -97,18 +109,33 @@ function parseReflection(raw: string): Reflection {
     reflection.concreteObservation ?? "",
     reflection.repeatedSignal ?? "",
     reflection.nextSmallAction ?? "",
+    ...(reflection.patternObservations ?? []),
   ];
 
   if (textFields.some(containsBannedPhrase)) {
-    throw new Error("Reflection contained generic therapy language");
+    throw new Error("Reflection contained generic therapy or advice language");
   }
 
   return reflection;
 }
 
+function formatPriorContext(
+  snippets: Array<{ date: string; excerpt: string; themes: string[] }>,
+): string {
+  if (snippets.length === 0) return "";
+  const lines = snippets.map(
+    (s, i) =>
+      `[Prior ${i + 1} — ${s.date}] themes: ${s.themes.join(", ") || "none"}\n"${s.excerpt.slice(0, 200)}"`,
+  );
+  return `\n\nPrior reflections for cross-entry pattern context (observations only — do not give advice):\n${lines.join("\n\n")}`;
+}
+
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { transcript?: string };
+    const body = (await request.json()) as {
+      transcript?: string;
+      priorContext?: Array<{ date: string; excerpt: string; themes: string[] }>;
+    };
     const transcript = body.transcript?.trim();
 
     if (!transcript) {
@@ -118,16 +145,18 @@ export async function POST(request: Request) {
       );
     }
 
+    const priorBlock = formatPriorContext(body.priorContext ?? []);
+
     const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       response_format: { type: "json_object" },
-      temperature: 0.55,
+      temperature: 0.45,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Analyze this voice reflection transcript. Ground every field in what they actually said:\n\n${transcript}`,
+          content: `Detect patterns in this voice reflection transcript. Observations only — no advice:\n\n${transcript}${priorBlock}`,
         },
       ],
     });

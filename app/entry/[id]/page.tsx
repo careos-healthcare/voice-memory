@@ -106,6 +106,7 @@ export default function EntryPage() {
               reflection={entry.reflection}
               transcript={entry.transcript}
               showTranscript
+              entry={entry}
             />
 
             <FeedbackPrompt

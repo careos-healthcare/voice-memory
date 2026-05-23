@@ -12,7 +12,8 @@ import {
 } from "@/components/InsightCard";
 import { Button } from "@/components/ui/button";
 import { saveAudio } from "@/lib/audio-storage";
-import { saveEntry } from "@/lib/storage";
+import { formatEntryDate } from "@/lib/utils";
+import { getAllEntries, saveEntry } from "@/lib/storage";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
 
 const MAX_SECONDS = 60;
@@ -86,10 +87,18 @@ export function Recorder({ autoStart = false, onComplete }: RecorderProps) {
 
         setStage("analyzing");
 
+        const priorContext = getAllEntries()
+          .slice(0, 5)
+          .map((e) => ({
+            date: formatEntryDate(e.createdAt),
+            excerpt: e.transcript.slice(0, 300),
+            themes: e.reflection.recurringThemes,
+          }));
+
         const analyzeResponse = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ transcript: transcribeData.transcript }),
+          body: JSON.stringify({ transcript: transcribeData.transcript, priorContext }),
         });
 
         const analyzeData = (await analyzeResponse.json()) as {
@@ -295,7 +304,7 @@ export function Recorder({ autoStart = false, onComplete }: RecorderProps) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <InsightCard reflection={entry.reflection} />
+            <InsightCard reflection={entry.reflection} entry={entry} />
             <p className="mt-4 text-center text-sm text-zinc-400">
               Opening your entry…
             </p>

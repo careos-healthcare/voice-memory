@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEntries } from "@/lib/storage";
+import { getEntryPreviewLine } from "@/lib/reflection";
 import { formatEntryDate, formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
@@ -107,7 +108,7 @@ export default function JournalPage() {
                               </span>
                             </div>
                             <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-zinc-300">
-                              {entry.reflection.positiveSignal}
+                              {getEntryPreviewLine(entry.reflection)}
                             </p>
                             <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
                               <span className="inline-flex items-center gap-1">

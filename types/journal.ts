@@ -2,8 +2,11 @@ export interface Reflection {
   mood: string;
   emotionalIntensity: number;
   recurringThemes: string[];
+  /** Legacy — kept for search/export compatibility; de-emphasized in UI. */
   hiddenConcern: string;
+  /** Legacy — kept for search/export compatibility; de-emphasized in UI. */
   positiveSignal: string;
+  /** Legacy — kept for search/export compatibility; de-emphasized in UI. */
   recommendation: string;
   /** Short quote or paraphrase of exact wording from the transcript. */
   exactLanguagePattern?: string;
@@ -11,8 +14,10 @@ export interface Reflection {
   concreteObservation?: string;
   /** Pattern that showed up more than once in this entry. */
   repeatedSignal?: string;
-  /** One small, specific action for the next 24 hours. */
+  /** Legacy action field — de-emphasized in UI. */
   nextSmallAction?: string;
+  /** Observation-style statements: "You repeatedly…", "You tend to…" */
+  patternObservations?: string[];
 }
 
 export interface JournalEntry {
