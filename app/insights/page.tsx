@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
 import { PhraseMemoryCard } from "@/components/patterns/PhraseMemoryCard";
+import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
 import { detectAllContradictions, type Contradiction } from "@/lib/patterns/contradictions";
 import { getTopPhrases, type PhraseMemoryRecord } from "@/lib/patterns/phrase-memory";
@@ -33,6 +34,10 @@ import {
   detectAllAvoidanceSignals,
   type AvoidanceSignal,
 } from "@/lib/patterns/avoidance";
+import {
+  getEmotionalCycleInsights,
+  type EvolutionInsight,
+} from "@/lib/patterns/emotional-evolution";
 import { getAllEntries } from "@/lib/storage";
 
 function IntensityTrendChart({ points }: { points: MemoryInsights["intensityTrend"] }) {
@@ -78,6 +83,7 @@ export default function InsightsPage() {
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
   const [phrases, setPhrases] = useState<PhraseMemoryRecord[]>([]);
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
+  const [cycleInsights, setCycleInsights] = useState<EvolutionInsight[]>([]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -86,6 +92,7 @@ export default function InsightsPage() {
       setContradictions(detectAllContradictions(entries));
       setPhrases(getTopPhrases(entries, 10));
       setAvoidanceSignals(detectAllAvoidanceSignals(entries));
+      setCycleInsights(getEmotionalCycleInsights(entries));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -218,6 +225,13 @@ export default function InsightsPage() {
                 title="What stays vague"
                 subtitle="Indirect references, hedging, and unnamed stressors — pattern observation only"
                 maxItems={6}
+              />
+
+              <EmotionalEvolutionCard
+                insights={cycleInsights}
+                title="Emotional cycles"
+                subtitle="Day-of-week patterns, intensity drift, and recurring trigger contexts"
+                maxItems={8}
               />
 
               {insights.weeklyMentions.length > 0 ? (

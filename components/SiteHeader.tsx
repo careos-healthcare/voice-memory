@@ -35,6 +35,12 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           Memory
         </Link>
         <Link
+          href="/timeline"
+          className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
+        >
+          Timeline
+        </Link>
+        <Link
           href="/weekly"
           className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
         >

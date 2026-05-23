@@ -36,12 +36,17 @@ import {
 } from "@/lib/weekly-intelligence";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { AvoidanceCard } from "@/components/patterns/AvoidanceCard";
+import { EmotionalEvolutionCard } from "@/components/patterns/EmotionalEvolutionCard";
 import { detectRecentContradictions } from "@/lib/patterns/contradictions";
 import type { Contradiction } from "@/lib/patterns/contradictions";
 import {
   detectRecentAvoidanceSignals,
   type AvoidanceSignal,
 } from "@/lib/patterns/avoidance";
+import {
+  buildWeeklyEvolutionComparison,
+  type WeeklyEvolutionComparison,
+} from "@/lib/patterns/emotional-evolution";
 import { getAllEntries } from "@/lib/storage";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
@@ -60,6 +65,7 @@ export default function WeeklyPage() {
   const [report, setReport] = useState<WeeklyIntelligenceReport | null>(null);
   const [contradictions, setContradictions] = useState<Contradiction[]>([]);
   const [avoidanceSignals, setAvoidanceSignals] = useState<AvoidanceSignal[]>([]);
+  const [weekEvolution, setWeekEvolution] = useState<WeeklyEvolutionComparison | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
@@ -68,6 +74,7 @@ export default function WeeklyPage() {
       setReport(analyzeWeeklyIntelligence());
       setContradictions(detectRecentContradictions(entries, 7));
       setAvoidanceSignals(detectRecentAvoidanceSignals(entries, 7));
+      setWeekEvolution(buildWeeklyEvolutionComparison(entries));
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -214,6 +221,15 @@ export default function WeeklyPage() {
                   ) : null}
                 </CardContent>
               </Card>
+
+              <EmotionalEvolutionCard
+                insights={weekEvolution?.insights ?? []}
+                weekComparison={weekEvolution}
+                showWeekComparison
+                title="This week vs previous week"
+                subtitle="Intensity shift and topic-level changes from your words"
+                maxItems={4}
+              />
 
               <ContradictionContinuityCard
                 contradictions={contradictions}
