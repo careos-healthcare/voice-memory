@@ -2,22 +2,22 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { getQuietLimits, isQuietModeEnabled, setQuietModeEnabled } from "@/lib/quiet-mode";
+import { getQuietLimits, isFullDetailEnabled, setFullDetailEnabled } from "@/lib/quiet-mode";
 
 export function useQuietMode() {
-  const [quiet, setQuiet] = useState(false);
+  const [quiet, setQuiet] = useState(true);
 
   useEffect(() => {
-    setQuiet(isQuietModeEnabled());
-    const handler = () => setQuiet(isQuietModeEnabled());
+    setQuiet(!isFullDetailEnabled());
+    const handler = () => setQuiet(!isFullDetailEnabled());
     window.addEventListener("voicememory:quiet-mode", handler);
     return () => window.removeEventListener("voicememory:quiet-mode", handler);
   }, []);
 
-  const toggle = useCallback((enabled: boolean) => {
-    setQuietModeEnabled(enabled);
-    setQuiet(enabled);
+  const toggleFullDetail = useCallback((enabled: boolean) => {
+    setFullDetailEnabled(enabled);
+    setQuiet(!enabled);
   }, []);
 
-  return { quiet, toggle, limits: getQuietLimits(quiet) };
+  return { quiet, fullDetail: !quiet, toggleFullDetail, limits: getQuietLimits(quiet) };
 }

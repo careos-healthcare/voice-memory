@@ -6,26 +6,12 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { FeedbackPrompt } from "@/components/FeedbackPrompt";
-import { InsightCard } from "@/components/InsightCard";
+import { MemoryNoteView } from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
-import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
-import {
-  ContinuityCallbacks,
-  MemoryLandmarksStrip,
-} from "@/components/patterns/ContinuityCallbacks";
-import { ThenVsNowCard } from "@/components/patterns/ThenVsNowCard";
-import { SeeMorePanel } from "@/components/patterns/SeeMorePanel";
-import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
-import { PatternInsightCard } from "@/components/patterns/PatternInsightCard";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuietMode } from "@/lib/hooks/useQuietMode";
-import { getContinuityForEntry } from "@/lib/patterns/continuity-moments";
-import { detectContradictionsForEntry } from "@/lib/patterns/contradictions";
-import { getPatternInsights } from "@/lib/patterns/pattern-engine";
-import { helpsOrient } from "@/lib/patterns/usefulness-filter";
+import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -35,7 +21,6 @@ export default function EntryPage() {
   const router = useRouter();
   const [entry, setEntry] = useState<JournalEntry | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const { quiet, limits } = useQuietMode();
 
   useEffect(() => {
     const found = getEntry(params.id);
@@ -45,24 +30,9 @@ export default function EntryPage() {
 
   const allEntries = useMemo(() => getAllEntries(), [entry]);
 
-  const continuity = useMemo(() => {
+  const notes = useMemo(() => {
     if (!entry) return null;
-    return getContinuityForEntry(allEntries, entry.id, {
-      callbacks: limits.callbacks,
-      landmarks: limits.landmarks,
-    });
-  }, [entry, allEntries, limits.callbacks, limits.landmarks]);
-
-  const relatedContradictions = useMemo(() => {
-    if (!entry) return [];
-    return detectContradictionsForEntry(allEntries, entry.id);
-  }, [entry, allEntries]);
-
-  const entryPatternInsights = useMemo(() => {
-    if (!entry) return [];
-    return getPatternInsights(allEntries, "entry", entry.id, 8).filter((i) =>
-      helpsOrient(i.title + " " + (i.detail ?? ""), i.scores.total),
-    );
+    return entryMemoryNotes(allEntries, entry.id);
   }, [entry, allEntries]);
 
   const handleDelete = () => {
@@ -71,7 +41,12 @@ export default function EntryPage() {
     router.push("/journal");
   };
 
-  const sectionGap = quiet ? "space-y-16" : "space-y-12";
+  const whatChangedLine =
+    notes?.whatChanged &&
+    notes.whatChanged.id !== notes.callback?.id &&
+    notes.whatChanged.id !== notes.thenVsNow?.id
+      ? notes.whatChanged
+      : null;
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -113,27 +88,17 @@ export default function EntryPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`mt-8 ${sectionGap}`}
+            className="mt-8 space-y-16"
           >
             <header>
               <h1 className="text-2xl font-semibold text-white">
                 {formatEntryDate(entry.createdAt)}
               </h1>
-              <p className="mt-2 text-sm text-zinc-600">{entry.durationSeconds}s · saved locally</p>
             </header>
 
-            {continuity?.callbacks.length ? (
-              <ContinuityCallbacks
-                callbacks={continuity.callbacks}
-                title="What sounds different now"
-                highlightEntryId={entry.id}
-                quiet={quiet}
-              />
-            ) : null}
+            {notes?.callback ? <MemoryNoteView note={notes.callback} /> : null}
 
-            {continuity?.thenVsNow ? (
-              <ThenVsNowCard comparison={continuity.thenVsNow} />
-            ) : null}
+            {notes?.thenVsNow ? <MemoryNoteView note={notes.thenVsNow} /> : null}
 
             <VoicePlayback
               entryId={entry.id}
@@ -141,50 +106,15 @@ export default function EntryPage() {
               durationSeconds={entry.durationSeconds}
             />
 
-            <InsightCard
-              reflection={entry.reflection}
-              transcript={entry.transcript}
-              showTranscript
-              entry={entry}
-              showContradictionCard={false}
-              showPhraseCard={false}
-              showAvoidanceCard={false}
-              hideMoodSummary
-              calmMode
-            />
-
-            {continuity?.landmarks.length ? (
-              <MemoryLandmarksStrip landmarks={continuity.landmarks} quiet={quiet} />
+            {entry.transcript ? (
+              <div className="space-y-3">
+                <p className="text-sm leading-relaxed text-zinc-400">{entry.transcript}</p>
+              </div>
             ) : null}
 
-            {!quiet &&
-            (entryPatternInsights.length > 0 || relatedContradictions.length > 0) ? (
-              <SeeMorePanel label="See more">
-                <PatternInsightCard
-                  insights={entryPatternInsights}
-                  title="What returned"
-                  maxItems={4}
-                  primaryCount={1}
-                  highlightEntryId={entry.id}
-                  hideWhenEmpty
-                />
-                <ContradictionContinuityCard
-                  contradictions={relatedContradictions}
-                  title="Tension elsewhere"
-                  subtitle=""
-                  maxItems={2}
-                  highlightEntryId={entry.id}
-                />
-              </SeeMorePanel>
+            {whatChangedLine ? (
+              <p className="text-sm leading-relaxed text-zinc-500">{whatChangedLine.text}</p>
             ) : null}
-
-            <FeedbackPrompt
-              kind="entry_reflection"
-              targetKey={entry.id}
-              label="Did this help you orient?"
-            />
-
-            <ShareMemoryCardButton kind="entry_observation" entry={entry} />
           </motion.div>
         )}
       </div>

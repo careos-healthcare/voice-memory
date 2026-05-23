@@ -20,7 +20,7 @@ import {
   slugExportDate,
 } from "@/lib/memory-export";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
-import { isQuietModeEnabled, setQuietModeEnabled } from "@/lib/quiet-mode";
+import { isFullDetailEnabled, setFullDetailEnabled } from "@/lib/quiet-mode";
 import {
   DATA_DELETION_SUMMARY,
   DATA_EXPORT_SUMMARY,
@@ -32,7 +32,7 @@ export default function SettingsPage() {
   const [entryCount, setEntryCount] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [quietMode, setQuietMode] = useState(false);
+  const [fullDetail, setFullDetail] = useState(false);
 
   const refreshCount = () => {
     setEntryCount(getStoredEntryCount());
@@ -40,7 +40,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     refreshCount();
-    setQuietMode(isQuietModeEnabled());
+    setFullDetail(isFullDetailEnabled());
   }, []);
 
   const showMessage = (text: string) => {
@@ -177,27 +177,31 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Quiet mode</CardTitle>
+              <CardTitle className="text-base">Full detail</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-zinc-400">
-                Low-density view — one observation at a time, more whitespace, less detail
-                until you ask for it.
+                Off by default. Turn on only if you want charts, pattern cards, and longer reads.
+                Debug views live at{" "}
+                <Link href="/debug/changes" className="text-zinc-500 hover:text-zinc-300">
+                  /debug/changes
+                </Link>
+                .
               </p>
               <Button
                 type="button"
-                variant={quietMode ? "default" : "secondary"}
+                variant={fullDetail ? "default" : "secondary"}
                 size="sm"
                 className="mt-4"
                 onClick={() => {
-                  const next = !quietMode;
-                  setQuietModeEnabled(next);
-                  setQuietMode(next);
-                  showMessage(next ? "Quiet mode on." : "Quiet mode off.");
+                  const next = !fullDetail;
+                  setFullDetailEnabled(next);
+                  setFullDetail(next);
+                  showMessage(next ? "Full detail on." : "Back to quiet view.");
                 }}
               >
                 <Moon className="h-4 w-4" />
-                {quietMode ? "Quiet mode on" : "Enable quiet mode"}
+                {fullDetail ? "Full detail on" : "Enable full detail"}
               </Button>
             </CardContent>
           </Card>

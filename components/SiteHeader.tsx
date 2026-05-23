@@ -23,7 +23,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             VoiceMemory
           </span>
           <span className="hidden text-[10px] text-zinc-600 sm:block">
-            Private memory over time
+            Talk once a day
           </span>
         </span>
       </Link>
@@ -51,12 +51,6 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
         >
           Monthly
-        </Link>
-        <Link
-          href="/insights"
-          className="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:inline-flex sm:px-4"
-        >
-          Insights
         </Link>
         <Link
           href="/reminders"

@@ -118,7 +118,7 @@ function detectEntryCallbacks(
     if (delta >= 1.5) {
       pushCallback(callbacks, {
         id: `cb-calmer-${themeKey}-${entryId}`,
-        text: `You sound calmer here than when you last spoke about ${theme.toLowerCase()}.`,
+        text: "This sounds lighter than before.",
         kind: "sounds_calmer",
         confidence: 60 + Math.round(delta * 4),
         entryIds: [...priorTheme.slice(-2).map((e) => e.id), current.id],
@@ -127,7 +127,7 @@ function detectEntryCallbacks(
     } else if (Math.abs(delta) >= 2 || priorTheme[priorTheme.length - 1].reflection.mood !== current.reflection.mood) {
       pushCallback(callbacks, {
         id: `cb-different-${themeKey}-${entryId}`,
-        text: `This came up differently before — ${theme.toLowerCase()} read ${priorAvg}/10 earlier, ${current.reflection.emotionalIntensity}/10 here.`,
+        text: "This came up differently before.",
         kind: "came_up_differently",
         confidence: 58 + Math.round(Math.abs(delta) * 3),
         entryIds: [priorTheme[priorTheme.length - 1].id, current.id],
@@ -143,7 +143,7 @@ function detectEntryCallbacks(
     if (priorHedge >= 1 && nowHedge < priorHedge && nowDirect > priorDirect) {
       pushCallback(callbacks, {
         id: `cb-vague-${themeKey}-${entryId}`,
-        text: `You used to describe ${theme.toLowerCase()} more vaguely.`,
+        text: "You used to describe this more vaguely.",
         kind: "used_to_be_vague",
         confidence: 62,
         entryIds: [priorTheme[priorTheme.length - 1].id, current.id],
@@ -163,7 +163,7 @@ function detectEntryCallbacks(
       if (priorDirectOnTheme.length === 0 && prior.some((e) => e.reflection.recurringThemes.some((t) => t.toLowerCase() === themeKey))) {
         pushCallback(callbacks, {
           id: `cb-first-direct-${themeKey}-${entryId}`,
-          text: `This is the first time you named ${theme.toLowerCase()} this directly.`,
+          text: "You named this directly this time.",
           kind: "first_direct",
           confidence: 64,
           entryIds: [current.id],
@@ -181,7 +181,7 @@ function detectEntryCallbacks(
     if (monthAvg - current.reflection.emotionalIntensity >= 1.2) {
       pushCallback(callbacks, {
         id: `cb-calmer-month-${entryId}`,
-        text: "You sound calmer here than last month.",
+        text: "This sounds lighter than before.",
         kind: "sounds_calmer",
         confidence: 61,
         entryIds: [...monthPrior.slice(-2).map((e) => e.id), current.id],
@@ -209,7 +209,7 @@ function detectArchiveCallbacks(
       const month = monthName(last.dateKey);
       pushCallback(callbacks, {
         id: `cb-phrase-stopped-${phrase.phrase}`,
-        text: `You stopped using "${phrase.phrase}" after ${month}.`,
+        text: `This has not appeared for a while.`,
         kind: "topic_stopped",
         confidence: 60 + phrase.count,
         entryIds: phrase.entryIds,
@@ -235,7 +235,7 @@ function detectArchiveCallbacks(
     if (lateAvg <= earlyAvg - 1.2) {
       pushCallback(callbacks, {
         id: `cb-theme-calmer-${theme}`,
-        text: `${theme.charAt(0).toUpperCase() + theme.slice(1)} sounds different now — less charged than before.`,
+        text: "This used to come with more tension.",
         kind: "sounds_different",
         confidence: 59 + Math.round((earlyAvg - lateAvg) * 4),
         entryIds: [...early.slice(-1), ...late.slice(0, 1)].map((e) => e.id),
@@ -247,7 +247,7 @@ function detectArchiveCallbacks(
     if (daysSince >= ABSENCE_DAYS + 3 && scoped.some((e) => e.id === last.id)) {
       pushCallback(callbacks, {
         id: `cb-topic-stopped-${theme}`,
-        text: `This topic stopped appearing after ${monthName(toDayKey(last.createdAt))}.`,
+        text: "This has not appeared for a while.",
         kind: "topic_stopped",
         confidence: 58,
         entryIds: group.map((e) => e.id),
@@ -296,7 +296,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: `moment-peak-${theme}`,
         kind: "last_concern_appearance",
-        text: "This was the week work pressure peaked.",
+        text: "This was when work pressure peaked.",
         detail: `${peak.intensity}/10 on ${formatEntryDate(peak.entry.createdAt)}.`,
         confidence: 62 + peak.intensity,
         entryIds: [peak.entry.id],
@@ -333,7 +333,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: `moment-recovery-${theme}`,
         kind: "recovery_after_spike",
-        text: `After ${theme} spiked, the next entries read calmer.`,
+        text: "After a spike, the next entries read calmer.",
         detail: `Peak ${intensities[peakIdx]}/10, then averaged ${roundAvg(afterPeak.map((r) => r.intensity))}/10.`,
         confidence: 63,
         entryIds: [rows[peakIdx].entry.id, ...afterPeak.slice(0, 2).map((r) => r.entry.id)],
@@ -349,7 +349,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: `moment-resolved-${theme}`,
         kind: "topic_resolved",
-        text: `${theme.charAt(0).toUpperCase() + theme.slice(1)} reads resolved — intensity dropped and stayed lower.`,
+        text: "This settled — it reads quieter now.",
         confidence: 60,
         entryIds: rows.map((r) => r.entry.id),
       });
@@ -365,7 +365,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: `moment-loop-${curr.id}`,
         kind: "loop_returning",
-        text: `"${shared[0]}" returned after ${gap} days away.`,
+        text: "You came back to this loop.",
         confidence: 59,
         entryIds: [prev.id, curr.id],
         dateLabel: formatEntryDate(curr.createdAt),
@@ -427,9 +427,9 @@ function detectThenVsNow(
     const hedgeDelta =
       countMatches(thenEntry.transcript, HEDGE_RE) - countMatches(current.transcript, HEDGE_RE);
 
-    let headline = `How ${theme.toLowerCase()} reads now`;
-    if (intensityDelta >= 1.5) headline = `${theme.charAt(0).toUpperCase() + theme.slice(1)} sounds calmer now`;
-    else if (hedgeDelta >= 1) headline = `More direct about ${theme.toLowerCase()} now`;
+    let headline = "This sounds different from before.";
+    if (intensityDelta >= 1.5) headline = "This sounds lighter than before.";
+    else if (hedgeDelta >= 1) headline = "You named this directly this time.";
 
     const confidence =
       55 +
