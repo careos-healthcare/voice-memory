@@ -1,14 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
+import { ResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { homepageResurfacingNotes } from "@/lib/memory/resurfacing";
 import {
   HONESTY_LINE,
   POSITIONING_EYEBROW,
@@ -16,8 +19,19 @@ import {
   POSITIONING_SUPPORT,
   POSITIONING_TAGLINE,
 } from "@/lib/product-copy";
+import { getAllEntries } from "@/lib/storage";
+import type { MemoryNote } from "@/types/memory-note";
 
 export default function HomePage() {
+  const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setResurfacing(homepageResurfacingNotes(getAllEntries()));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
       <div className="pointer-events-none absolute inset-0">
@@ -31,6 +45,7 @@ export default function HomePage() {
         <div className="mt-4 space-y-4">
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
+          <ResurfacingNotes notes={resurfacing} />
         </div>
 
         <main className="flex flex-1 flex-col items-center justify-center py-8 text-center">

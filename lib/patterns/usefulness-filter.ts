@@ -25,7 +25,7 @@ const ORIENTATION_SIGNALS = [
   /more (direct|clear|calm|forward)/i,
   /came (back|up differently)/i,
   /faded|disappeared|returned|resolved|recovery|peaked/i,
-  /before|after|used to|lately|now|this time|for a while|absent|named it|got quieter|came up before|sound different/i,
+  /before|after|used to|lately|now|this time|for a while|absent|named it|got quieter|came up before|sound different|not appeared for a while|came back today|quieter than last time|last talked about|days ago/i,
   /\d+\/10/,
 ];
 

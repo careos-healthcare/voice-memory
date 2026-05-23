@@ -7,21 +7,24 @@ import { Brain } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
-import { MemoryNotesOverview } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
+import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getAllEntries } from "@/lib/storage";
 import type { MemoryNotesReport } from "@/types/memory-note";
+import type { MemoryNote } from "@/types/memory-note";
 
 export default function MemoryPage() {
   const { limits } = useQuietMode();
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
+  const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -29,6 +32,7 @@ export default function MemoryPage() {
       const entries = getAllEntries();
       setSnapshot(buildEntityMemory());
       setNotes(buildMemoryNotesReport(entries, { context: "memory", maxTotal: limits.notes }));
+      setResurfacing(archiveResurfacingNotes(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [limits.notes]);
@@ -77,6 +81,8 @@ export default function MemoryPage() {
                   maxLandmarks={4}
                 />
               ) : null}
+
+              <ResurfacingNotes notes={resurfacing} />
 
               {snapshot.totalEntities > 0 ? (
                 <div className="space-y-12 border-t border-white/5 pt-12">

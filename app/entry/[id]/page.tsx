@@ -6,11 +6,12 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { MemoryNoteView } from "@/components/patterns/MemoryNote";
+import { MemoryNoteView, ResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -46,6 +47,18 @@ export default function EntryPage() {
     deleteEntry(entry.id);
     router.push("/journal");
   };
+
+  const resurfacing = useMemo(() => {
+    if (!entry) return [];
+    const raw = entryResurfacingNotes(allEntries, entry.id);
+    const shown = [
+      notes?.primaryCallback,
+      notes?.secondaryCallback,
+      ...(notes?.thenVsNow ?? []),
+      notes?.whatChanged,
+    ].filter(Boolean) as MemoryNote[];
+    return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, 1);
+  }, [entry, allEntries, notes]);
 
   const whatChangedLine = useMemo(() => {
     if (!notes?.whatChanged) return null;
@@ -114,6 +127,8 @@ export default function EntryPage() {
             {notes?.thenVsNow.map((note) => (
               <MemoryNoteView key={note.id} note={note} />
             ))}
+
+            <ResurfacingNotes notes={resurfacing} />
 
             <VoicePlayback
               entryId={entry.id}
