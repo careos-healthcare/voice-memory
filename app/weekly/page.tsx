@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 
+import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { ExportSummaryButton } from "@/components/export/ExportSummaryButton";
 import { ShareMemoryCardRow } from "@/components/memory/ShareMemoryCardButton";
@@ -23,6 +24,8 @@ import {
   RankedListCard,
   TrendStatCard,
 } from "@/components/weekly/WeeklyTrendCharts";
+import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { WhyThisMatters } from "@/components/WhyThisMatters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +33,7 @@ import {
   analyzeWeeklyIntelligence,
   type WeeklyIntelligenceReport,
 } from "@/lib/weekly-intelligence";
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
 const shiftAccent: Record<
   WeeklyIntelligenceReport["emotionalShift"]["direction"],
@@ -46,6 +50,7 @@ export default function WeeklyPage() {
   const [report, setReport] = useState<WeeklyIntelligenceReport | null>(null);
 
   useEffect(() => {
+    trackLaunchEvent(LAUNCH_EVENTS.weeklyPageOpened);
     const id = requestAnimationFrame(() => {
       setReport(analyzeWeeklyIntelligence());
     });
@@ -107,21 +112,24 @@ export default function WeeklyPage() {
               </CardContent>
             </Card>
           ) : !report.hasData ? (
-            <Card className="border-dashed">
-              <CardContent className="px-6 py-12 text-center">
-                <LineChart className="mx-auto h-8 w-8 text-violet-300" />
-                <p className="mt-4 text-lg font-medium text-white">
-                  No reflections this week
-                </p>
-                <p className="mt-2 text-sm text-zinc-400">
-                  Add a voice reflection in the last 7 days to unlock weekly
-                  memory intelligence.
-                </p>
-                <Button asChild className="mt-6 w-full sm:w-auto">
-                  <Link href="/">Record today&apos;s reflection</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <>
+              <EmptyStateIntelligence className="mb-4" />
+              <Card className="border-dashed">
+                <CardContent className="px-6 py-12 text-center">
+                  <LineChart className="mx-auto h-8 w-8 text-violet-300" />
+                  <p className="mt-4 text-lg font-medium text-white">
+                    No reflections this week
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    Add a voice reflection in the last 7 days to unlock weekly
+                    memory intelligence.
+                  </p>
+                  <Button asChild className="mt-6 w-full sm:w-auto">
+                    <Link href="/">Record today&apos;s reflection</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -194,6 +202,12 @@ export default function WeeklyPage() {
 
               <WeeklyAiReflection report={report} />
 
+              <FeedbackPrompt
+                kind="weekly_summary"
+                targetKey={report.weekEndingKey}
+                label="Was this weekly summary useful?"
+              />
+
               <ShareMemoryCardRow
                 kinds={["weekly_summary", "timeline_compression", "memory_continuity", "dominant_theme"]}
               />
@@ -265,6 +279,8 @@ export default function WeeklyPage() {
                 Entity detection runs locally on your transcripts — nothing leaves
                 this device except optional weekly intelligence summaries.
               </div>
+
+              <WhyThisMatters compact />
             </>
           )}
         </div>

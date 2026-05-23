@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 
+import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
+import { OnboardingBanner } from "@/components/OnboardingBanner";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -25,6 +27,11 @@ export default function HomePage() {
 
       <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-10 sm:px-6">
         <SiteHeader />
+
+        <div className="mt-4 space-y-4">
+          <OnboardingBanner />
+          <EmptyStateIntelligence hideWhenRich />
+        </div>
 
         <main className="flex flex-1 flex-col items-center justify-center py-8 text-center">
           <motion.div

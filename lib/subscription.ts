@@ -1,3 +1,5 @@
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+
 export type PlanId = "free" | "pro";
 
 export type UpgradeClickSource =
@@ -120,8 +122,10 @@ export function trackUpgradeClick(
       UPGRADE_CLICKS_KEY,
       JSON.stringify(existing.slice(-100)),
     );
+    trackLaunchEvent(LAUNCH_EVENTS.upgradeClicked, { source, feature: feature ?? "" });
   } catch {
     localStorage.setItem(UPGRADE_CLICKS_KEY, JSON.stringify([event]));
+    trackLaunchEvent(LAUNCH_EVENTS.upgradeClicked, { source, feature: feature ?? "" });
   }
 }
 

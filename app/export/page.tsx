@@ -16,6 +16,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requiresProForExportReports } from "@/lib/subscription";
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getEntries, getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
 import {
   buildExportJsonBundle,
@@ -44,9 +45,12 @@ export default function ExportPage() {
     return () => cancelAnimationFrame(id);
   }, []);
 
+  const trackExport = () => trackLaunchEvent(LAUNCH_EVENTS.exportUsed);
+
   const exportAllJson = () => {
     const bundle = buildExportJsonBundle();
     downloadJsonFile(`voicememory-all-${slugExportDate()}.json`, bundle);
+    trackExport();
   };
 
   const exportRangeJson = () => {
@@ -55,11 +59,13 @@ export default function ExportPage() {
       `voicememory-${dateFrom || "start"}-${dateTo || "end"}-${slugExportDate()}.json`,
       bundle,
     );
+    trackExport();
   };
 
   const exportWeeklyText = () => {
     if (exportLocked) return;
     downloadTextFile(`voicememory-weekly-${slugExportDate()}.txt`, buildWeeklySummaryText());
+    trackExport();
   };
 
   const printReport = () => {
@@ -70,6 +76,7 @@ export default function ExportPage() {
       maxExcerpts: 12,
     });
     openPrintableReport(report);
+    trackExport();
   };
 
   return (

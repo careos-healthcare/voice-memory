@@ -12,10 +12,13 @@ import {
   Tag,
 } from "lucide-react";
 
+import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { ExportSummaryButton } from "@/components/export/ExportSummaryButton";
+import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
+import { WhyThisMatters } from "@/components/WhyThisMatters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -103,19 +106,22 @@ export default function InsightsPage() {
           <HabitLoopCard />
 
           {loading ? null : !insights.hasData ? (
-            <Card className="border-dashed">
-              <CardContent className="px-6 py-12 text-center">
-                <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
-                <p className="mt-4 text-lg font-medium text-white">No memory patterns yet</p>
-                <p className="mt-2 text-sm text-zinc-400">
-                  Add a voice reflection to see moods, themes, and what keeps
-                  showing up over time.
-                </p>
-                <Button asChild className="mt-6">
-                  <Link href="/">Add your first reflection</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <>
+              <EmptyStateIntelligence className="mb-4" />
+              <Card className="border-dashed">
+                <CardContent className="px-6 py-12 text-center">
+                  <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
+                  <p className="mt-4 text-lg font-medium text-white">No memory patterns yet</p>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    Add a voice reflection to see moods, themes, and what keeps
+                    showing up over time.
+                  </p>
+                  <Button asChild className="mt-6">
+                    <Link href="/">Add your first reflection</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
           ) : (
             <>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -169,10 +175,24 @@ export default function InsightsPage() {
                       </p>
                     ))}
                     <ShareMemoryCardButton kind="memory_continuity" className="mt-4 border-violet-500/20" />
+                    <FeedbackPrompt
+                      kind="memory_continuity"
+                      targetKey="global"
+                      label="Is memory continuity useful?"
+                      className="mt-4"
+                    />
                   </CardContent>
                 </Card>
               ) : (
-                <ShareMemoryCardButton kind="memory_continuity" />
+                <>
+                  <ShareMemoryCardButton kind="memory_continuity" />
+                  <FeedbackPrompt
+                    kind="memory_continuity"
+                    targetKey="global"
+                    label="Is memory continuity useful?"
+                    className="mt-4"
+                  />
+                </>
               )}
 
               <Card>
@@ -245,6 +265,8 @@ export default function InsightsPage() {
                   ))}
                 </CardContent>
               </Card>
+
+              <WhyThisMatters compact />
             </>
           )}
         </div>

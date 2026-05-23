@@ -19,6 +19,7 @@ import {
   downloadJsonFile,
   slugExportDate,
 } from "@/lib/memory-export";
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import {
   DATA_DELETION_SUMMARY,
   DATA_EXPORT_SUMMARY,
@@ -47,6 +48,7 @@ export default function SettingsPage() {
   const handleExportAll = () => {
     const bundle = buildExportJsonBundle();
     downloadJsonFile(`voicememory-all-${slugExportDate()}.json`, bundle);
+    trackLaunchEvent(LAUNCH_EVENTS.exportUsed);
     showMessage("Export downloaded.");
   };
 

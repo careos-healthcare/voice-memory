@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
+import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { InsightCard } from "@/components/InsightCard";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
@@ -105,6 +106,12 @@ export default function EntryPage() {
               reflection={entry.reflection}
               transcript={entry.transcript}
               showTranscript
+            />
+
+            <FeedbackPrompt
+              kind="entry_reflection"
+              targetKey={entry.id}
+              className="mt-6"
             />
 
             <ShareMemoryCardButton

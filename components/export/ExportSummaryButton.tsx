@@ -3,6 +3,7 @@
 import { Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import {
   buildInsightsSummaryText,
   buildWeeklySummaryText,
@@ -21,6 +22,7 @@ export function ExportSummaryButton({
 }: ExportSummaryButtonProps) {
   const handleExport = () => {
     const date = slugExportDate();
+    trackLaunchEvent(LAUNCH_EVENTS.exportUsed, { variant });
     if (variant === "weekly") {
       downloadTextFile(`voicememory-weekly-${date}.txt`, buildWeeklySummaryText());
       return;

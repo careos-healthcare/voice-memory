@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Check, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { trackLocalEvent } from "@/lib/local-analytics";
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import {
   buildShareCardText,
   type ShareMemoryCardKind,
@@ -44,7 +44,7 @@ export function ShareMemoryCardButton({
   const copyCard = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(cardText);
-      trackLocalEvent("share_card_copied", {
+      trackLaunchEvent(LAUNCH_EVENTS.shareCardCopied, {
         kind,
         includeTranscript: String(includeTranscript),
       });
@@ -60,7 +60,7 @@ export function ShareMemoryCardButton({
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      trackLocalEvent("share_card_copied", {
+      trackLaunchEvent(LAUNCH_EVENTS.shareCardCopied, {
         kind,
         includeTranscript: String(includeTranscript),
       });

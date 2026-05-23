@@ -1,6 +1,7 @@
 import { deleteAudio } from "@/lib/audio-storage";
 import { clearHabitState } from "@/lib/habit-storage";
 import { recordReflectionDay } from "@/lib/habit-storage";
+import { trackReflectionMilestones } from "@/lib/local-analytics";
 import { normalizeReflection } from "@/lib/reflection";
 import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
 import type { JournalEntry, Reflection } from "@/types/journal";
@@ -66,6 +67,7 @@ export function saveEntry(entry: JournalEntry): void {
   entries.unshift(entry);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   recordReflectionDay(entry.createdAt);
+  trackReflectionMilestones(entries.length);
 }
 
 export function deleteEntry(id: string): void {

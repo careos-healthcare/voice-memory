@@ -5,7 +5,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Brain, Sparkles } from "lucide-react";
 
+import { FeedbackPrompt } from "@/components/FeedbackPrompt";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
+import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -16,11 +18,13 @@ import {
   formatEntityTypeLabel,
   type EntityMemorySnapshot,
 } from "@/lib/entity-memory";
+import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
 export default function MemoryPage() {
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
 
   useEffect(() => {
+    trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
     const id = requestAnimationFrame(() => {
       setSnapshot(buildEntityMemory());
     });
@@ -66,7 +70,9 @@ export default function MemoryPage() {
               </CardContent>
             </Card>
           ) : !snapshot.hasData ? (
-            <Card className="border-dashed">
+            <>
+              <EmptyStateIntelligence className="mb-4" />
+              <Card className="border-dashed">
               <CardContent className="px-6 py-12 text-center">
                 <Brain className="mx-auto h-8 w-8 text-violet-300" />
                 <p className="mt-4 text-lg font-medium text-white">No entity memory yet</p>
@@ -79,6 +85,7 @@ export default function MemoryPage() {
                 </Button>
               </CardContent>
             </Card>
+            </>
           ) : snapshot.totalEntities === 0 ? (
             <Card className="border-dashed">
               <CardContent className="px-6 py-12 text-center">
@@ -119,6 +126,12 @@ export default function MemoryPage() {
                       </p>
                     ))}
                     <ShareMemoryCardButton kind="memory_continuity" className="mt-4" />
+                    <FeedbackPrompt
+                      kind="memory_continuity"
+                      targetKey="global"
+                      label="Is memory continuity useful?"
+                      className="mt-4"
+                    />
                   </CardContent>
                 </Card>
               ) : null}
