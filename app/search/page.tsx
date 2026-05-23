@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Filter, Search, Sparkles } from "lucide-react";
 
+import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -122,6 +123,16 @@ export default function SearchPage() {
             memory locally — no embeddings, no cloud index.
           </p>
         </motion.div>
+
+        <div className="mt-6">
+          <UpgradeCta
+            source="search"
+            feature="semantic_search"
+            headline="Search your entire life in plain language"
+            description="Semantic life search on Free covers your last 7 entries. Pro searches mood, themes, concerns, and entities across full memory history."
+            compact
+          />
+        </div>
 
         <div className="relative mt-6">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />

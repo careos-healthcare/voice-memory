@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Brain, Sparkles } from "lucide-react";
 
+import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,13 @@ export default function MemoryPage() {
         </motion.div>
 
         <div className="mt-6 space-y-5">
+          <UpgradeCta
+            source="memory"
+            feature="entity_memory"
+            headline="Entity memory across your full journal"
+            description="Free includes patterns from your last 7 reflections. Pro maps people, concerns, and themes across your complete history."
+          />
+
           {loading ? (
             <Card>
               <CardContent className="py-12 text-center text-sm text-zinc-500">

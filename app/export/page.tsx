@@ -11,10 +11,12 @@ import {
   Shield,
 } from "lucide-react";
 
+import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getEntries } from "@/lib/storage";
+import { requiresProForExportReports } from "@/lib/subscription";
+import { getEntries, getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
 import {
   buildExportJsonBundle,
   buildPrintableReport,
@@ -27,12 +29,17 @@ import {
 
 export default function ExportPage() {
   const [entryCount, setEntryCount] = useState(0);
+  const [storedCount, setStoredCount] = useState(0);
+  const [lockedCount, setLockedCount] = useState(0);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const exportLocked = requiresProForExportReports();
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       setEntryCount(getEntries().length);
+      setStoredCount(getStoredEntryCount());
+      setLockedCount(getLockedEntryCount());
     });
     return () => cancelAnimationFrame(id);
   }, []);
@@ -51,10 +58,12 @@ export default function ExportPage() {
   };
 
   const exportWeeklyText = () => {
+    if (exportLocked) return;
     downloadTextFile(`voicememory-weekly-${slugExportDate()}.txt`, buildWeeklySummaryText());
   };
 
   const printReport = () => {
+    if (exportLocked) return;
     const report = buildPrintableReport({
       dateFrom,
       dateTo,
@@ -84,9 +93,19 @@ export default function ExportPage() {
             cloud upload.
           </p>
           <p className="mt-2 text-xs text-zinc-500">
-            {entryCount} reflection{entryCount === 1 ? "" : "s"} available
+            {exportLocked
+              ? `${entryCount} of ${storedCount} reflections exportable on Free`
+              : `${entryCount} reflection${entryCount === 1 ? "" : "s"} available`}
+            {lockedCount > 0 ? ` · ${lockedCount} locked on Pro` : null}
           </p>
         </motion.div>
+
+        <UpgradeCta
+          source="export"
+          feature="export_reports"
+          headline="Export reports are a Pro feature"
+          description="Free can export JSON for your last 7 entries. Pro adds full-archive JSON, weekly summary text, and printable reflection reports with mood timelines and entity memory."
+        />
 
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
           <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
@@ -173,10 +192,10 @@ export default function ExportPage() {
                 type="button"
                 variant="secondary"
                 onClick={exportWeeklyText}
-                disabled={entryCount === 0}
+                disabled={entryCount === 0 || exportLocked}
               >
                 <Download className="h-4 w-4" />
-                Download .txt
+                {exportLocked ? "Pro required" : "Download .txt"}
               </Button>
             </CardContent>
           </Card>
@@ -195,11 +214,11 @@ export default function ExportPage() {
               <Button
                 type="button"
                 onClick={printReport}
-                disabled={entryCount === 0}
+                disabled={entryCount === 0 || exportLocked}
                 className="w-full sm:w-auto"
               >
                 <Printer className="h-4 w-4" />
-                Print reflection report
+                {exportLocked ? "Upgrade to print" : "Print reflection report"}
               </Button>
               <p className="text-xs text-zinc-600">
                 Opens a print-friendly tab. Use Save as PDF in your browser if you prefer a

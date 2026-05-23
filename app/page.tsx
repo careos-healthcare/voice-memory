@@ -76,6 +76,9 @@ export default function HomePage() {
         </main>
 
         <footer className="mt-auto flex flex-wrap justify-center gap-4 pt-8 text-center text-xs text-zinc-600">
+          <Link href="/pricing" className="hover:text-zinc-400">
+            Pricing →
+          </Link>
           <Link href="/reminders" className="hover:text-zinc-400">
             Reminders →
           </Link>

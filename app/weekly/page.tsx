@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 
+import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { ExportSummaryButton } from "@/components/export/ExportSummaryButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WeekComparisonCard } from "@/components/weekly/WeekComparisonCard";
@@ -90,6 +91,13 @@ export default function WeeklyPage() {
         </motion.div>
 
         <div className="mt-6 space-y-5">
+          <UpgradeCta
+            source="weekly"
+            feature="weekly_intelligence"
+            headline="Weekly intelligence on your full story"
+            description="See emotional shifts, comparisons, and AI weekly summaries across every reflection — not just your latest seven."
+          />
+
           {loading ? (
             <Card>
               <CardContent className="py-12 text-center text-sm text-zinc-500">
