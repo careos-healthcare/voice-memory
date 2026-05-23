@@ -18,7 +18,7 @@ import {
   RevisitationNotes,
   TimeMemoryNotes,
 } from "@/components/patterns/MemoryNote";
-import { VoicePlayback } from "@/components/VoicePlayback";
+import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,6 +27,7 @@ import {
   buildFollowupPrompt,
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import { resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -244,6 +245,33 @@ export default function EntryPage() {
     router.push("/#recorder");
   };
 
+  const voicePlaybackPair = useMemo(() => {
+    if (!entry) return null;
+    return resolveVoicePlaybackPair(entry, allEntries, {
+      thenVsNow: notes?.thenVsNow ?? [],
+      relatedNotes: [
+        continuationOpener,
+        notes?.primaryCallback,
+        notes?.secondaryCallback,
+        ...changeMoments,
+        ...familiarityResurfacing,
+        ...resurfacing,
+        ...revisitation,
+        ...timeMemory,
+      ].filter(Boolean) as MemoryNote[],
+    });
+  }, [
+    entry,
+    allEntries,
+    notes,
+    continuationOpener,
+    changeMoments,
+    familiarityResurfacing,
+    resurfacing,
+    revisitation,
+    timeMemory,
+  ]);
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -320,11 +348,9 @@ export default function EntryPage() {
               onContinue={handleContinueFollowup}
             />
 
-            <VoicePlayback
-              entryId={entry.id}
-              audioId={entry.audioId}
-              durationSeconds={entry.durationSeconds}
-            />
+            {voicePlaybackPair ? (
+              <VoicePlaybackContinuity pair={voicePlaybackPair} />
+            ) : null}
 
             {entry.transcript ? (
               <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
