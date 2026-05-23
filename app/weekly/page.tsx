@@ -64,13 +64,14 @@ export default function WeeklyPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Weekly intelligence
+            Weekly memory intelligence
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Your week
+            Your week in memory
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Rolling 7-day patterns from your device — compared to the week before.
+            Rolling 7-day patterns from your voice reflections — compared to the
+            week before, on this device only.
           </p>
           {!loading && report ? (
             <>
@@ -95,13 +96,13 @@ export default function WeeklyPage() {
             source="weekly"
             feature="weekly_intelligence"
             headline="Weekly intelligence on your full story"
-            description="See emotional shifts, comparisons, and AI weekly summaries across every reflection — not just your latest seven."
+            description="See emotional shifts, comparisons, and weekly memory summaries across your full reflection history — not just your latest seven."
           />
 
           {loading ? (
             <Card>
               <CardContent className="py-12 text-center text-sm text-zinc-500">
-                Reading your local journal…
+                Reading your local memory…
               </CardContent>
             </Card>
           ) : !report.hasData ? (
@@ -112,8 +113,8 @@ export default function WeeklyPage() {
                   No reflections this week
                 </p>
                 <p className="mt-2 text-sm text-zinc-400">
-                  Record a voice entry in the last 7 days to unlock weekly
-                  intelligence.
+                  Add a voice reflection in the last 7 days to unlock weekly
+                  memory intelligence.
                 </p>
                 <Button asChild className="mt-6 w-full sm:w-auto">
                   <Link href="/">Record today&apos;s reflection</Link>
@@ -234,7 +235,7 @@ export default function WeeklyPage() {
                 title="Recurring themes"
                 subtitle="Topics that kept returning"
                 items={report.thisWeek.recurringThemes}
-                emptyLabel="Themes will appear after a few reflections."
+                emptyLabel="Themes appear as you add voice reflections."
                 capitalize
               />
 
@@ -257,7 +258,7 @@ export default function WeeklyPage() {
               <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3 text-xs text-zinc-500">
                 <Users className="h-3.5 w-3.5 shrink-0" />
                 Entity detection runs locally on your transcripts — nothing leaves
-                this device except optional AI summary aggregates.
+                this device except optional weekly intelligence summaries.
               </div>
             </>
           )}

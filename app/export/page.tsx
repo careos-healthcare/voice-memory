@@ -83,14 +83,14 @@ export default function ExportPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Export
+            Export memory
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Your memory, your file
+            Take your memory with you
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Download or print from localStorage on this device. Free — no account, no
-            cloud upload.
+            Download or print your private memory layer from this device. No account,
+            no cloud upload.
           </p>
           <p className="mt-2 text-xs text-zinc-500">
             {exportLocked
@@ -110,7 +110,7 @@ export default function ExportPage() {
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
           <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
           <p className="text-xs leading-relaxed text-zinc-500">
-            Exports include journal text and reflections. Store files where you trust.
+            Exports include transcripts and reflections. Store files where you trust.
             VoiceMemory does not upload exports to any server.
           </p>
         </div>

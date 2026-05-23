@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoiceMemory",
-  description: "Talk for 60 seconds. Understand yourself better.",
+  title: "VoiceMemory — Private memory intelligence",
+  description:
+    "Private memory intelligence from your voice reflections. Local-first, reflective mirror only — not therapy.",
 };
 
 export const viewport: Viewport = {

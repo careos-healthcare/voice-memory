@@ -90,8 +90,8 @@ export default function RemindersPage() {
             Reminders
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            In-app reminder placeholders based on your journal — stored on this
-            device only. Push notifications are not enabled yet.
+            In-app reminder placeholders based on your memory patterns — stored on
+            this device only. Push notifications are not enabled yet.
           </p>
         </motion.div>
 
@@ -177,7 +177,7 @@ export default function RemindersPage() {
                 {previewCount === 0 ? (
                   <p className="flex items-center gap-2 text-sm text-zinc-500">
                     <BellOff className="h-4 w-4" />
-                    No contextual cards match your current journal state.
+                    No contextual cards match your current memory state.
                   </p>
                 ) : (
                   <p className="text-sm text-zinc-300">

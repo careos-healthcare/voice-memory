@@ -53,7 +53,7 @@ export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   },
   {
     kind: "inactive",
-    message: "It has been a few days — your journal is still here when you are ready",
+    message: "It has been a few days — your memory is still here when you are ready",
     whenShown: "No reflection for 3+ days with inactivity reminders enabled",
   },
 ];
@@ -167,7 +167,7 @@ export function evaluateContextualReminders(
             ? `It has been ${inactiveDays} days since your last reflection`
             : "It has been a few days since your last reflection",
         href: "/",
-        cta: "Open journal",
+        cta: "View reflections",
       });
     }
   }

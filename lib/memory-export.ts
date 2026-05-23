@@ -148,7 +148,7 @@ export function buildWeeklySummaryText(): string {
     `Emotional shift: ${report.emotionalShift.label}`,
     report.emotionalShift.detail,
     "",
-    "Exported from your device. Not therapy or medical advice.",
+    "Exported from your device. Reflective mirror only — not therapy or diagnosis.",
   ];
 
   return lines.join("\n");
@@ -187,7 +187,10 @@ export function buildInsightsSummaryText(): string {
     }
   }
 
-  lines.push("", "Exported from your device. Not therapy or medical advice.");
+  lines.push(
+    "",
+    "Exported from your device. Reflective mirror only — not therapy or diagnosis.",
+  );
   return lines.join("\n");
 }
 

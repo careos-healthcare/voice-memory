@@ -119,8 +119,8 @@ export default function SearchPage() {
             Search
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Ask in plain language. We match mood, themes, concerns, and entity
-            memory locally — no embeddings, no cloud index.
+            Search your private memory in plain language — moods, themes, concerns,
+            and entities, all on this device.
           </p>
         </motion.div>
 

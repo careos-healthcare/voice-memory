@@ -24,7 +24,7 @@ export function UpgradeCta({
   source,
   feature,
   headline = "Unlock full memory intelligence",
-  description = "Pro gives you your complete journal history, semantic search, weekly intelligence, entity memory, and export reports.",
+  description = "Pro unlocks your full memory history, semantic life search, weekly intelligence, entity memory, and export reports.",
   compact = false,
 }: UpgradeCtaProps) {
   if (isProUser()) return null;

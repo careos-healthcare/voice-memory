@@ -23,6 +23,7 @@ import {
   type PlanId,
   type UpgradeClickSource,
 } from "@/lib/subscription";
+import { HONESTY_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
 import { getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
 
 function PlanFeature({ children }: { children: React.ReactNode }) {
@@ -76,15 +77,16 @@ export default function PricingPage() {
           className="mt-2 text-center sm:text-left"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Plans
+            Private memory intelligence
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Memory that grows with you
+            Plans for your memory layer
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            VoiceMemory stays private on your device. Pro unlocks the full
-            intelligence layer across your entire reflection history.
+            {POSITIONING_TAGLINE} Free stays local-first on your device. Pro
+            unlocks the full intelligence layer across your reflection history.
           </p>
+          <p className="mt-2 text-xs text-zinc-600">{HONESTY_LINE}</p>
           {storedCount > FREE_ENTRY_LIMIT && !isProUser() ? (
             <p className="mt-3 text-sm text-amber-200/90">
               You have {storedCount} reflections — {lockedCount} beyond the free
@@ -206,7 +208,7 @@ export default function PricingPage() {
 
         <p className="mt-8 text-center text-sm text-zinc-500">
           <Link href="/" className="text-violet-300 hover:underline">
-            Back to recording
+            Back to reflect
           </Link>
         </p>
       </div>

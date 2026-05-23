@@ -42,7 +42,7 @@ export default function EntryPage() {
           <Button asChild variant="ghost" size="sm">
             <Link href="/journal">
               <ArrowLeft className="h-4 w-4" />
-              Journal
+              Reflections
             </Link>
           </Button>
           {!loading && entry ? (
@@ -88,7 +88,7 @@ export default function EntryPage() {
                 {formatEntryDate(entry.createdAt)}
               </h1>
               <p className="mt-2 text-sm text-zinc-500">
-                {entry.durationSeconds}s voice note · saved locally
+                {entry.durationSeconds}s voice reflection · saved locally
               </p>
             </div>
 

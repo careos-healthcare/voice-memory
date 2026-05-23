@@ -45,8 +45,8 @@ export default function MemoryPage() {
             Memory
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            People, concerns, goals, and topics extracted conservatively from your
-            journal — stored only on this device.
+            People, concerns, goals, and topics from your voice reflections —
+            extracted locally on this device.
           </p>
         </motion.div>
 
@@ -54,23 +54,24 @@ export default function MemoryPage() {
           <UpgradeCta
             source="memory"
             feature="entity_memory"
-            headline="Entity memory across your full journal"
-            description="Free includes patterns from your last 7 reflections. Pro maps people, concerns, and themes across your complete history."
+            headline="Entity memory across your full history"
+            description="Free includes patterns from your last 7 reflections. Pro maps people, concerns, and themes across your complete private memory."
           />
 
           {loading ? (
             <Card>
               <CardContent className="py-12 text-center text-sm text-zinc-500">
-                Scanning your journal…
+                Reading your local memory…
               </CardContent>
             </Card>
           ) : !snapshot.hasData ? (
             <Card className="border-dashed">
               <CardContent className="px-6 py-12 text-center">
                 <Brain className="mx-auto h-8 w-8 text-violet-300" />
-                <p className="mt-4 text-lg font-medium text-white">No memories yet</p>
+                <p className="mt-4 text-lg font-medium text-white">No entity memory yet</p>
                 <p className="mt-2 text-sm text-zinc-400">
-                  Record reflections to build your entity memory over time.
+                  Voice reflections build a map of people, concerns, and themes
+                  that recur over time.
                 </p>
                 <Button asChild className="mt-6 w-full sm:w-auto">
                   <Link href="/">Start recording</Link>
@@ -90,7 +91,7 @@ export default function MemoryPage() {
                   relationships).
                 </p>
                 <Button asChild className="mt-6 w-full sm:w-auto" variant="secondary">
-                  <Link href="/journal">View journal</Link>
+                  <Link href="/journal">View reflections</Link>
                 </Button>
               </CardContent>
             </Card>

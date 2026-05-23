@@ -48,7 +48,8 @@ export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
   {
     id: "entity_memory",
     title: "Entity memory",
-    description: "Recurring people, concerns, goals, and topics across your full journal.",
+    description:
+      "Recurring people, concerns, goals, and topics across your full memory history.",
   },
   {
     id: "export_reports",
@@ -64,18 +65,18 @@ export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
 ];
 
 export const FREE_PLAN_FEATURES = [
-  "Last 7 reflections on device",
-  "Basic mood & theme reflections",
-  "Local-only storage (private by default)",
-  "Voice recording & transcript",
+  "Last 7 voice reflections on device",
+  "Basic pattern reflections (mood & themes)",
+  "Local-only memory (private by default)",
+  "Voice capture & transcript",
   "In-app contextual reminders",
 ];
 
 export const PRO_PLAN_FEATURES = [
-  "Unlimited local reflection history",
+  "Full private memory history",
   "Full semantic life search",
-  "Weekly intelligence & comparisons",
-  "Entity memory across all entries",
+  "Weekly memory intelligence",
+  "Entity memory across all reflections",
   "Export JSON, weekly summaries & print reports",
   "Priority access to encrypted sync (coming soon)",
 ];

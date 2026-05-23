@@ -7,6 +7,13 @@ import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
 import { Recorder } from "@/components/Recorder";
 import { SiteHeader } from "@/components/SiteHeader";
+import {
+  HONESTY_LINE,
+  POSITIONING_EYEBROW,
+  POSITIONING_LEAD,
+  POSITIONING_SUPPORT,
+  POSITIONING_TAGLINE,
+} from "@/lib/product-copy";
 
 export default function HomePage() {
   return (
@@ -27,13 +34,17 @@ export default function HomePage() {
             className="max-w-2xl"
           >
             <p className="text-xs uppercase tracking-[0.25em] text-violet-300/80">
-              Voice journal
+              {POSITIONING_EYEBROW}
             </p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
               VoiceMemory
             </h1>
-            <p className="mt-4 text-lg text-zinc-400 sm:text-xl">
-              Talk for 60 seconds. Understand yourself better.
+            <p className="mt-3 text-base text-violet-200/90 sm:text-lg">
+              {POSITIONING_TAGLINE}
+            </p>
+            <p className="mt-4 text-lg text-zinc-300 sm:text-xl">{POSITIONING_LEAD}</p>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-500 sm:text-base">
+              {POSITIONING_SUPPORT}
             </p>
           </motion.div>
 
@@ -70,8 +81,17 @@ export default function HomePage() {
             transition={{ delay: 0.3 }}
             className="mt-10 max-w-md text-sm leading-relaxed text-zinc-500"
           >
-            Record a quick voice note. We transcribe it, reflect on mood and
-            themes, and save everything locally on your device.
+            Speak for up to 60 seconds. We transcribe, surface patterns in mood and
+            themes, and keep everything on this device — your private memory layer.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+            className="mt-4 max-w-md text-xs leading-relaxed text-zinc-600"
+          >
+            {HONESTY_LINE}
           </motion.p>
         </main>
 
@@ -83,7 +103,7 @@ export default function HomePage() {
             Reminders →
           </Link>
           <Link href="/journal" className="hover:text-zinc-400">
-            Journal →
+            Reflections →
           </Link>
           <Link href="/export" className="hover:text-zinc-400">
             Export →

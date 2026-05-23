@@ -235,10 +235,10 @@ export function Recorder({ autoStart = false, onComplete }: RecorderProps) {
           >
             <Button size="lg" onClick={() => void startRecording()}>
               <Mic className="h-5 w-5" />
-              Start Recording
+              Start reflection
             </Button>
             <p className="text-sm text-zinc-500">
-              Up to {MAX_SECONDS} seconds · private on your device
+              Up to {MAX_SECONDS} seconds · local-first on your device
             </p>
           </motion.div>
         )}

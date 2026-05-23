@@ -81,11 +81,12 @@ export default function InsightsPage() {
           className="mt-4"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Memory timeline
+            Memory intelligence
           </p>
           <h1 className="mt-2 text-3xl font-semibold text-white">Insights</h1>
           <p className="mt-2 text-sm text-zinc-400">
-            Patterns from your journal — analyzed on this device only.
+            Recurring patterns in your voice reflections — computed locally, never
+            uploaded.
           </p>
           {!loading && insights?.hasData ? (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -104,12 +105,13 @@ export default function InsightsPage() {
             <Card className="border-dashed">
               <CardContent className="px-6 py-12 text-center">
                 <Sparkles className="mx-auto h-8 w-8 text-violet-300" />
-                <p className="mt-4 text-lg font-medium text-white">No memories yet</p>
+                <p className="mt-4 text-lg font-medium text-white">No memory patterns yet</p>
                 <p className="mt-2 text-sm text-zinc-400">
-                  Record a reflection to unlock your mood timeline and themes.
+                  Add a voice reflection to see moods, themes, and what keeps
+                  showing up over time.
                 </p>
                 <Button asChild className="mt-6">
-                  <Link href="/">Record your first entry</Link>
+                  <Link href="/">Add your first reflection</Link>
                 </Button>
               </CardContent>
             </Card>

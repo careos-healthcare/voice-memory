@@ -18,7 +18,7 @@ const BANNED_PHRASES = [
   "navigate your feelings",
 ];
 
-const SYSTEM_PROMPT = `You reflect on voice journal transcripts for VoiceMemory — a private reflective mirror, NOT therapy.
+const SYSTEM_PROMPT = `You reflect on voice reflection transcripts for VoiceMemory — private memory intelligence and a reflective mirror, NOT therapy.
 
 SAFETY (follow strictly):
 - This is not therapy, counseling, or medical advice.
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
         { role: "system", content: SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Analyze this voice journal transcript. Ground every field in what they actually said:\n\n${transcript}`,
+          content: `Analyze this voice reflection transcript. Ground every field in what they actually said:\n\n${transcript}`,
         },
       ],
     });
