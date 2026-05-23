@@ -4,9 +4,7 @@ import { TRUST_FOOTER_LINKS } from "@/lib/trust-copy";
 
 export function SiteFooter({ className }: { className?: string }) {
   return (
-    <footer
-      className={`border-t border-white/5 pt-8 text-center text-xs text-zinc-600 ${className ?? ""}`}
-    >
+    <footer className={`pt-12 text-center text-xs text-zinc-600 ${className ?? ""}`}>
       <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2">
         {TRUST_FOOTER_LINKS.map((link) => (
           <Link key={link.href} href={link.href} className="hover:text-zinc-400">

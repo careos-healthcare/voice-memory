@@ -10,6 +10,8 @@ import {
   ProcessingStatus,
 } from "@/components/InsightCard";
 import { Button } from "@/components/ui/button";
+import { MOTION } from "@/lib/motion/tokens";
+import { presenceFade } from "@/lib/motion/variants";
 import { saveAudio } from "@/lib/audio-storage";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, saveEntry } from "@/lib/storage";
@@ -237,10 +239,11 @@ export function Recorder({ autoStart = false, onComplete, preRecordLine }: Recor
         {state === "idle" && (
           <motion.div
             key="idle"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="flex flex-col items-center gap-4"
+            variants={presenceFade}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="flex flex-col items-center gap-5"
           >
             <Button size="lg" onClick={() => void startRecording()}>
               <Mic className="h-5 w-5" />
@@ -260,27 +263,28 @@ export function Recorder({ autoStart = false, onComplete, preRecordLine }: Recor
         {state === "recording" && (
           <motion.div
             key="recording"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            className="flex flex-col items-center gap-6 rounded-3xl border border-red-500/20 bg-red-500/5 px-6 py-10"
+            variants={presenceFade}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="flex flex-col items-center gap-7 px-6 py-10"
           >
             <div className="relative flex h-24 w-24 items-center justify-center">
               <motion.span
-                animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.2, 0.5] }}
-                transition={{ duration: 1.6, repeat: Infinity }}
-                className="absolute inset-0 rounded-full bg-red-500/20"
+                animate={{ scale: [1, 1.08, 1], opacity: [0.35, 0.15, 0.35] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: MOTION.ease }}
+                className="absolute inset-0 rounded-full bg-red-500/15"
               />
-              <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-red-500 shadow-lg shadow-red-500/30">
+              <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-red-500/90 shadow-lg shadow-red-500/20">
                 <Mic className="h-7 w-7 text-white" />
               </div>
             </div>
 
             <div className="text-center">
-              <p className="text-3xl font-semibold tabular-nums text-white">
+              <p className="text-3xl font-normal tabular-nums text-zinc-100">
                 {formatTime(seconds)}
               </p>
-              <p className="mt-1 text-sm text-zinc-400">
+              <p className="mt-2 text-sm leading-relaxed text-zinc-500">
                 Speak freely — we&apos;ll reflect when you stop
               </p>
             </div>
@@ -295,9 +299,10 @@ export function Recorder({ autoStart = false, onComplete, preRecordLine }: Recor
         {state === "processing" && (
           <motion.div
             key="processing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            variants={presenceFade}
+            initial="initial"
+            animate="animate"
+            exit="exit"
           >
             <ProcessingStatus stage={stage} />
           </motion.div>
@@ -306,8 +311,9 @@ export function Recorder({ autoStart = false, onComplete, preRecordLine }: Recor
         {state === "complete" && entry && (
           <motion.div
             key="complete"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={presenceFade}
+            initial="initial"
+            animate="animate"
             className="text-center"
           >
             <p className="text-sm text-zinc-400">Saved.</p>
@@ -320,8 +326,9 @@ export function Recorder({ autoStart = false, onComplete, preRecordLine }: Recor
         {state === "error" && (
           <motion.div
             key="error"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            variants={presenceFade}
+            initial="initial"
+            animate="animate"
             className="space-y-4"
           >
             {error ? <ErrorBanner message={error} /> : null}

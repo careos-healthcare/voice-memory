@@ -1,12 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
-import { MemoryNoteView, ChangeMomentsNotes, ContinuationNotes, FamiliarityNotes, FamiliarityResurfacingNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { MotionPage } from "@/components/motion/MotionPage";
+import { MotionNoteList } from "@/components/motion/MotionNote";
+import {
+  ChangeMomentsNotes,
+  ContinuationNotes,
+  AnimatedMemoryNote,
+  FamiliarityNotes,
+  FamiliarityResurfacingNotes,
+  ResurfacingNotes,
+  RevisitationNotes,
+  TimeMemoryNotes,
+} from "@/components/patterns/MemoryNote";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -222,24 +232,16 @@ export default function EntryPage() {
             <Skeleton className="h-32 w-full" />
           </div>
         ) : !entry ? (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-16 text-center"
-          >
-            <p className="text-lg font-medium text-white">Entry not found</p>
+          <MotionPage className="mt-16 text-center">
+            <p className="text-lg font-normal text-zinc-200">Entry not found</p>
             <Button asChild className="mt-6">
               <Link href="/">Record a new entry</Link>
             </Button>
-          </motion.div>
+          </MotionPage>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8 space-y-16"
-          >
+          <MotionPage className="mt-10 space-y-20">
             <header>
-              <h1 className="text-2xl font-semibold text-white">
+              <h1 className="text-xl font-normal tracking-tight text-zinc-100 sm:text-2xl">
                 {formatEntryDate(entry.createdAt)}
               </h1>
             </header>
@@ -248,26 +250,32 @@ export default function EntryPage() {
               <ContinuationNotes notes={[continuationOpener]} max={1} />
             ) : null}
 
-            {notes?.primaryCallback ? <MemoryNoteView note={notes.primaryCallback} /> : null}
+            <MotionNoteList className="space-y-20">
+              {notes?.primaryCallback ? (
+                <AnimatedMemoryNote note={notes.primaryCallback} index={0} />
+              ) : null}
 
-            {notes?.secondaryCallback &&
-            !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) ? (
-              <MemoryNoteView note={notes.secondaryCallback} />
-            ) : null}
+              {notes?.secondaryCallback &&
+              !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) ? (
+                <AnimatedMemoryNote note={notes.secondaryCallback} index={1} />
+              ) : null}
 
-            {notes?.thenVsNow.map((note) => (
-              <MemoryNoteView key={note.id} note={note} />
-            ))}
+              {notes?.thenVsNow.map((note, index) => (
+                <AnimatedMemoryNote key={note.id} note={note} index={index + 2} />
+              ))}
+            </MotionNoteList>
 
-            <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
-            <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
-            <FamiliarityResurfacingNotes
-              notes={familiarityResurfacing}
-              max={limits.familiarityResurfacing}
-            />
-            <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-            <RevisitationNotes notes={revisitation} max={1} />
-            <TimeMemoryNotes notes={timeMemory} max={1} />
+            <div className="space-y-20">
+              <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
+              <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+              <FamiliarityResurfacingNotes
+                notes={familiarityResurfacing}
+                max={limits.familiarityResurfacing}
+              />
+              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
+              <RevisitationNotes notes={revisitation} max={1} />
+              <TimeMemoryNotes notes={timeMemory} max={1} />
+            </div>
 
             <VoicePlayback
               entryId={entry.id}
@@ -276,13 +284,13 @@ export default function EntryPage() {
             />
 
             {entry.transcript ? (
-              <p className="text-sm leading-relaxed text-zinc-400">{entry.transcript}</p>
+              <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
             ) : null}
 
             {whatChangedLine ? (
-              <p className="text-sm leading-relaxed text-zinc-500">{whatChangedLine.text}</p>
+              <p className="text-sm leading-[1.75] text-zinc-500/90">{whatChangedLine.text}</p>
             ) : null}
-          </motion.div>
+          </MotionPage>
         )}
       </div>
     </div>

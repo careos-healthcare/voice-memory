@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { CalendarRange } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { timelineChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { timelineFamiliarityNotes } from "@/lib/memory/familiarity";
@@ -72,30 +71,21 @@ export default function TimelinePage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Timeline</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Over time</h1>
-        </motion.div>
+        <MotionPageTitle eyebrow="Timeline" title="Over time" />
 
-        <div className="mt-16 space-y-16">
+        <div className="mt-20 space-y-20">
           {loading ? (
-            <Card>
-              <CardContent className="py-16 text-center text-sm text-zinc-600">
-                Reading your archive…
-              </CardContent>
-            </Card>
+            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
           ) : entries.length === 0 ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
-              <Card className="border-dashed border-white/5">
-                <CardContent className="px-6 py-16 text-center">
-                  <CalendarRange className="mx-auto h-8 w-8 text-zinc-600" />
-                  <p className="mt-4 text-lg font-medium text-zinc-300">No timeline yet</p>
-                  <Button asChild className="mt-8" variant="secondary">
-                    <Link href="/">Start recording</Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              <div className="px-2 py-16 text-center">
+                <CalendarRange className="mx-auto h-7 w-7 text-zinc-600/80" />
+                <p className="mt-5 text-base font-normal text-zinc-400">No timeline yet</p>
+                <Button asChild className="mt-8" variant="secondary">
+                  <Link href="/">Start recording</Link>
+                </Button>
+              </div>
             </>
           ) : (
             <>
@@ -121,14 +111,14 @@ export default function TimelinePage() {
               <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
 
-              <section className="space-y-4 border-t border-white/5 pt-12">
-                <h2 className="text-sm font-medium text-zinc-500">Reflections</h2>
-                <ul className="space-y-1">
+              <section className="space-y-6 pt-4">
+                <h2 className="text-xs font-normal tracking-wide text-zinc-600">Reflections</h2>
+                <ul className="space-y-2">
                   {sorted.slice(0, 12).map((entry) => (
                     <li key={entry.id}>
                       <Link
                         href={`/entry/${entry.id}`}
-                        className="block rounded-xl px-2 py-4 text-sm text-zinc-400 transition-colors hover:bg-white/[0.03] hover:text-zinc-200"
+                        className="block px-1 py-3 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
                       >
                         {formatEntryDate(entry.createdAt)}
                       </Link>

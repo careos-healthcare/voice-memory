@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Bell, ChevronRight } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { fadeUp } from "@/lib/motion/variants";
 import {
   evaluateContextualReminders,
   type ContextualReminder,
@@ -25,41 +25,47 @@ export function ContextualReminderCards() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full space-y-2 text-left"
+      initial="hidden"
+      animate="visible"
+      variants={fadeUp}
+      className="w-full space-y-4 text-left"
     >
       <div className="flex items-center justify-between gap-2 px-1">
-        <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-violet-300/90">
+        <p className="flex items-center gap-1.5 text-xs tracking-wide text-zinc-500">
           <Bell className="h-3.5 w-3.5" />
           For you right now
         </p>
         <Link
           href="/reminders"
-          className="text-xs text-zinc-500 transition-colors hover:text-violet-300"
+          className="text-xs text-zinc-600 transition-colors hover:text-zinc-400"
         >
           Reminder settings
         </Link>
       </div>
 
-      {reminders.map((reminder) => (
-        <Link key={reminder.id} href={reminder.href} className="group block">
-          <Card className="border-violet-400/20 bg-violet-500/5 transition-colors hover:border-violet-400/35 hover:bg-violet-500/10">
-            <CardContent className="flex items-center gap-3 p-4">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-violet-200/90">
-                  {reminder.title}
-                </p>
-                <p className="mt-0.5 text-sm text-zinc-200">{reminder.message}</p>
+      <ul className="space-y-3">
+        {reminders.map((reminder) => (
+          <li key={reminder.id}>
+            <Link
+              href={reminder.href}
+              className="group block rounded-xl px-3 py-3 transition-colors hover:bg-white/[0.03]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-zinc-500">{reminder.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-zinc-300/90">
+                    {reminder.message}
+                  </p>
+                </div>
+                <span className="flex shrink-0 items-center gap-0.5 text-xs text-zinc-500 transition-colors group-hover:text-zinc-300">
+                  {reminder.cta}
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
               </div>
-              <span className="flex shrink-0 items-center gap-0.5 text-xs text-violet-300">
-                {reminder.cta}
-                <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-              </span>
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </motion.div>
   );
 }

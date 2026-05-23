@@ -54,11 +54,11 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
 
   if (compact && stats.streak === 0 && !stats.reflectedToday && recap.entryCount === 0) {
     return (
-      <Card className="border-violet-400/20 bg-gradient-to-br from-violet-500/10 to-transparent">
-        <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="rounded-xl px-1 py-2">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-medium text-white">Start your reflection habit</p>
-            <p className="mt-1 text-xs text-zinc-400">
+            <p className="text-sm font-normal text-zinc-200">Start your reflection habit</p>
+            <p className="mt-2 text-xs leading-relaxed text-zinc-500">
               One minute a day builds a private memory timeline.
             </p>
           </div>
@@ -68,8 +68,39 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
               Record today&apos;s reflection
             </Link>
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (compact) {
+    return (
+      <div className="space-y-3 rounded-xl px-1 py-2">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs tracking-wide text-zinc-600">Daily habit</p>
+            <p className="mt-2 flex items-center gap-2 text-xl font-normal text-zinc-200">
+              <Flame className="h-5 w-5 text-amber-400/80" />
+              {stats.streak} day{stats.streak === 1 ? "" : "s"} streak
+            </p>
+            <p className="mt-2 text-sm text-zinc-500">
+              Last reflection · {formatLastReflectionLabel(stats.lastReflectionDate)}
+            </p>
+          </div>
+          {!stats.reflectedToday ? (
+            <Button asChild size="sm" className="shrink-0">
+              <Link href="/">
+                <Mic className="h-4 w-4" />
+                Record today
+              </Link>
+            </Button>
+          ) : (
+            <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300/90">
+              Reflected today
+            </span>
+          )}
+        </div>
+      </div>
     );
   }
 

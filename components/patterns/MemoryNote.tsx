@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 
+import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
+import { MOTION, type NoteMotionTone } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
 
 interface MemoryNoteProps {
@@ -9,43 +12,63 @@ interface MemoryNoteProps {
   className?: string;
 }
 
+function quoteMotion(delay: number) {
+  return {
+    initial: { opacity: 0, y: MOTION.offset.subtle },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: MOTION.duration.fade, delay, ease: MOTION.ease },
+  };
+}
+
 export function MemoryNoteView({ note, className }: MemoryNoteProps) {
+  const isThenVsNow = Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
+
   return (
-    <article className={`space-y-4 ${className ?? ""}`}>
-      <p className="text-base leading-relaxed text-zinc-300">{note.text}</p>
+    <article className={`space-y-5 ${className ?? ""}`}>
+      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{note.text}</p>
       {note.pastQuote ? (
-        <blockquote className="border-l border-white/10 pl-4 text-sm leading-relaxed text-zinc-500">
-          &ldquo;{note.pastQuote.slice(0, 160)}
-          {note.pastQuote.length > 160 ? "…" : ""}&rdquo;
+        <motion.blockquote
+          {...quoteMotion(isThenVsNow ? 0.22 : 0.12)}
+          className="space-y-2 pl-1 text-sm leading-[1.7] text-zinc-500/85"
+        >
+          <p>
+            &ldquo;{note.pastQuote.slice(0, 160)}
+            {note.pastQuote.length > 160 ? "…" : ""}&rdquo;
+          </p>
           {note.pastDateLabel ? (
-            <span className="mt-1 block text-xs text-zinc-600">{note.pastDateLabel}</span>
+            <span className="block text-xs text-zinc-600/90">{note.pastDateLabel}</span>
           ) : null}
           {note.pastEntryId ? (
             <Link
               href={`/entry/${note.pastEntryId}`}
-              className="mt-2 block text-xs text-zinc-600 hover:text-zinc-400"
+              className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
               before
             </Link>
           ) : null}
-        </blockquote>
+        </motion.blockquote>
       ) : null}
       {note.currentQuote ? (
-        <blockquote className="border-l border-white/5 pl-4 text-sm leading-relaxed text-zinc-400">
-          &ldquo;{note.currentQuote.slice(0, 160)}
-          {note.currentQuote.length > 160 ? "…" : ""}&rdquo;
+        <motion.blockquote
+          {...quoteMotion(isThenVsNow ? 0.22 + MOTION.stagger.thenVsNow : 0.18)}
+          className="space-y-2 pl-1 text-sm leading-[1.7] text-zinc-400/90"
+        >
+          <p>
+            &ldquo;{note.currentQuote.slice(0, 160)}
+            {note.currentQuote.length > 160 ? "…" : ""}&rdquo;
+          </p>
           {note.currentDateLabel ? (
-            <span className="mt-1 block text-xs text-zinc-600">{note.currentDateLabel}</span>
+            <span className="block text-xs text-zinc-600/90">{note.currentDateLabel}</span>
           ) : null}
           {note.entryId ? (
             <Link
               href={`/entry/${note.entryId}`}
-              className="mt-2 block text-xs text-zinc-600 hover:text-zinc-400"
+              className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
               now
             </Link>
           ) : null}
-        </blockquote>
+        </motion.blockquote>
       ) : null}
     </article>
   );
@@ -57,20 +80,41 @@ interface MemoryNotesSectionProps {
   max?: number;
 }
 
+function AnimatedNotes({
+  notes,
+  max = 3,
+  tone = "default",
+  renderNote,
+  listClassName = "space-y-16 py-1",
+}: {
+  notes: MemoryNote[];
+  max?: number;
+  tone?: NoteMotionTone;
+  renderNote?: (note: MemoryNote) => React.ReactNode;
+  listClassName?: string;
+}) {
+  const visible = notes.slice(0, max);
+  if (visible.length === 0) return null;
+
+  return (
+    <MotionNoteList className={listClassName}>
+      {visible.map((note, index) => (
+        <MotionNoteItem key={note.id} index={index} tone={tone}>
+          {renderNote ? renderNote(note) : <MemoryNoteView note={note} />}
+        </MotionNoteItem>
+      ))}
+    </MotionNoteList>
+  );
+}
+
 export function MemoryNotesSection({ title, notes, max = 3 }: MemoryNotesSectionProps) {
   const visible = notes.slice(0, max);
   if (visible.length === 0) return null;
 
   return (
-    <section className="space-y-8">
-      <h2 className="text-sm font-medium text-zinc-500">{title}</h2>
-      <ul className="space-y-12">
-        {visible.map((note) => (
-          <li key={note.id}>
-            <MemoryNoteView note={note} />
-          </li>
-        ))}
-      </ul>
+    <section className="space-y-10">
+      <h2 className="text-xs font-normal tracking-wide text-zinc-600">{title}</h2>
+      <AnimatedNotes notes={visible} max={visible.length} />
     </section>
   );
 }
@@ -115,14 +159,8 @@ export function MemoryLandmarksSection({
   if (visible.length === 0) return null;
 
   return (
-    <section className="space-y-8 border-t border-white/5 pt-12">
-      <ul className="space-y-10">
-        {visible.map((note) => (
-          <li key={note.id}>
-            <MemoryNoteView note={note} />
-          </li>
-        ))}
-      </ul>
+    <section className="space-y-10 pt-4">
+      <AnimatedNotes notes={visible} max={visible.length} listClassName="space-y-14 py-1" />
     </section>
   );
 }
@@ -134,18 +172,7 @@ export function ChangeMomentsNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} />;
 }
 
 export function RevisitationNotes({
@@ -155,18 +182,7 @@ export function RevisitationNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} />;
 }
 
 export function TimeMemoryNotes({
@@ -176,18 +192,7 @@ export function TimeMemoryNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} />;
 }
 
 export function ResurfacingNotes({
@@ -197,18 +202,7 @@ export function ResurfacingNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} tone="resurfacing" />;
 }
 
 export function FamiliarityNotes({
@@ -218,18 +212,7 @@ export function FamiliarityNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} />;
 }
 
 export function RhythmNotes({
@@ -239,18 +222,7 @@ export function RhythmNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} />;
 }
 
 export function FamiliarityResurfacingNotes({
@@ -260,18 +232,7 @@ export function FamiliarityResurfacingNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
-  return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <MemoryNoteView note={note} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <AnimatedNotes notes={notes} max={max} tone="resurfacing" />;
 }
 
 export function ArchiveGrowthNotes({
@@ -281,17 +242,15 @@ export function ArchiveGrowthNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
   return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <p className="text-sm leading-relaxed text-zinc-500">{note.text}</p>
-        </li>
-      ))}
-    </ul>
+    <AnimatedNotes
+      notes={notes}
+      max={max}
+      tone="quiet"
+      renderNote={(note) => (
+        <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">{note.text}</p>
+      )}
+    />
   );
 }
 
@@ -302,17 +261,31 @@ export function ContinuationNotes({
   notes: MemoryNote[];
   max?: number;
 }) {
-  const visible = notes.slice(0, max);
-  if (visible.length === 0) return null;
-
   return (
-    <ul className="space-y-12">
-      {visible.map((note) => (
-        <li key={note.id}>
-          <p className="text-sm leading-relaxed text-zinc-500">{note.text}</p>
-        </li>
-      ))}
-    </ul>
+    <AnimatedNotes
+      notes={notes}
+      max={max}
+      tone="continuation"
+      renderNote={(note) => (
+        <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">{note.text}</p>
+      )}
+    />
+  );
+}
+
+export function AnimatedMemoryNote({
+  note,
+  tone = "default",
+  index = 0,
+}: {
+  note: MemoryNote;
+  tone?: NoteMotionTone;
+  index?: number;
+}) {
+  return (
+    <MotionNoteItem index={index} tone={tone}>
+      <MemoryNoteView note={note} />
+    </MotionNoteItem>
   );
 }
 
@@ -332,7 +305,7 @@ export function MemoryNotesOverview({
   if (!hasNotes && !hasLandmarks) return null;
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-20">
       {hasNotes ? (
         <>
           <MemoryNotesSection title="What changed" notes={capped.changed} max={maxPerSection} />

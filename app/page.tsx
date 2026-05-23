@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
+import { MotionPage } from "@/components/motion/MotionPage";
 import { OnboardingBanner } from "@/components/OnboardingBanner";
 import { ArchiveGrowthNotes, ContinuationNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes, FamiliarityNotes, RhythmNotes, FamiliarityResurfacingNotes } from "@/components/patterns/MemoryNote";
 import { ContextualReminderCards } from "@/components/reminders/ContextualReminderCards";
@@ -28,6 +29,7 @@ import {
 } from "@/lib/product-copy";
 import { getAllEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { MOTION } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
 
 export default function HomePage() {
@@ -90,7 +92,7 @@ export default function HomePage() {
       <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-10 sm:px-6">
         <SiteHeader />
 
-        <div className="mt-4 space-y-4">
+        <div className="mt-6 space-y-10 py-2">
           <OnboardingBanner />
           <EmptyStateIntelligence hideWhenRich />
           <ContinuationNotes notes={continuation} max={limits.continuation} />
@@ -106,51 +108,60 @@ export default function HomePage() {
           <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
         </div>
 
-        <main className="flex flex-1 flex-col items-center justify-center py-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-2xl"
-          >
-            <p className="text-xs uppercase tracking-[0.25em] text-violet-300/80">
+        <main className="flex flex-1 flex-col items-center justify-center py-10 text-center">
+          <MotionPage className="max-w-2xl">
+            <p className="text-xs tracking-[0.2em] text-violet-300/70">
               {POSITIONING_EYEBROW}
             </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+            <h1 className="mt-5 text-4xl font-normal tracking-tight text-zinc-100 sm:text-5xl">
               VoiceMemory
             </h1>
-            <p className="mt-3 text-base text-violet-200/90 sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-violet-200/80 sm:text-lg">
               {POSITIONING_TAGLINE}
             </p>
-            <p className="mt-4 text-lg text-zinc-300 sm:text-xl">{POSITIONING_LEAD}</p>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-500 sm:text-base">
+            <p className="mt-5 text-lg font-normal leading-relaxed text-zinc-300/90 sm:text-xl">
+              {POSITIONING_LEAD}
+            </p>
+            <p className="mt-4 text-sm leading-[1.75] text-zinc-500 sm:text-base">
               {POSITIONING_SUPPORT}
             </p>
-          </motion.div>
+          </MotionPage>
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: MOTION.offset.page }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.06 }}
-            className="mt-8 w-full text-left"
+            transition={{
+              duration: MOTION.duration.page,
+              delay: MOTION.delay.hero,
+              ease: MOTION.ease,
+            }}
+            className="mt-10 w-full text-left"
           >
             <ContextualReminderCards />
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: MOTION.offset.page }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.08 }}
-            className="mt-6 w-full text-left"
+            transition={{
+              duration: MOTION.duration.page,
+              delay: MOTION.delay.hero * 2,
+              ease: MOTION.ease,
+            }}
+            className="mt-8 w-full text-left"
           >
             <HabitLoopCard compact />
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: MOTION.offset.page }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.1 }}
-            className="mt-8 w-full"
+            transition={{
+              duration: MOTION.duration.page,
+              delay: MOTION.delay.hero * 3,
+              ease: MOTION.ease,
+            }}
+            className="mt-10 w-full"
           >
             <Recorder preRecordLine={recorderLine} />
           </motion.div>
@@ -158,8 +169,8 @@ export default function HomePage() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-10 max-w-md text-sm leading-relaxed text-zinc-500"
+            transition={{ duration: MOTION.duration.fade, delay: 0.45, ease: MOTION.ease }}
+            className="mt-12 max-w-md text-sm leading-[1.75] text-zinc-500"
           >
             Speak for up to 60 seconds. We transcribe, surface patterns in mood and
             themes, and keep everything on this device — your private memory layer.
@@ -168,8 +179,8 @@ export default function HomePage() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
-            className="mt-4 max-w-md text-xs leading-relaxed text-zinc-600"
+            transition={{ duration: MOTION.duration.fade, delay: 0.55, ease: MOTION.ease }}
+            className="mt-5 max-w-md text-xs leading-relaxed text-zinc-600"
           >
             {HONESTY_LINE}
           </motion.p>

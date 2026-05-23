@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Brain } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
+import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryArchiveGrowthNotes } from "@/lib/memory/archive-growth";
@@ -84,30 +83,21 @@ export default function MemoryPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Memory</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Your archive</h1>
-        </motion.div>
+        <MotionPageTitle eyebrow="Memory" title="Your archive" />
 
-        <div className="mt-16 space-y-16">
+        <div className="mt-20 space-y-20">
           {loading ? (
-            <Card>
-              <CardContent className="py-16 text-center text-sm text-zinc-600">
-                Reading your archive…
-              </CardContent>
-            </Card>
+            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
           ) : !snapshot.hasData ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
-              <Card className="border-dashed border-white/5">
-                <CardContent className="px-6 py-16 text-center">
-                  <Brain className="mx-auto h-8 w-8 text-zinc-600" />
-                  <p className="mt-4 text-lg font-medium text-zinc-300">No memory yet</p>
-                  <Button asChild className="mt-8" variant="secondary">
-                    <Link href="/">Start recording</Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              <div className="px-2 py-16 text-center">
+                <Brain className="mx-auto h-7 w-7 text-zinc-600/80" />
+                <p className="mt-5 text-base font-normal text-zinc-400">No memory yet</p>
+                <Button asChild className="mt-8" variant="secondary">
+                  <Link href="/">Start recording</Link>
+                </Button>
+              </div>
             </>
           ) : (
             <>
@@ -134,7 +124,7 @@ export default function MemoryPage() {
               <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
 
               {snapshot.totalEntities > 0 ? (
-                <div className="space-y-12 border-t border-white/5 pt-12">
+                <div className="space-y-20 pt-4">
                   <EntityMemorySection
                     title="People"
                     subtitle=""
