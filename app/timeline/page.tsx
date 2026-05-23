@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CalendarRange } from "lucide-react";
+
+import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
@@ -17,14 +20,20 @@ import { timelineRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
 import { timelineRevisitationNotes } from "@/lib/memory/revisitation";
 import { timelineTimeMemoryNotes } from "@/lib/memory/time-memory";
+import {
+  buildFollowupPrompt,
+  storeFollowupPrompt,
+} from "@/lib/conversation/followup-prompts";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
 import type { JournalEntry } from "@/types/journal";
+import type { FollowupPrompt } from "@/types/followup-prompt";
 
 export default function TimelinePage() {
+  const router = useRouter();
   const { limits } = useQuietMode();
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
@@ -65,6 +74,28 @@ export default function TimelinePage() {
   const sorted = [...entries].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+
+  const followupNotes = useMemo(
+    () => [
+      ...(notes?.changed ?? []),
+      ...(notes?.returned ?? []),
+      ...changeMoments,
+      ...familiarityResurfacing,
+      ...resurfacing,
+      ...revisitation,
+    ],
+    [notes, changeMoments, familiarityResurfacing, resurfacing, revisitation],
+  );
+
+  const followupPrompt = useMemo(
+    () => buildFollowupPrompt(followupNotes),
+    [followupNotes],
+  );
+
+  const handleContinueFollowup = (prompt: FollowupPrompt) => {
+    storeFollowupPrompt(prompt.text);
+    router.push("/#recorder");
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -110,6 +141,11 @@ export default function TimelinePage() {
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
+
+              <FollowupPromptInline
+                prompt={followupPrompt}
+                onContinue={handleContinueFollowup}
+              />
 
               <section className="space-y-6 pt-4">
                 <h2 className="text-xs font-normal tracking-wide text-zinc-600">Reflections</h2>

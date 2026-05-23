@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
+
+import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
@@ -13,6 +15,10 @@ import { Recorder } from "@/components/Recorder";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
+import {
+  buildFollowupPrompt,
+  consumeStoredFollowupPrompt,
+} from "@/lib/conversation/followup-prompts";
 import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -31,6 +37,7 @@ import { getAllEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
+import type { FollowupPrompt } from "@/types/followup-prompt";
 
 export default function HomePage() {
   const { limits } = useQuietMode();
@@ -43,6 +50,8 @@ export default function HomePage() {
   const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
+  const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
+  const recorderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -82,6 +91,50 @@ export default function HomePage() {
     limits.continuation,
   ]);
 
+  const visibleNotesForFollowup = useMemo(
+    () =>
+      [
+        ...continuation,
+        ...resurfacing,
+        ...familiarityResurfacing,
+        ...revisitation,
+        ...familiarity,
+        ...rhythm,
+        ...timeMemory,
+      ] satisfies MemoryNote[],
+    [
+      continuation,
+      resurfacing,
+      familiarityResurfacing,
+      revisitation,
+      familiarity,
+      rhythm,
+      timeMemory,
+    ],
+  );
+
+  const followupPrompt = useMemo(
+    () => buildFollowupPrompt(visibleNotesForFollowup),
+    [visibleNotesForFollowup],
+  );
+
+  useEffect(() => {
+    const stored = consumeStoredFollowupPrompt();
+    if (!stored) return;
+    setReflectionPrompt(stored);
+    const id = requestAnimationFrame(() => {
+      recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const handleContinueFollowup = useCallback((prompt: FollowupPrompt) => {
+    setReflectionPrompt(prompt.text);
+    requestAnimationFrame(() => {
+      recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, []);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950">
       <div className="pointer-events-none absolute inset-0">
@@ -106,6 +159,7 @@ export default function HomePage() {
           <RevisitationNotes notes={revisitation} max={1} />
           <TimeMemoryNotes notes={timeMemory} max={1} />
           <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+          <FollowupPromptInline prompt={followupPrompt} onContinue={handleContinueFollowup} />
         </div>
 
         <main className="flex flex-1 flex-col items-center justify-center py-10 text-center">
@@ -162,8 +216,13 @@ export default function HomePage() {
               ease: MOTION.ease,
             }}
             className="mt-10 w-full"
+            ref={recorderRef}
+            id="recorder"
           >
-            <Recorder preRecordLine={recorderLine} />
+            <Recorder
+              preRecordLine={reflectionPrompt ? null : recorderLine}
+              reflectionPrompt={reflectionPrompt}
+            />
           </motion.div>
 
           <motion.p

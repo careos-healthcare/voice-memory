@@ -34,6 +34,7 @@ const SKIP_PATH_PARTS = [
   "lib/memory/emotional-weight.ts",
   "lib/memory/archive-growth.ts",
   "lib/conversation/conversation-continuity.ts",
+  "lib/conversation/followup-prompts.ts",
   "components/InsightCard.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",

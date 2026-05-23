@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
+import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
 import {
@@ -22,6 +23,10 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
+import {
+  buildFollowupPrompt,
+  storeFollowupPrompt,
+} from "@/lib/conversation/followup-prompts";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -34,6 +39,7 @@ import { deleteEntry, getAllEntries, getEntry } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import type { FollowupPrompt } from "@/types/followup-prompt";
 
 function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boolean {
   if (!b) return false;
@@ -206,6 +212,38 @@ export default function EntryPage() {
     return wc;
   }, [notes]);
 
+  const followupNotes = useMemo(() => {
+    if (!entry) return [];
+    return [
+      continuationOpener,
+      notes?.primaryCallback,
+      notes?.secondaryCallback,
+      ...(notes?.thenVsNow ?? []),
+      ...changeMoments,
+      ...familiarityResurfacing,
+      ...resurfacing,
+      ...revisitation,
+    ].filter(Boolean) as MemoryNote[];
+  }, [
+    entry,
+    continuationOpener,
+    notes,
+    changeMoments,
+    familiarityResurfacing,
+    resurfacing,
+    revisitation,
+  ]);
+
+  const followupPrompt = useMemo(
+    () => buildFollowupPrompt(followupNotes),
+    [followupNotes],
+  );
+
+  const handleContinueFollowup = (prompt: FollowupPrompt) => {
+    storeFollowupPrompt(prompt.text);
+    router.push("/#recorder");
+  };
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -276,6 +314,11 @@ export default function EntryPage() {
               <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={1} />
             </div>
+
+            <FollowupPromptInline
+              prompt={followupPrompt}
+              onContinue={handleContinueFollowup}
+            />
 
             <VoicePlayback
               entryId={entry.id}

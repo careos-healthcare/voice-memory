@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CalendarDays } from "lucide-react";
+
+import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
@@ -17,12 +20,18 @@ import { monthlyRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { monthlyResurfacingNotes } from "@/lib/memory/resurfacing";
 import { monthlyRevisitationNotes } from "@/lib/memory/revisitation";
 import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
+import {
+  buildFollowupPrompt,
+  storeFollowupPrompt,
+} from "@/lib/conversation/followup-prompts";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries } from "@/lib/storage";
 import type { MemoryNote } from "@/types/memory-note";
 import type { MemoryNotesReport } from "@/types/memory-note";
+import type { FollowupPrompt } from "@/types/followup-prompt";
 
 export default function MonthlyPage() {
+  const router = useRouter();
   const { limits } = useQuietMode();
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
@@ -83,6 +92,28 @@ export default function MonthlyPage() {
   const hasArchiveGrowth = archiveGrowth.length > 0;
   const hasNotes = notes?.hasData ?? false;
 
+  const followupNotes = useMemo(
+    () => [
+      ...(notes?.changed ?? []),
+      ...(notes?.returned ?? []),
+      ...changeMoments,
+      ...familiarityResurfacing,
+      ...resurfacing,
+      ...revisitation,
+    ],
+    [notes, changeMoments, familiarityResurfacing, resurfacing, revisitation],
+  );
+
+  const followupPrompt = useMemo(
+    () => buildFollowupPrompt(followupNotes),
+    [followupNotes],
+  );
+
+  const handleContinueFollowup = (prompt: FollowupPrompt) => {
+    storeFollowupPrompt(prompt.text);
+    router.push("/#recorder");
+  };
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -117,6 +148,10 @@ export default function MonthlyPage() {
               <RevisitationNotes notes={revisitation} max={1} />
               <TimeMemoryNotes notes={timeMemory} max={2} />
               <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+              <FollowupPromptInline
+                prompt={followupPrompt}
+                onContinue={handleContinueFollowup}
+              />
               {hasNotes ? (
                 <MemoryNotesOverview
                   changed={notes!.changed}

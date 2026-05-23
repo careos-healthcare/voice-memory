@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Brain } from "lucide-react";
+
+import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
@@ -19,13 +22,19 @@ import { memoryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resu
 import { memoryRhythmNotes } from "@/lib/memory/rhythm-memory";
 import { memoryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { memoryRevisitationNotes } from "@/lib/memory/revisitation";
+import {
+  buildFollowupPrompt,
+  storeFollowupPrompt,
+} from "@/lib/conversation/followup-prompts";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getAllEntries } from "@/lib/storage";
 import type { MemoryNotesReport } from "@/types/memory-note";
 import type { MemoryNote } from "@/types/memory-note";
+import type { FollowupPrompt } from "@/types/followup-prompt";
 
 export default function MemoryPage() {
+  const router = useRouter();
   const { limits } = useQuietMode();
   const [snapshot, setSnapshot] = useState<EntityMemorySnapshot | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
@@ -78,6 +87,29 @@ export default function MemoryPage() {
 
   const loading = snapshot === null;
 
+  const followupNotes = useMemo(
+    () =>
+      [
+        ...(notes?.changed ?? []),
+        ...(notes?.returned ?? []),
+        ...changeMoments,
+        ...familiarityResurfacing,
+        ...resurfacing,
+        ...revisitation,
+      ] satisfies MemoryNote[],
+    [notes, changeMoments, familiarityResurfacing, resurfacing, revisitation],
+  );
+
+  const followupPrompt = useMemo(
+    () => buildFollowupPrompt(followupNotes),
+    [followupNotes],
+  );
+
+  const handleContinueFollowup = (prompt: FollowupPrompt) => {
+    storeFollowupPrompt(prompt.text);
+    router.push("/#recorder");
+  };
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -122,6 +154,10 @@ export default function MemoryPage() {
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={1} />
               <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+              <FollowupPromptInline
+                prompt={followupPrompt}
+                onContinue={handleContinueFollowup}
+              />
 
               {snapshot.totalEntities > 0 ? (
                 <div className="space-y-20 pt-4">

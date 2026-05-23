@@ -23,6 +23,7 @@ interface RecorderProps {
   autoStart?: boolean;
   onComplete?: (entry: JournalEntry) => void;
   preRecordLine?: string | null;
+  reflectionPrompt?: string | null;
 }
 
 type RecorderState =
@@ -32,7 +33,12 @@ type RecorderState =
   | "complete"
   | "error";
 
-export function Recorder({ autoStart = false, onComplete, preRecordLine }: RecorderProps) {
+export function Recorder({
+  autoStart = false,
+  onComplete,
+  preRecordLine,
+  reflectionPrompt,
+}: RecorderProps) {
   const router = useRouter();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -249,7 +255,11 @@ export function Recorder({ autoStart = false, onComplete, preRecordLine }: Recor
               <Mic className="h-5 w-5" />
               Start reflection
             </Button>
-            {preRecordLine ? (
+            {reflectionPrompt ? (
+              <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
+                {reflectionPrompt}
+              </p>
+            ) : preRecordLine ? (
               <p className="max-w-sm text-center text-sm leading-relaxed text-zinc-500">
                 {preRecordLine}
               </p>
