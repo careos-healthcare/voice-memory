@@ -22,6 +22,44 @@ function noteAnchorsCurrent(note: MemoryNote, currentEntryId: string): boolean {
   return !note.entryId || note.entryId === currentEntryId;
 }
 
+/** Resolve then/now audio for a revisit when both clips exist. */
+export function resolveRevisitVoicePlaybackPair(
+  currentEntry: JournalEntry,
+  allEntries: JournalEntry[],
+  options: {
+    contrast?: MemoryNote | null;
+    reward?: MemoryNote | null;
+  },
+): VoicePlaybackPair | null {
+  const notes = [options.contrast, options.reward].filter(Boolean) as MemoryNote[];
+
+  for (const note of notes) {
+    if (!note.pastEntryId) continue;
+    const thenEntry = entryById(allEntries, note.pastEntryId);
+    if (!thenEntry?.audioId || !currentEntry.audioId) continue;
+    if (thenEntry.id === currentEntry.id) continue;
+    return {
+      kind: "then_vs_now",
+      thenEntry,
+      nowEntry: currentEntry,
+    };
+  }
+
+  for (const note of notes) {
+    if (!note.pastEntryId) continue;
+    const thenEntry = entryById(allEntries, note.pastEntryId);
+    if (thenEntry && thenEntry.id !== currentEntry.id && thenEntry.audioId) {
+      return {
+        kind: "related",
+        thenEntry,
+        nowEntry: currentEntry,
+      };
+    }
+  }
+
+  return null;
+}
+
 /** Resolve then/now or one related older clip for entry playback. */
 export function resolveVoicePlaybackPair(
   currentEntry: JournalEntry,

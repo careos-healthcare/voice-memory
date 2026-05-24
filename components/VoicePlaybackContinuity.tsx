@@ -10,9 +10,10 @@ import {
 
 interface VoicePlaybackContinuityProps {
   pair: VoicePlaybackPair;
+  onAudioPlayed?: (clip: "then" | "now") => void;
 }
 
-export function VoicePlaybackContinuity({ pair }: VoicePlaybackContinuityProps) {
+export function VoicePlaybackContinuity({ pair, onAudioPlayed }: VoicePlaybackContinuityProps) {
   const [activeClip, setActiveClip] = useState<"then" | "now" | null>(null);
   const labels = VOICE_PLAYBACK_LABELS[pair.kind];
 
@@ -35,7 +36,10 @@ export function VoicePlaybackContinuity({ pair }: VoicePlaybackContinuityProps) 
         durationSeconds={pair.thenEntry.durationSeconds}
         label={labels.then ?? "Listen to an earlier moment"}
         pausedExternally={activeClip === "now"}
-        onPlayStart={() => setActiveClip("then")}
+        onPlayStart={() => {
+          setActiveClip("then");
+          onAudioPlayed?.("then");
+        }}
       />
       <VoiceClipPlayer
         entryId={pair.nowEntry.id}
@@ -43,7 +47,10 @@ export function VoicePlaybackContinuity({ pair }: VoicePlaybackContinuityProps) 
         durationSeconds={pair.nowEntry.durationSeconds}
         label={labels.now}
         pausedExternally={activeClip === "then"}
-        onPlayStart={() => setActiveClip("now")}
+        onPlayStart={() => {
+          setActiveClip("now");
+          onAudioPlayed?.("now");
+        }}
       />
     </div>
   );

@@ -34,6 +34,32 @@ export const KNOWS_ME_COPY = {
   earlier_version: "This sounds like an earlier version.",
 } as const;
 
+/** Revisit entry copy — answers “why was this worth reopening?” */
+export const REVISIT_REWARD_COPY = {
+  soundDifferentFrom: "You sound different from here.",
+  beforeQuieter: "This was before it got quieter.",
+  notNamedYet: "You had not named it yet.",
+  usedToTakeSpace: "This used to take up more space.",
+} as const;
+
+const REVISIT_CONTRAST_PRIORITY: KnowsMeSignal[] = [
+  "emotional_contrast",
+  "weight_shift",
+  "wording_shift",
+  "topic_quieter",
+];
+
+const REVISIT_REWARD_LINE_PRIORITY: KnowsMeSignal[] = [
+  "topic_quieter",
+  "certainty_shift",
+  "direct_naming",
+  "directness_shift",
+  "weight_shift",
+  "emotional_contrast",
+  "wording_shift",
+  "earlier_self",
+];
+
 interface KnowsMeCandidate {
   id: string;
   text: string;
@@ -384,6 +410,35 @@ function detectWordingShift(anchor: JournalEntry, prior: JournalEntry[]): KnowsM
   return null;
 }
 
+function detectReopenedBeforeQuieter(
+  anchor: JournalEntry,
+  later: JournalEntry[],
+): KnowsMeCandidate | null {
+  if (anchor.reflection.emotionalIntensity < 6 || later.length === 0) return null;
+
+  for (const theme of anchor.reflection.recurringThemes) {
+    const themeKey = theme.toLowerCase();
+    const calmerLater = later.find(
+      (entry) =>
+        hasTheme(entry, themeKey) && entry.reflection.emotionalIntensity <= 4.5,
+    );
+    if (!calmerLater) continue;
+
+    return {
+      id: `knows-me-reopen-quiet-${anchor.id}-${calmerLater.id}`,
+      signal: "topic_quieter",
+      text: REVISIT_REWARD_COPY.beforeQuieter,
+      strength:
+        70 +
+        Math.round(anchor.reflection.emotionalIntensity - calmerLater.reflection.emotionalIntensity) *
+          4,
+      ...evidence(anchor, calmerLater),
+    };
+  }
+
+  return null;
+}
+
 function collectCandidates(
   entries: JournalEntry[],
   anchor: JournalEntry,
@@ -393,6 +448,9 @@ function collectCandidates(
 ): KnowsMeCandidate[] {
   const notes: KnowsMeCandidate[] = [];
   const latest = allSorted[allSorted.length - 1];
+
+  const reopenedBeforeQuieter = detectReopenedBeforeQuieter(anchor, later);
+  if (reopenedBeforeQuieter) notes.push(reopenedBeforeQuieter);
 
   const earlier = detectEarlierSelf(anchor, prior, later);
   if (earlier) notes.push(earlier);
@@ -461,6 +519,118 @@ function toMemoryNote(candidate: KnowsMeCandidate): MemoryNote {
     pastEntryId: candidate.pastEntryId,
     entryId: candidate.entryId,
   };
+}
+
+function revisitTextForSignal(signal: KnowsMeSignal, fallback: string): string {
+  switch (signal) {
+    case "topic_quieter":
+      return REVISIT_REWARD_COPY.beforeQuieter;
+    case "certainty_shift":
+    case "direct_naming":
+      return REVISIT_REWARD_COPY.notNamedYet;
+    case "weight_shift":
+      return REVISIT_REWARD_COPY.usedToTakeSpace;
+    case "emotional_contrast":
+    case "wording_shift":
+    case "directness_shift":
+    case "earlier_self":
+      return REVISIT_REWARD_COPY.soundDifferentFrom;
+    default:
+      return fallback;
+  }
+}
+
+function toRevisitMemoryNote(candidate: KnowsMeCandidate): MemoryNote {
+  return {
+    ...toMemoryNote(candidate),
+    text: revisitTextForSignal(candidate.signal, candidate.text),
+  };
+}
+
+function hasContrastEvidence(note: MemoryNote): boolean {
+  return Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
+}
+
+function signalFromNoteId(note: MemoryNote): KnowsMeSignal | null {
+  if (note.id.startsWith("knows-me-contrast")) return "emotional_contrast";
+  if (note.id.startsWith("knows-me-weight")) return "weight_shift";
+  if (note.id.startsWith("knows-me-wording")) return "wording_shift";
+  if (note.id.startsWith("knows-me-quieter")) return "topic_quieter";
+  if (note.id.startsWith("knows-me-named") || note.id.startsWith("knows-me-certainty")) {
+    return "certainty_shift";
+  }
+  if (note.id.startsWith("knows-me-direct")) return "directness_shift";
+  if (note.id.startsWith("knows-me-earlier")) return "earlier_self";
+  if (note.id.startsWith("revisit-before-quiet")) return "topic_quieter";
+  if (note.id.startsWith("change-charged")) return "weight_shift";
+  if (note.id.startsWith("tvn-") || note.id.startsWith("revisit-diff")) return "emotional_contrast";
+  return null;
+}
+
+function revisitPriority(note: MemoryNote, order: KnowsMeSignal[]): number {
+  const signal = signalFromNoteId(note);
+  if (!signal) return order.length + 1;
+  const index = order.indexOf(signal);
+  return index >= 0 ? index : order.length;
+}
+
+function isDuplicateRevisitNote(a: MemoryNote, b: MemoryNote | null | undefined): boolean {
+  if (!b) return false;
+  return a.id === b.id || a.text === b.text;
+}
+
+/** All revisit-reward candidates for an entry anchor — internal ranking pool. */
+export function entryRevisitRewardCandidates(
+  entries: JournalEntry[],
+  entryId: string,
+): MemoryNote[] {
+  const allSorted = sortedEntries(entries);
+  const resolved = resolveAnchor(allSorted, "entry", entryId);
+  if (!resolved) return [];
+
+  return collectCandidates(
+    entries,
+    resolved.anchor,
+    resolved.prior,
+    resolved.later,
+    allSorted,
+  ).map(toRevisitMemoryNote);
+}
+
+/** Strongest before/after contrast for a revisit — quotes required. */
+export function pickEntryRevisitContrast(
+  candidates: MemoryNote[],
+  extra: MemoryNote[],
+  exclude: Array<MemoryNote | null | undefined>,
+): MemoryNote | null {
+  const pool = [...candidates, ...extra]
+    .filter((note) => hasContrastEvidence(note))
+    .filter((note) => !exclude.some((row) => isDuplicateRevisitNote(note, row)))
+    .sort(
+      (a, b) =>
+        revisitPriority(a, REVISIT_CONTRAST_PRIORITY) -
+          revisitPriority(b, REVISIT_CONTRAST_PRIORITY) ||
+        b.confidence - a.confidence,
+    );
+
+  return pool[0] ?? null;
+}
+
+/** Single reward line when contrast alone is not enough — text-first moments. */
+export function pickEntryRevisitRewardLine(
+  candidates: MemoryNote[],
+  exclude: Array<MemoryNote | null | undefined>,
+): MemoryNote | null {
+  const pool = candidates
+    .filter((note) => !exclude.some((row) => isDuplicateRevisitNote(note, row)))
+    .sort(
+      (a, b) =>
+        revisitPriority(a, REVISIT_REWARD_LINE_PRIORITY) -
+          revisitPriority(b, REVISIT_REWARD_LINE_PRIORITY) ||
+        b.confidence - a.confidence,
+    );
+
+  return pool[0] ?? null;
 }
 
 function resolveAnchor(

@@ -6,7 +6,6 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
-import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
 import {
@@ -35,7 +34,7 @@ import {
   buildFollowupPrompt,
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
-import { resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
+import { resolveRevisitVoicePlaybackPair, resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
 import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
@@ -51,8 +50,10 @@ import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import {
   buildRevisitExperience,
+  trackRevisitAudioPlayed,
   trackRevisitFollowupStarted,
   trackRevisitOpened,
+  trackRevisitRewardSeen,
   trackRevisitThenNowSeen,
   type RevisitExperiencePresentation,
 } from "@/lib/refinement/revisit-experience";
@@ -134,6 +135,11 @@ export default function EntryPage() {
     limits.familiarityResurfacing,
     limits.resurfacing,
   ]);
+
+  useEffect(() => {
+    if (!entry?.id || !revisitExperience?.revisitReward) return;
+    trackRevisitRewardSeen(entry.id, revisitExperience.revisitReward.id);
+  }, [entry?.id, revisitExperience?.revisitReward?.id]);
 
   useEffect(() => {
     if (!entry?.id || !revisitExperience?.thenVsNow) return;
@@ -332,6 +338,14 @@ export default function EntryPage() {
     router.push("/#recorder");
   };
 
+  const revisitVoicePair = useMemo(() => {
+    if (!entry || pending || !revisitExperience?.isRevisit) return null;
+    return resolveRevisitVoicePlaybackPair(entry, allEntries, {
+      contrast: revisitExperience.thenVsNow,
+      reward: revisitExperience.revisitReward,
+    });
+  }, [entry, allEntries, pending, revisitExperience]);
+
   const voicePlaybackPair = useMemo(() => {
     if (!entry || pending) return null;
     return resolveVoicePlaybackPair(entry, allEntries, {
@@ -446,26 +460,33 @@ export default function EntryPage() {
               <>
                 {revisitExperience?.isRevisit ? (
                   <>
-                    <PrimaryCallbackNote note={revisitExperience.primaryCallback} />
-                    {revisitExperience.thenVsNow ? (
-                      <MotionNoteList className="space-y-16 py-1">
-                        <AnimatedMemoryNote note={revisitExperience.thenVsNow} index={0} />
-                      </MotionNoteList>
-                    ) : null}
-                    {revisitExperience.quietRealization ? (
-                      revisitExperience.quietRealization.pastQuote ||
-                      revisitExperience.quietRealization.currentQuote ? (
+                    {revisitExperience.revisitReward ? (
+                      revisitExperience.revisitReward.pastQuote ||
+                      revisitExperience.revisitReward.currentQuote ? (
                         <MotionNoteList className="space-y-16 py-1">
                           <AnimatedMemoryNote
-                            note={revisitExperience.quietRealization}
-                            index={1}
+                            note={revisitExperience.revisitReward}
+                            index={0}
                           />
                         </MotionNoteList>
                       ) : (
                         <p className="text-sm leading-[1.75] text-zinc-500/90">
-                          {revisitExperience.quietRealization.text}
+                          {revisitExperience.revisitReward.text}
                         </p>
                       )
+                    ) : null}
+                    {revisitExperience.thenVsNow ? (
+                      <MotionNoteList className="space-y-16 py-1">
+                        <AnimatedMemoryNote note={revisitExperience.thenVsNow} index={1} />
+                      </MotionNoteList>
+                    ) : null}
+                    {revisitVoicePair ? (
+                      <VoicePlaybackContinuity
+                        pair={revisitVoicePair}
+                        onAudioPlayed={(clip) => {
+                          if (entry) trackRevisitAudioPlayed(entry.id, clip);
+                        }}
+                      />
                     ) : null}
                     <FollowupPromptInline
                       prompt={activeFollowup}
