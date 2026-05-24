@@ -3,6 +3,7 @@ import type {
   RoundupQualityReason,
   RoundupQualityVerdict,
 } from "@/types/roundup-quality-review";
+import { applyObservationScoreAdjustments } from "@/lib/roundups/roundup-observation";
 import type { ReflectiveRoundupLine, ReflectiveRoundupSignal } from "@/types/reflective-roundup";
 
 export const ROUNDUP_MAX_LINES = 5;
@@ -104,10 +105,11 @@ export function assessRoundupLineQuality(
 export function pickQualityRoundupLines(
   candidates: RoundupLineCandidate[],
 ): ReflectiveRoundupLine[] {
+  const tuned = applyObservationScoreAdjustments(candidates);
   const usedSignals = new Set<ReflectiveRoundupSignal>();
   const pickedTexts: string[] = [];
   const pickedThemes = new Set<string>();
-  const sorted = [...candidates].sort((a, b) => b.score - a.score);
+  const sorted = [...tuned].sort((a, b) => b.score - a.score);
   const picked: ReflectiveRoundupLine[] = [];
 
   for (const candidate of sorted) {
@@ -143,10 +145,11 @@ export interface EvaluatedRoundupCandidate {
 export function evaluateRoundupCandidates(
   candidates: RoundupLineCandidate[],
 ): EvaluatedRoundupCandidate[] {
+  const tuned = applyObservationScoreAdjustments(candidates);
   const usedSignals = new Set<ReflectiveRoundupSignal>();
   const pickedTexts: string[] = [];
   const pickedThemes = new Set<string>();
-  const sorted = [...candidates].sort((a, b) => b.score - a.score);
+  const sorted = [...tuned].sort((a, b) => b.score - a.score);
   const results: EvaluatedRoundupCandidate[] = [];
   let selectedCount = 0;
 

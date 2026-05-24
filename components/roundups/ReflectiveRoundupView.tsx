@@ -5,7 +5,9 @@ import Link from "next/link";
 
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import { RoundupContinuationActions } from "@/components/roundups/RoundupContinuationActions";
+import { RoundupLineObservation } from "@/components/roundups/RoundupLineObservation";
 import { trackRoundupItemRevisited } from "@/lib/roundups/roundup-continuation";
+import { trackRoundupIntentionLinkOpened } from "@/lib/roundups/roundup-observation";
 import type {
   KeyPiece,
   KeyPiecesReport,
@@ -64,25 +66,40 @@ function IntentionLinkRow({
   });
 
   return (
-    <li className="space-y-3">
-      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{link.text}</p>
-      <RoundupContinuationActions item={item} periodSlug={periodSlug} />
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
-        <RoundupSourceLink
-          item={item}
-          entryId={link.entryId}
-          periodSlug={periodSlug}
-          className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
-        >
-          Source entry
-        </RoundupSourceLink>
-        <Link
-          href="/intentions"
-          className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
-        >
-          Long-term thread
-        </Link>
-      </div>
+    <li>
+      <RoundupLineObservation
+        itemId={link.id}
+        text={link.text}
+        signal="returned"
+        periodSlug={periodSlug}
+      >
+        <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{link.text}</p>
+        <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          <RoundupSourceLink
+            item={item}
+            entryId={link.entryId}
+            periodSlug={periodSlug}
+            className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
+          >
+            Source entry
+          </RoundupSourceLink>
+          <Link
+            href="/intentions"
+            className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
+            onClick={() =>
+              trackRoundupIntentionLinkOpened({
+                itemId: link.id,
+                text: link.text,
+                intentionId: link.intentionId,
+                periodSlug,
+              })
+            }
+          >
+            Long-term thread
+          </Link>
+        </div>
+      </RoundupLineObservation>
     </li>
   );
 }
@@ -133,17 +150,24 @@ function KeyPieceRow({
   });
 
   return (
-    <li className="space-y-3">
-      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{piece.text}</p>
-      <RoundupContinuationActions item={item} periodSlug={periodSlug} />
-      <RoundupSourceLink
-        item={item}
-        entryId={piece.entryId}
+    <li>
+      <RoundupLineObservation
+        itemId={piece.id}
+        text={piece.text}
+        signal="revisited"
         periodSlug={periodSlug}
-        className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
       >
-        Source entry
-      </RoundupSourceLink>
+        <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{piece.text}</p>
+        <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+        <RoundupSourceLink
+          item={item}
+          entryId={piece.entryId}
+          periodSlug={periodSlug}
+          className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
+        >
+          Source entry
+        </RoundupSourceLink>
+      </RoundupLineObservation>
     </li>
   );
 }
@@ -185,24 +209,31 @@ function RoundupLineRow({
   });
 
   return (
-    <article className="space-y-4">
-      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{line.text}</p>
-      <RoundupContinuationActions item={item} periodSlug={periodSlug} />
-      {line.entryIds.length > 0 ? (
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600/90">
-          {line.entryIds.map((linkedEntryId, index) => (
-            <RoundupSourceLink
-              key={`${line.id}-${linkedEntryId}`}
-              item={item}
-              entryId={linkedEntryId}
-              periodSlug={periodSlug}
-              className="transition-colors hover:text-zinc-400"
-            >
-              {line.entryIds.length === 1 ? "Related entry" : `Related entry ${index + 1}`}
-            </RoundupSourceLink>
-          ))}
-        </div>
-      ) : null}
+    <article>
+      <RoundupLineObservation
+        itemId={line.id}
+        text={line.text}
+        signal={line.signal}
+        periodSlug={periodSlug}
+      >
+        <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{line.text}</p>
+        <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+        {line.entryIds.length > 0 ? (
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600/90">
+            {line.entryIds.map((linkedEntryId, index) => (
+              <RoundupSourceLink
+                key={`${line.id}-${linkedEntryId}`}
+                item={item}
+                entryId={linkedEntryId}
+                periodSlug={periodSlug}
+                className="transition-colors hover:text-zinc-400"
+              >
+                {line.entryIds.length === 1 ? "Related entry" : `Related entry ${index + 1}`}
+              </RoundupSourceLink>
+            ))}
+          </div>
+        ) : null}
+      </RoundupLineObservation>
     </article>
   );
 }

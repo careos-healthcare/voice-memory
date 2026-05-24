@@ -13,6 +13,11 @@ import {
   buildReflectiveRoundup,
   parsePeriodSlug,
 } from "@/lib/roundups/reflective-roundups";
+import {
+  closeRoundupSession,
+  recordRoundupLinesShown,
+  trackRoundupOpened,
+} from "@/lib/roundups/roundup-observation";
 import { buildKeyPieces } from "@/lib/roundups/key-pieces";
 import { buildRoundupIntentionLinks } from "@/lib/roundups/roundup-intention-links";
 import type {
@@ -30,6 +35,12 @@ export default function RoundupPeriodPage() {
   const [intentionLinks, setIntentionLinks] = useState<RoundupIntentionLinksReport | null>(null);
 
   useEffect(() => {
+    if (!periodSlug || !period) return;
+    trackRoundupOpened(periodSlug);
+    return () => closeRoundupSession();
+  }, [periodSlug, period]);
+
+  useEffect(() => {
     if (!period) {
       setRoundup(null);
       setKeyPieces(null);
@@ -43,6 +54,11 @@ export default function RoundupPeriodPage() {
     });
     return () => cancelAnimationFrame(id);
   }, [period]);
+
+  useEffect(() => {
+    if (!periodSlug || !roundup?.lines.length) return;
+    recordRoundupLinesShown(periodSlug, roundup.lines);
+  }, [periodSlug, roundup?.lines]);
 
   const loading = period && roundup === null;
   const invalid = !period;

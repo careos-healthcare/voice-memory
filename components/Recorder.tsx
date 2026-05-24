@@ -25,6 +25,7 @@ import {
   peekFollowupLoopContext,
   trackFollowupRecordingCompleted,
 } from "@/lib/retention/retention-loops";
+import { maybeTrackRoundupFollowupRecorded } from "@/lib/roundups/roundup-observation";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, saveEntry } from "@/lib/storage";
 import {
@@ -241,6 +242,7 @@ export function Recorder({
         if (reflectionPrompt || peekFollowupLoopContext()) {
           const meta = peekContinuationMeta();
           trackFollowupRecordingCompleted(newEntry.id);
+          maybeTrackRoundupFollowupRecorded(meta?.noteId, newEntry.id);
           trackContinuationCompleted(
             meta?.promptId ?? "recorder-continuation",
             newEntry.id,

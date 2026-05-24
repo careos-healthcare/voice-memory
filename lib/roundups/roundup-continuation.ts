@@ -4,16 +4,24 @@ import {
   trackContinuationStarted,
 } from "@/lib/conversation/continuation-loops";
 import { upsertIntentionFromRoundup } from "@/lib/intentions/long-term-intentions";
-import { trackLocalEvent } from "@/lib/local-analytics";
+import {
+  trackRoundupContinueClicked as trackRoundupContinueObservation,
+  trackRoundupIntentionSaved as trackRoundupIntentionSavedObservation,
+  trackRoundupRelatedEntryOpened,
+} from "@/lib/roundups/roundup-observation";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { LongTermIntention } from "@/types/long-term-intentions";
-import type { RoundupContinuationItem } from "@/types/reflective-roundup";
+import type { RoundupContinuationItem, ReflectiveRoundupSignal } from "@/types/reflective-roundup";
 
 const SAVED_ROUNDUP_ITEMS_KEY = "voicememory_roundup_saved_items";
 
-export const ROUNDUP_CONTINUE_CLICKED = "roundup_continue_clicked";
-export const ROUNDUP_INTENTION_SAVED = "roundup_intention_saved";
-export const ROUNDUP_ITEM_REVISITED = "roundup_item_revisited";
+export {
+  ROUNDUP_CONTINUE_CLICKED,
+  ROUNDUP_INTENTION_SAVED,
+} from "@/lib/roundups/roundup-observation";
+
+/** @deprecated Use roundup_related_entry_opened */
+export const ROUNDUP_ITEM_REVISITED = "roundup_related_entry_opened";
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -40,11 +48,18 @@ export function isRoundupItemSaved(itemId: string): boolean {
   return readSavedRoundupItems().includes(itemId);
 }
 
+function signalForItem(item: RoundupContinuationItem): ReflectiveRoundupSignal {
+  if (item.kind === "key_piece") return "revisited";
+  return "returned";
+}
+
 export function trackRoundupContinueClicked(item: RoundupContinuationItem, periodSlug?: string): void {
-  trackLocalEvent(ROUNDUP_CONTINUE_CLICKED, {
+  trackRoundupContinueObservation({
     itemId: item.id,
+    text: item.text,
+    signal: signalForItem(item),
+    periodSlug,
     kind: item.kind,
-    periodSlug: periodSlug ?? "",
   });
 }
 
@@ -53,11 +68,13 @@ export function trackRoundupIntentionSaved(
   intentionId: string,
   periodSlug?: string,
 ): void {
-  trackLocalEvent(ROUNDUP_INTENTION_SAVED, {
+  trackRoundupIntentionSavedObservation({
     itemId: item.id,
+    text: item.text,
+    signal: signalForItem(item),
+    periodSlug,
     intentionId,
     kind: item.kind,
-    periodSlug: periodSlug ?? "",
   });
 }
 
@@ -66,11 +83,13 @@ export function trackRoundupItemRevisited(
   entryId: string,
   periodSlug?: string,
 ): void {
-  trackLocalEvent(ROUNDUP_ITEM_REVISITED, {
+  trackRoundupRelatedEntryOpened({
     itemId: item.id,
+    text: item.text,
+    signal: signalForItem(item),
+    periodSlug,
     entryId,
     kind: item.kind,
-    periodSlug: periodSlug ?? "",
   });
 }
 

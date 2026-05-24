@@ -90,6 +90,9 @@ export function setBookmark(
   trackBookmarkCreated(entryId, type);
   trackRevisitRhythmBookmarkIfActive(entryId, type);
   trackBookmarkAfterCallback(undefined, type, "entry");
+  void import("@/lib/roundups/roundup-observation").then((mod) =>
+    mod.maybeTrackRoundupBookmark(entryId),
+  );
   void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
   return next;
 }
