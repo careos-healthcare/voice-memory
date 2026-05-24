@@ -16,6 +16,10 @@ import {
   buildRevisitWorthReport,
   type RevisitWorthReport,
 } from "@/lib/refinement/revisit-worth";
+import {
+  buildRevisitRhythmReport,
+  type RevisitRhythmReport,
+} from "@/lib/refinement/revisit-rhythm";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 
@@ -38,6 +42,7 @@ function ScoreCard({ label, value, hint }: { label: string; value: string; hint:
 export default function RetentionLoopsDebugPage() {
   const [report, setReport] = useState<RetentionLoopReport | null>(null);
   const [worthReport, setWorthReport] = useState<RevisitWorthReport | null>(null);
+  const [rhythmReport, setRhythmReport] = useState<RevisitRhythmReport | null>(null);
   const [memoryEntries, setMemoryEntries] = useState<ReturnType<typeof getMemoryEligibleEntries>>([]);
 
   const refresh = () => {
@@ -45,6 +50,7 @@ export default function RetentionLoopsDebugPage() {
     setMemoryEntries(entries);
     setReport(buildRetentionLoopReport());
     setWorthReport(buildRevisitWorthReport(entries));
+    setRhythmReport(buildRevisitRhythmReport(entries, "homepage"));
   };
 
   useEffect(() => {
@@ -225,6 +231,18 @@ export default function RetentionLoopsDebugPage() {
                   />
                 );
               })}
+            />
+
+            <Section
+              title="Revisit rhythm (internal pool)"
+              empty="No revisit rhythm signals yet."
+              items={(rhythmReport?.candidates ?? []).map((row) => (
+                <Row
+                  key={row.id}
+                  title={`${row.text} · score ${row.strength}`}
+                  meta={[row.kind, row.entryId?.slice(0, 8)].filter(Boolean).join(" · ")}
+                />
+              ))}
             />
           </div>
         )}

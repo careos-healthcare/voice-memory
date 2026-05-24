@@ -11,6 +11,7 @@ import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
@@ -22,6 +23,11 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
 import { memoryArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import {
+  memoryRevisitRhythmMoment,
+  revisitRhythmKindFromNote,
+  trackRevisitRhythmSeen,
+} from "@/lib/refinement/revisit-rhythm";
 import { memoryMilestoneNotes } from "@/lib/memory/milestones";
 import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
@@ -64,6 +70,7 @@ export default function MemoryPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -90,6 +97,7 @@ export default function MemoryPage() {
       setEntries(entries);
       setContinuityDepth(memoryContinuityDepthIndicator(entries));
       setArchiveGravity(memoryArchiveGravityMoment(entries));
+      setRevisitRhythm(memoryRevisitRhythmMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -101,6 +109,13 @@ export default function MemoryPage() {
     limits.familiarityResurfacing,
     limits.milestones,
   ]);
+
+  useEffect(() => {
+    if (!revisitRhythm) return;
+    const kind = revisitRhythmKindFromNote(revisitRhythm);
+    if (!kind) return;
+    trackRevisitRhythmSeen(revisitRhythm.id, kind);
+  }, [revisitRhythm?.id]);
 
   const loading = snapshot === null;
 
@@ -162,6 +177,7 @@ export default function MemoryPage() {
               ) : null}
 
               <ArchiveGravityNote note={archiveGravity} />
+              <RevisitRhythmNote note={revisitRhythm} />
               <ContinuityDepthNote indicator={continuityDepth} />
 
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />

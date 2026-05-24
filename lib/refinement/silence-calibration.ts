@@ -127,6 +127,7 @@ export function classifyEmotionalCategory(note: MemoryNote): EmotionalCategory {
   if (id.startsWith("fam-resurface-") || id.startsWith("familiarity-")) return "familiarity";
   if (id.startsWith("recovery-") || id.startsWith("moment-recovery-")) return "recovery";
   if (id.startsWith("milestone-")) return "milestone";
+  if (id.startsWith("revisit-rhythm-")) return "revisit";
   if (id.startsWith("revisit-reward") || id.startsWith("revisit-")) return "revisit";
   if (id.startsWith("change-")) {
     if (/direct|named|hedge/.test(id)) return "direct";

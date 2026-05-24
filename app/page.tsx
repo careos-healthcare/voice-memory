@@ -7,6 +7,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { PersonalisationProgressNote } from "@/components/PersonalisationProgressNote";
 import { ReflectionGoalHint } from "@/components/ReflectionGoalHint";
@@ -20,6 +21,11 @@ import { MotionPage } from "@/components/motion/MotionPage";
 import { consumeStoredFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
 import { homepageArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import {
+  homepageRevisitRhythmMoment,
+  revisitRhythmKindFromNote,
+  trackRevisitRhythmSeen,
+} from "@/lib/refinement/revisit-rhythm";
 import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import {
   HONESTY_LINE,
@@ -43,6 +49,7 @@ export default function HomePage() {
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
 
@@ -57,6 +64,7 @@ export default function HomePage() {
       setRecorderLine(presentation.recorderLine);
       setContinuityDepth(presentation.continuityDepth);
       setArchiveGravity(homepageArchiveGravityMoment(entries));
+      setRevisitRhythm(homepageRevisitRhythmMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -67,6 +75,13 @@ export default function HomePage() {
     limits.archiveGrowth,
     limits.continuation,
   ]);
+
+  useEffect(() => {
+    if (!revisitRhythm) return;
+    const kind = revisitRhythmKindFromNote(revisitRhythm);
+    if (!kind) return;
+    trackRevisitRhythmSeen(revisitRhythm.id, kind);
+  }, [revisitRhythm?.id]);
 
   useEffect(() => {
     const stored = consumeStoredFollowupPrompt();
@@ -101,6 +116,7 @@ export default function HomePage() {
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
           <ArchiveGravityNote note={archiveGravity} />
+          <RevisitRhythmNote note={revisitRhythm} />
           <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={1} />
           <FollowupPromptInline prompt={followupPrompt} onContinue={handleContinueFollowup} />
