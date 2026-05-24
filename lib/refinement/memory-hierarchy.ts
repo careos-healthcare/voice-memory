@@ -1,3 +1,4 @@
+import { applyLoopOptimizationBoost } from "@/lib/retention/loop-optimization";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { shouldSuppressCallbackCopy, tuneCallbackWording } from "@/lib/refinement/callback-wording";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
@@ -223,7 +224,16 @@ export function applyMemoryHierarchy(
   const ranked = notes
     .map((note) => tuneCallbackWording(note, entries))
     .filter((note) => !shouldSuppressCallbackCopy(note, entries))
-    .map((note) => ({ note, score: scoreNote(note, entries) }))
+    .map((note) => {
+      const score = scoreNote(note, entries);
+      return {
+        note,
+        score: {
+          ...score,
+          total: applyLoopOptimizationBoost(note, entries, score.total),
+        },
+      };
+    })
     .filter((row) => row.score.total >= minScore)
     .sort(
       (a, b) =>

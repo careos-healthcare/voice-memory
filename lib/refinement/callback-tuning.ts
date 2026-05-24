@@ -4,6 +4,7 @@ import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { LOW_CONTRAST_RESURFACE_ID } from "@/lib/refinement/callback-suppression";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
+import { applyLoopOptimizationBoost } from "@/lib/retention/loop-optimization";
 import { SCORE_WEAK } from "@/lib/refinement/score-thresholds";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -213,5 +214,6 @@ export function applyTuningScoreBoost(
   baseScore: number,
 ): number {
   const tuning = scoreCallbackTuning(note, entries);
-  return baseScore + Math.round(tuning.total * 0.35) - tuning.penalties;
+  const tuned = baseScore + Math.round(tuning.total * 0.35) - tuning.penalties;
+  return applyLoopOptimizationBoost(note, entries, tuned);
 }

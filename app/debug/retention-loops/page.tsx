@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
+import { LoopOptimizationDebugPanel } from "@/components/debug/LoopOptimizationDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  buildLoopOptimizationReport,
+  type LoopOptimizationReport,
+} from "@/lib/retention/loop-optimization";
 import {
   buildRetentionLoopReport,
   clearRetentionLoopEvents,
@@ -43,12 +48,14 @@ export default function RetentionLoopsDebugPage() {
   const [report, setReport] = useState<RetentionLoopReport | null>(null);
   const [worthReport, setWorthReport] = useState<RevisitWorthReport | null>(null);
   const [rhythmReport, setRhythmReport] = useState<RevisitRhythmReport | null>(null);
+  const [loopReport, setLoopReport] = useState<LoopOptimizationReport | null>(null);
   const [memoryEntries, setMemoryEntries] = useState<ReturnType<typeof getMemoryEligibleEntries>>([]);
 
   const refresh = () => {
     const entries = getMemoryEligibleEntries();
     setMemoryEntries(entries);
     setReport(buildRetentionLoopReport());
+    setLoopReport(buildLoopOptimizationReport(entries));
     setWorthReport(buildRevisitWorthReport(entries));
     setRhythmReport(buildRevisitRhythmReport(entries, "homepage"));
   };
@@ -124,6 +131,8 @@ export default function RetentionLoopsDebugPage() {
                 hint="Follow-up prompts started that became new recordings."
               />
             </div>
+
+            {loopReport?.hasData ? <LoopOptimizationDebugPanel report={loopReport} /> : null}
 
             <Card>
               <CardHeader className="pb-2">

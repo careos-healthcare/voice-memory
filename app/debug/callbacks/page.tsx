@@ -5,21 +5,27 @@ import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
 import { CallbackQualityDebugPanel } from "@/components/debug/CallbackQualityDebugPanel";
+import { LoopOptimizationDebugPanel } from "@/components/debug/LoopOptimizationDebugPanel";
 import { SilenceTimingDebugPanel } from "@/components/debug/SilenceTimingDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buildCallbackQualityReviewReport } from "@/lib/debug/callback-quality-review";
+import { buildLoopOptimizationReport } from "@/lib/retention/loop-optimization";
 import { buildSilenceTimingDebugSnapshot, type SilenceTimingDebugSnapshot } from "@/lib/refinement/silence-calibration";
 import { getAllEntries } from "@/lib/storage";
 import type { CallbackQualityReviewReport } from "@/types/callback-quality-review";
+import type { LoopOptimizationReport } from "@/lib/retention/loop-optimization";
 
 export default function CallbacksDebugPage() {
   const [report, setReport] = useState<CallbackQualityReviewReport | null>(null);
+  const [loopReport, setLoopReport] = useState<LoopOptimizationReport | null>(null);
   const [silence, setSilence] = useState<SilenceTimingDebugSnapshot | null>(null);
 
   const refresh = () => {
-    setReport(buildCallbackQualityReviewReport(getAllEntries()));
+    const entries = getAllEntries();
+    setReport(buildCallbackQualityReviewReport(entries));
+    setLoopReport(buildLoopOptimizationReport(entries));
     setSilence(buildSilenceTimingDebugSnapshot());
   };
 
@@ -67,6 +73,7 @@ export default function CallbacksDebugPage() {
         ) : (
           <div className="mt-12 space-y-10">
             {silence ? <SilenceTimingDebugPanel snapshot={silence} /> : null}
+            {loopReport?.hasData ? <LoopOptimizationDebugPanel report={loopReport} /> : null}
             <CallbackQualityDebugPanel report={report} onRefresh={refresh} />
           </div>
         )}
