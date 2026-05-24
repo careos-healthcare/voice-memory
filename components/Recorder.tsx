@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { MOTION } from "@/lib/motion/tokens";
 import { presenceFade } from "@/lib/motion/variants";
 import { useListeningMode } from "@/lib/hooks/useListeningMode";
-import { saveAudio } from "@/lib/audio-storage";
 import { LISTENING_SAVED_COPY } from "@/lib/listening-mode";
 import { createListeningModeEntry } from "@/lib/pending-reflection";
 import { ContinuationRecorderPrompt } from "@/components/conversation/ContinuationRecorderPrompt";
@@ -28,6 +27,12 @@ import {
 } from "@/lib/retention/retention-loops";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, saveEntry } from "@/lib/storage";
+import {
+  AUDIO_SAVE_PARTIAL_COPY,
+  DRAFT_RECOVERED_COPY,
+} from "@/lib/reliability/copy";
+import { persistTranscriptDraft, saveRecoveryDraft } from "@/lib/reliability/draft-recovery";
+import { saveAudioSafe, saveDraftAudioSafe } from "@/lib/reliability/safe-audio";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
 
 const MAX_SECONDS = 60;
@@ -58,11 +63,13 @@ export function Recorder({
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
+  const mimeTypeRef = useRef("audio/webm");
 
   const [state, setState] = useState<RecorderState>("idle");
   const [seconds, setSeconds] = useState(0);
   const [stage, setStage] = useState<ProcessingStage>("transcribing");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [entry, setEntry] = useState<JournalEntry | null>(null);
 
   const clearTimer = useCallback(() => {
@@ -78,17 +85,48 @@ export function Recorder({
       .forEach((track) => track.stop());
   }, []);
 
+  const saveRecordingBlob = useCallback(
+    async (entryId: string, blob: Blob) => {
+      const result = await saveAudioSafe(entryId, blob, mimeTypeRef.current);
+      if (!result.saved) {
+        setNotice(AUDIO_SAVE_PARTIAL_COPY);
+        return undefined;
+      }
+      return entryId;
+    },
+    [],
+  );
+
+  const finalizeEntry = useCallback(
+    (newEntry: JournalEntry, recoveredDraft = false) => {
+      if (recoveredDraft) {
+        setNotice(DRAFT_RECOVERED_COPY);
+      }
+      setEntry(newEntry);
+      setState("complete");
+      onComplete?.(newEntry);
+
+      window.setTimeout(() => {
+        router.push(`/entry/${newEntry.id}`);
+      }, 1200);
+    },
+    [onComplete, router],
+  );
+
   const processRecording = useCallback(
     async (blob: Blob, durationSeconds: number) => {
       setState("processing");
       setStage("transcribing");
       setError(null);
+      setNotice(null);
 
       try {
         const formData = new FormData();
         formData.append(
           "audio",
-          new File([blob], "recording.webm", { type: blob.type || "audio/webm" }),
+          new File([blob], "recording.webm", {
+            type: blob.type || mimeTypeRef.current,
+          }),
         );
 
         const transcribeResponse = await fetch("/api/transcribe", {
@@ -113,28 +151,17 @@ export function Recorder({
           setStage("saving");
 
           const entryId = crypto.randomUUID();
-
-          try {
-            await saveAudio(entryId, blob, blob.type || "audio/webm");
-          } catch {
-            // Transcript still saved if audio storage fails
-          }
+          const audioId = await saveRecordingBlob(entryId, blob);
 
           const newEntry = createListeningModeEntry(
             entryId,
             transcribeData.transcript,
             durationSeconds,
-            entryId,
+            audioId,
           );
 
           saveEntry(newEntry);
-          setEntry(newEntry);
-          setState("complete");
-          onComplete?.(newEntry);
-
-          window.setTimeout(() => {
-            router.push(`/entry/${newEntry.id}`);
-          }, 1200);
+          finalizeEntry(newEntry);
           return;
         }
 
@@ -151,7 +178,10 @@ export function Recorder({
         const analyzeResponse = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ transcript: transcribeData.transcript, priorContext }),
+          body: JSON.stringify({
+            transcript: transcribeData.transcript,
+            priorContext,
+          }),
         });
 
         const analyzeData = (await analyzeResponse.json()) as {
@@ -159,19 +189,28 @@ export function Recorder({
           error?: string;
         };
 
-        if (!analyzeResponse.ok || !analyzeData.reflection) {
-          throw new Error(analyzeData.error ?? "Could not analyze your entry");
-        }
-
         setStage("saving");
 
-        const entryId = crypto.randomUUID();
+        if (!analyzeResponse.ok || !analyzeData.reflection) {
+          const entryId = crypto.randomUUID();
+          const audioId = await saveRecordingBlob(entryId, blob);
 
-        try {
-          await saveAudio(entryId, blob, blob.type || "audio/webm");
-        } catch {
-          // Transcript + reflection still saved if audio storage fails (quota, etc.)
+          const newEntry = persistTranscriptDraft(
+            transcribeData.transcript,
+            durationSeconds,
+            {
+              id: entryId,
+              audioId,
+              reason: "analysis_failed",
+            },
+          );
+
+          finalizeEntry(newEntry, true);
+          return;
         }
+
+        const entryId = crypto.randomUUID();
+        const audioId = await saveRecordingBlob(entryId, blob);
 
         const newEntry: JournalEntry = {
           id: entryId,
@@ -179,10 +218,26 @@ export function Recorder({
           transcript: transcribeData.transcript,
           reflection: analyzeData.reflection,
           durationSeconds,
-          audioId: entryId,
+          audioId,
         };
 
-        saveEntry(newEntry);
+        try {
+          saveEntry(newEntry);
+        } catch {
+          const recovered = persistTranscriptDraft(
+            transcribeData.transcript,
+            durationSeconds,
+            {
+              id: entryId,
+              audioId,
+              reflection: analyzeData.reflection,
+              reason: "save_failed",
+            },
+          );
+          finalizeEntry(recovered, true);
+          return;
+        }
+
         if (reflectionPrompt || peekFollowupLoopContext()) {
           const meta = peekContinuationMeta();
           trackFollowupRecordingCompleted(newEntry.id);
@@ -193,13 +248,7 @@ export function Recorder({
           );
           consumeContinuationMeta();
         }
-        setEntry(newEntry);
-        setState("complete");
-        onComplete?.(newEntry);
-
-        window.setTimeout(() => {
-          router.push(`/entry/${newEntry.id}`);
-        }, 1200);
+        finalizeEntry(newEntry);
       } catch (processingError) {
         setState("error");
         setError(
@@ -209,7 +258,36 @@ export function Recorder({
         );
       }
     },
-    [onComplete, router, listeningMode, reflectionPrompt],
+    [finalizeEntry, listeningMode, reflectionPrompt, saveRecordingBlob],
+  );
+
+  const recoverUnexpectedRecording = useCallback(
+    async (blob: Blob, durationSeconds: number) => {
+      if (blob.size === 0) return;
+
+      const draftId = crypto.randomUUID();
+      const audioResult = await saveDraftAudioSafe(
+        draftId,
+        blob,
+        mimeTypeRef.current,
+      );
+
+      saveRecoveryDraft({
+        id: draftId,
+        transcript: "",
+        durationSeconds,
+        reflectionPending: true,
+        audioId: audioResult.saved ? `draft-${draftId}` : undefined,
+        reason: "unexpected_stop",
+      });
+
+      setState("error");
+      setNotice(DRAFT_RECOVERED_COPY);
+      setError(
+        "Recording stopped before it could finish. Your audio was preserved when possible.",
+      );
+    },
+    [],
   );
 
   const stopRecording = useCallback(() => {
@@ -223,6 +301,7 @@ export function Recorder({
 
   const startRecording = useCallback(async () => {
     setError(null);
+    setNotice(null);
     setEntry(null);
     chunksRef.current = [];
 
@@ -231,6 +310,7 @@ export function Recorder({
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
         : "audio/webm";
+      mimeTypeRef.current = mimeType;
 
       const recorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = recorder;
@@ -239,6 +319,17 @@ export function Recorder({
         if (event.data.size > 0) {
           chunksRef.current.push(event.data);
         }
+      };
+
+      recorder.onerror = () => {
+        clearTimer();
+        stopTracks();
+        const blob = new Blob(chunksRef.current, { type: mimeType });
+        const durationSeconds = Math.max(
+          1,
+          Math.round((Date.now() - startTimeRef.current) / 1000),
+        );
+        void recoverUnexpectedRecording(blob, durationSeconds);
       };
 
       recorder.onstop = () => {
@@ -271,7 +362,13 @@ export function Recorder({
         "Microphone access is required. Please allow mic permissions and try again.",
       );
     }
-  }, [processRecording, stopRecording, stopTracks]);
+  }, [
+    clearTimer,
+    processRecording,
+    recoverUnexpectedRecording,
+    stopRecording,
+    stopTracks,
+  ]);
 
   useEffect(() => {
     if (autoStart) {
@@ -391,6 +488,11 @@ export function Recorder({
             <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
               {listeningMode ? LISTENING_SAVED_COPY : "Saved."}
             </p>
+            {notice ? (
+              <p className="mt-2 text-sm leading-relaxed text-amber-200/80">
+                {notice}
+              </p>
+            ) : null}
             <p className="mt-2 text-center text-sm text-zinc-500">
               Opening your entry…
             </p>
@@ -406,6 +508,11 @@ export function Recorder({
             className="space-y-4"
           >
             {error ? <ErrorBanner message={error} /> : null}
+            {notice ? (
+              <p className="text-center text-sm leading-relaxed text-amber-200/80">
+                {notice}
+              </p>
+            ) : null}
             <div className="flex justify-center">
               <Button onClick={() => void startRecording()}>Try again</Button>
             </div>

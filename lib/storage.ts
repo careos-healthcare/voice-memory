@@ -6,6 +6,8 @@ import { bumpTimingFromEntry } from "@/lib/refinement/emotional-timing";
 import { trackMoatNewReflection } from "@/lib/retention/moat-metrics";
 import { removeBookmark } from "@/lib/reflection-bookmarks";
 import { normalizeReflection } from "@/lib/reflection";
+import { ensureStorageReady } from "@/lib/reliability/migrations";
+import { safeSetJson } from "@/lib/reliability/safe-local-storage";
 import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
 import type { JournalEntry, Reflection } from "@/types/journal";
 
@@ -17,6 +19,8 @@ function isBrowser(): boolean {
 
 function loadAllEntries(): JournalEntry[] {
   if (!isBrowser()) return [];
+
+  ensureStorageReady();
 
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -72,12 +76,18 @@ export function getEntry(id: string): JournalEntry | undefined {
   return loadAllEntries().find((entry) => entry.id === id);
 }
 
+function persistEntries(entries: JournalEntry[]): void {
+  safeSetJson(STORAGE_KEY, entries);
+}
+
 export function saveEntry(entry: JournalEntry): void {
   if (!isBrowser()) return;
 
+  ensureStorageReady();
+
   const entries = loadAllEntries().filter((existing) => existing.id !== entry.id);
   entries.unshift(entry);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  persistEntries(entries);
   recordReflectionDay(entry.createdAt);
   trackReflectionMilestones(entries.length);
   bumpTimingFromEntry(entry);
@@ -89,7 +99,7 @@ export function deleteEntry(id: string): void {
   if (!isBrowser()) return;
 
   const entries = loadAllEntries().filter((entry) => entry.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  persistEntries(entries);
   removeBookmark(id);
   void deleteAudio(id);
 }
@@ -100,7 +110,7 @@ export async function deleteAllEntries(): Promise<number> {
 
   const entries = loadAllEntries();
   const count = entries.length;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+  persistEntries([]);
   clearHabitState();
 
   for (const entry of entries) {

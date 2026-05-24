@@ -89,6 +89,35 @@ export async function hasAudio(entryId: string): Promise<boolean> {
   return audio !== null;
 }
 
+export async function listAudioEntryIds(): Promise<string[]> {
+  if (typeof indexedDB === "undefined") return [];
+
+  try {
+    const db = await openDb();
+
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readonly");
+      const request = tx.objectStore(STORE).getAllKeys();
+
+      request.onsuccess = () => {
+        db.close();
+        resolve(
+          (request.result as IDBValidKey[])
+            .filter((key): key is string => typeof key === "string")
+            .sort(),
+        );
+      };
+
+      request.onerror = () => {
+        db.close();
+        reject(request.error ?? new Error("Failed to list audio keys"));
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 export async function deleteAudio(entryId: string): Promise<void> {
   if (typeof indexedDB === "undefined") return;
 

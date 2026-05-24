@@ -210,6 +210,9 @@ export default function RetentionDebugPage() {
               <Link href="/debug/patterns" className="text-violet-300 hover:text-violet-200">
                 Full pattern debug →
               </Link>
+              <Link href="/debug/storage-health" className="text-violet-300 hover:text-violet-200">
+                Storage health →
+              </Link>
               <Link href="/launch" className="text-violet-300 hover:text-violet-200">
                 Launch checklist →
               </Link>
