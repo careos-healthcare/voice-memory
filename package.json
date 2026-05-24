@@ -9,7 +9,9 @@
     "lint": "eslint",
     "validate:quiet-copy": "node scripts/validate-quiet-copy.mjs",
     "validate:restraint": "node scripts/validate-product-restraint.mjs",
-    "validate": "npm run validate:quiet-copy && npm run validate:restraint"
+    "validate:stress": "node --import tsx scripts/run-stress-tests.mjs",
+    "stress-tests": "node --import tsx scripts/run-stress-tests.mjs",
+    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:stress"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -34,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

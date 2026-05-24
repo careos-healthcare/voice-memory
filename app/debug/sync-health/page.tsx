@@ -331,7 +331,10 @@ export default function SyncHealthDebugPage() {
             </Card>
 
             <div className="flex flex-wrap gap-3 text-sm">
-              <Link href="/debug/storage-health" className="text-violet-300 hover:text-violet-200">
+              <Link href="/debug/stress" className="text-violet-300 hover:text-violet-200">
+                Archive stress →
+              </Link>
+              <Link href="/debug/storage-health" className="text-zinc-500 hover:text-zinc-300">
                 Storage health →
               </Link>
               <Link href="/account" className="text-zinc-500 hover:text-zinc-300">

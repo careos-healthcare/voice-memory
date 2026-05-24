@@ -307,6 +307,9 @@ export default function StorageHealthDebugPage() {
             <RepairLog result={repairResult} />
 
             <div className="flex flex-wrap gap-3 text-sm">
+              <Link href="/debug/stress" className="text-violet-300 hover:text-violet-200">
+                Archive stress →
+              </Link>
               <Link href="/debug/retention" className="text-violet-300 hover:text-violet-200">
                 Retention dashboard →
               </Link>
