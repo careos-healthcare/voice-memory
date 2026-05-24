@@ -6,6 +6,7 @@ import { RefreshCw } from "lucide-react";
 
 import { CallbackQualityDebugPanel } from "@/components/debug/CallbackQualityDebugPanel";
 import { LoopOptimizationDebugPanel } from "@/components/debug/LoopOptimizationDebugPanel";
+import { RememberedLaterPanel } from "@/components/debug/RememberedLaterPanel";
 import { SilenceTimingDebugPanel } from "@/components/debug/SilenceTimingDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -13,20 +14,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { buildCallbackQualityReviewReport } from "@/lib/debug/callback-quality-review";
 import { buildLoopOptimizationReport } from "@/lib/retention/loop-optimization";
 import { buildSilenceTimingDebugSnapshot, type SilenceTimingDebugSnapshot } from "@/lib/refinement/silence-calibration";
+import { buildRememberedLaterReport } from "@/lib/social-proof/remembered-later";
 import { getAllEntries } from "@/lib/storage";
 import type { CallbackQualityReviewReport } from "@/types/callback-quality-review";
 import type { LoopOptimizationReport } from "@/lib/retention/loop-optimization";
+import type { RememberedLaterReport } from "@/types/social-proof";
 
 export default function CallbacksDebugPage() {
   const [report, setReport] = useState<CallbackQualityReviewReport | null>(null);
   const [loopReport, setLoopReport] = useState<LoopOptimizationReport | null>(null);
   const [silence, setSilence] = useState<SilenceTimingDebugSnapshot | null>(null);
+  const [rememberedLater, setRememberedLater] = useState<RememberedLaterReport | null>(null);
 
   const refresh = () => {
     const entries = getAllEntries();
     setReport(buildCallbackQualityReviewReport(entries));
     setLoopReport(buildLoopOptimizationReport(entries));
     setSilence(buildSilenceTimingDebugSnapshot());
+    setRememberedLater(buildRememberedLaterReport(entries));
   };
 
   useEffect(() => {
@@ -73,12 +78,16 @@ export default function CallbacksDebugPage() {
         ) : (
           <div className="mt-12 space-y-10">
             {silence ? <SilenceTimingDebugPanel snapshot={silence} /> : null}
+            {rememberedLater ? <RememberedLaterPanel report={rememberedLater} /> : null}
             {loopReport?.hasData ? <LoopOptimizationDebugPanel report={loopReport} /> : null}
             <CallbackQualityDebugPanel report={report} onRefresh={refresh} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/social-proof-review" className="text-violet-300 hover:text-violet-200">
+            Social proof review →
+          </Link>
           <Link href="/debug/moat-review" className="text-violet-300 hover:text-violet-200">
             Moat review →
           </Link>
@@ -98,10 +107,7 @@ export default function CallbacksDebugPage() {
             Retention dashboard →
           </Link>
           <Link href="/debug/changes" className="text-violet-300 hover:text-violet-200">
-            Change debug →
-          </Link>
-          <Link href="/memory" className="text-zinc-500 hover:text-zinc-300">
-            Memory →
+            Change moments →
           </Link>
         </div>
       </div>

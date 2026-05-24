@@ -1,5 +1,12 @@
-import { recordCallbackSurfaced } from "@/lib/callback-interaction-signals";
-import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
+import {
+  trackRememberedLaterDelayedRevisit,
+  trackRememberedLaterDelayedReflection,
+} from "@/lib/social-proof/remembered-later";
+import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import {
+  entryInteractionSummary,
+  recordCallbackSurfaced,
+} from "@/lib/callback-interaction-signals";
 import { trackLocalEvent } from "@/lib/local-analytics";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
@@ -388,6 +395,25 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
   });
   trackRetentionEntryRevisited(entryId, sources);
   trackOldEntryMoatRevisit(entryId, sources);
+
+  if (isBrowser()) {
+    try {
+      const raw = localStorage.getItem("voicememory_revisit_last_open");
+      const prior = raw ? (JSON.parse(raw) as { entryId: string; at: string }) : null;
+      localStorage.setItem(
+        "voicememory_revisit_last_open",
+        JSON.stringify({ entryId, at: new Date().toISOString() }),
+      );
+      if (prior?.at) {
+        const gap = daysBetweenKeys(toDayKey(prior.at), toDayKey(new Date().toISOString()));
+        if (gap >= 2) {
+          trackRememberedLaterDelayedRevisit(prior.entryId ?? entryId, entryId);
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }
 }
 
 export function trackRevisitRewardSeen(entryId: string, noteId: string): void {
@@ -415,4 +441,5 @@ export function trackRevisitAudioPlayed(entryId: string, clip: "then" | "now"): 
 export function trackRevisitFollowupStarted(entryId: string, promptId: string): void {
   trackLocalEvent("revisit_followup_started", { entryId, promptId });
   trackRevisitRewardFollowup(entryId, promptId);
+  trackRememberedLaterDelayedReflection(promptId, entryId);
 }

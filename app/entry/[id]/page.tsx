@@ -27,6 +27,8 @@ import { ReflectOnEntryButton } from "@/components/ReflectOnEntryButton";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
 import { SiteHeader } from "@/components/SiteHeader";
+import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
+import { OnboardingTrustLine } from "@/components/social-proof/OnboardingTrustLine";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
@@ -88,6 +90,7 @@ export default function EntryPage() {
   const [revisitExperience, setRevisitExperience] =
     useState<RevisitExperiencePresentation | null>(null);
   const [showReopenFollowup, setShowReopenFollowup] = useState(false);
+  const [revisitAudioReplayed, setRevisitAudioReplayed] = useState(false);
 
   useEffect(() => {
     const found = getEntry(params.id);
@@ -535,6 +538,7 @@ export default function EntryPage() {
                       if (entry) {
                         trackRevisitAudioPlayed(entry.id, clip);
                         trackFirstSessionAudioReplayed(entry.id, clip);
+                        setRevisitAudioReplayed(true);
                       }
                       trackAudioReplayAfterCallback(
                         revisitExperience?.thenVsNow?.id ??
@@ -550,6 +554,18 @@ export default function EntryPage() {
                   prompt={activeFollowup}
                   onContinue={handleContinueFollowup}
                 />
+
+                <OnboardingTrustLine
+                  isRevisit={revisitExperience.isRevisit}
+                  hasRevisitReward={Boolean(revisitExperience.revisitReward)}
+                  hasThenVsNow={Boolean(revisitExperience.thenVsNow)}
+                  reopenPayoffScore={revisitExperience.reopenPayoffScore?.total ?? null}
+                  audioReplayed={revisitAudioReplayed}
+                />
+
+                <div className="pt-2">
+                  <EmotionalProofLine surface="entry_revisit" />
+                </div>
               </section>
             ) : null}
 

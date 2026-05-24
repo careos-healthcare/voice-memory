@@ -7,6 +7,7 @@ import { CrossDeviceCarryoverLine } from "@/components/sync/CrossDeviceCarryover
 import { ArchiveOwnershipSparseLine } from "@/components/archive/ArchiveOwnershipSparseLine";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { OnboardingCompletionProof } from "@/components/social-proof/OnboardingCompletionProof";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
 import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
@@ -121,6 +122,7 @@ export default function HomePage() {
 
         <div className="mt-6 space-y-10 py-2">
           <ActivationOnboarding />
+          <OnboardingCompletionProof />
           <CrossDeviceCarryoverLine />
           <ArchiveOwnershipSparseLine />
           <PersonalisationProgressNote />

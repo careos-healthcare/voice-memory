@@ -12,6 +12,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
 import { ARCHIVE_PERMANENCE_COPY } from "@/lib/archive/copy";
 import {
   buildFullArchivePackage,
@@ -158,6 +159,7 @@ export default function ArchivePage() {
         <MotionPageTitle title="Archive" />
 
         <div className="mt-16 space-y-8">
+          <EmotionalProofLine surface="archive" />
           <ArchiveOwnershipPanel />
 
           <Card className="border-white/[0.06] bg-zinc-900/40">

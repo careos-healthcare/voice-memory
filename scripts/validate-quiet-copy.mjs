@@ -15,6 +15,7 @@ const SKIP_PATH_PARTS = [
   "app/contact",
   "lib/trust-copy.ts",
   "lib/marketing/",
+  "lib/social-proof/",
   "lib/patterns/usefulness-filter.ts",
   "lib/patterns/note-limits.ts",
   "lib/patterns/changes.ts",

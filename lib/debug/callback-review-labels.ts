@@ -1,4 +1,8 @@
 import type { CallbackReviewLabel } from "@/types/callback-quality-review";
+import {
+  trackRememberedLater72h,
+  trackRememberedLaterQuoted,
+} from "@/lib/social-proof/remembered-later";
 
 const REVIEWS_KEY = "voicememory_callback_reviews";
 
@@ -58,6 +62,17 @@ export function toggleCallbackReviewLabel(
     ? current.filter((item) => item !== label)
     : [...current, label];
   setCallbackReviewLabels(callbackId, next);
+
+  if (next.includes("remembered_72h") && !current.includes("remembered_72h")) {
+    trackRememberedLater72h(callbackId);
+  }
+  if (
+    (next.includes("memorable") && !current.includes("memorable")) ||
+    (next.includes("landed_emotionally") && !current.includes("landed_emotionally"))
+  ) {
+    trackRememberedLaterQuoted(callbackId);
+  }
+
   return next;
 }
 

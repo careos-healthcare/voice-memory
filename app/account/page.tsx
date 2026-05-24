@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Cloud, LogOut, RefreshCw, Shield } from "lucide-react";
 
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
+import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -153,6 +154,7 @@ export default function AccountPage() {
 
         <div className="mt-16 space-y-8">
           <p className="text-sm leading-relaxed text-zinc-400">{PRIVATE_BY_DEFAULT_LINE}</p>
+          <EmotionalProofLine surface="account" />
 
           <Card className="border-white/[0.06] bg-zinc-900/40">
             <CardHeader>

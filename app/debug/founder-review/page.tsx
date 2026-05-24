@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Download, RefreshCw } from "lucide-react";
 
 import { FounderReviewPanel } from "@/components/debug/FounderReviewPanel";
+import { RememberedLaterPanel } from "@/components/debug/RememberedLaterPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,20 +13,26 @@ import {
   buildFounderReviewReport,
   downloadFounderReviewJson,
 } from "@/lib/validation/founder-review";
+import { buildRememberedLaterReport } from "@/lib/social-proof/remembered-later";
 import { buildObservationSummariesExport } from "@/lib/validation/observation-summaries";
+import { getAllEntries } from "@/lib/storage";
 import type { FounderReviewReport, ObservationSummariesExport } from "@/types/validation-phase";
+import type { RememberedLaterReport } from "@/types/social-proof";
 
 export default function FounderReviewDebugPage() {
   const [report, setReport] = useState<FounderReviewReport | null>(null);
   const [summaries, setSummaries] = useState<ObservationSummariesExport | null>(null);
+  const [rememberedLater, setRememberedLater] = useState<RememberedLaterReport | null>(null);
 
   const refresh = async () => {
+    const entries = getAllEntries();
     const [nextReport, nextSummaries] = await Promise.all([
       buildFounderReviewReport(),
       buildObservationSummariesExport(),
     ]);
     setReport(nextReport);
     setSummaries(nextSummaries);
+    setRememberedLater(buildRememberedLaterReport(entries));
   };
 
   useEffect(() => {
@@ -64,12 +71,19 @@ export default function FounderReviewDebugPage() {
             <CardContent className="py-12 text-center text-sm text-zinc-500">Building review…</CardContent>
           </Card>
         ) : (
-          <div className="mt-6">
+          <div className="mt-6 space-y-6">
+            {rememberedLater ? <RememberedLaterPanel report={rememberedLater} /> : null}
             <FounderReviewPanel report={report} summaries={summaries} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/emotional-legitimacy" className="text-violet-300 hover:text-violet-200">
+            Emotional legitimacy →
+          </Link>
+          <Link href="/debug/social-proof-review" className="text-violet-300 hover:text-violet-200">
+            Social proof review →
+          </Link>
           <Link href="/debug/tester-feedback" className="text-violet-300 hover:text-violet-200">
             Tester feedback →
           </Link>
