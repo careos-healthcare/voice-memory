@@ -1,10 +1,12 @@
 import { inspectEntryIntegrity } from "@/lib/reliability/integrity";
+import { validateArchivePhotoIntegrity } from "@/lib/photo/integrity";
 import type { JournalEntry } from "@/types/journal";
 import type { VoiceMemoryArchivePackage } from "@/types/archive-permanence";
 import type { EncryptedPayload } from "@/types/sync";
 import type {
   SyncAudioMetadataRecord,
   SyncContinuityModel,
+  SyncPhotoMetadataRecord,
 } from "@/types/sync-continuity";
 import { SYNC_SCHEMA_VERSION } from "@/types/sync-continuity";
 import { isSyncContinuityModel } from "@/lib/sync/merge-strategy";
@@ -16,6 +18,8 @@ export interface ArchiveIntegrityIssue {
     | "duplicate_entry_id"
     | "missing_audio_metadata"
     | "orphan_audio_metadata"
+    | "missing_photo_metadata"
+    | "orphan_photo_metadata"
     | "invalid_archive_package"
     | "corrupted_payload";
   detail: string;
@@ -84,6 +88,34 @@ export function validateSyncContinuityModel(
     }
   }
 
+  const entryIdsWithPhoto = new Set(
+    entries.filter((entry) => entry.photo?.photoId).map((entry) => entry.id),
+  );
+  const photoMetadata = typed.photoMetadata ?? [];
+  const photoMetadataByEntry = new Map(
+    photoMetadata.map((row: SyncPhotoMetadataRecord) => [row.entryId, row]),
+  );
+
+  for (const entryId of entryIdsWithPhoto) {
+    if (!photoMetadataByEntry.has(entryId)) {
+      issues.push({
+        type: "missing_photo_metadata",
+        entryId,
+        detail: "Entry has photo but no sync photo metadata.",
+      });
+    }
+  }
+
+  for (const row of photoMetadata) {
+    if (!entryIdsWithPhoto.has(row.entryId)) {
+      issues.push({
+        type: "orphan_photo_metadata",
+        entryId: row.entryId,
+        detail: "Photo metadata without matching entry photo reference.",
+      });
+    }
+  }
+
   return { valid: issues.length === 0, issues };
 }
 
@@ -132,6 +164,15 @@ export function inspectArchivePackageIntegrity(
       type: "missing_entry_fields",
       entryId: issue.entryId,
       detail: issue.detail,
+    });
+  }
+
+  const photoIntegrity = validateArchivePhotoIntegrity(archive.entries, archive.photos);
+  for (const photoIssue of photoIntegrity.issues) {
+    issues.push({
+      type: photoIssue.level === "error" ? "invalid_archive_package" : "missing_entry_fields",
+      entryId: photoIssue.entryId,
+      detail: photoIssue.message,
     });
   }
 

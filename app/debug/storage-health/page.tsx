@@ -15,6 +15,7 @@ import {
 import {
   buildStorageHealthReport,
   clearBrokenAudioReferences,
+  clearBrokenPhotoReferences,
   repairEntryIntegrity,
 } from "@/lib/reliability/integrity";
 import {
@@ -130,7 +131,7 @@ export default function StorageHealthDebugPage() {
               Storage health
             </h1>
             <p className="mt-2 text-sm text-zinc-400">
-              Entry integrity, audio references, and migration version — all on
+              Entry integrity, audio and photo references, and migration version — all on
               this device.
             </p>
           </div>
@@ -151,6 +152,7 @@ export default function StorageHealthDebugPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <StatCard label="Entries" value={String(report.entriesCount)} />
               <StatCard label="Audio files" value={String(report.audioCount)} />
+              <StatCard label="Photo anchors" value={String(report.photoCount)} />
               <StatCard
                 label="Migration version"
                 value={`${report.storageVersion} / ${CURRENT_STORAGE_VERSION}`}
@@ -159,6 +161,19 @@ export default function StorageHealthDebugPage() {
               <StatCard
                 label="Broken audio refs"
                 value={String(report.brokenAudioReferences)}
+              />
+              <StatCard
+                label="Broken photo refs"
+                value={String(report.brokenPhotoReferences)}
+              />
+              <StatCard
+                label="Photo restore status"
+                value={report.photoRestoreReady ? "Ready" : "Needs review"}
+                hint={
+                  report.orphanPhotoBlobs > 0
+                    ? `${report.orphanPhotoBlobs} orphan blob(s)`
+                    : undefined
+                }
               />
               <StatCard
                 label="Duplicate IDs"
@@ -236,6 +251,15 @@ export default function StorageHealthDebugPage() {
                   onClick={() => void runRepair(repairEntryIntegrity)}
                 >
                   Repair entries
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() => void runRepair(clearBrokenPhotoReferences)}
+                >
+                  Clear broken photo refs
                 </Button>
                 <Button
                   type="button"

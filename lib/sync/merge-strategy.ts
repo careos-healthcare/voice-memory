@@ -10,6 +10,7 @@ import type {
   SyncLocalEventRecord,
   SyncMergeConflict,
   SyncMergeResult,
+  SyncPhotoMetadataRecord,
   SyncReviewRecord,
   SyncSettingsRecord,
 } from "@/types/sync-continuity";
@@ -109,6 +110,26 @@ export function mergeAudioMetadata(
   return Array.from(byEntryId.values());
 }
 
+export function mergePhotoMetadata(
+  local: SyncPhotoMetadataRecord[],
+  remote: SyncPhotoMetadataRecord[],
+  localDeviceId: string,
+): SyncPhotoMetadataRecord[] {
+  const byEntryId = new Map<string, SyncPhotoMetadataRecord>();
+
+  for (const record of [...remote, ...local]) {
+    const existing = byEntryId.get(record.entryId);
+    if (!existing) {
+      byEntryId.set(record.entryId, record);
+      continue;
+    }
+    const { winner } = pickNewerRecord(existing, record, localDeviceId);
+    byEntryId.set(record.entryId, winner);
+  }
+
+  return Array.from(byEntryId.values());
+}
+
 export function mergeBookmarkRecords(
   local: SyncBookmarkRecord[],
   remote: SyncBookmarkRecord[],
@@ -192,6 +213,11 @@ export function mergeSyncContinuityModelsWithResult(
     remote.audioMetadata,
     localDeviceId,
   );
+  const photoMetadata = mergePhotoMetadata(
+    local.photoMetadata ?? [],
+    remote.photoMetadata ?? [],
+    localDeviceId,
+  );
   const bookmarks = mergeBookmarkRecords(local.bookmarks, remote.bookmarks, localDeviceId);
   const reviews = mergeReviewRecords(local.reviews, remote.reviews, localDeviceId);
   const settings = mergeSettingsRecords(local.settings, remote.settings, localDeviceId);
@@ -220,6 +246,7 @@ export function mergeSyncContinuityModelsWithResult(
       envelope,
       entries: entries.merged,
       audioMetadata,
+      photoMetadata,
       bookmarks,
       settings,
       reviews,
@@ -273,6 +300,21 @@ export function normalizeLegacySyncBundle(
         audioId: row.entry.audioId!,
         durationSeconds: row.entry.durationSeconds,
         updatedAt: row.updatedAt,
+        sourceDeviceId: deviceId,
+        backedUp: false,
+      })),
+    photoMetadata: entries
+      .filter((row) => row.entry.photo?.photoId)
+      .map((row) => ({
+        entryId: row.entry.id,
+        photoId: row.entry.photo!.photoId,
+        mimeType: row.entry.photo!.mimeType,
+        byteLength: row.entry.photo!.byteLength,
+        contentHash: row.entry.photo!.contentHash,
+        width: row.entry.photo!.width,
+        height: row.entry.photo!.height,
+        attachedAt: row.entry.photo!.attachedAt,
+        updatedAt: row.entry.photo!.attachedAt || row.updatedAt,
         sourceDeviceId: deviceId,
         backedUp: false,
       })),

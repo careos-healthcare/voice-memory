@@ -55,6 +55,7 @@ export interface ArchiveImportPreview {
   entryCount: number;
   bookmarkCount: number;
   audioCount: number;
+  photoCount: number;
   reviewLabelCount: number;
   hasSettings: boolean;
   dateRange: { from: string | null; to: string | null };
@@ -69,4 +70,5 @@ export interface ArchiveRestoreOptions {
   mode: ArchiveRestoreMode;
   includeSettings: boolean;
   includeAudio: boolean;
+  includePhotos: boolean;
 }

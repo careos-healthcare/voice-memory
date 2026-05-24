@@ -40,6 +40,7 @@ export default function ArchivePage() {
   const [restoreMode, setRestoreMode] = useState<ArchiveRestoreMode>("merge");
   const [includeSettings, setIncludeSettings] = useState(true);
   const [includeAudio, setIncludeAudio] = useState(true);
+  const [includePhotos, setIncludePhotos] = useState(true);
   const [lifePeriodLine, setLifePeriodLine] = useState<string | null>(null);
 
   const refreshCount = () => setEntryCount(getStoredEntryCount());
@@ -81,6 +82,7 @@ export default function ArchivePage() {
       const validated = validateArchiveImport(parsed);
       setPreview(validated);
       setIncludeAudio((validated.audioCount ?? 0) > 0);
+      setIncludePhotos((validated.photoCount ?? 0) > 0);
       if (!validated.valid) {
         showMessage("Archive could not be validated.");
       }
@@ -108,11 +110,12 @@ export default function ArchivePage() {
         mode: restoreMode,
         includeSettings,
         includeAudio,
+        includePhotos,
       });
       refreshCount();
       setPreview(null);
       showMessage(
-        `Restored ${result.entries} reflection${result.entries === 1 ? "" : "s"}${result.audio ? ` and ${result.audio} audio file${result.audio === 1 ? "" : "s"}` : ""}.`,
+        `Restored ${result.entries} reflection${result.entries === 1 ? "" : "s"}${result.audio ? ` and ${result.audio} audio file${result.audio === 1 ? "" : "s"}` : ""}${result.photos ? ` and ${result.photos} photo${result.photos === 1 ? "" : "s"}` : ""}.`,
       );
     } catch (error) {
       showMessage(error instanceof Error ? error.message : "Restore failed.");
@@ -222,9 +225,11 @@ export default function ArchivePage() {
                 mode={restoreMode}
                 includeSettings={includeSettings}
                 includeAudio={includeAudio}
+                includePhotos={includePhotos}
                 onModeChange={setRestoreMode}
                 onIncludeSettingsChange={setIncludeSettings}
                 onIncludeAudioChange={setIncludeAudio}
+                onIncludePhotosChange={setIncludePhotos}
               />
               <Button
                 disabled={busy || !preview.valid}

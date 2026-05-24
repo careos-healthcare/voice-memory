@@ -1,4 +1,6 @@
 import { toDayKey } from "@/lib/dates";
+import { validateArchivePhotoIntegrity } from "@/lib/photo/integrity";
+import { PHOTO_EVENTS, trackPhotoEvent } from "@/lib/local-analytics";
 import { getAllEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type {
@@ -70,6 +72,7 @@ function normalizeFullArchive(raw: Record<string, unknown>): VoiceMemoryArchiveP
     : [];
 
   const audio = Array.isArray(raw.audio) ? raw.audio : undefined;
+  const photos = Array.isArray(raw.photos) ? raw.photos : undefined;
 
   return {
     format: "voicememory-archive",
@@ -91,6 +94,7 @@ function normalizeFullArchive(raw: Record<string, unknown>): VoiceMemoryArchiveP
     },
     memoryReviewLabels,
     audio,
+    photos,
   };
 }
 
@@ -117,6 +121,7 @@ export function validateArchiveImport(
       entryCount: 0,
       bookmarkCount: 0,
       audioCount: 0,
+      photoCount: 0,
       reviewLabelCount: 0,
       hasSettings: false,
       dateRange: { from: null, to: null },
@@ -140,13 +145,32 @@ export function validateArchiveImport(
   }
 
   const hasErrors = issues.some((issue) => issue.level === "error");
+  const photoIntegrity = validateArchivePhotoIntegrity(archive.entries, archive.photos);
+
+  trackPhotoEvent(PHOTO_EVENTS.restoreChecked, {
+    photoCount: String(photoIntegrity.photoCount),
+    valid: String(photoIntegrity.valid),
+    missingBlobs: String(photoIntegrity.missingBlobs),
+    orphanFiles: String(photoIntegrity.orphanFiles),
+  });
+
+  for (const photoIssue of photoIntegrity.issues) {
+    issues.push({
+      level: photoIssue.level,
+      message: photoIssue.message,
+    });
+  }
+
+  const finalHasErrors =
+    hasErrors || issues.some((issue) => issue.level === "error");
 
   return {
-    valid: !hasErrors,
+    valid: !finalHasErrors,
     formatLabel: "VoiceMemory archive",
     entryCount: archive.entries.length,
     bookmarkCount: archive.bookmarks.length,
     audioCount: archive.audio?.length ?? 0,
+    photoCount: photoIntegrity.photoCount,
     reviewLabelCount: archive.memoryReviewLabels.length,
     hasSettings: Boolean(archive.settings),
     dateRange: dateRangeForEntries(archive.entries),

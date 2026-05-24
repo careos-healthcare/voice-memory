@@ -31,6 +31,20 @@ export interface SyncAudioMetadataRecord {
   backedUp: boolean;
 }
 
+export interface SyncPhotoMetadataRecord {
+  entryId: string;
+  photoId: string;
+  mimeType: string;
+  byteLength?: number;
+  contentHash?: string;
+  width?: number;
+  height?: number;
+  attachedAt: string;
+  updatedAt: string;
+  sourceDeviceId: string;
+  backedUp: boolean;
+}
+
 export interface SyncBookmarkRecord {
   bookmark: ReflectionBookmark;
   updatedAt: string;
@@ -117,6 +131,7 @@ export interface SyncContinuityModel {
   envelope: SyncEnvelope;
   entries: SyncEntryRecord[];
   audioMetadata: SyncAudioMetadataRecord[];
+  photoMetadata: SyncPhotoMetadataRecord[];
   bookmarks: SyncBookmarkRecord[];
   settings: SyncSettingsRecord;
   reviews: SyncReviewRecord[];

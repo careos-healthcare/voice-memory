@@ -5,6 +5,11 @@ export interface EntryPhotoMeta {
   mimeType: string;
   attachedAt: string;
   filename?: string;
+  byteLength?: number;
+  width?: number;
+  height?: number;
+  contentHash?: string;
+  compressed?: boolean;
 }
 
 export interface ArchivePhotoFile {
@@ -13,6 +18,8 @@ export interface ArchivePhotoFile {
   dataBase64: string;
   filename: string;
   attachedAt: string;
+  byteLength?: number;
+  contentHash?: string;
 }
 
 export interface SoftTimelineSegment {

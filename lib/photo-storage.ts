@@ -1,6 +1,30 @@
+import { hashPhotoBlob } from "@/lib/photo/integrity";
+
 const DB_NAME = "voicememory_photos";
 const DB_VERSION = 1;
 const STORE = "attachments";
+
+export interface StoredPhotoRecord {
+  entryId: string;
+  blob: Blob;
+  mimeType: string;
+  savedAt: string;
+  byteLength: number;
+  originalByteLength?: number;
+  width?: number;
+  height?: number;
+  contentHash?: string;
+}
+
+export interface SavedPhotoResult {
+  mimeType: string;
+  byteLength: number;
+  originalByteLength: number;
+  width: number;
+  height: number;
+  contentHash: string;
+  savedAt: string;
+}
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -25,10 +49,20 @@ export async function savePhoto(
   entryId: string,
   blob: Blob,
   mimeType?: string,
-): Promise<void> {
+  meta?: {
+    originalByteLength?: number;
+    width?: number;
+    height?: number;
+  },
+): Promise<SavedPhotoResult> {
+  const resolvedMime = mimeType ?? (blob.type || "image/jpeg");
+  const contentHash = await hashPhotoBlob(blob);
+  const savedAt = new Date().toISOString();
+  const byteLength = blob.size;
+
   const db = await openDb();
 
-  return new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const tx = db.transaction(STORE, "readwrite");
     tx.oncomplete = () => {
       db.close();
@@ -42,15 +76,30 @@ export async function savePhoto(
     tx.objectStore(STORE).put({
       entryId,
       blob,
-      mimeType: mimeType ?? (blob.type || "image/jpeg"),
-      savedAt: new Date().toISOString(),
-    });
+      mimeType: resolvedMime,
+      savedAt,
+      byteLength,
+      originalByteLength: meta?.originalByteLength,
+      width: meta?.width,
+      height: meta?.height,
+      contentHash,
+    } satisfies StoredPhotoRecord);
   });
+
+  return {
+    mimeType: resolvedMime,
+    byteLength,
+    originalByteLength: meta?.originalByteLength ?? byteLength,
+    width: meta?.width ?? 0,
+    height: meta?.height ?? 0,
+    contentHash,
+    savedAt,
+  };
 }
 
 export async function getPhoto(
   entryId: string,
-): Promise<{ blob: Blob; mimeType: string; savedAt: string } | null> {
+): Promise<StoredPhotoRecord | null> {
   if (typeof indexedDB === "undefined") return null;
 
   try {
@@ -62,14 +111,12 @@ export async function getPhoto(
 
       request.onsuccess = () => {
         db.close();
-        const row = request.result as
-          | { blob: Blob; mimeType: string; savedAt: string }
-          | undefined;
+        const row = request.result as StoredPhotoRecord | undefined;
         if (!row?.blob) {
           resolve(null);
           return;
         }
-        resolve({ blob: row.blob, mimeType: row.mimeType, savedAt: row.savedAt });
+        resolve(row);
       };
 
       request.onerror = () => {
@@ -146,4 +193,14 @@ export async function listPhotoEntryIds(): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+export async function countPhotos(): Promise<number> {
+  const ids = await listPhotoEntryIds();
+  return ids.length;
+}
+
+export async function photoExists(entryId: string): Promise<boolean> {
+  const photo = await getPhoto(entryId);
+  return Boolean(photo?.blob?.size);
 }

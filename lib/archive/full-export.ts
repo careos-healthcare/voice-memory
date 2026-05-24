@@ -7,6 +7,8 @@ import { getReminderPreferences } from "@/lib/reminder-preferences";
 import { getAllEntries } from "@/lib/storage";
 import { getAudio } from "@/lib/audio-storage";
 import { getPhoto, listPhotoEntryIds } from "@/lib/photo-storage";
+import { validateArchivePhotoIntegrity } from "@/lib/photo/integrity";
+import { PHOTO_EVENTS, trackPhotoEvent } from "@/lib/local-analytics";
 import { attachPermanenceManifest } from "@/lib/archive/archive-guarantees";
 import { slugExportDate } from "@/lib/memory-export";
 import {
@@ -92,6 +94,8 @@ export async function collectArchivePhotos(includePhotos: boolean): Promise<Arch
       dataBase64: bytesToBase64(new Uint8Array(buffer)),
       filename: `photos/${entryId}.${ext}`,
       attachedAt: entry?.photo?.attachedAt ?? photo.savedAt,
+      byteLength: photo.byteLength ?? buffer.byteLength,
+      contentHash: photo.contentHash ?? entry?.photo?.contentHash,
     });
   }
 
@@ -105,12 +109,24 @@ export async function buildFullArchivePackage(
 ): Promise<VoiceMemoryArchivePackage> {
   const audio = await collectArchiveAudio(includeAudio);
   const photos = await collectArchivePhotos(includePhotos);
+  const entries = getAllEntries();
+
+  const photoIntegrity = validateArchivePhotoIntegrity(entries, photos);
+  if (!photoIntegrity.valid) {
+    throw new Error("Photo archive integrity check failed before export.");
+  }
+
+  if (photos.length > 0) {
+    trackPhotoEvent(PHOTO_EVENTS.exported, {
+      photoCount: String(photos.length),
+    });
+  }
 
   return attachPermanenceManifest({
     format: "voicememory-archive",
     version: 1,
     exportedAt: new Date().toISOString(),
-    entries: getAllEntries(),
+    entries,
     bookmarks: getAllBookmarks(),
     settings: buildArchiveSettingsSnapshot(),
     memoryReviewLabels: readAllCallbackReviews(),

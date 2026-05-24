@@ -59,6 +59,7 @@ function emptyModel(
     },
     entries,
     audioMetadata: [],
+    photoMetadata: [],
     bookmarks: [],
     settings: {
       reminders: {

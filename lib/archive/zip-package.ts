@@ -26,6 +26,7 @@ export function downloadArchiveZipPackage(archive: VoiceMemoryArchivePackage): v
           entryCount: archive.entries.length,
           bookmarkCount: archive.bookmarks.length,
           audioCount: archive.audio?.length ?? 0,
+          photoCount: archive.photos?.length ?? 0,
         },
         null,
         2,
@@ -40,6 +41,7 @@ export function downloadArchiveZipPackage(archive: VoiceMemoryArchivePackage): v
         "archive.json — full structured archive",
         "reflections.md — readable export",
         "audio/ — recordings where available",
+        "photos/ — memory anchor images where available",
         "",
         "Import this package from /archive in VoiceMemory.",
       ].join("\n"),
@@ -48,6 +50,12 @@ export function downloadArchiveZipPackage(archive: VoiceMemoryArchivePackage): v
 
   if (archive.audio) {
     for (const file of archive.audio) {
+      files[file.filename] = base64ToBytes(file.dataBase64);
+    }
+  }
+
+  if (archive.photos) {
+    for (const file of archive.photos) {
       files[file.filename] = base64ToBytes(file.dataBase64);
     }
   }

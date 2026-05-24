@@ -1,4 +1,5 @@
 import { listAudioEntryIds } from "@/lib/audio-storage";
+import { inspectPhotoIntegrity } from "@/lib/photo/integrity";
 import { normalizeReflection } from "@/lib/reflection";
 import { safeSetJson } from "@/lib/reliability/safe-local-storage";
 import { readStorageVersion } from "@/lib/reliability/storage-version";
@@ -96,20 +97,26 @@ export async function buildStorageHealthReport(): Promise<StorageHealthReport> {
   const entries = getAllEntries();
   const audioIdsList = await listAudioEntryIds();
   const audioIds = new Set(audioIdsList);
-  const issues = inspectEntryIntegrity(entries, audioIds);
+  const entryIssues = inspectEntryIntegrity(entries, audioIds);
+  const photoSummary = await inspectPhotoIntegrity(entries);
+  const issues = [...entryIssues, ...photoSummary.issues];
 
   return {
     storageVersion: readStorageVersion(),
     entriesCount: entries.length,
     audioCount: audioIdsList.length,
-    brokenAudioReferences: issues.filter(
+    photoCount: photoSummary.photoCount,
+    brokenAudioReferences: entryIssues.filter(
       (issue) => issue.type === "missing_audio_reference",
     ).length,
-    duplicateIds: issues.filter((issue) => issue.type === "duplicate_id").length,
-    malformedReflections: issues.filter(
+    brokenPhotoReferences: photoSummary.brokenPhotoReferences,
+    orphanPhotoBlobs: photoSummary.orphanPhotoBlobs,
+    photoRestoreReady: photoSummary.restoreReady,
+    duplicateIds: entryIssues.filter((issue) => issue.type === "duplicate_id").length,
+    malformedReflections: entryIssues.filter(
       (issue) => issue.type === "malformed_reflection",
     ).length,
-    missingTimestamps: issues.filter(
+    missingTimestamps: entryIssues.filter(
       (issue) => issue.type === "missing_timestamp",
     ).length,
     issues,
@@ -197,6 +204,34 @@ export async function repairEntryIntegrity(): Promise<RepairResult> {
     details.push(`Removed ${entries.length - fixed.length} duplicate entries`);
     repaired += entries.length - fixed.length;
   }
+
+  safeSetJson(ENTRIES_KEY, fixed);
+  return { repaired, details };
+}
+
+export async function clearBrokenPhotoReferences(): Promise<RepairResult> {
+  const entries = getAllEntries();
+  const photoSummary = await inspectPhotoIntegrity(entries);
+  const brokenIds = new Set(
+    photoSummary.issues
+      .filter((issue) => issue.type === "missing_photo_reference" && issue.entryId)
+      .map((issue) => issue.entryId!),
+  );
+
+  if (brokenIds.size === 0) {
+    return { repaired: 0, details: [] };
+  }
+
+  let repaired = 0;
+  const details: string[] = [];
+  const fixed = entries.map((entry) => {
+    if (!brokenIds.has(entry.id) || !entry.photo) return entry;
+    repaired += 1;
+    details.push(`Cleared broken photo reference for ${entry.id}`);
+    const next = { ...entry };
+    delete next.photo;
+    return next;
+  });
 
   safeSetJson(ENTRIES_KEY, fixed);
   return { repaired, details };

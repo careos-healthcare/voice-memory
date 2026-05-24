@@ -90,6 +90,22 @@ export function buildLocalSyncModel(): SyncContinuityModel {
       backedUp: false,
     }));
 
+  const photoMetadata = entries
+    .filter((row) => row.entry.photo?.photoId)
+    .map((row) => ({
+      entryId: row.entry.id,
+      photoId: row.entry.photo!.photoId,
+      mimeType: row.entry.photo!.mimeType,
+      byteLength: row.entry.photo!.byteLength,
+      contentHash: row.entry.photo!.contentHash,
+      width: row.entry.photo!.width,
+      height: row.entry.photo!.height,
+      attachedAt: row.entry.photo!.attachedAt,
+      updatedAt: row.entry.photo!.attachedAt || row.updatedAt,
+      sourceDeviceId: deviceId,
+      backedUp: false,
+    }));
+
   return {
     envelope: {
       schemaVersion: SYNC_SCHEMA_VERSION,
@@ -99,6 +115,7 @@ export function buildLocalSyncModel(): SyncContinuityModel {
     },
     entries,
     audioMetadata,
+    photoMetadata,
     bookmarks,
     settings,
     reviews,
@@ -122,6 +139,7 @@ export function normalizeRemoteSyncPayload(
     const model = payload as SyncContinuityModel;
     return {
       ...model,
+      photoMetadata: model.photoMetadata ?? [],
       emotionalContinuity: model.emotionalContinuity ?? null,
     };
   }

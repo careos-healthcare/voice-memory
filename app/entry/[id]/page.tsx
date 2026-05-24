@@ -72,6 +72,7 @@ import {
   buildCopiedMomentQuietShareCard,
   buildRevisitQuietShareCard,
 } from "@/lib/sharing/quiet-sharing";
+import { PHOTO_EVENTS, trackPhotoEvent } from "@/lib/local-analytics";
 import { buildEntrySharedMemoryMoment } from "@/lib/memory/shared-moments";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -172,6 +173,11 @@ export default function EntryPage() {
       entryId: entry.id,
     });
   }, [entry?.id, revisitExperience?.thenVsNow?.id]);
+
+  useEffect(() => {
+    if (!entry?.id || !entry.photo?.photoId || !revisitExperience?.isRevisit) return;
+    trackPhotoEvent(PHOTO_EVENTS.entryRevisited, { entryId: entry.id });
+  }, [entry?.id, entry?.photo?.photoId, revisitExperience?.isRevisit]);
 
   useEffect(() => {
     if (!revisitExperience?.isRevisit) {

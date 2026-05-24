@@ -77,6 +77,7 @@ function emptyModel(deviceId: string, entries: SyncEntryRecord[] = []): SyncCont
     },
     entries,
     audioMetadata: [],
+    photoMetadata: [],
     bookmarks: [],
     settings: {
       reminders: {

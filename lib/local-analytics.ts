@@ -19,6 +19,17 @@ export const LAUNCH_EVENTS = {
   demoModeExited: "demo_mode_exited",
 } as const;
 
+export const PHOTO_EVENTS = {
+  dragAttached: "photo_drag_attached",
+  pasteAttached: "photo_paste_attached",
+  replaced: "photo_replaced",
+  entryRevisited: "photo_entry_revisited",
+  exported: "photo_exported",
+  restoreChecked: "photo_restore_checked",
+} as const;
+
+export type PhotoEventName = (typeof PHOTO_EVENTS)[keyof typeof PHOTO_EVENTS];
+
 export type LaunchEventName = (typeof LAUNCH_EVENTS)[keyof typeof LAUNCH_EVENTS];
 
 const EVENTS_KEY = "voicememory_local_events";
@@ -48,6 +59,13 @@ export function trackLocalEvent(
 
 export function trackLaunchEvent(
   name: LaunchEventName,
+  meta?: Record<string, string>,
+): void {
+  trackLocalEvent(name, meta);
+}
+
+export function trackPhotoEvent(
+  name: PhotoEventName,
   meta?: Record<string, string>,
 ): void {
   trackLocalEvent(name, meta);

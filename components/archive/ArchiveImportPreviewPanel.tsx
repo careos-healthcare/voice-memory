@@ -7,9 +7,11 @@ interface ArchiveImportPreviewProps {
   mode: ArchiveRestoreMode;
   includeSettings: boolean;
   includeAudio: boolean;
+  includePhotos: boolean;
   onModeChange: (mode: ArchiveRestoreMode) => void;
   onIncludeSettingsChange: (value: boolean) => void;
   onIncludeAudioChange: (value: boolean) => void;
+  onIncludePhotosChange: (value: boolean) => void;
 }
 
 export function ArchiveImportPreviewPanel({
@@ -17,9 +19,11 @@ export function ArchiveImportPreviewPanel({
   mode,
   includeSettings,
   includeAudio,
+  includePhotos,
   onModeChange,
   onIncludeSettingsChange,
   onIncludeAudioChange,
+  onIncludePhotosChange,
 }: ArchiveImportPreviewProps) {
   if (!preview.package) return null;
 
@@ -33,6 +37,9 @@ export function ArchiveImportPreviewPanel({
             : ""}
           {preview.audioCount > 0
             ? ` · ${preview.audioCount} audio file${preview.audioCount === 1 ? "" : "s"}`
+            : ""}
+          {preview.photoCount > 0
+            ? ` · ${preview.photoCount} photo${preview.photoCount === 1 ? "" : "s"}`
             : ""}
         </p>
         {preview.dateRange.from ? (
@@ -95,6 +102,15 @@ export function ArchiveImportPreviewPanel({
             disabled={preview.audioCount === 0}
           />
           Restore audio recordings
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={includePhotos}
+            onChange={(event) => onIncludePhotosChange(event.target.checked)}
+            disabled={preview.photoCount === 0}
+          />
+          Restore photo memory anchors
         </label>
       </div>
     </div>

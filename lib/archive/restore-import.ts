@@ -2,6 +2,7 @@ import { saveAudio } from "@/lib/audio-storage";
 import { deleteAllEntriesAndAudio } from "@/lib/data-controls";
 import { setListeningModeEnabled } from "@/lib/listening-mode";
 import { setFullDetailEnabled } from "@/lib/quiet-mode";
+import { savePhoto } from "@/lib/photo-storage";
 import { getAllBookmarks } from "@/lib/reflection-bookmarks";
 import { setReflectionGoal } from "@/lib/reflection-goal";
 import { saveReminderPreferences } from "@/lib/reminder-preferences";
@@ -44,6 +45,20 @@ async function restoreAudio(archive: VoiceMemoryArchivePackage): Promise<number>
   return restored;
 }
 
+async function restorePhotos(archive: VoiceMemoryArchivePackage): Promise<number> {
+  if (!archive.photos?.length) return 0;
+
+  let restored = 0;
+  for (const file of archive.photos) {
+    const blob = base64ToBlob(file.dataBase64, file.mimeType);
+    await savePhoto(file.entryId, blob, file.mimeType, {
+      originalByteLength: file.byteLength,
+    });
+    restored += 1;
+  }
+  return restored;
+}
+
 function writeEntries(entries: VoiceMemoryArchivePackage["entries"]): void {
   const sorted = [...entries].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -76,7 +91,7 @@ function mergeBookmarks(archive: VoiceMemoryArchivePackage): void {
 export async function restoreArchivePackage(
   archive: VoiceMemoryArchivePackage,
   options: ArchiveRestoreOptions,
-): Promise<{ entries: number; audio: number }> {
+): Promise<{ entries: number; audio: number; photos: number }> {
   if (options.mode === "replace") {
     await deleteAllEntriesAndAudio();
     writeEntries(archive.entries);
@@ -89,7 +104,8 @@ export async function restoreArchivePackage(
   }
 
   const audio = options.includeAudio ? await restoreAudio(archive) : 0;
-  return { entries: archive.entries.length, audio };
+  const photos = options.includePhotos ? await restorePhotos(archive) : 0;
+  return { entries: archive.entries.length, audio, photos };
 }
 
 /** Delete all local archive data after explicit confirmation in UI. */
