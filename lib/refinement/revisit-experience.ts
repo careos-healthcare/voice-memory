@@ -19,6 +19,7 @@ import {
 } from "@/lib/refinement/emotional-timing";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
+import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
 import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
 import {
   markMoatRevisitAudioReplayed,
@@ -73,6 +74,8 @@ export interface RevisitExperiencePresentation {
   livingResurfacing: MemoryNote | null;
   /** How you sound on this thread — transcript pacing, not clinical analysis. */
   voiceIdentity: MemoryNote | null;
+  /** When this reflection belonged — before/during/after, without charts. */
+  emotionalChapter: MemoryNote | null;
   followupPrompt: FollowupPrompt | null;
 }
 
@@ -358,6 +361,7 @@ export function buildRevisitExperience(
       thenVsNow: null,
       livingResurfacing: null,
       voiceIdentity: null,
+      emotionalChapter: null,
       followupPrompt: null,
     };
   }
@@ -380,6 +384,7 @@ export function buildRevisitExperience(
   const revisitReward = resolveRevisitRewardLine(allEntries, entryId, thenVsNow, bestLine);
   const livingResurfacing = pickLivingResurfacingForEntry(allEntries, entryId);
   const voiceIdentity = pickVoiceIdentityForEntry(allEntries, entryId);
+  const emotionalChapter = pickEmotionalChapterForEntry(allEntries, entryId);
   const followupPrompt = buildRevisitFollowupPrompt(revisitReward, thenVsNow);
 
   const calibrated = calibrateRevisitExperience(
@@ -390,6 +395,7 @@ export function buildRevisitExperience(
       thenVsNow,
       livingResurfacing,
       voiceIdentity,
+      emotionalChapter,
       followupPrompt,
     },
     allEntries,
@@ -414,10 +420,19 @@ export function buildRevisitExperience(
       ? calibrated.voiceIdentity
       : null;
 
+  const resolvedEmotionalChapter =
+    calibrated.emotionalChapter &&
+    calibrated.emotionalChapter.text !== calibrated.revisitReward?.text &&
+    calibrated.emotionalChapter.text !== resolvedLivingResurfacing?.text &&
+    calibrated.emotionalChapter.text !== resolvedVoiceIdentity?.text
+      ? calibrated.emotionalChapter
+      : null;
+
   return {
     ...calibrated,
     livingResurfacing: resolvedLivingResurfacing,
     voiceIdentity: resolvedVoiceIdentity,
+    emotionalChapter: resolvedEmotionalChapter,
   };
 }
 

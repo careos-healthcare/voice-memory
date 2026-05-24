@@ -11,6 +11,7 @@ import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
 import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
 import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
@@ -24,6 +25,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
 import { memoryArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { memoryEmotionalChapterMoment } from "@/lib/memory/emotional-chapters";
 import { memoryLivingResurfacingMoment } from "@/lib/memory/living-resurfacing";
 import {
   memoryRevisitRhythmMoment,
@@ -73,6 +75,7 @@ export default function MemoryPage() {
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
   const [livingResurfacing, setLivingResurfacing] = useState<MemoryNote | null>(null);
+  const [emotionalChapter, setEmotionalChapter] = useState<MemoryNote | null>(null);
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
 
   useEffect(() => {
@@ -101,6 +104,7 @@ export default function MemoryPage() {
       setContinuityDepth(memoryContinuityDepthIndicator(entries));
       setArchiveGravity(memoryArchiveGravityMoment(entries));
       setLivingResurfacing(memoryLivingResurfacingMoment(entries));
+      setEmotionalChapter(memoryEmotionalChapterMoment(entries));
       setRevisitRhythm(memoryRevisitRhythmMoment(entries));
     });
     return () => cancelAnimationFrame(id);
@@ -182,6 +186,7 @@ export default function MemoryPage() {
 
               <ArchiveGravityNote note={archiveGravity} />
               <LivingResurfacingNote note={livingResurfacing} />
+              <EmotionalChapterNote note={emotionalChapter} />
               <RevisitRhythmNote note={revisitRhythm} />
               <ContinuityDepthNote indicator={continuityDepth} />
 

@@ -10,6 +10,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
 import { VoiceIdentityNote } from "@/components/memory/VoiceIdentityNote";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
@@ -31,6 +32,7 @@ import {
 } from "@/lib/conversation/followup-prompts";
 import { monthlyKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { monthlyArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { monthlyEmotionalChapterMoment } from "@/lib/memory/emotional-chapters";
 import { monthlyVoiceIdentityMoment } from "@/lib/memory/voice-identity";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
@@ -47,6 +49,7 @@ export default function MonthlyPage() {
   const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
   const [voiceIdentity, setVoiceIdentity] = useState<MemoryNote | null>(null);
+  const [emotionalChapter, setEmotionalChapter] = useState<MemoryNote | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
@@ -96,6 +99,7 @@ export default function MonthlyPage() {
       );
       setArchiveGravity(monthlyArchiveGravityMoment(entries));
       setVoiceIdentity(monthlyVoiceIdentityMoment(entries));
+      setEmotionalChapter(monthlyEmotionalChapterMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -168,6 +172,7 @@ export default function MonthlyPage() {
               <PrimaryCallbackNote note={knowsMe} />
               <ArchiveGravityNote note={archiveGravity} />
               <VoiceIdentityNote note={voiceIdentity} />
+              <EmotionalChapterNote note={emotionalChapter} />
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
               <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
               <FamiliarityResurfacingNotes
