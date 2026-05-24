@@ -113,6 +113,8 @@ export interface FounderWarningsReport {
   warnings: FounderWarning[];
 }
 
+import type { MonetizationObservationReport } from "@/types/monetization-validation";
+
 export interface ValidationOpsMetricRow {
   id: string;
   label: string;
@@ -139,6 +141,8 @@ export interface ValidationOpsReport {
   syncFailures: FounderReviewRankedItem[];
   archiveOps: ValidationOpsMetricRow[];
   emotionalLegitimacyTrend: ValidationOpsMetricRow[];
+  monetizationObservation: MonetizationObservationReport;
+  premiumState: string;
 }
 
 export interface FounderUserNote {

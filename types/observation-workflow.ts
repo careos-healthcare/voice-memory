@@ -37,6 +37,8 @@ export interface MoatReviewReport {
 
 export type MonetizationGateVerdict = "blocked" | "test_carefully";
 
+import type { MonetizationObservationReport } from "@/types/monetization-validation";
+
 export interface MonetizationReadinessReport {
   generatedAt: string;
   verdict: MonetizationGateVerdict;
@@ -48,6 +50,8 @@ export interface MonetizationReadinessReport {
   archiveChecks: ReadinessCheck[];
   stripeRecommendation: string;
   allMet: boolean;
+  softMonetization: MonetizationObservationReport;
+  archiveProtectionInterest: number;
 }
 
 export type CallbackPruningAction = "cut" | "rewrite" | "keep" | "double_down";

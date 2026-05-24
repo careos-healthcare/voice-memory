@@ -11,6 +11,9 @@ import {
   readWeeklyRetentionSnapshots,
 } from "@/lib/validation/observation-summaries";
 import { readTesterFeedback } from "@/lib/validation/tester-feedback";
+import { buildMonetizationObservationReport } from "@/lib/monetization/monetization-observation";
+import { getPremiumState, premiumStateLabel } from "@/lib/monetization/premium-state";
+import { buildArchiveAttachmentReport } from "@/lib/research/archive-attachment";
 import { getAllEntries } from "@/lib/storage";
 import type { FounderReviewRankedItem, FounderReviewReport } from "@/types/validation-phase";
 
@@ -126,6 +129,8 @@ export async function buildFounderReviewReport(): Promise<FounderReviewReport> {
   ];
 
   const feedback = readTesterFeedback();
+  const archiveValueObservation = buildMonetizationObservationReport();
+  const attachment = buildArchiveAttachmentReport(getAllEntries());
 
   return {
     generatedAt: new Date().toISOString(),
@@ -140,6 +145,9 @@ export async function buildFounderReviewReport(): Promise<FounderReviewReport> {
     retentionTrend: readWeeklyRetentionSnapshots(),
     openIncidents: incidents.openCount,
     testerFeedbackCount: feedback.length,
+    archiveValueObservation,
+    premiumState: premiumStateLabel(getPremiumState()),
+    archiveProtectionInterest: attachment.attachmentScore,
   };
 }
 

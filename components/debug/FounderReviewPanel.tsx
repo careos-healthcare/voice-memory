@@ -57,6 +57,15 @@ export function FounderReviewPanel({
           <p>
             {report.openIncidents} open incident(s) · {report.testerFeedbackCount} tester feedback note(s)
           </p>
+          <p>
+            Premium state: {report.premiumState} · Archive protection interest:{" "}
+            {report.archiveProtectionInterest}
+          </p>
+          <p>
+            Premium lines seen: {report.archiveValueObservation.premiumLinesSeen} · Legitimacy{" "}
+            {report.archiveValueObservation.legitimacyBeforeExposure ?? "—"} →{" "}
+            {report.archiveValueObservation.legitimacyAfterExposure ?? "—"}
+          </p>
           <Button
             type="button"
             size="sm"

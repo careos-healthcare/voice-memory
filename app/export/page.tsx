@@ -12,11 +12,13 @@ import {
 } from "lucide-react";
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
+import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requiresProForExportReports } from "@/lib/subscription";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
 import { getEntries, getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
 import {
   buildExportJsonBundle,
@@ -45,7 +47,10 @@ export default function ExportPage() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const trackExport = () => trackLaunchEvent(LAUNCH_EVENTS.exportUsed);
+  const trackExport = () => {
+    trackLaunchEvent(LAUNCH_EVENTS.exportUsed);
+    maybeTrackPostPremiumBehavior("export");
+  };
 
   const exportAllJson = () => {
     const bundle = buildExportJsonBundle();
@@ -106,6 +111,8 @@ export default function ExportPage() {
             {lockedCount > 0 ? ` · ${lockedCount} locked on Pro` : null}
           </p>
         </motion.div>
+
+        <ArchiveProtectionLine surface="export" />
 
         <UpgradeCta
           source="export"

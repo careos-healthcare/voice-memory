@@ -1,7 +1,9 @@
 import { buildProductionReadinessReport } from "@/lib/observation/production-readiness";
 import { buildMoatReviewReport } from "@/lib/observation/moat-review";
 import { readLastStressTestReport } from "@/lib/reliability/stress-tests";
+import { buildMonetizationObservationReport } from "@/lib/monetization/monetization-observation";
 import { buildArchiveOwnershipReport } from "@/lib/archive/archive-ownership";
+import { buildArchiveAttachmentReport } from "@/lib/research/archive-attachment";
 import { hasPreRestoreBackup } from "@/lib/sync/sync-health";
 import { readLastBackupAt, readLastSyncError } from "@/lib/sync/status-storage";
 import { buildRetentionLoopReport } from "@/lib/retention/retention-loops";
@@ -142,5 +144,7 @@ export async function buildMonetizationReadinessReport(): Promise<MonetizationRe
         ? "Keep Stripe blocked — thresholds and trust checks not met."
         : "Stripe may be considered for a small closed test — no public pricing prompts yet.",
     allMet,
+    softMonetization: buildMonetizationObservationReport(),
+    archiveProtectionInterest: buildArchiveAttachmentReport(entries).attachmentScore,
   };
 }

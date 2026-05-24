@@ -1,4 +1,6 @@
 import { buildEmotionalLegitimacyReport } from "@/lib/debug/emotional-legitimacy-review";
+import { buildMonetizationObservationReport } from "@/lib/monetization/monetization-observation";
+import { getPremiumState, premiumStateLabel } from "@/lib/monetization/premium-state";
 import { buildArchiveAttachmentReport } from "@/lib/research/archive-attachment";
 import { buildFounderWarningsReport } from "@/lib/research/founder-warnings";
 import { buildRolloutGatesReport, rolloutStageLabel } from "@/lib/research/rollout-gates";
@@ -155,6 +157,8 @@ export async function buildValidationOpsReport(): Promise<ValidationOpsReport> {
       metric("overclaim", "Overclaim risk", `${legitimacy.scores.overclaimRisk}`, undefined),
       metric("genericity", "Genericity risk", `${legitimacy.scores.genericityRisk}`, undefined),
     ],
+    monetizationObservation: buildMonetizationObservationReport(),
+    premiumState: premiumStateLabel(getPremiumState()),
   };
 }
 

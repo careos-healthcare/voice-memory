@@ -38,6 +38,22 @@ export function MonetizationReadinessPanel({ report }: { report: MonetizationRea
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-normal text-zinc-300">Soft monetization observation</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-zinc-400">
+          <p>Archive protection interest: {report.archiveProtectionInterest}</p>
+          <p>Premium lines seen: {report.softMonetization.premiumLinesSeen}</p>
+          <p>
+            Legitimacy before → after exposure:{" "}
+            {report.softMonetization.legitimacyBeforeExposure ?? "—"} →{" "}
+            {report.softMonetization.legitimacyAfterExposure ?? "—"}
+          </p>
+          <p className="text-xs text-zinc-600">Archive protection framing only — no Stripe on this page.</p>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4 lg:grid-cols-2">
         <CheckList title="Retention thresholds" checks={report.retentionChecks} />
         <CheckList title="Moat metrics" checks={report.moatChecks} />

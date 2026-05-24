@@ -6,6 +6,7 @@ import { Cloud, LogOut, RefreshCw, Shield } from "lucide-react";
 
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
 import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
+import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -24,6 +25,7 @@ import {
 import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
+import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries } from "@/lib/storage";
 import type { ArchiveOwnershipReport } from "@/types/archive-ownership";
@@ -105,6 +107,7 @@ export default function AccountPage() {
       showMessage(
         ok ? "Encrypted backup saved." : "Backup paused. Nothing was deleted.",
       );
+      if (ok) maybeTrackPostPremiumBehavior("backup");
     } finally {
       setBusy(false);
     }
@@ -155,6 +158,7 @@ export default function AccountPage() {
         <div className="mt-16 space-y-8">
           <p className="text-sm leading-relaxed text-zinc-400">{PRIVATE_BY_DEFAULT_LINE}</p>
           <EmotionalProofLine surface="account" />
+          <ArchiveProtectionLine surface="account" />
 
           <Card className="border-white/[0.06] bg-zinc-900/40">
             <CardHeader>

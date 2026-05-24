@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
+import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
+import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
 import { pickPrimaryLifePeriod } from "@/lib/archive/life-periods";
 import { ARCHIVE_PERMANENCE_COPY } from "@/lib/archive/copy";
 import {
@@ -62,6 +64,7 @@ export default function ArchivePage() {
       downloadArchiveMarkdown(buildArchiveMarkdown(archive));
       downloadArchiveZipPackage(archive);
       trackLaunchEvent(LAUNCH_EVENTS.exportUsed);
+      maybeTrackPostPremiumBehavior("export");
       showMessage("Archive exported as JSON, Markdown, and ZIP.");
     } catch (error) {
       showMessage(error instanceof Error ? error.message : "Export failed.");
@@ -183,6 +186,12 @@ export default function ArchivePage() {
               <p className="text-zinc-600">{ARCHIVE_PERMANENCE_COPY.previewBeforeRestore}</p>
             </CardContent>
           </Card>
+
+          {preview?.valid ? (
+            <ArchiveProtectionLine surface="restore" />
+          ) : (
+            <ArchiveProtectionLine surface="archive" />
+          )}
 
           <div className="flex flex-wrap gap-3">
             <Button disabled={busy || entryCount === 0} onClick={() => void handleExportAll()}>

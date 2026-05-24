@@ -54,6 +54,9 @@ export default function MonetizationReadinessPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/archive-value" className="text-violet-300 hover:text-violet-200">
+            Archive value →
+          </Link>
           <Link href="/debug/moat-review" className="text-violet-300 hover:text-violet-200">
             Moat review →
           </Link>

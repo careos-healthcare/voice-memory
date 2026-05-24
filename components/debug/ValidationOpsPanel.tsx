@@ -131,6 +131,27 @@ export function ValidationOpsPanel({ report }: { report: ValidationOpsReport }) 
         <MetricTable title="Revisit & continuation" rows={report.revisit} />
         <MetricTable title="Archive exports & restores" rows={report.archiveOps} />
         <MetricTable title="Emotional legitimacy trend" rows={report.emotionalLegitimacyTrend} />
+        <MetricTable
+          title="Soft monetization observation"
+          rows={[
+            { id: "premium-state", label: "Premium state", value: report.premiumState },
+            {
+              id: "lines-seen",
+              label: "Premium lines seen",
+              value: String(report.monetizationObservation.premiumLinesSeen),
+            },
+            {
+              id: "export-after",
+              label: "Export after premium line",
+              value: String(report.monetizationObservation.exportAfterPremium),
+            },
+            {
+              id: "legitimacy-delta",
+              label: "Legitimacy before → after",
+              value: `${report.monetizationObservation.legitimacyBeforeExposure ?? "—"} → ${report.monetizationObservation.legitimacyAfterExposure ?? "—"}`,
+            },
+          ]}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -225,7 +246,10 @@ export function ValidationOpsPanel({ report }: { report: ValidationOpsReport }) 
       </Card>
 
       <div className="flex flex-wrap gap-3 text-sm">
-        <Link href="/debug/user-review" className="text-violet-300 hover:text-violet-200">
+          <Link href="/debug/archive-value" className="text-zinc-500 hover:text-zinc-300">
+            Archive value →
+          </Link>
+          <Link href="/debug/user-review" className="text-zinc-500 hover:text-zinc-300">
           User review →
         </Link>
         <Link href="/debug/retention-study" className="text-zinc-500 hover:text-zinc-300">

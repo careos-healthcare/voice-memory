@@ -100,6 +100,8 @@ export interface FounderReviewRankedItem {
   score?: number;
 }
 
+import type { MonetizationObservationReport } from "@/types/monetization-validation";
+
 export interface FounderReviewReport {
   generatedAt: string;
   strongestCallbacks: FounderReviewRankedItem[];
@@ -113,4 +115,7 @@ export interface FounderReviewReport {
   retentionTrend: WeeklyRetentionSnapshot[];
   openIncidents: number;
   testerFeedbackCount: number;
+  archiveValueObservation: MonetizationObservationReport;
+  premiumState: string;
+  archiveProtectionInterest: number;
 }
