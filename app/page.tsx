@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { CrossDeviceCarryoverLine } from "@/components/sync/CrossDeviceCarryoverLine";
+import { ArchiveOwnershipSparseLine } from "@/components/archive/ArchiveOwnershipSparseLine";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
@@ -119,6 +120,7 @@ export default function HomePage() {
         <div className="mt-6 space-y-10 py-2">
           <ActivationOnboarding />
           <CrossDeviceCarryoverLine />
+          <ArchiveOwnershipSparseLine />
           <PersonalisationProgressNote />
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Archive, Download, FileUp, RefreshCw, Trash2 } from "lucide-react";
 
 import { ArchiveImportPreviewPanel } from "@/components/archive/ArchiveImportPreviewPanel";
+import { ArchiveOwnershipPanel } from "@/components/archive/ArchiveOwnershipPanel";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -157,6 +158,8 @@ export default function ArchivePage() {
         <MotionPageTitle title="Archive" />
 
         <div className="mt-16 space-y-8">
+          <ArchiveOwnershipPanel />
+
           <Card className="border-white/[0.06] bg-zinc-900/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-normal text-zinc-200">

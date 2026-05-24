@@ -16,10 +16,16 @@ import {
   setDebugEventSyncAllowed,
 } from "@/lib/sync/archive-bundle";
 import { buildEncryptedAudioBackupPlan } from "@/lib/sync/audio-backup";
+import {
+  buildAccountOwnershipLines,
+  buildArchiveOwnershipReport,
+} from "@/lib/archive/archive-ownership";
 import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { formatEntryDate } from "@/lib/utils";
+import { getAllEntries } from "@/lib/storage";
+import type { ArchiveOwnershipReport } from "@/types/archive-ownership";
 
 function statusLabel(state: string): string {
   switch (state) {
@@ -44,6 +50,7 @@ export default function AccountPage() {
   const [busy, setBusy] = useState(false);
   const [allowDebugEvents, setAllowDebugEvents] = useState(false);
   const [audioPlanCount, setAudioPlanCount] = useState(0);
+  const [ownership, setOwnership] = useState<ArchiveOwnershipReport | null>(null);
   const continuity = buildAccountContinuityStatus({
     signedIn: Boolean(status.session),
     lastBackupAt: status.lastBackupAt,
@@ -52,7 +59,12 @@ export default function AccountPage() {
   useEffect(() => {
     setAllowDebugEvents(isDebugEventSyncAllowed());
     setAudioPlanCount(buildEncryptedAudioBackupPlan().items.length);
+    void buildArchiveOwnershipReport(getAllEntries()).then(setOwnership);
   }, []);
+
+  const ownershipLines = ownership
+    ? buildAccountOwnershipLines(ownership, Boolean(status.session))
+    : [];
 
   const showMessage = (text: string) => {
     setMessage(text);
@@ -199,6 +211,14 @@ export default function AccountPage() {
                   {continuity.lastBackedUpLine ? (
                     <p>{continuity.lastBackedUpLine}</p>
                   ) : null}
+                </div>
+              ) : null}
+
+              {ownershipLines.length > 0 ? (
+                <div className="space-y-2 border-t border-white/5 pt-4 text-sm leading-relaxed text-zinc-500">
+                  {ownershipLines.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
                 </div>
               ) : null}
 

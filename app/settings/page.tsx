@@ -17,6 +17,10 @@ import {
   runFullLocalReset,
 } from "@/lib/data-controls";
 import {
+  buildArchiveOwnershipReport,
+  buildSettingsOwnershipLine,
+} from "@/lib/archive/archive-ownership";
+import {
   buildExportJsonBundle,
   downloadJsonFile,
   slugExportDate,
@@ -29,13 +33,14 @@ import {
   DELETE_ALL_CONFIRM_PHRASE,
   DELETE_ALL_LOCAL_PROMPT,
 } from "@/lib/trust-copy";
-import { getStoredEntryCount } from "@/lib/storage";
+import { getAllEntries, getStoredEntryCount } from "@/lib/storage";
 
 export default function SettingsPage() {
   const [entryCount, setEntryCount] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [fullDetail, setFullDetail] = useState(false);
+  const [ownershipLine, setOwnershipLine] = useState<string | null>(null);
   const { listeningMode, setListeningMode } = useListeningMode();
 
   const refreshCount = () => {
@@ -45,6 +50,9 @@ export default function SettingsPage() {
   useEffect(() => {
     refreshCount();
     setFullDetail(isFullDetailEnabled());
+    void buildArchiveOwnershipReport(getAllEntries()).then((report) => {
+      setOwnershipLine(buildSettingsOwnershipLine(report));
+    });
   }, []);
 
   const showMessage = (text: string) => {
@@ -133,6 +141,9 @@ export default function SettingsPage() {
                 <span className="font-medium text-white">{entryCount}</span>
               </p>
               <p className="text-xs">{DATA_EXPORT_SUMMARY}</p>
+              {ownershipLine ? (
+                <p className="text-sm leading-relaxed text-zinc-500">{ownershipLine}</p>
+              ) : null}
               <div className="flex flex-wrap gap-2 pt-1">
                 <Link href="/account" className="text-violet-300 hover:text-violet-200 text-sm">
                   Account & sync →
