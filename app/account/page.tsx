@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Cloud, LogOut, RefreshCw, Shield } from "lucide-react";
 
+import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -16,6 +17,7 @@ import {
 } from "@/lib/sync/archive-bundle";
 import { buildEncryptedAudioBackupPlan } from "@/lib/sync/audio-backup";
 import { ENCRYPTED_SYNC_COPY } from "@/lib/sync/copy";
+import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { formatEntryDate } from "@/lib/utils";
 
 function statusLabel(state: string): string {
@@ -128,17 +130,21 @@ export default function AccountPage() {
         <MotionPageTitle title="Account" />
 
         <div className="mt-16 space-y-8">
+          <p className="text-sm leading-relaxed text-zinc-400">{PRIVATE_BY_DEFAULT_LINE}</p>
+
           <Card className="border-white/[0.06] bg-zinc-900/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-normal text-zinc-200">
                 <Shield className="h-4 w-4 text-violet-300/80" />
-                Encrypted archive
+                Privacy & encrypted backup
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm leading-[1.75] text-zinc-500">
-              <p>{ENCRYPTED_SYNC_COPY.encryptedBeforeLeave}</p>
-              <p>{ENCRYPTED_SYNC_COPY.archiveNotServer}</p>
-              <p>{ENCRYPTED_SYNC_COPY.serverStoresCiphertext}</p>
+            <CardContent className="space-y-4">
+              <PrivacyTrustPanel compact />
+              <div className="space-y-2 border-t border-white/5 pt-4 text-sm leading-[1.75] text-zinc-500">
+                <p>{ENCRYPTED_SYNC_COPY.encryptedBeforeLeave}</p>
+                <p>{ENCRYPTED_SYNC_COPY.archiveNotServer}</p>
+              </div>
             </CardContent>
           </Card>
 
@@ -146,7 +152,7 @@ export default function AccountPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-normal text-zinc-200">
                 <Cloud className="h-4 w-4 text-violet-300/80" />
-                Sync status
+                Account & sync
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-zinc-400">
@@ -169,65 +175,52 @@ export default function AccountPage() {
                 Encrypted audio backup plan: {audioPlanCount} recording
                 {audioPlanCount === 1 ? "" : "s"} queued with the same client-side encryption.
               </p>
-            </CardContent>
-          </Card>
 
-          {status.session ? (
-            <div className="flex flex-wrap gap-3">
-              <Button disabled={busy || status.state === "syncing"} onClick={() => void handleSync()}>
-                <RefreshCw className="h-4 w-4" />
-                Back up now
-              </Button>
-              <Button variant="secondary" disabled={busy} onClick={() => void handleRestore()}>
-                Restore backup
-              </Button>
-              <Button variant="ghost" disabled={busy} onClick={() => void handleSignOut()}>
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </Button>
-            </div>
-          ) : (
-            <Card className="border-white/[0.06] bg-zinc-900/40">
-              <CardHeader>
-                <CardTitle className="text-base font-normal text-zinc-200">Email sign in</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-violet-500/30 focus:ring-2"
-                />
-                <div className="flex flex-wrap gap-3">
+              {status.session ? (
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <Button disabled={busy || status.state === "syncing"} onClick={() => void handleSync()}>
+                    <RefreshCw className="h-4 w-4" />
+                    Back up now
+                  </Button>
+                  <Button variant="secondary" disabled={busy} onClick={() => void handleRestore()}>
+                    Restore backup
+                  </Button>
+                  <Button variant="ghost" disabled={busy} onClick={() => void handleSignOut()}>
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4 border-t border-white/5 pt-4">
+                  <p className="text-zinc-500">Sign in only if you want encrypted backup across devices.</p>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-violet-500/30 focus:ring-2"
+                  />
                   <Button disabled={busy || !email.trim()} onClick={() => void handleSendCode()}>
                     Send code
                   </Button>
+                  {devCode ? (
+                    <p className="text-xs text-zinc-500">Development code: {devCode}</p>
+                  ) : null}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={code}
+                    onChange={(event) => setCode(event.target.value)}
+                    placeholder="6-digit code"
+                    className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-violet-500/30 focus:ring-2"
+                  />
+                  <Button disabled={busy || !email.trim() || !code.trim()} onClick={() => void handleVerify()}>
+                    Sign in
+                  </Button>
                 </div>
-                {devCode ? (
-                  <p className="text-xs text-zinc-500">Development code: {devCode}</p>
-                ) : null}
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={code}
-                  onChange={(event) => setCode(event.target.value)}
-                  placeholder="6-digit code"
-                  className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-violet-500/30 focus:ring-2"
-                />
-                <Button disabled={busy || !email.trim() || !code.trim()} onClick={() => void handleVerify()}>
-                  Sign in
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+              )}
 
-          <Card className="border-white/[0.06] bg-zinc-900/40">
-            <CardHeader>
-              <CardTitle className="text-base font-normal text-zinc-200">Optional sync</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <label className="flex items-start gap-3 text-sm leading-[1.75] text-zinc-500">
+              <label className="flex items-start gap-3 border-t border-white/5 pt-4 text-sm leading-[1.75] text-zinc-500">
                 <input
                   type="checkbox"
                   checked={allowDebugEvents}
@@ -238,6 +231,17 @@ export default function AccountPage() {
               </label>
             </CardContent>
           </Card>
+
+          <section className="rounded-2xl border border-white/[0.06] bg-zinc-900/40 p-5">
+            <h2 className="text-base font-normal text-zinc-200">Delete account</h2>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-500">{DELETE_ACCOUNT_PLACEHOLDER}</p>
+            <Link
+              href="/settings"
+              className="mt-3 inline-block text-sm text-violet-300 hover:text-violet-200"
+            >
+              Delete all local data →
+            </Link>
+          </section>
 
           {message ? <p className="text-sm text-zinc-400">{message}</p> : null}
 

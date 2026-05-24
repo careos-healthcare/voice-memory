@@ -15,7 +15,7 @@ export const ACTIVATION_PATTERNS =
   "After a few entries, older words start to echo back.";
 
 export const ACTIVATION_CONVERSATION =
-  "Keep going — it learns your voice over time.";
+  "Your archive grows at your pace — there is nothing to keep up with.";
 
 export const ACTIVATION_ONBOARDING_STEPS: ActivationOnboardingStep[] = [
   {

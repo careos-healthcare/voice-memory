@@ -11,6 +11,7 @@ import {
   ACTIVATION_QUIET_EARLY,
 } from "@/lib/activation-guidance";
 import { dismissOnboarding, isOnboardingDismissed } from "@/lib/onboarding";
+import { PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
 export function ActivationOnboarding() {
@@ -37,6 +38,7 @@ export function ActivationOnboarding() {
           <div>
             <p className="text-sm font-normal leading-relaxed text-zinc-300">{ACTIVATION_LEAD}</p>
             <p className="mt-2 text-xs leading-relaxed text-zinc-600">{ACTIVATION_QUIET_EARLY}</p>
+            <p className="mt-2 text-xs leading-relaxed text-zinc-600">{PRIVATE_BY_DEFAULT_LINE}</p>
           </div>
 
           <div className="space-y-3">

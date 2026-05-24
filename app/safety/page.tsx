@@ -12,8 +12,8 @@ export default function SafetyPage() {
   return (
     <TrustPageShell
       eyebrow="Trust"
-      title="Safety"
-      description="VoiceMemory helps you notice patterns in your own words. It does not replace professional care."
+      title="Safety & emotional boundaries"
+      description="VoiceMemory helps you notice patterns in your own words. It is not therapy, not crisis support, and never pressures you to keep recording."
     >
       <section className="rounded-2xl border border-amber-500/20 bg-amber-950/20 p-5">
         <h2 className="text-base font-semibold text-amber-100">If you need urgent help</h2>

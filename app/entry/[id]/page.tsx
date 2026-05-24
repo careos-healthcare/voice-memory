@@ -168,6 +168,13 @@ export default function EntryPage() {
 
   const handleDelete = () => {
     if (!entry) return;
+    if (
+      !window.confirm(
+        "Delete this reflection and its audio from this device? This cannot be undone.",
+      )
+    ) {
+      return;
+    }
     deleteEntry(entry.id);
     router.push("/journal");
   };

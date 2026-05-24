@@ -5,15 +5,16 @@ import Link from "next/link";
 import { Headphones, Download, Moon, RotateCcw, Trash2 } from "lucide-react";
 
 import { ReflectionGoalSetting } from "@/components/settings/ReflectionGoalSetting";
+import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  deleteAllEntriesAndAudio,
   resetOnboardingState,
   resetProPreviewPlan,
   resetReminderPreferencesToDefault,
+  runFullLocalReset,
 } from "@/lib/data-controls";
 import {
   buildExportJsonBundle,
@@ -24,9 +25,9 @@ import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { isFullDetailEnabled, setFullDetailEnabled } from "@/lib/quiet-mode";
 import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import {
-  DATA_DELETION_SUMMARY,
   DATA_EXPORT_SUMMARY,
-  LOCAL_FIRST_SUMMARY,
+  DELETE_ALL_CONFIRM_PHRASE,
+  DELETE_ALL_LOCAL_PROMPT,
 } from "@/lib/trust-copy";
 import { getStoredEntryCount } from "@/lib/storage";
 
@@ -58,19 +59,28 @@ export default function SettingsPage() {
     showMessage("Export downloaded.");
   };
 
-  const handleDeleteAll = async () => {
-    if (
-      !window.confirm(
-        "Delete ALL reflections and audio on this device? This cannot be undone.",
-      )
-    ) {
+  const handleDeleteAllLocal = async () => {
+    if (!window.confirm(DELETE_ALL_LOCAL_PROMPT)) {
       return;
     }
+
+    const typed = window.prompt(
+      `Type ${DELETE_ALL_CONFIRM_PHRASE} to confirm deletion of all local data.`,
+    );
+    if (typed !== DELETE_ALL_CONFIRM_PHRASE) {
+      showMessage("Deletion cancelled.");
+      return;
+    }
+
     setBusy(true);
     try {
-      const removed = await deleteAllEntriesAndAudio();
+      const removed = await runFullLocalReset();
       refreshCount();
-      showMessage(`Deleted ${removed} reflection${removed === 1 ? "" : "s"}.`);
+      showMessage(
+        removed > 0
+          ? `Deleted ${removed} reflection${removed === 1 ? "" : "s"} and cleared local preferences.`
+          : "All local VoiceMemory data cleared.",
+      );
     } finally {
       setBusy(false);
     }
@@ -78,7 +88,7 @@ export default function SettingsPage() {
 
   const handleResetReminders = () => {
     resetReminderPreferencesToDefault();
-    showMessage("Reminder preferences reset to defaults.");
+    showMessage("Reminder preferences reset — all reminders off by default.");
   };
 
   const handleResetOnboarding = () => {
@@ -101,7 +111,7 @@ export default function SettingsPage() {
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Settings</h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
             Manage data stored on this device. VoiceMemory is local-first — these actions affect
-            only this browser.
+            only this browser unless you use encrypted backup.
           </p>
         </header>
 
@@ -114,19 +124,16 @@ export default function SettingsPage() {
         <div className="mt-6 space-y-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Your data on this device</CardTitle>
+              <CardTitle className="text-base">Privacy & your data</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-zinc-400">
-              <p>{LOCAL_FIRST_SUMMARY}</p>
-              <p>Your archive is encrypted before it leaves this device.</p>
-              <p>VoiceMemory should feel like your archive, not our server.</p>
+            <CardContent className="space-y-4 text-sm text-zinc-400">
+              <PrivacyTrustPanel compact />
               <p>
                 Stored reflections:{" "}
                 <span className="font-medium text-white">{entryCount}</span>
               </p>
               <p className="text-xs">{DATA_EXPORT_SUMMARY}</p>
-              <p className="text-xs">{DATA_DELETION_SUMMARY}</p>
-              <div className="flex flex-wrap gap-2 pt-2">
+              <div className="flex flex-wrap gap-2 pt-1">
                 <Link href="/account" className="text-violet-300 hover:text-violet-200 text-sm">
                   Account & sync →
                 </Link>
@@ -135,6 +142,9 @@ export default function SettingsPage() {
                 </Link>
                 <Link href="/export" className="text-violet-300 hover:text-violet-200 text-sm">
                   More export options →
+                </Link>
+                <Link href="/safety" className="text-violet-300 hover:text-violet-200 text-sm">
+                  Emotional safety →
                 </Link>
                 <Link href="/privacy" className="text-zinc-500 hover:text-zinc-300 text-sm">
                   Privacy policy →
@@ -155,22 +165,24 @@ export default function SettingsPage() {
 
           <Card className="border-red-500/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base text-red-200">Delete all entries</CardTitle>
+              <CardTitle className="text-base text-red-200">Delete all local data</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-zinc-400">
-                Permanently removes all reflections, transcripts, and audio from this device.
+                Permanently removes reflections, transcripts, audio, bookmarks, goals,
+                reminder preferences, and onboarding state from this device. Encrypted cloud
+                backup (if enabled) is not removed — sign out on Account or contact us.
               </p>
               <Button
                 type="button"
                 variant="secondary"
                 size="sm"
                 className="mt-4 border-red-500/30 text-red-200 hover:bg-red-500/10"
-                disabled={busy || entryCount === 0}
-                onClick={() => void handleDeleteAll()}
+                disabled={busy}
+                onClick={() => void handleDeleteAllLocal()}
               >
                 <Trash2 className="h-4 w-4" />
-                Delete all entries
+                Delete all local data
               </Button>
             </CardContent>
           </Card>
@@ -241,7 +253,7 @@ export default function SettingsPage() {
             <CardContent className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Button type="button" variant="ghost" size="sm" onClick={handleResetReminders}>
                 <RotateCcw className="h-4 w-4" />
-                Clear reminder preferences
+                Reset reminders (all off)
               </Button>
               <Button type="button" variant="ghost" size="sm" onClick={handleResetOnboarding}>
                 <RotateCcw className="h-4 w-4" />

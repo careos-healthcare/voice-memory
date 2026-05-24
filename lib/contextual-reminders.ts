@@ -33,7 +33,7 @@ export interface ReminderCopyExample {
 export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   {
     kind: "stressful",
-    message: "You haven't checked in since a heavy moment",
+    message: "Your words from a heavy moment are still here",
     whenShown: "After a stressful entry (intensity 7+) with no follow-up reflection",
   },
   {
@@ -48,12 +48,12 @@ export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   },
   {
     kind: "daily",
-    message: "A minute of voice reflection can help you close the day",
+    message: "When you're ready, a short voice note can help close the day",
     whenShown: "Daily reflection preference on, no entry yet today",
   },
   {
     kind: "inactive",
-    message: "It has been a few days — your words are still here when you are ready",
+    message: "Your words are still here when you are ready",
     whenShown: "No reflection for 3+ days with inactivity reminders enabled",
   },
 ];
@@ -107,9 +107,9 @@ export function evaluateContextualReminders(
         id: "daily",
         kind: "daily",
         title: "Daily reflection",
-        message: "Take a minute to check in with yourself today",
+        message: "When you're ready, a short voice note can help close the day",
         href: "/",
-        cta: "Record today",
+        cta: "Record reflection",
       });
     }
   }
@@ -129,9 +129,9 @@ export function evaluateContextualReminders(
           id: "stressful",
           kind: "stressful",
           title: "After a heavy moment",
-          message: "You haven't checked in since a heavy moment",
+          message: "Your words from a heavy moment are still here",
           href: "/",
-          cta: "Reflect now",
+          cta: "View reflections",
         });
       }
     }
@@ -162,10 +162,7 @@ export function evaluateContextualReminders(
         id: "inactive",
         kind: "inactive",
         title: "Gentle check-in",
-        message:
-          inactiveDays >= 5
-            ? `It has been ${inactiveDays} days since your last reflection`
-            : "It has been a few days since your last reflection",
+        message: "Your words are still here when you are ready",
         href: "/",
         cta: "View reflections",
       });

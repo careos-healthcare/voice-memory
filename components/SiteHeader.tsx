@@ -23,7 +23,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             VoiceMemory
           </span>
           <span className="hidden text-[10px] text-zinc-600 sm:block">
-            Talk once a day
+            Private by default
           </span>
         </span>
       </Link>

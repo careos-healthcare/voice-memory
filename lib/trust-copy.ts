@@ -2,6 +2,9 @@
 
 export const CONTACT_EMAIL = "hello@voicememory.app";
 
+export const PRIVATE_BY_DEFAULT_LINE =
+  "Private by default. Your reflections stay on this device unless you choose encrypted backup.";
+
 export const NOT_THERAPY_LINE =
   "VoiceMemory is a reflective mirror for your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
 
@@ -14,11 +17,22 @@ export const LOCAL_FIRST_SUMMARY =
 export const OPENAI_PROCESSING_SUMMARY =
   "When you record, your audio is sent to our server and transcribed with OpenAI Whisper. The transcript is analyzed with OpenAI to produce structured reflection fields. We do not use your reflections to train OpenAI models. Audio is not retained on our servers after transcription completes.";
 
+export const ENCRYPTED_SYNC_SUMMARY =
+  "If you sign in, your archive is encrypted on this device before backup. Our servers store ciphertext only — not raw transcripts, audio, or reflection text. Sync is optional.";
+
 export const DATA_EXPORT_SUMMARY =
-  "You can export your data anytime from Export or Settings: full JSON archive, weekly summary text, and (on Pro) printable reports. Exports are generated on your device from local storage.";
+  "You can export your data anytime from Export, Archive, or Settings: full JSON archive, readable Markdown, and (on Pro) printable reports. Exports are generated on your device from local storage.";
 
 export const DATA_DELETION_SUMMARY =
-  "You can delete individual reflections from each entry page, or delete all entries from Settings. Deletion removes local journal data and associated audio on this device. Server-side transcription requests are not stored as a permanent journal.";
+  "Delete individual reflections from each entry page, or delete all local data from Settings. Deletion removes journal entries, audio, and preferences on this device. Server-side transcription requests are not stored as a permanent journal.";
+
+export const DELETE_ALL_CONFIRM_PHRASE = "DELETE";
+
+export const DELETE_ALL_LOCAL_PROMPT =
+  "Delete ALL local VoiceMemory data on this device? This removes reflections, audio, bookmarks, preferences, and goals. This cannot be undone.";
+
+export const DELETE_ACCOUNT_PLACEHOLDER =
+  "Full account deletion from our servers is not available yet. Sign out to stop syncing. Delete all local data in Settings to remove everything on this device. Email hello@voicememory.app if you need help removing encrypted backup data.";
 
 export const TRUST_FOOTER_LINKS = [
   { href: "/privacy", label: "Privacy" },
@@ -28,10 +42,37 @@ export const TRUST_FOOTER_LINKS = [
   { href: "/settings", label: "Settings" },
 ] as const;
 
+export const PRIVACY_TRUST_POINTS = [
+  {
+    title: "What stays local",
+    body: "Reflections, transcripts, audio recordings, bookmarks, reminder preferences, goals, and memory notes live in this browser unless you export or enable encrypted backup.",
+  },
+  {
+    title: "What is sent for transcription",
+    body: "When you record, audio is sent to our server for Whisper transcription, then discarded. It is not kept as a permanent cloud recording.",
+  },
+  {
+    title: "What is sent for reflection",
+    body: "Your transcript text is sent for structured reflection fields during analysis. That text is not stored on our servers as a journal — only processed to return results to your device.",
+  },
+  {
+    title: "What is encrypted before sync",
+    body: ENCRYPTED_SYNC_SUMMARY,
+  },
+  {
+    title: "How deletion works",
+    body: DATA_DELETION_SUMMARY,
+  },
+] as const;
+
 export const PRIVACY_SECTIONS = [
   {
+    title: "Private by default",
+    body: PRIVATE_BY_DEFAULT_LINE,
+  },
+  {
     title: "What we collect",
-    body: "On your device: voice reflections, transcripts, AI-generated reflection fields, habit streaks, reminder preferences, and optional Pro preview state. On our servers (transient): audio during transcription and transcript text during analysis — not kept as a permanent account journal.",
+    body: "On your device: voice reflections, transcripts, reflection fields, optional reminder preferences, reflection goals, and optional Pro preview state. On our servers (transient): audio during transcription and transcript text during analysis — not kept as a permanent account journal.",
   },
   {
     title: "Local-first storage",
@@ -42,8 +83,12 @@ export const PRIVACY_SECTIONS = [
     body: OPENAI_PROCESSING_SUMMARY,
   },
   {
+    title: "Encrypted backup (optional)",
+    body: ENCRYPTED_SYNC_SUMMARY,
+  },
+  {
     title: "What we do not do",
-    body: "We do not sell your reflections. We do not provide therapy or clinical diagnosis. We do not guarantee that AI summaries are complete or accurate — they describe patterns in what you said.",
+    body: "We do not sell your reflections. We do not provide therapy or clinical diagnosis. We do not use guilt, streaks, or pressure to keep you recording. AI summaries describe patterns in what you said — they are not complete or authoritative.",
   },
   {
     title: "Export your data",
@@ -86,6 +131,29 @@ export const TERMS_SECTIONS = [
   },
 ] as const;
 
+export const EMOTIONAL_SAFETY_SECTIONS = [
+  {
+    title: "Not crisis support",
+    body: "VoiceMemory cannot monitor your safety or respond to emergencies. It does not have human moderators or clinicians on call.",
+  },
+  {
+    title: "Not therapy",
+    body: NOT_THERAPY_LINE,
+  },
+  {
+    title: "You control your archive",
+    body: "Export, restore, or delete your reflections anytime from Archive and Settings. Nothing requires you to keep recording or stay active.",
+  },
+  {
+    title: "Silence is respected",
+    body: "There is no streak to maintain, no penalty for pausing, and reminders are off by default. Return when you want — your past words wait quietly.",
+  },
+  {
+    title: "Listening mode",
+    body: "Save voice without immediate interpretation. Your transcript and audio are kept — reflect later when it feels right.",
+  },
+] as const;
+
 export const SAFETY_SECTIONS = [
   {
     title: "Reflective mirror only",
@@ -95,10 +163,7 @@ export const SAFETY_SECTIONS = [
     title: "No diagnosis",
     body: "AI outputs may label moods or themes in plain language. That is not a mental health diagnosis, risk assessment, or treatment plan.",
   },
-  {
-    title: "Not crisis support",
-    body: "VoiceMemory cannot monitor your safety or respond to emergencies. It does not have human moderators or clinicians on call.",
-  },
+  ...EMOTIONAL_SAFETY_SECTIONS,
   {
     title: "If you need urgent help",
     body: CRISIS_DISCLAIMER,

@@ -92,8 +92,8 @@ export default function RemindersPage() {
             Reminders
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Choose which gentle nudges appear on your home screen — stored on this
-            device only.
+            Optional in-app suggestions only — all off by default. Nothing here shames you
+            for pausing or counts days to make you feel behind.
           </p>
         </motion.div>
 
@@ -111,14 +111,14 @@ export default function RemindersPage() {
             <section className="space-y-3">
               <ToggleRow
                 label="Daily reflection"
-                description="Suggest a check-in when you have not recorded today."
+                description="Optional suggestion when you have not recorded today."
                 checked={prefs.dailyReflection}
                 onChange={(dailyReflection) => update({ dailyReflection })}
               />
 
               <ToggleRow
                 label="After a heavy reflection"
-                description="Nudge you to check in again after an intense entry."
+                description="Optional note that your words from an intense entry are still here."
                 checked={prefs.afterStressfulEntry}
                 onChange={(afterStressfulEntry) =>
                   update({ afterStressfulEntry })
@@ -134,7 +134,7 @@ export default function RemindersPage() {
 
               <ToggleRow
                 label="Inactive for 3 days"
-                description="Gentle prompt if you have not reflected in three or more days."
+                description="Quiet prompt if you have not reflected in three or more days — no day counts shown."
                 checked={prefs.inactiveThreeDays}
                 onChange={(inactiveThreeDays) => update({ inactiveThreeDays })}
               />
@@ -192,7 +192,7 @@ export default function RemindersPage() {
             <section className="space-y-4">
               {memoryReminders.length === 0 ? (
                 <p className="text-sm text-zinc-500">
-                  Nothing to nudge you about right now.
+                  Nothing to suggest right now.
                 </p>
               ) : (
                 <MemoryReminderList reminders={memoryReminders} />

@@ -10,10 +10,10 @@ export interface ReminderPreferences {
 }
 
 export const DEFAULT_REMINDER_PREFERENCES: ReminderPreferences = {
-  dailyReflection: true,
-  afterStressfulEntry: true,
-  weeklyReview: true,
-  inactiveThreeDays: true,
+  dailyReflection: false,
+  afterStressfulEntry: false,
+  weeklyReview: false,
+  inactiveThreeDays: false,
   preferredReflectionHour: 20,
 };
 

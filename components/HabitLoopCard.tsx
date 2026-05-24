@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Flame, Mic, TrendingDown, TrendingUp } from "lucide-react";
+import { Calendar, Mic, TrendingDown, TrendingUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,20 +52,20 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
 
   const recap = stats.weeklyRecap;
 
-  if (compact && stats.streak === 0 && !stats.reflectedToday && recap.entryCount === 0) {
+  if (compact && !stats.reflectedToday && recap.entryCount === 0) {
     return (
       <div className="rounded-xl px-1 py-2">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-normal text-zinc-200">Start your daily check-in</p>
+            <p className="text-sm font-normal text-zinc-200">Record when you&apos;re ready</p>
             <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-              One minute a day is enough.
+              No schedule required — your pace is yours.
             </p>
           </div>
           <Button asChild size="sm">
             <Link href="/">
               <Mic className="h-4 w-4" />
-              Record today&apos;s reflection
+              Record a reflection
             </Link>
           </Button>
         </div>
@@ -78,25 +78,27 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
       <div className="space-y-3 rounded-xl px-1 py-2">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs tracking-wide text-zinc-600">Daily check-in</p>
+            <p className="text-xs tracking-wide text-zinc-600">Your reflection rhythm</p>
             <p className="mt-2 flex items-center gap-2 text-xl font-normal text-zinc-200">
-              <Flame className="h-5 w-5 text-amber-400/80" />
-              {stats.streak} day{stats.streak === 1 ? "" : "s"} streak
+              <Calendar className="h-5 w-5 text-violet-300/80" />
+              {formatLastReflectionLabel(stats.lastReflectionDate)}
             </p>
             <p className="mt-2 text-sm text-zinc-500">
-              Last reflection · {formatLastReflectionLabel(stats.lastReflectionDate)}
+              {recap.entryCount > 0
+                ? `${recap.entryCount} reflection${recap.entryCount === 1 ? "" : "s"} this week`
+                : "Return whenever it helps — no streak to keep."}
             </p>
           </div>
           {!stats.reflectedToday ? (
             <Button asChild size="sm" className="shrink-0">
               <Link href="/">
                 <Mic className="h-4 w-4" />
-                Record today
+                Record
               </Link>
             </Button>
           ) : (
             <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300/90">
-              Reflected today
+              Saved recently
             </span>
           )}
         </div>
@@ -111,26 +113,26 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Daily check-in
+                Your reflection rhythm
               </p>
               <CardTitle className="mt-2 flex items-center gap-2 text-2xl">
-                <Flame className="h-6 w-6 text-amber-400" />
-                {stats.streak} day{stats.streak === 1 ? "" : "s"} streak
+                <Calendar className="h-6 w-6 text-violet-300" />
+                {formatLastReflectionLabel(stats.lastReflectionDate)}
               </CardTitle>
               <p className="mt-2 text-sm text-zinc-400">
-                Last reflection · {formatLastReflectionLabel(stats.lastReflectionDate)}
+                No streak to maintain — just your own pace.
               </p>
             </div>
             {!stats.reflectedToday ? (
               <Button asChild size="sm" className="shrink-0">
                 <Link href="/">
                   <Mic className="h-4 w-4" />
-                  Record today
+                  Record
                 </Link>
               </Button>
             ) : (
               <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
-                Reflected today
+                Saved recently
               </span>
             )}
           </div>

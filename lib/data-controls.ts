@@ -1,5 +1,7 @@
 import { clearAllAudio } from "@/lib/audio-storage";
 import { resetOnboarding } from "@/lib/onboarding";
+import { clearRecoveryDrafts } from "@/lib/reliability/draft-recovery";
+import { clearAllBookmarks } from "@/lib/reflection-bookmarks";
 import { clearReminderPreferences } from "@/lib/reminder-preferences";
 import { clearReflectionGoal } from "@/lib/reflection-goal";
 import { clearProPreview } from "@/lib/subscription";
@@ -29,10 +31,14 @@ export function resetReflectionGoalToDefault(): void {
   clearReflectionGoal();
 }
 
-export async function runFullLocalReset(): Promise<void> {
-  await deleteAllEntriesAndAudio();
+/** Remove all local VoiceMemory data on this device (entries, audio, prefs, drafts). */
+export async function runFullLocalReset(): Promise<number> {
+  const count = await deleteAllEntriesAndAudio();
+  clearAllBookmarks();
+  clearRecoveryDrafts();
   resetReminderPreferencesToDefault();
   resetOnboardingState();
   resetReflectionGoalToDefault();
   resetProPreviewPlan();
+  return count;
 }
