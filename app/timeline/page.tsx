@@ -34,6 +34,7 @@ import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { timelineKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -78,7 +79,13 @@ export default function TimelinePage() {
       setRevisitation(timelineRevisitationNotes(memoryEntries));
       setThreadHighlights(timelineThreadHighlights(memoryEntries, 3));
       setMilestones(timelineMilestoneNotes(memoryEntries, limits.milestones));
-      setKnowsMe(timelineKnowsMeMoment(memoryEntries));
+      setKnowsMe(
+        calibratePrimaryNote(
+          [timelineKnowsMeMoment(memoryEntries)].filter(Boolean) as MemoryNote[],
+          memoryEntries,
+          "timeline",
+        ),
+      );
     });
     return () => cancelAnimationFrame(id);
   }, [

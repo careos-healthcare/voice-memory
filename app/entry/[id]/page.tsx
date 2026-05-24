@@ -497,8 +497,6 @@ export default function EntryPage() {
                   <>
                     {presentation?.continuation ? (
                       <ContinuationNotes notes={[presentation.continuation]} max={1} />
-                    ) : continuationOpener ? (
-                      <ContinuationNotes notes={[continuationOpener]} max={1} />
                     ) : null}
 
                     <ThreadMentionsSection
@@ -507,39 +505,19 @@ export default function EntryPage() {
                       subtitle=""
                     />
 
-                    <MotionNoteList className="space-y-20">
-                      {presentation?.primaryMoment &&
-                      !isDuplicateNote(presentation.primaryMoment, notes?.primaryCallback) ? (
+                    {presentation?.primaryMoment ? (
+                      <MotionNoteList className="space-y-20">
                         <AnimatedMemoryNote note={presentation.primaryMoment} index={0} />
-                      ) : null}
-                      {notes?.primaryCallback ? (
-                        <AnimatedMemoryNote note={notes.primaryCallback} index={0} />
-                      ) : null}
-
-                      {notes?.secondaryCallback &&
-                      !isDuplicateNote(notes.secondaryCallback, notes.primaryCallback) &&
-                      !isDuplicateNote(notes.secondaryCallback, presentation?.primaryMoment) ? (
-                        <AnimatedMemoryNote note={notes.secondaryCallback} index={1} />
-                      ) : null}
-
-                      {notes?.thenVsNow.map((note, index) => (
-                        <AnimatedMemoryNote key={note.id} note={note} index={index + 2} />
-                      ))}
-                    </MotionNoteList>
+                      </MotionNoteList>
+                    ) : null}
 
                     <FollowupPromptInline
                       prompt={activeFollowup}
                       onContinue={handleContinueFollowup}
                     />
 
-                    {voicePlaybackPair ? (
+                    {voicePlaybackPair && presentation?.primaryMoment ? (
                       <VoicePlaybackContinuity pair={voicePlaybackPair} />
-                    ) : null}
-
-                    {whatChangedLine ? (
-                      <p className="text-sm leading-[1.75] text-zinc-500/90">
-                        {whatChangedLine.text}
-                      </p>
                     ) : null}
                   </>
                 ) : (

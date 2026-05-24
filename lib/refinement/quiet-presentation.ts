@@ -20,11 +20,14 @@ import { entryContinuationOpener } from "@/lib/conversation/conversation-continu
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
 import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import {
+  calibrateEntryPresentation,
+  calibrateHomepagePresentation,
+} from "@/lib/refinement/silence-calibration";
 import { rememberNoteContext } from "@/lib/retention/retention-loops";
 import {
   isRevisitEntry,
   markRevisitBoost,
-  recordEmotionalNoteShown,
   shouldAllowEmotionalNote,
   suppressResurfacingCluster,
 } from "@/lib/refinement/emotional-timing";
@@ -96,7 +99,6 @@ export function buildQuietHomepagePresentation(
       : primaryNote;
 
   if (resolvedPrimary) {
-    recordEmotionalNoteShown("homepage", resolvedPrimary);
     recordCallbackSurfaced(resolvedPrimary.id);
     if (resolvedPrimary.entryId) {
       rememberNoteContext(
@@ -107,20 +109,23 @@ export function buildQuietHomepagePresentation(
     }
   }
 
-  const followupNotes = [...continuation, ...(resolvedPrimary ? [resolvedPrimary] : [])];
-  const followupPrompt = buildFollowupPrompt(followupNotes);
-
-  const meaningfulTiming = Boolean(resolvedPrimary);
-  const archiveCandidates = homepageArchiveGrowthNotes(entries, meaningfulTiming);
-  void archiveCandidates;
+  const calibrated = calibrateHomepagePresentation(
+    {
+      primaryNote: resolvedPrimary,
+      continuation,
+      followupPrompt: null,
+      recorderLine: continuation.length === 0 ? recorderPreRecordLine(entries) : null,
+      memoryReminder: null,
+      continuityDepth: null,
+    },
+    entries,
+  );
 
   return {
-    primaryNote: resolvedPrimary,
-    continuation,
-    followupPrompt,
-    recorderLine: continuation.length === 0 ? recorderPreRecordLine(entries) : null,
-    memoryReminder: null,
-    continuityDepth: null,
+    ...calibrated,
+    followupPrompt: buildFollowupPrompt(
+      calibrated.primaryNote ? [calibrated.primaryNote] : [],
+    ),
   };
 }
 
@@ -182,7 +187,6 @@ export function buildQuietEntryPresentation(
       : null;
 
   if (primaryMoment) {
-    recordEmotionalNoteShown("entry", primaryMoment);
     recordCallbackSurfaced(primaryMoment.id);
   }
 
@@ -190,12 +194,21 @@ export function buildQuietEntryPresentation(
     ...(continuation ? [continuation] : []),
     ...(primaryMoment ? [primaryMoment] : []),
   ];
-  const followupPrompt = buildFollowupPrompt(followupNotes);
+
+  const calibrated = calibrateEntryPresentation(
+    {
+      revisitMode,
+      primaryMoment,
+      continuation: continuation ?? null,
+      followupPrompt: null,
+    },
+    allEntries,
+  );
 
   return {
-    revisitMode,
-    primaryMoment,
-    continuation: continuation ?? null,
-    followupPrompt,
+    ...calibrated,
+    followupPrompt: buildFollowupPrompt(
+      calibrated.primaryMoment ? [calibrated.primaryMoment] : followupNotes,
+    ),
   };
 }

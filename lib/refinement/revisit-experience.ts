@@ -15,8 +15,8 @@ import {
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
   markRevisitBoost,
-  recordEmotionalNoteShown,
 } from "@/lib/refinement/emotional-timing";
+import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import {
   rememberNoteContext,
   trackEntryRevisited as trackRetentionEntryRevisited,
@@ -290,22 +290,28 @@ export function buildRevisitExperience(
     revisitReward = realizationNote(pickRevisitQuietCopy(allEntries, entryId), entryId);
   }
 
-  const surfaced = [revisitReward, thenVsNow].filter(Boolean) as MemoryNote[];
-  for (const note of surfaced) {
-    recordEmotionalNoteShown("entry", note);
+  const calibrated = calibrateRevisitExperience(
+    {
+      isRevisit: true,
+      sources: context.sources,
+      revisitReward,
+      thenVsNow: thenVsNow && !isDuplicateNote(thenVsNow, revisitReward) ? thenVsNow : null,
+      followupPrompt: null,
+    },
+    allEntries,
+  );
+
+  for (const note of [calibrated.revisitReward, calibrated.thenVsNow].filter(Boolean) as MemoryNote[]) {
     recordCallbackSurfaced(note.id);
     const contextEntryId = note.entryId ?? note.pastEntryId ?? entryId;
     rememberNoteContext(contextEntryId, note.id, note.text);
   }
 
-  const followupPrompt = buildFollowupPrompt(surfaced);
-
   return {
-    isRevisit: true,
-    sources: context.sources,
-    revisitReward,
-    thenVsNow: thenVsNow && !isDuplicateNote(thenVsNow, revisitReward) ? thenVsNow : null,
-    followupPrompt,
+    ...calibrated,
+    followupPrompt: buildFollowupPrompt(
+      [calibrated.revisitReward, calibrated.thenVsNow].filter(Boolean) as MemoryNote[],
+    ),
   };
 }
 

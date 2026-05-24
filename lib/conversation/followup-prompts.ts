@@ -1,3 +1,4 @@
+import { calibrateFollowupPrompt } from "@/lib/refinement/silence-calibration";
 import type {
   FollowupCandidate,
   FollowupPrompt,
@@ -143,14 +144,17 @@ export function buildFollowupPrompt(notes: MemoryNote[]): FollowupPrompt | null 
 
   if (text.length < 8 || BANNED_PROMPT_RE.test(text)) return null;
 
-  return {
-    id: `followup-${best.source}-${best.note.id}`,
-    text,
-    source: best.source,
-    noteId: best.note.id,
-    noteText: best.note.text,
-    strength: scoreCandidate(best),
-  };
+  return calibrateFollowupPrompt(
+    {
+      id: `followup-${best.source}-${best.note.id}`,
+      text,
+      source: best.source,
+      noteId: best.note.id,
+      noteText: best.note.text,
+      strength: scoreCandidate(best),
+    },
+    notes,
+  );
 }
 
 export function storeFollowupPrompt(text: string): void {

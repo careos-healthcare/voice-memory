@@ -28,6 +28,7 @@ import {
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
 import { monthlyKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { EmotionalMilestone } from "@/types/emotional-milestone";
@@ -80,7 +81,13 @@ export default function MonthlyPage() {
       );
       setMilestones(monthlyMilestoneNotes(entries, limits.milestones));
       setEntries(entries);
-      setKnowsMe(monthlyKnowsMeMoment(entries));
+      setKnowsMe(
+        calibratePrimaryNote(
+          [monthlyKnowsMeMoment(entries)].filter(Boolean) as MemoryNote[],
+          entries,
+          "monthly",
+        ),
+      );
     });
     return () => cancelAnimationFrame(id);
   }, [
