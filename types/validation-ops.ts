@@ -96,6 +96,8 @@ export type FounderWarningKind =
   | "callback_repetition"
   | "revisit_fatigue"
   | "emotional_overclaim"
+  | "explaining_too_much"
+  | "archive_overdesigned"
   | "retention_novelty_drop"
   | "performative_sharing"
   | "export_before_churn";

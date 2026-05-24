@@ -1,4 +1,6 @@
 import { buildEmotionalLegitimacyReport } from "@/lib/debug/emotional-legitimacy-review";
+import { buildEmotionalIntegrityReport } from "@/lib/integrity/emotional-integrity";
+import { buildArchiveSimplicityReport } from "@/lib/integrity/archive-simplicity-review";
 import { LAUNCH_EVENTS, countLocalEvents, readLocalEvents } from "@/lib/local-analytics";
 import { buildRevisitSequencingReport } from "@/lib/refinement/revisit-sequencing";
 import { buildLoopOptimizationReport } from "@/lib/retention/loop-optimization";
@@ -24,6 +26,8 @@ export function buildFounderWarningsReport(): FounderWarningsReport {
   const sequencing = buildRevisitSequencingReport();
   const loopOpt = buildLoopOptimizationReport(entries);
   const legitimacy = buildEmotionalLegitimacyReport(entries);
+  const integrity = buildEmotionalIntegrityReport(entries);
+  const simplicity = buildArchiveSimplicityReport();
   const sharing = buildShareObservationReport();
   const weekly = readWeeklyRetentionSnapshots();
   const warnings: FounderWarning[] = [];
@@ -69,6 +73,28 @@ export function buildFounderWarningsReport(): FounderWarningsReport {
         "Emotional overclaim risk increasing",
         `Overclaim risk ${legitimacy.scores.overclaimRisk} · genericity ${legitimacy.scores.genericityRisk}`,
         "concern",
+      ),
+    );
+  }
+
+  if (integrity.explainingTooMuch) {
+    warnings.push(
+      warning(
+        "explaining_too_much",
+        "The product may be explaining too much.",
+        `Emotional density ${integrity.emotionalDensityScore} · ${integrity.warnings.length} integrity flags`,
+        "concern",
+      ),
+    );
+  }
+
+  if (simplicity.overdesigned || integrity.overdesigned) {
+    warnings.push(
+      warning(
+        "archive_overdesigned",
+        "The archive may be becoming overdesigned.",
+        `Overlap score ${simplicity.overlapScore} · ${simplicity.rows.filter((r) => r.category === "overlap").length} overlapping detectors`,
+        "watch",
       ),
     );
   }

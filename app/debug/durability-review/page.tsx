@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { EmotionalLegitimacyPanel } from "@/components/debug/EmotionalLegitimacyPanel";
+import { DurabilityReviewPanel } from "@/components/debug/DurabilityReviewPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildEmotionalLegitimacyReport } from "@/lib/debug/emotional-legitimacy-review";
-import type { EmotionalLegitimacyReport } from "@/types/social-proof";
+import { buildDurabilityReviewReport } from "@/lib/integrity/durability-review";
+import type { DurabilityReviewReport } from "@/types/emotional-integrity-layer";
 
-export default function EmotionalLegitimacyDebugPage() {
-  const [report, setReport] = useState<EmotionalLegitimacyReport | null>(null);
+export default function DurabilityReviewDebugPage() {
+  const [report, setReport] = useState<DurabilityReviewReport | null>(null);
 
   const refresh = () => {
-    setReport(buildEmotionalLegitimacyReport());
+    setReport(buildDurabilityReviewReport());
   };
 
   useEffect(() => {
@@ -29,12 +29,13 @@ export default function EmotionalLegitimacyDebugPage() {
 
         <header className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Trust</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Consolidation</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              Emotional legitimacy
+              Durability review
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              Founder review of trust strength, residue, revisit authenticity, and overclaim risk.
+              Maintenance hotspots, sync and migration fragility, callback lineage risks, archive
+              corruption signals, and future continuity gaps.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -49,7 +50,7 @@ export default function EmotionalLegitimacyDebugPage() {
           </Card>
         ) : (
           <div className="mt-6">
-            <EmotionalLegitimacyPanel report={report} />
+            <DurabilityReviewPanel report={report} />
           </div>
         )}
 
@@ -57,11 +58,11 @@ export default function EmotionalLegitimacyDebugPage() {
           <Link href="/debug/emotional-integrity" className="text-violet-300 hover:text-violet-200">
             Emotional integrity →
           </Link>
-          <Link href="/debug/social-proof-review" className="text-zinc-500 hover:text-zinc-300">
-            Social proof review →
+          <Link href="/debug/archive-simplicity" className="text-zinc-500 hover:text-zinc-300">
+            Archive simplicity →
           </Link>
-          <Link href="/debug/founder-review" className="text-zinc-500 hover:text-zinc-300">
-            Founder review →
+          <Link href="/debug/archive-permanence" className="text-zinc-500 hover:text-zinc-300">
+            Archive permanence →
           </Link>
         </div>
       </div>
