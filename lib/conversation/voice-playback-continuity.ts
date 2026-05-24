@@ -14,15 +14,11 @@ function entryById(entries: JournalEntry[], id?: string): JournalEntry | null {
   return entries.find((entry) => entry.id === id) ?? null;
 }
 
-function isThenVsNowNote(note: MemoryNote): boolean {
-  return note.id.startsWith("tvn-") || Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
+function bothHaveAudio(thenEntry: JournalEntry | null, nowEntry: JournalEntry): boolean {
+  return Boolean(thenEntry?.audioId && nowEntry.audioId);
 }
 
-function noteAnchorsCurrent(note: MemoryNote, currentEntryId: string): boolean {
-  return !note.entryId || note.entryId === currentEntryId;
-}
-
-/** Resolve then/now audio for a revisit when both clips exist. */
+/** Resolve before/after audio for a revisit — both clips required. */
 export function resolveRevisitVoicePlaybackPair(
   currentEntry: JournalEntry,
   allEntries: JournalEntry[],
@@ -36,8 +32,8 @@ export function resolveRevisitVoicePlaybackPair(
   for (const note of notes) {
     if (!note.pastEntryId) continue;
     const thenEntry = entryById(allEntries, note.pastEntryId);
-    if (!thenEntry?.audioId || !currentEntry.audioId) continue;
-    if (thenEntry.id === currentEntry.id) continue;
+    if (!thenEntry || thenEntry.id === currentEntry.id) continue;
+    if (!bothHaveAudio(thenEntry, currentEntry)) continue;
     return {
       kind: "then_vs_now",
       thenEntry,
@@ -45,19 +41,15 @@ export function resolveRevisitVoicePlaybackPair(
     };
   }
 
-  for (const note of notes) {
-    if (!note.pastEntryId) continue;
-    const thenEntry = entryById(allEntries, note.pastEntryId);
-    if (thenEntry && thenEntry.id !== currentEntry.id && thenEntry.audioId) {
-      return {
-        kind: "related",
-        thenEntry,
-        nowEntry: currentEntry,
-      };
-    }
-  }
-
   return null;
+}
+
+function isThenVsNowNote(note: MemoryNote): boolean {
+  return note.id.startsWith("tvn-") || Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
+}
+
+function noteAnchorsCurrent(note: MemoryNote, currentEntryId: string): boolean {
+  return !note.entryId || note.entryId === currentEntryId;
 }
 
 /** Resolve then/now or one related older clip for entry playback. */
@@ -72,7 +64,7 @@ export function resolveVoicePlaybackPair(
   for (const note of options.thenVsNow) {
     if (!note.pastEntryId || !noteAnchorsCurrent(note, currentEntry.id)) continue;
     const thenEntry = entryById(allEntries, note.pastEntryId);
-    if (thenEntry && thenEntry.id !== currentEntry.id) {
+    if (thenEntry && thenEntry.id !== currentEntry.id && bothHaveAudio(thenEntry, currentEntry)) {
       return {
         kind: "then_vs_now",
         thenEntry,
@@ -92,7 +84,7 @@ export function resolveVoicePlaybackPair(
 
   for (const note of related) {
     const thenEntry = entryById(allEntries, note.pastEntryId);
-    if (thenEntry && thenEntry.id !== currentEntry.id) {
+    if (thenEntry && thenEntry.id !== currentEntry.id && bothHaveAudio(thenEntry, currentEntry)) {
       return {
         kind: "related",
         thenEntry,
@@ -121,6 +113,10 @@ export const VOICE_PLAYBACK_LABELS: Record<
     now: "Now",
   },
   current_only: {
-    now: "Your voice",
+    now: "Now",
   },
 };
+
+export function hasRevisitAudioComparison(pair: VoicePlaybackPair | null): boolean {
+  return Boolean(pair?.thenEntry?.audioId && pair.nowEntry.audioId);
+}

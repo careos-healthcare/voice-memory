@@ -15,6 +15,10 @@ import {
 } from "@/lib/patterns/note-limits";
 import { filterOrienting, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import { formatEntryDate } from "@/lib/utils";
+import {
+  qualifiesRevisitQuoteContrast,
+  trimRevisitQuote,
+} from "@/lib/refinement/then-vs-now-quotes";
 import type {
   ContinuityCallback,
   ContinuityCallbackKind,
@@ -495,9 +499,16 @@ function detectThenVsNowAll(
     if (priorMatches.length === 0) continue;
 
     const thenEntry = priorMatches[priorMatches.length - 1];
-    const thenSnippet = snippet(thenEntry).slice(0, 140);
-    const nowSnippet = snippet(current).slice(0, 140);
+    const gapDays = daysBetweenKeys(
+      toDayKey(thenEntry.createdAt),
+      toDayKey(current.createdAt),
+    );
+    if (gapDays < 7) continue;
+
+    const thenSnippet = trimRevisitQuote(snippet(thenEntry));
+    const nowSnippet = trimRevisitQuote(snippet(current));
     if (thenSnippet === nowSnippet) continue;
+    if (!qualifiesRevisitQuoteContrast(thenSnippet, nowSnippet, thenEntry, current)) continue;
 
     const intensityDelta =
       thenEntry.reflection.emotionalIntensity - current.reflection.emotionalIntensity;

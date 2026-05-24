@@ -22,6 +22,7 @@ import type {
   ThenVsNowComparison,
 } from "@/types/continuity-moments";
 import type { MemoryNote, MemoryNoteCategory, MemoryNotesReport } from "@/types/memory-note";
+import { prepareRevisitContrastNote } from "@/lib/refinement/then-vs-now-quotes";
 import type { JournalEntry } from "@/types/journal";
 
 const FADED_KINDS = new Set<ContinuityCallbackKind>(["topic_stopped", "used_to_be_vague"]);
@@ -117,12 +118,14 @@ export function thenVsNowToNote(
   if (comparison.confidence < 65) return null;
   const text = comparison.headline.trim() || "You sound different here.";
   if (weightThenVsNow(comparison, sorted) < 65) return null;
-  return noteFromText(`tvn-${comparison.then.entryId}-${comparison.subject}`, text, "changed", comparison.confidence, {
+  const note = noteFromText(`tvn-${comparison.then.entryId}-${comparison.subject}`, text, "changed", comparison.confidence, {
     pastQuote: comparison.then.snippet,
     currentQuote: comparison.now.snippet,
     pastEntryId: comparison.then.entryId,
     entryId: comparison.now.entryId,
   });
+  if (!note) return null;
+  return prepareRevisitContrastNote(note, sorted);
 }
 
 export function buildMemoryNotesReport(

@@ -34,7 +34,7 @@ import {
   buildFollowupPrompt,
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
-import { resolveRevisitVoicePlaybackPair, resolveVoicePlaybackPair } from "@/lib/conversation/voice-playback-continuity";
+import { resolveRevisitVoicePlaybackPair, resolveVoicePlaybackPair, hasRevisitAudioComparison } from "@/lib/conversation/voice-playback-continuity";
 import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
@@ -51,7 +51,6 @@ import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import {
   buildRevisitExperience,
-  revisitThenVsNowDisplayNote,
   trackRevisitAudioPlayed,
   trackRevisitFollowupStarted,
   trackRevisitOpened,
@@ -428,21 +427,45 @@ export default function EntryPage() {
         ) : (
           <MotionPage className="mt-10 space-y-20">
             {!pending && revisitExperience?.isRevisit ? (
-              <section className="space-y-10 border-b border-white/[0.04] pb-10">
-                {revisitExperience.thenVsNow ? (
-                  <MotionNoteList className="space-y-8 py-1">
-                    <AnimatedMemoryNote
-                      note={revisitThenVsNowDisplayNote(revisitExperience.thenVsNow)}
-                      index={0}
-                      tone="continuation"
-                    />
-                  </MotionNoteList>
-                ) : revisitExperience.revisitReward ? (
-                  <p className="text-[19px] font-normal leading-[1.4] text-zinc-50">
+              <section className="space-y-8 border-b border-white/[0.04] pb-10">
+                {revisitExperience.revisitReward ? (
+                  <p className="text-[22px] font-normal leading-[1.35] tracking-tight text-zinc-50 sm:text-2xl">
                     {revisitExperience.revisitReward.text}
                   </p>
                 ) : null}
-                {revisitVoicePair ? (
+
+                {revisitExperience.thenVsNow ? (
+                  <div className="space-y-6">
+                    {revisitExperience.thenVsNow.pastQuote ? (
+                      <blockquote className="space-y-2 border-l border-zinc-700/60 pl-4">
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-600">Before</p>
+                        <p className="text-base leading-[1.65] text-zinc-400/95">
+                          &ldquo;{revisitExperience.thenVsNow.pastQuote}&rdquo;
+                        </p>
+                        {revisitExperience.thenVsNow.pastDateLabel ? (
+                          <p className="text-xs text-zinc-600">
+                            {revisitExperience.thenVsNow.pastDateLabel}
+                          </p>
+                        ) : null}
+                      </blockquote>
+                    ) : null}
+                    {revisitExperience.thenVsNow.currentQuote ? (
+                      <blockquote className="space-y-2 border-l border-zinc-500/40 pl-4">
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-500">Now</p>
+                        <p className="text-base leading-[1.65] text-zinc-200/95">
+                          &ldquo;{revisitExperience.thenVsNow.currentQuote}&rdquo;
+                        </p>
+                        {revisitExperience.thenVsNow.currentDateLabel ? (
+                          <p className="text-xs text-zinc-600">
+                            {revisitExperience.thenVsNow.currentDateLabel}
+                          </p>
+                        ) : null}
+                      </blockquote>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {hasRevisitAudioComparison(revisitVoicePair) && revisitVoicePair ? (
                   <VoicePlaybackContinuity
                     pair={revisitVoicePair}
                     onAudioPlayed={(clip) => {
@@ -456,6 +479,7 @@ export default function EntryPage() {
                     }}
                   />
                 ) : null}
+
                 <FollowupPromptInline
                   prompt={activeFollowup}
                   onContinue={handleContinueFollowup}
@@ -486,7 +510,8 @@ export default function EntryPage() {
 
             {entry.audioId || entry.transcript ? (
               <section className="space-y-8">
-                {entry.audioId ? (
+                {entry.audioId &&
+                !(revisitExperience?.isRevisit && hasRevisitAudioComparison(revisitVoicePair)) ? (
                   <VoicePlayback
                     entryId={entry.id}
                     audioId={entry.audioId}

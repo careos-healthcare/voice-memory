@@ -484,14 +484,15 @@ function hasContrastEvidence(note: MemoryNote): boolean {
 }
 
 function hasStrongRevisitReward(note: MemoryNote, entries: JournalEntry[]): boolean {
+  if (!note.text.trim()) return false;
+  if (note.id.startsWith("revisit-reward-")) return true;
   return (
-    Boolean(note.text.trim()) &&
     !isWeakNote(note, entries) &&
     scoreMemoryHierarchy(note, entries).total >= 58
   );
 }
 
-/** Revisit — reward line always visible; optional contrast when quotes exist. */
+/** Revisit — reward line + optional contrast; no filler without evidence. */
 export function calibrateRevisitExperience<
   T extends {
     isRevisit: boolean;
@@ -502,23 +503,18 @@ export function calibrateRevisitExperience<
 >(experience: T, entries: JournalEntry[]): T {
   if (!experience.isRevisit) return experience;
 
-  const hasContrast =
-    experience.thenVsNow &&
-    hasContrastEvidence(experience.thenVsNow) &&
-    !isWeakNote(experience.thenVsNow, entries);
-
-  let thenVsNow = hasContrast ? experience.thenVsNow : null;
-  if (thenVsNow) {
-    recordSilenceShown(thenVsNow, entries, "entry_revisit");
-  }
-
   let revisitReward = experience.revisitReward;
-  if (thenVsNow) {
-    revisitReward = null;
-  } else if (revisitReward && hasStrongRevisitReward(revisitReward, entries)) {
+  if (revisitReward?.text.trim() && hasStrongRevisitReward(revisitReward, entries)) {
     recordSilenceShown(revisitReward, entries, "entry_revisit");
   } else {
     revisitReward = null;
+  }
+
+  let thenVsNow = experience.thenVsNow;
+  if (thenVsNow && hasContrastEvidence(thenVsNow) && !isWeakNote(thenVsNow, entries)) {
+    recordSilenceShown(thenVsNow, entries, "entry_revisit");
+  } else {
+    thenVsNow = null;
   }
 
   if (!revisitReward && !thenVsNow) {

@@ -6,10 +6,13 @@ import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import {
   entryRevisitRewardCandidates,
+  isTopicRecurrenceCopy,
   pickEntryRevisitContrast,
   pickEntryRevisitRewardLine,
+  revisitRewardCopyForContrast,
   REVISIT_REWARD_COPY,
 } from "@/lib/refinement/knows-me-moments";
+import { rankThenVsNowContrastNotes } from "@/lib/refinement/then-vs-now-quotes";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
   markRevisitBoost,
@@ -32,11 +35,11 @@ const REVISIT_NAV_KEY = "voicememory_revisit_nav";
 const REVISIT_REWARD_MIN = 62;
 
 export const REVISIT_QUIET_COPY_EXAMPLES = [
-  REVISIT_REWARD_COPY.beforeThingsChanged,
-  REVISIT_REWARD_COPY.soundCalmerNow,
+  REVISIT_REWARD_COPY.soundDifferentNow,
   REVISIT_REWARD_COPY.notNamedYet,
   REVISIT_REWARD_COPY.usedToTakeSpace,
-  REVISIT_REWARD_COPY.samePlace,
+  REVISIT_REWARD_COPY.beforeThingsChanged,
+  REVISIT_REWARD_COPY.soundFurtherAway,
 ] as const;
 
 export type RevisitQuietCopy = (typeof REVISIT_QUIET_COPY_EXAMPLES)[number];
@@ -60,9 +63,9 @@ export interface RevisitContext {
 export interface RevisitExperiencePresentation {
   isRevisit: boolean;
   sources: RevisitSource[];
-  /** Immediate text-only line — why this entry was worth reopening. */
+  /** Immediate human line — “you sound different”. */
   revisitReward: MemoryNote | null;
-  /** Quote-backed before/after contrast when evidence exists. */
+  /** Quote-backed before/after when contrast is obvious. */
   thenVsNow: MemoryNote | null;
   followupPrompt: FollowupPrompt | null;
 }
@@ -77,7 +80,7 @@ const REVISIT_SUPPRESSED_ID =
   /^rhythm-|^time-|^continuity-thread-|^continuity-recurring-|^archive-|^continuity-depth-|^resurface-topic-|^resurface-entity-|^resurface-phrase-|^resurface-person-|^resurface-loop-|^familiarity-|^fam-resurface-similar|^revisit-loop-|^continuity-callback-/;
 
 const REVISIT_SUPPRESSED_TEXT =
-  /\b(you came back to the same place|you spoke about this the same way|older reflections are starting|starting to mean something|kept coming back to a few things|tends to return|weekly rhythm|gap between these entries|you left off here|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again|worth revisiting|worth returning to|an older reflection|this changed|what changed|topic appeared|similar theme)\b/i;
+  /\b(you came back to the same place|you spoke about this the same way|older reflections are starting|starting to mean something|kept coming back to a few things|tends to return|weekly rhythm|gap between these entries|you left off here|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again|worth revisiting|worth returning to|an older reflection|this changed|what changed|topic appeared|similar theme|appeared again|money returned|work appeared)\b/i;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -92,7 +95,7 @@ function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boole
   return a.id === b.id || a.text === b.text;
 }
 
-function realizationNote(text: string, entryId: string, confidence = 64): MemoryNote {
+function realizationNote(text: string, entryId: string, confidence = 68): MemoryNote {
   return {
     id: `revisit-reward-${entryId}`,
     text,
@@ -105,6 +108,7 @@ function realizationNote(text: string, entryId: string, confidence = 64): Memory
 function isWeakForRevisit(note: MemoryNote): boolean {
   if (REVISIT_SUPPRESSED_ID.test(note.id)) return true;
   if (REVISIT_SUPPRESSED_TEXT.test(note.text)) return true;
+  if (isTopicRecurrenceCopy(note.text)) return true;
   return false;
 }
 
@@ -114,34 +118,33 @@ function isStrongForRevisit(note: MemoryNote, entries: JournalEntry[]): boolean 
 }
 
 function canonicalCopyForNote(note: MemoryNote): RevisitQuietCopy {
-  if (note.id.startsWith("revisit-before-quiet") || /before things (got quieter|changed)/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.beforeThingsChanged;
-  }
-  if (note.id.startsWith("change-charged") || /more pressure before|take up more space|felt heavier/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.usedToTakeSpace;
-  }
   if (note.id.startsWith("change-hedge") || note.id.startsWith("change-direct") || /not named|named directly/i.test(note.text)) {
     return REVISIT_REWARD_COPY.notNamedYet;
   }
-  if (note.id.startsWith("revisit-diff") || /sound calmer|more settled|quieter now/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.soundCalmerNow;
+  if (note.id.startsWith("change-charged") || /more pressure before|take up more room|felt heavier|used to take up/i.test(note.text)) {
+    return REVISIT_REWARD_COPY.usedToTakeSpace;
   }
-  if (/calmer|quieter|settled/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.soundCalmerNow;
+  if (note.id.startsWith("revisit-before-quiet") || /further away|quieter|calmer|settled/i.test(note.text)) {
+    return REVISIT_REWARD_COPY.soundFurtherAway;
+  }
+  if (note.id.startsWith("revisit-diff") || note.id.startsWith("knows-me-wording") || note.id.startsWith("tvn-")) {
+    return REVISIT_REWARD_COPY.soundDifferentNow;
   }
   if (/named|directly|not sure|vague/i.test(note.text)) {
     return REVISIT_REWARD_COPY.notNamedYet;
   }
-  if (/heavier|pressure|space|weight/i.test(note.text)) {
+  if (/heavier|pressure|room|weight/i.test(note.text)) {
     return REVISIT_REWARD_COPY.usedToTakeSpace;
+  }
+  if (/calmer|quieter|further|settled|different/i.test(note.text)) {
+    return REVISIT_REWARD_COPY.soundDifferentNow;
   }
   return REVISIT_REWARD_COPY.beforeThingsChanged;
 }
 
-/** Text-only reward line — never carries quote blocks. */
 function toRewardLine(note: MemoryNote | null, entryId: string, fallback: RevisitQuietCopy): MemoryNote {
   const text = note ? canonicalCopyForNote(note) : fallback;
-  return realizationNote(text, entryId, note?.confidence ?? 64);
+  return realizationNote(text, entryId, note?.confidence ?? 68);
 }
 
 function gatherContrastExtras(
@@ -151,19 +154,23 @@ function gatherContrastExtras(
   const notes = entryMemoryNotes(allEntries, entryId);
   const changeMoments = entryChangeMomentsNotes(allEntries, entryId, 2);
 
-  return [...notes.thenVsNow, notes.whatChanged, ...changeMoments]
+  const pool = [...notes.thenVsNow, ...changeMoments]
     .filter(Boolean)
     .filter((note) => hasContrastEvidence(note as MemoryNote))
     .filter((note) => isStrongForRevisit(note as MemoryNote, allEntries)) as MemoryNote[];
+
+  return rankThenVsNowContrastNotes(pool, allEntries);
 }
 
-function pickRevisitQuietCopy(allEntries: JournalEntry[], entryId: string): RevisitQuietCopy {
+function pickRevisitQuietCopy(allEntries: JournalEntry[], entryId: string): RevisitQuietCopy | null {
   const entry = allEntries.find((row) => row.id === entryId);
-  if (!entry) return REVISIT_REWARD_COPY.beforeThingsChanged;
+  if (!entry) return null;
 
   const prior = allEntries.filter(
     (row) => new Date(row.createdAt).getTime() < new Date(entry.createdAt).getTime(),
   );
+  if (prior.length === 0) return REVISIT_REWARD_COPY.soundDifferentNow;
+
   const themes = new Set(entry.reflection.recurringThemes.map((t) => t.toLowerCase()));
   const priorSameTheme = prior.filter((row) =>
     row.reflection.recurringThemes.some((t) => themes.has(t.toLowerCase())),
@@ -179,18 +186,18 @@ function pickRevisitQuietCopy(allEntries: JournalEntry[], entryId: string): Revi
 
   const intenseBefore = priorSameTheme.some((row) => row.reflection.emotionalIntensity >= 6);
   if (intenseBefore && entry.reflection.emotionalIntensity <= 4.5) {
-    return REVISIT_REWARD_COPY.soundCalmerNow;
+    return REVISIT_REWARD_COPY.soundFurtherAway;
   }
 
-  if (priorSameTheme.length >= 2) {
+  if (priorSameTheme.length >= 1) {
     const moodShift =
       priorSameTheme[priorSameTheme.length - 1].reflection.mood !== entry.reflection.mood;
     const intensityDelta = Math.abs(
       entry.reflection.emotionalIntensity -
         priorSameTheme[priorSameTheme.length - 1].reflection.emotionalIntensity,
     );
-    if (moodShift || intensityDelta >= 1.5) {
-      return REVISIT_REWARD_COPY.beforeThingsChanged;
+    if (moodShift || intensityDelta >= 1.2) {
+      return REVISIT_REWARD_COPY.soundDifferentNow;
     }
   }
 
@@ -203,40 +210,57 @@ function pickRevisitQuietCopy(allEntries: JournalEntry[], entryId: string): Revi
     return REVISIT_REWARD_COPY.usedToTakeSpace;
   }
 
-  return REVISIT_REWARD_COPY.beforeThingsChanged;
+  if (priorSameTheme.length >= 2) {
+    return REVISIT_REWARD_COPY.beforeThingsChanged;
+  }
+
+  return REVISIT_REWARD_COPY.soundDifferentNow;
+}
+
+function resolveRevisitRewardLine(
+  allEntries: JournalEntry[],
+  entryId: string,
+  thenVsNow: MemoryNote | null,
+  bestLine: MemoryNote | null,
+): MemoryNote | null {
+  if (thenVsNow) {
+    return realizationNote(
+      revisitRewardCopyForContrast(thenVsNow, allEntries),
+      entryId,
+      thenVsNow.confidence,
+    );
+  }
+
+  if (bestLine && isStrongForRevisit(bestLine, allEntries)) {
+    const fallback = pickRevisitQuietCopy(allEntries, entryId) ?? REVISIT_REWARD_COPY.soundDifferentNow;
+    return toRewardLine(bestLine, entryId, fallback);
+  }
+
+  const quietCopy = pickRevisitQuietCopy(allEntries, entryId);
+  if (!quietCopy) return null;
+  return realizationNote(quietCopy, entryId);
 }
 
 function buildRevisitFollowupPrompt(
   reward: MemoryNote | null,
   contrast: MemoryNote | null,
 ): FollowupPrompt | null {
+  if (!reward?.text.trim()) return null;
+
   if (contrast?.pastQuote?.trim() && contrast?.currentQuote?.trim()) {
-    const calmerNow =
-      /\bcalmer|quieter|further away|settled\b/i.test(contrast.text) ||
-      /\bcalmer|quieter|further away|settled\b/i.test(contrast.currentQuote);
-    const namedNow =
-      /\bnamed|direct|decided\b/i.test(contrast.currentQuote) ||
-      /\bnot named\b/i.test(contrast.pastQuote);
-
-    let text = "What shifted between these two moments?";
-    if (calmerNow) text = "What feels further away now?";
-    else if (namedNow) text = "What had you not named yet then?";
-
     return {
       id: `followup-revisit-${contrast.id}`,
-      text,
+      text: "What sounds different when you hear both?",
       source: "then_vs_now",
       noteId: contrast.id,
-      noteText: contrast.text,
-      strength: contrast.confidence,
+      noteText: reward.text,
+      strength: Math.max(contrast.confidence, reward.confidence),
     };
   }
 
-  if (!reward?.text.trim()) return null;
-
   return {
     id: `followup-revisit-${reward.id}`,
-    text: "What feels different about this now?",
+    text: "What feels different about how you sound now?",
     source: "revisitation",
     noteId: reward.id,
     noteText: reward.text,
@@ -308,7 +332,7 @@ export function detectRevisitContext(entryId: string): RevisitContext {
   };
 }
 
-/** Revisit entry presentation — immediate reward, contrast, audio, follow-up. */
+/** Revisit entry presentation — reward line, contrast quotes, follow-up. */
 export function buildRevisitExperience(
   allEntries: JournalEntry[],
   entryId: string,
@@ -337,20 +361,15 @@ export function buildRevisitExperience(
   );
   const contrastExtras = gatherContrastExtras(allEntries, entryId);
 
-  const thenVsNow = pickEntryRevisitContrast(knowsMeCandidates, contrastExtras, []);
+  const thenVsNow = pickEntryRevisitContrast(
+    knowsMeCandidates,
+    contrastExtras,
+    [],
+    allEntries,
+  );
 
   const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow]);
-  const hasStrongLine = Boolean(bestLine && isStrongForRevisit(bestLine, allEntries));
-  const fallbackCopy = hasStrongLine || thenVsNow ? pickRevisitQuietCopy(allEntries, entryId) : null;
-  let revisitReward =
-    hasStrongLine && bestLine
-      ? toRewardLine(bestLine, entryId, fallbackCopy ?? REVISIT_REWARD_COPY.beforeThingsChanged)
-      : null;
-
-  if (revisitReward && thenVsNow && isDuplicateNote(revisitReward, thenVsNow)) {
-    revisitReward = null;
-  }
-
+  const revisitReward = resolveRevisitRewardLine(allEntries, entryId, thenVsNow, bestLine);
   const followupPrompt = buildRevisitFollowupPrompt(revisitReward, thenVsNow);
 
   const calibrated = calibrateRevisitExperience(
@@ -358,7 +377,7 @@ export function buildRevisitExperience(
       isRevisit: true,
       sources: context.sources,
       revisitReward,
-      thenVsNow: thenVsNow && !isDuplicateNote(thenVsNow, revisitReward) ? thenVsNow : null,
+      thenVsNow,
       followupPrompt,
     },
     allEntries,
@@ -370,10 +389,7 @@ export function buildRevisitExperience(
     rememberNoteContext(contextEntryId, note.id, note.text);
   }
 
-  return {
-    ...calibrated,
-    followupPrompt: calibrated.followupPrompt,
-  };
+  return calibrated;
 }
 
 export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): void {

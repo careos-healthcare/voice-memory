@@ -17,6 +17,11 @@ import {
   languageShiftOnTheme,
 } from "@/lib/patterns/emotional-evolution";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
+import {
+  directScore,
+  hedgeScore,
+  rankThenVsNowContrastNotes,
+} from "@/lib/refinement/then-vs-now-quotes";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -60,14 +65,57 @@ const SELF_CONTRAST_SIGNALS = new Set<KnowsMeSignal>([
   "emotional_contrast",
 ]);
 
-/** Revisit entry copy — answers “why was this worth reopening?” */
+/** Revisit entry copy — first-screen “you sound different” moments. */
 export const REVISIT_REWARD_COPY = {
-  beforeThingsChanged: "You were carrying this differently then.",
-  soundCalmerNow: "You sound further away from it now.",
-  notNamedYet: "You had not named it yet.",
+  soundDifferentNow: "You sound different now.",
+  notNamedYet: "You had not named this yet.",
   usedToTakeSpace: "This used to take up more room.",
-  samePlace: "You came back to the same place.",
+  beforeThingsChanged: "You were carrying this differently then.",
+  soundFurtherAway: "You sound further away from this now.",
 } as const;
+
+export {
+  prepareRevisitContrastNote,
+  qualifiesRevisitQuoteContrast,
+  trimRevisitQuote,
+} from "@/lib/refinement/then-vs-now-quotes";
+
+export function revisitRewardCopyForContrast(
+  note: MemoryNote,
+  entries: JournalEntry[],
+): (typeof REVISIT_REWARD_COPY)[keyof typeof REVISIT_REWARD_COPY] {
+  const past = note.pastEntryId
+    ? entries.find((entry) => entry.id === note.pastEntryId)
+    : undefined;
+  const current = note.entryId
+    ? entries.find((entry) => entry.id === note.entryId)
+    : undefined;
+
+  if (note.pastQuote && note.currentQuote) {
+    const hedgeDrop = hedgeScore(note.pastQuote) - hedgeScore(note.currentQuote);
+    const directGain = directScore(note.currentQuote) - directScore(note.pastQuote);
+    if (hedgeDrop >= 1 && directGain >= 0) return REVISIT_REWARD_COPY.notNamedYet;
+    if (directGain >= 1) return REVISIT_REWARD_COPY.notNamedYet;
+  }
+
+  const signal = signalFromNoteId(note);
+  if (signal === "direct_naming" || signal === "certainty_shift" || signal === "directness_shift") {
+    return REVISIT_REWARD_COPY.notNamedYet;
+  }
+  if (signal === "weight_shift") return REVISIT_REWARD_COPY.usedToTakeSpace;
+  if (signal === "topic_quieter") return REVISIT_REWARD_COPY.soundFurtherAway;
+
+  if (past && current) {
+    if (current.reflection.emotionalIntensity <= past.reflection.emotionalIntensity - 1) {
+      return REVISIT_REWARD_COPY.soundFurtherAway;
+    }
+    if (past.reflection.mood !== current.reflection.mood) {
+      return REVISIT_REWARD_COPY.soundDifferentNow;
+    }
+  }
+
+  return REVISIT_REWARD_COPY.soundDifferentNow;
+}
 
 const REVISIT_CONTRAST_PRIORITY: KnowsMeSignal[] = [
   "earlier_self",
@@ -631,7 +679,7 @@ function detectReopenedBeforeQuieter(
     return {
       id: `knows-me-reopen-quiet-${anchor.id}-${calmerLater.id}`,
       signal: "topic_quieter",
-      text: REVISIT_REWARD_COPY.soundCalmerNow,
+      text: REVISIT_REWARD_COPY.soundFurtherAway,
       strength:
         70 +
         Math.round(anchor.reflection.emotionalIntensity - calmerLater.reflection.emotionalIntensity) *
@@ -745,17 +793,19 @@ function toMemoryNote(candidate: KnowsMeCandidate): MemoryNote {
 function revisitTextForSignal(signal: KnowsMeSignal, fallback: string): string {
   switch (signal) {
     case "topic_quieter":
-      return REVISIT_REWARD_COPY.soundCalmerNow;
+      return REVISIT_REWARD_COPY.soundFurtherAway;
     case "certainty_shift":
     case "direct_naming":
       return REVISIT_REWARD_COPY.notNamedYet;
     case "weight_shift":
       return REVISIT_REWARD_COPY.usedToTakeSpace;
+    case "phrase_gone":
+      return REVISIT_REWARD_COPY.usedToTakeSpace;
     case "emotional_contrast":
     case "wording_shift":
     case "directness_shift":
     case "earlier_self":
-      return REVISIT_REWARD_COPY.beforeThingsChanged;
+      return REVISIT_REWARD_COPY.soundDifferentNow;
     default:
       return fallback;
   }
@@ -822,11 +872,12 @@ export function entryRevisitRewardCandidates(
   ).map(toRevisitMemoryNote);
 }
 
-/** Strongest before/after contrast for a revisit — quotes required. */
+/** Strongest before/after contrast for a revisit — quotes required and quality-filtered. */
 export function pickEntryRevisitContrast(
   candidates: MemoryNote[],
   extra: MemoryNote[],
   exclude: Array<MemoryNote | null | undefined>,
+  entries: JournalEntry[],
 ): MemoryNote | null {
   const pool = [...candidates, ...extra]
     .filter((note) => hasContrastEvidence(note))
@@ -838,7 +889,8 @@ export function pickEntryRevisitContrast(
         b.confidence - a.confidence,
     );
 
-  return pool[0] ?? null;
+  const ranked = rankThenVsNowContrastNotes(pool, entries);
+  return ranked[0] ?? null;
 }
 
 /** Single reward line when contrast alone is not enough — text-first moments. */
