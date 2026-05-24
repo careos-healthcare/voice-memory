@@ -10,7 +10,8 @@ export type UpgradeClickSource =
   | "export"
   | "journal"
   | "insights"
-  | "homepage";
+  | "homepage"
+  | "pilot";
 
 export interface UpgradeClickEvent {
   source: UpgradeClickSource;

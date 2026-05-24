@@ -246,6 +246,9 @@ export function ValidationOpsPanel({ report }: { report: ValidationOpsReport }) 
       </Card>
 
       <div className="flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/pilot-review" className="text-zinc-500 hover:text-zinc-300">
+            Pilot review →
+          </Link>
           <Link href="/debug/archive-value" className="text-zinc-500 hover:text-zinc-300">
             Archive value →
           </Link>

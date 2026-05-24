@@ -31,6 +31,7 @@ const SKIP_PATH_PARTS = [
   "lib/archive/",
   "lib/research/",
   "lib/monetization/",
+  "lib/pilot/",
   "lib/refinement/permanent-callbacks.ts",
   "lib/roundups/roundup-quality.ts",
   "lib/roundups/roundup-observation.ts",

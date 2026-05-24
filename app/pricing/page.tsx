@@ -24,6 +24,7 @@ import {
   type UpgradeClickSource,
 } from "@/lib/subscription";
 import { HONESTY_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
+import { trackPilotPricingOpened } from "@/lib/pilot/pilot-interest";
 import { getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
 
 function PlanFeature({ children }: { children: React.ReactNode }) {
@@ -51,9 +52,10 @@ export default function PricingPage() {
       setClickCount(getUpgradeClickEvents().length);
       setStoredCount(getStoredEntryCount());
       setLockedCount(getLockedEntryCount());
+      if (from === "pilot") trackPilotPricingOpened();
     });
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [from]);
 
   const handleUpgrade = () => {
     trackUpgradeClick(from, "pricing_cta");
