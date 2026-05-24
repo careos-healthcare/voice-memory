@@ -1,5 +1,7 @@
+import type { ArchivePhotoFile } from "@/types/personalization";
 import type { ReminderPreferences } from "@/lib/reminder-preferences";
 import type { ReflectionGoal } from "@/types/reflection-goal";
+import type { VisualTone } from "@/types/personalization";
 import type { ReflectionBookmark } from "@/types/reflection-bookmark";
 import type { CallbackReviewLabel } from "@/types/callback-quality-review";
 import type { JournalEntry } from "@/types/journal";
@@ -16,6 +18,9 @@ export interface ArchiveSettingsSnapshot {
   reflectionGoal: ReflectionGoal;
   listeningMode: boolean;
   fullDetail: boolean;
+  visualTone?: VisualTone;
+  autoTimeOfDayTone?: boolean;
+  photoAttachmentsEnabled?: boolean;
 }
 
 export interface ArchiveAudioFile {
@@ -35,6 +40,7 @@ export interface VoiceMemoryArchivePackage {
   settings: ArchiveSettingsSnapshot;
   memoryReviewLabels: ArchiveReviewLabel[];
   audio?: ArchiveAudioFile[];
+  photos?: ArchivePhotoFile[];
   permanenceManifest?: ArchivePermanenceManifest;
 }
 

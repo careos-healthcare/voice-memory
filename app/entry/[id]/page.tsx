@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
+import { EntryPhotoAttachment } from "@/components/entry/EntryPhotoAttachment";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
@@ -463,7 +464,7 @@ export default function EntryPage() {
   }, [entry, allEntries, pending, limits.milestones]);
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
@@ -636,6 +637,12 @@ export default function EntryPage() {
                 ) : null}
               </section>
             ) : null}
+
+            <EntryPhotoAttachment
+              entryId={entry.id}
+              photo={entry.photo}
+              onPhotoChange={(photo) => setEntry((current) => (current ? { ...current, photo } : current))}
+            />
 
             {pending ? (
               <ReflectOnEntryButton

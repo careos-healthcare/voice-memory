@@ -6,12 +6,19 @@ import { isFullDetailEnabled } from "@/lib/quiet-mode";
 import { getReminderPreferences } from "@/lib/reminder-preferences";
 import { getAllEntries } from "@/lib/storage";
 import { getAudio } from "@/lib/audio-storage";
+import { getPhoto, listPhotoEntryIds } from "@/lib/photo-storage";
 import { attachPermanenceManifest } from "@/lib/archive/archive-guarantees";
 import { slugExportDate } from "@/lib/memory-export";
+import {
+  getStoredVisualTone,
+  isAutoTimeOfDayToneEnabled,
+} from "@/lib/personalization/visual-tone";
+import { isPhotoAttachmentEnabled } from "@/lib/personalization/photo-preferences";
 import type {
   ArchiveAudioFile,
   VoiceMemoryArchivePackage,
 } from "@/types/archive-permanence";
+import type { ArchivePhotoFile } from "@/types/personalization";
 
 function bytesToBase64(bytes: Uint8Array): string {
   let binary = "";
@@ -55,14 +62,49 @@ export function buildArchiveSettingsSnapshot() {
     reflectionGoal: getReflectionGoal(),
     listeningMode: isListeningModeEnabled(),
     fullDetail: isFullDetailEnabled(),
+    visualTone: getStoredVisualTone(),
+    autoTimeOfDayTone: isAutoTimeOfDayToneEnabled(),
+    photoAttachmentsEnabled: isPhotoAttachmentEnabled(),
   };
+}
+
+export async function collectArchivePhotos(includePhotos: boolean): Promise<ArchivePhotoFile[]> {
+  if (!includePhotos || !isPhotoAttachmentEnabled()) return [];
+
+  const files: ArchivePhotoFile[] = [];
+  const entryIds = await listPhotoEntryIds();
+
+  for (const entryId of entryIds) {
+    const entry = getAllEntries().find((row) => row.id === entryId);
+    const photo = await getPhoto(entryId);
+    if (!photo) continue;
+
+    const buffer = await photo.blob.arrayBuffer();
+    const ext = photo.mimeType.includes("png")
+      ? "png"
+      : photo.mimeType.includes("webp")
+        ? "webp"
+        : "jpg";
+
+    files.push({
+      entryId,
+      mimeType: photo.mimeType,
+      dataBase64: bytesToBase64(new Uint8Array(buffer)),
+      filename: `photos/${entryId}.${ext}`,
+      attachedAt: entry?.photo?.attachedAt ?? photo.savedAt,
+    });
+  }
+
+  return files;
 }
 
 /** Full portable archive — entries, bookmarks, settings, optional audio. */
 export async function buildFullArchivePackage(
   includeAudio = true,
+  includePhotos = true,
 ): Promise<VoiceMemoryArchivePackage> {
   const audio = await collectArchiveAudio(includeAudio);
+  const photos = await collectArchivePhotos(includePhotos);
 
   return attachPermanenceManifest({
     format: "voicememory-archive",
@@ -73,6 +115,7 @@ export async function buildFullArchivePackage(
     settings: buildArchiveSettingsSnapshot(),
     memoryReviewLabels: readAllCallbackReviews(),
     audio: audio.length > 0 ? audio : undefined,
+    photos: photos.length > 0 ? photos : undefined,
   });
 }
 

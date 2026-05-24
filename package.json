@@ -20,9 +20,10 @@
     "validate:integrity": "node scripts/validate-integrity-restraint.mjs",
     "validate:individuality": "node scripts/validate-individuality-restraint.mjs",
     "validate:sacredness": "node scripts/validate-sacredness-restraint.mjs",
+    "validate:personalization": "node scripts/validate-personalization-restraint.mjs",
     "validate:stress": "node --import tsx scripts/run-stress-tests.mjs",
     "stress-tests": "node --import tsx scripts/run-stress-tests.mjs",
-    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:acquisition && npm run validate:testimonial && npm run validate:sharing && npm run validate:compounding && npm run validate:permanence && npm run validate:validation-ops && npm run validate:monetization && npm run validate:pilot && npm run validate:integrity && npm run validate:individuality && npm run validate:sacredness && npm run validate:stress"
+    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:acquisition && npm run validate:testimonial && npm run validate:sharing && npm run validate:compounding && npm run validate:permanence && npm run validate:validation-ops && npm run validate:monetization && npm run validate:pilot && npm run validate:integrity && npm run validate:individuality && npm run validate:sacredness && npm run validate:personalization && npm run validate:stress"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

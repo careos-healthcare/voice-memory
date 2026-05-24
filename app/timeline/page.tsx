@@ -146,7 +146,13 @@ export default function TimelinePage() {
 
         <MotionPageTitle title="Over time" />
 
-        <div className="mt-20 space-y-20">
+        <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/feelings-timeline" className="text-violet-300 hover:text-violet-200">
+            How this has felt →
+          </Link>
+        </div>
+
+        <div className="mt-4 space-y-20">
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : entries.length === 0 ? (

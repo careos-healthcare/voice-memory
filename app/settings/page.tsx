@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Headphones, Download, Moon, RotateCcw, Trash2 } from "lucide-react";
 
 import { ReflectionGoalSetting } from "@/components/settings/ReflectionGoalSetting";
+import { PersonalizationSettings } from "@/components/settings/PersonalizationSettings";
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -110,7 +111,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         <SiteHeader />
 
@@ -200,6 +201,29 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader className="pb-2">
+              <CardTitle className="text-base">Preferences</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <PersonalizationSettings />
+              <div className="flex flex-col gap-3 border-t border-white/5 pt-6 sm:flex-row sm:flex-wrap">
+                <Button type="button" variant="ghost" size="sm" onClick={handleResetReminders}>
+                  <RotateCcw className="h-4 w-4" />
+                  Reset reminders (all off)
+                </Button>
+                <Button type="button" variant="ghost" size="sm" onClick={handleResetOnboarding}>
+                  <RotateCcw className="h-4 w-4" />
+                  Reset onboarding
+                </Button>
+                <Button type="button" variant="ghost" size="sm" onClick={handleClearPro}>
+                  <RotateCcw className="h-4 w-4" />
+                  Clear Pro preview
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
               <CardTitle className="text-base">How you use VoiceMemory</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -254,26 +278,6 @@ export default function SettingsPage() {
                   {fullDetail ? "Full detail on" : "Enable full detail"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Preferences</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button type="button" variant="ghost" size="sm" onClick={handleResetReminders}>
-                <RotateCcw className="h-4 w-4" />
-                Reset reminders (all off)
-              </Button>
-              <Button type="button" variant="ghost" size="sm" onClick={handleResetOnboarding}>
-                <RotateCcw className="h-4 w-4" />
-                Reset onboarding
-              </Button>
-              <Button type="button" variant="ghost" size="sm" onClick={handleClearPro}>
-                <RotateCcw className="h-4 w-4" />
-                Clear Pro preview
-              </Button>
             </CardContent>
           </Card>
         </div>

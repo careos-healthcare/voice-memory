@@ -1,3 +1,5 @@
+import type { EntryPhotoMeta } from "@/types/personalization";
+
 export interface Reflection {
   mood: string;
   emotionalIntensity: number;
@@ -34,6 +36,8 @@ export interface JournalEntry {
   audioId?: string;
   /** Saved in listening mode — reflection generated later on request. */
   reflectionPending?: boolean;
+  /** Optional quiet photo attachment — stored locally in IndexedDB. */
+  photo?: EntryPhotoMeta;
 }
 
 export type ProcessingStage = "transcribing" | "analyzing" | "saving";
