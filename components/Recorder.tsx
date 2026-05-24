@@ -27,6 +27,7 @@ import {
 } from "@/lib/retention/retention-loops";
 import { maybeTrackRoundupFollowupRecorded } from "@/lib/roundups/roundup-observation";
 import { formatEntryDate } from "@/lib/utils";
+import { markFirstReflectionCreated } from "@/lib/marketing/first-session-comprehension";
 import { getAllEntries, saveEntry } from "@/lib/storage";
 import {
   AUDIO_SAVE_PARTIAL_COPY,
@@ -162,6 +163,7 @@ export function Recorder({
           );
 
           saveEntry(newEntry);
+          markFirstReflectionCreated();
           finalizeEntry(newEntry);
           return;
         }
@@ -224,6 +226,7 @@ export function Recorder({
 
         try {
           saveEntry(newEntry);
+          markFirstReflectionCreated();
         } catch {
           const recovered = persistTranscriptDraft(
             transcribeData.transcript,

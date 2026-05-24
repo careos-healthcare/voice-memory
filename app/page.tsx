@@ -30,6 +30,7 @@ import {
   revisitRhythmKindFromNote,
   trackRevisitRhythmSeen,
 } from "@/lib/refinement/revisit-rhythm";
+import { maybeTrackFirstSessionReturnAfterRevisit } from "@/lib/marketing/first-session-comprehension";
 import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import {
   HONESTY_LINE,
@@ -60,6 +61,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
+      maybeTrackFirstSessionReturnAfterRevisit();
       checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
       const presentation = buildQuietHomepagePresentation(entries, limits);

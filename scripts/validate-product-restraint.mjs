@@ -21,6 +21,7 @@ const SKIP_PATH_PARTS = [
   "lib/debug",
   "lib/validation",
   "lib/intentions",
+  "lib/marketing",
   "lib/roundups/roundup-quality.ts",
   "lib/roundups/roundup-observation.ts",
   "lib/tester-onboarding-copy.ts",

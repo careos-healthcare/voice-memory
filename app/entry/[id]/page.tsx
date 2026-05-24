@@ -63,6 +63,7 @@ import {
   trackRevisitThenNowSeen,
   type RevisitExperiencePresentation,
 } from "@/lib/refinement/revisit-experience";
+import { trackFirstSessionAudioReplayed } from "@/lib/marketing/first-session-comprehension";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { isReflectionPending } from "@/lib/pending-reflection";
@@ -531,7 +532,10 @@ export default function EntryPage() {
                   <VoicePlaybackContinuity
                     pair={revisitVoicePair}
                     onAudioPlayed={(clip) => {
-                      if (entry) trackRevisitAudioPlayed(entry.id, clip);
+                      if (entry) {
+                        trackRevisitAudioPlayed(entry.id, clip);
+                        trackFirstSessionAudioReplayed(entry.id, clip);
+                      }
                       trackAudioReplayAfterCallback(
                         revisitExperience?.thenVsNow?.id ??
                           revisitExperience?.revisitReward?.id,
@@ -614,6 +618,7 @@ export default function EntryPage() {
                       <VoicePlaybackContinuity
                         pair={voicePlaybackPair}
                         onAudioPlayed={(clip) => {
+                          trackFirstSessionAudioReplayed(voicePlaybackPair.nowEntry.id, clip);
                           trackAudioReplayAfterCallback(
                             presentation.primaryMoment?.id,
                             clip,

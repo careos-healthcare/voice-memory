@@ -16,6 +16,9 @@ import {
 } from "@/lib/retention/retention-loops";
 import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
 import { trackOldEntryRevisitAfterCallback as trackPauseOldEntryRevisit } from "@/lib/retention/pause-moments";
+import {
+  trackFirstSessionOldReflectionOpened,
+} from "@/lib/marketing/first-session-comprehension";
 
 export function RevisitEntryLink({
   entryId,
@@ -45,6 +48,9 @@ export function RevisitEntryLink({
       onClick={() => {
         const resolvedSource = source ?? revisitSourceFromPath(pathname) ?? "memory_note";
         markRevisitNavigation(entryId, resolvedSource);
+        if (linkRole === "past" || noteId) {
+          trackFirstSessionOldReflectionOpened(entryId, resolvedSource);
+        }
         if (noteId) {
           recordMemoryLineClicked({
             noteId,
