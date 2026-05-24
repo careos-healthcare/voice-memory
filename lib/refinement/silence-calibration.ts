@@ -3,6 +3,10 @@ import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression
 import { recordEmotionalNoteShown } from "@/lib/refinement/emotional-timing";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
+  markSilenceIntelligenceSuppressed,
+  shouldSuppressSilenceIntelligenceSurface,
+} from "@/lib/restraint/silence-intelligence";
+import {
   SCORE_SHOW as MIN_SHOW_SCORE,
   SCORE_STRONG as STRONG_NOTE_SCORE,
 } from "@/lib/refinement/score-thresholds";
@@ -630,6 +634,11 @@ export function calibratePrimaryNote(
 ): MemoryNote | null {
   if (candidates.length === 0) return null;
 
+  if (shouldSuppressSilenceIntelligenceSurface("memory_note")) {
+    markSilenceIntelligenceSuppressed();
+    return null;
+  }
+
   const state = readState();
   const ranked = candidates
     .filter((note) => !isWeakNote(note, entries))
@@ -660,6 +669,11 @@ export function calibrateMemoryNotes(
   surface: SilenceSurface,
   max = 1,
 ): MemoryNote[] {
+  if (shouldSuppressSilenceIntelligenceSurface("memory_note")) {
+    markSilenceIntelligenceSuppressed();
+    return [];
+  }
+
   const picked: MemoryNote[] = [];
 
   const ranked = [...notes]
@@ -691,6 +705,11 @@ export function calibrateFollowupPrompt(
   sourceNotes: MemoryNote[],
 ): FollowupPrompt | null {
   if (!prompt) return null;
+
+  if (shouldSuppressSilenceIntelligenceSurface("followup")) {
+    markSilenceIntelligenceSuppressed();
+    return null;
+  }
 
   const state = readState();
   if (state.followupsThisSession >= 1) return null;

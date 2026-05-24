@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { CrossDeviceCarryoverLine } from "@/components/sync/CrossDeviceCarryoverLine";
 import { ArchiveOwnershipSparseLine } from "@/components/archive/ArchiveOwnershipSparseLine";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
+import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { OnboardingCompletionProof } from "@/components/social-proof/OnboardingCompletionProof";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
@@ -24,6 +25,7 @@ import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { consumeStoredFollowupPrompt, storeFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
+import { getSilenceIntelligenceEffects } from "@/lib/restraint/silence-intelligence";
 import { homepageArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { homepageLivingResurfacingMoment } from "@/lib/memory/living-resurfacing";
 import {
@@ -66,14 +68,19 @@ export default function HomePage() {
       checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
       const presentation = buildQuietHomepagePresentation(entries, limits);
+      const silenceEffects = getSilenceIntelligenceEffects(entries);
       setPrimaryNote(presentation.primaryNote);
       setContinuation(presentation.continuation);
       setFollowupPrompt(presentation.followupPrompt);
       setRecorderLine(presentation.recorderLine);
       setContinuityDepth(presentation.continuityDepth);
-      setArchiveGravity(homepageArchiveGravityMoment(entries));
-      setLivingResurfacing(homepageLivingResurfacingMoment(entries));
-      setRevisitRhythm(homepageRevisitRhythmMoment(entries));
+      setArchiveGravity(silenceEffects.delayResurfacing ? null : homepageArchiveGravityMoment(entries));
+      setLivingResurfacing(
+        silenceEffects.delayResurfacing ? null : homepageLivingResurfacingMoment(entries),
+      );
+      setRevisitRhythm(
+        silenceEffects.delayResurfacing ? null : homepageRevisitRhythmMoment(entries),
+      );
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -128,6 +135,7 @@ export default function HomePage() {
           <PersonalisationProgressNote />
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
+          <QuietSilenceLine />
           <ArchiveGravityNote note={archiveGravity} />
           <LivingResurfacingNote note={livingResurfacing} />
           <RevisitRhythmNote note={revisitRhythm} />

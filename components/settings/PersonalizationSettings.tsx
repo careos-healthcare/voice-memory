@@ -25,6 +25,10 @@ import {
   isPhotoAttachmentEnabled,
   setPhotoAttachmentEnabled,
 } from "@/lib/personalization/photo-preferences";
+import {
+  isSilenceIntelligenceEnabled,
+  setSilenceIntelligenceEnabled,
+} from "@/lib/restraint/silence-intelligence";
 
 const WARMTH_OPTIONS: Array<{ id: WarmthPreference; label: string }> = [
   { id: "cooler", label: "Cooler" },
@@ -44,6 +48,7 @@ export function PersonalizationSettings() {
   const [ambientEnabled, setAmbientEnabled] = useState(true);
   const [warmth, setWarmth] = useState<WarmthPreference>("balanced");
   const [contrast, setContrast] = useState<ContrastComfort>("standard");
+  const [silenceIntelligence, setSilenceIntelligence] = useState(true);
 
   useEffect(() => {
     setTone(getStoredVisualTone());
@@ -52,6 +57,7 @@ export function PersonalizationSettings() {
     setAmbientEnabled(isAmbientAdaptationEnabled());
     setWarmth(getWarmthPreference());
     setContrast(getContrastComfort());
+    setSilenceIntelligence(isSilenceIntelligenceEnabled());
   }, []);
 
   return (
@@ -166,6 +172,26 @@ export function PersonalizationSettings() {
             </Button>
           ))}
         </div>
+      </div>
+
+      <div className="space-y-3 border-t border-white/5 pt-6">
+        <p className="text-sm font-medium text-zinc-300">Silence intelligence</p>
+        <p className="text-sm text-zinc-400">
+          Lets the app say less for a while when callbacks are ignored, revisits feel heavy, or you
+          mostly want to record. Saved entries stay visible — recording and export are never blocked.
+        </p>
+        <Button
+          type="button"
+          variant={silenceIntelligence ? "default" : "secondary"}
+          size="sm"
+          onClick={() => {
+            const next = !silenceIntelligence;
+            setSilenceIntelligenceEnabled(next);
+            setSilenceIntelligence(next);
+          }}
+        >
+          {silenceIntelligence ? "Silence intelligence on" : "Enable silence intelligence"}
+        </Button>
       </div>
 
       <div className="space-y-3 border-t border-white/5 pt-6">

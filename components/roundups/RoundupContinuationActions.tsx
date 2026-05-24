@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { shouldSuppressSilenceIntelligenceSurface } from "@/lib/restraint/silence-intelligence";
 import {
   continueRoundupThought,
   isRoundupItemSaved,
@@ -21,22 +22,29 @@ export function RoundupContinuationActions({
 }) {
   const router = useRouter();
   const [saved, setSaved] = useState(() => isRoundupItemSaved(item.id));
+  const [roundupPromptsSuppressed, setRoundupPromptsSuppressed] = useState(false);
+
+  useEffect(() => {
+    setRoundupPromptsSuppressed(shouldSuppressSilenceIntelligenceSurface("roundup_prompt"));
+  }, []);
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-x-4 gap-y-1">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-auto px-0 text-xs text-zinc-500 hover:bg-transparent hover:text-zinc-300"
-          onClick={() => {
-            continueRoundupThought(item, periodSlug);
-            router.push("/#recorder");
-          }}
-        >
-          Continue this thought
-        </Button>
+        {!roundupPromptsSuppressed ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-auto px-0 text-xs text-zinc-500 hover:bg-transparent hover:text-zinc-300"
+            onClick={() => {
+              continueRoundupThought(item, periodSlug);
+              router.push("/#recorder");
+            }}
+          >
+            Continue this thought
+          </Button>
+        ) : null}
         <Button
           type="button"
           variant="ghost"

@@ -2,6 +2,7 @@ import { recordCallbackSurfaced } from "@/lib/callback-interaction-signals";
 import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
 import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { pickArchiveDepthIndicator } from "@/lib/memory/continuity-depth";
+import { resolveSilenceIntelligence } from "@/lib/restraint/silence-intelligence";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { homepageMemoryReminder } from "@/lib/memory/memory-reminders";
@@ -83,6 +84,7 @@ export function buildQuietHomepagePresentation(
     archiveGrowth: number;
   },
 ): QuietHomepagePresentation {
+  resolveSilenceIntelligence(entries);
   const continuation = homepageContinuationNotes(entries, 1).slice(0, 1);
   const candidates = collectHomepageCandidates(entries, limits);
 
@@ -167,6 +169,7 @@ export function buildQuietEntryPresentation(
     resurfacing: number;
   },
 ): QuietEntryPresentation {
+  resolveSilenceIntelligence(allEntries);
   const revisitMode = isRevisitEntry(entryId);
   if (revisitMode) markRevisitBoost();
 

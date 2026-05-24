@@ -1,4 +1,8 @@
 import { calibratePrimaryNote, type SilenceSurface } from "@/lib/refinement/silence-calibration";
+import {
+  markSilenceIntelligenceSuppressed,
+  shouldSuppressSilenceIntelligenceSurface,
+} from "@/lib/restraint/silence-intelligence";
 import { buildEligibleProofSnippets } from "@/lib/social-proof/emotional-proof";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
@@ -32,6 +36,11 @@ export function pickEmotionalProofLine(
   surface: EmotionalProofSurface,
   entries: JournalEntry[] = getMemoryEligibleEntries(),
 ): string | null {
+  if (shouldSuppressSilenceIntelligenceSurface("emotional_proof")) {
+    markSilenceIntelligenceSuppressed();
+    return null;
+  }
+
   const snippets = buildEligibleProofSnippets(entries);
   if (snippets.length === 0) return null;
 

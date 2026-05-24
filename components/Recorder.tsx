@@ -29,6 +29,7 @@ import { maybeTrackRoundupFollowupRecorded } from "@/lib/roundups/roundup-observ
 import { formatEntryDate } from "@/lib/utils";
 import { markFirstReflectionCreated } from "@/lib/marketing/first-session-comprehension";
 import { getAllEntries, saveEntry } from "@/lib/storage";
+import { recordReflectionDuringSilence } from "@/lib/restraint/silence-intelligence";
 import {
   AUDIO_SAVE_PARTIAL_COPY,
   DRAFT_RECOVERED_COPY,
@@ -101,6 +102,7 @@ export function Recorder({
 
   const finalizeEntry = useCallback(
     (newEntry: JournalEntry, recoveredDraft = false) => {
+      recordReflectionDuringSilence();
       if (recoveredDraft) {
         setNotice(DRAFT_RECOVERED_COPY);
       }
