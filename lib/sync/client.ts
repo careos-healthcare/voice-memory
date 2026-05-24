@@ -22,6 +22,9 @@ import {
 } from "@/lib/sync/encryption";
 import { mergeSyncContinuityModels } from "@/lib/sync/merge-strategy";
 import {
+  markPendingCarryoverAfterRemoteMerge,
+} from "@/lib/sync/cross-device-continuity";
+import {
   dispatchSyncStatusChange,
   writeLastBackupAt,
   writeLastSyncError,
@@ -94,6 +97,10 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
     const merged = remote ? mergeSyncContinuityModels(local, remote) : local;
     const payload = toEncryptedSyncPayload(merged);
 
+    if (remote) {
+      markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
+    }
+
     applySyncContinuityModel(merged);
 
     const encryptedCore = await encryptJsonPayload(payload);
@@ -143,6 +150,7 @@ export async function restoreArchiveFromEncryptedBackup(): Promise<void> {
 
     const local = buildLocalSyncModel();
     const merged = mergeSyncContinuityModels(local, remote);
+    markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
     applySyncContinuityModel(merged);
 
     const syncedAt = new Date().toISOString();

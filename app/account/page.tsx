@@ -16,6 +16,7 @@ import {
   setDebugEventSyncAllowed,
 } from "@/lib/sync/archive-bundle";
 import { buildEncryptedAudioBackupPlan } from "@/lib/sync/audio-backup";
+import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
 import { ENCRYPTED_SYNC_COPY } from "@/lib/sync/copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { formatEntryDate } from "@/lib/utils";
@@ -42,6 +43,10 @@ export default function AccountPage() {
   const [busy, setBusy] = useState(false);
   const [allowDebugEvents, setAllowDebugEvents] = useState(false);
   const [audioPlanCount, setAudioPlanCount] = useState(0);
+  const continuity = buildAccountContinuityStatus({
+    signedIn: Boolean(status.session),
+    lastBackupAt: status.lastBackupAt,
+  });
 
   useEffect(() => {
     setAllowDebugEvents(isDebugEventSyncAllowed());
@@ -175,6 +180,18 @@ export default function AccountPage() {
                 Encrypted audio backup plan: {audioPlanCount} recording
                 {audioPlanCount === 1 ? "" : "s"} queued with the same client-side encryption.
               </p>
+
+              {status.session ? (
+                <div className="space-y-2 border-t border-white/5 pt-4 text-sm leading-relaxed text-zinc-500">
+                  {continuity.archiveContinuesLine ? (
+                    <p>{continuity.archiveContinuesLine}</p>
+                  ) : null}
+                  {continuity.leftOffLine ? <p>{continuity.leftOffLine}</p> : null}
+                  {continuity.lastBackedUpLine ? (
+                    <p>{continuity.lastBackedUpLine}</p>
+                  ) : null}
+                </div>
+              ) : null}
 
               {status.session ? (
                 <div className="flex flex-wrap gap-3 pt-2">

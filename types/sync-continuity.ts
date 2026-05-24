@@ -71,6 +71,47 @@ export interface SyncLocalEventRecord {
   sourceDeviceId: string;
 }
 
+export interface CrossDeviceEmotionalState {
+  lastOpenedEntryId?: string;
+  lastOpenedAt?: string;
+  lastRevisitSource?: string;
+  lastRevisitEntryId?: string;
+  lastRevisitAt?: string;
+  lastFollowUpPrompt?: {
+    id: string;
+    text: string;
+    noteId?: string;
+    entryId?: string;
+  };
+  lastFollowUpAt?: string;
+  lastUnfinishedContinuation?: {
+    promptId: string;
+    noteId?: string;
+    entryId?: string;
+  };
+  lastUnfinishedAt?: string;
+  recentBookmarkEntryId?: string;
+  recentBookmarkAt?: string;
+  lastMemoryLine?: {
+    noteId: string;
+    noteText?: string;
+    entryId?: string;
+  };
+  lastMemoryLineAt?: string;
+  lastThenVsNow?: {
+    noteId: string;
+    pastEntryId?: string;
+    entryId?: string;
+  };
+  lastThenVsNowAt?: string;
+}
+
+export interface SyncEmotionalContinuityRecord {
+  state: CrossDeviceEmotionalState;
+  updatedAt: string;
+  sourceDeviceId: string;
+}
+
 /** Sync-ready archive payload — encrypted as archive-core. */
 export interface SyncContinuityModel {
   envelope: SyncEnvelope;
@@ -80,6 +121,7 @@ export interface SyncContinuityModel {
   settings: SyncSettingsRecord;
   reviews: SyncReviewRecord[];
   localEvents: SyncLocalEventRecord[];
+  emotionalContinuity: SyncEmotionalContinuityRecord | null;
   debugEventsAllowed: boolean;
 }
 

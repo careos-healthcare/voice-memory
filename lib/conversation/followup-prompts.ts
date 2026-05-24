@@ -1,4 +1,5 @@
 import { calibrateFollowupPrompt } from "@/lib/refinement/silence-calibration";
+import { recordFollowUpPrompt } from "@/lib/sync/cross-device-continuity";
 import {
   CONTINUATION_COPY,
   gatherContinuationCandidates,
@@ -225,6 +226,11 @@ export function storeFollowupPrompt(prompt: FollowupPrompt | string): void {
   sessionStorage.setItem(FOLLOWUP_PROMPT_KEY, text);
   if (typeof prompt !== "string") {
     storeContinuationMeta(prompt.id, prompt.noteId);
+    recordFollowUpPrompt({
+      id: prompt.id,
+      text: prompt.text,
+      noteId: prompt.noteId,
+    });
   }
 }
 

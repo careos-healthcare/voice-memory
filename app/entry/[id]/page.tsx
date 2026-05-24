@@ -39,6 +39,10 @@ import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
 import { recordEntryDwell, recordEntryView } from "@/lib/callback-interaction-signals";
+import {
+  recordLastOpenedEntry,
+  recordThenVsNowSeen,
+} from "@/lib/sync/cross-device-continuity";
 import { trackDwellForActiveCallback, trackAudioReplayAfterCallback } from "@/lib/retention/pause-moments";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
@@ -92,6 +96,7 @@ export default function EntryPage() {
   useEffect(() => {
     if (!entry) return;
     recordEntryView(entry.id);
+    recordLastOpenedEntry(entry.id);
     const started = Date.now();
     return () => {
       const dwellMs = Date.now() - started;
@@ -148,6 +153,11 @@ export default function EntryPage() {
   useEffect(() => {
     if (!entry?.id || !revisitExperience?.thenVsNow) return;
     trackRevisitThenNowSeen(entry.id, revisitExperience.thenVsNow.id);
+    recordThenVsNowSeen({
+      noteId: revisitExperience.thenVsNow.id,
+      pastEntryId: revisitExperience.thenVsNow.pastEntryId,
+      entryId: entry.id,
+    });
   }, [entry?.id, revisitExperience?.thenVsNow?.id]);
 
   const notes = useMemo(() => {

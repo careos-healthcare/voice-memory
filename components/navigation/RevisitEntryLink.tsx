@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { recordMemoryLineClicked } from "@/lib/sync/cross-device-continuity";
 import {
   markRevisitNavigation,
   revisitSourceFromPath,
@@ -43,6 +44,11 @@ export function RevisitEntryLink({
         const resolvedSource = source ?? revisitSourceFromPath(pathname) ?? "memory_note";
         markRevisitNavigation(entryId, resolvedSource);
         if (noteId) {
+          recordMemoryLineClicked({
+            noteId,
+            noteText,
+            entryId,
+          });
           recordSilenceNoteAction(noteId);
           if (linkRole === "past") {
             trackOldEntryOpenedFromNote({

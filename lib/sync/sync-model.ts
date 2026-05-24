@@ -5,6 +5,10 @@ import { getAllBookmarks } from "@/lib/reflection-bookmarks";
 import { isListeningModeEnabled } from "@/lib/listening-mode";
 import { isFullDetailEnabled } from "@/lib/quiet-mode";
 import { getReminderPreferences } from "@/lib/reminder-preferences";
+import {
+  applyEmotionalContinuityFromSync,
+  buildEmotionalContinuityForSync,
+} from "@/lib/sync/cross-device-continuity";
 import { getOrCreateDeviceId } from "@/lib/sync/device-id";
 import { localEventKey, normalizeLegacySyncBundle } from "@/lib/sync/merge-strategy";
 import { readLastSyncedAt } from "@/lib/sync/sync-metadata";
@@ -98,6 +102,7 @@ export function buildLocalSyncModel(): SyncContinuityModel {
     settings,
     reviews,
     localEvents,
+    emotionalContinuity: buildEmotionalContinuityForSync(),
     debugEventsAllowed,
   };
 }
@@ -113,7 +118,11 @@ export function normalizeRemoteSyncPayload(
     "envelope" in payload &&
     (payload as SyncContinuityModel).envelope?.schemaVersion === SYNC_SCHEMA_VERSION
   ) {
-    return payload as SyncContinuityModel;
+    const model = payload as SyncContinuityModel;
+    return {
+      ...model,
+      emotionalContinuity: model.emotionalContinuity ?? null,
+    };
   }
 
   return normalizeLegacySyncBundle(payload as SyncArchiveBundle, fallbackDeviceId);
@@ -162,6 +171,8 @@ export function applySyncContinuityModel(model: SyncContinuityModel): void {
     );
     localStorage.setItem(SYNC_ALLOW_DEBUG_KEY, "true");
   }
+
+  applyEmotionalContinuityFromSync(model.emotionalContinuity);
 }
 
 /** Legacy plaintext bundle for backward-compatible export paths. */

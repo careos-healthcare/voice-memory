@@ -32,6 +32,7 @@ import {
   trackOldEntryMoatRevisit,
 } from "@/lib/retention/moat-metrics";
 import { CONTINUATION_COPY } from "@/lib/conversation/continuation-loops";
+import { recordRevisitContext } from "@/lib/sync/cross-device-continuity";
 import {
   rememberNoteContext,
   trackEntryRevisited as trackRetentionEntryRevisited,
@@ -294,6 +295,7 @@ export function markRevisitNavigation(entryId: string, source: RevisitSource): v
     at: Date.now(),
   };
   sessionStorage.setItem(REVISIT_NAV_KEY, JSON.stringify(payload));
+  recordRevisitContext(entryId, source);
 }
 
 /** Read and clear a pending revisit navigation hint for this entry. */

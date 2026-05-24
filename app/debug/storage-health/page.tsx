@@ -17,6 +17,11 @@ import {
   clearBrokenAudioReferences,
   repairEntryIntegrity,
 } from "@/lib/reliability/integrity";
+import {
+  buildHomepageCarryoverLine,
+  readEmotionalContinuity,
+} from "@/lib/sync/cross-device-continuity";
+import { readDeviceId } from "@/lib/sync/device-id";
 import { restoreFromBackup } from "@/lib/reliability/safe-local-storage";
 import { CURRENT_STORAGE_VERSION } from "@/lib/reliability/storage-version";
 import type { RepairResult, StorageHealthReport } from "@/types/storage-reliability";
@@ -75,10 +80,24 @@ export default function StorageHealthDebugPage() {
   const [draftCount, setDraftCount] = useState(0);
   const [repairResult, setRepairResult] = useState<RepairResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [continuityDebug, setContinuityDebug] = useState<string>("");
 
   const refresh = async () => {
     setReport(await buildStorageHealthReport());
     setDraftCount(listRecoveryDrafts().length);
+    const record = readEmotionalContinuity();
+    const carryover = buildHomepageCarryoverLine({ requirePending: false });
+    setContinuityDebug(
+      JSON.stringify(
+        {
+          deviceId: readDeviceId(),
+          record,
+          previewCarryover: carryover,
+        },
+        null,
+        2,
+      ),
+    );
   };
 
   useEffect(() => {
@@ -186,6 +205,19 @@ export default function StorageHealthDebugPage() {
                     ))}
                   </ul>
                 )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-normal text-zinc-200">
+                  Cross-device emotional continuity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <pre className="overflow-x-auto whitespace-pre-wrap text-xs text-zinc-500">
+                  {continuityDebug || "No continuity state."}
+                </pre>
               </CardContent>
             </Card>
 

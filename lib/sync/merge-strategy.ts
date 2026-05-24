@@ -12,6 +12,7 @@ import type {
   SyncSettingsRecord,
 } from "@/types/sync-continuity";
 import { SYNC_SCHEMA_VERSION } from "@/types/sync-continuity";
+import { mergeEmotionalContinuityRecords } from "@/lib/sync/cross-device-continuity";
 import type { SyncArchiveBundle } from "@/types/sync";
 
 function parseTime(iso: string | undefined): number {
@@ -193,6 +194,11 @@ export function mergeSyncContinuityModels(
   const reviews = mergeReviewRecords(local.reviews, remote.reviews, localDeviceId);
   const settings = mergeSettingsRecords(local.settings, remote.settings, localDeviceId);
   const localEvents = mergeLocalEventRecords(local.localEvents, remote.localEvents);
+  const emotionalContinuity = mergeEmotionalContinuityRecords(
+    local.emotionalContinuity,
+    remote.emotionalContinuity,
+    localDeviceId,
+  );
 
   const envelope: SyncEnvelope = {
     schemaVersion: SYNC_SCHEMA_VERSION,
@@ -209,6 +215,7 @@ export function mergeSyncContinuityModels(
     settings,
     reviews,
     localEvents,
+    emotionalContinuity,
     debugEventsAllowed: local.debugEventsAllowed || remote.debugEventsAllowed,
   };
 }
@@ -274,6 +281,7 @@ export function normalizeLegacySyncBundle(
         sourceDeviceId: deviceId,
       };
     }),
+    emotionalContinuity: null,
     debugEventsAllowed: bundle.debugEventsAllowed,
   };
 }

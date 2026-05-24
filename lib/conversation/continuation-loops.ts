@@ -1,6 +1,7 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { trackLocalEvent, readLocalEvents } from "@/lib/local-analytics";
+import { recordUnfinishedContinuation } from "@/lib/sync/cross-device-continuity";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
 import { entrySnippet, hedgeCount } from "@/lib/memory/language-fingerprint";
@@ -361,6 +362,7 @@ export function storeContinuationMeta(promptId: string, noteId: string): void {
     CONTINUATION_META_KEY,
     JSON.stringify({ promptId, noteId }),
   );
+  recordUnfinishedContinuation({ promptId, noteId });
 }
 
 export function peekContinuationMeta(): { promptId: string; noteId: string } | null {
