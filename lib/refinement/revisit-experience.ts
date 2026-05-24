@@ -2,6 +2,7 @@ import {
   trackRememberedLaterDelayedRevisit,
   trackRememberedLaterDelayedReflection,
 } from "@/lib/social-proof/remembered-later";
+import { maybeTrackRevisitAfterShare } from "@/lib/sharing/share-observation";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import {
   entryInteractionSummary,
@@ -395,6 +396,7 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
   });
   trackRetentionEntryRevisited(entryId, sources);
   trackOldEntryMoatRevisit(entryId, sources);
+  maybeTrackRevisitAfterShare(entryId);
 
   if (isBrowser()) {
     try {

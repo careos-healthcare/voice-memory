@@ -23,6 +23,7 @@ const SKIP_PATH_PARTS = [
   "lib/intentions",
   "lib/marketing",
   "lib/social-proof",
+  "lib/sharing",
   "lib/roundups/roundup-quality.ts",
   "lib/roundups/roundup-observation.ts",
   "lib/tester-onboarding-copy.ts",

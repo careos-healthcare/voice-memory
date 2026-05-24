@@ -6,6 +6,7 @@ import {
   seedTestimonialCandidatesFromCallbacks,
 } from "@/lib/social-proof/emotional-proof";
 import { buildRememberedLaterReport } from "@/lib/social-proof/remembered-later";
+import { buildShareObservationReport } from "@/lib/sharing/share-observation";
 import {
   readAllTestimonials,
   readApprovedTestimonials,
@@ -14,6 +15,7 @@ import {
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { SocialProofReviewReport } from "@/types/social-proof";
+import type { ShareObservationReport } from "@/types/sharing";
 
 export function buildSocialProofReviewReport(
   entries: JournalEntry[] = getMemoryEligibleEntries(),
@@ -60,6 +62,8 @@ export function buildSocialProofReviewReport(
     .slice(0, 12)
     .map((row) => ({ id: row.callbackId, text: row.text }));
 
+  const shareObservation = buildShareObservationReport();
+
   return {
     generatedAt: new Date().toISOString(),
     hasData: callbackReport.hasData || loops.hasData,
@@ -72,7 +76,14 @@ export function buildSocialProofReviewReport(
     remembered72hCallbacks,
     overclaimedEmotionalLines: scanOverclaimedLines(entries),
     quietProofSnippets: buildEligibleProofSnippets(entries),
+    shareObservation,
   };
+}
+
+export function getShareObservationFromSocialProofReport(
+  report: SocialProofReviewReport,
+): ShareObservationReport {
+  return report.shareObservation;
 }
 
 export function downloadSocialProofReviewJson(

@@ -63,6 +63,7 @@ export interface SocialProofReviewReport {
   remembered72hCallbacks: Array<{ id: string; text: string }>;
   overclaimedEmotionalLines: Array<{ id: string; text: string; reason: string }>;
   quietProofSnippets: EmotionalProofSnippet[];
+  shareObservation: import("@/types/sharing").ShareObservationReport;
 }
 
 export interface EmotionalLegitimacyScores {

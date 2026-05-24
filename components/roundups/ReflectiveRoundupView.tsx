@@ -6,6 +6,8 @@ import Link from "next/link";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import { RoundupContinuationActions } from "@/components/roundups/RoundupContinuationActions";
 import { RoundupLineObservation } from "@/components/roundups/RoundupLineObservation";
+import { ShareQuietlyButton } from "@/components/sharing/ShareQuietlyButton";
+import { buildQuietShareCard, buildRoundupQuietShareCard } from "@/lib/sharing/quiet-sharing";
 import { trackRoundupItemRevisited } from "@/lib/roundups/roundup-continuation";
 import { trackRoundupIntentionLinkOpened } from "@/lib/roundups/roundup-observation";
 import type {
@@ -75,6 +77,15 @@ function IntentionLinkRow({
       >
         <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{link.text}</p>
         <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+        <ShareQuietlyButton
+          card={buildQuietShareCard({
+            id: `share-roundup-intention-${link.id}`,
+            line: link.text,
+            source: "roundup",
+            sourceId: link.id,
+            entryId: link.entryId,
+          })}
+        />
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           <RoundupSourceLink
             item={item}
@@ -159,6 +170,13 @@ function KeyPieceRow({
       >
         <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{piece.text}</p>
         <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+        <ShareQuietlyButton card={buildQuietShareCard({
+          id: `share-key-piece-${piece.id}`,
+          line: piece.text,
+          source: "roundup",
+          sourceId: piece.id,
+          entryId: piece.entryId,
+        })} />
         <RoundupSourceLink
           item={item}
           entryId={piece.entryId}
@@ -218,6 +236,7 @@ function RoundupLineRow({
       >
         <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{line.text}</p>
         <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+        <ShareQuietlyButton card={buildRoundupQuietShareCard(line)} />
         {line.entryIds.length > 0 ? (
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600/90">
             {line.entryIds.map((linkedEntryId, index) => (

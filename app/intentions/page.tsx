@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
+import { ShareQuietlyButton } from "@/components/sharing/ShareQuietlyButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import {
   formatIntentionSpan,
   setIntentionUserLabel,
 } from "@/lib/intentions/long-term-intentions";
+import { buildIntentionQuietShareCard } from "@/lib/sharing/quiet-sharing";
 import type { IntentionsReport, LongTermIntention } from "@/types/long-term-intentions";
 
 function IntentionRow({
@@ -46,6 +48,7 @@ function IntentionRow({
           </RevisitEntryLink>
         ))}
       </div>
+      <ShareQuietlyButton card={buildIntentionQuietShareCard(intention)} />
       <label className="block text-xs text-zinc-600">
         <span className="sr-only">Optional label</span>
         <input

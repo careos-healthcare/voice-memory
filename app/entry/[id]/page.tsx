@@ -29,6 +29,7 @@ import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
 import { OnboardingTrustLine } from "@/components/social-proof/OnboardingTrustLine";
+import { ShareQuietlyButton } from "@/components/sharing/ShareQuietlyButton";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
@@ -66,6 +67,11 @@ import {
   type RevisitExperiencePresentation,
 } from "@/lib/refinement/revisit-experience";
 import { trackFirstSessionAudioReplayed } from "@/lib/marketing/first-session-comprehension";
+import {
+  buildCopiedMomentQuietShareCard,
+  buildRevisitQuietShareCard,
+} from "@/lib/sharing/quiet-sharing";
+import { buildEntrySharedMemoryMoment } from "@/lib/memory/shared-moments";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { isReflectionPending } from "@/lib/pending-reflection";
@@ -91,6 +97,7 @@ export default function EntryPage() {
     useState<RevisitExperiencePresentation | null>(null);
   const [showReopenFollowup, setShowReopenFollowup] = useState(false);
   const [revisitAudioReplayed, setRevisitAudioReplayed] = useState(false);
+  const [momentCopied, setMomentCopied] = useState(false);
 
   useEffect(() => {
     const found = getEntry(params.id);
@@ -184,6 +191,21 @@ export default function EntryPage() {
     if (!entry || pending) return null;
     return entryMemoryNotes(allEntries, entry.id);
   }, [entry, allEntries, pending]);
+
+  const revisitShareCard = useMemo(() => {
+    if (!entry || !revisitExperience?.isRevisit) return null;
+    return buildRevisitQuietShareCard(revisitExperience, entry.id);
+  }, [entry, revisitExperience]);
+
+  const copiedShareCard = useMemo(() => {
+    if (!entry || revisitExperience?.isRevisit) return null;
+    const text = buildEntrySharedMemoryMoment(entry, allEntries);
+    return buildCopiedMomentQuietShareCard({
+      text,
+      sourceId: entry.id,
+      entryId: entry.id,
+    });
+  }, [entry, allEntries, revisitExperience?.isRevisit]);
 
   const continuationOpener = useMemo(() => {
     if (!entry || pending) return null;
@@ -566,6 +588,8 @@ export default function EntryPage() {
                 <div className="pt-2">
                   <EmotionalProofLine surface="entry_revisit" />
                 </div>
+
+                <ShareQuietlyButton card={revisitShareCard} />
               </section>
             ) : null}
 
@@ -582,11 +606,18 @@ export default function EntryPage() {
                 }
               />
               {!pending && !revisitExperience?.isRevisit ? (
-                <CopyMemoryMomentButton
-                  source="entry"
-                  entry={entry}
-                  allEntries={allEntries}
-                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <CopyMemoryMomentButton
+                    source="entry"
+                    entry={entry}
+                    allEntries={allEntries}
+                    onCopied={() => setMomentCopied(true)}
+                  />
+                  <ShareQuietlyButton
+                    card={copiedShareCard}
+                    copiedBefore={momentCopied}
+                  />
+                </div>
               ) : null}
             </header>
 

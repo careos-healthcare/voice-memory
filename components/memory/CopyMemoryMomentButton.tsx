@@ -17,6 +17,7 @@ import type { JournalEntry } from "@/types/journal";
 type CopyMemoryMomentButtonProps = {
   allEntries: JournalEntry[];
   className?: string;
+  onCopied?: () => void;
 } & (
   | { source: "entry"; entry: JournalEntry }
   | { source: "milestone"; milestone: EmotionalMilestone }
@@ -80,8 +81,9 @@ export function CopyMemoryMomentButton(props: CopyMemoryMomentButtonProps) {
     });
     trackCopyAfterCallback(undefined, sourceId, "entry");
     setCopied(true);
+    props.onCopied?.();
     window.setTimeout(() => setCopied(false), 2000);
-  }, [momentText, props.source, sourceId, includeQuote]);
+  }, [momentText, props, sourceId, includeQuote]);
 
   return (
     <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 ${className ?? ""}`}>

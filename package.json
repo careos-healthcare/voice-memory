@@ -11,9 +11,10 @@
     "validate:restraint": "node scripts/validate-product-restraint.mjs",
     "validate:acquisition": "node scripts/validate-acquisition-restraint.mjs",
     "validate:testimonial": "node scripts/validate-testimonial-restraint.mjs",
+    "validate:sharing": "node scripts/validate-sharing-restraint.mjs",
     "validate:stress": "node --import tsx scripts/run-stress-tests.mjs",
     "stress-tests": "node --import tsx scripts/run-stress-tests.mjs",
-    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:acquisition && npm run validate:testimonial && npm run validate:stress"
+    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:acquisition && npm run validate:testimonial && npm run validate:sharing && npm run validate:stress"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

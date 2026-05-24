@@ -4,19 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { SocialProofReviewPanel } from "@/components/debug/SocialProofReviewPanel";
-import { ShareObservationPanel } from "@/components/debug/ShareObservationPanel";
+import { DistributionReadinessPanel } from "@/components/debug/DistributionReadinessPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildSocialProofReviewReport } from "@/lib/debug/social-proof-review";
-import type { SocialProofReviewReport } from "@/types/social-proof";
+import { buildDistributionReadinessReport } from "@/lib/debug/distribution-readiness";
+import type { DistributionReadinessReport } from "@/types/sharing";
 
-export default function SocialProofReviewDebugPage() {
-  const [report, setReport] = useState<SocialProofReviewReport | null>(null);
+export default function DistributionReadinessDebugPage() {
+  const [report, setReport] = useState<DistributionReadinessReport | null>(null);
 
   const refresh = () => {
-    setReport(buildSocialProofReviewReport());
+    setReport(buildDistributionReadinessReport());
   };
 
   useEffect(() => {
@@ -30,13 +29,13 @@ export default function SocialProofReviewDebugPage() {
 
         <header className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Trust</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Distribution</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              Social proof review
+              Distribution readiness
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              Quiet proof snippets, testimonial candidates, revisit stories, and remembered-later
-              callbacks — debug only.
+              Founder review of quiet sharing — grounded lines, cringe risk, and organic revisit
+              signals. Debug only.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -50,21 +49,20 @@ export default function SocialProofReviewDebugPage() {
             <CardContent className="py-12 text-center text-sm text-zinc-500">Loading…</CardContent>
           </Card>
         ) : (
-          <div className="mt-6 space-y-6">
-            <SocialProofReviewPanel report={report} />
-            <ShareObservationPanel report={report.shareObservation} />
+          <div className="mt-6">
+            <DistributionReadinessPanel report={report} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/debug/emotional-legitimacy" className="text-violet-300 hover:text-violet-200">
-            Emotional legitimacy →
+          <Link href="/debug/social-proof-review" className="text-violet-300 hover:text-violet-200">
+            Social proof review →
           </Link>
-          <Link href="/debug/distribution-readiness" className="text-violet-300 hover:text-violet-200">
-            Distribution readiness →
+          <Link href="/creator-preview" className="text-zinc-500 hover:text-zinc-300">
+            Creator preview →
           </Link>
-          <Link href="/debug/founder-review" className="text-zinc-500 hover:text-zinc-300">
-            Founder review →
+          <Link href="/invite" className="text-zinc-500 hover:text-zinc-300">
+            Invite →
           </Link>
         </div>
       </div>

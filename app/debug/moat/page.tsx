@@ -7,6 +7,7 @@ import { RefreshCw } from "lucide-react";
 import { LoopOptimizationDebugPanel } from "@/components/debug/LoopOptimizationDebugPanel";
 import { MoatMetricsDebugPanel } from "@/components/debug/MoatMetricsDebugPanel";
 import { RememberedLaterPanel } from "@/components/debug/RememberedLaterPanel";
+import { ShareObservationPanel } from "@/components/debug/ShareObservationPanel";
 import { ReopenPayoffDebugPanel } from "@/components/debug/ReopenPayoffDebugPanel";
 import { SilenceTimingDebugPanel } from "@/components/debug/SilenceTimingDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -21,8 +22,10 @@ import {
   type MoatMetricsReport,
 } from "@/lib/retention/moat-metrics";
 import { buildRememberedLaterReport } from "@/lib/social-proof/remembered-later";
+import { buildShareObservationReport } from "@/lib/sharing/share-observation";
 import { getAllEntries } from "@/lib/storage";
 import type { RememberedLaterReport } from "@/types/social-proof";
+import type { ShareObservationReport } from "@/types/sharing";
 
 export default function MoatDebugPage() {
   const [report, setReport] = useState<MoatMetricsReport | null>(null);
@@ -30,6 +33,7 @@ export default function MoatDebugPage() {
   const [reopenPayoff, setReopenPayoff] = useState<ReopenPayoffDebugReport | null>(null);
   const [loopReport, setLoopReport] = useState<LoopOptimizationReport | null>(null);
   const [rememberedLater, setRememberedLater] = useState<RememberedLaterReport | null>(null);
+  const [shareObservation, setShareObservation] = useState<ShareObservationReport | null>(null);
 
   const refresh = () => {
     const entries = getAllEntries();
@@ -38,6 +42,7 @@ export default function MoatDebugPage() {
     setReopenPayoff(buildReopenPayoffDebugReport(entries));
     setLoopReport(buildLoopOptimizationReport(entries));
     setRememberedLater(buildRememberedLaterReport(entries));
+    setShareObservation(buildShareObservationReport());
   };
 
   useEffect(() => {
@@ -97,6 +102,7 @@ export default function MoatDebugPage() {
           <div className="mt-12 space-y-10">
             {silence ? <SilenceTimingDebugPanel snapshot={silence} /> : null}
             {rememberedLater ? <RememberedLaterPanel report={rememberedLater} /> : null}
+            {shareObservation ? <ShareObservationPanel report={shareObservation} /> : null}
             {reopenPayoff ? <ReopenPayoffDebugPanel report={reopenPayoff} /> : null}
             {loopReport?.hasData ? <LoopOptimizationDebugPanel report={loopReport} /> : null}
             <MoatMetricsDebugPanel report={report} />
