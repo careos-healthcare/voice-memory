@@ -7,6 +7,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
 import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { PersonalisationProgressNote } from "@/components/PersonalisationProgressNote";
@@ -21,6 +22,7 @@ import { MotionPage } from "@/components/motion/MotionPage";
 import { consumeStoredFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
 import { homepageArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { homepageLivingResurfacingMoment } from "@/lib/memory/living-resurfacing";
 import {
   homepageRevisitRhythmMoment,
   revisitRhythmKindFromNote,
@@ -49,6 +51,7 @@ export default function HomePage() {
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [livingResurfacing, setLivingResurfacing] = useState<MemoryNote | null>(null);
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
@@ -64,6 +67,7 @@ export default function HomePage() {
       setRecorderLine(presentation.recorderLine);
       setContinuityDepth(presentation.continuityDepth);
       setArchiveGravity(homepageArchiveGravityMoment(entries));
+      setLivingResurfacing(homepageLivingResurfacingMoment(entries));
       setRevisitRhythm(homepageRevisitRhythmMoment(entries));
     });
     return () => cancelAnimationFrame(id);
@@ -116,6 +120,7 @@ export default function HomePage() {
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
           <ArchiveGravityNote note={archiveGravity} />
+          <LivingResurfacingNote note={livingResurfacing} />
           <RevisitRhythmNote note={revisitRhythm} />
           <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={1} />

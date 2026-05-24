@@ -11,6 +11,7 @@ import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
 import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
@@ -23,6 +24,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
 import { memoryArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { memoryLivingResurfacingMoment } from "@/lib/memory/living-resurfacing";
 import {
   memoryRevisitRhythmMoment,
   revisitRhythmKindFromNote,
@@ -70,6 +72,7 @@ export default function MemoryPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [livingResurfacing, setLivingResurfacing] = useState<MemoryNote | null>(null);
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
 
   useEffect(() => {
@@ -97,6 +100,7 @@ export default function MemoryPage() {
       setEntries(entries);
       setContinuityDepth(memoryContinuityDepthIndicator(entries));
       setArchiveGravity(memoryArchiveGravityMoment(entries));
+      setLivingResurfacing(memoryLivingResurfacingMoment(entries));
       setRevisitRhythm(memoryRevisitRhythmMoment(entries));
     });
     return () => cancelAnimationFrame(id);
@@ -177,6 +181,7 @@ export default function MemoryPage() {
               ) : null}
 
               <ArchiveGravityNote note={archiveGravity} />
+              <LivingResurfacingNote note={livingResurfacing} />
               <RevisitRhythmNote note={revisitRhythm} />
               <ContinuityDepthNote indicator={continuityDepth} />
 

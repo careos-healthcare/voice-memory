@@ -434,6 +434,12 @@ export default function EntryPage() {
                   </p>
                 ) : null}
 
+                {revisitExperience.livingResurfacing ? (
+                  <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
+                    {revisitExperience.livingResurfacing.text}
+                  </p>
+                ) : null}
+
                 {revisitExperience.thenVsNow ? (
                   <div className="space-y-6">
                     {revisitExperience.thenVsNow.pastQuote ? (

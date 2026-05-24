@@ -18,6 +18,7 @@ import {
   markRevisitBoost,
 } from "@/lib/refinement/emotional-timing";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
+import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import {
   markMoatRevisitAudioReplayed,
   markMoatRevisitThenVsNow,
@@ -67,6 +68,8 @@ export interface RevisitExperiencePresentation {
   revisitReward: MemoryNote | null;
   /** Quote-backed before/after when contrast is obvious. */
   thenVsNow: MemoryNote | null;
+  /** Old entry whose meaning shifted as the archive grew. */
+  livingResurfacing: MemoryNote | null;
   followupPrompt: FollowupPrompt | null;
 }
 
@@ -350,6 +353,7 @@ export function buildRevisitExperience(
       sources: [],
       revisitReward: null,
       thenVsNow: null,
+      livingResurfacing: null,
       followupPrompt: null,
     };
   }
@@ -370,6 +374,7 @@ export function buildRevisitExperience(
 
   const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow]);
   const revisitReward = resolveRevisitRewardLine(allEntries, entryId, thenVsNow, bestLine);
+  const livingResurfacing = pickLivingResurfacingForEntry(allEntries, entryId);
   const followupPrompt = buildRevisitFollowupPrompt(revisitReward, thenVsNow);
 
   const calibrated = calibrateRevisitExperience(
@@ -378,6 +383,7 @@ export function buildRevisitExperience(
       sources: context.sources,
       revisitReward,
       thenVsNow,
+      livingResurfacing,
       followupPrompt,
     },
     allEntries,
@@ -389,7 +395,13 @@ export function buildRevisitExperience(
     rememberNoteContext(contextEntryId, note.id, note.text);
   }
 
-  return calibrated;
+  const resolvedLivingResurfacing =
+    calibrated.livingResurfacing &&
+    calibrated.livingResurfacing.text !== calibrated.revisitReward?.text
+      ? calibrated.livingResurfacing
+      : null;
+
+  return { ...calibrated, livingResurfacing: resolvedLivingResurfacing };
 }
 
 export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): void {
