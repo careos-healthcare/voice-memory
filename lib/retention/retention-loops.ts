@@ -1,5 +1,9 @@
 import { addDaysToKey, daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { readLocalEvents } from "@/lib/local-analytics";
+import {
+  markMoatRevisitBookmark,
+  markMoatRevisitCopy,
+} from "@/lib/retention/moat-metrics";
 import { getAllEntries } from "@/lib/storage";
 
 export type RetentionLoopEventKind =
@@ -266,6 +270,7 @@ export function trackBookmarkCreated(
     noteId: context.noteId,
     noteText: context.noteText,
   });
+  markMoatRevisitBookmark(entryId);
 }
 
 export function trackFollowupRecordingStarted(noteId: string, promptId: string): void {
@@ -309,6 +314,7 @@ export function trackCopiedMemoryMoment(input: {
     noteId: context.noteId ?? input.sourceId,
     noteText: context.noteText,
   });
+  if (input.entryId) markMoatRevisitCopy(input.entryId);
 }
 
 function activeDayKeys(): string[] {

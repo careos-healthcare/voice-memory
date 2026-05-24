@@ -3,6 +3,7 @@ import { clearHabitState } from "@/lib/habit-storage";
 import { recordReflectionDay } from "@/lib/habit-storage";
 import { trackReflectionMilestones } from "@/lib/local-analytics";
 import { bumpTimingFromEntry } from "@/lib/refinement/emotional-timing";
+import { trackMoatNewReflection } from "@/lib/retention/moat-metrics";
 import { removeBookmark } from "@/lib/reflection-bookmarks";
 import { normalizeReflection } from "@/lib/reflection";
 import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
@@ -80,6 +81,7 @@ export function saveEntry(entry: JournalEntry): void {
   recordReflectionDay(entry.createdAt);
   trackReflectionMilestones(entries.length);
   bumpTimingFromEntry(entry);
+  trackMoatNewReflection(entry.id, entry.createdAt);
 }
 
 export function deleteEntry(id: string): void {

@@ -67,6 +67,9 @@ export default function CallbacksDebugPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/moat" className="text-violet-300 hover:text-violet-200">
+            Moat metrics →
+          </Link>
           <Link href="/debug/retention-loops" className="text-violet-300 hover:text-violet-200">
             Retention loops →
           </Link>

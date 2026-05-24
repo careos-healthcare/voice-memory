@@ -16,6 +16,11 @@ import {
 } from "@/lib/refinement/emotional-timing";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import {
+  markMoatRevisitAudioReplayed,
+  markMoatRevisitThenVsNow,
+  trackOldEntryMoatRevisit,
+} from "@/lib/retention/moat-metrics";
+import {
   rememberNoteContext,
   trackEntryRevisited as trackRetentionEntryRevisited,
 } from "@/lib/retention/retention-loops";
@@ -359,6 +364,7 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
     sources: sources.join(","),
   });
   trackRetentionEntryRevisited(entryId, sources);
+  trackOldEntryMoatRevisit(entryId, sources);
 }
 
 export function trackRevisitRewardSeen(entryId: string, noteId: string): void {
@@ -367,6 +373,7 @@ export function trackRevisitRewardSeen(entryId: string, noteId: string): void {
 
 export function trackRevisitThenNowSeen(entryId: string, noteId: string): void {
   trackLocalEvent("revisit_then_now_seen", { entryId, noteId });
+  markMoatRevisitThenVsNow(entryId);
 }
 
 export function trackRevisitRewardFollowup(entryId: string, promptId: string): void {
@@ -379,6 +386,7 @@ export function trackRevisitRewardBookmark(entryId: string, bookmarkType: string
 
 export function trackRevisitAudioPlayed(entryId: string, clip: "then" | "now"): void {
   trackLocalEvent("revisit_audio_played", { entryId, clip });
+  markMoatRevisitAudioReplayed(entryId);
 }
 
 export function trackRevisitFollowupStarted(entryId: string, promptId: string): void {
