@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "validate:quiet-copy": "node scripts/validate-quiet-copy.mjs"
+    "validate:quiet-copy": "node scripts/validate-quiet-copy.mjs",
+    "validate:restraint": "node scripts/validate-product-restraint.mjs",
+    "validate": "npm run validate:quiet-copy && npm run validate:restraint"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

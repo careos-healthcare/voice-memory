@@ -132,22 +132,11 @@ export default function SettingsPage() {
                   Privacy policy →
                 </Link>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Export all entries</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-zinc-400">
-                Download a JSON archive of every reflection stored locally.
-              </p>
               <Button
                 type="button"
                 variant="secondary"
                 size="sm"
-                className="mt-4"
+                className="mt-2"
                 onClick={handleExportAll}
               >
                 <Download className="h-4 w-4" />
@@ -180,74 +169,60 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Reflection goal</CardTitle>
+              <CardTitle className="text-base">How you use VoiceMemory</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-sm text-zinc-400">
-                Optional. A quiet intention for how often you might return — not a target
-                to hit and not a streak to keep.
-              </p>
-              <ReflectionGoalSetting />
-            </CardContent>
-          </Card>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-zinc-300">Reflection goal</p>
+                <p className="text-sm text-zinc-400">
+                  Optional. A quiet intention for how often you might return — not a target
+                  to hit and not a streak to keep.
+                </p>
+                <ReflectionGoalSetting />
+              </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Listening mode</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-zinc-400">
-                Save recordings without immediate reflection. Your transcript and audio
-                are kept — you can reflect later when it feels right.
-              </p>
-              <Button
-                type="button"
-                variant={listeningMode ? "default" : "secondary"}
-                size="sm"
-                className="mt-4"
-                onClick={() => {
-                  const next = !listeningMode;
-                  setListeningMode(next);
-                  showMessage(next ? "Listening mode on." : "Listening mode off.");
-                }}
-              >
-                <Headphones className="h-4 w-4" />
-                {listeningMode ? "Listening mode on" : "Enable listening mode"}
-              </Button>
-            </CardContent>
-          </Card>
+              <div className="space-y-3 border-t border-white/5 pt-6">
+                <p className="text-sm font-medium text-zinc-300">Listening mode</p>
+                <p className="text-sm text-zinc-400">
+                  Save recordings without immediate reflection. Your transcript and audio
+                  are kept — you can reflect later when it feels right.
+                </p>
+                <Button
+                  type="button"
+                  variant={listeningMode ? "default" : "secondary"}
+                  size="sm"
+                  onClick={() => {
+                    const next = !listeningMode;
+                    setListeningMode(next);
+                    showMessage(next ? "Listening mode on." : "Listening mode off.");
+                  }}
+                >
+                  <Headphones className="h-4 w-4" />
+                  {listeningMode ? "Listening mode on" : "Enable listening mode"}
+                </Button>
+              </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Full detail</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-zinc-400">
-                Off by default. Turn on only if you want charts, pattern cards, and longer reads.
-                Debug views live at{" "}
-                <Link href="/debug/callbacks" className="text-zinc-500 hover:text-zinc-300">
-                  /debug/callbacks
-                </Link>
-                <Link href="/debug/changes" className="text-zinc-500 hover:text-zinc-300">
-                  /debug/changes
-                </Link>
-                .
-              </p>
-              <Button
-                type="button"
-                variant={fullDetail ? "default" : "secondary"}
-                size="sm"
-                className="mt-4"
-                onClick={() => {
-                  const next = !fullDetail;
-                  setFullDetailEnabled(next);
-                  setFullDetail(next);
-                  showMessage(next ? "Full detail on." : "Back to quiet view.");
-                }}
-              >
-                <Moon className="h-4 w-4" />
-                {fullDetail ? "Full detail on" : "Enable full detail"}
-              </Button>
+              <div className="space-y-3 border-t border-white/5 pt-6">
+                <p className="text-sm font-medium text-zinc-300">Full detail</p>
+                <p className="text-sm text-zinc-400">
+                  Off by default. Turn on only if you want fuller pattern reads and longer
+                  memory sections.
+                </p>
+                <Button
+                  type="button"
+                  variant={fullDetail ? "default" : "secondary"}
+                  size="sm"
+                  onClick={() => {
+                    const next = !fullDetail;
+                    setFullDetailEnabled(next);
+                    setFullDetail(next);
+                    showMessage(next ? "Full detail on." : "Back to quiet view.");
+                  }}
+                >
+                  <Moon className="h-4 w-4" />
+                  {fullDetail ? "Full detail on" : "Enable full detail"}
+                </Button>
+              </div>
             </CardContent>
           </Card>
 

@@ -110,6 +110,7 @@ function checkLine(line, filePath, lineNo, violations) {
   const trimmed = line.trim();
   if (!trimmed || trimmed.startsWith("//") || trimmed.startsWith("*")) return;
   if (trimmed.includes("validate:quiet-copy")) return;
+  if (trimmed.includes("validate:restraint")) return;
 
   for (const { re, label } of BANNED) {
     if (re.test(line)) {
