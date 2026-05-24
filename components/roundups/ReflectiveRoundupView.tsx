@@ -3,7 +3,62 @@
 import Link from "next/link";
 
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
-import type { KeyPiecesReport, ReflectiveRoundup } from "@/types/reflective-roundup";
+import type {
+  KeyPiecesReport,
+  ReflectiveRoundup,
+  RoundupIntentionLink,
+  RoundupIntentionLinksReport,
+} from "@/types/reflective-roundup";
+
+function IntentionLinkRow({ link }: { link: RoundupIntentionLink }) {
+  return (
+    <li className="space-y-3">
+      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{link.text}</p>
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        <RevisitEntryLink
+          entryId={link.entryId}
+          source="memory_note"
+          noteId={link.id}
+          noteText={link.text}
+          className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
+        >
+          Source entry
+        </RevisitEntryLink>
+        <Link
+          href="/intentions"
+          className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
+        >
+          Long-term thread
+        </Link>
+      </div>
+    </li>
+  );
+}
+
+function IntentionLinksSection({ report }: { report: RoundupIntentionLinksReport }) {
+  if (!report.hasData) return null;
+
+  const sections = [
+    { title: "Still with you", items: report.stillWithYou },
+    { title: "Changed shape", items: report.changedShape },
+    { title: "Quieter this period", items: report.quieterThisPeriod },
+  ].filter((section) => section.items.length > 0);
+
+  return (
+    <section className="space-y-10 border-t border-white/[0.06] pt-14">
+      {sections.map((section) => (
+        <div key={section.title} className="space-y-8">
+          <h2 className="text-xs uppercase tracking-[0.18em] text-zinc-600">{section.title}</h2>
+          <ul className="space-y-10">
+            {section.items.map((link) => (
+              <IntentionLinkRow key={link.id} link={link} />
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+  );
+}
 
 function KeyPiecesSection({ report }: { report: KeyPiecesReport }) {
   if (!report.hasData) return null;
@@ -34,14 +89,17 @@ function KeyPiecesSection({ report }: { report: KeyPiecesReport }) {
 export function ReflectiveRoundupView({
   roundup,
   keyPieces,
+  intentionLinks,
 }: {
   roundup: ReflectiveRoundup;
   keyPieces?: KeyPiecesReport | null;
+  intentionLinks?: RoundupIntentionLinksReport | null;
 }) {
   const hasLines = roundup.hasData && roundup.lines.length > 0;
   const hasKeyPieces = keyPieces?.hasData ?? false;
+  const hasIntentionLinks = intentionLinks?.hasData ?? false;
 
-  if (!hasLines && !hasKeyPieces) {
+  if (!hasLines && !hasKeyPieces && !hasIntentionLinks) {
     return (
       <p className="text-sm leading-relaxed text-zinc-500">
         Nothing to gather from this period yet.
@@ -76,6 +134,8 @@ export function ReflectiveRoundupView({
           ))}
         </div>
       ) : null}
+
+      {intentionLinks ? <IntentionLinksSection report={intentionLinks} /> : null}
 
       {keyPieces ? <KeyPiecesSection report={keyPieces} /> : null}
     </div>

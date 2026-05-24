@@ -66,3 +66,20 @@ export interface KeyPiecesReport {
   items: KeyPiece[];
   hasData: boolean;
 }
+
+export type RoundupIntentionLinkSection = "still_with_you" | "changed_shape" | "quieter_this_period";
+
+export interface RoundupIntentionLink {
+  id: string;
+  text: string;
+  intentionId: string;
+  entryId: string;
+  section: RoundupIntentionLinkSection;
+}
+
+export interface RoundupIntentionLinksReport {
+  stillWithYou: RoundupIntentionLink[];
+  changedShape: RoundupIntentionLink[];
+  quieterThisPeriod: RoundupIntentionLink[];
+  hasData: boolean;
+}

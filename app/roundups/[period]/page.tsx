@@ -14,7 +14,12 @@ import {
   parsePeriodSlug,
 } from "@/lib/roundups/reflective-roundups";
 import { buildKeyPieces } from "@/lib/roundups/key-pieces";
-import type { KeyPiecesReport, ReflectiveRoundup } from "@/types/reflective-roundup";
+import { buildRoundupIntentionLinks } from "@/lib/roundups/roundup-intention-links";
+import type {
+  KeyPiecesReport,
+  ReflectiveRoundup,
+  RoundupIntentionLinksReport,
+} from "@/types/reflective-roundup";
 
 export default function RoundupPeriodPage() {
   const params = useParams<{ period: string }>();
@@ -22,16 +27,19 @@ export default function RoundupPeriodPage() {
   const period = useMemo(() => parsePeriodSlug(periodSlug), [periodSlug]);
   const [roundup, setRoundup] = useState<ReflectiveRoundup | null>(null);
   const [keyPieces, setKeyPieces] = useState<KeyPiecesReport | null>(null);
+  const [intentionLinks, setIntentionLinks] = useState<RoundupIntentionLinksReport | null>(null);
 
   useEffect(() => {
     if (!period) {
       setRoundup(null);
       setKeyPieces(null);
+      setIntentionLinks(null);
       return;
     }
     const id = requestAnimationFrame(() => {
       setRoundup(buildReflectiveRoundup(period));
       setKeyPieces(buildKeyPieces(period));
+      setIntentionLinks(buildRoundupIntentionLinks(period));
     });
     return () => cancelAnimationFrame(id);
   }, [period]);
@@ -75,11 +83,15 @@ export default function RoundupPeriodPage() {
                   </CardContent>
                 </Card>
               ) : roundup ? (
-                <ReflectiveRoundupView roundup={roundup} keyPieces={keyPieces} />
+                <ReflectiveRoundupView
+                  roundup={roundup}
+                  keyPieces={keyPieces}
+                  intentionLinks={intentionLinks}
+                />
               ) : null}
             </div>
 
-            {!loading && roundup && !roundup.hasData && !keyPieces?.hasData ? (
+            {!loading && roundup && !roundup.hasData && !keyPieces?.hasData && !intentionLinks?.hasData ? (
               <div className="mt-10">
                 <Button asChild variant="secondary">
                   <Link href="/">Record in this period</Link>
@@ -103,6 +115,9 @@ export default function RoundupPeriodPage() {
               This month →
             </Link>
           ) : null}
+          <Link href="/intentions" className="text-zinc-500 transition-colors hover:text-zinc-300">
+            Intentions →
+          </Link>
         </div>
       </div>
     </div>

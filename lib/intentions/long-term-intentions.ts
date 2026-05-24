@@ -219,6 +219,27 @@ function revisitedEntryIds(): Set<string> {
 }
 
 /** Scan archive and merge intention mentions into local storage. */
+export function normalizeIntentionKey(text: string): string {
+  return intentionKey(text);
+}
+
+export function entriesMentioningIntention(
+  entries: JournalEntry[],
+  intention: LongTermIntention,
+): JournalEntry[] {
+  const key = intentionKey(intention.text);
+  const keyWords = key.split(" ").filter((word) => word.length > 3);
+
+  return sortedEntries(entries).filter((entry) => {
+    if (intention.sourceEntryIds.includes(entry.id)) return true;
+    const text = entryText(entry).toLowerCase();
+    if (text.includes(key.slice(0, Math.min(24, key.length)))) return true;
+    if (keyWords.length === 0) return false;
+    const hits = keyWords.filter((word) => text.includes(word)).length;
+    return hits >= Math.min(2, keyWords.length);
+  });
+}
+
 export function syncLongTermIntentions(
   entries: JournalEntry[] = getMemoryEligibleEntries(),
 ): LongTermIntention[] {
