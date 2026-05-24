@@ -1,6 +1,7 @@
 import { daysBetweenKeys, toDayKey, todayKey } from "@/lib/dates";
 import { trackLocalEvent } from "@/lib/local-analytics";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
+import { filterRevisitCandidates } from "@/lib/refinement/revisit-sequencing";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import {
   buildRetentionLoopReport,
@@ -398,7 +399,10 @@ export function buildRevisitRhythmReport(
     return { candidates: [], hasData: false };
   }
 
-  const candidates = sortCandidates(collectCandidates(loopReport), surface);
+  const candidates = sortCandidates(
+    filterRevisitCandidates(collectCandidates(loopReport)),
+    surface,
+  );
   return {
     candidates,
     hasData: candidates.length > 0,

@@ -35,6 +35,10 @@ import {
   resolveReopenFollowupDelayMs,
   type ReopenPayoffScore,
 } from "@/lib/refinement/reopen-payoff";
+import {
+  filterRevisitCandidates,
+  recordEmotionalReopen,
+} from "@/lib/refinement/revisit-sequencing";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
@@ -303,8 +307,10 @@ export function buildRevisitExperience(
 
   markRevisitBoost();
 
-  const knowsMeCandidates = entryRevisitRewardCandidates(allEntries, entryId).filter((note) =>
-    isStrongForRevisit(note, allEntries),
+  const knowsMeCandidates = filterRevisitCandidates(
+    entryRevisitRewardCandidates(allEntries, entryId).filter((note) =>
+      isStrongForRevisit(note, allEntries),
+    ).map((note) => ({ ...note, entryId: note.entryId ?? entryId })),
   );
   const contrastExtras = gatherContrastExtras(allEntries, entryId);
 
@@ -314,6 +320,9 @@ export function buildRevisitExperience(
     entryId,
   );
   const payoffScore = strongest.score;
+  if (payoffScore?.total) {
+    recordEmotionalReopen(entryId, payoffScore.total);
+  }
 
   const thenVsNow =
     strongest.moment?.pastQuote?.trim() && strongest.moment.currentQuote?.trim()
