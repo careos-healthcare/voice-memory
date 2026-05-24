@@ -1,8 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
 import { recordFollowupContinued } from "@/lib/callback-interaction-signals";
+import {
+  storeContinuationMeta,
+  trackContinuationSeen,
+  trackContinuationStarted,
+} from "@/lib/conversation/continuation-loops";
 import { markFollowupBoost } from "@/lib/refinement/emotional-timing";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { trackFollowUpAfterCallback } from "@/lib/retention/pause-moments";
@@ -15,6 +22,11 @@ interface FollowupPromptInlineProps {
 }
 
 export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlineProps) {
+  useEffect(() => {
+    if (!prompt) return;
+    trackContinuationSeen(prompt.id, prompt.noteId);
+  }, [prompt?.id, prompt?.noteId]);
+
   if (!prompt) return null;
 
   return (
@@ -28,6 +40,8 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
             size="sm"
             className="h-auto px-0 text-sm text-zinc-400 hover:bg-transparent hover:text-zinc-200"
             onClick={() => {
+              storeContinuationMeta(prompt.id, prompt.noteId);
+              trackContinuationStarted(prompt.id, prompt.noteId);
               if (prompt.noteId) {
                 recordFollowupContinued(prompt.noteId);
                 trackFollowupRecordingStarted(prompt.noteId, prompt.id);
@@ -38,7 +52,7 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
               onContinue(prompt);
             }}
           >
-            Continue this thought
+            Continue
           </Button>
         </div>
       </MotionNoteItem>

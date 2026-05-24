@@ -19,7 +19,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
-import { consumeStoredFollowupPrompt } from "@/lib/conversation/followup-prompts";
+import { consumeStoredFollowupPrompt, storeFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
 import { homepageArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { homepageLivingResurfacingMoment } from "@/lib/memory/living-resurfacing";
@@ -98,6 +98,7 @@ export default function HomePage() {
   }, []);
 
   const handleContinueFollowup = useCallback((prompt: FollowupPrompt) => {
+    storeFollowupPrompt(prompt);
     setReflectionPrompt(prompt.text);
     requestAnimationFrame(() => {
       recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });

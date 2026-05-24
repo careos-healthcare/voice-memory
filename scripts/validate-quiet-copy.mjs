@@ -40,6 +40,8 @@ const SKIP_PATH_PARTS = [
   "lib/memory/archive-growth.ts",
   "lib/conversation/conversation-continuity.ts",
   "lib/conversation/followup-prompts.ts",
+  "lib/conversation/continuation-loops.ts",
+  "lib/conversation/conversation-continuity.ts",
   "lib/conversation/voice-playback-continuity.ts",
   "lib/memory/memory-reminders.ts",
   "lib/memory/conversation-threads.ts",

@@ -324,8 +324,8 @@ export default function EntryPage() {
   ]);
 
   const followupPrompt = useMemo(
-    () => buildFollowupPrompt(followupNotes),
-    [followupNotes],
+    () => buildFollowupPrompt(followupNotes, allEntries, entry?.id),
+    [followupNotes, allEntries, entry?.id],
   );
 
   const activeFollowup =
@@ -338,7 +338,7 @@ export default function EntryPage() {
     if (prompt.noteId) {
       trackFollowupRecordingStarted(prompt.noteId, prompt.id);
     }
-    storeFollowupPrompt(prompt.text);
+    storeFollowupPrompt(prompt);
     router.push("/#recorder");
   };
 

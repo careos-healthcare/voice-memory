@@ -16,6 +16,12 @@ import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import { saveAudio } from "@/lib/audio-storage";
 import { LISTENING_SAVED_COPY } from "@/lib/listening-mode";
 import { createListeningModeEntry } from "@/lib/pending-reflection";
+import { ContinuationRecorderPrompt } from "@/components/conversation/ContinuationRecorderPrompt";
+import {
+  consumeContinuationMeta,
+  peekContinuationMeta,
+  trackContinuationCompleted,
+} from "@/lib/conversation/continuation-loops";
 import {
   peekFollowupLoopContext,
   trackFollowupRecordingCompleted,
@@ -178,7 +184,14 @@ export function Recorder({
 
         saveEntry(newEntry);
         if (reflectionPrompt || peekFollowupLoopContext()) {
+          const meta = peekContinuationMeta();
           trackFollowupRecordingCompleted(newEntry.id);
+          trackContinuationCompleted(
+            meta?.promptId ?? "recorder-continuation",
+            newEntry.id,
+            meta?.noteId,
+          );
+          consumeContinuationMeta();
         }
         setEntry(newEntry);
         setState("complete");
@@ -293,19 +306,24 @@ export function Recorder({
             exit="exit"
             className="flex flex-col items-center gap-5"
           >
-            <Button size="lg" onClick={() => void startRecording()}>
-              <Mic className="h-5 w-5" />
-              Start reflection
-            </Button>
             {reflectionPrompt ? (
-              <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
-                {reflectionPrompt}
-              </p>
-            ) : preRecordLine ? (
-              <p className="max-w-sm text-center text-sm leading-relaxed text-zinc-500">
-                {preRecordLine}
-              </p>
-            ) : null}
+              <ContinuationRecorderPrompt
+                text={reflectionPrompt}
+                onContinue={() => void startRecording()}
+              />
+            ) : (
+              <>
+                <Button size="lg" onClick={() => void startRecording()}>
+                  <Mic className="h-5 w-5" />
+                  Start reflection
+                </Button>
+                {preRecordLine ? (
+                  <p className="max-w-sm text-center text-sm font-normal leading-[1.75] text-zinc-500/90">
+                    {preRecordLine}
+                  </p>
+                ) : null}
+              </>
+            )}
             <p className="text-sm text-zinc-500">
               Up to {MAX_SECONDS} seconds · local-first on your device
             </p>

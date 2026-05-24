@@ -4,6 +4,10 @@ export type FollowupSource =
   | "resurfacing"
   | "then_vs_now"
   | "continuity"
+  | "continuation"
+  | "revisit_contrast"
+  | "partial_return"
+  | "unfinished"
   | "recovery"
   | "revisitation"
   | "familiarity_resurfacing";

@@ -26,6 +26,7 @@ import {
   markMoatRevisitThenVsNow,
   trackOldEntryMoatRevisit,
 } from "@/lib/retention/moat-metrics";
+import { CONTINUATION_COPY } from "@/lib/conversation/continuation-loops";
 import {
   rememberNoteContext,
   trackEntryRevisited as trackRetentionEntryRevisited,
@@ -254,22 +255,24 @@ function buildRevisitFollowupPrompt(
   reward: MemoryNote | null,
   contrast: MemoryNote | null,
 ): FollowupPrompt | null {
-  if (!reward?.text.trim()) return null;
+  if (!reward?.text.trim() && !contrast?.pastQuote?.trim()) return null;
 
   if (contrast?.pastQuote?.trim() && contrast?.currentQuote?.trim()) {
     return {
       id: `followup-revisit-${contrast.id}`,
-      text: "What sounds different when you hear both?",
-      source: "then_vs_now",
+      text: CONTINUATION_COPY.sayBackToSelf,
+      source: "revisit_contrast",
       noteId: contrast.id,
-      noteText: reward.text,
-      strength: Math.max(contrast.confidence, reward.confidence),
+      noteText: reward?.text ?? contrast.text,
+      strength: Math.max(contrast.confidence, reward?.confidence ?? 0),
     };
   }
 
+  if (!reward?.text.trim()) return null;
+
   return {
     id: `followup-revisit-${reward.id}`,
-    text: "What feels different about how you sound now?",
+    text: CONTINUATION_COPY.moreToSay,
     source: "revisitation",
     noteId: reward.id,
     noteText: reward.text,

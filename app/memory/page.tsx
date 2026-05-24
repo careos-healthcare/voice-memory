@@ -141,12 +141,12 @@ export default function MemoryPage() {
   );
 
   const followupPrompt = useMemo(
-    () => buildFollowupPrompt(followupNotes),
-    [followupNotes],
+    () => buildFollowupPrompt(followupNotes, entries),
+    [followupNotes, entries],
   );
 
   const handleContinueFollowup = (prompt: FollowupPrompt) => {
-    storeFollowupPrompt(prompt.text);
+    storeFollowupPrompt(prompt);
     router.push("/#recorder");
   };
 

@@ -1,4 +1,13 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import {
+  CONTINUATION_COPY,
+  detectEndingUncertainty,
+  detectPartialReturn,
+  detectRepeatedUnresolvedLine,
+  detectRevisitNoNewReflection,
+  detectUnfinishedThought,
+} from "@/lib/conversation/continuation-loops";
+import { buildRecorderContinuationPrompt } from "@/lib/conversation/followup-prompts";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
 import { applyMemoryHierarchy, pickStrongestMemoryNote } from "@/lib/refinement/memory-hierarchy";
 import { formatRelativeDate } from "@/lib/utils";
@@ -68,16 +77,30 @@ const CONTEXT_KIND_PRIORITY: Record<
     "returned_differently",
     "thread_changed",
   ],
-  recorder: ["sounds_like_continuation", "came_back", "left_unresolved"],
+  recorder: [
+    "stopped_here",
+    "unfinished_thought",
+    "ending_uncertainty",
+    "sounds_like_continuation",
+    "partial_return",
+    "revisit_no_reflection",
+    "left_unresolved",
+    "came_back",
+  ],
 };
 
 const COPY: Record<ConversationContinuityKind, string> = {
-  came_back: "You came back to the same place.",
-  left_unresolved: "You left this unfinished.",
-  sounds_like_continuation: "You left off here.",
-  stopped_here: "You stopped here last time.",
-  returned_differently: "You were carrying this differently then.",
-  thread_changed: "You left this in a different place.",
+  came_back: CONTINUATION_COPY.cameBackNotFully,
+  left_unresolved: CONTINUATION_COPY.neverFinished,
+  sounds_like_continuation: CONTINUATION_COPY.stoppedHere,
+  stopped_here: CONTINUATION_COPY.stoppedHere,
+  returned_differently: CONTINUATION_COPY.sayBackToSelf,
+  thread_changed: CONTINUATION_COPY.moreToSay,
+  unfinished_thought: CONTINUATION_COPY.neverFinished,
+  ending_uncertainty: CONTINUATION_COPY.moreToSay,
+  repeated_unresolved: CONTINUATION_COPY.neverFinished,
+  revisit_no_reflection: CONTINUATION_COPY.cameBackNotFully,
+  partial_return: CONTINUATION_COPY.cameBackNotFully,
 };
 
 function isBrowser(): boolean {
@@ -243,8 +266,9 @@ function hasEvidence(
   >,
 ): boolean {
   const hasQuotes = Boolean(item.pastQuote?.trim() && item.currentQuote?.trim());
+  const hasSingleAnchor = Boolean(item.currentQuote?.trim() && item.currentDateLabel);
   const hasDates = Boolean(item.pastDateLabel && item.currentDateLabel);
-  return hasQuotes || hasDates;
+  return hasQuotes || hasDates || hasSingleAnchor;
 }
 
 function pushCandidate(
@@ -505,6 +529,77 @@ function detectRecurringUnresolved(
   return notes;
 }
 
+function continuationToContinuityNote(
+  candidate: NonNullable<ReturnType<typeof detectUnfinishedThought>>,
+  kind: ConversationContinuityKind,
+): ConversationContinuityNote {
+  return {
+    id: candidate.id.replace("continuation-", "continuity-"),
+    kind,
+    text: candidate.text,
+    strength: candidate.strength,
+    pastQuote: candidate.pastQuote,
+    currentQuote: candidate.currentQuote,
+    pastDateLabel: candidate.pastDateLabel,
+    currentDateLabel: candidate.currentDateLabel,
+    pastEntryId: candidate.pastEntryId,
+    entryId: candidate.entryId,
+  };
+}
+
+function detectUnfinishedThoughtNote(
+  anchor: JournalEntry,
+): ConversationContinuityNote[] {
+  const candidate = detectUnfinishedThought(anchor);
+  if (!candidate) return [];
+  const notes: ConversationContinuityNote[] = [];
+  pushCandidate(notes, continuationToContinuityNote(candidate, "unfinished_thought"));
+  return notes;
+}
+
+function detectEndingUncertaintyNote(
+  anchor: JournalEntry,
+): ConversationContinuityNote[] {
+  const candidate = detectEndingUncertainty(anchor);
+  if (!candidate) return [];
+  const notes: ConversationContinuityNote[] = [];
+  pushCandidate(notes, continuationToContinuityNote(candidate, "ending_uncertainty"));
+  return notes;
+}
+
+function detectRepeatedUnresolvedNote(
+  anchor: JournalEntry,
+  allSorted: JournalEntry[],
+): ConversationContinuityNote[] {
+  const candidate = detectRepeatedUnresolvedLine(allSorted, anchor);
+  if (!candidate) return [];
+  const notes: ConversationContinuityNote[] = [];
+  pushCandidate(notes, continuationToContinuityNote(candidate, "repeated_unresolved"));
+  return notes;
+}
+
+function detectRevisitNoReflectionNote(
+  anchor: JournalEntry,
+  allSorted: JournalEntry[],
+): ConversationContinuityNote[] {
+  const candidate = detectRevisitNoNewReflection(allSorted, anchor.id);
+  if (!candidate) return [];
+  const notes: ConversationContinuityNote[] = [];
+  pushCandidate(notes, continuationToContinuityNote(candidate, "revisit_no_reflection"));
+  return notes;
+}
+
+function detectPartialReturnNote(
+  anchor: JournalEntry,
+  allSorted: JournalEntry[],
+): ConversationContinuityNote[] {
+  const candidate = detectPartialReturn(allSorted, anchor.id);
+  if (!candidate) return [];
+  const notes: ConversationContinuityNote[] = [];
+  pushCandidate(notes, continuationToContinuityNote(candidate, "partial_return"));
+  return notes;
+}
+
 function detectForAnchor(
   anchor: JournalEntry,
   allSorted: JournalEntry[],
@@ -513,6 +608,11 @@ function detectForAnchor(
   const prior = idx > 0 ? allSorted.slice(0, idx) : [];
 
   return [
+    ...detectUnfinishedThoughtNote(anchor),
+    ...detectEndingUncertaintyNote(anchor),
+    ...detectRepeatedUnresolvedNote(anchor, allSorted),
+    ...detectRevisitNoReflectionNote(anchor, allSorted),
+    ...detectPartialReturnNote(anchor, allSorted),
     ...detectSoundsLikeContinuation(anchor, prior),
     ...detectCameBack(anchor, prior),
     ...detectLeftUnresolved(anchor, prior),
@@ -609,6 +709,9 @@ function categoryForKind(kind: ConversationContinuityKind): MemoryNote["category
     case "thread_changed":
       return "changed";
     case "left_unresolved":
+    case "unfinished_thought":
+    case "ending_uncertainty":
+    case "repeated_unresolved":
       return "faded";
     default:
       return "returned";
@@ -660,10 +763,8 @@ export function entryContinuationOpener(
   );
 }
 
-/** Optional quiet line before recording — call only when homepage continuation is empty. */
+/** Optional quiet line before recording — unfinished conversation, not coaching. */
 export function recorderPreRecordLine(entries: JournalEntry[]): string | null {
-  const report = buildConversationContinuityReport(entries, {
-    context: "recorder",
-  });
-  return report.notes[0]?.text ?? null;
+  const prompt = buildRecorderContinuationPrompt(entries);
+  return prompt?.text ?? null;
 }

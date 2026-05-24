@@ -124,6 +124,7 @@ export function buildQuietHomepagePresentation(
     ...calibrated,
     followupPrompt: buildFollowupPrompt(
       calibrated.primaryNote ? [calibrated.primaryNote] : [],
+      entries,
     ),
   };
 }
@@ -208,6 +209,8 @@ export function buildQuietEntryPresentation(
     ...calibrated,
     followupPrompt: buildFollowupPrompt(
       calibrated.primaryMoment ? [calibrated.primaryMoment] : followupNotes,
+      allEntries,
+      entryId,
     ),
   };
 }

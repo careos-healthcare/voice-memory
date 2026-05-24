@@ -4,7 +4,12 @@ export type ConversationContinuityKind =
   | "sounds_like_continuation"
   | "stopped_here"
   | "returned_differently"
-  | "thread_changed";
+  | "thread_changed"
+  | "unfinished_thought"
+  | "ending_uncertainty"
+  | "repeated_unresolved"
+  | "revisit_no_reflection"
+  | "partial_return";
 
 export type ConversationContinuityContext = "homepage" | "entry" | "recorder";
 
