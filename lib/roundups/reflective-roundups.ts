@@ -482,6 +482,58 @@ export function buildCustomPeriod(startDayKey: string, endDayKey: string): Round
   };
 }
 
+export type PeriodPresetId =
+  | "last_7_days"
+  | "last_30_days"
+  | "this_month"
+  | "last_month"
+  | "custom";
+
+export const PERIOD_PRESET_LABELS: Record<PeriodPresetId, string> = {
+  last_7_days: "Last 7 days",
+  last_30_days: "Last 30 days",
+  this_month: "This month",
+  last_month: "Last month",
+  custom: "Custom",
+};
+
+export function buildLastNDaysPeriod(days: number, endDayKey: string = todayKey()): RoundupPeriod {
+  const startDayKey = addDaysToKey(endDayKey, -(days - 1));
+  return buildCustomPeriod(startDayKey, endDayKey);
+}
+
+export function buildLastMonthPeriod(referenceDayKey: string = todayKey()): RoundupPeriod {
+  const [y, m] = referenceDayKey.slice(0, 7).split("-").map(Number);
+  const date = new Date(y, m - 2, 1);
+  const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  return buildMonthlyPeriod(monthKey);
+}
+
+export function buildPeriodFromPreset(
+  preset: PeriodPresetId,
+  customStart?: string,
+  customEnd?: string,
+): RoundupPeriod | null {
+  switch (preset) {
+    case "last_7_days":
+      return buildLastNDaysPeriod(7);
+    case "last_30_days":
+      return buildLastNDaysPeriod(30);
+    case "this_month":
+      return buildMonthlyPeriod();
+    case "last_month":
+      return buildLastMonthPeriod();
+    case "custom":
+      if (!customStart || !customEnd) return null;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(customStart) || !/^\d{4}-\d{2}-\d{2}$/.test(customEnd)) {
+        return null;
+      }
+      return buildCustomPeriod(customStart, customEnd);
+    default:
+      return null;
+  }
+}
+
 export function parsePeriodSlug(slug: string): RoundupPeriod | null {
   if (slug === "weekly" || slug === "week") {
     return buildWeeklyPeriod();
@@ -580,12 +632,7 @@ export function listReflectiveRoundups(
   const lastWeekEnd = addDaysToKey(startOfWeekKey(end), -1);
   const lastWeek = buildWeeklyPeriod(lastWeekEnd);
   const thisMonth = buildMonthlyPeriod();
-  const prevMonthKey = (() => {
-    const [y, m] = todayKey().slice(0, 7).split("-").map(Number);
-    const date = new Date(y, m - 2, 1);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-  })();
-  const lastMonth = buildMonthlyPeriod(prevMonthKey);
+  const lastMonth = buildLastMonthPeriod();
 
   const periods = [thisWeek, lastWeek, thisMonth, lastMonth];
   const items: RoundupIndexItem[] = periods.map((period) => {

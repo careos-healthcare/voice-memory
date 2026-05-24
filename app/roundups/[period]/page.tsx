@@ -48,7 +48,13 @@ export default function RoundupPeriodPage() {
   const invalid = !period;
 
   const periodEyebrow =
-    period?.kind === "weekly" ? "Weekly roundup" : period?.kind === "monthly" ? "Monthly roundup" : "Roundup";
+    period?.kind === "weekly"
+      ? "Weekly roundup"
+      : period?.kind === "monthly"
+        ? "Monthly roundup"
+        : period?.kind === "custom"
+          ? "Period review"
+          : "Roundup";
 
   return (
     <div className="min-h-screen bg-zinc-950">

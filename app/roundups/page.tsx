@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { ReflectiveRoundupIndex } from "@/components/roundups/ReflectiveRoundupView";
+import { CustomPeriodReview } from "@/components/roundups/CustomPeriodReview";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,7 +37,9 @@ export default function RoundupsPage() {
           </p>
         </motion.header>
 
-        <div className="mt-16">
+        <div className="mt-16 space-y-16">
+          <CustomPeriodReview />
+
           {loading ? (
             <Card>
               <CardContent className="py-16 text-center text-sm text-zinc-600">
