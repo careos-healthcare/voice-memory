@@ -5,6 +5,7 @@ import {
   hedgeCount,
 } from "@/lib/memory/language-fingerprint";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
+import { guardSurfacedNote } from "@/lib/refinement/false-positive-suppression";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
 import { formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -467,7 +468,7 @@ function pickBest(
   if (isTextFatigued(best.text)) return null;
 
   recordShown(best, surface);
-  return toMemoryNote(best);
+  return guardSurfacedNote(toMemoryNote(best), entries, "voice_identity");
 }
 
 /** Entry revisit — how you sound now vs before on this thread. */

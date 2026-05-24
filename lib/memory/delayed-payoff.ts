@@ -3,6 +3,7 @@ import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
+import { guardSurfacedNote } from "@/lib/refinement/false-positive-suppression";
 import { formatRelativeDate } from "@/lib/utils";
 import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { JournalEntry } from "@/types/journal";
@@ -448,7 +449,7 @@ export function gateDelayedPayoffNote(
 ): MemoryNote | null {
   if (!note) return null;
   if (!passesDelayedPayoffGate(entries, note)) return null;
-  return applyDelayedPayoffFraming(entries, note);
+  return guardSurfacedNote(applyDelayedPayoffFraming(entries, note), entries, "delayed_payoff");
 }
 
 export function filterDelayedPayoffGate(
@@ -457,7 +458,9 @@ export function filterDelayedPayoffGate(
 ): MemoryNote[] {
   return notes
     .filter((note) => passesDelayedPayoffGate(entries, note))
-    .map((note) => applyDelayedPayoffFraming(entries, note));
+    .map((note) => applyDelayedPayoffFraming(entries, note))
+    .map((note) => guardSurfacedNote(note, entries, "delayed_payoff"))
+    .filter((note): note is MemoryNote => note !== null);
 }
 
 export function gateDelayedPayoffMilestone(

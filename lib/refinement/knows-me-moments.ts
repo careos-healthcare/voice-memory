@@ -23,6 +23,7 @@ import {
   rankThenVsNowContrastNotes,
 } from "@/lib/refinement/then-vs-now-quotes";
 import { gateDelayedPayoffNote } from "@/lib/memory/delayed-payoff";
+import { guardSurfacedNote, filterFalsePositiveNotes } from "@/lib/refinement/false-positive-suppression";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -890,7 +891,10 @@ export function pickEntryRevisitContrast(
         b.confidence - a.confidence,
     );
 
-  const ranked = rankThenVsNowContrastNotes(pool, entries);
+  const ranked = rankThenVsNowContrastNotes(
+    filterFalsePositiveNotes(pool, entries, "revisit_reward"),
+    entries,
+  );
   return ranked[0] ?? null;
 }
 
@@ -898,15 +902,20 @@ export function pickEntryRevisitContrast(
 export function pickEntryRevisitRewardLine(
   candidates: MemoryNote[],
   exclude: Array<MemoryNote | null | undefined>,
+  entries: JournalEntry[] = [],
 ): MemoryNote | null {
-  const pool = candidates
-    .filter((note) => !exclude.some((row) => isDuplicateRevisitNote(note, row)))
-    .sort(
-      (a, b) =>
-        revisitPriority(a, REVISIT_REWARD_LINE_PRIORITY) -
-          revisitPriority(b, REVISIT_REWARD_LINE_PRIORITY) ||
-        b.confidence - a.confidence,
-    );
+  const pool = filterFalsePositiveNotes(
+    candidates
+      .filter((note) => !exclude.some((row) => isDuplicateRevisitNote(note, row)))
+      .sort(
+        (a, b) =>
+          revisitPriority(a, REVISIT_REWARD_LINE_PRIORITY) -
+            revisitPriority(b, REVISIT_REWARD_LINE_PRIORITY) ||
+          b.confidence - a.confidence,
+      ),
+    entries,
+    "revisit_reward",
+  );
 
   return pool[0] ?? null;
 }
@@ -962,7 +971,11 @@ export function pickKnowsMeMoment(
   );
   const best = pickBest(candidates, minStrength, allSorted);
   if (!best) return null;
-  return gateDelayedPayoffNote(allSorted, toMemoryNote(best));
+  return guardSurfacedNote(
+    gateDelayedPayoffNote(allSorted, toMemoryNote(best)),
+    allSorted,
+    "knows_me",
+  );
 }
 
 export function entryKnowsMeMoment(

@@ -1,4 +1,5 @@
 import { toDayKey } from "@/lib/dates";
+import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression";
 import { recordEmotionalNoteShown } from "@/lib/refinement/emotional-timing";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
@@ -632,6 +633,7 @@ export function calibratePrimaryNote(
   const state = readState();
   const ranked = candidates
     .filter((note) => !isWeakNote(note, entries))
+    .filter((note) => !isFalsePositiveNote(note, entries))
     .map((note) => ({ note, score: scoreMemoryHierarchy(note, entries).total }))
     .sort(
       (a, b) =>
@@ -662,6 +664,7 @@ export function calibrateMemoryNotes(
 
   const ranked = [...notes]
     .filter((note) => !isWeakNote(note, entries))
+    .filter((note) => !isFalsePositiveNote(note, entries))
     .sort(
       (a, b) =>
         scoreMemoryHierarchy(b, entries).total - scoreMemoryHierarchy(a, entries).total ||
@@ -830,5 +833,31 @@ export function calibrateRevisitExperience<
     revisitReward,
     thenVsNow,
     followupPrompt,
+  };
+}
+
+/** Signals for false-positive suppression — recent show + ignored similar notes. */
+export function readFalsePositiveSilenceContext(
+  text: string,
+  noteId?: string,
+): { shownRecently: boolean; ignoredSimilarBefore: boolean } {
+  const state = readState();
+  const shownRecently = textShownRecently(state, text);
+
+  const similarIgnored =
+    state.recentShown.some(
+      (row) =>
+        !row.actionTaken &&
+        (row.noteId === noteId ||
+          normalizeTextKey(text).length > 8 &&
+          row.noteId.startsWith(noteId?.slice(0, 12) ?? "___")),
+    ) && consecutiveIgnoredCount(state) >= 1;
+
+  return {
+    shownRecently,
+    ignoredSimilarBefore:
+      ignoredCooldownActive(state) ||
+      lastTwoShownWithoutEngagement(state) ||
+      similarIgnored,
   };
 }

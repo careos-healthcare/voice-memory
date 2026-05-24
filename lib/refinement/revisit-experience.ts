@@ -385,7 +385,7 @@ export function buildRevisitExperience(
     allEntries,
   );
 
-  const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow]);
+  const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow], allEntries);
   const revisitReward = resolveRevisitRewardLine(allEntries, entryId, thenVsNow, bestLine);
   const livingResurfacing = pickLivingResurfacingForEntry(allEntries, entryId);
   const voiceIdentity = pickVoiceIdentityForEntry(allEntries, entryId);

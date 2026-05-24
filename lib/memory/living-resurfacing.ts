@@ -1,6 +1,7 @@
 import { daysBetweenKeys, toDayKey, todayKey } from "@/lib/dates";
 import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
+import { guardSurfacedNote } from "@/lib/refinement/false-positive-suppression";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
 import { formatRelativeDate } from "@/lib/utils";
@@ -540,7 +541,7 @@ export function pickLivingResurfacingForEntry(
   if (!best || best.strength < LIVING_ENTRY_MIN) return null;
 
   recordShown(best, "entry");
-  return toMemoryNote(best);
+  return guardSurfacedNote(toMemoryNote(best), sorted, "living_resurfacing");
 }
 
 function pickSurfaceMoment(
@@ -561,7 +562,7 @@ function pickSurfaceMoment(
   if (!calibrated) return null;
 
   recordShown(best, surface);
-  return calibrated;
+  return guardSurfacedNote(calibrated, sorted, "living_resurfacing");
 }
 
 export function homepageLivingResurfacingMoment(entries: JournalEntry[]): MemoryNote | null {

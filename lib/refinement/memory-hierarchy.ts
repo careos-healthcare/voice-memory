@@ -222,7 +222,7 @@ export function applyMemoryHierarchy(
 ): MemoryNote[] {
   const ranked = notes
     .map((note) => tuneCallbackWording(note, entries))
-    .filter((note) => !shouldSuppressCallbackCopy(note))
+    .filter((note) => !shouldSuppressCallbackCopy(note, entries))
     .map((note) => ({ note, score: scoreNote(note, entries) }))
     .filter((row) => row.score.total >= minScore)
     .sort(

@@ -74,6 +74,7 @@ const SKIP_PATH_PARTS = [
   "lib/retention/pause-moments.ts",
   "lib/retention/moat-metrics.ts",
   "lib/refinement/callback-wording.ts",
+  "lib/refinement/false-positive-suppression.ts",
   "lib/refinement/quiet-presentation.ts",
   "components/navigation/RevisitEntryLink.tsx",
   "lib/debug/callback-quality-score.ts",

@@ -1,3 +1,4 @@
+import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression";
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
 import { shouldSuppressNoteByPattern } from "@/lib/refinement/callback-suppression";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
@@ -93,8 +94,12 @@ function rewriteBySignal(note: MemoryNote): string | null {
   }
 }
 
-export function shouldSuppressCallbackCopy(note: MemoryNote): boolean {
+export function shouldSuppressCallbackCopy(
+  note: MemoryNote,
+  entries: JournalEntry[] = [],
+): boolean {
   const text = note.text.trim();
+  if (isFalsePositiveNote(note, entries)) return true;
   if (shouldSuppressNoteByPattern(note)) return true;
   if (isTopicRecurrenceCopy(text)) return true;
 
@@ -145,5 +150,5 @@ export function tuneCallbackWording(note: MemoryNote, _entries: JournalEntry[]):
 export function tuneCallbackPool(notes: MemoryNote[], entries: JournalEntry[]): MemoryNote[] {
   return notes
     .map((note) => tuneCallbackWording(note, entries))
-    .filter((note) => !shouldSuppressCallbackCopy(note));
+    .filter((note) => !shouldSuppressCallbackCopy(note, entries));
 }

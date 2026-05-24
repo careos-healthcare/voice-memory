@@ -8,6 +8,7 @@ import { detectRecoveryCandidates } from "@/lib/memory/recovery-memory";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
+import { guardSurfacedNote } from "@/lib/refinement/false-positive-suppression";
 import { formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -617,7 +618,7 @@ function pickBest(
   if (isTextFatigued(best.text)) return null;
 
   recordShown(best, surface);
-  return toMemoryNote(best);
+  return guardSurfacedNote(toMemoryNote(best), entries, "chaptering");
 }
 
 /** Entry revisit — one quiet line about when this reflection belonged. */

@@ -1,3 +1,4 @@
+import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression";
 import { calibrateFollowupPrompt } from "@/lib/refinement/silence-calibration";
 import { recordFollowUpPrompt } from "@/lib/sync/cross-device-continuity";
 import {
@@ -194,7 +195,9 @@ export function buildFollowupPrompt(
   const candidates = [
     ...gatherContinuationFollowupCandidates(entries, notes, entryId),
     ...gatherFollowupCandidates(notes),
-  ];
+  ].filter(
+    (candidate) => !isFalsePositiveNote(candidate.note, entries, "follow_up"),
+  );
 
   if (candidates.length === 0) return null;
 
