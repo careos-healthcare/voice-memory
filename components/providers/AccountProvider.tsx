@@ -16,9 +16,15 @@ import {
   signOutAccount,
   verifyEmailLoginCode,
 } from "@/lib/sync/account-client";
-import { restoreArchiveFromEncryptedBackup, syncArchiveIfSignedIn } from "@/lib/sync/client";
+import {
+  applyEncryptedRestoreFromPreview,
+  previewRestoreFromEncryptedBackup,
+  restoreArchiveFromEncryptedBackup,
+  syncArchiveIfSignedIn,
+} from "@/lib/sync/client";
 import { SYNC_STATUS_EVENT } from "@/lib/sync/status-storage";
 import type { AccountSession, AccountStatus } from "@/types/account";
+import type { RestorePreview } from "@/types/sync-health";
 
 interface AccountContextValue {
   status: AccountStatus;
@@ -27,7 +33,9 @@ interface AccountContextValue {
   verifyCode: (email: string, code: string) => Promise<void>;
   signOut: () => Promise<void>;
   syncNow: () => Promise<boolean>;
-  restoreNow: () => Promise<void>;
+  previewRestore: () => Promise<RestorePreview>;
+  applyRestore: (preview: RestorePreview) => Promise<void>;
+  restoreNow: () => Promise<RestorePreview>;
 }
 
 const AccountContext = createContext<AccountContextValue | null>(null);
@@ -81,9 +89,17 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
     return ok;
   }, []);
 
-  const restoreNow = useCallback(async () => {
-    await restoreArchiveFromEncryptedBackup();
+  const previewRestore = useCallback(async () => previewRestoreFromEncryptedBackup(), []);
+
+  const applyRestore = useCallback(async (preview: RestorePreview) => {
+    await applyEncryptedRestoreFromPreview(preview);
     setTick((value) => value + 1);
+  }, []);
+
+  const restoreNow = useCallback(async () => {
+    const preview = await restoreArchiveFromEncryptedBackup();
+    setTick((value) => value + 1);
+    return preview;
   }, []);
 
   const value = useMemo(
@@ -94,9 +110,11 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
       verifyCode,
       signOut,
       syncNow,
+      previewRestore,
+      applyRestore,
       restoreNow,
     }),
-    [status, refresh, sendCode, verifyCode, signOut, syncNow, restoreNow],
+    [status, refresh, sendCode, verifyCode, signOut, syncNow, previewRestore, applyRestore, restoreNow],
   );
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;

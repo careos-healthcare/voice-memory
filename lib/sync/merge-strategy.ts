@@ -8,6 +8,8 @@ import type {
   SyncEntryRecord,
   SyncEnvelope,
   SyncLocalEventRecord,
+  SyncMergeConflict,
+  SyncMergeResult,
   SyncReviewRecord,
   SyncSettingsRecord,
 } from "@/types/sync-continuity";
@@ -177,10 +179,10 @@ export function mergeLocalEventRecords(
     .slice(-500);
 }
 
-export function mergeSyncContinuityModels(
+export function mergeSyncContinuityModelsWithResult(
   local: SyncContinuityModel,
   remote: SyncContinuityModel,
-): SyncContinuityModel {
+): SyncMergeResult {
   const localDeviceId = local.envelope.deviceId;
   const now = new Date().toISOString();
 
@@ -207,17 +209,33 @@ export function mergeSyncContinuityModels(
     lastSyncedAt: now,
   };
 
+  const conflicts: SyncMergeConflict[] = entries.conflicts.map((row) => ({
+    domain: "entry" as const,
+    key: row.key,
+    resolution: row.resolution,
+  }));
+
   return {
-    envelope,
-    entries: entries.merged,
-    audioMetadata,
-    bookmarks,
-    settings,
-    reviews,
-    localEvents,
-    emotionalContinuity,
-    debugEventsAllowed: local.debugEventsAllowed || remote.debugEventsAllowed,
+    model: {
+      envelope,
+      entries: entries.merged,
+      audioMetadata,
+      bookmarks,
+      settings,
+      reviews,
+      localEvents,
+      emotionalContinuity,
+      debugEventsAllowed: local.debugEventsAllowed || remote.debugEventsAllowed,
+    },
+    conflicts,
   };
+}
+
+export function mergeSyncContinuityModels(
+  local: SyncContinuityModel,
+  remote: SyncContinuityModel,
+): SyncContinuityModel {
+  return mergeSyncContinuityModelsWithResult(local, remote).model;
 }
 
 /** Upgrade legacy v1 bundle shape to sync continuity model. */

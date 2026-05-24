@@ -310,6 +310,9 @@ export default function StorageHealthDebugPage() {
               <Link href="/debug/retention" className="text-violet-300 hover:text-violet-200">
                 Retention dashboard →
               </Link>
+              <Link href="/debug/sync-health" className="text-violet-300 hover:text-violet-200">
+                Sync health →
+              </Link>
               <Link href="/archive" className="text-violet-300 hover:text-violet-200">
                 Archive permanence →
               </Link>

@@ -12,6 +12,7 @@ import {
 import { getOrCreateDeviceId } from "@/lib/sync/device-id";
 import { localEventKey, normalizeLegacySyncBundle } from "@/lib/sync/merge-strategy";
 import { readLastSyncedAt } from "@/lib/sync/sync-metadata";
+import { safeSetJson } from "@/lib/reliability/safe-local-storage";
 import { getAllEntries } from "@/lib/storage";
 import type { SyncContinuityModel } from "@/types/sync-continuity";
 import type { SyncArchiveBundle } from "@/types/sync";
@@ -132,13 +133,13 @@ export function normalizeRemoteSyncPayload(
 export function applySyncContinuityModel(model: SyncContinuityModel): void {
   if (!isBrowser()) return;
 
-  localStorage.setItem(
+  safeSetJson(
     "voicememory_entries",
-    JSON.stringify(model.entries.map((row) => row.entry)),
+    model.entries.map((row) => row.entry),
   );
-  localStorage.setItem(
+  safeSetJson(
     "voicememory_reflection_bookmarks",
-    JSON.stringify(model.bookmarks.map((row) => row.bookmark)),
+    model.bookmarks.map((row) => row.bookmark),
   );
   localStorage.setItem(
     "voicememory_reminder_preferences",

@@ -7,5 +7,7 @@ export const ENCRYPTED_SYNC_COPY = {
   serverStoresCiphertext:
     "Our servers store encrypted blobs only — never raw transcripts, audio, or reflection text.",
   restoreWarning:
-    "Restore replaces local archive data on this device with your encrypted backup.",
+    "Restore merges your encrypted backup with this device. You will see a preview first.",
 } as const;
+
+export { SYNC_FAILURE_COPY } from "@/lib/sync/sync-health";

@@ -17,7 +17,7 @@ import {
 } from "@/lib/sync/archive-bundle";
 import { buildEncryptedAudioBackupPlan } from "@/lib/sync/audio-backup";
 import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
-import { ENCRYPTED_SYNC_COPY } from "@/lib/sync/copy";
+import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { formatEntryDate } from "@/lib/utils";
 
@@ -35,7 +35,8 @@ function statusLabel(state: string): string {
 }
 
 export default function AccountPage() {
-  const { status, sendCode, verifyCode, signOut, syncNow, restoreNow } = useAccount();
+  const { status, sendCode, verifyCode, signOut, syncNow, previewRestore, applyRestore } =
+    useAccount();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [devCode, setDevCode] = useState<string | null>(null);
@@ -88,23 +89,27 @@ export default function AccountPage() {
     setBusy(true);
     try {
       const ok = await syncNow();
-      showMessage(ok ? "Encrypted backup saved." : "Sync skipped or failed.");
+      showMessage(
+        ok ? "Encrypted backup saved." : "Backup paused. Nothing was deleted.",
+      );
     } finally {
       setBusy(false);
     }
   };
 
   const handleRestore = async () => {
-    if (
-      !window.confirm(
-        "Restore encrypted backup to this device? Local archive data will be replaced.",
-      )
-    ) {
-      return;
-    }
     setBusy(true);
     try {
-      await restoreNow();
+      const preview = await previewRestore();
+      const summary = preview.summaryLines.join("\n");
+      if (
+        !window.confirm(
+          `${ENCRYPTED_SYNC_COPY.restoreWarning}\n\n${summary}\n\nContinue?`,
+        )
+      ) {
+        return;
+      }
+      await applyRestore(preview);
       showMessage("Archive restored from encrypted backup.");
     } catch (error) {
       showMessage(error instanceof Error ? error.message : "Restore failed.");
@@ -174,7 +179,11 @@ export default function AccountPage() {
                   : "Not yet backed up"}
               </p>
               {status.lastSyncError ? (
-                <p className="text-red-300/90">{status.lastSyncError}</p>
+                <div className="space-y-1 text-sm leading-relaxed">
+                  <p className="text-red-300/90">{status.lastSyncError}</p>
+                  <p className="text-zinc-500">{SYNC_FAILURE_COPY.localArchiveSafe}</p>
+                  <p className="text-zinc-500">{SYNC_FAILURE_COPY.backupPaused}</p>
+                </div>
               ) : null}
               <p className="text-zinc-500">
                 Encrypted audio backup plan: {audioPlanCount} recording

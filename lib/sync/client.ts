@@ -20,10 +20,19 @@ import {
   decryptJsonPayload,
   ensureSyncMasterKey,
 } from "@/lib/sync/encryption";
-import { mergeSyncContinuityModels } from "@/lib/sync/merge-strategy";
+import { mergeSyncContinuityModelsWithResult } from "@/lib/sync/merge-strategy";
 import {
   markPendingCarryoverAfterRemoteMerge,
 } from "@/lib/sync/cross-device-continuity";
+import {
+  buildRestorePreview,
+  clearPreRestoreSnapshot,
+  inspectRemoteCoreBlob,
+  restorePreRestoreSnapshot,
+  snapshotPreRestoreArchive,
+  writeLastRestoreAt,
+  writeRecentAudioBackupFailures,
+} from "@/lib/sync/sync-health";
 import {
   dispatchSyncStatusChange,
   writeLastBackupAt,
@@ -32,6 +41,7 @@ import {
 import { writeLastSyncedAt } from "@/lib/sync/sync-metadata";
 import type { EncryptedPayload } from "@/types/sync";
 import type { SyncContinuityModel } from "@/types/sync-continuity";
+import type { RestorePreview } from "@/types/sync-health";
 
 const CORE_BLOB_ID = "archive-core";
 
@@ -62,7 +72,10 @@ async function pushEncryptedBlob(input: {
   }
 }
 
-async function pullEncryptedCoreBlob(): Promise<SyncContinuityModel | null> {
+async function pullEncryptedCoreBlobRaw(): Promise<{
+  encrypted: EncryptedPayload | null;
+  model: SyncContinuityModel | null;
+}> {
   const response = await fetch("/api/sync/pull", { cache: "no-store" });
   const data = (await response.json()) as {
     error?: string;
@@ -72,13 +85,78 @@ async function pullEncryptedCoreBlob(): Promise<SyncContinuityModel | null> {
     }>;
   };
 
-  if (!response.ok) return null;
+  if (!response.ok) return { encrypted: null, model: null };
 
   const core = data.blobs?.find((blob) => blob.id === CORE_BLOB_ID);
-  if (!core) return null;
+  if (!core) return { encrypted: null, model: null };
 
-  const payload = await decryptJsonPayload<unknown>(core.encrypted);
-  return normalizeRemoteSyncPayload(payload, getOrCreateDeviceId());
+  try {
+    const payload = await decryptJsonPayload<unknown>(core.encrypted);
+    const model = normalizeRemoteSyncPayload(payload, getOrCreateDeviceId());
+    return { encrypted: core.encrypted, model };
+  } catch {
+    return { encrypted: core.encrypted, model: null };
+  }
+}
+
+async function pullEncryptedCoreBlob(): Promise<SyncContinuityModel | null> {
+  const { model } = await pullEncryptedCoreBlobRaw();
+  return model;
+}
+
+/** Preview encrypted restore before applying — local archive is not modified. */
+export async function previewRestoreFromEncryptedBackup(): Promise<RestorePreview> {
+  const session = await fetchAccountSession();
+  if (!session) throw new Error("Sign in to restore your archive.");
+
+  await ensureSyncMasterKey();
+
+  const { encrypted, model: remote } = await pullEncryptedCoreBlobRaw();
+  if (!remote) {
+    const inspection = await inspectRemoteCoreBlob(encrypted, decryptJsonPayload);
+    if (inspection.corrupted) {
+      throw new Error("Encrypted backup could not be read. Your local archive was not changed.");
+    }
+    throw new Error("No encrypted archive found for this account.");
+  }
+
+  const local = buildLocalSyncModel();
+  return buildRestorePreview(local, remote);
+}
+
+/** Apply a previously previewed merge — keeps pre-restore snapshot on failure. */
+export async function applyEncryptedRestoreFromPreview(
+  preview: RestorePreview,
+): Promise<void> {
+  if (!preview.safeToApply) {
+    throw new Error("Restore preview is not safe to apply.");
+  }
+
+  const { model: remote } = await pullEncryptedCoreBlobRaw();
+  if (!remote) {
+    throw new Error("Encrypted backup is no longer available.");
+  }
+
+  const local = buildLocalSyncModel();
+  const merged = mergeSyncContinuityModelsWithResult(local, remote).model;
+
+  snapshotPreRestoreArchive();
+
+  try {
+    await ensureSyncMasterKey();
+    markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
+    applySyncContinuityModel(merged);
+
+    const syncedAt = new Date().toISOString();
+    writeLastRestoreAt(syncedAt);
+    writeLastBackupAt(syncedAt);
+    writeLastSyncedAt(syncedAt);
+    clearPreRestoreSnapshot();
+    dispatchSyncStatusChange();
+  } catch (error) {
+    restorePreRestoreSnapshot();
+    throw error;
+  }
 }
 
 /** Encrypt, merge with remote when present, upload, and apply merged archive locally. */
@@ -94,8 +172,9 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
 
     const local = buildLocalSyncModel();
     const remote = await pullEncryptedCoreBlob();
-    const merged = remote ? mergeSyncContinuityModels(local, remote) : local;
-    const payload = toEncryptedSyncPayload(merged);
+    const merged = remote
+      ? mergeSyncContinuityModelsWithResult(local, remote).model
+      : local;
 
     if (remote) {
       markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
@@ -103,6 +182,7 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
 
     applySyncContinuityModel(merged);
 
+    const payload = toEncryptedSyncPayload(merged);
     const encryptedCore = await encryptJsonPayload(payload);
     await pushEncryptedBlob({
       id: CORE_BLOB_ID,
@@ -111,16 +191,22 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
     });
 
     const audioPlan = buildEncryptedAudioBackupPlan();
+    const audioFailures: string[] = [];
     for (const item of audioPlan.items.slice(0, 12)) {
-      const blob = await readAudioBlobForBackup(item.entryId);
-      if (!blob) continue;
-      const encryptedAudio = await encryptBinaryPayload(await blob.arrayBuffer());
-      await pushEncryptedBlob({
-        id: `audio-${item.entryId}`,
-        type: "audio_backup",
-        encrypted: encryptedAudio,
-      });
+      try {
+        const blob = await readAudioBlobForBackup(item.entryId);
+        if (!blob) continue;
+        const encryptedAudio = await encryptBinaryPayload(await blob.arrayBuffer());
+        await pushEncryptedBlob({
+          id: `audio-${item.entryId}`,
+          type: "audio_backup",
+          encrypted: encryptedAudio,
+        });
+      } catch {
+        audioFailures.push(item.entryId);
+      }
     }
+    writeRecentAudioBackupFailures(audioFailures);
 
     const syncedAt = new Date().toISOString();
     writeLastBackupAt(syncedAt);
@@ -136,8 +222,8 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
   }
 }
 
-/** Pull encrypted archive and merge into local storage (preserves local on conflict). */
-export async function restoreArchiveFromEncryptedBackup(): Promise<void> {
+/** Pull encrypted archive, preview merge, then apply — never deletes local on failure. */
+export async function restoreArchiveFromEncryptedBackup(): Promise<RestorePreview> {
   const session = await fetchAccountSession();
   if (!session) throw new Error("Sign in to restore your archive.");
 
@@ -145,18 +231,10 @@ export async function restoreArchiveFromEncryptedBackup(): Promise<void> {
   writeLastSyncError(null);
 
   try {
-    const remote = await pullEncryptedCoreBlob();
-    if (!remote) throw new Error("No encrypted archive found for this account.");
-
-    const local = buildLocalSyncModel();
-    const merged = mergeSyncContinuityModels(local, remote);
-    markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
-    applySyncContinuityModel(merged);
-
-    const syncedAt = new Date().toISOString();
-    writeLastBackupAt(syncedAt);
-    writeLastSyncedAt(syncedAt);
-    dispatchSyncStatusChange();
+    await ensureSyncMasterKey();
+    const preview = await previewRestoreFromEncryptedBackup();
+    await applyEncryptedRestoreFromPreview(preview);
+    return preview;
   } catch (error) {
     writeLastSyncError(error instanceof Error ? error.message : "Restore failed.");
     dispatchSyncStatusChange();
@@ -170,4 +248,16 @@ export async function fetchSyncManifest() {
   const response = await fetch("/api/sync/manifest", { cache: "no-store" });
   if (!response.ok) return null;
   return response.json();
+}
+
+export async function inspectRemoteSyncHealth(): Promise<{
+  corrupted: boolean;
+  entryCount: number | null;
+}> {
+  const { encrypted } = await pullEncryptedCoreBlobRaw();
+  const inspection = await inspectRemoteCoreBlob(encrypted, decryptJsonPayload);
+  return {
+    corrupted: inspection.corrupted,
+    entryCount: inspection.entryCount,
+  };
 }
