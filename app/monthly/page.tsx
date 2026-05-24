@@ -10,6 +10,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { VoiceIdentityNote } from "@/components/memory/VoiceIdentityNote";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -30,6 +31,7 @@ import {
 } from "@/lib/conversation/followup-prompts";
 import { monthlyKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { monthlyArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { monthlyVoiceIdentityMoment } from "@/lib/memory/voice-identity";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getMemoryEligibleEntries } from "@/lib/storage";
@@ -44,6 +46,7 @@ export default function MonthlyPage() {
   const { limits } = useQuietMode();
   const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [voiceIdentity, setVoiceIdentity] = useState<MemoryNote | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
@@ -92,6 +95,7 @@ export default function MonthlyPage() {
         ),
       );
       setArchiveGravity(monthlyArchiveGravityMoment(entries));
+      setVoiceIdentity(monthlyVoiceIdentityMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -163,6 +167,7 @@ export default function MonthlyPage() {
             <>
               <PrimaryCallbackNote note={knowsMe} />
               <ArchiveGravityNote note={archiveGravity} />
+              <VoiceIdentityNote note={voiceIdentity} />
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
               <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
               <FamiliarityResurfacingNotes

@@ -19,6 +19,7 @@ import {
 } from "@/lib/refinement/emotional-timing";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
+import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
 import {
   markMoatRevisitAudioReplayed,
   markMoatRevisitThenVsNow,
@@ -70,6 +71,8 @@ export interface RevisitExperiencePresentation {
   thenVsNow: MemoryNote | null;
   /** Old entry whose meaning shifted as the archive grew. */
   livingResurfacing: MemoryNote | null;
+  /** How you sound on this thread — transcript pacing, not clinical analysis. */
+  voiceIdentity: MemoryNote | null;
   followupPrompt: FollowupPrompt | null;
 }
 
@@ -354,6 +357,7 @@ export function buildRevisitExperience(
       revisitReward: null,
       thenVsNow: null,
       livingResurfacing: null,
+      voiceIdentity: null,
       followupPrompt: null,
     };
   }
@@ -375,6 +379,7 @@ export function buildRevisitExperience(
   const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow]);
   const revisitReward = resolveRevisitRewardLine(allEntries, entryId, thenVsNow, bestLine);
   const livingResurfacing = pickLivingResurfacingForEntry(allEntries, entryId);
+  const voiceIdentity = pickVoiceIdentityForEntry(allEntries, entryId);
   const followupPrompt = buildRevisitFollowupPrompt(revisitReward, thenVsNow);
 
   const calibrated = calibrateRevisitExperience(
@@ -384,6 +389,7 @@ export function buildRevisitExperience(
       revisitReward,
       thenVsNow,
       livingResurfacing,
+      voiceIdentity,
       followupPrompt,
     },
     allEntries,
@@ -401,7 +407,18 @@ export function buildRevisitExperience(
       ? calibrated.livingResurfacing
       : null;
 
-  return { ...calibrated, livingResurfacing: resolvedLivingResurfacing };
+  const resolvedVoiceIdentity =
+    calibrated.voiceIdentity &&
+    calibrated.voiceIdentity.text !== calibrated.revisitReward?.text &&
+    calibrated.voiceIdentity.text !== resolvedLivingResurfacing?.text
+      ? calibrated.voiceIdentity
+      : null;
+
+  return {
+    ...calibrated,
+    livingResurfacing: resolvedLivingResurfacing,
+    voiceIdentity: resolvedVoiceIdentity,
+  };
 }
 
 export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): void {

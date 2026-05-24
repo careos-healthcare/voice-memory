@@ -16,6 +16,7 @@ import { buildFamiliarityReport } from "@/lib/memory/familiarity";
 import { buildFamiliarityResurfacingReport } from "@/lib/memory/familiarity-resurfacing";
 import { buildRhythmReport } from "@/lib/memory/rhythm-memory";
 import { buildTimeMemoryReport } from "@/lib/memory/time-memory";
+import { voiceIdentityDebugCandidates } from "@/lib/memory/voice-identity";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { buildContinuityMomentsReport } from "@/lib/patterns/continuity-moments";
 import { buildMemoryNotesReport, thenVsNowToNote } from "@/lib/patterns/memory-notes";
@@ -83,6 +84,9 @@ function whyFromId(id: string, fallback: string): string {
   if (id.startsWith("continuity-depth-")) {
     return "Continuity depth indicator — compounded threads, revisit links, and landmarks.";
   }
+  if (id.startsWith("voice-")) {
+    return "Voice identity shift from transcript pacing and wording — not clinical voice analysis.";
+  }
   return fallback;
 }
 
@@ -99,6 +103,8 @@ function surfacesForKind(kind: CallbackReviewKind): string[] {
       return ["homepage", "memory"];
     case "memory_reminder":
       return ["homepage", "reminders"];
+    case "voice_identity":
+      return ["entry", "timeline", "monthly"];
     default:
       return ["homepage", "memory", "timeline", "monthly", "entry"];
   }
@@ -507,6 +513,17 @@ export function buildCallbackQualityReviewReport(
         "time_memory",
         sorted,
         "Time memory — distance-aware note about how an older reflection reads now.",
+      ),
+    );
+  }
+
+  for (const note of voiceIdentityDebugCandidates(sorted)) {
+    items.push(
+      noteToItem(
+        note,
+        "voice_identity",
+        sorted,
+        whyFromId(note.id, "Voice identity from transcript pacing and self-language."),
       ),
     );
   }

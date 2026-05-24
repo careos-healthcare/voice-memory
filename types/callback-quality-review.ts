@@ -13,7 +13,8 @@ export type CallbackReviewKind =
   | "familiarity"
   | "familiarity_resurfacing"
   | "rhythm"
-  | "time_memory";
+  | "time_memory"
+  | "voice_identity";
 
 export type CallbackReviewLabel =
   | "landed_emotionally"

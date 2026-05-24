@@ -68,6 +68,10 @@ const KIND_SOURCE: Record<CallbackReviewKind, CallbackSourceLocation> = {
     file: "lib/memory/time-memory.ts",
     function: "buildTimeMemoryReport",
   },
+  voice_identity: {
+    file: "lib/memory/voice-identity.ts",
+    function: "buildVoiceIdentityReport",
+  },
 };
 
 const ID_PREFIX_SOURCE: Array<{ prefix: string; location: CallbackSourceLocation }> = [
@@ -83,6 +87,13 @@ const ID_PREFIX_SOURCE: Array<{ prefix: string; location: CallbackSourceLocation
     location: {
       file: "lib/memory/recovery-memory.ts",
       function: "detectRecoveryMoments",
+    },
+  },
+  {
+    prefix: "voice-",
+    location: {
+      file: "lib/memory/voice-identity.ts",
+      function: "buildVoiceIdentityReport",
     },
   },
   {

@@ -34,6 +34,7 @@ const SKIP_PATH_PARTS = [
   "lib/memory/resurfacing-priority.ts",
   "lib/memory/living-resurfacing.ts",
   "lib/memory/delayed-payoff.ts",
+  "lib/memory/voice-identity.ts",
   "lib/memory/emotional-weight.ts",
   "lib/memory/archive-growth.ts",
   "lib/conversation/conversation-continuity.ts",

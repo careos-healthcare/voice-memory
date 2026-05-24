@@ -7,6 +7,7 @@ import { CalendarRange } from "lucide-react";
 
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
+import { VoiceIdentityNote } from "@/components/memory/VoiceIdentityNote";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
@@ -36,6 +37,7 @@ import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { timelineKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { timelineArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { timelineVoiceIdentityMoment } from "@/lib/memory/voice-identity";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { orderEntriesForRevisitPrompts } from "@/lib/refinement/revisit-worth";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
@@ -53,6 +55,7 @@ export default function TimelinePage() {
   const { limits } = useQuietMode();
   const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [voiceIdentity, setVoiceIdentity] = useState<MemoryNote | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
@@ -91,6 +94,7 @@ export default function TimelinePage() {
         ),
       );
       setArchiveGravity(timelineArchiveGravityMoment(memoryEntries));
+      setVoiceIdentity(timelineVoiceIdentityMoment(memoryEntries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -156,6 +160,7 @@ export default function TimelinePage() {
             <>
               <PrimaryCallbackNote note={knowsMe} />
               <ArchiveGravityNote note={archiveGravity} />
+              <VoiceIdentityNote note={voiceIdentity} />
               {notes?.hasData ? (
                 <MemoryNotesOverview
                   changed={notes.changed}

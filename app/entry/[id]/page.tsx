@@ -440,6 +440,12 @@ export default function EntryPage() {
                   </p>
                 ) : null}
 
+                {revisitExperience.voiceIdentity ? (
+                  <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
+                    {revisitExperience.voiceIdentity.text}
+                  </p>
+                ) : null}
+
                 {revisitExperience.thenVsNow ? (
                   <div className="space-y-6">
                     {revisitExperience.thenVsNow.pastQuote ? (
