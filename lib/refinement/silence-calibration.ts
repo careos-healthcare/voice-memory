@@ -1,6 +1,10 @@
 import { toDayKey } from "@/lib/dates";
 import { recordEmotionalNoteShown } from "@/lib/refinement/emotional-timing";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
+import {
+  SCORE_SHOW as MIN_SHOW_SCORE,
+  SCORE_STRONG as STRONG_NOTE_SCORE,
+} from "@/lib/refinement/score-thresholds";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -13,8 +17,7 @@ const HIGH_DWELL_MS = 6000;
 const DELAY_CATEGORY_HOURS = 12;
 const HIGH_DWELL_DELAY_HOURS = 12;
 
-export const MIN_SHOW_SCORE = 66;
-export const STRONG_NOTE_SCORE = 72;
+export { MIN_SHOW_SCORE, STRONG_NOTE_SCORE };
 export const STRONG_CONFIDENCE = 68;
 export const SESSION_NOTE_MAX = 1;
 export const FOLLOWUP_MIN_STRENGTH = 70;

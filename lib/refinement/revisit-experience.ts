@@ -12,6 +12,11 @@ import {
   revisitRewardCopyForContrast,
   REVISIT_REWARD_COPY,
 } from "@/lib/refinement/knows-me-moments";
+import {
+  REVISIT_REWARD_SUPPRESS_ID,
+  REVISIT_REWARD_SUPPRESS_TEXT,
+} from "@/lib/refinement/callback-suppression";
+import { SCORE_REVISIT_REWARD } from "@/lib/refinement/score-thresholds";
 import { rankThenVsNowContrastNotes } from "@/lib/refinement/then-vs-now-quotes";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
@@ -36,7 +41,7 @@ import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
 const REVISIT_NAV_KEY = "voicememory_revisit_nav";
-const REVISIT_REWARD_MIN = 62;
+const REVISIT_REWARD_MIN = SCORE_REVISIT_REWARD;
 
 export const REVISIT_QUIET_COPY_EXAMPLES = [
   REVISIT_REWARD_COPY.soundDifferentNow,
@@ -86,11 +91,6 @@ interface RevisitNavigationHint {
   at: number;
 }
 
-const REVISIT_SUPPRESSED_ID =
-  /^rhythm-|^time-|^continuity-thread-|^continuity-recurring-|^archive-|^continuity-depth-|^resurface-topic-|^resurface-entity-|^resurface-phrase-|^resurface-person-|^resurface-loop-|^familiarity-|^fam-resurface-similar|^revisit-loop-|^continuity-callback-/;
-
-const REVISIT_SUPPRESSED_TEXT =
-  /\b(you came back to the same place|you spoke about this the same way|older reflections are starting|starting to mean something|kept coming back to a few things|tends to return|weekly rhythm|gap between these entries|you left off here|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again|worth revisiting|worth returning to|an older reflection|this changed|what changed|topic appeared|similar theme|appeared again|money returned|work appeared)\b/i;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -116,8 +116,8 @@ function realizationNote(text: string, entryId: string, confidence = 68): Memory
 }
 
 function isWeakForRevisit(note: MemoryNote): boolean {
-  if (REVISIT_SUPPRESSED_ID.test(note.id)) return true;
-  if (REVISIT_SUPPRESSED_TEXT.test(note.text)) return true;
+  if (REVISIT_REWARD_SUPPRESS_ID.test(note.id)) return true;
+  if (REVISIT_REWARD_SUPPRESS_TEXT.test(note.text)) return true;
   if (isTopicRecurrenceCopy(note.text)) return true;
   return false;
 }

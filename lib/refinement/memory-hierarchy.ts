@@ -1,6 +1,8 @@
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { shouldSuppressCallbackCopy, tuneCallbackWording } from "@/lib/refinement/callback-wording";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
+import { SCORE_MEMORY_HIERARCHY } from "@/lib/refinement/score-thresholds";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { JournalEntry } from "@/types/journal";
@@ -8,7 +10,7 @@ import type { MemoryNote } from "@/types/memory-note";
 import type { MemoryReminder } from "@/types/memory-reminder";
 import type { RelationshipContinuityNote } from "@/types/relationship-continuity";
 
-export const MEMORY_HIERARCHY_MIN = 60;
+export const MEMORY_HIERARCHY_MIN = SCORE_MEMORY_HIERARCHY;
 
 export type MemoryHierarchySignal =
   | "turning_point"
@@ -96,8 +98,7 @@ const PREFERRED_TEXT: Array<{ re: RegExp; signal: MemoryHierarchySignal; boost: 
 ];
 
 function linkedEntries(note: MemoryNote, entries: JournalEntry[]): JournalEntry[] {
-  const ids = [note.pastEntryId, note.entryId].filter(Boolean) as string[];
-  return entries.filter((entry) => ids.includes(entry.id));
+  return linkedEntriesForNote(note, entries);
 }
 
 function emotionalMeaningKey(note: MemoryNote): string {

@@ -1,4 +1,5 @@
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
+import { shouldSuppressNoteByPattern } from "@/lib/refinement/callback-suppression";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -94,9 +95,7 @@ function rewriteBySignal(note: MemoryNote): string | null {
 
 export function shouldSuppressCallbackCopy(note: MemoryNote): boolean {
   const text = note.text.trim();
-  if (!text) return true;
-  if (SUPPRESS_ID.some((re) => re.test(note.id))) return true;
-  if (SUPPRESS_TEXT.some((re) => re.test(text))) return true;
+  if (shouldSuppressNoteByPattern(note)) return true;
   if (isTopicRecurrenceCopy(text)) return true;
 
   const flags = detectRewriteCandidateFlags({ text });

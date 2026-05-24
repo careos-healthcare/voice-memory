@@ -5,10 +5,11 @@ import { buildContinuityMomentsReport } from "@/lib/patterns/continuity-moments"
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { buildRetentionLoopReport } from "@/lib/retention/retention-loops";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
+import { SCORE_REVISIT_WORTH } from "@/lib/refinement/score-thresholds";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
-export const REVISIT_WORTH_MIN = 58;
+export const REVISIT_WORTH_MIN = SCORE_REVISIT_WORTH;
 export const REVISIT_WORTH_POOL = 5;
 export const REVISIT_WORTH_UI = 1;
 export const MIN_REVISIT_AGE_DAYS = 14;

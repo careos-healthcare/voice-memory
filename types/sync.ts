@@ -1,3 +1,5 @@
+import type { SyncContinuityModel } from "@/types/sync-continuity";
+
 /** Encrypted payload envelope — server never sees plaintext. */
 export interface EncryptedPayload {
   ciphertext: string;
@@ -33,6 +35,7 @@ export interface SyncManifest {
   }>;
 }
 
+/** Legacy v1 bundle — upgraded to SyncContinuityModel on read. */
 export interface SyncArchiveBundle {
   version: 1;
   exportedAt: string;
@@ -48,6 +51,9 @@ export interface SyncArchiveBundle {
   debugEventsAllowed: boolean;
   debugEvents?: unknown[];
 }
+
+/** Encrypted archive-core payload — prefer SyncContinuityModel (schema v2). */
+export type SyncEncryptedPayload = SyncContinuityModel | SyncArchiveBundle;
 
 export interface AudioBackupPlanItem {
   entryId: string;

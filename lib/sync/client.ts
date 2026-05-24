@@ -1,4 +1,9 @@
-import { buildLocalArchiveBundle, restoreLocalArchiveBundle } from "@/lib/sync/archive-bundle";
+import {
+  applySyncContinuityModel,
+  buildLocalSyncModel,
+  normalizeRemoteSyncPayload,
+  toEncryptedSyncPayload,
+} from "@/lib/sync/sync-model";
 import {
   buildEncryptedAudioBackupPlan,
   readAudioBlobForBackup,
@@ -8,18 +13,22 @@ import {
   markSyncFinished,
   markSyncStarted,
 } from "@/lib/sync/account-client";
+import { getOrCreateDeviceId } from "@/lib/sync/device-id";
 import {
   encryptBinaryPayload,
   encryptJsonPayload,
   decryptJsonPayload,
   ensureSyncMasterKey,
 } from "@/lib/sync/encryption";
+import { mergeSyncContinuityModels } from "@/lib/sync/merge-strategy";
 import {
   dispatchSyncStatusChange,
   writeLastBackupAt,
   writeLastSyncError,
 } from "@/lib/sync/status-storage";
-import type { EncryptedPayload, SyncArchiveBundle } from "@/types/sync";
+import { writeLastSyncedAt } from "@/lib/sync/sync-metadata";
+import type { EncryptedPayload } from "@/types/sync";
+import type { SyncContinuityModel } from "@/types/sync-continuity";
 
 const CORE_BLOB_ID = "archive-core";
 
@@ -50,7 +59,26 @@ async function pushEncryptedBlob(input: {
   }
 }
 
-/** Encrypt and upload journal, bookmarks, settings, and review labels. */
+async function pullEncryptedCoreBlob(): Promise<SyncContinuityModel | null> {
+  const response = await fetch("/api/sync/pull", { cache: "no-store" });
+  const data = (await response.json()) as {
+    error?: string;
+    blobs?: Array<{
+      id: string;
+      encrypted: EncryptedPayload;
+    }>;
+  };
+
+  if (!response.ok) return null;
+
+  const core = data.blobs?.find((blob) => blob.id === CORE_BLOB_ID);
+  if (!core) return null;
+
+  const payload = await decryptJsonPayload<unknown>(core.encrypted);
+  return normalizeRemoteSyncPayload(payload, getOrCreateDeviceId());
+}
+
+/** Encrypt, merge with remote when present, upload, and apply merged archive locally. */
 export async function syncArchiveIfSignedIn(): Promise<boolean> {
   const session = await fetchAccountSession();
   if (!session) return false;
@@ -60,9 +88,15 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
 
   try {
     await ensureSyncMasterKey();
-    const bundle = buildLocalArchiveBundle();
 
-    const encryptedCore = await encryptJsonPayload(bundle);
+    const local = buildLocalSyncModel();
+    const remote = await pullEncryptedCoreBlob();
+    const merged = remote ? mergeSyncContinuityModels(local, remote) : local;
+    const payload = toEncryptedSyncPayload(merged);
+
+    applySyncContinuityModel(merged);
+
+    const encryptedCore = await encryptJsonPayload(payload);
     await pushEncryptedBlob({
       id: CORE_BLOB_ID,
       type: "journal_snapshot",
@@ -81,7 +115,9 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
       });
     }
 
-    writeLastBackupAt(new Date().toISOString());
+    const syncedAt = new Date().toISOString();
+    writeLastBackupAt(syncedAt);
+    writeLastSyncedAt(syncedAt);
     dispatchSyncStatusChange();
     return true;
   } catch (error) {
@@ -93,7 +129,7 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
   }
 }
 
-/** Pull encrypted archive and restore locally after decryption. */
+/** Pull encrypted archive and merge into local storage (preserves local on conflict). */
 export async function restoreArchiveFromEncryptedBackup(): Promise<void> {
   const session = await fetchAccountSession();
   if (!session) throw new Error("Sign in to restore your archive.");
@@ -102,24 +138,16 @@ export async function restoreArchiveFromEncryptedBackup(): Promise<void> {
   writeLastSyncError(null);
 
   try {
-    const response = await fetch("/api/sync/pull", { cache: "no-store" });
-    const data = (await response.json()) as {
-      error?: string;
-      blobs?: Array<{
-        id: string;
-        type: string;
-        encrypted: EncryptedPayload;
-      }>;
-    };
+    const remote = await pullEncryptedCoreBlob();
+    if (!remote) throw new Error("No encrypted archive found for this account.");
 
-    if (!response.ok) throw new Error(data.error ?? "Could not fetch encrypted backup.");
+    const local = buildLocalSyncModel();
+    const merged = mergeSyncContinuityModels(local, remote);
+    applySyncContinuityModel(merged);
 
-    const core = data.blobs?.find((blob) => blob.id === CORE_BLOB_ID);
-    if (!core) throw new Error("No encrypted archive found for this account.");
-
-    const bundle = await decryptJsonPayload<SyncArchiveBundle>(core.encrypted);
-    restoreLocalArchiveBundle(bundle);
-    writeLastBackupAt(new Date().toISOString());
+    const syncedAt = new Date().toISOString();
+    writeLastBackupAt(syncedAt);
+    writeLastSyncedAt(syncedAt);
     dispatchSyncStatusChange();
   } catch (error) {
     writeLastSyncError(error instanceof Error ? error.message : "Restore failed.");

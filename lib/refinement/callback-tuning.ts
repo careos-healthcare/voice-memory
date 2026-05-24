@@ -1,7 +1,10 @@
 import { callbackInteractionSignals } from "@/lib/callback-interaction-signals";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { LOW_CONTRAST_RESURFACE_ID } from "@/lib/refinement/callback-suppression";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
+import { SCORE_WEAK } from "@/lib/refinement/score-thresholds";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -30,11 +33,10 @@ const TEMPLATE_RE =
 const PREFERRED_CONTRAST_RE =
   /\b(this used to feel heavier|still circling this here|stopped apologising|sound more direct now|reads like an earlier version)\b/i;
 
-const LOW_CONTRAST_RESURFACE_RE = /^resurface-topic-|^resurface-entity-|^fam-resurface-similar/;
+const LOW_CONTRAST_RESURFACE_RE = LOW_CONTRAST_RESURFACE_ID;
 
 function linkedEntries(note: MemoryNote, entries: JournalEntry[]): JournalEntry[] {
-  const ids = [note.pastEntryId, note.entryId].filter(Boolean) as string[];
-  return entries.filter((entry) => ids.includes(entry.id));
+  return linkedEntriesForNote(note, entries);
 }
 
 function wordCount(text: string): number {
@@ -192,7 +194,7 @@ export function rankCallbacksByTuning(
 export function pickBestCallback(
   notes: MemoryNote[],
   entries: JournalEntry[],
-  minTotal = 42,
+  minTotal = SCORE_WEAK,
 ): MemoryNote | null {
   const ranked = rankCallbacksByTuning(notes, entries);
   const best = ranked.find(
