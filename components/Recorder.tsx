@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import {
   ErrorBanner,
   ProcessingStatus,
-} from "@/components/InsightCard";
+} from "@/components/InsightCardStatus";
 import { Button } from "@/components/ui/button";
 import { MOTION } from "@/lib/motion/tokens";
 import { presenceFade } from "@/lib/motion/variants";

@@ -94,16 +94,3 @@ export function getSpecificReflectionView(
 export function getEntryPreviewLine(reflection: Reflection): string {
   return getPrimaryObservation(reflection) ?? "Voice reflection";
 }
-
-export { getPrimaryObservation };
-
-export function hasEnhancedReflection(reflection: Reflection): boolean {
-  return Boolean(
-    reflection.exactLanguagePattern ||
-      reflection.concreteObservation ||
-      reflection.tensionOrContradiction ||
-      reflection.repeatedSignal ||
-      reflection.avoidedOrVagueArea ||
-      reflection.nextSmallAction,
-  );
-}

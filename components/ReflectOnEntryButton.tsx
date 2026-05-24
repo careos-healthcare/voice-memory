@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { ProcessingStatus } from "@/components/InsightCard";
+import { ProcessingStatus } from "@/components/InsightCardStatus";
 import { Button } from "@/components/ui/button";
 import { generateReflectionForEntry } from "@/lib/pending-reflection";
 import type { JournalEntry } from "@/types/journal";

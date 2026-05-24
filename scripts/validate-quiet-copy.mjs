@@ -68,6 +68,7 @@ const SKIP_PATH_PARTS = [
   "lib/debug/callback-source-map.ts",
   "lib/debug/callback-review-export.ts",
   "components/InsightCard.tsx",
+  "components/InsightCardStatus.tsx",
   "components/patterns/AvoidanceCard.tsx",
   "components/patterns/CalmUnderstandingCard.tsx",
   "components/patterns/ContradictionContinuityCard.tsx",
