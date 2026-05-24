@@ -39,6 +39,7 @@ import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
 import { recordEntryDwell, recordEntryView } from "@/lib/callback-interaction-signals";
+import { trackDwellForActiveCallback, trackAudioReplayAfterCallback } from "@/lib/retention/pause-moments";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityNotes } from "@/lib/memory/familiarity";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
@@ -94,7 +95,9 @@ export default function EntryPage() {
     recordEntryView(entry.id);
     const started = Date.now();
     return () => {
-      recordEntryDwell(entry.id, Date.now() - started);
+      const dwellMs = Date.now() - started;
+      recordEntryDwell(entry.id, dwellMs);
+      trackDwellForActiveCallback(dwellMs, "entry");
     };
   }, [entry?.id]);
 
@@ -465,6 +468,12 @@ export default function EntryPage() {
                     pair={revisitVoicePair}
                     onAudioPlayed={(clip) => {
                       if (entry) trackRevisitAudioPlayed(entry.id, clip);
+                      trackAudioReplayAfterCallback(
+                        revisitExperience?.thenVsNow?.id ??
+                          revisitExperience?.revisitReward?.id,
+                        clip,
+                        "entry",
+                      );
                     }}
                   />
                 ) : null}
@@ -519,7 +528,16 @@ export default function EntryPage() {
                     />
 
                     {voicePlaybackPair && presentation?.primaryMoment ? (
-                      <VoicePlaybackContinuity pair={voicePlaybackPair} />
+                      <VoicePlaybackContinuity
+                        pair={voicePlaybackPair}
+                        onAudioPlayed={(clip) => {
+                          trackAudioReplayAfterCallback(
+                            presentation.primaryMoment?.id,
+                            clip,
+                            "entry",
+                          );
+                        }}
+                      />
                     ) : null}
                   </>
                 ) : (

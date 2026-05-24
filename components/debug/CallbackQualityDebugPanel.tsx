@@ -73,6 +73,7 @@ function CallbackRankedTable({
             <th className="px-3 py-2.5 font-medium">Line</th>
             <th className="px-3 py-2.5 font-medium">Residue</th>
             <th className="px-3 py-2.5 font-medium">Survival</th>
+            <th className="px-3 py-2.5 font-medium">Pause</th>
             <th className="px-3 py-2.5 font-medium">Quality</th>
             <th className="px-3 py-2.5 font-medium">Engagement</th>
             <th className="px-3 py-2.5 font-medium">Survived</th>
@@ -102,11 +103,24 @@ function CallbackRankedTable({
               <td className="px-3 py-3 tabular-nums font-medium text-sky-200">
                 {item.survival.emotionalSurvivalScore}
               </td>
+              <td className="px-3 py-3 tabular-nums font-medium text-amber-200/90">
+                {item.pause.pauseScore}
+              </td>
               <td className="px-3 py-3 tabular-nums text-zinc-400">{item.qualityScore}</td>
               <td className="px-3 py-3 text-xs text-zinc-500">{engagementDots(item)}</td>
               <td className="px-3 py-3 text-xs text-zinc-500">{survivalDots(item)}</td>
               <td className="px-3 py-3">
                 <div className="flex flex-wrap gap-1">
+                  {item.pause.highDwellLowAction ? (
+                    <span className="rounded-full bg-yellow-500/10 px-1.5 py-0.5 text-[10px] text-yellow-200/90">
+                      High dwell
+                    </span>
+                  ) : null}
+                  {item.pause.causedAudioReplay ? (
+                    <span className="rounded-full bg-indigo-500/10 px-1.5 py-0.5 text-[10px] text-indigo-200/90">
+                      Replay
+                    </span>
+                  ) : null}
                   {item.survival.lowSurvivalCutCandidate ? (
                     <span className="rounded-full bg-orange-500/10 px-1.5 py-0.5 text-[10px] text-orange-200/90">
                       Low survival
@@ -197,7 +211,7 @@ function CallbackReviewCard({
           ) : null}
           <span className="text-[10px] tabular-nums text-zinc-600">
             residue {item.emotionalResidueScore} · survival {item.survival.emotionalSurvivalScore} ·
-            quality {item.qualityScore}
+            pause {item.pause.pauseScore} · quality {item.qualityScore}
           </span>
         </div>
         <CardTitle className="text-base font-normal leading-relaxed text-zinc-200">
@@ -262,6 +276,38 @@ function CallbackReviewCard({
             </ul>
           </div>
         ) : null}
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
+            Pause moment analysis
+          </p>
+          <div className="mt-2 space-y-1.5 rounded-xl bg-white/[0.03] p-3">
+            <SignalRow label="Pause score" value={String(item.pause.pauseScore)} />
+            <SignalRow
+              label="Emotional interruption"
+              value={String(item.pause.emotionalInterruptionScore)}
+            />
+            <SignalRow label="Reread likelihood" value={String(item.pause.rereadLikelihood)} />
+            <SignalRow label="Replay likelihood" value={String(item.pause.replayLikelihood)} />
+            <SignalRow
+              label="Dwell after callback"
+              value={`${Math.round(item.pause.dwellAfterCallbackMs / 1000)}s`}
+            />
+            <SignalRow label="Scroll pauses" value={String(item.pause.scrollPauseCount)} />
+            <SignalRow label="Audio replays" value={String(item.pause.audioReplayCount)} />
+            <SignalRow
+              label="Old-entry revisits"
+              value={String(item.pause.oldEntryRevisitCount)}
+            />
+            <SignalRow label="Bookmarks" value={String(item.pause.bookmarkCount)} />
+            <SignalRow label="Copies" value={String(item.pause.copyCount)} />
+            <SignalRow label="Follow-ups" value={String(item.pause.followUpCount)} />
+            <SignalRow
+              label="High dwell, low action"
+              value={item.pause.highDwellLowAction ? "yes" : "no"}
+            />
+          </div>
+        </div>
 
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
@@ -452,7 +498,7 @@ export function CallbackQualityDebugPanel({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-10">
           <Card>
             <CardHeader className="pb-1">
               <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
@@ -549,6 +595,42 @@ export function CallbackQualityDebugPanel({
               </p>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                High dwell
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold tabular-nums text-yellow-300">
+                {report.highDwellLowActionCount}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                Audio replay
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold tabular-nums text-indigo-300">
+                {report.audioReplayCallbackCount}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                Old-entry revisit
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold tabular-nums text-indigo-200">
+                {report.oldEntryRevisitPauseCount}
+              </p>
+            </CardContent>
+          </Card>
         </div>
         <div className="flex flex-col gap-2">
           <Button type="button" variant="secondary" size="sm" onClick={() => downloadCallbackReviewJson(report)}>
@@ -584,7 +666,32 @@ export function CallbackQualityDebugPanel({
 
       <div>
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-600">
-          Ranked by emotional residue · survival score in table
+          Top pause moments
+        </p>
+        {report.topPauseMoments.length === 0 ? (
+          <p className="text-sm text-zinc-600">No pause events recorded yet.</p>
+        ) : (
+          <ul className="space-y-2 rounded-xl border border-white/5 p-3">
+            {report.topPauseMoments.map((row, index) => (
+              <li
+                key={row.id}
+                className="flex cursor-pointer items-start justify-between gap-3 text-sm"
+                onClick={() => handleSelect(row.id)}
+              >
+                <div className="min-w-0">
+                  <span className="tabular-nums text-zinc-600">{index + 1}.</span>{" "}
+                  <span className="text-zinc-300">{row.text}</span>
+                </div>
+                <span className="shrink-0 tabular-nums text-amber-200/90">{row.pauseScore}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-600">
+          Ranked by emotional residue · pause score in table
         </p>
         <CallbackRankedTable items={items} selectedId={selectedId} onSelect={handleSelect} />
       </div>

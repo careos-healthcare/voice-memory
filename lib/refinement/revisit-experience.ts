@@ -342,7 +342,7 @@ export function buildRevisitExperience(
   );
 
   for (const note of [calibrated.revisitReward, calibrated.thenVsNow].filter(Boolean) as MemoryNote[]) {
-    recordCallbackSurfaced(note.id);
+    recordCallbackSurfaced(note.id, "entry");
     const contextEntryId = note.entryId ?? note.pastEntryId ?? entryId;
     rememberNoteContext(contextEntryId, note.id, note.text);
   }

@@ -2,10 +2,8 @@ import {
   averageEntryDwellMs,
   readCallbackRetention,
 } from "@/lib/callback-interaction-signals";
-import {
-  readRetentionLoopEvents,
-  type RetentionLoopEvent,
-} from "@/lib/retention/retention-loops";
+import { readRetentionLoopEvents, type RetentionLoopEvent } from "@/lib/retention/retention-loops";
+import { computeCallbackPauseAnalysis } from "@/lib/retention/pause-moments";
 import type {
   CallbackReviewItem,
   CallbackReviewLabel,
@@ -378,7 +376,11 @@ export type CallbackReviewFilter =
   | "caused_followup"
   | "caused_bookmark"
   | "caused_copy"
-  | "low_survival_cut";
+  | "low_survival_cut"
+  | "high_dwell_low_action"
+  | "caused_audio_replay"
+  | "caused_old_entry_revisit"
+  | "top_pause";
 
 export const CALLBACK_REVIEW_FILTERS: Array<{
   value: CallbackReviewFilter;
@@ -394,6 +396,10 @@ export const CALLBACK_REVIEW_FILTERS: Array<{
   { value: "caused_followup", label: "Caused follow-up" },
   { value: "caused_bookmark", label: "Caused bookmark" },
   { value: "caused_copy", label: "Caused copy" },
+  { value: "high_dwell_low_action", label: "High dwell, low action" },
+  { value: "caused_audio_replay", label: "Caused audio replay" },
+  { value: "caused_old_entry_revisit", label: "Caused old-entry revisit" },
+  { value: "top_pause", label: "Top pause" },
   { value: "rewrite", label: "Rewrite" },
   { value: "landed_emotionally", label: "Landed emotionally" },
   { value: "felt_generic", label: "Felt generic" },
@@ -460,6 +466,20 @@ export function matchesCallbackFilter(
     return survival.lowSurvivalCutCandidate;
   }
 
+  const pause = item.pause;
+  if (filter === "high_dwell_low_action") {
+    return pause.highDwellLowAction;
+  }
+  if (filter === "caused_audio_replay") {
+    return pause.causedAudioReplay;
+  }
+  if (filter === "caused_old_entry_revisit") {
+    return pause.causedOldEntryRevisit;
+  }
+  if (filter === "top_pause") {
+    return pause.pauseScore >= 55;
+  }
+
   return true;
 }
 
@@ -471,6 +491,7 @@ export type CallbackReviewItemDraft = Omit<
   | "cutCandidate"
   | "doubleDown"
   | "survival"
+  | "pause"
 >;
 
 export function enrichCallbackReviewItem(
@@ -480,6 +501,8 @@ export function enrichCallbackReviewItem(
   const emotionalResidueScore = computeEmotionalResidueScore(item, labels);
   const qualityScore = computeQualityScore(item, labels, emotionalResidueScore);
   const survival = computeCallbackSurvival(item, labels);
+  const noteKeys = noteKeysForCallback(item);
+  const pause = computeCallbackPauseAnalysis(item.id, noteKeys);
 
   return {
     ...item,
@@ -494,7 +517,14 @@ export function enrichCallbackReviewItem(
     ),
     doubleDown: isDoubleDown(item, emotionalResidueScore, labels),
     survival,
+    pause,
   };
+}
+
+export function sortByPauseScore(items: CallbackReviewItem[]): CallbackReviewItem[] {
+  return [...items].sort(
+    (a, b) => b.pause.pauseScore - a.pause.pauseScore || b.pause.dwellAfterCallbackMs - a.pause.dwellAfterCallbackMs,
+  );
 }
 
 export function sortByEmotionalSurvival(

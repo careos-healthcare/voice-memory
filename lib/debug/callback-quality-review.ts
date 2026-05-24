@@ -23,6 +23,7 @@ import { countLabeledCallbacks, getCallbackReviewLabels } from "@/lib/debug/call
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
 import {
   enrichCallbackReviewItem,
+  sortByPauseScore,
   type CallbackReviewItemDraft,
 } from "@/lib/debug/callback-quality-score";
 import { resolveCallbackSource } from "@/lib/debug/callback-source-map";
@@ -205,6 +206,10 @@ export function buildCallbackQualityReviewReport(
       survived24hCount: 0,
       survived72hCount: 0,
       lowSurvivalCutCount: 0,
+      highDwellLowActionCount: 0,
+      audioReplayCallbackCount: 0,
+      oldEntryRevisitPauseCount: 0,
+      topPauseMoments: [],
       hasData: false,
     };
   }
@@ -544,6 +549,23 @@ export function buildCallbackQualityReviewReport(
   const lowSurvivalCutCount = deduped.filter(
     (item) => item.survival.lowSurvivalCutCandidate,
   ).length;
+  const highDwellLowActionCount = deduped.filter(
+    (item) => item.pause.highDwellLowAction,
+  ).length;
+  const audioReplayCallbackCount = deduped.filter(
+    (item) => item.pause.causedAudioReplay,
+  ).length;
+  const oldEntryRevisitPauseCount = deduped.filter(
+    (item) => item.pause.causedOldEntryRevisit,
+  ).length;
+  const topPauseMoments = sortByPauseScore(deduped)
+    .slice(0, 8)
+    .map((item) => ({
+      id: item.id,
+      text: item.text,
+      pauseScore: item.pause.pauseScore,
+      emotionalInterruptionScore: item.pause.emotionalInterruptionScore,
+    }));
 
   return {
     items: deduped,
@@ -554,6 +576,10 @@ export function buildCallbackQualityReviewReport(
     survived24hCount,
     survived72hCount,
     lowSurvivalCutCount,
+    highDwellLowActionCount,
+    audioReplayCallbackCount,
+    oldEntryRevisitPauseCount,
+    topPauseMoments,
     hasData: deduped.length > 0,
   };
 }

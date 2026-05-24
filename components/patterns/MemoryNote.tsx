@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
+import { bindMemoryLinePauseTracking } from "@/lib/retention/pause-moments";
 import { revisitSourceFromNote } from "@/lib/refinement/revisit-experience";
 import { MOTION, type NoteMotionTone } from "@/lib/motion/tokens";
 import type { MemoryNote } from "@/types/memory-note";
@@ -24,11 +26,22 @@ function quoteMotion(delay: number) {
 
 export function MemoryNoteView({ note, className }: MemoryNoteProps) {
   const isThenVsNow = Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
+  const lineRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (!note.id || !note.text?.trim() || !lineRef.current) return;
+    return bindMemoryLinePauseTracking(lineRef.current, note.id, "memory_line");
+  }, [note.id, note.text]);
 
   return (
     <article className={`space-y-5 ${className ?? ""}`}>
       {note.text ? (
-        <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{note.text}</p>
+        <p
+          ref={lineRef}
+          className="text-[15px] font-normal leading-[1.75] text-zinc-300/95"
+        >
+          {note.text}
+        </p>
       ) : null}
       {note.pastQuote ? (
         <motion.blockquote

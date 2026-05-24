@@ -93,6 +93,25 @@ export interface CallbackSurvivalAnalysis {
   lowSurvivalCutCandidate: boolean;
 }
 
+export interface CallbackPauseAnalysis {
+  pauseScore: number;
+  emotionalInterruptionScore: number;
+  rereadLikelihood: number;
+  replayLikelihood: number;
+  dwellAfterCallbackMs: number;
+  scrollPauseCount: number;
+  scrollPauseTotalMs: number;
+  audioReplayCount: number;
+  oldEntryRevisitCount: number;
+  bookmarkCount: number;
+  copyCount: number;
+  followUpCount: number;
+  actionCount: number;
+  highDwellLowAction: boolean;
+  causedAudioReplay: boolean;
+  causedOldEntryRevisit: boolean;
+}
+
 export interface CallbackReviewItem {
   id: string;
   kind: CallbackReviewKind;
@@ -119,6 +138,7 @@ export interface CallbackReviewItem {
   cutCandidate: boolean;
   doubleDown: boolean;
   survival: CallbackSurvivalAnalysis;
+  pause: CallbackPauseAnalysis;
 }
 
 export interface CallbackQualityReviewReport {
@@ -130,6 +150,15 @@ export interface CallbackQualityReviewReport {
   survived24hCount: number;
   survived72hCount: number;
   lowSurvivalCutCount: number;
+  highDwellLowActionCount: number;
+  audioReplayCallbackCount: number;
+  oldEntryRevisitPauseCount: number;
+  topPauseMoments: Array<{
+    id: string;
+    text: string;
+    pauseScore: number;
+    emotionalInterruptionScore: number;
+  }>;
   hasData: boolean;
 }
 

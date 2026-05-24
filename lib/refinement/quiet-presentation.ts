@@ -98,7 +98,7 @@ export function buildQuietHomepagePresentation(
       : primaryNote;
 
   if (resolvedPrimary) {
-    recordCallbackSurfaced(resolvedPrimary.id);
+    recordCallbackSurfaced(resolvedPrimary.id, "homepage");
     if (resolvedPrimary.entryId) {
       rememberNoteContext(
         resolvedPrimary.entryId,
@@ -186,7 +186,7 @@ export function buildQuietEntryPresentation(
       : null;
 
   if (primaryMoment) {
-    recordCallbackSurfaced(primaryMoment.id);
+    recordCallbackSurfaced(primaryMoment.id, "entry");
   }
 
   const followupNotes = [

@@ -5,6 +5,7 @@ import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
 import { recordFollowupContinued } from "@/lib/callback-interaction-signals";
 import { markFollowupBoost } from "@/lib/refinement/emotional-timing";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
+import { trackFollowUpAfterCallback } from "@/lib/retention/pause-moments";
 import { trackRevisitRhythmFollowupIfActive } from "@/lib/refinement/revisit-rhythm";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 
@@ -30,6 +31,7 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
               if (prompt.noteId) {
                 recordFollowupContinued(prompt.noteId);
                 trackFollowupRecordingStarted(prompt.noteId, prompt.id);
+                trackFollowUpAfterCallback(prompt.noteId, prompt.id);
                 markFollowupBoost();
               }
               trackRevisitRhythmFollowupIfActive(prompt.noteId ?? prompt.id, prompt.id);

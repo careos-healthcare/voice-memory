@@ -1,5 +1,6 @@
 import { formatEntryDate } from "@/lib/utils";
 import { trackBookmarkCreated } from "@/lib/retention/retention-loops";
+import { trackBookmarkAfterCallback } from "@/lib/retention/pause-moments";
 import { trackRevisitRhythmBookmarkIfActive } from "@/lib/refinement/revisit-rhythm";
 import type { JournalEntry } from "@/types/journal";
 import type {
@@ -88,6 +89,7 @@ export function setBookmark(
   dispatchBookmarkChange();
   trackBookmarkCreated(entryId, type);
   trackRevisitRhythmBookmarkIfActive(entryId, type);
+  trackBookmarkAfterCallback(undefined, type, "entry");
   return next;
 }
 

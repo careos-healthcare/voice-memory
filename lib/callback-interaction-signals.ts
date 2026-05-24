@@ -1,5 +1,6 @@
 import { readLocalEvents } from "@/lib/local-analytics";
 import { getAllBookmarks, getBookmarkForEntry } from "@/lib/reflection-bookmarks";
+import { trackCallbackShown } from "@/lib/retention/pause-moments";
 import { formatEntryDate } from "@/lib/utils";
 import { getEntry } from "@/lib/storage";
 import type { CallbackInteractionSignals, CallbackRetentionSummary } from "@/types/callback-quality-review";
@@ -113,8 +114,9 @@ function pushRetention(callbackId: string, outcome: CallbackRetentionOutcome): v
   writeStore(store);
 }
 
-export function recordCallbackSurfaced(callbackId: string): void {
+export function recordCallbackSurfaced(callbackId: string, surface?: string): void {
   pushRetention(callbackId, "surfaced");
+  trackCallbackShown(callbackId, surface);
 }
 
 export function recordCallbackIgnored(callbackId: string): void {

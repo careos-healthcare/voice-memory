@@ -13,6 +13,7 @@ import {
   trackOldEntryOpenedFromNote,
   trackResurfacedMemoryClicked,
 } from "@/lib/retention/retention-loops";
+import { trackOldEntryRevisitAfterCallback as trackPauseOldEntryRevisit } from "@/lib/retention/pause-moments";
 
 export function RevisitEntryLink({
   entryId,
@@ -48,6 +49,7 @@ export function RevisitEntryLink({
               pastEntryId: entryId,
               source: resolvedSource,
             });
+            trackPauseOldEntryRevisit(noteId, entryId, resolvedSource);
           } else {
             trackResurfacedMemoryClicked({
               noteId,
