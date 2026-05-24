@@ -136,11 +136,11 @@ export default function TimelinePage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle eyebrow="Timeline" title="Over time" />
+        <MotionPageTitle title="Over time" />
 
         <div className="mt-20 space-y-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : entries.length === 0 ? (
             <>
               <EmptyStateIntelligence className="mb-4" />

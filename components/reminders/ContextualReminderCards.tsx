@@ -52,8 +52,7 @@ export function ContextualReminderCards() {
             >
               <div className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs text-zinc-500">{reminder.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-zinc-300/90">
+                  <p className="text-sm leading-relaxed text-zinc-300/90">
                     {reminder.message}
                   </p>
                 </div>

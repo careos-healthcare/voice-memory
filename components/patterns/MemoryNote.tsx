@@ -132,13 +132,20 @@ function AnimatedNotes({
   );
 }
 
-export function MemoryNotesSection({ title, notes, max = 3 }: MemoryNotesSectionProps) {
+export function MemoryNotesSection({
+  title,
+  notes,
+  max = 3,
+  showTitle = true,
+}: MemoryNotesSectionProps & { showTitle?: boolean }) {
   const visible = notes.slice(0, max);
   if (visible.length === 0) return null;
 
   return (
     <section className="space-y-10">
-      <h2 className="text-xs font-normal tracking-wide text-zinc-600">{title}</h2>
+      {showTitle ? (
+        <h2 className="text-xs font-normal tracking-wide text-zinc-600">{title}</h2>
+      ) : null}
       <AnimatedNotes notes={visible} max={visible.length} />
     </section>
   );
@@ -324,8 +331,14 @@ export function MemoryNotesOverview({
   maxLandmarks = 4,
 }: MemoryNotesOverviewProps) {
   const capped = capNotesAcrossSections(changed, faded, returned, maxTotal);
-  const hasNotes =
-    capped.changed.length > 0 || capped.faded.length > 0 || capped.returned.length > 0;
+  const sections = [
+    { title: "This changed", notes: capped.changed },
+    { title: "This got quieter", notes: capped.faded },
+    { title: "You came back", notes: capped.returned },
+  ].filter((section) => section.notes.length > 0);
+  const totalNotes = sections.reduce((sum, section) => sum + section.notes.length, 0);
+  const showTitles = sections.length > 1 || totalNotes > 2;
+  const hasNotes = totalNotes > 0;
   const hasLandmarks = landmarks.length > 0;
   if (!hasNotes && !hasLandmarks) return null;
 
@@ -333,9 +346,15 @@ export function MemoryNotesOverview({
     <div className="space-y-20">
       {hasNotes ? (
         <>
-          <MemoryNotesSection title="This changed" notes={capped.changed} max={maxPerSection} />
-          <MemoryNotesSection title="This got quieter" notes={capped.faded} max={maxPerSection} />
-          <MemoryNotesSection title="You came back" notes={capped.returned} max={maxPerSection} />
+          {sections.map((section) => (
+            <MemoryNotesSection
+              key={section.title}
+              title={section.title}
+              notes={section.notes}
+              max={maxPerSection}
+              showTitle={showTitles}
+            />
+          ))}
         </>
       ) : null}
       {hasLandmarks ? (

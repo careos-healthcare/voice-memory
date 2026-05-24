@@ -12,12 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   evaluateContextualReminders,
   getPreferredHourLabel,
-  REMINDER_COPY_EXAMPLES,
 } from "@/lib/contextual-reminders";
-import {
-  listMemoryReminders,
-  MEMORY_REMINDER_COPY_EXAMPLES,
-} from "@/lib/memory/memory-reminders";
+import { listMemoryReminders } from "@/lib/memory/memory-reminders";
 import {
   DEFAULT_REMINDER_PREFERENCES,
   getReminderPreferences,
@@ -92,15 +88,12 @@ export default function RemindersPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-2"
         >
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Reminder settings
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+          <h1 className="text-3xl font-semibold tracking-tight text-white">
             Reminders
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            In-app reminder placeholders based on your memory patterns — stored on
-            this device only. Push notifications are not enabled yet.
+            Choose which gentle nudges appear on your home screen — stored on this
+            device only.
           </p>
         </motion.div>
 
@@ -108,9 +101,7 @@ export default function RemindersPage() {
           <CardContent className="flex items-start gap-3 p-4">
             <Smartphone className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
             <p className="text-xs leading-relaxed text-amber-100/80">
-              These preferences control which reminder cards appear on your home
-              screen. They do not send system push notifications — that comes in a
-              later release.
+              These show up in the app only — not as phone notifications yet.
             </p>
           </CardContent>
         </Card>
@@ -118,8 +109,6 @@ export default function RemindersPage() {
         {loaded ? (
           <div className="mt-6 space-y-6">
             <section className="space-y-3">
-              <h2 className="text-sm font-medium text-white">Enable reminders</h2>
-
               <ToggleRow
                 label="Daily reflection"
                 description="Suggest a check-in when you have not recorded today."
@@ -128,8 +117,8 @@ export default function RemindersPage() {
               />
 
               <ToggleRow
-                label="After stressful entry"
-                description="Nudge you to reflect again after a high-intensity entry (7/10+)."
+                label="After a heavy reflection"
+                description="Nudge you to check in again after an intense entry."
                 checked={prefs.afterStressfulEntry}
                 onChange={(afterStressfulEntry) =>
                   update({ afterStressfulEntry })
@@ -155,7 +144,7 @@ export default function RemindersPage() {
                   Usual reflection time
                 </span>
                 <span className="text-xs text-zinc-500">
-                  Used for &ldquo;You usually reflect around this time&rdquo; copy
+                  We&apos;ll mention this time when suggesting a check-in.
                 </span>
                 <select
                   value={prefs.preferredReflectionHour}
@@ -179,20 +168,19 @@ export default function RemindersPage() {
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
                   <Bell className="h-4 w-4 text-violet-300" />
-                  <CardTitle className="text-base">Active on home now</CardTitle>
+                  <CardTitle className="text-base">On home today</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 {previewCount === 0 ? (
                   <p className="flex items-center gap-2 text-sm text-zinc-500">
                     <BellOff className="h-4 w-4" />
-                    No reminder cards match right now.
+                    Nothing would show on home right now.
                   </p>
                 ) : (
                   <p className="text-sm text-zinc-300">
-                    {previewCount} reminder card
-                    {previewCount === 1 ? "" : "s"} would show on the homepage with
-                    these settings.
+                    You&apos;d see {previewCount} nudge{previewCount === 1 ? "" : "s"} on
+                    home with these settings.
                   </p>
                 )}
                 <Button asChild variant="secondary" size="sm" className="mt-4">
@@ -202,59 +190,13 @@ export default function RemindersPage() {
             </Card>
 
             <section className="space-y-4">
-              <div>
-                <h2 className="text-sm font-medium text-white">Memory reminders</h2>
-                <p className="mt-1 text-xs leading-relaxed text-zinc-500">
-                  Sparse nudges from your archive — not daily prompts. Shown on the homepage
-                  when something feels worth returning to.
-                </p>
-              </div>
-
               {memoryReminders.length === 0 ? (
                 <p className="text-sm text-zinc-500">
-                  No memory reminders match your archive right now.
+                  Nothing to nudge you about right now.
                 </p>
               ) : (
                 <MemoryReminderList reminders={memoryReminders} />
               )}
-
-              <ul className="mt-4 space-y-3">
-                {MEMORY_REMINDER_COPY_EXAMPLES.map((example) => (
-                  <li
-                    key={example.kind}
-                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"
-                  >
-                    <p className="text-sm font-medium text-zinc-300">
-                      &ldquo;{example.message}&rdquo;
-                    </p>
-                    <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                      {example.whenShown}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-sm font-medium text-white">Example copy</h2>
-              <p className="mt-1 text-xs text-zinc-500">
-                Messages you may see when the moment fits
-              </p>
-              <ul className="mt-4 space-y-3">
-                {REMINDER_COPY_EXAMPLES.map((example) => (
-                  <li
-                    key={example.kind}
-                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"
-                  >
-                    <p className="text-sm font-medium text-violet-200">
-                      &ldquo;{example.message}&rdquo;
-                    </p>
-                    <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                      {example.whenShown}
-                    </p>
-                  </li>
-                ))}
-              </ul>
             </section>
           </div>
         ) : null}

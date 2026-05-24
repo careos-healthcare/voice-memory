@@ -57,9 +57,9 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
       <div className="rounded-xl px-1 py-2">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-normal text-zinc-200">Start your reflection habit</p>
+            <p className="text-sm font-normal text-zinc-200">Start your daily check-in</p>
             <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-              One minute a day builds a private memory timeline.
+              One minute a day is enough.
             </p>
           </div>
           <Button asChild size="sm">
@@ -78,7 +78,7 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
       <div className="space-y-3 rounded-xl px-1 py-2">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs tracking-wide text-zinc-600">Daily habit</p>
+            <p className="text-xs tracking-wide text-zinc-600">Daily check-in</p>
             <p className="mt-2 flex items-center gap-2 text-xl font-normal text-zinc-200">
               <Flame className="h-5 w-5 text-amber-400/80" />
               {stats.streak} day{stats.streak === 1 ? "" : "s"} streak
@@ -111,7 +111,7 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Daily habit
+                Daily check-in
               </p>
               <CardTitle className="mt-2 flex items-center gap-2 text-2xl">
                 <Flame className="h-6 w-6 text-amber-400" />

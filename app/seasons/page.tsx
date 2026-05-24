@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import {
   calendarSeasonsOnly,
   listMemorySeasons,
-  MEMORY_SEASON_COPY_EXAMPLES,
   monthlyPeriodsOnly,
 } from "@/lib/memory/seasons";
 import { getMemoryEligibleEntries } from "@/lib/storage";
@@ -37,16 +36,11 @@ export default function SeasonsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle eyebrow="Seasons" title="Memory over time" />
-
-        <p className="mt-4 text-sm leading-relaxed text-zinc-500">
-          Your archive grouped by seasons and months — how periods sounded, what
-          returned, and what faded.
-        </p>
+        <MotionPageTitle title="Over the year" />
 
         <div className="mt-20 space-y-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : !seasons || seasons.length === 0 ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
@@ -64,33 +58,10 @@ export default function SeasonsPage() {
               </div>
             </>
           ) : (
-            <>
-              <MemorySeasonOverview
-                calendarSeasons={calendarSeasons}
-                monthlyPeriods={monthlyPeriods}
-              />
-
-              <section className="space-y-4 border-t border-white/5 pt-16">
-                <h2 className="text-xs font-normal tracking-wide text-zinc-600">
-                  Example copy
-                </h2>
-                <ul className="space-y-3">
-                  {MEMORY_SEASON_COPY_EXAMPLES.map((example) => (
-                    <li
-                      key={example.kind}
-                      className="rounded-2xl border border-white/10 bg-white/[0.02] p-4"
-                    >
-                      <p className="text-sm font-normal text-zinc-400">
-                        &ldquo;{example.message}&rdquo;
-                      </p>
-                      <p className="mt-2 text-xs leading-relaxed text-zinc-600">
-                        {example.whenShown}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </>
+            <MemorySeasonOverview
+              calendarSeasons={calendarSeasons}
+              monthlyPeriods={monthlyPeriods}
+            />
           )}
         </div>
       </div>

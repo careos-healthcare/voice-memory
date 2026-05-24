@@ -6,16 +6,16 @@ import type {
 } from "@/types/activation-guidance";
 
 export const ACTIVATION_LEAD =
-  "VoiceMemory gets more personal as your archive grows.";
+  "The more you talk, the more it picks up on what keeps coming back.";
 
 export const ACTIVATION_QUIET_EARLY =
-  "Early reflections may feel quiet. That is intentional.";
+  "Early days may feel quiet. That is fine.";
 
 export const ACTIVATION_PATTERNS =
-  "After a few entries, it starts remembering you.";
+  "After a few entries, older words start to echo back.";
 
 export const ACTIVATION_CONVERSATION =
-  "This is a remembered conversation — not generic advice.";
+  "Keep going — it learns your voice over time.";
 
 export const ACTIVATION_ONBOARDING_STEPS: ActivationOnboardingStep[] = [
   {
@@ -31,15 +31,15 @@ export const ACTIVATION_ONBOARDING_STEPS: ActivationOnboardingStep[] = [
   {
     id: "after-seven",
     label: "After 7+ reflections",
-    body: "It can show what changed, faded, returned, and became clearer.",
+    body: "It can show what changed, faded, and came back.",
   },
 ];
 
 const PROGRESS_LINES: Record<PersonalisationProgressTier, string> = {
-  1: "A first memory.",
-  3: "Threads can start appearing.",
-  7: "Changes may begin to surface.",
-  14: "Your archive is becoming familiar.",
+  1: "A first note saved.",
+  3: "Links between days may appear.",
+  7: "Shifts may start to show.",
+  14: "Your past words feel familiar.",
 };
 
 const PROGRESS_THRESHOLDS: PersonalisationProgressTier[] = [14, 7, 3, 1];

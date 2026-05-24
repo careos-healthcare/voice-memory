@@ -191,8 +191,7 @@ export default function HomePage() {
             transition={{ duration: MOTION.duration.fade, delay: 0.45, ease: MOTION.ease }}
             className="mt-12 max-w-md text-sm leading-[1.75] text-zinc-500"
           >
-            Speak for up to 60 seconds. Your words stay on this device — a private memory
-            layer that grows familiar over time.
+            Speak for up to 60 seconds. Your words stay on this device.
           </motion.p>
 
           <motion.p

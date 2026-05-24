@@ -2,10 +2,6 @@
 
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  formatSeasonPeriodType,
-} from "@/lib/memory/seasons";
 import type { MemorySeason } from "@/types/memory-season";
 
 export function MemorySeasonList({
@@ -21,14 +17,9 @@ export function MemorySeasonList({
         <li key={season.period.id}>
           <article className="space-y-5 px-1">
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-base font-normal text-zinc-200">
-                  {season.period.label}
-                </h2>
-                <Badge variant="secondary" className="text-[10px] font-normal">
-                  {formatSeasonPeriodType(season.period.type)}
-                </Badge>
-              </div>
+              <h2 className="text-base font-normal text-zinc-200">
+                {season.period.label}
+              </h2>
               <p className="text-sm leading-[1.75] text-zinc-500/90">{season.headline}</p>
               <p className="text-xs text-zinc-600">
                 {season.period.entryCount} reflection
@@ -84,27 +75,13 @@ export function MemorySeasonOverview({
   return (
     <div className="space-y-20">
       {calendarSeasons.length > 0 ? (
-        <section className="space-y-8">
-          <div className="px-1">
-            <h2 className="text-xs font-normal tracking-wide text-zinc-600">Seasons</h2>
-            <p className="mt-1 text-xs leading-relaxed text-zinc-600">
-              How your reflections sounded across spring, summer, autumn, and winter.
-            </p>
-          </div>
+        <section>
           <MemorySeasonList seasons={calendarSeasons} />
         </section>
       ) : null}
 
       {monthlyPeriods.length > 0 ? (
-        <section className="space-y-8">
-          <div className="px-1">
-            <h2 className="text-xs font-normal tracking-wide text-zinc-600">
-              Monthly periods
-            </h2>
-            <p className="mt-1 text-xs leading-relaxed text-zinc-600">
-              Shorter stretches when a month held its own shape.
-            </p>
-          </div>
+        <section>
           <MemorySeasonList seasons={monthlyPeriods} />
         </section>
       ) : null}

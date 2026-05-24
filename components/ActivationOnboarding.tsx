@@ -8,7 +8,6 @@ import {
   ACTIVATION_CONVERSATION,
   ACTIVATION_LEAD,
   ACTIVATION_ONBOARDING_STEPS,
-  ACTIVATION_PATTERNS,
   ACTIVATION_QUIET_EARLY,
 } from "@/lib/activation-guidance";
 import { dismissOnboarding, isOnboardingDismissed } from "@/lib/onboarding";
@@ -41,9 +40,6 @@ export function ActivationOnboarding() {
           </div>
 
           <div className="space-y-3">
-            <p className="text-xs tracking-wide text-zinc-600">
-              Step {step + 1} of {ACTIVATION_ONBOARDING_STEPS.length}
-            </p>
             <div>
               <p className="text-sm text-zinc-400">{current.label}</p>
               <p className="mt-1 text-sm leading-relaxed text-zinc-500/90">{current.body}</p>
@@ -51,10 +47,7 @@ export function ActivationOnboarding() {
           </div>
 
           {isLast ? (
-            <div className="space-y-2 text-xs leading-relaxed text-zinc-600">
-              <p>{ACTIVATION_PATTERNS}</p>
-              <p>{ACTIVATION_CONVERSATION}</p>
-            </div>
+            <p className="text-xs leading-relaxed text-zinc-600">{ACTIVATION_CONVERSATION}</p>
           ) : null}
 
           <div className="flex flex-wrap items-center gap-2 pt-1">

@@ -42,7 +42,7 @@ export default function BookmarksPage() {
 
         <div className="mt-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your marks…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : bookmarks.length === 0 ? (
             <>
               <EmptyStateIntelligence className="mb-4" />

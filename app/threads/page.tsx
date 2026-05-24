@@ -36,11 +36,11 @@ export default function ThreadsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle eyebrow="Threads" title="Worth returning to" />
+        <MotionPageTitle title="Worth returning to" />
 
         <div className="mt-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : threads.length === 0 ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
@@ -50,7 +50,7 @@ export default function ThreadsPage() {
                   No ongoing conversations yet
                 </p>
                 <p className="mt-2 text-sm text-zinc-600">
-                  These show up when something appears more than once in your archive.
+                  These show up when you talk about the same thing more than once.
                 </p>
                 <Button asChild className="mt-8" variant="secondary">
                   <Link href="/">Start recording</Link>

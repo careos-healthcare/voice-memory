@@ -80,7 +80,7 @@ export function ShareMemoryCardButton({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
-            Share memory moment
+            Share this moment
           </p>
           <p className="mt-1 text-sm font-medium text-white">{CARD_LABELS[kind]}</p>
         </div>

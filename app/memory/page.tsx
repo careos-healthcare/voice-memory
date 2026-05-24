@@ -147,17 +147,17 @@ export default function MemoryPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle eyebrow="Memory" title="Your archive" />
+        <MotionPageTitle title="What you've said" />
 
         <div className="mt-20 space-y-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : !snapshot.hasData ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
               <div className="px-2 py-16 text-center">
                 <Brain className="mx-auto h-7 w-7 text-zinc-600/80" />
-                <p className="mt-5 text-base font-normal text-zinc-400">No memory yet</p>
+                <p className="mt-5 text-base font-normal text-zinc-400">Nothing here yet</p>
                 <Button asChild className="mt-8" variant="secondary">
                   <Link href="/">Start recording</Link>
                 </Button>

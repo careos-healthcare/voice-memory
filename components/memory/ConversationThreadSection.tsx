@@ -96,6 +96,18 @@ export function ThreadDetail({
 }) {
   const { evolution } = thread;
   const bookmarkedIds = useBookmarkedEntryIds();
+  const evolutionBlocks = [
+    evolution.whatChanged
+      ? { title: "This changed", text: evolution.whatChanged }
+      : null,
+    evolution.whatFaded
+      ? { title: "This got quieter", text: evolution.whatFaded }
+      : null,
+    evolution.whatCameBack
+      ? { title: "You came back", text: evolution.whatCameBack }
+      : null,
+  ].filter(Boolean) as Array<{ title: string; text: string }>;
+  const showEvolutionTitles = evolutionBlocks.length > 1;
 
   return (
     <div className="space-y-20">
@@ -113,40 +125,20 @@ export function ThreadDetail({
         </div>
       </header>
 
-      {(evolution.whatChanged || evolution.whatFaded || evolution.whatCameBack) && (
+      {evolutionBlocks.length > 0 ? (
         <section className="space-y-8">
-          {evolution.whatChanged ? (
-            <div className="space-y-2 px-1">
-              <h2 className="text-xs font-normal tracking-wide text-zinc-600">
-                This changed
-              </h2>
-              <p className="text-sm leading-[1.75] text-zinc-500/90">
-                {evolution.whatChanged}
-              </p>
+          {evolutionBlocks.map((block) => (
+            <div key={block.title} className="space-y-2 px-1">
+              {showEvolutionTitles ? (
+                <h2 className="text-xs font-normal tracking-wide text-zinc-600">
+                  {block.title}
+                </h2>
+              ) : null}
+              <p className="text-sm leading-[1.75] text-zinc-500/90">{block.text}</p>
             </div>
-          ) : null}
-          {evolution.whatFaded ? (
-            <div className="space-y-2 px-1">
-              <h2 className="text-xs font-normal tracking-wide text-zinc-600">
-                This got quieter
-              </h2>
-              <p className="text-sm leading-[1.75] text-zinc-500/90">
-                {evolution.whatFaded}
-              </p>
-            </div>
-          ) : null}
-          {evolution.whatCameBack ? (
-            <div className="space-y-2 px-1">
-              <h2 className="text-xs font-normal tracking-wide text-zinc-600">
-                You came back
-              </h2>
-              <p className="text-sm leading-[1.75] text-zinc-500/90">
-                {evolution.whatCameBack}
-              </p>
-            </div>
-          ) : null}
+          ))}
         </section>
-      )}
+      ) : null}
 
       <section className="space-y-6">
         <h2 className="text-xs font-normal tracking-wide text-zinc-600">Older</h2>

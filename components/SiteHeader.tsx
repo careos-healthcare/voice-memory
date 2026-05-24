@@ -32,7 +32,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           href="/memory"
           className="rounded-full px-3 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white sm:px-4"
         >
-          Memory
+          Past notes
         </Link>
         <Link
           href="/timeline"

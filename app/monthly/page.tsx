@@ -143,11 +143,11 @@ export default function MonthlyPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle eyebrow="Monthly" title="This month" />
+        <MotionPageTitle title="This month" />
 
         <div className="mt-20 space-y-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : !hasNotes && !hasTimeMemory && !hasRevisitation && !hasResurfacing && !hasChangeMoments && !hasFamiliarity && !hasRhythm && !hasFamiliarityResurfacing && !hasArchiveGrowth ? (
             <div className="px-2 py-16 text-center">
               <CalendarDays className="mx-auto h-7 w-7 text-zinc-600/80" />

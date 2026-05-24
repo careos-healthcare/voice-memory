@@ -205,8 +205,8 @@ export default function SettingsPage() {
               <div className="space-y-3 border-t border-white/5 pt-6">
                 <p className="text-sm font-medium text-zinc-300">Full detail</p>
                 <p className="text-sm text-zinc-400">
-                  Off by default. Turn on only if you want fuller reads and longer
-                  memory sections.
+                  Off by default. Turn on only if you want fuller reads and more detail
+                  on each page.
                 </p>
                 <Button
                   type="button"

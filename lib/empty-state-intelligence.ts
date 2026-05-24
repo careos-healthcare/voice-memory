@@ -19,32 +19,27 @@ const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
   none: {
     tier: "none",
     headline: "Start with one voice note",
-    body: "Talk for up to a minute. VoiceMemory saves your words on this device and starts to notice how they change over time.",
-    hint: "After your first reflection, Weekly and Memory pages begin to take shape.",
+    body: "Talk for up to a minute. Your words stay on this device.",
   },
   one: {
     tier: "one",
     headline: "One reflection in",
-    body: "You have a snapshot from today. Add a few more voice notes across different days and names and themes will start to come back.",
-    hint: "Two or three reflections unlock weekly comparisons.",
+    body: "Add a few more across different days and older words will start to link up.",
   },
   few: {
     tier: "few",
-    headline: "Your archive is warming up",
-    body: "With a handful of reflections, VoiceMemory can spot themes that repeat and names that come back.",
-    hint: "Five reflections is where weekly drift feels noticeably richer.",
+    headline: "Building slowly",
+    body: "A handful of reflections is enough for themes and names to come back.",
   },
   building: {
     tier: "building",
     headline: "Your picture is forming",
-    body: "You have enough history for weekly comparisons and emotional drift. Keep recording — the mirror gets sharper when your words accumulate.",
-    hint: "Pro unlocks the full archive if you hit the free 7-entry window.",
+    body: "You have enough history for weekly comparisons and quiet callbacks from older entries.",
   },
   rich: {
     tier: "rich",
-    headline: "Your archive has depth",
-    body: "Your history is long enough for meaningful weekly shifts and quiet callbacks from older entries. Export anytime to keep a portable copy.",
-    hint: "Search works best when you name people, places, and themes out loud.",
+    headline: "Depth is here",
+    body: "Your history is long enough for meaningful shifts and older words worth reopening.",
   },
 };
 

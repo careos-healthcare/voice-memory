@@ -36,23 +36,6 @@ export function EntityMemorySection({
                 {entity.mentionCount === 1 ? "" : "s"}
               </p>
               <p className="mt-1 text-xs text-zinc-600">{formatEntityDateRange(entity)}</p>
-              {entity.relatedMoods.length > 0 ? (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {entity.relatedMoods.map((mood) => (
-                    <span
-                      key={mood}
-                      className="rounded-full bg-white/[0.03] px-2 py-0.5 text-[10px] capitalize text-zinc-500"
-                    >
-                      {mood}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-              {entity.relatedThemes.length > 0 ? (
-                <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-zinc-600">
-                  {entity.relatedThemes.join(", ")}
-                </p>
-              ) : null}
             </div>
 
             <div className="flex flex-wrap gap-2 pt-1">

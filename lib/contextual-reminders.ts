@@ -33,12 +33,12 @@ export interface ReminderCopyExample {
 export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   {
     kind: "stressful",
-    message: "You haven't reflected since a high-stress entry",
+    message: "You haven't checked in since a heavy moment",
     whenShown: "After a stressful entry (intensity 7+) with no follow-up reflection",
   },
   {
     kind: "weekly",
-    message: "Your weekly pattern is ready",
+    message: "Your week is ready to look back on",
     whenShown: "When you have entries this week and weekly review is enabled",
   },
   {
@@ -53,7 +53,7 @@ export const REMINDER_COPY_EXAMPLES: ReminderCopyExample[] = [
   },
   {
     kind: "inactive",
-    message: "It has been a few days — your memory is still here when you are ready",
+    message: "It has been a few days — your words are still here when you are ready",
     whenShown: "No reflection for 3+ days with inactivity reminders enabled",
   },
 ];
@@ -129,7 +129,7 @@ export function evaluateContextualReminders(
           id: "stressful",
           kind: "stressful",
           title: "After a heavy moment",
-          message: "You haven't reflected since a high-stress entry",
+          message: "You haven't checked in since a heavy moment",
           href: "/",
           cta: "Reflect now",
         });
@@ -147,7 +147,7 @@ export function evaluateContextualReminders(
           id: "weekly",
           kind: "weekly",
           title: "Weekly review",
-          message: "Your weekly pattern is ready",
+          message: "Your week is ready to look back on",
           href: "/weekly",
           cta: "View your week",
         });

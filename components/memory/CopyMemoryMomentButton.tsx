@@ -111,7 +111,7 @@ export function CopyMemoryMomentButton(props: CopyMemoryMomentButtonProps) {
         ) : (
           <>
             <Copy className="h-3.5 w-3.5" />
-            Copy memory moment
+            Copy this moment
           </>
         )}
       </Button>
