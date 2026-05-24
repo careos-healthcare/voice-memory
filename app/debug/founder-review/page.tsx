@@ -84,6 +84,12 @@ export default function FounderReviewDebugPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/validation-ops" className="text-violet-300 hover:text-violet-200">
+            Validation ops →
+          </Link>
+          <Link href="/debug/user-review" className="text-violet-300 hover:text-violet-200">
+            User review →
+          </Link>
           <Link href="/debug/distribution-readiness" className="text-violet-300 hover:text-violet-200">
             Distribution readiness →
           </Link>

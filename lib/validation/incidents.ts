@@ -11,7 +11,11 @@ function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
-function readStoredIncidents(): IncidentRecord[] {
+export function readStoredIncidents(): IncidentRecord[] {
+  return readStoredIncidentsInternal();
+}
+
+function readStoredIncidentsInternal(): IncidentRecord[] {
   if (!isBrowser()) return [];
   try {
     const raw = localStorage.getItem(INCIDENTS_KEY);
@@ -41,7 +45,7 @@ export function recordIncident(input: {
   if (!detail) return null;
 
   const fingerprint = incidentFingerprint(input.kind, detail);
-  const existing = readStoredIncidents();
+  const existing = readStoredIncidentsInternal();
   const duplicate = existing.find(
     (row) => !row.resolved && incidentFingerprint(row.kind, row.detail) === fingerprint,
   );
