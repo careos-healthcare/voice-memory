@@ -13,21 +13,25 @@ import {
   buildReflectiveRoundup,
   parsePeriodSlug,
 } from "@/lib/roundups/reflective-roundups";
-import type { ReflectiveRoundup } from "@/types/reflective-roundup";
+import { buildKeyPieces } from "@/lib/roundups/key-pieces";
+import type { KeyPiecesReport, ReflectiveRoundup } from "@/types/reflective-roundup";
 
 export default function RoundupPeriodPage() {
   const params = useParams<{ period: string }>();
   const periodSlug = params.period;
   const period = useMemo(() => parsePeriodSlug(periodSlug), [periodSlug]);
   const [roundup, setRoundup] = useState<ReflectiveRoundup | null>(null);
+  const [keyPieces, setKeyPieces] = useState<KeyPiecesReport | null>(null);
 
   useEffect(() => {
     if (!period) {
       setRoundup(null);
+      setKeyPieces(null);
       return;
     }
     const id = requestAnimationFrame(() => {
       setRoundup(buildReflectiveRoundup(period));
+      setKeyPieces(buildKeyPieces(period));
     });
     return () => cancelAnimationFrame(id);
   }, [period]);
@@ -71,11 +75,11 @@ export default function RoundupPeriodPage() {
                   </CardContent>
                 </Card>
               ) : roundup ? (
-                <ReflectiveRoundupView roundup={roundup} />
+                <ReflectiveRoundupView roundup={roundup} keyPieces={keyPieces} />
               ) : null}
             </div>
 
-            {!loading && roundup && !roundup.hasData ? (
+            {!loading && roundup && !roundup.hasData && !keyPieces?.hasData ? (
               <div className="mt-10">
                 <Button asChild variant="secondary">
                   <Link href="/">Record in this period</Link>

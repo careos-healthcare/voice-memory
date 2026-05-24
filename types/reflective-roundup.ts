@@ -44,3 +44,25 @@ export interface RoundupListReport {
   generatedAt: string;
   items: RoundupIndexItem[];
 }
+
+export type KeyPieceKind =
+  | "repeated_concern"
+  | "named_entity"
+  | "decision"
+  | "unresolved_question"
+  | "phrase_repeated"
+  | "wanted_thing"
+  | "avoided_naming"
+  | "worth_revisiting";
+
+export interface KeyPiece {
+  id: string;
+  text: string;
+  entryId: string;
+  kind: KeyPieceKind;
+}
+
+export interface KeyPiecesReport {
+  items: KeyPiece[];
+  hasData: boolean;
+}
