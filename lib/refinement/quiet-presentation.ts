@@ -1,8 +1,7 @@
 import { recordCallbackSurfaced } from "@/lib/callback-interaction-signals";
 import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
 import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
-import { homepageArchiveGrowthNotes } from "@/lib/memory/archive-growth";
-import { homepageContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
+import { pickArchiveDepthIndicator } from "@/lib/memory/continuity-depth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { homepageMemoryReminder } from "@/lib/memory/memory-reminders";
@@ -116,7 +115,7 @@ export function buildQuietHomepagePresentation(
       followupPrompt: null,
       recorderLine: continuation.length === 0 ? recorderPreRecordLine(entries) : null,
       memoryReminder: null,
-      continuityDepth: null,
+      continuityDepth: pickArchiveDepthIndicator(entries, "homepage"),
     },
     entries,
   );

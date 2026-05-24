@@ -203,6 +203,11 @@ export function entryInteractionSummary(entryId: string): EntryInteractionRecord
   return readStore().entries.find((row) => row.entryId === entryId) ?? null;
 }
 
+export function revisitedEntryCount(): number {
+  if (!isBrowser()) return 0;
+  return readStore().entries.filter((row) => row.viewCount > 1).length;
+}
+
 export function buildSourceEntrySnippet(entryId: string): string {
   const entry = getEntry(entryId);
   if (!entry) return "";

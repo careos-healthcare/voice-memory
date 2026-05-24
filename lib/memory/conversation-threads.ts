@@ -11,7 +11,7 @@ import type {
 import type { JournalEntry } from "@/types/journal";
 
 const MIN_THREAD_ENTRIES = 2;
-const MIN_ARCHIVE_ENTRIES = 2;
+const MIN_ARCHIVE_ENTRIES = 12;
 const GAP_DAYS = 10;
 const MAX_RELATED_ENTRIES = 8;
 
@@ -409,4 +409,40 @@ export function formatThreadSourceLabel(source: ConversationThreadSource): strin
 
 export function threadRecencyLabel(thread: ConversationThread): string {
   return formatRelativeDate(thread.latestAppearance);
+}
+
+export interface ThreadDepthSignals {
+  connectedThreadCount: number;
+  multiWeekThreadCount: number;
+  multiMonthThreadCount: number;
+  strongThreadCount: number;
+  toneShiftThreadCount: number;
+}
+
+/** Measure thread continuity for archive-depth — internal scoring only. */
+export function measureThreadDepthSignals(entries: JournalEntry[]): ThreadDepthSignals {
+  const { threads } = buildConversationThreadsReport(entries);
+  let multiWeekThreadCount = 0;
+  let multiMonthThreadCount = 0;
+  let toneShiftThreadCount = 0;
+
+  for (const thread of threads) {
+    const span = daysBetweenKeys(
+      toDayKey(thread.firstAppearance),
+      toDayKey(thread.latestAppearance),
+    );
+    if (span >= 14) multiWeekThreadCount += 1;
+    if (span >= 28) multiMonthThreadCount += 1;
+    if (thread.evolution.whatChanged || thread.evolution.whatCameBack) {
+      toneShiftThreadCount += 1;
+    }
+  }
+
+  return {
+    connectedThreadCount: threads.filter((thread) => thread.mentionCount >= 2).length,
+    multiWeekThreadCount,
+    multiMonthThreadCount,
+    strongThreadCount: threads.filter((thread) => thread.mentionCount >= 3).length,
+    toneShiftThreadCount,
+  };
 }

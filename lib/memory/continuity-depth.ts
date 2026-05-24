@@ -1,10 +1,15 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
-import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
-import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
+import { revisitedEntryCount } from "@/lib/callback-interaction-signals";
+import { getAllBookmarks } from "@/lib/reflection-bookmarks";
+import { measureArchiveGrowthDepthSignals } from "@/lib/memory/archive-growth";
+import { measureThreadDepthSignals } from "@/lib/memory/conversation-threads";
+import { measureMilestoneDepthSignals } from "@/lib/memory/milestones";
+import { measureSeasonDepthSignals } from "@/lib/memory/seasons";
 import { buildChangeMomentsReport } from "@/lib/memory/change-moments";
-import { buildConversationThreadsReport } from "@/lib/memory/conversation-threads";
 import { buildRelationshipContinuityReport } from "@/lib/memory/relationship-continuity";
 import { buildRevisitationReport } from "@/lib/memory/revisitation";
+import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
+import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import type {
   ContinuityDepthContext,
   ContinuityDepthCopyExample,
@@ -15,42 +20,50 @@ import type {
 import type { JournalEntry } from "@/types/journal";
 
 const DEPTH_KEY = "voicememory_continuity_depth";
-const MIN_ENTRIES = 10;
-const STRONG_MIN = 68;
+const MIN_ENTRIES = 16;
+const MIN_MONTHS = 3;
+const MIN_SPAN_DAYS = 45;
+const STRONG_MIN = 72;
 const MIN_SESSIONS = 6;
-const MIN_DAYS = 14;
+const MIN_DAYS = 16;
 const TEXT_COOLDOWN_DAYS = 28;
-const SURFACE_COOLDOWN_DAYS = 10;
+const SURFACE_COOLDOWN_DAYS = 12;
 
 const COPY: Record<ContinuityDepthKind, string> = {
-  reflections_connecting: "Reflections starting to connect.",
-  threads_worth_returning: "Threads worth returning to.",
-  older_entries_context: "Older entries carry context.",
+  older_entries_context: "Older entries are beginning to carry context.",
+  reflections_connecting: "More of this is starting to connect.",
+  period_read_differently: "This period is beginning to read differently.",
+  threads_worth_returning: "There are a few threads worth returning to.",
 };
 
 const KIND_PRIORITY: ContinuityDepthKind[] = [
   "older_entries_context",
-  "threads_worth_returning",
   "reflections_connecting",
+  "period_read_differently",
+  "threads_worth_returning",
 ];
 
 export const CONTINUITY_DEPTH_COPY_EXAMPLES: ContinuityDepthCopyExample[] = [
   {
+    kind: "older_entries_context",
+    message: COPY.older_entries_context,
+    whenShown:
+      "Older reflections, revisit links, and bookmarks give earlier entries surrounding context",
+  },
+  {
     kind: "reflections_connecting",
     message: COPY.reflections_connecting,
-    whenShown:
-      "Threads, revisit links, theme shifts, and relationship notes overlap enough to feel interconnected",
+    whenShown: "Themes and threads bridge weeks or months with enough overlap to feel linked",
+  },
+  {
+    kind: "period_read_differently",
+    message: COPY.period_read_differently,
+    whenShown: "A recurring theme or season reads with a different tone than before",
   },
   {
     kind: "threads_worth_returning",
     message: COPY.threads_worth_returning,
     whenShown: "Several conversation threads span multiple reflections with enough depth to revisit",
-  },
-  {
-    kind: "older_entries_context",
-    message: COPY.older_entries_context,
-    whenShown:
-      "Landmarks, revisit links, and relationship continuity give older entries surrounding context",
   },
 ];
 
@@ -73,12 +86,25 @@ interface DepthState {
 }
 
 interface DepthSignals {
+  archiveSpanDays: number;
+  monthCount: number;
   connectedThreadCount: number;
+  multiMonthThreadCount: number;
   strongThreadCount: number;
+  crossMonthThemes: number;
+  oldEntryBridges: number;
+  toneEvolutionThemes: number;
+  revisitationThemes: number;
+  distinguishablePeriodCount: number;
+  toneShiftPeriodCount: number;
+  milestoneCount: number;
+  oldEntryMilestoneCount: number;
   revisitLinkCount: number;
   themeShiftCount: number;
   relationshipDepth: number;
   landmarkSpanDays: number;
+  bookmarkedCount: number;
+  revisitedCount: number;
 }
 
 function isBrowser(): boolean {
@@ -89,6 +115,10 @@ function sortedEntries(entries: JournalEntry[]): JournalEntry[] {
   return [...entries].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
+}
+
+function uniqueMonths(entries: JournalEntry[]): string[] {
+  return [...new Set(entries.map((entry) => toDayKey(entry.createdAt).slice(0, 7)))].sort();
 }
 
 function textKey(text: string): string {
@@ -241,30 +271,20 @@ function countThemeShifts(sorted: JournalEntry[]): number {
     const laterAvg = roundAvg(later.map((entry) => entry.reflection.emotionalIntensity));
     if (Math.abs(earlierAvg - laterAvg) >= 1.2) {
       count += 1;
-      continue;
     }
-    const earlierThemes = new Set(
-      earlier.flatMap((entry) => entry.reflection.recurringThemes.map((t) => t.toLowerCase())),
-    );
-    const laterOnly = later.some(
-      (entry) =>
-        entry.reflection.recurringThemes.some((t) => !earlierThemes.has(t.toLowerCase())) ||
-        entry.reflection.emotionalIntensity <= earlierAvg - 1,
-    );
-    if (laterOnly) count += 1;
   }
   return count;
 }
 
 function countRevisitLinks(sorted: JournalEntry[]): number {
   const linked = new Set<string>();
-  const anchors = sorted.slice(-Math.min(sorted.length, 12));
+  const anchors = sorted.slice(-Math.min(sorted.length, 10));
 
   for (const anchor of anchors) {
     const report = buildRevisitationReport(sorted, {
       context: "memory",
       entryId: anchor.id,
-      limit: 2,
+      limit: 1,
     });
     for (const note of report.notes) {
       if (note.pastEntryId) {
@@ -301,79 +321,138 @@ function measureLandmarkSpan(sorted: JournalEntry[]): number {
   return daysBetweenKeys(toDayKey(first.createdAt), toDayKey(last.createdAt));
 }
 
+function measureEngagementDepth(): { bookmarkedCount: number; revisitedCount: number } {
+  return {
+    bookmarkedCount: isBrowser() ? getAllBookmarks().length : 0,
+    revisitedCount: revisitedEntryCount(),
+  };
+}
+
 function measureSignals(sorted: JournalEntry[]): DepthSignals {
-  const threads = buildConversationThreadsReport(sorted).threads.filter(
-    (thread) => thread.mentionCount >= 2,
-  );
+  const threads = measureThreadDepthSignals(sorted);
+  const seasons = measureSeasonDepthSignals(sorted);
+  const milestones = measureMilestoneDepthSignals(sorted);
+  const archive = measureArchiveGrowthDepthSignals(sorted);
   const changeMoments = buildChangeMomentsReport(sorted, {
     context: "memory",
-    limit: 6,
+    limit: 4,
   }).notes;
   const relationshipNotes = buildRelationshipContinuityReport(sorted, {
     context: "memory",
-    limit: 6,
+    limit: 4,
   }).notes;
+  const engagement = measureEngagementDepth();
 
   return {
-    connectedThreadCount: threads.length,
-    strongThreadCount: threads.filter((thread) => thread.mentionCount >= 3).length,
+    archiveSpanDays: archive.archiveSpanDays,
+    monthCount: uniqueMonths(sorted).length,
+    connectedThreadCount: threads.connectedThreadCount,
+    multiMonthThreadCount: threads.multiMonthThreadCount,
+    strongThreadCount: threads.strongThreadCount,
+    crossMonthThemes: archive.crossMonthThemes,
+    oldEntryBridges: archive.oldEntryBridges,
+    toneEvolutionThemes: archive.toneEvolutionThemes,
+    revisitationThemes: archive.revisitationThemes,
+    distinguishablePeriodCount: seasons.distinguishablePeriodCount,
+    toneShiftPeriodCount: seasons.toneShiftPeriodCount,
+    milestoneCount: milestones.milestoneCount,
+    oldEntryMilestoneCount: milestones.oldEntryMilestoneCount,
     revisitLinkCount: countRevisitLinks(sorted),
-    themeShiftCount: Math.max(countThemeShifts(sorted), changeMoments.length >= 2 ? 2 : changeMoments.length),
+    themeShiftCount: Math.max(countThemeShifts(sorted), changeMoments.length >= 2 ? 2 : 0),
     relationshipDepth: relationshipNotes.length,
     landmarkSpanDays: measureLandmarkSpan(sorted),
+    bookmarkedCount: engagement.bookmarkedCount,
+    revisitedCount: engagement.revisitedCount,
   };
+}
+
+/** True when the archive is deep enough for a sparse depth line. */
+export function isArchiveDeep(entries: JournalEntry[]): boolean {
+  const sorted = sortedEntries(entries);
+  if (sorted.length < MIN_ENTRIES) return false;
+  if (uniqueMonths(sorted).length < MIN_MONTHS) return false;
+
+  const span = daysBetweenKeys(
+    toDayKey(sorted[0].createdAt),
+    toDayKey(sorted[sorted.length - 1].createdAt),
+  );
+  return span >= MIN_SPAN_DAYS;
+}
+
+function scoreOlderEntriesContext(signals: DepthSignals): number {
+  let score = 0;
+  if (signals.landmarkSpanDays >= 30) score += 24;
+  if (signals.landmarkSpanDays >= 14) score += 12;
+  if (signals.oldEntryBridges >= 4) score += 22;
+  if (signals.oldEntryMilestoneCount >= 1) score += 18;
+  if (signals.revisitLinkCount >= 3) score += 20;
+  if (signals.bookmarkedCount >= 1) score += 14;
+  if (signals.revisitedCount >= 2) score += 16;
+  if (signals.relationshipDepth >= 1) score += 12;
+  return score;
 }
 
 function scoreReflectionsConnecting(signals: DepthSignals): number {
   let score = 0;
-  if (signals.connectedThreadCount >= 2) score += 18;
-  if (signals.connectedThreadCount >= 3) score += 12;
-  if (signals.revisitLinkCount >= 4) score += 22;
-  if (signals.revisitLinkCount >= 6) score += 10;
-  if (signals.themeShiftCount >= 2) score += 18;
-  if (signals.themeShiftCount >= 1) score += 8;
+  if (signals.crossMonthThemes >= 2) score += 24;
+  if (signals.oldEntryBridges >= 6) score += 18;
+  if (signals.connectedThreadCount >= 2) score += 16;
+  if (signals.revisitationThemes >= 2) score += 18;
+  if (signals.themeShiftCount >= 1) score += 12;
   if (signals.relationshipDepth >= 2) score += 14;
-  if (signals.landmarkSpanDays >= 21) score += 8;
+  return score;
+}
+
+function scorePeriodReadDifferently(signals: DepthSignals): number {
+  let score = 0;
+  if (signals.toneEvolutionThemes >= 1) score += 24;
+  if (signals.toneShiftPeriodCount >= 2) score += 20;
+  if (signals.themeShiftCount >= 2) score += 18;
+  if (signals.distinguishablePeriodCount >= 2) score += 14;
+  if (signals.multiMonthThreadCount >= 1) score += 12;
   return score;
 }
 
 function scoreThreadsWorthReturning(signals: DepthSignals): number {
   let score = 0;
-  if (signals.connectedThreadCount >= 2) score += 24;
+  if (signals.strongThreadCount >= 2) score += 26;
+  if (signals.strongThreadCount >= 1) score += 18;
+  if (signals.multiMonthThreadCount >= 2) score += 20;
   if (signals.connectedThreadCount >= 3) score += 16;
-  if (signals.strongThreadCount >= 1) score += 22;
-  if (signals.strongThreadCount >= 2) score += 14;
-  if (signals.connectedThreadCount >= 4) score += 12;
-  return score;
-}
-
-function scoreOlderEntriesContext(signals: DepthSignals): number {
-  let score = 0;
-  if (signals.landmarkSpanDays >= 30) score += 26;
-  if (signals.landmarkSpanDays >= 14) score += 14;
-  if (signals.revisitLinkCount >= 3) score += 22;
-  if (signals.revisitLinkCount >= 5) score += 10;
-  if (signals.relationshipDepth >= 1) score += 16;
-  if (signals.relationshipDepth >= 3) score += 12;
-  if (signals.themeShiftCount >= 1) score += 10;
+  if (signals.revisitedCount >= 2) score += 12;
+  if (signals.bookmarkedCount >= 1) score += 10;
   return score;
 }
 
 function meetsKindThreshold(kind: ContinuityDepthKind, signals: DepthSignals): boolean {
   switch (kind) {
-    case "reflections_connecting":
-      return (
-        signals.connectedThreadCount >= 2 &&
-        signals.revisitLinkCount >= 4 &&
-        (signals.themeShiftCount >= 1 || signals.relationshipDepth >= 2)
-      );
-    case "threads_worth_returning":
-      return signals.connectedThreadCount >= 2 && signals.strongThreadCount >= 1;
     case "older_entries_context":
       return (
-        signals.landmarkSpanDays >= 14 &&
-        signals.revisitLinkCount >= 3 &&
-        signals.relationshipDepth >= 1
+        signals.archiveSpanDays >= MIN_SPAN_DAYS &&
+        (signals.landmarkSpanDays >= 14 ||
+          signals.oldEntryMilestoneCount >= 1 ||
+          signals.revisitLinkCount >= 3) &&
+        (signals.bookmarkedCount >= 1 ||
+          signals.revisitedCount >= 2 ||
+          signals.oldEntryBridges >= 4)
+      );
+    case "reflections_connecting":
+      return (
+        signals.crossMonthThemes >= 2 ||
+        (signals.connectedThreadCount >= 2 &&
+          signals.oldEntryBridges >= 4 &&
+          signals.revisitationThemes >= 2)
+      );
+    case "period_read_differently":
+      return (
+        signals.toneEvolutionThemes >= 1 ||
+        (signals.toneShiftPeriodCount >= 2 && signals.themeShiftCount >= 1)
+      );
+    case "threads_worth_returning":
+      return (
+        signals.strongThreadCount >= 1 &&
+        signals.connectedThreadCount >= 2 &&
+        signals.multiMonthThreadCount >= 1
       );
     default:
       return false;
@@ -382,12 +461,14 @@ function meetsKindThreshold(kind: ContinuityDepthKind, signals: DepthSignals): b
 
 function scoreForKind(kind: ContinuityDepthKind, signals: DepthSignals): number {
   switch (kind) {
-    case "reflections_connecting":
-      return scoreReflectionsConnecting(signals);
-    case "threads_worth_returning":
-      return scoreThreadsWorthReturning(signals);
     case "older_entries_context":
       return scoreOlderEntriesContext(signals);
+    case "reflections_connecting":
+      return scoreReflectionsConnecting(signals);
+    case "period_read_differently":
+      return scorePeriodReadDifferently(signals);
+    case "threads_worth_returning":
+      return scoreThreadsWorthReturning(signals);
     default:
       return 0;
   }
@@ -421,8 +502,7 @@ export function buildContinuityDepthReport(
   entries: JournalEntry[],
   options: ContinuityDepthOptions,
 ): ContinuityDepthReport {
-  const sorted = sortedEntries(entries);
-  if (sorted.length < MIN_ENTRIES) {
+  if (!isArchiveDeep(entries)) {
     return { indicator: null, hasData: false };
   }
 
@@ -441,6 +521,7 @@ export function buildContinuityDepthReport(
     return { indicator: null, hasData: false };
   }
 
+  const sorted = sortedEntries(entries);
   const signals = measureSignals(sorted);
   const indicator = pickIndicator(signals);
   if (!indicator) {
@@ -454,14 +535,22 @@ export function buildContinuityDepthReport(
   return { indicator, hasData: true };
 }
 
+/** Max one archive-depth line for homepage or memory. */
+export function pickArchiveDepthIndicator(
+  entries: JournalEntry[],
+  context: ContinuityDepthContext,
+): ContinuityDepthIndicator | null {
+  return buildContinuityDepthReport(entries, { context }).indicator;
+}
+
 export function homepageContinuityDepthIndicator(
   entries: JournalEntry[],
 ): ContinuityDepthIndicator | null {
-  return buildContinuityDepthReport(entries, { context: "homepage" }).indicator;
+  return pickArchiveDepthIndicator(entries, "homepage");
 }
 
 export function memoryContinuityDepthIndicator(
   entries: JournalEntry[],
 ): ContinuityDepthIndicator | null {
-  return buildContinuityDepthReport(entries, { context: "memory" }).indicator;
+  return pickArchiveDepthIndicator(entries, "memory");
 }

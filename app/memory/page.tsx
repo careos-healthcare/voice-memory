@@ -14,14 +14,13 @@ import { RelationshipContinuityNotes } from "@/components/memory/RelationshipCon
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
-import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
+import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
-import { memoryArchiveGrowthNotes } from "@/lib/memory/archive-growth";
-import { memoryMilestoneNotes } from "@/lib/memory/milestones";
 import { memoryContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
+import { memoryMilestoneNotes } from "@/lib/memory/milestones";
 import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
 import { memoryChangeMomentsNotes } from "@/lib/memory/change-moments";
@@ -57,7 +56,6 @@ export default function MemoryPage() {
   const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
   const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
   const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
-  const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
   const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
   const [relationshipNotes, setRelationshipNotes] = useState<RelationshipContinuityNote[]>([]);
   const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
@@ -83,14 +81,6 @@ export default function MemoryPage() {
       setRhythm(memoryRhythmNotes(entries, limits.rhythm));
       setFamiliarityResurfacing(familiarityResurfacingNotes);
       setRevisitation(revisitationNotes);
-      const meaningfulTiming =
-        resurfacingNotes.length > 0 ||
-        revisitationNotes.length > 0 ||
-        changeMomentNotes.length > 0 ||
-        familiarityResurfacingNotes.length > 0;
-      setArchiveGrowth(
-        memoryArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
-      );
       setThreadHighlights(memoryThreadHighlights(entries, 4));
       setRelationshipNotes(memoryRelationshipNotes(entries, 4));
       setMilestones(memoryMilestoneNotes(entries, limits.milestones));
@@ -105,7 +95,6 @@ export default function MemoryPage() {
     limits.familiarity,
     limits.rhythm,
     limits.familiarityResurfacing,
-    limits.archiveGrowth,
     limits.milestones,
   ]);
 
@@ -179,7 +168,6 @@ export default function MemoryPage() {
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={1} />
-              <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
               <ThreadMentionsSection
                 threads={threadHighlights}
                 subtitle="Recurring topics that span more than one reflection."

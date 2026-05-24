@@ -531,3 +531,37 @@ export function entryMilestoneNotes(
     limit,
   );
 }
+
+export interface MilestoneDepthSignals {
+  milestoneCount: number;
+  oldEntryMilestoneCount: number;
+  spanDays: number;
+}
+
+/** Measure milestone accumulation for archive-depth — internal scoring only. */
+export function measureMilestoneDepthSignals(entries: JournalEntry[]): MilestoneDepthSignals {
+  const sorted = sortedEntries(entries);
+  if (sorted.length < MIN_ENTRIES) {
+    return { milestoneCount: 0, oldEntryMilestoneCount: 0, spanDays: 0 };
+  }
+
+  const milestones = dedupeMilestones(detectAllMilestones(sorted));
+  const today = toDayKey(new Date().toISOString());
+  const oldEntryMilestoneCount = milestones.filter((milestone) => {
+    const anchorId = milestone.pastEntryId ?? milestone.entryId;
+    const anchor = sorted.find((entry) => entry.id === anchorId);
+    if (!anchor) return false;
+    return daysBetweenKeys(toDayKey(anchor.createdAt), today) >= 21;
+  }).length;
+
+  const spanDays = daysBetweenKeys(
+    toDayKey(sorted[0].createdAt),
+    toDayKey(sorted[sorted.length - 1].createdAt),
+  );
+
+  return {
+    milestoneCount: milestones.length,
+    oldEntryMilestoneCount,
+    spanDays,
+  };
+}

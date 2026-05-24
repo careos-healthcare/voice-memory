@@ -1,7 +1,8 @@
 export type ContinuityDepthKind =
   | "reflections_connecting"
   | "threads_worth_returning"
-  | "older_entries_context";
+  | "older_entries_context"
+  | "period_read_differently";
 
 export type ContinuityDepthContext = "homepage" | "memory";
 

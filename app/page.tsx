@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { PersonalisationProgressNote } from "@/components/PersonalisationProgressNote";
 import { ReflectionGoalHint } from "@/components/ReflectionGoalHint";
@@ -30,6 +31,7 @@ import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { MemoryNote } from "@/types/memory-note";
+import type { ContinuityDepthIndicator } from "@/types/continuity-depth";
 
 export default function HomePage() {
   const { limits } = useQuietMode();
@@ -37,6 +39,7 @@ export default function HomePage() {
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
   const [followupPrompt, setFollowupPrompt] = useState<FollowupPrompt | null>(null);
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
+  const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
 
@@ -49,6 +52,7 @@ export default function HomePage() {
       setContinuation(presentation.continuation);
       setFollowupPrompt(presentation.followupPrompt);
       setRecorderLine(presentation.recorderLine);
+      setContinuityDepth(presentation.continuityDepth);
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -92,6 +96,7 @@ export default function HomePage() {
           <PersonalisationProgressNote />
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
+          <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={1} />
           <FollowupPromptInline prompt={followupPrompt} onContinue={handleContinueFollowup} />
         </div>

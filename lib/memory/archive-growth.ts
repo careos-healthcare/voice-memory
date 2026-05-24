@@ -13,11 +13,11 @@ import type { MemoryNote } from "@/types/memory-note";
 import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 
 const ACCUMULATION_KEY = "voicememory_archive_accumulation";
-const MIN_ENTRIES = 12;
-const MIN_MONTHS = 2;
-const STRONG_MIN = 64;
-const MIN_SESSIONS = 4;
-const MIN_DAYS = 8;
+const MIN_ENTRIES = 16;
+const MIN_MONTHS = 3;
+const STRONG_MIN = 68;
+const MIN_SESSIONS = 5;
+const MIN_DAYS = 12;
 const TEXT_COOLDOWN_DAYS = 28;
 const MEMORY_STRONG_MIN = 68;
 
@@ -54,11 +54,11 @@ const CONTEXT_KIND_PRIORITY: Record<ArchiveGrowthContext, ArchiveGrowthKind[]> =
 };
 
 const COPY: Record<ArchiveGrowthKind, string> = {
-  connecting_older: "Older reflections connecting.",
-  read_differently: "Some entries read differently now.",
-  more_familiar: "This archive feels familiar.",
-  more_continuity: "More returned here.",
-  starting_to_relate: "These reflections relate to each other.",
+  connecting_older: "Older entries are beginning to carry context.",
+  read_differently: "This period is beginning to read differently.",
+  more_familiar: "More of this is starting to connect.",
+  more_continuity: "More of this is starting to connect.",
+  starting_to_relate: "More of this is starting to connect.",
 };
 
 function isBrowser(): boolean {
@@ -639,4 +639,98 @@ export function memoryArchiveGrowthNotes(
     entries,
     1,
   );
+}
+
+export interface ArchiveGrowthDepthSignals {
+  crossMonthThemes: number;
+  oldEntryBridges: number;
+  toneEvolutionThemes: number;
+  revisitationThemes: number;
+  archiveSpanDays: number;
+}
+
+/** Measure archive compounding for depth lines — internal scoring only. */
+export function measureArchiveGrowthDepthSignals(
+  entries: JournalEntry[],
+): ArchiveGrowthDepthSignals {
+  const sorted = sortedEntries(entries);
+  if (sorted.length < MIN_ENTRIES) {
+    return {
+      crossMonthThemes: 0,
+      oldEntryBridges: 0,
+      toneEvolutionThemes: 0,
+      revisitationThemes: 0,
+      archiveSpanDays: 0,
+    };
+  }
+
+  const months = uniqueMonths(sorted);
+  let crossMonthThemes = 0;
+  if (months.length >= MIN_MONTHS) {
+    const recentMonths = months.slice(-2);
+    const priorMonths = months.slice(0, -2);
+    for (const [, hits] of themeMap(sorted)) {
+      const monthSet = new Set(hits.map((entry) => monthKey(entry.createdAt)));
+      const inRecent = recentMonths.some((month) => monthSet.has(month));
+      const inPrior = priorMonths.some((month) => monthSet.has(month));
+      if (inRecent && inPrior && hits.length >= 3) crossMonthThemes += 1;
+    }
+  }
+
+  let revisitationThemes = 0;
+  for (const [, hits] of themeMap(sorted)) {
+    if (hits.length < 3) continue;
+    const gaps = hits.slice(1).map((entry, i) =>
+      daysBetweenKeys(toDayKey(hits[i].createdAt), toDayKey(entry.createdAt)),
+    );
+    if (gaps.some((gap) => gap >= 14)) revisitationThemes += 1;
+  }
+
+  let toneEvolutionThemes = 0;
+  for (const [, hits] of themeMap(sorted)) {
+    if (hits.length < 4) continue;
+    const early = hits.slice(0, Math.floor(hits.length / 2));
+    const late = hits.slice(Math.floor(hits.length / 2));
+    const earlyAvg = roundAvg(early.map((entry) => entry.reflection.emotionalIntensity));
+    const lateAvg = roundAvg(late.map((entry) => entry.reflection.emotionalIntensity));
+    const earlyHedge = roundAvg(early.map((entry) => countMatches(entry.transcript, HEDGE_RE)));
+    const lateHedge = roundAvg(late.map((entry) => countMatches(entry.transcript, HEDGE_RE)));
+    const earlyDirect = roundAvg(early.map((entry) => countMatches(entry.transcript, DIRECT_RE)));
+    const lateDirect = roundAvg(late.map((entry) => countMatches(entry.transcript, DIRECT_RE)));
+    if (
+      lateAvg <= earlyAvg - 1 ||
+      lateHedge <= earlyHedge - 0.8 ||
+      lateDirect >= earlyDirect + 0.8
+    ) {
+      toneEvolutionThemes += 1;
+    }
+  }
+
+  let oldEntryBridges = 0;
+  for (let i = 0; i < sorted.length; i += 1) {
+    for (let j = i + 1; j < sorted.length; j += 1) {
+      const gap = daysBetweenKeys(
+        toDayKey(sorted[i].createdAt),
+        toDayKey(sorted[j].createdAt),
+      );
+      if (gap < 21) continue;
+      const shared = sorted[i].reflection.recurringThemes.some((theme) =>
+        sorted[j].reflection.recurringThemes.some(
+          (other) => other.toLowerCase() === theme.toLowerCase(),
+        ),
+      );
+      if (shared) oldEntryBridges += 1;
+    }
+  }
+
+  return {
+    crossMonthThemes,
+    oldEntryBridges,
+    toneEvolutionThemes,
+    revisitationThemes,
+    archiveSpanDays: daysBetweenKeys(
+      toDayKey(sorted[0].createdAt),
+      toDayKey(sorted[sorted.length - 1].createdAt),
+    ),
+  };
 }

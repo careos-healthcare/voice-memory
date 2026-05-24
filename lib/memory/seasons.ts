@@ -13,7 +13,7 @@ import type { JournalEntry } from "@/types/journal";
 
 const MIN_PERIOD_ENTRIES = 1;
 const MIN_OBSERVATION_ENTRIES = 2;
-const ARCHIVE_MIN = 3;
+const ARCHIVE_MIN = 12;
 
 const UNCERTAINTY_RE =
   /\b(not sure|unclear|uncertain|worried|anxious|maybe|don't know|unresolved)\b/gi;
@@ -543,4 +543,43 @@ export function calendarSeasonsOnly(seasons: MemorySeason[]): MemorySeason[] {
 
 export function monthlyPeriodsOnly(seasons: MemorySeason[]): MemorySeason[] {
   return seasons.filter((season) => season.period.type === "month");
+}
+
+export interface SeasonDepthSignals {
+  distinguishablePeriodCount: number;
+  toneShiftPeriodCount: number;
+  calendarSeasonCount: number;
+  recurringAcrossYears: number;
+}
+
+/** Measure seasonal distinguishability for archive-depth — internal scoring only. */
+export function measureSeasonDepthSignals(entries: JournalEntry[]): SeasonDepthSignals {
+  const { seasons } = buildMemorySeasonsReport(entries);
+  const calendar = calendarSeasonsOnly(seasons);
+
+  let toneShiftPeriodCount = 0;
+  let recurringAcrossYears = 0;
+
+  for (const season of seasons) {
+    const hasToneShift = season.observations.some(
+      (observation) =>
+        observation.kind === "lighter_period" ||
+        observation.kind === "heavier_period" ||
+        observation.kind === "faded_theme" ||
+        observation.kind === "repeated_theme",
+    );
+    if (hasToneShift) toneShiftPeriodCount += 1;
+    if (season.observations.some((observation) => observation.kind === "repeated_theme")) {
+      recurringAcrossYears += 1;
+    }
+  }
+
+  return {
+    distinguishablePeriodCount: seasons.filter(
+      (season) => season.period.entryCount >= 2 && season.observations.length >= 1,
+    ).length,
+    toneShiftPeriodCount,
+    calendarSeasonCount: calendar.length,
+    recurringAcrossYears,
+  };
 }
