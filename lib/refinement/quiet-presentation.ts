@@ -19,6 +19,7 @@ import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
+import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import {
   isRevisitEntry,
   markRevisitBoost,
@@ -87,21 +88,26 @@ export function buildQuietHomepagePresentation(
     .filter((note) => shouldAllowEmotionalNote("homepage", note));
 
   const primaryNote = pickBestCallback(eligible, entries, 48);
+  const knowsMe = homepageKnowsMeMoment(entries);
+  const resolvedPrimary =
+    knowsMe && (!primaryNote || knowsMe.confidence >= primaryNote.confidence)
+      ? knowsMe
+      : primaryNote;
 
-  if (primaryNote) {
-    recordEmotionalNoteShown("homepage", primaryNote);
-    recordCallbackSurfaced(primaryNote.id);
+  if (resolvedPrimary) {
+    recordEmotionalNoteShown("homepage", resolvedPrimary);
+    recordCallbackSurfaced(resolvedPrimary.id);
   }
 
-  const followupNotes = [...continuation, ...(primaryNote ? [primaryNote] : [])];
+  const followupNotes = [...continuation, ...(resolvedPrimary ? [resolvedPrimary] : [])];
   const followupPrompt = buildFollowupPrompt(followupNotes);
 
-  const meaningfulTiming = Boolean(primaryNote);
+  const meaningfulTiming = Boolean(resolvedPrimary);
   const archiveCandidates = homepageArchiveGrowthNotes(entries, meaningfulTiming);
   void archiveCandidates;
 
   return {
-    primaryNote,
+    primaryNote: resolvedPrimary,
     continuation,
     followupPrompt,
     recorderLine: continuation.length === 0 ? recorderPreRecordLine(entries) : null,

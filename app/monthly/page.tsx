@@ -8,6 +8,7 @@ import { CalendarDays } from "lucide-react";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
+import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -26,6 +27,7 @@ import {
   buildFollowupPrompt,
   storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import { monthlyKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { EmotionalMilestone } from "@/types/emotional-milestone";
@@ -37,6 +39,7 @@ import type { JournalEntry } from "@/types/journal";
 export default function MonthlyPage() {
   const router = useRouter();
   const { limits } = useQuietMode();
+  const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
   const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
@@ -77,6 +80,7 @@ export default function MonthlyPage() {
       );
       setMilestones(monthlyMilestoneNotes(entries, limits.milestones));
       setEntries(entries);
+      setKnowsMe(monthlyKnowsMeMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -146,6 +150,7 @@ export default function MonthlyPage() {
             </div>
           ) : (
             <>
+              <PrimaryCallbackNote note={knowsMe} />
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
               <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
               <FamiliarityResurfacingNotes

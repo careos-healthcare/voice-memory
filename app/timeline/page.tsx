@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarRange } from "lucide-react";
 
+import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
@@ -32,6 +33,7 @@ import {
 import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
+import { timelineKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -45,6 +47,7 @@ import type { FollowupPrompt } from "@/types/followup-prompt";
 export default function TimelinePage() {
   const router = useRouter();
   const { limits } = useQuietMode();
+  const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
@@ -75,6 +78,7 @@ export default function TimelinePage() {
       setRevisitation(timelineRevisitationNotes(memoryEntries));
       setThreadHighlights(timelineThreadHighlights(memoryEntries, 3));
       setMilestones(timelineMilestoneNotes(memoryEntries, limits.milestones));
+      setKnowsMe(timelineKnowsMeMoment(memoryEntries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -137,6 +141,7 @@ export default function TimelinePage() {
             </>
           ) : (
             <>
+              <PrimaryCallbackNote note={knowsMe} />
               {notes?.hasData ? (
                 <MemoryNotesOverview
                   changed={notes.changed}

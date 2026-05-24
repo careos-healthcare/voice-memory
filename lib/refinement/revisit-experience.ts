@@ -9,6 +9,7 @@ import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
+import { entryKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import {
   markRevisitBoost,
   recordEmotionalNoteShown,
@@ -256,18 +257,28 @@ export function buildRevisitExperience(
 
   const primaryCallback = pickBestCallback(callbackEligible, allEntries, 48);
 
-  const quietRealization = pickQuietRealization(allEntries, entryId, limits, [
+  const quietFromPool = pickQuietRealization(allEntries, entryId, limits, [
     primaryCallback,
     thenVsNow,
   ]);
+  const knowsMe = entryKnowsMeMoment(allEntries, entryId);
+  const quietRealization =
+    knowsMe &&
+    !isDuplicateNote(knowsMe, primaryCallback) &&
+    !isDuplicateNote(knowsMe, thenVsNow)
+      ? knowsMe
+      : quietFromPool;
 
   if (primaryCallback) {
     recordEmotionalNoteShown("entry", primaryCallback);
     recordCallbackSurfaced(primaryCallback.id);
+  } else if (quietRealization) {
+    recordEmotionalNoteShown("entry", quietRealization);
+    recordCallbackSurfaced(quietRealization.id);
   }
 
   const followupPrompt = buildFollowupPrompt(
-    [primaryCallback, thenVsNow].filter(Boolean) as MemoryNote[],
+    [primaryCallback, thenVsNow, quietRealization].filter(Boolean) as MemoryNote[],
   );
 
   return {
