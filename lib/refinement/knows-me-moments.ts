@@ -1,4 +1,15 @@
 import { addDaysToKey, daysBetweenKeys, toDayKey } from "@/lib/dates";
+import {
+  buildLanguageFingerprint,
+  currentCircleRun,
+  directCount,
+  FAMILIARITY_COPY,
+  fingerprintEvidence,
+  hedgeCount,
+  isLooping,
+  type LanguageFingerprint,
+  MIN_FINGERPRINT_ENTRIES,
+} from "@/lib/memory/language-fingerprint";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import {
   getThemeIntensityTrend,
@@ -6,7 +17,6 @@ import {
   languageShiftOnTheme,
 } from "@/lib/patterns/emotional-evolution";
 import { helpsOrient } from "@/lib/patterns/usefulness-filter";
-import { formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -27,19 +37,19 @@ export type KnowsMeSignal =
 export type KnowsMeSurface = "entry" | "homepage" | "timeline" | "monthly";
 
 export const KNOWS_ME_COPY = {
-  sound_different: "You do sound different here.",
-  used_to_consume: "This used to take up more space.",
-  not_named_yet: "You had not named it yet.",
-  still_circling: "You were still circling this.",
+  sound_different: FAMILIARITY_COPY.moreSettled,
+  used_to_consume: FAMILIARITY_COPY.usedToFeelHeavier,
+  not_named_yet: FAMILIARITY_COPY.namedDirectly,
+  still_circling: FAMILIARITY_COPY.stoppedCircling,
   earlier_version: "This sounds like an earlier version.",
 } as const;
 
 /** Revisit entry copy — answers “why was this worth reopening?” */
 export const REVISIT_REWARD_COPY = {
-  soundDifferentFrom: "You sound different from here.",
-  beforeQuieter: "This was before it got quieter.",
-  notNamedYet: "You had not named it yet.",
-  usedToTakeSpace: "This used to take up more space.",
+  soundDifferentFrom: FAMILIARITY_COPY.moreSettled,
+  beforeQuieter: FAMILIARITY_COPY.usedToFeelHeavier,
+  notNamedYet: FAMILIARITY_COPY.namedDirectly,
+  usedToTakeSpace: FAMILIARITY_COPY.usedToFeelHeavier,
 } as const;
 
 const REVISIT_CONTRAST_PRIORITY: KnowsMeSignal[] = [
@@ -73,12 +83,6 @@ interface KnowsMeCandidate {
   entryId?: string;
 }
 
-const HEDGE_RE =
-  /\b(maybe|sort of|kind of|probably|not sure|something|stuff|indirectly|i guess|vague)\b/gi;
-const DIRECT_RE =
-  /\b(i will|decided|named|wrote down|mum|dad|mother|father|clearly|for sure|definitely|plan)\b/gi;
-const LOOP_RE =
-  /\b(same loop|loop came back|keep coming back|again before|that loop|same pattern|i keep|circling|around it)\b/i;
 const ABSENCE_DAYS = 14;
 
 const SIGNAL_PRIORITY: KnowsMeSignal[] = [
@@ -99,27 +103,13 @@ function sortedEntries(entries: JournalEntry[]): JournalEntry[] {
   );
 }
 
-function snippet(entry: JournalEntry): string {
-  const fromReflection =
-    entry.reflection.exactLanguagePattern?.trim() ||
-    entry.reflection.concreteObservation?.trim();
-  if (fromReflection) return fromReflection.slice(0, 160);
-  return entry.transcript.trim().slice(0, 160);
-}
-
-function countMatches(text: string, re: RegExp): number {
-  return text.match(re)?.length ?? 0;
-}
-
 function evidence(past: JournalEntry, current: JournalEntry) {
-  return {
-    pastQuote: snippet(past),
-    currentQuote: snippet(current),
-    pastDateLabel: formatRelativeDate(past.createdAt),
-    currentDateLabel: formatRelativeDate(current.createdAt),
-    pastEntryId: past.id,
-    entryId: current.id,
-  };
+  return fingerprintEvidence(past, current);
+}
+
+function fingerprintFromPrior(prior: JournalEntry[]): LanguageFingerprint | null {
+  if (prior.length < MIN_FINGERPRINT_ENTRIES) return null;
+  return buildLanguageFingerprint(prior);
 }
 
 function sharedThemes(a: JournalEntry, b: JournalEntry): string[] {
@@ -139,6 +129,7 @@ function pushCandidate(
 function detectEmotionalContrast(
   anchor: JournalEntry,
   compare: JournalEntry,
+  fingerprint: LanguageFingerprint | null,
 ): KnowsMeCandidate | null {
   const overlap = sharedThemes(anchor, compare);
   if (overlap.length === 0) return null;
@@ -146,8 +137,7 @@ function detectEmotionalContrast(
   const intensityDelta = Math.abs(
     anchor.reflection.emotionalIntensity - compare.reflection.emotionalIntensity,
   );
-  const moodDiff = anchor.reflection.mood !== compare.reflection.mood;
-  if (intensityDelta < 2 && !moodDiff) return null;
+  if (intensityDelta < 2) return null;
 
   const anchorIsHeavier = anchor.reflection.emotionalIntensity > compare.reflection.emotionalIntensity;
   const gap = daysBetweenKeys(
@@ -158,10 +148,18 @@ function detectEmotionalContrast(
   const past = anchorIsHeavier ? compare : anchor;
   const current = anchorIsHeavier ? anchor : compare;
 
+  const settledNow =
+    fingerprint &&
+    current.reflection.emotionalIntensity <= fingerprint.intensityP25 - 0.3;
+
   return {
     id: `knows-me-contrast-${past.id}-${current.id}`,
     signal: "emotional_contrast",
-    text: anchorIsHeavier ? KNOWS_ME_COPY.used_to_consume : KNOWS_ME_COPY.sound_different,
+    text: anchorIsHeavier
+      ? KNOWS_ME_COPY.used_to_consume
+      : settledNow
+        ? FAMILIARITY_COPY.moreSettled
+        : KNOWS_ME_COPY.sound_different,
     strength: 64 + Math.round(intensityDelta * 4) + Math.min(gap, 10) + overlap.length * 2,
     ...evidence(past, current),
   };
@@ -170,6 +168,7 @@ function detectEmotionalContrast(
 function detectWeightShift(
   anchor: JournalEntry,
   allSorted: JournalEntry[],
+  fingerprint: LanguageFingerprint | null,
 ): KnowsMeCandidate | null {
   for (const theme of anchor.reflection.recurringThemes) {
     const themeKey = theme.toLowerCase();
@@ -185,6 +184,13 @@ function detectWeightShift(
     const current = anchor.id === latest.id ? latest : anchor;
 
     if (past.id === current.id) continue;
+    if (
+      fingerprint &&
+      past.reflection.emotionalIntensity < fingerprint.intensityP75 &&
+      trend.delta < 2.5
+    ) {
+      continue;
+    }
 
     return {
       id: `knows-me-weight-${themeKey}-${past.id}`,
@@ -197,14 +203,23 @@ function detectWeightShift(
   return null;
 }
 
-function detectTopicQuieter(anchor: JournalEntry, prior: JournalEntry[]): KnowsMeCandidate | null {
-  if (anchor.reflection.emotionalIntensity > 4.5) return null;
+function detectTopicQuieter(
+  anchor: JournalEntry,
+  prior: JournalEntry[],
+  fingerprint: LanguageFingerprint | null,
+): KnowsMeCandidate | null {
+  const quietThreshold = fingerprint?.intensityP25 ?? 4.5;
+  if (anchor.reflection.emotionalIntensity > quietThreshold + 0.5) return null;
 
   for (const theme of anchor.reflection.recurringThemes) {
     const themeKey = theme.toLowerCase();
     const intense = [...prior]
       .reverse()
-      .find((e) => hasTheme(e, themeKey) && e.reflection.emotionalIntensity >= 6.5);
+      .find(
+        (e) =>
+          hasTheme(e, themeKey) &&
+          e.reflection.emotionalIntensity >= (fingerprint?.intensityP75 ?? 6.5),
+      );
     if (!intense) continue;
     if (anchor.reflection.emotionalIntensity > intense.reflection.emotionalIntensity - 1.5) {
       continue;
@@ -227,8 +242,10 @@ function detectTopicQuieter(anchor: JournalEntry, prior: JournalEntry[]): KnowsM
 function detectCertaintyAndDirectness(
   anchor: JournalEntry,
   prior: JournalEntry[],
+  fingerprint: LanguageFingerprint | null,
 ): KnowsMeCandidate[] {
   const notes: KnowsMeCandidate[] = [];
+  if (!fingerprint) return notes;
 
   for (const theme of anchor.reflection.recurringThemes) {
     const themeKey = theme.toLowerCase();
@@ -240,16 +257,14 @@ function detectCertaintyAndDirectness(
     const ev = evidence(lastPrior, anchor);
     const gap = daysBetweenKeys(toDayKey(lastPrior.createdAt), toDayKey(anchor.createdAt));
 
-    const priorHedged =
-      countMatches(lastPrior.transcript, HEDGE_RE) >= 2 &&
-      countMatches(lastPrior.transcript, DIRECT_RE) === 0;
-    const nowDirect = countMatches(anchor.transcript, DIRECT_RE) >= 1;
+    const priorHedged = hedgeCount(lastPrior) >= Math.max(fingerprint.avgHedge, 2);
+    const nowDirect = directCount(anchor) >= fingerprint.avgDirect + 1;
 
     if (priorHedged && nowDirect && shift.directDelta >= 1) {
       pushCandidate(notes, {
         id: `knows-me-named-${themeKey}-${anchor.id}`,
         signal: "direct_naming",
-        text: KNOWS_ME_COPY.not_named_yet,
+        text: FAMILIARITY_COPY.namedDirectly,
         strength: 68 + shift.directDelta * 4 + Math.min(gap, 8),
         ...ev,
       });
@@ -259,17 +274,17 @@ function detectCertaintyAndDirectness(
       pushCandidate(notes, {
         id: `knows-me-certainty-${themeKey}-${anchor.id}`,
         signal: "certainty_shift",
-        text: KNOWS_ME_COPY.not_named_yet,
+        text: FAMILIARITY_COPY.namedDirectly,
         strength: 64 + shift.hedgeDelta * 3 + shift.directDelta * 2,
         ...ev,
       });
     }
 
-    if (shift.directDelta >= 2) {
+    if (directCount(anchor) >= fingerprint.avgDirect + 1.5 && shift.directDelta >= 2) {
       pushCandidate(notes, {
         id: `knows-me-direct-${themeKey}-${anchor.id}`,
         signal: "directness_shift",
-        text: KNOWS_ME_COPY.sound_different,
+        text: FAMILIARITY_COPY.namedDirectly,
         strength: 62 + shift.directDelta * 4,
         ...ev,
       });
@@ -279,31 +294,37 @@ function detectCertaintyAndDirectness(
   return notes;
 }
 
-function detectStillCircling(anchor: JournalEntry, prior: JournalEntry[]): KnowsMeCandidate | null {
+function detectStoppedCircling(
+  anchor: JournalEntry,
+  prior: JournalEntry[],
+  sorted: JournalEntry[],
+  anchorIdx: number,
+  fingerprint: LanguageFingerprint | null,
+): KnowsMeCandidate | null {
+  if (!fingerprint) return null;
+
   for (const theme of anchor.reflection.recurringThemes) {
     const themeKey = theme.toLowerCase();
-    const priorMatches = prior.filter((e) => hasTheme(e, themeKey));
-    if (priorMatches.length < 2) continue;
+    const typical = fingerprint.themeCircleRun.get(themeKey);
+    if (!typical || typical < 2.5) continue;
 
-    const circling = priorMatches.find(
-      (e) => LOOP_RE.test(e.transcript) || countMatches(e.transcript, HEDGE_RE) >= 2,
-    );
-    if (!circling) continue;
+    const run = currentCircleRun(sorted, anchorIdx, themeKey);
+    if (run >= typical - 0.5) continue;
 
-    const laterDirect =
-      countMatches(anchor.transcript, DIRECT_RE) >= 1 ||
-      anchor.reflection.emotionalIntensity <= circling.reflection.emotionalIntensity - 1;
-    if (!laterDirect) continue;
+    const circlingPrior = [...prior]
+      .reverse()
+      .find((e) => hasTheme(e, themeKey) && isLooping(e));
+    if (!circlingPrior) continue;
 
-    const gap = daysBetweenKeys(toDayKey(circling.createdAt), toDayKey(anchor.createdAt));
+    const gap = daysBetweenKeys(toDayKey(circlingPrior.createdAt), toDayKey(anchor.createdAt));
     if (gap < 7) continue;
 
     return {
-      id: `knows-me-circling-${themeKey}-${circling.id}`,
+      id: `knows-me-circling-${themeKey}-${circlingPrior.id}`,
       signal: "phrase_gone",
-      text: KNOWS_ME_COPY.still_circling,
-      strength: 63 + Math.min(gap, 12) + priorMatches.length * 2,
-      ...evidence(circling, anchor),
+      text: FAMILIARITY_COPY.stoppedCircling,
+      strength: 65 + Math.min(gap, 12) + Math.round((typical - run) * 3),
+      ...evidence(circlingPrior, anchor),
     };
   }
   return null;
@@ -329,7 +350,7 @@ function detectPhraseStopped(allSorted: JournalEntry[]): KnowsMeCandidate | null
     return {
       id: `knows-me-phrase-gone-${record.phrase}`,
       signal: "phrase_gone",
-      text: KNOWS_ME_COPY.still_circling,
+      text: FAMILIARITY_COPY.stoppedCircling,
       strength: 64 + Math.min(record.count, 5) + Math.min(gap, 10),
       ...evidence(priorEntry, latest),
     };
@@ -341,6 +362,7 @@ function detectEarlierSelf(
   anchor: JournalEntry,
   prior: JournalEntry[],
   later: JournalEntry[],
+  fingerprint: LanguageFingerprint | null,
 ): KnowsMeCandidate | null {
   const comparePool = [...prior, ...later];
   if (comparePool.length === 0) return null;
@@ -356,10 +378,11 @@ function detectEarlierSelf(
   const gap = daysBetweenKeys(toDayKey(anchor.createdAt), toDayKey(latest.createdAt));
   if (gap < ABSENCE_DAYS) return null;
 
-  const anchorHedged = countMatches(anchor.transcript, HEDGE_RE) >= 2;
-  const anchorIntense = anchor.reflection.emotionalIntensity >= 6;
+  const anchorHedged = hedgeCount(anchor) >= Math.max(fingerprint?.avgHedge ?? 2, 2);
+  const anchorIntense =
+    anchor.reflection.emotionalIntensity >= (fingerprint?.intensityP75 ?? 6);
   const latestCalmer = latest.reflection.emotionalIntensity <= anchor.reflection.emotionalIntensity - 1.5;
-  const latestDirecter = countMatches(latest.transcript, DIRECT_RE) > countMatches(anchor.transcript, DIRECT_RE);
+  const latestDirecter = directCount(latest) > directCount(anchor);
 
   if (!anchorHedged && !anchorIntense && !latestCalmer && !latestDirecter) return null;
 
@@ -380,7 +403,11 @@ function detectEarlierSelf(
   };
 }
 
-function detectWordingShift(anchor: JournalEntry, prior: JournalEntry[]): KnowsMeCandidate | null {
+function detectWordingShift(
+  anchor: JournalEntry,
+  prior: JournalEntry[],
+  fingerprint: LanguageFingerprint | null,
+): KnowsMeCandidate | null {
   for (let i = prior.length - 1; i >= 0; i -= 1) {
     const old = prior[i];
     const gap = daysBetweenKeys(toDayKey(old.createdAt), toDayKey(anchor.createdAt));
@@ -389,20 +416,19 @@ function detectWordingShift(anchor: JournalEntry, prior: JournalEntry[]): KnowsM
     const overlap = sharedThemes(anchor, old);
     if (overlap.length === 0) continue;
 
-    const moodDiff = anchor.reflection.mood !== old.reflection.mood;
     const intensityDelta = Math.abs(
       anchor.reflection.emotionalIntensity - old.reflection.emotionalIntensity,
     );
     const hedgeFlip =
-      countMatches(old.transcript, HEDGE_RE) >= 2 &&
-      countMatches(anchor.transcript, HEDGE_RE) <= 1;
+      hedgeCount(old) >= Math.max(fingerprint?.avgHedge ?? 2, 2) &&
+      hedgeCount(anchor) <= Math.max((fingerprint?.avgHedge ?? 2) - 1, 1);
 
-    if (!moodDiff && intensityDelta < 1.5 && !hedgeFlip) continue;
+    if (intensityDelta < 1.5 && !hedgeFlip) continue;
 
     return {
       id: `knows-me-wording-${old.id}-${anchor.id}`,
       signal: "wording_shift",
-      text: KNOWS_ME_COPY.earlier_version,
+      text: hedgeFlip ? FAMILIARITY_COPY.moreSettled : KNOWS_ME_COPY.earlier_version,
       strength: 60 + Math.min(gap, 12) + overlap.length * 3 + (hedgeFlip ? 4 : 0),
       ...evidence(old, anchor),
     };
@@ -413,8 +439,10 @@ function detectWordingShift(anchor: JournalEntry, prior: JournalEntry[]): KnowsM
 function detectReopenedBeforeQuieter(
   anchor: JournalEntry,
   later: JournalEntry[],
+  fingerprint: LanguageFingerprint | null,
 ): KnowsMeCandidate | null {
-  if (anchor.reflection.emotionalIntensity < 6 || later.length === 0) return null;
+  const heavyThreshold = fingerprint?.intensityP75 ?? 6;
+  if (anchor.reflection.emotionalIntensity < heavyThreshold || later.length === 0) return null;
 
   for (const theme of anchor.reflection.recurringThemes) {
     const themeKey = theme.toLowerCase();
@@ -448,32 +476,35 @@ function collectCandidates(
 ): KnowsMeCandidate[] {
   const notes: KnowsMeCandidate[] = [];
   const latest = allSorted[allSorted.length - 1];
+  const anchorIdx = allSorted.findIndex((e) => e.id === anchor.id);
+  const fingerprint = fingerprintFromPrior(prior);
 
-  const reopenedBeforeQuieter = detectReopenedBeforeQuieter(anchor, later);
+  const reopenedBeforeQuieter = detectReopenedBeforeQuieter(anchor, later, fingerprint);
   if (reopenedBeforeQuieter) notes.push(reopenedBeforeQuieter);
 
-  const earlier = detectEarlierSelf(anchor, prior, later);
+  const earlier = detectEarlierSelf(anchor, prior, later, fingerprint);
   if (earlier) notes.push(earlier);
 
-  const quieter = detectTopicQuieter(anchor, prior);
+  const quieter = detectTopicQuieter(anchor, prior, fingerprint);
   if (quieter) notes.push(quieter);
 
-  const weight = detectWeightShift(anchor, allSorted);
+  const weight = detectWeightShift(anchor, allSorted, fingerprint);
   if (weight) notes.push(weight);
 
-  notes.push(...detectCertaintyAndDirectness(anchor, prior));
+  notes.push(...detectCertaintyAndDirectness(anchor, prior, fingerprint));
 
-  const circling = detectStillCircling(anchor, prior);
-  if (circling) notes.push(circling);
+  const stopped = detectStoppedCircling(anchor, prior, allSorted, anchorIdx, fingerprint);
+  if (stopped) notes.push(stopped);
 
-  const wording = detectWordingShift(anchor, prior);
+  const wording = detectWordingShift(anchor, prior, fingerprint);
   if (wording) notes.push(wording);
 
-  const contrastWithLatest = anchor.id !== latest.id ? detectEmotionalContrast(anchor, latest) : null;
+  const contrastWithLatest =
+    anchor.id !== latest.id ? detectEmotionalContrast(anchor, latest, fingerprint) : null;
   if (contrastWithLatest) notes.push(contrastWithLatest);
 
   for (const old of prior.slice(-6)) {
-    const contrast = detectEmotionalContrast(anchor, old);
+    const contrast = detectEmotionalContrast(anchor, old, fingerprint);
     if (contrast) notes.push(contrast);
   }
 

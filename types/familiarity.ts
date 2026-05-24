@@ -2,9 +2,9 @@ export type FamiliarityKind =
   | "more_settled_than_usual"
   | "more_direct_than_usual"
   | "quicker_return"
-  | "longer_circle_usual"
-  | "unusual_tension"
-  | "unusual_loop";
+  | "stopped_circling"
+  | "slower_return"
+  | "heavier_before";
 
 export interface FamiliarityNote {
   id: string;

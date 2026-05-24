@@ -28,6 +28,7 @@ const SKIP_PATH_PARTS = [
   "lib/memory/change-moments.ts",
   "lib/memory/recovery-memory.ts",
   "lib/memory/familiarity.ts",
+  "lib/memory/language-fingerprint.ts",
   "lib/memory/rhythm-memory.ts",
   "lib/memory/familiarity-resurfacing.ts",
   "lib/memory/resurfacing-priority.ts",

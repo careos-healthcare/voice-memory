@@ -2,12 +2,7 @@ export type RhythmKind =
   | "after_busy_weeks"
   | "shorter_gap"
   | "longer_calm"
-  | "end_of_week_return"
-  | "weekly_loop"
-  | "longer_recovery"
-  | "tension_interval"
-  | "rhythm_disruption"
-  | "late_night_weekend";
+  | "longer_recovery";
 
 export interface RhythmNote {
   id: string;
