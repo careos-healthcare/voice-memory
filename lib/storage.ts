@@ -82,6 +82,7 @@ export function saveEntry(entry: JournalEntry): void {
   trackReflectionMilestones(entries.length);
   bumpTimingFromEntry(entry);
   trackMoatNewReflection(entry.id, entry.createdAt);
+  void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
 }
 
 export function deleteEntry(id: string): void {

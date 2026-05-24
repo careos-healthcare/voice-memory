@@ -90,6 +90,7 @@ export function setBookmark(
   trackBookmarkCreated(entryId, type);
   trackRevisitRhythmBookmarkIfActive(entryId, type);
   trackBookmarkAfterCallback(undefined, type, "entry");
+  void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
   return next;
 }
 

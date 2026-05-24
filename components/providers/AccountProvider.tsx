@@ -1,0 +1,111 @@
+"use client";
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  fetchAccountSession,
+  readAccountStatus,
+  sendEmailLoginCode,
+  signOutAccount,
+  verifyEmailLoginCode,
+} from "@/lib/sync/account-client";
+import { restoreArchiveFromEncryptedBackup, syncArchiveIfSignedIn } from "@/lib/sync/client";
+import { SYNC_STATUS_EVENT } from "@/lib/sync/status-storage";
+import type { AccountSession, AccountStatus } from "@/types/account";
+
+interface AccountContextValue {
+  status: AccountStatus;
+  refresh: () => Promise<void>;
+  sendCode: (email: string) => Promise<{ devCode?: string }>;
+  verifyCode: (email: string, code: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  syncNow: () => Promise<boolean>;
+  restoreNow: () => Promise<void>;
+}
+
+const AccountContext = createContext<AccountContextValue | null>(null);
+
+export function AccountProvider({ children }: { children: React.ReactNode }) {
+  const [session, setSession] = useState<AccountSession | null>(null);
+  const [tick, setTick] = useState(0);
+
+  const refresh = useCallback(async () => {
+    const next = await fetchAccountSession();
+    setSession(next);
+    setTick((value) => value + 1);
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  useEffect(() => {
+    const onChange = () => setTick((value) => value + 1);
+    window.addEventListener(SYNC_STATUS_EVENT, onChange);
+    return () => window.removeEventListener(SYNC_STATUS_EVENT, onChange);
+  }, []);
+
+  const status = useMemo(
+    () => readAccountStatus(session),
+    [session, tick],
+  );
+
+  const sendCode = useCallback(async (email: string) => sendEmailLoginCode(email), []);
+
+  const verifyCode = useCallback(
+    async (email: string, code: string) => {
+      const next = await verifyEmailLoginCode(email, code);
+      setSession(next);
+      await syncArchiveIfSignedIn();
+      setTick((value) => value + 1);
+    },
+    [],
+  );
+
+  const signOut = useCallback(async () => {
+    await signOutAccount();
+    setSession(null);
+    setTick((value) => value + 1);
+  }, []);
+
+  const syncNow = useCallback(async () => {
+    const ok = await syncArchiveIfSignedIn();
+    setTick((value) => value + 1);
+    return ok;
+  }, []);
+
+  const restoreNow = useCallback(async () => {
+    await restoreArchiveFromEncryptedBackup();
+    setTick((value) => value + 1);
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      status,
+      refresh,
+      sendCode,
+      verifyCode,
+      signOut,
+      syncNow,
+      restoreNow,
+    }),
+    [status, refresh, sendCode, verifyCode, signOut, syncNow, restoreNow],
+  );
+
+  return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
+}
+
+export function useAccount(): AccountContextValue {
+  const context = useContext(AccountContext);
+  if (!context) {
+    throw new Error("useAccount must be used within AccountProvider.");
+  }
+  return context;
+}

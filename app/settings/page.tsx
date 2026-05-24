@@ -118,6 +118,8 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-zinc-400">
               <p>{LOCAL_FIRST_SUMMARY}</p>
+              <p>Your archive is encrypted before it leaves this device.</p>
+              <p>VoiceMemory should feel like your archive, not our server.</p>
               <p>
                 Stored reflections:{" "}
                 <span className="font-medium text-white">{entryCount}</span>
@@ -125,6 +127,9 @@ export default function SettingsPage() {
               <p className="text-xs">{DATA_EXPORT_SUMMARY}</p>
               <p className="text-xs">{DATA_DELETION_SUMMARY}</p>
               <div className="flex flex-wrap gap-2 pt-2">
+                <Link href="/account" className="text-violet-300 hover:text-violet-200 text-sm">
+                  Account & sync →
+                </Link>
                 <Link href="/export" className="text-violet-300 hover:text-violet-200 text-sm">
                   More export options →
                 </Link>
