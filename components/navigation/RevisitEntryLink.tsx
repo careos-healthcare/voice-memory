@@ -24,6 +24,7 @@ export function RevisitEntryLink({
   noteText,
   linkRole = "target",
   className,
+  onNavigate,
   children,
 }: {
   entryId: string;
@@ -32,6 +33,7 @@ export function RevisitEntryLink({
   noteText?: string;
   linkRole?: "target" | "past";
   className?: string;
+  onNavigate?: () => void;
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -67,6 +69,7 @@ export function RevisitEntryLink({
             });
           }
         }
+        onNavigate?.();
       }}
     >
       {children}

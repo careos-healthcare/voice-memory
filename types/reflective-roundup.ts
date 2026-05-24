@@ -83,3 +83,10 @@ export interface RoundupIntentionLinksReport {
   quieterThisPeriod: RoundupIntentionLink[];
   hasData: boolean;
 }
+
+export interface RoundupContinuationItem {
+  id: string;
+  text: string;
+  entryId: string;
+  kind: "line" | "key_piece" | "intention_link";
+}

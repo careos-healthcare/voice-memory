@@ -87,6 +87,7 @@ export default function RoundupPeriodPage() {
                   roundup={roundup}
                   keyPieces={keyPieces}
                   intentionLinks={intentionLinks}
+                  periodSlug={periodSlug}
                 />
               ) : null}
             </div>

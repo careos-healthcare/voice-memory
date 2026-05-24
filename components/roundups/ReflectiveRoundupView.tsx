@@ -1,29 +1,81 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
+import { RoundupContinuationActions } from "@/components/roundups/RoundupContinuationActions";
+import { trackRoundupItemRevisited } from "@/lib/roundups/roundup-continuation";
 import type {
+  KeyPiece,
   KeyPiecesReport,
   ReflectiveRoundup,
+  ReflectiveRoundupLine,
+  RoundupContinuationItem,
   RoundupIntentionLink,
   RoundupIntentionLinksReport,
 } from "@/types/reflective-roundup";
 
-function IntentionLinkRow({ link }: { link: RoundupIntentionLink }) {
+function toContinuationItem(
+  input: Pick<RoundupContinuationItem, "id" | "text" | "entryId" | "kind">,
+): RoundupContinuationItem {
+  return input;
+}
+
+function RoundupSourceLink({
+  item,
+  entryId,
+  periodSlug,
+  children,
+  className,
+}: {
+  item: RoundupContinuationItem;
+  entryId: string;
+  periodSlug?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <RevisitEntryLink
+      entryId={entryId}
+      source="memory_note"
+      noteId={item.id}
+      noteText={item.text}
+      className={className}
+      onNavigate={() => trackRoundupItemRevisited(item, entryId, periodSlug)}
+    >
+      {children}
+    </RevisitEntryLink>
+  );
+}
+
+function IntentionLinkRow({
+  link,
+  periodSlug,
+}: {
+  link: RoundupIntentionLink;
+  periodSlug?: string;
+}) {
+  const item = toContinuationItem({
+    id: link.id,
+    text: link.text,
+    entryId: link.entryId,
+    kind: "intention_link",
+  });
+
   return (
     <li className="space-y-3">
       <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{link.text}</p>
+      <RoundupContinuationActions item={item} periodSlug={periodSlug} />
       <div className="flex flex-wrap gap-x-4 gap-y-1">
-        <RevisitEntryLink
+        <RoundupSourceLink
+          item={item}
           entryId={link.entryId}
-          source="memory_note"
-          noteId={link.id}
-          noteText={link.text}
+          periodSlug={periodSlug}
           className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
         >
           Source entry
-        </RevisitEntryLink>
+        </RoundupSourceLink>
         <Link
           href="/intentions"
           className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
@@ -35,7 +87,13 @@ function IntentionLinkRow({ link }: { link: RoundupIntentionLink }) {
   );
 }
 
-function IntentionLinksSection({ report }: { report: RoundupIntentionLinksReport }) {
+function IntentionLinksSection({
+  report,
+  periodSlug,
+}: {
+  report: RoundupIntentionLinksReport;
+  periodSlug?: string;
+}) {
   if (!report.hasData) return null;
 
   const sections = [
@@ -51,7 +109,7 @@ function IntentionLinksSection({ report }: { report: RoundupIntentionLinksReport
           <h2 className="text-xs uppercase tracking-[0.18em] text-zinc-600">{section.title}</h2>
           <ul className="space-y-10">
             {section.items.map((link) => (
-              <IntentionLinkRow key={link.id} link={link} />
+              <IntentionLinkRow key={link.id} link={link} periodSlug={periodSlug} />
             ))}
           </ul>
         </div>
@@ -60,29 +118,92 @@ function IntentionLinksSection({ report }: { report: RoundupIntentionLinksReport
   );
 }
 
-function KeyPiecesSection({ report }: { report: KeyPiecesReport }) {
+function KeyPieceRow({
+  piece,
+  periodSlug,
+}: {
+  piece: KeyPiece;
+  periodSlug?: string;
+}) {
+  const item = toContinuationItem({
+    id: piece.id,
+    text: piece.text,
+    entryId: piece.entryId,
+    kind: "key_piece",
+  });
+
+  return (
+    <li className="space-y-3">
+      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{piece.text}</p>
+      <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+      <RoundupSourceLink
+        item={item}
+        entryId={piece.entryId}
+        periodSlug={periodSlug}
+        className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
+      >
+        Source entry
+      </RoundupSourceLink>
+    </li>
+  );
+}
+
+function KeyPiecesSection({
+  report,
+  periodSlug,
+}: {
+  report: KeyPiecesReport;
+  periodSlug?: string;
+}) {
   if (!report.hasData) return null;
 
   return (
     <section className="space-y-8 border-t border-white/[0.06] pt-14">
       <h2 className="text-xs uppercase tracking-[0.18em] text-zinc-600">Worth noticing</h2>
       <ul className="space-y-10">
-        {report.items.map((item) => (
-          <li key={item.id} className="space-y-3">
-            <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{item.text}</p>
-            <RevisitEntryLink
-              entryId={item.entryId}
-              source="memory_note"
-              noteId={item.id}
-              noteText={item.text}
-              className="text-xs text-zinc-600/90 transition-colors hover:text-zinc-400"
-            >
-              Source entry
-            </RevisitEntryLink>
-          </li>
+        {report.items.map((piece) => (
+          <KeyPieceRow key={piece.id} piece={piece} periodSlug={periodSlug} />
         ))}
       </ul>
     </section>
+  );
+}
+
+function RoundupLineRow({
+  line,
+  periodSlug,
+}: {
+  line: ReflectiveRoundupLine;
+  periodSlug?: string;
+}) {
+  const entryId = line.entryIds[0] ?? "";
+  const item = toContinuationItem({
+    id: line.id,
+    text: line.text,
+    entryId,
+    kind: "line",
+  });
+
+  return (
+    <article className="space-y-4">
+      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{line.text}</p>
+      <RoundupContinuationActions item={item} periodSlug={periodSlug} />
+      {line.entryIds.length > 0 ? (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600/90">
+          {line.entryIds.map((linkedEntryId, index) => (
+            <RoundupSourceLink
+              key={`${line.id}-${linkedEntryId}`}
+              item={item}
+              entryId={linkedEntryId}
+              periodSlug={periodSlug}
+              className="transition-colors hover:text-zinc-400"
+            >
+              {line.entryIds.length === 1 ? "Related entry" : `Related entry ${index + 1}`}
+            </RoundupSourceLink>
+          ))}
+        </div>
+      ) : null}
+    </article>
   );
 }
 
@@ -90,10 +211,12 @@ export function ReflectiveRoundupView({
   roundup,
   keyPieces,
   intentionLinks,
+  periodSlug,
 }: {
   roundup: ReflectiveRoundup;
   keyPieces?: KeyPiecesReport | null;
   intentionLinks?: RoundupIntentionLinksReport | null;
+  periodSlug?: string;
 }) {
   const hasLines = roundup.hasData && roundup.lines.length > 0;
   const hasKeyPieces = keyPieces?.hasData ?? false;
@@ -112,32 +235,16 @@ export function ReflectiveRoundupView({
       {hasLines ? (
         <div className="space-y-14">
           {roundup.lines.map((line) => (
-            <article key={line.id} className="space-y-4">
-              <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{line.text}</p>
-              {line.entryIds.length > 0 ? (
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600/90">
-                  {line.entryIds.map((entryId, index) => (
-                    <RevisitEntryLink
-                      key={`${line.id}-${entryId}`}
-                      entryId={entryId}
-                      source="memory_note"
-                      noteId={line.id}
-                      noteText={line.text}
-                      className="transition-colors hover:text-zinc-400"
-                    >
-                      {line.entryIds.length === 1 ? "Related entry" : `Related entry ${index + 1}`}
-                    </RevisitEntryLink>
-                  ))}
-                </div>
-              ) : null}
-            </article>
+            <RoundupLineRow key={line.id} line={line} periodSlug={periodSlug} />
           ))}
         </div>
       ) : null}
 
-      {intentionLinks ? <IntentionLinksSection report={intentionLinks} /> : null}
+      {intentionLinks ? (
+        <IntentionLinksSection report={intentionLinks} periodSlug={periodSlug} />
+      ) : null}
 
-      {keyPieces ? <KeyPiecesSection report={keyPieces} /> : null}
+      {keyPieces ? <KeyPiecesSection report={keyPieces} periodSlug={periodSlug} /> : null}
     </div>
   );
 }

@@ -240,6 +240,58 @@ export function entriesMentioningIntention(
   });
 }
 
+function roundupLineToIntentionText(text: string): string {
+  const phrase = text.trim().replace(/\s+/g, " ").replace(/[.,;:!?…]+$/, "").slice(0, 72);
+  if (phrase.length < 6) return text.trim().slice(0, 72);
+  const lower = phrase.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+/** Create or refresh a long-term intention from a roundup line — no reminders or deadlines. */
+export function upsertIntentionFromRoundup(input: {
+  text: string;
+  entryId: string;
+}): LongTermIntention {
+  const text = roundupLineToIntentionText(input.text);
+  let intentions = readStoreRaw();
+  const existing = findMatchingIntention(intentions, text);
+  const now = new Date().toISOString();
+
+  if (existing) {
+    const sourceEntryIds =
+      input.entryId && !existing.sourceEntryIds.includes(input.entryId)
+        ? [...existing.sourceEntryIds, input.entryId].slice(-12)
+        : existing.sourceEntryIds;
+    const status: IntentionStatus =
+      existing.status === "changed" ? "changed" : "returned";
+    const updated: LongTermIntention = {
+      ...existing,
+      text,
+      sourceEntryIds,
+      lastSeenAt: now,
+      status,
+    };
+    intentions = intentions.map((row) => (row.id === existing.id ? updated : row));
+    writeStoreRaw(intentions);
+    return updated;
+  }
+
+  const created: LongTermIntention = {
+    id: `intent-${crypto.randomUUID()}`,
+    text,
+    sourceEntryIds: input.entryId ? [input.entryId] : [],
+    firstSeenAt: now,
+    lastSeenAt: now,
+    status: "open",
+  };
+  intentions.unshift(created);
+  intentions.sort(
+    (a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime(),
+  );
+  writeStoreRaw(intentions);
+  return created;
+}
+
 export function syncLongTermIntentions(
   entries: JournalEntry[] = getMemoryEligibleEntries(),
 ): LongTermIntention[] {
