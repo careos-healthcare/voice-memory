@@ -98,6 +98,8 @@ export type FounderWarningKind =
   | "emotional_overclaim"
   | "explaining_too_much"
   | "archive_overdesigned"
+  | "emotional_specificity_loss"
+  | "archive_convergence"
   | "retention_novelty_drop"
   | "performative_sharing"
   | "export_before_churn";

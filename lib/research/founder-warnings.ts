@@ -1,6 +1,8 @@
 import { buildEmotionalLegitimacyReport } from "@/lib/debug/emotional-legitimacy-review";
 import { buildEmotionalIntegrityReport } from "@/lib/integrity/emotional-integrity";
 import { buildArchiveSimplicityReport } from "@/lib/integrity/archive-simplicity-review";
+import { buildArchiveIndividualityReviewReport } from "@/lib/debug/archive-individuality-review";
+import { buildArchiveDivergenceReviewReport } from "@/lib/debug/archive-divergence-review";
 import { LAUNCH_EVENTS, countLocalEvents, readLocalEvents } from "@/lib/local-analytics";
 import { buildRevisitSequencingReport } from "@/lib/refinement/revisit-sequencing";
 import { buildLoopOptimizationReport } from "@/lib/retention/loop-optimization";
@@ -28,6 +30,8 @@ export function buildFounderWarningsReport(): FounderWarningsReport {
   const legitimacy = buildEmotionalLegitimacyReport(entries);
   const integrity = buildEmotionalIntegrityReport(entries);
   const simplicity = buildArchiveSimplicityReport();
+  const individuality = buildArchiveIndividualityReviewReport();
+  const divergence = buildArchiveDivergenceReviewReport();
   const sharing = buildShareObservationReport();
   const weekly = readWeeklyRetentionSnapshots();
   const warnings: FounderWarning[] = [];
@@ -95,6 +99,31 @@ export function buildFounderWarningsReport(): FounderWarningsReport {
         "The archive may be becoming overdesigned.",
         `Overlap score ${simplicity.overlapScore} · ${simplicity.rows.filter((r) => r.category === "overlap").length} overlapping detectors`,
         "watch",
+      ),
+    );
+  }
+
+  if (individuality.founderWarnings.includes("The product may be losing emotional specificity.")) {
+    warnings.push(
+      warning(
+        "emotional_specificity_loss",
+        "The product may be losing emotional specificity.",
+        `Vocabulary diversity ${individuality.vocabularyDiversity} · callback similarity ${individuality.callbackSimilarityScore}`,
+        "concern",
+      ),
+    );
+  }
+
+  if (
+    divergence.founderWarnings.includes("Different users may be starting to sound the same.") ||
+    divergence.archivesConverging
+  ) {
+    warnings.push(
+      warning(
+        "archive_convergence",
+        "Different users may be starting to sound the same.",
+        `Homogenization score ${divergence.homogenizationScore}`,
+        "concern",
       ),
     );
   }
