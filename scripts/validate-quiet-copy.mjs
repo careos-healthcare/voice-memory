@@ -43,6 +43,7 @@ const SKIP_PATH_PARTS = [
   "lib/conversation/continuation-loops.ts",
   "lib/sync/",
   "lib/archive/",
+  "lib/research/",
   "lib/sync/",
   "lib/reliability/",
   "lib/server/",
