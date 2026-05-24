@@ -1,4 +1,5 @@
 import { addDaysToKey, startOfWeekKey, toDayKey, todayKey } from "@/lib/dates";
+import { pickQualityRoundupLines } from "@/lib/roundups/roundup-quality";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
@@ -11,8 +12,6 @@ import type {
   RoundupPeriod,
   RoundupPeriodKind,
 } from "@/types/reflective-roundup";
-
-const MAX_LINES = 5;
 
 const HEDGE_RE =
   /\b(maybe|i guess|sort of|kind of|probably|not sure|i don't know|eventually)\b/gi;
@@ -27,6 +26,8 @@ interface LineCandidate {
   signal: ReflectiveRoundupSignal;
   score: number;
 }
+
+export type { LineCandidate as RoundupLineCandidate };
 
 function sortedEntries(entries: JournalEntry[]): JournalEntry[] {
   return [...entries].sort(
@@ -421,25 +422,52 @@ function detectCarriedDifferently(
   return null;
 }
 
-function pickLines(candidates: LineCandidate[]): ReflectiveRoundupLine[] {
-  const usedSignals = new Set<ReflectiveRoundupSignal>();
-  const sorted = [...candidates].sort((a, b) => b.score - a.score);
-  const picked: ReflectiveRoundupLine[] = [];
+export function collectRoundupLineCandidates(
+  period: RoundupPeriod,
+  entries: JournalEntry[] = getMemoryEligibleEntries(),
+): LineCandidate[] {
+  const scoped = entriesInRange(entries, period.startDayKey, period.endDayKey);
+  const candidates: LineCandidate[] = [];
 
-  for (const candidate of sorted) {
-    if (picked.length >= MAX_LINES) break;
-    if (usedSignals.has(candidate.signal)) continue;
-    usedSignals.add(candidate.signal);
-    picked.push({
-      id: `roundup-${candidate.signal}-${picked.length}`,
-      text: candidate.text,
-      entryIds: candidate.entryIds,
-      signal: candidate.signal,
-      score: candidate.score,
+  if (scoped.length === 0) return candidates;
+
+  const returned = detectReturned(scoped, period.kind);
+  if (returned) candidates.push(returned);
+
+  const faded = detectFaded(scoped);
+  if (faded) candidates.push(faded);
+
+  candidates.push(...detectToneAndClarity(scoped));
+
+  const unfinished = detectUnfinished(scoped);
+  if (unfinished) candidates.push(unfinished);
+
+  const weight = detectWeight(scoped, period.kind);
+  if (weight) candidates.push(weight);
+
+  const revisited = detectRevisited(period, scoped);
+  if (revisited) candidates.push(revisited);
+
+  const carried = detectCarriedDifferently(scoped, period.kind);
+  if (carried) candidates.push(carried);
+
+  if (candidates.length === 0 && scoped.length >= 1) {
+    const theme = scoped[scoped.length - 1].reflection.recurringThemes[0];
+    candidates.push({
+      text: theme
+        ? `You kept returning to ${theme.toLowerCase()}.`
+        : "Your voice kept circling the same ground.",
+      entryIds: scoped.slice(-2).map((entry) => entry.id),
+      signal: "returned",
+      score: 55,
     });
   }
 
-  return picked;
+  return candidates;
+}
+
+function pickLines(candidates: LineCandidate[]): ReflectiveRoundupLine[] {
+  return pickQualityRoundupLines(candidates);
 }
 
 export function buildWeeklyPeriod(endDayKey: string = todayKey()): RoundupPeriod {
@@ -573,7 +601,6 @@ export function buildReflectiveRoundup(
   entries: JournalEntry[] = getMemoryEligibleEntries(),
 ): ReflectiveRoundup {
   const scoped = entriesInRange(entries, period.startDayKey, period.endDayKey);
-  const candidates: LineCandidate[] = [];
 
   if (scoped.length === 0) {
     return {
@@ -584,37 +611,7 @@ export function buildReflectiveRoundup(
     };
   }
 
-  const returned = detectReturned(scoped, period.kind);
-  if (returned) candidates.push(returned);
-
-  const faded = detectFaded(scoped);
-  if (faded) candidates.push(faded);
-
-  candidates.push(...detectToneAndClarity(scoped));
-
-  const unfinished = detectUnfinished(scoped);
-  if (unfinished) candidates.push(unfinished);
-
-  const weight = detectWeight(scoped, period.kind);
-  if (weight) candidates.push(weight);
-
-  const revisited = detectRevisited(period, scoped);
-  if (revisited) candidates.push(revisited);
-
-  const carried = detectCarriedDifferently(scoped, period.kind);
-  if (carried) candidates.push(carried);
-
-  if (candidates.length === 0 && scoped.length >= 1) {
-    const theme = scoped[scoped.length - 1].reflection.recurringThemes[0];
-    candidates.push({
-      text: theme
-        ? `You kept returning to ${theme.toLowerCase()}.`
-        : "Your voice kept circling the same ground.",
-      entryIds: scoped.slice(-2).map((entry) => entry.id),
-      signal: "returned",
-      score: 55,
-    });
-  }
+  const candidates = collectRoundupLineCandidates(period, entries);
 
   return {
     period,

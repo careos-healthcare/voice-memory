@@ -21,6 +21,7 @@ const SKIP_PATH_PARTS = [
   "lib/debug",
   "lib/validation",
   "lib/intentions",
+  "lib/roundups/roundup-quality.ts",
   "lib/tester-onboarding-copy.ts",
   "lib/patterns/pattern-engine.ts",
   "lib/patterns/continuity-engine.ts",
@@ -111,6 +112,13 @@ const BANNED_PHRASES = [
   { re: /\banalytics dashboard\b/i, label: "analytics dashboard" },
   { re: /\binsight engine\b/i, label: "insight engine" },
   { re: /\bpattern engine\b/i, label: "pattern engine" },
+  { re: /\baction plan\b/i, label: "action plan" },
+  { re: /\bgoal dashboard\b/i, label: "goal dashboard" },
+  { re: /\bproductivity score\b/i, label: "productivity score" },
+  { re: /\bhabit completion\b/i, label: "habit completion" },
+  { re: /\bkpi\b/i, label: "KPI" },
+  { re: /\bsmart goal\b/i, label: "SMART goal" },
+  { re: /\bcoaching plan\b/i, label: "coaching plan" },
 ];
 
 const CHART_DASHBOARD_PHRASES = [
