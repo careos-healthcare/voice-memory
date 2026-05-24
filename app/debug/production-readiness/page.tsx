@@ -54,6 +54,15 @@ export default function ProductionReadinessPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/founder-review" className="text-violet-300 hover:text-violet-200">
+            Founder review →
+          </Link>
+          <Link href="/debug/incidents" className="text-violet-300 hover:text-violet-200">
+            Incidents →
+          </Link>
+          <Link href="/debug/tester-feedback" className="text-violet-300 hover:text-violet-200">
+            Tester feedback →
+          </Link>
           <Link href="/debug/monetization-readiness" className="text-violet-300 hover:text-violet-200">
             Monetization gate →
           </Link>

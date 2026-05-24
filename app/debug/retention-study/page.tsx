@@ -536,6 +536,15 @@ export default function RetentionStudyDebugPage() {
             {message ? <p className="text-sm text-zinc-400">{message}</p> : null}
 
             <div className="flex flex-wrap gap-3 text-sm">
+              <Link href="/debug/founder-review" className="text-violet-300 hover:text-violet-200">
+                Founder review →
+              </Link>
+              <Link href="/debug/tester-feedback" className="text-violet-300 hover:text-violet-200">
+                Tester feedback →
+              </Link>
+              <Link href="/welcome" className="text-zinc-500 hover:text-zinc-300">
+                Tester welcome →
+              </Link>
               <Link href="/debug/moat-review" className="text-violet-300 hover:text-violet-200">
                 Moat review →
               </Link>
