@@ -201,6 +201,9 @@ export default function RetentionDebugPage() {
             </Card>
 
             <div className="flex flex-wrap gap-3 text-sm">
+              <Link href="/debug/retention-loops" className="text-violet-300 hover:text-violet-200">
+                Retention loops →
+              </Link>
               <Link href="/debug/callbacks" className="text-violet-300 hover:text-violet-200">
                 Callback quality review →
               </Link>

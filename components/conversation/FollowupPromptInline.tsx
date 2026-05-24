@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
 import { recordFollowupContinued } from "@/lib/callback-interaction-signals";
 import { markFollowupBoost } from "@/lib/refinement/emotional-timing";
+import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 
 interface FollowupPromptInlineProps {
@@ -27,6 +28,7 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
             onClick={() => {
               if (prompt.noteId) {
                 recordFollowupContinued(prompt.noteId);
+                trackFollowupRecordingStarted(prompt.noteId, prompt.id);
                 markFollowupBoost();
               }
               onContinue(prompt);

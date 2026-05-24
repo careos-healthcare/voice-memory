@@ -56,6 +56,7 @@ import {
   trackRevisitThenNowSeen,
   type RevisitExperiencePresentation,
 } from "@/lib/refinement/revisit-experience";
+import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { isReflectionPending } from "@/lib/pending-reflection";
 import { deleteEntry, getEntry, getMemoryEligibleEntries } from "@/lib/storage";
@@ -323,6 +324,9 @@ export default function EntryPage() {
   const handleContinueFollowup = (prompt: FollowupPrompt) => {
     if (entry && revisitExperience?.isRevisit) {
       trackRevisitFollowupStarted(entry.id, prompt.id);
+    }
+    if (prompt.noteId) {
+      trackFollowupRecordingStarted(prompt.noteId, prompt.id);
     }
     storeFollowupPrompt(prompt.text);
     router.push("/#recorder");

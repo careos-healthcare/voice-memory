@@ -20,6 +20,7 @@ import { entryContinuationOpener } from "@/lib/conversation/conversation-continu
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
 import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import { rememberNoteContext } from "@/lib/retention/retention-loops";
 import {
   isRevisitEntry,
   markRevisitBoost,
@@ -97,6 +98,13 @@ export function buildQuietHomepagePresentation(
   if (resolvedPrimary) {
     recordEmotionalNoteShown("homepage", resolvedPrimary);
     recordCallbackSurfaced(resolvedPrimary.id);
+    if (resolvedPrimary.entryId) {
+      rememberNoteContext(
+        resolvedPrimary.entryId,
+        resolvedPrimary.id,
+        resolvedPrimary.text,
+      );
+    }
   }
 
   const followupNotes = [...continuation, ...(resolvedPrimary ? [resolvedPrimary] : [])];

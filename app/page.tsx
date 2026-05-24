@@ -17,6 +17,7 @@ import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { consumeStoredFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
+import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import {
   HONESTY_LINE,
   POSITIONING_EYEBROW,
@@ -41,6 +42,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
+      checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
       const presentation = buildQuietHomepagePresentation(entries, limits);
       setPrimaryNote(presentation.primaryNote);

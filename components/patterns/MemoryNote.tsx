@@ -44,6 +44,9 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
             <RevisitEntryLink
               entryId={note.pastEntryId}
               source={revisitSourceFromNote(note)}
+              noteId={note.id}
+              noteText={note.text}
+              linkRole="past"
               className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
               before
@@ -67,6 +70,9 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
             <RevisitEntryLink
               entryId={note.entryId}
               source={revisitSourceFromNote(note)}
+              noteId={note.id}
+              noteText={note.text}
+              linkRole="target"
               className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
               now

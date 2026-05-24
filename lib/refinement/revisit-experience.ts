@@ -2,6 +2,7 @@ import { recordCallbackSurfaced } from "@/lib/callback-interaction-signals";
 import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { trackLocalEvent } from "@/lib/local-analytics";
+import { trackEntryRevisited as trackRetentionEntryRevisited, rememberNoteContext } from "@/lib/retention/retention-loops";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
@@ -272,9 +273,23 @@ export function buildRevisitExperience(
   if (primaryCallback) {
     recordEmotionalNoteShown("entry", primaryCallback);
     recordCallbackSurfaced(primaryCallback.id);
+    if (primaryCallback.entryId) {
+      rememberNoteContext(
+        primaryCallback.entryId,
+        primaryCallback.id,
+        primaryCallback.text,
+      );
+    }
   } else if (quietRealization) {
     recordEmotionalNoteShown("entry", quietRealization);
     recordCallbackSurfaced(quietRealization.id);
+    if (quietRealization.entryId) {
+      rememberNoteContext(
+        quietRealization.entryId,
+        quietRealization.id,
+        quietRealization.text,
+      );
+    }
   }
 
   const followupPrompt = buildFollowupPrompt(
@@ -301,6 +316,7 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
     entryId,
     sources: sources.join(","),
   });
+  trackRetentionEntryRevisited(entryId, sources);
 }
 
 export function trackRevisitThenNowSeen(entryId: string, noteId: string): void {

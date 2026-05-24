@@ -1,4 +1,5 @@
 import { formatEntryDate } from "@/lib/utils";
+import { trackBookmarkCreated } from "@/lib/retention/retention-loops";
 import type { JournalEntry } from "@/types/journal";
 import type {
   ReflectionBookmark,
@@ -84,6 +85,7 @@ export function setBookmark(
   };
   writeBookmarks([next, ...bookmarks]);
   dispatchBookmarkChange();
+  trackBookmarkCreated(entryId, type);
   return next;
 }
 

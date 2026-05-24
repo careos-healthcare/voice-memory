@@ -5,6 +5,7 @@ import { Check, Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import { trackCopiedMemoryMoment } from "@/lib/retention/retention-loops";
 import {
   buildEntrySharedMemoryMoment,
   buildMilestoneSharedMemoryMoment,
@@ -70,6 +71,11 @@ export function CopyMemoryMomentButton(props: CopyMemoryMomentButtonProps) {
       source: props.source,
       sourceId,
       includeQuote: String(includeQuote),
+    });
+    trackCopiedMemoryMoment({
+      sourceId,
+      source: props.source,
+      entryId: props.source === "entry" ? props.entry.id : undefined,
     });
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2000);

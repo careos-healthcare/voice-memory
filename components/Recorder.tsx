@@ -16,6 +16,10 @@ import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import { saveAudio } from "@/lib/audio-storage";
 import { LISTENING_SAVED_COPY } from "@/lib/listening-mode";
 import { createListeningModeEntry } from "@/lib/pending-reflection";
+import {
+  peekFollowupLoopContext,
+  trackFollowupRecordingCompleted,
+} from "@/lib/retention/retention-loops";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, saveEntry } from "@/lib/storage";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
@@ -173,6 +177,9 @@ export function Recorder({
         };
 
         saveEntry(newEntry);
+        if (reflectionPrompt || peekFollowupLoopContext()) {
+          trackFollowupRecordingCompleted(newEntry.id);
+        }
         setEntry(newEntry);
         setState("complete");
         onComplete?.(newEntry);
@@ -189,7 +196,7 @@ export function Recorder({
         );
       }
     },
-    [onComplete, router, listeningMode],
+    [onComplete, router, listeningMode, reflectionPrompt],
   );
 
   const stopRecording = useCallback(() => {
