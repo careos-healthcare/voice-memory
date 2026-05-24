@@ -31,15 +31,15 @@ export default function CallbacksDebugPage() {
         <header className="mt-2 flex items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">
-              Callback tuning
+              Callback survival
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
               Memory lines
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
-              Rank callbacks by emotional residue. Find which exact lines create pauses, rereads,
-              revisits, bookmarks, copied moments, and follow-up continuations — then cut or double
-              down.
+              Find which exact memory lines survive emotionally after use. Track pauses, rereads,
+              old-entry revisits, bookmarks, copied moments, follow-up continuations, and 24h/72h
+              remembrance — then cut weak lines or double down on survivors.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>

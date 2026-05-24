@@ -589,6 +589,12 @@ function computeScores(events: RetentionLoopEvent[]): RetentionLoopScores {
   };
 }
 
+export function readRetentionLoopEvents(): RetentionLoopEvent[] {
+  if (!isBrowser()) return [];
+  checkVoluntaryReturns();
+  return readEvents();
+}
+
 export function buildRetentionLoopReport(): RetentionLoopReport {
   checkVoluntaryReturns();
   const events = readEvents();

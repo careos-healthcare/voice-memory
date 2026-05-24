@@ -27,7 +27,9 @@ export type CallbackReviewLabel =
   | "comforting"
   | "worth_revisiting"
   | "high_emotional_residue"
-  | "forgettable";
+  | "forgettable"
+  | "remembered_24h"
+  | "remembered_72h";
 
 export type RewriteCandidateFlag =
   | "generic_wording"
@@ -70,6 +72,27 @@ export interface CallbackSourceLocation {
   note?: string;
 }
 
+export interface CallbackSurvivalAnalysis {
+  callbackShownCount: number;
+  rereadCount: number;
+  oldEntryRevisitCount: number;
+  bookmarkAfterCallbackCount: number;
+  copiedMemoryMomentCount: number;
+  followUpStartCount: number;
+  followUpCompleteCount: number;
+  dwellTimeAverageMs: number;
+  remembered24hFlag: boolean;
+  remembered24hManual: boolean;
+  remembered72hFlag: boolean;
+  remembered72hManual: boolean;
+  pauseScore: number;
+  revisitScore: number;
+  continuationScore: number;
+  rememberedScore: number;
+  emotionalSurvivalScore: number;
+  lowSurvivalCutCandidate: boolean;
+}
+
 export interface CallbackReviewItem {
   id: string;
   kind: CallbackReviewKind;
@@ -95,6 +118,7 @@ export interface CallbackReviewItem {
   qualityScore: number;
   cutCandidate: boolean;
   doubleDown: boolean;
+  survival: CallbackSurvivalAnalysis;
 }
 
 export interface CallbackQualityReviewReport {
@@ -103,6 +127,9 @@ export interface CallbackQualityReviewReport {
   labeledCount: number;
   cutCandidateCount: number;
   doubleDownCount: number;
+  survived24hCount: number;
+  survived72hCount: number;
+  lowSurvivalCutCount: number;
   hasData: boolean;
 }
 
@@ -122,6 +149,16 @@ export const CALLBACK_REVIEW_LABELS: Array<{
   { value: "worth_revisiting", label: "Worth revisiting" },
   { value: "high_emotional_residue", label: "High emotional residue" },
   { value: "forgettable", label: "Forgettable" },
+  { value: "remembered_24h", label: "Remembered 24h" },
+  { value: "remembered_72h", label: "Remembered 72h" },
+];
+
+export const CALLBACK_SURVIVAL_LABELS: Array<{
+  value: CallbackReviewLabel;
+  label: string;
+}> = [
+  { value: "remembered_24h", label: "Remembered 24h" },
+  { value: "remembered_72h", label: "Remembered 72h" },
 ];
 
 export const REWRITE_FLAG_LABELS: Record<RewriteCandidateFlag, string> = {

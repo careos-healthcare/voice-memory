@@ -21,7 +21,10 @@ import { buildContinuityMomentsReport } from "@/lib/patterns/continuity-moments"
 import { buildMemoryNotesReport, thenVsNowToNote } from "@/lib/patterns/memory-notes";
 import { countLabeledCallbacks, getCallbackReviewLabels } from "@/lib/debug/callback-review-labels";
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
-import { enrichCallbackReviewItem } from "@/lib/debug/callback-quality-score";
+import {
+  enrichCallbackReviewItem,
+  type CallbackReviewItemDraft,
+} from "@/lib/debug/callback-quality-score";
 import { resolveCallbackSource } from "@/lib/debug/callback-source-map";
 import type {
   CallbackQualityReviewReport,
@@ -120,7 +123,7 @@ function noteToItem(
   const followup = buildFollowupPrompt([note]);
   const followupPrompt = followup?.text;
 
-  const base: CallbackReviewItem = {
+  const base: CallbackReviewItemDraft = {
     id: note.id,
     kind,
     text: note.text,
@@ -140,11 +143,6 @@ function noteToItem(
     followupNoteId: note.id,
     followupPrompt,
     continuedFollowup: signals.followupContinued,
-    manualLabels: [],
-    emotionalResidueScore: 0,
-    qualityScore: 0,
-    cutCandidate: false,
-    doubleDown: false,
   };
 
   return enrichCallbackReviewItem(base, getCallbackReviewLabels(note.id));
@@ -163,7 +161,7 @@ function lineToItem(
   const rewriteFlags = detectRewriteCandidateFlags({ text, kind });
   const signals = callbackInteractionSignals(id, entryIds);
   const retention = summarizeCallbackRetention(id, entryIds);
-  const base: CallbackReviewItem = {
+  const base: CallbackReviewItemDraft = {
     id,
     kind,
     text,
@@ -177,11 +175,6 @@ function lineToItem(
     signals,
     retention,
     continuedFollowup: signals.followupContinued,
-    manualLabels: [],
-    emotionalResidueScore: 0,
-    qualityScore: 0,
-    cutCandidate: false,
-    doubleDown: false,
   };
 
   return enrichCallbackReviewItem(base, getCallbackReviewLabels(id));
@@ -209,6 +202,9 @@ export function buildCallbackQualityReviewReport(
       labeledCount: 0,
       cutCandidateCount: 0,
       doubleDownCount: 0,
+      survived24hCount: 0,
+      survived72hCount: 0,
+      lowSurvivalCutCount: 0,
       hasData: false,
     };
   }
@@ -539,6 +535,15 @@ export function buildCallbackQualityReviewReport(
   const rewriteCandidateCount = deduped.filter((item) => item.rewriteFlags.length > 0).length;
   const cutCandidateCount = deduped.filter((item) => item.cutCandidate).length;
   const doubleDownCount = deduped.filter((item) => item.doubleDown).length;
+  const survived24hCount = deduped.filter(
+    (item) => item.survival.remembered24hFlag || item.survival.remembered24hManual,
+  ).length;
+  const survived72hCount = deduped.filter(
+    (item) => item.survival.remembered72hFlag || item.survival.remembered72hManual,
+  ).length;
+  const lowSurvivalCutCount = deduped.filter(
+    (item) => item.survival.lowSurvivalCutCandidate,
+  ).length;
 
   return {
     items: deduped,
@@ -546,6 +551,9 @@ export function buildCallbackQualityReviewReport(
     labeledCount: countLabeledCallbacks(),
     cutCandidateCount,
     doubleDownCount,
+    survived24hCount,
+    survived72hCount,
+    lowSurvivalCutCount,
     hasData: deduped.length > 0,
   };
 }

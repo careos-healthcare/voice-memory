@@ -165,6 +165,14 @@ function memoryMomentCopiedForEntries(entryIds: string[]): boolean {
   });
 }
 
+export function averageEntryDwellMs(entryIds: string[]): number {
+  const store = readStore();
+  const linked = store.entries.filter((row) => entryIds.includes(row.entryId));
+  const totalViews = linked.reduce((sum, row) => sum + row.viewCount, 0);
+  const totalDwell = linked.reduce((sum, row) => sum + row.totalDwellMs, 0);
+  return totalViews > 0 ? Math.round(totalDwell / totalViews) : 0;
+}
+
 export function callbackInteractionSignals(
   callbackId: string,
   entryIds: string[],

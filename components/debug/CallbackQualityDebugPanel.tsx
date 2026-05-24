@@ -15,7 +15,7 @@ import {
   matchesCallbackFilter,
   type CallbackReviewFilter,
 } from "@/lib/debug/callback-quality-score";
-import { downloadCallbackReviewJson } from "@/lib/debug/callback-review-export";
+import { downloadCallbackReviewJson, downloadCallbackSurvivalJson } from "@/lib/debug/callback-review-export";
 import {
   CALLBACK_REVIEW_LABELS,
   REWRITE_FLAG_LABELS,
@@ -31,6 +31,18 @@ function SignalRow({ label, value }: { label: string; value: string }) {
       <span className="tabular-nums text-zinc-300">{value}</span>
     </div>
   );
+}
+
+function survivalDots(item: CallbackReviewItem): string {
+  const marks: string[] = [];
+  const s = item.survival;
+  if (s.remembered24hFlag || s.remembered24hManual) marks.push("24h");
+  if (s.remembered72hFlag || s.remembered72hManual) marks.push("72h");
+  if (s.oldEntryRevisitCount > 0) marks.push("↩");
+  if (s.followUpCompleteCount > 0) marks.push("→");
+  if (s.bookmarkAfterCallbackCount > 0) marks.push("★");
+  if (s.copiedMemoryMomentCount > 0) marks.push("⎘");
+  return marks.join(" ") || "—";
 }
 
 function engagementDots(item: CallbackReviewItem): string {
@@ -60,8 +72,10 @@ function CallbackRankedTable({
             <th className="px-3 py-2.5 font-medium">#</th>
             <th className="px-3 py-2.5 font-medium">Line</th>
             <th className="px-3 py-2.5 font-medium">Residue</th>
+            <th className="px-3 py-2.5 font-medium">Survival</th>
             <th className="px-3 py-2.5 font-medium">Quality</th>
             <th className="px-3 py-2.5 font-medium">Engagement</th>
+            <th className="px-3 py-2.5 font-medium">Survived</th>
             <th className="px-3 py-2.5 font-medium">Flags</th>
             <th className="px-3 py-2.5 font-medium">Source</th>
           </tr>
@@ -85,10 +99,19 @@ function CallbackRankedTable({
               <td className="px-3 py-3 tabular-nums font-medium text-violet-200">
                 {item.emotionalResidueScore}
               </td>
+              <td className="px-3 py-3 tabular-nums font-medium text-sky-200">
+                {item.survival.emotionalSurvivalScore}
+              </td>
               <td className="px-3 py-3 tabular-nums text-zinc-400">{item.qualityScore}</td>
               <td className="px-3 py-3 text-xs text-zinc-500">{engagementDots(item)}</td>
+              <td className="px-3 py-3 text-xs text-zinc-500">{survivalDots(item)}</td>
               <td className="px-3 py-3">
                 <div className="flex flex-wrap gap-1">
+                  {item.survival.lowSurvivalCutCandidate ? (
+                    <span className="rounded-full bg-orange-500/10 px-1.5 py-0.5 text-[10px] text-orange-200/90">
+                      Low survival
+                    </span>
+                  ) : null}
                   {item.doubleDown ? (
                     <span className="rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] text-emerald-200/90">
                       Double down
@@ -173,7 +196,8 @@ function CallbackReviewCard({
             </span>
           ) : null}
           <span className="text-[10px] tabular-nums text-zinc-600">
-            residue {item.emotionalResidueScore} · quality {item.qualityScore}
+            residue {item.emotionalResidueScore} · survival {item.survival.emotionalSurvivalScore} ·
+            quality {item.qualityScore}
           </span>
         </div>
         <CardTitle className="text-base font-normal leading-relaxed text-zinc-200">
@@ -238,6 +262,76 @@ function CallbackReviewCard({
             </ul>
           </div>
         ) : null}
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
+            Survival analysis
+          </p>
+          <div className="mt-2 space-y-1.5 rounded-xl bg-white/[0.03] p-3">
+            <SignalRow label="Shown" value={String(item.survival.callbackShownCount)} />
+            <SignalRow label="Rereads" value={String(item.survival.rereadCount)} />
+            <SignalRow
+              label="Old-entry revisits"
+              value={String(item.survival.oldEntryRevisitCount)}
+            />
+            <SignalRow
+              label="Bookmarks after callback"
+              value={String(item.survival.bookmarkAfterCallbackCount)}
+            />
+            <SignalRow
+              label="Copied memory moments"
+              value={String(item.survival.copiedMemoryMomentCount)}
+            />
+            <SignalRow
+              label="Follow-up starts"
+              value={String(item.survival.followUpStartCount)}
+            />
+            <SignalRow
+              label="Follow-up completes"
+              value={String(item.survival.followUpCompleteCount)}
+            />
+            <SignalRow
+              label="Dwell average"
+              value={`${Math.round(item.survival.dwellTimeAverageMs / 1000)}s`}
+            />
+            <SignalRow
+              label="Remembered 24h"
+              value={
+                item.survival.remembered24hFlag || item.survival.remembered24hManual
+                  ? item.survival.remembered24hManual
+                    ? "manual"
+                    : "flag"
+                  : "no"
+              }
+            />
+            <SignalRow
+              label="Remembered 72h"
+              value={
+                item.survival.remembered72hFlag || item.survival.remembered72hManual
+                  ? item.survival.remembered72hManual
+                    ? "manual"
+                    : "flag"
+                  : "no"
+              }
+            />
+          </div>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
+            Survival scores
+          </p>
+          <div className="mt-2 space-y-1.5 rounded-xl bg-white/[0.03] p-3">
+            <SignalRow label="Pause" value={String(item.survival.pauseScore)} />
+            <SignalRow label="Revisit" value={String(item.survival.revisitScore)} />
+            <SignalRow label="Continuation" value={String(item.survival.continuationScore)} />
+            <SignalRow label="Remembered" value={String(item.survival.rememberedScore)} />
+            <SignalRow
+              label="Emotional survival"
+              value={String(item.survival.emotionalSurvivalScore)}
+            />
+          </div>
+        </div>
 
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
@@ -358,7 +452,7 @@ export function CallbackQualityDebugPanel({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-5">
+        <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           <Card>
             <CardHeader className="pb-1">
               <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
@@ -419,11 +513,58 @@ export function CallbackQualityDebugPanel({
               </p>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                Survived 24h
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold tabular-nums text-sky-300">
+                {report.survived24hCount}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                Survived 72h
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold tabular-nums text-sky-200">
+                {report.survived72hCount}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-1">
+              <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
+                Low survival
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-semibold tabular-nums text-orange-300">
+                {report.lowSurvivalCutCount}
+              </p>
+            </CardContent>
+          </Card>
         </div>
-        <Button type="button" variant="secondary" size="sm" onClick={() => downloadCallbackReviewJson(report)}>
-          <Download className="mr-2 h-4 w-4" />
-          Export JSON
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button type="button" variant="secondary" size="sm" onClick={() => downloadCallbackReviewJson(report)}>
+            <Download className="mr-2 h-4 w-4" />
+            Export JSON
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => downloadCallbackSurvivalJson(report)}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Survival JSON
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -443,7 +584,7 @@ export function CallbackQualityDebugPanel({
 
       <div>
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-600">
-          Ranked by emotional residue
+          Ranked by emotional residue · survival score in table
         </p>
         <CallbackRankedTable items={items} selectedId={selectedId} onSelect={handleSelect} />
       </div>
