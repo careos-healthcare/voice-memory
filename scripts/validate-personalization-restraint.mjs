@@ -7,6 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
   "lib/personalization/visual-tone.ts",
+  "lib/personalization/ambient-adaptation.ts",
   "lib/personalization/photo-preferences.ts",
   "lib/personalization/soft-emotional-timeline.ts",
   "lib/photo-storage.ts",

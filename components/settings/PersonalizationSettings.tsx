@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
+  isAmbientAdaptationEnabled,
+  setAmbientAdaptationEnabled,
+  getWarmthPreference,
+  setWarmthPreference,
+  getContrastComfort,
+  setContrastComfort,
+} from "@/lib/personalization/ambient-adaptation";
+import { trackAmbientModeEnabled } from "@/lib/personalization/ambient-observation";
+import {
   isAutoTimeOfDayToneEnabled,
   setAutoTimeOfDayToneEnabled,
   setStoredVisualTone,
@@ -11,20 +20,38 @@ import {
   VISUAL_TONE_OPTIONS,
 } from "@/lib/personalization/visual-tone";
 import type { VisualTone } from "@/types/personalization";
+import type { ContrastComfort, WarmthPreference } from "@/types/ambient-adaptation";
 import {
   isPhotoAttachmentEnabled,
   setPhotoAttachmentEnabled,
 } from "@/lib/personalization/photo-preferences";
 
+const WARMTH_OPTIONS: Array<{ id: WarmthPreference; label: string }> = [
+  { id: "cooler", label: "Cooler" },
+  { id: "balanced", label: "Balanced" },
+  { id: "warmer", label: "Warmer" },
+];
+
+const CONTRAST_OPTIONS: Array<{ id: ContrastComfort; label: string }> = [
+  { id: "standard", label: "Standard" },
+  { id: "softer", label: "Softer" },
+];
+
 export function PersonalizationSettings() {
   const [tone, setTone] = useState<VisualTone>("deep-dark");
   const [autoTone, setAutoTone] = useState(false);
   const [photosEnabled, setPhotosEnabled] = useState(true);
+  const [ambientEnabled, setAmbientEnabled] = useState(true);
+  const [warmth, setWarmth] = useState<WarmthPreference>("balanced");
+  const [contrast, setContrast] = useState<ContrastComfort>("standard");
 
   useEffect(() => {
     setTone(getStoredVisualTone());
     setAutoTone(isAutoTimeOfDayToneEnabled());
     setPhotosEnabled(isPhotoAttachmentEnabled());
+    setAmbientEnabled(isAmbientAdaptationEnabled());
+    setWarmth(getWarmthPreference());
+    setContrast(getContrastComfort());
   }, []);
 
   return (
@@ -72,6 +99,73 @@ export function PersonalizationSettings() {
         >
           {autoTone ? "Automatic tone on" : "Enable automatic tone"}
         </Button>
+      </div>
+
+      <div className="space-y-3 border-t border-white/5 pt-6">
+        <p className="text-sm font-medium text-zinc-300">Ambient adaptation</p>
+        <p className="text-sm text-zinc-400">
+          Subtle shifts for long rereads, revisits, and time of day — never decorative or
+          mood-reactive.
+        </p>
+        <Button
+          type="button"
+          variant={ambientEnabled ? "default" : "secondary"}
+          size="sm"
+          onClick={() => {
+            const next = !ambientEnabled;
+            setAmbientAdaptationEnabled(next);
+            setAmbientEnabled(next);
+            if (next) trackAmbientModeEnabled();
+          }}
+        >
+          {ambientEnabled ? "Ambient adaptation on" : "Enable ambient adaptation"}
+        </Button>
+      </div>
+
+      <div className="space-y-3 border-t border-white/5 pt-6">
+        <p className="text-sm font-medium text-zinc-300">Warmth preference</p>
+        <p className="text-sm text-zinc-400">How warm the interface should feel over a session.</p>
+        <div className="flex flex-wrap gap-2">
+          {WARMTH_OPTIONS.map((option) => (
+            <Button
+              key={option.id}
+              type="button"
+              variant={warmth === option.id ? "default" : "secondary"}
+              size="sm"
+              disabled={!ambientEnabled}
+              onClick={() => {
+                setWarmthPreference(option.id);
+                setWarmth(option.id);
+              }}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3 border-t border-white/5 pt-6">
+        <p className="text-sm font-medium text-zinc-300">Contrast comfort</p>
+        <p className="text-sm text-zinc-400">
+          Softer contrast during long reading sessions or when you prefer less visual weight.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {CONTRAST_OPTIONS.map((option) => (
+            <Button
+              key={option.id}
+              type="button"
+              variant={contrast === option.id ? "default" : "secondary"}
+              size="sm"
+              disabled={!ambientEnabled}
+              onClick={() => {
+                setContrastComfort(option.id);
+                setContrast(option.id);
+              }}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       <div className="space-y-3 border-t border-white/5 pt-6">

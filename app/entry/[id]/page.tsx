@@ -46,6 +46,12 @@ import { threadsForEntry } from "@/lib/memory/conversation-threads";
 import { territoriesForEntry } from "@/lib/territories/emotional-territories";
 import { recordEntryDwell, recordEntryView } from "@/lib/callback-interaction-signals";
 import {
+  clearAmbientPageContext,
+  isHeavyEntry,
+  recordAmbientSessionActivity,
+  setAmbientPageContext,
+} from "@/lib/personalization/ambient-adaptation";
+import {
   recordLastOpenedEntry,
   recordThenVsNowSeen,
 } from "@/lib/sync/cross-device-continuity";
@@ -117,9 +123,22 @@ export default function EntryPage() {
     return () => {
       const dwellMs = Date.now() - started;
       recordEntryDwell(entry.id, dwellMs);
+      recordAmbientSessionActivity(entry.id, dwellMs);
       trackDwellForActiveCallback(dwellMs, "entry");
     };
   }, [entry?.id]);
+
+  useEffect(() => {
+    if (!entry) {
+      clearAmbientPageContext();
+      return;
+    }
+    setAmbientPageContext({
+      isRevisit: Boolean(revisitExperience?.isRevisit),
+      heavyEntry: isHeavyEntry(entry),
+    });
+    return () => clearAmbientPageContext();
+  }, [entry, revisitExperience?.isRevisit]);
 
   const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry]);
   const pending = entry ? isReflectionPending(entry) : false;

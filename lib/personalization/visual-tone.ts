@@ -1,4 +1,5 @@
 import type { VisualTone } from "@/types/personalization";
+import { trackUserOverrodeTone } from "@/lib/personalization/ambient-observation";
 
 const TONE_KEY = "voicememory_visual_tone";
 const AUTO_TONE_KEY = "voicememory_auto_time_tone";
@@ -27,6 +28,9 @@ export function getStoredVisualTone(): VisualTone {
 export function setStoredVisualTone(tone: VisualTone): void {
   if (!isBrowser()) return;
   localStorage.setItem(TONE_KEY, tone);
+  if (!isAutoTimeOfDayToneEnabled()) {
+    trackUserOverrodeTone(tone);
+  }
   window.dispatchEvent(new CustomEvent("voicememory:visual-tone"));
 }
 

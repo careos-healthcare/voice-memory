@@ -94,3 +94,31 @@ body {
 [data-tone="warm-light"] ::selection {
   background: color-mix(in oklab, var(--vm-accent) 25%, transparent);
 }
+
+/* Ambient adaptation — subtle overlays, no animated backgrounds */
+[data-ambient-warmth="warmer"] {
+  --background: color-mix(in oklab, var(--background) 93%, #c9b59a 7%);
+}
+
+[data-ambient-warmth="cooler"] {
+  --background: color-mix(in oklab, var(--background) 96%, #8a95a3 4%);
+}
+
+[data-ambient-contrast="softer"] {
+  --foreground: color-mix(in oklab, var(--foreground) 86%, var(--background));
+  --vm-muted: color-mix(in oklab, var(--vm-muted) 82%, var(--background));
+  --vm-border: color-mix(in oklab, var(--vm-border) 70%, transparent);
+}
+
+[data-ambient-saturation="quiet"] {
+  --vm-accent: color-mix(in oklab, var(--vm-accent) 72%, var(--vm-muted));
+  --foreground: color-mix(in oklab, var(--foreground) 94%, var(--vm-muted));
+}
+
+[data-ambient-bg="quiet"] {
+  --background: color-mix(in oklab, var(--background) 97%, var(--foreground));
+}
+
+[data-ambient-reduced="true"] body {
+  transition: none;
+}
