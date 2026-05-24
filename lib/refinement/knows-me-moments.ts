@@ -62,10 +62,11 @@ const SELF_CONTRAST_SIGNALS = new Set<KnowsMeSignal>([
 
 /** Revisit entry copy — answers “why was this worth reopening?” */
 export const REVISIT_REWARD_COPY = {
-  beforeThingsChanged: "This was before it shifted.",
-  soundCalmerNow: "You sound calmer now.",
-  notNamedYet: "You had not named this directly yet.",
+  beforeThingsChanged: "You were carrying this differently then.",
+  soundCalmerNow: "You sound further away from it now.",
+  notNamedYet: "You had not named it yet.",
   usedToTakeSpace: "This used to take up more room.",
+  samePlace: "You came back to the same place.",
 } as const;
 
 const REVISIT_CONTRAST_PRIORITY: KnowsMeSignal[] = [

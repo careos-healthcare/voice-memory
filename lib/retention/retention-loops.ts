@@ -4,6 +4,7 @@ import {
   markMoatRevisitBookmark,
   markMoatRevisitCopy,
 } from "@/lib/retention/moat-metrics";
+import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
 import { getAllEntries } from "@/lib/storage";
 
 export type RetentionLoopEventKind =
@@ -230,6 +231,7 @@ export function trackResurfacedMemoryClicked(input: {
   source?: string;
 }): void {
   rememberNoteContext(input.targetEntryId, input.noteId, input.noteText);
+  recordSilenceNoteAction(input.noteId);
   pushEvent({
     kind: "resurfaced_memory_clicked",
     noteId: input.noteId,
@@ -246,6 +248,7 @@ export function trackOldEntryOpenedFromNote(input: {
   source?: string;
 }): void {
   rememberNoteContext(input.pastEntryId, input.noteId, input.noteText);
+  recordSilenceNoteAction(input.noteId);
   pushEvent({
     kind: "old_entry_opened_from_note",
     noteId: input.noteId,
@@ -270,6 +273,7 @@ export function trackBookmarkCreated(
     noteId: context.noteId,
     noteText: context.noteText,
   });
+  if (context.noteId) recordSilenceNoteAction(context.noteId);
   markMoatRevisitBookmark(entryId);
 }
 
@@ -314,6 +318,8 @@ export function trackCopiedMemoryMoment(input: {
     noteId: context.noteId ?? input.sourceId,
     noteText: context.noteText,
   });
+  const actionNoteId = context.noteId ?? input.sourceId;
+  if (actionNoteId) recordSilenceNoteAction(actionNoteId);
   if (input.entryId) markMoatRevisitCopy(input.entryId);
 }
 

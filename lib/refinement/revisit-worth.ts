@@ -11,8 +11,9 @@ import type { MemoryNote } from "@/types/memory-note";
 export const REVISIT_WORTH_MIN = 58;
 export const REVISIT_WORTH_POOL = 5;
 export const REVISIT_WORTH_UI = 1;
-export const MIN_REVISIT_AGE_DAYS = 12;
-export const MIN_CONTRAST_DELTA = 1.2;
+export const MIN_REVISIT_AGE_DAYS = 14;
+export const MIN_CONTRAST_DELTA = 1.4;
+export const RECENT_HIGH_CONTRAST_DELTA = 2.4;
 
 export interface RevisitWorthSignal {
   id: string;
@@ -173,6 +174,40 @@ function scoreFollowupAfterRelated(candidate: JournalEntry): number {
   return Math.min(score, 22);
 }
 
+function scoreNamedDirectEvolution(candidate: JournalEntry, sorted: JournalEntry[]): number {
+  const idx = sorted.findIndex((entry) => entry.id === candidate.id);
+  if (idx < 0) return 0;
+
+  const later = sorted.slice(idx + 1);
+  if (later.length === 0) return 0;
+
+  const hedgedBefore = /\b(maybe|sort of|kind of|not sure|vague)\b/i.test(candidate.transcript);
+  const directLater = later.some((entry) =>
+    /\b(named|decided|clearly|for sure|directly)\b/i.test(entry.transcript),
+  );
+  const calmerLater = later.some(
+    (entry) => entry.reflection.emotionalIntensity <= candidate.reflection.emotionalIntensity - 1.2,
+  );
+
+  let score = 0;
+  if (hedgedBefore && directLater) score += 16;
+  if (calmerLater) score += 14;
+  if (candidate.audioId) score += 6;
+  return score;
+}
+
+function scoreCopyEngagement(candidate: JournalEntry): number {
+  const report = buildRetentionLoopReport();
+  let score = 0;
+  for (const event of report.events) {
+    if (event.kind !== "copied_memory_moment") continue;
+    if (event.entryId === candidate.id || event.pastEntryId === candidate.id) {
+      score += 14;
+    }
+  }
+  return Math.min(score, 14);
+}
+
 function scoreRevisitConversion(candidate: JournalEntry): number {
   let score = 0;
   const summary = entryInteractionSummary(candidate.id);
@@ -226,13 +261,15 @@ function scoreEntry(
   }
 
   if (gap < MIN_REVISIT_AGE_DAYS) {
-    return {
-      entryId: candidate.id,
-      total: 0,
-      suppressed: true,
-      suppressReason: "recent",
-      signals: [],
-    };
+    if (intensityDelta < RECENT_HIGH_CONTRAST_DELTA) {
+      return {
+        entryId: candidate.id,
+        total: 0,
+        suppressed: true,
+        suppressReason: "recent",
+        signals: [],
+      };
+    }
   }
 
   if (overlap.length === 0 && gap < 21) {
@@ -247,7 +284,7 @@ function scoreEntry(
 
   if (
     overlap.length > 0 &&
-    intensityDelta < 0.8 &&
+    intensityDelta < 1.0 &&
     candidate.reflection.mood === latest.reflection.mood
   ) {
     return {
@@ -257,6 +294,19 @@ function scoreEntry(
       suppressReason: "similar_only",
       signals: [],
     };
+  }
+
+  if (overlap.length > 0 && intensityDelta < MIN_CONTRAST_DELTA) {
+    const namedDirect = scoreNamedDirectEvolution(candidate, sorted);
+    if (namedDirect < 10) {
+      return {
+        entryId: candidate.id,
+        total: 0,
+        suppressed: true,
+        suppressReason: "similar_only",
+        signals: [],
+      };
+    }
   }
 
   const signals: RevisitWorthSignal[] = [];
@@ -272,9 +322,19 @@ function scoreEntry(
   if (bookmark) {
     signals.push({
       id: "bookmark",
-      points: bookmark.type === "changed_something" ? 24 : 16,
+      points: bookmark.type === "changed_something" ? 28 : 20,
     });
   }
+
+  if (candidate.audioId) {
+    signals.push({ id: "has_audio", points: 16 });
+  }
+
+  const copyEngagement = scoreCopyEngagement(candidate);
+  if (copyEngagement > 0) signals.push({ id: "copied_moment", points: copyEngagement });
+
+  const namedDirect = scoreNamedDirectEvolution(candidate, sorted);
+  if (namedDirect > 0) signals.push({ id: "calmer_direct_named", points: namedDirect });
 
   const followup = scoreFollowupAfterRelated(candidate);
   if (followup > 0) signals.push({ id: "followup_after_note", points: followup });
@@ -367,7 +427,9 @@ function noteRankScore(note: MemoryNote, entries: JournalEntry[]): number {
   const hierarchy = scoreMemoryHierarchy(note, entries).total;
   const pastId = linkedOldEntryId(note);
   const worth = pastId ? revisitWorthScore(pastId, entries) : 0;
-  return hierarchy + worth * 0.55 + note.confidence * 0.2;
+  const pastEntry = pastId ? entries.find((entry) => entry.id === pastId) : undefined;
+  const audioBoost = pastEntry?.audioId ? 8 : 0;
+  return hierarchy + worth * 0.62 + note.confidence * 0.2 + audioBoost;
 }
 
 /** Rank memory notes so links to emotionally worth-reopening entries surface first. */

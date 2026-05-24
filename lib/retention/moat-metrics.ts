@@ -1,5 +1,8 @@
+import {
+  buildRetentionLoopReport,
+  resolveNoteContext,
+} from "@/lib/retention/retention-loops";
 import { getAllEntries } from "@/lib/storage";
-import { resolveNoteContext } from "@/lib/retention/retention-loops";
 import type { RevisitSource } from "@/lib/refinement/revisit-experience";
 import type { JournalEntry } from "@/types/journal";
 
@@ -33,6 +36,15 @@ export interface MoatMemoryLineRow {
   conversionRate: string;
 }
 
+export interface MoatTargetRow {
+  label: string;
+  current: string;
+  target: string;
+  currentValue: number;
+  targetValue: number;
+  met: boolean;
+}
+
 export interface MoatMetricsReport {
   revisits: MoatOldEntryRevisit[];
   oldEntryRevisitCount: number;
@@ -42,6 +54,10 @@ export interface MoatMetricsReport {
   revisitToReflection7d: string;
   revisitToReflection24hCount: number;
   revisitToReflection7dCount: number;
+  memoryLineToOldEntryOpenRate: string;
+  memoryLineToOldEntryOpenCount: number;
+  memoryLineClickCount: number;
+  targets: MoatTargetRow[];
   memoryLineFunnel: MoatFunnelRow[];
   thenVsNowFunnel: MoatFunnelRow[];
   audioReplayFunnel: MoatFunnelRow[];
@@ -55,6 +71,69 @@ const MOAT_SESSION_KEY = "voicememory_moat_active_revisit";
 const MAX_REVISITS = 600;
 const MS_24H = 24 * 60 * 60 * 1000;
 const MS_7D = 7 * MS_24H;
+
+export const MOAT_TARGET_OLD_ENTRY_REVISIT_RATE = 30;
+export const MOAT_TARGET_REVISIT_TO_REFLECTION_7D = 12;
+export const MOAT_TARGET_MEMORY_LINE_OPEN_RATE = 20;
+
+function parsePct(value: string): number {
+  const n = Number.parseInt(value.replace("%", ""), 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function memoryLineOpenStats(): { opens: number; clicks: number; rate: string } {
+  const report = buildRetentionLoopReport();
+  const opens = report.notesCausingRevisits.reduce(
+    (sum, row) => sum + row.oldEntryOpens,
+    0,
+  );
+  const clicks = report.notesCausingRevisits.reduce(
+    (sum, row) => sum + row.clicks + row.oldEntryOpens,
+    0,
+  );
+  return {
+    opens,
+    clicks,
+    rate: pct(opens, Math.max(1, clicks)),
+  };
+}
+
+function buildTargetRows(report: {
+  oldEntryRevisitRate: string;
+  revisitToReflection7d: string;
+  memoryLineToOldEntryOpenRate: string;
+}): MoatTargetRow[] {
+  const revisitRate = parsePct(report.oldEntryRevisitRate);
+  const reflectionRate = parsePct(report.revisitToReflection7d);
+  const memoryLineRate = parsePct(report.memoryLineToOldEntryOpenRate);
+
+  return [
+    {
+      label: "Old-entry revisit rate",
+      current: report.oldEntryRevisitRate,
+      target: `${MOAT_TARGET_OLD_ENTRY_REVISIT_RATE}%`,
+      currentValue: revisitRate,
+      targetValue: MOAT_TARGET_OLD_ENTRY_REVISIT_RATE,
+      met: revisitRate >= MOAT_TARGET_OLD_ENTRY_REVISIT_RATE,
+    },
+    {
+      label: "Revisit → new reflection (7d)",
+      current: report.revisitToReflection7d,
+      target: `${MOAT_TARGET_REVISIT_TO_REFLECTION_7D}%`,
+      currentValue: reflectionRate,
+      targetValue: MOAT_TARGET_REVISIT_TO_REFLECTION_7D,
+      met: reflectionRate >= MOAT_TARGET_REVISIT_TO_REFLECTION_7D,
+    },
+    {
+      label: "Memory note → old entry open",
+      current: report.memoryLineToOldEntryOpenRate,
+      target: `${MOAT_TARGET_MEMORY_LINE_OPEN_RATE}%`,
+      currentValue: memoryLineRate,
+      targetValue: MOAT_TARGET_MEMORY_LINE_OPEN_RATE,
+      met: memoryLineRate >= MOAT_TARGET_MEMORY_LINE_OPEN_RATE,
+    },
+  ];
+}
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -334,15 +413,27 @@ export function buildMoatMetricsReport(): MoatMetricsReport {
   const bookmarkOrCopy = (row: MoatOldEntryRevisit) =>
     row.bookmarkBeforeRecording || row.copyBeforeRecording;
 
+  const memoryLineStats = memoryLineOpenStats();
+  const oldEntryRevisitRate = pct(revisits.length, Math.max(1, oldEntriesInArchive));
+  const revisitToReflection7d = pct(withReflection7d.length, Math.max(1, revisits.length));
+
   return {
     revisits,
     oldEntryRevisitCount: revisits.length,
     oldEntriesInArchive,
-    oldEntryRevisitRate: pct(revisits.length, Math.max(1, oldEntriesInArchive)),
+    oldEntryRevisitRate,
     revisitToReflection24h: pct(withReflection24h.length, Math.max(1, revisits.length)),
-    revisitToReflection7d: pct(withReflection7d.length, Math.max(1, revisits.length)),
+    revisitToReflection7d,
     revisitToReflection24hCount: withReflection24h.length,
     revisitToReflection7dCount: withReflection7d.length,
+    memoryLineToOldEntryOpenRate: memoryLineStats.rate,
+    memoryLineToOldEntryOpenCount: memoryLineStats.opens,
+    memoryLineClickCount: memoryLineStats.clicks,
+    targets: buildTargetRows({
+      oldEntryRevisitRate,
+      revisitToReflection7d,
+      memoryLineToOldEntryOpenRate: memoryLineStats.rate,
+    }),
     memoryLineFunnel: buildFunnel(revisits, (row) => row.fromMemoryLine, "Memory line"),
     thenVsNowFunnel: buildFunnel(revisits, (row) => row.hadThenVsNow, "Then vs now"),
     audioReplayFunnel: buildFunnel(revisits, (row) => row.audioReplayed, "Audio replay"),

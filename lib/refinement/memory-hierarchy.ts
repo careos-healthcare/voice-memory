@@ -1,4 +1,5 @@
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
+import { shouldSuppressCallbackCopy, tuneCallbackWording } from "@/lib/refinement/callback-wording";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import type { EmotionalMilestone } from "@/types/emotional-milestone";
@@ -58,6 +59,11 @@ const SUPPRESSED_ID: Array<{ re: RegExp; signal: MemoryHierarchySignal; penalty:
 ];
 
 const GENERIC_TEXT: Array<{ re: RegExp; signal: MemoryHierarchySignal; penalty: number }> = [
+  { re: /\bworth revisiting\b/i, signal: "generic_return", penalty: 28 },
+  { re: /\bworth returning to\b/i, signal: "generic_return", penalty: 28 },
+  { re: /\ban older reflection\b/i, signal: "informational", penalty: 26 },
+  { re: /\bthis changed\b/i, signal: "generic_return", penalty: 24 },
+  { re: /\bwhat changed\b/i, signal: "generic_return", penalty: 24 },
   { re: /\bappeared again\b/i, signal: "generic_return", penalty: 24 },
   { re: /\bmoney returned\b/i, signal: "generic_return", penalty: 24 },
   { re: /\bwork appeared\b/i, signal: "generic_return", penalty: 22 },
@@ -214,6 +220,8 @@ export function applyMemoryHierarchy(
   minScore = MEMORY_HIERARCHY_MIN,
 ): MemoryNote[] {
   const ranked = notes
+    .map((note) => tuneCallbackWording(note, entries))
+    .filter((note) => !shouldSuppressCallbackCopy(note))
     .map((note) => ({ note, score: scoreNote(note, entries) }))
     .filter((row) => row.score.total >= minScore)
     .sort(

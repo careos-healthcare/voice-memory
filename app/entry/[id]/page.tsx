@@ -427,41 +427,20 @@ export default function EntryPage() {
           </MotionPage>
         ) : (
           <MotionPage className="mt-10 space-y-20">
-            <header className="space-y-4">
-              <h1 className="text-xl font-normal tracking-tight text-zinc-100 sm:text-2xl">
-                {formatEntryDate(entry.createdAt)}
-              </h1>
-              <MarkReflectionButton
-                entryId={entry.id}
-                onMarked={
-                  revisitExperience?.isRevisit
-                    ? (type) => trackRevisitRewardBookmark(entry.id, type)
-                    : undefined
-                }
-              />
-              {!pending && !revisitExperience?.isRevisit ? (
-                <CopyMemoryMomentButton
-                  source="entry"
-                  entry={entry}
-                  allEntries={allEntries}
-                />
-              ) : null}
-            </header>
-
             {!pending && revisitExperience?.isRevisit ? (
               <section className="space-y-10 border-b border-white/[0.04] pb-10">
-                {revisitExperience.revisitReward ? (
-                  <p className="text-[17px] font-normal leading-[1.45] text-zinc-100">
-                    {revisitExperience.revisitReward.text}
-                  </p>
-                ) : null}
                 {revisitExperience.thenVsNow ? (
-                  <MotionNoteList className="space-y-6 py-1">
+                  <MotionNoteList className="space-y-8 py-1">
                     <AnimatedMemoryNote
                       note={revisitThenVsNowDisplayNote(revisitExperience.thenVsNow)}
                       index={0}
+                      tone="continuation"
                     />
                   </MotionNoteList>
+                ) : revisitExperience.revisitReward ? (
+                  <p className="text-[19px] font-normal leading-[1.4] text-zinc-50">
+                    {revisitExperience.revisitReward.text}
+                  </p>
                 ) : null}
                 {revisitVoicePair ? (
                   <VoicePlaybackContinuity
@@ -483,6 +462,27 @@ export default function EntryPage() {
                 />
               </section>
             ) : null}
+
+            <header className="space-y-4">
+              <h1 className="text-xl font-normal tracking-tight text-zinc-100 sm:text-2xl">
+                {formatEntryDate(entry.createdAt)}
+              </h1>
+              <MarkReflectionButton
+                entryId={entry.id}
+                onMarked={
+                  revisitExperience?.isRevisit
+                    ? (type) => trackRevisitRewardBookmark(entry.id, type)
+                    : undefined
+                }
+              />
+              {!pending && !revisitExperience?.isRevisit ? (
+                <CopyMemoryMomentButton
+                  source="entry"
+                  entry={entry}
+                  allEntries={allEntries}
+                />
+              ) : null}
+            </header>
 
             {entry.audioId || entry.transcript ? (
               <section className="space-y-8">

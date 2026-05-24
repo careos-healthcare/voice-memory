@@ -29,13 +29,14 @@ import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
 const REVISIT_NAV_KEY = "voicememory_revisit_nav";
-const REVISIT_REWARD_MIN = 56;
+const REVISIT_REWARD_MIN = 62;
 
 export const REVISIT_QUIET_COPY_EXAMPLES = [
   REVISIT_REWARD_COPY.beforeThingsChanged,
   REVISIT_REWARD_COPY.soundCalmerNow,
   REVISIT_REWARD_COPY.notNamedYet,
   REVISIT_REWARD_COPY.usedToTakeSpace,
+  REVISIT_REWARD_COPY.samePlace,
 ] as const;
 
 export type RevisitQuietCopy = (typeof REVISIT_QUIET_COPY_EXAMPLES)[number];
@@ -76,7 +77,7 @@ const REVISIT_SUPPRESSED_ID =
   /^rhythm-|^time-|^continuity-thread-|^continuity-recurring-|^archive-|^continuity-depth-|^resurface-topic-|^resurface-entity-|^resurface-phrase-|^resurface-person-|^resurface-loop-|^familiarity-|^fam-resurface-similar|^revisit-loop-|^continuity-callback-/;
 
 const REVISIT_SUPPRESSED_TEXT =
-  /\b(you came back to the same place|you spoke about this the same way|older reflections are starting|starting to mean something|kept coming back to a few things|tends to return|weekly rhythm|gap between these entries|you left off here|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again)\b/i;
+  /\b(you came back to the same place|you spoke about this the same way|older reflections are starting|starting to mean something|kept coming back to a few things|tends to return|weekly rhythm|gap between these entries|you left off here|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again|worth revisiting|worth returning to|an older reflection|this changed|what changed|topic appeared|similar theme)\b/i;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -210,9 +211,20 @@ function buildRevisitFollowupPrompt(
   contrast: MemoryNote | null,
 ): FollowupPrompt | null {
   if (contrast?.pastQuote?.trim() && contrast?.currentQuote?.trim()) {
+    const calmerNow =
+      /\bcalmer|quieter|further away|settled\b/i.test(contrast.text) ||
+      /\bcalmer|quieter|further away|settled\b/i.test(contrast.currentQuote);
+    const namedNow =
+      /\bnamed|direct|decided\b/i.test(contrast.currentQuote) ||
+      /\bnot named\b/i.test(contrast.pastQuote);
+
+    let text = "What shifted between these two moments?";
+    if (calmerNow) text = "What feels further away now?";
+    else if (namedNow) text = "What had you not named yet then?";
+
     return {
       id: `followup-revisit-${contrast.id}`,
-      text: "What changed?",
+      text,
       source: "then_vs_now",
       noteId: contrast.id,
       noteText: contrast.text,
@@ -220,11 +232,11 @@ function buildRevisitFollowupPrompt(
     };
   }
 
-  if (!reward) return null;
+  if (!reward?.text.trim()) return null;
 
   return {
     id: `followup-revisit-${reward.id}`,
-    text: "What feels different now?",
+    text: "What feels different about this now?",
     source: "revisitation",
     noteId: reward.id,
     noteText: reward.text,
@@ -328,12 +340,18 @@ export function buildRevisitExperience(
   const thenVsNow = pickEntryRevisitContrast(knowsMeCandidates, contrastExtras, []);
 
   const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow]);
-  const fallbackCopy = pickRevisitQuietCopy(allEntries, entryId);
-  let revisitReward = toRewardLine(bestLine, entryId, fallbackCopy);
+  const hasStrongLine = Boolean(bestLine && isStrongForRevisit(bestLine, allEntries));
+  const fallbackCopy = hasStrongLine || thenVsNow ? pickRevisitQuietCopy(allEntries, entryId) : null;
+  let revisitReward =
+    hasStrongLine && bestLine
+      ? toRewardLine(bestLine, entryId, fallbackCopy ?? REVISIT_REWARD_COPY.beforeThingsChanged)
+      : null;
 
-  if (thenVsNow && isDuplicateNote(revisitReward, thenVsNow)) {
-    revisitReward = realizationNote(fallbackCopy, entryId);
+  if (revisitReward && thenVsNow && isDuplicateNote(revisitReward, thenVsNow)) {
+    revisitReward = null;
   }
+
+  const followupPrompt = buildRevisitFollowupPrompt(revisitReward, thenVsNow);
 
   const calibrated = calibrateRevisitExperience(
     {
@@ -341,7 +359,7 @@ export function buildRevisitExperience(
       sources: context.sources,
       revisitReward,
       thenVsNow: thenVsNow && !isDuplicateNote(thenVsNow, revisitReward) ? thenVsNow : null,
-      followupPrompt: null,
+      followupPrompt,
     },
     allEntries,
   );
@@ -354,7 +372,7 @@ export function buildRevisitExperience(
 
   return {
     ...calibrated,
-    followupPrompt: buildRevisitFollowupPrompt(calibrated.revisitReward, calibrated.thenVsNow),
+    followupPrompt: calibrated.followupPrompt,
   };
 }
 

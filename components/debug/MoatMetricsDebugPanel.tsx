@@ -64,6 +64,36 @@ function FunnelTable({
 export function MoatMetricsDebugPanel({ report }: { report: MoatMetricsReport }) {
   return (
     <div className="space-y-10">
+      <Card className="border-violet-400/20 bg-violet-500/5">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-normal text-zinc-200">
+            Pre-monetization targets
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-3">
+            {report.targets.map((row) => (
+              <li
+                key={row.label}
+                className="flex flex-wrap items-baseline justify-between gap-3 text-sm"
+              >
+                <span className="text-zinc-400">{row.label}</span>
+                <span className="tabular-nums text-zinc-200">
+                  {row.current}
+                  <span className="mx-2 text-zinc-600">→</span>
+                  <span className="text-zinc-500">{row.target}</span>
+                  <span
+                    className={`ml-2 text-xs ${row.met ? "text-emerald-400" : "text-amber-400"}`}
+                  >
+                    {row.met ? "on track" : "below target"}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           label="Revisit → reflection (24h)"
@@ -81,9 +111,9 @@ export function MoatMetricsDebugPanel({ report }: { report: MoatMetricsReport })
           hint={`${report.oldEntryRevisitCount} revisits across ${report.oldEntriesInArchive} old entries`}
         />
         <MetricCard
-          label="Tracked revisits"
-          value={String(report.oldEntryRevisitCount)}
-          hint="Local old-entry reopen events with source and engagement flags"
+          label="Memory note → old entry open"
+          value={report.memoryLineToOldEntryOpenRate}
+          hint={`${report.memoryLineToOldEntryOpenCount} opens from ${report.memoryLineClickCount} memory-line clicks · target ${report.targets[2]?.target ?? "20%"}`}
         />
       </section>
 

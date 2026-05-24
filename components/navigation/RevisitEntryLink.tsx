@@ -13,6 +13,7 @@ import {
   trackOldEntryOpenedFromNote,
   trackResurfacedMemoryClicked,
 } from "@/lib/retention/retention-loops";
+import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
 import { trackOldEntryRevisitAfterCallback as trackPauseOldEntryRevisit } from "@/lib/retention/pause-moments";
 
 export function RevisitEntryLink({
@@ -42,6 +43,7 @@ export function RevisitEntryLink({
         const resolvedSource = source ?? revisitSourceFromPath(pathname) ?? "memory_note";
         markRevisitNavigation(entryId, resolvedSource);
         if (noteId) {
+          recordSilenceNoteAction(noteId);
           if (linkRole === "past") {
             trackOldEntryOpenedFromNote({
               noteId,

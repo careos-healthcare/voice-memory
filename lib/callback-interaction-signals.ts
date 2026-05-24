@@ -1,6 +1,7 @@
 import { readLocalEvents } from "@/lib/local-analytics";
 import { getAllBookmarks, getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { trackCallbackShown } from "@/lib/retention/pause-moments";
+import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
 import { formatEntryDate } from "@/lib/utils";
 import { getEntry } from "@/lib/storage";
 import type { CallbackInteractionSignals, CallbackRetentionSummary } from "@/types/callback-quality-review";
@@ -102,6 +103,7 @@ export function recordEntryDwell(entryId: string, dwellMs: number): void {
 
 export function recordFollowupContinued(noteId: string): void {
   if (!isBrowser()) return;
+  recordSilenceNoteAction(noteId);
   const store = readStore();
   store.followups.push({ noteId, continuedAt: new Date().toISOString() });
   writeStore(store);
