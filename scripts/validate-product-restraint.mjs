@@ -36,6 +36,7 @@ const SKIP_PATH_PARTS = [
   "lib/identity/",
   "lib/personalization/",
   "lib/territories/",
+  "lib/atmosphere/",
   "lib/photo-storage.ts",
   "lib/restraint/",
   "lib/refinement/callback-deduplication.ts",

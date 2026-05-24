@@ -6,69 +6,58 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
-  "lib/personalization/visual-tone.ts",
-  "lib/personalization/ambient-adaptation.ts",
-  "lib/personalization/photo-preferences.ts",
-  "lib/personalization/soft-emotional-timeline.ts",
-  "lib/photo-storage.ts",
-  "lib/photo/compress.ts",
-  "lib/photo/integrity.ts",
-  "components/settings/PersonalizationSettings.tsx",
-  "components/entry/EntryPhotoAttachment.tsx",
-  "app/feelings-timeline/page.tsx",
+  "lib/atmosphere/memory-atmosphere.ts",
+  "lib/atmosphere/atmosphere-storage.ts",
+  "lib/atmosphere/atmosphere-observation.ts",
+  "types/atmosphere.ts",
+  "components/entry/EntryAtmosphereAttachment.tsx",
+  "app/api/atmosphere/route.ts",
 ];
-
-const SCAN_DIRS = ["app", "components", "lib"];
 
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
-  `${path.sep}api${path.sep}`,
-  "lib/personalization/",
-  "lib/photo-storage.ts",
-  "lib/photo/",
   "lib/atmosphere/",
-  "components/settings/PersonalizationSettings.tsx",
-  "components/entry/EntryPhotoAttachment.tsx",
   "components/entry/EntryAtmosphereAttachment.tsx",
-  "app/feelings-timeline/",
+  "app/api/atmosphere/",
   "scripts/",
 ];
 
-const FORBIDDEN_PERSONALIZATION_PHRASES = [
-  { re: /\bmood dashboard\b/i, label: "mood dashboard" },
-  { re: /\bproductivity chart\b/i, label: "productivity chart" },
-  { re: /\bemotion tracking\b/i, label: "emotion tracking" },
-  { re: /\bgamified emotion\b/i, label: "gamified emotion" },
-  { re: /\bsticker\b/i, label: "sticker" },
-  { re: /\bcute diary\b/i, label: "cute diary" },
-  { re: /\bchildish customization\b/i, label: "childish customization" },
-  { re: /\bai[- ]generated memory art\b/i, label: "AI-generated memory art" },
+const FORBIDDEN_PHRASES = [
+  { re: /\bai interpreted your soul\b/i, label: "AI interpreted your soul" },
+  { re: /\bfantasy art\b/i, label: "fantasy art" },
+  { re: /\bcinematic trauma\b/i, label: "cinematic trauma" },
+  { re: /\btherapy symbolism\b/i, label: "therapy symbolism" },
+  { re: /\bautomatic generation\b/i, label: "automatic generation" },
+  { re: /\banimated background\b/i, label: "animated background" },
   { re: /\bgenerate.*image\b/i, label: "generate image" },
+  { re: /\bai[- ]generated memory art\b/i, label: "AI-generated memory art" },
   { re: /\bphoto feed\b/i, label: "photo feed" },
-  { re: /\binstagram\b/i, label: "instagram" },
-  { re: /\bphoto filters?\b/i, label: "photo filters" },
-  { re: /\bimage filters?\b/i, label: "image filters" },
-  { re: /\bemoji theme\b/i, label: "emoji theme" },
   { re: /\bbright theme\b/i, label: "bright theme" },
-  { re: /\bhabit tracker\b/i, label: "habit tracker" },
 ];
 
 const EXT = new Set([".tsx", ".ts", ".jsx", ".js"]);
+const SCAN_DIRS = ["app", "components", "lib"];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
 if (missing.length > 0) {
-  console.error("Personalization restraint validation failed — missing files:\n");
+  console.error("Atmosphere restraint validation failed — missing files:\n");
   for (const file of missing) console.error(`  ${file}`);
   process.exit(1);
 }
 
-const feelingsPage = fs.readFileSync(
-  path.join(ROOT, "app/feelings-timeline/page.tsx"),
+const component = fs.readFileSync(
+  path.join(ROOT, "components/entry/EntryAtmosphereAttachment.tsx"),
   "utf8",
 );
-if (!feelingsPage.includes("How this has felt over time")) {
-  console.error("Personalization validation failed — missing soft timeline copy.");
-  process.exit(1);
+for (const copy of [
+  "Create quiet atmosphere",
+  "A quiet visual, not a memory.",
+  "Generated images may not match what happened.",
+]) {
+  if (!component.includes(copy)) {
+    console.error(`Atmosphere validation failed — missing copy "${copy}".`);
+    process.exit(1);
+  }
 }
 
 function shouldSkip(filePath) {
@@ -97,8 +86,11 @@ function isCommentLine(trimmed) {
   );
 }
 
-function isAllowedFilterContext(line) {
-  return /\bno filters\b/i.test(line) || /FORBIDDEN.*filter/i.test(line);
+function isAllowedContext(line, label) {
+  if (label === "fantasy art" || label === "automatic generation" || label === "generate image") {
+    return /\bno fantasy\b/i.test(line) || /\bnever automatic\b/i.test(line) || /\bnot a memory\b/i.test(line);
+  }
+  return false;
 }
 
 const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
@@ -119,9 +111,9 @@ for (const file of files) {
     const trimmed = line.trim();
     if (isCommentLine(trimmed)) return;
 
-    for (const { re, label } of FORBIDDEN_PERSONALIZATION_PHRASES) {
+    for (const { re, label } of FORBIDDEN_PHRASES) {
       if (re.test(line)) {
-        if (label === "photo filters" && isAllowedFilterContext(line)) continue;
+        if (isAllowedContext(line, label)) continue;
         violations.push({ file, line: index + 1, label, text: trimmed.slice(0, 120) });
       }
     }
@@ -129,7 +121,7 @@ for (const file of files) {
 }
 
 if (violations.length > 0) {
-  console.error("Personalization restraint validation failed:\n");
+  console.error("Atmosphere restraint validation failed:\n");
   for (const row of violations) {
     console.error(`  ${path.relative(ROOT, row.file)}:${row.line} — banned "${row.label}"`);
     console.error(`    ${row.text}\n`);
@@ -137,4 +129,4 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-console.log("Personalization restraint validation passed.");
+console.log("Atmosphere restraint validation passed.");

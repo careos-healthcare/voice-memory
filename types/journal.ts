@@ -1,4 +1,5 @@
 import type { EntryPhotoMeta } from "@/types/personalization";
+import type { EntryAtmosphereMeta } from "@/types/atmosphere";
 
 export interface Reflection {
   mood: string;
@@ -38,6 +39,8 @@ export interface JournalEntry {
   reflectionPending?: boolean;
   /** Optional quiet photo attachment — stored locally in IndexedDB. */
   photo?: EntryPhotoMeta;
+  /** Optional abstract atmosphere — user-initiated, stored locally. */
+  atmosphere?: EntryAtmosphereMeta;
 }
 
 export type ProcessingStage = "transcribing" | "analyzing" | "saving";

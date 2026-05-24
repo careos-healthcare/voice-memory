@@ -1,4 +1,5 @@
 import { deleteAudio } from "@/lib/audio-storage";
+import { deleteAtmosphereImage } from "@/lib/atmosphere/atmosphere-storage";
 import { deletePhoto } from "@/lib/photo-storage";
 import { clearHabitState } from "@/lib/habit-storage";
 import { recordReflectionDay } from "@/lib/habit-storage";
@@ -104,6 +105,7 @@ export function deleteEntry(id: string): void {
   removeBookmark(id);
   void deleteAudio(id);
   void deletePhoto(id);
+  void deleteAtmosphereImage(id);
 }
 
 /** Remove all journal entries from localStorage (call clearAllAudio separately). */
@@ -118,6 +120,7 @@ export async function deleteAllEntries(): Promise<number> {
   for (const entry of entries) {
     await deleteAudio(entry.id);
     await deletePhoto(entry.id);
+    await deleteAtmosphereImage(entry.id);
   }
 
   return count;

@@ -1,4 +1,5 @@
 import { clearAllAudio } from "@/lib/audio-storage";
+import { clearAllAtmospheres } from "@/lib/atmosphere/atmosphere-storage";
 import { clearAllPhotos } from "@/lib/photo-storage";
 import { resetOnboarding } from "@/lib/onboarding";
 import { clearRecoveryDrafts } from "@/lib/reliability/draft-recovery";
@@ -13,6 +14,7 @@ export async function deleteAllEntriesAndAudio(): Promise<number> {
   const count = await deleteAllEntries();
   await clearAllAudio();
   await clearAllPhotos();
+  await clearAllAtmospheres();
   clearAllWeeklySummaryCache();
   return count;
 }

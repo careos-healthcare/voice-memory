@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
 import { EntryPhotoAttachment } from "@/components/entry/EntryPhotoAttachment";
+import { EntryAtmosphereAttachment } from "@/components/entry/EntryAtmosphereAttachment";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
@@ -81,6 +82,7 @@ import {
   buildRevisitQuietShareCard,
 } from "@/lib/sharing/quiet-sharing";
 import { PHOTO_EVENTS, trackPhotoEvent } from "@/lib/local-analytics";
+import { trackAtmosphereRevisited } from "@/lib/atmosphere/atmosphere-observation";
 import { buildEntrySharedMemoryMoment } from "@/lib/memory/shared-moments";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -199,6 +201,11 @@ export default function EntryPage() {
     if (!entry?.id || !entry.photo?.photoId || !revisitExperience?.isRevisit) return;
     trackPhotoEvent(PHOTO_EVENTS.entryRevisited, { entryId: entry.id });
   }, [entry?.id, entry?.photo?.photoId, revisitExperience?.isRevisit]);
+
+  useEffect(() => {
+    if (!entry?.id || !entry.atmosphere?.atmosphereId || !revisitExperience?.isRevisit) return;
+    trackAtmosphereRevisited(entry.id);
+  }, [entry?.id, entry?.atmosphere?.atmosphereId, revisitExperience?.isRevisit]);
 
   useEffect(() => {
     if (!revisitExperience?.isRevisit) {
@@ -674,6 +681,15 @@ export default function EntryPage() {
               entryId={entry.id}
               photo={entry.photo}
               onPhotoChange={(photo) => setEntry((current) => (current ? { ...current, photo } : current))}
+            />
+
+            <EntryAtmosphereAttachment
+              entryId={entry.id}
+              entry={entry}
+              atmosphere={entry.atmosphere}
+              onAtmosphereChange={(atmosphere) =>
+                setEntry((current) => (current ? { ...current, atmosphere } : current))
+              }
             />
 
             {pending ? (
