@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { ArchiveMaturityPanel } from "@/components/debug/ArchiveMaturityPanel";
+import { FutureArchivePanel } from "@/components/debug/FutureArchivePanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildArchiveMaturityReport } from "@/lib/debug/archive-maturity-review";
+import { buildFutureArchiveSimulationReport } from "@/lib/debug/future-archive-review";
 import { getMemoryEligibleEntries } from "@/lib/storage";
-import type { ArchiveMaturityReport } from "@/types/memory-compounding";
+import type { FutureArchiveSimulationReport } from "@/types/archive-permanence-layer";
 
-export default function ArchiveMaturityDebugPage() {
-  const [report, setReport] = useState<ArchiveMaturityReport | null>(null);
+export default function FutureArchiveDebugPage() {
+  const [report, setReport] = useState<FutureArchiveSimulationReport | null>(null);
 
   const refresh = () => {
-    setReport(buildArchiveMaturityReport(getMemoryEligibleEntries()));
+    setReport(buildFutureArchiveSimulationReport(getMemoryEligibleEntries()));
   };
 
   useEffect(() => {
@@ -31,10 +31,10 @@ export default function ArchiveMaturityDebugPage() {
         <header className="mt-2 flex items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Archive</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Archive maturity</h1>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Future archive</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              Long-horizon compounding review — durability, slow realizations, density, and revisit
-              sequencing. Debug only.
+              Years-later simulation — density, callback durability, revisit fatigue, landmark survival, and
+              continuity drift. Debug only.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -49,22 +49,16 @@ export default function ArchiveMaturityDebugPage() {
           </Card>
         ) : (
           <div className="mt-6">
-            <ArchiveMaturityPanel report={report} />
+            <FutureArchivePanel report={report} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/debug/archive-depth" className="text-violet-300 hover:text-violet-200">
-            Archive depth →
-          </Link>
-          <Link href="/debug/archive-permanence" className="text-zinc-500 hover:text-zinc-300">
+          <Link href="/debug/archive-permanence" className="text-violet-300 hover:text-violet-200">
             Archive permanence →
           </Link>
-          <Link href="/debug/future-archive" className="text-zinc-500 hover:text-zinc-300">
-            Future archive →
-          </Link>
-          <Link href="/debug/callbacks" className="text-zinc-500 hover:text-zinc-300">
-            Callbacks →
+          <Link href="/debug/archive-maturity" className="text-zinc-500 hover:text-zinc-300">
+            Archive maturity →
           </Link>
         </div>
       </div>

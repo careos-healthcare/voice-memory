@@ -3,6 +3,7 @@ import type { ReflectionGoal } from "@/types/reflection-goal";
 import type { ReflectionBookmark } from "@/types/reflection-bookmark";
 import type { CallbackReviewLabel } from "@/types/callback-quality-review";
 import type { JournalEntry } from "@/types/journal";
+import type { ArchivePermanenceManifest } from "@/types/archive-permanence-layer";
 
 export interface ArchiveReviewLabel {
   callbackId: string;
@@ -34,6 +35,7 @@ export interface VoiceMemoryArchivePackage {
   settings: ArchiveSettingsSnapshot;
   memoryReviewLabels: ArchiveReviewLabel[];
   audio?: ArchiveAudioFile[];
+  permanenceManifest?: ArchivePermanenceManifest;
 }
 
 export interface ArchiveValidationIssue {

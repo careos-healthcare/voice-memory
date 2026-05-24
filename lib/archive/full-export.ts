@@ -6,6 +6,7 @@ import { isFullDetailEnabled } from "@/lib/quiet-mode";
 import { getReminderPreferences } from "@/lib/reminder-preferences";
 import { getAllEntries } from "@/lib/storage";
 import { getAudio } from "@/lib/audio-storage";
+import { attachPermanenceManifest } from "@/lib/archive/archive-guarantees";
 import { slugExportDate } from "@/lib/memory-export";
 import type {
   ArchiveAudioFile,
@@ -63,7 +64,7 @@ export async function buildFullArchivePackage(
 ): Promise<VoiceMemoryArchivePackage> {
   const audio = await collectArchiveAudio(includeAudio);
 
-  return {
+  return attachPermanenceManifest({
     format: "voicememory-archive",
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -72,7 +73,7 @@ export async function buildFullArchivePackage(
     settings: buildArchiveSettingsSnapshot(),
     memoryReviewLabels: readAllCallbackReviews(),
     audio: audio.length > 0 ? audio : undefined,
-  };
+  });
 }
 
 export function downloadBlob(filename: string, blob: Blob): void {

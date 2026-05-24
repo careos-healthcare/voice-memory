@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
+import { pickPrimaryLifePeriod } from "@/lib/archive/life-periods";
 import { ARCHIVE_PERMANENCE_COPY } from "@/lib/archive/copy";
 import {
   buildFullArchivePackage,
@@ -24,7 +25,7 @@ import { deleteLocalArchive, restoreArchivePackage } from "@/lib/archive/restore
 import { parseArchiveFile, validateArchiveImport } from "@/lib/archive/validate-import";
 import { downloadArchiveZipPackage } from "@/lib/archive/zip-package";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
-import { getStoredEntryCount } from "@/lib/storage";
+import { getStoredEntryCount, getMemoryEligibleEntries } from "@/lib/storage";
 import type { ArchiveImportPreview, ArchiveRestoreMode } from "@/types/archive-permanence";
 
 export default function ArchivePage() {
@@ -37,11 +38,15 @@ export default function ArchivePage() {
   const [restoreMode, setRestoreMode] = useState<ArchiveRestoreMode>("merge");
   const [includeSettings, setIncludeSettings] = useState(true);
   const [includeAudio, setIncludeAudio] = useState(true);
+  const [lifePeriodLine, setLifePeriodLine] = useState<string | null>(null);
 
   const refreshCount = () => setEntryCount(getStoredEntryCount());
 
   useEffect(() => {
     refreshCount();
+    const entries = getMemoryEligibleEntries();
+    const note = pickPrimaryLifePeriod(entries);
+    setLifePeriodLine(note?.text ?? null);
   }, []);
 
   const showMessage = (text: string) => {
@@ -160,6 +165,9 @@ export default function ArchivePage() {
 
         <div className="mt-16 space-y-8">
           <EmotionalProofLine surface="archive" />
+          {lifePeriodLine ? (
+            <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">{lifePeriodLine}</p>
+          ) : null}
           <ArchiveOwnershipPanel />
 
           <Card className="border-white/[0.06] bg-zinc-900/40">

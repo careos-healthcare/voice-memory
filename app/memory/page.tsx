@@ -15,6 +15,7 @@ import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
 import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
 import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { SlowRealizationNote } from "@/components/memory/SlowRealizationNote";
+import { ArchiveLandmarkNote } from "@/components/memory/ArchiveLandmarkNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
@@ -33,6 +34,7 @@ import {
   revisitRhythmKindFromNote,
   trackRevisitRhythmSeen,
 } from "@/lib/refinement/revisit-rhythm";
+import { pickPrimaryArchiveLandmark } from "@/lib/archive/archive-landmarks";
 import { memorySlowRealizationNote } from "@/lib/memory/slow-realizations";
 import { memoryMilestoneNotes } from "@/lib/memory/milestones";
 import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
@@ -80,6 +82,7 @@ export default function MemoryPage() {
   const [emotionalChapter, setEmotionalChapter] = useState<MemoryNote | null>(null);
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
   const [slowRealization, setSlowRealization] = useState<MemoryNote | null>(null);
+  const [archiveLandmark, setArchiveLandmark] = useState<MemoryNote | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -110,6 +113,7 @@ export default function MemoryPage() {
       setEmotionalChapter(memoryEmotionalChapterMoment(entries));
       setRevisitRhythm(memoryRevisitRhythmMoment(entries));
       setSlowRealization(memorySlowRealizationNote(entries));
+      setArchiveLandmark(pickPrimaryArchiveLandmark(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -193,6 +197,7 @@ export default function MemoryPage() {
               <EmotionalChapterNote note={emotionalChapter} />
               <RevisitRhythmNote note={revisitRhythm} />
               <SlowRealizationNote note={slowRealization} />
+              <ArchiveLandmarkNote note={archiveLandmark} />
               <ContinuityDepthNote indicator={continuityDepth} />
 
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />

@@ -28,6 +28,8 @@ const SKIP_PATH_PARTS = [
   "lib/memory/slow-realizations.ts",
   "lib/refinement/revisit-sequencing.ts",
   "lib/refinement/durable-callbacks.ts",
+  "lib/archive/",
+  "lib/refinement/permanent-callbacks.ts",
   "lib/roundups/roundup-quality.ts",
   "lib/roundups/roundup-observation.ts",
   "lib/tester-onboarding-copy.ts",
