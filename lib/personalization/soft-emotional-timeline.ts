@@ -1,4 +1,5 @@
 import { startOfWeekKey, toDayKey } from "@/lib/dates";
+import { entriesForTerritory } from "@/lib/territories/emotional-territories";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { SoftEmotionalTimelineReport, SoftTimelineSegment } from "@/types/personalization";
@@ -27,8 +28,10 @@ function periodLabel(weekKey: string): string {
 /** Gentle movement over time — no charts, scores, or clinical labels. */
 export function buildSoftEmotionalTimelineReport(
   entries: JournalEntry[] = getMemoryEligibleEntries(),
+  territoryId?: string | null,
 ): SoftEmotionalTimelineReport {
-  const sorted = [...entries].sort(
+  const scoped = entriesForTerritory(entries, territoryId ?? null);
+  const sorted = [...scoped].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
 

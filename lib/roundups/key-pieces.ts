@@ -2,6 +2,7 @@ import { toDayKey } from "@/lib/dates";
 import { buildEntityMemoryFromEntries } from "@/lib/entity-memory";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
+import { entriesForTerritory } from "@/lib/territories/emotional-territories";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { KeyPiece, KeyPieceKind, KeyPiecesReport, RoundupPeriod } from "@/types/reflective-roundup";
@@ -405,8 +406,10 @@ function pickItems(candidates: Candidate[]): KeyPiece[] {
 export function buildKeyPieces(
   period: RoundupPeriod,
   entries: JournalEntry[] = getMemoryEligibleEntries(),
+  territoryId?: string | null,
 ): KeyPiecesReport {
-  const scoped = entriesInRange(entries, period.startDayKey, period.endDayKey);
+  const scopedEntries = entriesForTerritory(entries, territoryId ?? null);
+  const scoped = entriesInRange(scopedEntries, period.startDayKey, period.endDayKey);
 
   if (scoped.length === 0) {
     return { items: [], hasData: false };

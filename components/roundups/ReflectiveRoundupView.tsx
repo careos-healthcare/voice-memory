@@ -262,11 +262,13 @@ export function ReflectiveRoundupView({
   keyPieces,
   intentionLinks,
   periodSlug,
+  territoryLabel,
 }: {
   roundup: ReflectiveRoundup;
   keyPieces?: KeyPiecesReport | null;
   intentionLinks?: RoundupIntentionLinksReport | null;
   periodSlug?: string;
+  territoryLabel?: string | null;
 }) {
   const hasLines = roundup.hasData && roundup.lines.length > 0;
   const hasKeyPieces = keyPieces?.hasData ?? false;
@@ -282,6 +284,11 @@ export function ReflectiveRoundupView({
 
   return (
     <div className="space-y-14">
+      {territoryLabel ? (
+        <p className="text-sm text-zinc-500">
+          Key pieces filtered to {territoryLabel.toLowerCase()}.
+        </p>
+      ) : null}
       {hasLines ? (
         <div className="space-y-14">
           {roundup.lines.map((line) => (

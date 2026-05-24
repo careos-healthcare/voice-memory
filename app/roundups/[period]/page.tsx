@@ -20,6 +20,14 @@ import {
 } from "@/lib/roundups/roundup-observation";
 import { buildKeyPieces } from "@/lib/roundups/key-pieces";
 import { buildRoundupIntentionLinks } from "@/lib/roundups/roundup-intention-links";
+import {
+  getEmotionalTerritoryById,
+} from "@/lib/territories/emotional-territories";
+import {
+  readActiveTerritoryId,
+  resolveTerritoryLabel,
+} from "@/lib/territories/territory-preferences";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import type {
   KeyPiecesReport,
   ReflectiveRoundup,
@@ -33,6 +41,7 @@ export default function RoundupPeriodPage() {
   const [roundup, setRoundup] = useState<ReflectiveRoundup | null>(null);
   const [keyPieces, setKeyPieces] = useState<KeyPiecesReport | null>(null);
   const [intentionLinks, setIntentionLinks] = useState<RoundupIntentionLinksReport | null>(null);
+  const [territoryLabel, setTerritoryLabel] = useState<string | null>(null);
 
   useEffect(() => {
     if (!periodSlug || !period) return;
@@ -48,8 +57,18 @@ export default function RoundupPeriodPage() {
       return;
     }
     const id = requestAnimationFrame(() => {
+      const entries = getMemoryEligibleEntries();
+      const activeTerritoryId = readActiveTerritoryId();
+      const activeTerritory = activeTerritoryId
+        ? getEmotionalTerritoryById(entries, activeTerritoryId)
+        : null;
+      setTerritoryLabel(
+        activeTerritory
+          ? resolveTerritoryLabel(activeTerritory.id, activeTerritory.defaultLabel)
+          : null,
+      );
       setRoundup(buildReflectiveRoundup(period));
-      setKeyPieces(buildKeyPieces(period));
+      setKeyPieces(buildKeyPieces(period, entries, activeTerritoryId));
       setIntentionLinks(buildRoundupIntentionLinks(period));
     });
     return () => cancelAnimationFrame(id);
@@ -110,6 +129,7 @@ export default function RoundupPeriodPage() {
                   keyPieces={keyPieces}
                   intentionLinks={intentionLinks}
                   periodSlug={periodSlug}
+                  territoryLabel={territoryLabel}
                 />
               ) : null}
             </div>

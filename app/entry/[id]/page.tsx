@@ -24,6 +24,7 @@ import { CopyMemoryMomentButton } from "@/components/memory/CopyMemoryMomentButt
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
+import { TerritoryMentionsSection } from "@/components/territories/TerritorySections";
 import { ReflectOnEntryButton } from "@/components/ReflectOnEntryButton";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
@@ -42,6 +43,7 @@ import { resolveRevisitVoicePlaybackPair, resolveVoicePlaybackPair, hasRevisitAu
 import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { threadsForEntry } from "@/lib/memory/conversation-threads";
+import { territoriesForEntry } from "@/lib/territories/emotional-territories";
 import { recordEntryDwell, recordEntryView } from "@/lib/callback-interaction-signals";
 import {
   recordLastOpenedEntry,
@@ -457,7 +459,12 @@ export default function EntryPage() {
   const entryThreads = useMemo(() => {
     if (!entry || pending) return [];
     return threadsForEntry(allEntries, entry.id, 3);
-  }, [entry, allEntries]);
+  }, [entry, allEntries, pending]);
+
+  const entryTerritories = useMemo(() => {
+    if (!entry || pending) return [];
+    return territoriesForEntry(allEntries, entry.id, 3);
+  }, [entry, allEntries, pending]);
 
   const relationshipNotes = useMemo(() => {
     if (!entry || pending) return [];
@@ -662,6 +669,7 @@ export default function EntryPage() {
                     ) : null}
 
                     <ThreadMentionsSection threads={entryThreads} />
+                    <TerritoryMentionsSection territories={entryTerritories} />
 
                     {presentation?.primaryMoment ? (
                       <MotionNoteList className="space-y-20">
@@ -695,6 +703,7 @@ export default function EntryPage() {
                 ) : null}
 
                 <ThreadMentionsSection threads={entryThreads} />
+                <TerritoryMentionsSection territories={entryTerritories} />
 
                 <RelationshipContinuityNotes notes={relationshipNotes} max={2} />
 
