@@ -3,12 +3,35 @@ export type WouldPayAnswer = "yes" | "no" | "maybe";
 export interface ManualStudyNote {
   id: string;
   createdAt: string;
+  participantId?: string;
   rememberedSentence48h?: string;
   feltRemembered?: boolean;
   feltGeneric?: boolean;
   userQuote?: string;
   wouldPay?: WouldPayAnswer;
   payReason?: string;
+}
+
+export interface StudyParticipantRecord {
+  id: string;
+  label?: string;
+  anchorDay: string;
+  addedAt: string;
+  active: boolean;
+}
+
+export interface StudyParticipantStatus {
+  participant: StudyParticipantRecord;
+  studyDayCount: number;
+  day7Eligible: boolean;
+  day30Eligible: boolean;
+  day60Eligible: boolean;
+  noteCount: number;
+  revisitToReflection: number;
+  wouldPayYes: number;
+  wouldPayMaybe: number;
+  feltRememberedCount: number;
+  feltGenericCount: number;
 }
 
 export interface RetentionWindowIndicator {
@@ -49,6 +72,7 @@ export interface ParticipantSnapshot {
 export interface RetentionObservationSnapshot {
   generatedAt: string;
   participant: ParticipantSnapshot;
+  participantRoster: StudyParticipantStatus[];
   returnDayKeys: string[];
   retentionWindows: RetentionWindowIndicator[];
   revisitFunnel: RevisitFunnelStep[];
@@ -71,5 +95,6 @@ export interface AnonymizedStudyExport {
   schemaVersion: 1;
   exportedAt: string;
   participantId: string;
+  participantRoster: StudyParticipantStatus[];
   observation: RetentionObservationSnapshot;
 }

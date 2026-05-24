@@ -16,13 +16,17 @@ import type {
   RetentionObservationSnapshot,
   RetentionWindowIndicator,
   RevisitFunnelStep,
+  StudyParticipantRecord,
+  StudyParticipantStatus,
   WouldPayAnswer,
 } from "@/types/retention-observation";
 
 const MANUAL_NOTES_KEY = "voicememory_retention_study_manual";
 const PARTICIPANT_KEY = "voicememory_study_participant_id";
+const PARTICIPANT_ROSTER_KEY = "voicememory_study_participant_roster";
 const ANCHOR_KEY = "voicememory_study_anchor_day";
 const MAX_MANUAL_NOTES = 120;
+const MAX_PARTICIPANTS = 20;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -62,6 +66,117 @@ export function resetStudyAnchorDay(dayKey?: string): string {
   return anchor;
 }
 
+function readParticipantRosterRaw(): StudyParticipantRecord[] {
+  if (!isBrowser()) return [];
+  try {
+    const raw = localStorage.getItem(PARTICIPANT_ROSTER_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as StudyParticipantRecord[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeParticipantRosterRaw(roster: StudyParticipantRecord[]): void {
+  if (!isBrowser()) return;
+  localStorage.setItem(PARTICIPANT_ROSTER_KEY, JSON.stringify(roster.slice(0, MAX_PARTICIPANTS)));
+}
+
+function ensureCurrentParticipantInRoster(): StudyParticipantRecord[] {
+  const currentId = getOrCreateParticipantId();
+  const anchor = getStudyAnchorDay();
+  const roster = readParticipantRosterRaw();
+  if (!roster.some((row) => row.id === currentId)) {
+    roster.unshift({
+      id: currentId,
+      label: "This device",
+      anchorDay: anchor,
+      addedAt: new Date().toISOString(),
+      active: true,
+    });
+    writeParticipantRosterRaw(roster);
+  }
+  return readParticipantRosterRaw();
+}
+
+export function readStudyParticipantRoster(): StudyParticipantRecord[] {
+  return ensureCurrentParticipantInRoster();
+}
+
+export function addStudyParticipant(label?: string): StudyParticipantRecord {
+  if (!isBrowser()) {
+    return {
+      id: "server",
+      label,
+      anchorDay: todayKey(),
+      addedAt: new Date().toISOString(),
+      active: true,
+    };
+  }
+
+  const roster = ensureCurrentParticipantInRoster();
+  if (roster.length >= MAX_PARTICIPANTS) {
+    throw new Error(`Participant roster full (${MAX_PARTICIPANTS}).`);
+  }
+
+  const id = `p-${crypto.randomUUID().replace(/-/g, "").slice(0, 10)}`;
+  const record: StudyParticipantRecord = {
+    id,
+    label: label?.trim() || `Participant ${roster.length + 1}`,
+    anchorDay: todayKey(),
+    addedAt: new Date().toISOString(),
+    active: true,
+  };
+  writeParticipantRosterRaw([record, ...roster]);
+  return record;
+}
+
+export function removeStudyParticipant(participantId: string): void {
+  const roster = readParticipantRosterRaw().filter((row) => row.id !== participantId);
+  writeParticipantRosterRaw(roster);
+}
+
+export function setActiveStudyParticipant(participantId: string): void {
+  if (!isBrowser()) return;
+  localStorage.setItem(PARTICIPANT_KEY, participantId);
+  const roster = readParticipantRosterRaw();
+  const match = roster.find((row) => row.id === participantId);
+  if (match) {
+    localStorage.setItem(ANCHOR_KEY, match.anchorDay);
+  }
+}
+
+function buildParticipantStatuses(notes: ManualStudyNote[]): StudyParticipantStatus[] {
+  const roster = ensureCurrentParticipantInRoster();
+  const loopReport = buildRetentionLoopReport();
+  const revisitReflection = loopReport.revisitsCausingReflections.filter(
+    (row) => row.reflectionEntryId,
+  ).length;
+
+  return roster.map((participant) => {
+    const participantNotes = notes.filter((note) => note.participantId === participant.id);
+    const studyDayCount = Math.max(
+      0,
+      daysBetweenKeys(participant.anchorDay, todayKey()) + 1,
+    );
+
+    return {
+      participant,
+      studyDayCount,
+      day7Eligible: studyDayCount >= 7,
+      day30Eligible: studyDayCount >= 30,
+      day60Eligible: studyDayCount >= 60,
+      noteCount: participantNotes.length,
+      revisitToReflection: participant.id === getOrCreateParticipantId() ? revisitReflection : 0,
+      wouldPayYes: participantNotes.filter((note) => note.wouldPay === "yes").length,
+      wouldPayMaybe: participantNotes.filter((note) => note.wouldPay === "maybe").length,
+      feltRememberedCount: participantNotes.filter((note) => note.feltRemembered).length,
+      feltGenericCount: participantNotes.filter((note) => note.feltGeneric).length,
+    };
+  });
+}
+
 function readManualNotesRaw(): ManualStudyNote[] {
   if (!isBrowser()) return [];
   try {
@@ -96,6 +211,7 @@ export function saveManualStudyNote(input: {
   const note: ManualStudyNote = {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
+    participantId: getOrCreateParticipantId(),
     rememberedSentence48h: input.rememberedSentence48h?.trim() || undefined,
     feltRemembered: input.feltRemembered,
     feltGeneric: input.feltGeneric,
@@ -260,10 +376,12 @@ export async function buildRetentionObservationSnapshot(): Promise<RetentionObse
   const loopReport = buildRetentionLoopReport();
   const participant = buildParticipantSnapshot(returnDayKeys, anchorDay);
   const archiveProtection = await buildArchiveProtectionBehavior();
+  const manualNotes = readManualStudyNotes();
 
   return {
     generatedAt: new Date().toISOString(),
     participant,
+    participantRoster: buildParticipantStatuses(manualNotes),
     returnDayKeys,
     retentionWindows: ([7, 30, 60] as const).map((windowDays) =>
       buildRetentionWindow(
@@ -316,6 +434,7 @@ export async function buildAnonymizedStudyExport(): Promise<AnonymizedStudyExpor
     schemaVersion: 1,
     exportedAt: new Date().toISOString(),
     participantId: observation.participant.participantId,
+    participantRoster: observation.participantRoster,
     observation: {
       ...observation,
       emotionalResidue: observation.emotionalResidue.map(sanitizeManualNote),

@@ -17,6 +17,9 @@ import {
   readManualStudyNotes,
   resetStudyAnchorDay,
   saveManualStudyNote,
+  addStudyParticipant,
+  removeStudyParticipant,
+  setActiveStudyParticipant,
 } from "@/lib/research/retention-observation";
 import { formatEntryDate } from "@/lib/utils";
 import type { RetentionObservationSnapshot, WouldPayAnswer } from "@/types/retention-observation";
@@ -48,6 +51,9 @@ export default function RetentionStudyDebugPage() {
   const [wouldPay, setWouldPay] = useState<WouldPayAnswer | "">("");
   const [feltRemembered, setFeltRemembered] = useState<boolean | null>(null);
   const [feltGeneric, setFeltGeneric] = useState<boolean | null>(null);
+  const [newParticipantLabel, setNewParticipantLabel] = useState("");
+
+  const activeParticipantId = getOrCreateParticipantId();
 
   const refresh = async () => {
     setSnapshot(await buildRetentionObservationSnapshot());
@@ -137,6 +143,157 @@ export default function RetentionStudyDebugPage() {
           </Card>
         ) : (
           <div className="mt-6 space-y-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-normal text-zinc-200">
+                  Participant roster ({snapshot.participantRoster.length}/20)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="overflow-x-auto rounded-xl border border-white/5">
+                  <table className="w-full min-w-[720px] text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-zinc-600">
+                        <th className="px-3 py-2.5 font-medium">Participant</th>
+                        <th className="px-3 py-2.5 font-medium">Day</th>
+                        <th className="px-3 py-2.5 font-medium">D7</th>
+                        <th className="px-3 py-2.5 font-medium">D30</th>
+                        <th className="px-3 py-2.5 font-medium">D60</th>
+                        <th className="px-3 py-2.5 font-medium">Notes</th>
+                        <th className="px-3 py-2.5 font-medium">Revisit→refl</th>
+                        <th className="px-3 py-2.5 font-medium">Pay</th>
+                        <th className="px-3 py-2.5 font-medium">Felt</th>
+                        <th className="px-3 py-2.5 font-medium"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {snapshot.participantRoster.map((row) => {
+                        const isActive = row.participant.id === activeParticipantId;
+                        return (
+                          <tr
+                            key={row.participant.id}
+                            className={`border-b border-white/[0.03] ${
+                              isActive ? "bg-violet-500/10" : ""
+                            }`}
+                          >
+                            <td className="px-3 py-3">
+                              <p className="font-medium text-zinc-200">
+                                {row.participant.label ?? row.participant.id}
+                              </p>
+                              <p className="font-mono text-[10px] text-zinc-600">
+                                {row.participant.id}
+                              </p>
+                            </td>
+                            <td className="px-3 py-3 tabular-nums text-zinc-400">
+                              {row.studyDayCount}
+                            </td>
+                            <td className="px-3 py-3 text-xs text-zinc-400">
+                              {row.day7Eligible ? "✓" : "—"}
+                            </td>
+                            <td className="px-3 py-3 text-xs text-zinc-400">
+                              {row.day30Eligible ? "✓" : "—"}
+                            </td>
+                            <td className="px-3 py-3 text-xs text-zinc-400">
+                              {row.day60Eligible ? "✓" : "—"}
+                            </td>
+                            <td className="px-3 py-3 tabular-nums text-zinc-400">
+                              {row.noteCount}
+                            </td>
+                            <td className="px-3 py-3 tabular-nums text-zinc-400">
+                              {row.revisitToReflection}
+                            </td>
+                            <td className="px-3 py-3 text-xs text-zinc-400">
+                              {row.wouldPayYes > 0 || row.wouldPayMaybe > 0
+                                ? `${row.wouldPayYes}y / ${row.wouldPayMaybe}m`
+                                : "—"}
+                            </td>
+                            <td className="px-3 py-3 text-xs text-zinc-400">
+                              {row.feltRememberedCount > 0 || row.feltGenericCount > 0
+                                ? `${row.feltRememberedCount}r / ${row.feltGenericCount}g`
+                                : "—"}
+                            </td>
+                            <td className="px-3 py-3">
+                              <div className="flex flex-wrap gap-1">
+                                {!isActive ? (
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-auto px-2 py-1 text-[10px]"
+                                    disabled={busy}
+                                    onClick={() => {
+                                      setActiveStudyParticipant(row.participant.id);
+                                      showMessage(`Active participant: ${row.participant.label ?? row.participant.id}`);
+                                      void refresh();
+                                    }}
+                                  >
+                                    Select
+                                  </Button>
+                                ) : (
+                                  <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] text-violet-200">
+                                    Active
+                                  </span>
+                                )}
+                                {!isActive && snapshot.participantRoster.length > 1 ? (
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-auto px-2 py-1 text-[10px] text-rose-300"
+                                    disabled={busy}
+                                    onClick={() => {
+                                      removeStudyParticipant(row.participant.id);
+                                      showMessage("Participant removed from roster.");
+                                      void refresh();
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                ) : null}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex flex-wrap items-end gap-2">
+                  <label className="flex-1 space-y-1 text-sm text-zinc-400">
+                    Add participant
+                    <input
+                      value={newParticipantLabel}
+                      onChange={(event) => setNewParticipantLabel(event.target.value)}
+                      placeholder="Label (optional)"
+                      className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-violet-500/30 focus:ring-2"
+                    />
+                  </label>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={busy || snapshot.participantRoster.length >= 20}
+                    onClick={() => {
+                      try {
+                        addStudyParticipant(newParticipantLabel || undefined);
+                        setNewParticipantLabel("");
+                        showMessage("Participant added.");
+                        void refresh();
+                      } catch (error) {
+                        showMessage(error instanceof Error ? error.message : "Could not add.");
+                      }
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+                <p className="text-xs text-zinc-600">
+                  Switch active participant to tag manual notes. Device metrics apply only to the
+                  active device participant.
+                </p>
+              </CardContent>
+            </Card>
+
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 label="Participant"
@@ -379,6 +536,12 @@ export default function RetentionStudyDebugPage() {
             {message ? <p className="text-sm text-zinc-400">{message}</p> : null}
 
             <div className="flex flex-wrap gap-3 text-sm">
+              <Link href="/debug/moat-review" className="text-violet-300 hover:text-violet-200">
+                Moat review →
+              </Link>
+              <Link href="/debug/monetization-readiness" className="text-violet-300 hover:text-violet-200">
+                Monetization gate →
+              </Link>
               <Link href="/debug/retention-loops" className="text-violet-300 hover:text-violet-200">
                 Retention loops →
               </Link>

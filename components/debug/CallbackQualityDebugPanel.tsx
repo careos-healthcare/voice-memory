@@ -17,12 +17,19 @@ import {
 } from "@/lib/debug/callback-quality-score";
 import { downloadCallbackReviewJson, downloadCallbackSurvivalJson } from "@/lib/debug/callback-review-export";
 import {
+  downloadCallbackPruningJson,
+  getCallbackPruningAction,
+  PRUNING_ACTION_LABELS,
+  setCallbackPruningAction,
+} from "@/lib/debug/callback-pruning";
+import {
   CALLBACK_REVIEW_LABELS,
   REWRITE_FLAG_LABELS,
   type CallbackQualityReviewReport,
   type CallbackReviewItem,
   type CallbackReviewLabel,
 } from "@/types/callback-quality-review";
+import type { CallbackPruningAction } from "@/types/observation-workflow";
 
 function SignalRow({ label, value }: { label: string; value: string }) {
   return (
@@ -169,10 +176,19 @@ function CallbackReviewCard({
   const [labels, setLabels] = useState<CallbackReviewLabel[]>(() =>
     getCallbackReviewLabels(item.id),
   );
+  const [pruningAction, setPruningAction] = useState<CallbackPruningAction | null>(() =>
+    getCallbackPruningAction(item.id),
+  );
 
   const toggleLabel = (label: CallbackReviewLabel) => {
     const next = toggleCallbackReviewLabel(item.id, label);
     setLabels(next);
+    onLabelsChange();
+  };
+
+  const choosePruningAction = (action: CallbackPruningAction) => {
+    setCallbackPruningAction(item.id, action, item.text);
+    setPruningAction(action);
     onLabelsChange();
   };
 
@@ -463,6 +479,34 @@ function CallbackReviewCard({
             })}
           </div>
         </div>
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-zinc-600">
+            Pruning decision
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {(Object.keys(PRUNING_ACTION_LABELS) as CallbackPruningAction[]).map((action) => {
+              const active = pruningAction === action;
+              return (
+                <Button
+                  key={action}
+                  type="button"
+                  size="sm"
+                  variant={active ? "default" : "secondary"}
+                  className="h-auto px-2 py-1 text-[11px]"
+                  onClick={() => choosePruningAction(action)}
+                >
+                  {PRUNING_ACTION_LABELS[action]}
+                </Button>
+              );
+            })}
+          </div>
+          {pruningAction ? (
+            <p className="mt-2 text-xs text-zinc-500">
+              Saved locally: {PRUNING_ACTION_LABELS[pruningAction]}
+            </p>
+          ) : null}
+        </div>
       </CardContent>
     </Card>
   );
@@ -645,6 +689,15 @@ export function CallbackQualityDebugPanel({
           >
             <Download className="mr-2 h-4 w-4" />
             Survival JSON
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => downloadCallbackPruningJson(report)}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            callback-pruning.json
           </Button>
         </div>
       </div>

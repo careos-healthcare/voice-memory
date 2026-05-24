@@ -79,6 +79,12 @@ export default function CallbacksDebugPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link href="/debug/moat-review" className="text-violet-300 hover:text-violet-200">
+            Moat review →
+          </Link>
+          <Link href="/debug/monetization-readiness" className="text-violet-300 hover:text-violet-200">
+            Monetization gate →
+          </Link>
           <Link href="/debug/suppression" className="text-violet-300 hover:text-violet-200">
             Suppression review →
           </Link>
