@@ -14,6 +14,7 @@ import type {
 } from "@/types/emotional-milestone";
 import type { JournalEntry } from "@/types/journal";
 import { applyMilestoneHierarchy } from "@/lib/refinement/memory-hierarchy";
+import { filterDelayedPayoffMilestones } from "@/lib/memory/delayed-payoff";
 
 const MILESTONE_KEY = "voicememory_emotional_milestones";
 const MIN_ENTRIES = 5;
@@ -487,10 +488,13 @@ export function memoryMilestoneNotes(
   entries: JournalEntry[],
   limit = 1,
 ): EmotionalMilestone[] {
-  return applyMilestoneHierarchy(
-    buildEmotionalMilestonesReport(entries, { context: "memory", limit }).milestones,
+  return filterDelayedPayoffMilestones(
     entries,
-    limit,
+    applyMilestoneHierarchy(
+      buildEmotionalMilestonesReport(entries, { context: "memory", limit }).milestones,
+      entries,
+      limit,
+    ),
   );
 }
 
@@ -498,10 +502,13 @@ export function timelineMilestoneNotes(
   entries: JournalEntry[],
   limit = 1,
 ): EmotionalMilestone[] {
-  return applyMilestoneHierarchy(
-    buildEmotionalMilestonesReport(entries, { context: "timeline", limit }).milestones,
+  return filterDelayedPayoffMilestones(
     entries,
-    limit,
+    applyMilestoneHierarchy(
+      buildEmotionalMilestonesReport(entries, { context: "timeline", limit }).milestones,
+      entries,
+      limit,
+    ),
   );
 }
 
@@ -509,10 +516,13 @@ export function monthlyMilestoneNotes(
   entries: JournalEntry[],
   limit = 1,
 ): EmotionalMilestone[] {
-  return applyMilestoneHierarchy(
-    buildEmotionalMilestonesReport(entries, { context: "monthly", limit }).milestones,
+  return filterDelayedPayoffMilestones(
     entries,
-    limit,
+    applyMilestoneHierarchy(
+      buildEmotionalMilestonesReport(entries, { context: "monthly", limit }).milestones,
+      entries,
+      limit,
+    ),
   );
 }
 
@@ -521,14 +531,17 @@ export function entryMilestoneNotes(
   entryId: string,
   limit = 1,
 ): EmotionalMilestone[] {
-  return applyMilestoneHierarchy(
-    buildEmotionalMilestonesReport(entries, {
-      context: "entry",
-      entryId,
-      limit,
-    }).milestones,
+  return filterDelayedPayoffMilestones(
     entries,
-    limit,
+    applyMilestoneHierarchy(
+      buildEmotionalMilestonesReport(entries, {
+        context: "entry",
+        entryId,
+        limit,
+      }).milestones,
+      entries,
+      limit,
+    ),
   );
 }
 

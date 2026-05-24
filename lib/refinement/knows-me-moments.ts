@@ -22,6 +22,7 @@ import {
   hedgeScore,
   rankThenVsNowContrastNotes,
 } from "@/lib/refinement/then-vs-now-quotes";
+import { gateDelayedPayoffNote } from "@/lib/memory/delayed-payoff";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -960,7 +961,8 @@ export function pickKnowsMeMoment(
     allSorted,
   );
   const best = pickBest(candidates, minStrength, allSorted);
-  return best ? toMemoryNote(best) : null;
+  if (!best) return null;
+  return gateDelayedPayoffNote(allSorted, toMemoryNote(best));
 }
 
 export function entryKnowsMeMoment(

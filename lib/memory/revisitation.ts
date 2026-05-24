@@ -20,6 +20,7 @@ import type {
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
+import { filterDelayedPayoffGate } from "@/lib/memory/delayed-payoff";
 
 const OLDER_GAP_DAYS = 12;
 const LOOP_GAP_DAYS = 7;
@@ -413,15 +414,18 @@ function applyRevisitationRarity(
   surface: ResurfacingSurface,
   limit = 1,
 ): MemoryNote[] {
-  return applyResurfacingRarity(
-    notes.map((note) =>
-      candidateFromRevisitationNote(
-        note,
-        revisitationToNotes([note])[0],
-        gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
+  return filterDelayedPayoffGate(
+    entries,
+    applyResurfacingRarity(
+      notes.map((note) =>
+        candidateFromRevisitationNote(
+          note,
+          revisitationToNotes([note])[0],
+          gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
+        ),
       ),
+      { surface, limit, record: true, entries },
     ),
-    { surface, limit, record: true, entries },
   );
 }
 

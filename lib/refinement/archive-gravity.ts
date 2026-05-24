@@ -5,6 +5,7 @@ import { helpsOrient } from "@/lib/patterns/usefulness-filter";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { buildRevisitWorthReport } from "@/lib/refinement/revisit-worth";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
+import { gateDelayedPayoffNote } from "@/lib/memory/delayed-payoff";
 import { formatRelativeDate } from "@/lib/utils";
 import type { ConversationThread } from "@/types/conversation-thread";
 import type { JournalEntry } from "@/types/journal";
@@ -553,7 +554,7 @@ export function pickArchiveGravityMoment(
   if (!calibrated) return null;
 
   recordShown(best, surface);
-  return calibrated;
+  return gateDelayedPayoffNote(sorted, calibrated);
 }
 
 export function homepageArchiveGravityMoment(entries: JournalEntry[]): MemoryNote | null {

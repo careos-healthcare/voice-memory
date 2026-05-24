@@ -16,6 +16,7 @@ import type { ResurfacingKind, ResurfacingNote, ResurfacingReport } from "@/type
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 import { applyMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
+import { filterDelayedPayoffGate } from "@/lib/memory/delayed-payoff";
 
 const ABSENCE_DAYS = RESURFACING_MIN_ABSENCE_DAYS;
 const LONG_SILENCE_DAYS = RESURFACING_LONG_SILENCE_DAYS;
@@ -514,12 +515,15 @@ export function entryResurfacingNotes(
   entryId: string,
   limit = 1,
 ): MemoryNote[] {
-  return applyMemoryHierarchy(
-    resurfacingToMemoryNotes(
-      buildResurfacingReport(entries, { entryId, limit, surface: "entry" }).notes,
-    ),
+  return filterDelayedPayoffGate(
     entries,
-    limit,
+    applyMemoryHierarchy(
+      resurfacingToMemoryNotes(
+        buildResurfacingReport(entries, { entryId, limit, surface: "entry" }).notes,
+      ),
+      entries,
+      limit,
+    ),
   );
 }
 
@@ -528,10 +532,13 @@ export function latestResurfacingNotes(
   limit = 1,
   surface: ResurfacingSurface = "homepage",
 ): MemoryNote[] {
-  return applyMemoryHierarchy(
-    resurfacingToMemoryNotes(buildResurfacingReport(entries, { limit, surface }).notes),
+  return filterDelayedPayoffGate(
     entries,
-    limit,
+    applyMemoryHierarchy(
+      resurfacingToMemoryNotes(buildResurfacingReport(entries, { limit, surface }).notes),
+      entries,
+      limit,
+    ),
   );
 }
 
