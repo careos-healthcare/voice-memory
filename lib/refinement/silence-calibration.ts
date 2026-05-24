@@ -122,7 +122,7 @@ export function classifyEmotionalCategory(note: MemoryNote): EmotionalCategory {
   if (id.startsWith("tvn-") || id.startsWith("revisit-diff") || (note.pastQuote && note.currentQuote)) {
     return "contrast";
   }
-  if (id.startsWith("continuity-")) return "continuity";
+  if (id.startsWith("continuity-") || id.startsWith("archive-gravity-")) return "continuity";
   if (id.startsWith("resurface-")) return "resurfacing";
   if (id.startsWith("fam-resurface-") || id.startsWith("familiarity-")) return "familiarity";
   if (id.startsWith("recovery-") || id.startsWith("moment-recovery-")) return "recovery";

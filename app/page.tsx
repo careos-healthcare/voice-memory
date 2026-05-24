@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
+import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
 import { PersonalisationProgressNote } from "@/components/PersonalisationProgressNote";
 import { ReflectionGoalHint } from "@/components/ReflectionGoalHint";
@@ -18,6 +19,7 @@ import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { consumeStoredFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
+import { homepageArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import {
   HONESTY_LINE,
@@ -40,6 +42,7 @@ export default function HomePage() {
   const [followupPrompt, setFollowupPrompt] = useState<FollowupPrompt | null>(null);
   const [recorderLine, setRecorderLine] = useState<string | null>(null);
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
+  const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
   const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
   const recorderRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +56,7 @@ export default function HomePage() {
       setFollowupPrompt(presentation.followupPrompt);
       setRecorderLine(presentation.recorderLine);
       setContinuityDepth(presentation.continuityDepth);
+      setArchiveGravity(homepageArchiveGravityMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -96,6 +100,7 @@ export default function HomePage() {
           <PersonalisationProgressNote />
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
+          <ArchiveGravityNote note={archiveGravity} />
           <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={1} />
           <FollowupPromptInline prompt={followupPrompt} onContinue={handleContinueFollowup} />

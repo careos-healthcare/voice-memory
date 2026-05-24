@@ -56,6 +56,7 @@ const SKIP_PATH_PARTS = [
   "lib/refinement/knows-me-moments.ts",
   "lib/refinement/silence-calibration.ts",
   "lib/refinement/revisit-worth.ts",
+  "lib/refinement/archive-gravity.ts",
   "lib/retention/retention-loops.ts",
   "lib/refinement/quiet-presentation.ts",
   "components/navigation/RevisitEntryLink.tsx",

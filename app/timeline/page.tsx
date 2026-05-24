@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { CalendarRange } from "lucide-react";
 
 import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
+import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
@@ -34,6 +35,7 @@ import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { timelineKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import { timelineArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { orderEntriesForRevisitPrompts } from "@/lib/refinement/revisit-worth";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
@@ -50,6 +52,7 @@ export default function TimelinePage() {
   const router = useRouter();
   const { limits } = useQuietMode();
   const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
+  const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
   const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
   const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
   const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
@@ -87,6 +90,7 @@ export default function TimelinePage() {
           "timeline",
         ),
       );
+      setArchiveGravity(timelineArchiveGravityMoment(memoryEntries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -151,6 +155,7 @@ export default function TimelinePage() {
           ) : (
             <>
               <PrimaryCallbackNote note={knowsMe} />
+              <ArchiveGravityNote note={archiveGravity} />
               {notes?.hasData ? (
                 <MemoryNotesOverview
                   changed={notes.changed}

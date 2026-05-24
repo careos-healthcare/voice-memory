@@ -10,6 +10,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
+import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
@@ -20,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
 import { memoryContinuityDepthIndicator } from "@/lib/memory/continuity-depth";
+import { memoryArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { memoryMilestoneNotes } from "@/lib/memory/milestones";
 import { memoryRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { memoryThreadHighlights } from "@/lib/memory/conversation-threads";
@@ -61,6 +63,7 @@ export default function MemoryPage() {
   const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [continuityDepth, setContinuityDepth] = useState<ContinuityDepthIndicator | null>(null);
+  const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
 
   useEffect(() => {
     trackLaunchEvent(LAUNCH_EVENTS.memoryPageOpened);
@@ -86,6 +89,7 @@ export default function MemoryPage() {
       setMilestones(memoryMilestoneNotes(entries, limits.milestones));
       setEntries(entries);
       setContinuityDepth(memoryContinuityDepthIndicator(entries));
+      setArchiveGravity(memoryArchiveGravityMoment(entries));
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -157,6 +161,7 @@ export default function MemoryPage() {
                 />
               ) : null}
 
+              <ArchiveGravityNote note={archiveGravity} />
               <ContinuityDepthNote indicator={continuityDepth} />
 
               <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
