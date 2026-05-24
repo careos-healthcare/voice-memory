@@ -8,12 +8,39 @@ import type { MemoryNote } from "@/types/memory-note";
 const SILENCE_KEY = "voicememory_silence_calibration";
 const MS_PER_HOUR = 1000 * 60 * 60;
 const MS_PER_DAY = MS_PER_HOUR * 24;
+const IGNORED_COOLDOWN_HOURS = 36;
+const HIGH_DWELL_MS = 6000;
+const DELAY_CATEGORY_HOURS = 12;
+const HIGH_DWELL_DELAY_HOURS = 12;
 
 export const MIN_SHOW_SCORE = 66;
 export const STRONG_NOTE_SCORE = 72;
 export const STRONG_CONFIDENCE = 68;
-export const SESSION_NOTE_MAX = 2;
+export const SESSION_NOTE_MAX = 1;
 export const FOLLOWUP_MIN_STRENGTH = 70;
+
+export type RelatedAllowanceReason =
+  | "old_entry_open"
+  | "recording_after_revisit"
+  | "bookmark_copy";
+
+const RELATED_ALLOWANCE: Record<
+  RelatedAllowanceReason,
+  { categories: EmotionalCategory[]; hours: number }
+> = {
+  old_entry_open: {
+    categories: ["continuity", "revisit", "resurfacing", "contrast"],
+    hours: 6,
+  },
+  recording_after_revisit: {
+    categories: ["continuity", "revisit", "contrast"],
+    hours: 8,
+  },
+  bookmark_copy: {
+    categories: ["revisit", "contrast", "continuity"],
+    hours: 6,
+  },
+};
 
 export type SilenceSurface =
   | "homepage"
@@ -44,6 +71,20 @@ interface ShownNoteRecord {
   at: number;
   actionTaken: boolean;
   strong: boolean;
+  dwellMs?: number;
+  highDwellNoAction?: boolean;
+}
+
+interface RelatedNoteAllowance {
+  anchorCategory: EmotionalCategory;
+  categories: EmotionalCategory[];
+  until: number;
+  reason: RelatedAllowanceReason;
+}
+
+interface DelayedCategory {
+  category: EmotionalCategory;
+  until: number;
 }
 
 interface SilenceState {
@@ -55,7 +96,35 @@ interface SilenceState {
   lastStrongNoteAt: number;
   lastFollowupAt: number;
   lastHighActionAt: number;
+  ignoredCooldownUntil: number;
+  relatedNoteAllowance: RelatedNoteAllowance | null;
+  delayedCategories: DelayedCategory[];
   recentShown: ShownNoteRecord[];
+}
+
+export interface SilenceTimingDebugSnapshot {
+  ignoredCooldownActive: boolean;
+  ignoredCooldownUntil: string | null;
+  consecutiveIgnored: number;
+  lastTwoWithoutEngagement: boolean;
+  weakNoteSuppressed: boolean;
+  highActionUnlockActive: boolean;
+  highActionUnlockHoursAgo: number | null;
+  relatedNoteAllowance: {
+    reason: RelatedAllowanceReason;
+    categories: EmotionalCategory[];
+    expiresAt: string;
+  } | null;
+  delayedCategories: Array<{ category: EmotionalCategory; expiresAt: string }>;
+  sessionNoteCount: number;
+  recentShown: Array<{
+    noteId: string;
+    category: EmotionalCategory;
+    actionTaken: boolean;
+    highDwellNoAction: boolean;
+    strong: boolean;
+    shownAt: string;
+  }>;
 }
 
 function isBrowser(): boolean {
@@ -72,8 +141,23 @@ function emptyState(): SilenceState {
     lastStrongNoteAt: 0,
     lastFollowupAt: 0,
     lastHighActionAt: 0,
+    ignoredCooldownUntil: 0,
+    relatedNoteAllowance: null,
+    delayedCategories: [],
     recentShown: [],
   };
+}
+
+function pruneDelayedCategories(rows: DelayedCategory[]): DelayedCategory[] {
+  const now = Date.now();
+  return rows.filter((row) => row.until > now);
+}
+
+function pruneRelatedAllowance(
+  allowance: RelatedNoteAllowance | null,
+): RelatedNoteAllowance | null {
+  if (!allowance) return null;
+  return allowance.until > Date.now() ? allowance : null;
 }
 
 function readState(): SilenceState {
@@ -88,6 +172,19 @@ function readState(): SilenceState {
         ...emptyState(),
         sessionDay: today,
         lastStrongNoteAt: parsed.lastStrongNoteAt ?? 0,
+        lastHighActionAt: parsed.lastHighActionAt ?? 0,
+        ignoredCooldownUntil: parsed.ignoredCooldownUntil ?? 0,
+        relatedNoteAllowance: pruneRelatedAllowance(
+          (parsed.relatedNoteAllowance as RelatedNoteAllowance | null) ?? null,
+        ),
+        delayedCategories: pruneDelayedCategories(
+          Array.isArray(parsed.delayedCategories)
+            ? (parsed.delayedCategories as DelayedCategory[])
+            : [],
+        ),
+        recentShown: Array.isArray(parsed.recentShown)
+          ? (parsed.recentShown as ShownNoteRecord[]).slice(-12)
+          : [],
       };
     }
     return {
@@ -99,7 +196,18 @@ function readState(): SilenceState {
       lastStrongNoteAt: parsed.lastStrongNoteAt ?? 0,
       lastFollowupAt: parsed.lastFollowupAt ?? 0,
       lastHighActionAt: parsed.lastHighActionAt ?? 0,
-      recentShown: Array.isArray(parsed.recentShown) ? parsed.recentShown : [],
+      ignoredCooldownUntil: parsed.ignoredCooldownUntil ?? 0,
+      relatedNoteAllowance: pruneRelatedAllowance(
+        (parsed.relatedNoteAllowance as RelatedNoteAllowance | null) ?? null,
+      ),
+      delayedCategories: pruneDelayedCategories(
+        Array.isArray(parsed.delayedCategories)
+          ? (parsed.delayedCategories as DelayedCategory[])
+          : [],
+      ),
+      recentShown: Array.isArray(parsed.recentShown)
+        ? (parsed.recentShown as ShownNoteRecord[]).slice(-12)
+        : [],
     };
   } catch {
     return emptyState();
@@ -175,6 +283,58 @@ function consecutiveIgnoredCount(state: SilenceState): number {
   return count;
 }
 
+function lastTwoShownWithoutEngagement(state: SilenceState): boolean {
+  const recent = state.recentShown.slice(-2);
+  if (recent.length < 2) return false;
+  return recent.every((row) => !row.actionTaken);
+}
+
+function ignoredCooldownActive(state: SilenceState): boolean {
+  return state.ignoredCooldownUntil > Date.now();
+}
+
+function syncIgnoredCooldown(state: SilenceState): void {
+  if (!lastTwoShownWithoutEngagement(state)) return;
+  const until = Date.now() + IGNORED_COOLDOWN_HOURS * MS_PER_HOUR;
+  if (until > state.ignoredCooldownUntil) {
+    state.ignoredCooldownUntil = until;
+  }
+}
+
+function categoryForNoteId(noteId: string, state: SilenceState): EmotionalCategory {
+  const shown = state.recentShown.find(
+    (row) => row.noteId === noteId || noteId.startsWith(row.noteId),
+  );
+  if (shown) return shown.category;
+  return classifyEmotionalCategory({
+    id: noteId,
+    text: "",
+    category: "changed",
+    confidence: 0,
+  });
+}
+
+function relatedAllowanceActive(
+  state: SilenceState,
+  category: EmotionalCategory,
+): boolean {
+  const allowance = pruneRelatedAllowance(state.relatedNoteAllowance);
+  if (!allowance) return false;
+  return allowance.categories.includes(category);
+}
+
+function categoryDelayed(state: SilenceState, category: EmotionalCategory): boolean {
+  return state.delayedCategories.some(
+    (row) => row.category === category && row.until > Date.now(),
+  );
+}
+
+function delayCategory(state: SilenceState, category: EmotionalCategory): void {
+  const until = Date.now() + HIGH_DWELL_DELAY_HOURS * MS_PER_HOUR;
+  const without = state.delayedCategories.filter((row) => row.category !== category);
+  state.delayedCategories = [...without, { category, until }];
+}
+
 function lastShownHadAction(state: SilenceState): boolean {
   const last = state.recentShown[state.recentShown.length - 1];
   return Boolean(last?.actionTaken);
@@ -192,6 +352,10 @@ function requiredScore(state: SilenceState, note: MemoryNote, category: Emotiona
     }
   }
 
+  if (relatedAllowanceActive(state, category)) {
+    base -= 8;
+  }
+
   if (state.lastStrongNoteAt && hoursSince(state.lastStrongNoteAt) < 8) {
     base += 4;
   }
@@ -204,10 +368,19 @@ function requiredScore(state: SilenceState, note: MemoryNote, category: Emotiona
     base += 8;
   }
 
+  if (lastTwoShownWithoutEngagement(state)) {
+    base += 10;
+  }
+
+  if (ignoredCooldownActive(state)) {
+    base += 12;
+  }
+
   return base;
 }
 
 function categoryShownThisSession(state: SilenceState, category: EmotionalCategory): boolean {
+  if (relatedAllowanceActive(state, category)) return false;
   if (state.lastHighActionAt && hoursSince(state.lastHighActionAt) < 3) {
     const lastAction = [...state.recentShown].reverse().find((row) => row.actionTaken);
     if (lastAction?.category === category) return false;
@@ -241,27 +414,47 @@ function passesSilenceFilters(
 ): boolean {
   if (isWeakNote(note, entries)) return false;
 
-  if (consecutiveIgnoredCount(state) >= 2 && isWeakNote(note, entries)) return false;
-  if (consecutiveIgnoredCount(state) >= 2 && !isStrongNote(note, entries)) {
-    const score = scoreMemoryHierarchy(note, entries).total;
+  const category = classifyEmotionalCategory(note);
+  const score = scoreMemoryHierarchy(note, entries).total;
+  const strong = isStrongNote(note, entries);
+  const isStrongContrast =
+    category === "contrast" &&
+    (strong || Boolean(note.pastQuote?.trim() && note.currentQuote?.trim()));
+
+  if (ignoredCooldownActive(state)) {
+    if (isWeakNote(note, entries)) return false;
+    if (!strong && !isStrongContrast && !relatedAllowanceActive(state, category)) {
+      return false;
+    }
+  }
+
+  if (lastTwoShownWithoutEngagement(state)) {
+    if (!strong && !isStrongContrast && !relatedAllowanceActive(state, category)) {
+      return false;
+    }
+  }
+
+  if (categoryDelayed(state, category)) {
+    if (!isStrongContrast) return false;
+  }
+
+  if (consecutiveIgnoredCount(state) >= 2 && !strong && !isStrongContrast) {
     if (score < STRONG_NOTE_SCORE) return false;
   }
 
-  const category = classifyEmotionalCategory(note);
-  const score = scoreMemoryHierarchy(note, entries).total;
   if (score < requiredScore(state, note, category)) return false;
 
   if (categoryShownThisSession(state, category)) return false;
   if (textShownRecently(state, note.text)) return false;
 
-  if (inStrongNoteCooldown(state) && !isStrongNote(note, entries)) return false;
+  if (inStrongNoteCooldown(state) && !strong) return false;
 
   if (state.sessionNoteCount >= SESSION_NOTE_MAX && surface !== "entry_revisit") {
     return false;
   }
 
   if (state.sessionNoteCount >= surfaceSessionCap(surface) && surface !== "entry_revisit") {
-    if (!isStrongNote(note, entries) || score < STRONG_NOTE_SCORE + 2) {
+    if (!strong || score < STRONG_NOTE_SCORE + 2) {
       return false;
     }
   }
@@ -284,7 +477,7 @@ export function recordSilenceNoteAction(noteId: string): void {
   state.recentShown = state.recentShown.map((row) => {
     if (row.noteId === noteId || noteId.startsWith(row.noteId)) {
       matched = true;
-      return { ...row, actionTaken: true };
+      return { ...row, actionTaken: true, highDwellNoAction: false };
     }
     return row;
   });
@@ -293,6 +486,101 @@ export function recordSilenceNoteAction(noteId: string): void {
     state.lastHighActionAt = now;
     writeState(state);
   }
+}
+
+/** Allow one related note sooner after a high-intent action on a memory line. */
+export function unlockRelatedNoteAfterAction(
+  noteId: string,
+  reason: RelatedAllowanceReason,
+): void {
+  if (!isBrowser() || !noteId) return;
+  const state = readState();
+  const anchorCategory = categoryForNoteId(noteId, state);
+  const config = RELATED_ALLOWANCE[reason];
+  state.relatedNoteAllowance = {
+    anchorCategory,
+    categories: config.categories,
+    until: Date.now() + config.hours * MS_PER_HOUR,
+    reason,
+  };
+  writeState(state);
+}
+
+/** High dwell without action — delay similar notes, still allow strong contrast. */
+export function recordSilenceNoteDwell(noteId: string, dwellMs: number): void {
+  if (!isBrowser() || !noteId || dwellMs < HIGH_DWELL_MS) return;
+  const state = readState();
+  let matched = false;
+
+  state.recentShown = state.recentShown.map((row) => {
+    if (row.noteId !== noteId && !noteId.startsWith(row.noteId)) return row;
+    if (row.actionTaken) return row;
+    matched = true;
+    return {
+      ...row,
+      dwellMs: Math.max(row.dwellMs ?? 0, dwellMs),
+      highDwellNoAction: true,
+    };
+  });
+
+  if (matched) {
+    const category = categoryForNoteId(noteId, state);
+    delayCategory(state, category);
+    syncIgnoredCooldown(state);
+    writeState(state);
+  }
+}
+
+export function buildSilenceTimingDebugSnapshot(): SilenceTimingDebugSnapshot {
+  const state = readState();
+  syncIgnoredCooldown(state);
+  state.relatedNoteAllowance = pruneRelatedAllowance(state.relatedNoteAllowance);
+  state.delayedCategories = pruneDelayedCategories(state.delayedCategories);
+  writeState(state);
+  const allowance = state.relatedNoteAllowance;
+
+  return {
+    ignoredCooldownActive: ignoredCooldownActive(state),
+    ignoredCooldownUntil:
+      state.ignoredCooldownUntil > Date.now()
+        ? new Date(state.ignoredCooldownUntil).toISOString()
+        : null,
+    consecutiveIgnored: consecutiveIgnoredCount(state),
+    lastTwoWithoutEngagement: lastTwoShownWithoutEngagement(state),
+    weakNoteSuppressed:
+      ignoredCooldownActive(state) || lastTwoShownWithoutEngagement(state),
+    highActionUnlockActive:
+      Boolean(state.lastHighActionAt) && hoursSince(state.lastHighActionAt) < 6,
+    highActionUnlockHoursAgo:
+      state.lastHighActionAt > 0
+        ? Math.round(hoursSince(state.lastHighActionAt) * 10) / 10
+        : null,
+    relatedNoteAllowance: allowance
+      ? {
+          reason: allowance.reason,
+          categories: allowance.categories,
+          expiresAt: new Date(allowance.until).toISOString(),
+        }
+      : null,
+    delayedCategories: pruneDelayedCategories(state.delayedCategories).map((row) => ({
+      category: row.category,
+      expiresAt: new Date(row.until).toISOString(),
+    })),
+    sessionNoteCount: state.sessionNoteCount,
+    recentShown: state.recentShown.map((row) => ({
+      noteId: row.noteId,
+      category: row.category,
+      actionTaken: row.actionTaken,
+      highDwellNoAction: Boolean(row.highDwellNoAction),
+      strong: row.strong,
+      shownAt: new Date(row.at).toISOString(),
+    })),
+  };
+}
+
+export function clearSilenceCalibrationState(): void {
+  if (!isBrowser()) return;
+  localStorage.removeItem(SILENCE_KEY);
 }
 
 /** Record that a calibrated note was shown — updates local timing memory. */
@@ -315,6 +603,9 @@ export function recordSilenceShown(
     { noteId: note.id, category, at: now, actionTaken: false, strong },
   ].slice(-12);
   if (strong) state.lastStrongNoteAt = now;
+  syncIgnoredCooldown(state);
+  state.relatedNoteAllowance = pruneRelatedAllowance(state.relatedNoteAllowance);
+  state.delayedCategories = pruneDelayedCategories(state.delayedCategories);
   writeState(state);
 
   recordEmotionalNoteShown(toEmotionalSurface(surface), note);

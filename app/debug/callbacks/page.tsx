@@ -5,18 +5,22 @@ import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
 import { CallbackQualityDebugPanel } from "@/components/debug/CallbackQualityDebugPanel";
+import { SilenceTimingDebugPanel } from "@/components/debug/SilenceTimingDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buildCallbackQualityReviewReport } from "@/lib/debug/callback-quality-review";
+import { buildSilenceTimingDebugSnapshot, type SilenceTimingDebugSnapshot } from "@/lib/refinement/silence-calibration";
 import { getAllEntries } from "@/lib/storage";
 import type { CallbackQualityReviewReport } from "@/types/callback-quality-review";
 
 export default function CallbacksDebugPage() {
   const [report, setReport] = useState<CallbackQualityReviewReport | null>(null);
+  const [silence, setSilence] = useState<SilenceTimingDebugSnapshot | null>(null);
 
   const refresh = () => {
     setReport(buildCallbackQualityReviewReport(getAllEntries()));
+    setSilence(buildSilenceTimingDebugSnapshot());
   };
 
   useEffect(() => {
@@ -61,7 +65,8 @@ export default function CallbacksDebugPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="mt-12">
+          <div className="mt-12 space-y-10">
+            {silence ? <SilenceTimingDebugPanel snapshot={silence} /> : null}
             <CallbackQualityDebugPanel report={report} onRefresh={refresh} />
           </div>
         )}

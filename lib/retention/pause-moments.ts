@@ -1,4 +1,9 @@
 import { readRetentionLoopEvents, type RetentionLoopEvent } from "@/lib/retention/retention-loops";
+import {
+  recordSilenceNoteAction,
+  recordSilenceNoteDwell,
+  unlockRelatedNoteAfterAction,
+} from "@/lib/refinement/silence-calibration";
 
 export type PauseMomentKind =
   | "callback_shown"
@@ -153,6 +158,7 @@ export function trackDwellAfterCallback(
     dwellMs: Math.round(dwellMs),
     surface,
   });
+  recordSilenceNoteDwell(callbackId, dwellMs);
 }
 
 export function trackDwellForActiveCallback(dwellMs: number, surface?: string): void {
@@ -173,6 +179,9 @@ export function trackScrollPauseNearCallback(
     scrollPauseMs: Math.round(scrollPauseMs),
     surface,
   });
+  if (scrollPauseMs >= 2000) {
+    recordSilenceNoteAction(callbackId);
+  }
 }
 
 export function trackAudioReplayAfterCallback(
@@ -188,6 +197,7 @@ export function trackAudioReplayAfterCallback(
     surface,
     meta: clip ? { clip } : undefined,
   });
+  recordSilenceNoteAction(resolved);
 }
 
 export function trackOldEntryRevisitAfterCallback(
@@ -203,6 +213,8 @@ export function trackOldEntryRevisitAfterCallback(
     surface,
     meta: entryId ? { entryId } : undefined,
   });
+  recordSilenceNoteAction(resolved);
+  unlockRelatedNoteAfterAction(resolved, "old_entry_open");
 }
 
 export function trackBookmarkAfterCallback(
@@ -218,6 +230,8 @@ export function trackBookmarkAfterCallback(
     surface,
     meta: bookmarkType ? { bookmarkType } : undefined,
   });
+  recordSilenceNoteAction(resolved);
+  unlockRelatedNoteAfterAction(resolved, "bookmark_copy");
 }
 
 export function trackCopyAfterCallback(
@@ -233,6 +247,8 @@ export function trackCopyAfterCallback(
     surface,
     meta: sourceId ? { sourceId } : undefined,
   });
+  recordSilenceNoteAction(resolved);
+  unlockRelatedNoteAfterAction(resolved, "bookmark_copy");
 }
 
 export function trackFollowUpAfterCallback(
@@ -248,6 +264,7 @@ export function trackFollowUpAfterCallback(
     surface,
     meta: promptId ? { promptId } : undefined,
   });
+  recordSilenceNoteAction(resolved);
 }
 
 export function readPauseMomentEvents(callbackId?: string): PauseMomentEvent[] {

@@ -5,9 +5,11 @@ import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
 import { MoatMetricsDebugPanel } from "@/components/debug/MoatMetricsDebugPanel";
+import { SilenceTimingDebugPanel } from "@/components/debug/SilenceTimingDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { buildSilenceTimingDebugSnapshot, type SilenceTimingDebugSnapshot } from "@/lib/refinement/silence-calibration";
 import {
   buildMoatMetricsReport,
   clearMoatMetrics,
@@ -16,9 +18,11 @@ import {
 
 export default function MoatDebugPage() {
   const [report, setReport] = useState<MoatMetricsReport | null>(null);
+  const [silence, setSilence] = useState<SilenceTimingDebugSnapshot | null>(null);
 
   const refresh = () => {
     setReport(buildMoatMetricsReport());
+    setSilence(buildSilenceTimingDebugSnapshot());
   };
 
   useEffect(() => {
@@ -75,7 +79,8 @@ export default function MoatDebugPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="mt-12">
+          <div className="mt-12 space-y-10">
+            {silence ? <SilenceTimingDebugPanel snapshot={silence} /> : null}
             <MoatMetricsDebugPanel report={report} />
           </div>
         )}

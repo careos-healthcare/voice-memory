@@ -4,7 +4,10 @@ import {
   markMoatRevisitBookmark,
   markMoatRevisitCopy,
 } from "@/lib/retention/moat-metrics";
-import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
+import {
+  recordSilenceNoteAction,
+  unlockRelatedNoteAfterAction,
+} from "@/lib/refinement/silence-calibration";
 import { getAllEntries } from "@/lib/storage";
 
 export type RetentionLoopEventKind =
@@ -249,6 +252,7 @@ export function trackOldEntryOpenedFromNote(input: {
 }): void {
   rememberNoteContext(input.pastEntryId, input.noteId, input.noteText);
   recordSilenceNoteAction(input.noteId);
+  unlockRelatedNoteAfterAction(input.noteId, "old_entry_open");
   pushEvent({
     kind: "old_entry_opened_from_note",
     noteId: input.noteId,
@@ -273,7 +277,10 @@ export function trackBookmarkCreated(
     noteId: context.noteId,
     noteText: context.noteText,
   });
-  if (context.noteId) recordSilenceNoteAction(context.noteId);
+  if (context.noteId) {
+    recordSilenceNoteAction(context.noteId);
+    unlockRelatedNoteAfterAction(context.noteId, "bookmark_copy");
+  }
   markMoatRevisitBookmark(entryId);
 }
 
@@ -294,6 +301,10 @@ export function trackFollowupRecordingCompleted(newEntryId: string): void {
     noteId: context?.noteId,
     promptId: context?.promptId,
   });
+  if (context?.noteId) {
+    recordSilenceNoteAction(context.noteId);
+    unlockRelatedNoteAfterAction(context.noteId, "recording_after_revisit");
+  }
   checkVoluntaryReturns(newEntryId);
 }
 
@@ -320,6 +331,7 @@ export function trackCopiedMemoryMoment(input: {
   });
   const actionNoteId = context.noteId ?? input.sourceId;
   if (actionNoteId) recordSilenceNoteAction(actionNoteId);
+  if (actionNoteId) unlockRelatedNoteAfterAction(actionNoteId, "bookmark_copy");
   if (input.entryId) markMoatRevisitCopy(input.entryId);
 }
 

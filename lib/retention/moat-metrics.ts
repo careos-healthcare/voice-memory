@@ -2,6 +2,7 @@ import {
   buildRetentionLoopReport,
   resolveNoteContext,
 } from "@/lib/retention/retention-loops";
+import { unlockRelatedNoteAfterAction } from "@/lib/refinement/silence-calibration";
 import { getAllEntries } from "@/lib/storage";
 import type { RevisitSource } from "@/lib/refinement/revisit-experience";
 import type { JournalEntry } from "@/types/journal";
@@ -325,6 +326,15 @@ export function trackMoatNewReflection(reflectionEntryId: string, reflectionAt?:
   }
 
   if (changed) writeRevisits(revisits);
+
+  if (changed) {
+    const linked = session
+      ? revisits.find((row) => row.id === session.revisitId)
+      : revisits.find((row) => row.reflectionEntryId === reflectionEntryId);
+    if (linked?.noteId) {
+      unlockRelatedNoteAfterAction(linked.noteId, "recording_after_revisit");
+    }
+  }
 }
 
 function pct(count: number, total: number): string {
