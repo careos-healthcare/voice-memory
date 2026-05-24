@@ -14,6 +14,7 @@ import {
   applyMemoryHierarchy,
   pickStrongestMemoryNote,
 } from "@/lib/refinement/memory-hierarchy";
+import { prioritizeMemoryNotesByRevisitWorth } from "@/lib/refinement/revisit-worth";
 import type { ChangeDetectionReport } from "@/types/changes";
 import type {
   ContinuityCallbackKind,
@@ -191,7 +192,14 @@ export function buildMemoryNotesReport(
     );
   }
 
-  const split = splitByCategory(applyMemoryHierarchy(all, sorted, maxTotal), sorted);
+  const split = splitByCategory(
+    prioritizeMemoryNotesByRevisitWorth(
+      applyMemoryHierarchy(all, sorted, maxTotal),
+      sorted,
+      maxTotal,
+    ),
+    sorted,
+  );
   const landmarks =
     options.includeLandmarks !== false
       ? applyMemoryHierarchy(landmarksToNotes(continuity, sorted), sorted, MAX_LANDMARKS)
@@ -232,10 +240,14 @@ export function entryMemoryNotes(
     1,
   );
 
-  const thenVsNow = applyMemoryHierarchy(
-    (continuity.thenVsNowList ?? [])
-      .map((comparison) => thenVsNowToNote(comparison, entries))
-      .filter((n): n is MemoryNote => n !== null),
+  const thenVsNow = prioritizeMemoryNotesByRevisitWorth(
+    applyMemoryHierarchy(
+      (continuity.thenVsNowList ?? [])
+        .map((comparison) => thenVsNowToNote(comparison, entries))
+        .filter((n): n is MemoryNote => n !== null),
+      entries,
+      1,
+    ),
     entries,
     1,
   );

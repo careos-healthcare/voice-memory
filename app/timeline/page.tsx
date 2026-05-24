@@ -35,6 +35,7 @@ import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
 import { timelineKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
+import { orderEntriesForRevisitPrompts } from "@/lib/refinement/revisit-worth";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -99,9 +100,10 @@ export default function TimelinePage() {
   ]);
 
   const loading = notes === null;
-  const sorted = [...entries].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  );
+  const reflectionEntries = useMemo(() => {
+    const eligible = entries.filter((entry) => entry.reflectionPending !== true);
+    return orderEntriesForRevisitPrompts(eligible, 12);
+  }, [entries]);
 
   const followupNotes = useMemo(
     () => [
@@ -186,7 +188,7 @@ export default function TimelinePage() {
               <section className="space-y-6 pt-4">
                 <h2 className="text-xs font-normal tracking-wide text-zinc-600">Reflections</h2>
                 <ul className="space-y-2">
-                  {sorted.slice(0, 12).map((entry) => (
+                  {reflectionEntries.map((entry) => (
                     <li key={entry.id}>
                       <RevisitEntryLink
                         entryId={entry.id}
@@ -202,7 +204,7 @@ export default function TimelinePage() {
                     </li>
                   ))}
                 </ul>
-                {sorted.length > 12 ? (
+                {entries.filter((entry) => entry.reflectionPending !== true).length > 12 ? (
                   <Button asChild variant="ghost" size="sm" className="text-zinc-600">
                     <Link href="/journal">All reflections</Link>
                   </Button>

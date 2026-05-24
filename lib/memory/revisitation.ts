@@ -421,7 +421,7 @@ function applyRevisitationRarity(
         gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
       ),
     ),
-    { surface, limit, record: true },
+    { surface, limit, record: true, entries },
   );
 }
 

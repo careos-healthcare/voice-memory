@@ -6,6 +6,10 @@ import type { ResurfacingKind, ResurfacingNote } from "@/types/resurfacing";
 import type { RevisitationKind, RevisitationNote } from "@/types/revisitation";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { weightResurfacingNote, weightRevisitationKind } from "@/lib/memory/emotional-weight";
+import {
+  isRevisitWorthSuppressed,
+  revisitWorthBoostForNote,
+} from "@/lib/refinement/revisit-worth";
 
 const FATIGUE_KEY = "voicememory_resurfacing_fatigue";
 const MAX_FATIGUE_RECORDS = 48;
@@ -55,6 +59,7 @@ export interface ApplyResurfacingRarityOptions {
   surface: ResurfacingSurface;
   limit?: number;
   record?: boolean;
+  entries?: JournalEntry[];
 }
 
 const CATEGORY_COOLDOWN_DAYS: Partial<Record<ResurfacingFatigueCategory, number>> = {
@@ -235,7 +240,10 @@ export function shouldShowResurfacingCandidate(candidate: ResurfacingCandidate):
   return true;
 }
 
-function scoreCandidate(candidate: ResurfacingCandidate): number {
+function scoreCandidate(
+  candidate: ResurfacingCandidate,
+  entries?: JournalEntry[],
+): number {
   let score = candidate.emotionalWeight + candidate.priority;
   const gap = candidate.gapDays ?? 0;
 
@@ -251,6 +259,12 @@ function scoreCandidate(candidate: ResurfacingCandidate): number {
   if (candidate.category === "topic_return") score -= 8;
   if (candidate.category === "revisitation" && candidate.emotionalWeight < 66) score -= 10;
 
+  if (entries?.length) {
+    const pastId = candidate.note.pastEntryId;
+    if (pastId && isRevisitWorthSuppressed(pastId, entries)) return -9999;
+    score += revisitWorthBoostForNote(candidate.note, entries);
+  }
+
   return score;
 }
 
@@ -262,7 +276,15 @@ export function applyResurfacingRarity(
 
   const eligible = candidates
     .filter(shouldShowResurfacingCandidate)
-    .sort((a, b) => scoreCandidate(b) - scoreCandidate(a));
+    .filter(
+      (candidate) =>
+        !options.entries?.length ||
+        !candidate.note.pastEntryId ||
+        !isRevisitWorthSuppressed(candidate.note.pastEntryId, options.entries),
+    )
+    .sort(
+      (a, b) => scoreCandidate(b, options.entries) - scoreCandidate(a, options.entries),
+    );
 
   const picked: ResurfacingCandidate[] = [];
   const usedCategories = new Set<ResurfacingFatigueCategory>();

@@ -12,6 +12,12 @@ import {
   clearRetentionLoopEvents,
   type RetentionLoopReport,
 } from "@/lib/retention/retention-loops";
+import {
+  buildRevisitWorthReport,
+  type RevisitWorthReport,
+} from "@/lib/refinement/revisit-worth";
+import { getMemoryEligibleEntries } from "@/lib/storage";
+import { formatEntryDate } from "@/lib/utils";
 
 function ScoreCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
@@ -31,9 +37,14 @@ function ScoreCard({ label, value, hint }: { label: string; value: string; hint:
 
 export default function RetentionLoopsDebugPage() {
   const [report, setReport] = useState<RetentionLoopReport | null>(null);
+  const [worthReport, setWorthReport] = useState<RevisitWorthReport | null>(null);
+  const [memoryEntries, setMemoryEntries] = useState<ReturnType<typeof getMemoryEligibleEntries>>([]);
 
   const refresh = () => {
+    const entries = getMemoryEligibleEntries();
+    setMemoryEntries(entries);
     setReport(buildRetentionLoopReport());
+    setWorthReport(buildRevisitWorthReport(entries));
   };
 
   useEffect(() => {
@@ -192,6 +203,28 @@ export default function RetentionLoopsDebugPage() {
                     .join(" · ")}
                 />
               ))}
+            />
+
+            <Section
+              title="Worth revisiting (internal pool)"
+              empty="No emotionally worth-reopening entries yet."
+              items={(worthReport?.entries ?? []).map((row) => {
+                const entry = memoryEntries.find((e) => e.id === row.entryId);
+                const signalSummary = row.signals
+                  .map((signal) => `${signal.id} +${signal.points}`)
+                  .join(" · ");
+                return (
+                  <Row
+                    key={row.entryId}
+                    title={
+                      entry
+                        ? `${formatEntryDate(entry.createdAt)} · score ${row.total}`
+                        : `${row.entryId.slice(0, 8)}… · score ${row.total}`
+                    }
+                    meta={signalSummary || "No signals"}
+                  />
+                );
+              })}
             />
           </div>
         )}

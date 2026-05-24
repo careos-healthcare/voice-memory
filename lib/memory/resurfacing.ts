@@ -463,7 +463,7 @@ function reportForEntry(
         gap,
       );
     }),
-    { surface, limit, record: true },
+    { surface, limit, record: true, entries: sorted },
   );
 
   const notes = raw.filter((note) =>

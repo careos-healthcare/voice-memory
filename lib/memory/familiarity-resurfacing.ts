@@ -552,7 +552,7 @@ function applyFamiliarityResurfacingRarity(
         gapDaysBetweenEntries(entries, note.pastEntryId, note.entryId),
       ),
     ),
-    { surface: surfaceForContext(context), limit, record: true },
+    { surface: surfaceForContext(context), limit, record: true, entries },
   );
 }
 
