@@ -42,6 +42,7 @@ const SKIP_PATH_PARTS = [
   "lib/conversation/followup-prompts.ts",
   "lib/conversation/continuation-loops.ts",
   "lib/sync/",
+  "lib/archive/",
   "lib/server/",
   "app/account/",
   "lib/conversation/conversation-continuity.ts",

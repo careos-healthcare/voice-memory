@@ -130,6 +130,9 @@ export default function SettingsPage() {
                 <Link href="/account" className="text-violet-300 hover:text-violet-200 text-sm">
                   Account & sync →
                 </Link>
+                <Link href="/archive" className="text-violet-300 hover:text-violet-200 text-sm">
+                  Archive permanence →
+                </Link>
                 <Link href="/export" className="text-violet-300 hover:text-violet-200 text-sm">
                   More export options →
                 </Link>
