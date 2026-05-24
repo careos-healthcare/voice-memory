@@ -3,6 +3,7 @@ import { buildEmotionalIntegrityReport } from "@/lib/integrity/emotional-integri
 import { buildArchiveSimplicityReport } from "@/lib/integrity/archive-simplicity-review";
 import { buildArchiveIndividualityReviewReport } from "@/lib/debug/archive-individuality-review";
 import { buildArchiveDivergenceReviewReport } from "@/lib/debug/archive-divergence-review";
+import { buildSacrednessReport } from "@/lib/restraint/sacredness";
 import { LAUNCH_EVENTS, countLocalEvents, readLocalEvents } from "@/lib/local-analytics";
 import { buildRevisitSequencingReport } from "@/lib/refinement/revisit-sequencing";
 import { buildLoopOptimizationReport } from "@/lib/retention/loop-optimization";
@@ -32,6 +33,7 @@ export function buildFounderWarningsReport(): FounderWarningsReport {
   const simplicity = buildArchiveSimplicityReport();
   const individuality = buildArchiveIndividualityReviewReport();
   const divergence = buildArchiveDivergenceReviewReport();
+  const sacredness = buildSacrednessReport(entries);
   const sharing = buildShareObservationReport();
   const weekly = readWeeklyRetentionSnapshots();
   const warnings: FounderWarning[] = [];
@@ -124,6 +126,39 @@ export function buildFounderWarningsReport(): FounderWarningsReport {
         "Different users may be starting to sound the same.",
         `Homogenization score ${divergence.homogenizationScore}`,
         "concern",
+      ),
+    );
+  }
+
+  if (sacredness.emotionallyCrowded) {
+    warnings.push(
+      warning(
+        "archive_emotionally_crowded",
+        "The archive may be becoming emotionally crowded.",
+        `${sacredness.inflationWarnings.length} inflation signals · sacredness ${sacredness.sacrednessScore}`,
+        "concern",
+      ),
+    );
+  }
+
+  if (sacredness.meaningfulnessInflated) {
+    warnings.push(
+      warning(
+        "meaningfulness_inflation",
+        "Too many moments are being treated as meaningful.",
+        `Rarity score ${sacredness.emotionalRarityScore}`,
+        "concern",
+      ),
+    );
+  }
+
+  if (sacredness.silencePreferred) {
+    warnings.push(
+      warning(
+        "silence_over_resurfacing",
+        "Silence may now be more valuable than resurfacing.",
+        `Silence value ${sacredness.silenceValueScore}`,
+        "watch",
       ),
     );
   }

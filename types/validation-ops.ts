@@ -100,6 +100,9 @@ export type FounderWarningKind =
   | "archive_overdesigned"
   | "emotional_specificity_loss"
   | "archive_convergence"
+  | "archive_emotionally_crowded"
+  | "meaningfulness_inflation"
+  | "silence_over_resurfacing"
   | "retention_novelty_drop"
   | "performative_sharing"
   | "export_before_churn";
