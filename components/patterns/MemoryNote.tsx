@@ -27,7 +27,9 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
 
   return (
     <article className={`space-y-5 ${className ?? ""}`}>
-      <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{note.text}</p>
+      {note.text ? (
+        <p className="text-[15px] font-normal leading-[1.75] text-zinc-300/95">{note.text}</p>
+      ) : null}
       {note.pastQuote ? (
         <motion.blockquote
           {...quoteMotion(isThenVsNow ? 0.22 : 0.12)}

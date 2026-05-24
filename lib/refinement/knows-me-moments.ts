@@ -46,10 +46,10 @@ export const KNOWS_ME_COPY = {
 
 /** Revisit entry copy — answers “why was this worth reopening?” */
 export const REVISIT_REWARD_COPY = {
-  soundDifferentFrom: FAMILIARITY_COPY.moreSettled,
-  beforeQuieter: FAMILIARITY_COPY.usedToFeelHeavier,
-  notNamedYet: FAMILIARITY_COPY.namedDirectly,
-  usedToTakeSpace: FAMILIARITY_COPY.usedToFeelHeavier,
+  beforeThingsChanged: "This was before things changed.",
+  soundCalmerNow: "You sound calmer now.",
+  notNamedYet: "You had not named this directly yet.",
+  usedToTakeSpace: "This used to take up more space.",
 } as const;
 
 const REVISIT_CONTRAST_PRIORITY: KnowsMeSignal[] = [
@@ -455,7 +455,7 @@ function detectReopenedBeforeQuieter(
     return {
       id: `knows-me-reopen-quiet-${anchor.id}-${calmerLater.id}`,
       signal: "topic_quieter",
-      text: REVISIT_REWARD_COPY.beforeQuieter,
+      text: REVISIT_REWARD_COPY.soundCalmerNow,
       strength:
         70 +
         Math.round(anchor.reflection.emotionalIntensity - calmerLater.reflection.emotionalIntensity) *
@@ -555,7 +555,7 @@ function toMemoryNote(candidate: KnowsMeCandidate): MemoryNote {
 function revisitTextForSignal(signal: KnowsMeSignal, fallback: string): string {
   switch (signal) {
     case "topic_quieter":
-      return REVISIT_REWARD_COPY.beforeQuieter;
+      return REVISIT_REWARD_COPY.soundCalmerNow;
     case "certainty_shift":
     case "direct_naming":
       return REVISIT_REWARD_COPY.notNamedYet;
@@ -565,7 +565,7 @@ function revisitTextForSignal(signal: KnowsMeSignal, fallback: string): string {
     case "wording_shift":
     case "directness_shift":
     case "earlier_self":
-      return REVISIT_REWARD_COPY.soundDifferentFrom;
+      return REVISIT_REWARD_COPY.beforeThingsChanged;
     default:
       return fallback;
   }

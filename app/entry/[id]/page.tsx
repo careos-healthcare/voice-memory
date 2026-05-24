@@ -50,9 +50,11 @@ import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import {
   buildRevisitExperience,
+  revisitThenVsNowDisplayNote,
   trackRevisitAudioPlayed,
   trackRevisitFollowupStarted,
   trackRevisitOpened,
+  trackRevisitRewardBookmark,
   trackRevisitRewardSeen,
   trackRevisitThenNowSeen,
   type RevisitExperiencePresentation,
@@ -426,8 +428,15 @@ export default function EntryPage() {
               <h1 className="text-xl font-normal tracking-tight text-zinc-100 sm:text-2xl">
                 {formatEntryDate(entry.createdAt)}
               </h1>
-              <MarkReflectionButton entryId={entry.id} />
-              {!pending ? (
+              <MarkReflectionButton
+                entryId={entry.id}
+                onMarked={
+                  revisitExperience?.isRevisit
+                    ? (type) => trackRevisitRewardBookmark(entry.id, type)
+                    : undefined
+                }
+              />
+              {!pending && !revisitExperience?.isRevisit ? (
                 <CopyMemoryMomentButton
                   source="entry"
                   entry={entry}
@@ -435,6 +444,36 @@ export default function EntryPage() {
                 />
               ) : null}
             </header>
+
+            {!pending && revisitExperience?.isRevisit ? (
+              <section className="space-y-10 border-b border-white/[0.04] pb-10">
+                {revisitExperience.revisitReward ? (
+                  <p className="text-[17px] font-normal leading-[1.45] text-zinc-100">
+                    {revisitExperience.revisitReward.text}
+                  </p>
+                ) : null}
+                {revisitExperience.thenVsNow ? (
+                  <MotionNoteList className="space-y-6 py-1">
+                    <AnimatedMemoryNote
+                      note={revisitThenVsNowDisplayNote(revisitExperience.thenVsNow)}
+                      index={0}
+                    />
+                  </MotionNoteList>
+                ) : null}
+                {revisitVoicePair ? (
+                  <VoicePlaybackContinuity
+                    pair={revisitVoicePair}
+                    onAudioPlayed={(clip) => {
+                      if (entry) trackRevisitAudioPlayed(entry.id, clip);
+                    }}
+                  />
+                ) : null}
+                <FollowupPromptInline
+                  prompt={activeFollowup}
+                  onContinue={handleContinueFollowup}
+                />
+              </section>
+            ) : null}
 
             {entry.audioId || entry.transcript ? (
               <section className="space-y-8">
@@ -456,44 +495,7 @@ export default function EntryPage() {
                 entryId={entry.id}
                 onComplete={(updated) => setEntry(updated)}
               />
-            ) : (
-              <>
-                {revisitExperience?.isRevisit ? (
-                  <>
-                    {revisitExperience.revisitReward ? (
-                      revisitExperience.revisitReward.pastQuote ||
-                      revisitExperience.revisitReward.currentQuote ? (
-                        <MotionNoteList className="space-y-16 py-1">
-                          <AnimatedMemoryNote
-                            note={revisitExperience.revisitReward}
-                            index={0}
-                          />
-                        </MotionNoteList>
-                      ) : (
-                        <p className="text-sm leading-[1.75] text-zinc-500/90">
-                          {revisitExperience.revisitReward.text}
-                        </p>
-                      )
-                    ) : null}
-                    {revisitExperience.thenVsNow ? (
-                      <MotionNoteList className="space-y-16 py-1">
-                        <AnimatedMemoryNote note={revisitExperience.thenVsNow} index={1} />
-                      </MotionNoteList>
-                    ) : null}
-                    {revisitVoicePair ? (
-                      <VoicePlaybackContinuity
-                        pair={revisitVoicePair}
-                        onAudioPlayed={(clip) => {
-                          if (entry) trackRevisitAudioPlayed(entry.id, clip);
-                        }}
-                      />
-                    ) : null}
-                    <FollowupPromptInline
-                      prompt={activeFollowup}
-                      onContinue={handleContinueFollowup}
-                    />
-                  </>
-                ) : quiet ? (
+            ) : revisitExperience?.isRevisit ? null : quiet ? (
                   <>
                     {presentation?.continuation ? (
                       <ContinuationNotes notes={[presentation.continuation]} max={1} />
@@ -586,8 +588,6 @@ export default function EntryPage() {
                 ) : null}
                   </>
                 )}
-              </>
-            )}
           </MotionPage>
         )}
       </div>

@@ -398,7 +398,7 @@ function hasContrastEvidence(note: MemoryNote): boolean {
   return Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
 }
 
-/** Revisit — one realization, optional contrast only when it carries quotes. */
+/** Revisit — reward line always visible; optional contrast when quotes exist. */
 export function calibrateRevisitExperience<
   T extends {
     isRevisit: boolean;
@@ -409,17 +409,21 @@ export function calibrateRevisitExperience<
 >(experience: T, entries: JournalEntry[]): T {
   if (!experience.isRevisit) return experience;
 
-  const candidates: MemoryNote[] = [];
-  if (experience.thenVsNow && hasContrastEvidence(experience.thenVsNow)) {
-    candidates.push(experience.thenVsNow);
-  }
-  if (experience.revisitReward) {
-    candidates.push(experience.revisitReward);
+  let revisitReward = experience.revisitReward;
+  if (revisitReward?.text.trim()) {
+    recordSilenceShown(revisitReward, entries, "entry_revisit");
+  } else {
+    revisitReward = null;
   }
 
-  const realization = calibratePrimaryNote(candidates, entries, "entry_revisit");
+  let thenVsNow = experience.thenVsNow;
+  if (thenVsNow && hasContrastEvidence(thenVsNow) && !isWeakNote(thenVsNow, entries)) {
+    recordSilenceShown(thenVsNow, entries, "entry_revisit");
+  } else {
+    thenVsNow = null;
+  }
 
-  if (!realization) {
+  if (!revisitReward && !thenVsNow) {
     return {
       ...experience,
       revisitReward: null,
@@ -428,19 +432,10 @@ export function calibrateRevisitExperience<
     };
   }
 
-  if (hasContrastEvidence(realization)) {
-    return {
-      ...experience,
-      revisitReward: null,
-      thenVsNow: realization,
-      followupPrompt: null,
-    };
-  }
-
   return {
     ...experience,
-    revisitReward: realization,
-    thenVsNow: null,
+    revisitReward,
+    thenVsNow,
     followupPrompt: null,
   };
 }

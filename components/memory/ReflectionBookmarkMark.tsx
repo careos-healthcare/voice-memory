@@ -17,7 +17,13 @@ const BOOKMARK_TYPES: ReflectionBookmarkType[] = [
   "changed_something",
 ];
 
-export function MarkReflectionButton({ entryId }: { entryId: string }) {
+export function MarkReflectionButton({
+  entryId,
+  onMarked,
+}: {
+  entryId: string;
+  onMarked?: (type: ReflectionBookmarkType) => void;
+}) {
   const { bookmark, mark, unmark } = useReflectionBookmark(entryId);
   const [open, setOpen] = useState(false);
 
@@ -76,6 +82,7 @@ export function MarkReflectionButton({ entryId }: { entryId: string }) {
                 className="h-auto px-2 py-1.5 text-xs text-zinc-500 hover:text-zinc-300"
                 onClick={() => {
                   mark(type);
+                  onMarked?.(type);
                   setOpen(false);
                 }}
               >
