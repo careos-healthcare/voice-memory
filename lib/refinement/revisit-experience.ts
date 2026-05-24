@@ -9,7 +9,6 @@ import {
   isTopicRecurrenceCopy,
   pickEntryRevisitContrast,
   pickEntryRevisitRewardLine,
-  revisitRewardCopyForContrast,
   REVISIT_REWARD_COPY,
 } from "@/lib/refinement/knows-me-moments";
 import {
@@ -17,11 +16,17 @@ import {
   REVISIT_REWARD_SUPPRESS_TEXT,
 } from "@/lib/refinement/callback-suppression";
 import { SCORE_REVISIT_REWARD } from "@/lib/refinement/score-thresholds";
-import { rankThenVsNowContrastNotes } from "@/lib/refinement/then-vs-now-quotes";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
   markRevisitBoost,
 } from "@/lib/refinement/emotional-timing";
+import {
+  pickReopenFirstLine,
+  pickStrongestReopenMoment,
+  rankReopenPayoffNotes,
+  resolveReopenFollowupDelayMs,
+  type ReopenPayoffScore,
+} from "@/lib/refinement/reopen-payoff";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
@@ -84,6 +89,8 @@ export interface RevisitExperiencePresentation {
   /** When this reflection belonged — before/during/after, without charts. */
   emotionalChapter: MemoryNote | null;
   followupPrompt: FollowupPrompt | null;
+  reopenPayoffScore: ReopenPayoffScore | null;
+  followupDelayMs: number;
 }
 
 interface RevisitNavigationHint {
@@ -128,36 +135,6 @@ function isStrongForRevisit(note: MemoryNote, entries: JournalEntry[]): boolean 
   return scoreMemoryHierarchy(note, entries).total >= REVISIT_REWARD_MIN;
 }
 
-function canonicalCopyForNote(note: MemoryNote): RevisitQuietCopy {
-  if (note.id.startsWith("change-hedge") || note.id.startsWith("change-direct") || /not named|named directly/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.notNamedYet;
-  }
-  if (note.id.startsWith("change-charged") || /more pressure before|take up more room|felt heavier|used to take up/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.usedToTakeSpace;
-  }
-  if (note.id.startsWith("revisit-before-quiet") || /further away|quieter|calmer|settled/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.soundFurtherAway;
-  }
-  if (note.id.startsWith("revisit-diff") || note.id.startsWith("knows-me-wording") || note.id.startsWith("tvn-")) {
-    return REVISIT_REWARD_COPY.soundDifferentNow;
-  }
-  if (/named|directly|not sure|vague/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.notNamedYet;
-  }
-  if (/heavier|pressure|room|weight/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.usedToTakeSpace;
-  }
-  if (/calmer|quieter|further|settled|different/i.test(note.text)) {
-    return REVISIT_REWARD_COPY.soundDifferentNow;
-  }
-  return REVISIT_REWARD_COPY.beforeThingsChanged;
-}
-
-function toRewardLine(note: MemoryNote | null, entryId: string, fallback: RevisitQuietCopy): MemoryNote {
-  const text = note ? canonicalCopyForNote(note) : fallback;
-  return realizationNote(text, entryId, note?.confidence ?? 68);
-}
-
 function gatherContrastExtras(
   allEntries: JournalEntry[],
   entryId: string,
@@ -170,62 +147,7 @@ function gatherContrastExtras(
     .filter((note) => hasContrastEvidence(note as MemoryNote))
     .filter((note) => isStrongForRevisit(note as MemoryNote, allEntries)) as MemoryNote[];
 
-  return rankThenVsNowContrastNotes(pool, allEntries);
-}
-
-function pickRevisitQuietCopy(allEntries: JournalEntry[], entryId: string): RevisitQuietCopy | null {
-  const entry = allEntries.find((row) => row.id === entryId);
-  if (!entry) return null;
-
-  const prior = allEntries.filter(
-    (row) => new Date(row.createdAt).getTime() < new Date(entry.createdAt).getTime(),
-  );
-  if (prior.length === 0) return REVISIT_REWARD_COPY.soundDifferentNow;
-
-  const themes = new Set(entry.reflection.recurringThemes.map((t) => t.toLowerCase()));
-  const priorSameTheme = prior.filter((row) =>
-    row.reflection.recurringThemes.some((t) => themes.has(t.toLowerCase())),
-  );
-
-  const directNow = /\b(named|decided|clearly|for sure|directly)\b/i.test(entry.transcript);
-  const hedgedBefore = priorSameTheme.some((row) =>
-    /\b(maybe|sort of|kind of|not sure|vague)\b/i.test(row.transcript),
-  );
-  if (!directNow && hedgedBefore) {
-    return REVISIT_REWARD_COPY.notNamedYet;
-  }
-
-  const intenseBefore = priorSameTheme.some((row) => row.reflection.emotionalIntensity >= 6);
-  if (intenseBefore && entry.reflection.emotionalIntensity <= 4.5) {
-    return REVISIT_REWARD_COPY.soundFurtherAway;
-  }
-
-  if (priorSameTheme.length >= 1) {
-    const moodShift =
-      priorSameTheme[priorSameTheme.length - 1].reflection.mood !== entry.reflection.mood;
-    const intensityDelta = Math.abs(
-      entry.reflection.emotionalIntensity -
-        priorSameTheme[priorSameTheme.length - 1].reflection.emotionalIntensity,
-    );
-    if (moodShift || intensityDelta >= 1.2) {
-      return REVISIT_REWARD_COPY.soundDifferentNow;
-    }
-  }
-
-  const peak = priorSameTheme.reduce(
-    (best, row) =>
-      row.reflection.emotionalIntensity > best ? row.reflection.emotionalIntensity : best,
-    0,
-  );
-  if (peak >= 6.5 && entry.reflection.emotionalIntensity <= peak - 1.5) {
-    return REVISIT_REWARD_COPY.usedToTakeSpace;
-  }
-
-  if (priorSameTheme.length >= 2) {
-    return REVISIT_REWARD_COPY.beforeThingsChanged;
-  }
-
-  return REVISIT_REWARD_COPY.soundDifferentNow;
+  return rankReopenPayoffNotes(pool, allEntries);
 }
 
 function resolveRevisitRewardLine(
@@ -233,22 +155,20 @@ function resolveRevisitRewardLine(
   entryId: string,
   thenVsNow: MemoryNote | null,
   bestLine: MemoryNote | null,
+  payoffScore: ReopenPayoffScore | null,
 ): MemoryNote | null {
+  const anchorNote = thenVsNow ?? bestLine;
+  const firstLine = pickReopenFirstLine(anchorNote, allEntries, payoffScore);
+
   if (thenVsNow) {
-    return realizationNote(
-      revisitRewardCopyForContrast(thenVsNow, allEntries),
-      entryId,
-      thenVsNow.confidence,
-    );
+    return realizationNote(firstLine, entryId, thenVsNow.confidence);
   }
 
   if (bestLine && isStrongForRevisit(bestLine, allEntries)) {
-    const fallback = pickRevisitQuietCopy(allEntries, entryId) ?? REVISIT_REWARD_COPY.soundDifferentNow;
-    return toRewardLine(bestLine, entryId, fallback);
+    return realizationNote(firstLine, entryId, bestLine.confidence);
   }
 
-  const quietCopy = pickRevisitQuietCopy(allEntries, entryId);
-  if (!quietCopy) return null;
+  const quietCopy = pickReopenFirstLine(null, allEntries, payoffScore);
   return realizationNote(quietCopy, entryId);
 }
 
@@ -368,6 +288,8 @@ export function buildRevisitExperience(
       voiceIdentity: null,
       emotionalChapter: null,
       followupPrompt: null,
+      reopenPayoffScore: null,
+      followupDelayMs: 0,
     };
   }
 
@@ -378,19 +300,35 @@ export function buildRevisitExperience(
   );
   const contrastExtras = gatherContrastExtras(allEntries, entryId);
 
-  const thenVsNow = pickEntryRevisitContrast(
+  const strongest = pickStrongestReopenMoment(
+    [...knowsMeCandidates, ...contrastExtras],
+    allEntries,
+    entryId,
+  );
+  const payoffScore = strongest.score;
+
+  const thenVsNow =
+    strongest.moment?.pastQuote?.trim() && strongest.moment.currentQuote?.trim()
+      ? strongest.moment
+      : pickEntryRevisitContrast(knowsMeCandidates, contrastExtras, [], allEntries);
+
+  const bestLine = pickEntryRevisitRewardLine(
     knowsMeCandidates,
-    contrastExtras,
-    [],
+    [thenVsNow, strongest.moment],
     allEntries,
   );
-
-  const bestLine = pickEntryRevisitRewardLine(knowsMeCandidates, [thenVsNow], allEntries);
-  const revisitReward = resolveRevisitRewardLine(allEntries, entryId, thenVsNow, bestLine);
+  const revisitReward = resolveRevisitRewardLine(
+    allEntries,
+    entryId,
+    thenVsNow,
+    bestLine,
+    payoffScore,
+  );
   const livingResurfacing = pickLivingResurfacingForEntry(allEntries, entryId);
   const voiceIdentity = pickVoiceIdentityForEntry(allEntries, entryId);
   const emotionalChapter = pickEmotionalChapterForEntry(allEntries, entryId);
   const followupPrompt = buildRevisitFollowupPrompt(revisitReward, thenVsNow);
+  const followupDelayMs = resolveReopenFollowupDelayMs(payoffScore);
 
   const calibrated = calibrateRevisitExperience(
     {
@@ -438,6 +376,8 @@ export function buildRevisitExperience(
     livingResurfacing: resolvedLivingResurfacing,
     voiceIdentity: resolvedVoiceIdentity,
     emotionalChapter: resolvedEmotionalChapter,
+    reopenPayoffScore: payoffScore,
+    followupDelayMs,
   };
 }
 

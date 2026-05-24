@@ -86,6 +86,7 @@ export default function EntryPage() {
   const [presentation, setPresentation] = useState<QuietEntryPresentation | null>(null);
   const [revisitExperience, setRevisitExperience] =
     useState<RevisitExperiencePresentation | null>(null);
+  const [showReopenFollowup, setShowReopenFollowup] = useState(false);
 
   useEffect(() => {
     const found = getEntry(params.id);
@@ -159,6 +160,21 @@ export default function EntryPage() {
       entryId: entry.id,
     });
   }, [entry?.id, revisitExperience?.thenVsNow?.id]);
+
+  useEffect(() => {
+    if (!revisitExperience?.isRevisit) {
+      setShowReopenFollowup(false);
+      return;
+    }
+    const delay = revisitExperience.followupDelayMs ?? 0;
+    if (delay <= 0) {
+      setShowReopenFollowup(true);
+      return;
+    }
+    setShowReopenFollowup(false);
+    const timer = window.setTimeout(() => setShowReopenFollowup(true), delay);
+    return () => window.clearTimeout(timer);
+  }, [revisitExperience?.isRevisit, revisitExperience?.followupDelayMs, entry?.id]);
 
   const notes = useMemo(() => {
     if (!entry || pending) return null;
@@ -345,8 +361,19 @@ export default function EntryPage() {
     [followupNotes, allEntries, entry?.id],
   );
 
-  const activeFollowup =
-    revisitExperience?.followupPrompt ?? presentation?.followupPrompt ?? followupPrompt;
+  const activeFollowup = useMemo(() => {
+    if (revisitExperience?.isRevisit) {
+      if (!showReopenFollowup) return null;
+      return revisitExperience.followupPrompt;
+    }
+    return presentation?.followupPrompt ?? followupPrompt;
+  }, [
+    revisitExperience?.isRevisit,
+    revisitExperience?.followupPrompt,
+    showReopenFollowup,
+    presentation?.followupPrompt,
+    followupPrompt,
+  ]);
 
   const handleContinueFollowup = (prompt: FollowupPrompt) => {
     if (entry && revisitExperience?.isRevisit) {

@@ -1,5 +1,6 @@
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+import { rankReopenAudioCandidates } from "@/lib/refinement/reopen-payoff";
 
 export type VoicePlaybackPairKind = "then_vs_now" | "related" | "current_only";
 
@@ -28,20 +29,14 @@ export function resolveRevisitVoicePlaybackPair(
   },
 ): VoicePlaybackPair | null {
   const notes = [options.contrast, options.reward].filter(Boolean) as MemoryNote[];
-
-  for (const note of notes) {
-    if (!note.pastEntryId) continue;
-    const thenEntry = entryById(allEntries, note.pastEntryId);
-    if (!thenEntry || thenEntry.id === currentEntry.id) continue;
-    if (!bothHaveAudio(thenEntry, currentEntry)) continue;
-    return {
-      kind: "then_vs_now",
-      thenEntry,
-      nowEntry: currentEntry,
-    };
-  }
-
-  return null;
+  const ranked = rankReopenAudioCandidates(currentEntry, allEntries, notes);
+  const best = ranked[0];
+  if (!best) return null;
+  return {
+    kind: "then_vs_now",
+    thenEntry: best.thenEntry,
+    nowEntry: best.nowEntry,
+  };
 }
 
 function isThenVsNowNote(note: MemoryNote): boolean {

@@ -22,6 +22,7 @@ import {
   hedgeScore,
   rankThenVsNowContrastNotes,
 } from "@/lib/refinement/then-vs-now-quotes";
+import { rankReopenPayoffNotes } from "@/lib/refinement/reopen-payoff";
 import { gateDelayedPayoffNote } from "@/lib/memory/delayed-payoff";
 import { guardSurfacedNote, filterFalsePositiveNotes } from "@/lib/refinement/false-positive-suppression";
 import type { JournalEntry } from "@/types/journal";
@@ -891,7 +892,7 @@ export function pickEntryRevisitContrast(
         b.confidence - a.confidence,
     );
 
-  const ranked = rankThenVsNowContrastNotes(
+  const ranked = rankReopenPayoffNotes(
     filterFalsePositiveNotes(pool, entries, "revisit_reward"),
     entries,
   );
