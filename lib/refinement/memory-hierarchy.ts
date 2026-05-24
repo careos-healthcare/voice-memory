@@ -1,4 +1,6 @@
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import type { EmotionalMilestone } from "@/types/emotional-milestone";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -28,6 +30,11 @@ export interface MemoryHierarchyScore {
 }
 
 const PREFERRED_ID: Array<{ re: RegExp; signal: MemoryHierarchySignal; boost: number }> = [
+  { re: /^knows-me-earlier|^knows-me-still-circling/, signal: "reads_differently", boost: 22 },
+  { re: /^knows-me-apology|^knows-me-wording/, signal: "reads_differently", boost: 20 },
+  { re: /^knows-me-named|^knows-me-direct|^knows-me-certainty/, signal: "direct_naming", boost: 22 },
+  { re: /^knows-me-phrase-gone|^knows-me-circling/, signal: "phrase_disappearance", boost: 21 },
+  { re: /^knows-me-weight|^knows-me-contrast|^knows-me-quieter/, signal: "emotional_shift", boost: 20 },
   { re: /^milestone-/, signal: "turning_point", boost: 24 },
   { re: /^tvn-/, signal: "reads_differently", boost: 22 },
   { re: /^revisit-diff|^revisit-related/, signal: "reads_differently", boost: 20 },
@@ -41,16 +48,23 @@ const PREFERRED_ID: Array<{ re: RegExp; signal: MemoryHierarchySignal; boost: nu
 ];
 
 const SUPPRESSED_ID: Array<{ re: RegExp; signal: MemoryHierarchySignal; penalty: number }> = [
+  { re: /^resurface-topic-|^resurface-entity-|^resurface-phrase-/, signal: "generic_return", penalty: 22 },
+  { re: /^fam-resurface-similar/, signal: "routine_recurrence", penalty: 20 },
   { re: /^archive-|^continuity-depth-/, signal: "informational", penalty: 28 },
   { re: /^continuity-thread-|^continuity-recurring-/, signal: "routine_recurrence", penalty: 22 },
   { re: /^rhythm-|^time-/, signal: "routine_recurrence", penalty: 20 },
-  { re: /^resurface-topic-|^resurface-entity-|^resurface-phrase-/, signal: "generic_return", penalty: 16 },
   { re: /^resurface-person-/, signal: "weak_resurfacing", penalty: 10 },
-  { re: /^fam-resurface-similar|^familiarity-/, signal: "routine_recurrence", penalty: 14 },
+  { re: /^familiarity-/, signal: "routine_recurrence", penalty: 14 },
 ];
 
 const GENERIC_TEXT: Array<{ re: RegExp; signal: MemoryHierarchySignal; penalty: number }> = [
-  { re: /\byou came back to the same place\b/i, signal: "generic_return", penalty: 18 },
+  { re: /\bappeared again\b/i, signal: "generic_return", penalty: 24 },
+  { re: /\bmoney returned\b/i, signal: "generic_return", penalty: 24 },
+  { re: /\bwork appeared\b/i, signal: "generic_return", penalty: 22 },
+  { re: /\btopic appeared\b/i, signal: "generic_return", penalty: 24 },
+  { re: /\bsimilar theme\b/i, signal: "routine_recurrence", penalty: 22 },
+  { re: /\byou came back to the same place\b/i, signal: "generic_return", penalty: 20 },
+  { re: /\byou came back to the same loop\b/i, signal: "generic_return", penalty: 20 },
   { re: /\byou spoke about this the same way\b/i, signal: "routine_recurrence", penalty: 16 },
   { re: /\bolder reflections connecting\b/i, signal: "informational", penalty: 24 },
   { re: /\breflections starting to connect\b/i, signal: "informational", penalty: 24 },
@@ -62,6 +76,11 @@ const GENERIC_TEXT: Array<{ re: RegExp; signal: MemoryHierarchySignal; penalty: 
 ];
 
 const PREFERRED_TEXT: Array<{ re: RegExp; signal: MemoryHierarchySignal; boost: number }> = [
+  { re: /\bthis used to feel heavier\b/i, signal: "emotional_shift", boost: 18 },
+  { re: /\bstill circling this here\b/i, signal: "unfinished_loop", boost: 18 },
+  { re: /\bstopped apologising\b/i, signal: "reads_differently", boost: 20 },
+  { re: /\bsound more direct now\b/i, signal: "direct_naming", boost: 18 },
+  { re: /\breads like an earlier version\b/i, signal: "reads_differently", boost: 18 },
   { re: /\bread(s)? differently\b/i, signal: "reads_differently", boost: 14 },
   { re: /\bbefore it got quieter\b/i, signal: "calmer_return", boost: 12 },
   { re: /\bnamed this more directly\b/i, signal: "direct_naming", boost: 14 },
@@ -131,6 +150,40 @@ function scoreNote(note: MemoryNote, entries: JournalEntry[]): MemoryHierarchySc
     } else if (avgIntensity >= 6.5) {
       total += 6;
     }
+
+    if (linked.length >= 2) {
+      const intensities = linked.map((entry) => entry.reflection.emotionalIntensity);
+      const intensityDelta = Math.max(...intensities) - Math.min(...intensities);
+      if (intensityDelta >= 1.5) {
+        total += 12;
+        preferred.push("emotional_shift");
+      }
+
+      const sortedLinked = [...linked].sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
+      const gap = daysBetweenKeys(
+        toDayKey(sortedLinked[0].createdAt),
+        toDayKey(sortedLinked[sortedLinked.length - 1].createdAt),
+      );
+      if (gap >= 14) {
+        total += Math.min(Math.round(gap / 7), 10);
+      }
+    }
+
+    if (linked.some((entry) => entry.audioId)) {
+      total += 8;
+    }
+  }
+
+  if (isTopicRecurrenceCopy(text)) {
+    total -= 26;
+    suppressed.push("generic_return");
+  }
+
+  if (note.id.startsWith("resurface-topic-") || note.id.startsWith("fam-resurface-similar")) {
+    total -= 12;
+    suppressed.push("weak_resurfacing");
   }
 
   if (note.confidence < 62) {

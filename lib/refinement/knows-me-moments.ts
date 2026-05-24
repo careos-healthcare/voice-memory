@@ -37,12 +37,28 @@ export type KnowsMeSignal =
 export type KnowsMeSurface = "entry" | "homepage" | "timeline" | "monthly";
 
 export const KNOWS_ME_COPY = {
-  sound_different: FAMILIARITY_COPY.moreSettled,
-  used_to_consume: FAMILIARITY_COPY.usedToFeelHeavier,
-  not_named_yet: FAMILIARITY_COPY.namedDirectly,
-  still_circling: FAMILIARITY_COPY.stoppedCircling,
-  earlier_version: "This sounds like an earlier version.",
+  used_to_feel_heavier: "This used to feel heavier.",
+  still_circling: "You were still circling this here.",
+  stopped_apologising: "You stopped apologising when talking about this.",
+  sound_more_direct: "You sound more direct now.",
+  earlier_version: "This reads like an earlier version.",
 } as const;
+
+export const TOPIC_RECURRENCE_TEXT =
+  /\b(appeared again|money returned|work appeared|topic appeared|similar theme|came back to the same place|came back to the same loop|showed up again|keeps showing up)\b/i;
+
+const APOLOGY_RE = /\b(sorry|apolog\w*)\b/i;
+
+const SELF_CONTRAST_SIGNALS = new Set<KnowsMeSignal>([
+  "earlier_self",
+  "wording_shift",
+  "weight_shift",
+  "direct_naming",
+  "certainty_shift",
+  "directness_shift",
+  "phrase_gone",
+  "emotional_contrast",
+]);
 
 /** Revisit entry copy — answers “why was this worth reopening?” */
 export const REVISIT_REWARD_COPY = {
@@ -53,21 +69,27 @@ export const REVISIT_REWARD_COPY = {
 } as const;
 
 const REVISIT_CONTRAST_PRIORITY: KnowsMeSignal[] = [
-  "emotional_contrast",
-  "weight_shift",
+  "earlier_self",
   "wording_shift",
+  "weight_shift",
+  "direct_naming",
+  "certainty_shift",
+  "directness_shift",
+  "phrase_gone",
+  "emotional_contrast",
   "topic_quieter",
 ];
 
 const REVISIT_REWARD_LINE_PRIORITY: KnowsMeSignal[] = [
-  "topic_quieter",
-  "certainty_shift",
-  "direct_naming",
-  "directness_shift",
-  "weight_shift",
-  "emotional_contrast",
-  "wording_shift",
   "earlier_self",
+  "wording_shift",
+  "weight_shift",
+  "direct_naming",
+  "certainty_shift",
+  "directness_shift",
+  "phrase_gone",
+  "emotional_contrast",
+  "topic_quieter",
 ];
 
 interface KnowsMeCandidate {
@@ -87,15 +109,97 @@ const ABSENCE_DAYS = 14;
 
 const SIGNAL_PRIORITY: KnowsMeSignal[] = [
   "earlier_self",
-  "emotional_contrast",
+  "wording_shift",
   "weight_shift",
-  "topic_quieter",
   "direct_naming",
   "certainty_shift",
   "directness_shift",
   "phrase_gone",
-  "wording_shift",
+  "emotional_contrast",
+  "topic_quieter",
 ];
+
+function apologyCount(entry: JournalEntry): number {
+  return entry.transcript.match(APOLOGY_RE)?.length ?? 0;
+}
+
+export function isTopicRecurrenceCopy(text: string): boolean {
+  return TOPIC_RECURRENCE_TEXT.test(text);
+}
+
+function entriesForCandidate(
+  candidate: KnowsMeCandidate,
+  allSorted: JournalEntry[],
+): { past?: JournalEntry; current?: JournalEntry } {
+  const past = candidate.pastEntryId
+    ? allSorted.find((entry) => entry.id === candidate.pastEntryId)
+    : undefined;
+  const current = candidate.entryId
+    ? allSorted.find((entry) => entry.id === candidate.entryId)
+    : undefined;
+  return { past, current };
+}
+
+function contrastBoosts(
+  candidate: KnowsMeCandidate,
+  past: JournalEntry | undefined,
+  current: JournalEntry | undefined,
+): number {
+  let boost = 0;
+
+  if (SELF_CONTRAST_SIGNALS.has(candidate.signal)) boost += 10;
+  if (candidate.signal === "topic_quieter") boost -= 8;
+
+  if (candidate.pastQuote?.trim() && candidate.currentQuote?.trim()) boost += 12;
+
+  if (past && current) {
+    const intensityDrop = past.reflection.emotionalIntensity - current.reflection.emotionalIntensity;
+    if (intensityDrop >= 1.2) {
+      boost += 8 + Math.round(intensityDrop * 3);
+    }
+
+    const hedgeDrop = hedgeCount(past) - hedgeCount(current);
+    if (hedgeDrop >= 1) boost += 6 + hedgeDrop * 2;
+
+    const directGain = directCount(current) - directCount(past);
+    if (directGain >= 1) boost += 6 + directGain * 2;
+
+    const gap = daysBetweenKeys(toDayKey(past.createdAt), toDayKey(current.createdAt));
+    if (gap >= 14) boost += Math.min(Math.round(gap / 7), 10);
+
+    if (past.audioId) boost += 6;
+    if (current.audioId) boost += 6;
+  }
+
+  switch (candidate.signal) {
+    case "wording_shift":
+      boost += 8;
+      break;
+    case "phrase_gone":
+      boost += 10;
+      break;
+    case "direct_naming":
+    case "directness_shift":
+    case "certainty_shift":
+      boost += 9;
+      break;
+    default:
+      break;
+  }
+
+  if (isTopicRecurrenceCopy(candidate.text)) boost -= 28;
+
+  return boost;
+}
+
+function adjustCandidateStrength(
+  candidate: KnowsMeCandidate,
+  allSorted: JournalEntry[],
+): KnowsMeCandidate {
+  const { past, current } = entriesForCandidate(candidate, allSorted);
+  const strength = candidate.strength + contrastBoosts(candidate, past, current);
+  return { ...candidate, strength: Math.max(0, strength) };
+}
 
 function sortedEntries(entries: JournalEntry[]): JournalEntry[] {
   return [...entries].sort(
@@ -156,10 +260,10 @@ function detectEmotionalContrast(
     id: `knows-me-contrast-${past.id}-${current.id}`,
     signal: "emotional_contrast",
     text: anchorIsHeavier
-      ? KNOWS_ME_COPY.used_to_consume
+      ? KNOWS_ME_COPY.used_to_feel_heavier
       : settledNow
-        ? FAMILIARITY_COPY.moreSettled
-        : KNOWS_ME_COPY.sound_different,
+        ? KNOWS_ME_COPY.sound_more_direct
+        : KNOWS_ME_COPY.earlier_version,
     strength: 64 + Math.round(intensityDelta * 4) + Math.min(gap, 10) + overlap.length * 2,
     ...evidence(past, current),
   };
@@ -195,7 +299,7 @@ function detectWeightShift(
     return {
       id: `knows-me-weight-${themeKey}-${past.id}`,
       signal: "weight_shift",
-      text: KNOWS_ME_COPY.used_to_consume,
+      text: KNOWS_ME_COPY.used_to_feel_heavier,
       strength: 66 + Math.round(trend.delta * 5) + trend.mentions * 2,
       ...evidence(past, current),
     };
@@ -228,9 +332,9 @@ function detectTopicQuieter(
     return {
       id: `knows-me-quieter-${intense.id}-${anchor.id}`,
       signal: "topic_quieter",
-      text: KNOWS_ME_COPY.used_to_consume,
+      text: KNOWS_ME_COPY.used_to_feel_heavier,
       strength:
-        65 +
+        58 +
         Math.round(intense.reflection.emotionalIntensity - anchor.reflection.emotionalIntensity) *
           4,
       ...evidence(intense, anchor),
@@ -264,7 +368,7 @@ function detectCertaintyAndDirectness(
       pushCandidate(notes, {
         id: `knows-me-named-${themeKey}-${anchor.id}`,
         signal: "direct_naming",
-        text: FAMILIARITY_COPY.namedDirectly,
+        text: KNOWS_ME_COPY.sound_more_direct,
         strength: 68 + shift.directDelta * 4 + Math.min(gap, 8),
         ...ev,
       });
@@ -274,7 +378,7 @@ function detectCertaintyAndDirectness(
       pushCandidate(notes, {
         id: `knows-me-certainty-${themeKey}-${anchor.id}`,
         signal: "certainty_shift",
-        text: FAMILIARITY_COPY.namedDirectly,
+        text: KNOWS_ME_COPY.sound_more_direct,
         strength: 64 + shift.hedgeDelta * 3 + shift.directDelta * 2,
         ...ev,
       });
@@ -284,7 +388,7 @@ function detectCertaintyAndDirectness(
       pushCandidate(notes, {
         id: `knows-me-direct-${themeKey}-${anchor.id}`,
         signal: "directness_shift",
-        text: FAMILIARITY_COPY.namedDirectly,
+        text: KNOWS_ME_COPY.sound_more_direct,
         strength: 62 + shift.directDelta * 4,
         ...ev,
       });
@@ -428,12 +532,83 @@ function detectWordingShift(
     return {
       id: `knows-me-wording-${old.id}-${anchor.id}`,
       signal: "wording_shift",
-      text: hedgeFlip ? FAMILIARITY_COPY.moreSettled : KNOWS_ME_COPY.earlier_version,
-      strength: 60 + Math.min(gap, 12) + overlap.length * 3 + (hedgeFlip ? 4 : 0),
+      text: hedgeFlip ? KNOWS_ME_COPY.sound_more_direct : KNOWS_ME_COPY.earlier_version,
+      strength: 60 + Math.min(gap, 12) + overlap.length * 3 + (hedgeFlip ? 6 : 0),
       ...evidence(old, anchor),
     };
   }
   return null;
+}
+
+function detectStillCirclingHere(
+  anchor: JournalEntry,
+  later: JournalEntry[],
+  sorted: JournalEntry[],
+  anchorIdx: number,
+  fingerprint: LanguageFingerprint | null,
+): KnowsMeCandidate | null {
+  if (!fingerprint) return null;
+
+  for (const theme of anchor.reflection.recurringThemes) {
+    const themeKey = theme.toLowerCase();
+    const typical = fingerprint.themeCircleRun.get(themeKey);
+    if (!typical || typical < 2) continue;
+
+    const run = currentCircleRun(sorted, anchorIdx, themeKey);
+    if (run < typical - 0.25 && !isLooping(anchor)) continue;
+
+    const calmerLater = later.find(
+      (entry) =>
+        hasTheme(entry, themeKey) &&
+        entry.reflection.emotionalIntensity <= anchor.reflection.emotionalIntensity - 1.2,
+    );
+    if (!calmerLater && later.length > 0) continue;
+
+    const compare = calmerLater ?? later[later.length - 1];
+    if (!compare || compare.id === anchor.id) continue;
+
+    const gap = daysBetweenKeys(toDayKey(anchor.createdAt), toDayKey(compare.createdAt));
+    if (gap < 7) continue;
+
+    return {
+      id: `knows-me-still-circling-${themeKey}-${anchor.id}`,
+      signal: "earlier_self",
+      text: KNOWS_ME_COPY.still_circling,
+      strength: 66 + Math.min(gap, 12) + Math.round(run),
+      ...evidence(anchor, compare),
+    };
+  }
+
+  return null;
+}
+
+function detectApologyShift(
+  anchor: JournalEntry,
+  allSorted: JournalEntry[],
+): KnowsMeCandidate | null {
+  const latest = allSorted[allSorted.length - 1];
+  if (anchor.id === latest.id) return null;
+
+  const overlap = sharedThemes(anchor, latest);
+  if (overlap.length === 0) return null;
+
+  const gap = daysBetweenKeys(toDayKey(anchor.createdAt), toDayKey(latest.createdAt));
+  if (gap < ABSENCE_DAYS) return null;
+
+  const hadApology = apologyCount(anchor) >= 1;
+  const stoppedApologising = apologyCount(latest) === 0;
+  const hedgeDrop = hedgeCount(anchor) - hedgeCount(latest) >= 1;
+
+  if (!hadApology || !stoppedApologising) return null;
+  if (!hedgeDrop && apologyCount(anchor) < 2) return null;
+
+  return {
+    id: `knows-me-apology-${anchor.id}-${latest.id}`,
+    signal: "wording_shift",
+    text: KNOWS_ME_COPY.stopped_apologising,
+    strength: 68 + Math.min(gap, 12) + apologyCount(anchor) * 2 + (hedgeDrop ? 4 : 0),
+    ...evidence(anchor, latest),
+  };
 }
 
 function detectReopenedBeforeQuieter(
@@ -482,6 +657,12 @@ function collectCandidates(
   const reopenedBeforeQuieter = detectReopenedBeforeQuieter(anchor, later, fingerprint);
   if (reopenedBeforeQuieter) notes.push(reopenedBeforeQuieter);
 
+  const stillCircling = detectStillCirclingHere(anchor, later, allSorted, anchorIdx, fingerprint);
+  if (stillCircling) notes.push(stillCircling);
+
+  const apologyShift = detectApologyShift(anchor, allSorted);
+  if (apologyShift) notes.push(apologyShift);
+
   const earlier = detectEarlierSelf(anchor, prior, later, fingerprint);
   if (earlier) notes.push(earlier);
 
@@ -516,8 +697,16 @@ function collectCandidates(
   return notes;
 }
 
-function pickBest(candidates: KnowsMeCandidate[], minStrength: number): KnowsMeCandidate | null {
-  const eligible = candidates.filter((c) => c.strength >= minStrength);
+function pickBest(
+  candidates: KnowsMeCandidate[],
+  minStrength: number,
+  allSorted: JournalEntry[],
+): KnowsMeCandidate | null {
+  const eligible = candidates
+    .map((candidate) => adjustCandidateStrength(candidate, allSorted))
+    .filter((candidate) => candidate.strength >= minStrength)
+    .filter((candidate) => !isTopicRecurrenceCopy(candidate.text));
+
   if (eligible.length === 0) return null;
 
   const sorted = [...eligible].sort((a, b) => {
@@ -585,13 +774,17 @@ function hasContrastEvidence(note: MemoryNote): boolean {
 function signalFromNoteId(note: MemoryNote): KnowsMeSignal | null {
   if (note.id.startsWith("knows-me-contrast")) return "emotional_contrast";
   if (note.id.startsWith("knows-me-weight")) return "weight_shift";
-  if (note.id.startsWith("knows-me-wording")) return "wording_shift";
+  if (note.id.startsWith("knows-me-wording") || note.id.startsWith("knows-me-apology")) {
+    return "wording_shift";
+  }
   if (note.id.startsWith("knows-me-quieter")) return "topic_quieter";
   if (note.id.startsWith("knows-me-named") || note.id.startsWith("knows-me-certainty")) {
     return "certainty_shift";
   }
   if (note.id.startsWith("knows-me-direct")) return "directness_shift";
-  if (note.id.startsWith("knows-me-earlier")) return "earlier_self";
+  if (note.id.startsWith("knows-me-earlier") || note.id.startsWith("knows-me-still-circling")) {
+    return "earlier_self";
+  }
   if (note.id.startsWith("revisit-before-quiet")) return "topic_quieter";
   if (note.id.startsWith("change-charged")) return "weight_shift";
   if (note.id.startsWith("tvn-") || note.id.startsWith("revisit-diff")) return "emotional_contrast";
@@ -713,7 +906,7 @@ export function pickKnowsMeMoment(
     resolved.later,
     allSorted,
   );
-  const best = pickBest(candidates, minStrength);
+  const best = pickBest(candidates, minStrength, allSorted);
   return best ? toMemoryNote(best) : null;
 }
 

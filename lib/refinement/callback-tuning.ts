@@ -1,5 +1,7 @@
 import { callbackInteractionSignals } from "@/lib/callback-interaction-signals";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
+import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -25,6 +27,16 @@ const EXPLAIN_RE =
 const TEMPLATE_RE =
   /^(You |This was |This has been |An older |There is more |More of your |Your archive )/i;
 
+const PREFERRED_CONTRAST_RE =
+  /\b(this used to feel heavier|still circling this here|stopped apologising|sound more direct now|reads like an earlier version)\b/i;
+
+const LOW_CONTRAST_RESURFACE_RE = /^resurface-topic-|^resurface-entity-|^fam-resurface-similar/;
+
+function linkedEntries(note: MemoryNote, entries: JournalEntry[]): JournalEntry[] {
+  const ids = [note.pastEntryId, note.entryId].filter(Boolean) as string[];
+  return entries.filter((entry) => ids.includes(entry.id));
+}
+
 function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
@@ -40,7 +52,7 @@ function quoteSimilarity(a: string, b: string): number {
   return overlap / Math.max(left.size, right.size);
 }
 
-function scorePenalties(text: string): number {
+function scorePenalties(text: string, note: MemoryNote): number {
   let penalty = 0;
   if (GENERIC_RE.test(text)) penalty += 14;
   if (THERAPY_RE.test(text)) penalty += 18;
@@ -48,6 +60,8 @@ function scorePenalties(text: string): number {
   if (TEMPLATE_RE.test(text)) penalty += 8;
   if (wordCount(text) > 12) penalty += 6;
   if (text.includes(" — ") || text.includes(";")) penalty += 4;
+  if (isTopicRecurrenceCopy(text)) penalty += 24;
+  if (LOW_CONTRAST_RESURFACE_RE.test(note.id)) penalty += 18;
   return penalty;
 }
 
@@ -64,6 +78,7 @@ export function scoreCallbackTuning(
 
   const hasQuotes = Boolean(note.pastQuote?.trim() && note.currentQuote?.trim());
   const hasOneQuote = Boolean(note.pastQuote?.trim() || note.currentQuote?.trim());
+  const linked = linkedEntries(note, entries);
 
   let emotionalContrast = 12;
   if (hasQuotes) {
@@ -72,14 +87,25 @@ export function scoreCallbackTuning(
   } else if (note.pastQuote || note.currentQuote) {
     emotionalContrast += 10;
   }
-  if (/\b(quieter|different|returned|faded|calmer|heavier|unfinished)\b/i.test(text)) {
+  if (PREFERRED_CONTRAST_RE.test(text)) emotionalContrast += 18;
+  if (/\b(quieter|different|faded|calmer|heavier|unfinished|direct|earlier|circling|apolog)\b/i.test(text)) {
     emotionalContrast += 8;
+  }
+  if (note.id.startsWith("knows-me-")) emotionalContrast += 10;
+
+  if (linked.length >= 2) {
+    const intensities = linked.map((entry) => entry.reflection.emotionalIntensity);
+    const intensityDelta = Math.max(...intensities) - Math.min(...intensities);
+    if (intensityDelta >= 1.5) emotionalContrast += 10 + Math.round(intensityDelta * 2);
   }
 
   let specificity = 10;
   if (hasOneQuote) specificity += 14;
   if (/\b(mum|dad|work|home|Sarah|[A-Z][a-z]{2,})\b/.test(text)) specificity += 10;
   if (note.pastDateLabel && note.currentDateLabel) specificity += 6;
+  if (note.id.startsWith("knows-me-named") || note.id.startsWith("knows-me-direct")) {
+    specificity += 8;
+  }
 
   let simplicity = 18;
   if (words <= 6) simplicity += 16;
@@ -106,7 +132,27 @@ export function scoreCallbackTuning(
     quoteQuality += 8;
   }
 
-  const penalties = scorePenalties(text);
+  if (linked.some((entry) => entry.audioId)) quoteQuality += 10;
+
+  if (linked.length >= 2) {
+    const sortedLinked = [...linked].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+    const gap = daysBetweenKeys(
+      toDayKey(sortedLinked[0].createdAt),
+      toDayKey(sortedLinked[sortedLinked.length - 1].createdAt),
+    );
+    if (gap >= 14) emotionalTiming += Math.min(Math.round(gap / 7), 8);
+  }
+
+  if (note.id.startsWith("knows-me-wording") || note.id.startsWith("knows-me-apology")) {
+    emotionalContrast += 8;
+  }
+  if (note.id.startsWith("knows-me-phrase-gone") || note.id.startsWith("knows-me-circling")) {
+    emotionalContrast += 10;
+  }
+
+  const penalties = scorePenalties(text, note);
   const total = Math.max(
     0,
     emotionalContrast +
@@ -149,8 +195,14 @@ export function pickBestCallback(
   minTotal = 42,
 ): MemoryNote | null {
   const ranked = rankCallbacksByTuning(notes, entries);
-  const best = ranked.find((row) => row.score.total >= minTotal && row.score.penalties < 24);
-  return best?.note ?? ranked[0]?.note ?? null;
+  const best = ranked.find(
+    (row) =>
+      row.score.total >= minTotal &&
+      row.score.penalties < 24 &&
+      !isTopicRecurrenceCopy(row.note.text) &&
+      !LOW_CONTRAST_RESURFACE_RE.test(row.note.id),
+  );
+  return best?.note ?? ranked.find((row) => !isTopicRecurrenceCopy(row.note.text))?.note ?? null;
 }
 
 export function applyTuningScoreBoost(
