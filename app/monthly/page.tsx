@@ -202,6 +202,14 @@ export default function MonthlyPage() {
             </>
           )}
         </div>
+
+        {entries.length > 0 ? (
+          <div className="mt-16">
+            <Link href="/roundups/month" className="text-sm text-zinc-500 transition-colors hover:text-zinc-300">
+              Monthly roundup →
+            </Link>
+          </div>
+        ) : null}
       </div>
     </div>
   );

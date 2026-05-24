@@ -77,6 +77,14 @@ export default function WeeklyPage() {
             />
           ) : null}
         </div>
+
+        {hasData ? (
+          <div className="mt-16">
+            <Link href="/roundups/week" className="text-sm text-zinc-500 transition-colors hover:text-zinc-300">
+              Weekly roundup →
+            </Link>
+          </div>
+        ) : null}
       </div>
     </div>
   );

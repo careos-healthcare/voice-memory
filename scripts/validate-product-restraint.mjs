@@ -70,6 +70,7 @@ const ALLOWED_LINK_PREFIXES = [
   "/export",
   "/search",
   "/journal",
+  "/roundups",
   "/privacy",
   "/terms",
   "/safety",
