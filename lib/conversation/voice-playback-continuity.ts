@@ -113,12 +113,12 @@ export const VOICE_PLAYBACK_LABELS: Record<
   { then?: string; now: string }
 > = {
   then_vs_now: {
-    then: "Listen to how you sounded then",
-    now: "Listen to how you sound now",
+    then: "Before",
+    now: "Now",
   },
   related: {
-    then: "Listen to an earlier moment",
-    now: "Listen to how you sound now",
+    then: "Before",
+    now: "Now",
   },
   current_only: {
     now: "Your voice",

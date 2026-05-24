@@ -183,10 +183,7 @@ export default function TimelinePage() {
                 onContinue={handleContinueFollowup}
               />
 
-              <ThreadMentionsSection
-                threads={threadHighlights}
-                subtitle="Topics that keep showing up across your timeline."
-              />
+              <ThreadMentionsSection threads={threadHighlights} />
 
               <MilestoneNotes milestones={milestones} entries={entries} max={limits.milestones} />
 

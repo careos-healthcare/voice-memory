@@ -26,8 +26,8 @@ export function OnboardingBanner() {
         <div>
           <p className="text-sm font-medium text-violet-100">Welcome to VoiceMemory</p>
           <p className="mt-1 text-sm leading-relaxed text-zinc-400">
-            Record a short voice reflection. We transcribe it, surface patterns in mood
-            and themes, and keep everything on this device. Try{" "}
+            Record a short voice reflection. We transcribe it, keep everything on this device,
+            and notice how your words shift over time. Try{" "}
             <span className="text-zinc-300">/demo</span> to explore with sample data.
           </p>
           <Button type="button" size="sm" className="mt-3" onClick={complete}>

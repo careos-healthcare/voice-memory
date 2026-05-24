@@ -18,33 +18,33 @@ export interface EmptyStateMessage {
 const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
   none: {
     tier: "none",
-    headline: "Your memory layer starts with one voice note",
-    body: "Talk for up to a minute. VoiceMemory transcribes, surfaces mood and themes, and saves everything on this device — nothing in a cloud journal.",
+    headline: "Start with one voice note",
+    body: "Talk for up to a minute. VoiceMemory saves your words on this device and starts to notice how they change over time.",
     hint: "After your first reflection, Weekly and Memory pages begin to take shape.",
   },
   one: {
     tier: "one",
-    headline: "One reflection in — patterns need a little time",
-    body: "You have a snapshot of mood and themes from today. Add a few more voice notes and recurring people, concerns, and themes will start to appear.",
-    hint: "Two or three reflections across different days unlock weekly comparisons.",
+    headline: "One reflection in",
+    body: "You have a snapshot from today. Add a few more voice notes across different days and names and themes will start to come back.",
+    hint: "Two or three reflections unlock weekly comparisons.",
   },
   few: {
     tier: "few",
-    headline: "Memory intelligence is warming up",
-    body: "With a handful of reflections, VoiceMemory can spot themes that repeat and names that come back. Entity memory needs mentions across entries — not just once.",
-    hint: "Five reflections is where weekly drift and continuity feel noticeably richer.",
+    headline: "Your archive is warming up",
+    body: "With a handful of reflections, VoiceMemory can spot themes that repeat and names that come back.",
+    hint: "Five reflections is where weekly drift feels noticeably richer.",
   },
   building: {
     tier: "building",
-    headline: "Your longitudinal picture is forming",
-    body: "You have enough history for weekly comparisons, emotional drift, and entity continuity. Keep recording — the mirror gets sharper when your words accumulate.",
+    headline: "Your picture is forming",
+    body: "You have enough history for weekly comparisons and emotional drift. Keep recording — the mirror gets sharper when your words accumulate.",
     hint: "Pro unlocks the full archive if you hit the free 7-entry window.",
   },
   rich: {
     tier: "rich",
-    headline: "Deep memory intelligence is active",
-    body: "Your archive is long enough for meaningful weekly shifts, recurring patterns, and memory continuity across weeks. Export anytime to keep a portable copy.",
-    hint: "Search and weekly intelligence work best when you name people, places, and themes out loud.",
+    headline: "Your archive has depth",
+    body: "Your history is long enough for meaningful weekly shifts and quiet callbacks from older entries. Export anytime to keep a portable copy.",
+    hint: "Search works best when you name people, places, and themes out loud.",
   },
 };
 
@@ -58,12 +58,12 @@ export function getTierProgressLabel(entryCount: number): string {
     case "none":
       return "0 reflections";
     case "one":
-      return "1 reflection · early snapshot";
+      return "1 reflection";
     case "few":
-      return `${entryCount} reflections · patterns emerging`;
+      return `${entryCount} reflections`;
     case "building":
-      return `${entryCount} reflections · weekly intelligence active`;
+      return `${entryCount} reflections`;
     case "rich":
-      return `${entryCount} reflections · full memory layer`;
+      return `${entryCount} reflections`;
   }
 }

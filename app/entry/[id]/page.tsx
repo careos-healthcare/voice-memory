@@ -510,11 +510,7 @@ export default function EntryPage() {
                       <ContinuationNotes notes={[presentation.continuation]} max={1} />
                     ) : null}
 
-                    <ThreadMentionsSection
-                      threads={entryThreads}
-                      title="Part of these conversations"
-                      subtitle=""
-                    />
+                    <ThreadMentionsSection threads={entryThreads} />
 
                     {presentation?.primaryMoment ? (
                       <MotionNoteList className="space-y-20">
@@ -546,18 +542,9 @@ export default function EntryPage() {
                   <ContinuationNotes notes={[continuationOpener]} max={1} />
                 ) : null}
 
-                <ThreadMentionsSection
-                  threads={entryThreads}
-                  title="Part of these conversations"
-                  subtitle=""
-                />
+                <ThreadMentionsSection threads={entryThreads} />
 
-                <RelationshipContinuityNotes
-                  notes={relationshipNotes}
-                  max={2}
-                  title="People here"
-                  subtitle=""
-                />
+                <RelationshipContinuityNotes notes={relationshipNotes} max={2} />
 
                 <MilestoneNotes
                   milestones={milestoneNotes}

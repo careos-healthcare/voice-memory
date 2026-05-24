@@ -138,7 +138,7 @@ export default function RemindersPage() {
 
               <ToggleRow
                 label="Weekly review"
-                description="Point you to your weekly pattern when enough entries exist."
+                description="Point you to your weekly review when enough entries exist."
                 checked={prefs.weeklyReview}
                 onChange={(weeklyReview) => update({ weeklyReview })}
               />
@@ -206,7 +206,7 @@ export default function RemindersPage() {
                 <h2 className="text-sm font-medium text-white">Memory reminders</h2>
                 <p className="mt-1 text-xs leading-relaxed text-zinc-500">
                   Sparse nudges from your archive — not daily prompts. Shown on the homepage
-                  when a pattern is strong enough.
+                  when something feels worth returning to.
                 </p>
               </div>
 

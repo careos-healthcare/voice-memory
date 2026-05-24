@@ -64,7 +64,7 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
               linkRole="past"
               className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
-              before
+              Before
             </RevisitEntryLink>
           ) : null}
         </motion.blockquote>
@@ -90,7 +90,7 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
               linkRole="target"
               className="block text-xs text-zinc-600/80 transition-colors hover:text-zinc-400"
             >
-              now
+              Now
             </RevisitEntryLink>
           ) : null}
         </motion.blockquote>
@@ -333,9 +333,9 @@ export function MemoryNotesOverview({
     <div className="space-y-20">
       {hasNotes ? (
         <>
-          <MemoryNotesSection title="What changed" notes={capped.changed} max={maxPerSection} />
-          <MemoryNotesSection title="What faded" notes={capped.faded} max={maxPerSection} />
-          <MemoryNotesSection title="What came back" notes={capped.returned} max={maxPerSection} />
+          <MemoryNotesSection title="This changed" notes={capped.changed} max={maxPerSection} />
+          <MemoryNotesSection title="This got quieter" notes={capped.faded} max={maxPerSection} />
+          <MemoryNotesSection title="You came back" notes={capped.returned} max={maxPerSection} />
         </>
       ) : null}
       {hasLandmarks ? (

@@ -113,7 +113,7 @@ export default function SearchPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Semantic life search
+            Search
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Search

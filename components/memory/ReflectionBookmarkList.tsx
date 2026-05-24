@@ -2,10 +2,8 @@
 
 import {
   BookmarkIndicator,
-  BookmarkTypeHint,
 } from "@/components/memory/ReflectionBookmarkMark";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
-import { formatBookmarkTypeLabel } from "@/lib/reflection-bookmarks";
 import type {
   ReflectionBookmarkType,
   ReflectionBookmarkWithEntry,
@@ -16,12 +14,6 @@ const SECTION_ORDER: ReflectionBookmarkType[] = [
   "revisit_later",
   "changed_something",
 ];
-
-const SECTION_INTRO: Record<ReflectionBookmarkType, string> = {
-  mattered: "Reflections you marked as mattering.",
-  revisit_later: "Reflections you wanted to return to.",
-  changed_something: "Reflections where something shifted.",
-};
 
 export function ReflectionBookmarkList({
   bookmarks,
@@ -39,14 +31,6 @@ export function ReflectionBookmarkList({
     <div className="space-y-20">
       {grouped.map((section) => (
         <section key={section.type} className="space-y-6">
-          <div className="space-y-2 px-1">
-            <h2 className="text-xs font-normal tracking-wide text-zinc-600">
-              {formatBookmarkTypeLabel(section.type)}
-            </h2>
-            <p className="text-xs leading-relaxed text-zinc-600">
-              {SECTION_INTRO[section.type]}
-            </p>
-          </div>
           <ul className="space-y-8">
             {section.items.map((bookmark) => (
               <li key={`${bookmark.entryId}-${bookmark.type}`}>
@@ -59,7 +43,6 @@ export function ReflectionBookmarkList({
                     <p className="text-xs text-zinc-600">{bookmark.dateLabel}</p>
                     <BookmarkIndicator entryId={bookmark.entryId} />
                   </div>
-                  <BookmarkTypeHint type={bookmark.type} />
                   {bookmark.snippet ? (
                     <p className="text-sm leading-[1.75] text-zinc-500/90 transition-colors group-hover:text-zinc-400">
                       {bookmark.snippet}

@@ -33,10 +33,10 @@ export function WhyThisMatters({
       <div>
         <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Why this matters</p>
         <h2 className="mt-2 text-xl font-semibold text-white">
-          Memory intelligence over time
+          Remembering over time
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          VoiceMemory surfaces patterns in your words — not labels from a clinician.
+          VoiceMemory holds your words — not labels from a clinician.
         </p>
       </div>
       {topics.map((topic) => (

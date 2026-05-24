@@ -42,7 +42,7 @@ function SafetyNotice() {
     <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
       <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
       <p className="text-xs leading-relaxed text-zinc-500">
-        Pattern detection in your words — not therapy, not medical advice, not a
+        A mirror for your words — not therapy, not medical advice, not a
         diagnosis.
       </p>
     </div>
@@ -195,7 +195,7 @@ export function InsightCard({
       {!calmMode ? (
         <>
           <PatternSection
-            title="Recurring patterns"
+            title="What repeats"
             icon={Repeat2}
             accent="text-violet-300"
             items={(patternInsights?.recurringPatterns ?? []).map((detail, i) => ({
@@ -205,7 +205,7 @@ export function InsightCard({
             emptyLabel={
               reflection.recurringThemes.length > 0
                 ? `Themes in this entry: ${reflection.recurringThemes.join(", ")}`
-                : "Patterns emerge as you add more reflections."
+                : "More history helps repeats stand out."
             }
           />
 
@@ -346,7 +346,7 @@ export function ProcessingStatus({
 }) {
   const labels = {
     transcribing: "Listening to your voice…",
-    analyzing: "Detecting patterns in what you said…",
+    analyzing: "Reading your words…",
     saving: "Saving your reflection…",
   };
 
@@ -366,7 +366,7 @@ export function ProcessingStatus({
       <div>
         <p className="text-lg font-medium text-white">{labels[stage]}</p>
         <p className="mt-1 text-sm text-zinc-400">
-          Pattern detection — not therapy or diagnosis.
+          A mirror for your words — not therapy or diagnosis.
         </p>
       </div>
     </motion.div>

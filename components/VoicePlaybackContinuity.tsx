@@ -34,7 +34,7 @@ export function VoicePlaybackContinuity({ pair, onAudioPlayed }: VoicePlaybackCo
         entryId={pair.thenEntry.id}
         audioId={pair.thenEntry.audioId}
         durationSeconds={pair.thenEntry.durationSeconds}
-        label={labels.then ?? "Listen to an earlier moment"}
+        label={labels.then ?? "Before"}
         pausedExternally={activeClip === "now"}
         onPlayStart={() => {
           setActiveClip("then");

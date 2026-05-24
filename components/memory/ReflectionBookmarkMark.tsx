@@ -30,9 +30,7 @@ export function MarkReflectionButton({
   if (bookmark && !open) {
     return (
       <div className="flex flex-wrap items-center gap-3">
-        <p className="text-xs text-zinc-600">
-          Marked · {formatBookmarkTypeLabel(bookmark.type).toLowerCase()}
-        </p>
+        <p className="text-xs text-zinc-600">Marked</p>
         <Button
           type="button"
           variant="ghost"
@@ -117,17 +115,12 @@ export function BookmarkIndicator({
 
   if (!isMarked) return null;
 
-  const label = bookmark
-    ? formatBookmarkTypeLabel(bookmark.type).toLowerCase()
-    : "marked";
-
   return (
     <span
       className="inline-flex items-center gap-1 text-[10px] text-zinc-600"
-      aria-label={`Bookmarked: ${label}`}
+      aria-label="Bookmarked"
     >
       <Bookmark className="h-3 w-3 fill-zinc-700/40 text-zinc-600" />
-      {label}
     </span>
   );
 }

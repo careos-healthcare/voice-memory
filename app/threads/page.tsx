@@ -36,12 +36,7 @@ export default function ThreadsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle eyebrow="Threads" title="Ongoing conversations" />
-
-        <p className="mt-4 text-sm leading-relaxed text-zinc-500">
-          Themes, people, and phrases you kept returning to — grouped as conversations,
-          not one-off recordings.
-        </p>
+        <MotionPageTitle eyebrow="Threads" title="Worth returning to" />
 
         <div className="mt-20">
           {loading ? (
@@ -55,7 +50,7 @@ export default function ThreadsPage() {
                   No ongoing conversations yet
                 </p>
                 <p className="mt-2 text-sm text-zinc-600">
-                  These appear when a theme, person, or phrase shows up more than once.
+                  These show up when something appears more than once in your archive.
                 </p>
                 <Button asChild className="mt-8" variant="secondary">
                   <Link href="/">Start recording</Link>
@@ -64,11 +59,7 @@ export default function ThreadsPage() {
             </>
           ) : (
             <div className="space-y-20">
-              <RelationshipContinuityNotes
-                notes={relationshipNotes}
-                max={3}
-                subtitle="How people in your archive sound over time."
-              />
+              <RelationshipContinuityNotes notes={relationshipNotes} max={3} />
               <ThreadList threads={threads} />
             </div>
           )}

@@ -189,20 +189,12 @@ export default function MemoryPage() {
               <RhythmNotes notes={rhythm} max={limits.rhythm} />
               <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
               <RevisitationNotes notes={revisitation} max={1} />
-              <ThreadMentionsSection
-                threads={threadHighlights}
-                subtitle="Things you returned to more than once."
-              />
-              <RelationshipContinuityNotes
-                notes={relationshipNotes}
-                max={4}
-                subtitle="How people and places appear differently across your archive."
-              />
+              <ThreadMentionsSection threads={threadHighlights} />
+              <RelationshipContinuityNotes notes={relationshipNotes} max={4} />
               <MilestoneNotes
                 milestones={milestones}
                 entries={entries}
                 max={limits.milestones}
-                subtitle="Rare moments when something shifted — shown sparingly."
               />
               <FollowupPromptInline
                 prompt={followupPrompt}
@@ -211,24 +203,9 @@ export default function MemoryPage() {
 
               {snapshot.totalEntities > 0 ? (
                 <div className="space-y-20 pt-4">
-                  <EntityMemorySection
-                    title="People"
-                    subtitle=""
-                    entities={snapshot.people}
-                    emptyLabel=""
-                  />
-                  <EntityMemorySection
-                    title="Threads"
-                    subtitle=""
-                    entities={snapshot.concerns}
-                    emptyLabel=""
-                  />
-                  <EntityMemorySection
-                    title="Topics"
-                    subtitle=""
-                    entities={snapshot.topics}
-                    emptyLabel=""
-                  />
+                  <EntityMemorySection entities={snapshot.people} />
+                  <EntityMemorySection entities={snapshot.concerns} />
+                  <EntityMemorySection entities={snapshot.topics} />
                 </div>
               ) : null}
             </>
