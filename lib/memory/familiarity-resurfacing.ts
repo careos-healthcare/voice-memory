@@ -161,7 +161,7 @@ function detectSoundDifferent(
     pushCandidate(notes, {
       id: `fam-resurface-different-${past.id}-${current.id}`,
       kind: "sound_different",
-      text: "This reads differently from before.",
+      text: "You were carrying this differently then.",
       strength: 64 + Math.round(intensityDelta * 3) + (languageFlip ? 4 : 0),
       ...evidence(past, current),
     });
@@ -189,7 +189,7 @@ function detectEmotionallyOpposite(
     pushCandidate(notes, {
       id: `fam-resurface-opposite-${past.id}-${current.id}`,
       kind: "emotionally_opposite",
-      text: "This reads differently from before.",
+      text: "You were carrying this differently then.",
       strength: 63 + Math.round(delta * 2),
       ...evidence(past, current),
     });
@@ -373,7 +373,7 @@ function detectBeforeMajorShift(
   pushCandidate(notes, {
     id: `fam-resurface-shift-${best.entry.id}-${current.id}`,
     kind: "before_major_shift",
-    text: "This reads differently from before.",
+    text: "You were carrying this differently then.",
     strength: 64 + Math.round(best.magnitude * 3),
     ...evidence(best.entry, current),
   });
@@ -418,7 +418,7 @@ function detectMonthlyContrast(
   pushCandidate(notes, {
     id: `fam-resurface-month-${compareMonth}-${current.id}`,
     kind: "monthly_contrast",
-    text: "This reads differently now.",
+    text: "You sound further away from it now.",
     strength: 62 + Math.round(delta * 3),
     ...evidence(past, current),
   });

@@ -99,7 +99,7 @@ function promptForSource(note: MemoryNote, source: FollowupSource): string {
     return "Resolved or returned?";
   }
 
-  if (/\b(different|changed|read differently|sound different)\b/i.test(text)) {
+  if (/\b(different|changed|differently|carrying)\b/i.test(text)) {
     return "What feels different now?";
   }
 

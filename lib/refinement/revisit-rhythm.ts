@@ -27,9 +27,9 @@ export const MIN_ENTRIES = 4;
 
 export const REVISIT_RHYTHM_COPY = {
   recentRevisit: "You came back to something important this week.",
-  revisitToReflection: "This revisit led to another reflection.",
+  revisitToReflection: "You picked this back up.",
   revisitKeptGoing: "You returned here and kept going.",
-  resurfaceThread: "This older entry became part of the thread again.",
+  resurfaceThread: "You came back to the same place.",
 } as const;
 
 const RHYTHM_KEY = "voicememory_revisit_rhythm";

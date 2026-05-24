@@ -31,11 +31,11 @@ const LOOP_RE =
   /\b(same loop|keep coming back|again before|that loop|same pattern|i keep)\b/i;
 
 const COPY: Record<EmotionalMilestoneKind, string> = {
-  first_calmer_topic: "This was the first calmer version.",
-  topic_absent_after_intensity: "This stopped appearing after this period.",
-  phrase_disappeared: "This stopped appearing after this period.",
-  direct_naming: "This was when the wording changed.",
-  recovery_after_loop: "This was the first calmer version.",
+  first_calmer_topic: "This was the first time it sounded calmer.",
+  topic_absent_after_intensity: "It went quiet after that stretch.",
+  phrase_disappeared: "It went quiet after that stretch.",
+  direct_naming: "This was when you named it differently.",
+  recovery_after_loop: "This was the first time it sounded calmer.",
 };
 
 export const EMOTIONAL_MILESTONE_COPY_EXAMPLES: EmotionalMilestoneCopyExample[] = [

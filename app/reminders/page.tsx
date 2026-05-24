@@ -93,7 +93,7 @@ export default function RemindersPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Contextual reminders
+            Reminder settings
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Reminders
@@ -186,7 +186,7 @@ export default function RemindersPage() {
                 {previewCount === 0 ? (
                   <p className="flex items-center gap-2 text-sm text-zinc-500">
                     <BellOff className="h-4 w-4" />
-                    No contextual cards match your current memory state.
+                    No reminder cards match right now.
                   </p>
                 ) : (
                   <p className="text-sm text-zinc-300">
@@ -238,7 +238,7 @@ export default function RemindersPage() {
             <section>
               <h2 className="text-sm font-medium text-white">Example copy</h2>
               <p className="mt-1 text-xs text-zinc-500">
-                Messages you may see when context matches
+                Messages you may see when the moment fits
               </p>
               <ul className="mt-4 space-y-3">
                 {REMINDER_COPY_EXAMPLES.map((example) => (

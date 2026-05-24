@@ -260,7 +260,7 @@ function detectArchiveCallbacks(
     if (daysSince >= ABSENCE_DAYS + 3 && scoped.some((e) => e.id === last.id)) {
       pushCallback(callbacks, {
         id: `cb-topic-stopped-${theme}`,
-        text: "This has not appeared for a while.",
+        text: "You had not mentioned this for a while.",
         kind: "topic_stopped",
         confidence: 58,
         entryIds: group.map((e) => e.id),
@@ -346,7 +346,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: `moment-recovery-${theme}`,
         kind: "recovery_after_spike",
-        text: "After a spike, the next entries read calmer.",
+        text: "After a spike, you sounded calmer.",
         detail: `Peak ${intensities[peakIdx]}/10, then averaged ${roundAvg(afterPeak.map((r) => r.intensity))}/10.`,
         confidence: 63,
         entryIds: [rows[peakIdx].entry.id, ...afterPeak.slice(0, 2).map((r) => r.entry.id)],
@@ -362,7 +362,7 @@ function detectMoments(sorted: JournalEntry[]): ContinuityMoment[] {
       pushMoment(moments, {
         id: `moment-resolved-${theme}`,
         kind: "topic_resolved",
-        text: "This settled — it reads quieter now.",
+        text: "This settled — quieter now.",
         confidence: 60,
         entryIds: rows.map((r) => r.entry.id),
       });

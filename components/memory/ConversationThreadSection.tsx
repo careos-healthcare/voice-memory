@@ -15,7 +15,7 @@ import type { ConversationThread } from "@/types/conversation-thread";
 
 export function ThreadMentionsSection({
   threads,
-  title = "Conversation threads",
+  title = "What kept coming back",
   subtitle,
 }: {
   threads: ConversationThread[];
@@ -59,7 +59,7 @@ export function ThreadMentionsSection({
         href="/threads"
         className="inline-block px-1 text-xs text-zinc-600 transition-colors hover:text-zinc-400"
       >
-        All conversation threads
+        All of them
       </Link>
     </section>
   );

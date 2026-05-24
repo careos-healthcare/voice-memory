@@ -191,7 +191,7 @@ export default function MemoryPage() {
               <RevisitationNotes notes={revisitation} max={1} />
               <ThreadMentionsSection
                 threads={threadHighlights}
-                subtitle="Recurring topics that span more than one reflection."
+                subtitle="Things you returned to more than once."
               />
               <RelationshipContinuityNotes
                 notes={relationshipNotes}

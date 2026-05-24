@@ -43,7 +43,7 @@ export const MEMORY_SEASON_COPY_EXAMPLES: MemorySeasonCopyExample[] = [
   },
   {
     kind: "dominant_focus",
-    message: "This period was mostly about work becoming quieter.",
+    message: "For a while, work became quieter.",
     whenShown: "One theme dominated a period and softened toward the end",
   },
   {
@@ -393,14 +393,14 @@ function detectDominantFocus(
       observations.push({
         id: `season-dominant-quiet-${periodLabel}-${topTheme.key}`,
         kind: "dominant_focus",
-        text: `This period was mostly about ${subject.toLowerCase()} becoming quieter.`,
+        text: `For a while, ${subject.toLowerCase()} became quieter.`,
         subject,
       });
     } else {
       observations.push({
         id: `season-dominant-${periodLabel}-${topTheme.key}`,
         kind: "dominant_focus",
-        text: `This period was mostly about ${subject.toLowerCase()}.`,
+        text: `For a while, this was mostly about ${subject.toLowerCase()}.`,
         subject,
       });
     }
@@ -421,7 +421,7 @@ function detectDominantFocus(
     observations.push({
       id: `season-topic-${periodLabel}-${dominantTopic.id}`,
       kind: "dominant_focus",
-      text: `This period was mostly about ${dominantTopic.name.toLowerCase()}.`,
+      text: `For a while, this was mostly about ${dominantTopic.name.toLowerCase()}.`,
       subject: dominantTopic.name,
     });
   }

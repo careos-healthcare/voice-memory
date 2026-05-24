@@ -140,7 +140,7 @@ function detectLanguageShifts(
       pushCandidate(notes, {
         id: `change-future-${themeKey}-${current.id}`,
         kind: "future_forward",
-        text: "This reads differently here.",
+        text: "You sound different here.",
         strength: 62 + nowFuture * 2,
         ...ev,
       });

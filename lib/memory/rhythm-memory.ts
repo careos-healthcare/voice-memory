@@ -122,7 +122,7 @@ function detectAfterBusyWeeks(
     pushCandidate(notes, {
       id: `rhythm-busy-${themeKey}-${current.id}`,
       kind: "after_busy_weeks",
-      text: "This came back after a heavy stretch.",
+      text: "You came back after a heavy stretch.",
       strength: STRONG_MIN + afterBusy * 2,
       ...fingerprintEvidence(sample, current),
     });

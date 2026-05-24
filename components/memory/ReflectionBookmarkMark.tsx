@@ -71,7 +71,7 @@ export function MarkReflectionButton({
       ) : null}
       {open ? (
         <div className="space-y-2 px-1">
-          <p className="text-xs text-zinc-600">Mark this reflection as</p>
+          <p className="text-xs text-zinc-600">Mark this as</p>
           <div className="flex flex-wrap gap-2">
             {BOOKMARK_TYPES.map((type) => (
               <Button

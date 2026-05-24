@@ -30,10 +30,10 @@ const TEXT_COOLDOWN_DAYS = 28;
 const SURFACE_COOLDOWN_DAYS = 12;
 
 const COPY: Record<ContinuityDepthKind, string> = {
-  older_entries_context: "Older entries are beginning to carry context.",
-  reflections_connecting: "More of this is starting to connect.",
-  period_read_differently: "This period is beginning to read differently.",
-  threads_worth_returning: "There are a few threads worth returning to.",
+  older_entries_context: "Older reflections are starting to mean something different.",
+  reflections_connecting: "More of this is starting to mean something.",
+  period_read_differently: "You were carrying this differently then.",
+  threads_worth_returning: "You kept coming back to a few things.",
 };
 
 const KIND_PRIORITY: ContinuityDepthKind[] = [
@@ -48,22 +48,22 @@ export const CONTINUITY_DEPTH_COPY_EXAMPLES: ContinuityDepthCopyExample[] = [
     kind: "older_entries_context",
     message: COPY.older_entries_context,
     whenShown:
-      "Older reflections, revisit links, and bookmarks give earlier entries surrounding context",
+      "Older reflections, revisit links, and bookmarks make earlier recordings land differently",
   },
   {
     kind: "reflections_connecting",
     message: COPY.reflections_connecting,
-    whenShown: "Themes and threads bridge weeks or months with enough overlap to feel linked",
+    whenShown: "Themes bridge weeks or months with enough overlap to feel linked",
   },
   {
     kind: "period_read_differently",
     message: COPY.period_read_differently,
-    whenShown: "A recurring theme or season reads with a different tone than before",
+    whenShown: "A recurring theme or season lands with a different tone than before",
   },
   {
     kind: "threads_worth_returning",
     message: COPY.threads_worth_returning,
-    whenShown: "Several conversation threads span multiple reflections with enough depth to revisit",
+    whenShown: "Several conversations span multiple recordings with enough depth to reopen",
   },
 ];
 

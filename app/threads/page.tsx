@@ -39,8 +39,8 @@ export default function ThreadsPage() {
         <MotionPageTitle eyebrow="Threads" title="Ongoing conversations" />
 
         <p className="mt-4 text-sm leading-relaxed text-zinc-500">
-          Recurring themes, people, phrases, and topics across your reflections —
-          grouped as conversations, not isolated entries.
+          Themes, people, and phrases you kept returning to — grouped as conversations,
+          not one-off recordings.
         </p>
 
         <div className="mt-20">
@@ -52,11 +52,10 @@ export default function ThreadsPage() {
               <div className="px-2 py-16 text-center">
                 <MessageCircle className="mx-auto h-7 w-7 text-zinc-600/80" />
                 <p className="mt-5 text-base font-normal text-zinc-400">
-                  No conversation threads yet
+                  No ongoing conversations yet
                 </p>
                 <p className="mt-2 text-sm text-zinc-600">
-                  Threads appear when a theme, person, or phrase shows up in more
-                  than one reflection.
+                  These appear when a theme, person, or phrase shows up more than once.
                 </p>
                 <Button asChild className="mt-8" variant="secondary">
                   <Link href="/">Start recording</Link>
@@ -68,7 +67,7 @@ export default function ThreadsPage() {
               <RelationshipContinuityNotes
                 notes={relationshipNotes}
                 max={3}
-                subtitle="How people in your threads sound over time."
+                subtitle="How people in your archive sound over time."
               />
               <ThreadList threads={threads} />
             </div>

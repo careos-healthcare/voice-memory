@@ -9,8 +9,8 @@ import type {
 
 export const SHARED_MOMENT_COPY: Record<SharedMemoryMomentTemplate, string> = {
   forgot_sound: "I forgot I used to sound like this.",
-  quieter_thought: "This was a quieter version of the same thought.",
-  changed_over_time: "This changed over time.",
+  quieter_thought: "A quieter version of the same thing.",
+  changed_over_time: "This shifted over time.",
 };
 
 export const SHARED_MEMORY_MOMENT_COPY_EXAMPLES: SharedMemoryMomentCopyExample[] = [

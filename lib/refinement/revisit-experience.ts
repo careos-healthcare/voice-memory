@@ -71,7 +71,7 @@ const REVISIT_SUPPRESSED_ID =
   /^rhythm-|^time-|^continuity-thread-|^continuity-recurring-|^archive-|^continuity-depth-|^resurface-topic-|^resurface-entity-|^resurface-phrase-|^resurface-person-|^resurface-loop-|^familiarity-|^fam-resurface-similar|^revisit-loop-|^continuity-callback-/;
 
 const REVISIT_SUPPRESSED_TEXT =
-  /\b(you came back to the same place|you spoke about this the same way|older reflections connecting|reflections starting to connect|threads worth returning|tends to return|weekly rhythm|gap between these entries|sounds like the next part|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again)\b/i;
+  /\b(you came back to the same place|you spoke about this the same way|older reflections are starting|starting to mean something|kept coming back to a few things|tends to return|weekly rhythm|gap between these entries|you left off here|came up again|showed up again|keeps showing up|same theme|same topic|returned to this|spoke about this again)\b/i;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";

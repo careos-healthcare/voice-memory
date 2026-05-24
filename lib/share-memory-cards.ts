@@ -167,7 +167,7 @@ export function buildMemoryContinuityShareCard(options: ShareCardOptions = {}): 
 
   if (lines.length === 0) {
     lines.push(
-      "Continuity patterns appear after a few reflections — themes and concerns that repeat across days.",
+      "Themes you keep returning to show up after a few days of recording.",
     );
   }
 

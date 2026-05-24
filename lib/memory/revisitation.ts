@@ -88,7 +88,7 @@ function detectRelatedOlder(
     pushCandidate(notes, {
       id: `revisit-related-${old.id}-${anchor.id}`,
       kind: "related_older",
-      text: "This reads differently now.",
+      text: "You were carrying this differently then.",
       strength: 60 + Math.min(gap, 14) + overlap.length * 3,
       pastQuote: snippet(old),
       currentQuote: snippet(anchor),
@@ -152,7 +152,7 @@ function detectBeforeQuieter(
     pushCandidate(notes, {
       id: `revisit-before-quiet-${intense.id}-${anchor.id}`,
       kind: "before_quieter",
-      text: "This was before things got quieter.",
+      text: "This was before it got quieter.",
       strength: 63 + Math.round(intense.reflection.emotionalIntensity - anchor.reflection.emotionalIntensity) * 3,
       pastQuote: snippet(intense),
       currentQuote: snippet(anchor),
@@ -183,7 +183,7 @@ function detectReadsDifferently(
       pushCandidate(notes, {
         id: `revisit-diff-now-${anchor.id}`,
         kind: "reads_differently",
-        text: "This reads differently now.",
+        text: "You were carrying this differently then.",
         strength: 62 + overlap.length * 3 + Math.round(intensityDelta * 2),
         pastQuote: snippet(anchor),
         currentQuote: snippet(latest),
@@ -209,7 +209,7 @@ function detectReadsDifferently(
     pushCandidate(notes, {
       id: `revisit-diff-${old.id}-${anchor.id}`,
       kind: "reads_differently",
-      text: "This reads differently now.",
+      text: "You were carrying this differently then.",
       strength: 60 + overlap.length * 3 + Math.round(intensityDelta * 2),
       pastQuote: snippet(old),
       currentQuote: snippet(anchor),
@@ -239,7 +239,7 @@ function detectLoopReturn(
   pushCandidate(notes, {
     id: `revisit-loop-${lastLoop.id}-${anchor.id}`,
     kind: "loop_return",
-    text: "This reads differently now.",
+    text: "You were carrying this differently then.",
     strength: 61 + Math.min(gap, 10),
     pastQuote: snippet(lastLoop),
     currentQuote: snippet(anchor),
@@ -278,7 +278,7 @@ function detectWorthRevisit(
     pushCandidate(notes, {
       id: `revisit-changed-${candidate.id}-${anchor.id}`,
       kind: "worth_revisit",
-      text: "This reads differently now.",
+      text: "You were carrying this differently then.",
       strength: 59 + Math.round(beforeIntensity - afterAvg) * 3,
       pastQuote: snippet(candidate),
       currentQuote: snippet(anchor),

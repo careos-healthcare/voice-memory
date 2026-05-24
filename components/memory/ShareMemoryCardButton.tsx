@@ -14,7 +14,7 @@ import type { JournalEntry } from "@/types/journal";
 const CARD_LABELS: Record<ShareMemoryCardKind, string> = {
   weekly_summary: "Weekly summary",
   timeline_compression: "Timeline compression",
-  memory_continuity: "Memory continuity",
+  memory_continuity: "Over time",
   dominant_theme: "Dominant theme",
   entry_observation: "Concrete observation",
 };

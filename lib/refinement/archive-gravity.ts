@@ -28,9 +28,9 @@ export const MIN_SESSIONS_BETWEEN = 4;
 
 export const ARCHIVE_GRAVITY_COPY = {
   returningMonths: "You have been returning to this for months.",
-  periodReadsDifferently: "This period reads differently now.",
-  threadWorthRevisiting: "There is a thread here worth revisiting.",
-  olderEntriesPointBack: "Older entries are starting to point back here.",
+  periodReadsDifferently: "You were carrying this differently then.",
+  threadWorthRevisiting: "You kept coming back to this.",
+  olderEntriesPointBack: "Something older keeps pulling you back.",
 } as const;
 
 const GRAVITY_KEY = "voicememory_archive_gravity";

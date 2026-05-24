@@ -168,7 +168,7 @@ function detectToneShift(
       pushCandidate(notes, {
         id: `resurface-heavier-${themeKey}-${current.id}`,
         kind: "heavier_return",
-        text: "This carried more weight this time.",
+        text: "It took up more room this time.",
         strength: 62 + Math.round((current.reflection.emotionalIntensity - priorAvg) * 4),
         ...evidence,
       });

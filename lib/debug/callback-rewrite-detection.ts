@@ -5,9 +5,9 @@ const GENERIC_PHRASES: RegExp[] = [
   /\bcame back softly\b/i,
   /\bthis changed over time\b/i,
   /\bhas been quiet for a while\b/i,
-  /\bbeginning to connect\b/i,
-  /\bworth returning to\b/i,
-  /\bcarry context\b/i,
+  /\bbeginning to mean something\b/i,
+  /\bkept coming back to a few things\b/i,
+  /\bmean something different\b/i,
   /\bmore personal\b/i,
   /\brecurring pattern\b/i,
   /\bdominant theme\b/i,
@@ -28,7 +28,7 @@ const TEMPLATE_OPENERS: RegExp[] = [
   /^There is more /i,
   /^More of your reflections /i,
   /^Your archive has /i,
-  /^Older entries are /i,
+  /^Older reflections are /i,
   /^VoiceMemory /i,
 ];
 
@@ -36,8 +36,8 @@ const UNIVERSAL_PHRASES: RegExp[] = [
   /^This came back softly\.?$/i,
   /^This has been quiet for a while\.?$/i,
   /^An older reflection may feel different now\.?$/i,
-  /^This changed over time\.?$/i,
-  /^This was a quieter version of the same thought\.?$/i,
+  /^This shifted over time\.?$/i,
+  /^A quieter version of the same thing\.?$/i,
   /^I forgot I used to sound like this\.?$/i,
 ];
 

@@ -103,7 +103,7 @@ export function detectRecoveryCandidates(
       results.push({
         id: `recovery-spiral-${themeKey}-${current.id}`,
         kind: "shorter_spiral",
-        text: "This reads differently here.",
+        text: "You sound different here.",
         strength: 63 + Math.round(priorLoop.length * 2),
         ...loopEv,
       });

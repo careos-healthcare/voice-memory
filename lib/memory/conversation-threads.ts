@@ -253,9 +253,9 @@ function analyzeEvolution(entries: JournalEntry[]): ConversationThreadEvolution 
     const lateDirect = roundAvg(late.map((e) => countMatches(e.transcript, DIRECT_RE)));
 
     if (lateAvg <= earlyAvg - 1 || lateHedge <= earlyHedge - 0.8) {
-      whatChanged = "This sounded calmer in more recent reflections.";
+      whatChanged = "You sounded calmer about this lately.";
     } else if (lateAvg >= earlyAvg + 1) {
-      whatChanged = "This carried more weight in recent reflections.";
+      whatChanged = "This took up more room lately.";
     } else if (lateDirect >= earlyDirect + 0.8) {
       whatChanged = "Your language around this shifted over time.";
     }
@@ -267,7 +267,7 @@ function analyzeEvolution(entries: JournalEntry[]): ConversationThreadEvolution 
       toDayKey(entries[i].createdAt),
     );
     if (gap >= GAP_DAYS) {
-      whatFaded = "This went quiet for a while between mentions.";
+      whatFaded = "This went quiet for a while.";
       break;
     }
   }

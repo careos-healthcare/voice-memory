@@ -537,7 +537,7 @@ export default function EntryPage() {
                 <RelationshipContinuityNotes
                   notes={relationshipNotes}
                   max={2}
-                  title="People in this reflection"
+                  title="People here"
                   subtitle=""
                 />
 
