@@ -23,6 +23,7 @@ import {
   buildArchiveOwnershipReport,
 } from "@/lib/archive/archive-ownership";
 import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
+import { AccountAuthError } from "@/lib/sync/account-client";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
@@ -43,12 +44,30 @@ function statusLabel(state: string): string {
   }
 }
 
+type SendCodeUiState = "idle" | "sending" | "sent" | "error" | "storage_error";
+
+function sendCodeStatusLine(state: SendCodeUiState): string | null {
+  switch (state) {
+    case "sending":
+      return "Sending…";
+    case "sent":
+      return "Code sent. Check your email.";
+    case "error":
+      return "Could not send code. Try again.";
+    case "storage_error":
+      return "Auth storage is not configured.";
+    default:
+      return null;
+  }
+}
+
 export default function AccountPage() {
   const { status, sendCode, verifyCode, signOut, syncNow, previewRestore, applyRestore } =
     useAccount();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [devCode, setDevCode] = useState<string | null>(null);
+  const [sendCodeState, setSendCodeState] = useState<SendCodeUiState>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [allowDebugEvents, setAllowDebugEvents] = useState(false);
@@ -76,12 +95,22 @@ export default function AccountPage() {
 
   const handleSendCode = async () => {
     setBusy(true);
+    setSendCodeState("sending");
     try {
       const result = await sendCode(email);
       setDevCode(result.devCode ?? null);
-      showMessage("Sign-in code sent.");
+      setSendCodeState("sent");
+      showMessage("Code sent. Check your email.");
     } catch (error) {
-      showMessage(error instanceof Error ? error.message : "Could not send code.");
+      if (error instanceof AccountAuthError && error.code === "storage_not_configured") {
+        setSendCodeState("storage_error");
+        showMessage("Auth storage is not configured.");
+      } else {
+        setSendCodeState("error");
+        showMessage(
+          error instanceof Error ? error.message : "Could not send code. Try again.",
+        );
+      }
     } finally {
       setBusy(false);
     }
@@ -248,13 +277,27 @@ export default function AccountPage() {
                   <input
                     type="email"
                     value={email}
-                    onChange={(event) => setEmail(event.target.value)}
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      if (sendCodeState !== "idle") setSendCodeState("idle");
+                    }}
                     placeholder="you@example.com"
                     className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-violet-500/30 focus:ring-2"
                   />
                   <Button disabled={busy || !email.trim()} onClick={() => void handleSendCode()}>
-                    Send code
+                    {sendCodeState === "sending" ? "Sending…" : "Send code"}
                   </Button>
+                  {sendCodeStatusLine(sendCodeState) ? (
+                    <p
+                      className={
+                        sendCodeState === "storage_error" || sendCodeState === "error"
+                          ? "text-sm text-red-300/90"
+                          : "text-sm text-zinc-400"
+                      }
+                    >
+                      {sendCodeStatusLine(sendCodeState)}
+                    </p>
+                  ) : null}
                   {devCode ? (
                     <p className="text-xs text-zinc-500">Development code: {devCode}</p>
                   ) : null}

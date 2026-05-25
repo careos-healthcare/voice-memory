@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { issueEmailLoginCode } from "@/lib/server/auth-store";
+import { AuthStorageNotConfiguredError, issueEmailLoginCode } from "@/lib/server/auth-store";
 
 export const runtime = "nodejs";
 
@@ -14,20 +14,31 @@ export async function POST(request: Request) {
 
     const { code } = issueEmailLoginCode(email);
 
-    // Foundation: log code in development. Wire SMTP in production deployment.
     if (process.env.NODE_ENV !== "production") {
       console.info(`[VoiceMemory auth] Sign-in code for ${email}: ${code}`);
     }
 
-    const response: { ok: true; devCode?: string } = { ok: true };
+    const response: { ok: true; message: string; devCode?: string } = {
+      ok: true,
+      message: "Code sent. Check your email.",
+    };
     if (process.env.NODE_ENV !== "production") {
       response.devCode = code;
     }
 
     return NextResponse.json(response);
   } catch (error) {
+    if (error instanceof AuthStorageNotConfiguredError) {
+      return NextResponse.json(
+        { error: error.message, code: "storage_not_configured" },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Could not send code." },
+      {
+        error: error instanceof Error ? error.message : "Could not send code. Try again.",
+      },
       { status: 400 },
     );
   }

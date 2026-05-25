@@ -20,7 +20,8 @@ Generated for VoiceMemory production deployment prep.
 | `OPENAI_API_KEY` | **Yes** for recording flow | Powers `/api/transcribe` and `/api/analyze` |
 | `VOICEMEMORY_ENABLE_ATMOSPHERE_API` | No | Set `true` only with OpenAI key to enable DALL-E atmosphere |
 | `DEBUG_ACCESS_TOKEN` | No | When set, allows `/debug/*` in production via `?debug_token=` |
-| `SYNC_DATA_DIR` | No | Override for encrypted sync + auth JSON store |
+| `DATABASE_URL` | Before serious auth testing | Postgres for durable auth codes + sync metadata; without it production uses ephemeral in-memory auth |
+| `SYNC_DATA_DIR` | No | Override for encrypted sync JSON store (development / persistent hosts) |
 
 ## Production hardening audit
 
@@ -40,7 +41,8 @@ Generated for VoiceMemory production deployment prep.
 | Risk | Detail | Mitigation |
 | --- | --- | --- |
 | **Auth email delivery** | `/api/auth/send-code` logs codes in dev only; no SMTP in production yet | Wire email provider before inviting testers; use dev build locally for auth QA |
-| **Ephemeral server storage** | Auth + sync JSON live under `.data/` on the server filesystem | Vercel serverless resets between deploys/regions; use persistent volume or external store for multi-device sync |
+| **Ephemeral auth memory** | Without `DATABASE_URL`, production stores codes in memory per server instance | Set `DATABASE_URL` (Postgres) before serious multi-device auth testing |
+| **Ephemeral server storage** | Sync JSON still lives under `.data/` on the server filesystem | Vercel serverless resets between deploys/regions; use persistent volume or external store for multi-device sync |
 | **Open API routes** | `/api/transcribe`, `/api/analyze`, `/api/atmosphere` have no session gate | Monitor OpenAI usage; add rate limits or auth before public launch |
 | **OPENAI dependency** | Recording fails without key | Set `OPENAI_API_KEY` in Vercel; verify one end-to-end recording post-deploy |
 

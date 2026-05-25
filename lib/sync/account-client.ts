@@ -39,14 +39,33 @@ export async function fetchAccountSession(): Promise<AccountSession | null> {
   return data.session;
 }
 
+export class AccountAuthError extends Error {
+  code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = "AccountAuthError";
+    this.code = code;
+  }
+}
+
 export async function sendEmailLoginCode(email: string): Promise<{ devCode?: string }> {
   const response = await fetch("/api/auth/send-code", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
   });
-  const data = (await response.json()) as { error?: string; devCode?: string };
-  if (!response.ok) throw new Error(data.error ?? "Could not send sign-in code.");
+  const data = (await response.json()) as {
+    error?: string;
+    devCode?: string;
+    code?: string;
+  };
+  if (!response.ok) {
+    throw new AccountAuthError(
+      data.error ?? "Could not send code. Try again.",
+      data.code,
+    );
+  }
   return { devCode: data.devCode };
 }
 
