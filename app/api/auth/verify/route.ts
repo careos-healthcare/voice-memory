@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { logAuthError, isPostgresAuthError } from "@/lib/server/auth-diagnostics";
 import { verifyEmailLoginCode } from "@/lib/server/auth-store";
 import {
   buildSessionCookie,
@@ -8,6 +9,7 @@ import {
 } from "@/lib/server/session";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -34,6 +36,14 @@ export async function POST(request: Request) {
     response.cookies.set(buildSessionCookie(token));
     return response;
   } catch (error) {
+    if (isPostgresAuthError(error)) {
+      logAuthError("verify", error, { phase: "postgres_verify" });
+      return NextResponse.json(
+        { error: "Sign-in storage is temporarily unavailable.", code: "AUTH_DATABASE_FAILED" },
+        { status: 503 },
+      );
+    }
+    logAuthError("verify", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Sign-in failed." },
       { status: 400 },

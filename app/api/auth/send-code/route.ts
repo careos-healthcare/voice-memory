@@ -1,5 +1,9 @@
 import { authApiFailure, authApiSuccess } from "@/lib/server/auth-api-response";
 import { createAuthSendCodeLog } from "@/lib/server/auth-route-log";
+import {
+  isPostgresAuthError,
+  logAuthError,
+} from "@/lib/server/auth-diagnostics";
 import { readAuthEmailEnvStatus } from "@/lib/server/env-check";
 import {
   AuthEmailError,
@@ -8,6 +12,7 @@ import {
 import { AuthStorageNotConfiguredError, issueEmailLoginCode } from "@/lib/server/auth-store";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const { log, finalize } = createAuthSendCodeLog();
@@ -76,6 +81,17 @@ export async function POST(request: Request) {
       return authApiFailure(
         "Auth storage is not configured.",
         "AUTH_STORAGE_NOT_CONFIGURED",
+        503,
+      );
+    }
+
+    if (isPostgresAuthError(error)) {
+      logAuthError("send-code", error, { phase: "postgres_auth_code" });
+      log({ ok: false, errorCode: "AUTH_DATABASE_FAILED" });
+      finalize(error);
+      return authApiFailure(
+        "Sign-in storage is temporarily unavailable.",
+        "AUTH_DATABASE_FAILED",
         503,
       );
     }

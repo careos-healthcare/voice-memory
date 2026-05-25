@@ -7,6 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
   "lib/server/db.ts",
+  "lib/server/auth-diagnostics.ts",
   "lib/server/auth-store-postgres.ts",
   "lib/server/sync-store-postgres.ts",
   "docs/sql/001_auth_sync_schema.sql",
@@ -38,6 +39,11 @@ for (const table of ["auth_codes", "sessions", "sync_blobs"]) {
     console.error(`Durable storage validation failed — schema missing table ${table}.`);
     process.exit(1);
   }
+}
+
+if (!db.includes("AUTH_SYNC_SCHEMA_STATEMENTS") || db.includes("readFileSync")) {
+  console.error("Durable storage validation failed — db.ts must bundle schema SQL for serverless.");
+  process.exit(1);
 }
 
 if (!db.includes("shouldUsePostgresStorage") || !db.includes("ensureDatabaseSchema")) {
@@ -97,8 +103,17 @@ if (!envExample.includes("DATABASE_URL")) {
   process.exit(1);
 }
 
-if (!sendCodeRoute.includes("await issueEmailLoginCode")) {
-  console.error("Durable storage validation failed — send-code must await async auth store.");
+if (!sendCodeRoute.includes("AUTH_DATABASE_FAILED") || !sendCodeRoute.includes("logAuthError")) {
+  console.error("Durable storage validation failed — send-code must log and surface database failures.");
+  process.exit(1);
+}
+
+const sessionRoute = fs.readFileSync(
+  path.join(ROOT, "app/api/auth/session/route.ts"),
+  "utf8",
+);
+if (!sessionRoute.includes("logAuthError") || !sessionRoute.includes("AUTH_SESSION_FAILED")) {
+  console.error("Durable storage validation failed — session route must handle auth failures.");
   process.exit(1);
 }
 
