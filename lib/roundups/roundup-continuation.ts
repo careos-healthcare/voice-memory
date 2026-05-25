@@ -7,7 +7,7 @@ import { upsertIntentionFromRoundup } from "@/lib/intentions/long-term-intention
 import {
   trackRoundupContinueClicked as trackRoundupContinueObservation,
   trackRoundupIntentionSaved as trackRoundupIntentionSavedObservation,
-  trackRoundupRelatedEntryOpened,
+  trackRoundupItemRevisited as trackRoundupItemRevisitedObservation,
 } from "@/lib/roundups/roundup-observation";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { LongTermIntention } from "@/types/long-term-intentions";
@@ -18,10 +18,8 @@ const SAVED_ROUNDUP_ITEMS_KEY = "voicememory_roundup_saved_items";
 export {
   ROUNDUP_CONTINUE_CLICKED,
   ROUNDUP_INTENTION_SAVED,
+  ROUNDUP_ITEM_REVISITED,
 } from "@/lib/roundups/roundup-observation";
-
-/** @deprecated Use roundup_related_entry_opened */
-export const ROUNDUP_ITEM_REVISITED = "roundup_related_entry_opened";
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -83,7 +81,7 @@ export function trackRoundupItemRevisited(
   entryId: string,
   periodSlug?: string,
 ): void {
-  trackRoundupRelatedEntryOpened({
+  trackRoundupItemRevisitedObservation({
     itemId: item.id,
     text: item.text,
     signal: signalForItem(item),

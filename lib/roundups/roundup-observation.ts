@@ -10,6 +10,8 @@ export const ROUNDUP_LINE_COPIED = "roundup_line_copied";
 export const ROUNDUP_LINE_BOOKMARKED = "roundup_line_bookmarked";
 export const ROUNDUP_CONTINUE_CLICKED = "roundup_continue_clicked";
 export const ROUNDUP_INTENTION_SAVED = "roundup_intention_saved";
+export const ROUNDUP_ITEM_REVISITED = "roundup_item_revisited";
+/** @deprecated Use roundup_item_revisited */
 export const ROUNDUP_RELATED_ENTRY_OPENED = "roundup_related_entry_opened";
 export const ROUNDUP_FOLLOWUP_RECORDED = "roundup_followup_recorded";
 export const ROUNDUP_RETURN_AFTER = "roundup_return_after_roundup";
@@ -275,7 +277,7 @@ export function trackRoundupIntentionSaved(input: {
   });
 }
 
-export function trackRoundupRelatedEntryOpened(input: {
+export function trackRoundupItemRevisited(input: {
   itemId: string;
   text: string;
   signal: ReflectiveRoundupSignal;
@@ -285,11 +287,23 @@ export function trackRoundupRelatedEntryOpened(input: {
 }): void {
   markSessionAction();
   storeRoundupActiveContext(input);
-  trackLocalEvent(ROUNDUP_RELATED_ENTRY_OPENED, {
+  trackLocalEvent(ROUNDUP_ITEM_REVISITED, {
     ...lineMeta(input),
     entryId: input.entryId,
     kind: input.kind ?? "",
   });
+}
+
+/** @deprecated Use trackRoundupItemRevisited */
+export function trackRoundupRelatedEntryOpened(input: {
+  itemId: string;
+  text: string;
+  signal: ReflectiveRoundupSignal;
+  periodSlug?: string;
+  entryId: string;
+  kind?: string;
+}): void {
+  trackRoundupItemRevisited(input);
 }
 
 export function trackRoundupIntentionLinkOpened(input: {
@@ -451,6 +465,7 @@ function aggregateLineMetrics(): Map<string, AggregatedLineMetrics> {
       case ROUNDUP_INTENTION_SAVED:
         row.intentionsSaved += 1;
         break;
+      case ROUNDUP_ITEM_REVISITED:
       case ROUNDUP_RELATED_ENTRY_OPENED:
         row.relatedEntryOpens += 1;
         break;
