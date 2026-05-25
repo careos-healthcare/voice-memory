@@ -13,6 +13,11 @@ import {
 import { dismissOnboarding, isOnboardingDismissed } from "@/lib/onboarding";
 import { PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import {
+  trackOnboardingClarityEvent,
+  ONBOARDING_CLARITY_EVENTS,
+} from "@/lib/onboarding/onboarding-observation";
+import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
 
 export function ActivationOnboarding() {
   const [visible, setVisible] = useState(
@@ -25,6 +30,8 @@ export function ActivationOnboarding() {
   const complete = () => {
     dismissOnboarding();
     trackLaunchEvent(LAUNCH_EVENTS.onboardingCompleted);
+    trackOnboardingClarityEvent(ONBOARDING_CLARITY_EVENTS.onboardingCompleted);
+    completeFirstSessionStep("archive_perception");
     setVisible(false);
   };
 

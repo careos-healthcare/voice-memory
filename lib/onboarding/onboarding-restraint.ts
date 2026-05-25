@@ -1,0 +1,61 @@
+/** Reject tutorial overload, AI hype, productivity, and therapy framing in onboarding surfaces. */
+
+export const ONBOARDING_BLOCKED_TERMS = [
+  "life-changing",
+  "game-changer",
+  "unlock your potential",
+  "self-improvement",
+  "productivity",
+  "habit stack",
+  "AI-powered",
+  "powered by AI",
+  "therapist",
+  "therapy",
+  "coach you",
+  "tutorial",
+  "step-by-step guide",
+  "reflective intelligence",
+  "longitudinal memory",
+  "emotional archive",
+] as const;
+
+const VAGUE_UNGROUNDED = [
+  /\bcontinuity\b(?!\s+across\s+days)/i,
+  /\breflective intelligence\b/i,
+  /\blongitudinal memory\b/i,
+  /\bemotional archive\b/i,
+] as const;
+
+export function isOnboardingCopyAllowed(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed) return false;
+  const lower = trimmed.toLowerCase();
+  for (const term of ONBOARDING_BLOCKED_TERMS) {
+    if (lower.includes(term.toLowerCase())) return false;
+  }
+  for (const re of VAGUE_UNGROUNDED) {
+    if (re.test(trimmed)) return false;
+  }
+  return true;
+}
+
+export function assessOnboardingCopyLine(
+  line: string,
+  id: string,
+): { id: string; allowed: boolean; reason: string | null } {
+  if (isOnboardingCopyAllowed(line)) {
+    return { id, allowed: true, reason: null };
+  }
+  const lower = line.toLowerCase();
+  for (const term of ONBOARDING_BLOCKED_TERMS) {
+    if (lower.includes(term.toLowerCase())) {
+      return { id, allowed: false, reason: `blocked term: ${term}` };
+    }
+  }
+  for (const re of VAGUE_UNGROUNDED) {
+    if (re.test(line)) {
+      return { id, allowed: false, reason: `vague term: ${re.source}` };
+    }
+  }
+  return { id, allowed: false, reason: "restraint" };
+}

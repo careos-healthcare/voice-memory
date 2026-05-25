@@ -2,6 +2,7 @@ import "server-only";
 
 import path from "node:path";
 
+import { shouldUsePostgresStorage } from "@/lib/server/db";
 import { ensureDataDir, readJsonFile, writeJsonFile } from "@/lib/server/data-path";
 
 export const AUTH_STORAGE_NOT_CONFIGURED = "Auth storage is not configured.";
@@ -51,10 +52,6 @@ function isProduction(): boolean {
   return process.env.NODE_ENV === "production";
 }
 
-function hasDatabaseUrl(): boolean {
-  return Boolean(process.env.DATABASE_URL?.trim());
-}
-
 function pruneExpiredCodes(store: AuthStoreShape): AuthStoreShape {
   const now = Date.now();
   return {
@@ -92,8 +89,8 @@ function filesystemBackend(): AuthStorageBackend {
 }
 
 function resolveBackend(): AuthStorageBackend {
-  if (hasDatabaseUrl()) {
-    throw new AuthStorageNotConfiguredError();
+  if (shouldUsePostgresStorage()) {
+    throw new Error("Local auth backend must not be used when DATABASE_URL is set.");
   }
 
   if (isProduction()) {
@@ -106,6 +103,10 @@ function resolveBackend(): AuthStorageBackend {
 let cachedBackend: AuthStorageBackend | null = null;
 
 function backend(): AuthStorageBackend {
+  if (shouldUsePostgresStorage()) {
+    throw new Error("Local auth backend must not be used when DATABASE_URL is set.");
+  }
+
   if (!cachedBackend) {
     cachedBackend = resolveBackend();
   }
@@ -113,6 +114,10 @@ function backend(): AuthStorageBackend {
 }
 
 export function getAuthStorageMode(): AuthStorageMode {
+  if (shouldUsePostgresStorage()) {
+    return "database";
+  }
+
   try {
     return backend().mode;
   } catch (error) {
@@ -129,4 +134,8 @@ export function readAuthStore(): AuthStoreShape {
 
 export function writeAuthStore(store: AuthStoreShape): void {
   backend().write(store);
+}
+
+export function authStorageUsesFilesystemInProduction(): boolean {
+  return isProduction() && getAuthStorageMode() === "filesystem";
 }

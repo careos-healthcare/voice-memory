@@ -10,6 +10,13 @@ export async function GET() {
   return NextResponse.json({
     resendConfigured: status.resendConfigured,
     emailFromConfigured: status.emailFromConfigured,
+    emailFromUsesResendSandbox: status.emailFromUsesResendSandbox,
+    emailFromDomain: status.emailFromDomain,
     appUrlConfigured: status.appUrlConfigured,
+    productionEmailReady:
+      status.resendConfigured &&
+      status.emailFromConfigured &&
+      status.emailFromFormatValid &&
+      !status.emailFromUsesResendSandbox,
   });
 }

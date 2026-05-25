@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   log({ email });
 
   try {
-    const { code } = issueEmailLoginCode(email);
+    const { code } = await issueEmailLoginCode(email);
 
     if (process.env.NODE_ENV !== "production") {
       console.info(`[VoiceMemory auth] Sign-in code for ${email}: ${code}`);

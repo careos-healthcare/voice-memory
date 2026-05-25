@@ -48,8 +48,13 @@ const authEnvRoute = fs.readFileSync(
   "utf8",
 );
 
-if (!authStorage.includes("memoryBackend") || !authStorage.includes("isProduction()")) {
-  console.error("Auth storage validation failed — missing production memory backend.");
+if (!authStorage.includes("shouldUsePostgresStorage") || !authStorage.includes("memoryBackend")) {
+  console.error("Auth storage validation failed — missing Postgres branch or production memory backend.");
+  process.exit(1);
+}
+
+if (authStorage.includes("throw new AuthStorageNotConfiguredError()")) {
+  console.error("Auth storage validation failed — DATABASE_URL must not disable auth storage.");
   process.exit(1);
 }
 

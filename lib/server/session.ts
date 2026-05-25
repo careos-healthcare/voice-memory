@@ -2,8 +2,19 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { SESSION_COOKIE, signSessionToken, verifySessionToken } from "@/lib/server/auth-crypto";
+import {
+  SESSION_COOKIE,
+  signSessionToken,
+  verifySessionToken,
+} from "@/lib/server/auth-crypto";
 import { getUserById } from "@/lib/server/auth-store";
+import {
+  persistSessionPostgres,
+  revokeSessionPostgres,
+  sessionExistsPostgres,
+} from "@/lib/server/auth-store-postgres";
+import { shouldUsePostgresStorage } from "@/lib/server/db";
+import type { StoredUser } from "@/lib/server/auth-storage";
 
 export interface ServerSession {
   userId: string;
@@ -18,10 +29,28 @@ export async function getServerSession(): Promise<ServerSession | null> {
   const payload = verifySessionToken(token);
   if (!payload) return null;
 
-  const user = getUserById(payload.userId);
+  if (shouldUsePostgresStorage()) {
+    const active = await sessionExistsPostgres(token);
+    if (!active) return null;
+  }
+
+  const user = await getUserById(payload.userId);
   if (!user) return null;
 
   return { userId: user.id, email: user.email };
+}
+
+export async function persistSessionForUser(
+  token: string,
+  user: StoredUser,
+): Promise<void> {
+  if (!shouldUsePostgresStorage()) return;
+  await persistSessionPostgres(token, user);
+}
+
+export async function revokeServerSession(token: string): Promise<void> {
+  if (!shouldUsePostgresStorage()) return;
+  await revokeSessionPostgres(token);
 }
 
 export function buildSessionCookie(token: string): {

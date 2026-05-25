@@ -1,8 +1,10 @@
+import { ONBOARDING_ARCHIVE } from "@/lib/onboarding/onboarding-copy";
+
 /** User-facing archive permanence copy. */
 export const ARCHIVE_PERMANENCE_COPY = {
-  neverTrapped: "Your archive should never feel trapped here.",
-  takeWithYou: "You can take your reflections with you.",
-  previewBeforeRestore: "Review what is in this archive before restoring.",
+  neverTrapped: ONBOARDING_ARCHIVE.permanenceNeverTrapped,
+  takeWithYou: ONBOARDING_ARCHIVE.takeWithYou,
+  previewBeforeRestore: ONBOARDING_ARCHIVE.previewRestore,
   replaceWarning:
     "Replace will remove all reflections and audio on this device, then restore from this archive.",
   mergeNote: "Merge keeps what you have and adds or updates matching entries.",

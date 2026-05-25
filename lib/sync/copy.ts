@@ -1,9 +1,9 @@
+import { ONBOARDING_ACCOUNT } from "@/lib/onboarding/onboarding-copy";
+
 /** User-facing encrypted sync copy. */
 export const ENCRYPTED_SYNC_COPY = {
-  encryptedBeforeLeave:
-    "Your archive is encrypted before it leaves this device.",
-  archiveNotServer:
-    "VoiceMemory should feel like your archive, not our server.",
+  encryptedBeforeLeave: ONBOARDING_ACCOUNT.backupLead,
+  archiveNotServer: ONBOARDING_ACCOUNT.continuitySignedIn,
   serverStoresCiphertext:
     "Our servers store encrypted blobs only — never raw transcripts, audio, or reflection text.",
   restoreWarning:

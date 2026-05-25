@@ -1,0 +1,133 @@
+#!/usr/bin/env node
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+const REQUIRED_FILES = [
+  "types/onboarding-clarity.ts",
+  "lib/onboarding/first-session-flow.ts",
+  "lib/onboarding/confusion-signals.ts",
+  "lib/onboarding/onboarding-observation.ts",
+  "lib/onboarding/onboarding-copy.ts",
+  "lib/onboarding/first-aha-callback.ts",
+  "lib/onboarding/calm-comprehension.ts",
+  "lib/onboarding/onboarding-restraint.ts",
+  "lib/debug/onboarding-clarity.ts",
+  "components/onboarding/OnboardingNavigationTracker.tsx",
+  "components/onboarding/CalmComprehensionPrompt.tsx",
+  "components/debug/OnboardingClarityDebugPanel.tsx",
+  "app/debug/onboarding-clarity/page.tsx",
+];
+
+const REQUIRED_EVENTS = [
+  "onboarding_completed",
+  "first_aha_moment",
+  "callback_surprise",
+  "confusion_detected",
+  "first_revisit_delay",
+  "archive_understood",
+  "overwhelmed_exit",
+];
+
+const REQUIRED_COPY = [
+  "You don't need to organize anything here.",
+  "This becomes more meaningful as moments accumulate.",
+  "You can leave unfinished thoughts.",
+  "Speak for a minute. Your words stay on this phone.",
+];
+
+const FORBIDDEN_RE = [
+  { re: /\blife-changing\b/i, label: "life-changing" },
+  { re: /\bAI-powered\b/i, label: "AI-powered" },
+  { re: /\bself-improvement\b/i, label: "self-improvement" },
+  { re: /\bproductivity\b/i, label: "productivity" },
+  { re: /\breflective intelligence\b/i, label: "reflective intelligence" },
+  { re: /\blongitudinal memory\b/i, label: "longitudinal memory" },
+  { re: /\bemotional archive\b/i, label: "emotional archive" },
+  { re: /\btutorial\b/i, label: "tutorial" },
+];
+
+const USER_SCAN = [
+  "lib/onboarding/onboarding-copy.ts",
+  "components/onboarding",
+  "components/ActivationOnboarding.tsx",
+];
+
+const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
+if (missing.length > 0) {
+  console.error("Onboarding restraint validation failed — missing files:\n");
+  for (const file of missing) console.error(`  ${file}`);
+  process.exit(1);
+}
+
+const observation = fs.readFileSync(
+  path.join(ROOT, "lib/onboarding/onboarding-observation.ts"),
+  "utf8",
+);
+for (const event of REQUIRED_EVENTS) {
+  if (!observation.includes(event)) {
+    console.error(`Onboarding restraint validation failed — missing event: ${event}`);
+    process.exit(1);
+  }
+}
+
+const calm = fs.readFileSync(path.join(ROOT, "lib/onboarding/calm-comprehension.ts"), "utf8");
+for (const line of REQUIRED_COPY.slice(0, 3)) {
+  if (!calm.includes(line)) {
+    console.error(`Onboarding restraint validation failed — missing calm copy: "${line}"`);
+    process.exit(1);
+  }
+}
+
+const homeCopy = fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8");
+for (const line of REQUIRED_COPY.slice(3)) {
+  if (!homeCopy.includes(line)) {
+    console.error(`Onboarding restraint validation failed — missing home copy: "${line}"`);
+    process.exit(1);
+  }
+}
+
+const restraint = fs.readFileSync(
+  path.join(ROOT, "lib/onboarding/onboarding-restraint.ts"),
+  "utf8",
+);
+if (!restraint.includes("isOnboardingCopyAllowed") || !restraint.includes("ONBOARDING_BLOCKED_TERMS")) {
+  console.error("Onboarding restraint validation failed — restraint helper required.");
+  process.exit(1);
+}
+
+function scanFile(relPath) {
+  const full = path.join(ROOT, relPath);
+  if (!fs.existsSync(full)) return;
+  const lines = fs.readFileSync(full, "utf8").split("\n");
+  for (const line of lines) {
+    if (line.includes("FORBIDDEN_RE") || line.includes("ONBOARDING_BLOCKED")) continue;
+    for (const { re, label } of FORBIDDEN_RE) {
+      if (re.test(line)) {
+        console.error(`Onboarding restraint validation failed — forbidden "${label}" in ${relPath}`);
+        process.exit(1);
+      }
+    }
+  }
+}
+
+for (const rel of USER_SCAN) {
+  const full = path.join(ROOT, rel);
+  if (!fs.existsSync(full)) continue;
+  if (fs.statSync(full).isDirectory()) {
+    for (const name of fs.readdirSync(full)) {
+      scanFile(path.join(rel, name));
+    }
+  } else {
+    scanFile(rel);
+  }
+}
+
+if (!fs.readFileSync(path.join(ROOT, "app/providers.tsx"), "utf8").includes("OnboardingNavigationTracker")) {
+  console.error("Onboarding restraint validation failed — wire OnboardingNavigationTracker in providers.");
+  process.exit(1);
+}
+
+console.log("Onboarding restraint validation passed.");

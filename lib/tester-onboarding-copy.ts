@@ -1,9 +1,10 @@
 /** Calm onboarding copy for real-user validation — no coach, no productivity framing. */
 
+import { ONBOARDING_WELCOME } from "@/lib/onboarding/onboarding-copy";
+
 export const WELCOME_EYEBROW = "VoiceMemory";
 export const WELCOME_TITLE = "Welcome";
-export const WELCOME_DESCRIPTION =
-  "A quiet place to hear yourself again. This early version is for a small group of people who want to try it honestly — not to perform, not to optimize.";
+export const WELCOME_DESCRIPTION = ONBOARDING_WELCOME.description;
 
 export const WELCOME_SECTIONS = [
   {
@@ -12,7 +13,7 @@ export const WELCOME_SECTIONS = [
   },
   {
     title: "Memory grows slowly",
-    body: "The archive becomes more personal over time. Early days may feel sparse. That is normal — the point is to return when something matters, not to fill a feed.",
+    body: ONBOARDING_WELCOME.memoryGrows,
   },
   {
     title: "You can leave with your words",

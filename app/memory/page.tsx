@@ -24,6 +24,7 @@ import { EntityMemorySection } from "@/components/memory/EntityMemorySection";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ONBOARDING_MEMORY } from "@/lib/onboarding/onboarding-copy";
 import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
@@ -165,17 +166,17 @@ export default function MemoryPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <MotionPageTitle title="What you've said" />
+        <MotionPageTitle title={ONBOARDING_MEMORY.title} />
 
         <div className="mt-20 space-y-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <p className="py-20 text-center text-sm text-zinc-600">{ONBOARDING_MEMORY.loading}</p>
           ) : !snapshot.hasData ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
               <div className="px-2 py-16 text-center">
                 <Brain className="mx-auto h-7 w-7 text-zinc-600/80" />
-                <p className="mt-5 text-base font-normal text-zinc-400">Nothing here yet</p>
+                <p className="mt-5 text-base font-normal text-zinc-400">{ONBOARDING_MEMORY.empty}</p>
                 <Button asChild className="mt-8" variant="secondary">
                   <Link href="/">Start recording</Link>
                 </Button>

@@ -95,7 +95,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const manifest = upsertEncryptedBlobs(
+    const manifest = await upsertEncryptedBlobs(
       session.userId,
       blobs.map((blob) => ({
         id: blob.id,

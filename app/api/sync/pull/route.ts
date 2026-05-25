@@ -29,7 +29,7 @@ export async function GET(request: Request) {
   log({ email: session.email });
 
   try {
-    const blobs = readEncryptedBlobs(session.userId).map((blob) => ({
+    const blobs = (await readEncryptedBlobs(session.userId)).map((blob) => ({
       id: blob.id,
       type: blob.type,
       encrypted: blob.encrypted,

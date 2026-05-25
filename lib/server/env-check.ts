@@ -3,11 +3,26 @@ import "server-only";
 const EMAIL_FROM_RE = /^.+<[^@\s]+@[^>\s]+>$/;
 const PLAIN_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const RESEND_SANDBOX_FROM = /onboarding@resend\.dev/i;
+
 export interface AuthEmailEnvStatus {
   resendConfigured: boolean;
   emailFromConfigured: boolean;
   emailFromFormatValid: boolean;
+  /** True when EMAIL_FROM still uses Resend's sandbox sender (not production-ready). */
+  emailFromUsesResendSandbox: boolean;
+  /** Domain part of the From address, for ops checks (no local-part). */
+  emailFromDomain: string | null;
   appUrlConfigured: boolean;
+}
+
+function parseEmailFromDomain(from: string): string | null {
+  const trimmed = from.trim();
+  const bracket = trimmed.match(/<([^>]+)>/);
+  const addr = (bracket?.[1] ?? trimmed).trim();
+  const at = addr.lastIndexOf("@");
+  if (at < 1 || at >= addr.length - 1) return null;
+  return addr.slice(at + 1).toLowerCase();
 }
 
 export function readAuthEmailEnvStatus(): AuthEmailEnvStatus {
@@ -20,6 +35,8 @@ export function readAuthEmailEnvStatus(): AuthEmailEnvStatus {
     resendConfigured: Boolean(process.env.RESEND_API_KEY?.trim()),
     emailFromConfigured: Boolean(from),
     emailFromFormatValid,
+    emailFromUsesResendSandbox: RESEND_SANDBOX_FROM.test(from),
+    emailFromDomain: from ? parseEmailFromDomain(from) : null,
     appUrlConfigured: Boolean(process.env.NEXT_PUBLIC_APP_URL?.trim()),
   };
 }

@@ -60,8 +60,19 @@ Expected:
 {
   "resendConfigured": true,
   "emailFromConfigured": true,
-  "appUrlConfigured": true
+  "emailFromUsesResendSandbox": false,
+  "emailFromDomain": "voicememory.app",
+  "appUrlConfigured": true,
+  "productionEmailReady": true
 }
+```
+
+If `emailFromUsesResendSandbox` is **true**, Production still has `onboarding@resend.dev` — update `EMAIL_FROM` after Resend shows **Verified**.
+
+```bash
+chmod +x scripts/verify-production-auth-email.sh
+./scripts/verify-production-auth-email.sh
+./scripts/verify-production-auth-email.sh you@yourdomain.com
 ```
 
 ## 4. Send-code test (any user email)

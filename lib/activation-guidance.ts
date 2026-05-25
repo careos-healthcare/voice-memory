@@ -1,3 +1,4 @@
+import { ONBOARDING_ACTIVATION } from "@/lib/onboarding/onboarding-copy";
 import type {
   ActivationGuidanceCopyExample,
   ActivationOnboardingStep,
@@ -5,33 +6,29 @@ import type {
   PersonalisationProgressTier,
 } from "@/types/activation-guidance";
 
-export const ACTIVATION_LEAD =
-  "The more you talk, the more it picks up on what keeps coming back.";
+export const ACTIVATION_LEAD = ONBOARDING_ACTIVATION.lead;
 
-export const ACTIVATION_QUIET_EARLY =
-  "Early days may feel quiet. That is fine.";
+export const ACTIVATION_QUIET_EARLY = ONBOARDING_ACTIVATION.quietEarly;
 
-export const ACTIVATION_PATTERNS =
-  "After a few entries, older words start to echo back.";
+export const ACTIVATION_PATTERNS = ONBOARDING_ACTIVATION.stepReturn;
 
-export const ACTIVATION_CONVERSATION =
-  "Your archive grows at your pace — there is nothing to keep up with.";
+export const ACTIVATION_CONVERSATION = ONBOARDING_ACTIVATION.finish;
 
 export const ACTIVATION_ONBOARDING_STEPS: ActivationOnboardingStep[] = [
   {
     id: "day-one",
     label: "Day 1",
-    body: "It listens and saves your reflection on this device.",
+    body: ONBOARDING_ACTIVATION.stepRecord,
   },
   {
     id: "after-three",
-    label: "After 3 reflections",
-    body: "It starts noticing what returns.",
+    label: "Later",
+    body: ONBOARDING_ACTIVATION.stepReturn,
   },
   {
     id: "after-seven",
-    label: "After 7+ reflections",
-    body: "It can show what changed, faded, and came back.",
+    label: "Over time",
+    body: ONBOARDING_ACTIVATION.stepGrow,
   },
 ];
 

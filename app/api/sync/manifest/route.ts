@@ -29,7 +29,7 @@ export async function GET(request: Request) {
   log({ email: session.email });
 
   try {
-    const manifest = readSyncManifest(session.userId);
+    const manifest = await readSyncManifest(session.userId);
     log({
       ok: true,
       parseSuccess: true,

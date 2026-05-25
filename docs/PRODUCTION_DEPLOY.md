@@ -30,6 +30,7 @@ Project → Settings → Environment Variables → Production:
 | Variable | Value | Notes |
 | --- | --- | --- |
 | `AUTH_SECRET` | Random secret | Required |
+| `DATABASE_URL` | Postgres connection string | Required before tester onboarding — durable auth + sync |
 | `NEXT_PUBLIC_APP_URL` | `https://your-app.vercel.app` | Set after first deploy if URL unknown |
 | `OPENAI_API_KEY` | `sk-…` | Required for recording |
 | `VOICEMEMORY_ENABLE_ATMOSPHERE_API` | `false` | Set `true` only to enable DALL-E atmosphere |
@@ -125,8 +126,8 @@ Run these on the production URL. Details in [POST_DEPLOY_QA.md](./POST_DEPLOY_QA
 See [DEPLOY_READINESS_REPORT.md](./DEPLOY_READINESS_REPORT.md):
 
 - **Auth codes** — production sends via Resend; set `RESEND_API_KEY` and verified-domain `EMAIL_FROM` ([RESEND_DOMAIN_AUTH.md](./RESEND_DOMAIN_AUTH.md))
-- **Postgres auth** — set `DATABASE_URL` before serious tester auth; without it codes live in ephemeral server memory
-- **Server sync storage** — ephemeral on default Vercel; multi-device sync needs persistent backend ([DURABLE_STORAGE_MIGRATION.md](./DURABLE_STORAGE_MIGRATION.md))
+- **Durable auth + sync** — set `DATABASE_URL` (Postgres) before real tester onboarding; without it codes and encrypted blobs live in ephemeral server memory only
+- **Schema** — apply `docs/sql/001_auth_sync_schema.sql` or rely on automatic init on first request
 - **Open API routes** — transcribe/analyze unauthenticated; monitor usage
 
 ## 8. Rollback

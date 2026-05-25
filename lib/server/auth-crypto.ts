@@ -33,6 +33,18 @@ export function createUserId(): string {
   return randomBytes(16).toString("hex");
 }
 
+export function userIdFromEmail(email: string): string {
+  const normalized = email.trim().toLowerCase();
+  return createHash("sha256")
+    .update(`user:${normalized}:${authSecret()}`)
+    .digest("hex")
+    .slice(0, 32);
+}
+
+export function hashSessionToken(token: string): string {
+  return createHash("sha256").update(`session:${token}:${authSecret()}`).digest("hex");
+}
+
 export function signSessionToken(payload: Omit<SessionTokenPayload, "exp">): string {
   const body: SessionTokenPayload = {
     ...payload,
