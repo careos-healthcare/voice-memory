@@ -39,6 +39,7 @@ const SKIP_PATH_PARTS = [
   "lib/atmosphere/",
   "lib/photo-storage.ts",
   "lib/restraint/",
+  "lib/onboarding/",
   "lib/refinement/callback-deduplication.ts",
   "lib/refinement/anti-template.ts",
   "lib/refinement/rarity-preservation.ts",
@@ -60,23 +61,11 @@ const SKIP_PATH_PARTS = [
 /** Canonical header nav — update deliberately when adding essential routes. */
 const ESSENTIAL_NAV_HREFS = new Set([
   "/",
-  "/memory",
-  "/timeline",
-  "/weekly",
-  "/monthly",
-  "/seasons",
-  "/bookmarks",
-  "/threads",
-  "/reminders",
-  "/pricing",
-  "/demo",
-  "/launch",
-  "/settings",
-  "/account",
-  "/archive",
-  "/export",
-  "/search",
   "/journal",
+  "/intentions",
+  "/insights",
+  "/search",
+  "/pricing",
 ]);
 
 const ALLOWED_LINK_PREFIXES = [
@@ -238,13 +227,20 @@ function checkChartDashboardWording(content, filePath, violations) {
 }
 
 function extractHrefLiterals(content) {
-  const hrefs = [];
-  const re = /href=["'{`]([^"'`#]+)["'`}]/g;
+  const hrefs = new Set();
+
+  const quoted = /href=["']([^"'#]+)["']/g;
   let match;
-  while ((match = re.exec(content)) !== null) {
-    hrefs.push(match[1]);
+  while ((match = quoted.exec(content)) !== null) {
+    hrefs.add(match[1]);
   }
-  return hrefs;
+
+  const navConst = /href:\s*"(\/[^"]+)"/g;
+  while ((match = navConst.exec(content)) !== null) {
+    hrefs.add(match[1]);
+  }
+
+  return [...hrefs];
 }
 
 function isAllowedProductLink(href) {

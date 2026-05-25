@@ -120,7 +120,7 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Daily habit loop
+                Reflection rhythm
               </p>
               <CardTitle className="mt-2 flex items-center gap-2 text-2xl">
                 <Calendar className="h-6 w-6 text-violet-300" />

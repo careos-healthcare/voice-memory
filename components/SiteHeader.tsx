@@ -8,6 +8,7 @@ interface SiteHeaderProps {
 
 const PRIMARY_NAV = [
   { href: "/journal", label: "Memory" },
+  { href: "/intentions", label: "Intentions" },
   { href: "/insights", label: "Insights" },
   { href: "/search", label: "Search" },
   { href: "/pricing", label: "Pricing" },

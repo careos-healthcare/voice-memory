@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ConservativePattern } from "@/lib/insights/patterns-detected";
+import type { ConservativePattern } from "@/lib/insights/conservative-patterns";
 
 interface PatternsDetectedSectionProps {
   patterns: ConservativePattern[];
@@ -21,7 +21,7 @@ export function PatternsDetectedSection({
       <Card className="border-dashed border-white/5">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium text-zinc-400">
-            Patterns detected
+            Patterns over time
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -40,7 +40,7 @@ export function PatternsDetectedSection({
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-violet-300/80" />
           <CardTitle className="text-base font-medium text-zinc-200">
-            Patterns detected
+            Patterns over time
           </CardTitle>
         </div>
         <p className="mt-1 text-xs leading-relaxed text-zinc-600">{disclaimer}</p>

@@ -12,7 +12,7 @@ import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildConservativePatterns } from "@/lib/insights/patterns-detected";
+import { buildConservativePatterns } from "@/lib/insights/conservative-patterns";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 
@@ -48,7 +48,7 @@ export default function InsightsPage() {
             Memory timeline
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Local analysis of your voice reflections — moods, themes, people, and
+            Local read of your voice reflections — moods, themes, people, and
             recurring concerns. Nothing leaves this device.
           </p>
         </motion.div>
@@ -96,7 +96,7 @@ export default function InsightsPage() {
 
               <section className="space-y-3">
                 <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">
-                  Shareable insight cards
+                  Shareable memory cards
                 </h2>
                 <ShareMemoryCardButton kind="weekly_summary" />
                 <ShareMemoryCardButton kind="dominant_theme" />

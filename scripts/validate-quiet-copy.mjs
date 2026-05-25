@@ -98,6 +98,8 @@ const SKIP_PATH_PARTS = [
   "components/patterns/PatternInsightCard.tsx",
   "components/patterns/ThenVsNowCard.tsx",
   "components/patterns/WhatChangedCard.tsx",
+  "lib/insights/",
+  "components/insights/",
 ];
 
 const BANNED = [

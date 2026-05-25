@@ -100,6 +100,9 @@ export function saveEntry(entry: JournalEntry): void {
   });
   bumpTimingFromEntry(entry);
   trackMoatNewReflection(entry.id, entry.createdAt);
+  void import("@/lib/intentions/long-term-intentions").then((mod) => {
+    mod.syncLongTermIntentions(getMemoryEligibleEntries());
+  });
   void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
 }
 
