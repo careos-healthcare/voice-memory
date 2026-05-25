@@ -33,13 +33,22 @@ export interface WeeklyMention {
   count: number;
 }
 
+export interface PositiveSignalPoint {
+  dayKey: string;
+  label: string;
+  signal: string;
+  mood: string;
+}
+
 export interface MemoryInsights {
   totalEntries: number;
   dominantMoods: MoodCount[];
   recurringThemes: ThemeCount[];
   intensityTrend: IntensityPoint[];
   mostRepeatedPattern: string | null;
+  mostMentionedConcern: string | null;
   observationsOverTime: ObservationPoint[];
+  positiveSignalsOverTime: PositiveSignalPoint[];
   weeklyMentions: WeeklyMention[];
   hasData: boolean;
 }
@@ -126,6 +135,64 @@ function buildIntensityTrend(entries: JournalEntry[], days = 14): IntensityPoint
   return points;
 }
 
+function buildMostMentionedConcern(entries: JournalEntry[]): string | null {
+  const counts = new Map<string, number>();
+
+  for (const entry of entries) {
+    const candidates = [
+      entry.reflection.hiddenConcern,
+      entry.reflection.avoidedOrVagueArea,
+      entry.reflection.repeatedSignal,
+      entry.reflection.tensionOrContradiction,
+    ];
+
+    for (const raw of candidates) {
+      const text = raw?.trim();
+      if (!text || text.length < 4) continue;
+      const key = text.slice(0, 80).toLowerCase();
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+  }
+
+  const top = topFromMap(counts, 1)[0];
+  if (!top) return null;
+  if (top.count >= 2) {
+    return `"${top.key}" mentioned ${top.count} times`;
+  }
+  return top.key.length > 60 ? `${top.key.slice(0, 60)}…` : top.key;
+}
+
+function buildPositiveSignalsOverTime(entries: JournalEntry[]): PositiveSignalPoint[] {
+  return [...entries]
+    .filter(
+      (e) =>
+        e.reflection.positiveSignal.trim().length > 0 ||
+        (e.reflection.concreteObservation?.trim() &&
+          e.reflection.emotionalIntensity <= 5),
+    )
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .slice(-8)
+    .map((entry) => {
+      const signal =
+        entry.reflection.positiveSignal.trim() ||
+        entry.reflection.concreteObservation?.trim() ||
+        entry.reflection.mood;
+
+      const [y, m, d] = toDayKey(entry.createdAt).split("-").map(Number);
+      const label = new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+      }).format(new Date(y, m - 1, d));
+
+      return {
+        dayKey: toDayKey(entry.createdAt),
+        label,
+        signal: signal.slice(0, 120),
+        mood: entry.reflection.mood,
+      };
+    });
+}
+
 function buildWeeklyMentions(entries: JournalEntry[]): WeeklyMention[] {
   const weekAgo = addDaysToKey(todayKey(), -6);
   const recent = entries.filter((e) => toDayKey(e.createdAt) >= weekAgo);
@@ -156,7 +223,9 @@ export function analyzeJournalEntries(): MemoryInsights {
       recurringThemes: [],
       intensityTrend: buildIntensityTrend([]),
       mostRepeatedPattern: null,
+      mostMentionedConcern: null,
       observationsOverTime: [],
+      positiveSignalsOverTime: [],
       weeklyMentions: [],
       hasData: false,
     };
@@ -195,7 +264,9 @@ export function analyzeJournalEntries(): MemoryInsights {
     recurringThemes,
     intensityTrend: buildIntensityTrend(entries),
     mostRepeatedPattern: mostRepeatedPattern(entries),
+    mostMentionedConcern: buildMostMentionedConcern(entries),
     observationsOverTime,
+    positiveSignalsOverTime: buildPositiveSignalsOverTime(entries),
     weeklyMentions: buildWeeklyMentions(entries),
     hasData: true,
   };

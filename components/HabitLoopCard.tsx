@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calendar, Mic, TrendingDown, TrendingUp } from "lucide-react";
+import { Calendar, Flame, Mic, TrendingDown, TrendingUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,6 +45,7 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
 
   if (!stats) return null;
 
+  const consecutiveDays = stats.consecutiveReflectionDays;
   const intensityDelta =
     stats.today.avgIntensity !== null && stats.yesterday.avgIntensity !== null
       ? stats.today.avgIntensity - stats.yesterday.avgIntensity
@@ -83,22 +84,28 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
               <Calendar className="h-5 w-5 text-violet-300/80" />
               {formatLastReflectionLabel(stats.lastReflectionDate)}
             </p>
+            {consecutiveDays > 0 ? (
+              <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-400">
+                <Flame className="h-4 w-4 text-amber-400/80" />
+                {consecutiveDays} consecutive reflection day{consecutiveDays === 1 ? "" : "s"}
+              </p>
+            ) : null}
             <p className="mt-2 text-sm text-zinc-500">
               {recap.entryCount > 0
                 ? `${recap.entryCount} reflection${recap.entryCount === 1 ? "" : "s"} this week`
-                : "Return whenever it helps — no streak to keep."}
+                : "Return whenever it helps."}
             </p>
           </div>
           {!stats.reflectedToday ? (
             <Button asChild size="sm" className="shrink-0">
               <Link href="/">
                 <Mic className="h-4 w-4" />
-                Record
+                Record today&apos;s reflection
               </Link>
             </Button>
           ) : (
             <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300/90">
-              Saved recently
+              Reflected today
             </span>
           )}
         </div>
@@ -113,26 +120,33 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Your reflection rhythm
+                Daily habit loop
               </p>
               <CardTitle className="mt-2 flex items-center gap-2 text-2xl">
                 <Calendar className="h-6 w-6 text-violet-300" />
                 {formatLastReflectionLabel(stats.lastReflectionDate)}
               </CardTitle>
-              <p className="mt-2 text-sm text-zinc-400">
-                No streak to maintain — just your own pace.
-              </p>
+              {consecutiveDays > 0 ? (
+                <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-300">
+                  <Flame className="h-4 w-4 text-amber-400" />
+                  {consecutiveDays} consecutive reflection day{consecutiveDays === 1 ? "" : "s"}
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-zinc-400">
+                  Last reflection · {formatLastReflectionLabel(stats.lastReflectionDate)}
+                </p>
+              )}
             </div>
             {!stats.reflectedToday ? (
               <Button asChild size="sm" className="shrink-0">
                 <Link href="/">
                   <Mic className="h-4 w-4" />
-                  Record
+                  Record today&apos;s reflection
                 </Link>
               </Button>
             ) : (
               <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
-                Saved recently
+                Reflected today
               </span>
             )}
           </div>

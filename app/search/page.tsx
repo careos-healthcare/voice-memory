@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Filter, Search, Sparkles } from "lucide-react";
@@ -10,6 +10,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import {
   EMPTY_LIFE_SEARCH_FILTERS,
   EXAMPLE_LIFE_QUERIES,
@@ -78,6 +79,7 @@ export default function SearchPage() {
     moods: string[];
     themes: string[];
   }>({ moods: [], themes: [] });
+  const lastTrackedQuery = useRef("");
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -99,6 +101,17 @@ export default function SearchPage() {
     filters.dateTo ||
     filters.intensityMin !== null ||
     filters.intensityMax !== null;
+
+  useEffect(() => {
+    if (!hasInput) return;
+    const signature = JSON.stringify({ query: query.trim(), filters });
+    if (signature === lastTrackedQuery.current) return;
+    lastTrackedQuery.current = signature;
+    trackRetentionEvent(RETENTION_EVENTS.searchPerformed, {
+      queryLength: String(query.trim().length),
+      resultCount: String(results.length),
+    });
+  }, [hasInput, query, filters, results.length]);
 
   const clearFilters = () => setFilters(EMPTY_LIFE_SEARCH_FILTERS);
 

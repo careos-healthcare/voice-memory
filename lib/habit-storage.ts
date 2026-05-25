@@ -24,6 +24,8 @@ export interface WeeklyRecap {
 
 export interface HabitStats {
   streak: number;
+  /** User-facing consecutive reflection day count (same as streak). */
+  consecutiveReflectionDays: number;
   lastReflectionDate: string | null;
   reflectedToday: boolean;
   today: DayComparison;
@@ -185,6 +187,7 @@ export function getHabitStats(): HabitStats {
 
   return {
     streak,
+    consecutiveReflectionDays: streak,
     lastReflectionDate,
     reflectedToday: dayKeys.includes(today),
     today: summarizeDay(entriesForDay(entries, today)),

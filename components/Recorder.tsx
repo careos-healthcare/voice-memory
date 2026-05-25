@@ -28,7 +28,15 @@ import {
 import { maybeTrackRoundupFollowupRecorded } from "@/lib/roundups/roundup-observation";
 import { formatEntryDate } from "@/lib/utils";
 import { markFirstReflectionCreated } from "@/lib/marketing/first-session-comprehension";
+import { ONBOARDING_RECORDER } from "@/lib/onboarding/onboarding-copy";
+import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
+import {
+  markRecorderAbandoned,
+  markRecorderCompleted,
+  markRecorderStarted,
+} from "@/lib/onboarding/confusion-signals";
 import { getAllEntries, saveEntry } from "@/lib/storage";
+import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { recordReflectionDuringSilence } from "@/lib/restraint/silence-intelligence";
 import {
   AUDIO_SAVE_PARTIAL_COPY,
@@ -67,6 +75,8 @@ export function Recorder({
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const mimeTypeRef = useRef("audio/webm");
+  const recorderStartedRef = useRef(false);
+  const recorderCompletedRef = useRef(false);
 
   const [state, setState] = useState<RecorderState>("idle");
   const [seconds, setSeconds] = useState(0);
@@ -103,11 +113,15 @@ export function Recorder({
   const finalizeEntry = useCallback(
     (newEntry: JournalEntry, recoveredDraft = false) => {
       recordReflectionDuringSilence();
+      trackRetentionEvent(RETENTION_EVENTS.entryRecorded, { entryId: newEntry.id });
       if (recoveredDraft) {
         setNotice(DRAFT_RECOVERED_COPY);
       }
       setEntry(newEntry);
       setState("complete");
+      recorderCompletedRef.current = true;
+      markRecorderCompleted();
+      completeFirstSessionStep("first_reflection");
       onComplete?.(newEntry);
 
       window.setTimeout(() => {
@@ -352,6 +366,8 @@ export function Recorder({
       startTimeRef.current = Date.now();
       recorder.start(250);
       setSeconds(0);
+      recorderStartedRef.current = true;
+      markRecorderStarted();
       setState("recording");
 
       timerRef.current = window.setInterval(() => {
@@ -387,6 +403,9 @@ export function Recorder({
     return () => {
       clearTimer();
       stopTracks();
+      if (recorderStartedRef.current && !recorderCompletedRef.current) {
+        markRecorderAbandoned();
+      }
     };
   }, [clearTimer, stopTracks]);
 
@@ -428,9 +447,7 @@ export function Recorder({
                 ) : null}
               </>
             )}
-            <p className="text-sm text-zinc-500">
-              Up to {MAX_SECONDS} seconds · local-first on your device
-            </p>
+            <p className="text-sm text-zinc-500">{ONBOARDING_RECORDER.idle}</p>
           </motion.div>
         )}
 

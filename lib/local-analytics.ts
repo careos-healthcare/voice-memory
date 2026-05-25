@@ -19,6 +19,18 @@ export const LAUNCH_EVENTS = {
   demoModeExited: "demo_mode_exited",
 } as const;
 
+/** Retention + memory intelligence layer — local-only telemetry. */
+export const RETENTION_EVENTS = {
+  entryRecorded: "entry_recorded",
+  insightViewed: "insight_viewed",
+  searchPerformed: "search_performed",
+  audioPlayed: "audio_played",
+  pricingViewed: "pricing_viewed",
+} as const;
+
+export type RetentionEventName =
+  (typeof RETENTION_EVENTS)[keyof typeof RETENTION_EVENTS];
+
 export const PHOTO_EVENTS = {
   dragAttached: "photo_drag_attached",
   pasteAttached: "photo_paste_attached",
@@ -59,6 +71,13 @@ export function trackLocalEvent(
 
 export function trackLaunchEvent(
   name: LaunchEventName,
+  meta?: Record<string, string>,
+): void {
+  trackLocalEvent(name, meta);
+}
+
+export function trackRetentionEvent(
+  name: RetentionEventName,
   meta?: Record<string, string>,
 ): void {
   trackLocalEvent(name, meta);

@@ -25,6 +25,7 @@ import {
 } from "@/lib/subscription";
 import { HONESTY_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
 import { trackPilotPricingOpened } from "@/lib/pilot/pilot-interest";
+import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
 
 function PlanFeature({ children }: { children: React.ReactNode }) {
@@ -52,6 +53,7 @@ export default function PricingPage() {
       setClickCount(getUpgradeClickEvents().length);
       setStoredCount(getStoredEntryCount());
       setLockedCount(getLockedEntryCount());
+      trackRetentionEvent(RETENTION_EVENTS.pricingViewed, { from });
       if (from === "pilot") trackPilotPricingOpened();
     });
     return () => cancelAnimationFrame(id);

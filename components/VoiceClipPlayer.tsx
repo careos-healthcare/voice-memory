@@ -5,6 +5,7 @@ import { MicOff, Pause, Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { getAudio } from "@/lib/audio-storage";
+import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 
 interface VoiceClipPlayerProps {
   entryId: string;
@@ -114,6 +115,7 @@ export function VoiceClipPlayer({
     }
 
     onPlayStart?.();
+    trackRetentionEvent(RETENTION_EVENTS.audioPlayed, { entryId });
     void audio.play();
   };
 
