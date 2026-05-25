@@ -23,6 +23,7 @@ import {
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { CopyMemoryMomentButton } from "@/components/memory/CopyMemoryMomentButton";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
+import { MemoryContinuitySection } from "@/components/memory/MemoryContinuitySection";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { TerritoryMentionsSection } from "@/components/territories/TerritorySections";
@@ -64,6 +65,7 @@ import { entryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
+import { buildMemoryContinuityReport } from "@/lib/memory/memory-continuity";
 import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import {
@@ -502,6 +504,11 @@ export default function EntryPage() {
     return entryMilestoneNotes(allEntries, entry.id, limits.milestones);
   }, [entry, allEntries, pending, limits.milestones]);
 
+  const memoryContinuity = useMemo(() => {
+    if (!entry || pending) return null;
+    return buildMemoryContinuityReport(entry, allEntries);
+  }, [entry, allEntries, pending]);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
@@ -691,6 +698,10 @@ export default function EntryPage() {
                 setEntry((current) => (current ? { ...current, atmosphere } : current))
               }
             />
+
+            {!pending && memoryContinuity?.hasData ? (
+              <MemoryContinuitySection report={memoryContinuity} />
+            ) : null}
 
             {pending ? (
               <ReflectOnEntryButton
