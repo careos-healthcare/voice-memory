@@ -11,12 +11,16 @@ const REQUIRED_FILES = [
   "lib/retention/archive-attachment-signals.ts",
   "lib/retention/archive-value-moments.ts",
   "lib/retention/first-week-observation.ts",
+  "lib/retention/first-magic-moment.ts",
   "lib/revisit/first-meaningful-revisit.ts",
   "components/retention/GentleReturnPrompt.tsx",
   "components/retention/ArchiveValueMoments.tsx",
   "lib/debug/first-week-retention.ts",
+  "lib/debug/first-magic-moment-review.ts",
   "app/debug/first-week-retention/page.tsx",
+  "app/debug/first-magic-moment/page.tsx",
   "types/first-week-retention.ts",
+  "types/first-magic-moment.ts",
 ];
 
 const REQUIRED_EVENTS = [
@@ -29,10 +33,20 @@ const REQUIRED_EVENTS = [
   "revisit_emotional_payoff",
 ];
 
+const MAGIC_EVENTS = [
+  "magic_candidate_created",
+  "magic_candidate_shown",
+  "magic_candidate_opened",
+  "magic_candidate_saved",
+  "magic_candidate_shared",
+  "magic_followup_recorded",
+  "magic_return_after_callback",
+];
+
 const REQUIRED_COPY = [
   "You may want to leave another note before this week disappears.",
   "Something from earlier this week may feel different now.",
-  "You've started building continuity.",
+  "You used similar words before.",
   "This is starting to become a record of a real period.",
 ];
 
@@ -68,6 +82,21 @@ for (const event of REQUIRED_EVENTS) {
   }
 }
 
+const magicMoment = fs.readFileSync(
+  path.join(ROOT, "lib/retention/first-magic-moment.ts"),
+  "utf8",
+);
+for (const event of MAGIC_EVENTS) {
+  if (!magicMoment.includes(event)) {
+    console.error(`Retention restraint validation failed — missing magic event: ${event}`);
+    process.exit(1);
+  }
+}
+if (!magicMoment.includes("timeUntilFirstMeaningfulCallbackMs") || !magicMoment.includes("callbackOpenRate")) {
+  console.error("Retention restraint validation failed — first magic moment must measure callback timing and open rate.");
+  process.exit(1);
+}
+
 const prompts = fs.readFileSync(
   path.join(ROOT, "lib/retention/gentle-return-prompts.ts"),
   "utf8",
@@ -76,8 +105,10 @@ const valueMoments = fs.readFileSync(
   path.join(ROOT, "lib/retention/archive-value-moments.ts"),
   "utf8",
 );
+const productCopy = fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8");
+const retentionCopy = `${prompts}\n${valueMoments}\n${productCopy}`;
 for (const line of REQUIRED_COPY) {
-  if (!prompts.includes(line) && !valueMoments.includes(line)) {
+  if (!retentionCopy.includes(line)) {
     console.error(`Retention restraint validation failed — missing copy: "${line}"`);
     process.exit(1);
   }

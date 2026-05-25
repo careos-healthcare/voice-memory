@@ -1,5 +1,7 @@
 export type EntryTier = "none" | "one" | "few" | "building" | "rich";
 
+import { WEDGE_RESURFACING } from "@/lib/product-copy";
+
 export function getEntryTier(count: number): EntryTier {
   if (count === 0) return "none";
   if (count === 1) return "one";
@@ -24,22 +26,22 @@ const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
   one: {
     tier: "one",
     headline: "One reflection in",
-    body: "Add a few more across different days and VoiceMemory will start noticing patterns.",
+    body: "Add a few more across different days and older words may return when they match again.",
   },
   few: {
     tier: "few",
-    headline: "Patterns forming",
-    body: "A handful of reflections is enough for themes, moods, and names to recur.",
+    headline: "Words starting to repeat",
+    body: "A handful of reflections is enough for similar phrases, moods, and concerns to show up again.",
   },
   building: {
     tier: "building",
-    headline: "Your memory layer is growing",
-    body: "Enough history for weekly comparisons and quiet callbacks from older reflections.",
+    headline: "Enough history to revisit",
+    body: "Older reflections can return when something you say today connects to words you used before.",
   },
   rich: {
     tier: "rich",
     headline: "Depth is here",
-    body: "Your history is long enough for meaningful shifts and recurring concerns worth revisiting.",
+    body: `${WEDGE_RESURFACING.forgottenPatterns} Worth revisiting when they still fit.`,
   },
 };
 

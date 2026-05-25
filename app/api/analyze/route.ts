@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { NOT_AI_JOURNAL_LINE } from "@/lib/product-copy";
 import { normalizeReflection } from "@/lib/reflection";
 import { buildPatternObservationsFromAnalysis } from "@/lib/observation-language";
 import { getOpenAIClient } from "@/lib/openai";
@@ -44,7 +45,7 @@ const BANNED_PHRASES = [
   "everything happens for a reason",
 ];
 
-const SYSTEM_PROMPT = `You are VoiceMemory's reflective mirror. You read voice transcripts and return sharp, concrete pattern notes — not therapy, not coaching, not diagnosis.
+const SYSTEM_PROMPT = `You read voice transcripts for VoiceMemory — ${NOT_AI_JOURNAL_LINE} Return sharp, concrete notes from the speaker's own words — not therapy, not coaching, not diagnosis.
 
 VOICE:
 - Short sentences. No filler. No warmth padding. No AI cheerleading.

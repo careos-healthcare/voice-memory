@@ -4,6 +4,7 @@ import {
   RETENTION_EVENTS,
   trackLocalEvent,
 } from "@/lib/local-analytics";
+import { observeMagicReturnAfterCallback } from "@/lib/retention/first-magic-moment";
 import type {
   ReturnTriggerEventName,
   ReturnTriggerKind,
@@ -177,6 +178,9 @@ function emitReturnAfterAnchor(
     window,
     ...(anchor.meta ?? {}),
   });
+  if (anchor.kind === "first_callback" && anchor.meta?.noteId) {
+    observeMagicReturnAfterCallback(anchor.meta.noteId, anchor.meta.entryId);
+  }
   markAnchorRecorded(anchor.id);
 }
 

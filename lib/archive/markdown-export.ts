@@ -1,3 +1,4 @@
+import { EXPORT_TRUST_FOOTER } from "@/lib/product-copy";
 import { getPrimaryObservation } from "@/lib/observation-language";
 import { formatEntryDate } from "@/lib/utils";
 import type { ReflectionBookmark } from "@/types/reflection-bookmark";
@@ -23,7 +24,7 @@ export function buildArchiveMarkdown(archive: VoiceMemoryArchivePackage): string
     `Exported: ${formatEntryDate(archive.exportedAt)}`,
     `Reflections: ${archive.entries.length}`,
     "",
-    "Reflective mirror only — not therapy or diagnosis.",
+    EXPORT_TRUST_FOOTER,
     "",
     "---",
     "",

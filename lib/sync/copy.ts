@@ -1,9 +1,10 @@
 import { ONBOARDING_ACCOUNT } from "@/lib/onboarding/onboarding-copy";
+import { ACCOUNT_BACKUP } from "@/lib/product-copy";
 
 /** User-facing encrypted sync copy. */
 export const ENCRYPTED_SYNC_COPY = {
   encryptedBeforeLeave: ONBOARDING_ACCOUNT.backupLead,
-  archiveNotServer: ONBOARDING_ACCOUNT.continuitySignedIn,
+  archiveNotServer: ACCOUNT_BACKUP.signedInLead,
   serverStoresCiphertext:
     "Our servers store encrypted blobs only — never raw transcripts, audio, or reflection text.",
   restoreWarning:

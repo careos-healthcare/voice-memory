@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoiceMemory — Private memory intelligence",
+  title: "VoiceMemory — Private voice reflections",
   description:
-    "Private memory intelligence from your voice reflections. Local-first, reflective mirror only — not therapy.",
+    "VoiceMemory resurfaces forgotten emotional patterns from your own voice. Local-first — not therapy.",
 };
 
 export const viewport: Viewport = {

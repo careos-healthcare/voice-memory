@@ -134,6 +134,14 @@ const BANNED_PHRASES = [
   { re: /\bkpi\b/i, label: "KPI" },
   { re: /\bsmart goal\b/i, label: "SMART goal" },
   { re: /\bcoaching plan\b/i, label: "coaching plan" },
+  { re: /\bmemory intelligence\b/i, label: "memory intelligence" },
+  { re: /\breflective mirror\b/i, label: "reflective mirror" },
+  { re: /\bemotional continuity\b/i, label: "emotional continuity" },
+  { re: /\bliving resurfacing\b/i, label: "living resurfacing" },
+  { re: /\bvoice identity\b/i, label: "voice identity" },
+  { re: /\bemotional chapter\b/i, label: "emotional chapter" },
+  { re: /\bgently return\b/i, label: "gently return" },
+  { re: /\bintelligence layer\b/i, label: "intelligence layer" },
 ];
 
 const CHART_DASHBOARD_PHRASES = [
@@ -364,6 +372,24 @@ if (violations.length > 0) {
     console.error(`  … and ${violations.length - 40} more`);
   }
   process.exit(1);
+}
+
+const productCopyPath = path.join(ROOT, "lib/product-copy.ts");
+if (!fs.existsSync(productCopyPath)) {
+  console.error("validate:restraint failed — missing lib/product-copy.ts");
+  process.exit(1);
+}
+const productCopy = fs.readFileSync(productCopyPath, "utf8");
+for (const required of [
+  "VoiceMemory is not an AI journal.",
+  "resurfaces forgotten emotional patterns from your own voice",
+  "Patterns you forgot you were repeating.",
+  "Your past words come back when they match today.",
+]) {
+  if (!productCopy.includes(required)) {
+    console.error(`validate:restraint failed — product-copy missing wedge line: ${required}`);
+    process.exit(1);
+  }
 }
 
 console.log(`validate:restraint passed (${files.length} files scanned)`);

@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
+import { APP_SUBTITLE } from "@/lib/product-copy";
 import {
   EMPTY_LIFE_SEARCH_FILTERS,
   EXAMPLE_LIFE_QUERIES,
@@ -126,7 +127,7 @@ export default function SearchPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Private memory intelligence
+            {APP_SUBTITLE}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Search your memory

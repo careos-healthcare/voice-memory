@@ -8,6 +8,7 @@ import {
   analyzeWeeklyIntelligence,
   buildLocalWeeklySummary,
 } from "@/lib/weekly-intelligence";
+import { EXPORT_TRUST_FOOTER } from "@/lib/product-copy";
 import { getCachedWeeklySummary } from "@/lib/weekly-summary-cache";
 import type { JournalEntry } from "@/types/journal";
 
@@ -149,7 +150,7 @@ export function buildWeeklySummaryText(): string {
     `Emotional shift: ${report.emotionalShift.label}`,
     report.emotionalShift.detail,
     "",
-    "Exported from your device. Reflective mirror only — not therapy or diagnosis.",
+    EXPORT_TRUST_FOOTER,
   ];
 
   return lines.join("\n");
@@ -190,7 +191,7 @@ export function buildInsightsSummaryText(): string {
 
   lines.push(
     "",
-    "Exported from your device. Reflective mirror only — not therapy or diagnosis.",
+    EXPORT_TRUST_FOOTER,
   );
   return lines.join("\n");
 }

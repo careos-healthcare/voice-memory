@@ -1,4 +1,5 @@
 import { daysBetweenKeys, toDayKey, todayKey } from "@/lib/dates";
+import { WEDGE_RESURFACING } from "@/lib/product-copy";
 import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { guardSurfacedNote } from "@/lib/refinement/false-positive-suppression";
@@ -18,10 +19,10 @@ export type LivingResurfacingKind =
 export type LivingResurfacingSurface = "homepage" | "memory" | "entry";
 
 export const LIVING_RESURFACING_COPY = {
-  newMeaningAfterLater: "This means something different now.",
-  multipleReturnWays: "You have come back to this in different ways.",
-  readsDifferentlyAfterLater: "This sounds different after what came later.",
-  usedToSitCenter: "This used to sit closer to the center.",
+  newMeaningAfterLater: WEDGE_RESURFACING.pastWordsMatch,
+  multipleReturnWays: WEDGE_RESURFACING.saidBeforeLeftAlone,
+  readsDifferentlyAfterLater: WEDGE_RESURFACING.similarWordsBefore,
+  usedToSitCenter: WEDGE_RESURFACING.concernAgain,
 } as const;
 
 export const LIVING_ENTRY_MIN = 68;

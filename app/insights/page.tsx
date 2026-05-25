@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { buildConservativePatterns } from "@/lib/insights/conservative-patterns";
 import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
+import { APP_SUBTITLE, WEDGE_RESURFACING } from "@/lib/product-copy";
 
 export default function InsightsPage() {
   const [insights, setInsights] = useState<MemoryInsights | null>(null);
@@ -42,14 +43,14 @@ export default function InsightsPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Private memory intelligence
+            {APP_SUBTITLE}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Memory timeline
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Local read of your voice reflections — moods, themes, people, and
-            recurring concerns. Nothing leaves this device.
+            Your past words on this device — moods, themes, people, and concerns that
+            came back in your own voice.
           </p>
         </motion.div>
 
@@ -57,8 +58,8 @@ export default function InsightsPage() {
           <UpgradeCta
             source="insights"
             feature="weekly_patterns"
-            headline="See weekly patterns across your full memory"
-            description="Pro unlocks full history intelligence, semantic search, and export reports. Free shows patterns from your recent reflections."
+            headline="Search your full reflection history"
+            description="Pro unlocks full history search, export reports, and weekly resurfacing. Free searches recent reflections on this device."
             compact
           />
         </div>
@@ -77,8 +78,7 @@ export default function InsightsPage() {
               <CardContent className="py-16 text-center">
                 <p className="text-zinc-400">Not enough yet for a memory timeline.</p>
                 <p className="mt-2 text-sm text-zinc-600">
-                  Talk naturally a few times. VoiceMemory will notice recurring
-                  patterns as your reflections accumulate.
+                  Talk naturally a few times. {WEDGE_RESURFACING.pastWordsMatch}
                 </p>
                 <Button asChild className="mt-6" variant="secondary">
                   <Link href="/">Record today&apos;s reflection</Link>

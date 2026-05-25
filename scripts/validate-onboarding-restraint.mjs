@@ -34,11 +34,12 @@ const REQUIRED_EVENTS = [
 const REQUIRED_COPY = [
   "Record one short reflection.",
   "VoiceMemory saves it on this device.",
-  "When similar words, moods, or concerns appear later",
+  "Your past words come back when they match today.",
   "Sign in only if you want encrypted sync.",
   "The value appears when today connects to something you said before.",
   "Speak for about a minute. Your words stay on this device.",
   "Not therapy, not a diagnosis",
+  "VoiceMemory is not an AI journal.",
 ];
 
 const FORBIDDEN_RE = [
@@ -52,8 +53,9 @@ const FORBIDDEN_RE = [
   { re: /\bmemory intelligence\b/i, label: "memory intelligence" },
   { re: /\bemotional continuity\b/i, label: "emotional continuity" },
   { re: /\bintelligence layer\b/i, label: "intelligence layer" },
-  { re: /\bwhat keeps coming back\b/i, label: "what keeps coming back" },
-  { re: /\btutorial\b/i, label: "tutorial" },
+  { re: /\bemotional chapter\b/i, label: "emotional chapter" },
+  { re: /\breflective mirror\b/i, label: "reflective mirror" },
+  { re: /\bgently return\b/i, label: "gently return" },
 ];
 
 const USER_SCAN = [
@@ -80,7 +82,10 @@ for (const event of REQUIRED_EVENTS) {
   }
 }
 
-const homeCopy = fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8");
+const homeCopy = [
+  fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8"),
+].join("\n");
 for (const line of REQUIRED_COPY) {
   if (!homeCopy.includes(line)) {
     console.error(`Onboarding restraint validation failed — missing onboarding copy: "${line}"`);

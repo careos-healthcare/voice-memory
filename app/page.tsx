@@ -41,11 +41,13 @@ import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import { maybeDetectReturnTriggers } from "@/lib/retention/return-triggers";
 import {
   HONESTY_LINE,
+  NOT_AI_JOURNAL_LINE,
   DEVICE_PRIVACY_LINE,
   POSITIONING_EYEBROW,
   POSITIONING_LEAD,
   POSITIONING_SUPPORT,
   POSITIONING_TAGLINE,
+  PRODUCT_WEDGE_LINE,
 } from "@/lib/product-copy";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -170,6 +172,8 @@ export default function HomePage() {
             <p className="mt-4 text-sm leading-[1.75] text-zinc-500 sm:text-base">
               {POSITIONING_SUPPORT}
             </p>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-600">{NOT_AI_JOURNAL_LINE}</p>
+            <p className="mt-1 text-sm leading-relaxed text-zinc-600">{PRODUCT_WEDGE_LINE}</p>
           </MotionPage>
 
           <motion.div

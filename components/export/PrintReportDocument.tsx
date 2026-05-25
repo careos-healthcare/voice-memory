@@ -1,4 +1,5 @@
 import type { PrintableReport } from "@/lib/memory-export";
+import { EXPORT_TRUST_FOOTER } from "@/lib/product-copy";
 
 interface PrintReportDocumentProps {
   report: PrintableReport;
@@ -25,8 +26,7 @@ export function PrintReportDocument({ report }: PrintReportDocumentProps) {
           Generated {formatGeneratedAt(report.generatedAt)} · {report.dateRangeLabel}
         </p>
         <p className="mt-3 text-xs text-zinc-500">
-          Reflective mirror only — not therapy, not medical advice, no diagnosis.
-          Exported from your device; nothing stored on a server.
+          {EXPORT_TRUST_FOOTER} Exported from your device; nothing stored on a server.
         </p>
       </header>
 

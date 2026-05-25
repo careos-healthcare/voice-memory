@@ -23,7 +23,7 @@ import {
   type PlanId,
   type UpgradeClickSource,
 } from "@/lib/subscription";
-import { HONESTY_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
+import { APP_SUBTITLE, HONESTY_LINE, NOT_AI_JOURNAL_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
 import { trackPilotPricingOpened } from "@/lib/pilot/pilot-interest";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
@@ -81,16 +81,17 @@ export default function PricingPage() {
           className="mt-2 text-center sm:text-left"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Private memory intelligence
+            {APP_SUBTITLE}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Plans for private memory intelligence
+            Plans for your voice archive
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            {POSITIONING_TAGLINE} Free stays local-first on your device. Pro
-            unlocks the full intelligence layer across your reflection history.
+            {POSITIONING_TAGLINE} Free stays local-first on your device. Pro unlocks
+            full history search, export, and weekly resurfacing from your own voice.
           </p>
-          <p className="mt-2 text-xs text-zinc-600">{HONESTY_LINE}</p>
+          <p className="mt-2 text-xs text-zinc-600">{NOT_AI_JOURNAL_LINE}</p>
+          <p className="mt-1 text-xs text-zinc-600">{HONESTY_LINE}</p>
           {storedCount > FREE_ENTRY_LIMIT && !isProUser() ? (
             <p className="mt-3 text-sm text-amber-200/90">
               You have {storedCount} reflections — {lockedCount} beyond the free

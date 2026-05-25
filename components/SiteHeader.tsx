@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { APP_SUBTITLE } from "@/lib/product-copy";
 import { cn } from "@/lib/utils";
 
 interface SiteHeaderProps {
@@ -31,7 +32,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             VoiceMemory
           </span>
           <span className="hidden text-[10px] text-zinc-600 sm:block">
-            Private memory intelligence
+            {APP_SUBTITLE}
           </span>
         </span>
       </Link>

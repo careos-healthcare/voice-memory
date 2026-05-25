@@ -45,8 +45,8 @@ export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
   },
   {
     id: "weekly_intelligence",
-    title: "Weekly intelligence",
-    description: "Rolling week comparisons, emotional shifts, and pattern summaries.",
+    title: "Weekly resurfacing",
+    description: "Rolling week comparisons and words that came back in your own voice.",
   },
   {
     id: "entity_memory",
@@ -69,7 +69,7 @@ export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
 
 export const FREE_PLAN_FEATURES = [
   "Last 7 voice reflections on device",
-  "Basic pattern mirror (mood & themes)",
+  "Resurfacing from recent reflections",
   "Local-first memory (private by default)",
   "Voice capture & transcript",
   "In-app contextual reminders",
@@ -78,7 +78,7 @@ export const FREE_PLAN_FEATURES = [
 export const PRO_PLAN_FEATURES = [
   "Full private memory history",
   "Full semantic memory search",
-  "Weekly memory intelligence",
+  "Weekly resurfacing from your voice",
   "Entity memory across all reflections",
   "Export JSON, weekly summaries & print reports",
   "Priority access to encrypted sync (coming soon)",

@@ -201,7 +201,7 @@ export function InsightCard({
             {!calmMode ? (
               <>
                 <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
-                  Reflective mirror
+                  Your own words
                 </p>
                 <CardTitle className="text-lg">What your words show</CardTitle>
               </>

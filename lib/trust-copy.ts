@@ -1,12 +1,14 @@
 /** Production trust, safety, and legal copy — user-facing only. */
 
+import { SERVICE_DESCRIPTION } from "@/lib/product-copy";
+
 export const CONTACT_EMAIL = "hello@voicememory.app";
 
 export const PRIVATE_BY_DEFAULT_LINE =
   "Local-first and private by default. Your reflections stay on this device unless you choose encrypted backup.";
 
 export const NOT_THERAPY_LINE =
-  "VoiceMemory is a reflective mirror for your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
+  "VoiceMemory resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
 
 export const CRISIS_DISCLAIMER =
   "VoiceMemory cannot help in an emergency. If you or someone else may be in immediate danger, contact local emergency services. In the UK, Samaritans are available 24/7 on 116 123. In the US, call or text 988 for the Suicide & Crisis Lifeline.";
@@ -107,7 +109,7 @@ export const PRIVACY_SECTIONS = [
 export const TERMS_SECTIONS = [
   {
     title: "Service description",
-    body: "VoiceMemory is private memory intelligence for voice reflections — a reflective mirror, not therapy or a diagnosis. The product is provided as-is for personal self-reflection.",
+    body: `${SERVICE_DESCRIPTION} The product is provided as-is for personal self-reflection.`,
   },
   {
     title: "Not medical or therapeutic advice",
@@ -156,7 +158,7 @@ export const EMOTIONAL_SAFETY_SECTIONS = [
 
 export const SAFETY_SECTIONS = [
   {
-    title: "Reflective mirror only",
+    title: "Your own voice only",
     body: NOT_THERAPY_LINE,
   },
   {

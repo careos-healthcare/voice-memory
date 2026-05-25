@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FOOTER_TRUST_LINE } from "@/lib/product-copy";
 import { TRUST_FOOTER_LINKS } from "@/lib/trust-copy";
 
 export function SiteFooter({ className }: { className?: string }) {
@@ -19,7 +20,7 @@ export function SiteFooter({ className }: { className?: string }) {
         </Link>
       </nav>
       <p className="mx-auto mt-4 max-w-md leading-relaxed">
-        Reflective mirror only — not therapy, not a diagnosis, not crisis support.
+        {FOOTER_TRUST_LINE}
       </p>
     </footer>
   );

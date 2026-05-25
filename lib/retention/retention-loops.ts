@@ -1,6 +1,11 @@
 import { addDaysToKey, daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { readLocalEvents } from "@/lib/local-analytics";
 import {
+  observeMagicCandidateSaved,
+  observeMagicCandidateShared,
+  observeMagicFollowupRecorded,
+} from "@/lib/retention/first-magic-moment";
+import {
   markMoatRevisitBookmark,
   markMoatRevisitCopy,
 } from "@/lib/retention/moat-metrics";
@@ -280,6 +285,7 @@ export function trackBookmarkCreated(
   if (context.noteId) {
     recordSilenceNoteAction(context.noteId);
     unlockRelatedNoteAfterAction(context.noteId, "bookmark_copy");
+    observeMagicCandidateSaved(context.noteId, entryId);
   }
   markMoatRevisitBookmark(entryId);
 }
@@ -304,6 +310,7 @@ export function trackFollowupRecordingCompleted(newEntryId: string): void {
   if (context?.noteId) {
     recordSilenceNoteAction(context.noteId);
     unlockRelatedNoteAfterAction(context.noteId, "recording_after_revisit");
+    observeMagicFollowupRecorded(context.noteId, newEntryId);
   }
   checkVoluntaryReturns(newEntryId);
 }
@@ -332,6 +339,7 @@ export function trackCopiedMemoryMoment(input: {
   const actionNoteId = context.noteId ?? input.sourceId;
   if (actionNoteId) recordSilenceNoteAction(actionNoteId);
   if (actionNoteId) unlockRelatedNoteAfterAction(actionNoteId, "bookmark_copy");
+  if (actionNoteId) observeMagicCandidateShared(actionNoteId, input.sourceId);
   if (input.entryId) markMoatRevisitCopy(input.entryId);
 }
 

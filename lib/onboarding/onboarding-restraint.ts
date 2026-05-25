@@ -19,6 +19,11 @@ export const ONBOARDING_BLOCKED_TERMS = [
   "emotional continuity",
   "intelligence layer",
   "what keeps coming back",
+  "reflective mirror",
+  "gently return",
+  "living resurfacing",
+  "voice identity",
+  "emotional chapter",
 ] as const;
 
 const VAGUE_UNGROUNDED = [
@@ -28,6 +33,12 @@ const VAGUE_UNGROUNDED = [
   /\bemotional archive\b/i,
   /\bmemory intelligence\b/i,
   /\bemotional continuity\b/i,
+  /\breflective mirror\b/i,
+  /\bgently return\b/i,
+  /\bgently bring\b/i,
+  /\bliving resurfacing\b/i,
+  /\bvoice identity\b/i,
+  /\bemotional chapter\b/i,
   /\bintelligence layer\b/i,
   /\bwhat keeps coming back\b/i,
   /\brecurring patterns over time\b/i,

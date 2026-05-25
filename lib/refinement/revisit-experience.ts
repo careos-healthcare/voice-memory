@@ -4,6 +4,7 @@ import {
 } from "@/lib/social-proof/remembered-later";
 import { maybeTrackRevisitAfterShare } from "@/lib/sharing/share-observation";
 import { registerRevisitReturnTrigger } from "@/lib/retention/return-triggers";
+import { observeMagicCallbackSurfaced } from "@/lib/retention/first-magic-moment";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import {
   entryInteractionSummary,
@@ -371,6 +372,7 @@ export function buildRevisitExperience(
 
   for (const note of [calibrated.revisitReward, calibrated.thenVsNow].filter(Boolean) as MemoryNote[]) {
     recordCallbackSurfaced(note.id, "entry");
+    observeMagicCallbackSurfaced(note, allEntries, "entry");
     const contextEntryId = note.entryId ?? note.pastEntryId ?? entryId;
     rememberNoteContext(contextEntryId, note.id, note.text);
   }

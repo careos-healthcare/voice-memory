@@ -39,7 +39,7 @@ const TYPE_TO_KIND: Partial<Record<PatternInsightType, ConservativePatternKind>>
 };
 
 const PATTERN_DISCLAIMER =
-  "These are language patterns from your entries — not a diagnosis or medical claim.";
+  "Repeated words and concerns from your entries — with links to the reflections they came from. Not a diagnosis.";
 
 function toConservativePattern(insight: PatternInsight): ConservativePattern | null {
   const kind = TYPE_TO_KIND[insight.type];

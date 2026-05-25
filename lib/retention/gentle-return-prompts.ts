@@ -1,4 +1,5 @@
 import { todayKey } from "@/lib/dates";
+import { WEDGE_RESURFACING } from "@/lib/product-copy";
 import { pickFirstMeaningfulRevisitCandidate } from "@/lib/revisit/first-meaningful-revisit";
 import {
   buildFirstWeekTimingRecommendations,
@@ -14,7 +15,7 @@ import type { JournalEntry } from "@/types/journal";
 const PROMPT_COPY: Record<GentleReturnPromptId, string> = {
   week_disappearing: "You may want to leave another note before this week disappears.",
   earlier_this_week: "Something from earlier this week may feel different now.",
-  continuity_building: "You've started building continuity.",
+  continuity_building: WEDGE_RESURFACING.similarWordsBefore,
   meaningful_revisit: "Something from earlier this week may feel different now.",
 };
 

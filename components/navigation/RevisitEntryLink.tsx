@@ -19,6 +19,7 @@ import { trackOldEntryRevisitAfterCallback as trackPauseOldEntryRevisit } from "
 import {
   trackFirstSessionOldReflectionOpened,
 } from "@/lib/marketing/first-session-comprehension";
+import { observeMagicCandidateOpened } from "@/lib/retention/first-magic-moment";
 
 export function RevisitEntryLink({
   entryId,
@@ -52,6 +53,10 @@ export function RevisitEntryLink({
           trackFirstSessionOldReflectionOpened(entryId, resolvedSource);
         }
         if (noteId) {
+          observeMagicCandidateOpened(noteId, {
+            entryId,
+            source: resolvedSource,
+          });
           recordMemoryLineClicked({
             noteId,
             noteText,

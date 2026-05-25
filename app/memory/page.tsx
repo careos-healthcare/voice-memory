@@ -25,6 +25,7 @@ import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ONBOARDING_MEMORY } from "@/lib/onboarding/onboarding-copy";
+import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildEntityMemory, type EntityMemorySnapshot } from "@/lib/entity-memory";
@@ -167,8 +168,10 @@ export default function MemoryPage() {
         <SiteHeader />
 
         <MotionPageTitle title={ONBOARDING_MEMORY.title} />
+        <p className="mt-3 text-sm leading-relaxed text-zinc-500">{PRODUCT_WEDGE_LINE}</p>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-600">{ONBOARDING_MEMORY.wedge}</p>
 
-        <div className="mt-20 space-y-20">
+        <div className="mt-16 space-y-20">
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">{ONBOARDING_MEMORY.loading}</p>
           ) : !snapshot.hasData ? (

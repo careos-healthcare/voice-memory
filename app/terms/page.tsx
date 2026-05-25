@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { TrustPageShell, TrustSection } from "@/components/trust/TrustPageShell";
 import { TERMS_SECTIONS } from "@/lib/trust-copy";
 
+import { APP_DESCRIPTION_SHORT } from "@/lib/product-copy";
+
 export const metadata: Metadata = {
   title: "Terms — VoiceMemory",
-  description: "Terms of use for VoiceMemory private memory intelligence.",
+  description: `Terms of use for VoiceMemory — ${APP_DESCRIPTION_SHORT}`,
 };
 
 export default function TermsPage() {

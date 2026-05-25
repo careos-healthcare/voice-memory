@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { getOpenAIClient } from "@/lib/openai";
 import type { WeeklyReflectionPayload } from "@/types/weekly";
 
 export const runtime = "nodejs";
 
-const SYSTEM_PROMPT = `You detect weekly language patterns for VoiceMemory — private memory intelligence, NOT therapy.
+const SYSTEM_PROMPT = `You detect weekly language patterns for VoiceMemory — ${PRODUCT_WEDGE_LINE} NOT therapy.
 Given aggregated statistics from a user's last 7 days of voice reflections (no raw transcripts), write ONE paragraph (4-6 sentences) of pattern observations.
 
 Rules:

@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { ReturnTriggersDebugPanel } from "@/components/debug/ReturnTriggersDebugPanel";
+import { FirstMagicMomentDebugPanel } from "@/components/debug/FirstMagicMomentDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildReturnTriggersDebugReport } from "@/lib/debug/return-triggers-review";
-import type { ReturnTriggerDebugReport } from "@/types/return-triggers";
+import { buildFirstMagicMomentDebugReport } from "@/lib/debug/first-magic-moment-review";
+import type { MagicMomentDebugReport } from "@/types/first-magic-moment";
 
-export default function ReturnTriggersDebugPage() {
-  const [report, setReport] = useState<ReturnTriggerDebugReport | null>(null);
+export default function FirstMagicMomentDebugPage() {
+  const [report, setReport] = useState<MagicMomentDebugReport | null>(null);
 
   const refresh = () => {
-    setReport(buildReturnTriggersDebugReport());
+    setReport(buildFirstMagicMomentDebugReport());
   };
 
   useEffect(() => {
@@ -31,12 +31,11 @@ export default function ReturnTriggersDebugPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Retention</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              Return triggers
+              First magic moment
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              Internal attribution only — what preceded a return, how long the gap was, and
-              whether the return led to reflection, revisit, or archive care. No user-facing
-              dashboards.
+              Internal measurement only — when a specific callback from the user&apos;s own voice
+              lands with recognition. Not shown to users.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -51,25 +50,19 @@ export default function ReturnTriggersDebugPage() {
           </Card>
         ) : (
           <div className="mt-6">
-            <ReturnTriggersDebugPanel report={report} />
+            <FirstMagicMomentDebugPanel report={report} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/debug/first-week-retention" className="text-violet-300 hover:text-violet-200">
-            First-week retention →
-          </Link>
-          <Link href="/debug/retention-loops" className="text-zinc-500 hover:text-zinc-300">
-            Retention loops →
+          <Link href="/debug/return-triggers" className="text-violet-300 hover:text-violet-200">
+            Return triggers →
           </Link>
           <Link href="/debug/revisit-quality" className="text-zinc-500 hover:text-zinc-300">
             Revisit quality →
           </Link>
-          <Link href="/debug/first-magic-moment" className="text-zinc-500 hover:text-zinc-300">
-            First magic moment →
-          </Link>
-          <Link href="/debug/silence-intelligence" className="text-zinc-500 hover:text-zinc-300">
-            Silence intelligence →
+          <Link href="/debug/onboarding-clarity" className="text-zinc-500 hover:text-zinc-300">
+            Onboarding clarity →
           </Link>
         </div>
       </div>

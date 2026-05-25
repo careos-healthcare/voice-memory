@@ -18,7 +18,7 @@ export const CARRYOVER_COPY = {
 } as const;
 
 export const ACCOUNT_CONTINUITY_COPY = {
-  archiveContinues: "Your archive can continue on another device.",
+  archiveContinues: "Encrypted backup can continue on another device.",
   leftOffOlder: "You left off with an older reflection.",
 } as const;
 

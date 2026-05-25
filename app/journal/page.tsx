@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEntries } from "@/lib/storage";
 import { getEntryPreviewLine } from "@/lib/reflection";
+import { APP_HONESTY, APP_SUBTITLE } from "@/lib/product-copy";
 import { formatEntryDate, formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
@@ -39,11 +40,11 @@ export default function JournalPage() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Private memory intelligence
+                {APP_SUBTITLE}
               </p>
               <h1 className="mt-2 text-3xl font-semibold text-white">Your reflections</h1>
               <p className="mt-2 text-sm text-zinc-400">
-                Voice reflections on this device — local-first, reflective mirror only.
+                Voice reflections on this device — {APP_HONESTY.toLowerCase()}
               </p>
             </div>
             <Button asChild variant="secondary" size="sm">

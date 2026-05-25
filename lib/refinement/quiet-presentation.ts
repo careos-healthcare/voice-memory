@@ -30,6 +30,7 @@ import {
   pickFirstAhaCallback,
 } from "@/lib/onboarding/first-aha-callback";
 import { rememberNoteContext } from "@/lib/retention/retention-loops";
+import { observeMagicCallbackSurfaced } from "@/lib/retention/first-magic-moment";
 import {
   isRevisitEntry,
   markRevisitBoost,
@@ -109,6 +110,7 @@ export function buildQuietHomepagePresentation(
 
   if (resolvedPrimary) {
     recordCallbackSurfaced(resolvedPrimary.id, "homepage");
+    observeMagicCallbackSurfaced(resolvedPrimary, entries, "homepage");
     if (resolvedPrimary.entryId) {
       rememberNoteContext(
         resolvedPrimary.entryId,
@@ -200,6 +202,7 @@ export function buildQuietEntryPresentation(
 
   if (primaryMoment) {
     recordCallbackSurfaced(primaryMoment.id, "entry");
+    observeMagicCallbackSurfaced(primaryMoment, allEntries, "entry");
   }
 
   const followupNotes = [

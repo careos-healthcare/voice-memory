@@ -19,7 +19,7 @@ export const LAUNCH_EVENTS = {
   demoModeExited: "demo_mode_exited",
 } as const;
 
-/** Retention + memory intelligence layer — local-only telemetry. */
+/** Retention layer — local-only telemetry. */
 export const RETENTION_EVENTS = {
   entryRecorded: "entry_recorded",
   insightViewed: "insight_viewed",

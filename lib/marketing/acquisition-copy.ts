@@ -1,11 +1,18 @@
 /** App Store / Play Store acquisition copy — human, private, non-coaching. */
 
-export const SHORT_APP_DESCRIPTION =
-  "Private memory intelligence from your voice reflections.";
+import {
+  APP_DESCRIPTION_SHORT,
+  EXPORT_TRUST_FOOTER,
+  NOT_AI_JOURNAL_LINE,
+  PRODUCT_WEDGE_LINE,
+  WEDGE_RESURFACING,
+} from "@/lib/product-copy";
 
-export const FULL_APP_DESCRIPTION = `VoiceMemory is private memory intelligence for thoughts you actually want to keep.
+export const SHORT_APP_DESCRIPTION = APP_DESCRIPTION_SHORT;
 
-Talk naturally for a minute or two. Your audio and transcript stay on your device. Over time, VoiceMemory notices recurring patterns in your moods, people, goals, and concerns — a reflective mirror, not therapy.
+export const FULL_APP_DESCRIPTION = `${NOT_AI_JOURNAL_LINE} ${PRODUCT_WEDGE_LINE}
+
+Talk naturally for a minute or two. Your audio and transcript stay on this device. Over time, VoiceMemory brings back words you forgot you were repeating — from your own voice, not therapy.
 
 What you can do:
 • Record voice reflections in a quiet, private space
@@ -17,7 +24,7 @@ What you can do:
 What VoiceMemory is not:
 Not therapy. Not coaching. Not a productivity system. No diagnosis, no performance dashboard, no pressure to record every day.
 
-Local-first. Reflective mirror only. Your words stay yours.`;
+Local-first. Your words stay yours.`;
 
 /** Apple App Store — 100 characters max, comma-separated, no spaces after commas. */
 export const APP_STORE_KEYWORDS =
@@ -58,7 +65,7 @@ export const SCREENSHOT_SETS: readonly ScreenshotSet[] = [
       "Hear yourself again",
       "Speak what matters today",
       "Your voice, kept private",
-      "Old thoughts return gently",
+      WEDGE_RESURFACING.pastWordsMatch,
       "Notice what repeats",
       "Return when you are ready",
     ],
@@ -67,7 +74,7 @@ export const SCREENSHOT_SETS: readonly ScreenshotSet[] = [
     id: "privacy",
     label: "Privacy",
     headlines: [
-      "Private memory intelligence",
+      "Private voice reflections",
       "Stays on your device",
       "Optional encrypted backup",
       "Export your words anytime",
@@ -92,7 +99,7 @@ export const SCREENSHOT_SETS: readonly ScreenshotSet[] = [
     label: "Continuity",
     headlines: [
       "Your voice over time",
-      "Themes that return",
+      WEDGE_RESURFACING.forgottenPatterns,
       "What faded. What stayed.",
       "A few lines each week",
       "Save what to return to",
@@ -113,7 +120,7 @@ export const ONBOARDING_HOOKS = [
   "A private place to hear yourself again.",
   "Speak what you are actually thinking.",
   "Your reflections stay on this device.",
-  "Older entries may return when they still fit.",
+  WEDGE_RESURFACING.pastWordsMatch,
   "No streaks. No scores. Return when it matters.",
 ] as const;
 
@@ -133,7 +140,7 @@ export const REVIEW_RESPONSE_TEMPLATES = {
   revisitConfusion:
     "Older reflections sometimes appear again when they still connect to what you said recently — you can open them, ignore them, or record a follow-up. Both are fine.",
   notTherapy:
-    "VoiceMemory is private memory intelligence, not therapy or medical advice. If you are in crisis, please contact local emergency services or a trusted helpline.",
+    `${NOT_AI_JOURNAL_LINE} Not therapy or medical advice. If you are in crisis, please contact local emergency services or a trusted helpline.`,
   featureRequest:
     "Thank you — we are keeping the app quiet on purpose, but we read every note. hello@voicememory.app if you want to share more context.",
   bugReport:
@@ -141,7 +148,7 @@ export const REVIEW_RESPONSE_TEMPLATES = {
 } as const;
 
 export const NOTIFICATION_COPY_EXAMPLES = [
-  "A past reflection might still fit today.",
+  WEDGE_RESURFACING.pastWordsMatch,
   "You saved something to return to.",
   "Your voice from last month is still here.",
 ] as const;
@@ -149,16 +156,22 @@ export const NOTIFICATION_COPY_EXAMPLES = [
 /** Words that improve clarity scores when present in user-facing acquisition copy. */
 export const PREFERRED_ACQUISITION_WORDS = [
   "private",
-  "voice journal",
-  "remember",
+  "voice",
+  "reflection",
+  "device",
+  "export",
+  "backup",
   "revisit",
   "hear yourself",
-  "thoughts",
-  "reflections",
-  "calmer",
-  "return to",
-  "your voice",
+  "local-first",
+  "encrypted",
+  "your words",
+  "past reflections",
+  "forgotten",
+  "repeating",
 ] as const;
+
+export const ACQUISITION_FOOTER = EXPORT_TRUST_FOOTER;
 
 /** Abstract or internal vocabulary — flagged in acquisition review & validation. */
 export const FORBIDDEN_ABSTRACT_PHRASES = [
@@ -173,6 +186,13 @@ export const FORBIDDEN_ABSTRACT_PHRASES = [
   "behavioral intelligence",
   "pattern engine",
   "insight engine",
+  "memory intelligence",
+  "reflective mirror",
+  "emotional continuity",
+  "living resurfacing",
+  "voice identity",
+  "emotional chapter",
+  "intelligence layer",
 ] as const;
 
 export const ACQUISITION_COPY_BUNDLE = {

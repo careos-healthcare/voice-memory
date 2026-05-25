@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { WEDGE_RESURFACING } from "@/lib/product-copy";
 import type { ConservativePattern } from "@/lib/insights/conservative-patterns";
 
 interface PatternsDetectedSectionProps {
@@ -21,13 +22,12 @@ export function PatternsDetectedSection({
       <Card className="border-dashed border-white/5">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium text-zinc-400">
-            Patterns over time
+            Repeated words in your archive
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-zinc-500">
-            Recurring language patterns may appear after several reflections. This
-            is a mirror of your words — not therapy or a diagnosis.
+            {WEDGE_RESURFACING.forgottenPatterns} Not therapy or a diagnosis.
           </p>
         </CardContent>
       </Card>
@@ -40,7 +40,7 @@ export function PatternsDetectedSection({
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-violet-300/80" />
           <CardTitle className="text-base font-medium text-zinc-200">
-            Patterns over time
+            Repeated words in your archive
           </CardTitle>
         </div>
         <p className="mt-1 text-xs leading-relaxed text-zinc-600">{disclaimer}</p>

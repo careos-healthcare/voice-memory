@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Cloud, LogOut, RefreshCw, Shield } from "lucide-react";
 
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
-import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
 import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -25,25 +24,28 @@ import {
 import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
 import type { AccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
 import { AccountAuthError } from "@/lib/sync/account-client";
+import {
+  accountStatusLabel,
+  formatLastBackupLine,
+} from "@/lib/sync/account-status-copy";
 import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
+import { ACCOUNT_BACKUP, PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
-import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries } from "@/lib/storage";
 import type { ArchiveOwnershipReport } from "@/types/archive-ownership";
 
 function statusLabel(state: string): string {
-  switch (state) {
-    case "signed_in":
-      return "Signed in";
-    case "syncing":
-      return "Syncing";
-    case "sync_error":
-      return "Sync error";
-    default:
-      return "Signed out";
+  if (
+    state === "signed_in" ||
+    state === "signed_out" ||
+    state === "syncing" ||
+    state === "sync_error"
+  ) {
+    return accountStatusLabel(state);
   }
+  return accountStatusLabel("signed_out");
 }
 
 type SendCodeUiState =
@@ -120,9 +122,10 @@ export default function AccountPage() {
     void buildArchiveOwnershipReport(getAllEntries()).then(setOwnership);
   }, []);
 
-  const ownershipLines = ownership
-    ? buildAccountOwnershipLines(ownership, Boolean(status.session))
-    : [];
+  const ownershipLines =
+    ownership && status.session
+      ? buildAccountOwnershipLines(ownership, true)
+      : [];
 
   const showMessage = (text: string) => {
     setMessage(text);
@@ -228,7 +231,7 @@ export default function AccountPage() {
 
         <div className="mt-16 space-y-8">
           <p className="text-sm leading-relaxed text-zinc-400">{PRIVATE_BY_DEFAULT_LINE}</p>
-          <EmotionalProofLine surface="account" />
+          <p className="text-sm leading-relaxed text-zinc-500">{PRODUCT_WEDGE_LINE}</p>
           <ArchiveProtectionLine surface="account" />
 
           <Card className="border-white/[0.06] bg-zinc-900/40">
@@ -256,19 +259,13 @@ export default function AccountPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-zinc-400">
               <p>
-                Status: <span className="text-zinc-300">{statusLabel(status.state)}</span>
+                Backup status:{" "}
+                <span className="text-zinc-300">{statusLabel(status.state)}</span>
               </p>
               {status.session ? (
                 <p className="text-zinc-500">{status.session.user.email}</p>
               ) : null}
-              <p>
-                Last backup:{" "}
-                {!hydrated
-                  ? "—"
-                  : status.lastBackupAt
-                    ? formatEntryDate(status.lastBackupAt)
-                    : "Not yet backed up"}
-              </p>
+              <p>{formatLastBackupLine(status.lastBackupAt, hydrated)}</p>
               {status.lastSyncError ? (
                 <div className="space-y-1 text-sm leading-relaxed">
                   <p className="text-red-300/90">{status.lastSyncError}</p>
@@ -276,10 +273,12 @@ export default function AccountPage() {
                   <p className="text-zinc-500">{SYNC_FAILURE_COPY.backupPaused}</p>
                 </div>
               ) : null}
-              <p className="text-zinc-500">
-                Encrypted audio backup plan: {audioPlanCount} recording
-                {audioPlanCount === 1 ? "" : "s"} queued with the same client-side encryption.
-              </p>
+              {hydrated && status.session && audioPlanCount > 0 ? (
+                <p className="text-zinc-500">
+                  Encrypted audio backup: {audioPlanCount} recording
+                  {audioPlanCount === 1 ? "" : "s"} queued with the same client-side encryption.
+                </p>
+              ) : null}
 
               {hydrated && status.session ? (
                 <div className="space-y-2 border-t border-white/5 pt-4 text-sm leading-relaxed text-zinc-500">
@@ -287,9 +286,6 @@ export default function AccountPage() {
                     <p>{continuity.archiveContinuesLine}</p>
                   ) : null}
                   {continuity.leftOffLine ? <p>{continuity.leftOffLine}</p> : null}
-                  {continuity.lastBackedUpLine ? (
-                    <p>{continuity.lastBackedUpLine}</p>
-                  ) : null}
                 </div>
               ) : null}
 
@@ -317,7 +313,7 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="space-y-4 border-t border-white/5 pt-4">
-                  <p className="text-zinc-500">Sign in only if you want encrypted backup across devices.</p>
+                  <p className="text-zinc-500">{ACCOUNT_BACKUP.signInPrompt}</p>
                   <input
                     type="email"
                     value={email}

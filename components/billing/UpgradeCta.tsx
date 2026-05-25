@@ -23,8 +23,8 @@ interface UpgradeCtaProps {
 export function UpgradeCta({
   source,
   feature,
-  headline = "Unlock full private memory intelligence",
-  description = "Pro unlocks your full memory history, semantic search, weekly intelligence, entity memory, and export reports.",
+  headline = "Unlock your full voice archive",
+  description = "Pro unlocks your full history, semantic search, weekly resurfacing, entity memory, and export reports.",
   compact = false,
 }: UpgradeCtaProps) {
   if (isProUser()) return null;
