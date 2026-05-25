@@ -27,6 +27,8 @@ import { deleteLocalArchive, restoreArchivePackage } from "@/lib/archive/restore
 import { parseArchiveFile, validateArchiveImport } from "@/lib/archive/validate-import";
 import { downloadArchiveZipPackage } from "@/lib/archive/zip-package";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import { trackArchiveUnderstood } from "@/lib/onboarding/onboarding-observation";
+import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
 import { getStoredEntryCount, getMemoryEligibleEntries } from "@/lib/storage";
 import type { ArchiveImportPreview, ArchiveRestoreMode } from "@/types/archive-permanence";
 
@@ -50,6 +52,8 @@ export default function ArchivePage() {
     const entries = getMemoryEligibleEntries();
     const note = pickPrimaryLifePeriod(entries);
     setLifePeriodLine(note?.text ?? null);
+    trackArchiveUnderstood("archive_page");
+    completeFirstSessionStep("archive_perception");
   }, []);
 
   const showMessage = (text: string) => {
@@ -65,6 +69,9 @@ export default function ArchivePage() {
       downloadArchiveMarkdown(buildArchiveMarkdown(archive));
       downloadArchiveZipPackage(archive);
       trackLaunchEvent(LAUNCH_EVENTS.exportUsed);
+      void import("@/lib/retention/return-triggers").then((mod) => {
+        mod.registerArchiveExportReturnTrigger("archive_page");
+      });
       maybeTrackPostPremiumBehavior("export");
       showMessage("Archive exported as JSON, Markdown, and ZIP.");
     } catch (error) {

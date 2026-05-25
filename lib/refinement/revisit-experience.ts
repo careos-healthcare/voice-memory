@@ -3,6 +3,7 @@ import {
   trackRememberedLaterDelayedReflection,
 } from "@/lib/social-proof/remembered-later";
 import { maybeTrackRevisitAfterShare } from "@/lib/sharing/share-observation";
+import { registerRevisitReturnTrigger } from "@/lib/retention/return-triggers";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import {
   entryInteractionSummary,
@@ -403,6 +404,16 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
     entryId,
     sources: sources.join(","),
   });
+  registerRevisitReturnTrigger(entryId, sources.join(","));
+  void import("@/lib/onboarding/first-session-flow").then((flow) => {
+    const hours = flow.hoursSinceFirstSession();
+    if (hours !== null) {
+      void import("@/lib/onboarding/onboarding-observation").then((obs) => {
+        obs.trackFirstRevisitDelay(hours);
+      });
+    }
+    flow.completeFirstSessionStep("quiet_revisit");
+  });
   void import("@/lib/retention/first-week-observation").then((mod) => {
     mod.trackFirstRevisitCompleted(entryId);
   });
@@ -432,6 +443,9 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
 
 export function trackRevisitRewardSeen(entryId: string, noteId: string): void {
   trackLocalEvent("revisit_reward_seen", { entryId, noteId });
+  void import("@/lib/retention/return-triggers").then((mod) => {
+    mod.registerFirstCallbackReturnTrigger(noteId, entryId);
+  });
   void import("@/lib/retention/first-week-observation").then((mod) => {
     mod.trackRevisitEmotionalPayoff(entryId, noteId);
     mod.trackFirstCallbackLanded(noteId);

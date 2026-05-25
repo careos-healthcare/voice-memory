@@ -1,4 +1,5 @@
 import { trackLocalEvent } from "@/lib/local-analytics";
+import { registerTerritoryReturnTrigger } from "@/lib/retention/return-triggers";
 
 export const TERRITORY_OPENED = "territory_opened";
 export const TERRITORY_RENAMED = "territory_renamed";
@@ -7,6 +8,7 @@ export const TERRITORY_CONTINUE_CLICKED = "territory_continue_clicked";
 
 export function trackTerritoryOpened(territoryId: string, slug: string): void {
   trackLocalEvent(TERRITORY_OPENED, { territoryId, slug });
+  registerTerritoryReturnTrigger(territoryId, slug);
 }
 
 export function trackTerritoryRenamed(territoryId: string, label: string): void {

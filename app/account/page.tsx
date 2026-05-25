@@ -173,7 +173,12 @@ export default function AccountPage() {
       showMessage(
         ok ? "Encrypted backup saved." : "Backup paused. Nothing was deleted.",
       );
-      if (ok) maybeTrackPostPremiumBehavior("backup");
+      if (ok) {
+        maybeTrackPostPremiumBehavior("backup");
+        void import("@/lib/retention/return-triggers").then((mod) => {
+          mod.registerBackupReturnTrigger();
+        });
+      }
     } finally {
       setBusy(false);
     }

@@ -1,5 +1,10 @@
 import { toDayKey } from "@/lib/dates";
 import { readLocalEvents, trackLocalEvent } from "@/lib/local-analytics";
+import {
+  maybeDetectReturnTriggers,
+  registerRoundupReturnTrigger,
+  RETURN_TRIGGER_EVENTS,
+} from "@/lib/retention/return-triggers";
 import type { RoundupLineCandidate } from "@/types/roundup-quality-review";
 import type { ReflectiveRoundupLine, ReflectiveRoundupSignal } from "@/types/reflective-roundup";
 import type { RoundupReturnWindow } from "@/types/roundup-observation";
@@ -14,7 +19,8 @@ export const ROUNDUP_ITEM_REVISITED = "roundup_item_revisited";
 /** @deprecated Use roundup_item_revisited */
 export const ROUNDUP_RELATED_ENTRY_OPENED = "roundup_related_entry_opened";
 export const ROUNDUP_FOLLOWUP_RECORDED = "roundup_followup_recorded";
-export const ROUNDUP_RETURN_AFTER = "roundup_return_after_roundup";
+/** @deprecated Use return_after_roundup */
+export const ROUNDUP_RETURN_AFTER = RETURN_TRIGGER_EVENTS.returnAfterRoundup;
 export const ROUNDUP_INSTANT_ABANDON = "roundup_instant_abandon";
 
 const SHOWN_LINES_KEY = "voicememory_roundup_shown_lines";
@@ -128,46 +134,9 @@ function markSessionAction(): void {
   writeSession({ ...session, hadAction: true });
 }
 
-function noteReturnAfterRoundup(periodSlug: string): void {
-  const lastOpenRaw = localStorage.getItem(LAST_OPEN_KEY);
-  if (!lastOpenRaw) return;
-
-  try {
-    const last = JSON.parse(lastOpenRaw) as { at: string; periodSlug: string };
-    const hours =
-      (Date.now() - new Date(last.at).getTime()) / (1000 * 60 * 60);
-    if (hours <= 0) return;
-
-    if (hours <= 24) {
-      trackLocalEvent(
-        ROUNDUP_RETURN_AFTER,
-        lineMeta({
-          itemId: `return-${periodSlug}`,
-          text: last.periodSlug,
-          signal: "returned",
-          periodSlug,
-          window: "24h",
-        }),
-      );
-    } else if (hours <= 24 * 7) {
-      trackLocalEvent(
-        ROUNDUP_RETURN_AFTER,
-        lineMeta({
-          itemId: `return-${periodSlug}`,
-          text: last.periodSlug,
-          signal: "returned",
-          periodSlug,
-          window: "7d",
-        }),
-      );
-    }
-  } catch {
-    // ignore malformed state
-  }
-}
-
 export function trackRoundupOpened(periodSlug: string): void {
-  noteReturnAfterRoundup(periodSlug);
+  maybeDetectReturnTriggers();
+  registerRoundupReturnTrigger(periodSlug);
   trackLocalEvent(ROUNDUP_OPENED, { periodSlug });
   writeSession({ periodSlug, openedAt: new Date().toISOString(), hadAction: false });
   localStorage.setItem(

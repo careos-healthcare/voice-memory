@@ -38,6 +38,7 @@ import {
 } from "@/lib/refinement/revisit-rhythm";
 import { maybeTrackFirstSessionReturnAfterRevisit } from "@/lib/marketing/first-session-comprehension";
 import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
+import { maybeDetectReturnTriggers } from "@/lib/retention/return-triggers";
 import {
   HONESTY_LINE,
   DEVICE_PRIVACY_LINE,
@@ -69,6 +70,7 @@ export default function HomePage() {
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       maybeTrackFirstSessionReturnAfterRevisit();
+      maybeDetectReturnTriggers();
       checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
       const presentation = buildQuietHomepagePresentation(entries, limits);

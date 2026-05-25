@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { FirstWeekRetentionDebugPanel } from "@/components/debug/FirstWeekRetentionDebugPanel";
+import { ReturnTriggersDebugPanel } from "@/components/debug/ReturnTriggersDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildFirstWeekRetentionDebugReport } from "@/lib/debug/first-week-retention";
-import type { FirstWeekRetentionDebugReport } from "@/types/first-week-retention";
+import { buildReturnTriggersDebugReport } from "@/lib/debug/return-triggers-review";
+import type { ReturnTriggerDebugReport } from "@/types/return-triggers";
 
-export default function FirstWeekRetentionDebugPage() {
-  const [report, setReport] = useState<FirstWeekRetentionDebugReport | null>(null);
+export default function ReturnTriggersDebugPage() {
+  const [report, setReport] = useState<ReturnTriggerDebugReport | null>(null);
 
   const refresh = () => {
-    setReport(buildFirstWeekRetentionDebugReport());
+    setReport(buildReturnTriggersDebugReport());
   };
 
   useEffect(() => {
@@ -31,11 +31,12 @@ export default function FirstWeekRetentionDebugPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Retention</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              First-week emotional return
+              Return triggers
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              Calm return loops only — milestones, attachment emergence, prompt restraint, and
-              meaningful revisit candidates. No streaks or habit pressure.
+              Internal attribution only — what preceded a return, how long the gap was, and
+              whether the return led to reflection, revisit, or archive care. No user-facing
+              dashboards.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -50,19 +51,19 @@ export default function FirstWeekRetentionDebugPage() {
           </Card>
         ) : (
           <div className="mt-6">
-            <FirstWeekRetentionDebugPanel report={report} />
+            <ReturnTriggersDebugPanel report={report} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/debug/retention" className="text-violet-300 hover:text-violet-200">
-            Retention dashboard →
+          <Link href="/debug/first-week-retention" className="text-violet-300 hover:text-violet-200">
+            First-week retention →
           </Link>
-          <Link href="/debug/return-triggers" className="text-zinc-500 hover:text-zinc-300">
-            Return triggers →
+          <Link href="/debug/retention-loops" className="text-zinc-500 hover:text-zinc-300">
+            Retention loops →
           </Link>
-          <Link href="/debug/callbacks" className="text-zinc-500 hover:text-zinc-300">
-            Callbacks →
+          <Link href="/debug/silence-intelligence" className="text-zinc-500 hover:text-zinc-300">
+            Silence intelligence →
           </Link>
         </div>
       </div>

@@ -84,6 +84,7 @@ import {
   buildRevisitQuietShareCard,
 } from "@/lib/sharing/quiet-sharing";
 import { PHOTO_EVENTS, trackPhotoEvent } from "@/lib/local-analytics";
+import { registerPhotoReturnTrigger } from "@/lib/retention/return-triggers";
 import { trackAtmosphereRevisited } from "@/lib/atmosphere/atmosphere-observation";
 import { buildEntrySharedMemoryMoment } from "@/lib/memory/shared-moments";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
@@ -202,6 +203,7 @@ export default function EntryPage() {
   useEffect(() => {
     if (!entry?.id || !entry.photo?.photoId || !revisitExperience?.isRevisit) return;
     trackPhotoEvent(PHOTO_EVENTS.entryRevisited, { entryId: entry.id });
+    registerPhotoReturnTrigger(entry.id);
   }, [entry?.id, entry?.photo?.photoId, revisitExperience?.isRevisit]);
 
   useEffect(() => {

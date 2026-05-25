@@ -39,6 +39,9 @@ export function trackEarlyArchiveAttachment(level: string): void {
 
 export function trackReturnPromptOpened(promptId: string): void {
   trackFirstWeekEvent(FIRST_WEEK_RETENTION_EVENTS.returnPromptOpened, { promptId });
+  void import("@/lib/retention/return-triggers").then((mod) => {
+    mod.registerPromptReturnTrigger(promptId);
+  });
 }
 
 export function markReturnPromptPending(promptId: string): void {
