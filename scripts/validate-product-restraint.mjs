@@ -50,6 +50,7 @@ const SKIP_PATH_PARTS = [
   "lib/patterns/continuity-engine.ts",
   "lib/retention-metrics.ts",
   "lib/retention/retention-loops.ts",
+  "lib/retention/gentle-return-prompts.ts",
   "lib/launch-checklist.ts",
   "lib/conversation/followup-prompts.ts",
   "lib/trust-copy.ts",

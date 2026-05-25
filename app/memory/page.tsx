@@ -14,6 +14,8 @@ import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
 import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
 import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
 import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
+import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
+import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { SlowRealizationNote } from "@/components/memory/SlowRealizationNote";
 import { ArchiveLandmarkNote } from "@/components/memory/ArchiveLandmarkNote";
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
@@ -181,6 +183,9 @@ export default function MemoryPage() {
             </>
           ) : (
             <>
+              <GentleReturnPrompt />
+              <ArchiveValueMoments />
+
               {notes?.hasData ? (
                 <MemoryNotesOverview
                   changed={notes.changed}

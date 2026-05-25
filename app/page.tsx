@@ -7,6 +7,8 @@ import { CrossDeviceCarryoverLine } from "@/components/sync/CrossDeviceCarryover
 import { ArchiveOwnershipSparseLine } from "@/components/archive/ArchiveOwnershipSparseLine";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
+import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
+import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { OnboardingCompletionProof } from "@/components/social-proof/OnboardingCompletionProof";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
@@ -136,6 +138,8 @@ export default function HomePage() {
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
           <QuietSilenceLine />
+          <GentleReturnPrompt />
+          <ArchiveValueMoments />
           <ArchiveGravityNote note={archiveGravity} />
           <LivingResurfacingNote note={livingResurfacing} />
           <RevisitRhythmNote note={revisitRhythm} />

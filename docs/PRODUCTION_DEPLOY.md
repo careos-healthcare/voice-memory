@@ -34,8 +34,12 @@ Project → Settings → Environment Variables → Production:
 | `OPENAI_API_KEY` | `sk-…` | Required for recording |
 | `VOICEMEMORY_ENABLE_ATMOSPHERE_API` | `false` | Set `true` only to enable DALL-E atmosphere |
 | `DEBUG_ACCESS_TOKEN` | Optional random string | Enables `/debug/*` in production |
+| `RESEND_API_KEY` | Resend sending key | Required for production OTP email |
+| `EMAIL_FROM` | `VoiceMemory <noreply@your-verified-domain>` | After domain verify — see [RESEND_DOMAIN_AUTH.md](./RESEND_DOMAIN_AUTH.md) |
 
 Copy from [`.env.example`](../.env.example). Never commit real secrets.
+
+**Auth email:** Sandbox `onboarding@resend.dev` only delivers to the Resend account owner. For all testers, verify a domain in Resend and update `EMAIL_FROM` (runbook above).
 
 ## 3. Push to GitHub
 
@@ -120,9 +124,9 @@ Run these on the production URL. Details in [POST_DEPLOY_QA.md](./POST_DEPLOY_QA
 
 See [DEPLOY_READINESS_REPORT.md](./DEPLOY_READINESS_REPORT.md):
 
-- **Auth codes** — production sends via Resend; set `RESEND_API_KEY` and `EMAIL_FROM`
+- **Auth codes** — production sends via Resend; set `RESEND_API_KEY` and verified-domain `EMAIL_FROM` ([RESEND_DOMAIN_AUTH.md](./RESEND_DOMAIN_AUTH.md))
 - **Postgres auth** — set `DATABASE_URL` before serious tester auth; without it codes live in ephemeral server memory
-- **Server sync storage** — ephemeral on default Vercel; multi-device sync needs persistent backend storage
+- **Server sync storage** — ephemeral on default Vercel; multi-device sync needs persistent backend ([DURABLE_STORAGE_MIGRATION.md](./DURABLE_STORAGE_MIGRATION.md))
 - **Open API routes** — transcribe/analyze unauthenticated; monitor usage
 
 ## 8. Rollback

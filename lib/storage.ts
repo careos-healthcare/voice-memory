@@ -92,6 +92,12 @@ export function saveEntry(entry: JournalEntry): void {
   persistEntries(entries);
   recordReflectionDay(entry.createdAt);
   trackReflectionMilestones(entries.length);
+  void import("@/lib/retention/first-week-observation").then((mod) => {
+    mod.trackReflectionAfterPromptIfPending();
+  });
+  void import("@/lib/restraint/silence-intelligence").then((mod) => {
+    mod.recordReflectionDuringSilence();
+  });
   bumpTimingFromEntry(entry);
   trackMoatNewReflection(entry.id, entry.createdAt);
   void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());

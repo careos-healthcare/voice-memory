@@ -79,6 +79,7 @@ const SKIP_PATH_PARTS = [
   "lib/refinement/archive-gravity.ts",
   "lib/refinement/revisit-rhythm.ts",
   "lib/retention/retention-loops.ts",
+  "lib/retention/gentle-return-prompts.ts",
   "lib/retention/pause-moments.ts",
   "lib/retention/moat-metrics.ts",
   "lib/refinement/callback-wording.ts",

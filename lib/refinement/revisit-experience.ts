@@ -403,6 +403,9 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
     entryId,
     sources: sources.join(","),
   });
+  void import("@/lib/retention/first-week-observation").then((mod) => {
+    mod.trackFirstRevisitCompleted(entryId);
+  });
   trackRetentionEntryRevisited(entryId, sources);
   trackOldEntryMoatRevisit(entryId, sources);
   maybeTrackRevisitAfterShare(entryId);
@@ -429,6 +432,10 @@ export function trackRevisitOpened(entryId: string, sources: RevisitSource[]): v
 
 export function trackRevisitRewardSeen(entryId: string, noteId: string): void {
   trackLocalEvent("revisit_reward_seen", { entryId, noteId });
+  void import("@/lib/retention/first-week-observation").then((mod) => {
+    mod.trackRevisitEmotionalPayoff(entryId, noteId);
+    mod.trackFirstCallbackLanded(noteId);
+  });
 }
 
 export function trackRevisitThenNowSeen(entryId: string, noteId: string): void {
