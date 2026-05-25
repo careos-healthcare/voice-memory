@@ -10,6 +10,7 @@ import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
 import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
 import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { CalmComprehensionPrompt } from "@/components/onboarding/CalmComprehensionPrompt";
 import { OnboardingCompletionProof } from "@/components/social-proof/OnboardingCompletionProof";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
 import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
@@ -39,6 +40,7 @@ import { maybeTrackFirstSessionReturnAfterRevisit } from "@/lib/marketing/first-
 import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import {
   HONESTY_LINE,
+  DEVICE_PRIVACY_LINE,
   POSITIONING_EYEBROW,
   POSITIONING_LEAD,
   POSITIONING_SUPPORT,
@@ -131,6 +133,7 @@ export default function HomePage() {
 
         <div className="mt-6 space-y-10 py-2">
           <ActivationOnboarding />
+          <CalmComprehensionPrompt />
           <OnboardingCompletionProof />
           <CrossDeviceCarryoverLine />
           <ArchiveOwnershipSparseLine />
@@ -217,7 +220,7 @@ export default function HomePage() {
             transition={{ duration: MOTION.duration.fade, delay: 0.45, ease: MOTION.ease }}
             className="mt-12 max-w-md text-sm leading-[1.75] text-zinc-500"
           >
-            Speak for up to 60 seconds. Your words stay on this device.
+            {DEVICE_PRIVACY_LINE}
           </motion.p>
 
           <motion.p

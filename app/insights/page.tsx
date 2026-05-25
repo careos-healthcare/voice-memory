@@ -42,14 +42,14 @@ export default function InsightsPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Insights
+            Private memory intelligence
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Memory timeline
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Local analysis of your reflections — moods, themes, and patterns over
-            time. Nothing leaves this device.
+            Local analysis of your voice reflections — moods, themes, people, and
+            recurring concerns. Nothing leaves this device.
           </p>
         </motion.div>
 
@@ -75,9 +75,10 @@ export default function InsightsPage() {
           ) : !insights.hasData ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="py-16 text-center">
-                <p className="text-zinc-400">Not enough yet for a timeline.</p>
+                <p className="text-zinc-400">Not enough yet for a memory timeline.</p>
                 <p className="mt-2 text-sm text-zinc-600">
-                  Record a few reflections and your patterns will appear here.
+                  Talk naturally a few times. VoiceMemory will notice recurring
+                  patterns as your reflections accumulate.
                 </p>
                 <Button asChild className="mt-6" variant="secondary">
                   <Link href="/">Record today&apos;s reflection</Link>

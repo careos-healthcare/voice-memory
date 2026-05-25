@@ -1,13 +1,15 @@
 /** Shared product positioning — user-facing strings only. */
 
-export const POSITIONING_EYEBROW = "Voice reflections";
+import { ONBOARDING_HOME } from "@/lib/onboarding/onboarding-copy";
 
-export const POSITIONING_TAGLINE = "Your voice, on your device. Return when you want.";
+export const POSITIONING_EYEBROW = ONBOARDING_HOME.eyebrow;
 
-export const POSITIONING_LEAD =
-  "Record a short reflection. Older words come back when something shifts.";
+export const POSITIONING_TAGLINE = ONBOARDING_HOME.tagline;
 
-export const POSITIONING_SUPPORT = "Not summaries. Not scores. Just your voice over time.";
+export const POSITIONING_LEAD = ONBOARDING_HOME.lead;
 
-export const HONESTY_LINE =
-  "Stored on this device. A mirror for your words, not a diagnosis.";
+export const POSITIONING_SUPPORT = ONBOARDING_HOME.support;
+
+export const HONESTY_LINE = ONBOARDING_HOME.honesty;
+
+export const DEVICE_PRIVACY_LINE = ONBOARDING_HOME.deviceLine;

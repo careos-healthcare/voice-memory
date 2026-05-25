@@ -126,14 +126,14 @@ export default function SearchPage() {
           className="mt-2"
         >
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-            Search
+            Private memory intelligence
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Search
+            Search your memory
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Search your private memory in plain language — moods, themes, concerns,
-            and entities, all on this device.
+            Search your private memory in plain language — thoughts, moods, themes,
+            concerns, and people. All on this device.
           </p>
         </motion.div>
 
@@ -141,8 +141,8 @@ export default function SearchPage() {
           <UpgradeCta
             source="search"
             feature="semantic_search"
-            headline="Search your entire life in plain language"
-            description="Semantic life search on Free covers your last 7 entries. Pro searches mood, themes, concerns, and entities across full memory history."
+            headline="Search your full memory in plain language"
+            description="Semantic memory search on Free covers your last 7 entries. Pro searches moods, themes, concerns, and people across full history."
             compact
           />
         </div>
@@ -317,7 +317,8 @@ export default function SearchPage() {
           {!hasInput ? (
             <Card className="border-dashed">
               <CardContent className="px-6 py-10 text-center text-sm text-zinc-500">
-                Ask a question or apply filters to search your life on this device.
+                Ask a question or apply filters to search across your voice
+                reflections on this device.
               </CardContent>
             </Card>
           ) : results.length === 0 ? (

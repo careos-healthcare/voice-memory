@@ -1,23 +1,23 @@
 /** App Store / Play Store acquisition copy — human, private, non-coaching. */
 
 export const SHORT_APP_DESCRIPTION =
-  "Private voice journal to speak, revisit, and hear yourself again.";
+  "Private memory intelligence from your voice reflections.";
 
-export const FULL_APP_DESCRIPTION = `VoiceMemory is a private voice journal for thoughts you actually want to keep.
+export const FULL_APP_DESCRIPTION = `VoiceMemory is private memory intelligence for thoughts you actually want to keep.
 
-Speak for a minute or two. Your audio and transcript stay on your device. Over time, an older reflection may return when it still connects to what you are living now — so you can hear yourself again, not start from zero.
+Talk naturally for a minute or two. Your audio and transcript stay on your device. Over time, VoiceMemory notices recurring patterns in your moods, people, goals, and concerns — a reflective mirror, not therapy.
 
 What you can do:
 • Record voice reflections in a quiet, private space
 • Revisit past entries and replay your own voice
-• Notice what keeps returning — without scores or streaks
+• Notice what keeps returning — without scores or pressure
 • Export your archive anytime
 • Choose encrypted backup if you want a second copy
 
 What VoiceMemory is not:
-Not therapy. Not coaching. Not a productivity system. No diagnosis, no performance dashboard, no pressure to journal every day.
+Not therapy. Not coaching. Not a productivity system. No diagnosis, no performance dashboard, no pressure to record every day.
 
-Your words stay yours. Return when something matters.`;
+Local-first. Reflective mirror only. Your words stay yours.`;
 
 /** Apple App Store — 100 characters max, comma-separated, no spaces after commas. */
 export const APP_STORE_KEYWORDS =
@@ -67,7 +67,7 @@ export const SCREENSHOT_SETS: readonly ScreenshotSet[] = [
     id: "privacy",
     label: "Privacy",
     headlines: [
-      "Private voice journal",
+      "Private memory intelligence",
       "Stays on your device",
       "Optional encrypted backup",
       "Export your words anytime",
@@ -133,7 +133,7 @@ export const REVIEW_RESPONSE_TEMPLATES = {
   revisitConfusion:
     "Older reflections sometimes appear again when they still connect to what you said recently — you can open them, ignore them, or record a follow-up. Both are fine.",
   notTherapy:
-    "VoiceMemory is a private voice journal, not therapy or medical advice. If you are in crisis, please contact local emergency services or a trusted helpline.",
+    "VoiceMemory is private memory intelligence, not therapy or medical advice. If you are in crisis, please contact local emergency services or a trusted helpline.",
   featureRequest:
     "Thank you — we are keeping the app quiet on purpose, but we read every note. hello@voicememory.app if you want to share more context.",
   bugReport:

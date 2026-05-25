@@ -3,7 +3,7 @@
 export const CONTACT_EMAIL = "hello@voicememory.app";
 
 export const PRIVATE_BY_DEFAULT_LINE =
-  "Private by default. Your reflections stay on this device unless you choose encrypted backup.";
+  "Local-first and private by default. Your reflections stay on this device unless you choose encrypted backup.";
 
 export const NOT_THERAPY_LINE =
   "VoiceMemory is a reflective mirror for your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
@@ -107,7 +107,7 @@ export const PRIVACY_SECTIONS = [
 export const TERMS_SECTIONS = [
   {
     title: "Service description",
-    body: "VoiceMemory helps you capture short voice reflections and notice recurring patterns over time. The product is provided as-is for personal journaling and self-reflection.",
+    body: "VoiceMemory is private memory intelligence for voice reflections — a reflective mirror, not therapy or a diagnosis. The product is provided as-is for personal self-reflection.",
   },
   {
     title: "Not medical or therapeutic advice",

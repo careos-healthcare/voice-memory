@@ -84,7 +84,7 @@ export default function PricingPage() {
             Private memory intelligence
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Plans for your memory layer
+            Plans for private memory intelligence
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
             {POSITIONING_TAGLINE} Free stays local-first on your device. Pro
@@ -212,7 +212,7 @@ export default function PricingPage() {
 
         <p className="mt-8 text-center text-sm text-zinc-500">
           <Link href="/" className="text-violet-300 hover:underline">
-            Back to reflect
+            Back to record
           </Link>
         </p>
       </div>

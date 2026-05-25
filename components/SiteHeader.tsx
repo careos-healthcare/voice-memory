@@ -7,7 +7,7 @@ interface SiteHeaderProps {
 }
 
 const PRIMARY_NAV = [
-  { href: "/journal", label: "Journal" },
+  { href: "/journal", label: "Memory" },
   { href: "/insights", label: "Insights" },
   { href: "/search", label: "Search" },
   { href: "/pricing", label: "Pricing" },
@@ -30,7 +30,7 @@ export function SiteHeader({ className }: SiteHeaderProps) {
             VoiceMemory
           </span>
           <span className="hidden text-[10px] text-zinc-600 sm:block">
-            Private by default
+            Private memory intelligence
           </span>
         </span>
       </Link>

@@ -39,11 +39,11 @@ export default function JournalPage() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                Your memory timeline
+                Private memory intelligence
               </p>
-              <h1 className="mt-2 text-3xl font-semibold text-white">Reflections</h1>
+              <h1 className="mt-2 text-3xl font-semibold text-white">Your reflections</h1>
               <p className="mt-2 text-sm text-zinc-400">
-                Voice reflections — local-first on this device only.
+                Voice reflections on this device — local-first, reflective mirror only.
               </p>
             </div>
             <Button asChild variant="secondary" size="sm">
@@ -76,8 +76,8 @@ export default function JournalPage() {
                       No reflections yet
                     </p>
                     <p className="mt-2 max-w-sm text-sm text-zinc-400">
-                      Talk naturally for a minute. Your private memory intelligence
-                      layer starts with one voice reflection.
+                      Talk naturally for a minute. VoiceMemory notices recurring
+                      patterns over time — starting with one voice reflection.
                     </p>
                   </div>
                   <Button asChild>

@@ -18,28 +18,28 @@ export interface EmptyStateMessage {
 const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
   none: {
     tier: "none",
-    headline: "Start with one voice note",
-    body: "Talk for up to a minute. Your words stay on this device.",
+    headline: "Start with one voice reflection",
+    body: "Talk naturally for a minute. Your words stay on this device.",
   },
   one: {
     tier: "one",
     headline: "One reflection in",
-    body: "Add a few more across different days and older words will start to link up.",
+    body: "Add a few more across different days and VoiceMemory will start noticing patterns.",
   },
   few: {
     tier: "few",
-    headline: "Building slowly",
-    body: "A handful of reflections is enough for themes and names to come back.",
+    headline: "Patterns forming",
+    body: "A handful of reflections is enough for themes, moods, and names to recur.",
   },
   building: {
     tier: "building",
-    headline: "Your picture is forming",
-    body: "You have enough history for weekly comparisons and quiet callbacks from older entries.",
+    headline: "Your memory layer is growing",
+    body: "Enough history for weekly comparisons and quiet callbacks from older reflections.",
   },
   rich: {
     tier: "rich",
     headline: "Depth is here",
-    body: "Your history is long enough for meaningful shifts and older words worth reopening.",
+    body: "Your history is long enough for meaningful shifts and recurring concerns worth revisiting.",
   },
 };
 
