@@ -2,7 +2,7 @@ import type { MemoryNote } from "@/types/memory-note";
 
 /** Low-contrast resurfacing note IDs — weak emotional contrast. */
 export const LOW_CONTRAST_RESURFACE_ID =
-  /^resurface-topic-|^resurface-entity-|^resurface-phrase-|^fam-resurface-similar/;
+  /^resurface-topic-|^resurface-entity-|^fam-resurface-similar/;
 
 /** Routine or informational note IDs — deprioritize for surfacing. */
 export const ROUTINE_RESURFACE_ID =
@@ -49,8 +49,16 @@ export const GENERIC_CALLBACK_TEXT_PATTERNS: RegExp[] = [
   /\bappeared again\b/i,
   /\bmoney returned\b/i,
   /\bwork appeared\b/i,
-  /\bthis changed\b/i,
-  /\bwhat changed\b/i,
+  /\byou came back to the same loop\b/i,
+  /\byou came back to the same place\b/i,
+  /\byou should\b/i,
+  /\btry to\b/i,
+  /\bcheck in with yourself\b/i,
+  /\bhold space\b/i,
+  /\bstreak\b/i,
+  /\bproductivity\b/i,
+  /\bclearly improved\b/i,
+  /\bdefinitely changed\b/i,
 ];
 
 export function noteIdMatchesSuppressedPattern(

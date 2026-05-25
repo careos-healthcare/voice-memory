@@ -8,6 +8,7 @@ import {
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { buildEmotionalTerritoriesReport } from "@/lib/territories/emotional-territories";
 import { getMemoryEligibleEntries } from "@/lib/storage";
+import { RESURFACING_COPY } from "@/lib/revisit/resurfacing-copy";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -76,7 +77,7 @@ export function pickFirstMeaningfulRevisitCandidate(
         entryId: sorted[i].id,
         anchorEntryId: sorted[i + 1].id,
         payoffScore: 62,
-        firstLine: "You had not named this yet.",
+        firstLine: RESURFACING_COPY.namedMoreDirectly,
         signals: ["uncertainty_softened"],
         reasons: ["hedge_to_clarity"],
       };
@@ -90,10 +91,15 @@ export function pickFirstMeaningfulRevisitCandidate(
       entry.transcript.toLowerCase().includes(topPhrase.phrase.toLowerCase().slice(0, 20)),
     );
     if (match) {
+      const latest = sorted[sorted.length - 1];
+      const gap = daysBetweenKeys(toDayKey(match.createdAt), toDayKey(latest.createdAt));
       return {
         entryId: match.id,
         payoffScore: 58,
-        firstLine: "You were still circling this here.",
+        firstLine:
+          gap >= 7
+            ? RESURFACING_COPY.similarDaysAgo(gap)
+            : RESURFACING_COPY.stillCircling,
         signals: ["repeated_phrase"],
         reasons: ["phrase_recurrence"],
       };
@@ -106,7 +112,7 @@ export function pickFirstMeaningfulRevisitCandidate(
     return {
       entryId: photo.id,
       payoffScore: 56,
-      firstLine: "This still carries the weight of that moment.",
+      firstLine: RESURFACING_COPY.usedToSoundHeavier,
       signals: ["photo_linked"],
       reasons: ["photo_attachment"],
     };
@@ -130,7 +136,7 @@ export function pickFirstMeaningfulRevisitCandidate(
     return {
       entryId: oldest.id,
       payoffScore: 50,
-      firstLine: "You sound like an earlier you here.",
+      firstLine: RESURFACING_COPY.similarDaysAgo(gap),
       signals: ["temporal_distance"],
       reasons: ["earliest_in_week"],
     };

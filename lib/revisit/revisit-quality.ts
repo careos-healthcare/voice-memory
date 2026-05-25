@@ -18,7 +18,15 @@ import {
   quoteSimilarity,
 } from "@/lib/refinement/then-vs-now-quotes";
 import { readLocalEvents } from "@/lib/local-analytics";
+import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { entryRevisitRewardCandidates } from "@/lib/refinement/knows-me-moments";
+import {
+  ADVICE_RESURFACING_RE,
+  isBlockedResurfacingCopy,
+  isGenericResurfacingCopy,
+  OVERCLAIM_RESURFACING_RE,
+  PRODUCTIVITY_RESURFACING_RE,
+} from "@/lib/revisit/resurfacing-copy";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -81,11 +89,12 @@ function scoreSpecificity(note: MemoryNote, tuningSpecificity: number): number {
   return Math.min(score, 100);
 }
 
-function scoreSurprise(payoffTotal: number, gapDays: number): number {
+function scoreSurprise(payoffTotal: number, gapDays: number, repeatedPhraseScore: number): number {
   let score = Math.min(Math.round(payoffTotal * 0.45), 45);
   if (gapDays >= 30) score += 18;
   else if (gapDays >= 14) score += 10;
-  else if (gapDays >= 7) score += 4;
+  else if (gapDays >= 7) score += 8;
+  score += Math.min(Math.round(repeatedPhraseScore * 0.2), 14);
   return Math.min(score, 100);
 }
 
@@ -171,14 +180,44 @@ function scoreRepeatReopenSameEntry(entryIds: string[]): number {
   return 0;
 }
 
+function scoreRepeatedPhrase(note: MemoryNote, entries: JournalEntry[]): number {
+  if (!note.pastEntryId || !note.entryId) return 0;
+  const past = entryById(entries, note.pastEntryId);
+  const current = entryById(entries, note.entryId);
+  if (!past || !current) return 0;
+
+  const phrases = buildPhraseMemory(entries);
+  for (const record of phrases) {
+    if (record.count < 2) continue;
+    if (!record.entryIds.includes(past.id) || !record.entryIds.includes(current.id)) continue;
+    const gap = daysBetweenKeys(toDayKey(past.createdAt), toDayKey(current.createdAt));
+    if (gap >= 7) return Math.min(88, 52 + Math.min(gap, 21) + record.count * 4);
+  }
+
+  if (note.id.includes("phrase")) return 48;
+  return 0;
+}
+
 function scoreGenericityRisk(text: string, note: MemoryNote): number {
   let risk = 0;
   if (GENERIC_COPY_RE.test(text)) risk += 28;
+  if (isGenericResurfacingCopy(text)) risk += 40;
+  if (isBlockedResurfacingCopy(text)) risk += 36;
+  if (ADVICE_RESURFACING_RE.test(text)) risk += 44;
+  if (OVERCLAIM_RESURFACING_RE.test(text)) risk += 38;
+  if (PRODUCTIVITY_RESURFACING_RE.test(text)) risk += 50;
   if (SUMMARY_RE.test(text)) risk += 22;
   if (UNIVERSAL_TEMPLATE_RE.test(text.trim())) risk += 34;
   if (isTopicRecurrenceCopy(text)) risk += 36;
   if (!note.pastQuote?.trim() && !note.currentQuote?.trim() && text.split(/\s+/).length <= 6) {
-    risk += 18;
+    risk += 22;
+  }
+  if (
+    note.id.startsWith("resurface-topic-") &&
+    !note.pastQuote?.trim() &&
+    !note.currentQuote?.trim()
+  ) {
+    risk += 28;
   }
   return Math.min(risk, 100);
 }
@@ -296,10 +335,11 @@ export function assessRevisitQuality(
   const gapDays = gapDaysForNote(note, entries);
   const tuning = scoreCallbackTuning(note, entries);
   const payoff = scoreReopenPayoff(note, entries);
+  const repeatedPhraseScore = scoreRepeatedPhrase(note, entries);
 
   const dimensions: RevisitQualityDimensions = {
-    specificity: scoreSpecificity(note, tuning.specificity),
-    surprise: scoreSurprise(payoff.total, gapDays),
+    specificity: scoreSpecificity(note, tuning.specificity) + Math.min(repeatedPhraseScore * 0.15, 12),
+    surprise: scoreSurprise(payoff.total, gapDays, repeatedPhraseScore),
     beforeAfterContrast: scoreBeforeAfterContrast(note, tuning.emotionalContrast, payoff.total),
     wordingPreservation: scoreWordingPreservation(note, past, current),
     emotionalDistance: scoreEmotionalDistance(past, current, gapDays),
@@ -331,12 +371,13 @@ export function assessRevisitQuality(
   const hardSuppressed =
     REVISIT_REWARD_SUPPRESS_ID.test(note.id) ||
     REVISIT_REWARD_SUPPRESS_TEXT.test(text) ||
-    isTopicRecurrenceCopy(text);
+    isTopicRecurrenceCopy(text) ||
+    isBlockedResurfacingCopy(text);
 
   const suppressed =
     hardSuppressed ||
     classification === "weak_revisit" ||
-    dimensions.genericityRisk >= 60 ||
+    dimensions.genericityRisk >= 55 ||
     (dimensions.overclaimRisk >= 55 && dimensions.specificity < 35);
 
   return {

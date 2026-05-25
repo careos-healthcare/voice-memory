@@ -84,10 +84,10 @@ const CATEGORY_PRIORITY: Record<ResurfacingFatigueCategory, number> = {
   loop_return: 70,
   familiarity_reconnect: 68,
   tone_shift: 62,
-  person_return: 52,
-  revisitation: 48,
-  topic_return: 42,
-  phrase_return: 36,
+  person_return: 58,
+  revisitation: 54,
+  phrase_return: 90,
+  topic_return: 38,
 };
 
 function isBrowser(): boolean {

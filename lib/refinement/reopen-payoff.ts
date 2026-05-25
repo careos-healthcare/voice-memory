@@ -1,7 +1,7 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { readMoatRevisits } from "@/lib/retention/moat-metrics";
-import { REVISIT_REWARD_COPY } from "@/lib/refinement/knows-me-moments";
+import { pickReopenResurfacingLine } from "@/lib/revisit/resurfacing-copy";
 import {
   directScore,
   hedgeScore,
@@ -384,7 +384,7 @@ export function pickStrongestReopenMoment(
   return { moment: best.note, score: best.score };
 }
 
-export type ReopenQuietCopy = (typeof REVISIT_REWARD_COPY)[keyof typeof REVISIT_REWARD_COPY];
+export type ReopenQuietCopy = string;
 
 /** First visible line on revisit — maps payoff signals to quiet copy, no analysis language. */
 export function pickReopenFirstLine(
@@ -394,26 +394,24 @@ export function pickReopenFirstLine(
 ): ReopenQuietCopy {
   const resolvedScore = score ?? (note ? scoreReopenPayoff(note, entries) : null);
   const signalIds = new Set(resolvedScore?.signals.map((row) => row.id) ?? []);
+  const gapDays = resolvedScore?.gapDays ?? (note ? gapDaysForNote(entries, note) : 0);
 
-  if (signalIds.has("apology_disappearance") || signalIds.has("direct_naming")) {
-    return REVISIT_REWARD_COPY.notNamedYet;
-  }
-  if (signalIds.has("calmer_tone") || signalIds.has("long_distance_contrast")) {
-    return REVISIT_REWARD_COPY.soundFurtherAway;
-  }
-  if (signalIds.has("earlier_self_feeling") || signalIds.has("phrase_disappearance")) {
-    return REVISIT_REWARD_COPY.beforeThingsChanged;
-  }
-  if (signalIds.has("emotional_wording_shift") || signalIds.has("changed_certainty")) {
-    return REVISIT_REWARD_COPY.soundDifferentNow;
-  }
+  const past = entryById(entries, note?.pastEntryId);
+  const current = entryById(entries, note?.entryId);
 
-  if (note?.pastQuote && note.currentQuote) {
-    const hedgeDrop = hedgeScore(note.pastQuote) - hedgeScore(note.currentQuote);
-    if (hedgeDrop >= 1) return REVISIT_REWARD_COPY.notNamedYet;
-  }
-
-  return REVISIT_REWARD_COPY.soundDifferentNow;
+  return pickReopenResurfacingLine(gapDays, {
+    apologyDisappeared: signalIds.has("apology_disappearance"),
+    directNaming: signalIds.has("direct_naming"),
+    calmerTone: signalIds.has("calmer_tone"),
+    wordingShift: signalIds.has("emotional_wording_shift") || signalIds.has("changed_certainty"),
+    phraseReturn: signalIds.has("phrase_disappearance") || note?.id.includes("phrase"),
+    moodShift: Boolean(past && current && past.reflection.mood !== current.reflection.mood),
+    heavierBefore: Boolean(
+      past &&
+        current &&
+        past.reflection.emotionalIntensity >= current.reflection.emotionalIntensity + 1,
+    ),
+  });
 }
 
 export interface ReopenAudioCandidate {

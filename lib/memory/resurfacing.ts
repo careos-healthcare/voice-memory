@@ -11,6 +11,11 @@ import {
 } from "@/lib/memory/resurfacing-priority";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
+import {
+  isBlockedResurfacingCopy,
+  isMoodOrThemeOnlyResurface,
+  pickResurfacingHeadline,
+} from "@/lib/revisit/resurfacing-copy";
 import { formatRelativeDate } from "@/lib/utils";
 import type { ResurfacingKind, ResurfacingNote, ResurfacingReport } from "@/types/resurfacing";
 import type { JournalEntry } from "@/types/journal";
@@ -20,6 +25,8 @@ import { filterDelayedPayoffGate } from "@/lib/memory/delayed-payoff";
 
 const ABSENCE_DAYS = RESURFACING_MIN_ABSENCE_DAYS;
 const LONG_SILENCE_DAYS = RESURFACING_LONG_SILENCE_DAYS;
+/** Concern / phrase return — meaningful after a week apart. */
+const CONCERN_RETURN_DAYS = 7;
 const LOOP_RE =
   /\b(same loop|loop came back|came back briefly|keep coming back|again before|that loop)\b/i;
 const HEDGE_RE =
@@ -88,13 +95,25 @@ function hasEvidence(
   return hasQuotes || hasDates;
 }
 
+function mediaBoost(past: JournalEntry, current: JournalEntry): number {
+  let boost = 0;
+  if (past.photo?.photoId || current.photo?.photoId) boost += 6;
+  if (past.audioId || current.audioId) boost += 8;
+  if (past.audioId && current.audioId) boost += 6;
+  return boost;
+}
+
 function pushCandidate(
   bucket: ResurfacingNote[],
   item: Omit<ResurfacingNote, "strength"> & { strength?: number },
+  past?: JournalEntry,
+  current?: JournalEntry,
 ): void {
-  const strength = item.strength ?? 55;
+  const strength = (item.strength ?? 55) + (past && current ? mediaBoost(past, current) : 0);
   if (strength < RESURFACING_MIN_WEIGHT) return;
   if (!hasEvidence(item)) return;
+  if (isBlockedResurfacingCopy(item.text)) return;
+  if (past && current && isMoodOrThemeOnlyResurface(item.kind, past, current)) return;
   if (!helpsOrient(item.text, strength)) return;
   bucket.push({ ...item, strength });
 }
@@ -119,14 +138,25 @@ function detectTopicSilence(
 
     const evidence = evidencePair(lastPrior, current);
     if (!hasEvidence(evidence)) continue;
+    if (isMoodOrThemeOnlyResurface("topic_silence", lastPrior, current)) continue;
 
-    pushCandidate(notes, {
-      id: `resurface-topic-${themeKey}-${current.id}`,
-      kind: "topic_silence",
-      text: "You came back to the same place.",
-      strength: 64 + Math.min(gap, 14) + (priorMatches.length >= 2 ? 4 : 0),
-      ...evidence,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `resurface-topic-${themeKey}-${current.id}`,
+        kind: "topic_silence",
+        text: pickResurfacingHeadline({
+          kind: "topic_silence",
+          gapDays: gap,
+          past: lastPrior,
+          current,
+        }),
+        strength: 64 + Math.min(gap, 14) + (priorMatches.length >= 2 ? 4 : 0),
+        ...evidence,
+      },
+      lastPrior,
+      current,
+    );
   }
 
   return notes;
@@ -156,23 +186,43 @@ function detectToneShift(
     if (!hasEvidence(evidence)) continue;
 
     if (delta >= 1.5) {
-      pushCandidate(notes, {
-        id: `resurface-calmer-${themeKey}-${current.id}`,
-        kind: "calmer_return",
-        text: "You came back with less tension.",
-        strength: 64 + Math.round(delta * 4) + Math.min(gap, 8),
-        ...evidence,
-      });
+      pushCandidate(
+        notes,
+        {
+          id: `resurface-calmer-${themeKey}-${current.id}`,
+          kind: "calmer_return",
+          text: pickResurfacingHeadline({
+            kind: "calmer_return",
+            gapDays: gap,
+            past: lastPrior,
+            current,
+          }),
+          strength: 64 + Math.round(delta * 4) + Math.min(gap, 8),
+          ...evidence,
+        },
+        lastPrior,
+        current,
+      );
     }
 
     if (current.reflection.emotionalIntensity - priorAvg >= 1.5) {
-      pushCandidate(notes, {
-        id: `resurface-heavier-${themeKey}-${current.id}`,
-        kind: "heavier_return",
-        text: "It took up more room this time.",
-        strength: 62 + Math.round((current.reflection.emotionalIntensity - priorAvg) * 4),
-        ...evidence,
-      });
+      pushCandidate(
+        notes,
+        {
+          id: `resurface-heavier-${themeKey}-${current.id}`,
+          kind: "heavier_return",
+          text: pickResurfacingHeadline({
+            kind: "heavier_return",
+            gapDays: gap,
+            past: lastPrior,
+            current,
+          }),
+          strength: 62 + Math.round((current.reflection.emotionalIntensity - priorAvg) * 4),
+          ...evidence,
+        },
+        lastPrior,
+        current,
+      );
     }
 
     const priorHedge = countMatches(lastPrior.transcript, HEDGE_RE);
@@ -181,13 +231,23 @@ function detectToneShift(
     const nowDirect = countMatches(current.transcript, DIRECT_RE);
 
     if (priorHedge >= 1 && nowDirect > priorDirect && nowHedge <= priorHedge) {
-      pushCandidate(notes, {
-        id: `resurface-direct-${themeKey}-${current.id}`,
-        kind: "direct_return",
-        text: "You named this more directly.",
-        strength: 63 + Math.min(gap, 8),
-        ...evidence,
-      });
+      pushCandidate(
+        notes,
+        {
+          id: `resurface-direct-${themeKey}-${current.id}`,
+          kind: "direct_return",
+          text: pickResurfacingHeadline({
+            kind: "direct_return",
+            gapDays: gap,
+            past: lastPrior,
+            current,
+          }),
+          strength: 63 + Math.min(gap, 8),
+          ...evidence,
+        },
+        lastPrior,
+        current,
+      );
     }
   }
 
@@ -213,7 +273,7 @@ function detectPhraseReturns(
 
     const lastPrior = priorOccurrences[priorOccurrences.length - 1];
     const gap = daysBetweenKeys(lastPrior.dateKey, currentDay);
-    if (gap < LONG_SILENCE_DAYS) continue;
+    if (gap < CONCERN_RETURN_DAYS) continue;
 
     const priorEntry = allSorted.find((e) => e.id === lastPrior.entryId);
     if (!priorEntry) continue;
@@ -225,13 +285,24 @@ function detectPhraseReturns(
     );
     if (!hasEvidence(evidence)) continue;
 
-    pushCandidate(notes, {
-      id: `resurface-phrase-${record.phrase}-${current.id}`,
-      kind: "phrase_return",
-      text: "You came back to the same place.",
-      strength: 66 + Math.min(gap, 12) + Math.min(record.count, 4),
-      ...evidence,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `resurface-phrase-${record.phrase}-${current.id}`,
+        kind: "phrase_return",
+        text: pickResurfacingHeadline({
+          kind: "phrase_return",
+          gapDays: gap,
+          past: priorEntry,
+          current,
+          repeatedPhrase: true,
+        }),
+        strength: 70 + Math.min(gap, 12) + Math.min(record.count, 4) * 2,
+        ...evidence,
+      },
+      priorEntry,
+      current,
+    );
   }
 
   return notes;
@@ -267,16 +338,23 @@ function detectPersonSilence(
     );
     if (!hasEvidence(evidence)) continue;
 
-    pushCandidate(notes, {
-      id: `resurface-person-${person.id}-${current.id}`,
-      kind: "person_silence",
-      text:
-        gap >= LONG_SILENCE_DAYS
-          ? "You had not named this for a while."
-          : "You had not named this for a while.",
-      strength: 64 + Math.min(gap, 14) + Math.min(person.mentionCount, 4),
-      ...evidence,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `resurface-person-${person.id}-${current.id}`,
+        kind: "person_silence",
+        text: pickResurfacingHeadline({
+          kind: "person_silence",
+          gapDays: gap,
+          past: lastPrior,
+          current,
+        }),
+        strength: 66 + Math.min(gap, 14) + Math.min(person.mentionCount, 4),
+        ...evidence,
+      },
+      lastPrior,
+      current,
+    );
   }
 
   return notes;
@@ -312,13 +390,23 @@ function detectEntityReturns(
     );
     if (!hasEvidence(evidence)) continue;
 
-    pushCandidate(notes, {
-      id: `resurface-entity-${entity.id}-${current.id}`,
-      kind: "topic_silence",
-      text: "You came back to the same place.",
-      strength: 64 + Math.min(gap, 12),
-      ...evidence,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `resurface-entity-${entity.id}-${current.id}`,
+        kind: "topic_silence",
+        text: pickResurfacingHeadline({
+          kind: "topic_silence",
+          gapDays: gap,
+          past: lastPrior,
+          current,
+        }),
+        strength: 64 + Math.min(gap, 12),
+        ...evidence,
+      },
+      lastPrior,
+      current,
+    );
   }
 
   return notes;
@@ -351,13 +439,23 @@ function detectLoopReturns(
     const evidence = evidencePair(lastPrior, current);
     if (!hasEvidence(evidence)) continue;
 
-    pushCandidate(notes, {
-      id: `resurface-loop-${themeKey}-${current.id}`,
-      kind: "loop_return",
-      text: "You came back to the same loop.",
-      strength: 66 + Math.min(gap, 10),
-      ...evidence,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `resurface-loop-${themeKey}-${current.id}`,
+        kind: "loop_return",
+        text: pickResurfacingHeadline({
+          kind: "loop_return",
+          gapDays: gap,
+          past: lastPrior,
+          current,
+        }),
+        strength: 68 + Math.min(gap, 10),
+        ...evidence,
+      },
+      lastPrior,
+      current,
+    );
   }
 
   if (notes.length === 0) {
@@ -372,13 +470,23 @@ function detectLoopReturns(
     const evidence = evidencePair(lastLoop, current);
     if (!hasEvidence(evidence)) return notes;
 
-    pushCandidate(notes, {
-      id: `resurface-loop-generic-${current.id}`,
-      kind: "loop_return",
-      text: "You came back to the same loop.",
-      strength: 64 + Math.min(gap, 10),
-      ...evidence,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `resurface-loop-generic-${current.id}`,
+        kind: "loop_return",
+        text: pickResurfacingHeadline({
+          kind: "loop_return",
+          gapDays: gap,
+          past: lastLoop,
+          current,
+        }),
+        strength: 66 + Math.min(gap, 10),
+        ...evidence,
+      },
+      lastLoop,
+      current,
+    );
   }
 
   return notes;
@@ -400,13 +508,13 @@ function detectForEntry(
 }
 
 const KIND_PRIORITY: ResurfacingKind[] = [
-  "loop_return",
+  "phrase_return",
+  "direct_return",
   "calmer_return",
   "heavier_return",
-  "direct_return",
+  "loop_return",
   "person_silence",
   "topic_silence",
-  "phrase_return",
 ];
 
 function dedupeNotes(notes: ResurfacingNote[]): ResurfacingNote[] {

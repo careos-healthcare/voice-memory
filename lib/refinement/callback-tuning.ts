@@ -1,6 +1,9 @@
 import { callbackInteractionSignals } from "@/lib/callback-interaction-signals";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import {
+  isBlockedResurfacingCopy,
+} from "@/lib/revisit/resurfacing-copy";
 import { LOW_CONTRAST_RESURFACE_ID } from "@/lib/refinement/callback-suppression";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
@@ -37,7 +40,7 @@ const TEMPLATE_RE =
   /^(You |This was |This has been |An older |There is more |More of your |Your archive )/i;
 
 const PREFERRED_CONTRAST_RE =
-  /\b(this used to feel heavier|still circling this here|stopped apologising|sound more direct now|reads like an earlier version)\b/i;
+  /\b(this used to feel heavier|still circling this here|stopped apologising|sound more direct now|reads like an earlier version|said something similar|came back in different words|same concern showed up|used to sound heavier|named this before)\b/i;
 
 const LOW_CONTRAST_RESURFACE_RE = LOW_CONTRAST_RESURFACE_ID;
 
@@ -69,6 +72,7 @@ function scorePenalties(text: string, note: MemoryNote): number {
   if (wordCount(text) > 12) penalty += 6;
   if (text.includes(" — ") || text.includes(";")) penalty += 4;
   if (isTopicRecurrenceCopy(text)) penalty += 24;
+  if (isBlockedResurfacingCopy(text)) penalty += 28;
   if (LOW_CONTRAST_RESURFACE_RE.test(note.id)) penalty += 18;
   return penalty;
 }
@@ -150,14 +154,24 @@ export function scoreCallbackTuning(
       toDayKey(sortedLinked[0].createdAt),
       toDayKey(sortedLinked[sortedLinked.length - 1].createdAt),
     );
+    if (gap >= 7) {
+      emotionalTiming += Math.min(Math.round(gap / 5), 12);
+      memorability += 6;
+    }
     if (gap >= 14) emotionalTiming += Math.min(Math.round(gap / 7), 8);
   }
+
+  if (linked.some((entry) => entry.photo?.photoId)) quoteQuality += 8;
 
   if (note.id.startsWith("knows-me-wording") || note.id.startsWith("knows-me-apology")) {
     emotionalContrast += 8;
   }
   if (note.id.startsWith("knows-me-phrase-gone") || note.id.startsWith("knows-me-circling")) {
     emotionalContrast += 10;
+  }
+  if (note.id.includes("resurface-phrase") || note.id.includes("phrase_return")) {
+    emotionalContrast += 14;
+    specificity += 12;
   }
 
   const penalties = scorePenalties(text, note);
@@ -208,6 +222,7 @@ export function pickBestCallback(
       row.score.total >= minTotal &&
       row.score.penalties < 24 &&
       !isTopicRecurrenceCopy(row.note.text) &&
+      !isBlockedResurfacingCopy(row.note.text) &&
       !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
       !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)),
   );

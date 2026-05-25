@@ -11,6 +11,10 @@ import {
   type ResurfacingSurface,
 } from "@/lib/memory/resurfacing-priority";
 import { helpsOrient, USEFULNESS_MIN_CONFIDENCE } from "@/lib/patterns/usefulness-filter";
+import {
+  isBlockedResurfacingCopy,
+  pickResurfacingHeadline,
+} from "@/lib/revisit/resurfacing-copy";
 import type {
   RevisitationContext,
   RevisitationKind,
@@ -61,12 +65,22 @@ function hasTheme(entry: JournalEntry, themeKey: string): boolean {
   return entry.reflection.recurringThemes.some((t) => t.toLowerCase() === themeKey);
 }
 
+function mediaBoost(past: JournalEntry, current: JournalEntry): number {
+  let boost = 0;
+  if (past.photo?.photoId || current.photo?.photoId) boost += 5;
+  if (past.audioId || current.audioId) boost += 7;
+  return boost;
+}
+
 function pushCandidate(
   bucket: RevisitationNote[],
   item: Omit<RevisitationNote, "strength"> & { strength?: number },
+  past?: JournalEntry,
+  current?: JournalEntry,
 ): void {
-  const strength = item.strength ?? 55;
+  const strength = (item.strength ?? 55) + (past && current ? mediaBoost(past, current) : 0);
   if (strength < RESURFACING_MIN_WEIGHT) return;
+  if (isBlockedResurfacingCopy(item.text)) return;
   if (!helpsOrient(item.text, strength)) return;
   bucket.push({ ...item, strength });
 }
@@ -86,16 +100,26 @@ function detectRelatedOlder(
     const overlap = sharedThemes(anchor, old);
     if (overlap.length === 0) continue;
 
-    pushCandidate(notes, {
-      id: `revisit-related-${old.id}-${anchor.id}`,
-      kind: "related_older",
-      text: "You were carrying this differently then.",
-      strength: 60 + Math.min(gap, 14) + overlap.length * 3,
-      pastQuote: snippet(old),
-      currentQuote: snippet(anchor),
-      pastEntryId: old.id,
-      entryId: anchor.id,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `revisit-related-${old.id}-${anchor.id}`,
+        kind: "related_older",
+        text: pickResurfacingHeadline({
+          kind: "related_older",
+          gapDays: gap,
+          past: old,
+          current: anchor,
+        }),
+        strength: 62 + Math.min(gap, 14) + overlap.length * 3,
+        pastQuote: snippet(old),
+        currentQuote: snippet(anchor),
+        pastEntryId: old.id,
+        entryId: anchor.id,
+      },
+      old,
+      anchor,
+    );
     break;
   }
 
@@ -116,16 +140,21 @@ function detectFirstTopic(
     const first = hits[0];
     if (first.id === anchor.id) continue;
 
-    pushCandidate(notes, {
-      id: `revisit-first-${themeKey}-${anchor.id}`,
-      kind: "first_topic",
-      text: "You had not spoken about this before.",
-      strength: 64 + hits.length * 2,
-      pastQuote: snippet(first),
-      currentQuote: snippet(anchor),
-      pastEntryId: first.id,
-      entryId: anchor.id,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `revisit-first-${themeKey}-${anchor.id}`,
+        kind: "first_topic",
+        text: pickResurfacingHeadline({ kind: "first_topic", gapDays: 0, past: first, current: anchor }),
+        strength: 64 + hits.length * 2,
+        pastQuote: snippet(first),
+        currentQuote: snippet(anchor),
+        pastEntryId: first.id,
+        entryId: anchor.id,
+      },
+      first,
+      anchor,
+    );
     break;
   }
 
@@ -150,16 +179,26 @@ function detectBeforeQuieter(
       continue;
     }
 
-    pushCandidate(notes, {
-      id: `revisit-before-quiet-${intense.id}-${anchor.id}`,
-      kind: "before_quieter",
-      text: "This was before it got quieter.",
-      strength: 63 + Math.round(intense.reflection.emotionalIntensity - anchor.reflection.emotionalIntensity) * 3,
-      pastQuote: snippet(intense),
-      currentQuote: snippet(anchor),
-      pastEntryId: intense.id,
-      entryId: anchor.id,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `revisit-before-quiet-${intense.id}-${anchor.id}`,
+        kind: "before_quieter",
+        text: pickResurfacingHeadline({
+          kind: "before_quieter",
+          gapDays: daysBetweenKeys(toDayKey(intense.createdAt), toDayKey(anchor.createdAt)),
+          past: intense,
+          current: anchor,
+        }),
+        strength: 63 + Math.round(intense.reflection.emotionalIntensity - anchor.reflection.emotionalIntensity) * 3,
+        pastQuote: snippet(intense),
+        currentQuote: snippet(anchor),
+        pastEntryId: intense.id,
+        entryId: anchor.id,
+      },
+      intense,
+      anchor,
+    );
     break;
   }
 
@@ -181,16 +220,26 @@ function detectReadsDifferently(
     const moodDiff = anchor.reflection.mood !== latest.reflection.mood;
 
     if (overlap.length > 0 && (intensityDelta >= 1.5 || moodDiff)) {
-      pushCandidate(notes, {
-        id: `revisit-diff-now-${anchor.id}`,
-        kind: "reads_differently",
-        text: "You were carrying this differently then.",
-        strength: 62 + overlap.length * 3 + Math.round(intensityDelta * 2),
-        pastQuote: snippet(anchor),
-        currentQuote: snippet(latest),
-        pastEntryId: anchor.id,
-        entryId: latest.id,
-      });
+      pushCandidate(
+        notes,
+        {
+          id: `revisit-diff-now-${anchor.id}`,
+          kind: "reads_differently",
+          text: pickResurfacingHeadline({
+            kind: "reads_differently",
+            gapDays: daysBetweenKeys(toDayKey(anchor.createdAt), toDayKey(latest.createdAt)),
+            past: anchor,
+            current: latest,
+          }),
+          strength: 64 + overlap.length * 3 + Math.round(intensityDelta * 2),
+          pastQuote: snippet(anchor),
+          currentQuote: snippet(latest),
+          pastEntryId: anchor.id,
+          entryId: latest.id,
+        },
+        anchor,
+        latest,
+      );
       return notes;
     }
   }
@@ -207,16 +256,26 @@ function detectReadsDifferently(
     );
     if (overlap.length === 0 || intensityDelta < 1.5) continue;
 
-    pushCandidate(notes, {
-      id: `revisit-diff-${old.id}-${anchor.id}`,
-      kind: "reads_differently",
-      text: "You were carrying this differently then.",
-      strength: 60 + overlap.length * 3 + Math.round(intensityDelta * 2),
-      pastQuote: snippet(old),
-      currentQuote: snippet(anchor),
-      pastEntryId: old.id,
-      entryId: anchor.id,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `revisit-diff-${old.id}-${anchor.id}`,
+        kind: "reads_differently",
+        text: pickResurfacingHeadline({
+          kind: "reads_differently",
+          gapDays: gap,
+          past: old,
+          current: anchor,
+        }),
+        strength: 62 + overlap.length * 3 + Math.round(intensityDelta * 2),
+        pastQuote: snippet(old),
+        currentQuote: snippet(anchor),
+        pastEntryId: old.id,
+        entryId: anchor.id,
+      },
+      old,
+      anchor,
+    );
     break;
   }
 
@@ -237,16 +296,26 @@ function detectLoopReturn(
   const gap = daysBetweenKeys(toDayKey(lastLoop.createdAt), anchorDay);
   if (gap < LOOP_GAP_DAYS) return notes;
 
-  pushCandidate(notes, {
-    id: `revisit-loop-${lastLoop.id}-${anchor.id}`,
-    kind: "loop_return",
-    text: "You were carrying this differently then.",
-    strength: 61 + Math.min(gap, 10),
-    pastQuote: snippet(lastLoop),
-    currentQuote: snippet(anchor),
-    pastEntryId: lastLoop.id,
-    entryId: anchor.id,
-  });
+  pushCandidate(
+    notes,
+    {
+      id: `revisit-loop-${lastLoop.id}-${anchor.id}`,
+      kind: "loop_return",
+      text: pickResurfacingHeadline({
+        kind: "loop_return",
+        gapDays: gap,
+        past: lastLoop,
+        current: anchor,
+      }),
+      strength: 65 + Math.min(gap, 10),
+      pastQuote: snippet(lastLoop),
+      currentQuote: snippet(anchor),
+      pastEntryId: lastLoop.id,
+      entryId: anchor.id,
+    },
+    lastLoop,
+    anchor,
+  );
 
   return notes;
 }
@@ -276,16 +345,26 @@ function detectWorthRevisit(
     const afterAvg = roundAvg(afterOnTheme.map((e) => e.reflection.emotionalIntensity));
     if (beforeIntensity - afterAvg < 1.5) continue;
 
-    pushCandidate(notes, {
-      id: `revisit-changed-${candidate.id}-${anchor.id}`,
-      kind: "worth_revisit",
-      text: "You were carrying this differently then.",
-      strength: 59 + Math.round(beforeIntensity - afterAvg) * 3,
-      pastQuote: snippet(candidate),
-      currentQuote: snippet(anchor),
-      pastEntryId: candidate.id,
-      entryId: anchor.id,
-    });
+    pushCandidate(
+      notes,
+      {
+        id: `revisit-changed-${candidate.id}-${anchor.id}`,
+        kind: "worth_revisit",
+        text: pickResurfacingHeadline({
+          kind: "worth_revisit",
+          gapDays: daysBetweenKeys(toDayKey(candidate.createdAt), toDayKey(anchor.createdAt)),
+          past: candidate,
+          current: anchor,
+        }),
+        strength: 61 + Math.round(beforeIntensity - afterAvg) * 3,
+        pastQuote: snippet(candidate),
+        currentQuote: snippet(anchor),
+        pastEntryId: candidate.id,
+        entryId: anchor.id,
+      },
+      candidate,
+      anchor,
+    );
     break;
   }
 
