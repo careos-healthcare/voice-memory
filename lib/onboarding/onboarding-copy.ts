@@ -1,14 +1,17 @@
 /** Plain-language onboarding copy — every line should pass the “normal person” test. */
 
+export const ONBOARDING_WHY_RETURN =
+  "The value appears when today connects to something you said before.";
+
 export const ONBOARDING_HOME = {
-  eyebrow: "Private memory intelligence",
-  tagline: "Private memory intelligence from your voice reflections",
-  lead: "Talk naturally. VoiceMemory notices recurring patterns over time.",
+  eyebrow: "Private voice reflections",
+  tagline: "Record a short reflection. Keep it on this device.",
+  lead: "Record one short reflection. VoiceMemory saves it here until you export or delete it.",
   support:
-    "A private intelligence layer for your thoughts, moods, people, goals, and recurring concerns.",
+    "When similar words, moods, or concerns show up later, an older entry may gently return. Sign in only if you want encrypted backup.",
   honesty:
-    "Local-first on this device. Reflective mirror only — not therapy, not a diagnosis.",
-  deviceLine: "Speak for a minute. Your words stay on this phone.",
+    "Local-first on this device. Not therapy, not a diagnosis, and not a score or streak.",
+  deviceLine: "Speak for about a minute. Your words stay on this device.",
 } as const;
 
 export const ONBOARDING_RECORDER = {
@@ -18,8 +21,8 @@ export const ONBOARDING_RECORDER = {
 } as const;
 
 export const ONBOARDING_MEMORY = {
-  title: "Your memory layer",
-  empty: "Nothing here yet. One voice reflection is enough to start noticing patterns.",
+  title: "Your reflections",
+  empty: "Nothing here yet. One short voice reflection is enough to start.",
   loading: "One moment…",
 } as const;
 
@@ -35,17 +38,19 @@ export const ONBOARDING_ACCOUNT = {
 } as const;
 
 export const ONBOARDING_ACTIVATION = {
-  lead: "Private memory intelligence — not a diary app with folders.",
+  lead: "Record a short voice reflection. VoiceMemory keeps it on this device.",
   quietEarly: "The first day may feel quiet. That is normal.",
-  stepRecord: "Day 1: talk naturally, speak, your reflection stays here.",
-  stepReturn: "Later: VoiceMemory may surface an older moment when it still fits.",
-  stepGrow: "Over time: recurring patterns in your thoughts, moods, and concerns.",
+  whyReturn: ONBOARDING_WHY_RETURN,
+  stepRecord: "Record one short reflection. VoiceMemory saves it on this device.",
+  stepReturn:
+    "When similar words, moods, or concerns appear later, it can gently bring the old reflection back.",
+  stepBackup: "You can use it without backup. Sign in only if you want encrypted sync.",
   finish: "Go at your pace. Nothing to catch up on.",
 } as const;
 
 export const ONBOARDING_WELCOME = {
   description:
-    "Private memory intelligence from your voice. For early testers who want to try it honestly — not to perform or put on a show.",
+    "Record short voice reflections on this device. For early testers — no performance, no scoring.",
   memoryGrows:
-    "Patterns emerge slowly. Early days can feel empty. That is fine — return when something matters.",
+    "Older reflections may return when something you say today connects to words you used before.",
 } as const;

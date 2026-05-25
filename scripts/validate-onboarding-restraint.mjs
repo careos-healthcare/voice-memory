@@ -32,10 +32,13 @@ const REQUIRED_EVENTS = [
 ];
 
 const REQUIRED_COPY = [
-  "You don't need to organize anything here.",
-  "This becomes more meaningful as moments accumulate.",
-  "You can leave unfinished thoughts.",
-  "Speak for a minute. Your words stay on this phone.",
+  "Record one short reflection.",
+  "VoiceMemory saves it on this device.",
+  "When similar words, moods, or concerns appear later",
+  "Sign in only if you want encrypted sync.",
+  "The value appears when today connects to something you said before.",
+  "Speak for about a minute. Your words stay on this device.",
+  "Not therapy, not a diagnosis",
 ];
 
 const FORBIDDEN_RE = [
@@ -46,6 +49,10 @@ const FORBIDDEN_RE = [
   { re: /\breflective intelligence\b/i, label: "reflective intelligence" },
   { re: /\blongitudinal memory\b/i, label: "longitudinal memory" },
   { re: /\bemotional archive\b/i, label: "emotional archive" },
+  { re: /\bmemory intelligence\b/i, label: "memory intelligence" },
+  { re: /\bemotional continuity\b/i, label: "emotional continuity" },
+  { re: /\bintelligence layer\b/i, label: "intelligence layer" },
+  { re: /\bwhat keeps coming back\b/i, label: "what keeps coming back" },
   { re: /\btutorial\b/i, label: "tutorial" },
 ];
 
@@ -73,20 +80,34 @@ for (const event of REQUIRED_EVENTS) {
   }
 }
 
-const calm = fs.readFileSync(path.join(ROOT, "lib/onboarding/calm-comprehension.ts"), "utf8");
-for (const line of REQUIRED_COPY.slice(0, 3)) {
-  if (!calm.includes(line)) {
-    console.error(`Onboarding restraint validation failed — missing calm copy: "${line}"`);
+const homeCopy = fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8");
+for (const line of REQUIRED_COPY) {
+  if (!homeCopy.includes(line)) {
+    console.error(`Onboarding restraint validation failed — missing onboarding copy: "${line}"`);
     process.exit(1);
   }
 }
 
-const homeCopy = fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8");
-for (const line of REQUIRED_COPY.slice(3)) {
-  if (!homeCopy.includes(line)) {
-    console.error(`Onboarding restraint validation failed — missing home copy: "${line}"`);
-    process.exit(1);
-  }
+const calm = fs.readFileSync(path.join(ROOT, "lib/onboarding/calm-comprehension.ts"), "utf8");
+if (!calm.includes("You don't need to organize anything here.")) {
+  console.error("Onboarding restraint validation failed — missing calm comprehension copy.");
+  process.exit(1);
+}
+
+const activation = fs.readFileSync(path.join(ROOT, "lib/activation-guidance.ts"), "utf8");
+if (
+  !activation.includes('id: "record"') ||
+  !activation.includes('id: "return"') ||
+  !activation.includes('id: "backup"') ||
+  activation.includes('id: "day-one"')
+) {
+  console.error("Onboarding restraint validation failed — activation must use 3 concrete steps.");
+  process.exit(1);
+}
+
+if (!fs.readFileSync(path.join(ROOT, "components/ActivationOnboarding.tsx"), "utf8").includes("Record a reflection")) {
+  console.error("Onboarding restraint validation failed — primary CTA must lead to recording.");
+  process.exit(1);
 }
 
 const restraint = fs.readFileSync(
@@ -98,9 +119,15 @@ if (!restraint.includes("isOnboardingCopyAllowed") || !restraint.includes("ONBOA
   process.exit(1);
 }
 
+if (!restraint.includes("memory intelligence")) {
+  console.error("Onboarding restraint validation failed — must block memory intelligence hype.");
+  process.exit(1);
+}
+
 function scanFile(relPath) {
   const full = path.join(ROOT, relPath);
   if (!fs.existsSync(full)) return;
+  if (relPath.includes("onboarding-restraint")) return;
   const lines = fs.readFileSync(full, "utf8").split("\n");
   for (const line of lines) {
     if (line.includes("FORBIDDEN_RE") || line.includes("ONBOARDING_BLOCKED")) continue;

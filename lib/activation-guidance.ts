@@ -10,25 +10,27 @@ export const ACTIVATION_LEAD = ONBOARDING_ACTIVATION.lead;
 
 export const ACTIVATION_QUIET_EARLY = ONBOARDING_ACTIVATION.quietEarly;
 
+export const ACTIVATION_WHY_RETURN = ONBOARDING_ACTIVATION.whyReturn;
+
 export const ACTIVATION_PATTERNS = ONBOARDING_ACTIVATION.stepReturn;
 
 export const ACTIVATION_CONVERSATION = ONBOARDING_ACTIVATION.finish;
 
 export const ACTIVATION_ONBOARDING_STEPS: ActivationOnboardingStep[] = [
   {
-    id: "day-one",
-    label: "Day 1",
+    id: "record",
+    label: "Record",
     body: ONBOARDING_ACTIVATION.stepRecord,
   },
   {
-    id: "after-three",
-    label: "Later",
+    id: "return",
+    label: "Return",
     body: ONBOARDING_ACTIVATION.stepReturn,
   },
   {
-    id: "after-seven",
-    label: "Over time",
-    body: ONBOARDING_ACTIVATION.stepGrow,
+    id: "backup",
+    label: "Optional",
+    body: ONBOARDING_ACTIVATION.stepBackup,
   },
 ];
 
@@ -49,9 +51,14 @@ export const ACTIVATION_GUIDANCE_COPY_EXAMPLES: ActivationGuidanceCopyExample[] 
     whenShown: "First-run onboarding reassurance",
   },
   {
+    id: "why-return",
+    message: ACTIVATION_WHY_RETURN,
+    whenShown: "First-run onboarding — why return",
+  },
+  {
     id: "patterns",
     message: ACTIVATION_PATTERNS,
-    whenShown: "First-run onboarding — continuity over time",
+    whenShown: "First-run onboarding — older reflections return",
   },
   ...Object.entries(PROGRESS_LINES).map(([tier, message]) => ({
     id: `progress-${tier}`,

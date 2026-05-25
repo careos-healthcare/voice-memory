@@ -5,13 +5,13 @@ import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  ACTIVATION_CONVERSATION,
   ACTIVATION_LEAD,
   ACTIVATION_ONBOARDING_STEPS,
   ACTIVATION_QUIET_EARLY,
+  ACTIVATION_WHY_RETURN,
 } from "@/lib/activation-guidance";
 import { dismissOnboarding, isOnboardingDismissed } from "@/lib/onboarding";
-import { PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
+import { NOT_THERAPY_LINE, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import {
   trackOnboardingClarityEvent,
@@ -27,12 +27,17 @@ export function ActivationOnboarding() {
 
   if (!visible) return null;
 
-  const complete = () => {
+  const finish = (scrollToRecorder: boolean) => {
     dismissOnboarding();
     trackLaunchEvent(LAUNCH_EVENTS.onboardingCompleted);
     trackOnboardingClarityEvent(ONBOARDING_CLARITY_EVENTS.onboardingCompleted);
     completeFirstSessionStep("archive_perception");
     setVisible(false);
+    if (scrollToRecorder) {
+      requestAnimationFrame(() => {
+        document.getElementById("recorder")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
   };
 
   const current = ACTIVATION_ONBOARDING_STEPS[step];
@@ -46,7 +51,10 @@ export function ActivationOnboarding() {
             <p className="text-sm font-normal leading-relaxed text-zinc-300">{ACTIVATION_LEAD}</p>
             <p className="mt-2 text-xs leading-relaxed text-zinc-600">{ACTIVATION_QUIET_EARLY}</p>
             <p className="mt-2 text-xs leading-relaxed text-zinc-600">{PRIVATE_BY_DEFAULT_LINE}</p>
+            <p className="mt-2 text-xs leading-relaxed text-zinc-600">{NOT_THERAPY_LINE}</p>
           </div>
+
+          <p className="text-sm leading-relaxed text-zinc-400">{ACTIVATION_WHY_RETURN}</p>
 
           <div className="space-y-3">
             <div>
@@ -55,22 +63,24 @@ export function ActivationOnboarding() {
             </div>
           </div>
 
-          {isLast ? (
-            <p className="text-xs leading-relaxed text-zinc-600">{ACTIVATION_CONVERSATION}</p>
-          ) : null}
-
           <div className="flex flex-wrap items-center gap-2 pt-1">
             {!isLast ? (
               <Button type="button" size="sm" variant="secondary" onClick={() => setStep((s) => s + 1)}>
                 Next
               </Button>
             ) : (
-              <Button type="button" size="sm" onClick={complete}>
-                Begin
+              <Button type="button" size="sm" onClick={() => finish(true)}>
+                Record a reflection
               </Button>
             )}
-            <Button type="button" size="sm" variant="ghost" className="text-zinc-600" onClick={complete}>
-              Skip
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="text-zinc-600"
+              onClick={() => finish(isLast)}
+            >
+              {isLast ? "Skip for now" : "Skip"}
             </Button>
           </div>
         </div>
@@ -79,7 +89,7 @@ export function ActivationOnboarding() {
           type="button"
           aria-label="Dismiss"
           className="rounded-full p-1 text-zinc-600 hover:bg-white/5 hover:text-zinc-400"
-          onClick={complete}
+          onClick={() => finish(false)}
         >
           <X className="h-4 w-4" />
         </button>

@@ -10,13 +10,15 @@ export const ONBOARDING_BLOCKED_TERMS = [
   "AI-powered",
   "powered by AI",
   "therapist",
-  "therapy",
-  "coach you",
   "tutorial",
   "step-by-step guide",
   "reflective intelligence",
   "longitudinal memory",
   "emotional archive",
+  "memory intelligence",
+  "emotional continuity",
+  "intelligence layer",
+  "what keeps coming back",
 ] as const;
 
 const VAGUE_UNGROUNDED = [
@@ -24,6 +26,11 @@ const VAGUE_UNGROUNDED = [
   /\breflective intelligence\b/i,
   /\blongitudinal memory\b/i,
   /\bemotional archive\b/i,
+  /\bmemory intelligence\b/i,
+  /\bemotional continuity\b/i,
+  /\bintelligence layer\b/i,
+  /\bwhat keeps coming back\b/i,
+  /\brecurring patterns over time\b/i,
 ] as const;
 
 export function isOnboardingCopyAllowed(line: string): boolean {
