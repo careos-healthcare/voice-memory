@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+import {
+  AuthEmailDeliveryError,
+  AuthEmailNotConfiguredError,
+  sendAuthCodeEmail,
+} from "@/lib/email/send-auth-code";
 import { AuthStorageNotConfiguredError, issueEmailLoginCode } from "@/lib/server/auth-store";
 
 export const runtime = "nodejs";
@@ -16,6 +21,8 @@ export async function POST(request: Request) {
 
     if (process.env.NODE_ENV !== "production") {
       console.info(`[VoiceMemory auth] Sign-in code for ${email}: ${code}`);
+    } else {
+      await sendAuthCodeEmail(email, code);
     }
 
     const response: { ok: true; message: string; devCode?: string } = {
@@ -32,6 +39,21 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: error.message, code: "storage_not_configured" },
         { status: 503 },
+      );
+    }
+
+    if (error instanceof AuthEmailNotConfiguredError) {
+      console.error("[VoiceMemory auth] Email provider not configured:", error.message);
+      return NextResponse.json(
+        { error: error.message, code: "email_not_configured" },
+        { status: 503 },
+      );
+    }
+
+    if (error instanceof AuthEmailDeliveryError) {
+      return NextResponse.json(
+        { error: error.message, code: "email_delivery_failed" },
+        { status: 502 },
       );
     }
 

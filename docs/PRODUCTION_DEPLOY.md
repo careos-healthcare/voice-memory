@@ -120,7 +120,7 @@ Run these on the production URL. Details in [POST_DEPLOY_QA.md](./POST_DEPLOY_QA
 
 See [DEPLOY_READINESS_REPORT.md](./DEPLOY_READINESS_REPORT.md):
 
-- **Auth codes** — production send-code does not email yet; sign-in QA needs SMTP or dev environment
+- **Auth codes** — production sends via Resend; set `RESEND_API_KEY` and `EMAIL_FROM`
 - **Postgres auth** — set `DATABASE_URL` before serious tester auth; without it codes live in ephemeral server memory
 - **Server sync storage** — ephemeral on default Vercel; multi-device sync needs persistent backend storage
 - **Open API routes** — transcribe/analyze unauthenticated; monitor usage

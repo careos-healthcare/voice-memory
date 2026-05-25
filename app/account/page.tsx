@@ -44,7 +44,13 @@ function statusLabel(state: string): string {
   }
 }
 
-type SendCodeUiState = "idle" | "sending" | "sent" | "error" | "storage_error";
+type SendCodeUiState =
+  | "idle"
+  | "sending"
+  | "sent"
+  | "error"
+  | "storage_error"
+  | "email_error";
 
 function sendCodeStatusLine(state: SendCodeUiState): string | null {
   switch (state) {
@@ -54,6 +60,8 @@ function sendCodeStatusLine(state: SendCodeUiState): string | null {
       return "Code sent. Check your email.";
     case "error":
       return "Could not send code. Try again.";
+    case "email_error":
+      return "Could not send the email. Try again in a moment.";
     case "storage_error":
       return "Auth storage is not configured.";
     default:
@@ -105,6 +113,9 @@ export default function AccountPage() {
       if (error instanceof AccountAuthError && error.code === "storage_not_configured") {
         setSendCodeState("storage_error");
         showMessage("Auth storage is not configured.");
+      } else if (error instanceof AccountAuthError && error.code === "email_delivery_failed") {
+        setSendCodeState("email_error");
+        showMessage("Could not send the email. Try again in a moment.");
       } else {
         setSendCodeState("error");
         showMessage(
@@ -290,7 +301,9 @@ export default function AccountPage() {
                   {sendCodeStatusLine(sendCodeState) ? (
                     <p
                       className={
-                        sendCodeState === "storage_error" || sendCodeState === "error"
+                        sendCodeState === "storage_error" ||
+                        sendCodeState === "error" ||
+                        sendCodeState === "email_error"
                           ? "text-sm text-red-300/90"
                           : "text-sm text-zinc-400"
                       }
