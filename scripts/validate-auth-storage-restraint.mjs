@@ -8,10 +8,13 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REQUIRED_FILES = [
   "lib/server/auth-storage.ts",
   "lib/server/auth-store.ts",
+  "lib/server/env-check.ts",
+  "lib/server/auth-route-log.ts",
   "lib/email/send-auth-code.ts",
-  "lib/sync/parse-response.ts",
-  "lib/hooks/use-client-hydrated.ts",
+  "lib/auth/auth-errors.ts",
+  "instrumentation.ts",
   "app/api/auth/send-code/route.ts",
+  "app/api/debug/auth-env/route.ts",
 ];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
@@ -38,6 +41,10 @@ const accountClient = fs.readFileSync(
 const accountPage = fs.readFileSync(path.join(ROOT, "app/account/page.tsx"), "utf8");
 const productionDeploy = fs.readFileSync(
   path.join(ROOT, "docs/PRODUCTION_DEPLOY.md"),
+  "utf8",
+);
+const authEnvRoute = fs.readFileSync(
+  path.join(ROOT, "app/api/debug/auth-env/route.ts"),
   "utf8",
 );
 
@@ -71,6 +78,36 @@ if (!sendCodeRoute.includes("sendAuthCodeEmail")) {
   process.exit(1);
 }
 
+if (!sendCodeRoute.includes("authApiFailure")) {
+  console.error("Auth storage validation failed — send-code must return typed JSON failures.");
+  process.exit(1);
+}
+
+if (!sendCodeRoute.includes("createAuthSendCodeLog")) {
+  console.error("Auth storage validation failed — send-code must use structured auth logging.");
+  process.exit(1);
+}
+
+if (!sendAuthCode.includes('from "resend"') || !sendAuthCode.includes("new Resend")) {
+  console.error("Auth storage validation failed — send-auth-code must use Resend SDK.");
+  process.exit(1);
+}
+
+if (!sendAuthCode.includes("RESEND_API_KEY") || !sendAuthCode.includes("EMAIL_FROM")) {
+  console.error("Auth storage validation failed — send-auth-code must use Resend env vars.");
+  process.exit(1);
+}
+
+if (!sendAuthCode.includes("AUTH_RESEND_REJECTED") || !sendAuthCode.includes("AUTH_INVALID_EMAIL_FROM")) {
+  console.error("Auth storage validation failed — missing typed auth email error codes.");
+  process.exit(1);
+}
+
+if (authEnvRoute.includes("RESEND_API_KEY") || authEnvRoute.includes("process.env.EMAIL_FROM")) {
+  console.error("Auth storage validation failed — auth-env debug route must not expose secrets.");
+  process.exit(1);
+}
+
 if (!fs.existsSync(path.join(ROOT, "lib/sync/parse-response.ts"))) {
   console.error("Auth storage validation failed — missing lib/sync/parse-response.ts");
   process.exit(1);
@@ -95,8 +132,8 @@ if (!accountClient.includes("readResponseJson")) {
   process.exit(1);
 }
 
-if (!sendAuthCode.includes("RESEND_API_KEY") || !sendAuthCode.includes("EMAIL_FROM")) {
-  console.error("Auth storage validation failed — send-auth-code must use Resend env vars.");
+if (!accountClient.includes("mapAuthErrorToUserMessage")) {
+  console.error("Auth storage validation failed — account-client must map auth errors.");
   process.exit(1);
 }
 
@@ -108,8 +145,8 @@ if (!sendAuthCode.includes("Your VoiceMemory sign-in code")) {
 const uiStates = [
   "Sending…",
   "Code sent. Check your email.",
-  "Could not send code. Try again.",
-  "Could not send the email. Try again in a moment.",
+  "Email delivery is temporarily unavailable.",
+  "Auth email provider rejected the sender address.",
   "Auth storage is not configured.",
 ];
 for (const line of uiStates) {
@@ -117,6 +154,11 @@ for (const line of uiStates) {
     console.error(`Auth storage validation failed — account page missing UI state: "${line}"`);
     process.exit(1);
   }
+}
+
+if (accountPage.includes("Could not send code. Try again.")) {
+  console.error("Auth storage validation failed — account page must not show generic try-again copy.");
+  process.exit(1);
 }
 
 if (!productionDeploy.toLowerCase().includes("postgres")) {

@@ -50,9 +50,9 @@ type SendCodeUiState =
   | "idle"
   | "sending"
   | "sent"
-  | "error"
-  | "storage_error"
-  | "email_error";
+  | "delivery_unavailable"
+  | "sender_rejected"
+  | "storage_error";
 
 function sendCodeStatusLine(state: SendCodeUiState): string | null {
   switch (state) {
@@ -60,15 +60,29 @@ function sendCodeStatusLine(state: SendCodeUiState): string | null {
       return "Sending…";
     case "sent":
       return "Code sent. Check your email.";
-    case "error":
-      return "Could not send code. Try again.";
-    case "email_error":
-      return "Could not send the email. Try again in a moment.";
+    case "delivery_unavailable":
+      return "Email delivery is temporarily unavailable.";
+    case "sender_rejected":
+      return "Auth email provider rejected the sender address.";
     case "storage_error":
       return "Auth storage is not configured.";
     default:
       return null;
   }
+}
+
+function sendCodeStateFromAuthCode(code: string | undefined): SendCodeUiState {
+  if (code === "AUTH_STORAGE_NOT_CONFIGURED" || code === "storage_not_configured") {
+    return "storage_error";
+  }
+  if (
+    code === "AUTH_INVALID_EMAIL_FROM" ||
+    code === "AUTH_RESEND_REJECTED" ||
+    code === "email_delivery_failed"
+  ) {
+    return "sender_rejected";
+  }
+  return "delivery_unavailable";
 }
 
 export default function AccountPage() {
@@ -124,18 +138,16 @@ export default function AccountPage() {
       setSendCodeState("sent");
       showMessage("Code sent. Check your email.");
     } catch (error) {
-      if (error instanceof AccountAuthError && error.code === "storage_not_configured") {
-        setSendCodeState("storage_error");
-        showMessage("Auth storage is not configured.");
-      } else if (error instanceof AccountAuthError && error.code === "email_delivery_failed") {
-        setSendCodeState("email_error");
-        showMessage("Could not send the email. Try again in a moment.");
-      } else {
-        setSendCodeState("error");
-        showMessage(
-          error instanceof Error ? error.message : "Could not send code. Try again.",
-        );
-      }
+      const authCode = error instanceof AccountAuthError ? error.code : undefined;
+      const uiState = sendCodeStateFromAuthCode(authCode);
+      setSendCodeState(uiState);
+      showMessage(
+        error instanceof AccountAuthError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : "Email delivery is temporarily unavailable.",
+      );
     } finally {
       setBusy(false);
     }
@@ -318,8 +330,8 @@ export default function AccountPage() {
                     <p
                       className={
                         sendCodeState === "storage_error" ||
-                        sendCodeState === "error" ||
-                        sendCodeState === "email_error"
+                        sendCodeState === "delivery_unavailable" ||
+                        sendCodeState === "sender_rejected"
                           ? "text-sm text-red-300/90"
                           : "text-sm text-zinc-400"
                       }

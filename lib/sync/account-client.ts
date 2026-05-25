@@ -3,6 +3,7 @@ import {
   readLastBackupAt,
   readLastSyncError,
 } from "@/lib/sync/status-storage";
+import { mapAuthErrorToUserMessage } from "@/lib/auth/auth-errors";
 import { readResponseJson } from "@/lib/sync/parse-response";
 import type { AccountSession, AccountStatus, AccountSyncState } from "@/types/account";
 
@@ -71,9 +72,9 @@ export async function sendEmailLoginCode(email: string): Promise<{ devCode?: str
     devCode?: string;
     code?: string;
   }>(response, {}, { routeLabel: "auth/send-code", requireOk: false });
-  if (!response.ok) {
+  if (!response.ok || data?.ok === false) {
     throw new AccountAuthError(
-      data?.error ?? "Could not send code. Try again.",
+      mapAuthErrorToUserMessage(data?.code, data?.error),
       data?.code,
     );
   }
