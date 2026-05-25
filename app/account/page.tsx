@@ -23,7 +23,9 @@ import {
   buildArchiveOwnershipReport,
 } from "@/lib/archive/archive-ownership";
 import { buildAccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
+import type { AccountContinuityStatus } from "@/lib/sync/cross-device-continuity";
 import { AccountAuthError } from "@/lib/sync/account-client";
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
 import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
@@ -70,6 +72,7 @@ function sendCodeStatusLine(state: SendCodeUiState): string | null {
 }
 
 export default function AccountPage() {
+  const hydrated = useClientHydrated();
   const { status, sendCode, verifyCode, signOut, syncNow, previewRestore, applyRestore } =
     useAccount();
   const [email, setEmail] = useState("");
@@ -81,10 +84,21 @@ export default function AccountPage() {
   const [allowDebugEvents, setAllowDebugEvents] = useState(false);
   const [audioPlanCount, setAudioPlanCount] = useState(0);
   const [ownership, setOwnership] = useState<ArchiveOwnershipReport | null>(null);
-  const continuity = buildAccountContinuityStatus({
-    signedIn: Boolean(status.session),
-    lastBackupAt: status.lastBackupAt,
+  const [continuity, setContinuity] = useState<AccountContinuityStatus>({
+    archiveContinuesLine: null,
+    leftOffLine: null,
+    lastBackedUpLine: null,
   });
+
+  useEffect(() => {
+    if (!hydrated) return;
+    setContinuity(
+      buildAccountContinuityStatus({
+        signedIn: Boolean(status.session),
+        lastBackupAt: status.lastBackupAt,
+      }),
+    );
+  }, [hydrated, status.session, status.lastBackupAt]);
 
   useEffect(() => {
     setAllowDebugEvents(isDebugEventSyncAllowed());
@@ -232,9 +246,11 @@ export default function AccountPage() {
               ) : null}
               <p>
                 Last backup:{" "}
-                {status.lastBackupAt
-                  ? formatEntryDate(status.lastBackupAt)
-                  : "Not yet backed up"}
+                {!hydrated
+                  ? "—"
+                  : status.lastBackupAt
+                    ? formatEntryDate(status.lastBackupAt)
+                    : "Not yet backed up"}
               </p>
               {status.lastSyncError ? (
                 <div className="space-y-1 text-sm leading-relaxed">
@@ -248,7 +264,7 @@ export default function AccountPage() {
                 {audioPlanCount === 1 ? "" : "s"} queued with the same client-side encryption.
               </p>
 
-              {status.session ? (
+              {hydrated && status.session ? (
                 <div className="space-y-2 border-t border-white/5 pt-4 text-sm leading-relaxed text-zinc-500">
                   {continuity.archiveContinuesLine ? (
                     <p>{continuity.archiveContinuesLine}</p>

@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import {
   fetchAccountSession,
   readAccountStatus,
@@ -23,6 +24,7 @@ import {
   syncArchiveIfSignedIn,
 } from "@/lib/sync/client";
 import { SYNC_STATUS_EVENT } from "@/lib/sync/status-storage";
+import { syncWarn } from "@/lib/sync/sync-log";
 import type { AccountSession, AccountStatus } from "@/types/account";
 import type { RestorePreview } from "@/types/sync-health";
 
@@ -41,6 +43,7 @@ interface AccountContextValue {
 const AccountContext = createContext<AccountContextValue | null>(null);
 
 export function AccountProvider({ children }: { children: React.ReactNode }) {
+  const hydrated = useClientHydrated();
   const [session, setSession] = useState<AccountSession | null>(null);
   const [tick, setTick] = useState(0);
 
@@ -61,8 +64,11 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const status = useMemo(
-    () => readAccountStatus(session),
-    [session, tick],
+    () =>
+      readAccountStatus(session, {
+        includeLocalSyncState: hydrated,
+      }),
+    [session, tick, hydrated],
   );
 
   const sendCode = useCallback(async (email: string) => sendEmailLoginCode(email), []);
@@ -71,7 +77,12 @@ export function AccountProvider({ children }: { children: React.ReactNode }) {
     async (email: string, code: string) => {
       const next = await verifyEmailLoginCode(email, code);
       setSession(next);
-      await syncArchiveIfSignedIn();
+      const ok = await syncArchiveIfSignedIn();
+      if (!ok && typeof window !== "undefined") {
+        syncWarn("Post-sign-in sync did not complete", {
+          message: readAccountStatus(next, { includeLocalSyncState: true }).lastSyncError,
+        });
+      }
       setTick((value) => value + 1);
     },
     [],

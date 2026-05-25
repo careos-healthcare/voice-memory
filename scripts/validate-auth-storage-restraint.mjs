@@ -9,6 +9,8 @@ const REQUIRED_FILES = [
   "lib/server/auth-storage.ts",
   "lib/server/auth-store.ts",
   "lib/email/send-auth-code.ts",
+  "lib/sync/parse-response.ts",
+  "lib/hooks/use-client-hydrated.ts",
   "app/api/auth/send-code/route.ts",
 ];
 
@@ -27,6 +29,10 @@ const sendCodeRoute = fs.readFileSync(
 );
 const sendAuthCode = fs.readFileSync(
   path.join(ROOT, "lib/email/send-auth-code.ts"),
+  "utf8",
+);
+const accountClient = fs.readFileSync(
+  path.join(ROOT, "lib/sync/account-client.ts"),
   "utf8",
 );
 const accountPage = fs.readFileSync(path.join(ROOT, "app/account/page.tsx"), "utf8");
@@ -62,6 +68,30 @@ if (sendCodeRoute.includes("devCode") && !sendCodeRoute.includes('process.env.NO
 
 if (!sendCodeRoute.includes("sendAuthCodeEmail")) {
   console.error("Auth storage validation failed — send-code route must call sendAuthCodeEmail.");
+  process.exit(1);
+}
+
+if (!fs.existsSync(path.join(ROOT, "lib/sync/parse-response.ts"))) {
+  console.error("Auth storage validation failed — missing lib/sync/parse-response.ts");
+  process.exit(1);
+}
+
+const accountProvider = fs.readFileSync(
+  path.join(ROOT, "components/providers/AccountProvider.tsx"),
+  "utf8",
+);
+if (!accountProvider.includes("useClientHydrated")) {
+  console.error("Auth storage validation failed — AccountProvider must gate local sync state.");
+  process.exit(1);
+}
+
+if (!accountPage.includes("useClientHydrated")) {
+  console.error("Auth storage validation failed — account page must gate client-only render.");
+  process.exit(1);
+}
+
+if (!accountClient.includes("readResponseJson")) {
+  console.error("Auth storage validation failed — account-client must use readResponseJson.");
   process.exit(1);
 }
 

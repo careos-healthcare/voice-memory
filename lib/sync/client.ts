@@ -21,9 +21,7 @@ import {
   ensureSyncMasterKey,
 } from "@/lib/sync/encryption";
 import { mergeSyncContinuityModelsWithResult } from "@/lib/sync/merge-strategy";
-import {
-  markPendingCarryoverAfterRemoteMerge,
-} from "@/lib/sync/cross-device-continuity";
+import { markPendingCarryoverAfterRemoteMerge } from "@/lib/sync/cross-device-continuity";
 import {
   buildRestorePreview,
   clearPreRestoreSnapshot,
@@ -38,12 +36,36 @@ import {
   writeLastBackupAt,
   writeLastSyncError,
 } from "@/lib/sync/status-storage";
+import {
+  readResponseJson,
+  type SyncManifestPayload,
+  type SyncPullPayload,
+  type SyncPushPayload,
+} from "@/lib/sync/parse-response";
 import { writeLastSyncedAt } from "@/lib/sync/sync-metadata";
+import { SyncClientError } from "@/lib/sync/sync-errors";
+import {
+  isRecoverableRemoteCorruption,
+  recoverFromCorruptRemoteState,
+  writeFriendlySyncError,
+} from "@/lib/sync/sync-recovery";
+import { syncWarn } from "@/lib/sync/sync-log";
+import { validateRemoteBlobRecord } from "@/lib/sync/validate-remote";
 import type { EncryptedPayload } from "@/types/sync";
 import type { SyncContinuityModel } from "@/types/sync-continuity";
 import type { RestorePreview } from "@/types/sync-health";
 
 const CORE_BLOB_ID = "archive-core";
+
+const EMPTY_PULL: SyncPullPayload = { ok: true, blobs: [] };
+const EMPTY_PUSH: SyncPushPayload = { ok: false, error: "Encrypted backup failed.", code: "SYNC_PUSH_FAILED" };
+
+export interface PullCoreResult {
+  encrypted: EncryptedPayload | null;
+  model: SyncContinuityModel | null;
+  corrupt: boolean;
+  missing: boolean;
+}
 
 async function pushEncryptedBlob(input: {
   id: string;
@@ -66,62 +88,86 @@ async function pushEncryptedBlob(input: {
     }),
   });
 
-  if (!response.ok) {
-    const data = (await response.json()) as { error?: string };
-    throw new Error(data.error ?? "Encrypted backup failed.");
+  const data = await readResponseJson<SyncPushPayload>(response, EMPTY_PUSH, {
+    routeLabel: "sync/push",
+  });
+
+  if (!data.ok) {
+    throw new SyncClientError(
+      (data.code as SyncClientError["code"]) ?? "SYNC_PUSH_FAILED",
+      data.error ?? "Encrypted backup could not be saved.",
+    );
   }
 }
 
-async function pullEncryptedCoreBlobRaw(): Promise<{
-  encrypted: EncryptedPayload | null;
-  model: SyncContinuityModel | null;
-}> {
+async function pullEncryptedCoreBlobRaw(): Promise<PullCoreResult> {
   const response = await fetch("/api/sync/pull", { cache: "no-store" });
-  const data = (await response.json()) as {
-    error?: string;
-    blobs?: Array<{
-      id: string;
-      encrypted: EncryptedPayload;
-    }>;
-  };
 
-  if (!response.ok) return { encrypted: null, model: null };
+  let data: SyncPullPayload;
+  try {
+    data = await readResponseJson<SyncPullPayload>(response, EMPTY_PULL, {
+      routeLabel: "sync/pull",
+    });
+  } catch (error) {
+    syncWarn("Pull failed before blob parse", { error });
+    return { encrypted: null, model: null, corrupt: true, missing: false };
+  }
 
-  const core = data.blobs?.find((blob) => blob.id === CORE_BLOB_ID);
-  if (!core) return { encrypted: null, model: null };
+  if (!data.ok) {
+    return { encrypted: null, model: null, corrupt: false, missing: true };
+  }
+
+  const core = data.blobs?.find(
+    (blob: NonNullable<SyncPullPayload["blobs"]>[number]) => blob.id === CORE_BLOB_ID,
+  );
+  if (!core) {
+    return { encrypted: null, model: null, corrupt: false, missing: true };
+  }
+
+  const blobValidation = validateRemoteBlobRecord({
+    id: core.id,
+    updatedAt: core.updatedAt,
+    encrypted: core.encrypted as EncryptedPayload,
+  });
+  const encrypted = core.encrypted as EncryptedPayload;
+
+  if (!blobValidation.valid) {
+    syncWarn("Remote core blob envelope invalid", { issues: blobValidation.issues });
+    return { encrypted, model: null, corrupt: true, missing: false };
+  }
 
   try {
-    const payload = await decryptJsonPayload<unknown>(core.encrypted);
+    const payload = await decryptJsonPayload<unknown>(encrypted);
     const model = normalizeRemoteSyncPayload(payload, getOrCreateDeviceId());
-    return { encrypted: core.encrypted, model };
-  } catch {
-    return { encrypted: core.encrypted, model: null };
+    return { encrypted, model, corrupt: false, missing: false };
+  } catch (error) {
+    syncWarn("Remote core blob decrypt failed", {
+      code: error instanceof SyncClientError ? error.code : "DECRYPT_FAILED",
+    });
+    return { encrypted, model: null, corrupt: true, missing: false };
   }
-}
-
-async function pullEncryptedCoreBlob(): Promise<SyncContinuityModel | null> {
-  const { model } = await pullEncryptedCoreBlobRaw();
-  return model;
 }
 
 /** Preview encrypted restore before applying — local archive is not modified. */
 export async function previewRestoreFromEncryptedBackup(): Promise<RestorePreview> {
   const session = await fetchAccountSession();
-  if (!session) throw new Error("Sign in to restore your archive.");
+  if (!session) throw new SyncClientError("SYNC_AUTH_REQUIRED", "Sign in to restore your archive.");
 
   await ensureSyncMasterKey();
 
-  const { encrypted, model: remote } = await pullEncryptedCoreBlobRaw();
-  if (!remote) {
-    const inspection = await inspectRemoteCoreBlob(encrypted, decryptJsonPayload);
-    if (inspection.corrupted) {
-      throw new Error("Encrypted backup could not be read. Your local archive was not changed.");
+  const pull = await pullEncryptedCoreBlobRaw();
+  if (!pull.model) {
+    if (pull.corrupt) {
+      throw new SyncClientError(
+        "REMOTE_BACKUP_CORRUPT",
+        "Encrypted backup could not be verified.",
+      );
     }
-    throw new Error("No encrypted archive found for this account.");
+    throw new SyncClientError("NO_REMOTE_BACKUP", "No backup found yet.");
   }
 
   const local = buildLocalSyncModel();
-  return buildRestorePreview(local, remote);
+  return buildRestorePreview(local, pull.model);
 }
 
 /** Apply a previously previewed merge — keeps pre-restore snapshot on failure. */
@@ -132,19 +178,19 @@ export async function applyEncryptedRestoreFromPreview(
     throw new Error("Restore preview is not safe to apply.");
   }
 
-  const { model: remote } = await pullEncryptedCoreBlobRaw();
-  if (!remote) {
-    throw new Error("Encrypted backup is no longer available.");
+  const pull = await pullEncryptedCoreBlobRaw();
+  if (!pull.model) {
+    throw new SyncClientError("NO_REMOTE_BACKUP", "Encrypted backup is no longer available.");
   }
 
   const local = buildLocalSyncModel();
-  const merged = mergeSyncContinuityModelsWithResult(local, remote).model;
+  const merged = mergeSyncContinuityModelsWithResult(local, pull.model).model;
 
   snapshotPreRestoreArchive();
 
   try {
     await ensureSyncMasterKey();
-    markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
+    markPendingCarryoverAfterRemoteMerge(pull.model.emotionalContinuity);
     applySyncContinuityModel(merged);
 
     const syncedAt = new Date().toISOString();
@@ -171,13 +217,24 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
     await ensureSyncMasterKey();
 
     const local = buildLocalSyncModel();
-    const remote = await pullEncryptedCoreBlob();
-    const merged = remote
-      ? mergeSyncContinuityModelsWithResult(local, remote).model
-      : local;
+    const pull = await pullEncryptedCoreBlobRaw();
 
-    if (remote) {
-      markPendingCarryoverAfterRemoteMerge(remote.emotionalContinuity);
+    let merged = local;
+    let remoteForCarryover: SyncContinuityModel | null = null;
+
+    if (pull.corrupt) {
+      recoverFromCorruptRemoteState("remote_core_corrupt");
+      merged = local;
+    } else if (pull.model) {
+      remoteForCarryover = pull.model;
+      merged = mergeSyncContinuityModelsWithResult(local, pull.model).model;
+    } else if (pull.missing) {
+      syncWarn("No remote backup yet — uploading local archive");
+      merged = local;
+    }
+
+    if (remoteForCarryover) {
+      markPendingCarryoverAfterRemoteMerge(remoteForCarryover.emotionalContinuity);
     }
 
     applySyncContinuityModel(merged);
@@ -214,7 +271,28 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
     dispatchSyncStatusChange();
     return true;
   } catch (error) {
-    writeLastSyncError(error instanceof Error ? error.message : "Sync failed.");
+    if (isRecoverableRemoteCorruption(error)) {
+      recoverFromCorruptRemoteState("sync_upload_after_corruption");
+      try {
+        const local = buildLocalSyncModel();
+        applySyncContinuityModel(local);
+        const encryptedCore = await encryptJsonPayload(toEncryptedSyncPayload(local));
+        await pushEncryptedBlob({
+          id: CORE_BLOB_ID,
+          type: "journal_snapshot",
+          encrypted: encryptedCore,
+        });
+        const syncedAt = new Date().toISOString();
+        writeLastBackupAt(syncedAt);
+        writeLastSyncedAt(syncedAt);
+        dispatchSyncStatusChange();
+        return true;
+      } catch (retryError) {
+        writeFriendlySyncError(retryError);
+      }
+    } else {
+      writeFriendlySyncError(error);
+    }
     dispatchSyncStatusChange();
     return false;
   } finally {
@@ -225,7 +303,7 @@ export async function syncArchiveIfSignedIn(): Promise<boolean> {
 /** Pull encrypted archive, preview merge, then apply — never deletes local on failure. */
 export async function restoreArchiveFromEncryptedBackup(): Promise<RestorePreview> {
   const session = await fetchAccountSession();
-  if (!session) throw new Error("Sign in to restore your archive.");
+  if (!session) throw new SyncClientError("SYNC_AUTH_REQUIRED", "Sign in to restore your archive.");
 
   markSyncStarted();
   writeLastSyncError(null);
@@ -236,7 +314,7 @@ export async function restoreArchiveFromEncryptedBackup(): Promise<RestorePrevie
     await applyEncryptedRestoreFromPreview(preview);
     return preview;
   } catch (error) {
-    writeLastSyncError(error instanceof Error ? error.message : "Restore failed.");
+    writeFriendlySyncError(error);
     dispatchSyncStatusChange();
     throw error;
   } finally {
@@ -247,17 +325,23 @@ export async function restoreArchiveFromEncryptedBackup(): Promise<RestorePrevie
 export async function fetchSyncManifest() {
   const response = await fetch("/api/sync/manifest", { cache: "no-store" });
   if (!response.ok) return null;
-  return response.json();
+
+  const data = await readResponseJson<SyncManifestPayload>(
+    response,
+    { ok: true },
+    { routeLabel: "sync/manifest" },
+  );
+  return data.ok ? data.manifest ?? null : null;
 }
 
 export async function inspectRemoteSyncHealth(): Promise<{
   corrupted: boolean;
   entryCount: number | null;
 }> {
-  const { encrypted } = await pullEncryptedCoreBlobRaw();
-  const inspection = await inspectRemoteCoreBlob(encrypted, decryptJsonPayload);
+  const pull = await pullEncryptedCoreBlobRaw();
+  const inspection = await inspectRemoteCoreBlob(pull.encrypted, decryptJsonPayload);
   return {
-    corrupted: inspection.corrupted,
+    corrupted: pull.corrupt || inspection.corrupted,
     entryCount: inspection.entryCount,
   };
 }

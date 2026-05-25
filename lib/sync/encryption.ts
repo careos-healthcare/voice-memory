@@ -1,3 +1,5 @@
+import { SyncEncryptionError } from "@/lib/sync/sync-errors";
+import { validateEncryptedEnvelope } from "@/lib/sync/validate-remote";
 import type { EncryptedPayload } from "@/types/sync";
 
 const SYNC_KEY_STORAGE = "voicememory_sync_master_key";
@@ -19,16 +21,31 @@ function bytesToBase64(bytes: Uint8Array): string {
 }
 
 function base64ToBytes(value: string): Uint8Array {
-  const binary = atob(value);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
-  return bytes;
+  try {
+    const binary = atob(value.trim());
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  } catch {
+    throw new SyncEncryptionError("INVALID_ENCRYPTED_ENVELOPE", "Ciphertext is malformed.");
+  }
 }
 
 function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
   const copy = new Uint8Array(bytes.byteLength);
   copy.set(bytes);
   return copy.buffer;
+}
+
+function assertValidEnvelope(payload: EncryptedPayload): void {
+  const validation = validateEncryptedEnvelope(payload);
+  if (!validation.valid) {
+    const primary = validation.issues[0];
+    throw new SyncEncryptionError(
+      primary?.code ?? "INVALID_ENCRYPTED_ENVELOPE",
+      primary?.detail ?? "Encrypted envelope is invalid.",
+    );
+  }
 }
 
 async function importRawKey(raw: Uint8Array): Promise<CryptoKey> {
@@ -88,15 +105,30 @@ export async function encryptJsonPayload(value: unknown): Promise<EncryptedPaylo
 }
 
 export async function decryptJsonPayload<T>(payload: EncryptedPayload): Promise<T> {
-  const key = await ensureSyncMasterKey();
-  const iv = base64ToBytes(payload.iv);
-  const ciphertext = base64ToBytes(payload.ciphertext);
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: toArrayBuffer(iv) },
-    key,
-    toArrayBuffer(ciphertext),
-  );
-  return JSON.parse(new TextDecoder().decode(decrypted)) as T;
+  assertValidEnvelope(payload);
+
+  try {
+    const key = await ensureSyncMasterKey();
+    const iv = base64ToBytes(payload.iv);
+    const ciphertext = base64ToBytes(payload.ciphertext);
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: toArrayBuffer(iv) },
+      key,
+      toArrayBuffer(ciphertext),
+    );
+    const text = new TextDecoder().decode(decrypted);
+    if (!text.trim()) {
+      throw new SyncEncryptionError("EMPTY_REMOTE_PAYLOAD", "Decrypted backup payload is empty.");
+    }
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      throw new SyncEncryptionError("INVALID_REMOTE_JSON", "Decrypted backup JSON is invalid.");
+    }
+  } catch (error) {
+    if (error instanceof SyncEncryptionError) throw error;
+    throw new SyncEncryptionError("DECRYPT_FAILED", "Encrypted backup could not be verified.");
+  }
 }
 
 export async function encryptBinaryPayload(data: ArrayBuffer): Promise<EncryptedPayload> {
@@ -116,14 +148,21 @@ export async function encryptBinaryPayload(data: ArrayBuffer): Promise<Encrypted
 }
 
 export async function decryptBinaryPayload(payload: EncryptedPayload): Promise<ArrayBuffer> {
-  const key = await ensureSyncMasterKey();
-  const iv = base64ToBytes(payload.iv);
-  const ciphertext = base64ToBytes(payload.ciphertext);
-  return crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: toArrayBuffer(iv) },
-    key,
-    toArrayBuffer(ciphertext),
-  );
+  assertValidEnvelope(payload);
+
+  try {
+    const key = await ensureSyncMasterKey();
+    const iv = base64ToBytes(payload.iv);
+    const ciphertext = base64ToBytes(payload.ciphertext);
+    return crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: toArrayBuffer(iv) },
+      key,
+      toArrayBuffer(ciphertext),
+    );
+  } catch (error) {
+    if (error instanceof SyncEncryptionError) throw error;
+    throw new SyncEncryptionError("DECRYPT_FAILED", "Encrypted backup could not be verified.");
+  }
 }
 
 export function clearSyncMasterKey(): void {

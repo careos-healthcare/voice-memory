@@ -3,21 +3,27 @@ import {
   readLastBackupAt,
   readLastSyncError,
 } from "@/lib/sync/status-storage";
+import { readResponseJson } from "@/lib/sync/parse-response";
 import type { AccountSession, AccountStatus, AccountSyncState } from "@/types/account";
 
 let syncInFlight = false;
 
-export function readAccountStatus(session: AccountSession | null): AccountStatus {
+export function readAccountStatus(
+  session: AccountSession | null,
+  options: { includeLocalSyncState?: boolean } = {},
+): AccountStatus {
+  const includeLocal = options.includeLocalSyncState !== false;
   let state: AccountSyncState = "signed_out";
   if (session) {
-    state = syncInFlight ? "syncing" : readLastSyncError() ? "sync_error" : "signed_in";
+    const syncError = includeLocal ? readLastSyncError() : null;
+    state = syncInFlight ? "syncing" : syncError ? "sync_error" : "signed_in";
   }
 
   return {
     state,
     session,
-    lastBackupAt: readLastBackupAt(),
-    lastSyncError: readLastSyncError(),
+    lastBackupAt: includeLocal ? readLastBackupAt() : null,
+    lastSyncError: includeLocal ? readLastSyncError() : null,
     syncEnabled: Boolean(session),
   };
 }
@@ -35,8 +41,12 @@ export function markSyncFinished(): void {
 export async function fetchAccountSession(): Promise<AccountSession | null> {
   const response = await fetch("/api/auth/session", { cache: "no-store" });
   if (!response.ok) return null;
-  const data = (await response.json()) as { session: AccountSession | null };
-  return data.session;
+  const data = await readResponseJson<{ ok?: boolean; session: AccountSession | null }>(
+    response,
+    { session: null },
+    { routeLabel: "auth/session", requireOk: false },
+  );
+  return data.session ?? null;
 }
 
 export class AccountAuthError extends Error {
@@ -55,18 +65,19 @@ export async function sendEmailLoginCode(email: string): Promise<{ devCode?: str
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
   });
-  const data = (await response.json()) as {
+  const data = await readResponseJson<{
+    ok?: boolean;
     error?: string;
     devCode?: string;
     code?: string;
-  };
+  }>(response, {}, { routeLabel: "auth/send-code", requireOk: false });
   if (!response.ok) {
     throw new AccountAuthError(
-      data.error ?? "Could not send code. Try again.",
-      data.code,
+      data?.error ?? "Could not send code. Try again.",
+      data?.code,
     );
   }
-  return { devCode: data.devCode };
+  return { devCode: data?.devCode };
 }
 
 export async function verifyEmailLoginCode(email: string, code: string): Promise<AccountSession> {
@@ -75,9 +86,13 @@ export async function verifyEmailLoginCode(email: string, code: string): Promise
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, code }),
   });
-  const data = (await response.json()) as { error?: string; session?: AccountSession };
-  if (!response.ok || !data.session) {
-    throw new Error(data.error ?? "Invalid sign-in code.");
+  const data = await readResponseJson<{ ok?: boolean; error?: string; session?: AccountSession }>(
+    response,
+    {},
+    { routeLabel: "auth/verify", requireOk: false },
+  );
+  if (!response.ok || !data?.session) {
+    throw new Error(data?.error ?? "Invalid sign-in code.");
   }
   return data.session;
 }
