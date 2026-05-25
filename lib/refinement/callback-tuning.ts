@@ -6,6 +6,11 @@ import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
 import { applyLoopOptimizationBoost } from "@/lib/retention/loop-optimization";
 import { SCORE_WEAK } from "@/lib/refinement/score-thresholds";
+import {
+  applyRevisitQualityRankAdjustment,
+  isRevisitQualityNote,
+  shouldSuppressRevisitQuality,
+} from "@/lib/revisit/revisit-quality";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -203,7 +208,8 @@ export function pickBestCallback(
       row.score.total >= minTotal &&
       row.score.penalties < 24 &&
       !isTopicRecurrenceCopy(row.note.text) &&
-      !LOW_CONTRAST_RESURFACE_RE.test(row.note.id),
+      !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
+      !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)),
   );
   return best?.note ?? ranked.find((row) => !isTopicRecurrenceCopy(row.note.text))?.note ?? null;
 }
@@ -215,5 +221,6 @@ export function applyTuningScoreBoost(
 ): number {
   const tuning = scoreCallbackTuning(note, entries);
   const tuned = baseScore + Math.round(tuning.total * 0.35) - tuning.penalties;
-  return applyLoopOptimizationBoost(note, entries, tuned);
+  const withLoops = applyLoopOptimizationBoost(note, entries, tuned);
+  return applyRevisitQualityRankAdjustment(note, entries, withLoops);
 }

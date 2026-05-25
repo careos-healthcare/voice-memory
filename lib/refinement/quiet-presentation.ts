@@ -19,11 +19,16 @@ import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
+import { pickQualityRevisitNotes } from "@/lib/revisit/revisit-quality";
 import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import {
   calibrateEntryPresentation,
   calibrateHomepagePresentation,
 } from "@/lib/refinement/silence-calibration";
+import {
+  firstAhaAsMemoryNote,
+  pickFirstAhaCallback,
+} from "@/lib/onboarding/first-aha-callback";
 import { rememberNoteContext } from "@/lib/retention/retention-loops";
 import {
   isRevisitEntry,
@@ -88,14 +93,17 @@ export function buildQuietHomepagePresentation(
   const continuation = homepageContinuationNotes(entries, 1).slice(0, 1);
   const candidates = collectHomepageCandidates(entries, limits);
 
-  const eligible = rankCallbacksByTuning(candidates, entries)
-    .map((row) => row.note)
-    .filter((note) => shouldAllowEmotionalNote("homepage", note));
+  const eligible = pickQualityRevisitNotes(
+    rankCallbacksByTuning(candidates, entries).map((row) => row.note),
+    entries,
+  ).filter((note) => shouldAllowEmotionalNote("homepage", note));
 
+  const firstAha = pickFirstAhaCallback(entries);
   const primaryNote = pickBestCallback(eligible, entries, 48);
   const knowsMe = homepageKnowsMeMoment(entries);
-  const resolvedPrimary =
-    knowsMe && (!primaryNote || knowsMe.confidence >= primaryNote.confidence)
+  const resolvedPrimary = firstAha
+    ? firstAhaAsMemoryNote(firstAha)
+    : knowsMe && (!primaryNote || knowsMe.confidence >= primaryNote.confidence)
       ? knowsMe
       : primaryNote;
 
@@ -176,13 +184,14 @@ export function buildQuietEntryPresentation(
   const continuation = entryContinuationOpener(allEntries, entryId);
   const candidates = collectEntryCandidates(allEntries, entryId, limits);
 
-  const eligible = rankCallbacksByTuning(candidates, allEntries)
-    .map((row) => row.note)
-    .filter((note) =>
-      revisitMode
-        ? shouldAllowEmotionalNote("entry", note, { maxPerSession: 1, minHoursBetween: 1 })
-        : shouldAllowEmotionalNote("entry", note, { maxPerSession: 2, minHoursBetween: 2 }),
-    );
+  const eligible = pickQualityRevisitNotes(
+    rankCallbacksByTuning(candidates, allEntries).map((row) => row.note),
+    allEntries,
+  ).filter((note) =>
+    revisitMode
+      ? shouldAllowEmotionalNote("entry", note, { maxPerSession: 1, minHoursBetween: 1 })
+      : shouldAllowEmotionalNote("entry", note, { maxPerSession: 2, minHoursBetween: 2 }),
+  );
 
   const primaryMoment =
     revisitMode || eligible.length > 0

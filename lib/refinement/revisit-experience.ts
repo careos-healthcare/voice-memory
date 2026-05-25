@@ -41,6 +41,11 @@ import {
   recordEmotionalReopen,
 } from "@/lib/refinement/revisit-sequencing";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
+import {
+  assessRevisitQuality,
+  isProtectedRevisitQuality,
+  shouldSuppressRevisitQuality,
+} from "@/lib/revisit/revisit-quality";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
 import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
@@ -136,16 +141,18 @@ function realizationNote(text: string, entryId: string, confidence = 68): Memory
   };
 }
 
-function isWeakForRevisit(note: MemoryNote): boolean {
+function isWeakForRevisit(note: MemoryNote, allEntries: JournalEntry[]): boolean {
   if (REVISIT_REWARD_SUPPRESS_ID.test(note.id)) return true;
   if (REVISIT_REWARD_SUPPRESS_TEXT.test(note.text)) return true;
   if (isTopicRecurrenceCopy(note.text)) return true;
-  return false;
+  return shouldSuppressRevisitQuality(note, allEntries);
 }
 
 function isStrongForRevisit(note: MemoryNote, entries: JournalEntry[]): boolean {
-  if (isWeakForRevisit(note)) return false;
-  return scoreMemoryHierarchy(note, entries).total >= REVISIT_REWARD_MIN;
+  if (isWeakForRevisit(note, entries)) return false;
+  const hierarchy = scoreMemoryHierarchy(note, entries);
+  if (hierarchy.total >= REVISIT_REWARD_MIN) return true;
+  return isProtectedRevisitQuality(assessRevisitQuality(note, entries));
 }
 
 function gatherContrastExtras(
