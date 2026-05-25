@@ -3,12 +3,24 @@ import { isListeningModeEnabled } from "@/lib/listening-mode";
 import { readLocalEvents } from "@/lib/local-analytics";
 import { buildSilenceTimingDebugSnapshot } from "@/lib/refinement/silence-calibration";
 import { detectRevisitFatigue } from "@/lib/refinement/revisit-sequencing";
+import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
+import {
+  readSilenceRetentionSignals,
+  silenceHarmedFromRetention,
+  silenceHelpedFromRetention,
+} from "@/lib/restraint/silence-retention-signals";
 import { buildSacrednessReport } from "@/lib/restraint/sacredness";
+import {
+  REVISIT_QUALITY_DURABLE_MIN,
+  REVISIT_QUALITY_MEANINGFUL_MIN,
+  assessRevisitQuality,
+  isRevisitQualityNote,
+} from "@/lib/revisit/revisit-quality";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
+import type { MemoryNote } from "@/types/memory-note";
 import type {
-  SilenceIntelligenceDebugReport,
   SilenceIntelligenceEffects,
   SilenceIntelligenceReport,
   SilenceIntelligenceSignal,
@@ -42,6 +54,8 @@ interface PersistedSilenceIntelligence {
   ignoredNoteCount: number;
   returnAfterSilenceObserved: boolean;
   silenceImprovedRevisit: boolean | null;
+  silenceHelpedObserved: boolean;
+  silenceHarmedObserved: boolean;
   reflectionsDuringSilence: number;
   recentTransitions: Array<{
     from: SilenceIntelligenceState;
@@ -50,6 +64,8 @@ interface PersistedSilenceIntelligence {
   }>;
   lastResolvedAt: string | null;
   suppressedThisSession: boolean;
+  lastRareResurfacingAt: string | null;
+  postReflectionMinimalUntil: string | null;
 }
 
 function isBrowser(): boolean {
@@ -65,10 +81,14 @@ function defaultPersisted(): PersistedSilenceIntelligence {
     ignoredNoteCount: 0,
     returnAfterSilenceObserved: false,
     silenceImprovedRevisit: null,
+    silenceHelpedObserved: false,
+    silenceHarmedObserved: false,
     reflectionsDuringSilence: 0,
     recentTransitions: [],
     lastResolvedAt: null,
     suppressedThisSession: false,
+    lastRareResurfacingAt: null,
+    postReflectionMinimalUntil: null,
   };
 }
 
@@ -103,52 +123,85 @@ export function setSilenceIntelligenceEnabled(enabled: boolean): void {
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT));
 }
 
-function effectsForState(state: SilenceIntelligenceState): SilenceIntelligenceEffects {
-  switch (state) {
-    case "almost_silent":
-      return {
-        suppressMemoryNotes: true,
-        suppressFollowups: true,
-        suppressRoundupPrompts: true,
-        suppressEmotionalProof: true,
-        delayResurfacing: true,
-        essentialsOnly: true,
-      };
-    case "very_quiet":
-      return {
-        suppressMemoryNotes: true,
-        suppressFollowups: true,
-        suppressRoundupPrompts: true,
-        suppressEmotionalProof: true,
-        delayResurfacing: true,
-        essentialsOnly: false,
-      };
-    case "quiet":
-      return {
-        suppressMemoryNotes: false,
-        suppressFollowups: true,
-        suppressRoundupPrompts: false,
-        suppressEmotionalProof: false,
-        delayResurfacing: true,
-        essentialsOnly: false,
-      };
-    default:
-      return {
-        suppressMemoryNotes: false,
-        suppressFollowups: false,
-        suppressRoundupPrompts: false,
-        suppressEmotionalProof: false,
-        delayResurfacing: false,
-        essentialsOnly: false,
-      };
-  }
+function effectsForState(
+  state: SilenceIntelligenceState,
+  options: {
+    allowRareResurfacing: boolean;
+    postReflectionMinimal: boolean;
+    qualityThresholdRequired: number;
+  },
+): SilenceIntelligenceEffects {
+  const base = (() => {
+    switch (state) {
+      case "almost_silent":
+        return {
+          suppressMemoryNotes: true,
+          suppressFollowups: true,
+          suppressRoundupPrompts: true,
+          suppressEmotionalProof: true,
+          delayResurfacing: true,
+          essentialsOnly: true,
+        };
+      case "very_quiet":
+        return {
+          suppressMemoryNotes: true,
+          suppressFollowups: true,
+          suppressRoundupPrompts: true,
+          suppressEmotionalProof: true,
+          delayResurfacing: true,
+          essentialsOnly: false,
+        };
+      case "quiet":
+        return {
+          suppressMemoryNotes: false,
+          suppressFollowups: true,
+          suppressRoundupPrompts: false,
+          suppressEmotionalProof: false,
+          delayResurfacing: true,
+          essentialsOnly: false,
+        };
+      default:
+        return {
+          suppressMemoryNotes: false,
+          suppressFollowups: false,
+          suppressRoundupPrompts: false,
+          suppressEmotionalProof: false,
+          delayResurfacing: false,
+          essentialsOnly: false,
+        };
+    }
+  })();
+
+  return {
+    ...base,
+    allowRareResurfacing: options.allowRareResurfacing,
+    postReflectionMinimal: options.postReflectionMinimal,
+    qualityThresholdRequired: options.qualityThresholdRequired,
+  };
 }
 
-function stateFromScore(score: number): SilenceIntelligenceState {
-  if (score >= 7) return "almost_silent";
-  if (score >= 5) return "very_quiet";
-  if (score >= 3) return "quiet";
-  return "normal";
+function stateFromScore(
+  score: number,
+  persisted: PersistedSilenceIntelligence,
+  extendQuiet: boolean,
+  reduceSuppression: boolean,
+): SilenceIntelligenceState {
+  const adjusted = reduceSuppression ? Math.max(0, score - 2) : score;
+  const candidate = (() => {
+    if (adjusted >= 7) return "almost_silent";
+    if (adjusted >= 5) return "very_quiet";
+    if (adjusted >= 3) return "quiet";
+    return "normal";
+  })();
+
+  if (!extendQuiet || persisted.state === "normal") {
+    return candidate;
+  }
+
+  if (persisted.state === "almost_silent" && adjusted >= 5) return "almost_silent";
+  if (persisted.state === "very_quiet" && adjusted >= 3) return "very_quiet";
+  if (persisted.state === "quiet" && adjusted >= 2) return "quiet";
+  return candidate;
 }
 
 function signal(
@@ -219,7 +272,86 @@ function detectHeavyEntriesLowAction(entries: JournalEntry[]): SilenceIntelligen
   return null;
 }
 
-function detectSignals(entries: JournalEntry[]): SilenceIntelligenceSignal[] {
+function detectRetentionSignals(
+  entries: JournalEntry[],
+  retention: ReturnType<typeof readSilenceRetentionSignals>,
+): SilenceIntelligenceSignal[] {
+  const signals: SilenceIntelligenceSignal[] = [];
+
+  if (retention.onboardingAhaRate.endsWith("No revisit opens yet")) {
+    return signals;
+  }
+
+  const ahaMatch = retention.onboardingAhaRate.match(/^(\d+)%/);
+  const ahaPct = ahaMatch ? Number(ahaMatch[1]) : 100;
+  if (ahaPct < 35) {
+    signals.push(
+      signal(
+        "low_onboarding_aha",
+        "Low onboarding aha-rate",
+        retention.onboardingAhaRate,
+        ahaPct < 15 ? 2 : 1,
+      ),
+    );
+  }
+
+  if (retention.ignoredPromptCount >= 2) {
+    signals.push(
+      signal(
+        "ignored_gentle_prompts",
+        "Ignored gentle prompts",
+        `${retention.ignoredPromptCount} ignored return prompts`,
+        retention.ignoredPromptCount >= 3 ? 3 : 2,
+      ),
+    );
+  }
+
+  if (
+    retention.voluntaryReturnCount === 0 &&
+    retention.returnAfterSilenceCount === 0 &&
+    retention.reflectionDuringSilenceCount === 0
+  ) {
+    signals.push(
+      signal(
+        "weak_return_triggers",
+        "Weak return triggers",
+        "No voluntary or silence-attributed returns yet",
+        1,
+      ),
+    );
+  }
+
+  if (retention.highQualityRevisitAvailable) {
+    signals.push(
+      signal(
+        "high_quality_revisit_available",
+        "High-quality revisit available",
+        `Best revisit score ${retention.bestRevisitScore ?? "—"} — rare resurfacing may be allowed`,
+        -1,
+      ),
+    );
+  }
+
+  if (retention.exportBackupDuringSilence) {
+    signals.push(
+      signal(
+        "archive_care_during_silence",
+        "Archive care during silence",
+        "Export or backup used while quiet — user still tending the archive",
+        -1,
+      ),
+    );
+  }
+
+  return signals;
+}
+
+function detectSignals(
+  entries: JournalEntry[],
+  retention: ReturnType<typeof readSilenceRetentionSignals>,
+  silenceHelped: boolean,
+  silenceHarmed: boolean,
+): SilenceIntelligenceSignal[] {
   const silence = buildSilenceTimingDebugSnapshot();
   const fatigue = detectRevisitFatigue();
   const sacredness = buildSacrednessReport(entries);
@@ -292,6 +424,30 @@ function detectSignals(entries: JournalEntry[]): SilenceIntelligenceSignal[] {
         "Closed without continuing",
         `${closesWithoutContinuing} note${closesWithoutContinuing === 1 ? "" : "s"} with dwell but no action`,
         closesWithoutContinuing >= 2 ? 3 : 2,
+      ),
+    );
+  }
+
+  signals.push(...detectRetentionSignals(entries, retention));
+
+  if (silenceHelped) {
+    signals.push(
+      signal(
+        "silence_helped_return",
+        "Silence helped return behavior",
+        "Return, reflection, or archive care observed after quiet",
+        2,
+      ),
+    );
+  }
+
+  if (silenceHarmed) {
+    signals.push(
+      signal(
+        "silence_harmed_behavior",
+        "Silence may be harming return",
+        "Extended quiet without payoff — easing suppression",
+        -2,
       ),
     );
   }
@@ -374,6 +530,8 @@ function applyStateTransition(
   persisted: PersistedSilenceIntelligence,
   nextState: SilenceIntelligenceState,
   score: number,
+  silenceHelped: boolean,
+  silenceHarmed: boolean,
 ): PersistedSilenceIntelligence {
   const previousState = persisted.state;
   if (previousState === nextState) {
@@ -411,6 +569,8 @@ function applyStateTransition(
     recentTransitions: transitions,
     lastResolvedAt: now,
     returnAfterSilenceObserved: returnAfterSilence,
+    silenceHelpedObserved: silenceHelped,
+    silenceHarmedObserved: silenceHarmed,
     silenceImprovedRevisit: computeSilenceImprovedRevisit(
       { ...persisted, state: nextState, enteredAt: now },
       nextState,
@@ -428,6 +588,72 @@ function resetSessionSuppressionFlag(): void {
   }
 }
 
+function isPostReflectionMinimal(persisted: PersistedSilenceIntelligence): boolean {
+  if (!persisted.postReflectionMinimalUntil) return false;
+  return Date.now() < new Date(persisted.postReflectionMinimalUntil).getTime();
+}
+
+function canAllowRareResurfacing(
+  persisted: PersistedSilenceIntelligence,
+  retention: ReturnType<typeof readSilenceRetentionSignals>,
+): boolean {
+  if (persisted.state === "normal") return false;
+  if (!retention.highQualityRevisitAvailable) return false;
+  if (persisted.lastRareResurfacingAt) {
+    const usedAfterEntering =
+      daysBetweenKeys(toDayKey(persisted.enteredAt), toDayKey(persisted.lastRareResurfacingAt)) >= 0;
+    if (usedAfterEntering) return false;
+  }
+  return true;
+}
+
+function qualityThresholdForState(
+  state: SilenceIntelligenceState,
+  retention: ReturnType<typeof readSilenceRetentionSignals>,
+): number {
+  if (retention.bestRevisitScore !== null && retention.bestRevisitScore >= REVISIT_QUALITY_DURABLE_MIN) {
+    return REVISIT_QUALITY_DURABLE_MIN;
+  }
+  if (state === "almost_silent") return REVISIT_QUALITY_DURABLE_MIN;
+  if (state === "very_quiet") return REVISIT_QUALITY_MEANINGFUL_MIN + 4;
+  return REVISIT_QUALITY_MEANINGFUL_MIN;
+}
+
+function computeNextResurfacingWindow(
+  state: SilenceIntelligenceState,
+  extendQuiet: boolean,
+  allowRare: boolean,
+): string | null {
+  if (state === "normal") return "Now";
+  if (allowRare) return "Rare high-quality moment allowed now";
+  if (state === "almost_silent") return extendQuiet ? "7+ days unless reflection during silence" : "5–7 days";
+  if (state === "very_quiet") return extendQuiet ? "3–5 days" : "2–4 days";
+  return extendQuiet ? "1–3 days" : "Next session";
+}
+
+function listSuppressedSurfaces(effects: SilenceIntelligenceEffects): string[] {
+  const rows: string[] = [];
+  if (effects.suppressMemoryNotes && !effects.allowRareResurfacing) {
+    rows.push("memory_note");
+  }
+  if (effects.suppressFollowups || effects.postReflectionMinimal) rows.push("followup");
+  if (effects.suppressRoundupPrompts) rows.push("roundup_prompt");
+  if (effects.suppressEmotionalProof || effects.postReflectionMinimal) rows.push("emotional_proof");
+  if (effects.delayResurfacing || effects.essentialsOnly) rows.push("resurfacing");
+  if (effects.allowRareResurfacing) rows.push("rare_resurfacing_allowed");
+  if (effects.postReflectionMinimal) rows.push("post_reflection_minimal");
+  return rows;
+}
+
+function buildActivationReason(signals: SilenceIntelligenceSignal[]): string {
+  if (signals.length === 0) return "No active silence signals.";
+  const positive = signals.filter((row) => row.weight > 0).slice(0, 3);
+  if (positive.length === 0) {
+    return signals[0]?.label ?? "Retention-adjusted quiet state.";
+  }
+  return positive.map((row) => row.label).join(" · ");
+}
+
 function buildSilenceIntelligenceReport(
   entries: JournalEntry[],
   persist: boolean,
@@ -435,15 +661,73 @@ function buildSilenceIntelligenceReport(
   if (persist) resetSessionSuppressionFlag();
   const enabled = isSilenceIntelligenceEnabled();
   const persisted = readPersisted();
-  const signals = enabled ? detectSignals(entries) : [];
+  const retention = readSilenceRetentionSignals(
+    entries,
+    persisted.state === "normal" ? null : persisted.enteredAt,
+  );
+
+  const daysInState =
+    persisted.state === "normal"
+      ? 0
+      : daysBetweenKeys(toDayKey(persisted.enteredAt), todayKey());
+
+  const silenceHelped =
+    persisted.silenceHelpedObserved ||
+    silenceHelpedFromRetention(
+      retention,
+      persisted.returnAfterSilenceObserved,
+      persisted.silenceImprovedRevisit,
+    );
+
+  const silenceHarmed =
+    persisted.silenceHarmedObserved ||
+    silenceHarmedFromRetention(
+      retention,
+      persisted.state,
+      daysInState,
+      persisted.returnAfterSilenceObserved,
+    );
+
+  const signals = enabled
+    ? detectSignals(entries, retention, silenceHelped, silenceHarmed)
+    : [];
   const score = signals.reduce((sum, row) => sum + row.weight, 0);
-  const state = enabled ? stateFromScore(score) : "normal";
-  const effects = enabled ? effectsForState(state) : effectsForState("normal");
+  const state = enabled
+    ? stateFromScore(score, persisted, silenceHelped, silenceHarmed)
+    : "normal";
+
+  const postReflectionMinimal = isPostReflectionMinimal(persisted);
+  const allowRareResurfacing = canAllowRareResurfacing(persisted, retention);
+  const qualityThresholdRequired = qualityThresholdForState(state, retention);
+
+  const effects = enabled
+    ? effectsForState(state, {
+        allowRareResurfacing,
+        postReflectionMinimal,
+        qualityThresholdRequired,
+      })
+    : effectsForState("normal", {
+        allowRareResurfacing: false,
+        postReflectionMinimal: false,
+        qualityThresholdRequired: REVISIT_QUALITY_MEANINGFUL_MIN,
+      });
+
+  if (postReflectionMinimal) {
+    effects.suppressMemoryNotes = true;
+    effects.suppressFollowups = true;
+    effects.suppressEmotionalProof = true;
+    effects.delayResurfacing = true;
+  }
 
   const nextPersisted = enabled
     ? persist
-      ? applyStateTransition(persisted, state, score)
-      : syncLastSurfacedFromSilence({ ...persisted, state })
+      ? applyStateTransition(persisted, state, score, silenceHelped, silenceHarmed)
+      : syncLastSurfacedFromSilence({
+          ...persisted,
+          state,
+          silenceHelpedObserved: silenceHelped,
+          silenceHarmedObserved: silenceHarmed,
+        })
     : { ...persisted, lastResolvedAt: new Date().toISOString() };
 
   if (persist) {
@@ -484,6 +768,28 @@ export function shouldSuppressSilenceIntelligenceSurface(surface: SilenceIntelli
   if (!isSilenceIntelligenceEnabled()) return false;
 
   const report = buildSilenceIntelligenceReport(getMemoryEligibleEntries(), false);
+
+  if (report.effects.postReflectionMinimal) {
+    switch (surface) {
+      case "memory_note":
+      case "followup":
+      case "emotional_proof":
+      case "resurfacing":
+        return true;
+      case "roundup_prompt":
+        return report.effects.suppressRoundupPrompts;
+      default:
+        return false;
+    }
+  }
+
+  if (
+    (surface === "memory_note" || surface === "resurfacing") &&
+    report.effects.allowRareResurfacing
+  ) {
+    return false;
+  }
+
   switch (surface) {
     case "memory_note":
       return report.effects.suppressMemoryNotes;
@@ -498,6 +804,30 @@ export function shouldSuppressSilenceIntelligenceSurface(surface: SilenceIntelli
     default:
       return false;
   }
+}
+
+export function noteQualifiesForRareSilenceResurfacing(
+  note: MemoryNote,
+  entries: JournalEntry[] = getMemoryEligibleEntries(),
+): boolean {
+  const report = buildSilenceIntelligenceReport(entries, false);
+  if (!report.effects.allowRareResurfacing) return false;
+
+  if (isRevisitQualityNote(note)) {
+    const verdict = assessRevisitQuality(note, entries);
+    return verdict.protected || verdict.total >= report.effects.qualityThresholdRequired;
+  }
+
+  return scoreMemoryHierarchy(note, entries).total >= report.effects.qualityThresholdRequired;
+}
+
+export function markRareResurfacingUsed(): void {
+  if (!isBrowser()) return;
+  const persisted = readPersisted();
+  writePersisted({
+    ...persisted,
+    lastRareResurfacingAt: new Date().toISOString(),
+  });
 }
 
 export function markSilenceIntelligenceSuppressed(): void {
@@ -517,25 +847,59 @@ export function recordReflectionDuringSilence(): void {
   if (persisted.state === "normal") return;
 
   trackReflectionDuringSilence(persisted.state);
+  const minimalUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   writePersisted({
     ...persisted,
     reflectionsDuringSilence: persisted.reflectionsDuringSilence + 1,
+    postReflectionMinimalUntil: minimalUntil,
+    silenceHelpedObserved: true,
   });
 }
 
 export function buildSilenceIntelligenceDebugReport(
   entries: JournalEntry[] = getMemoryEligibleEntries(),
-): SilenceIntelligenceDebugReport {
+): import("@/types/silence-intelligence").SilenceIntelligenceDebugReport {
   const report = resolveSilenceIntelligence(entries);
   const persisted = readPersisted();
   const reflectionEvents = readLocalEvents().filter(
     (event) => event.name === "reflection_during_silence",
   ).length;
+  const retention = readSilenceRetentionSignals(
+    entries,
+    persisted.state === "normal" ? null : persisted.enteredAt,
+  );
+  const silenceHelped =
+    persisted.silenceHelpedObserved ||
+    silenceHelpedFromRetention(
+      retention,
+      persisted.returnAfterSilenceObserved,
+      persisted.silenceImprovedRevisit,
+    );
+  const silenceHarmed =
+    persisted.silenceHarmedObserved ||
+    silenceHarmedFromRetention(
+      retention,
+      persisted.state,
+      persisted.state === "normal"
+        ? 0
+        : daysBetweenKeys(toDayKey(persisted.enteredAt), todayKey()),
+      persisted.returnAfterSilenceObserved,
+    );
 
   return {
     ...report,
     recentStateTransitions: persisted.recentTransitions,
     reflectionsDuringSilence: Math.max(persisted.reflectionsDuringSilence, reflectionEvents),
+    activationReason: buildActivationReason(report.signals),
+    suppressedSurfaces: listSuppressedSurfaces(report.effects),
+    silenceHelped,
+    silenceHarmed,
+    nextResurfacingWindow: computeNextResurfacingWindow(
+      report.state,
+      silenceHelped,
+      report.effects.allowRareResurfacing,
+    ),
+    retentionSignals: retention,
   };
 }
 

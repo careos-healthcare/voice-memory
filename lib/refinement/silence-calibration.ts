@@ -4,6 +4,8 @@ import { recordEmotionalNoteShown } from "@/lib/refinement/emotional-timing";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
   markSilenceIntelligenceSuppressed,
+  markRareResurfacingUsed,
+  noteQualifiesForRareSilenceResurfacing,
   shouldSuppressSilenceIntelligenceSurface,
 } from "@/lib/restraint/silence-intelligence";
 import {
@@ -635,6 +637,24 @@ export function calibratePrimaryNote(
   if (candidates.length === 0) return null;
 
   if (shouldSuppressSilenceIntelligenceSurface("memory_note")) {
+    const rareCandidates = candidates.filter((note) =>
+      noteQualifiesForRareSilenceResurfacing(note, entries),
+    );
+    if (rareCandidates.length > 0) {
+      const ranked = rareCandidates
+        .filter((note) => !isWeakNote(note, entries))
+        .filter((note) => !isFalsePositiveNote(note, entries))
+        .map((note) => ({ note, score: scoreMemoryHierarchy(note, entries).total }))
+        .sort((a, b) => b.score - a.score || b.note.confidence - a.note.confidence);
+
+      for (const row of ranked) {
+        if (!passesSilenceFilters(row.note, entries, surface, readState())) continue;
+        recordSilenceShown(row.note, entries, surface);
+        markRareResurfacingUsed();
+        return row.note;
+      }
+    }
+
     markSilenceIntelligenceSuppressed();
     return null;
   }
@@ -670,8 +690,33 @@ export function calibrateMemoryNotes(
   max = 1,
 ): MemoryNote[] {
   if (shouldSuppressSilenceIntelligenceSurface("memory_note")) {
-    markSilenceIntelligenceSuppressed();
-    return [];
+    const rareCandidates = notes.filter((note) =>
+      noteQualifiesForRareSilenceResurfacing(note, entries),
+    );
+    if (rareCandidates.length === 0) {
+      markSilenceIntelligenceSuppressed();
+      return [];
+    }
+
+    const picked: MemoryNote[] = [];
+    const ranked = [...rareCandidates]
+      .filter((note) => !isWeakNote(note, entries))
+      .filter((note) => !isFalsePositiveNote(note, entries))
+      .sort(
+        (a, b) =>
+          scoreMemoryHierarchy(b, entries).total - scoreMemoryHierarchy(a, entries).total ||
+          b.confidence - a.confidence,
+      );
+
+    for (const note of ranked) {
+      if (picked.length >= max) break;
+      if (!passesSilenceFilters(note, entries, surface, readState())) continue;
+      picked.push(note);
+      recordSilenceShown(note, entries, surface);
+      markRareResurfacingUsed();
+    }
+
+    return picked;
   }
 
   const picked: MemoryNote[] = [];

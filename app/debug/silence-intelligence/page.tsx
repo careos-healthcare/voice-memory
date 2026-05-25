@@ -58,8 +58,11 @@ export default function SilenceIntelligenceDebugPage() {
           <Link href="/debug/suppression" className="text-violet-300 hover:text-violet-200">
             Suppression review →
           </Link>
-          <Link href="/debug/sacredness-review" className="text-zinc-500 hover:text-zinc-300">
-            Sacredness review →
+          <Link href="/debug/revisit-quality" className="text-zinc-500 hover:text-zinc-300">
+            Revisit quality →
+          </Link>
+          <Link href="/debug/return-triggers" className="text-zinc-500 hover:text-zinc-300">
+            Return triggers →
           </Link>
         </div>
       </div>

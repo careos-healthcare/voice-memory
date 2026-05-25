@@ -2,6 +2,15 @@ import { buildSilenceTimingDebugSnapshot } from "@/lib/refinement/silence-calibr
 import { buildRevisitSequencingReport } from "@/lib/refinement/revisit-sequencing";
 import { buildSacrednessReport } from "@/lib/restraint/sacredness";
 import { getSilenceFirstPolicy } from "@/lib/restraint/silence-first";
+import {
+  buildSilenceIntelligenceDebugReport,
+  resolveSilenceIntelligence,
+} from "@/lib/restraint/silence-intelligence";
+import {
+  readSilenceRetentionSignals,
+  silenceHarmedFromRetention,
+  silenceHelpedFromRetention,
+} from "@/lib/restraint/silence-retention-signals";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
 import { toDayKey, daysBetweenKeys, todayKey } from "@/lib/dates";
 import { getMemoryEligibleEntries } from "@/lib/storage";
@@ -60,6 +69,26 @@ export function buildNonInterventionReport(
   const sequencing = buildRevisitSequencingReport();
   const log = readLog();
   const loopEvents = readRetentionLoopEvents();
+  const silenceIntel = resolveSilenceIntelligence(entries);
+  const silenceDebug = buildSilenceIntelligenceDebugReport(entries);
+  const retention = readSilenceRetentionSignals(
+    entries,
+    silenceIntel.state === "normal" ? null : silenceIntel.stateEnteredAt,
+  );
+
+  const silenceHelped = silenceHelpedFromRetention(
+    retention,
+    silenceIntel.returnAfterSilence,
+    silenceIntel.silenceImprovedRevisit,
+  );
+  const silenceHarmed = silenceHarmedFromRetention(
+    retention,
+    silenceIntel.state,
+    silenceIntel.stateEnteredAt
+      ? daysBetweenKeys(toDayKey(silenceIntel.stateEnteredAt), todayKey())
+      : 0,
+    silenceIntel.returnAfterSilence,
+  );
 
   const conclusions: NonInterventionReport["conclusions"] = [];
 
@@ -79,6 +108,30 @@ export function buildNonInterventionReport(
     });
   }
 
+  if (silenceHelped && silenceIntel.state !== "normal") {
+    conclusions.push({
+      id: "silence-helped",
+      text: "Quiet period appears to be helping return behavior",
+      confidence: 68,
+    });
+  }
+
+  if (silenceHarmed) {
+    conclusions.push({
+      id: "silence-harmed",
+      text: "Quiet period may be over-suppressing — easing restraint",
+      confidence: 64,
+    });
+  }
+
+  if (silenceDebug.effects.allowRareResurfacing) {
+    conclusions.push({
+      id: "rare-resurfacing",
+      text: "One rare high-quality revisit may surface",
+      confidence: 72,
+    });
+  }
+
   if (sacredness.emotionallyCrowded || sacredness.meaningfulnessInflated) {
     conclusions.push({
       id: "no-interpretation",
@@ -95,6 +148,14 @@ export function buildNonInterventionReport(
     });
   }
 
+  if (retention.ignoredPromptCount >= 3) {
+    conclusions.push({
+      id: "prompt-fatigue",
+      text: "Return prompts are being ignored — stay quieter",
+      confidence: 70,
+    });
+  }
+
   const silenceEvents = log.filter((e) => e.kind === "silence").length;
   const revisitAfter = log.filter((e) => e.kind === "revisit_after_silence").length;
   const delayedEffective = log.filter((e) => e.kind === "delayed_effective").length;
@@ -106,7 +167,18 @@ export function buildNonInterventionReport(
   ).length;
 
   const silenceSuccessRate =
-    silenceEvents > 0 ? Math.min(100, Math.round((revisitAfter / silenceEvents) * 100)) : 0;
+    silenceEvents > 0
+      ? Math.min(
+          100,
+          Math.round(
+            ((revisitAfter + retention.returnAfterSilenceCount + retention.reflectionDuringSilenceCount) /
+              silenceEvents) *
+              100,
+          ),
+        )
+      : retention.returnAfterSilenceCount > 0
+        ? 100
+        : 0;
 
   const delayedCallbackEffectiveness =
     delayedEffective > 0
@@ -116,7 +188,9 @@ export function buildNonInterventionReport(
         : 0;
 
   const shouldSurfaceNothing =
-    conclusions.some((c) => c.id === "surface-nothing") && sacredness.silenceValueScore >= 45;
+    conclusions.some((c) => c.id === "surface-nothing") &&
+    sacredness.silenceValueScore >= 45 &&
+    !silenceHarmed;
 
   return {
     generatedAt: new Date().toISOString(),
@@ -124,7 +198,7 @@ export function buildNonInterventionReport(
     shouldSurfaceNothing,
     conclusions,
     silenceSuccessRate,
-    revisitAfterSilenceCount: revisitAfter,
+    revisitAfterSilenceCount: revisitAfter + retention.returnAfterSilenceCount,
     delayedCallbackEffectiveness,
   };
 }

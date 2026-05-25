@@ -21,6 +21,15 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-0.5 border-b border-white/5 py-2 sm:flex-row sm:justify-between">
+      <span className="text-xs text-zinc-500">{label}</span>
+      <span className="text-sm text-zinc-300">{value}</span>
+    </div>
+  );
+}
+
 export function SilenceIntelligenceDebugPanel({
   report,
   onRefresh,
@@ -40,15 +49,16 @@ export function SilenceIntelligenceDebugPanel({
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="State" value={report.state.replace(/_/g, " ")} />
         <StatCard label="Score" value={String(report.score)} />
-        <StatCard label="Ignored notes" value={String(report.ignoredNoteCount)} />
+        <StatCard label="Quality threshold" value={String(report.effects.qualityThresholdRequired)} />
         <StatCard label="Enabled" value={report.enabled ? "Yes" : "No"} />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base text-zinc-200">Reasons</CardTitle>
+          <CardTitle className="text-base text-zinc-200">Why silence activated</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-zinc-400">
+          <p className="text-zinc-300">{report.activationReason}</p>
           {report.signals.length === 0 ? (
             <p>No active silence signals.</p>
           ) : (
@@ -65,49 +75,77 @@ export function SilenceIntelligenceDebugPanel({
       <div className="grid gap-3 sm:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base text-zinc-200">Last surfaced note</CardTitle>
+            <CardTitle className="text-base text-zinc-200">Retention signals</CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-zinc-400">
-            {report.lastSurfacedNoteId ? (
-              <>
-                <p className="font-mono text-xs text-zinc-500">{report.lastSurfacedNoteId}</p>
-                {report.lastSurfacedNoteAt ? (
-                  <p className="mt-2 text-zinc-500">{report.lastSurfacedNoteAt}</p>
-                ) : null}
-              </>
-            ) : (
-              <p>None recorded.</p>
-            )}
+          <CardContent className="text-sm">
+            <Row label="Onboarding aha-rate" value={report.retentionSignals.onboardingAhaRate} />
+            <Row
+              label="Return after silence"
+              value={String(report.retentionSignals.returnAfterSilenceCount)}
+            />
+            <Row
+              label="Reflection during silence"
+              value={String(report.retentionSignals.reflectionDuringSilenceCount)}
+            />
+            <Row
+              label="Revisit after silence"
+              value={String(report.retentionSignals.revisitAfterSilenceCount)}
+            />
+            <Row label="Ignored prompts" value={String(report.retentionSignals.ignoredPromptCount)} />
+            <Row
+              label="High-quality revisit"
+              value={
+                report.retentionSignals.highQualityRevisitAvailable
+                  ? `Yes · ${report.retentionSignals.bestRevisitScore ?? "—"}`
+                  : "No"
+              }
+            />
+            <Row
+              label="Export / backup during silence"
+              value={report.retentionSignals.exportBackupDuringSilence ? "Yes" : "No"}
+            />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base text-zinc-200">Return & revisit</CardTitle>
+            <CardTitle className="text-base text-zinc-200">Silence outcome</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-zinc-400">
-            <p>Return after silence: {report.returnAfterSilence ? "Yes" : "No"}</p>
-            <p>Silence improved revisit behavior: {improved}</p>
-            <p>Reflections during silence: {report.reflectionsDuringSilence}</p>
+          <CardContent className="text-sm">
+            <Row label="Silence helped" value={report.silenceHelped ? "Yes" : "No"} />
+            <Row label="Silence harmed" value={report.silenceHarmed ? "Yes" : "No"} />
+            <Row label="Return after silence" value={report.returnAfterSilence ? "Yes" : "No"} />
+            <Row label="Silence improved revisit" value={improved} />
+            <Row label="Reflections during silence" value={String(report.reflectionsDuringSilence)} />
+            <Row label="Next resurfacing window" value={report.nextResurfacingWindow ?? "—"} />
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base text-zinc-200">Effects</CardTitle>
+          <CardTitle className="text-base text-zinc-200">What was suppressed</CardTitle>
           <Button type="button" variant="ghost" size="sm" onClick={onRefresh}>
             <RefreshCw className="h-4 w-4" />
           </Button>
         </CardHeader>
-        <CardContent className="grid gap-2 text-sm text-zinc-400 sm:grid-cols-2">
-          {Object.entries(report.effects).map(([key, active]) => (
-            <p key={key}>
-              {key}: {active ? "on" : "off"}
-            </p>
-          ))}
+        <CardContent className="space-y-2 text-sm text-zinc-400">
+          {report.suppressedSurfaces.length === 0 ? (
+            <p>Nothing actively suppressed.</p>
+          ) : (
+            report.suppressedSurfaces.map((surface) => (
+              <p key={surface}>{surface.replace(/_/g, " ")}</p>
+            ))
+          )}
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {Object.entries(report.effects).map(([key, active]) => (
+              <p key={key}>
+                {key}: {typeof active === "boolean" ? (active ? "on" : "off") : String(active)}
+              </p>
+            ))}
+          </div>
           {report.userLine ? (
-            <p className="sm:col-span-2 text-zinc-300">User line: “{report.userLine}”</p>
+            <p className="text-zinc-300">User line: “{report.userLine}”</p>
           ) : null}
         </CardContent>
       </Card>
