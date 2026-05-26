@@ -43,6 +43,11 @@ export function MemoryNoteView({ note, className }: MemoryNoteProps) {
           {note.text}
         </p>
       ) : null}
+      {note.evidenceReason ? (
+        <p className="text-sm font-normal leading-[1.65] text-zinc-500/90">
+          {note.evidenceReason}
+        </p>
+      ) : null}
       {note.pastQuote ? (
         <motion.blockquote
           {...quoteMotion(isThenVsNow ? 0.22 : 0.12)}

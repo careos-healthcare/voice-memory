@@ -11,6 +11,8 @@ export interface MemoryNote {
   pastEntryId?: string;
   category: MemoryNoteCategory;
   confidence: number;
+  /** Quiet evidence line for resurfacing — never a numeric score. */
+  evidenceReason?: string;
 }
 
 export interface MemoryNotesReport {

@@ -20,6 +20,10 @@ import { entryContinuationOpener } from "@/lib/conversation/conversation-continu
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
 import { pickQualityRevisitNotes } from "@/lib/revisit/revisit-quality";
+import {
+  enrichNoteWithResurfacingConfidence,
+  pickConfidenceEligibleNotes,
+} from "@/lib/revisit/resurfacing-confidence";
 import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import {
   calibrateEntryPresentation,
@@ -94,19 +98,25 @@ export function buildQuietHomepagePresentation(
   const continuation = homepageContinuationNotes(entries, 1).slice(0, 1);
   const candidates = collectHomepageCandidates(entries, limits);
 
-  const eligible = pickQualityRevisitNotes(
-    rankCallbacksByTuning(candidates, entries).map((row) => row.note),
+  const eligible = pickConfidenceEligibleNotes(
+    pickQualityRevisitNotes(
+      rankCallbacksByTuning(candidates, entries).map((row) => row.note),
+      entries,
+    ),
     entries,
   ).filter((note) => shouldAllowEmotionalNote("homepage", note));
 
   const firstAha = pickFirstAhaCallback(entries);
   const primaryNote = pickBestCallback(eligible, entries, 48);
   const knowsMe = homepageKnowsMeMoment(entries);
-  const resolvedPrimary = firstAha
+  const resolvedPrimaryRaw = firstAha
     ? firstAhaAsMemoryNote(firstAha)
     : knowsMe && (!primaryNote || knowsMe.confidence >= primaryNote.confidence)
       ? knowsMe
       : primaryNote;
+  const resolvedPrimary = resolvedPrimaryRaw
+    ? enrichNoteWithResurfacingConfidence(resolvedPrimaryRaw, entries)
+    : null;
 
   if (resolvedPrimary) {
     recordCallbackSurfaced(resolvedPrimary.id, "homepage");
@@ -186,8 +196,11 @@ export function buildQuietEntryPresentation(
   const continuation = entryContinuationOpener(allEntries, entryId);
   const candidates = collectEntryCandidates(allEntries, entryId, limits);
 
-  const eligible = pickQualityRevisitNotes(
-    rankCallbacksByTuning(candidates, allEntries).map((row) => row.note),
+  const eligible = pickConfidenceEligibleNotes(
+    pickQualityRevisitNotes(
+      rankCallbacksByTuning(candidates, allEntries).map((row) => row.note),
+      allEntries,
+    ),
     allEntries,
   ).filter((note) =>
     revisitMode
@@ -195,10 +208,13 @@ export function buildQuietEntryPresentation(
       : shouldAllowEmotionalNote("entry", note, { maxPerSession: 2, minHoursBetween: 2 }),
   );
 
-  const primaryMoment =
+  const primaryMomentRaw =
     revisitMode || eligible.length > 0
       ? pickBestCallback(eligible, allEntries, revisitMode ? 52 : 44)
       : null;
+  const primaryMoment = primaryMomentRaw
+    ? enrichNoteWithResurfacingConfidence(primaryMomentRaw, allEntries)
+    : null;
 
   if (primaryMoment) {
     recordCallbackSurfaced(primaryMoment.id, "entry");

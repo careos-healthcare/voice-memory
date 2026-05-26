@@ -10,6 +10,7 @@ import {
   isRevisitQualityNote,
   REVISIT_QUALITY_MEANINGFUL_MIN,
 } from "@/lib/revisit/revisit-quality";
+import { assessResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
 import { getAllEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -182,6 +183,18 @@ export function qualifyMagicCandidate(
   const specificity = isSpecificEnough(note, entries);
   if (!specificity.ok) return null;
 
+  const confidence = assessResurfacingConfidence(note, entries);
+  if (confidence.suppressed || confidence.classification === "weak") {
+    return null;
+  }
+  if (
+    confidence.classification !== "magic_candidate" &&
+    confidence.classification !== "strong" &&
+    confidence.classification !== "plausible"
+  ) {
+    return null;
+  }
+
   const evidence = collectMagicEvidence(
     note,
     entries,
@@ -221,6 +234,12 @@ function markCandidateCreated(qualification: MagicCandidateQualification, surfac
     classification: qualification.classification,
     qualityTotal: String(qualification.qualityTotal),
     surface: surface ?? "",
+  });
+  void import("@/lib/retention/first-week-funnel").then((mod) => {
+    mod.observeFunnelFirstResurfacingCandidate({
+      noteId: qualification.noteId,
+      surface: surface ?? "",
+    });
   });
 }
 
@@ -262,6 +281,9 @@ function confirmFirstMagicMoment(noteId: string, engagement: MagicEngagementKind
       at: new Date().toISOString(),
     }),
   );
+  void import("@/lib/retention/first-week-funnel").then((mod) => {
+    mod.observeFunnelFirstMagicMoment({ noteId, engagement });
+  });
 }
 
 function firstReflectionAtMs(entries: JournalEntry[] = getAllEntries()): number | null {

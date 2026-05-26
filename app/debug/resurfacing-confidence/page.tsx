@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 
-import { RevisitQualityDebugPanel } from "@/components/debug/RevisitQualityDebugPanel";
+import { ResurfacingConfidenceDebugPanel } from "@/components/debug/ResurfacingConfidenceDebugPanel";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildRevisitQualityDebugReport } from "@/lib/debug/revisit-quality-review";
-import type { RevisitQualityDebugReport } from "@/types/revisit-quality";
+import { buildResurfacingConfidenceDebugReport } from "@/lib/debug/resurfacing-confidence-review";
+import type { ResurfacingConfidenceDebugReport } from "@/types/resurfacing-confidence";
 
-export default function RevisitQualityDebugPage() {
-  const [report, setReport] = useState<RevisitQualityDebugReport | null>(null);
+export default function ResurfacingConfidenceDebugPage() {
+  const [report, setReport] = useState<ResurfacingConfidenceDebugReport | null>(null);
 
   const refresh = () => {
-    setReport(buildRevisitQualityDebugReport());
+    setReport(buildResurfacingConfidenceDebugReport());
   };
 
   useEffect(() => {
@@ -31,11 +31,12 @@ export default function RevisitQualityDebugPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Retention</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              Revisit quality
+              Resurfacing confidence
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              Internal scoring for whether revisits emotionally land — specificity, contrast,
-              payoff, and fatigue risk. Classifications never surface in product UI.
+              Internal scoring for whether callbacks feel earned — phrase recurrence, concern
+              overlap, time gap, and interaction history. Classifications and numeric scores never
+              surface in product UI; only quiet evidence reasons do.
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" onClick={refresh}>
@@ -50,19 +51,16 @@ export default function RevisitQualityDebugPage() {
           </Card>
         ) : (
           <div className="mt-6">
-            <RevisitQualityDebugPanel report={report} />
+            <ResurfacingConfidenceDebugPanel report={report} />
           </div>
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/debug/resurfacing-confidence" className="text-violet-300 hover:text-violet-200">
-            Resurfacing confidence →
+          <Link href="/debug/revisit-quality" className="text-violet-300 hover:text-violet-200">
+            Revisit quality →
           </Link>
-          <Link href="/debug/return-triggers" className="text-zinc-500 hover:text-zinc-300">
-            Return triggers →
-          </Link>
-          <Link href="/debug/retention-loops" className="text-zinc-500 hover:text-zinc-300">
-            Retention loops →
+          <Link href="/debug/first-magic-moment" className="text-zinc-500 hover:text-zinc-300">
+            First magic moment →
           </Link>
           <Link href="/debug/callbacks" className="text-zinc-500 hover:text-zinc-300">
             Callbacks →

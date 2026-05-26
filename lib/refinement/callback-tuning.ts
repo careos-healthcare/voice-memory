@@ -14,6 +14,10 @@ import {
   isRevisitQualityNote,
   shouldSuppressRevisitQuality,
 } from "@/lib/revisit/revisit-quality";
+import {
+  applyResurfacingConfidenceRankAdjustment,
+  shouldSuppressResurfacingConfidence,
+} from "@/lib/revisit/resurfacing-confidence";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -224,7 +228,8 @@ export function pickBestCallback(
       !isTopicRecurrenceCopy(row.note.text) &&
       !isBlockedResurfacingCopy(row.note.text) &&
       !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
-      !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)),
+      !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)) &&
+      !shouldSuppressResurfacingConfidence(row.note, entries),
   );
   return best?.note ?? ranked.find((row) => !isTopicRecurrenceCopy(row.note.text))?.note ?? null;
 }
@@ -237,5 +242,6 @@ export function applyTuningScoreBoost(
   const tuning = scoreCallbackTuning(note, entries);
   const tuned = baseScore + Math.round(tuning.total * 0.35) - tuning.penalties;
   const withLoops = applyLoopOptimizationBoost(note, entries, tuned);
-  return applyRevisitQualityRankAdjustment(note, entries, withLoops);
+  const withQuality = applyRevisitQualityRankAdjustment(note, entries, withLoops);
+  return applyResurfacingConfidenceRankAdjustment(note, entries, withQuality);
 }

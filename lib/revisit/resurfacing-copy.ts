@@ -1,6 +1,7 @@
 import type { ResurfacingKind } from "@/types/resurfacing";
 import type { RevisitationKind } from "@/types/revisitation";
 import type { JournalEntry } from "@/types/journal";
+import type { ResurfacingConfidenceEvidence } from "@/types/resurfacing-confidence";
 
 /** Quiet resurfacing headlines — specific, non-coachy, no certainty claims. */
 export const RESURFACING_COPY = {
@@ -222,6 +223,33 @@ export function isGenericResurfacingCopy(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return true;
   return GENERIC_RESURFACING_COPY.some((pattern) => pattern.test(trimmed));
+}
+
+/** Quiet evidence lines — answer “why am I seeing this now?” without scores or certainty. */
+export const RESURFACING_EVIDENCE_COPY = {
+  similarWordsBefore: "Because you used similar words before.",
+  concernAgain: "Because this concern appeared again.",
+  toneChangedSameTopic: "Because your tone changed around the same topic.",
+  cameBackAfterDays: (days: number) =>
+    `Because this came back after ${formatGapLabel(days)}.`,
+} as const;
+
+export function pickResurfacingEvidenceReason(
+  evidence: ResurfacingConfidenceEvidence,
+  gapDays: number,
+): string | null {
+  if (evidence.repeatedPhrase) return RESURFACING_EVIDENCE_COPY.similarWordsBefore;
+  if (evidence.repeatedConcern) return RESURFACING_EVIDENCE_COPY.concernAgain;
+  if (evidence.moodShift && evidence.daysSincePrior >= 3) {
+    return RESURFACING_EVIDENCE_COPY.toneChangedSameTopic;
+  }
+  if (evidence.daysSincePrior >= 3) {
+    return RESURFACING_EVIDENCE_COPY.cameBackAfterDays(gapDays);
+  }
+  if (evidence.sharedEntities.length > 0 && evidence.daysSincePrior >= 7) {
+    return RESURFACING_EVIDENCE_COPY.cameBackAfterDays(gapDays);
+  }
+  return null;
 }
 
 export function isBlockedResurfacingCopy(text: string): boolean {

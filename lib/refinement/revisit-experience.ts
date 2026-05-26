@@ -47,6 +47,10 @@ import {
   isProtectedRevisitQuality,
   shouldSuppressRevisitQuality,
 } from "@/lib/revisit/revisit-quality";
+import {
+  enrichNoteWithResurfacingConfidence,
+  shouldSuppressResurfacingConfidence,
+} from "@/lib/revisit/resurfacing-confidence";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
 import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
@@ -146,7 +150,10 @@ function isWeakForRevisit(note: MemoryNote, allEntries: JournalEntry[]): boolean
   if (REVISIT_REWARD_SUPPRESS_ID.test(note.id)) return true;
   if (REVISIT_REWARD_SUPPRESS_TEXT.test(note.text)) return true;
   if (isTopicRecurrenceCopy(note.text)) return true;
-  return shouldSuppressRevisitQuality(note, allEntries);
+  return (
+    shouldSuppressRevisitQuality(note, allEntries) ||
+    shouldSuppressResurfacingConfidence(note, allEntries)
+  );
 }
 
 function isStrongForRevisit(note: MemoryNote, entries: JournalEntry[]): boolean {
@@ -343,13 +350,16 @@ export function buildRevisitExperience(
     [thenVsNow, strongest.moment],
     allEntries,
   );
-  const revisitReward = resolveRevisitRewardLine(
+  const revisitRewardRaw = resolveRevisitRewardLine(
     allEntries,
     entryId,
     thenVsNow,
     bestLine,
     payoffScore,
   );
+  const revisitReward = revisitRewardRaw
+    ? enrichNoteWithResurfacingConfidence(revisitRewardRaw, allEntries)
+    : null;
   const livingResurfacing = pickLivingResurfacingForEntry(allEntries, entryId);
   const voiceIdentity = pickVoiceIdentityForEntry(allEntries, entryId);
   const emotionalChapter = pickEmotionalChapterForEntry(allEntries, entryId);

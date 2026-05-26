@@ -27,6 +27,7 @@ import {
   OVERCLAIM_RESURFACING_RE,
   PRODUCTIVITY_RESURFACING_RE,
 } from "@/lib/revisit/resurfacing-copy";
+import { shouldSuppressResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -428,7 +429,10 @@ export function pickQualityRevisitNotes(
 ): MemoryNote[] {
   return notes.filter((note) => {
     if (!isRevisitQualityNote(note)) return true;
-    return !shouldSuppressRevisitQuality(note, entries);
+    return (
+      !shouldSuppressRevisitQuality(note, entries) &&
+      !shouldSuppressResurfacingConfidence(note, entries)
+    );
   });
 }
 
