@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import {
   resolvePrimaryCtaWinner,
   type PrimaryCtaId,
@@ -18,7 +19,6 @@ import {
 type Registry = Partial<Record<PrimaryCtaId, boolean>>;
 
 type HomepagePrimaryCtaContextValue = {
-  canShow: (id: PrimaryCtaId) => boolean;
   register: (id: PrimaryCtaId, active: boolean) => void;
   activeWinner: PrimaryCtaId | null;
 };
@@ -42,14 +42,9 @@ export function HomepagePrimaryCtaProvider({ children }: { children: ReactNode }
 
   const activeWinner = useMemo(() => resolvePrimaryCtaWinner(registry), [registry]);
 
-  const canShow = useCallback(
-    (id: PrimaryCtaId) => activeWinner === id,
-    [activeWinner],
-  );
-
   const value = useMemo(
-    () => ({ canShow, register, activeWinner }),
-    [canShow, register, activeWinner],
+    () => ({ register, activeWinner }),
+    [register, activeWinner],
   );
 
   return (
@@ -59,22 +54,31 @@ export function HomepagePrimaryCtaProvider({ children }: { children: ReactNode }
   );
 }
 
-/** Register a primary CTA claim; returns whether this id may render its button. */
+/**
+ * Register a primary CTA claim. Safe without a provider (falls back to `active`).
+ * Coordinated claims only run after client hydration to avoid SSR/prerender issues.
+ */
 export function usePrimaryCtaClaim(id: PrimaryCtaId, active: boolean): boolean {
   const ctx = useContext(HomepagePrimaryCtaContext);
+  const hydrated = useClientHydrated();
+  const register = ctx?.register;
+  const claimActive = hydrated && active;
 
   useEffect(() => {
-    if (!ctx) return;
-    ctx.register(id, active);
-    return () => ctx.register(id, false);
-  }, [ctx, id, active]);
+    if (!register) return;
+    register(id, claimActive);
+    return () => register(id, false);
+  }, [register, id, claimActive]);
 
-  if (!ctx) return active;
-  return ctx.canShow(id);
+  if (!register) return active;
+  if (!hydrated) return false;
+  return ctx.activeWinner === id;
 }
 
 /** True when any homepage primary CTA owns the surface (e.g. hide habit fallback buttons). */
 export function useHomepagePrimaryCtaActive(): boolean {
   const ctx = useContext(HomepagePrimaryCtaContext);
-  return ctx?.activeWinner != null;
+  const hydrated = useClientHydrated();
+  if (!ctx || !hydrated) return false;
+  return ctx.activeWinner != null;
 }

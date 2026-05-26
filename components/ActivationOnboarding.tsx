@@ -31,8 +31,9 @@ export function ActivationOnboarding() {
     setVisible(!isOnboardingDismissed());
   }, []);
 
-  const current = ACTIVATION_ONBOARDING_STEPS[step];
-  const isLast = step >= ACTIVATION_ONBOARDING_STEPS.length - 1;
+  const stepIndex = Math.min(step, ACTIVATION_ONBOARDING_STEPS.length - 1);
+  const current = ACTIVATION_ONBOARDING_STEPS[stepIndex]!;
+  const isLast = stepIndex >= ACTIVATION_ONBOARDING_STEPS.length - 1;
   const canShowOnboardingCta = usePrimaryCtaClaim(
     "onboarding",
     hydrated && visible && isLast,

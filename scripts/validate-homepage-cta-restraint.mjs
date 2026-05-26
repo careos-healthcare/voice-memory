@@ -88,6 +88,27 @@ const activation = fs.readFileSync(
 );
 const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
 const habit = fs.readFileSync(path.join(ROOT, "components/HabitLoopCard.tsx"), "utf8");
+const ctaProvider = fs.readFileSync(
+  path.join(ROOT, "components/homepage/HomepagePrimaryCtaProvider.tsx"),
+  "utf8",
+);
+
+if (ctaProvider.includes("[ctx, id, active]") || ctaProvider.includes("[ctx, id, active,")) {
+  console.error(
+    "Homepage CTA validation failed — usePrimaryCtaClaim must not depend on ctx in useEffect (update loop risk).",
+  );
+  process.exit(1);
+}
+
+if (
+  !ctaProvider.includes("useClientHydrated") ||
+  !ctaProvider.includes("if (!register) return active")
+) {
+  console.error(
+    "Homepage CTA validation failed — CTA claim hook must gate on hydration and support missing provider.",
+  );
+  process.exit(1);
+}
 
 if (!activation.includes("Record a reflection") || !activation.includes("canShowOnboardingCta")) {
   console.error(
