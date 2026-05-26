@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -8,11 +9,14 @@ import { dismissOnboarding, isOnboardingDismissed } from "@/lib/onboarding";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
 export function OnboardingBanner() {
-  const [visible, setVisible] = useState(
-    () => typeof window !== "undefined" && !isOnboardingDismissed(),
-  );
+  const hydrated = useClientHydrated();
+  const [visible, setVisible] = useState(false);
 
-  if (!visible) return null;
+  useEffect(() => {
+    setVisible(!isOnboardingDismissed());
+  }, []);
+
+  if (!hydrated || !visible) return null;
 
   const complete = () => {
     dismissOnboarding();

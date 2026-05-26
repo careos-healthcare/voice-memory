@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { X } from "lucide-react";
 
 import {
@@ -10,13 +11,14 @@ import {
 import type { CalmComprehensionOffer } from "@/types/onboarding-clarity";
 
 export function CalmComprehensionPrompt() {
+  const hydrated = useClientHydrated();
   const [offer, setOffer] = useState<CalmComprehensionOffer | null>(null);
 
   useEffect(() => {
     setOffer(pickCalmComprehensionPrompt());
   }, []);
 
-  if (!offer) return null;
+  if (!hydrated || !offer) return null;
 
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">

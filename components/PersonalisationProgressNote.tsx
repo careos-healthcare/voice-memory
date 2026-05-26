@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
+
 import {
   getPersonalisationProgress,
   shouldShowPersonalisationProgress,
@@ -11,11 +14,14 @@ export function PersonalisationProgressNote({
 }: {
   entryCount?: number;
 }) {
-  const count =
-    entryCount ??
-    (typeof window !== "undefined" ? getStoredEntryCount() : 0);
+  const hydrated = useClientHydrated();
+  const [count, setCount] = useState(0);
 
-  if (!shouldShowPersonalisationProgress(count)) return null;
+  useEffect(() => {
+    setCount(entryCount ?? getStoredEntryCount());
+  }, [entryCount]);
+
+  if (!hydrated || !shouldShowPersonalisationProgress(count)) return null;
 
   const progress = getPersonalisationProgress(count);
   if (!progress) return null;
