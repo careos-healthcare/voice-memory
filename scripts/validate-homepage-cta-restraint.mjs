@@ -110,6 +110,45 @@ if (
   process.exit(1);
 }
 
+if (
+  !ctaProvider.includes("HomepagePrimaryCtaRegisterContext") ||
+  !ctaProvider.includes("HomepagePrimaryCtaWinnerContext") ||
+  !ctaProvider.includes("useContext(HomepagePrimaryCtaRegisterContext)") ||
+  !ctaProvider.includes("useContext(HomepagePrimaryCtaWinnerContext)")
+) {
+  console.error(
+    "Homepage CTA validation failed — split register/winner contexts required to avoid update loops.",
+  );
+  process.exit(1);
+}
+
+const unstableEffectDeps = [
+  { file: "components/homepage/HomepagePrimaryCtaProvider.tsx", pattern: /\[ctx\b/ },
+  { file: "components/ActivationOnboarding.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
+  { file: "components/Recorder.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
+];
+
+for (const { file, pattern } of unstableEffectDeps) {
+  const content = fs.readFileSync(path.join(ROOT, file), "utf8");
+  if (pattern.test(content)) {
+    console.error(
+      `Homepage CTA validation failed — ${file} useEffect depends on unstable context object.`,
+    );
+    process.exit(1);
+  }
+}
+
+const limitsObjectDep = /useEffect\(\s*[\s\S]*?\[\s*limits\s*,/m;
+for (const file of ["app/page.tsx", "app/entry/[id]/page.tsx"]) {
+  const content = fs.readFileSync(path.join(ROOT, file), "utf8");
+  if (limitsObjectDep.test(content)) {
+    console.error(
+      `Homepage CTA validation failed — ${file} useEffect must depend on limits.* primitives, not the limits object.`,
+    );
+    process.exit(1);
+  }
+}
+
 if (!activation.includes("Record a reflection") || !activation.includes("canShowOnboardingCta")) {
   console.error(
     "Homepage CTA validation failed — onboarding record CTA must be gated by canShowOnboardingCta.",

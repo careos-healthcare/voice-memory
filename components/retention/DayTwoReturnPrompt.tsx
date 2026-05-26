@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { pickDayTwoReturnOffer, type DayTwoReturnOffer } from "@/lib/retention/day-two-return";
+import {
+  commitDayTwoReturnOffer,
+  pickDayTwoReturnOffer,
+  type DayTwoReturnOffer,
+} from "@/lib/retention/day-two-return";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 
 export function DayTwoReturnPrompt() {
@@ -11,7 +15,10 @@ export function DayTwoReturnPrompt() {
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const entries = getMemoryEligibleEntries();
-      setOffer(pickDayTwoReturnOffer(entries));
+      const next = pickDayTwoReturnOffer(entries);
+      if (!next) return;
+      commitDayTwoReturnOffer(next);
+      setOffer(next);
     });
     return () => cancelAnimationFrame(id);
   }, []);

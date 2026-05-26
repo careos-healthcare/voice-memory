@@ -1,4 +1,5 @@
 import { trackLocalEvent } from "@/lib/local-analytics";
+import { withTrackingGuard } from "@/lib/tracking/sync-guard";
 
 export const SESSION_RETENTION_EVENTS = {
   firstVisit: "first_visit",
@@ -34,11 +35,13 @@ function readOnceFlags(): Record<string, boolean> {
 
 function writeOnceFlag(event: SessionRetentionEvent): void {
   if (!isBrowser()) return;
-  const flags = readOnceFlags();
-  if (flags[event]) return;
-  flags[event] = true;
-  localStorage.setItem(ONCE_KEY, JSON.stringify(flags));
-  trackLocalEvent(event, { schema: "session_retention_v1" });
+  withTrackingGuard(() => {
+    const flags = readOnceFlags();
+    if (flags[event]) return;
+    flags[event] = true;
+    localStorage.setItem(ONCE_KEY, JSON.stringify(flags));
+    trackLocalEvent(event, { schema: "session_retention_v1" });
+  });
 }
 
 /** Count discrete app sessions (tab loads) for session-2 measurement. */
@@ -60,18 +63,31 @@ export function observeSessionFirstReflectionSaved(): void {
 }
 
 export function observeSessionDay2Return(meta?: Record<string, string>): void {
-  writeOnceFlag(SESSION_RETENTION_EVENTS.day2Return);
-  if (meta) trackLocalEvent(SESSION_RETENTION_EVENTS.day2Return, meta);
+  withTrackingGuard(() => {
+    if (!isBrowser()) return;
+    const flags = readOnceFlags();
+    if (flags[SESSION_RETENTION_EVENTS.day2Return]) return;
+    flags[SESSION_RETENTION_EVENTS.day2Return] = true;
+    localStorage.setItem(ONCE_KEY, JSON.stringify(flags));
+    trackLocalEvent(SESSION_RETENTION_EVENTS.day2Return, {
+      schema: "session_retention_v1",
+      ...meta,
+    });
+  });
 }
 
 export function observeSessionFirstCallbackSeen(meta?: Record<string, string>): void {
-  writeOnceFlag(SESSION_RETENTION_EVENTS.firstCallbackSeen);
-  if (meta) trackLocalEvent(SESSION_RETENTION_EVENTS.firstCallbackSeen, meta);
+  withTrackingGuard(() => {
+    writeOnceFlag(SESSION_RETENTION_EVENTS.firstCallbackSeen);
+    if (meta) trackLocalEvent(SESSION_RETENTION_EVENTS.firstCallbackSeen, meta);
+  });
 }
 
 export function observeSessionFirstCallbackOpened(meta?: Record<string, string>): void {
-  writeOnceFlag(SESSION_RETENTION_EVENTS.firstCallbackOpened);
-  if (meta) trackLocalEvent(SESSION_RETENTION_EVENTS.firstCallbackOpened, meta);
+  withTrackingGuard(() => {
+    writeOnceFlag(SESSION_RETENTION_EVENTS.firstCallbackOpened);
+    if (meta) trackLocalEvent(SESSION_RETENTION_EVENTS.firstCallbackOpened, meta);
+  });
 }
 
 export function markReflectionAfterCallbackPending(): void {

@@ -6,7 +6,6 @@ import {
   enrichNoteWithResurfacingConfidence,
 } from "@/lib/revisit/resurfacing-confidence";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
-import { observeSessionDay2Return } from "@/lib/retention/session-retention";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -79,9 +78,6 @@ export function pickDayTwoReturnOffer(entries: JournalEntry[]): DayTwoReturnOffe
 
   const callback = hasThemeEvidence ? pickDayTwoCallback(entries) : null;
 
-  markShownToday();
-  observeSessionDay2Return({ hasCallback: callback ? "1" : "0" });
-
   if (callback?.text) {
     return {
       id: "day_two_callback",
@@ -95,4 +91,13 @@ export function pickDayTwoReturnOffer(entries: JournalEntry[]): DayTwoReturnOffe
     text: DAY_TWO_FALLBACK_PROMPT,
     note: null,
   };
+}
+
+/** Persist day-2 prompt display + retention event once per calendar day. */
+export function commitDayTwoReturnOffer(offer: DayTwoReturnOffer): void {
+  if (!isBrowser()) return;
+  markShownToday();
+  void import("@/lib/retention/session-retention").then((mod) => {
+    mod.observeSessionDay2Return({ hasCallback: offer.note ? "1" : "0" });
+  });
 }

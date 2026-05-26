@@ -1,4 +1,5 @@
 import { getLightweightLimits } from "@/lib/performance/lightweight-mode";
+import { withTrackingGuard } from "@/lib/tracking/sync-guard";
 
 export type LocalAnalyticsEvent = {
   name: string;
@@ -122,28 +123,30 @@ export function trackLocalEvent(
 ): void {
   if (typeof window === "undefined" || flushing) return;
 
-  const now = Date.now();
-  const last = queue[queue.length - 1];
-  if (
-    last &&
-    dedupeKey(last.name, last.meta) === dedupeKey(name, meta) &&
-    now - new Date(last.at).getTime() < DEDUPE_WINDOW_MS
-  ) {
-    return;
-  }
+  withTrackingGuard(() => {
+    const now = Date.now();
+    const last = queue[queue.length - 1];
+    if (
+      last &&
+      dedupeKey(last.name, last.meta) === dedupeKey(name, meta) &&
+      now - new Date(last.at).getTime() < DEDUPE_WINDOW_MS
+    ) {
+      return;
+    }
 
-  queue.push({
-    name,
-    at: new Date().toISOString(),
-    meta,
+    queue.push({
+      name,
+      at: new Date().toISOString(),
+      meta,
+    });
+
+    if (queue.length > maxEvents()) {
+      queue = queue.slice(-maxEvents());
+    }
+
+    knownNames.add(name);
+    scheduleFlush();
   });
-
-  if (queue.length > maxEvents()) {
-    queue = queue.slice(-maxEvents());
-  }
-
-  knownNames.add(name);
-  scheduleFlush();
 }
 
 export function trackLaunchEvent(

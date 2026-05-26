@@ -13,6 +13,8 @@ const SCAN_FILES = [
   "components/onboarding/OnboardingNavigationTracker.tsx",
   "components/social-proof/OnboardingCompletionProof.tsx",
   "components/social-proof/OnboardingTrustLine.tsx",
+  "components/homepage/HomepagePrimaryCtaProvider.tsx",
+  "components/retention/DayTwoReturnPrompt.tsx",
 ];
 
 const BROWSER_READ_RE =
@@ -101,6 +103,13 @@ for (const rel of SCAN_FILES) {
   const renderBody = stripUseEffectCalls(content);
   if (BROWSER_READ_RE.test(renderBody)) {
     violations.push(`${rel}: browser-only read outside useEffect`);
+  }
+
+  if (/\[ctx\b/.test(content) || /useEffect\([^)]*\[[^\]]*\bctx\b/.test(content)) {
+    violations.push(`${rel}: useEffect depends on unstable context object`);
+  }
+  if (/useEffect\(\s*[\s\S]*?\[\s*limits\s*,/m.test(content)) {
+    violations.push(`${rel}: useEffect depends on whole limits object`);
   }
 }
 

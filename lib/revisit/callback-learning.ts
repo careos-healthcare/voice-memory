@@ -1,6 +1,7 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
 import { trackLocalEvent } from "@/lib/local-analytics";
+import { withTrackingGuard } from "@/lib/tracking/sync-guard";
 import { assessResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
 import { collectResurfacingConfidenceCandidates } from "@/lib/revisit/resurfacing-confidence";
 import { getMemoryEligibleEntries } from "@/lib/storage";
@@ -32,6 +33,7 @@ export const LEARNING_RANK_CAP = 12;
 export const LEARNING_INTERACTION_CAP = 15;
 
 const STORE_KEY = "voicememory_callback_learning";
+const SHOWN_DEDUPE_KEY = "voicememory_callback_shown_dedupe";
 
 const POSITIVE_EVENTS = new Set<CallbackLearningEventName>([
   CALLBACK_LEARNING_EVENTS.opened,
@@ -178,20 +180,37 @@ function resolveNote(
   entries?: JournalEntry[],
 ): { note: MemoryNote; entries: JournalEntry[] } {
   const pool = entries ?? getMemoryEligibleEntries();
+  if ("text" in note && note.text.trim()) {
+    return { note: note as MemoryNote, entries: pool };
+  }
   const candidate =
-    "text" in note && note.text
-      ? (note as MemoryNote)
-      : collectResurfacingConfidenceCandidates(pool).find((row) => row.id === note.id) ??
-        ({
-          id: note.id,
-          text: "",
-          entryId: note.entryId,
-          pastEntryId: note.pastEntryId,
-          category: "returned" as const,
-          confidence: 0,
-        } satisfies MemoryNote);
+    collectResurfacingConfidenceCandidates(pool).find((row) => row.id === note.id) ??
+    ({
+      id: note.id,
+      text: "",
+      entryId: note.entryId,
+      pastEntryId: note.pastEntryId,
+      category: "returned" as const,
+      confidence: 0,
+    } satisfies MemoryNote);
 
   return { note: candidate, entries: pool };
+}
+
+function shouldSkipShownEvent(noteId: string, meta?: Record<string, string>): boolean {
+  if (!isBrowser()) return true;
+  const surface = meta?.surface ?? "";
+  const key = `${surface}:${noteId}`;
+  const raw = sessionStorage.getItem(SHOWN_DEDUPE_KEY);
+  let seen: string[] = [];
+  try {
+    seen = raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    seen = [];
+  }
+  if (seen.includes(key)) return true;
+  sessionStorage.setItem(SHOWN_DEDUPE_KEY, JSON.stringify([...seen, key].slice(-48)));
+  return false;
 }
 
 function applyEventToWeights(
@@ -220,24 +239,26 @@ function recordLearningEvent(
   entries?: JournalEntry[],
   meta?: Record<string, string>,
 ): void {
-  const { note, entries: resolvedEntries } = resolveNote(noteRef, entries);
-  const kinds = classifyCallbackLearningKinds(note, resolvedEntries);
-  const store = readStore();
+  withTrackingGuard(() => {
+    const { note, entries: resolvedEntries } = resolveNote(noteRef, entries);
+    const kinds = classifyCallbackLearningKinds(note, resolvedEntries);
+    const store = readStore();
 
-  store.weights = applyEventToWeights(store.weights, kinds, event);
-  store.events.push({
-    event,
-    at: new Date().toISOString(),
-    noteId: note.id,
-    kinds,
-  });
+    store.weights = applyEventToWeights(store.weights, kinds, event);
+    store.events.push({
+      event,
+      at: new Date().toISOString(),
+      noteId: note.id,
+      kinds,
+    });
 
-  writeStore(store);
-  trackLocalEvent(event, {
-    noteId: note.id,
-    entryId: note.entryId ?? "",
-    kinds: kinds.join(","),
-    ...meta,
+    writeStore(store);
+    trackLocalEvent(event, {
+      noteId: note.id,
+      entryId: note.entryId ?? "",
+      kinds: kinds.join(","),
+      ...meta,
+    });
   });
 }
 
@@ -254,9 +275,14 @@ export function observeCallbackShown(
   entries?: JournalEntry[],
   meta?: Record<string, string>,
 ): void {
-  recordLearningEvent(CALLBACK_LEARNING_EVENTS.shown, noteRef, entries, meta);
-  void import("@/lib/retention/session-retention").then((mod) => {
-    mod.observeSessionFirstCallbackSeen(meta);
+  const noteId = noteRef.id;
+  if (!noteId || shouldSkipShownEvent(noteId, meta)) return;
+
+  queueMicrotask(() => {
+    recordLearningEvent(CALLBACK_LEARNING_EVENTS.shown, noteRef, entries, meta);
+    void import("@/lib/retention/session-retention").then((mod) => {
+      mod.observeSessionFirstCallbackSeen(meta);
+    });
   });
 }
 
@@ -272,10 +298,12 @@ export function observeCallbackOpened(
   entries?: JournalEntry[],
   meta?: Record<string, string>,
 ): void {
-  recordLearningEvent(CALLBACK_LEARNING_EVENTS.opened, noteRef, entries, meta);
-  void import("@/lib/retention/session-retention").then((mod) => {
-    mod.observeSessionFirstCallbackOpened(meta);
-    mod.markReflectionAfterCallbackPending();
+  queueMicrotask(() => {
+    recordLearningEvent(CALLBACK_LEARNING_EVENTS.opened, noteRef, entries, meta);
+    void import("@/lib/retention/session-retention").then((mod) => {
+      mod.observeSessionFirstCallbackOpened(meta);
+      mod.markReflectionAfterCallbackPending();
+    });
   });
 }
 

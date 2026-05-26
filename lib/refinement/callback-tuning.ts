@@ -226,7 +226,10 @@ export function pickBestCallback(
   entries: JournalEntry[],
   minTotal = SCORE_WEAK,
 ): MemoryNote | null {
-  const ranked = rankCallbacksByTuning(notes, entries);
+  const backed = notes.filter((note) => hasConcreteResurfacingEvidence(note, entries));
+  if (backed.length === 0) return null;
+
+  const ranked = rankCallbacksByTuning(backed, entries);
   const best = ranked.find(
     (row) =>
       row.score.total >= minTotal &&
@@ -236,8 +239,7 @@ export function pickBestCallback(
       !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
       !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)) &&
       !shouldSuppressResurfacingConfidence(row.note, entries) &&
-      !shouldSuppressResurfacingTiming(row.note, entries) &&
-      hasConcreteResurfacingEvidence(row.note, entries),
+      !shouldSuppressResurfacingTiming(row.note, entries),
   );
   return best?.note ?? null;
 }

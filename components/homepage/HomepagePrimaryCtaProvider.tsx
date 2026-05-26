@@ -16,16 +16,14 @@ import {
   type PrimaryCtaId,
 } from "@/lib/homepage/primary-cta";
 
+type RegisterFn = (id: PrimaryCtaId, active: boolean) => void;
 type Registry = Partial<Record<PrimaryCtaId, boolean>>;
 
-type HomepagePrimaryCtaContextValue = {
-  register: (id: PrimaryCtaId, active: boolean) => void;
-  activeWinner: PrimaryCtaId | null;
-};
+/** Stable register fn — does not change when the winner changes. */
+const HomepagePrimaryCtaRegisterContext = createContext<RegisterFn | null>(null);
 
-const HomepagePrimaryCtaContext = createContext<HomepagePrimaryCtaContextValue | null>(
-  null,
-);
+/** Winner id only — consumers that need display gating subscribe here. */
+const HomepagePrimaryCtaWinnerContext = createContext<PrimaryCtaId | null>(null);
 
 export function HomepagePrimaryCtaProvider({ children }: { children: ReactNode }) {
   const [registry, setRegistry] = useState<Registry>({});
@@ -42,15 +40,12 @@ export function HomepagePrimaryCtaProvider({ children }: { children: ReactNode }
 
   const activeWinner = useMemo(() => resolvePrimaryCtaWinner(registry), [registry]);
 
-  const value = useMemo(
-    () => ({ register, activeWinner }),
-    [register, activeWinner],
-  );
-
   return (
-    <HomepagePrimaryCtaContext.Provider value={value}>
-      {children}
-    </HomepagePrimaryCtaContext.Provider>
+    <HomepagePrimaryCtaRegisterContext.Provider value={register}>
+      <HomepagePrimaryCtaWinnerContext.Provider value={activeWinner}>
+        {children}
+      </HomepagePrimaryCtaWinnerContext.Provider>
+    </HomepagePrimaryCtaRegisterContext.Provider>
   );
 }
 
@@ -59,9 +54,9 @@ export function HomepagePrimaryCtaProvider({ children }: { children: ReactNode }
  * Coordinated claims only run after client hydration to avoid SSR/prerender issues.
  */
 export function usePrimaryCtaClaim(id: PrimaryCtaId, active: boolean): boolean {
-  const ctx = useContext(HomepagePrimaryCtaContext);
+  const register = useContext(HomepagePrimaryCtaRegisterContext);
+  const activeWinner = useContext(HomepagePrimaryCtaWinnerContext);
   const hydrated = useClientHydrated();
-  const register = ctx?.register;
   const claimActive = hydrated && active;
 
   useEffect(() => {
@@ -72,13 +67,13 @@ export function usePrimaryCtaClaim(id: PrimaryCtaId, active: boolean): boolean {
 
   if (!register) return active;
   if (!hydrated) return false;
-  return ctx.activeWinner === id;
+  return activeWinner === id;
 }
 
 /** True when any homepage primary CTA owns the surface (e.g. hide habit fallback buttons). */
 export function useHomepagePrimaryCtaActive(): boolean {
-  const ctx = useContext(HomepagePrimaryCtaContext);
+  const activeWinner = useContext(HomepagePrimaryCtaWinnerContext);
   const hydrated = useClientHydrated();
-  if (!ctx || !hydrated) return false;
-  return ctx.activeWinner != null;
+  if (!hydrated) return false;
+  return activeWinner != null;
 }

@@ -58,6 +58,9 @@ function bumpMemoryEligibleCache(): void {
   memoryEligibleVersion += 1;
   bumpPhraseScanCache();
   clearResurfacingCaches();
+  void import("@/lib/resurfacing/evidence-engine").then((mod) => {
+    mod.clearConcreteEvidenceCache();
+  });
 }
 
 /** Entries with a completed reflection — used for memory pattern surfacing. */

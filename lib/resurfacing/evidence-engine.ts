@@ -1,8 +1,6 @@
+import { getMemoryEligibleEntriesVersion } from "@/lib/storage";
 import { assessResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
-import {
-  assessResurfacingWhyNow,
-  hasResurfacingWhyNow,
-} from "@/lib/revisit/resurfacing-why-now";
+import { assessResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
 import { isBlockedResurfacingCopy, isGenericResurfacingCopy } from "@/lib/revisit/resurfacing-copy";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import type { JournalEntry } from "@/types/journal";
@@ -25,6 +23,16 @@ export interface ConcreteResurfacingEvidence {
 
 const WEAK_ONLY_RE =
   /^(you came back to the same (place|loop)|worth revisiting|similar theme|appeared again|showed up again)\.?$/i;
+
+const backedCache = new Map<string, boolean>();
+
+function evidenceCacheKey(noteId: string, entriesVersion: number): string {
+  return `${entriesVersion}:${noteId}`;
+}
+
+export function clearConcreteEvidenceCache(): void {
+  backedCache.clear();
+}
 
 function kindsFromSignals(
   whyNow: ReturnType<typeof assessResurfacingWhyNow>,
@@ -74,7 +82,7 @@ export function assessConcreteResurfacingEvidence(
 
   const hasAnchor = kinds.length > 0;
   const hasExplanation = Boolean(whyNow.explanation?.trim());
-  const backed = !blocked && hasAnchor && hasExplanation && hasResurfacingWhyNow(note, entries);
+  const backed = !blocked && hasAnchor && hasExplanation && whyNow.evidenceBacked;
 
   let strength = 0;
   if (kinds.includes("repeated_phrase")) strength += 42;
@@ -97,7 +105,12 @@ export function hasConcreteResurfacingEvidence(
   note: MemoryNote,
   entries: JournalEntry[],
 ): boolean {
-  return assessConcreteResurfacingEvidence(note, entries).backed;
+  const key = evidenceCacheKey(note.id, getMemoryEligibleEntriesVersion());
+  const cached = backedCache.get(key);
+  if (cached !== undefined) return cached;
+  const backed = assessConcreteResurfacingEvidence(note, entries).backed;
+  backedCache.set(key, backed);
+  return backed;
 }
 
 export function rankByConcreteEvidence(
