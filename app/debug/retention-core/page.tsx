@@ -79,6 +79,9 @@ export default function RetentionCoreDebugPage() {
           <Link href="/debug/recurrence-density" className="text-zinc-500 hover:text-zinc-300">
             Recurrence density →
           </Link>
+          <Link href="/debug/retention-readout" className="text-zinc-500 hover:text-zinc-300">
+            Retention readout →
+          </Link>
           <Link href="/debug/first-week-funnel" className="text-zinc-500 hover:text-zinc-300">
             First-week funnel →
           </Link>

@@ -102,3 +102,17 @@ export function observeSessionReflectionAfterCallbackIfPending(): void {
   sessionStorage.removeItem(REFLECTION_AFTER_CALLBACK_KEY);
   writeOnceFlag(SESSION_RETENTION_EVENTS.reflectionAfterCallback);
 }
+
+/** Read-only snapshot for retention readout — no writes. */
+export function readSessionRetentionSnapshot(): {
+  onceFlags: Record<string, boolean>;
+  sessionCount: number;
+} {
+  if (!isBrowser()) {
+    return { onceFlags: {}, sessionCount: 0 };
+  }
+  return {
+    onceFlags: readOnceFlags(),
+    sessionCount: Number(sessionStorage.getItem(SESSION_COUNT_KEY) ?? "0"),
+  };
+}
