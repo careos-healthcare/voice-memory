@@ -4,29 +4,25 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
-import { MemoryTimelineDashboard } from "@/components/insights/MemoryTimelineDashboard";
-import { PatternsDetectedSection } from "@/components/insights/PatternsDetectedSection";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildConservativePatterns } from "@/lib/insights/conservative-patterns";
-import { analyzeJournalEntries, type MemoryInsights } from "@/lib/journal-analytics";
+import { buildReturnThreads } from "@/lib/continuity/return-threads";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { APP_SUBTITLE, WEDGE_RESURFACING } from "@/lib/product-copy";
+import type { ReturnThreadsReport } from "@/types/return-thread";
 
 export default function InsightsPage() {
-  const [insights, setInsights] = useState<MemoryInsights | null>(null);
-  const [patterns, setPatterns] = useState<ReturnType<typeof buildConservativePatterns> | null>(
-    null,
-  );
+  const [report, setReport] = useState<ReturnThreadsReport | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      setInsights(analyzeJournalEntries());
-      setPatterns(buildConservativePatterns());
+      setReport(buildReturnThreads(getMemoryEligibleEntries()));
       trackRetentionEvent(RETENTION_EVENTS.insightViewed);
     });
     return () => cancelAnimationFrame(id);
@@ -46,11 +42,11 @@ export default function InsightsPage() {
             {APP_SUBTITLE}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Memory timeline
+            What keeps returning
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Your past words on this device — moods, themes, people, and concerns that
-            came back in your own voice.
+            Unfinished conversations in your own words — what came back, what changed,
+            and what is still open.
           </p>
         </motion.div>
 
@@ -67,39 +63,33 @@ export default function InsightsPage() {
         <div className="mt-8 space-y-10">
           <HabitLoopCard />
 
-          {insights === null || patterns === null ? (
+          {report === null ? (
             <Card>
               <CardContent className="py-16 text-center text-sm text-zinc-600">
-                Reading your reflections…
+                Reading what came back…
               </CardContent>
             </Card>
-          ) : !insights.hasData ? (
+          ) : !report.hasData ? (
             <Card className="border-dashed border-white/5">
               <CardContent className="py-16 text-center">
-                <p className="text-zinc-400">Not enough yet for a memory timeline.</p>
+                <p className="text-zinc-400">Not enough yet to see what returns.</p>
                 <p className="mt-2 text-sm text-zinc-600">
                   Talk naturally a few times. {WEDGE_RESURFACING.pastWordsMatch}
                 </p>
                 <Button asChild className="mt-6" variant="secondary">
-                  <Link href="/">Record today&apos;s reflection</Link>
+                  <Link href="/">Record a reflection</Link>
                 </Button>
               </CardContent>
             </Card>
           ) : (
             <>
-              <MemoryTimelineDashboard insights={insights} />
+              <ReturnThreadsOverview report={report} />
 
-              <PatternsDetectedSection
-                patterns={patterns.patterns}
-                disclaimer={patterns.disclaimer}
-              />
-
-              <section className="space-y-3">
+              <section className="space-y-3 border-t border-white/5 pt-8">
                 <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">
-                  Shareable memory cards
+                  Share a moment
                 </h2>
                 <ShareMemoryCardButton kind="weekly_summary" />
-                <ShareMemoryCardButton kind="dominant_theme" />
               </section>
             </>
           )}

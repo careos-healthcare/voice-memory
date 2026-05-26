@@ -1,0 +1,173 @@
+import { buildReturnThreads } from "@/lib/continuity/return-threads";
+import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { sanitizeUserFacingObservation } from "@/lib/product/human-continuity-ui";
+import type { ReturnThread, ReturnThreadType } from "@/types/return-thread";
+import type { JournalEntry } from "@/types/journal";
+
+const BANNED_LINE_RE =
+  /\b(speaker expresses|the speaker|mood tracker|dominant mood|emotional trend|emotional intensity|intensity trend|ai analysis|analyzed your|therapy|diagnosis|coping plan|you should|you need to|try to|i recommend)\b/i;
+
+const HOMEPAGE_LINES = [
+  "This came back.",
+  "You said this differently tonight.",
+  "You stopped talking about this for a while.",
+  "You returned to this.",
+  "You mentioned this again.",
+  "Something here is still unfinished.",
+] as const;
+
+function formatQuote(text: string): string {
+  const trimmed = text.trim().slice(0, 140);
+  if (!trimmed) return "";
+  if (trimmed.startsWith('"') && trimmed.endsWith('"')) return trimmed;
+  return `"${trimmed}"`;
+}
+
+function gapLabel(days: number): string {
+  if (days <= 0) return "again tonight";
+  if (days === 1) return "again the next day";
+  if (days < 7) return `again after ${days} days`;
+  if (days < 21) return `${days} days later, this came back`;
+  const weeks = Math.round(days / 7);
+  return weeks === 1 ? "about a week later" : `${weeks} weeks later, this came back differently`;
+}
+
+export function isAllowedContinuityLine(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.length > 220) return false;
+  if (BANNED_LINE_RE.test(trimmed)) return false;
+  return sanitizeUserFacingObservation(trimmed) !== null || !BANNED_LINE_RE.test(trimmed);
+}
+
+export function quoteFromEntry(entry: JournalEntry): string {
+  if (entry.reflection.exactLanguagePattern?.trim()) {
+    return entry.reflection.exactLanguagePattern.trim().slice(0, 140);
+  }
+  const transcript = entry.transcript?.trim();
+  if (transcript) {
+    const slice = transcript.slice(0, 140);
+    return transcript.length > 140 ? `${slice}…` : slice;
+  }
+  const obs =
+    entry.reflection.concreteObservation?.trim() ??
+    entry.reflection.patternObservations?.find((o) => o.trim())?.trim();
+  if (obs) return obs.slice(0, 140);
+  return "";
+}
+
+/** User-facing continuity line for a return thread. */
+export function buildContinuityLineForThread(thread: {
+  type: ReturnThreadType;
+  anchorQuote: string;
+  latestQuote: string;
+  gapDays?: number;
+  contextLabel?: string;
+  appearances: number;
+}): string {
+  const gap = thread.gapDays ?? 0;
+  const anchor = formatQuote(thread.anchorQuote);
+  const latest = formatQuote(thread.latestQuote);
+  const label = thread.contextLabel?.trim();
+
+  let line = "";
+
+  switch (thread.type) {
+    case "repeated_phrase":
+      line =
+        thread.appearances >= 3
+          ? `You kept circling ${label ? `"${label}"` : "this phrase"}.`
+          : `You mentioned this again ${gapLabel(gap)}.`;
+      break;
+    case "unresolved_problem":
+      line = "This thread still feels unfinished.";
+      break;
+    case "recurring_person":
+      line = label
+        ? `You returned to ${label} in different words.`
+        : "You returned to the same person in different words.";
+      break;
+    case "contradiction":
+      line = "You came back to this in different words.";
+      break;
+    case "changed_position":
+      if (anchor && latest && anchor !== latest) {
+        line = `Earlier: ${anchor} Now: ${latest}`;
+      } else {
+        line = "Something changed in how you said this.";
+      }
+      break;
+    case "silence_then_return":
+      line =
+        gap >= 5
+          ? `You stopped talking about this for ${gap} days.`
+          : "You stopped talking about this for a while.";
+      break;
+    case "emotional_reversal":
+      line =
+        gap >= 7
+          ? `Three weeks later, this came back differently.`
+          : "This came back with a different tone in your words.";
+      break;
+    case "recurring_uncertainty":
+      line = label
+        ? `The same uncertainty about ${label} showed up again.`
+        : "The same uncertainty showed up again.";
+      break;
+    default:
+      line = "You mentioned this again tonight.";
+  }
+
+  if (!isAllowedContinuityLine(line)) {
+    line = "You mentioned this again.";
+  }
+  return line;
+}
+
+/** Sharpest single line for homepage / pre-mic — quote-led when possible. */
+export function pickHomepageContinuityLine(
+  threads: ReturnThread[],
+  entries: JournalEntry[],
+): string | null {
+  const sorted = [...threads].sort((a, b) => {
+    const gapA = a.gapDays ?? 0;
+    const gapB = b.gapDays ?? 0;
+    if (gapB !== gapA) return gapB - gapA;
+    return b.appearances - a.appearances;
+  });
+
+  for (const thread of sorted) {
+    if (thread.continuityLine && isAllowedContinuityLine(thread.continuityLine)) {
+      const short =
+        thread.continuityLine.length <= 72
+          ? thread.continuityLine
+          : thread.continuityLine.slice(0, 69) + "…";
+      return short;
+    }
+  }
+
+  const latest = [...entries].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  )[0];
+  if (latest) {
+    const q = quoteFromEntry(latest);
+    if (q && q.length > 12) {
+      const line = `You mentioned this again tonight. ${formatQuote(q)}`;
+      if (isAllowedContinuityLine(line)) return line.length > 100 ? line.slice(0, 97) + "…" : line;
+    }
+  }
+
+  for (const fallback of HOMEPAGE_LINES) {
+    if (isAllowedContinuityLine(fallback)) return fallback;
+  }
+  return null;
+}
+
+export function gapDaysBetween(firstIso: string, lastIso: string): number {
+  return Math.max(0, daysBetweenKeys(toDayKey(firstIso), toDayKey(lastIso)));
+}
+
+/** Single quote-led line before the mic — max one, no stacked interpretation. */
+export function preMicContinuityLine(entries: JournalEntry[]): string | null {
+  const { threads } = buildReturnThreads(entries);
+  return pickHomepageContinuityLine(threads, entries);
+}

@@ -30,4 +30,10 @@ export const BANNED_USER_MEMORY_PHRASES = [
   "the system recommends",
   "your score",
   "performance score",
+  "speaker expresses",
+  "mood snapshot",
+  "dominant mood",
+  "emotional intensity trend",
+  "mood tracker",
+  "intensity/10",
 ] as const;

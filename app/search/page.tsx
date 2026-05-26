@@ -7,7 +7,7 @@ import { ArrowRight, Filter, Search } from "lucide-react";
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Badge } from "@/components/ui/badge";
+import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
@@ -21,7 +21,6 @@ import {
   type ConfidenceLabel,
   type LifeSearchFilters,
 } from "@/lib/semantic-life-search";
-import { formatRelativeDate } from "@/lib/utils";
 
 const MATCH_STYLES: Record<
   ConfidenceLabel,
@@ -354,12 +353,7 @@ export default function SearchPage() {
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
-                                <Badge className="capitalize">
-                                  {result.entry.reflection.mood}
-                                </Badge>
-                                <span className="text-xs text-zinc-500">
-                                  {formatRelativeDate(result.entry.createdAt)}
-                                </span>
+                                <EntryListRowMeta createdAt={result.entry.createdAt} />
                                 <span
                                   className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${matchStyle.className}`}
                                 >

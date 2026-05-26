@@ -5,75 +5,33 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarRange } from "lucide-react";
 
-import { PrimaryCallbackNote } from "@/components/memory/PrimaryCallbackNote";
-import { ArchiveGravityNote } from "@/components/memory/ArchiveGravityNote";
-import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
-import { VoiceIdentityNote } from "@/components/memory/VoiceIdentityNote";
-import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
-
+import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { OpenLoopsSection } from "@/components/open-loops/OpenLoopsSection";
-
-import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
-import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
-import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
-import { MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
+import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
+import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { useQuietMode } from "@/lib/hooks/useQuietMode";
-import { timelineChangeMomentsNotes } from "@/lib/memory/change-moments";
-import { timelineFamiliarityNotes } from "@/lib/memory/familiarity";
-import { timelineFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
-import { timelineRhythmNotes } from "@/lib/memory/rhythm-memory";
-import { archiveResurfacingNotes } from "@/lib/memory/resurfacing";
-import { timelineRevisitationNotes } from "@/lib/memory/revisitation";
-import { timelineTimeMemoryNotes } from "@/lib/memory/time-memory";
-import {
-  buildFollowupPrompt,
-} from "@/lib/conversation/followup-prompts";
+import { buildReturnThreads } from "@/lib/continuity/return-threads";
+import { followupPromptFromReturnThreads } from "@/lib/continuity/followup-from-threads";
 import {
   buildRecordReturnFromFollowup,
   storeRecordReturnContext,
 } from "@/lib/reflection/record-return";
 import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
-import { timelineMilestoneNotes } from "@/lib/memory/milestones";
-import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
-import { timelineKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
-import { timelineArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
-import { timelineEmotionalChapterMoment } from "@/lib/memory/emotional-chapters";
-import { timelineVoiceIdentityMoment } from "@/lib/memory/voice-identity";
-import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
 import { orderEntriesForRevisitPrompts } from "@/lib/refinement/revisit-worth";
-import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { getAllEntries, getMemoryEligibleEntries } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
-import type { EmotionalMilestone } from "@/types/emotional-milestone";
-import type { ConversationThread } from "@/types/conversation-thread";
-import type { MemoryNotesReport } from "@/types/memory-note";
-import type { MemoryNote } from "@/types/memory-note";
 import type { JournalEntry } from "@/types/journal";
 import type { FollowupPrompt } from "@/types/followup-prompt";
+import type { ReturnThreadsReport } from "@/types/return-thread";
 
 export default function TimelinePage() {
   const router = useRouter();
-  const { limits } = useQuietMode();
-  const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
-  const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
-  const [voiceIdentity, setVoiceIdentity] = useState<MemoryNote | null>(null);
-  const [emotionalChapter, setEmotionalChapter] = useState<MemoryNote | null>(null);
-  const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
-  const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
-  const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
-  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
-  const [changeMoments, setChangeMoments] = useState<MemoryNote[]>([]);
-  const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
-  const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
-  const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [threadHighlights, setThreadHighlights] = useState<ConversationThread[]>([]);
-  const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
+  const [report, setReport] = useState<ReturnThreadsReport | null>(null);
   const bookmarkedIds = useBookmarkedEntryIds();
 
   useEffect(() => {
@@ -81,61 +39,19 @@ export default function TimelinePage() {
       const allEntries = getAllEntries();
       const memoryEntries = getMemoryEligibleEntries();
       setEntries(allEntries);
-      setNotes(buildMemoryNotesReport(memoryEntries, { context: "timeline", maxTotal: limits.notes }));
-      setResurfacing(archiveResurfacingNotes(memoryEntries, limits.resurfacing));
-      setChangeMoments(timelineChangeMomentsNotes(memoryEntries, limits.changeMoments));
-      setFamiliarity(timelineFamiliarityNotes(memoryEntries, limits.familiarity));
-      setFamiliarityResurfacing(
-        timelineFamiliarityResurfacingNotes(memoryEntries, limits.familiarityResurfacing),
-      );
-      setRhythm(timelineRhythmNotes(memoryEntries, limits.rhythm));
-      setTimeMemory(timelineTimeMemoryNotes(memoryEntries));
-      setRevisitation(timelineRevisitationNotes(memoryEntries));
-      setThreadHighlights(timelineThreadHighlights(memoryEntries, 3));
-      setMilestones(timelineMilestoneNotes(memoryEntries, limits.milestones));
-      setKnowsMe(
-        calibratePrimaryNote(
-          [timelineKnowsMeMoment(memoryEntries)].filter(Boolean) as MemoryNote[],
-          memoryEntries,
-          "timeline",
-        ),
-      );
-      setArchiveGravity(timelineArchiveGravityMoment(memoryEntries));
-      setVoiceIdentity(timelineVoiceIdentityMoment(memoryEntries));
-      setEmotionalChapter(timelineEmotionalChapterMoment(memoryEntries));
+      setReport(buildReturnThreads(memoryEntries));
     });
     return () => cancelAnimationFrame(id);
-  }, [
-    limits.notes,
-    limits.resurfacing,
-    limits.changeMoments,
-    limits.familiarity,
-    limits.familiarityResurfacing,
-    limits.rhythm,
-    limits.milestones,
-  ]);
+  }, []);
 
-  const loading = notes === null;
   const reflectionEntries = useMemo(() => {
     const eligible = entries.filter((entry) => entry.reflectionPending !== true);
     return orderEntriesForRevisitPrompts(eligible, 12);
   }, [entries]);
 
-  const followupNotes = useMemo(
-    () => [
-      ...(notes?.changed ?? []),
-      ...(notes?.returned ?? []),
-      ...changeMoments,
-      ...familiarityResurfacing,
-      ...resurfacing,
-      ...revisitation,
-    ],
-    [notes, changeMoments, familiarityResurfacing, resurfacing, revisitation],
-  );
-
   const followupPrompt = useMemo(
-    () => buildFollowupPrompt(followupNotes, entries),
-    [followupNotes, entries],
+    () => followupPromptFromReturnThreads(report, entries),
+    [report, entries],
   );
 
   const handleRecordAgain = (prompt: FollowupPrompt) => {
@@ -143,23 +59,26 @@ export default function TimelinePage() {
     router.push("/#recorder");
   };
 
+  const loading = report === null;
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
         <MotionPageTitle title="Over time" />
+        <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+          What keeps returning, what changed, and what stayed unresolved — in your
+          own words.
+        </p>
 
-        <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/feelings-timeline" className="text-violet-300 hover:text-violet-200">
-            How this has felt →
-          </Link>
+        <div className="mt-6 flex flex-wrap gap-3 text-sm">
           <Link href="/open-loops" className="text-zinc-500 hover:text-zinc-300">
             Open loops →
           </Link>
         </div>
 
-        <div className="mt-4 space-y-20">
+        <div className="mt-10 space-y-12">
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : entries.length === 0 ? (
@@ -176,43 +95,17 @@ export default function TimelinePage() {
           ) : (
             <>
               <OpenLoopsSection maxItems={2} />
-              <PrimaryCallbackNote note={knowsMe} />
-              <ArchiveGravityNote note={archiveGravity} />
-              <VoiceIdentityNote note={voiceIdentity} />
-              <EmotionalChapterNote note={emotionalChapter} />
-              {notes?.hasData ? (
-                <MemoryNotesOverview
-                  changed={notes.changed}
-                  faded={notes.faded}
-                  returned={notes.returned}
-                  landmarks={notes.landmarks}
-                  maxPerSection={2}
-                  maxLandmarks={4}
-                />
-              ) : null}
-
-              <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
-              <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
-              <FamiliarityResurfacingNotes
-                notes={familiarityResurfacing}
-                max={limits.familiarityResurfacing}
-              />
-              <RhythmNotes notes={rhythm} max={limits.rhythm} />
-              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
-              <RevisitationNotes notes={revisitation} max={1} />
-              <TimeMemoryNotes notes={timeMemory} max={2} />
+              <ReturnThreadsOverview report={report ?? undefined} />
 
               <FollowupPromptInline
                 prompt={followupPrompt}
                 onRecordAgain={handleRecordAgain}
               />
 
-              <ThreadMentionsSection threads={threadHighlights} />
-
-              <MilestoneNotes milestones={milestones} entries={entries} max={limits.milestones} />
-
-              <section className="space-y-6 pt-4">
-                <h2 className="text-xs font-normal tracking-wide text-zinc-600">Reflections</h2>
+              <section className="space-y-4 border-t border-white/5 pt-8">
+                <h2 className="text-xs font-normal tracking-wide text-zinc-600">
+                  Reflections
+                </h2>
                 <ul className="space-y-2">
                   {reflectionEntries.map((entry) => (
                     <li key={entry.id}>

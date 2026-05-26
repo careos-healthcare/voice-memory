@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, TrendingUp } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-import { IntensityTrendChart } from "@/components/insights/IntensityTrendChart";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MemoryInsights } from "@/lib/journal-analytics";
 
@@ -24,25 +22,25 @@ function StatTile({ label, value }: { label: string; value: string | number }) {
   );
 }
 
+/** Words-first continuity overview — no mood badges or intensity charts. */
 export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardProps) {
-  const topMood = insights.dominantMoods[0];
   const topTheme = insights.recurringThemes[0];
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile label="Total entries" value={insights.totalEntries} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <StatTile label="Reflections saved" value={insights.totalEntries} />
         <StatTile
-          label="Dominant mood"
-          value={topMood ? topMood.mood : "—"}
+          label="Words that returned"
+          value={insights.mostRepeatedPattern ? "Yes" : "—"}
         />
         <StatTile
-          label="Top theme"
-          value={topTheme ? topTheme.theme.slice(0, 18) : "—"}
-        />
-        <StatTile
-          label="This week"
-          value={insights.weeklyMentions.reduce((sum, m) => sum + m.count, 0)}
+          label="Topic mentioned this week"
+          value={
+            insights.weeklyMentions.length > 0
+              ? insights.weeklyMentions[0]!.count
+              : "—"
+          }
         />
       </div>
 
@@ -66,32 +64,7 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium text-zinc-300">
-            Dominant moods
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {insights.dominantMoods.length === 0 ? (
-            <p className="text-sm text-zinc-500">No mood data yet.</p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {insights.dominantMoods.map((mood) => (
-                <Badge
-                  key={mood.mood}
-                  variant="secondary"
-                  className="capitalize"
-                >
-                  {mood.mood} · {mood.count} ({mood.share}%)
-                </Badge>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-medium text-zinc-300">
-            Recurring themes
+            Topics in your words
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -104,7 +77,7 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
                   key={theme.theme}
                   className="flex items-center justify-between text-sm"
                 >
-                  <span className="capitalize text-zinc-300">{theme.theme}</span>
+                  <span className="text-zinc-300">{theme.theme}</span>
                   <span className="tabular-nums text-zinc-500">{theme.count}×</span>
                 </li>
               ))}
@@ -112,63 +85,6 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
           )}
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-zinc-500" />
-            <CardTitle className="text-base font-medium text-zinc-300">
-              Emotional intensity trend
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <IntensityTrendChart points={insights.intensityTrend} />
-        </CardContent>
-      </Card>
-
-      {insights.mostMentionedConcern ? (
-        <Card className="border-amber-500/15 bg-amber-500/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium text-zinc-300">
-              Most mentioned concern
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm leading-relaxed text-zinc-300">
-              {insights.mostMentionedConcern}
-            </p>
-          </CardContent>
-        </Card>
-      ) : null}
-
-      {insights.positiveSignalsOverTime.length > 0 ? (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium text-zinc-300">
-              Positive signals over time
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {insights.positiveSignalsOverTime.map((point) => (
-              <motion.div
-                key={`${point.dayKey}-${point.signal.slice(0, 24)}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-zinc-500">{point.label}</span>
-                  <Badge className="capitalize">{point.mood}</Badge>
-                </div>
-                <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">
-                  {point.signal}
-                </p>
-              </motion.div>
-            ))}
-          </CardContent>
-        </Card>
-      ) : null}
 
       {insights.mostRepeatedPattern ? (
         <Card>
@@ -180,6 +96,34 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
           <CardContent>
             <p className="text-sm leading-relaxed text-zinc-400">
               {insights.mostRepeatedPattern}
+            </p>
+          </CardContent>
+        </Card>
+      ) : topTheme ? (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-medium text-zinc-300">
+              Often in your words lately
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed text-zinc-400">
+              {topTheme.theme} — {topTheme.count} reflections
+            </p>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {insights.mostMentionedConcern ? (
+        <Card className="border-white/10 bg-white/[0.02]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-medium text-zinc-300">
+              In your own words recently
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed text-zinc-300">
+              {insights.mostMentionedConcern}
             </p>
           </CardContent>
         </Card>

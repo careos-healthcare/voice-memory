@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calendar, Mic, TrendingDown, TrendingUp } from "lucide-react";
+import { Calendar, Mic } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,11 +51,6 @@ export function HabitLoopCard({
   }, []);
 
   if (!stats) return null;
-
-  const intensityDelta =
-    stats.today.avgIntensity !== null && stats.yesterday.avgIntensity !== null
-      ? stats.today.avgIntensity - stats.yesterday.avgIntensity
-      : null;
 
   const recap = stats.weeklyRecap;
 
@@ -164,30 +159,6 @@ export function HabitLoopCard({
               today={String(stats.today.entryCount)}
               yesterday={String(stats.yesterday.entryCount)}
             />
-            <ComparisonRow
-              label="Avg intensity"
-              today={
-                stats.today.avgIntensity !== null
-                  ? `${stats.today.avgIntensity}/10`
-                  : "—"
-              }
-              yesterday={
-                stats.yesterday.avgIntensity !== null
-                  ? `${stats.yesterday.avgIntensity}/10`
-                  : "—"
-              }
-            />
-            {intensityDelta !== null && intensityDelta !== 0 ? (
-              <p className="flex items-center gap-1.5 text-xs text-zinc-500">
-                {intensityDelta > 0 ? (
-                  <TrendingUp className="h-3.5 w-3.5 text-amber-400" />
-                ) : (
-                  <TrendingDown className="h-3.5 w-3.5 text-emerald-400" />
-                )}
-                Emotional intensity{" "}
-                {intensityDelta > 0 ? "higher" : "lower"} than yesterday
-              </p>
-            ) : null}
           </CardContent>
         ) : null}
       </Card>
@@ -205,19 +176,11 @@ export function HabitLoopCard({
                 <span className="text-white">{recap.entryCount}</span> reflection
                 {recap.entryCount === 1 ? "" : "s"} logged
               </li>
-              {recap.dominantMood ? (
-                <li>
-                  Dominant mood ·{" "}
-                  <span className="capitalize text-zinc-200">{recap.dominantMood}</span>
-                </li>
-              ) : null}
               {recap.topTheme ? (
                 <li>
-                  Top theme · <span className="text-zinc-200">{recap.topTheme}</span>
+                  Topic you named most ·{" "}
+                  <span className="text-zinc-200">{recap.topTheme}</span>
                 </li>
-              ) : null}
-              {recap.avgIntensity !== null ? (
-                <li>Average intensity · {recap.avgIntensity}/10</li>
               ) : null}
             </ul>
           )}

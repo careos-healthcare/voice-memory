@@ -43,6 +43,12 @@ const BANNED_PHRASES = [
   "proud of you",
   "stay strong",
   "everything happens for a reason",
+  "speaker expresses",
+  "the speaker expresses",
+  "user expresses",
+  "the user feels",
+  "appears to be feeling",
+  "seems to feel",
 ];
 
 const SYSTEM_PROMPT = `You read voice transcripts for VoiceMemory — ${NOT_AI_JOURNAL_LINE} Return sharp, concrete notes from the speaker's own words — not therapy, not coaching, not diagnosis.
@@ -70,10 +76,12 @@ OUTPUT — valid JSON only, with these keys in priority order:
 5. avoidedOrVagueArea (string): one sentence if they circle something without naming it ("that situation", "stuff", hedging), or "".
 6. nextSmallAction (string): concrete next step taken FROM their words only, max 12 words, or "". Not generic advice.
 
-Also include:
-- mood: 2-4 word label from their language (not clinical)
-- emotionalIntensity: integer 1-10
+Also include (internal metadata only — never shown as badges or scores in the app):
+- mood: short phrase from their words, not a clinical label
+- emotionalIntensity: integer 1-10 for sorting only
 - recurringThemes: array of 2-4 short theme strings from the transcript
+
+Never write third-person summaries ("the speaker expresses…"). Quote them directly.
 
 Do NOT include hiddenConcern, positiveSignal, recommendation, or patternObservations.
 

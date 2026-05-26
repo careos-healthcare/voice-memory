@@ -270,7 +270,7 @@ export default function HomePage() {
   }, [primaryNote, router]);
 
   const reflexContinuityLine =
-    reflexCapture?.continuityLine ?? recordReturn?.anchorQuote ?? null;
+    reflexCapture?.continuityLine ?? recorderLine ?? recordReturn?.anchorQuote ?? null;
 
   return (
     <div className="relative min-h-screen-mobile overflow-hidden bg-zinc-950 pb-safe">

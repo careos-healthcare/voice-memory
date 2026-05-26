@@ -11,7 +11,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContradictionContinuityCard } from "@/components/patterns/ContradictionContinuityCard";
 import { buildEntryPatternInsights } from "@/lib/pattern-detection";
@@ -31,7 +30,6 @@ interface InsightCardProps {
   showContradictionCard?: boolean;
   showPhraseCard?: boolean;
   showAvoidanceCard?: boolean;
-  hideMoodSummary?: boolean;
   hideObservations?: boolean;
   calmMode?: boolean;
 }
@@ -91,57 +89,6 @@ function PatternSection({
   );
 }
 
-function MoodSummaryCard({
-  reflection,
-  intensityPercent,
-}: {
-  reflection: Reflection;
-  intensityPercent: number;
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-              Mood snapshot
-            </p>
-            <CardTitle className="mt-2 text-2xl capitalize">{reflection.mood}</CardTitle>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-right">
-            <p className="text-xs text-zinc-400">Intensity</p>
-            <p className="text-2xl font-semibold text-white">
-              {reflection.emotionalIntensity}
-              <span className="text-sm font-normal text-zinc-500">/10</span>
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${intensityPercent}%` }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"
-          />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {reflection.recurringThemes.length > 0 ? (
-            reflection.recurringThemes.map((theme) => (
-              <Badge key={theme} variant="default">
-                {theme}
-              </Badge>
-            ))
-          ) : (
-            <span className="text-sm text-zinc-500">No themes tagged</span>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 export function InsightCard({
   reflection,
   transcript,
@@ -152,9 +99,8 @@ export function InsightCard({
   showContradictionCard = true,
   showPhraseCard = true,
   showAvoidanceCard = true,
-  hideMoodSummary = false,
   hideObservations = false,
-  calmMode = false,
+  calmMode = true,
 }: InsightCardProps) {
   const patternInsights = useMemo(() => {
     if (patternInsightsProp) return patternInsightsProp;
@@ -173,8 +119,6 @@ export function InsightCard({
     if (!resolvedEntry) return [];
     return detectContradictionsForEntry(getAllEntries(), resolvedEntry.id);
   }, [resolvedEntry]);
-
-  const intensityPercent = reflection.emotionalIntensity * 10;
 
   const mirrorRead = getStructuredAnalysis(reflection);
   const calmMirror = calmMode ? mirrorRead.slice(0, 1) : mirrorRead;
@@ -224,25 +168,9 @@ export function InsightCard({
             ))}
           </CardContent>
         </Card>
-      ) : observations.length > 0 && !hideObservations && !calmMode ? (
-        <Card className="border-fuchsia-400/20 bg-gradient-to-br from-fuchsia-500/10 via-transparent to-transparent">
-          <CardHeader className="pb-2">
-            <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
-              Concrete observations
-            </p>
-            <CardTitle className="text-lg">What repeats in your words</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {observations.map((obs) => (
-              <p key={obs} className="text-sm leading-relaxed text-zinc-200">
-                {obs}
-              </p>
-            ))}
-          </CardContent>
-        </Card>
       ) : null}
 
-      {!calmMode ? (
+      {!calmMode && !hideObservations ? (
         <>
           <PatternSection
             title="What repeats"
@@ -296,7 +224,7 @@ export function InsightCard({
 
           {(patternInsights?.emotionalEvolution.length ?? 0) > 0 ? (
             <PatternSection
-              title="Emotional shift"
+              title="How this thread shifted"
               icon={TrendingUp}
               accent="text-sky-300"
               items={(patternInsights?.emotionalEvolution ?? []).map((e) => ({
@@ -307,10 +235,6 @@ export function InsightCard({
             />
           ) : null}
         </>
-      ) : null}
-
-      {!hideMoodSummary && !calmMode ? (
-        <MoodSummaryCard reflection={reflection} intensityPercent={intensityPercent} />
       ) : null}
 
       {showTranscript && transcript ? (

@@ -1,4 +1,4 @@
-import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
+import { preMicContinuityLine } from "@/lib/continuity/build-continuity-lines";
 import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { pickArchiveDepthIndicator } from "@/lib/memory/continuity-depth";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
@@ -108,7 +108,7 @@ export function buildQuietHomepagePresentation(
 ): QuietHomepagePresentation {
   const sideEffects = emptyPresentationSideEffects();
   queueSilenceIntelligencePersist(sideEffects, entries);
-  const continuation = homepageContinuationNotes(entries, 1).slice(0, 1);
+  const continuation: MemoryNote[] = [];
   const candidates = collectHomepageCandidates(entries, limits);
 
   const eligible = pickConfidenceEligibleNotes(
@@ -160,7 +160,7 @@ export function buildQuietHomepagePresentation(
         : null,
       continuation,
       followupPrompt: null,
-      recorderLine: continuation.length === 0 ? recorderPreRecordLine(entries) : null,
+      recorderLine: preMicContinuityLine(entries),
       memoryReminder: null,
       continuityDepth: pickArchiveDepthIndicator(entries, "homepage"),
     },

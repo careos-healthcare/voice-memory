@@ -1,23 +1,27 @@
 import { MEMORY_LANGUAGE } from "@/lib/memory-language";
+import { sanitizeUserFacingObservation } from "@/lib/product/human-continuity-ui";
 import type { Reflection } from "@/types/journal";
 
 /** Primary observation line for UI — never falls back to legacy therapy fields. */
 export function getPrimaryObservation(reflection: Reflection): string | null {
   if (reflection.concreteObservation?.trim()) {
-    return reflection.concreteObservation.trim();
+    return sanitizeUserFacingObservation(reflection.concreteObservation) ?? null;
   }
   if (reflection.tensionOrContradiction?.trim()) {
-    return reflection.tensionOrContradiction.trim();
+    return sanitizeUserFacingObservation(reflection.tensionOrContradiction);
   }
   if (reflection.repeatedSignal?.trim()) {
     const signal = reflection.repeatedSignal.trim();
-    if (!signal.toLowerCase().startsWith("nothing repeated")) return signal;
+    if (!signal.toLowerCase().startsWith("nothing repeated")) {
+      return sanitizeUserFacingObservation(signal);
+    }
   }
   if (reflection.exactLanguagePattern?.trim()) {
-    return `"${reflection.exactLanguagePattern.trim()}"`;
+    const quote = reflection.exactLanguagePattern.trim();
+    return sanitizeUserFacingObservation(`"${quote}"`) ?? `"${quote}"`;
   }
   const obs = reflection.patternObservations?.find((o) => o.trim());
-  if (obs) return obs.trim();
+  if (obs) return sanitizeUserFacingObservation(obs);
   return null;
 }
 
@@ -30,49 +34,56 @@ export function getStructuredAnalysis(reflection: Reflection): Array<{
   const rows: Array<{ key: string; label: string; detail: string }> = [];
 
   if (reflection.exactLanguagePattern?.trim()) {
+    const quote = `"${reflection.exactLanguagePattern.trim()}"`;
+    const detail = sanitizeUserFacingObservation(quote) ?? quote;
     rows.push({
       key: "exact",
       label: MEMORY_LANGUAGE.yourOwnWords,
-      detail: `"${reflection.exactLanguagePattern.trim()}"`,
+      detail,
     });
   }
   if (reflection.concreteObservation?.trim()) {
-    rows.push({
-      key: "concrete",
-      label: MEMORY_LANGUAGE.whatStoodOut,
-      detail: reflection.concreteObservation.trim(),
-    });
+    const detail = sanitizeUserFacingObservation(reflection.concreteObservation);
+    if (detail) {
+      rows.push({
+        key: "concrete",
+        label: MEMORY_LANGUAGE.whatStoodOut,
+        detail,
+      });
+    }
   }
   if (reflection.tensionOrContradiction?.trim()) {
-    rows.push({
-      key: "tension",
-      label: MEMORY_LANGUAGE.twoTruths,
-      detail: reflection.tensionOrContradiction.trim(),
-    });
+    const detail = sanitizeUserFacingObservation(reflection.tensionOrContradiction);
+    if (detail) {
+      rows.push({
+        key: "tension",
+        label: MEMORY_LANGUAGE.twoTruths,
+        detail,
+      });
+    }
   }
   if (reflection.repeatedSignal?.trim()) {
     const signal = reflection.repeatedSignal.trim();
     if (!signal.toLowerCase().startsWith("nothing repeated")) {
-      rows.push({
-        key: "repeat",
-        label: MEMORY_LANGUAGE.youSaidBefore.replace(/\.$/, ""),
-        detail: signal,
-      });
+      const detail = sanitizeUserFacingObservation(signal);
+      if (detail) {
+        rows.push({
+          key: "repeat",
+          label: MEMORY_LANGUAGE.youSaidBefore.replace(/\.$/, ""),
+          detail,
+        });
+      }
     }
   }
   if (reflection.avoidedOrVagueArea?.trim()) {
-    rows.push({
-      key: "vague",
-      label: MEMORY_LANGUAGE.leftIndirect.replace(/\.$/, ""),
-      detail: reflection.avoidedOrVagueArea.trim(),
-    });
-  }
-  if (reflection.nextSmallAction?.trim()) {
-    rows.push({
-      key: "action",
-      label: "Next step in your words",
-      detail: reflection.nextSmallAction.trim(),
-    });
+    const detail = sanitizeUserFacingObservation(reflection.avoidedOrVagueArea);
+    if (detail) {
+      rows.push({
+        key: "vague",
+        label: MEMORY_LANGUAGE.leftIndirect.replace(/\.$/, ""),
+        detail,
+      });
+    }
   }
 
   return rows;

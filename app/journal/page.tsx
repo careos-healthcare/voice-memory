@@ -6,14 +6,15 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Clock3 } from "lucide-react";
 
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Badge } from "@/components/ui/badge";
+import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEntries } from "@/lib/storage";
-import { getEntryPreviewLine } from "@/lib/reflection";
+import { entryContinuitySnippet } from "@/lib/product/human-continuity-ui";
 import { APP_HONESTY, APP_SUBTITLE } from "@/lib/product-copy";
 import { formatEntryDate, formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -53,8 +54,9 @@ export default function JournalPage() {
           </div>
         </motion.div>
 
-        <div className="mt-8">
+        <div className="mt-8 space-y-10">
           <HabitLoopCard compact />
+          <ReturnThreadsOverview compact />
         </div>
 
         <div className="relative mt-10">
@@ -102,14 +104,9 @@ export default function JournalPage() {
                         <div className="absolute -left-[1.35rem] top-6 hidden h-3 w-3 rounded-full border border-violet-400/40 bg-violet-500 sm:block" />
                         <div className="flex items-start justify-between gap-4">
                           <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Badge>{entry.reflection.mood}</Badge>
-                              <span className="text-xs text-zinc-500">
-                                Intensity {entry.reflection.emotionalIntensity}/10
-                              </span>
-                            </div>
+                            <EntryListRowMeta createdAt={entry.createdAt} />
                             <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-zinc-300">
-                              {getEntryPreviewLine(entry.reflection)}
+                              {entryContinuitySnippet(entry)}
                             </p>
                             <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
                               <span className="inline-flex items-center gap-1">

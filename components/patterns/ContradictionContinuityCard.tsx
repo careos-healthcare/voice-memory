@@ -80,9 +80,6 @@ export function ContradictionContinuityCard({
                     >
                       {ev.dateLabel}
                     </Link>
-                    {ev.mood ? (
-                      <span className="text-[10px] capitalize text-zinc-600">{ev.mood}</span>
-                    ) : null}
                   </div>
                   <p className="mt-1 text-xs italic leading-relaxed text-zinc-400">
                     &ldquo;{ev.phrase}&rdquo;
