@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,12 +21,16 @@ import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
 import { observeRecurrenceDensityOnboardingComplete } from "@/lib/retention/recurrence-density";
 
 export function ActivationOnboarding() {
-  const [visible, setVisible] = useState(
-    () => typeof window !== "undefined" && !isOnboardingDismissed(),
-  );
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
 
-  if (!visible) return null;
+  useEffect(() => {
+    setMounted(true);
+    setVisible(!isOnboardingDismissed());
+  }, []);
+
+  if (!mounted || !visible) return null;
 
   const finish = (scrollToRecorder: boolean) => {
     dismissOnboarding();
