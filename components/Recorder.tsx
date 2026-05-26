@@ -55,6 +55,7 @@ import {
 } from "@/lib/reliability/copy";
 import { persistTranscriptDraft, saveRecoveryDraft } from "@/lib/reliability/draft-recovery";
 import { saveAudioSafe, saveDraftAudioSafe } from "@/lib/reliability/safe-audio";
+import { usePrimaryCtaClaim } from "@/components/homepage/HomepagePrimaryCtaProvider";
 import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
 
@@ -469,6 +470,9 @@ export function Recorder({
     return `${mins}:${secs}`;
   };
 
+  const canShowRecorderCta = usePrimaryCtaClaim("recorder", state === "idle");
+  const canShowRetryCta = usePrimaryCtaClaim("retry", state === "error");
+
   return (
     <div className="w-full max-w-xl">
       <AnimatePresence mode="wait">
@@ -481,14 +485,18 @@ export function Recorder({
             exit="exit"
             className="flex flex-col items-center gap-5"
           >
-            {reflectionPrompt ? (
+            {canShowRecorderCta && reflectionPrompt ? (
               <ContinuationRecorderPrompt
                 text={reflectionPrompt}
                 onContinue={() => void startRecording()}
               />
-            ) : (
+            ) : canShowRecorderCta ? (
               <>
-                <Button size="lg" onClick={() => void startRecording()}>
+                <Button
+                  size="lg"
+                  data-primary-cta="recorder"
+                  onClick={() => void startRecording()}
+                >
                   <Mic className="h-5 w-5" />
                   Start reflection
                 </Button>
@@ -512,7 +520,7 @@ export function Recorder({
                   </div>
                 ) : null}
               </>
-            )}
+            ) : null}
             <p className="text-sm text-zinc-500">{ONBOARDING_RECORDER.idle}</p>
           </motion.div>
         )}
@@ -603,9 +611,13 @@ export function Recorder({
                 {notice}
               </p>
             ) : null}
-            <div className="flex justify-center">
-              <Button onClick={() => void startRecording()}>Try again</Button>
-            </div>
+            {canShowRetryCta ? (
+              <div className="flex justify-center">
+                <Button data-primary-cta="retry" onClick={() => void startRecording()}>
+                  Try again
+                </Button>
+              </div>
+            ) : null}
           </motion.div>
         )}
       </AnimatePresence>

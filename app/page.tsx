@@ -10,6 +10,7 @@ import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
 import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
 import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { HomepagePrimaryCtaProvider } from "@/components/homepage/HomepagePrimaryCtaProvider";
 import { CalmComprehensionPrompt } from "@/components/onboarding/CalmComprehensionPrompt";
 import { OnboardingCompletionProof } from "@/components/social-proof/OnboardingCompletionProof";
 import { ContinuityDepthNote } from "@/components/memory/ContinuityDepthNote";
@@ -132,6 +133,7 @@ export default function HomePage() {
         <div className="absolute bottom-0 right-0 h-[280px] w-[280px] rounded-full bg-fuchsia-600/10 blur-3xl" />
       </div>
 
+      <HomepagePrimaryCtaProvider>
       <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-10 sm:px-6">
         <SiteHeader />
 
@@ -199,7 +201,7 @@ export default function HomePage() {
             }}
             className="mt-8 w-full text-left"
           >
-            <HabitLoopCard compact />
+            <HabitLoopCard compact suppressRecordCta />
           </motion.div>
 
           <motion.div
@@ -241,6 +243,7 @@ export default function HomePage() {
 
         <SiteFooter className="mt-auto pt-8" />
       </div>
+      </HomepagePrimaryCtaProvider>
     </div>
   );
 }

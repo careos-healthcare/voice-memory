@@ -20,6 +20,7 @@ import {
 } from "@/lib/onboarding/onboarding-observation";
 import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
 import { observeRecurrenceDensityOnboardingComplete } from "@/lib/retention/recurrence-density";
+import { usePrimaryCtaClaim } from "@/components/homepage/HomepagePrimaryCtaProvider";
 
 export function ActivationOnboarding() {
   const hydrated = useClientHydrated();
@@ -29,6 +30,9 @@ export function ActivationOnboarding() {
   useEffect(() => {
     setVisible(!isOnboardingDismissed());
   }, []);
+
+  const isLast = step >= ACTIVATION_ONBOARDING_STEPS.length - 1;
+  const canShowOnboardingCta = usePrimaryCtaClaim("onboarding", hydrated && visible && isLast);
 
   if (!hydrated || !visible) return null;
 
@@ -47,7 +51,6 @@ export function ActivationOnboarding() {
   };
 
   const current = ACTIVATION_ONBOARDING_STEPS[step];
-  const isLast = step >= ACTIVATION_ONBOARDING_STEPS.length - 1;
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-5">
@@ -74,11 +77,16 @@ export function ActivationOnboarding() {
               <Button type="button" size="sm" variant="secondary" onClick={() => setStep((s) => s + 1)}>
                 Next
               </Button>
-            ) : (
-              <Button type="button" size="sm" onClick={() => finish(true)}>
+            ) : canShowOnboardingCta ? (
+              <Button
+                type="button"
+                size="sm"
+                data-primary-cta="onboarding"
+                onClick={() => finish(true)}
+              >
                 Record a reflection
               </Button>
-            )}
+            ) : null}
             <Button
               type="button"
               size="sm"

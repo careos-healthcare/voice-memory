@@ -33,7 +33,14 @@ function ComparisonRow({
   );
 }
 
-export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
+export function HabitLoopCard({
+  compact = false,
+  suppressRecordCta = false,
+}: {
+  compact?: boolean;
+  /** Hide habit-loop record links when the homepage primary recorder CTA owns the surface. */
+  suppressRecordCta?: boolean;
+}) {
   const [stats, setStats] = useState<HabitStats | null>(null);
 
   useEffect(() => {
@@ -63,12 +70,14 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
               No schedule required — your pace is yours.
             </p>
           </div>
-          <Button asChild size="sm">
-            <Link href="/">
-              <Mic className="h-4 w-4" />
-              Record a reflection
-            </Link>
-          </Button>
+          {!suppressRecordCta ? (
+            <Button asChild size="sm">
+              <Link href="/">
+                <Mic className="h-4 w-4" />
+                Record a reflection
+              </Link>
+            </Button>
+          ) : null}
         </div>
       </div>
     );
@@ -96,17 +105,17 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
                 : "Return whenever it helps."}
             </p>
           </div>
-          {!stats.reflectedToday ? (
+          {stats.reflectedToday ? (
+            <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300/90">
+              Reflected today
+            </span>
+          ) : suppressRecordCta ? null : (
             <Button asChild size="sm" className="shrink-0">
               <Link href="/">
                 <Mic className="h-4 w-4" />
                 Record today&apos;s reflection
               </Link>
             </Button>
-          ) : (
-            <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300/90">
-              Reflected today
-            </span>
           )}
         </div>
       </div>
@@ -137,17 +146,17 @@ export function HabitLoopCard({ compact = false }: { compact?: boolean }) {
                 </p>
               )}
             </div>
-            {!stats.reflectedToday ? (
+            {stats.reflectedToday ? (
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
+                Reflected today
+              </span>
+            ) : suppressRecordCta ? null : (
               <Button asChild size="sm" className="shrink-0">
                 <Link href="/">
                   <Mic className="h-4 w-4" />
                   Record today&apos;s reflection
                 </Link>
               </Button>
-            ) : (
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
-                Reflected today
-              </span>
             )}
           </div>
         </CardHeader>
