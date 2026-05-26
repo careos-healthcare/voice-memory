@@ -104,6 +104,21 @@ import {
   isMicrophonePermissionGranted,
   markMicrophonePermissionGranted,
 } from "@/lib/capture/fast-capture";
+import { MIC_PERMISSION_COPY } from "@/lib/capture/mic-permission-copy";
+import {
+  clearMicPermissionRequestActive,
+  markMicPermissionRequestActive,
+  setRecorderSurfaceActive,
+} from "@/lib/mobile/install-prompt-gate";
+import {
+  isLikelyOffline,
+  isNetworkFetchError,
+  OFFLINE_TRANSCRIPTION_RETRY_HINT,
+  OFFLINE_TRANSCRIPTION_SAVED_COPY,
+  saveOfflineRecordingDraft,
+  sanitizeRecordingErrorMessage,
+} from "@/lib/reliability/offline-transcription";
+import { MicPermissionPanel } from "@/components/recording/MicPermissionPanel";
 import {
   clearForceDirectMicAfterCapture,
   clearHesitationWatch,
@@ -167,6 +182,11 @@ export function Recorder({
   const recorderStartedRef = useRef(false);
   const recorderCompletedRef = useRef(false);
   const navigatingAfterSaveRef = useRef(false);
+  const lastRecordingRef = useRef<{ blob: Blob; durationSeconds: number } | null>(
+    null,
+  );
+  const [micBlocked, setMicBlocked] = useState(false);
+  const [pendingOfflineRetry, setPendingOfflineRetry] = useState(false);
   const processingRef = useRef(false);
 
   const [state, setState] = useState<RecorderState>("idle");
@@ -293,11 +313,14 @@ export function Recorder({
       if (processingRef.current) return;
       processingRef.current = true;
       navigatingAfterSaveRef.current = false;
+      lastRecordingRef.current = { blob, durationSeconds };
 
       setState("processing");
       setStage("transcribing");
       setError(null);
       setNotice(null);
+      setMicBlocked(false);
+      setPendingOfflineRetry(false);
 
       try {
         const formData = new FormData();
@@ -308,10 +331,28 @@ export function Recorder({
           }),
         );
 
-        const transcribeResponse = await fetch("/api/transcribe", {
-          method: "POST",
-          body: formData,
-        });
+        let transcribeResponse: Response;
+        try {
+          transcribeResponse = await fetch("/api/transcribe", {
+            method: "POST",
+            body: formData,
+          });
+        } catch (fetchError) {
+          if (isNetworkFetchError(fetchError) || isLikelyOffline()) {
+            await saveOfflineRecordingDraft(
+              blob,
+              durationSeconds,
+              mimeTypeRef.current,
+            );
+            processingRef.current = false;
+            setState("error");
+            setPendingOfflineRetry(true);
+            setNotice(OFFLINE_TRANSCRIPTION_SAVED_COPY);
+            setError(OFFLINE_TRANSCRIPTION_RETRY_HINT);
+            return;
+          }
+          throw fetchError;
+        }
 
         const transcribeData = (await transcribeResponse.json()) as {
           transcript?: string;
@@ -319,6 +360,19 @@ export function Recorder({
         };
 
         if (!transcribeResponse.ok || !transcribeData.transcript) {
+          if (!transcribeResponse.ok && (isLikelyOffline() || transcribeResponse.status >= 500)) {
+            await saveOfflineRecordingDraft(
+              blob,
+              durationSeconds,
+              mimeTypeRef.current,
+            );
+            processingRef.current = false;
+            setState("error");
+            setPendingOfflineRetry(true);
+            setNotice(OFFLINE_TRANSCRIPTION_SAVED_COPY);
+            setError(OFFLINE_TRANSCRIPTION_RETRY_HINT);
+            return;
+          }
           throw new Error(
             transcribeData.error ?? "Could not transcribe your recording",
           );
@@ -491,12 +545,27 @@ export function Recorder({
         finalizeEntry(newEntry);
       } catch (processingError) {
         processingRef.current = false;
+        if (
+          (isNetworkFetchError(processingError) || isLikelyOffline()) &&
+          lastRecordingRef.current
+        ) {
+          await saveOfflineRecordingDraft(
+            blob,
+            durationSeconds,
+            mimeTypeRef.current,
+          );
+          setState("error");
+          setPendingOfflineRetry(true);
+          setNotice(OFFLINE_TRANSCRIPTION_SAVED_COPY);
+          setError(OFFLINE_TRANSCRIPTION_RETRY_HINT);
+          return;
+        }
         setState("error");
-        setError(
+        const raw =
           processingError instanceof Error
             ? processingError.message
-            : "Something went wrong",
-        );
+            : "Something went wrong";
+        setError(sanitizeRecordingErrorMessage(raw));
       }
     },
     [
@@ -552,14 +621,18 @@ export function Recorder({
     setError(null);
     setNotice(null);
     setEntry(null);
+    setMicBlocked(false);
+    setPendingOfflineRetry(false);
     if (densityOffer) {
       recordRecurrenceDensityEngaged();
       setDensityOffer(null);
     }
     chunksRef.current = [];
 
+    markMicPermissionRequestActive();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      clearMicPermissionRequestActive();
       markMicrophonePermissionGranted();
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
@@ -619,10 +692,10 @@ export function Recorder({
         });
       }, 1000);
     } catch {
+      clearMicPermissionRequestActive();
+      setMicBlocked(true);
       setState("error");
-      setError(
-        "Microphone access is required. Please allow mic permissions and try again.",
-      );
+      setError(null);
     }
   }, [
     clearTimer,
@@ -632,6 +705,15 @@ export function Recorder({
     stopRecording,
     stopTracks,
   ]);
+
+  const retryLastRecording = useCallback(() => {
+    const last = lastRecordingRef.current;
+    if (last) {
+      void processRecording(last.blob, last.durationSeconds);
+      return;
+    }
+    void startRecording();
+  }, [processRecording, startRecording]);
 
   useEffect(() => {
     if (reflexFastBoot) markReflexRecorderMounted();
@@ -680,7 +762,9 @@ export function Recorder({
   ]);
 
   useEffect(() => {
+    setRecorderSurfaceActive(true);
     observeFunnelRecorderViewed();
+    return () => setRecorderSurfaceActive(false);
   }, []);
 
   useEffect(() => {
@@ -937,19 +1021,45 @@ export function Recorder({
             animate="animate"
             className="space-y-4"
           >
-            {error ? <ErrorBanner message={error} /> : null}
-            {notice ? (
-              <p className="text-center text-sm leading-relaxed text-amber-200/80">
-                {notice}
-              </p>
-            ) : null}
-            {canShowRetryCta ? (
-              <div className="flex justify-center">
-                <Button data-primary-cta="retry" onClick={() => void startRecording()}>
-                  Try again
-                </Button>
-              </div>
-            ) : null}
+            {micBlocked ? (
+              <MicPermissionPanel
+                onRetry={() => {
+                  setMicBlocked(false);
+                  void startRecording();
+                }}
+              />
+            ) : (
+              <>
+                {notice ? (
+                  <p className="text-center text-sm leading-relaxed text-zinc-300">
+                    {notice}
+                  </p>
+                ) : null}
+                {error && !pendingOfflineRetry ? (
+                  <ErrorBanner message={error} />
+                ) : error ? (
+                  <p className="text-center text-sm leading-relaxed text-zinc-500">
+                    {error}
+                  </p>
+                ) : null}
+                {canShowRetryCta ? (
+                  <div className="flex justify-center">
+                    <Button
+                      data-primary-cta="retry"
+                      onClick={() =>
+                        pendingOfflineRetry
+                          ? void retryLastRecording()
+                          : void startRecording()
+                      }
+                    >
+                      {pendingOfflineRetry
+                        ? "Retry transcription"
+                        : MIC_PERMISSION_COPY.retry}
+                    </Button>
+                  </div>
+                ) : null}
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -685,9 +685,9 @@ export default function EntryPage() {
   return (
     <div className="min-h-screen-mobile mobile-entry-scroll bg-background pb-safe">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
-        <SiteHeader />
+        <SiteHeader compact />
 
-        <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="mt-2 flex items-center justify-between gap-4 sm:mt-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/journal">
               <ArrowLeft className="h-4 w-4" />

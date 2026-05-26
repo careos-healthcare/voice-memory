@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 
 interface SiteHeaderProps {
   className?: string;
+  /** Entry / capture routes — logo only, no nav strip on small screens. */
+  compact?: boolean;
 }
 
 const PRIMARY_NAV = [
@@ -15,11 +17,12 @@ const PRIMARY_NAV = [
   { href: "/pricing", label: "Pricing" },
 ] as const;
 
-export function SiteHeader({ className }: SiteHeaderProps) {
+export function SiteHeader({ className, compact = false }: SiteHeaderProps) {
   return (
     <header
       className={cn(
-        "mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-5 sm:px-6",
+        "mx-auto flex w-full max-w-3xl items-center justify-between px-4 sm:px-6",
+        compact ? "py-3" : "py-5",
         className,
       )}
     >
@@ -31,12 +34,19 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           <span className="text-sm font-medium text-zinc-200 transition-colors group-hover:text-white">
             VoiceMemory
           </span>
-          <span className="hidden text-[10px] text-zinc-600 sm:block">
-            {APP_SUBTITLE}
-          </span>
+          {!compact ? (
+            <span className="hidden text-[10px] text-zinc-600 sm:block">
+              {APP_SUBTITLE}
+            </span>
+          ) : null}
         </span>
       </Link>
-      <nav className="flex items-center gap-0.5 sm:gap-1">
+      <nav
+        className={cn(
+          "flex items-center gap-0.5 sm:gap-1",
+          compact ? "hidden sm:flex" : "flex",
+        )}
+      >
         {PRIMARY_NAV.map(({ href, label }) => (
           <Link
             key={href}

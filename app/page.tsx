@@ -30,7 +30,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
+import { MobileCompressedHome } from "@/components/homepage/MobileCompressedHome";
 import { MicCentricHome } from "@/components/reflex/MicCentricHome";
+import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
+import { isMobileFirstRunHome } from "@/lib/mobile/mobile-first-run";
 import {
   buildRecordReturnFromFollowup,
   buildRecordReturnFromNote,
@@ -98,6 +101,8 @@ import {
 } from "@/lib/reflex/reflex-observation";
 export default function HomePage() {
   const router = useRouter();
+  const hydrated = useClientHydrated();
+  const mobileFirstRun = hydrated && isMobileFirstRunHome();
   const { limits } = useQuietMode();
   const [primaryNote, setPrimaryNote] = useState<MemoryNote | null>(null);
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
@@ -276,9 +281,9 @@ export default function HomePage() {
 
       <HomepagePrimaryCtaProvider>
       <div className="relative mx-auto flex min-h-screen-mobile max-w-3xl flex-col px-4 pb-10 sm:px-6">
-        <SiteHeader />
+        <SiteHeader compact={mobileFirstRun} />
 
-        {!micCentric ? (
+        {!micCentric && !mobileFirstRun ? (
           <div className="mt-6 space-y-10 py-2">
             <ActivationOnboarding />
             <CalmComprehensionPrompt />
@@ -326,6 +331,21 @@ export default function HomePage() {
               reflexCapture={reflexCapture}
               recorderAutoStart={recorderAutoStart}
               quickReflection={isQuickReflectionEnabled()}
+            />
+          ) : mobileFirstRun ? (
+            <MobileCompressedHome
+              recorder={
+                <div className="w-full" ref={recorderRef} id="recorder">
+                  <Recorder
+                    autoStart={false}
+                    recordReturn={recordReturn}
+                    clarityRecord={clarityRecord}
+                    reflexCapture={reflexCapture}
+                    reflexFastBoot
+                    quickReflection={isQuickReflectionEnabled()}
+                  />
+                </div>
+              }
             />
           ) : (
             <>
@@ -383,40 +403,38 @@ export default function HomePage() {
               >
                 <HabitLoopCard compact suppressRecordCta />
               </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: MOTION.offset.page }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: MOTION.duration.page,
+                  delay: MOTION.delay.hero * 3,
+                  ease: MOTION.ease,
+                }}
+                className="mt-10 w-full"
+                ref={recorderRef}
+                id="recorder"
+              >
+                {!recordReturn && !clarityRecord ? (
+                  <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
+                    {HOMEPAGE_CLARITY.ctaLine}
+                  </p>
+                ) : null}
+                <Recorder
+                  autoStart={recorderAutoStart}
+                  preRecordLine={recordReturn || clarityRecord ? null : recorderLine}
+                  recordReturn={recordReturn}
+                  clarityRecord={clarityRecord}
+                  reflexCapture={reflexCapture}
+                  reflexFastBoot={directToMic || silenceFirstReflex}
+                  quickReflection={isQuickReflectionEnabled()}
+                />
+              </motion.div>
             </>
           )}
 
-          {!micCentric ? (
-            <motion.div
-              initial={{ opacity: 0, y: MOTION.offset.page }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: MOTION.duration.page,
-                delay: MOTION.delay.hero * 3,
-                ease: MOTION.ease,
-              }}
-              className="mt-10 w-full"
-              ref={recorderRef}
-              id="recorder"
-            >
-              {!recordReturn && !clarityRecord ? (
-                <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
-                  {HOMEPAGE_CLARITY.ctaLine}
-                </p>
-              ) : null}
-              <Recorder
-                autoStart={recorderAutoStart}
-                preRecordLine={recordReturn || clarityRecord ? null : recorderLine}
-                recordReturn={recordReturn}
-                clarityRecord={clarityRecord}
-                reflexCapture={reflexCapture}
-                reflexFastBoot={directToMic || silenceFirstReflex}
-                quickReflection={isQuickReflectionEnabled()}
-              />
-            </motion.div>
-          ) : null}
-
-          {!micCentric ? (
+          {!micCentric && !mobileFirstRun ? (
             <>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -439,7 +457,7 @@ export default function HomePage() {
           ) : null}
         </main>
 
-        {!micCentric ? <SiteFooter className="mt-auto pt-8" /> : null}
+        {!micCentric && !mobileFirstRun ? <SiteFooter className="mt-auto pt-8" /> : null}
       </div>
       </HomepagePrimaryCtaProvider>
     </div>

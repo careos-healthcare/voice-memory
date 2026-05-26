@@ -42,7 +42,10 @@ if (!micBranch) {
   }
 }
 
-if (!home.includes("{!micCentric ?")) {
+if (
+  !home.includes("{!micCentric && !mobileFirstRun ?") &&
+  !home.includes("{!micCentric ?")
+) {
   failures.push("homepage continuity stack must be gated behind !micCentric");
 }
 

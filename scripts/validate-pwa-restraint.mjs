@@ -27,6 +27,9 @@ const install = fs.readFileSync(INSTALL_FILE, "utf8");
 if (!install.includes("beforeinstallprompt")) {
   failures.push("InstallPrompt must listen for beforeinstallprompt");
 }
+if (!fs.existsSync(path.join(ROOT, "lib/mobile/install-prompt-gate.ts"))) {
+  failures.push("install-prompt-gate module required");
+}
 if (!install.match(/dismiss|Not now/i)) {
   failures.push("InstallPrompt must allow dismiss");
 }

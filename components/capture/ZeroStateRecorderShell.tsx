@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useMemo } from "react";
 
 import { Recorder } from "@/components/Recorder";
 import { markAppOpenForCapture, markFastCaptureReady } from "@/lib/capture/fast-capture";
+import { setRecorderSurfaceActive } from "@/lib/mobile/install-prompt-gate";
 import { markMicVisibleForHesitation } from "@/lib/capture/hesitation-signals";
 import {
   getZeroStateRecorderLine,
@@ -59,12 +60,14 @@ export function ZeroStateRecorderShell({
   const zeroState = shouldUseZeroStateRecorder(input);
 
   useLayoutEffect(() => {
+    setRecorderSurfaceActive(true);
     markAppOpenForCapture();
     startVulnerabilitySession(captureContext);
     markReflexRecorderMounted();
     markMicVisibleForHesitation();
     markMicVisible(captureContext);
     markFastCaptureReady();
+    return () => setRecorderSurfaceActive(false);
   }, [captureContext]);
 
   return (

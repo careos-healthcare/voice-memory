@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +9,7 @@ import {
   trackInstallPromptDismissed,
   trackInstallPromptShown,
 } from "@/lib/behavior/observation";
+import { shouldShowInstallPrompt } from "@/lib/mobile/install-prompt-gate";
 import { isPWA } from "@/lib/mobile/platform";
 
 const DISMISS_KEY = "voicememory_pwa_install_dismissed_until";
@@ -32,10 +34,11 @@ function dismissForDays(days: number): void {
   localStorage.setItem(DISMISS_KEY, String(Date.now() + days * 24 * 60 * 60 * 1000));
 }
 
-/** Single quiet install affordance — no nag loops. */
+/** Single quiet install affordance — after first-run value, never during capture. */
 export function InstallPrompt() {
+  const pathname = usePathname();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [armed, setArmed] = useState(false);
 
   useEffect(() => {
     if (isPWA() || dismissedRecently()) return;
@@ -43,13 +46,21 @@ export function InstallPrompt() {
     const onBip = (event: Event) => {
       event.preventDefault();
       setDeferred(event as BeforeInstallPromptEvent);
-      setVisible(true);
-      trackInstallPromptShown();
+      setArmed(true);
     };
 
     window.addEventListener("beforeinstallprompt", onBip);
     return () => window.removeEventListener("beforeinstallprompt", onBip);
   }, []);
+
+  useEffect(() => {
+    if (!armed || !deferred) return;
+    if (!shouldShowInstallPrompt(pathname)) return;
+    trackInstallPromptShown();
+  }, [armed, deferred, pathname]);
+
+  const visible =
+    armed && deferred && shouldShowInstallPrompt(pathname);
 
   if (!visible || !deferred) return null;
 
@@ -59,14 +70,14 @@ export function InstallPrompt() {
     if (choice.outcome === "accepted") {
       trackInstallAccepted();
     }
-    setVisible(false);
+    setArmed(false);
     setDeferred(null);
   };
 
   const handleDismiss = () => {
     dismissForDays(DISMISS_DAYS);
     trackInstallPromptDismissed();
-    setVisible(false);
+    setArmed(false);
     setDeferred(null);
   };
 
