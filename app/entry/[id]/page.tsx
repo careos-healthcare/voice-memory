@@ -51,6 +51,7 @@ import { consumeClarityAfterSaveLine } from "@/lib/clarity/clarity-record";
 import { buildClarityResurfacingNote } from "@/lib/clarity/clarity-resurfacing";
 import { SortThisOutAloudPrompt } from "@/components/clarity/SortThisOutAloudPrompt";
 import { CirclingThoughtsSection } from "@/components/clarity/CirclingThoughtsSection";
+import { shouldActivateReflexSilenceFirst } from "@/lib/reflex/open-without-record";
 import { readClarityPromptOffer } from "@/lib/runtime/read-model";
 import {
   writeEnqueueThoughtPatternExtract,
@@ -159,6 +160,11 @@ export default function EntryPage() {
   const [showReopenFollowup, setShowReopenFollowup] = useState(false);
   const [revisitAudioReplayed, setRevisitAudioReplayed] = useState(false);
   const [momentCopied, setMomentCopied] = useState(false);
+  const [reflexSilenceFirst, setReflexSilenceFirst] = useState(false);
+
+  useEffect(() => {
+    setReflexSilenceFirst(shouldActivateReflexSilenceFirst());
+  }, []);
 
   useEffect(() => {
     if (routeInvalid) {
@@ -857,7 +863,10 @@ export default function EntryPage() {
                 ) : null}
                 {entry.transcript && !pending ? (
                   <>
-                    {clarityOffer && !freshQuiet && !revisitExperience?.isRevisit ? (
+                    {clarityOffer &&
+                    !freshQuiet &&
+                    !reflexSilenceFirst &&
+                    !revisitExperience?.isRevisit ? (
                       <SortThisOutAloudPrompt
                         offer={clarityOffer}
                         anchorSnippet={entry.transcript}
@@ -868,7 +877,9 @@ export default function EntryPage() {
                       isRevisit={Boolean(revisitExperience?.isRevisit)}
                     />
                     <OpenLoopEntryContinuity entryId={entry.id} />
-                    {!freshQuiet ? <CirclingThoughtsSection entryId={entry.id} /> : null}
+                    {!freshQuiet && !reflexSilenceFirst ? (
+                      <CirclingThoughtsSection entryId={entry.id} />
+                    ) : null}
                   </>
                 ) : null}
               </section>

@@ -14,6 +14,8 @@ import {
   pickStrongestSurfaces,
 } from "@/lib/behavior/surface-effectiveness";
 import { buildBehaviorInsightSummary } from "@/lib/behavior/insight-summary";
+import { buildReadVsSpeakReport } from "@/lib/reflex/read-vs-speak";
+import { buildReflexScoreSnapshot } from "@/lib/reflex/reflex-score";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { BehaviorTruthReport } from "@/types/behavior-truth";
 
@@ -51,6 +53,8 @@ export function buildBehaviorTruthReport(): BehaviorTruthReport {
   };
 
   const insights = buildBehaviorInsightSummary(partial);
+  const readVsSpeak = buildReadVsSpeakReport();
+  const reflexScore = buildReflexScoreSnapshot();
 
   return {
     generatedAt: new Date().toISOString(),
@@ -69,6 +73,8 @@ export function buildBehaviorTruthReport(): BehaviorTruthReport {
     mobile,
     productPressure,
     insights,
+    readVsSpeak,
+    reflexScore,
   };
 }
 
@@ -89,5 +95,25 @@ function emptyReport(): BehaviorTruthReport {
     mobile: [],
     productPressure: [],
     insights: [],
+    readVsSpeak: {
+      metrics: {
+        avgSecondsBeforeRecord: null,
+        callbackOpensWithoutRecord: 0,
+        repeatedReopenWithoutRecord: 0,
+        scrollBeforeRecordSignals: 0,
+        consumableContinuityRisk: false,
+        passiveReadingLikely: false,
+      },
+      warnings: [],
+    },
+    reflexScore: {
+      resurfacingToImmediateRecord: 0,
+      unresolvedReturnScore: 0,
+      speedToSpeakScore: 0,
+      emotionalRecurrenceTiming: 0,
+      lateNightReflexUsage: 0,
+      conflictRepeatScore: 0,
+      overall: 0,
+    },
   };
 }

@@ -29,6 +29,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
+import { MicCentricHome } from "@/components/reflex/MicCentricHome";
 import {
   buildRecordReturnFromFollowup,
   buildRecordReturnFromNote,
@@ -71,7 +72,26 @@ import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { RecordReturnContext } from "@/types/record-return";
 import type { MemoryNote } from "@/types/memory-note";
 import type { ContinuityDepthIndicator } from "@/types/continuity-depth";
-
+import { detectReflexCapture } from "@/lib/reflex/reflex-capture";
+import {
+  consumeReflexCaptureContext,
+  storeReflexCaptureContext,
+  type ReflexCaptureContext,
+} from "@/lib/reflex/reflex-context";
+import {
+  shouldActivateReflexSilenceFirst,
+  recordReflexAppOpen,
+} from "@/lib/reflex/open-without-record";
+import { shouldDelayHomepageContinuityStack } from "@/lib/reflex/reflex-restraint";
+import {
+  markHomepageReadingStart,
+  markScrollBeforeRecorder,
+} from "@/lib/reflex/read-vs-speak";
+import {
+  markReflexPageLand,
+  trackReflexEvent,
+  REFLEX_EVENTS,
+} from "@/lib/reflex/reflex-observation";
 export default function HomePage() {
   const { limits } = useQuietMode();
   const [primaryNote, setPrimaryNote] = useState<MemoryNote | null>(null);
@@ -84,38 +104,99 @@ export default function HomePage() {
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
   const [recordReturn, setRecordReturn] = useState<RecordReturnContext | null>(null);
   const [clarityRecord, setClarityRecord] = useState<ClarityRecordContext | null>(null);
+  const [reflexCapture, setReflexCapture] = useState<ReflexCaptureContext | null>(null);
+  const [directToMic, setDirectToMic] = useState(false);
+  const [silenceFirstReflex, setSilenceFirstReflex] = useState(false);
   const [recorderAutoStart, setRecorderAutoStart] = useState(false);
   const recorderRef = useRef<HTMLDivElement>(null);
 
   const scrollToRecorder = useCallback(() => {
+    markScrollBeforeRecorder();
     requestAnimationFrame(() => {
       recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   }, []);
 
+  const micCentric =
+    directToMic || silenceFirstReflex || Boolean(recordReturn || clarityRecord || reflexCapture);
+
   useEffect(() => {
+    markReflexPageLand();
+    recordReflexAppOpen();
+    markHomepageReadingStart();
+
     const id = requestAnimationFrame(() => {
       maybeTrackFirstSessionReturnAfterRevisit();
       maybeDetectReturnTriggers();
       checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
+
+      const reflex = detectReflexCapture(entries);
+      if (
+        reflex.shouldBypassHomepage &&
+        reflex.continuityLine &&
+        reflex.triggerType
+      ) {
+        const ctx: ReflexCaptureContext = {
+          continuityLine: reflex.continuityLine,
+          triggerType: reflex.triggerType,
+          anchorQuote: reflex.anchorQuote,
+          noteId: reflex.noteId,
+        };
+        storeReflexCaptureContext(ctx);
+        setReflexCapture(ctx);
+        setDirectToMic(true);
+        setRecorderAutoStart(true);
+        trackReflexEvent(REFLEX_EVENTS.reflexMomentDetected, {
+          triggerType: reflex.triggerType,
+          bypassScore: String(reflex.bypassScore),
+        });
+        trackReflexEvent(REFLEX_EVENTS.directToMicBypass, {
+          triggerType: reflex.triggerType,
+        });
+        return;
+      }
+
+      if (shouldActivateReflexSilenceFirst()) {
+        setSilenceFirstReflex(true);
+        trackReflexEvent(REFLEX_EVENTS.silenceFirstActivated);
+        return;
+      }
+
+      const delayStack = shouldDelayHomepageContinuityStack();
       const presentation = runPresentationBuild(() =>
         buildQuietHomepagePresentation(entries, limits),
       );
-      flushPresentationSideEffects(presentation.sideEffects);
+      if (!delayStack) {
+        flushPresentationSideEffects(presentation.sideEffects);
+      }
       const silenceEffects = getSilenceIntelligenceEffects(entries);
-      setPrimaryNote(presentation.primaryNote);
-      setContinuation(presentation.continuation);
-      setFollowupPrompt(presentation.followupPrompt);
-      setRecorderLine(presentation.recorderLine);
-      setContinuityDepth(presentation.continuityDepth);
-      setArchiveGravity(silenceEffects.delayResurfacing ? null : homepageArchiveGravityMoment(entries));
-      setLivingResurfacing(
-        silenceEffects.delayResurfacing ? null : homepageLivingResurfacingMoment(entries),
-      );
-      setRevisitRhythm(
-        silenceEffects.delayResurfacing ? null : homepageRevisitRhythmMoment(entries),
-      );
+
+      if (delayStack) {
+        setPrimaryNote(null);
+        setContinuation([]);
+        setFollowupPrompt(null);
+        setRecorderLine(null);
+        setContinuityDepth(null);
+        setArchiveGravity(null);
+        setLivingResurfacing(null);
+        setRevisitRhythm(null);
+      } else {
+        setPrimaryNote(presentation.primaryNote);
+        setContinuation(presentation.continuation);
+        setFollowupPrompt(presentation.followupPrompt);
+        setRecorderLine(presentation.recorderLine);
+        setContinuityDepth(presentation.continuityDepth);
+        setArchiveGravity(
+          silenceEffects.delayResurfacing ? null : homepageArchiveGravityMoment(entries),
+        );
+        setLivingResurfacing(
+          silenceEffects.delayResurfacing ? null : homepageLivingResurfacingMoment(entries),
+        );
+        setRevisitRhythm(
+          silenceEffects.delayResurfacing ? null : homepageRevisitRhythmMoment(entries),
+        );
+      }
     });
     return () => cancelAnimationFrame(id);
   }, [
@@ -138,6 +219,14 @@ export default function HomePage() {
     const clarity = consumeClarityRecordContext();
     if (clarity) {
       setClarityRecord(clarity);
+      setRecorderAutoStart(true);
+      scrollToRecorder();
+      return;
+    }
+    const reflex = consumeReflexCaptureContext();
+    if (reflex) {
+      setReflexCapture(reflex);
+      setDirectToMic(true);
       setRecorderAutoStart(true);
       scrollToRecorder();
       return;
@@ -165,6 +254,9 @@ export default function HomePage() {
     scrollToRecorder();
   }, [primaryNote, scrollToRecorder]);
 
+  const reflexContinuityLine =
+    reflexCapture?.continuityLine ?? recordReturn?.anchorQuote ?? null;
+
   return (
     <div className="relative min-h-screen-mobile overflow-hidden bg-zinc-950 pb-safe">
       <div className="pointer-events-none absolute inset-0">
@@ -176,145 +268,168 @@ export default function HomePage() {
       <div className="relative mx-auto flex min-h-screen-mobile max-w-3xl flex-col px-4 pb-10 sm:px-6">
         <SiteHeader />
 
-        <div className="mt-6 space-y-10 py-2">
-          <ActivationOnboarding />
-          <CalmComprehensionPrompt />
-          <OnboardingCompletionProof />
-          <CrossDeviceCarryoverLine />
-          <ArchiveOwnershipSparseLine />
-          <PersonalisationProgressNote />
-          <ReflectionGoalHint />
-          <PrimaryCallbackNote
-            note={primaryNote}
-            onRecordAgain={handlePrimaryRecordAgain}
-          />
-          <QuietSilenceLine />
-          <OpenLoopReturnPrompt
-            onRecordAgain={() => {
-              const stored = peekRecordReturnContext();
-              if (stored) {
-                setRecordReturn(stored);
-                setRecorderAutoStart(true);
-              }
-              scrollToRecorder();
-            }}
-          />
-          <GentleReturnPrompt />
-          <DayTwoReturnPrompt />
-          <ArchiveValueMoments />
-          <ArchiveGravityNote note={archiveGravity} />
-          <LivingResurfacingNote note={livingResurfacing} />
-          <RevisitRhythmNote note={revisitRhythm} />
-          <ContinuityDepthNote indicator={continuityDepth} />
-          <ContinuationNotes notes={continuation} max={1} />
-          <FollowupPromptInline
-            prompt={followupPrompt}
-            onRecordAgain={handleRecordAgain}
-          />
-        </div>
+        {!micCentric ? (
+          <div className="mt-6 space-y-10 py-2">
+            <ActivationOnboarding />
+            <CalmComprehensionPrompt />
+            <OnboardingCompletionProof />
+            <CrossDeviceCarryoverLine />
+            <ArchiveOwnershipSparseLine />
+            <PersonalisationProgressNote />
+            <ReflectionGoalHint />
+            <PrimaryCallbackNote
+              note={primaryNote}
+              onRecordAgain={handlePrimaryRecordAgain}
+            />
+            <QuietSilenceLine />
+            <OpenLoopReturnPrompt
+              onRecordAgain={() => {
+                const stored = peekRecordReturnContext();
+                if (stored) {
+                  setRecordReturn(stored);
+                  setRecorderAutoStart(true);
+                }
+                scrollToRecorder();
+              }}
+            />
+            <GentleReturnPrompt />
+            <DayTwoReturnPrompt />
+            <ArchiveValueMoments />
+            <ArchiveGravityNote note={archiveGravity} />
+            <LivingResurfacingNote note={livingResurfacing} />
+            <RevisitRhythmNote note={revisitRhythm} />
+            <ContinuityDepthNote indicator={continuityDepth} />
+            <ContinuationNotes notes={continuation} max={1} />
+            <FollowupPromptInline
+              prompt={followupPrompt}
+              onRecordAgain={handleRecordAgain}
+            />
+          </div>
+        ) : null}
 
         <main className="flex flex-1 flex-col items-center justify-center py-10 text-center">
-          <MotionPage className="max-w-2xl">
-            <p className="text-xs tracking-[0.2em] text-violet-300/70">
-              {POSITIONING_EYEBROW}
-            </p>
-            <h1 className="mt-5 text-4xl font-normal tracking-tight text-zinc-100 sm:text-5xl">
-              VoiceMemory
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-violet-200/80 sm:text-lg">
-              {POSITIONING_TAGLINE}
-            </p>
-            <p className="mt-6 text-lg font-normal leading-relaxed text-zinc-200 sm:text-xl">
-              {POSITIONING_LEAD}
-            </p>
-            <ul className="mx-auto mt-5 max-w-md space-y-2 text-left text-sm leading-relaxed text-zinc-400">
-              <li>{HOMEPAGE_CLARITY.stepSpeak}</li>
-              <li>{HOMEPAGE_CLARITY.stepRemember}</li>
-              <li>{HOMEPAGE_CLARITY.stepReturn}</li>
-            </ul>
-            <div className="mx-auto mt-8 max-w-md rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-left">
-              <p className="text-[10px] uppercase tracking-wider text-zinc-600">
-                {HOMEPAGE_CLARITY.exampleLabel}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-400/95">
-                {HOMEPAGE_CLARITY.example}
-              </p>
-            </div>
-            <p className="mt-6 text-sm leading-[1.75] text-zinc-500">{POSITIONING_SUPPORT}</p>
-          </MotionPage>
-
-          <motion.div
-            initial={{ opacity: 0, y: MOTION.offset.page }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: MOTION.duration.page,
-              delay: MOTION.delay.hero,
-              ease: MOTION.ease,
-            }}
-            className="mt-10 w-full text-left"
-          >
-            <ContextualReminderCards />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: MOTION.offset.page }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: MOTION.duration.page,
-              delay: MOTION.delay.hero * 2,
-              ease: MOTION.ease,
-            }}
-            className="mt-8 w-full text-left"
-          >
-            <HabitLoopCard compact suppressRecordCta />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: MOTION.offset.page }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: MOTION.duration.page,
-              delay: MOTION.delay.hero * 3,
-              ease: MOTION.ease,
-            }}
-            className="mt-10 w-full"
-            ref={recorderRef}
-            id="recorder"
-          >
-            {!recordReturn ? (
-              <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
-                {HOMEPAGE_CLARITY.ctaLine}
-              </p>
-            ) : null}
-            <Recorder
-              autoStart={recorderAutoStart}
-              preRecordLine={recordReturn || clarityRecord ? null : recorderLine}
+          {micCentric ? (
+            <MicCentricHome
+              continuityLine={reflexContinuityLine}
               recordReturn={recordReturn}
               clarityRecord={clarityRecord}
+              reflexCapture={reflexCapture}
+              recorderAutoStart={recorderAutoStart}
               quickReflection={isQuickReflectionEnabled()}
             />
-          </motion.div>
+          ) : (
+            <>
+              <MotionPage className="max-w-2xl">
+                <p className="text-xs tracking-[0.2em] text-violet-300/70">
+                  {POSITIONING_EYEBROW}
+                </p>
+                <h1 className="mt-5 text-4xl font-normal tracking-tight text-zinc-100 sm:text-5xl">
+                  VoiceMemory
+                </h1>
+                <p className="mt-4 text-base leading-relaxed text-violet-200/80 sm:text-lg">
+                  {POSITIONING_TAGLINE}
+                </p>
+                <p className="mt-6 text-lg font-normal leading-relaxed text-zinc-200 sm:text-xl">
+                  {POSITIONING_LEAD}
+                </p>
+                <ul className="mx-auto mt-5 max-w-md space-y-2 text-left text-sm leading-relaxed text-zinc-400">
+                  <li>{HOMEPAGE_CLARITY.stepSpeak}</li>
+                  <li>{HOMEPAGE_CLARITY.stepRemember}</li>
+                  <li>{HOMEPAGE_CLARITY.stepReturn}</li>
+                </ul>
+                <div className="mx-auto mt-8 max-w-md rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-left">
+                  <p className="text-[10px] uppercase tracking-wider text-zinc-600">
+                    {HOMEPAGE_CLARITY.exampleLabel}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-400/95">
+                    {HOMEPAGE_CLARITY.example}
+                  </p>
+                </div>
+                <p className="mt-6 text-sm leading-[1.75] text-zinc-500">{POSITIONING_SUPPORT}</p>
+              </MotionPage>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: MOTION.duration.fade, delay: 0.45, ease: MOTION.ease }}
-            className="mt-12 max-w-md text-sm leading-[1.75] text-zinc-500"
-          >
-            {DEVICE_PRIVACY_LINE}
-          </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: MOTION.offset.page }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: MOTION.duration.page,
+                  delay: MOTION.delay.hero,
+                  ease: MOTION.ease,
+                }}
+                className="mt-10 w-full text-left"
+              >
+                <ContextualReminderCards />
+              </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: MOTION.duration.fade, delay: 0.55, ease: MOTION.ease }}
-            className="mt-5 max-w-md text-xs leading-relaxed text-zinc-600"
-          >
-            {HONESTY_LINE}
-          </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: MOTION.offset.page }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: MOTION.duration.page,
+                  delay: MOTION.delay.hero * 2,
+                  ease: MOTION.ease,
+                }}
+                className="mt-8 w-full text-left"
+              >
+                <HabitLoopCard compact suppressRecordCta />
+              </motion.div>
+            </>
+          )}
+
+          {!micCentric ? (
+            <motion.div
+              initial={{ opacity: 0, y: MOTION.offset.page }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: MOTION.duration.page,
+                delay: MOTION.delay.hero * 3,
+                ease: MOTION.ease,
+              }}
+              className="mt-10 w-full"
+              ref={recorderRef}
+              id="recorder"
+            >
+              {!recordReturn && !clarityRecord ? (
+                <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
+                  {HOMEPAGE_CLARITY.ctaLine}
+                </p>
+              ) : null}
+              <Recorder
+                autoStart={recorderAutoStart}
+                preRecordLine={recordReturn || clarityRecord ? null : recorderLine}
+                recordReturn={recordReturn}
+                clarityRecord={clarityRecord}
+                reflexCapture={reflexCapture}
+                reflexFastBoot={directToMic || silenceFirstReflex}
+                quickReflection={isQuickReflectionEnabled()}
+              />
+            </motion.div>
+          ) : null}
+
+          {!micCentric ? (
+            <>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: MOTION.duration.fade, delay: 0.45, ease: MOTION.ease }}
+                className="mt-12 max-w-md text-sm leading-[1.75] text-zinc-500"
+              >
+                {DEVICE_PRIVACY_LINE}
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: MOTION.duration.fade, delay: 0.55, ease: MOTION.ease }}
+                className="mt-5 max-w-md text-xs leading-relaxed text-zinc-600"
+              >
+                {HONESTY_LINE}
+              </motion.p>
+            </>
+          ) : null}
         </main>
 
-        <SiteFooter className="mt-auto pt-8" />
+        {!micCentric ? <SiteFooter className="mt-auto pt-8" /> : null}
       </div>
       </HomepagePrimaryCtaProvider>
     </div>

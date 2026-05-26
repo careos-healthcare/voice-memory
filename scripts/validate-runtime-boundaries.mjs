@@ -31,6 +31,7 @@ const UI_COMPONENTS = [
   "components/open-loops/OpenLoopReturnPrompt.tsx",
   "components/clarity/SortThisOutAloudPrompt.tsx",
   "components/clarity/CirclingThoughtsSection.tsx",
+  "components/reflex/MicCentricHome.tsx",
 ];
 
 const UI_FORBIDDEN_IMPORTS = [

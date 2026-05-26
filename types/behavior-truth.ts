@@ -1,3 +1,5 @@
+import type { ReadVsSpeakReport, ReflexScoreSnapshot } from "@/types/reflex";
+
 export type InsightConfidence = "low" | "moderate" | "high";
 
 export interface BehaviorFunnelStep {
@@ -89,4 +91,6 @@ export interface BehaviorTruthReport {
   mobile: MobileBehaviorRow[];
   productPressure: ProductPressureWarning[];
   insights: BehaviorInsightLine[];
+  readVsSpeak: ReadVsSpeakReport;
+  reflexScore: ReflexScoreSnapshot;
 }

@@ -2,6 +2,7 @@ import { LAUNCH_EVENTS, RETENTION_EVENTS, readLocalEvents } from "@/lib/local-an
 import { OPEN_LOOP_EVENTS } from "@/lib/open-loops/open-loop-observation";
 import { CALLBACK_LEARNING_EVENTS } from "@/lib/revisit/callback-learning";
 import { CLARITY_EVENTS } from "@/lib/clarity/clarity-observation";
+import { REFLEX_EVENTS } from "@/lib/reflex/reflex-observation";
 import { BEHAVIOR_EVENTS } from "@/lib/behavior/observation";
 import {
   formatSampleNote,
@@ -195,6 +196,26 @@ export function computeBehaviorFunnels(
       clarityAbandoned === 0
         ? "No clarity-prompt recorder abandonments logged."
         : "Some users opened the recorder from a clarity prompt but did not finish.",
+    ),
+    funnelStep(
+      "reflex_detected_to_record",
+      "Reflex moment → recording started",
+      events.filter((e) => e.name === REFLEX_EVENTS.recordingStartedLatency).length,
+      Math.max(
+        events.filter((e) => e.name === REFLEX_EVENTS.reflexMomentDetected).length,
+        1,
+      ),
+      "High-confidence reflex bypass should land on the mic quickly — not on a feed.",
+    ),
+    funnelStep(
+      "reflex_bypass_to_record",
+      "Direct-to-mic bypass → recording started",
+      events.filter((e) => e.name === REFLEX_EVENTS.recordingStartedLatency).length,
+      Math.max(
+        events.filter((e) => e.name === REFLEX_EVENTS.directToMicBypass).length,
+        1,
+      ),
+      "Homepage stack skipped when reflex confidence is high.",
     ),
   ];
 

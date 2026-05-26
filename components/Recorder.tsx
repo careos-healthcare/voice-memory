@@ -89,6 +89,16 @@ import {
   qualifiesForClarityPrompt,
 } from "@/lib/clarity/thinking-out-loud-signals";
 import { recordReflectionAfterResurface } from "@/lib/resurfacing/resurfacing-fatigue";
+import {
+  peekReflexCaptureContext,
+  type ReflexCaptureContext,
+} from "@/lib/reflex/reflex-context";
+import { markRecorderEngaged } from "@/lib/reflex/read-vs-speak";
+import {
+  markReflexRecordingStarted,
+  markReflexRecorderMounted,
+} from "@/lib/reflex/reflex-observation";
+import { recordReflexSessionRecording } from "@/lib/reflex/open-without-record";
 import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
 import type { RecordReturnContext as RecordReturnContextType } from "@/types/record-return";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
@@ -103,6 +113,9 @@ interface RecorderProps {
   reflectionPrompt?: string | null;
   recordReturn?: RecordReturnContextType | null;
   clarityRecord?: ClarityRecordContext | null;
+  reflexCapture?: ReflexCaptureContext | null;
+  /** Faster boot — defer extras, prioritize mic. */
+  reflexFastBoot?: boolean;
   quickReflection?: boolean;
 }
 
@@ -120,6 +133,8 @@ export function Recorder({
   reflectionPrompt,
   recordReturn: recordReturnProp,
   clarityRecord: clarityRecordProp,
+  reflexCapture: reflexCaptureProp,
+  reflexFastBoot = false,
   quickReflection = false,
 }: RecorderProps) {
   const router = useRouter();
@@ -145,7 +160,8 @@ export function Recorder({
   const [continuityLine, setContinuityLine] = useState<string | null>(null);
   const recordReturnRef = useRef<RecordReturnContextType | null>(recordReturnProp ?? null);
   const clarityRecordRef = useRef<ClarityRecordContext | null>(clarityRecordProp ?? null);
-  const quickMode = quickReflection || isQuickReflectionEnabled();
+  const reflexCaptureRef = useRef<ReflexCaptureContext | null>(reflexCaptureProp ?? null);
+  const quickMode = quickReflection || isQuickReflectionEnabled() || reflexFastBoot;
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -175,7 +191,8 @@ export function Recorder({
   useEffect(() => {
     recordReturnRef.current = recordReturnProp ?? peekRecordReturnContext() ?? null;
     clarityRecordRef.current = clarityRecordProp ?? peekClarityRecordContext() ?? null;
-  }, [clarityRecordProp, recordReturnProp]);
+    reflexCaptureRef.current = reflexCaptureProp ?? peekReflexCaptureContext() ?? null;
+  }, [clarityRecordProp, recordReturnProp, reflexCaptureProp]);
 
   const completeClarityAfterSave = useCallback((newEntry: JournalEntry) => {
     const ctx = clarityRecordRef.current ?? consumeClarityRecordContext();
@@ -231,13 +248,17 @@ export function Recorder({
       completeFirstSessionStep("first_reflection");
       onComplete?.(newEntry);
 
-      const delayMs = quickMode || recordReturnRef.current ? 700 : 1200;
+      recordReflexSessionRecording();
+      const delayMs =
+        reflexFastBoot || quickMode || recordReturnRef.current || reflexCaptureRef.current
+          ? 500
+          : 1200;
       window.setTimeout(() => {
         markFreshEntryAfterRecording(newEntry.id);
         router.push(`/entry/${newEntry.id}`);
       }, delayMs);
     },
-    [onComplete, quickMode, router],
+    [onComplete, quickMode, reflexFastBoot, router],
   );
 
   const processRecording = useCallback(
@@ -281,7 +302,7 @@ export function Recorder({
 
         setLiveTranscript(prepared.transcript);
 
-        if (quickMode && !listeningModeActive) {
+        if ((quickMode || reflexFastBoot) && !listeningModeActive) {
           setStage("saving");
           const entryId = crypto.randomUUID();
           const audioId = await saveRecordingBlob(entryId, blob);
@@ -551,6 +572,8 @@ export function Recorder({
       setSeconds(0);
       recorderStartedRef.current = true;
       markRecorderStarted();
+      markRecorderEngaged();
+      markReflexRecordingStarted();
       setState("recording");
 
       timerRef.current = window.setInterval(() => {
@@ -578,20 +601,38 @@ export function Recorder({
   ]);
 
   useEffect(() => {
-    if (preRecordLine || reflectionPrompt || recordReturnProp || clarityRecordProp || quickMode) {
+    if (reflexFastBoot) markReflexRecorderMounted();
+  }, [reflexFastBoot]);
+
+  useEffect(() => {
+    if (
+      preRecordLine ||
+      reflectionPrompt ||
+      recordReturnProp ||
+      clarityRecordProp ||
+      reflexCaptureProp ||
+      quickMode
+    ) {
       return;
     }
     const id = requestAnimationFrame(() => {
       setDensityOffer(pickRecurrenceDensityPrompt());
     });
     return () => cancelAnimationFrame(id);
-  }, [clarityRecordProp, preRecordLine, quickMode, recordReturnProp, reflectionPrompt]);
+  }, [
+    clarityRecordProp,
+    preRecordLine,
+    quickMode,
+    recordReturnProp,
+    reflexCaptureProp,
+    reflectionPrompt,
+  ]);
 
   useEffect(() => {
-    if (autoStart || recordReturnProp || clarityRecordProp) {
+    if (autoStart || recordReturnProp || clarityRecordProp || reflexCaptureProp) {
       void startRecording();
     }
-  }, [autoStart, clarityRecordProp, recordReturnProp, startRecording]);
+  }, [autoStart, clarityRecordProp, recordReturnProp, reflexCaptureProp, startRecording]);
 
   useEffect(() => {
     observeFunnelRecorderViewed();
@@ -622,6 +663,7 @@ export function Recorder({
   const canShowRecorderCta = usePrimaryCtaClaim("recorder", state === "idle");
   const canShowRetryCta = usePrimaryCtaClaim("retry", state === "error");
   const activeClarity = clarityRecordProp ?? clarityRecordRef.current;
+  const activeReflex = reflexCaptureProp ?? reflexCaptureRef.current;
   const activeReturn =
     recordReturnProp ??
     recordReturnRef.current ??
@@ -646,7 +688,23 @@ export function Recorder({
             exit="exit"
             className="flex flex-col items-center gap-5"
           >
-            {canShowRecorderCta && activeClarity ? (
+            {canShowRecorderCta && activeReflex ? (
+              <div className="flex w-full max-w-md flex-col items-center gap-5">
+                <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
+                  {activeReflex.continuityLine}
+                </p>
+                <Button
+                  type="button"
+                  size="lg"
+                  className="mobile-touch-target mobile-recorder-primary min-h-[3.25rem] min-w-[13rem] text-base"
+                  data-primary-cta="recorder"
+                  onClick={() => void startRecording()}
+                >
+                  <Mic className="h-5 w-5" />
+                  Record
+                </Button>
+              </div>
+            ) : canShowRecorderCta && activeClarity ? (
               <div className="flex w-full max-w-md flex-col items-center gap-5">
                 <p className="text-center text-lg font-normal leading-relaxed text-zinc-300">
                   {activeClarity.recorderPrompt}
@@ -699,7 +757,7 @@ export function Recorder({
                 ) : null}
               </>
             ) : null}
-            {!activeReturn && !activeClarity && !quickMode ? (
+            {!activeReturn && !activeClarity && !activeReflex && !quickMode ? (
               <p className="text-sm text-zinc-500">{ONBOARDING_RECORDER.idle}</p>
             ) : null}
           </motion.div>
@@ -714,7 +772,11 @@ export function Recorder({
             exit="exit"
             className="flex flex-col items-center gap-7 px-4 py-10"
           >
-            {activeClarity ? (
+            {activeReflex ? (
+              <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
+                {activeReflex.continuityLine}
+              </p>
+            ) : activeClarity ? (
               <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
                 {activeClarity.recorderPrompt}
               </p>

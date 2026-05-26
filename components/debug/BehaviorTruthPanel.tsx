@@ -9,6 +9,7 @@ import type {
   ProductPressureWarning,
   SurfaceEffectivenessRow,
 } from "@/types/behavior-truth";
+import type { ReadVsSpeakReport, ReflexScoreSnapshot } from "@/types/reflex";
 
 function FunnelCard({ step }: { step: BehaviorFunnelStep }) {
   return (
@@ -67,6 +68,71 @@ function InsightList({ insights }: { insights: BehaviorInsightLine[] }) {
   );
 }
 
+function ReadVsSpeakSection({ report }: { report: ReadVsSpeakReport }) {
+  const { metrics } = report;
+  return (
+    <Card className="mt-3 border-white/[0.06] bg-zinc-900/40">
+      <CardContent className="space-y-3 py-4 text-sm">
+        <p className="text-zinc-400">
+          Avg read before record:{" "}
+          <span className="text-zinc-200">
+            {metrics.avgSecondsBeforeRecord != null
+              ? `${metrics.avgSecondsBeforeRecord}s`
+              : "—"}
+          </span>
+        </p>
+        <p className="text-zinc-500">
+          Callback opens without record: {metrics.callbackOpensWithoutRecord} ·
+          Reopens without record: {metrics.repeatedReopenWithoutRecord} · Scroll
+          signals: {metrics.scrollBeforeRecordSignals}
+        </p>
+        {metrics.consumableContinuityRisk ? (
+          <p className="text-amber-200/90">Consumable continuity risk</p>
+        ) : null}
+        {metrics.passiveReadingLikely ? (
+          <p className="text-amber-200/90">Passive reading likely</p>
+        ) : null}
+        {report.warnings.length > 0 ? (
+          <ul className="space-y-2 text-xs text-zinc-600">
+            {report.warnings.map((w) => (
+              <li key={w.id}>{w.message}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-zinc-600">No read-vs-speak warnings on this device.</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ReflexScoreSection({ score }: { score: ReflexScoreSnapshot }) {
+  const rows: Array<{ label: string; value: number }> = [
+    { label: "Resurfacing → immediate record", value: score.resurfacingToImmediateRecord },
+    { label: "Unresolved return", value: score.unresolvedReturnScore },
+    { label: "Speed to speak", value: score.speedToSpeakScore },
+    { label: "Emotional recurrence timing", value: score.emotionalRecurrenceTiming },
+    { label: "Late-night reflex", value: score.lateNightReflexUsage },
+    { label: "After conflict repeat", value: score.conflictRepeatScore },
+  ];
+  return (
+    <Card className="mt-3 border-violet-500/20 bg-violet-950/10">
+      <CardContent className="py-4 text-sm">
+        <p className="text-2xl tabular-nums text-zinc-200">{score.overall}</p>
+        <p className="text-xs text-zinc-600">Overall reflex score (speaking-weighted, not engagement)</p>
+        <ul className="mt-4 space-y-2">
+          {rows.map((row) => (
+            <li key={row.label} className="flex justify-between gap-2 text-zinc-500">
+              <span>{row.label}</span>
+              <span className="tabular-nums text-zinc-300">{row.value}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+}
+
 function PressureList({ warnings }: { warnings: ProductPressureWarning[] }) {
   return (
     <ul className="space-y-2">
@@ -110,13 +176,39 @@ export function BehaviorTruthPanel({ report }: { report: BehaviorTruthReport }) 
       ) : null}
 
       <section>
+        <p className="text-xs uppercase tracking-wider text-zinc-600">Read vs speak</p>
+        <ReadVsSpeakSection report={report.readVsSpeak} />
+      </section>
+
+      <section>
+        <p className="text-xs uppercase tracking-wider text-zinc-600">Reflex decompression score</p>
+        <ReflexScoreSection score={report.reflexScore} />
+      </section>
+
+      <section>
         <p className="text-xs uppercase tracking-wider text-zinc-600">Funnels</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {report.funnels
-            .filter((step) => !step.id.startsWith("clarity_") && step.id !== "thought_pattern_resurface_to_reflection")
+            .filter(
+              (step) =>
+                !step.id.startsWith("clarity_") &&
+                !step.id.startsWith("reflex_") &&
+                step.id !== "thought_pattern_resurface_to_reflection",
+            )
             .map((step) => (
             <FunnelCard key={step.id} step={step} />
           ))}
+        </div>
+      </section>
+
+      <section>
+        <p className="text-xs uppercase tracking-wider text-zinc-600">Reflex capture</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {report.funnels
+            .filter((step) => step.id.startsWith("reflex_"))
+            .map((step) => (
+              <FunnelCard key={step.id} step={step} />
+            ))}
         </div>
       </section>
 

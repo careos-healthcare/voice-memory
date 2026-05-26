@@ -65,6 +65,16 @@ for (const section of [
   }
 }
 
+const panel = fs.readFileSync(
+  path.join(ROOT, "components/debug/BehaviorTruthPanel.tsx"),
+  "utf8",
+);
+for (const section of ["Read vs speak", "Reflex decompression score"]) {
+  if (!panel.includes(section)) {
+    failures.push(`BehaviorTruthPanel missing ${section}`);
+  }
+}
+
 const scanDirs = ["lib/behavior", "components/debug/BehaviorTruthPanel.tsx", "app/debug/behavior-truth"];
 for (const rel of scanDirs) {
   const full = path.join(ROOT, rel);
