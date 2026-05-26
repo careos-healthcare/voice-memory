@@ -29,6 +29,8 @@ interface EntryAtmosphereAttachmentProps {
   entry: JournalEntry;
   atmosphere?: EntryAtmosphereMeta;
   onAtmosphereChange: (atmosphere?: EntryAtmosphereMeta) => void;
+  /** Hide create UI until expanded — existing atmosphere still renders. */
+  collapsed?: boolean;
 }
 
 type Phase = "idle" | "creating" | "saved" | "error";
@@ -38,6 +40,7 @@ export function EntryAtmosphereAttachment({
   entry,
   atmosphere,
   onAtmosphereChange,
+  collapsed = false,
 }: EntryAtmosphereAttachmentProps) {
   const [expanded, setExpanded] = useState(false);
   const [style, setStyle] = useState<AtmosphereStyle>(getStoredAtmosphereStyle());
@@ -131,6 +134,8 @@ export function EntryAtmosphereAttachment({
       setErrorMessage(error instanceof Error ? error.message : "Atmosphere could not be removed.");
     }
   };
+
+  if (collapsed && !hasAtmosphere) return null;
 
   if (hasAtmosphere && previewUrl) {
     return (

@@ -15,6 +15,8 @@ interface EntryPhotoAttachmentProps {
   entryId: string;
   photo?: EntryPhotoMeta;
   onPhotoChange: (photo?: EntryPhotoMeta) => void;
+  /** Hide attach UI until expanded — existing photos still render. */
+  collapsed?: boolean;
 }
 
 type AttachPhase = "idle" | "compressing" | "saving" | "saved" | "error";
@@ -24,6 +26,7 @@ export function EntryPhotoAttachment({
   entryId,
   photo,
   onPhotoChange,
+  collapsed = false,
 }: EntryPhotoAttachmentProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -229,6 +232,7 @@ export function EntryPhotoAttachment({
   };
 
   if (!enabled) return null;
+  if (collapsed && !photo?.photoId) return null;
 
   return (
     <section

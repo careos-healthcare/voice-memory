@@ -1,6 +1,6 @@
 import { createListeningModeEntry } from "@/lib/pending-reflection";
 import {
-  prepareTranscriptForSave,
+  prepareTranscriptForSaveOnce,
   trackTranscriptCleanupEvents,
 } from "@/lib/transcript/transcript-cleanup";
 import { safeGetJson, safeSetJson } from "@/lib/reliability/safe-local-storage";
@@ -117,7 +117,7 @@ export function persistTranscriptDraft(
 ): JournalEntry {
   const entryId = options?.id ?? crypto.randomUUID();
   const reason = options?.reason ?? "analysis_failed";
-  const prepared = prepareTranscriptForSave(transcript);
+  const prepared = prepareTranscriptForSaveOnce(transcript);
 
   saveRecoveryDraft({
     id: entryId,

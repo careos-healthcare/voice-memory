@@ -1,3 +1,5 @@
+import { getLightweightLimits } from "@/lib/performance/lightweight-mode";
+
 export type LocalAnalyticsEvent = {
   name: string;
   at: string;
@@ -45,28 +47,103 @@ export type PhotoEventName = (typeof PHOTO_EVENTS)[keyof typeof PHOTO_EVENTS];
 export type LaunchEventName = (typeof LAUNCH_EVENTS)[keyof typeof LAUNCH_EVENTS];
 
 const EVENTS_KEY = "voicememory_local_events";
-const MAX_EVENTS = 500;
+const DEDUPE_WINDOW_MS = 2000;
+const FLUSH_DEBOUNCE_MS = 400;
+
+let queue: LocalAnalyticsEvent[] = [];
+let knownNames = new Set<string>();
+let eventsSnapshot: LocalAnalyticsEvent[] | null = null;
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+let flushing = false;
+let hydrated = false;
+
+function maxEvents(): number {
+  return getLightweightLimits().maxAnalyticsEvents;
+}
+
+function metaKey(meta?: Record<string, string>): string {
+  if (!meta) return "";
+  return Object.keys(meta)
+    .sort()
+    .map((key) => `${key}=${meta[key]}`)
+    .join("&");
+}
+
+function dedupeKey(name: string, meta?: Record<string, string>): string {
+  return `${name}|${metaKey(meta)}`;
+}
+
+function hydrateFromStorage(): void {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
+  try {
+    const raw = localStorage.getItem(EVENTS_KEY);
+    const parsed = raw ? (JSON.parse(raw) as LocalAnalyticsEvent[]) : [];
+    eventsSnapshot = Array.isArray(parsed) ? parsed.slice(-maxEvents()) : [];
+    knownNames = new Set(eventsSnapshot.map((event) => event.name));
+  } catch {
+    eventsSnapshot = [];
+    knownNames = new Set();
+  }
+}
+
+function scheduleFlush(): void {
+  if (typeof window === "undefined") return;
+  if (flushTimer) return;
+  flushTimer = setTimeout(() => {
+    flushTimer = null;
+    flushAnalyticsQueue();
+  }, FLUSH_DEBOUNCE_MS);
+}
+
+function flushAnalyticsQueue(): void {
+  if (typeof window === "undefined" || flushing || queue.length === 0) return;
+  flushing = true;
+  try {
+    hydrateFromStorage();
+    const merged = [...(eventsSnapshot ?? []), ...queue];
+    const trimmed = merged.slice(-maxEvents());
+    localStorage.setItem(EVENTS_KEY, JSON.stringify(trimmed));
+    eventsSnapshot = trimmed;
+    for (const event of trimmed) {
+      knownNames.add(event.name);
+    }
+    queue = [];
+  } catch {
+    // Local-only telemetry — never block UX.
+  } finally {
+    flushing = false;
+  }
+}
 
 export function trackLocalEvent(
   name: string,
   meta?: Record<string, string>,
 ): void {
-  if (typeof window === "undefined") return;
-  try {
-    const raw = localStorage.getItem(EVENTS_KEY);
-    const events: LocalAnalyticsEvent[] = raw ? (JSON.parse(raw) as LocalAnalyticsEvent[]) : [];
-    events.push({
-      name,
-      at: new Date().toISOString(),
-      meta,
-    });
-    localStorage.setItem(
-      EVENTS_KEY,
-      JSON.stringify(events.slice(-MAX_EVENTS)),
-    );
-  } catch {
-    // Local-only telemetry — never block UX.
+  if (typeof window === "undefined" || flushing) return;
+
+  const now = Date.now();
+  const last = queue[queue.length - 1];
+  if (
+    last &&
+    dedupeKey(last.name, last.meta) === dedupeKey(name, meta) &&
+    now - new Date(last.at).getTime() < DEDUPE_WINDOW_MS
+  ) {
+    return;
   }
+
+  queue.push({
+    name,
+    at: new Date().toISOString(),
+    meta,
+  });
+
+  if (queue.length > maxEvents()) {
+    queue = queue.slice(-maxEvents());
+  }
+
+  knownNames.add(name);
+  scheduleFlush();
 }
 
 export function trackLaunchEvent(
@@ -92,24 +169,37 @@ export function trackPhotoEvent(
 
 export function readLocalEvents(): LocalAnalyticsEvent[] {
   if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(EVENTS_KEY);
-    return raw ? (JSON.parse(raw) as LocalAnalyticsEvent[]) : [];
-  } catch {
-    return [];
+  hydrateFromStorage();
+  if (queue.length === 0) {
+    return eventsSnapshot ?? [];
   }
+  return [...(eventsSnapshot ?? []), ...queue].slice(-maxEvents());
+}
+
+export function getAnalyticsQueueSize(): number {
+  return queue.length;
 }
 
 export function countLocalEvents(name: string): number {
+  hydrateFromStorage();
+  if (knownNames.has(name) && queue.length === 0) {
+    return (eventsSnapshot ?? []).filter((event) => event.name === name).length;
+  }
   return readLocalEvents().filter((event) => event.name === name).length;
 }
 
 export function hasLocalEvent(name: string): boolean {
-  return countLocalEvents(name) > 0;
+  hydrateFromStorage();
+  if (knownNames.has(name)) return true;
+  return queue.some((event) => event.name === name);
 }
 
 export function clearLocalEvents(): void {
   if (typeof window === "undefined") return;
+  queue = [];
+  knownNames = new Set();
+  eventsSnapshot = [];
+  hydrated = true;
   localStorage.removeItem(EVENTS_KEY);
 }
 

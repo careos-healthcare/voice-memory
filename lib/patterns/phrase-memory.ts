@@ -1,4 +1,5 @@
 import { toDayKey } from "@/lib/dates";
+import { getCachedPhraseMemory } from "@/lib/performance/phrase-scan-cache";
 import { transcriptForPhraseScanning } from "@/lib/transcript/transcript-cleanup";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
@@ -269,8 +270,7 @@ function scanMetaphorsAndFraming(
   }
 }
 
-/** Build phrase memory across all entries. */
-export function buildPhraseMemory(entries: JournalEntry[]): PhraseMemoryRecord[] {
+function buildPhraseMemoryUncached(entries: JournalEntry[]): PhraseMemoryRecord[] {
   if (entries.length === 0) return [];
 
   const sorted = sortedEntries(entries);
@@ -287,6 +287,11 @@ export function buildPhraseMemory(entries: JournalEntry[]): PhraseMemoryRecord[]
   scanMetaphorsAndFraming(store, sorted);
 
   return finalize(store).slice(0, 20);
+}
+
+/** Build phrase memory across all entries (cached by archive fingerprint). */
+export function buildPhraseMemory(entries: JournalEntry[]): PhraseMemoryRecord[] {
+  return getCachedPhraseMemory(entries, buildPhraseMemoryUncached);
 }
 
 /** Phrases linked to a specific entry. */

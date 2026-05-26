@@ -43,7 +43,7 @@ import {
 } from "@/lib/onboarding/confusion-signals";
 import { markFreshEntryAfterRecording } from "@/lib/refinement/entry-quiet-state";
 import {
-  prepareTranscriptForSave,
+  prepareTranscriptForSaveOnce,
   trackTranscriptCleanupEvents,
 } from "@/lib/transcript/transcript-cleanup";
 import { getAllEntries, saveEntry } from "@/lib/storage";
@@ -89,6 +89,8 @@ export function Recorder({
   const mimeTypeRef = useRef("audio/webm");
   const recorderStartedRef = useRef(false);
   const recorderCompletedRef = useRef(false);
+  const navigatingAfterSaveRef = useRef(false);
+  const processingRef = useRef(false);
 
   const [state, setState] = useState<RecorderState>("idle");
   const [seconds, setSeconds] = useState(0);
@@ -125,6 +127,10 @@ export function Recorder({
 
   const finalizeEntry = useCallback(
     (newEntry: JournalEntry, recoveredDraft = false) => {
+      if (navigatingAfterSaveRef.current) return;
+      navigatingAfterSaveRef.current = true;
+      processingRef.current = false;
+
       recordReflectionDuringSilence();
       trackRetentionEvent(RETENTION_EVENTS.entryRecorded, { entryId: newEntry.id });
       if (recoveredDraft) {
@@ -147,6 +153,10 @@ export function Recorder({
 
   const processRecording = useCallback(
     async (blob: Blob, durationSeconds: number) => {
+      if (processingRef.current) return;
+      processingRef.current = true;
+      navigatingAfterSaveRef.current = false;
+
       setState("processing");
       setStage("transcribing");
       setError(null);
@@ -177,7 +187,7 @@ export function Recorder({
           );
         }
 
-        const prepared = prepareTranscriptForSave(transcribeData.transcript);
+        const prepared = prepareTranscriptForSaveOnce(transcribeData.transcript);
         const listeningModeActive = listeningMode;
 
         if (listeningModeActive) {
@@ -295,6 +305,7 @@ export function Recorder({
         }
         finalizeEntry(newEntry);
       } catch (processingError) {
+        processingRef.current = false;
         setState("error");
         setError(
           processingError instanceof Error

@@ -416,22 +416,39 @@ export function prepareTranscriptForSave(rawTranscript: string): {
   };
 }
 
+const cleanupResultByRaw = new Map<string, ReturnType<typeof prepareTranscriptForSave>>();
+
+/** Run cleanup once per raw transcript per session — avoids duplicate work on retries. */
+export function prepareTranscriptForSaveOnce(rawTranscript: string): ReturnType<
+  typeof prepareTranscriptForSave
+> {
+  const key = rawTranscript.trim();
+  const hit = cleanupResultByRaw.get(key);
+  if (hit) return hit;
+  const prepared = prepareTranscriptForSave(key);
+  if (cleanupResultByRaw.size >= 32) {
+    cleanupResultByRaw.clear();
+  }
+  cleanupResultByRaw.set(key, prepared);
+  return prepared;
+}
+
 export function trackTranscriptCleanupEvents(result: TranscriptCleanupResult, entryId?: string): void {
   const meta = entryId ? { entryId } : undefined;
   trackLocalEvent(TRANSCRIPT_CLEANUP_EVENTS.applied, {
     ...meta,
     confidence: result.confidence,
+    preservedCount: String(result.preservedPhrases.length),
   });
 
   if (result.confidence === "low") {
     trackLocalEvent(TRANSCRIPT_CLEANUP_EVENTS.lowConfidence, meta);
   }
 
-  for (const phrase of result.preservedPhrases) {
+  if (result.preservedPhrases.length > 0) {
     trackLocalEvent(TRANSCRIPT_CLEANUP_EVENTS.phrasePreserved, {
       ...meta,
-      phrase: phrase.text.slice(0, 80),
-      reason: phrase.reason,
+      count: String(result.preservedPhrases.length),
     });
   }
 }

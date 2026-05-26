@@ -10,10 +10,16 @@ import { removeBookmark } from "@/lib/reflection-bookmarks";
 import { normalizeReflection } from "@/lib/reflection";
 import { ensureStorageReady } from "@/lib/reliability/migrations";
 import { safeSetJson } from "@/lib/reliability/safe-local-storage";
+import { bumpPhraseScanCache } from "@/lib/performance/phrase-scan-cache";
+import { clearResurfacingCaches } from "@/lib/performance/resurfacing-cache";
 import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
 import type { JournalEntry, Reflection } from "@/types/journal";
 
 const STORAGE_KEY = "voicememory_entries";
+
+let memoryEligibleVersion = 0;
+let memoryEligibleCache: JournalEntry[] = [];
+let memoryEligibleCachedVersion = -1;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -48,9 +54,24 @@ export function getAllEntries(): JournalEntry[] {
   return loadAllEntries();
 }
 
+function bumpMemoryEligibleCache(): void {
+  memoryEligibleVersion += 1;
+  bumpPhraseScanCache();
+  clearResurfacingCaches();
+}
+
 /** Entries with a completed reflection — used for memory pattern surfacing. */
 export function getMemoryEligibleEntries(): JournalEntry[] {
-  return loadAllEntries().filter((entry) => entry.reflectionPending !== true);
+  if (memoryEligibleCachedVersion === memoryEligibleVersion) {
+    return memoryEligibleCache;
+  }
+  memoryEligibleCache = loadAllEntries().filter((entry) => entry.reflectionPending !== true);
+  memoryEligibleCachedVersion = memoryEligibleVersion;
+  return memoryEligibleCache;
+}
+
+export function getMemoryEligibleEntriesVersion(): number {
+  return memoryEligibleVersion;
 }
 
 export function isReflectionPendingEntry(entry: JournalEntry): boolean {
@@ -90,6 +111,7 @@ export function saveEntry(entry: JournalEntry): void {
   const entries = loadAllEntries().filter((existing) => existing.id !== entry.id);
   entries.unshift(entry);
   persistEntries(entries);
+  bumpMemoryEligibleCache();
   recordReflectionDay(entry.createdAt);
   trackReflectionMilestones(entries.length);
   void import("@/lib/retention/first-week-observation").then((mod) => {
@@ -111,6 +133,7 @@ export function deleteEntry(id: string): void {
 
   const entries = loadAllEntries().filter((entry) => entry.id !== id);
   persistEntries(entries);
+  bumpMemoryEligibleCache();
   removeBookmark(id);
   void deleteAudio(id);
   void deletePhoto(id);
@@ -124,6 +147,7 @@ export async function deleteAllEntries(): Promise<number> {
   const entries = loadAllEntries();
   const count = entries.length;
   persistEntries([]);
+  bumpMemoryEligibleCache();
   clearHabitState();
 
   for (const entry of entries) {

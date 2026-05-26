@@ -66,10 +66,14 @@ import { entryRevisitationNotes } from "@/lib/memory/revisitation";
 import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { buildMemoryContinuityReport } from "@/lib/memory/memory-continuity";
-import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
+import { bumpRenderCount } from "@/lib/performance/perf-instrumentation";
+import { resurfacingDeferMs } from "@/lib/performance/lightweight-mode";
 import {
-  buildRevisitExperience,
+  getCachedQuietEntryPresentation,
+  getCachedRevisitExperience,
+} from "@/lib/performance/resurfacing-cache";
+import {
   trackRevisitAudioPlayed,
   trackRevisitFollowupStarted,
   trackRevisitOpened,
@@ -88,9 +92,11 @@ import { registerPhotoReturnTrigger } from "@/lib/retention/return-triggers";
 import { trackAtmosphereRevisited } from "@/lib/atmosphere/atmosphere-observation";
 import { buildEntrySharedMemoryMoment } from "@/lib/memory/shared-moments";
 import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
+import { useFreshEntryQuietMode } from "@/lib/hooks/useFreshEntryQuietMode";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { pickEvidenceBackedEntryMoment } from "@/lib/refinement/entry-quiet-state";
 import { isReflectionPending } from "@/lib/pending-reflection";
-import { deleteEntry, getEntry, getMemoryEligibleEntries } from "@/lib/storage";
+import { deleteEntry, getEntry, getMemoryEligibleEntries, getMemoryEligibleEntriesVersion } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -110,6 +116,10 @@ export default function EntryPage() {
   const [presentation, setPresentation] = useState<QuietEntryPresentation | null>(null);
   const [revisitExperience, setRevisitExperience] =
     useState<RevisitExperiencePresentation | null>(null);
+  const { freshQuiet, expandFreshQuiet } = useFreshEntryQuietMode(
+    entry,
+    Boolean(revisitExperience?.isRevisit),
+  );
   const [showReopenFollowup, setShowReopenFollowup] = useState(false);
   const [revisitAudioReplayed, setRevisitAudioReplayed] = useState(false);
   const [momentCopied, setMomentCopied] = useState(false);
@@ -145,8 +155,14 @@ export default function EntryPage() {
     return () => clearAmbientPageContext();
   }, [entry, revisitExperience?.isRevisit]);
 
-  const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry]);
+  const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry?.id, entry?.createdAt]);
   const pending = entry ? isReflectionPending(entry) : false;
+  const needsHeavyMemoryBlocks =
+    !pending && !freshQuiet && !quiet && !revisitExperience?.isRevisit;
+
+  useEffect(() => {
+    bumpRenderCount("entry-page");
+  });
 
   useEffect(() => {
     if (!entry || pending) {
@@ -154,35 +170,64 @@ export default function EntryPage() {
       setRevisitExperience(null);
       return;
     }
-    const id = requestAnimationFrame(() => {
-      const limitsPayload = {
-        changeMoments: limits.changeMoments,
-        familiarityResurfacing: limits.familiarityResurfacing,
-        resurfacing: limits.resurfacing,
-      };
-      const revisit = buildRevisitExperience(allEntries, entry.id, limitsPayload);
+
+    let cancelled = false;
+    const limitsPayload = {
+      changeMoments: limits.changeMoments,
+      familiarityResurfacing: limits.familiarityResurfacing,
+      resurfacing: limits.resurfacing,
+    };
+    const entriesVersion = getMemoryEligibleEntriesVersion();
+
+    const run = () => {
+      if (cancelled) return;
+      const revisit = getCachedRevisitExperience(
+        allEntries,
+        entry.id,
+        limitsPayload,
+        entriesVersion,
+      );
       setRevisitExperience(revisit);
       if (revisit.isRevisit) {
         setPresentation(null);
         trackRevisitOpened(entry.id, revisit.sources);
       } else {
         setPresentation(
-          buildQuietEntryPresentation(allEntries, entry.id, {
-            ...limitsPayload,
-            familiarity: limits.familiarity,
-          }),
+          getCachedQuietEntryPresentation(
+            allEntries,
+            entry.id,
+            {
+              ...limitsPayload,
+              familiarity: limits.familiarity,
+            },
+            entriesVersion,
+          ),
         );
       }
-    });
-    return () => cancelAnimationFrame(id);
+    };
+
+    const deferMs = resurfacingDeferMs();
+    if (deferMs > 0) {
+      const timer = window.setTimeout(run, deferMs);
+      return () => {
+        cancelled = true;
+        window.clearTimeout(timer);
+      };
+    }
+
+    const frame = requestAnimationFrame(run);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
   }, [
-    entry,
-    allEntries,
+    entry?.id,
     pending,
     limits.changeMoments,
     limits.familiarity,
     limits.familiarityResurfacing,
     limits.resurfacing,
+    allEntries,
   ]);
 
   useEffect(() => {
@@ -227,9 +272,9 @@ export default function EntryPage() {
   }, [revisitExperience?.isRevisit, revisitExperience?.followupDelayMs, entry?.id]);
 
   const notes = useMemo(() => {
-    if (!entry || pending) return null;
+    if (!needsHeavyMemoryBlocks || !entry) return null;
     return entryMemoryNotes(allEntries, entry.id);
-  }, [entry, allEntries, pending]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries]);
 
   const revisitShareCard = useMemo(() => {
     if (!entry || !revisitExperience?.isRevisit) return null;
@@ -247,7 +292,7 @@ export default function EntryPage() {
   }, [entry, allEntries, revisitExperience?.isRevisit]);
 
   const continuationOpener = useMemo(() => {
-    if (!entry || pending) return null;
+    if (!needsHeavyMemoryBlocks || !entry) return null;
     const opener = entryContinuationOpener(allEntries, entry.id);
     if (!opener) return null;
     if (isDuplicateNote(opener, notes?.primaryCallback)) return null;
@@ -255,7 +300,7 @@ export default function EntryPage() {
     if (notes?.thenVsNow.some((t) => isDuplicateNote(opener, t))) return null;
     if (isDuplicateNote(opener, notes?.whatChanged)) return null;
     return opener;
-  }, [entry, allEntries, notes, pending]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries, notes]);
 
   const handleDelete = () => {
     if (!entry) return;
@@ -271,7 +316,7 @@ export default function EntryPage() {
   };
 
   const resurfacing = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     const raw = entryResurfacingNotes(allEntries, entry.id, limits.resurfacing);
     const shown = [
       continuationOpener,
@@ -281,10 +326,10 @@ export default function EntryPage() {
       notes?.whatChanged,
     ].filter(Boolean) as MemoryNote[];
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.resurfacing);
-  }, [entry, allEntries, notes, continuationOpener, limits.resurfacing]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries, notes, continuationOpener, limits.resurfacing]);
 
   const timeMemory = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     const raw = entryTimeMemoryNotes(allEntries, entry.id);
     const shown = [
       continuationOpener,
@@ -298,7 +343,7 @@ export default function EntryPage() {
   }, [entry, allEntries, notes, continuationOpener, resurfacing]);
 
   const revisitation = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     const raw = entryRevisitationNotes(allEntries, entry.id);
     const shown = [
       continuationOpener,
@@ -313,7 +358,7 @@ export default function EntryPage() {
   }, [entry, allEntries, notes, continuationOpener, resurfacing, timeMemory]);
 
   const changeMoments = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     const raw = entryChangeMomentsNotes(allEntries, entry.id, limits.changeMoments);
     const shown = [
       continuationOpener,
@@ -326,10 +371,10 @@ export default function EntryPage() {
       ...revisitation,
     ].filter(Boolean) as MemoryNote[];
     return raw.filter((r) => !shown.some((s) => isDuplicateNote(r, s))).slice(0, limits.changeMoments);
-  }, [entry, allEntries, notes, continuationOpener, resurfacing, timeMemory, revisitation, limits.changeMoments]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries, notes, continuationOpener, resurfacing, timeMemory, revisitation, limits.changeMoments]);
 
   const familiarity = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     const raw = entryFamiliarityNotes(allEntries, entry.id, limits.familiarity);
     const shown = [
       continuationOpener,
@@ -356,7 +401,7 @@ export default function EntryPage() {
   ]);
 
   const familiarityResurfacing = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     const raw = entryFamiliarityResurfacingNotes(
       allEntries,
       entry.id,
@@ -400,7 +445,7 @@ export default function EntryPage() {
   }, [notes]);
 
   const followupNotes = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     return [
       continuationOpener,
       notes?.primaryCallback,
@@ -460,7 +505,7 @@ export default function EntryPage() {
   }, [entry, allEntries, pending, revisitExperience]);
 
   const voicePlaybackPair = useMemo(() => {
-    if (!entry || pending) return null;
+    if (!needsHeavyMemoryBlocks || !entry) return null;
     return resolveVoicePlaybackPair(entry, allEntries, {
       thenVsNow: notes?.thenVsNow ?? [],
       relatedNotes: [
@@ -486,30 +531,44 @@ export default function EntryPage() {
     timeMemory,
   ]);
 
+  const showQuietContext = !pending && !freshQuiet && !revisitExperience?.isRevisit;
+
   const entryThreads = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!showQuietContext || !entry) return [];
     return threadsForEntry(allEntries, entry.id, 3);
-  }, [entry, allEntries, pending]);
+  }, [showQuietContext, entry, allEntries]);
 
   const entryTerritories = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!showQuietContext || !entry) return [];
     return territoriesForEntry(allEntries, entry.id, 3);
-  }, [entry, allEntries, pending]);
+  }, [showQuietContext, entry, allEntries]);
 
   const relationshipNotes = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     return entryRelationshipNotes(allEntries, entry.id, 2);
-  }, [entry, allEntries, pending]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries]);
 
   const milestoneNotes = useMemo(() => {
-    if (!entry || pending) return [];
+    if (!needsHeavyMemoryBlocks || !entry) return [];
     return entryMilestoneNotes(allEntries, entry.id, limits.milestones);
-  }, [entry, allEntries, pending, limits.milestones]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries, limits.milestones]);
 
   const memoryContinuity = useMemo(() => {
-    if (!entry || pending) return null;
+    if (!needsHeavyMemoryBlocks || !entry) return null;
     return buildMemoryContinuityReport(entry, allEntries);
-  }, [entry, allEntries, pending]);
+  }, [needsHeavyMemoryBlocks, entry, allEntries]);
+
+  const evidenceBackedMoment = useMemo(
+    () => pickEvidenceBackedEntryMoment(presentation?.primaryMoment),
+    [presentation?.primaryMoment],
+  );
+
+  const freshContinuation = useMemo(() => {
+    const continuation = presentation?.continuation;
+    if (!continuation) return null;
+    if (evidenceBackedMoment && isDuplicateNote(continuation, evidenceBackedMoment)) return null;
+    return continuation;
+  }, [presentation?.continuation, evidenceBackedMoment]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -646,27 +705,31 @@ export default function EntryPage() {
               <h1 className="text-xl font-normal tracking-tight text-zinc-100 sm:text-2xl">
                 {formatEntryDate(entry.createdAt)}
               </h1>
-              <MarkReflectionButton
-                entryId={entry.id}
-                onMarked={
-                  revisitExperience?.isRevisit
-                    ? (type) => trackRevisitRewardBookmark(entry.id, type)
-                    : undefined
-                }
-              />
-              {!pending && !revisitExperience?.isRevisit ? (
-                <div className="flex flex-wrap items-center gap-2">
-                  <CopyMemoryMomentButton
-                    source="entry"
-                    entry={entry}
-                    allEntries={allEntries}
-                    onCopied={() => setMomentCopied(true)}
+              {!freshQuiet ? (
+                <>
+                  <MarkReflectionButton
+                    entryId={entry.id}
+                    onMarked={
+                      revisitExperience?.isRevisit
+                        ? (type) => trackRevisitRewardBookmark(entry.id, type)
+                        : undefined
+                    }
                   />
-                  <ShareQuietlyButton
-                    card={copiedShareCard}
-                    copiedBefore={momentCopied}
-                  />
-                </div>
+                  {!pending && !revisitExperience?.isRevisit ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <CopyMemoryMomentButton
+                        source="entry"
+                        entry={entry}
+                        allEntries={allEntries}
+                        onCopied={() => setMomentCopied(true)}
+                      />
+                      <ShareQuietlyButton
+                        card={copiedShareCard}
+                        copiedBefore={momentCopied}
+                      />
+                    </div>
+                  ) : null}
+                </>
               ) : null}
             </header>
 
@@ -689,6 +752,7 @@ export default function EntryPage() {
             <EntryPhotoAttachment
               entryId={entry.id}
               photo={entry.photo}
+              collapsed={freshQuiet}
               onPhotoChange={(photo) => setEntry((current) => (current ? { ...current, photo } : current))}
             />
 
@@ -696,12 +760,13 @@ export default function EntryPage() {
               entryId={entry.id}
               entry={entry}
               atmosphere={entry.atmosphere}
+              collapsed={freshQuiet}
               onAtmosphereChange={(atmosphere) =>
                 setEntry((current) => (current ? { ...current, atmosphere } : current))
               }
             />
 
-            {!pending && memoryContinuity?.hasData ? (
+            {!freshQuiet && !pending && memoryContinuity?.hasData ? (
               <MemoryContinuitySection report={memoryContinuity} />
             ) : null}
 
@@ -710,6 +775,35 @@ export default function EntryPage() {
                 entryId={entry.id}
                 onComplete={(updated) => setEntry(updated)}
               />
+            ) : freshQuiet ? (
+              <>
+                {freshContinuation ? (
+                  <ContinuationNotes notes={[freshContinuation]} max={1} />
+                ) : null}
+
+                {evidenceBackedMoment ? (
+                  <MotionNoteList className="space-y-20">
+                    <AnimatedMemoryNote note={evidenceBackedMoment} index={0} />
+                  </MotionNoteList>
+                ) : null}
+
+                <FollowupPromptInline
+                  prompt={activeFollowup}
+                  onContinue={handleContinueFollowup}
+                />
+
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-zinc-500 hover:text-zinc-300"
+                    onClick={expandFreshQuiet}
+                  >
+                    More for this entry
+                  </Button>
+                </div>
+              </>
             ) : revisitExperience?.isRevisit ? null : quiet ? (
                   <>
                     {presentation?.continuation ? (
