@@ -15,7 +15,7 @@ const REASON_LABELS: Record<RelatedReflection["matchReasons"][number], string> =
   entities: "People & topics",
   keywords: "Wording",
   concern: "Concern",
-  recommendation: "Recommendation",
+  recommendation: "Next step you named",
 };
 
 function RelatedReflectionRow({

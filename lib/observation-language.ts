@@ -1,3 +1,4 @@
+import { MEMORY_LANGUAGE } from "@/lib/memory-language";
 import type { Reflection } from "@/types/journal";
 
 /** Primary observation line for UI — never falls back to legacy therapy fields. */
@@ -20,7 +21,7 @@ export function getPrimaryObservation(reflection: Reflection): string | null {
   return null;
 }
 
-/** Structured analysis fields in mirror priority order. */
+/** Structured read-back fields in mirror priority order. */
 export function getStructuredAnalysis(reflection: Reflection): Array<{
   key: string;
   label: string;
@@ -31,21 +32,21 @@ export function getStructuredAnalysis(reflection: Reflection): Array<{
   if (reflection.exactLanguagePattern?.trim()) {
     rows.push({
       key: "exact",
-      label: "Exact wording",
+      label: MEMORY_LANGUAGE.yourOwnWords,
       detail: `"${reflection.exactLanguagePattern.trim()}"`,
     });
   }
   if (reflection.concreteObservation?.trim()) {
     rows.push({
       key: "concrete",
-      label: "Concrete read",
+      label: MEMORY_LANGUAGE.whatStoodOut,
       detail: reflection.concreteObservation.trim(),
     });
   }
   if (reflection.tensionOrContradiction?.trim()) {
     rows.push({
       key: "tension",
-      label: "Tension or contradiction",
+      label: MEMORY_LANGUAGE.twoTruths,
       detail: reflection.tensionOrContradiction.trim(),
     });
   }
@@ -54,7 +55,7 @@ export function getStructuredAnalysis(reflection: Reflection): Array<{
     if (!signal.toLowerCase().startsWith("nothing repeated")) {
       rows.push({
         key: "repeat",
-        label: "Repeated signal",
+        label: MEMORY_LANGUAGE.youSaidBefore.replace(/\.$/, ""),
         detail: signal,
       });
     }
@@ -62,14 +63,14 @@ export function getStructuredAnalysis(reflection: Reflection): Array<{
   if (reflection.avoidedOrVagueArea?.trim()) {
     rows.push({
       key: "vague",
-      label: "Indirect or vague area",
+      label: MEMORY_LANGUAGE.leftIndirect.replace(/\.$/, ""),
       detail: reflection.avoidedOrVagueArea.trim(),
     });
   }
   if (reflection.nextSmallAction?.trim()) {
     rows.push({
       key: "action",
-      label: "Named next step",
+      label: "Next step in your words",
       detail: reflection.nextSmallAction.trim(),
     });
   }

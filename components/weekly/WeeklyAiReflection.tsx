@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { Loader2, PenLine, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -99,8 +99,8 @@ export function WeeklyAiReflection({ report }: WeeklyAiReflectionProps) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-violet-300" />
-              <CardTitle className="text-base">Weekly summary</CardTitle>
+              <PenLine className="h-4 w-4 text-violet-300" />
+              <CardTitle className="text-base">This week in your words</CardTitle>
             </div>
             <p className="mt-1 text-xs text-zinc-500">
               Written from your local data — not therapy, not stored on a server
@@ -124,16 +124,16 @@ export function WeeklyAiReflection({ report }: WeeklyAiReflectionProps) {
         {state === "idle" && report.hasData ? (
           <div className="space-y-3">
             <p className="text-sm text-zinc-400">
-              Generate a short paragraph from this week&apos;s emotional shifts and
-              recurring language.
+              Write a short paragraph from this week&apos;s moods and the words that
+              came back.
             </p>
             <Button
               type="button"
               className="w-full sm:w-auto"
               onClick={() => void generate()}
             >
-              <Sparkles className="h-4 w-4" />
-              Generate weekly summary
+              <PenLine className="h-4 w-4" />
+              Write this week&apos;s summary
             </Button>
           </div>
         ) : null}

@@ -77,8 +77,8 @@ export default function JournalPage() {
                       No reflections yet
                     </p>
                     <p className="mt-2 max-w-sm text-sm text-zinc-400">
-                      Talk naturally for a minute. VoiceMemory notices recurring
-                      patterns over time — starting with one voice reflection.
+                      Talk naturally for a minute. VoiceMemory notices when your
+                      words repeat across days — starting with one voice reflection.
                     </p>
                   </div>
                   <Button asChild>

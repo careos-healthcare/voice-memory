@@ -39,6 +39,7 @@ const SKIP_PATH_PARTS = [
   "lib/atmosphere/",
   "lib/photo-storage.ts",
   "lib/restraint/",
+  "lib/memory-language.ts",
   "lib/onboarding/",
   "lib/resurfacing/emotional-specificity.ts",
   "lib/resurfacing/genericity-filter.ts",
@@ -442,17 +443,21 @@ if (!fs.existsSync(productCopyPath)) {
   process.exit(1);
 }
 const productCopy = fs.readFileSync(productCopyPath, "utf8");
-for (const required of [
-  "VoiceMemory is not an AI journal.",
-  "resurfaces forgotten emotional patterns from your own voice",
-  "Patterns you forgot you were repeating.",
-  "Your own words came back.",
-  "You used similar words before.",
-  "This concern showed up again.",
-  "Your voice makes the pattern harder to ignore.",
-]) {
-  if (!productCopy.includes(required)) {
-    console.error(`validate:restraint failed — product-copy missing wedge line: ${required}`);
+const productCopyRequired = [
+  ["Your words stay yours"],
+  ["brings back what you already said"],
+  ["Words you forgot you had already spoken."],
+  ["This came back.", "MEMORY_LANGUAGE.thisCameBack"],
+  ["Your own words came back.", "MEMORY_LANGUAGE.wordsReturned"],
+  ["You used similar words before."],
+  ["This concern showed up again."],
+  ["Hearing your own voice makes the return harder to shrug off."],
+];
+for (const alternatives of productCopyRequired) {
+  if (!alternatives.some((token) => productCopy.includes(token))) {
+    console.error(
+      `validate:restraint failed — product-copy missing wedge line: ${alternatives[0]}`,
+    );
     process.exit(1);
   }
 }

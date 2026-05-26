@@ -7,7 +7,7 @@ import {
   MessageSquareQuote,
   Repeat2,
   Shield,
-  Sparkles,
+  Mic,
   TrendingUp,
 } from "lucide-react";
 
@@ -203,7 +203,7 @@ export function InsightCard({
                 <p className="text-xs uppercase tracking-[0.2em] text-fuchsia-300/80">
                   Your own words
                 </p>
-                <CardTitle className="text-lg">What your words show</CardTitle>
+                <CardTitle className="text-lg">You said this before</CardTitle>
               </>
             ) : (
               <CardTitle className="text-base font-medium text-zinc-300">This entry</CardTitle>
@@ -317,7 +317,7 @@ export function InsightCard({
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-zinc-400" />
+              <Mic className="h-4 w-4 text-zinc-400" />
               <CardTitle className="text-base">Your words</CardTitle>
             </div>
           </CardHeader>

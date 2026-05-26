@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "VoiceMemory — Private voice reflections",
   description:
-    "VoiceMemory resurfaces forgotten emotional patterns from your own voice. Local-first — not therapy.",
+    "VoiceMemory brings back what you already said, when it matters again. Local-first — not therapy.",
   applicationName: "VoiceMemory",
   appleWebApp: {
     capable: true,

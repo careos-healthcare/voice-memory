@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Filter, Search, Sparkles } from "lucide-react";
+import { ArrowRight, Filter, Search } from "lucide-react";
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -309,9 +309,7 @@ export default function SearchPage() {
         ) : null}
 
         <p className="mt-3 flex items-center gap-1.5 text-xs text-zinc-600">
-          <Sparkles className="h-3.5 w-3.5" />
-          Transcript · mood · themes · concerns · signals · recommendations ·
-          entities
+          Search across transcript · mood · themes · concerns · signals · entities
         </p>
 
         <div className="mt-6 space-y-3">

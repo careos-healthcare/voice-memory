@@ -1,8 +1,10 @@
 /** Shared product positioning — user-facing strings only. */
 
+import { MEMORY_LANGUAGE } from "@/lib/memory-language";
+
 export const WEDGE_POSITIONING = {
-  notAiJournal: "VoiceMemory is not an AI journal.",
-  wedge: "VoiceMemory resurfaces forgotten emotional patterns from your own voice.",
+  notAiJournal: "Your words stay yours — speak privately and revisit when something returns.",
+  wedge: "VoiceMemory brings back what you already said, when it matters again.",
 } as const;
 
 export const PRODUCT_WEDGE_LINE = WEDGE_POSITIONING.wedge;
@@ -11,20 +13,21 @@ export const NOT_AI_JOURNAL_LINE = WEDGE_POSITIONING.notAiJournal;
 
 /** Concrete resurfacing lines — prefer evidence over abstraction. */
 export const WEDGE_RESURFACING = {
-  forgottenPatterns: "Patterns you forgot you were repeating.",
-  wordsCameBack: "Your own words came back.",
-  pastWordsMatch: "Your own words came back when they match today.",
+  forgottenPatterns: "Words you forgot you had already spoken.",
+  wordsCameBack: MEMORY_LANGUAGE.thisCameBack,
+  pastWordsMatch: MEMORY_LANGUAGE.wordsReturned,
   similarWordsBefore: "You used similar words before.",
   concernAgain: "This concern showed up again.",
-  saidBeforeLeftAlone: "You said this before, then left it alone.",
-  ownVoicePattern: "Your voice makes the pattern harder to ignore.",
+  saidBeforeLeftAlone: MEMORY_LANGUAGE.youSaidBefore,
+  ownVoicePattern: "Hearing your own voice makes the return harder to shrug off.",
   returnedAfterDays: (days: number) =>
     `This returned after ${days} day${days === 1 ? "" : "s"}.`,
 } as const;
 
 export const APP_EYEBROW = "Private voice reflections";
-export const APP_TAGLINE = "Voice journaling that resurfaces what repeats in your own words.";
-export const APP_LEAD = "Speak thoughts aloud. VoiceMemory remembers patterns. Relevant moments return later.";
+export const APP_TAGLINE = "Voice reflections that resurface in your own words.";
+export const APP_LEAD =
+  "Speak thoughts aloud. What you said before can return when it connects to today.";
 export const APP_SUPPORT =
   "Record on this device. Sign in only if you want encrypted backup.";
 export const APP_HONESTY =
@@ -34,10 +37,10 @@ export const APP_DEVICE_LINE = "Speak for about a minute. Your words stay on thi
 /** Homepage hero — understandable in ~5 seconds. */
 export const HOMEPAGE_CLARITY = {
   stepSpeak: "Speak thoughts aloud",
-  stepRemember: "VoiceMemory remembers patterns",
-  stepReturn: "Relevant moments return later",
+  stepRemember: "Your past words stay here",
+  stepReturn: "Similar words return when they match today",
   ctaLine:
-    "Record thoughts with your voice. VoiceMemory quietly resurfaces moments that repeat over time.",
+    "Record thoughts with your voice. VoiceMemory quietly brings back moments that repeat in your words.",
   exampleLabel: "Example",
   example:
     "Three weeks apart, you mentioned waiting for the same phone call.",
@@ -45,7 +48,7 @@ export const HOMEPAGE_CLARITY = {
 
 export const APP_SUBTITLE = PRODUCT_WEDGE_LINE;
 export const APP_DESCRIPTION_SHORT =
-  "Private voice reflections that resurface forgotten patterns from your own voice.";
+  "Private voice reflections that resurface forgotten moments from your own voice.";
 
 export const SERVICE_DESCRIPTION = `${NOT_AI_JOURNAL_LINE} ${PRODUCT_WEDGE_LINE}`;
 

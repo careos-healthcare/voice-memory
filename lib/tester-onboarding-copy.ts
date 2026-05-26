@@ -33,7 +33,7 @@ export const HOW_IT_WORKS_DESCRIPTION =
 export const HOW_IT_WORKS_SECTIONS = [
   {
     title: "Record when something is worth keeping",
-    body: "Speak for a minute or two. Your audio and transcript stay on this device. Analysis runs to organize what you said — not to judge it.",
+    body: "Speak for a minute or two. Your audio and transcript stay on this device. Your words are organized from what you said — not judged.",
   },
   {
     title: "Past notes may return",
@@ -65,7 +65,7 @@ export const PRIVACY_SIMPLE_SECTIONS = [
   },
   {
     title: "Processing when you record",
-    body: "Audio is sent for transcription and analysis, then discarded from our servers. We do not store your journal as a cloud database.",
+    body: "Audio is sent for transcription, then discarded from our servers. We do not store your journal as a cloud database.",
   },
   {
     title: "Export anytime",

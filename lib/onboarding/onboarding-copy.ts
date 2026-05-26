@@ -17,7 +17,7 @@ export const ONBOARDING_MEMORY = {
   title: "Your reflections",
   empty: "Nothing here yet. One short voice reflection is enough to start.",
   loading: "One moment…",
-  wedge: "Patterns you forgot you were repeating may show up here as your archive grows.",
+  wedge: "Words you forgot you had already spoken may show up here as your archive grows.",
 } as const;
 
 export const ONBOARDING_ARCHIVE = {

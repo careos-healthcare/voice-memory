@@ -481,7 +481,7 @@ export function buildWeeklyReflectionPayload(
 
 export function buildLocalWeeklySummary(report: WeeklyIntelligenceReport): string {
   if (!report.hasData) {
-    return "Your weekly reflection will appear after you log a few voice entries this week. One minute a day is enough to see patterns emerge.";
+    return "Your weekly reflection will appear after you log a few voice entries this week. One minute a day is enough for your words to start repeating.";
   }
 
   const { thisWeek, comparison, emotionalShift } = report;

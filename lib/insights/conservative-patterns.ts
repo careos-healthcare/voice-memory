@@ -22,11 +22,11 @@ export interface ConservativePattern {
 }
 
 const KIND_LABELS: Record<ConservativePatternKind, string> = {
-  recurring_thought: "Recurring thought",
-  contradiction: "Possible contradiction",
-  avoidance_signal: "Possible avoidance signal",
-  improvement_signal: "Possible improvement signal",
-  emotional_trigger_candidate: "Emotional trigger candidate",
+  recurring_thought: "Words that returned",
+  contradiction: "Did not line up",
+  avoidance_signal: "Indirect wording",
+  improvement_signal: "Shift in tone",
+  emotional_trigger_candidate: "Name or topic returned",
 };
 
 const TYPE_TO_KIND: Partial<Record<PatternInsightType, ConservativePatternKind>> = {
@@ -39,7 +39,7 @@ const TYPE_TO_KIND: Partial<Record<PatternInsightType, ConservativePatternKind>>
 };
 
 const PATTERN_DISCLAIMER =
-  "Repeated words and concerns from your entries — with links to the reflections they came from. Not a diagnosis.";
+  "Repeated words and concerns from your archive — each links to the reflection it came from. Not a diagnosis.";
 
 function toConservativePattern(insight: PatternInsight): ConservativePattern | null {
   const kind = TYPE_TO_KIND[insight.type];

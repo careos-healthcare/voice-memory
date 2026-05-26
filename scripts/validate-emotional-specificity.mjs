@@ -21,6 +21,7 @@ const SKIP_PATH_PARTS = [
   "lib/pilot",
   "lib/integrity",
   "lib/onboarding/onboarding-restraint.ts",
+  "lib/memory-language.ts",
   "lib/resurfacing/emotional-specificity.ts",
   "lib/resurfacing/genericity-filter.ts",
   "lib/revisit/resurfacing-copy.ts",

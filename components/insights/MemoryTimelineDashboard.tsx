@@ -174,7 +174,7 @@ export function MemoryTimelineDashboard({ insights }: MemoryTimelineDashboardPro
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-medium text-zinc-300">
-              Repeated pattern
+              Phrase that returned
             </CardTitle>
           </CardHeader>
           <CardContent>

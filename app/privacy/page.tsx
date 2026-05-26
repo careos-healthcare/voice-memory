@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <TrustPageShell
       eyebrow="Trust"
       title="Privacy"
-      description="Your reflections stay on this device by default. Cloud processing is limited to transcription and analysis when you record."
+      description="Your reflections stay on this device by default. Cloud processing is limited to transcription and organizing what you said when you record."
     >
       {PRIVACY_SECTIONS.map((section) => (
         <TrustSection key={section.title} title={section.title} body={section.body} />

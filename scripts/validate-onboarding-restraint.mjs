@@ -34,15 +34,15 @@ const REQUIRED_EVENTS = [
 const REQUIRED_COPY = [
   "Record one short reflection.",
   "VoiceMemory saves it on this device.",
-  "Your own words came back.",
+  "This came back.", // via MEMORY_LANGUAGE / WEDGE_RESURFACING
   "Sign in only if you want encrypted sync.",
   "The value appears when today connects to something you said before.",
   "Speak for about a minute. Your words stay on this device.",
   "Not therapy, not a diagnosis",
-  "VoiceMemory is not an AI journal.",
-  "Patterns you forgot you were repeating.",
+  "Your words stay yours",
+  "Words you forgot you had already spoken.",
   "You used similar words before.",
-  "Your voice makes the pattern harder to ignore.",
+  "Hearing your own voice makes the return harder to shrug off.",
 ];
 
 const FORBIDDEN_RE = [
@@ -96,8 +96,13 @@ const homeCopy = [
   fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8"),
   fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8"),
 ].join("\n");
+const copyAlternatives = {
+  "This came back.": ["MEMORY_LANGUAGE.thisCameBack", "WEDGE_RESURFACING.wordsCameBack"],
+  "Your own words came back.": ["MEMORY_LANGUAGE.wordsReturned", "WEDGE_RESURFACING.pastWordsMatch"],
+};
 for (const line of REQUIRED_COPY) {
-  if (!homeCopy.includes(line)) {
+  const alts = copyAlternatives[line];
+  if (alts ? !alts.some((token) => homeCopy.includes(token)) : !homeCopy.includes(line)) {
     console.error(`Onboarding restraint validation failed — missing onboarding copy: "${line}"`);
     process.exit(1);
   }

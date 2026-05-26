@@ -20,7 +20,7 @@ export function ContradictionContinuityCard({
   contradictions,
   title = "Contradictions & continuity",
   subtitle = "Where your words pull in two directions",
-  emptyLabel = "No contradictions detected yet. They appear as patterns accumulate across entries.",
+  emptyLabel = "Nothing contradictory has surfaced yet — it shows up as more of your words accumulate.",
   maxItems = 4,
   highlightEntryId,
   className,

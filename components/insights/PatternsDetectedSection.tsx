@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Repeat2 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WEDGE_RESURFACING } from "@/lib/product-copy";
@@ -38,7 +38,7 @@ export function PatternsDetectedSection({
     <Card className="border-white/5">
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-violet-300/80" />
+          <Repeat2 className="h-4 w-4 text-violet-300/80" />
           <CardTitle className="text-base font-medium text-zinc-200">
             Repeated words in your archive
           </CardTitle>

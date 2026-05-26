@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calendar, Flame, Mic, TrendingDown, TrendingUp } from "lucide-react";
+import { Calendar, Mic, TrendingDown, TrendingUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,7 +52,6 @@ export function HabitLoopCard({
 
   if (!stats) return null;
 
-  const consecutiveDays = stats.consecutiveReflectionDays;
   const intensityDelta =
     stats.today.avgIntensity !== null && stats.yesterday.avgIntensity !== null
       ? stats.today.avgIntensity - stats.yesterday.avgIntensity
@@ -93,10 +92,10 @@ export function HabitLoopCard({
               <Calendar className="h-5 w-5 text-violet-300/80" />
               {formatLastReflectionLabel(stats.lastReflectionDate)}
             </p>
-            {consecutiveDays > 0 ? (
-              <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-400">
-                <Flame className="h-4 w-4 text-amber-400/80" />
-                {consecutiveDays} consecutive reflection day{consecutiveDays === 1 ? "" : "s"}
+            {stats.weeklyRecap.entryCount > 0 ? (
+              <p className="mt-2 text-sm text-zinc-400">
+                {stats.weeklyRecap.entryCount} reflection
+                {stats.weeklyRecap.entryCount === 1 ? "" : "s"} this week — your pace
               </p>
             ) : null}
             <p className="mt-2 text-sm text-zinc-500">
@@ -135,16 +134,11 @@ export function HabitLoopCard({
                 <Calendar className="h-6 w-6 text-violet-300" />
                 {formatLastReflectionLabel(stats.lastReflectionDate)}
               </CardTitle>
-              {consecutiveDays > 0 ? (
-                <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-300">
-                  <Flame className="h-4 w-4 text-amber-400" />
-                  {consecutiveDays} consecutive reflection day{consecutiveDays === 1 ? "" : "s"}
-                </p>
-              ) : (
-                <p className="mt-2 text-sm text-zinc-400">
-                  Last reflection · {formatLastReflectionLabel(stats.lastReflectionDate)}
-                </p>
-              )}
+              <p className="mt-2 text-sm text-zinc-400">
+                {stats.weeklyRecap.entryCount > 0
+                  ? `${stats.weeklyRecap.entryCount} reflection${stats.weeklyRecap.entryCount === 1 ? "" : "s"} this week`
+                  : `Last reflection · ${formatLastReflectionLabel(stats.lastReflectionDate)}`}
+              </p>
             </div>
             {stats.reflectedToday ? (
               <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
