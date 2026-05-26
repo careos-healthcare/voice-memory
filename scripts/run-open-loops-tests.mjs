@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 
+import { resetUnresolvedDetectionCache } from "../lib/open-loops/unresolved-cache.ts";
 import {
   detectUnresolvedThread,
   hasUnresolvedThreadLanguage,
 } from "../lib/open-loops/unresolved-signals.ts";
+import { resetOpenLoopActivationCache } from "../lib/open-loops/open-loop-activation.ts";
+
+resetUnresolvedDetectionCache();
+resetOpenLoopActivationCache();
 import { detectEmotionalShift } from "../lib/open-loops/emotional-shift.ts";
 import { pickOpenLoopResurfacingLine } from "../lib/open-loops/open-loop-resurfacing-lines.ts";
 import { hasLongAbsenceReturn } from "../lib/open-loops/open-loop-silence.ts";

@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { runWhenIdle } from "@/lib/open-loops/open-loop-defer";
 import {
   trackOpenLoopEntryReopened,
   trackOpenLoopResurfacingShown,
 } from "@/lib/open-loops/open-loop-observation";
+import { recordComponentRender } from "@/lib/open-loops/open-loop-performance";
 import {
   getOpenLoopsForEntry,
   pickEntryOpenLoopContinuityLine,
   primaryAnchorPhrase,
+  OPEN_LOOP_CHANGE_EVENT,
 } from "@/lib/open-loops/open-loop-storage";
 import type { OpenLoop } from "@/types/open-loop";
 
@@ -18,24 +21,60 @@ interface OpenLoopEntryContinuityProps {
   entryId: string;
 }
 
-function activeLoop(entryId: string): OpenLoop | undefined {
-  return getOpenLoopsForEntry(entryId).find(
-    (row) => row.status === "open" || row.status === "softened",
-  );
+interface ContinuityPayload {
+  loop: OpenLoop;
+  line: string;
 }
 
-/** Max one evidence-backed continuity line on an entry — quote-anchored when possible. */
+function readContinuityPayload(entryId: string): ContinuityPayload | null {
+  const loop = getOpenLoopsForEntry(entryId).find(
+    (row) => row.status === "open" || row.status === "softened",
+  );
+  if (!loop) return null;
+  const line = pickEntryOpenLoopContinuityLine(entryId);
+  if (!line) return null;
+  return { loop, line };
+}
+
+/** Deferred continuity line — does not block transcript or prompt paint. */
 export function OpenLoopEntryContinuity({ entryId }: OpenLoopEntryContinuityProps) {
-  const loop = useMemo(() => activeLoop(entryId), [entryId]);
-  const line = useMemo(() => pickEntryOpenLoopContinuityLine(entryId), [entryId, loop?.updatedAt]);
+  recordComponentRender("OpenLoopEntryContinuity");
+
+  const [payload, setPayload] = useState<ContinuityPayload | null>(null);
+  const trackedLineRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!line || !loop) return;
-    trackOpenLoopResurfacingShown(loop.openLoopId, line);
-  }, [line, loop?.openLoopId]);
+    let cancelled = false;
+    const cancelIdle = runWhenIdle(() => {
+      if (cancelled) return;
+      setPayload(readContinuityPayload(entryId));
+    });
 
-  if (!line || !loop) return null;
+    const onChange = () => {
+      runWhenIdle(() => {
+        if (cancelled) return;
+        setPayload(readContinuityPayload(entryId));
+      });
+    };
 
+    window.addEventListener(OPEN_LOOP_CHANGE_EVENT, onChange);
+    return () => {
+      cancelled = true;
+      cancelIdle();
+      window.removeEventListener(OPEN_LOOP_CHANGE_EVENT, onChange);
+    };
+  }, [entryId]);
+
+  useEffect(() => {
+    if (!payload?.line || !payload.loop) return;
+    if (trackedLineRef.current === payload.line) return;
+    trackedLineRef.current = payload.line;
+    trackOpenLoopResurfacingShown(payload.loop.openLoopId, payload.line);
+  }, [payload?.line, payload?.loop?.openLoopId]);
+
+  if (!payload) return null;
+
+  const { loop, line } = payload;
   const anchor = primaryAnchorPhrase(loop);
   const showAnchor = line.includes(anchor) || line.includes(loop.userNextStep.slice(0, 20));
 

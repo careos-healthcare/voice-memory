@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { auditOpenLoopActivation } from "@/lib/open-loops/open-loop-activation-audit";
-import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
 import { resolveOpenLoopActivation } from "@/lib/open-loops/open-loop-activation";
 import {
   OPEN_LOOP_ANCHOR_LABEL,
@@ -21,6 +19,8 @@ import {
   trackOpenLoopPromptDismissed,
   trackOpenLoopPromptShown,
 } from "@/lib/open-loops/open-loop-observation";
+import { recordComponentRender } from "@/lib/open-loops/open-loop-performance";
+import { transcriptCacheKey } from "@/lib/open-loops/open-loop-performance";
 import { createOpenLoop, dismissOpenLoopPrompt } from "@/lib/open-loops/open-loop-storage";
 import type { JournalEntry } from "@/types/journal";
 
@@ -41,14 +41,22 @@ export function OpenLoopNextStepPrompt({
   entry,
   isRevisit = false,
 }: OpenLoopNextStepPromptProps) {
+  recordComponentRender("OpenLoopNextStepPrompt");
+
   const [dismissed, setDismissed] = useState(false);
   const [saved, setSaved] = useState(false);
   const [nextStep, setNextStep] = useState("");
   const [saving, setSaving] = useState(false);
+  const promptTrackedRef = useRef(false);
+
+  const transcriptKey = useMemo(
+    () => transcriptCacheKey(entry.transcript ?? ""),
+    [entry.transcript],
+  );
 
   const activation = useMemo(
     () => resolveOpenLoopActivation(entry, { isRevisit }),
-    [entry, isRevisit],
+    [entry.id, transcriptKey, isRevisit, entry.transcript, entry.createdAt],
   );
 
   const promptLine = useMemo(() => promptLineForEntry(entry.id), [entry.id]);
@@ -58,26 +66,9 @@ export function OpenLoopNextStepPrompt({
   const visible = activation.showPrompt && !dismissed && !saved;
 
   useEffect(() => {
-    const audit = auditOpenLoopActivation(entry, { isRevisit, logSource: "OpenLoopNextStepPrompt" });
-    logOpenLoopActivationDebug("OpenLoopNextStepPrompt.mount", {
-      entryId: entry.id,
-      unresolvedDetected: audit.unresolvedDetected,
-      matchedSignals: audit.matchedSignals,
-      existingLoopFound: audit.existingLoopFound,
-      dismissedRecently: audit.dismissedRecently,
-      freshEntryWindow: audit.freshEntryWindow,
-      revisitMode: audit.revisitMode,
-      heavyReady: audit.heavyReady,
-      activationSuppressedReason: audit.activationSuppressedReason,
-      componentVisible: visible,
-      localDismissed: dismissed,
-      localSaved: saved,
-      activationShowPrompt: activation.showPrompt,
-    });
-  }, [entry, isRevisit, visible, dismissed, saved, activation.showPrompt]);
-
-  useEffect(() => {
-    if (visible) trackOpenLoopPromptShown(entry.id);
+    if (!visible || promptTrackedRef.current) return;
+    promptTrackedRef.current = true;
+    trackOpenLoopPromptShown(entry.id);
   }, [visible, entry.id]);
 
   if (!visible || !activation.signal) return null;

@@ -1,6 +1,6 @@
 import { isWithinFreshEntryWindow, isFreshEntryQuietMode } from "@/lib/refinement/entry-quiet-state";
+import { getCachedUnresolvedThread } from "@/lib/open-loops/unresolved-cache";
 import {
-  detectUnresolvedThread,
   hasUnresolvedThreadLanguage,
   unresolvedDetectionScore,
 } from "@/lib/open-loops/unresolved-signals";
@@ -10,7 +10,7 @@ import {
   isOpenLoopPromptDismissed,
 } from "@/lib/open-loops/open-loop-storage";
 import type { JournalEntry } from "@/types/journal";
-import type { UnresolvedThreadSignal } from "@/lib/open-loops/unresolved-signals";
+import type { UnresolvedThreadSignal } from "@/lib/open-loops/unresolved-detect-core";
 
 export type OpenLoopActivationSuppressionReason =
   | "no_transcript"
@@ -73,7 +73,7 @@ export function auditOpenLoopActivation(
   },
 ): OpenLoopActivationAudit {
   const transcript = entry.transcript?.trim() ?? "";
-  const signal = transcript ? detectUnresolvedThread(transcript) : null;
+  const signal = transcript ? getCachedUnresolvedThread(transcript) : null;
   const unresolvedDetected = hasUnresolvedThreadLanguage(transcript);
   const suppression = resolveOpenLoopActivationSuppression(entry, {
     dismissed: options?.dismissed,

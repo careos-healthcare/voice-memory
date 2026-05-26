@@ -1,23 +1,36 @@
 import { isWithinFreshEntryWindow, isFreshEntryQuietMode } from "@/lib/refinement/entry-quiet-state";
-import {
-  detectUnresolvedThread,
-  hasUnresolvedThreadLanguage,
-} from "@/lib/open-loops/unresolved-signals";
+import { getCachedUnresolvedThread } from "@/lib/open-loops/unresolved-cache";
+import { hasUnresolvedThreadLanguage } from "@/lib/open-loops/unresolved-signals";
 import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
 import {
   auditOpenLoopActivation,
   resolveOpenLoopActivationSuppression,
 } from "@/lib/open-loops/open-loop-activation-audit";
+import {
+  recordFunctionInvocation,
+  transcriptCacheKey,
+} from "@/lib/open-loops/open-loop-performance";
 import type { JournalEntry } from "@/types/journal";
 
 const PROMPT_DISMISS_MS = 48 * 60 * 60 * 1000;
+
+const activationByTranscriptKey = new Map<
+  string,
+  {
+    showPrompt: boolean;
+    prominent: boolean;
+    isFresh: boolean;
+    isRevisit: boolean;
+    signal: ReturnType<typeof getCachedUnresolvedThread>;
+  }
+>();
 
 export interface OpenLoopActivationContext {
   showPrompt: boolean;
   prominent: boolean;
   isFresh: boolean;
   isRevisit: boolean;
-  signal: ReturnType<typeof detectUnresolvedThread>;
+  signal: ReturnType<typeof getCachedUnresolvedThread>;
 }
 
 /** When to surface the keep-thread-open prompt — no coaching, user-owned. */
@@ -25,8 +38,14 @@ export function resolveOpenLoopActivation(
   entry: JournalEntry,
   options?: { isRevisit?: boolean; heavyReady?: boolean | null },
 ): OpenLoopActivationContext {
+  recordFunctionInvocation("resolveOpenLoopActivation");
+
   const transcript = entry.transcript?.trim() ?? "";
-  const signal = transcript ? detectUnresolvedThread(transcript) : null;
+  const cacheKey = `${entry.id}:${transcriptCacheKey(transcript)}:${options?.isRevisit ? "1" : "0"}`;
+  const cached = activationByTranscriptKey.get(cacheKey);
+  if (cached) return cached;
+
+  const signal = transcript ? getCachedUnresolvedThread(transcript) : null;
   const isFresh = isFreshEntryQuietMode(entry.id, entry.createdAt);
   const isRevisit = Boolean(options?.isRevisit);
   const inFreshWindow = isWithinFreshEntryWindow(entry.createdAt);
@@ -40,6 +59,8 @@ export function resolveOpenLoopActivation(
     isRevisit,
     signal,
   };
+
+  activationByTranscriptKey.set(cacheKey, context);
 
   logOpenLoopActivationDebug("resolveOpenLoopActivation", {
     entryId: entry.id,
@@ -57,6 +78,10 @@ export function resolveOpenLoopActivation(
   });
 
   return context;
+}
+
+export function resetOpenLoopActivationCache(): void {
+  activationByTranscriptKey.clear();
 }
 
 export { auditOpenLoopActivation, resolveOpenLoopActivationSuppression };

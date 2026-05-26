@@ -3,6 +3,12 @@ import {
   refreshAllOpenLoopContinuity,
   refreshOpenLoopContinuity,
 } from "@/lib/open-loops/open-loop-continuity";
+import { runWhenIdle } from "@/lib/open-loops/open-loop-defer";
+import {
+  recordContinuityBuildDuration,
+  recordStorageRead,
+  recordStorageWrite,
+} from "@/lib/open-loops/open-loop-performance";
 import {
   OPEN_LOOP_EVENTS,
   trackOpenLoopClosed,
@@ -157,25 +163,43 @@ function normalizeLoop(raw: unknown): OpenLoop | null {
   };
 }
 
+let loopsReadCache: OpenLoop[] | null = null;
+
+function invalidateLoopsReadCache(): void {
+  loopsReadCache = null;
+}
+
 function readLoops(): OpenLoop[] {
   if (!isBrowser()) return [];
+  if (loopsReadCache) return loopsReadCache;
 
   try {
+    recordStorageRead();
     const raw = localStorage.getItem(OPEN_LOOPS_KEY);
-    if (!raw) return [];
+    if (!raw) {
+      loopsReadCache = [];
+      return loopsReadCache;
+    }
     const parsed = JSON.parse(raw) as unknown[];
-    if (!Array.isArray(parsed)) return [];
-    return parsed
+    if (!Array.isArray(parsed)) {
+      loopsReadCache = [];
+      return loopsReadCache;
+    }
+    loopsReadCache = parsed
       .map(normalizeLoop)
       .filter((loop): loop is OpenLoop => loop !== null);
+    return loopsReadCache;
   } catch {
-    return [];
+    loopsReadCache = [];
+    return loopsReadCache;
   }
 }
 
 function writeLoops(loops: OpenLoop[]): void {
   if (!isBrowser()) return;
+  recordStorageWrite();
   localStorage.setItem(OPEN_LOOPS_KEY, JSON.stringify(loops));
+  invalidateLoopsReadCache();
 }
 
 function dispatchChange(): void {
@@ -190,11 +214,31 @@ function sortLoops(loops: OpenLoop[]): OpenLoop[] {
 }
 
 function withFreshContinuity(loops: OpenLoop[]): OpenLoop[] {
-  return refreshAllOpenLoopContinuity(loops);
+  const started = typeof performance !== "undefined" ? performance.now() : 0;
+  const refreshed = refreshAllOpenLoopContinuity(loops);
+  if (started > 0) {
+    recordContinuityBuildDuration(performance.now() - started);
+  }
+  return refreshed;
+}
+
+let continuityRefreshQueued = false;
+
+/** Background continuity refresh — never during render/memo. */
+export function scheduleOpenLoopContinuityRefresh(): void {
+  if (!isBrowser() || continuityRefreshQueued) return;
+  continuityRefreshQueued = true;
+  runWhenIdle(() => {
+    continuityRefreshQueued = false;
+    const stored = readLoops();
+    const refreshed = withFreshContinuity(stored);
+    writeLoops(refreshed);
+    dispatchChange();
+  });
 }
 
 export function getAllOpenLoops(): OpenLoop[] {
-  return sortLoops(withFreshContinuity(readLoops()));
+  return sortLoops(readLoops());
 }
 
 export function getActiveOpenLoops(): OpenLoop[] {
@@ -228,13 +272,12 @@ export function dismissOpenLoopPrompt(entryId: string, dismissMs = 48 * 60 * 60 
 
 export function isOpenLoopPromptDismissed(entryId: string): boolean {
   if (!isBrowser()) return false;
+  recordStorageRead();
   const raw = localStorage.getItem(`${PROMPT_DISMISS_PREFIX}${entryId}`);
   if (!raw) return false;
   const until = Number(raw);
   if (!Number.isFinite(until)) return true;
-  if (Date.now() < until) return true;
-  localStorage.removeItem(`${PROMPT_DISMISS_PREFIX}${entryId}`);
-  return false;
+  return Date.now() < until;
 }
 
 export function shouldShowOpenLoopPrompt(
@@ -476,7 +519,5 @@ export function pickEntryOpenLoopContinuityLine(entryId: string): string | null 
     (loop) => loop.status === "open" || loop.status === "softened",
   );
   if (loops.length === 0) return null;
-
-  const refreshed = refreshOpenLoopContinuity(loops[0]);
-  return pickOpenLoopResurfacingLine(refreshed);
+  return pickOpenLoopResurfacingLine(loops[0]);
 }

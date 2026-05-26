@@ -9,8 +9,8 @@ import { EntryPhotoAttachment } from "@/components/entry/EntryPhotoAttachment";
 import { EntryAtmosphereAttachment } from "@/components/entry/EntryAtmosphereAttachment";
 import { OpenLoopNextStepPrompt } from "@/components/entry/OpenLoopNextStepPrompt";
 import { OpenLoopEntryContinuity } from "@/components/open-loops/OpenLoopEntryContinuity";
-import { auditOpenLoopActivation } from "@/lib/open-loops/open-loop-activation-audit";
-import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
+import { recordComponentRender } from "@/lib/open-loops/open-loop-performance";
+import { scheduleOpenLoopContinuityRefresh } from "@/lib/open-loops/open-loop-storage";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
@@ -122,6 +122,7 @@ function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boole
 }
 
 export default function EntryPage() {
+  recordComponentRender("EntryPage");
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const entryId = normalizeEntryRouteId(params.id);
@@ -187,24 +188,8 @@ export default function EntryPage() {
   const pending = entry ? isReflectionPending(entry) : false;
 
   useEffect(() => {
-    if (!entry?.transcript?.trim()) return;
-    const pageAudit = auditOpenLoopActivation(entry, {
-      isRevisit: Boolean(revisitExperience?.isRevisit),
-      heavyReady,
-      logSource: "entry-page",
-    });
-    logOpenLoopActivationDebug("entry-page.render", {
-      entryId: entry.id,
-      unresolvedDetected: pageAudit.unresolvedDetected,
-      activationSuppressedReason: pageAudit.activationSuppressedReason,
-      freshQuiet,
-      pending,
-      heavyReady,
-      revisitMode: Boolean(revisitExperience?.isRevisit),
-      willRenderPrompt: Boolean(entry.transcript && !pending),
-      placement: "below_transcript",
-    });
-  }, [entry, revisitExperience?.isRevisit, heavyReady, freshQuiet, pending]);
+    scheduleOpenLoopContinuityRefresh();
+  }, []);
   const needsHeavyMemoryBlocks =
     heavyReady &&
     !pending &&
