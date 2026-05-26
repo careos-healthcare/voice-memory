@@ -12,6 +12,7 @@ import { VoiceIdentityNote } from "@/components/memory/VoiceIdentityNote";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
+import { OpenLoopsSection } from "@/components/open-loops/OpenLoopsSection";
 
 import { MilestoneNotes } from "@/components/memory/MilestoneNotes";
 import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
@@ -150,6 +151,9 @@ export default function TimelinePage() {
           <Link href="/feelings-timeline" className="text-violet-300 hover:text-violet-200">
             How this has felt →
           </Link>
+          <Link href="/open-loops" className="text-zinc-500 hover:text-zinc-300">
+            Open loops →
+          </Link>
         </div>
 
         <div className="mt-4 space-y-20">
@@ -168,6 +172,7 @@ export default function TimelinePage() {
             </>
           ) : (
             <>
+              <OpenLoopsSection maxItems={2} />
               <PrimaryCallbackNote note={knowsMe} />
               <ArchiveGravityNote note={archiveGravity} />
               <VoiceIdentityNote note={voiceIdentity} />

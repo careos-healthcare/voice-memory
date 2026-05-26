@@ -143,6 +143,9 @@ export function deleteEntry(id: string): void {
   persistEntries(entries);
   bumpMemoryEligibleCache();
   removeBookmark(id);
+  void import("@/lib/open-loops/open-loop-storage").then((mod) =>
+    mod.removeOpenLoopsForEntry(id),
+  );
   void deleteAudio(id);
   void deletePhoto(id);
   void deleteAtmosphereImage(id);

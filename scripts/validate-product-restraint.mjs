@@ -83,6 +83,7 @@ const ALLOWED_LINK_PREFIXES = [
   "/monthly",
   "/seasons",
   "/bookmarks",
+  "/open-loops",
   "/threads",
   "/reminders",
   "/pricing",

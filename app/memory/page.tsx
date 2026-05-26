@@ -15,6 +15,7 @@ import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
 import { LivingResurfacingNote } from "@/components/memory/LivingResurfacingNote";
 import { RevisitRhythmNote } from "@/components/memory/RevisitRhythmNote";
 import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
+import { OpenLoopsSection } from "@/components/open-loops/OpenLoopsSection";
 import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { SlowRealizationNote } from "@/components/memory/SlowRealizationNote";
 import { ArchiveLandmarkNote } from "@/components/memory/ArchiveLandmarkNote";
@@ -188,6 +189,7 @@ export default function MemoryPage() {
           ) : (
             <>
               <GentleReturnPrompt />
+              <OpenLoopsSection />
               <ArchiveValueMoments />
 
               {notes?.hasData ? (

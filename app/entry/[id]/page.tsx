@@ -7,6 +7,8 @@ import { ArrowLeft, Trash2 } from "lucide-react";
 
 import { EntryPhotoAttachment } from "@/components/entry/EntryPhotoAttachment";
 import { EntryAtmosphereAttachment } from "@/components/entry/EntryAtmosphereAttachment";
+import { OpenLoopNextStepPrompt } from "@/components/entry/OpenLoopNextStepPrompt";
+import { OpenLoopEntryContinuity } from "@/components/open-loops/OpenLoopEntryContinuity";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
@@ -785,6 +787,16 @@ export default function EntryPage() {
                   <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
                 ) : null}
               </section>
+            ) : null}
+
+            {entry.transcript && !pending ? (
+              <>
+                <OpenLoopEntryContinuity entryId={entry.id} />
+                <OpenLoopNextStepPrompt
+                  entry={entry}
+                  isRevisit={Boolean(revisitExperience?.isRevisit)}
+                />
+              </>
             ) : null}
 
             <EntryPhotoAttachment
