@@ -1,4 +1,8 @@
 import { createListeningModeEntry } from "@/lib/pending-reflection";
+import {
+  prepareTranscriptForSave,
+  trackTranscriptCleanupEvents,
+} from "@/lib/transcript/transcript-cleanup";
 import { safeGetJson, safeSetJson } from "@/lib/reliability/safe-local-storage";
 import { saveEntry } from "@/lib/storage";
 import type { JournalEntry, Reflection } from "@/types/journal";
@@ -113,10 +117,11 @@ export function persistTranscriptDraft(
 ): JournalEntry {
   const entryId = options?.id ?? crypto.randomUUID();
   const reason = options?.reason ?? "analysis_failed";
+  const prepared = prepareTranscriptForSave(transcript);
 
   saveRecoveryDraft({
     id: entryId,
-    transcript,
+    transcript: prepared.transcript,
     durationSeconds,
     reflectionPending: !options?.reflection,
     reflection: options?.reflection ?? null,
@@ -128,18 +133,25 @@ export function persistTranscriptDraft(
     ? {
         id: entryId,
         createdAt: new Date().toISOString(),
-        transcript,
+        transcript: prepared.transcript,
+        rawTranscript: prepared.rawTranscript,
+        transcriptCleanup: prepared.transcriptCleanup,
         reflection: options.reflection,
         durationSeconds,
         audioId: options?.audioId,
       }
-    : createListeningModeEntry(
-        entryId,
-        transcript,
-        durationSeconds,
-        options?.audioId,
-      );
+    : {
+        ...createListeningModeEntry(
+          entryId,
+          prepared.transcript,
+          durationSeconds,
+          options?.audioId,
+        ),
+        rawTranscript: prepared.rawTranscript,
+        transcriptCleanup: prepared.transcriptCleanup,
+      };
 
+  trackTranscriptCleanupEvents(prepared.result, entryId);
   saveEntry(entry);
   removeRecoveryDraft(entryId);
   return entry;

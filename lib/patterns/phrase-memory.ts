@@ -1,4 +1,5 @@
 import { toDayKey } from "@/lib/dates";
+import { transcriptForPhraseScanning } from "@/lib/transcript/transcript-cleanup";
 import { formatEntryDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
@@ -137,7 +138,7 @@ function scanPattern(
   const re = new RegExp(pattern.source, pattern.flags);
 
   for (const entry of entries) {
-    const transcript = entry.transcript;
+    const transcript = transcriptForPhraseScanning(entry);
     let match: RegExpExecArray | null;
     re.lastIndex = 0;
 
@@ -213,7 +214,7 @@ function scanMetaphorsAndFraming(
   entries: JournalEntry[],
 ): void {
   for (const entry of entries) {
-    const transcript = entry.transcript;
+    const transcript = transcriptForPhraseScanning(entry);
     const lower = transcript.toLowerCase();
 
     for (const hint of METAPHOR_HINTS) {

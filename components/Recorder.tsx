@@ -41,6 +41,11 @@ import {
   markRecorderCompleted,
   markRecorderStarted,
 } from "@/lib/onboarding/confusion-signals";
+import { markFreshEntryAfterRecording } from "@/lib/refinement/entry-quiet-state";
+import {
+  prepareTranscriptForSave,
+  trackTranscriptCleanupEvents,
+} from "@/lib/transcript/transcript-cleanup";
 import { getAllEntries, saveEntry } from "@/lib/storage";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { recordReflectionDuringSilence } from "@/lib/restraint/silence-intelligence";
@@ -133,6 +138,7 @@ export function Recorder({
       onComplete?.(newEntry);
 
       window.setTimeout(() => {
+        markFreshEntryAfterRecording(newEntry.id);
         router.push(`/entry/${newEntry.id}`);
       }, 1200);
     },
@@ -171,6 +177,7 @@ export function Recorder({
           );
         }
 
+        const prepared = prepareTranscriptForSave(transcribeData.transcript);
         const listeningModeActive = listeningMode;
 
         if (listeningModeActive) {
@@ -179,13 +186,18 @@ export function Recorder({
           const entryId = crypto.randomUUID();
           const audioId = await saveRecordingBlob(entryId, blob);
 
-          const newEntry = createListeningModeEntry(
-            entryId,
-            transcribeData.transcript,
-            durationSeconds,
-            audioId,
-          );
+          const newEntry: JournalEntry = {
+            ...createListeningModeEntry(
+              entryId,
+              prepared.transcript,
+              durationSeconds,
+              audioId,
+            ),
+            rawTranscript: prepared.rawTranscript,
+            transcriptCleanup: prepared.transcriptCleanup,
+          };
 
+          trackTranscriptCleanupEvents(prepared.result, entryId);
           saveEntry(newEntry);
           markFirstReflectionCreated();
           finalizeEntry(newEntry);
@@ -206,7 +218,7 @@ export function Recorder({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            transcript: transcribeData.transcript,
+            transcript: prepared.transcript,
             priorContext,
           }),
         });
@@ -223,7 +235,7 @@ export function Recorder({
           const audioId = await saveRecordingBlob(entryId, blob);
 
           const newEntry = persistTranscriptDraft(
-            transcribeData.transcript,
+            prepared.rawTranscript,
             durationSeconds,
             {
               id: entryId,
@@ -242,18 +254,22 @@ export function Recorder({
         const newEntry: JournalEntry = {
           id: entryId,
           createdAt: new Date().toISOString(),
-          transcript: transcribeData.transcript,
+          transcript: prepared.transcript,
+          rawTranscript: prepared.rawTranscript,
+          transcriptCleanup: prepared.transcriptCleanup,
           reflection: analyzeData.reflection,
           durationSeconds,
           audioId,
         };
+
+        trackTranscriptCleanupEvents(prepared.result, entryId);
 
         try {
           saveEntry(newEntry);
           markFirstReflectionCreated();
         } catch {
           const recovered = persistTranscriptDraft(
-            transcribeData.transcript,
+            prepared.rawTranscript,
             durationSeconds,
             {
               id: entryId,

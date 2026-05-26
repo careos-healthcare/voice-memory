@@ -61,6 +61,12 @@ export function buildArchiveMarkdown(archive: VoiceMemoryArchivePackage): string
       lines.push(entry.transcript.trim());
       lines.push("");
     }
+    if (entry.rawTranscript?.trim() && entry.rawTranscript.trim() !== entry.transcript.trim()) {
+      lines.push("**Original transcript (before cleanup)**");
+      lines.push("");
+      lines.push(entry.rawTranscript.trim());
+      lines.push("");
+    }
     if (observation) {
       lines.push("**Observation**");
       lines.push("");

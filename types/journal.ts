@@ -1,5 +1,6 @@
 import type { EntryPhotoMeta } from "@/types/personalization";
 import type { EntryAtmosphereMeta } from "@/types/atmosphere";
+import type { TranscriptCleanupMeta } from "@/types/transcript-cleanup";
 
 export interface Reflection {
   mood: string;
@@ -31,6 +32,10 @@ export interface JournalEntry {
   id: string;
   createdAt: string;
   transcript: string;
+  /** Original ASR transcript before quiet cleanup, when preserved. */
+  rawTranscript?: string;
+  /** Cleanup metadata for preserved phrase anchors. */
+  transcriptCleanup?: TranscriptCleanupMeta;
   reflection: Reflection;
   durationSeconds: number;
   /** Set when original recording is stored in IndexedDB. */
