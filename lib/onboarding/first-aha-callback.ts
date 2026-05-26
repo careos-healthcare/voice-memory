@@ -1,5 +1,5 @@
 import { pickFirstMeaningfulRevisitCandidate } from "@/lib/revisit/first-meaningful-revisit";
-import { REVISIT_REWARD_COPY } from "@/lib/refinement/knows-me-moments";
+import { REVISIT_REWARD_COPY } from "@/lib/refinement/revisit-reward-copy";
 import { hasLocalEvent } from "@/lib/local-analytics";
 import {
   isInFirstAhaWindow,

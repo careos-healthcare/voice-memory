@@ -6,7 +6,7 @@ import {
 import { buildEntityMemoryFromEntries } from "@/lib/entity-memory";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
-import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import { quoteSimilarity } from "@/lib/refinement/then-vs-now-quotes";
 import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import {

@@ -25,8 +25,19 @@ import {
 import { rankReopenPayoffNotes } from "@/lib/refinement/reopen-payoff";
 import { gateDelayedPayoffNote } from "@/lib/memory/delayed-payoff";
 import { guardSurfacedNote, filterFalsePositiveNotes } from "@/lib/refinement/false-positive-suppression";
+import {
+  isTopicRecurrenceCopy,
+  REVISIT_REWARD_COPY,
+  type RevisitRewardCopyLine,
+} from "@/lib/refinement/revisit-reward-copy";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
+
+export {
+  REVISIT_REWARD_COPY,
+  TOPIC_RECURRENCE_TEXT,
+  isTopicRecurrenceCopy,
+} from "@/lib/refinement/revisit-reward-copy";
 
 export const KNOWS_ME_VISIT_MIN = 58;
 export const KNOWS_ME_SURFACE_MIN = 72;
@@ -52,9 +63,6 @@ export const KNOWS_ME_COPY = {
   earlier_version: "You sound like an earlier you here.",
 } as const;
 
-export const TOPIC_RECURRENCE_TEXT =
-  /\b(appeared again|money returned|work appeared|topic appeared|similar theme|came back to the same place|came back to the same loop|showed up again|keeps showing up)\b/i;
-
 const APOLOGY_RE = /\b(sorry|apolog\w*)\b/i;
 
 const SELF_CONTRAST_SIGNALS = new Set<KnowsMeSignal>([
@@ -68,15 +76,6 @@ const SELF_CONTRAST_SIGNALS = new Set<KnowsMeSignal>([
   "emotional_contrast",
 ]);
 
-/** Revisit entry copy — first-screen “you sound different” moments. */
-export const REVISIT_REWARD_COPY = {
-  soundDifferentNow: "You sound different now.",
-  notNamedYet: "You had not named this yet.",
-  usedToTakeSpace: "This used to take up more room.",
-  beforeThingsChanged: "You were carrying this differently then.",
-  soundFurtherAway: "You sound further away from this now.",
-} as const;
-
 export {
   prepareRevisitContrastNote,
   qualifiesRevisitQuoteContrast,
@@ -86,7 +85,7 @@ export {
 export function revisitRewardCopyForContrast(
   note: MemoryNote,
   entries: JournalEntry[],
-): (typeof REVISIT_REWARD_COPY)[keyof typeof REVISIT_REWARD_COPY] {
+): RevisitRewardCopyLine {
   const past = note.pastEntryId
     ? entries.find((entry) => entry.id === note.pastEntryId)
     : undefined;
@@ -173,10 +172,6 @@ const SIGNAL_PRIORITY: KnowsMeSignal[] = [
 
 function apologyCount(entry: JournalEntry): number {
   return entry.transcript.match(APOLOGY_RE)?.length ?? 0;
-}
-
-export function isTopicRecurrenceCopy(text: string): boolean {
-  return TOPIC_RECURRENCE_TEXT.test(text);
 }
 
 function entriesForCandidate(

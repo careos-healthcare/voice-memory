@@ -1,7 +1,7 @@
 import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression";
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
 import { shouldSuppressNoteByPattern } from "@/lib/refinement/callback-suppression";
-import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 

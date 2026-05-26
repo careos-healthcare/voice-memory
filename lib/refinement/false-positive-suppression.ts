@@ -1,6 +1,6 @@
 import { detectRewriteCandidateFlags } from "@/lib/debug/callback-rewrite-detection";
 import { shouldSuppressNoteByPattern } from "@/lib/refinement/callback-suppression";
-import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import { SCORE_MEMORY_HIERARCHY } from "@/lib/refinement/score-thresholds";
 import { readFalsePositiveSilenceContext } from "@/lib/refinement/silence-calibration";

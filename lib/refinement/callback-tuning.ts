@@ -5,7 +5,7 @@ import {
   isBlockedResurfacingCopy,
 } from "@/lib/revisit/resurfacing-copy";
 import { LOW_CONTRAST_RESURFACE_ID } from "@/lib/refinement/callback-suppression";
-import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
 import { applyLoopOptimizationBoost } from "@/lib/retention/loop-optimization";
 import { SCORE_WEAK } from "@/lib/refinement/score-thresholds";

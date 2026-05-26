@@ -1,7 +1,7 @@
 import { callbackInteractionSignals } from "@/lib/callback-interaction-signals";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { entryRevisitationNotes, homepageRevisitationNotes } from "@/lib/memory/revisitation";
-import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import { scoreCallbackTuning } from "@/lib/refinement/callback-tuning";
 import {
   REVISIT_REWARD_SUPPRESS_ID,

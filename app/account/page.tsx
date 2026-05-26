@@ -32,7 +32,6 @@ import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { ACCOUNT_BACKUP, PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
-import { maybeTrackPostPremiumBehavior } from "@/lib/monetization/monetization-observation";
 import { getAllEntries } from "@/lib/storage";
 import type { ArchiveOwnershipReport } from "@/types/archive-ownership";
 
@@ -177,7 +176,9 @@ export default function AccountPage() {
         ok ? "Encrypted backup saved." : "Backup paused. Nothing was deleted.",
       );
       if (ok) {
-        maybeTrackPostPremiumBehavior("backup");
+        void import("@/lib/monetization/monetization-observation").then((mod) => {
+          mod.maybeTrackPostPremiumBehavior("backup");
+        });
         void import("@/lib/retention/return-triggers").then((mod) => {
           mod.registerBackupReturnTrigger();
         });

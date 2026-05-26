@@ -19,8 +19,8 @@ import {
   isTopicRecurrenceCopy,
   pickEntryRevisitContrast,
   pickEntryRevisitRewardLine,
-  REVISIT_REWARD_COPY,
 } from "@/lib/refinement/knows-me-moments";
+import { REVISIT_REWARD_COPY } from "@/lib/refinement/revisit-reward-copy";
 import {
   REVISIT_REWARD_SUPPRESS_ID,
   REVISIT_REWARD_SUPPRESS_TEXT,

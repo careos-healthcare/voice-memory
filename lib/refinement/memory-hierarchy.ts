@@ -1,7 +1,7 @@
 import { applyLoopOptimizationBoost } from "@/lib/retention/loop-optimization";
 import { weightMemoryNote } from "@/lib/memory/emotional-weight";
 import { shouldSuppressCallbackCopy, tuneCallbackWording } from "@/lib/refinement/callback-wording";
-import { isTopicRecurrenceCopy } from "@/lib/refinement/knows-me-moments";
+import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
 import { SCORE_MEMORY_HIERARCHY } from "@/lib/refinement/score-thresholds";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";

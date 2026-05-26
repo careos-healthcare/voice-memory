@@ -1,4 +1,3 @@
-import { buildEmotionalLegitimacyReport } from "@/lib/debug/emotional-legitimacy-review";
 import { LAUNCH_EVENTS, readLocalEvents, trackLocalEvent } from "@/lib/local-analytics";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
 import { readStoredIncidents } from "@/lib/validation/incidents";
@@ -76,15 +75,22 @@ function withinWindowHours(hours: number): boolean {
   return Date.now() - last < hours * 60 * 60 * 1000;
 }
 
+function pushLegitimacySnapshot(phase: "before" | "after", surface?: PremiumSurface): void {
+  if (!isBrowser()) return;
+  void import("@/lib/debug/emotional-legitimacy-review").then(({ buildEmotionalLegitimacyReport }) => {
+    const legitimacy = buildEmotionalLegitimacyReport(getMemoryEligibleEntries()).scores.overall;
+    pushEvent(LEGITIMACY_SNAPSHOT, {
+      phase,
+      score: String(legitimacy),
+      ...(surface ? { surface } : {}),
+    });
+  });
+}
+
 export function trackPremiumLineSeen(surface: PremiumSurface, line: string): void {
-  const legitimacy = buildEmotionalLegitimacyReport(getMemoryEligibleEntries()).scores.overall;
   setLastPremiumLineAt(Date.now());
   pushEvent(PREMIUM_LINE_SEEN, { surface, line: line.slice(0, 120) });
-  pushEvent(LEGITIMACY_SNAPSHOT, {
-    phase: "before",
-    score: String(legitimacy),
-    surface,
-  });
+  pushLegitimacySnapshot("before", surface);
 }
 
 export function maybeTrackPostPremiumBehavior(kind: "backup" | "export" | "revisit"): void {
@@ -94,8 +100,7 @@ export function maybeTrackPostPremiumBehavior(kind: "backup" | "export" | "revis
   if (kind === "export") pushEvent(EXPORT_AFTER_PREMIUM, {});
   if (kind === "revisit") pushEvent(REVISIT_AFTER_PREMIUM, {});
 
-  const legitimacy = buildEmotionalLegitimacyReport(getMemoryEligibleEntries()).scores.overall;
-  pushEvent(LEGITIMACY_SNAPSHOT, { phase: "after", score: String(legitimacy) });
+  pushLegitimacySnapshot("after");
 }
 
 export function maybeTrackTrustDropAfterPremium(): void {
