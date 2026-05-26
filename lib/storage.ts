@@ -114,6 +114,11 @@ export function saveEntry(entry: JournalEntry): void {
   bumpMemoryEligibleCache();
   recordReflectionDay(entry.createdAt);
   trackReflectionMilestones(entries.length);
+  if (entries.length === 1) {
+    void import("@/lib/retention/day-two-return").then((mod) => {
+      mod.anchorFirstReflectionForDayTwo(entry.createdAt);
+    });
+  }
   void import("@/lib/retention/first-week-observation").then((mod) => {
     mod.trackReflectionAfterPromptIfPending();
   });

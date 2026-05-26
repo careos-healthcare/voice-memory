@@ -10,12 +10,14 @@ import {
 import { recordOnboardingPageView } from "@/lib/onboarding/confusion-signals";
 import { recordComprehensionSession } from "@/lib/onboarding/calm-comprehension";
 import { observeFunnelFirstVisit } from "@/lib/retention/first-week-funnel";
+import { markAppSessionStarted } from "@/lib/retention/session-retention";
 
 export function OnboardingNavigationTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
     observeFunnelFirstVisit();
+    markAppSessionStarted();
     markFirstSessionStarted();
     recordComprehensionSession();
     inferFlowProgressFromAppState();

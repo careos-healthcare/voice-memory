@@ -486,7 +486,9 @@ export function enrichNoteWithResurfacingConfidence(
   const verdict = assessResurfacingConfidence(note, entries);
   const explanation =
     pickResurfacingWhyNowExplanation(note, entries) ?? verdict.evidenceReason;
-  if (verdict.suppressed || !explanation) return note;
+  if (verdict.suppressed || !explanation || !hasResurfacingWhyNow(note, entries)) {
+    return note;
+  }
   return {
     ...note,
     evidenceReason: explanation,

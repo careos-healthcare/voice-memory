@@ -95,6 +95,7 @@ import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
 import { useFreshEntryQuietMode } from "@/lib/hooks/useFreshEntryQuietMode";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { pickEvidenceBackedEntryMoment } from "@/lib/refinement/entry-quiet-state";
+import { FRESH_ENTRY_NO_CALLBACK_LINE } from "@/lib/entry/fresh-entry-copy";
 import { isReflectionPending } from "@/lib/pending-reflection";
 import { deleteEntry, getEntry, getMemoryEligibleEntries, getMemoryEligibleEntriesVersion } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -559,8 +560,8 @@ export default function EntryPage() {
   }, [needsHeavyMemoryBlocks, entry, allEntries]);
 
   const evidenceBackedMoment = useMemo(
-    () => pickEvidenceBackedEntryMoment(presentation?.primaryMoment),
-    [presentation?.primaryMoment],
+    () => pickEvidenceBackedEntryMoment(presentation?.primaryMoment, allEntries),
+    [presentation?.primaryMoment, allEntries],
   );
 
   const freshContinuation = useMemo(() => {
@@ -785,7 +786,11 @@ export default function EntryPage() {
                   <MotionNoteList className="space-y-20">
                     <AnimatedMemoryNote note={evidenceBackedMoment} index={0} />
                   </MotionNoteList>
-                ) : null}
+                ) : (
+                  <p className="text-sm leading-[1.75] text-zinc-500/90">
+                    {FRESH_ENTRY_NO_CALLBACK_LINE}
+                  </p>
+                )}
 
                 <FollowupPromptInline
                   prompt={activeFollowup}

@@ -1,4 +1,5 @@
-import { CONFIDENCE_STRONG_MIN } from "@/lib/revisit/resurfacing-confidence";
+import { hasConcreteResurfacingEvidence } from "@/lib/resurfacing/evidence-engine";
+import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
 /** Post-record quiet window — progressive disclosure on the entry page. */
@@ -64,11 +65,13 @@ export function isFreshEntryQuietMode(entryId: string, createdAt: string): boole
   return isWithinFreshEntryWindow(createdAt);
 }
 
-/** One continuity line — only when evidence is strong enough to feel earned. */
+/** One continuity line — only when concrete resurfacing evidence exists. */
 export function pickEvidenceBackedEntryMoment(
   note: MemoryNote | null | undefined,
+  entries: JournalEntry[],
 ): MemoryNote | null {
   if (!note) return null;
-  if (note.confidence < CONFIDENCE_STRONG_MIN) return null;
+  if (!hasConcreteResurfacingEvidence(note, entries)) return null;
+  if (!note.evidenceReason?.trim()) return null;
   return note;
 }

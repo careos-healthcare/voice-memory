@@ -201,10 +201,15 @@ function detectWhyNowSignals(
 
   const sharedConcerns = sharedConcernSignals(past.reflection, current.reflection);
   if (sharedConcerns.length > 0 && gapDays >= MIN_GAP_DAYS) {
+    const exactConcern =
+      past.reflection.hiddenConcern?.trim().toLowerCase() ===
+      current.reflection.hiddenConcern?.trim().toLowerCase();
     signals.push({
       kind: "repeated_concern_after_gap",
       strength: 84 + sharedConcerns.length * 4,
-      evidence: ["concern_overlap", `gap_${gapDays}d`],
+      evidence: exactConcern
+        ? ["concern_overlap", "exact_concern", `gap_${gapDays}d`]
+        : ["concern_overlap", `gap_${gapDays}d`],
       gapDays,
     });
   }
@@ -319,6 +324,9 @@ function explanationForSignal(signal: ResurfacingWhyNowSignal): string {
     case "repeated_phrase_after_gap":
       return RESURFACING_WHY_NOW_COPY.similarWordsDaysAgo(gapDays);
     case "repeated_concern_after_gap":
+      if (signal.evidence.includes("concern_overlap") && !signal.evidence.includes("exact_concern")) {
+        return RESURFACING_WHY_NOW_COPY.concernDifferentWords;
+      }
       return gapDays >= QUIET_GAP_DAYS
         ? RESURFACING_WHY_NOW_COPY.concernAfterQuietStretch
         : RESURFACING_WHY_NOW_COPY.concernAgainAfterGap(gapDays);

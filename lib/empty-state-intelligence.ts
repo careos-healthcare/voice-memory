@@ -26,7 +26,8 @@ const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
   one: {
     tier: "one",
     headline: "One reflection in",
-    body: "Add a few more across different days and older words may return when they match again.",
+    body: "VoiceMemory gets clearer when your own words repeat across different days.",
+    hint: "Record again when the same concern or phrase comes back.",
   },
   few: {
     tier: "few",

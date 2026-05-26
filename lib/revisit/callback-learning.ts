@@ -255,6 +255,9 @@ export function observeCallbackShown(
   meta?: Record<string, string>,
 ): void {
   recordLearningEvent(CALLBACK_LEARNING_EVENTS.shown, noteRef, entries, meta);
+  void import("@/lib/retention/session-retention").then((mod) => {
+    mod.observeSessionFirstCallbackSeen(meta);
+  });
 }
 
 export function observeCallbackIgnored(
@@ -270,6 +273,10 @@ export function observeCallbackOpened(
   meta?: Record<string, string>,
 ): void {
   recordLearningEvent(CALLBACK_LEARNING_EVENTS.opened, noteRef, entries, meta);
+  void import("@/lib/retention/session-retention").then((mod) => {
+    mod.observeSessionFirstCallbackOpened(meta);
+    mod.markReflectionAfterCallbackPending();
+  });
 }
 
 export function observeCallbackReread(

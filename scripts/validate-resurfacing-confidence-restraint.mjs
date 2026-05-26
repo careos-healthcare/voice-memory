@@ -63,7 +63,8 @@ if (!confidence.includes("mood_only_match") || !confidence.includes("no_why_now"
 }
 
 const evidenceLines = [
-  "You used similar words",
+  "You said something similar",
+  "This concern came back in different words",
   "This concern showed up again after a quiet stretch.",
   "You mentioned",
   "Your tone changed around the same topic.",

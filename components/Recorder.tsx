@@ -133,6 +133,9 @@ export function Recorder({
       processingRef.current = false;
 
       recordReflectionDuringSilence();
+      void import("@/lib/retention/session-retention").then((mod) => {
+        mod.observeSessionReflectionAfterCallbackIfPending();
+      });
       trackRetentionEvent(RETENTION_EVENTS.entryRecorded, { entryId: newEntry.id });
       if (recoveredDraft) {
         setNotice(DRAFT_RECOVERED_COPY);

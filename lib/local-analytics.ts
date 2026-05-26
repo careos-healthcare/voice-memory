@@ -214,4 +214,9 @@ export function trackReflectionMilestones(totalAfterSave: number): void {
   void import("@/lib/retention/first-week-funnel").then((mod) => {
     mod.observeFunnelReflectionSaved(totalAfterSave);
   });
+  if (totalAfterSave >= 1) {
+    void import("@/lib/retention/session-retention").then((mod) => {
+      mod.observeSessionFirstReflectionSaved();
+    });
+  }
 }

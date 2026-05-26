@@ -40,6 +40,7 @@ const SKIP_PATH_PARTS = [
   "lib/photo-storage.ts",
   "lib/restraint/",
   "lib/onboarding/",
+  "lib/resurfacing/emotional-specificity.ts",
   "lib/refinement/callback-deduplication.ts",
   "lib/refinement/callback-suppression.ts",
   "lib/revisit/resurfacing-copy.ts",

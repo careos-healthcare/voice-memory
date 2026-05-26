@@ -6,6 +6,7 @@ import type { ResurfacingConfidenceEvidence } from "@/types/resurfacing-confiden
 /** Quiet resurfacing headlines — specific, non-coachy, no certainty claims. */
 export const RESURFACING_COPY = {
   similarDaysAgo: (days: number) => `You said something similar ${formatGapLabel(days)}.`,
+  concernDifferentWords: "This concern came back in different words.",
   differentWords: "This came back in different words.",
   concernSofter: "The same concern showed up again, but softer.",
   usedToSoundHeavier: "This used to sound heavier.",
@@ -227,7 +228,8 @@ export function isGenericResurfacingCopy(text: string): boolean {
 
 /** Quiet “why now?” lines — evidence-backed, no scores or certainty claims. */
 export const RESURFACING_WHY_NOW_COPY = {
-  similarWordsDaysAgo: (days: number) => `You used similar words ${formatGapLabel(days)}.`,
+  similarWordsDaysAgo: (days: number) => `You said something similar ${formatGapLabel(days)}.`,
+  concernDifferentWords: "This concern came back in different words.",
   concernAfterQuietStretch: "This concern showed up again after a quiet stretch.",
   concernAgainAfterGap: (days: number) =>
     `This concern showed up again ${formatGapLabel(days)}.`,
@@ -269,6 +271,9 @@ export function pickResurfacingEvidenceReason(
       : RESURFACING_EVIDENCE_COPY.similarWordsBefore;
   }
   if (evidence.repeatedConcern) {
+    if (!evidence.repeatedPhrase && gapDays >= 3 && gapDays < 7) {
+      return RESURFACING_WHY_NOW_COPY.concernDifferentWords;
+    }
     return gapDays >= 7
       ? RESURFACING_WHY_NOW_COPY.concernAfterQuietStretch
       : RESURFACING_WHY_NOW_COPY.concernAgainAfterGap(gapDays);

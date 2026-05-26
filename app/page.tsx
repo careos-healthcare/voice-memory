@@ -9,6 +9,7 @@ import { FollowupPromptInline } from "@/components/conversation/FollowupPromptIn
 import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
 import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
 import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
+import { DayTwoReturnPrompt } from "@/components/retention/DayTwoReturnPrompt";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
 import { HomepagePrimaryCtaProvider } from "@/components/homepage/HomepagePrimaryCtaProvider";
 import { CalmComprehensionPrompt } from "@/components/onboarding/CalmComprehensionPrompt";
@@ -148,6 +149,7 @@ export default function HomePage() {
           <PrimaryCallbackNote note={primaryNote} />
           <QuietSilenceLine />
           <GentleReturnPrompt />
+          <DayTwoReturnPrompt />
           <ArchiveValueMoments />
           <ArchiveGravityNote note={archiveGravity} />
           <LivingResurfacingNote note={livingResurfacing} />

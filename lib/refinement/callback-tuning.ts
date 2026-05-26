@@ -23,6 +23,7 @@ import {
   shouldSuppressResurfacingTiming,
 } from "@/lib/revisit/resurfacing-timing";
 import { applyCallbackLearningRankAdjustment } from "@/lib/revisit/callback-learning";
+import { hasConcreteResurfacingEvidence } from "@/lib/resurfacing/evidence-engine";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -40,7 +41,7 @@ export interface CallbackTuningScore {
 }
 
 const GENERIC_RE =
-  /\b(may feel|might feel|appears to|seems to|pattern|insight|analysis|observed|continuity|intelligence|engine|shift|recurring theme)\b/i;
+  /\b(may feel|might feel|appears to|seems to|pattern|insight|analysis|observed|continuity|intelligence|engine|shift|recurring theme|journey|growth|insights)\b/i;
 const THERAPY_RE =
   /\b(process|journey|validate|hold space|check in with yourself|self-care|healing|unpack)\b/i;
 const EXPLAIN_RE =
@@ -235,9 +236,10 @@ export function pickBestCallback(
       !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
       !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)) &&
       !shouldSuppressResurfacingConfidence(row.note, entries) &&
-      !shouldSuppressResurfacingTiming(row.note, entries),
+      !shouldSuppressResurfacingTiming(row.note, entries) &&
+      hasConcreteResurfacingEvidence(row.note, entries),
   );
-  return best?.note ?? ranked.find((row) => !isTopicRecurrenceCopy(row.note.text))?.note ?? null;
+  return best?.note ?? null;
 }
 
 export function applyTuningScoreBoost(
