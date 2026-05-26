@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  trackInstallAccepted,
+  trackInstallPromptDismissed,
+  trackInstallPromptShown,
+} from "@/lib/behavior/observation";
 import { isPWA } from "@/lib/mobile/platform";
 
 const DISMISS_KEY = "voicememory_pwa_install_dismissed_until";
@@ -39,6 +44,7 @@ export function InstallPrompt() {
       event.preventDefault();
       setDeferred(event as BeforeInstallPromptEvent);
       setVisible(true);
+      trackInstallPromptShown();
     };
 
     window.addEventListener("beforeinstallprompt", onBip);
@@ -49,13 +55,17 @@ export function InstallPrompt() {
 
   const handleInstall = async () => {
     await deferred.prompt();
-    await deferred.userChoice;
+    const choice = await deferred.userChoice;
+    if (choice.outcome === "accepted") {
+      trackInstallAccepted();
+    }
     setVisible(false);
     setDeferred(null);
   };
 
   const handleDismiss = () => {
     dismissForDays(DISMISS_DAYS);
+    trackInstallPromptDismissed();
     setVisible(false);
     setDeferred(null);
   };

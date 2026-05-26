@@ -48,7 +48,13 @@ export function clearBillingGrantedEntitlements(): void {
 
 export function setPreviewTier(tier: TierId): void {
   if (!isBrowser()) return;
+  const wasPro = localStorage.getItem(PLAN_KEY) === "pro";
   localStorage.setItem(PLAN_KEY, tier);
+  if (tier === "pro" && !wasPro) {
+    void import("@/lib/behavior/observation").then((mod) => {
+      mod.trackProPreviewEnabled("preview_tier");
+    });
+  }
 }
 
 export function getTierSnapshot(): TierSnapshot {
