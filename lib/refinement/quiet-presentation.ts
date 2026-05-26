@@ -1,8 +1,6 @@
-import { recordCallbackSurfaced } from "@/lib/callback-interaction-signals";
 import { homepageContinuationNotes, recorderPreRecordLine } from "@/lib/conversation/conversation-continuity";
 import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import { pickArchiveDepthIndicator } from "@/lib/memory/continuity-depth";
-import { resolveSilenceIntelligence } from "@/lib/restraint/silence-intelligence";
 import { homepageFamiliarityNotes } from "@/lib/memory/familiarity";
 import { homepageFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
 import { homepageMemoryReminder } from "@/lib/memory/memory-reminders";
@@ -24,8 +22,14 @@ import {
   enrichNoteWithResurfacingConfidence,
   pickConfidenceEligibleNotes,
 } from "@/lib/revisit/resurfacing-confidence";
-import { observeCallbackShown } from "@/lib/revisit/callback-learning";
 import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import {
+  emptyPresentationSideEffects,
+  queueCallbackObservation,
+  queueRememberNoteContext,
+  queueSilenceIntelligencePersist,
+  type PresentationSideEffectBatch,
+} from "@/lib/refinement/presentation-side-effects";
 import {
   calibrateEntryPresentation,
   calibrateHomepagePresentation,
@@ -34,11 +38,8 @@ import {
   firstAhaAsMemoryNote,
   pickFirstAhaCallback,
 } from "@/lib/onboarding/first-aha-callback";
-import { rememberNoteContext } from "@/lib/retention/retention-loops";
-import { observeMagicCallbackSurfaced } from "@/lib/retention/first-magic-moment";
 import {
   isRevisitEntry,
-  markRevisitBoost,
   shouldAllowEmotionalNote,
   suppressResurfacingCluster,
 } from "@/lib/refinement/emotional-timing";
@@ -55,6 +56,7 @@ export interface QuietHomepagePresentation {
   recorderLine: string | null;
   memoryReminder: MemoryReminder | null;
   continuityDepth: ContinuityDepthIndicator | null;
+  sideEffects: PresentationSideEffectBatch;
 }
 
 export interface QuietEntryPresentation {
@@ -62,6 +64,7 @@ export interface QuietEntryPresentation {
   primaryMoment: MemoryNote | null;
   continuation: MemoryNote | null;
   followupPrompt: FollowupPrompt | null;
+  sideEffects: PresentationSideEffectBatch;
 }
 
 function collectHomepageCandidates(
@@ -95,7 +98,8 @@ export function buildQuietHomepagePresentation(
     archiveGrowth: number;
   },
 ): QuietHomepagePresentation {
-  resolveSilenceIntelligence(entries);
+  const sideEffects = emptyPresentationSideEffects();
+  queueSilenceIntelligencePersist(sideEffects, entries);
   const continuation = homepageContinuationNotes(entries, 1).slice(0, 1);
   const candidates = collectHomepageCandidates(entries, limits);
 
@@ -120,11 +124,14 @@ export function buildQuietHomepagePresentation(
     : null;
 
   if (resolvedPrimary) {
-    recordCallbackSurfaced(resolvedPrimary.id, "homepage");
-    observeCallbackShown(resolvedPrimary, entries, { surface: "homepage" });
-    observeMagicCallbackSurfaced(resolvedPrimary, entries, "homepage");
+    queueCallbackObservation(sideEffects, {
+      note: resolvedPrimary,
+      entries,
+      surface: "homepage",
+    });
     if (resolvedPrimary.entryId) {
-      rememberNoteContext(
+      queueRememberNoteContext(
+        sideEffects,
         resolvedPrimary.entryId,
         resolvedPrimary.id,
         resolvedPrimary.text,
@@ -150,6 +157,7 @@ export function buildQuietHomepagePresentation(
       calibrated.primaryNote ? [calibrated.primaryNote] : [],
       entries,
     ),
+    sideEffects,
   };
 }
 
@@ -191,9 +199,10 @@ export function buildQuietEntryPresentation(
     resurfacing: number;
   },
 ): QuietEntryPresentation {
-  resolveSilenceIntelligence(allEntries);
+  const sideEffects = emptyPresentationSideEffects();
+  queueSilenceIntelligencePersist(sideEffects, allEntries);
   const revisitMode = isRevisitEntry(entryId);
-  if (revisitMode) markRevisitBoost();
+  if (revisitMode) sideEffects.markRevisitBoost = true;
 
   const continuation = entryContinuationOpener(allEntries, entryId);
   const candidates = collectEntryCandidates(allEntries, entryId, limits);
@@ -219,9 +228,11 @@ export function buildQuietEntryPresentation(
     : null;
 
   if (primaryMoment) {
-    recordCallbackSurfaced(primaryMoment.id, "entry");
-    observeCallbackShown(primaryMoment, allEntries, { surface: "entry" });
-    observeMagicCallbackSurfaced(primaryMoment, allEntries, "entry");
+    queueCallbackObservation(sideEffects, {
+      note: primaryMoment,
+      entries: allEntries,
+      surface: "entry",
+    });
   }
 
   const followupNotes = [
@@ -246,5 +257,6 @@ export function buildQuietEntryPresentation(
       allEntries,
       entryId,
     ),
+    sideEffects,
   };
 }

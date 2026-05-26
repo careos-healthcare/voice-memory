@@ -1,5 +1,6 @@
 import { daysBetweenKeys, toDayKey, todayKey } from "@/lib/dates";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import type { JournalEntry } from "@/types/journal";
 import type { RevisitSequencingReport } from "@/types/memory-compounding";
 
@@ -48,7 +49,7 @@ function readState(): SequencingState {
 }
 
 function writeState(state: SequencingState): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   localStorage.setItem(SEQUENCING_KEY, JSON.stringify(state));
 }
 

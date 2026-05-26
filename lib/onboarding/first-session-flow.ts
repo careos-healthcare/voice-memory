@@ -1,4 +1,5 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { hasLocalEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import {
   trackFlowDropOff,
@@ -66,7 +67,7 @@ function defaultFlow(): PersistedFlow {
 }
 
 function ensureSessionStarted(flow: PersistedFlow): PersistedFlow {
-  if (!isBrowser()) return flow;
+  if (!isBrowser() || isSideEffectBlocked()) return flow;
   const existing = localStorage.getItem(SESSION_START_KEY);
   if (!existing) {
     localStorage.setItem(SESSION_START_KEY, flow.startedAt);
@@ -75,7 +76,7 @@ function ensureSessionStarted(flow: PersistedFlow): PersistedFlow {
 }
 
 function writeFlow(flow: PersistedFlow): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   localStorage.setItem(FLOW_KEY, JSON.stringify(flow));
 }
 

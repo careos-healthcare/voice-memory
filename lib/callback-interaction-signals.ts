@@ -1,4 +1,5 @@
 import { readLocalEvents } from "@/lib/local-analytics";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { getAllBookmarks, getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import { trackCallbackShown } from "@/lib/retention/pause-moments";
 import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
@@ -63,7 +64,7 @@ function readStore(): InteractionStore {
 }
 
 function writeStore(store: InteractionStore): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   localStorage.setItem(
     INTERACTION_KEY,
     JSON.stringify({

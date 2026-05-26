@@ -1,6 +1,7 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { linkedEntriesForNote } from "@/lib/refinement/note-linked-entries";
 import { trackLocalEvent } from "@/lib/local-analytics";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { withTrackingGuard } from "@/lib/tracking/sync-guard";
 import { assessResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
 import { collectResurfacingConfidenceCandidates } from "@/lib/revisit/resurfacing-confidence";
@@ -101,7 +102,7 @@ function readStore(): LearningStore {
 }
 
 function writeStore(store: LearningStore): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   localStorage.setItem(
     STORE_KEY,
     JSON.stringify({
@@ -198,7 +199,7 @@ function resolveNote(
 }
 
 function shouldSkipShownEvent(noteId: string, meta?: Record<string, string>): boolean {
-  if (!isBrowser()) return true;
+  if (!isBrowser() || isSideEffectBlocked()) return true;
   const surface = meta?.surface ?? "";
   const key = `${surface}:${noteId}`;
   const raw = sessionStorage.getItem(SHOWN_DEDUPE_KEY);
@@ -239,6 +240,7 @@ function recordLearningEvent(
   entries?: JournalEntry[],
   meta?: Record<string, string>,
 ): void {
+  if (isSideEffectBlocked()) return;
   withTrackingGuard(() => {
     const { note, entries: resolvedEntries } = resolveNote(noteRef, entries);
     const kinds = classifyCallbackLearningKinds(note, resolvedEntries);
@@ -275,6 +277,7 @@ export function observeCallbackShown(
   entries?: JournalEntry[],
   meta?: Record<string, string>,
 ): void {
+  if (isSideEffectBlocked()) return;
   const noteId = noteRef.id;
   if (!noteId || shouldSkipShownEvent(noteId, meta)) return;
 

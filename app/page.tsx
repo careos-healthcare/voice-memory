@@ -29,7 +29,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { consumeStoredFollowupPrompt, storeFollowupPrompt } from "@/lib/conversation/followup-prompts";
+import { flushPresentationSideEffects } from "@/lib/refinement/presentation-side-effects";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
+import { runPresentationBuild } from "@/lib/tracking/presentation-guard";
 import { getSilenceIntelligenceEffects } from "@/lib/restraint/silence-intelligence";
 import { homepageArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { homepageLivingResurfacingMoment } from "@/lib/memory/living-resurfacing";
@@ -77,7 +79,10 @@ export default function HomePage() {
       maybeDetectReturnTriggers();
       checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
-      const presentation = buildQuietHomepagePresentation(entries, limits);
+      const presentation = runPresentationBuild(() =>
+        buildQuietHomepagePresentation(entries, limits),
+      );
+      flushPresentationSideEffects(presentation.sideEffects);
       const silenceEffects = getSilenceIntelligenceEffects(entries);
       setPrimaryNote(presentation.primaryNote);
       setContinuation(presentation.continuation);

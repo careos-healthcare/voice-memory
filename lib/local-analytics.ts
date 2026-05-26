@@ -1,4 +1,5 @@
 import { getLightweightLimits } from "@/lib/performance/lightweight-mode";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { withTrackingGuard } from "@/lib/tracking/sync-guard";
 
 export type LocalAnalyticsEvent = {
@@ -98,7 +99,9 @@ function scheduleFlush(): void {
 }
 
 function flushAnalyticsQueue(): void {
-  if (typeof window === "undefined" || flushing || queue.length === 0) return;
+  if (typeof window === "undefined" || flushing || queue.length === 0 || isSideEffectBlocked()) {
+    return;
+  }
   flushing = true;
   try {
     hydrateFromStorage();
@@ -121,7 +124,7 @@ export function trackLocalEvent(
   name: string,
   meta?: Record<string, string>,
 ): void {
-  if (typeof window === "undefined" || flushing) return;
+  if (typeof window === "undefined" || flushing || isSideEffectBlocked()) return;
 
   withTrackingGuard(() => {
     const now = Date.now();

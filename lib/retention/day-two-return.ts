@@ -1,4 +1,5 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { buildRepeatedThemeReport } from "@/lib/patterns/repeated-themes";
 import { rankByConcreteEvidence } from "@/lib/resurfacing/evidence-engine";
 import {
@@ -95,7 +96,7 @@ export function pickDayTwoReturnOffer(entries: JournalEntry[]): DayTwoReturnOffe
 
 /** Persist day-2 prompt display + retention event once per calendar day. */
 export function commitDayTwoReturnOffer(offer: DayTwoReturnOffer): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   markShownToday();
   void import("@/lib/retention/session-retention").then((mod) => {
     mod.observeSessionDay2Return({ hasCallback: offer.note ? "1" : "0" });

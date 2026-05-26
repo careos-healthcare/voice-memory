@@ -18,6 +18,7 @@ import {
   unlockRelatedNoteAfterAction,
 } from "@/lib/refinement/silence-calibration";
 import { getAllEntries } from "@/lib/storage";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 
 export type RetentionLoopEventKind =
   | "entry_revisited"
@@ -160,7 +161,7 @@ export function rememberNoteContext(
   noteId: string,
   noteText?: string,
 ): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   try {
     const raw = sessionStorage.getItem(NOTE_CONTEXT_KEY);
     const map = raw ? (JSON.parse(raw) as Record<string, { noteId: string; noteText?: string }>) : {};

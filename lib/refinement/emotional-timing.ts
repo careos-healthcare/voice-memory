@@ -1,4 +1,5 @@
 import { toDayKey } from "@/lib/dates";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { getBookmarkForEntry } from "@/lib/reflection-bookmarks";
 import type { JournalEntry } from "@/types/journal";
@@ -82,7 +83,7 @@ function emptyState(): TimingState {
 }
 
 function writeState(state: TimingState): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   localStorage.setItem(TIMING_KEY, JSON.stringify(state));
 }
 

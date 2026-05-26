@@ -1,6 +1,11 @@
 import { measurePerf } from "@/lib/performance/perf-instrumentation";
+import {
+  flushPresentationSideEffects,
+  withoutPresentationSideEffects,
+} from "@/lib/refinement/presentation-side-effects";
 import { buildQuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import { buildRevisitExperience } from "@/lib/refinement/revisit-experience";
+import { runPresentationBuild } from "@/lib/tracking/presentation-guard";
 import type { JournalEntry } from "@/types/journal";
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import type { RevisitExperiencePresentation } from "@/lib/refinement/revisit-experience";
@@ -43,9 +48,11 @@ export function getCachedQuietEntryPresentation(
   const key = `p:${entriesVersion}:${entryId}:${limitsKey(limits)}`;
   const hit = cacheGet(presentationCache, key);
   if (hit) return hit;
-  const value = measurePerf("quiet_entry_presentation", () =>
-    buildQuietEntryPresentation(entries, entryId, limits),
+  const built = measurePerf("quiet_entry_presentation", () =>
+    runPresentationBuild(() => buildQuietEntryPresentation(entries, entryId, limits)),
   );
+  flushPresentationSideEffects(built.sideEffects);
+  const value = withoutPresentationSideEffects(built);
   cacheSet(presentationCache, key, value);
   return value;
 }
@@ -63,9 +70,11 @@ export function getCachedRevisitExperience(
   const key = `r:${entriesVersion}:${entryId}:${limitsKey(limits)}`;
   const hit = cacheGet(revisitCache, key);
   if (hit) return hit;
-  const value = measurePerf("revisit_experience", () =>
-    buildRevisitExperience(entries, entryId, limits),
+  const built = measurePerf("revisit_experience", () =>
+    runPresentationBuild(() => buildRevisitExperience(entries, entryId, limits)),
   );
+  flushPresentationSideEffects(built.sideEffects);
+  const value = withoutPresentationSideEffects(built);
   cacheSet(revisitCache, key, value);
   return value;
 }

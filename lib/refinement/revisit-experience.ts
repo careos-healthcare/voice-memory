@@ -4,12 +4,8 @@ import {
 } from "@/lib/social-proof/remembered-later";
 import { maybeTrackRevisitAfterShare } from "@/lib/sharing/share-observation";
 import { registerRevisitReturnTrigger } from "@/lib/retention/return-triggers";
-import { observeMagicCallbackSurfaced } from "@/lib/retention/first-magic-moment";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
-import {
-  entryInteractionSummary,
-  recordCallbackSurfaced,
-} from "@/lib/callback-interaction-signals";
+import { entryInteractionSummary } from "@/lib/callback-interaction-signals";
 import { trackLocalEvent } from "@/lib/local-analytics";
 import { entryChangeMomentsNotes } from "@/lib/memory/change-moments";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
@@ -28,19 +24,19 @@ import {
 import { SCORE_REVISIT_REWARD } from "@/lib/refinement/score-thresholds";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
 import {
-  markRevisitBoost,
-} from "@/lib/refinement/emotional-timing";
-import {
   pickReopenFirstLine,
   pickStrongestReopenMoment,
   rankReopenPayoffNotes,
   resolveReopenFollowupDelayMs,
   type ReopenPayoffScore,
 } from "@/lib/refinement/reopen-payoff";
+import { filterRevisitCandidates } from "@/lib/refinement/revisit-sequencing";
 import {
-  filterRevisitCandidates,
-  recordEmotionalReopen,
-} from "@/lib/refinement/revisit-sequencing";
+  emptyPresentationSideEffects,
+  queueCallbackObservation,
+  queueRememberNoteContext,
+  type PresentationSideEffectBatch,
+} from "@/lib/refinement/presentation-side-effects";
 import { calibrateRevisitExperience } from "@/lib/refinement/silence-calibration";
 import {
   assessRevisitQuality,
@@ -52,7 +48,6 @@ import {
   shouldSuppressResurfacingConfidence,
 } from "@/lib/revisit/resurfacing-confidence";
 import { shouldSuppressResurfacingTiming } from "@/lib/revisit/resurfacing-timing";
-import { observeCallbackShown } from "@/lib/revisit/callback-learning";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
 import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
@@ -63,10 +58,7 @@ import {
 } from "@/lib/retention/moat-metrics";
 import { CONTINUATION_COPY } from "@/lib/conversation/continuation-loops";
 import { recordRevisitContext } from "@/lib/sync/cross-device-continuity";
-import {
-  rememberNoteContext,
-  trackEntryRevisited as trackRetentionEntryRevisited,
-} from "@/lib/retention/retention-loops";
+import { trackEntryRevisited as trackRetentionEntryRevisited } from "@/lib/retention/retention-loops";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -116,6 +108,7 @@ export interface RevisitExperiencePresentation {
   followupPrompt: FollowupPrompt | null;
   reopenPayoffScore: ReopenPayoffScore | null;
   followupDelayMs: number;
+  sideEffects: PresentationSideEffectBatch;
 }
 
 interface RevisitNavigationHint {
@@ -321,10 +314,12 @@ export function buildRevisitExperience(
       followupPrompt: null,
       reopenPayoffScore: null,
       followupDelayMs: 0,
+      sideEffects: emptyPresentationSideEffects(),
     };
   }
 
-  markRevisitBoost();
+  const sideEffects = emptyPresentationSideEffects();
+  sideEffects.markRevisitBoost = true;
 
   const knowsMeCandidates = filterRevisitCandidates(
     entryRevisitRewardCandidates(allEntries, entryId).filter((note) =>
@@ -340,7 +335,7 @@ export function buildRevisitExperience(
   );
   const payoffScore = strongest.score;
   if (payoffScore?.total) {
-    recordEmotionalReopen(entryId, payoffScore.total);
+    sideEffects.emotionalReopen = { entryId, payoffScore: payoffScore.total };
   }
 
   const thenVsNow =
@@ -384,11 +379,14 @@ export function buildRevisitExperience(
   );
 
   for (const note of [calibrated.revisitReward, calibrated.thenVsNow].filter(Boolean) as MemoryNote[]) {
-    recordCallbackSurfaced(note.id, "entry");
-    observeCallbackShown(note, allEntries, { surface: "entry", context: "revisit_experience" });
-    observeMagicCallbackSurfaced(note, allEntries, "entry");
+    queueCallbackObservation(sideEffects, {
+      note,
+      entries: allEntries,
+      surface: "entry",
+      context: "revisit_experience",
+    });
     const contextEntryId = note.entryId ?? note.pastEntryId ?? entryId;
-    rememberNoteContext(contextEntryId, note.id, note.text);
+    queueRememberNoteContext(sideEffects, contextEntryId, note.id, note.text);
   }
 
   const resolvedLivingResurfacing =
@@ -419,6 +417,7 @@ export function buildRevisitExperience(
     emotionalChapter: resolvedEmotionalChapter,
     reopenPayoffScore: payoffScore,
     followupDelayMs,
+    sideEffects,
   };
 }
 

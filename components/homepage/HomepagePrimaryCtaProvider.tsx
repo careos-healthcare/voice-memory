@@ -5,7 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -26,19 +26,17 @@ const HomepagePrimaryCtaRegisterContext = createContext<RegisterFn | null>(null)
 const HomepagePrimaryCtaWinnerContext = createContext<PrimaryCtaId | null>(null);
 
 export function HomepagePrimaryCtaProvider({ children }: { children: ReactNode }) {
-  const [registry, setRegistry] = useState<Registry>({});
+  const registryRef = useRef<Registry>({});
+  const [activeWinner, setActiveWinner] = useState<PrimaryCtaId | null>(null);
 
   const register = useCallback((id: PrimaryCtaId, active: boolean) => {
-    setRegistry((prev) => {
-      if (!!prev[id] === active) return prev;
-      const next = { ...prev };
-      if (active) next[id] = true;
-      else delete next[id];
-      return next;
-    });
+    const prev = !!registryRef.current[id];
+    if (prev === active) return;
+    if (active) registryRef.current[id] = true;
+    else delete registryRef.current[id];
+    const next = resolvePrimaryCtaWinner(registryRef.current);
+    setActiveWinner((current) => (current === next ? current : next));
   }, []);
-
-  const activeWinner = useMemo(() => resolvePrimaryCtaWinner(registry), [registry]);
 
   return (
     <HomepagePrimaryCtaRegisterContext.Provider value={register}>

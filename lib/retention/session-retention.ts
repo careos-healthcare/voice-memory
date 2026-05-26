@@ -1,4 +1,5 @@
 import { trackLocalEvent } from "@/lib/local-analytics";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { withTrackingGuard } from "@/lib/tracking/sync-guard";
 
 export const SESSION_RETENTION_EVENTS = {
@@ -34,7 +35,7 @@ function readOnceFlags(): Record<string, boolean> {
 }
 
 function writeOnceFlag(event: SessionRetentionEvent): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   withTrackingGuard(() => {
     const flags = readOnceFlags();
     if (flags[event]) return;
@@ -64,7 +65,7 @@ export function observeSessionFirstReflectionSaved(): void {
 
 export function observeSessionDay2Return(meta?: Record<string, string>): void {
   withTrackingGuard(() => {
-    if (!isBrowser()) return;
+    if (!isBrowser() || isSideEffectBlocked()) return;
     const flags = readOnceFlags();
     if (flags[SESSION_RETENTION_EVENTS.day2Return]) return;
     flags[SESSION_RETENTION_EVENTS.day2Return] = true;

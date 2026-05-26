@@ -4,6 +4,7 @@ import {
   readLocalEvents,
   trackLocalEvent,
 } from "@/lib/local-analytics";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { pickFirstMeaningfulRevisitCandidate } from "@/lib/revisit/first-meaningful-revisit";
 import {
   assessRevisitQuality,
@@ -62,7 +63,7 @@ function readCreatedNoteIds(): Set<string> {
 }
 
 function rememberCreatedNoteId(noteId: string): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   const ids = readCreatedNoteIds();
   ids.add(noteId);
   localStorage.setItem(CREATED_NOTES_KEY, JSON.stringify([...ids].slice(-120)));
@@ -313,6 +314,7 @@ export function observeMagicCallbackSurfaced(
   entries: JournalEntry[],
   surface: string,
 ): MagicCandidateQualification | null {
+  if (isSideEffectBlocked()) return null;
   const qualification = qualifyMagicCandidate(note, entries);
   if (!qualification) return null;
 

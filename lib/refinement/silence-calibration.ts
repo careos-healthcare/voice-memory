@@ -1,4 +1,6 @@
 import { toDayKey } from "@/lib/dates";
+import { queueDeferredSilenceShown } from "@/lib/refinement/presentation-side-effects";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression";
 import { recordEmotionalNoteShown } from "@/lib/refinement/emotional-timing";
 import { scoreMemoryHierarchy } from "@/lib/refinement/memory-hierarchy";
@@ -225,7 +227,7 @@ function readState(): SilenceState {
 }
 
 function writeState(state: SilenceState): void {
-  if (!isBrowser()) return;
+  if (!isBrowser() || isSideEffectBlocked()) return;
   localStorage.setItem(SILENCE_KEY, JSON.stringify(state));
 }
 
@@ -599,6 +601,10 @@ export function recordSilenceShown(
   entries: JournalEntry[],
   surface: SilenceSurface,
 ): void {
+  if (isSideEffectBlocked()) {
+    queueDeferredSilenceShown(note, entries, surface);
+    return;
+  }
   const state = readState();
   const category = classifyEmotionalCategory(note);
   const textKey = normalizeTextKey(note.text);
