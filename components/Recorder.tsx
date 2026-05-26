@@ -29,6 +29,12 @@ import { maybeTrackRoundupFollowupRecorded } from "@/lib/roundups/roundup-observ
 import { formatEntryDate } from "@/lib/utils";
 import { markFirstReflectionCreated } from "@/lib/marketing/first-session-comprehension";
 import { ONBOARDING_RECORDER } from "@/lib/onboarding/onboarding-copy";
+import { observeFunnelRecorderViewed } from "@/lib/retention/first-week-funnel";
+import {
+  pickRecurrenceDensityPrompt,
+  recordRecurrenceDensityDismissed,
+  recordRecurrenceDensityEngaged,
+} from "@/lib/retention/recurrence-density";
 import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
 import {
   markRecorderAbandoned,
@@ -44,6 +50,7 @@ import {
 } from "@/lib/reliability/copy";
 import { persistTranscriptDraft, saveRecoveryDraft } from "@/lib/reliability/draft-recovery";
 import { saveAudioSafe, saveDraftAudioSafe } from "@/lib/reliability/safe-audio";
+import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
 
 const MAX_SECONDS = 60;
@@ -84,6 +91,7 @@ export function Recorder({
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [entry, setEntry] = useState<JournalEntry | null>(null);
+  const [densityOffer, setDensityOffer] = useState<RecurrenceDensityPromptOffer | null>(null);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -324,6 +332,10 @@ export function Recorder({
     setError(null);
     setNotice(null);
     setEntry(null);
+    if (densityOffer) {
+      recordRecurrenceDensityEngaged();
+      setDensityOffer(null);
+    }
     chunksRef.current = [];
 
     try {
@@ -387,6 +399,7 @@ export function Recorder({
     }
   }, [
     clearTimer,
+    densityOffer,
     processRecording,
     recoverUnexpectedRecording,
     stopRecording,
@@ -394,10 +407,22 @@ export function Recorder({
   ]);
 
   useEffect(() => {
+    if (preRecordLine || reflectionPrompt) return;
+    const id = requestAnimationFrame(() => {
+      setDensityOffer(pickRecurrenceDensityPrompt());
+    });
+    return () => cancelAnimationFrame(id);
+  }, [preRecordLine, reflectionPrompt]);
+
+  useEffect(() => {
     if (autoStart) {
       void startRecording();
     }
   }, [autoStart, startRecording]);
+
+  useEffect(() => {
+    observeFunnelRecorderViewed();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -440,10 +465,24 @@ export function Recorder({
                   <Mic className="h-5 w-5" />
                   Start reflection
                 </Button>
-                {preRecordLine ? (
-                  <p className="max-w-sm text-center text-sm font-normal leading-[1.75] text-zinc-500/90">
-                    {preRecordLine}
-                  </p>
+                {preRecordLine || densityOffer ? (
+                  <div className="max-w-sm text-center">
+                    <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
+                      {preRecordLine ?? densityOffer?.text}
+                    </p>
+                    {densityOffer && !preRecordLine ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          recordRecurrenceDensityDismissed();
+                          setDensityOffer(null);
+                        }}
+                        className="mt-2 text-xs text-zinc-600 hover:text-zinc-400"
+                      >
+                        Not now
+                      </button>
+                    ) : null}
+                  </div>
                 ) : null}
               </>
             )}

@@ -7,6 +7,7 @@ import {
   readFirstWeekPromptState,
   recordGentlePromptShown,
 } from "@/lib/retention/first-week";
+import { readRecurrenceDensityState } from "@/lib/retention/recurrence-density";
 import { getSilenceIntelligenceEffects } from "@/lib/restraint/silence-intelligence";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { GentleReturnPromptOffer, GentleReturnPromptId } from "@/types/first-week-retention";
@@ -54,6 +55,7 @@ function buildGentleReturnPromptOffer(
 
   const state = readFirstWeekPromptState();
   if (state.lastShownDay === todayKey()) return null;
+  if (readRecurrenceDensityState().lastShownDay === todayKey()) return null;
   if (state.ignoredCount >= 3) return null;
 
   const silence = getSilenceIntelligenceEffects(entries);

@@ -18,6 +18,7 @@ import {
   ONBOARDING_CLARITY_EVENTS,
 } from "@/lib/onboarding/onboarding-observation";
 import { completeFirstSessionStep } from "@/lib/onboarding/first-session-flow";
+import { observeRecurrenceDensityOnboardingComplete } from "@/lib/retention/recurrence-density";
 
 export function ActivationOnboarding() {
   const [visible, setVisible] = useState(
@@ -31,6 +32,7 @@ export function ActivationOnboarding() {
     dismissOnboarding();
     trackLaunchEvent(LAUNCH_EVENTS.onboardingCompleted);
     trackOnboardingClarityEvent(ONBOARDING_CLARITY_EVENTS.onboardingCompleted);
+    observeRecurrenceDensityOnboardingComplete();
     completeFirstSessionStep("archive_perception");
     setVisible(false);
     if (scrollToRecorder) {

@@ -12,15 +12,20 @@ const REQUIRED_FILES = [
   "lib/retention/archive-value-moments.ts",
   "lib/retention/first-week-observation.ts",
   "lib/retention/first-magic-moment.ts",
+  "lib/retention/recurrence-density.ts",
   "lib/revisit/first-meaningful-revisit.ts",
   "components/retention/GentleReturnPrompt.tsx",
   "components/retention/ArchiveValueMoments.tsx",
   "lib/debug/first-week-retention.ts",
   "lib/debug/first-magic-moment-review.ts",
+  "lib/debug/recurrence-density-review.ts",
   "app/debug/first-week-retention/page.tsx",
   "app/debug/first-magic-moment/page.tsx",
+  "app/debug/recurrence-density/page.tsx",
+  "components/debug/RecurrenceDensityDebugPanel.tsx",
   "types/first-week-retention.ts",
   "types/first-magic-moment.ts",
+  "types/recurrence-density.ts",
 ];
 
 const REQUIRED_EVENTS = [
@@ -43,11 +48,24 @@ const MAGIC_EVENTS = [
   "magic_return_after_callback",
 ];
 
+const RECURRENCE_DENSITY_EVENTS = [
+  "recurrence_density_signal_detected",
+  "recurrence_density_prompt_shown",
+  "recurrence_density_prompt_dismissed",
+  "recurrence_density_prompt_engaged",
+  "recurrence_density_onboarding_complete",
+];
+
 const REQUIRED_COPY = [
   "You may want to leave another note before this week disappears.",
   "Something from earlier this week may feel different now.",
   "You used similar words before.",
   "This is starting to become a record of a real period.",
+  "Record again about this when it shows up.",
+  "If this comes back, say it in your own words.",
+  "This may be worth recording again later.",
+  "Use the same words if they still fit.",
+  "The pattern gets clearer when your own words repeat.",
 ];
 
 const FORBIDDEN_RE = [
@@ -97,6 +115,25 @@ if (!magicMoment.includes("timeUntilFirstMeaningfulCallbackMs") || !magicMoment.
   process.exit(1);
 }
 
+const recurrenceDensity = fs.readFileSync(
+  path.join(ROOT, "lib/retention/recurrence-density.ts"),
+  "utf8",
+);
+for (const event of RECURRENCE_DENSITY_EVENTS) {
+  if (!recurrenceDensity.includes(event)) {
+    console.error(`Retention restraint validation failed — missing recurrence-density event: ${event}`);
+    process.exit(1);
+  }
+}
+if (
+  !recurrenceDensity.includes("pickRecurrenceDensityPrompt") ||
+  !recurrenceDensity.includes("isRecurrenceDensityCopyAllowed") ||
+  !recurrenceDensity.includes("analyzeRecurrenceDensitySignals")
+) {
+  console.error("Retention restraint validation failed — recurrence density must pick prompts and analyze signals.");
+  process.exit(1);
+}
+
 const prompts = fs.readFileSync(
   path.join(ROOT, "lib/retention/gentle-return-prompts.ts"),
   "utf8",
@@ -106,7 +143,7 @@ const valueMoments = fs.readFileSync(
   "utf8",
 );
 const productCopy = fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8");
-const retentionCopy = `${prompts}\n${valueMoments}\n${productCopy}`;
+const retentionCopy = `${prompts}\n${valueMoments}\n${productCopy}\n${recurrenceDensity}`;
 for (const line of REQUIRED_COPY) {
   if (!retentionCopy.includes(line)) {
     console.error(`Retention restraint validation failed — missing copy: "${line}"`);
@@ -133,7 +170,7 @@ function scanFile(relPath) {
   if (!fs.existsSync(full)) return;
   const lines = fs.readFileSync(full, "utf8").split("\n");
   for (const line of lines) {
-    if (line.includes("FORBIDDEN_RE") || line.includes("isGentlePromptCopyAllowed")) continue;
+    if (line.includes("FORBIDDEN_RE") || line.includes("isGentlePromptCopyAllowed") || line.includes("isRecurrenceDensityCopyAllowed") || line.includes("BLOCKED_TERMS")) continue;
     for (const { re, label } of FORBIDDEN_RE) {
       if (re.test(line)) {
         console.error(`Retention restraint validation failed — forbidden "${label}" in ${relPath}`);

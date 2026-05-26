@@ -59,6 +59,7 @@ const SKIP_PATH_PARTS = [
   "lib/refinement/callback-tuning.ts",
   "lib/revisit/resurfacing-why-now.ts",
   "lib/retention/first-week.ts",
+  "lib/retention/recurrence-density.ts",
   "scripts/",
 ];
 
