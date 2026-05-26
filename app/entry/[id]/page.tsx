@@ -47,6 +47,20 @@ import {
   storeRecordReturnContext,
 } from "@/lib/reflection/record-return";
 import { consumeAfterSaveContinuityLine } from "@/lib/reflection/after-save-continuity";
+import { consumeClarityAfterSaveLine } from "@/lib/clarity/clarity-record";
+import { buildClarityResurfacingNote } from "@/lib/clarity/clarity-resurfacing";
+import { SortThisOutAloudPrompt } from "@/components/clarity/SortThisOutAloudPrompt";
+import { CirclingThoughtsSection } from "@/components/clarity/CirclingThoughtsSection";
+import { readClarityPromptOffer } from "@/lib/runtime/read-model";
+import {
+  writeEnqueueThoughtPatternExtract,
+  writeTrackThoughtPatternResurfaced,
+} from "@/lib/runtime/write-actions";
+import {
+  detectThinkingOutLoudSignals,
+  qualifiesForClarityPrompt,
+} from "@/lib/clarity/thinking-out-loud-signals";
+import type { ClarityPromptOffer } from "@/types/clarity";
 import { resolveRevisitVoicePlaybackPair, resolveVoicePlaybackPair, hasRevisitAudioComparison } from "@/lib/conversation/voice-playback-continuity";
 import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
@@ -490,9 +504,20 @@ export default function EntryPage() {
     return wc;
   }, [notes]);
 
+  const clarityResurfaceNote = useMemo(() => {
+    if (!entry?.transcript?.trim()) return null;
+    return buildClarityResurfacingNote(entry.transcript, entry.id);
+  }, [entry?.id, entry?.transcript]);
+
+  useEffect(() => {
+    if (!clarityResurfaceNote || !entry) return;
+    writeTrackThoughtPatternResurfaced(entry.id, clarityResurfaceNote.id);
+  }, [clarityResurfaceNote?.id, entry?.id]);
+
   const followupNotes = useMemo(() => {
     if (!needsHeavyMemoryBlocks || !entry) return [];
     return [
+      clarityResurfaceNote,
       continuationOpener,
       notes?.primaryCallback,
       notes?.secondaryCallback,
@@ -503,6 +528,7 @@ export default function EntryPage() {
       ...revisitation,
     ].filter(Boolean) as MemoryNote[];
   }, [
+    clarityResurfaceNote,
     entry,
     continuationOpener,
     notes,
@@ -545,15 +571,36 @@ export default function EntryPage() {
   const [postSaveContinuity, setPostSaveContinuity] = useState<{
     text: string;
   } | null>(null);
+  const [clarityOffer, setClarityOffer] = useState<ClarityPromptOffer | null>(null);
 
   useEffect(() => {
     if (!freshQuiet || !entry) {
       setPostSaveContinuity(null);
       return;
     }
-    const line = consumeAfterSaveContinuityLine();
-    setPostSaveContinuity(line ? { text: line.text } : null);
+    const clarityLine = consumeClarityAfterSaveLine();
+    const deferred = consumeAfterSaveContinuityLine();
+    const line = clarityLine ?? deferred?.text ?? null;
+    setPostSaveContinuity(line ? { text: line } : null);
   }, [freshQuiet, entry?.id]);
+
+  useEffect(() => {
+    if (!entry?.transcript || pending || freshQuiet || revisitExperience?.isRevisit) {
+      setClarityOffer(null);
+      return;
+    }
+    const id = requestAnimationFrame(() => {
+      setClarityOffer(readClarityPromptOffer(entry.id));
+      const signals = detectThinkingOutLoudSignals(entry.transcript);
+      if (qualifiesForClarityPrompt(signals)) {
+        writeEnqueueThoughtPatternExtract({
+          entryId: entry.id,
+          transcript: entry.transcript,
+        });
+      }
+    });
+    return () => cancelAnimationFrame(id);
+  }, [entry?.id, entry?.transcript, freshQuiet, pending, revisitExperience?.isRevisit]);
 
   const revisitVoicePair = useMemo(() => {
     if (!entry || pending || !revisitExperience?.isRevisit) return null;
@@ -810,11 +857,18 @@ export default function EntryPage() {
                 ) : null}
                 {entry.transcript && !pending ? (
                   <>
+                    {clarityOffer && !freshQuiet && !revisitExperience?.isRevisit ? (
+                      <SortThisOutAloudPrompt
+                        offer={clarityOffer}
+                        anchorSnippet={entry.transcript}
+                      />
+                    ) : null}
                     <OpenLoopNextStepPrompt
                       entry={entry}
                       isRevisit={Boolean(revisitExperience?.isRevisit)}
                     />
                     <OpenLoopEntryContinuity entryId={entry.id} />
+                    {!freshQuiet ? <CirclingThoughtsSection entryId={entry.id} /> : null}
                   </>
                 ) : null}
               </section>

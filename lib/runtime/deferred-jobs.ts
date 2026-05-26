@@ -4,7 +4,13 @@ import { runWriteAction } from "@/lib/runtime/render-safe";
 
 export type DeferredJobType =
   | "refresh-open-loop-continuity"
-  | "link-reflection-after-resurface";
+  | "link-reflection-after-resurface"
+  | "extract-thought-patterns";
+
+export interface ExtractThoughtPatternsPayload {
+  entryId: string;
+  transcript: string;
+}
 
 export interface LinkReflectionAfterResurfacePayload {
   id: string;
@@ -14,7 +20,8 @@ export interface LinkReflectionAfterResurfacePayload {
 
 type DeferredJob =
   | { type: "refresh-open-loop-continuity" }
-  | { type: "link-reflection-after-resurface"; payload: LinkReflectionAfterResurfacePayload };
+  | { type: "link-reflection-after-resurface"; payload: LinkReflectionAfterResurfacePayload }
+  | { type: "extract-thought-patterns"; payload: ExtractThoughtPatternsPayload };
 
 const queue: DeferredJob[] = [];
 const pendingTypes = new Set<DeferredJobType>();
@@ -37,6 +44,17 @@ async function executeJob(job: DeferredJob): Promise<void> {
       );
       runWriteAction("deferred:link-reflection-after-resurface", () => {
         maybeLinkReflectionAfterOpenLoopResurface(job.payload);
+      });
+      break;
+    }
+    case "extract-thought-patterns": {
+      const { extractThoughtPatterns } = await import("@/lib/clarity/thought-patterns");
+      const { persistThoughtPatternsForEntryInStore } = await import(
+        "@/lib/clarity/clarity-storage"
+      );
+      runWriteAction("deferred:extract-thought-patterns", () => {
+        const patterns = extractThoughtPatterns(job.payload.transcript);
+        persistThoughtPatternsForEntryInStore(job.payload.entryId, patterns);
       });
       break;
     }
@@ -83,6 +101,12 @@ export function enqueueLinkReflectionAfterResurface(
   payload: LinkReflectionAfterResurfacePayload,
 ): void {
   enqueue({ type: "link-reflection-after-resurface", payload });
+}
+
+export function enqueueExtractThoughtPatterns(
+  payload: ExtractThoughtPatternsPayload,
+): void {
+  enqueue({ type: "extract-thought-patterns", payload });
 }
 
 export function resetDeferredJobQueue(): void {

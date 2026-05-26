@@ -21,7 +21,12 @@ import {
   updateOpenLoopStatusInStore,
 } from "@/lib/open-loops/open-loop-storage";
 import { hasEntitlement } from "@/lib/entitlement/entitlements";
-import { enqueueLinkReflectionAfterResurface } from "@/lib/runtime/deferred-jobs";
+import {
+  enqueueExtractThoughtPatterns,
+  enqueueLinkReflectionAfterResurface,
+} from "@/lib/runtime/deferred-jobs";
+import { dismissClarityPromptInStore } from "@/lib/clarity/clarity-storage";
+import { trackClarityEvent, CLARITY_EVENTS } from "@/lib/clarity/clarity-observation";
 import { recordOpenLoopReturnPromptShown } from "@/lib/open-loops/open-loop-return-prompt";
 import { runWriteAction } from "@/lib/runtime/render-safe";
 import type { OpenLoop, OpenLoopStatus } from "@/types/open-loop";
@@ -175,5 +180,49 @@ export function writeTrackOpenLoopReturnPromptEngaged(openLoopId: string): void 
 export function writeRecordOpenLoopReturnPromptShown(): void {
   runWriteAction("writeRecordOpenLoopReturnPromptShown", () =>
     recordOpenLoopReturnPromptShown(),
+  );
+}
+
+export function writeDismissClarityPrompt(entryId: string): void {
+  runWriteAction("writeDismissClarityPrompt", () => dismissClarityPromptInStore(entryId));
+}
+
+export function writeTrackClarityPromptShown(entryId: string): void {
+  runWriteAction("writeTrackClarityPromptShown", () =>
+    trackClarityEvent(CLARITY_EVENTS.promptShown, { entryId }),
+  );
+}
+
+export function writeTrackClarityRecordClicked(entryId: string): void {
+  runWriteAction("writeTrackClarityRecordClicked", () =>
+    trackClarityEvent(CLARITY_EVENTS.recordClicked, { entryId }),
+  );
+}
+
+export function writeTrackClarityFollowupSaved(entryId: string, newEntryId: string): void {
+  runWriteAction("writeTrackClarityFollowupSaved", () => {
+    trackClarityEvent(CLARITY_EVENTS.followupSaved, { entryId, newEntryId });
+    trackClarityEvent(CLARITY_EVENTS.reflectionAfterPrompt, { entryId, newEntryId });
+  });
+}
+
+export function writeTrackClarityAbandoned(entryId: string): void {
+  runWriteAction("writeTrackClarityAbandoned", () =>
+    trackClarityEvent(CLARITY_EVENTS.abandoned, { entryId }),
+  );
+}
+
+export function writeTrackThoughtPatternResurfaced(entryId: string, noteId: string): void {
+  runWriteAction("writeTrackThoughtPatternResurfaced", () =>
+    trackClarityEvent(CLARITY_EVENTS.thoughtPatternResurfaced, { entryId, noteId }),
+  );
+}
+
+export function writeEnqueueThoughtPatternExtract(payload: {
+  entryId: string;
+  transcript: string;
+}): void {
+  runWriteAction("writeEnqueueThoughtPatternExtract", () =>
+    enqueueExtractThoughtPatterns(payload),
   );
 }

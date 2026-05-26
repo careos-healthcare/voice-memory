@@ -55,7 +55,9 @@ export function classifyFollowupSource(note: MemoryNote): FollowupSource | null 
   if (note.id.startsWith("continuation-")) return "continuation";
   if (note.id.startsWith("tvn-")) return "then_vs_now";
   if (note.id.startsWith("continuity-")) return "continuity";
-  if (note.id.startsWith("resurface-")) return "resurfacing";
+  if (note.id.startsWith("resurface-") || note.id.startsWith("clarity-resurface-")) {
+    return "resurfacing";
+  }
   if (note.id.startsWith("revisit-")) return "revisitation";
   if (note.id.startsWith("fam-resurface-")) return "familiarity_resurfacing";
   if (isRecoveryNote(note)) return "recovery";

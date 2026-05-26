@@ -112,9 +112,28 @@ export function BehaviorTruthPanel({ report }: { report: BehaviorTruthReport }) 
       <section>
         <p className="text-xs uppercase tracking-wider text-zinc-600">Funnels</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          {report.funnels.map((step) => (
+          {report.funnels
+            .filter((step) => !step.id.startsWith("clarity_") && step.id !== "thought_pattern_resurface_to_reflection")
+            .map((step) => (
             <FunnelCard key={step.id} step={step} />
           ))}
+        </div>
+      </section>
+
+      <section>
+        <p className="text-xs uppercase tracking-wider text-zinc-600">
+          Thinking out loud (clarity)
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {report.funnels
+            .filter(
+              (step) =>
+                step.id.startsWith("clarity_") ||
+                step.id === "thought_pattern_resurface_to_reflection",
+            )
+            .map((step) => (
+              <FunnelCard key={step.id} step={step} />
+            ))}
         </div>
       </section>
 

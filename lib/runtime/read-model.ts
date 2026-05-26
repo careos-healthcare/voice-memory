@@ -27,6 +27,10 @@ import {
   pickOpenLoopReturnOffer,
   type OpenLoopReturnOffer,
 } from "@/lib/open-loops/open-loop-return-prompt";
+import {
+  readCirclingThoughtsForEntry as readCirclingThoughtsForEntryCore,
+  readClarityPromptOffer as readClarityPromptOfferCore,
+} from "@/lib/clarity/clarity-read-model";
 import { getCachedQuietEntryPresentation, getCachedRevisitExperience } from "@/lib/performance/resurfacing-cache";
 import {
   getTierSnapshot,
@@ -210,6 +214,16 @@ export function readCachedQuietEntryPresentation(
 ): QuietEntryPresentation {
   return runReadOnly("readCachedQuietEntryPresentation", () =>
     getCachedQuietEntryPresentation(entries, entryId, limits, entriesVersion),
+  );
+}
+
+export function readClarityPromptOffer(entryId: string) {
+  return runReadOnly("readClarityPromptOffer", () => readClarityPromptOfferCore(entryId));
+}
+
+export function readCirclingThoughtsForEntry(entryId: string) {
+  return runReadOnly("readCirclingThoughtsForEntry", () =>
+    readCirclingThoughtsForEntryCore(entryId),
   );
 }
 

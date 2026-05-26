@@ -35,6 +35,11 @@ import {
   consumeRecordReturnContext,
   peekRecordReturnContext,
 } from "@/lib/reflection/record-return";
+import {
+  consumeClarityRecordContext,
+  peekClarityRecordContext,
+  type ClarityRecordContext,
+} from "@/lib/clarity/clarity-record";
 import { isQuickReflectionEnabled } from "@/lib/reflection/quick-reflection";
 import { flushPresentationSideEffects } from "@/lib/refinement/presentation-side-effects";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
@@ -78,6 +83,7 @@ export default function HomePage() {
   const [livingResurfacing, setLivingResurfacing] = useState<MemoryNote | null>(null);
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
   const [recordReturn, setRecordReturn] = useState<RecordReturnContext | null>(null);
+  const [clarityRecord, setClarityRecord] = useState<ClarityRecordContext | null>(null);
   const [recorderAutoStart, setRecorderAutoStart] = useState(false);
   const recorderRef = useRef<HTMLDivElement>(null);
 
@@ -129,6 +135,13 @@ export default function HomePage() {
   }, [revisitRhythm?.id]);
 
   useEffect(() => {
+    const clarity = consumeClarityRecordContext();
+    if (clarity) {
+      setClarityRecord(clarity);
+      setRecorderAutoStart(true);
+      scrollToRecorder();
+      return;
+    }
     const stored = consumeRecordReturnContext();
     if (!stored) return;
     setRecordReturn(stored);
@@ -275,8 +288,9 @@ export default function HomePage() {
             ) : null}
             <Recorder
               autoStart={recorderAutoStart}
-              preRecordLine={recordReturn ? null : recorderLine}
+              preRecordLine={recordReturn || clarityRecord ? null : recorderLine}
               recordReturn={recordReturn}
+              clarityRecord={clarityRecord}
               quickReflection={isQuickReflectionEnabled()}
             />
           </motion.div>

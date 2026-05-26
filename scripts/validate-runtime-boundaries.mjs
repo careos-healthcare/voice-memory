@@ -29,6 +29,8 @@ const UI_COMPONENTS = [
   "components/open-loops/OpenLoopEntryContinuity.tsx",
   "components/open-loops/OpenLoopCard.tsx",
   "components/open-loops/OpenLoopReturnPrompt.tsx",
+  "components/clarity/SortThisOutAloudPrompt.tsx",
+  "components/clarity/CirclingThoughtsSection.tsx",
 ];
 
 const UI_FORBIDDEN_IMPORTS = [
@@ -58,7 +60,11 @@ if (!writeActions.includes("runWriteAction")) {
 }
 
 const deferred = fs.readFileSync(path.join(ROOT, "lib/runtime/deferred-jobs.ts"), "utf8");
-for (const job of ["refresh-open-loop-continuity", "link-reflection-after-resurface"]) {
+for (const job of [
+  "refresh-open-loop-continuity",
+  "link-reflection-after-resurface",
+  "extract-thought-patterns",
+]) {
   if (!deferred.includes(job)) failures.push(`deferred-jobs.ts missing ${job}`);
 }
 

@@ -1,6 +1,7 @@
 import { LAUNCH_EVENTS, RETENTION_EVENTS, readLocalEvents } from "@/lib/local-analytics";
 import { OPEN_LOOP_EVENTS } from "@/lib/open-loops/open-loop-observation";
 import { CALLBACK_LEARNING_EVENTS } from "@/lib/revisit/callback-learning";
+import { CLARITY_EVENTS } from "@/lib/clarity/clarity-observation";
 import { BEHAVIOR_EVENTS } from "@/lib/behavior/observation";
 import {
   formatSampleNote,
@@ -74,6 +75,21 @@ export function computeBehaviorFunnels(
   const pricingViewed = events.filter((e) => e.name === RETENTION_EVENTS.pricingViewed).length;
   const proPreview = events.filter((e) => e.name === BEHAVIOR_EVENTS.proPreviewEnabled).length;
 
+  const clarityShown = events.filter((e) => e.name === CLARITY_EVENTS.promptShown).length;
+  const clarityRecordClicked = events.filter(
+    (e) => e.name === CLARITY_EVENTS.recordClicked,
+  ).length;
+  const clarityFollowupSaved = events.filter(
+    (e) => e.name === CLARITY_EVENTS.followupSaved,
+  ).length;
+  const clarityReflectionAfter = events.filter(
+    (e) => e.name === CLARITY_EVENTS.reflectionAfterPrompt,
+  ).length;
+  const clarityAbandoned = events.filter((e) => e.name === CLARITY_EVENTS.abandoned).length;
+  const thoughtPatternResurfaced = events.filter(
+    (e) => e.name === CLARITY_EVENTS.thoughtPatternResurfaced,
+  ).length;
+
   const firstDenom = firstReflection ? 1 : 0;
   const secondNum = secondReflection ? 1 : 0;
 
@@ -139,6 +155,46 @@ export function computeBehaviorFunnels(
         : proPreview === 0
           ? "Pricing was viewed without enabling Pro preview — price may be ahead of felt value."
           : "Pricing views sometimes lead to Pro preview on this device (local preview only).",
+    ),
+    funnelStep(
+      "clarity_prompt_to_record",
+      "Clarity prompt shown → record clicked",
+      clarityRecordClicked,
+      clarityShown,
+      clarityShown === 0
+        ? "No sort-this-out prompts logged yet."
+        : clarityRecordClicked === 0
+          ? "Prompts are showing without a record tap — users may be reading instead of speaking."
+          : "Some conflict/uncertainty entries led straight to the recorder.",
+    ),
+    funnelStep(
+      "clarity_record_to_saved",
+      "Clarity record → follow-up saved",
+      clarityFollowupSaved,
+      Math.max(clarityRecordClicked, 1),
+      clarityFollowupSaved === 0 && clarityRecordClicked > 0
+        ? "Record was opened but follow-up rarely saved — hesitation before speaking may remain."
+        : "Clarity follow-ups are being saved on this device.",
+    ),
+    funnelStep(
+      "thought_pattern_resurface_to_reflection",
+      "Thought pattern resurfaced → recorded again",
+      clarityReflectionAfter,
+      Math.max(thoughtPatternResurfaced, 1),
+      thoughtPatternResurfaced === 0
+        ? "No thought-pattern resurfacing logged yet."
+        : clarityReflectionAfter === 0
+          ? "Patterns resurface but rarely lead to another reflection."
+          : "Repeated thought patterns sometimes lead to another recording.",
+    ),
+    funnelStep(
+      "clarity_abandoned_after_prompt",
+      "Abandoned recorder after clarity prompt",
+      clarityAbandoned,
+      Math.max(clarityRecordClicked, 1),
+      clarityAbandoned === 0
+        ? "No clarity-prompt recorder abandonments logged."
+        : "Some users opened the recorder from a clarity prompt but did not finish.",
     ),
   ];
 
