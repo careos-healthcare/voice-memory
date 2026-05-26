@@ -3,7 +3,15 @@ import {
   refreshAllOpenLoopContinuity,
   refreshOpenLoopContinuity,
 } from "@/lib/open-loops/open-loop-continuity";
+import {
+  OPEN_LOOP_EVENTS,
+  trackOpenLoopClosed,
+  trackOpenLoopCreated,
+  trackOpenLoopReflectionAfterResurface,
+  trackOpenLoopSoftened,
+} from "@/lib/open-loops/open-loop-observation";
 import { pickOpenLoopResurfacingLine } from "@/lib/open-loops/open-loop-resurfacing-lines";
+import { readLocalEvents } from "@/lib/local-analytics";
 import { formatEntryDate } from "@/lib/utils";
 import { getEntry } from "@/lib/storage";
 import type {
@@ -273,6 +281,7 @@ export function createOpenLoop(input: {
   );
   writeLoops([next, ...loops]);
   dispatchChange();
+  trackOpenLoopCreated(next.openLoopId, next.sourceEntryId);
   void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
   return next;
 }
@@ -295,6 +304,7 @@ export function updateOpenLoopStatus(
   loops[index] = updated;
   writeLoops(loops);
   dispatchChange();
+  if (status === "softened") trackOpenLoopSoftened(openLoopId);
   return updated;
 }
 
@@ -319,6 +329,7 @@ export function closeOpenLoop(
   loops[index] = updated;
   writeLoops(loops);
   dispatchChange();
+  trackOpenLoopClosed(openLoopId);
   return updated;
 }
 
@@ -408,6 +419,39 @@ export function primaryAnchorPhrase(loop: OpenLoop): string {
 }
 
 /** One continuity line for an entry view — max one loop, one line. */
+/** Link new reflections to active loops after resurfacing — local validation only. */
+export function maybeLinkReflectionAfterOpenLoopResurface(entry: {
+  id: string;
+  createdAt: string;
+  transcript: string;
+}): void {
+  if (!entry.transcript.trim()) return;
+
+  const events = readLocalEvents();
+  const loops = getActiveOpenLoops();
+
+  for (const loop of loops) {
+    if (loop.sourceEntryId === entry.id) continue;
+    if (new Date(entry.createdAt).getTime() <= new Date(loop.firstSeenAt).getTime()) continue;
+
+    const resurfaced = events.some(
+      (event) =>
+        event.name === OPEN_LOOP_EVENTS.resurfacingShown &&
+        event.meta?.openLoopId === loop.openLoopId,
+    );
+    if (!resurfaced && loop.recurrenceCount < 2) continue;
+
+    const matchesAnchor = loop.anchorPhrases.some((phrase) => {
+      const fragment = phrase.trim().slice(0, 24);
+      return fragment.length >= 10 && entry.transcript.includes(fragment);
+    });
+    if (!matchesAnchor) continue;
+
+    touchRelatedEntry(loop.openLoopId, entry.id);
+    trackOpenLoopReflectionAfterResurface(loop.openLoopId, entry.id);
+  }
+}
+
 export function pickEntryOpenLoopContinuityLine(entryId: string): string | null {
   const loops = getOpenLoopsForEntry(entryId).filter(
     (loop) => loop.status === "open" || loop.status === "softened",

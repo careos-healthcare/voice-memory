@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   OPEN_LOOP_CLOSURE_PLACEHOLDER,
@@ -11,6 +11,10 @@ import {
   OPEN_LOOP_KEEP_OPEN_LABEL,
   OPEN_LOOP_SOFTEN_LABEL,
 } from "@/lib/open-loops/open-loop-copy";
+import {
+  trackOpenLoopEntryReopened,
+  trackOpenLoopResurfacingShown,
+} from "@/lib/open-loops/open-loop-observation";
 import {
   closeOpenLoop,
   updateOpenLoopStatus,
@@ -26,6 +30,12 @@ interface OpenLoopCardProps {
 export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
   const [closing, setClosing] = useState(false);
   const [closureNote, setClosureNote] = useState("");
+
+  useEffect(() => {
+    if (loop.resurfacingLine) {
+      trackOpenLoopResurfacingShown(loop.openLoopId, loop.resurfacingLine);
+    }
+  }, [loop.openLoopId, loop.resurfacingLine]);
 
   const earlierMoments =
     loop.connectedMoments.length > 1
@@ -113,6 +123,9 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
               <Link
                 href={`/entry/${loop.sourceEntryId}`}
                 className="hover:text-zinc-400"
+                onClick={() =>
+                  trackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
+                }
               >
                 Open reflection
               </Link>
@@ -147,6 +160,9 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
         <Link
           href={`/entry/${loop.sourceEntryId}`}
           className="text-sm text-zinc-600 hover:text-zinc-400"
+          onClick={() =>
+            trackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
+          }
         >
           Open reflection
         </Link>

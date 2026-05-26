@@ -55,7 +55,20 @@ function pickBestLine(candidates: LineCandidate[]): string | null {
 
 /** At most one restrained continuity line — evidence-backed, no clinical framing. */
 export function pickOpenLoopResurfacingLine(loop: OpenLoop, now = Date.now()): string | null {
-  if (loop.status === "closed") return null;
+  return pickBestLine(buildAllCandidates(loop, now));
+}
+
+export interface OpenLoopResurfacingCandidate {
+  line: string;
+  priority: number;
+  evidenceBacked: boolean;
+  passesGate: boolean;
+  suppressed: boolean;
+  shown: boolean;
+}
+
+function buildAllCandidates(loop: OpenLoop, now = Date.now()): LineCandidate[] {
+  if (loop.status === "closed") return [];
 
   const candidates: LineCandidate[] = [];
   const gapDays = daysBetweenLastTwoMentions(loop);
@@ -102,9 +115,8 @@ export function pickOpenLoopResurfacingLine(loop: OpenLoop, now = Date.now()): s
   }
 
   if (concern && UNCERTAIN_CONCERN_RE.test(concern)) {
-    const topic = concern.toLowerCase();
     candidates.push({
-      line: `This feeling seems to return around ${topic}.`,
+      line: `This feeling seems to return around ${concern.toLowerCase()}.`,
       priority: 76,
       evidenceBacked: true,
     });
@@ -118,5 +130,29 @@ export function pickOpenLoopResurfacingLine(loop: OpenLoop, now = Date.now()): s
     });
   }
 
-  return pickBestLine(candidates);
+  return candidates;
+}
+
+/** Debug/validation audit — shown line plus suppressed generic candidates. */
+export function auditOpenLoopResurfacing(loop: OpenLoop, now = Date.now()): {
+  shown: string | null;
+  candidates: OpenLoopResurfacingCandidate[];
+} {
+  const raw = buildAllCandidates(loop, now);
+  const shown = pickBestLine(raw);
+
+  const candidates: OpenLoopResurfacingCandidate[] = raw.map((row) => {
+    const passesGate = row.evidenceBacked && passesContinuityGate(row.line);
+    const suppressed = row.evidenceBacked && !passesGate;
+    return {
+      line: row.line,
+      priority: row.priority,
+      evidenceBacked: row.evidenceBacked,
+      passesGate,
+      suppressed,
+      shown: shown === row.line,
+    };
+  });
+
+  return { shown, candidates };
 }

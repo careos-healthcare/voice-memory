@@ -133,6 +133,9 @@ export function saveEntry(entry: JournalEntry): void {
   void import("@/lib/intentions/long-term-intentions").then((mod) => {
     mod.syncLongTermIntentions(getMemoryEligibleEntries());
   });
+  void import("@/lib/open-loops/open-loop-storage").then((mod) =>
+    mod.maybeLinkReflectionAfterOpenLoopResurface(entry),
+  );
   void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
 }
 

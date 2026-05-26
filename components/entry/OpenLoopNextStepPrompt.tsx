@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,10 @@ import {
   OPEN_LOOP_SAVE_CTA,
 } from "@/lib/open-loops/open-loop-copy";
 import { detectUnresolvedThread } from "@/lib/open-loops/unresolved-signals";
+import {
+  trackOpenLoopPromptDismissed,
+  trackOpenLoopPromptShown,
+} from "@/lib/open-loops/open-loop-observation";
 import {
   createOpenLoop,
   dismissOpenLoopPrompt,
@@ -54,6 +58,10 @@ export function OpenLoopNextStepPrompt({
     return shouldShowOpenLoopPrompt(entry.id, entry.transcript, { isRevisit });
   }, [dismissed, saved, entry.id, entry.transcript, isRevisit]);
 
+  useEffect(() => {
+    if (visible) trackOpenLoopPromptShown(entry.id);
+  }, [visible, entry.id]);
+
   if (!visible || !signal) return null;
 
   const handleSave = () => {
@@ -73,6 +81,7 @@ export function OpenLoopNextStepPrompt({
 
   const handleNotNow = () => {
     dismissOpenLoopPrompt(entry.id);
+    trackOpenLoopPromptDismissed(entry.id);
     setDismissed(true);
   };
 

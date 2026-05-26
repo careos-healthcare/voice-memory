@@ -14,6 +14,9 @@ const REQUIRED_FILES = [
   "lib/open-loops/open-loop-resurfacing-lines.ts",
   "lib/open-loops/open-loop-silence.ts",
   "lib/open-loops/emotional-shift.ts",
+  "lib/open-loops/open-loop-readout.ts",
+  "lib/open-loops/open-loop-observation.ts",
+  "app/debug/open-loops-readout/page.tsx",
   "components/entry/OpenLoopNextStepPrompt.tsx",
   "components/open-loops/OpenLoopCard.tsx",
   "components/open-loops/OpenLoopsList.tsx",
@@ -22,6 +25,7 @@ const REQUIRED_FILES = [
 
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
+  "app/debug/open-loops-readout/",
   "lib/open-loops/",
   "components/entry/OpenLoopNextStepPrompt.tsx",
   "components/open-loops/",
