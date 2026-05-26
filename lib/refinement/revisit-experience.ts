@@ -51,6 +51,7 @@ import {
   enrichNoteWithResurfacingConfidence,
   shouldSuppressResurfacingConfidence,
 } from "@/lib/revisit/resurfacing-confidence";
+import { shouldSuppressResurfacingTiming } from "@/lib/revisit/resurfacing-timing";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
 import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
@@ -152,7 +153,8 @@ function isWeakForRevisit(note: MemoryNote, allEntries: JournalEntry[]): boolean
   if (isTopicRecurrenceCopy(note.text)) return true;
   return (
     shouldSuppressRevisitQuality(note, allEntries) ||
-    shouldSuppressResurfacingConfidence(note, allEntries)
+    shouldSuppressResurfacingConfidence(note, allEntries) ||
+    shouldSuppressResurfacingTiming(note, allEntries)
   );
 }
 

@@ -23,6 +23,7 @@ import {
   collectRevisitQualityCandidates,
   isRevisitQualityNote,
 } from "@/lib/revisit/revisit-quality";
+import { shouldSuppressResurfacingTiming } from "@/lib/revisit/resurfacing-timing";
 import type { JournalEntry } from "@/types/journal";
 import type { Reflection } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -467,7 +468,11 @@ export function pickConfidenceEligibleNotes(
   notes: MemoryNote[],
   entries: JournalEntry[],
 ): MemoryNote[] {
-  return notes.filter((note) => !shouldSuppressResurfacingConfidence(note, entries));
+  return notes.filter(
+    (note) =>
+      !shouldSuppressResurfacingConfidence(note, entries) &&
+      !shouldSuppressResurfacingTiming(note, entries),
+  );
 }
 
 export function enrichNoteWithResurfacingConfidence(

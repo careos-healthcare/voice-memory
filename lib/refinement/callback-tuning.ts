@@ -18,6 +18,10 @@ import {
   applyResurfacingConfidenceRankAdjustment,
   shouldSuppressResurfacingConfidence,
 } from "@/lib/revisit/resurfacing-confidence";
+import {
+  applyResurfacingTimingRankAdjustment,
+  shouldSuppressResurfacingTiming,
+} from "@/lib/revisit/resurfacing-timing";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -229,7 +233,8 @@ export function pickBestCallback(
       !isBlockedResurfacingCopy(row.note.text) &&
       !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
       !(isRevisitQualityNote(row.note) && shouldSuppressRevisitQuality(row.note, entries)) &&
-      !shouldSuppressResurfacingConfidence(row.note, entries),
+      !shouldSuppressResurfacingConfidence(row.note, entries) &&
+      !shouldSuppressResurfacingTiming(row.note, entries),
   );
   return best?.note ?? ranked.find((row) => !isTopicRecurrenceCopy(row.note.text))?.note ?? null;
 }
@@ -243,5 +248,6 @@ export function applyTuningScoreBoost(
   const tuned = baseScore + Math.round(tuning.total * 0.35) - tuning.penalties;
   const withLoops = applyLoopOptimizationBoost(note, entries, tuned);
   const withQuality = applyRevisitQualityRankAdjustment(note, entries, withLoops);
-  return applyResurfacingConfidenceRankAdjustment(note, entries, withQuality);
+  const withConfidence = applyResurfacingConfidenceRankAdjustment(note, entries, withQuality);
+  return applyResurfacingTimingRankAdjustment(note, entries, withConfidence);
 }
