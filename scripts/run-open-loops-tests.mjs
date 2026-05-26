@@ -8,6 +8,44 @@ import {
 import { detectEmotionalShift } from "../lib/open-loops/emotional-shift.ts";
 import { pickOpenLoopResurfacingLine } from "../lib/open-loops/open-loop-resurfacing-lines.ts";
 import { hasLongAbsenceReturn } from "../lib/open-loops/open-loop-silence.ts";
+import { auditOpenLoopActivation } from "../lib/open-loops/open-loop-activation-audit.ts";
+import { resolveOpenLoopActivation } from "../lib/open-loops/open-loop-activation.ts";
+
+const HAUNTED_TRANSCRIPT =
+  "I am haunted by the past, the present and the future. I'm scared.";
+
+assert.equal(hasUnresolvedThreadLanguage(HAUNTED_TRANSCRIPT), true);
+const hauntedSignal = detectUnresolvedThread(HAUNTED_TRANSCRIPT);
+assert.ok(hauntedSignal);
+assert.match(hauntedSignal.anchorPhrases.join(" "), /haunted|scared/i);
+assert.ok(hauntedSignal.matchedLabels.some((l) => /haunted|scared/i.test(l)));
+
+const hauntedEntry = {
+  id: "entry-haunted-fixture",
+  createdAt: "2026-05-01T12:00:00.000Z",
+  transcript: HAUNTED_TRANSCRIPT,
+  reflection: {
+    mood: "anxious",
+    emotionalIntensity: 6,
+    recurringThemes: [],
+    hiddenConcern: "",
+    positiveSignal: "",
+    recommendation: "",
+  },
+  durationSeconds: 42,
+};
+
+const hauntedAudit = auditOpenLoopActivation(hauntedEntry, {
+  dismissed: false,
+  hasLoop: false,
+});
+assert.equal(hauntedAudit.unresolvedDetected, true);
+assert.equal(hauntedAudit.showPrompt, true);
+assert.equal(hauntedAudit.activationSuppressedReason, null);
+
+const hauntedActivation = resolveOpenLoopActivation(hauntedEntry);
+assert.equal(hauntedActivation.showPrompt, true);
+assert.ok(hauntedActivation.signal);
 assert.equal(hasUnresolvedThreadLanguage("I need to call them back tomorrow."), true);
 assert.equal(
   hasUnresolvedThreadLanguage("Today was fine. Nothing unresolved."),

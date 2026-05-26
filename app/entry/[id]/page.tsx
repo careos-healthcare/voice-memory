@@ -9,6 +9,8 @@ import { EntryPhotoAttachment } from "@/components/entry/EntryPhotoAttachment";
 import { EntryAtmosphereAttachment } from "@/components/entry/EntryAtmosphereAttachment";
 import { OpenLoopNextStepPrompt } from "@/components/entry/OpenLoopNextStepPrompt";
 import { OpenLoopEntryContinuity } from "@/components/open-loops/OpenLoopEntryContinuity";
+import { auditOpenLoopActivation } from "@/lib/open-loops/open-loop-activation-audit";
+import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
@@ -183,6 +185,26 @@ export default function EntryPage() {
     return getMemoryEligibleEntries();
   }, [heavyReady, entry?.id, entry?.createdAt]);
   const pending = entry ? isReflectionPending(entry) : false;
+
+  useEffect(() => {
+    if (!entry?.transcript?.trim()) return;
+    const pageAudit = auditOpenLoopActivation(entry, {
+      isRevisit: Boolean(revisitExperience?.isRevisit),
+      heavyReady,
+      logSource: "entry-page",
+    });
+    logOpenLoopActivationDebug("entry-page.render", {
+      entryId: entry.id,
+      unresolvedDetected: pageAudit.unresolvedDetected,
+      activationSuppressedReason: pageAudit.activationSuppressedReason,
+      freshQuiet,
+      pending,
+      heavyReady,
+      revisitMode: Boolean(revisitExperience?.isRevisit),
+      willRenderPrompt: Boolean(entry.transcript && !pending),
+      placement: "below_transcript",
+    });
+  }, [entry, revisitExperience?.isRevisit, heavyReady, freshQuiet, pending]);
   const needsHeavyMemoryBlocks =
     heavyReady &&
     !pending &&
@@ -786,17 +808,16 @@ export default function EntryPage() {
                 {entry.transcript ? (
                   <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
                 ) : null}
+                {entry.transcript && !pending ? (
+                  <>
+                    <OpenLoopNextStepPrompt
+                      entry={entry}
+                      isRevisit={Boolean(revisitExperience?.isRevisit)}
+                    />
+                    <OpenLoopEntryContinuity entryId={entry.id} />
+                  </>
+                ) : null}
               </section>
-            ) : null}
-
-            {entry.transcript && !pending && !freshQuiet ? (
-              <>
-                <OpenLoopNextStepPrompt
-                  entry={entry}
-                  isRevisit={Boolean(revisitExperience?.isRevisit)}
-                />
-                <OpenLoopEntryContinuity entryId={entry.id} />
-              </>
             ) : null}
 
             <EntryPhotoAttachment
@@ -840,13 +861,6 @@ export default function EntryPage() {
                     {FRESH_ENTRY_NO_CALLBACK_LINE}
                   </p>
                 )}
-
-                <OpenLoopNextStepPrompt
-                  entry={entry}
-                  isRevisit={Boolean(revisitExperience?.isRevisit)}
-                />
-
-                <OpenLoopEntryContinuity entryId={entry.id} />
 
                 <FollowupPromptInline
                   prompt={activeFollowup}

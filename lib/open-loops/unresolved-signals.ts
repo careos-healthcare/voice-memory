@@ -1,10 +1,25 @@
+import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
+
 export interface UnresolvedThreadSignal {
   anchorPhrases: string[];
   title: string;
   concernLabel?: string;
+  matchedLabels: string[];
 }
 
 const UNRESOLVED_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
+  { pattern: /\bhaunted\b/i, label: "Haunted" },
+  { pattern: /\bscared\b/i, label: "Scared" },
+  { pattern: /\bafraid\b/i, label: "Afraid" },
+  { pattern: /\bworried\b/i, label: "Worried" },
+  { pattern: /\banxious\b/i, label: "Anxious" },
+  { pattern: /\boverwhelmed\b/i, label: "Overwhelmed" },
+  { pattern: /\bstuck\b/i, label: "Stuck" },
+  { pattern: /\buncertain\b/i, label: "Uncertain" },
+  { pattern: /\bavoiding\b/i, label: "Avoiding" },
+  { pattern: /\bpressure\b/i, label: "Pressure" },
+  { pattern: /\bkeeps returning\b/i, label: "Keeps returning" },
+  { pattern: /\bcan'?t stop thinking\b/i, label: "Keeps circling" },
   { pattern: /\bi need to\b/i, label: "Need to follow through" },
   { pattern: /\bi keep avoiding\b/i, label: "Keeps avoiding" },
   { pattern: /\bi don'?t know what to do about\b/i, label: "Unsure what to do" },
@@ -42,12 +57,13 @@ function buildTitle(anchorPhrase: string, fallback: string): string {
   return fallback;
 }
 
-/** Conservative detection — only explicit unresolved language in the transcript. */
+/** Unresolved or emotionally open language — explicit cues only, no clinical framing. */
 export function detectUnresolvedThread(transcript: string): UnresolvedThreadSignal | null {
   const text = transcript.trim();
   if (text.length < 12) return null;
 
   const anchorPhrases: string[] = [];
+  const matchedLabels: string[] = [];
   let concernLabel: string | undefined;
   let title = "Open thread";
 
@@ -55,6 +71,7 @@ export function detectUnresolvedThread(transcript: string): UnresolvedThreadSign
     const phrase = sentenceForMatch(text, pattern);
     if (!phrase) continue;
     if (!anchorPhrases.includes(phrase)) anchorPhrases.push(phrase);
+    if (!matchedLabels.includes(label)) matchedLabels.push(label);
     if (!concernLabel) {
       concernLabel = label;
       title = buildTitle(phrase, label);
@@ -63,13 +80,29 @@ export function detectUnresolvedThread(transcript: string): UnresolvedThreadSign
 
   if (anchorPhrases.length === 0) return null;
 
-  return {
+  const signal: UnresolvedThreadSignal = {
     anchorPhrases,
     title,
     concernLabel,
+    matchedLabels,
   };
+
+  logOpenLoopActivationDebug("detectUnresolvedThread", {
+    unresolvedDetected: true,
+    matchedPhrases: anchorPhrases,
+    matchedLabels,
+    concernLabel,
+  });
+
+  return signal;
 }
 
 export function hasUnresolvedThreadLanguage(transcript: string): boolean {
   return detectUnresolvedThread(transcript) !== null;
+}
+
+export function unresolvedDetectionScore(transcript: string): number {
+  const signal = detectUnresolvedThread(transcript);
+  if (!signal) return 0;
+  return signal.matchedLabels.length;
 }

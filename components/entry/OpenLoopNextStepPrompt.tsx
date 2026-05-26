@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { auditOpenLoopActivation } from "@/lib/open-loops/open-loop-activation-audit";
+import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
 import { resolveOpenLoopActivation } from "@/lib/open-loops/open-loop-activation";
 import {
   OPEN_LOOP_ANCHOR_LABEL,
@@ -50,9 +52,29 @@ export function OpenLoopNextStepPrompt({
   );
 
   const promptLine = useMemo(() => promptLineForEntry(entry.id), [entry.id]);
-  const anchorPhrase = activation.signal?.anchorPhrases[0];
+  const anchorPhrase =
+    activation.signal?.anchorPhrases[0] ?? entry.transcript?.trim().slice(0, 160);
 
   const visible = activation.showPrompt && !dismissed && !saved;
+
+  useEffect(() => {
+    const audit = auditOpenLoopActivation(entry, { isRevisit, logSource: "OpenLoopNextStepPrompt" });
+    logOpenLoopActivationDebug("OpenLoopNextStepPrompt.mount", {
+      entryId: entry.id,
+      unresolvedDetected: audit.unresolvedDetected,
+      matchedSignals: audit.matchedSignals,
+      existingLoopFound: audit.existingLoopFound,
+      dismissedRecently: audit.dismissedRecently,
+      freshEntryWindow: audit.freshEntryWindow,
+      revisitMode: audit.revisitMode,
+      heavyReady: audit.heavyReady,
+      activationSuppressedReason: audit.activationSuppressedReason,
+      componentVisible: visible,
+      localDismissed: dismissed,
+      localSaved: saved,
+      activationShowPrompt: activation.showPrompt,
+    });
+  }, [entry, isRevisit, visible, dismissed, saved, activation.showPrompt]);
 
   useEffect(() => {
     if (visible) trackOpenLoopPromptShown(entry.id);
