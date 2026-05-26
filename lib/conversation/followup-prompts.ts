@@ -1,3 +1,8 @@
+import { applyBehavioralRankingBoost } from "@/lib/resurfacing/behavioral-ranking";
+import {
+  shouldSuppressResurfacingNote,
+  recordResurfacingShown,
+} from "@/lib/resurfacing/resurfacing-fatigue";
 import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression";
 import { calibrateFollowupPrompt } from "@/lib/refinement/silence-calibration";
 import { continuationBoostForNote } from "@/lib/retention/loop-optimization";
@@ -134,8 +139,15 @@ function promptForSource(note: MemoryNote, source: FollowupSource): string {
   return CONTINUATION_COPY.moreToSay;
 }
 
-function scoreCandidate(candidate: FollowupCandidate): number {
-  return candidate.priority + candidate.note.confidence + continuationBoostForNote(candidate.note.id);
+function scoreCandidate(
+  candidate: FollowupCandidate,
+  entries: JournalEntry[] = [],
+): number {
+  const base =
+    candidate.priority +
+    candidate.note.confidence +
+    continuationBoostForNote(candidate.note.id);
+  return applyBehavioralRankingBoost(candidate.note, entries, base);
 }
 
 function continuationToNote(candidate: ReturnType<typeof gatherContinuationCandidates>[number]): MemoryNote {
@@ -196,13 +208,15 @@ export function buildFollowupPrompt(
   const candidates = [
     ...gatherContinuationFollowupCandidates(entries, notes, entryId),
     ...gatherFollowupCandidates(notes),
-  ].filter(
-    (candidate) => !isFalsePositiveNote(candidate.note, entries, "follow_up"),
-  );
+  ]
+    .filter((candidate) => !isFalsePositiveNote(candidate.note, entries, "follow_up"))
+    .filter((candidate) => !shouldSuppressResurfacingNote(candidate.note.id));
 
   if (candidates.length === 0) return null;
 
-  const best = [...candidates].sort((a, b) => scoreCandidate(b) - scoreCandidate(a))[0];
+  const best = [...candidates].sort(
+    (a, b) => scoreCandidate(b, entries) - scoreCandidate(a, entries),
+  )[0];
   const text = (
     best.note.id.startsWith("continuation-")
       ? best.note.text
@@ -218,7 +232,7 @@ export function buildFollowupPrompt(
       source: best.source,
       noteId: best.note.id,
       noteText: best.note.text,
-      strength: scoreCandidate(best),
+      strength: scoreCandidate(best, entries),
     },
     notes,
   );
@@ -235,6 +249,7 @@ export function storeFollowupPrompt(prompt: FollowupPrompt | string): void {
       text: prompt.text,
       noteId: prompt.noteId,
     });
+    recordResurfacingShown(prompt.noteId);
   }
 }
 

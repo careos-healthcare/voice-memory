@@ -32,8 +32,11 @@ import { timelineRevisitationNotes } from "@/lib/memory/revisitation";
 import { timelineTimeMemoryNotes } from "@/lib/memory/time-memory";
 import {
   buildFollowupPrompt,
-  storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import {
+  buildRecordReturnFromFollowup,
+  storeRecordReturnContext,
+} from "@/lib/reflection/record-return";
 import { useBookmarkedEntryIds } from "@/lib/hooks/useReflectionBookmark";
 import { timelineMilestoneNotes } from "@/lib/memory/milestones";
 import { timelineThreadHighlights } from "@/lib/memory/conversation-threads";
@@ -135,8 +138,8 @@ export default function TimelinePage() {
     [followupNotes, entries],
   );
 
-  const handleContinueFollowup = (prompt: FollowupPrompt) => {
-    storeFollowupPrompt(prompt);
+  const handleRecordAgain = (prompt: FollowupPrompt) => {
+    storeRecordReturnContext(buildRecordReturnFromFollowup(prompt));
     router.push("/#recorder");
   };
 
@@ -201,7 +204,7 @@ export default function TimelinePage() {
 
               <FollowupPromptInline
                 prompt={followupPrompt}
-                onContinue={handleContinueFollowup}
+                onRecordAgain={handleRecordAgain}
               />
 
               <ThreadMentionsSection threads={threadHighlights} />

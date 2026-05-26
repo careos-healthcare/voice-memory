@@ -28,8 +28,11 @@ import { monthlyRevisitationNotes } from "@/lib/memory/revisitation";
 import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
 import {
   buildFollowupPrompt,
-  storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import {
+  buildRecordReturnFromFollowup,
+  storeRecordReturnContext,
+} from "@/lib/reflection/record-return";
 import { monthlyKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import { monthlyArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
 import { monthlyEmotionalChapterMoment } from "@/lib/memory/emotional-chapters";
@@ -141,8 +144,8 @@ export default function MonthlyPage() {
     [followupNotes, entries],
   );
 
-  const handleContinueFollowup = (prompt: FollowupPrompt) => {
-    storeFollowupPrompt(prompt);
+  const handleRecordAgain = (prompt: FollowupPrompt) => {
+    storeRecordReturnContext(buildRecordReturnFromFollowup(prompt));
     router.push("/#recorder");
   };
 
@@ -187,7 +190,7 @@ export default function MonthlyPage() {
               <MilestoneNotes milestones={milestones} entries={entries} max={limits.milestones} />
               <FollowupPromptInline
                 prompt={followupPrompt}
-                onContinue={handleContinueFollowup}
+                onRecordAgain={handleRecordAgain}
               />
               {hasNotes ? (
                 <MemoryNotesOverview

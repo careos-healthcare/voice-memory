@@ -14,8 +14,11 @@ import { MOTION } from "@/lib/motion/tokens";
 import { presenceFade } from "@/lib/motion/variants";
 import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import { LISTENING_SAVED_COPY } from "@/lib/listening-mode";
-import { createListeningModeEntry } from "@/lib/pending-reflection";
-import { ContinuationRecorderPrompt } from "@/components/conversation/ContinuationRecorderPrompt";
+import {
+  createListeningModeEntry,
+  createPendingReflection,
+} from "@/lib/pending-reflection";
+import { RecordReturnAnchor } from "@/components/recording/RecordReturnAnchor";
 import {
   consumeContinuationMeta,
   peekContinuationMeta,
@@ -56,7 +59,22 @@ import {
 import { persistTranscriptDraft, saveRecoveryDraft } from "@/lib/reliability/draft-recovery";
 import { saveAudioSafe, saveDraftAudioSafe } from "@/lib/reliability/safe-audio";
 import { usePrimaryCtaClaim } from "@/components/homepage/HomepagePrimaryCtaProvider";
+import {
+  consumeRecordReturnContext,
+  peekRecordReturnContext,
+  RECORD_RETURN_SAVED_LINE,
+} from "@/lib/reflection/record-return";
+import {
+  consumeAfterSaveContinuityLine,
+  finalizeAfterSaveContinuity,
+} from "@/lib/reflection/after-save-continuity";
+import { isQuickReflectionEnabled } from "@/lib/reflection/quick-reflection";
+import { recordResurfacingOpenedWithoutReflection } from "@/lib/resurfacing/resurfacing-fatigue";
+import { observeReflectionAfterCallback } from "@/lib/revisit/callback-learning";
+import { writeLinkReflectionAfterResurface } from "@/lib/runtime/write-actions";
+import { recordReflectionAfterResurface } from "@/lib/resurfacing/resurfacing-fatigue";
 import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
+import type { RecordReturnContext as RecordReturnContextType } from "@/types/record-return";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
 
 const MAX_SECONDS = 60;
@@ -65,7 +83,10 @@ interface RecorderProps {
   autoStart?: boolean;
   onComplete?: (entry: JournalEntry) => void;
   preRecordLine?: string | null;
+  /** @deprecated Use recordReturn — one-tap return flow with anchor quote. */
   reflectionPrompt?: string | null;
+  recordReturn?: RecordReturnContextType | null;
+  quickReflection?: boolean;
 }
 
 type RecorderState =
@@ -80,6 +101,8 @@ export function Recorder({
   onComplete,
   preRecordLine,
   reflectionPrompt,
+  recordReturn: recordReturnProp,
+  quickReflection = false,
 }: RecorderProps) {
   const router = useRouter();
   const { listeningMode } = useListeningMode();
@@ -100,6 +123,10 @@ export function Recorder({
   const [notice, setNotice] = useState<string | null>(null);
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [densityOffer, setDensityOffer] = useState<RecurrenceDensityPromptOffer | null>(null);
+  const [liveTranscript, setLiveTranscript] = useState<string | null>(null);
+  const [continuityLine, setContinuityLine] = useState<string | null>(null);
+  const recordReturnRef = useRef<RecordReturnContextType | null>(recordReturnProp ?? null);
+  const quickMode = quickReflection || isQuickReflectionEnabled();
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -126,6 +153,25 @@ export function Recorder({
     [],
   );
 
+  useEffect(() => {
+    recordReturnRef.current = recordReturnProp ?? peekRecordReturnContext() ?? null;
+  }, [recordReturnProp]);
+
+  const completeRecordReturnAfterSave = useCallback((newEntry: JournalEntry) => {
+    const returnCtx = recordReturnRef.current ?? consumeRecordReturnContext();
+    if (!returnCtx) {
+      const deferred = consumeAfterSaveContinuityLine();
+      if (deferred) setContinuityLine(deferred.text);
+      return;
+    }
+    recordReturnRef.current = null;
+    writeLinkReflectionAfterResurface(newEntry);
+    observeReflectionAfterCallback({ id: returnCtx.noteId });
+    recordReflectionAfterResurface(returnCtx.noteId);
+    finalizeAfterSaveContinuity(newEntry, returnCtx);
+    setContinuityLine(RECORD_RETURN_SAVED_LINE);
+  }, []);
+
   const finalizeEntry = useCallback(
     (newEntry: JournalEntry, recoveredDraft = false) => {
       if (navigatingAfterSaveRef.current) return;
@@ -147,12 +193,13 @@ export function Recorder({
       completeFirstSessionStep("first_reflection");
       onComplete?.(newEntry);
 
+      const delayMs = quickMode || recordReturnRef.current ? 700 : 1200;
       window.setTimeout(() => {
         markFreshEntryAfterRecording(newEntry.id);
         router.push(`/entry/${newEntry.id}`);
-      }, 1200);
+      }, delayMs);
     },
-    [onComplete, router],
+    [onComplete, quickMode, router],
   );
 
   const processRecording = useCallback(
@@ -193,6 +240,30 @@ export function Recorder({
 
         const prepared = prepareTranscriptForSaveOnce(transcribeData.transcript);
         const listeningModeActive = listeningMode;
+
+        setLiveTranscript(prepared.transcript);
+
+        if (quickMode && !listeningModeActive) {
+          setStage("saving");
+          const entryId = crypto.randomUUID();
+          const audioId = await saveRecordingBlob(entryId, blob);
+          const newEntry: JournalEntry = {
+            id: entryId,
+            createdAt: new Date().toISOString(),
+            transcript: prepared.transcript,
+            rawTranscript: prepared.rawTranscript,
+            transcriptCleanup: prepared.transcriptCleanup,
+            reflection: createPendingReflection(),
+            durationSeconds,
+            audioId,
+          };
+          trackTranscriptCleanupEvents(prepared.result, entryId);
+          saveEntry(newEntry);
+          markFirstReflectionCreated();
+          completeRecordReturnAfterSave(newEntry);
+          finalizeEntry(newEntry);
+          return;
+        }
 
         if (listeningModeActive) {
           setStage("saving");
@@ -296,7 +367,11 @@ export function Recorder({
           return;
         }
 
-        if (reflectionPrompt || peekFollowupLoopContext()) {
+        if (
+          reflectionPrompt ||
+          recordReturnRef.current ||
+          peekFollowupLoopContext()
+        ) {
           const meta = peekContinuationMeta();
           trackFollowupRecordingCompleted(newEntry.id);
           maybeTrackRoundupFollowupRecorded(meta?.noteId, newEntry.id);
@@ -307,6 +382,7 @@ export function Recorder({
           );
           consumeContinuationMeta();
         }
+        completeRecordReturnAfterSave(newEntry);
         finalizeEntry(newEntry);
       } catch (processingError) {
         processingRef.current = false;
@@ -318,7 +394,14 @@ export function Recorder({
         );
       }
     },
-    [finalizeEntry, listeningMode, reflectionPrompt, saveRecordingBlob],
+    [
+      completeRecordReturnAfterSave,
+      finalizeEntry,
+      listeningMode,
+      quickMode,
+      reflectionPrompt,
+      saveRecordingBlob,
+    ],
   );
 
   const recoverUnexpectedRecording = useCallback(
@@ -438,18 +521,18 @@ export function Recorder({
   ]);
 
   useEffect(() => {
-    if (preRecordLine || reflectionPrompt) return;
+    if (preRecordLine || reflectionPrompt || recordReturnProp || quickMode) return;
     const id = requestAnimationFrame(() => {
       setDensityOffer(pickRecurrenceDensityPrompt());
     });
     return () => cancelAnimationFrame(id);
-  }, [preRecordLine, reflectionPrompt]);
+  }, [preRecordLine, quickMode, recordReturnProp, reflectionPrompt]);
 
   useEffect(() => {
-    if (autoStart) {
+    if (autoStart || recordReturnProp) {
       void startRecording();
     }
-  }, [autoStart, startRecording]);
+  }, [autoStart, recordReturnProp, startRecording]);
 
   useEffect(() => {
     observeFunnelRecorderViewed();
@@ -461,6 +544,8 @@ export function Recorder({
       stopTracks();
       if (recorderStartedRef.current && !recorderCompletedRef.current) {
         markRecorderAbandoned();
+        const ctx = peekRecordReturnContext();
+        if (ctx) recordResurfacingOpenedWithoutReflection(ctx.noteId);
       }
     };
   }, [clearTimer, stopTracks]);
@@ -475,9 +560,20 @@ export function Recorder({
 
   const canShowRecorderCta = usePrimaryCtaClaim("recorder", state === "idle");
   const canShowRetryCta = usePrimaryCtaClaim("retry", state === "error");
+  const activeReturn =
+    recordReturnProp ??
+    recordReturnRef.current ??
+    (reflectionPrompt
+      ? {
+          id: "legacy-return",
+          anchorQuote: reflectionPrompt,
+          noteId: "legacy-return",
+          source: "resurfacing" as const,
+        }
+      : null);
 
   return (
-    <div className="mobile-recorder-zone w-full max-w-xl px-2">
+    <div className="mobile-recorder-zone mobile-recorder-dominant w-full max-w-xl px-2">
       <AnimatePresence mode="wait">
         {state === "idle" && (
           <motion.div
@@ -488,21 +584,21 @@ export function Recorder({
             exit="exit"
             className="flex flex-col items-center gap-5"
           >
-            {canShowRecorderCta && reflectionPrompt ? (
-              <ContinuationRecorderPrompt
-                text={reflectionPrompt}
-                onContinue={() => void startRecording()}
+            {canShowRecorderCta && activeReturn ? (
+              <RecordReturnAnchor
+                context={activeReturn}
+                onRecordAgain={() => void startRecording()}
               />
             ) : canShowRecorderCta ? (
               <>
                 <Button
                   size="lg"
-                  className="mobile-touch-target min-w-[12rem]"
+                  className="mobile-touch-target mobile-recorder-primary min-h-[3.25rem] min-w-[13rem] text-base"
                   data-primary-cta="recorder"
                   onClick={() => void startRecording()}
                 >
                   <Mic className="h-5 w-5" />
-                  Start reflection
+                  {quickMode ? "Quick reflection" : "Start reflection"}
                 </Button>
                 {preRecordLine || densityOffer ? (
                   <div className="max-w-sm text-center">
@@ -525,7 +621,9 @@ export function Recorder({
                 ) : null}
               </>
             ) : null}
-            <p className="text-sm text-zinc-500">{ONBOARDING_RECORDER.idle}</p>
+            {!activeReturn && !quickMode ? (
+              <p className="text-sm text-zinc-500">{ONBOARDING_RECORDER.idle}</p>
+            ) : null}
           </motion.div>
         )}
 
@@ -536,9 +634,19 @@ export function Recorder({
             initial="initial"
             animate="animate"
             exit="exit"
-            className="flex flex-col items-center gap-7 px-6 py-10"
+            className="flex flex-col items-center gap-7 px-4 py-10"
           >
-            <div className="relative flex h-24 w-24 items-center justify-center">
+            {activeReturn ? (
+              <div className="max-w-sm text-center">
+                <p className="text-xs tracking-wide text-zinc-600">
+                  You're returning to this:
+                </p>
+                <p className="mt-2 text-sm leading-[1.75] text-zinc-400/95">
+                  {activeReturn.anchorQuote}
+                </p>
+              </div>
+            ) : null}
+            <div className="relative flex h-28 w-28 items-center justify-center">
               <motion.span
                 animate={{ scale: [1, 1.08, 1], opacity: [0.35, 0.15, 0.35] }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: MOTION.ease }}
@@ -553,11 +661,11 @@ export function Recorder({
               <p className="text-3xl font-normal tabular-nums text-zinc-100">
                 {formatTime(seconds)}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-500">
-                {listeningMode
-                  ? "Speak freely — we'll save when you stop"
-                  : "Speak freely — we'll reflect when you stop"}
-              </p>
+              {!quickMode ? (
+                <p className="mt-2 text-sm leading-relaxed text-zinc-500">
+                  {listeningMode ? "Speak freely" : "Speak freely"}
+                </p>
+              ) : null}
             </div>
 
             <Button
@@ -580,6 +688,11 @@ export function Recorder({
             animate="animate"
             exit="exit"
           >
+            {quickMode && liveTranscript ? (
+              <p className="mb-4 max-w-md text-center text-sm leading-[1.75] text-zinc-400/95">
+                {liveTranscript}
+              </p>
+            ) : null}
             <ProcessingStatus stage={stage} />
           </motion.div>
         )}
@@ -595,6 +708,11 @@ export function Recorder({
             <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
               {listeningMode ? LISTENING_SAVED_COPY : "Saved."}
             </p>
+            {continuityLine ? (
+              <p className="mt-3 text-sm leading-[1.75] text-zinc-400/95">
+                {continuityLine}
+              </p>
+            ) : null}
             {notice ? (
               <p className="mt-2 text-sm leading-relaxed text-amber-200/80">
                 {notice}

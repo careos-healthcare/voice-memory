@@ -6,6 +6,7 @@ import { recordSilenceShown } from "@/lib/refinement/silence-calibration";
 import { observeMagicCallbackSurfaced } from "@/lib/retention/first-magic-moment";
 import { rememberNoteContext } from "@/lib/retention/retention-loops";
 import { resolveSilenceIntelligence } from "@/lib/restraint/silence-intelligence";
+import { recordResurfacingShown } from "@/lib/resurfacing/resurfacing-fatigue";
 import { observeCallbackShown } from "@/lib/revisit/callback-learning";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -106,6 +107,7 @@ function drainDeferredSilenceShown(): void {
 function applyCallbackObservation(observation: CallbackObservation): void {
   const { note, entries, surface, context } = observation;
   recordCallbackSurfaced(note.id, surface);
+  recordResurfacingShown(note.id);
   observeCallbackShown(note, entries, {
     surface,
     ...(context ? { context } : {}),

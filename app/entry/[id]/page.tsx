@@ -41,10 +41,12 @@ import { ShareQuietlyButton } from "@/components/sharing/ShareQuietlyButton";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
+import { buildFollowupPrompt } from "@/lib/conversation/followup-prompts";
 import {
-  buildFollowupPrompt,
-  storeFollowupPrompt,
-} from "@/lib/conversation/followup-prompts";
+  buildRecordReturnFromFollowup,
+  storeRecordReturnContext,
+} from "@/lib/reflection/record-return";
+import { consumeAfterSaveContinuityLine } from "@/lib/reflection/after-save-continuity";
 import { resolveRevisitVoicePlaybackPair, resolveVoicePlaybackPair, hasRevisitAudioComparison } from "@/lib/conversation/voice-playback-continuity";
 import { entryMilestoneNotes } from "@/lib/memory/milestones";
 import { entryRelationshipNotes } from "@/lib/memory/relationship-continuity";
@@ -529,16 +531,29 @@ export default function EntryPage() {
     followupPrompt,
   ]);
 
-  const handleContinueFollowup = (prompt: FollowupPrompt) => {
+  const handleRecordAgain = (prompt: FollowupPrompt) => {
     if (entry && revisitExperience?.isRevisit) {
       trackRevisitFollowupStarted(entry.id, prompt.id);
     }
     if (prompt.noteId) {
       trackFollowupRecordingStarted(prompt.noteId, prompt.id);
     }
-    storeFollowupPrompt(prompt);
+    storeRecordReturnContext(buildRecordReturnFromFollowup(prompt));
     router.push("/#recorder");
   };
+
+  const [postSaveContinuity, setPostSaveContinuity] = useState<{
+    text: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!freshQuiet || !entry) {
+      setPostSaveContinuity(null);
+      return;
+    }
+    const line = consumeAfterSaveContinuityLine();
+    setPostSaveContinuity(line ? { text: line.text } : null);
+  }, [freshQuiet, entry?.id]);
 
   const revisitVoicePair = useMemo(() => {
     if (!entry || pending || !revisitExperience?.isRevisit) return null;
@@ -729,7 +744,7 @@ export default function EntryPage() {
 
                 <FollowupPromptInline
                   prompt={activeFollowup}
-                  onContinue={handleContinueFollowup}
+                  onRecordAgain={handleRecordAgain}
                 />
 
                 <OnboardingTrustLine
@@ -833,11 +848,18 @@ export default function EntryPage() {
               />
             ) : freshQuiet ? (
               <>
-                {freshContinuation ? (
+                {postSaveContinuity ? (
+                  <p className="text-sm leading-[1.75] text-zinc-400/95">
+                    {postSaveContinuity.text}
+                  </p>
+                ) : activeFollowup ? (
+                  <FollowupPromptInline
+                    prompt={activeFollowup}
+                    onRecordAgain={handleRecordAgain}
+                  />
+                ) : freshContinuation ? (
                   <ContinuationNotes notes={[freshContinuation]} max={1} />
-                ) : null}
-
-                {evidenceBackedMoment ? (
+                ) : evidenceBackedMoment ? (
                   <MotionNoteList className="space-y-20">
                     <AnimatedMemoryNote note={evidenceBackedMoment} index={0} />
                   </MotionNoteList>
@@ -846,11 +868,6 @@ export default function EntryPage() {
                     {FRESH_ENTRY_NO_CALLBACK_LINE}
                   </p>
                 )}
-
-                <FollowupPromptInline
-                  prompt={activeFollowup}
-                  onContinue={handleContinueFollowup}
-                />
 
                 <div className="pt-2">
                   <Button
@@ -881,7 +898,7 @@ export default function EntryPage() {
 
                     <FollowupPromptInline
                       prompt={activeFollowup}
-                      onContinue={handleContinueFollowup}
+                      onRecordAgain={handleRecordAgain}
                     />
 
                     {voicePlaybackPair && presentation?.primaryMoment ? (
@@ -944,7 +961,7 @@ export default function EntryPage() {
 
                 <FollowupPromptInline
                   prompt={activeFollowup}
-                  onContinue={handleContinueFollowup}
+                  onRecordAgain={handleRecordAgain}
                 />
 
                 {voicePlaybackPair ? (

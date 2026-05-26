@@ -22,6 +22,8 @@ import {
   applyResurfacingTimingRankAdjustment,
   shouldSuppressResurfacingTiming,
 } from "@/lib/revisit/resurfacing-timing";
+import { applyBehavioralRankingBoost } from "@/lib/resurfacing/behavioral-ranking";
+import { shouldSuppressResurfacingNote } from "@/lib/resurfacing/resurfacing-fatigue";
 import { applyCallbackLearningRankAdjustment } from "@/lib/revisit/callback-learning";
 import { hasConcreteResurfacingEvidence } from "@/lib/resurfacing/evidence-engine";
 import {
@@ -239,7 +241,9 @@ export function pickBestCallback(
   );
   if (backed.length === 0) return null;
 
-  const ranked = rankCallbacksByTuning(backed, entries);
+  const ranked = rankCallbacksByTuning(backed, entries).filter(
+    (row) => !shouldSuppressResurfacingNote(row.note.id),
+  );
   const best = ranked.find(
     (row) =>
       row.score.total >= minTotal &&
@@ -266,5 +270,6 @@ export function applyTuningScoreBoost(
   const withQuality = applyRevisitQualityRankAdjustment(note, entries, withLoops);
   const withConfidence = applyResurfacingConfidenceRankAdjustment(note, entries, withQuality);
   const withTiming = applyResurfacingTimingRankAdjustment(note, entries, withConfidence);
-  return applyCallbackLearningRankAdjustment(note, entries, withTiming);
+  const withBehavior = applyBehavioralRankingBoost(note, entries, withTiming);
+  return applyCallbackLearningRankAdjustment(note, entries, withBehavior);
 }

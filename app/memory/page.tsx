@@ -53,8 +53,11 @@ import { memoryResurfacingNotes } from "@/lib/memory/resurfacing";
 import { memoryRevisitationNotes } from "@/lib/memory/revisitation";
 import {
   buildFollowupPrompt,
-  storeFollowupPrompt,
 } from "@/lib/conversation/followup-prompts";
+import {
+  buildRecordReturnFromFollowup,
+  storeRecordReturnContext,
+} from "@/lib/reflection/record-return";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 import { getMemoryEligibleEntries } from "@/lib/storage";
@@ -159,8 +162,8 @@ export default function MemoryPage() {
     [followupNotes, entries],
   );
 
-  const handleContinueFollowup = (prompt: FollowupPrompt) => {
-    storeFollowupPrompt(prompt);
+  const handleRecordAgain = (prompt: FollowupPrompt) => {
+    storeRecordReturnContext(buildRecordReturnFromFollowup(prompt));
     router.push("/#recorder");
   };
 
@@ -231,7 +234,7 @@ export default function MemoryPage() {
               />
               <FollowupPromptInline
                 prompt={followupPrompt}
-                onContinue={handleContinueFollowup}
+                onRecordAgain={handleRecordAgain}
               />
 
               {snapshot.totalEntities > 0 ? (

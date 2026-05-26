@@ -29,7 +29,13 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
-import { consumeStoredFollowupPrompt, storeFollowupPrompt } from "@/lib/conversation/followup-prompts";
+import {
+  buildRecordReturnFromFollowup,
+  buildRecordReturnFromNote,
+  consumeRecordReturnContext,
+  peekRecordReturnContext,
+} from "@/lib/reflection/record-return";
+import { isQuickReflectionEnabled } from "@/lib/reflection/quick-reflection";
 import { flushPresentationSideEffects } from "@/lib/refinement/presentation-side-effects";
 import { buildQuietHomepagePresentation } from "@/lib/refinement/quiet-presentation";
 import { runPresentationBuild } from "@/lib/tracking/presentation-guard";
@@ -57,6 +63,7 @@ import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
 import type { FollowupPrompt } from "@/types/followup-prompt";
+import type { RecordReturnContext } from "@/types/record-return";
 import type { MemoryNote } from "@/types/memory-note";
 import type { ContinuityDepthIndicator } from "@/types/continuity-depth";
 
@@ -70,8 +77,15 @@ export default function HomePage() {
   const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
   const [livingResurfacing, setLivingResurfacing] = useState<MemoryNote | null>(null);
   const [revisitRhythm, setRevisitRhythm] = useState<MemoryNote | null>(null);
-  const [reflectionPrompt, setReflectionPrompt] = useState<string | null>(null);
+  const [recordReturn, setRecordReturn] = useState<RecordReturnContext | null>(null);
+  const [recorderAutoStart, setRecorderAutoStart] = useState(false);
   const recorderRef = useRef<HTMLDivElement>(null);
+
+  const scrollToRecorder = useCallback(() => {
+    requestAnimationFrame(() => {
+      recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, []);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -115,22 +129,28 @@ export default function HomePage() {
   }, [revisitRhythm?.id]);
 
   useEffect(() => {
-    const stored = consumeStoredFollowupPrompt();
+    const stored = consumeRecordReturnContext();
     if (!stored) return;
-    setReflectionPrompt(stored);
-    const id = requestAnimationFrame(() => {
-      recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-    return () => cancelAnimationFrame(id);
-  }, []);
+    setRecordReturn(stored);
+    setRecorderAutoStart(true);
+    scrollToRecorder();
+  }, [scrollToRecorder]);
 
-  const handleContinueFollowup = useCallback((prompt: FollowupPrompt) => {
-    storeFollowupPrompt(prompt);
-    setReflectionPrompt(prompt.text);
-    requestAnimationFrame(() => {
-      recorderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  }, []);
+  const handleRecordAgain = useCallback(
+    (prompt: FollowupPrompt) => {
+      setRecordReturn(buildRecordReturnFromFollowup(prompt));
+      setRecorderAutoStart(true);
+      scrollToRecorder();
+    },
+    [scrollToRecorder],
+  );
+
+  const handlePrimaryRecordAgain = useCallback(() => {
+    if (!primaryNote) return;
+    setRecordReturn(buildRecordReturnFromNote(primaryNote));
+    setRecorderAutoStart(true);
+    scrollToRecorder();
+  }, [primaryNote, scrollToRecorder]);
 
   return (
     <div className="relative min-h-screen-mobile overflow-hidden bg-zinc-950 pb-safe">
@@ -151,9 +171,21 @@ export default function HomePage() {
           <ArchiveOwnershipSparseLine />
           <PersonalisationProgressNote />
           <ReflectionGoalHint />
-          <PrimaryCallbackNote note={primaryNote} />
+          <PrimaryCallbackNote
+            note={primaryNote}
+            onRecordAgain={handlePrimaryRecordAgain}
+          />
           <QuietSilenceLine />
-          <OpenLoopReturnPrompt />
+          <OpenLoopReturnPrompt
+            onRecordAgain={() => {
+              const stored = peekRecordReturnContext();
+              if (stored) {
+                setRecordReturn(stored);
+                setRecorderAutoStart(true);
+              }
+              scrollToRecorder();
+            }}
+          />
           <GentleReturnPrompt />
           <DayTwoReturnPrompt />
           <ArchiveValueMoments />
@@ -162,7 +194,10 @@ export default function HomePage() {
           <RevisitRhythmNote note={revisitRhythm} />
           <ContinuityDepthNote indicator={continuityDepth} />
           <ContinuationNotes notes={continuation} max={1} />
-          <FollowupPromptInline prompt={followupPrompt} onContinue={handleContinueFollowup} />
+          <FollowupPromptInline
+            prompt={followupPrompt}
+            onRecordAgain={handleRecordAgain}
+          />
         </div>
 
         <main className="flex flex-1 flex-col items-center justify-center py-10 text-center">
@@ -233,12 +268,16 @@ export default function HomePage() {
             ref={recorderRef}
             id="recorder"
           >
-            <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
-              {HOMEPAGE_CLARITY.ctaLine}
-            </p>
+            {!recordReturn ? (
+              <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
+                {HOMEPAGE_CLARITY.ctaLine}
+              </p>
+            ) : null}
             <Recorder
-              preRecordLine={reflectionPrompt ? null : recorderLine}
-              reflectionPrompt={reflectionPrompt}
+              autoStart={recorderAutoStart}
+              preRecordLine={recordReturn ? null : recorderLine}
+              recordReturn={recordReturn}
+              quickReflection={isQuickReflectionEnabled()}
             />
           </motion.div>
 

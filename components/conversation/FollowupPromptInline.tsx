@@ -1,27 +1,23 @@
 "use client";
 
 import { useEffect } from "react";
+import { Mic } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MotionNoteItem, MotionNoteList } from "@/components/motion/MotionNote";
-import { recordFollowupContinued } from "@/lib/callback-interaction-signals";
-import {
-  storeContinuationMeta,
-  trackContinuationSeen,
-  trackContinuationStarted,
-} from "@/lib/conversation/continuation-loops";
-import { markFollowupBoost } from "@/lib/refinement/emotional-timing";
-import { trackFollowupRecordingStarted } from "@/lib/retention/retention-loops";
-import { trackFollowUpAfterCallback } from "@/lib/retention/pause-moments";
-import { trackRevisitRhythmFollowupIfActive } from "@/lib/refinement/revisit-rhythm";
+import { buildRecordReturnFromFollowup } from "@/lib/reflection/record-return";
+import { startRecordReturnFlow } from "@/lib/reflection/start-record-return";
+import { recordResurfacingDismissed } from "@/lib/resurfacing/resurfacing-fatigue";
+import { observeCallbackDismissed } from "@/lib/revisit/callback-learning";
+import { trackContinuationSeen } from "@/lib/conversation/continuation-loops";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 
 interface FollowupPromptInlineProps {
   prompt: FollowupPrompt | null;
-  onContinue: (prompt: FollowupPrompt) => void;
+  onRecordAgain: (prompt: FollowupPrompt) => void;
 }
 
-export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlineProps) {
+export function FollowupPromptInline({ prompt, onRecordAgain }: FollowupPromptInlineProps) {
   useEffect(() => {
     if (!prompt) return;
     trackContinuationSeen(prompt.id, prompt.noteId);
@@ -36,24 +32,27 @@ export function FollowupPromptInline({ prompt, onContinue }: FollowupPromptInlin
           <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">{prompt.text}</p>
           <Button
             type="button"
-            variant="ghost"
-            size="sm"
-            className="h-auto px-0 text-sm text-zinc-400 hover:bg-transparent hover:text-zinc-200"
+            size="lg"
+            className="mobile-touch-target min-h-[3rem]"
+            data-primary-cta="recorder"
             onClick={() => {
-              storeContinuationMeta(prompt.id, prompt.noteId);
-              trackContinuationStarted(prompt.id, prompt.noteId);
-              if (prompt.noteId) {
-                recordFollowupContinued(prompt.noteId);
-                trackFollowupRecordingStarted(prompt.noteId, prompt.id);
-                trackFollowUpAfterCallback(prompt.noteId, prompt.id);
-                markFollowupBoost();
-              }
-              trackRevisitRhythmFollowupIfActive(prompt.noteId ?? prompt.id, prompt.id);
-              onContinue(prompt);
+              startRecordReturnFlow(buildRecordReturnFromFollowup(prompt));
+              onRecordAgain(prompt);
             }}
           >
-            Continue
+            <Mic className="h-5 w-5" />
+            Record again
           </Button>
+          <button
+            type="button"
+            className="text-xs text-zinc-600 hover:text-zinc-400"
+            onClick={() => {
+              recordResurfacingDismissed(prompt.noteId);
+              observeCallbackDismissed({ id: prompt.noteId });
+            }}
+          >
+            Not now
+          </button>
         </div>
       </MotionNoteItem>
     </MotionNoteList>

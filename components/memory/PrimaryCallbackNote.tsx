@@ -1,11 +1,37 @@
 "use client";
 
 import { ResurfacingNotes } from "@/components/patterns/MemoryNote";
-
+import { RecordReturnAnchor } from "@/components/recording/RecordReturnAnchor";
+import { buildRecordReturnFromNote } from "@/lib/reflection/record-return";
+import { startRecordReturnFlow } from "@/lib/reflection/start-record-return";
 import type { MemoryNote } from "@/types/memory-note";
 
-/** Single tuned callback line for quiet-first surfaces. */
-export function PrimaryCallbackNote({ note }: { note: MemoryNote | null }) {
+/** Single tuned callback — primary action opens recorder immediately. */
+export function PrimaryCallbackNote({
+  note,
+  onRecordAgain,
+}: {
+  note: MemoryNote | null;
+  onRecordAgain?: () => void;
+}) {
   if (!note) return null;
-  return <ResurfacingNotes notes={[note]} max={1} />;
+
+  const context = buildRecordReturnFromNote(note, "primary_callback");
+
+  return (
+    <div className="space-y-5">
+      <ResurfacingNotes notes={[note]} max={1} />
+      {onRecordAgain ? (
+        <div className="flex justify-center">
+          <RecordReturnAnchor
+            context={context}
+            onRecordAgain={() => {
+              startRecordReturnFlow(context);
+              onRecordAgain();
+            }}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
 }

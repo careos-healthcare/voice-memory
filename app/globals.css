@@ -102,6 +102,26 @@ body {
   padding-bottom: max(2rem, env(safe-area-inset-bottom));
 }
 
+.mobile-recorder-dominant {
+  margin-inline: auto;
+}
+
+.mobile-recorder-primary {
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.22);
+}
+
+@media (max-width: 640px) {
+  .mobile-recorder-dominant {
+    width: 100%;
+    max-width: none;
+    padding-inline: 0.25rem;
+  }
+
+  .mobile-recorder-dominant [data-primary-cta="recorder"] {
+    width: min(100%, 18rem);
+  }
+}
+
 @media (max-width: 640px) {
   .mobile-stack-tight {
     gap: 0.75rem;
