@@ -45,13 +45,12 @@ import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
 import { maybeDetectReturnTriggers } from "@/lib/retention/return-triggers";
 import {
   HONESTY_LINE,
-  NOT_AI_JOURNAL_LINE,
   DEVICE_PRIVACY_LINE,
+  HOMEPAGE_CLARITY,
   POSITIONING_EYEBROW,
   POSITIONING_LEAD,
   POSITIONING_SUPPORT,
   POSITIONING_TAGLINE,
-  PRODUCT_WEDGE_LINE,
 } from "@/lib/product-copy";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -175,14 +174,23 @@ export default function HomePage() {
             <p className="mt-4 text-base leading-relaxed text-violet-200/80 sm:text-lg">
               {POSITIONING_TAGLINE}
             </p>
-            <p className="mt-5 text-lg font-normal leading-relaxed text-zinc-300/90 sm:text-xl">
+            <p className="mt-6 text-lg font-normal leading-relaxed text-zinc-200 sm:text-xl">
               {POSITIONING_LEAD}
             </p>
-            <p className="mt-4 text-sm leading-[1.75] text-zinc-500 sm:text-base">
-              {POSITIONING_SUPPORT}
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-600">{NOT_AI_JOURNAL_LINE}</p>
-            <p className="mt-1 text-sm leading-relaxed text-zinc-600">{PRODUCT_WEDGE_LINE}</p>
+            <ul className="mx-auto mt-5 max-w-md space-y-2 text-left text-sm leading-relaxed text-zinc-400">
+              <li>{HOMEPAGE_CLARITY.stepSpeak}</li>
+              <li>{HOMEPAGE_CLARITY.stepRemember}</li>
+              <li>{HOMEPAGE_CLARITY.stepReturn}</li>
+            </ul>
+            <div className="mx-auto mt-8 max-w-md rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-left">
+              <p className="text-[10px] uppercase tracking-wider text-zinc-600">
+                {HOMEPAGE_CLARITY.exampleLabel}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-400/95">
+                {HOMEPAGE_CLARITY.example}
+              </p>
+            </div>
+            <p className="mt-6 text-sm leading-[1.75] text-zinc-500">{POSITIONING_SUPPORT}</p>
           </MotionPage>
 
           <motion.div
@@ -223,6 +231,9 @@ export default function HomePage() {
             ref={recorderRef}
             id="recorder"
           >
+            <p className="mb-4 text-center text-sm leading-relaxed text-zinc-400">
+              {HOMEPAGE_CLARITY.ctaLine}
+            </p>
             <Recorder
               preRecordLine={reflectionPrompt ? null : recorderLine}
               reflectionPrompt={reflectionPrompt}

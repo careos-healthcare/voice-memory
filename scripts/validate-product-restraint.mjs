@@ -41,6 +41,7 @@ const SKIP_PATH_PARTS = [
   "lib/restraint/",
   "lib/onboarding/",
   "lib/resurfacing/emotional-specificity.ts",
+  "lib/resurfacing/genericity-filter.ts",
   "lib/refinement/callback-deduplication.ts",
   "lib/refinement/callback-suppression.ts",
   "lib/revisit/resurfacing-copy.ts",

@@ -1,6 +1,11 @@
 import { getMemoryEligibleEntriesVersion } from "@/lib/storage";
 import { assessResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
 import { assessResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
+import {
+  isGenericResurfacing,
+  passesResurfacingGenericityGate,
+  scoreSpecificity,
+} from "@/lib/resurfacing/genericity-filter";
 import { isBlockedResurfacingCopy, isGenericResurfacingCopy } from "@/lib/revisit/resurfacing-copy";
 import { isTopicRecurrenceCopy } from "@/lib/refinement/revisit-reward-copy";
 import type { JournalEntry } from "@/types/journal";
@@ -76,13 +81,18 @@ export function assessConcreteResurfacingEvidence(
     !text ||
     isBlockedResurfacingCopy(text) ||
     isGenericResurfacingCopy(text) ||
+    isGenericResurfacing(text) ||
     isTopicRecurrenceCopy(text) ||
     WEAK_ONLY_RE.test(text) ||
     confidence.suppressed;
 
   const hasAnchor = kinds.length > 0;
   const hasExplanation = Boolean(whyNow.explanation?.trim());
-  const backed = !blocked && hasAnchor && hasExplanation && whyNow.evidenceBacked;
+  const specificityOk = passesResurfacingGenericityGate(text, note, {
+    evidenceBacked: whyNow.evidenceBacked,
+  });
+  const backed =
+    !blocked && hasAnchor && hasExplanation && whyNow.evidenceBacked && specificityOk;
 
   let strength = 0;
   if (kinds.includes("repeated_phrase")) strength += 42;
@@ -91,6 +101,7 @@ export function assessConcreteResurfacingEvidence(
   if (kinds.includes("mood_shift")) strength += 18;
   if (kinds.includes("meaningful_gap")) strength += 12;
   strength += Math.min(confidence.totalConfidence * 0.35, 28);
+  strength += Math.min(scoreSpecificity(text, note) * 0.25, 22);
 
   return {
     backed,

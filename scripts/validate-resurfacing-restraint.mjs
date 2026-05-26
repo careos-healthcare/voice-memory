@@ -77,8 +77,21 @@ if (!revisitQuality.includes("isBlockedResurfacingCopy") || !revisitQuality.incl
   process.exit(1);
 }
 
+if (!fs.existsSync(path.join(ROOT, "lib/resurfacing/genericity-filter.ts"))) {
+  console.error("Resurfacing validation failed — missing genericity-filter.ts");
+  process.exit(1);
+}
+
 if (!callbackTuning.includes("isBlockedResurfacingCopy")) {
   console.error("Resurfacing validation failed — callback-tuning must reject blocked resurfacing copy.");
+  process.exit(1);
+}
+
+if (
+  !callbackTuning.includes("passesResurfacingGenericityGate") ||
+  !callbackTuning.includes("isGenericResurfacing")
+) {
+  console.error("Resurfacing validation failed — callback-tuning must use genericity filter.");
   process.exit(1);
 }
 

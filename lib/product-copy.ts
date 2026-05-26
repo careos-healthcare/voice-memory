@@ -23,13 +23,25 @@ export const WEDGE_RESURFACING = {
 } as const;
 
 export const APP_EYEBROW = "Private voice reflections";
-export const APP_TAGLINE = "Record a short reflection. Keep it on this device.";
-export const APP_LEAD =
-  "Record one short reflection. VoiceMemory saves it here until you export or delete it.";
-export const APP_SUPPORT = `${WEDGE_RESURFACING.wordsCameBack} Sign in only if you want encrypted backup.`;
+export const APP_TAGLINE = "Voice journaling that resurfaces what repeats in your own words.";
+export const APP_LEAD = "Speak thoughts aloud. VoiceMemory remembers patterns. Relevant moments return later.";
+export const APP_SUPPORT =
+  "Record on this device. Sign in only if you want encrypted backup.";
 export const APP_HONESTY =
-  "Local-first on this device. Not therapy, not a diagnosis, and not a score or streak.";
+  "Local-first. Not therapy, not a diagnosis, and not a score or streak.";
 export const APP_DEVICE_LINE = "Speak for about a minute. Your words stay on this device.";
+
+/** Homepage hero — understandable in ~5 seconds. */
+export const HOMEPAGE_CLARITY = {
+  stepSpeak: "Speak thoughts aloud",
+  stepRemember: "VoiceMemory remembers patterns",
+  stepReturn: "Relevant moments return later",
+  ctaLine:
+    "Record thoughts with your voice. VoiceMemory quietly resurfaces moments that repeat over time.",
+  exampleLabel: "Example",
+  example:
+    "Three weeks apart, you mentioned waiting for the same phone call.",
+} as const;
 
 export const APP_SUBTITLE = PRODUCT_WEDGE_LINE;
 export const APP_DESCRIPTION_SHORT =

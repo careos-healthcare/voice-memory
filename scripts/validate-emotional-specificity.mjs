@@ -22,6 +22,7 @@ const SKIP_PATH_PARTS = [
   "lib/integrity",
   "lib/onboarding/onboarding-restraint.ts",
   "lib/resurfacing/emotional-specificity.ts",
+  "lib/resurfacing/genericity-filter.ts",
   "lib/revisit/resurfacing-copy.ts",
   "scripts/",
   "app/safety",

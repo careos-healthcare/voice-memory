@@ -1,3 +1,4 @@
+import { isGenericResurfacing } from "@/lib/resurfacing/genericity-filter";
 import type { ResurfacingKind } from "@/types/resurfacing";
 import type { RevisitationKind } from "@/types/revisitation";
 import type { JournalEntry } from "@/types/journal";
@@ -223,6 +224,7 @@ export const OVERCLAIM_RESURFACING_RE =
 export function isGenericResurfacingCopy(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return true;
+  if (isGenericResurfacing(trimmed)) return true;
   return GENERIC_RESURFACING_COPY.some((pattern) => pattern.test(trimmed));
 }
 

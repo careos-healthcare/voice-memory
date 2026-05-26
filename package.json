@@ -27,6 +27,9 @@
     "validate:auth-storage": "node scripts/validate-auth-storage-restraint.mjs",
     "validate:durable-storage": "node scripts/validate-durable-storage-restraint.mjs",
     "validate:resurfacing": "node scripts/validate-resurfacing-restraint.mjs",
+    "validate:genericity": "node scripts/validate-genericity-restraint.mjs",
+    "validate:homepage-clarity": "node scripts/validate-homepage-clarity.mjs",
+    "validate:resurfacing-specificity": "node scripts/validate-resurfacing-specificity.mjs",
     "validate:resurfacing-confidence": "node scripts/validate-resurfacing-confidence-restraint.mjs",
     "validate:resurfacing-timing": "node scripts/validate-resurfacing-timing-restraint.mjs",
     "validate:callback-learning": "node scripts/validate-callback-learning-restraint.mjs",
@@ -45,7 +48,7 @@
     "validate:sync-parse": "node --import tsx scripts/run-sync-parse-tests.mjs",
     "validate:stress": "node --import tsx scripts/run-stress-tests.mjs",
     "stress-tests": "node --import tsx scripts/run-stress-tests.mjs",
-    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:acquisition && npm run validate:testimonial && npm run validate:sharing && npm run validate:compounding && npm run validate:permanence && npm run validate:validation-ops && npm run validate:monetization && npm run validate:pilot && npm run validate:integrity && npm run validate:individuality && npm run validate:sacredness && npm run validate:personalization && npm run validate:territories && npm run validate:atmosphere && npm run validate:silence-intelligence && npm run validate:auth-storage && npm run validate:durable-storage && npm run validate:resurfacing && npm run validate:resurfacing-confidence && npm run validate:resurfacing-timing && npm run validate:callback-learning && npm run validate:retention && npm run validate:onboarding && npm run validate:hydration && npm run validate:homepage-cta && npm run validate:presentation-side-effects && npm run validate:presentation-side-effects-tests && npm run validate:entry-route && npm run validate:entry-route-tests && npm run validate:emotional-specificity && npm run validate:account-route && npm run validate:transcript-cleanup && npm run validate:performance && npm run validate:sync-parse && npm run validate:stress"
+    "validate": "npm run validate:quiet-copy && npm run validate:restraint && npm run validate:acquisition && npm run validate:testimonial && npm run validate:sharing && npm run validate:compounding && npm run validate:permanence && npm run validate:validation-ops && npm run validate:monetization && npm run validate:pilot && npm run validate:integrity && npm run validate:individuality && npm run validate:sacredness && npm run validate:personalization && npm run validate:territories && npm run validate:atmosphere && npm run validate:silence-intelligence && npm run validate:auth-storage && npm run validate:durable-storage && npm run validate:resurfacing && npm run validate:genericity && npm run validate:resurfacing-specificity && npm run validate:homepage-clarity && npm run validate:resurfacing-confidence && npm run validate:resurfacing-timing && npm run validate:callback-learning && npm run validate:retention && npm run validate:onboarding && npm run validate:hydration && npm run validate:homepage-cta && npm run validate:presentation-side-effects && npm run validate:presentation-side-effects-tests && npm run validate:entry-route && npm run validate:entry-route-tests && npm run validate:emotional-specificity && npm run validate:account-route && npm run validate:transcript-cleanup && npm run validate:performance && npm run validate:sync-parse && npm run validate:stress"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

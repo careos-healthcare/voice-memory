@@ -24,6 +24,11 @@ import {
 } from "@/lib/revisit/resurfacing-timing";
 import { applyCallbackLearningRankAdjustment } from "@/lib/revisit/callback-learning";
 import { hasConcreteResurfacingEvidence } from "@/lib/resurfacing/evidence-engine";
+import {
+  isGenericResurfacing,
+  passesResurfacingGenericityGate,
+  scoreSpecificity,
+} from "@/lib/resurfacing/genericity-filter";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -83,6 +88,7 @@ function scorePenalties(text: string, note: MemoryNote): number {
   if (text.includes(" — ") || text.includes(";")) penalty += 4;
   if (isTopicRecurrenceCopy(text)) penalty += 24;
   if (isBlockedResurfacingCopy(text)) penalty += 28;
+  if (isGenericResurfacing(text)) penalty += 32;
   if (LOW_CONTRAST_RESURFACE_RE.test(note.id)) penalty += 18;
   return penalty;
 }
@@ -121,7 +127,7 @@ export function scoreCallbackTuning(
     if (intensityDelta >= 1.5) emotionalContrast += 10 + Math.round(intensityDelta * 2);
   }
 
-  let specificity = 10;
+  let specificity = Math.round(scoreSpecificity(text, note) * 0.45);
   if (hasOneQuote) specificity += 14;
   if (/\b(mum|dad|work|home|Sarah|[A-Z][a-z]{2,})\b/.test(text)) specificity += 10;
   if (note.pastDateLabel && note.currentDateLabel) specificity += 6;
@@ -226,7 +232,11 @@ export function pickBestCallback(
   entries: JournalEntry[],
   minTotal = SCORE_WEAK,
 ): MemoryNote | null {
-  const backed = notes.filter((note) => hasConcreteResurfacingEvidence(note, entries));
+  const backed = notes.filter(
+    (note) =>
+      hasConcreteResurfacingEvidence(note, entries) &&
+      passesResurfacingGenericityGate(note.text, note, { evidenceBacked: true }),
+  );
   if (backed.length === 0) return null;
 
   const ranked = rankCallbacksByTuning(backed, entries);
@@ -234,6 +244,7 @@ export function pickBestCallback(
     (row) =>
       row.score.total >= minTotal &&
       row.score.penalties < 24 &&
+      !isGenericResurfacing(row.note.text) &&
       !isTopicRecurrenceCopy(row.note.text) &&
       !isBlockedResurfacingCopy(row.note.text) &&
       !LOW_CONTRAST_RESURFACE_RE.test(row.note.id) &&
