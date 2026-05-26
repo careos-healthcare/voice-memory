@@ -1,3 +1,4 @@
+import { capInterruptionLine } from "@/lib/capture/interruption-timing";
 import { classifyEmotionalCaptureState, getCaptureRouting } from "@/lib/capture/emotional-state-routing";
 import type { ClarityRecordContext } from "@/lib/clarity/clarity-record";
 import type { ReflexCaptureContext } from "@/lib/reflex/reflex-context";
@@ -44,7 +45,7 @@ export function getZeroStateRecorderLine(
     reflexCapture: input.reflexCapture,
     preserveQuote: input.preserveQuote,
   });
-  return routing.preSpeechLine;
+  return capInterruptionLine(routing.preSpeechLine);
 }
 
 export function shouldAutoStartZeroStateRecorder(

@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 
 import { Recorder } from "@/components/Recorder";
+import { markAppOpenForCapture, markFastCaptureReady } from "@/lib/capture/fast-capture";
+import { markMicVisibleForHesitation } from "@/lib/capture/hesitation-signals";
 import {
   getZeroStateRecorderLine,
   shouldAutoStartZeroStateRecorder,
@@ -56,12 +58,13 @@ export function ZeroStateRecorderShell({
     autoStartOverride ?? shouldAutoStartZeroStateRecorder(input);
   const zeroState = shouldUseZeroStateRecorder(input);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    markAppOpenForCapture();
     startVulnerabilitySession(captureContext);
     markReflexRecorderMounted();
-    requestAnimationFrame(() => {
-      markMicVisible(captureContext);
-    });
+    markMicVisibleForHesitation();
+    markMicVisible(captureContext);
+    markFastCaptureReady();
   }, [captureContext]);
 
   return (

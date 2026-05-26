@@ -165,19 +165,37 @@ export function BehaviorTruthPanel({ report }: { report: BehaviorTruthReport }) 
         <Card className="mt-3 border-violet-500/20 bg-violet-950/10">
           <CardContent className="space-y-2 py-4 text-sm text-zinc-400">
             <p>
-              Median to mic:{" "}
+              App open → mic:{" "}
               <span className="text-zinc-200">
-                {vulnerability.medianTimeToMicMs != null
-                  ? `${vulnerability.medianTimeToMicMs}ms`
-                  : "—"}
+                {vulnerability.medianAppOpenToMicVisibleMs ??
+                  vulnerability.medianTimeToMicMs ??
+                  "—"}
+                ms
               </span>
             </p>
             <p>
-              Median to vulnerable phrase:{" "}
+              App open → record:{" "}
               <span className="text-zinc-200">
-                {vulnerability.medianTimeToVulnerablePhraseMs != null
-                  ? `${vulnerability.medianTimeToVulnerablePhraseMs}ms`
-                  : "—"}
+                {vulnerability.medianAppOpenToRecordingStartedMs ?? "—"}ms
+              </span>
+            </p>
+            <p>
+              Median hesitation / silence before speech:{" "}
+              <span className="text-zinc-200">
+                {vulnerability.medianHesitationMs ?? "—"}ms /{" "}
+                {vulnerability.medianSilenceBeforeSpeechMs ?? "—"}ms
+              </span>
+            </p>
+            <p>
+              Vulnerable phrase latency:{" "}
+              <span className="text-zinc-200">
+                {vulnerability.medianTimeToVulnerablePhraseMs ?? "—"}ms
+              </span>
+            </p>
+            <p>
+              Direct-to-mic conversion:{" "}
+              <span className="text-zinc-200">
+                {vulnerability.directToMicConversionPercent ?? "—"}%
               </span>
             </p>
             <p className="text-xs text-zinc-600">{vulnerability.scopeNote}</p>
@@ -188,7 +206,18 @@ export function BehaviorTruthPanel({ report }: { report: BehaviorTruthReport }) 
       <section>
         <p className="text-xs uppercase tracking-wider text-zinc-600">Interruption timing</p>
         <Card className="mt-3 border-white/[0.06] bg-zinc-900/40">
-          <CardContent className="py-4 text-sm text-zinc-500">{interruption.plain}</CardContent>
+          <CardContent className="space-y-2 py-4 text-sm text-zinc-500">
+            <p>{interruption.plain}</p>
+            <p className="text-zinc-400">
+              Effectiveness (recording): {interruption.recordingEffectivenessPercent ?? "—"}%
+              · Silence: {interruption.silenceEffectivenessPercent ?? "—"}%
+            </p>
+            <p className="text-xs text-zinc-600">
+              Shown {interruption.metrics.shown} · suppressed {interruption.metrics.suppressed}{" "}
+              · led to record {interruption.metrics.ledToRecording} · read{" "}
+              {interruption.metrics.ledToReading}
+            </p>
+          </CardContent>
         </Card>
       </section>
 

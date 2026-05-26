@@ -27,8 +27,12 @@ for (const fn of [
 }
 
 const record = fs.readFileSync(path.join(ROOT, "app/record/page.tsx"), "utf8");
-if (!record.includes("ZeroStateRecorderShell")) {
-  failures.push("/record must use ZeroStateRecorderShell");
+const quickRecord = fs.readFileSync(
+  path.join(ROOT, "components/capture/QuickRecordPage.tsx"),
+  "utf8",
+);
+if (!record.includes("QuickRecordPage") || !quickRecord.includes("ZeroStateRecorderShell")) {
+  failures.push("/record must render QuickRecordPage with ZeroStateRecorderShell");
 }
 for (const heavy of [
   "LivingResurfacingNote",

@@ -19,5 +19,7 @@ export interface InterruptionTimingReport {
   shouldInterruptNow: boolean;
   shouldStaySilent: boolean;
   bestMode: InterruptionMode;
+  recordingEffectivenessPercent: number | null;
+  silenceEffectivenessPercent: number | null;
   plain: string;
 }

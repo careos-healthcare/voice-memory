@@ -1,3 +1,4 @@
+import { shouldSuppressContinuityEntirely } from "@/lib/capture/hesitation-signals";
 import { buildReadVsSpeakRisk } from "@/lib/reflex/read-vs-speak";
 import { shouldActivateReflexSilenceFirst } from "@/lib/reflex/open-without-record";
 import { detectReflexCapture } from "@/lib/reflex/reflex-capture";
@@ -33,6 +34,7 @@ const RUMINATION_RE =
 /** Routing only — never shown to users. */
 export function classifyEmotionalCaptureState(): EmotionalCaptureState {
   if (isSideEffectBlocked()) return "neutral";
+  if (shouldSuppressContinuityEntirely()) return "exhausted";
 
   const readRisk = buildReadVsSpeakRisk();
   if (readRisk.passiveReadingLikely || readRisk.consumableContinuityRisk) {

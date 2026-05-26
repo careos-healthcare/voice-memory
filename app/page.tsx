@@ -37,6 +37,8 @@ import {
   consumeRecordReturnContext,
   peekRecordReturnContext,
 } from "@/lib/reflection/record-return";
+import { buildDirectRecordHref } from "@/lib/capture/direct-record";
+import { shouldForceDirectMicNextSession } from "@/lib/capture/hesitation-signals";
 import { hrefForRecordReturn, startRecordReturnFlow } from "@/lib/reflection/start-record-return";
 import {
   consumeClarityRecordContext,
@@ -124,6 +126,10 @@ export default function HomePage() {
     directToMic || silenceFirstReflex || Boolean(recordReturn || clarityRecord || reflexCapture);
 
   useEffect(() => {
+    if (shouldForceDirectMicNextSession()) {
+      router.replace(buildDirectRecordHref({ source: "reflex", autostart: true }));
+      return;
+    }
     markReflexPageLand();
     recordReflexAppOpen();
     markHomepageReadingStart();
@@ -203,6 +209,7 @@ export default function HomePage() {
     });
     return () => cancelAnimationFrame(id);
   }, [
+    router,
     limits.resurfacing,
     limits.familiarity,
     limits.rhythm,

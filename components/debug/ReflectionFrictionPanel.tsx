@@ -77,6 +77,18 @@ export function ReflectionFrictionPanel({ report }: { report: ReflectionFriction
               {interruption.metrics.silenceChosen}
             </dd>
           </div>
+          <div className="flex justify-between gap-4">
+            <dt>Recording effectiveness</dt>
+            <dd className="tabular-nums text-zinc-200">
+              {interruption.recordingEffectivenessPercent ?? "—"}%
+            </dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt>Silence effectiveness</dt>
+            <dd className="tabular-nums text-zinc-200">
+              {interruption.silenceEffectivenessPercent ?? "—"}%
+            </dd>
+          </div>
         </dl>
       </section>
 

@@ -21,10 +21,16 @@ export default function manifest(): MetadataRoute.Manifest {
         description: "Open directly to recording",
       },
       {
+        name: "Continue speaking",
+        short_name: "Continue",
+        url: "/record?source=reflex",
+        description: "Resume speaking without the homepage",
+      },
+      {
         name: "Return to this",
         short_name: "Return",
         url: "/record?source=return",
-        description: "Record with return context",
+        description: "Record with return context — add quote in-app if needed",
       },
     ],
     icons: [

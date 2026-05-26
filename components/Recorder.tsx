@@ -101,6 +101,15 @@ import {
 } from "@/lib/reflex/reflex-observation";
 import { recordReflexSessionRecording } from "@/lib/reflex/open-without-record";
 import {
+  isMicrophonePermissionGranted,
+  markMicrophonePermissionGranted,
+} from "@/lib/capture/fast-capture";
+import {
+  clearForceDirectMicAfterCapture,
+  clearHesitationWatch,
+  markSpeechStartedAfterHesitation,
+} from "@/lib/capture/hesitation-signals";
+import {
   markRecordingStartedForVulnerability,
   markVulnerablePhraseDetected,
 } from "@/lib/capture/vulnerability-timing";
@@ -262,6 +271,7 @@ export function Recorder({
       setState("complete");
       recorderCompletedRef.current = true;
       markRecorderCompleted();
+      clearForceDirectMicAfterCapture();
       completeFirstSessionStep("first_reflection");
       onComplete?.(newEntry);
 
@@ -550,6 +560,7 @@ export function Recorder({
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      markMicrophonePermissionGranted();
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
         : "audio/webm";
@@ -593,6 +604,8 @@ export function Recorder({
       markRecorderEngaged();
       markReflexRecordingStarted();
       markRecordingStartedForVulnerability(captureContext);
+      markSpeechStartedAfterHesitation();
+      clearHesitationWatch();
       recordInterruptionOutcome("recording");
       setState("recording");
 
@@ -650,10 +663,21 @@ export function Recorder({
   ]);
 
   useEffect(() => {
-    if (autoStart || recordReturnProp || clarityRecordProp || reflexCaptureProp) {
-      void startRecording();
-    }
-  }, [autoStart, clarityRecordProp, recordReturnProp, reflexCaptureProp, startRecording]);
+    const wantsAutoStart =
+      autoStart || Boolean(recordReturnProp || clarityRecordProp || reflexCaptureProp);
+    if (!wantsAutoStart) return;
+    void (async () => {
+      if (await isMicrophonePermissionGranted()) {
+        void startRecording();
+      }
+    })();
+  }, [
+    autoStart,
+    clarityRecordProp,
+    recordReturnProp,
+    reflexCaptureProp,
+    startRecording,
+  ]);
 
   useEffect(() => {
     observeFunnelRecorderViewed();

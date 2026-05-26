@@ -93,6 +93,39 @@ function buildReturnFromParams(
   return peekRecordReturnContext();
 }
 
+/** Sync preview for first paint — peek only, no storage writes or tracking. */
+export function parseQuickEntryPreview(
+  search: string,
+): Pick<
+  QuickEntryResolution,
+  | "recordReturn"
+  | "preserveQuote"
+  | "source"
+  | "entryId"
+  | "loopId"
+  | "autoStart"
+> & { reflexContext: ReflexCaptureContext | null; clarityRecord: ReturnType<typeof peekClarityRecordContext> } {
+  const params = new URLSearchParams(search);
+  const source = mapSourceParam(params.get("source"));
+  const recordReturn =
+    buildReturnFromParams(source, params) ?? peekRecordReturnContext();
+  const reflexContext = peekReflexCaptureContext();
+  const clarityRecord = peekClarityRecordContext();
+  const quote = params.get("quote");
+
+  return {
+    recordReturn,
+    reflexContext,
+    clarityRecord,
+    preserveQuote:
+      quote ?? reflexContext?.anchorQuote ?? recordReturn?.anchorQuote ?? clarityRecord?.anchorSnippet ?? null,
+    source: source ?? (recordReturn ? "return" : clarityRecord ? "clarity" : null),
+    entryId: params.get("entryId"),
+    loopId: params.get("loopId"),
+    autoStart: params.get("autostart") !== "0",
+  };
+}
+
 /** Parse URL for direct capture — `/record` is first-class. */
 export function parseQuickEntryIntent(
   location?: Pick<Location, "pathname" | "search" | "hash">,
