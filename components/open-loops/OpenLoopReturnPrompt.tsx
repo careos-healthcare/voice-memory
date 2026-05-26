@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Mic } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { buildDirectRecordHref } from "@/lib/capture/direct-record";
 import { readOpenLoopReturnOffer, type OpenLoopReturnOffer } from "@/lib/runtime/read-model";
 import { buildRecordReturnFromOpenLoop } from "@/lib/reflection/record-return";
 import { startRecordReturnFlow } from "@/lib/reflection/start-record-return";
@@ -19,6 +20,7 @@ export function OpenLoopReturnPrompt({
 }: {
   onRecordAgain?: () => void;
 }) {
+  const router = useRouter();
   const [offer, setOffer] = useState<OpenLoopReturnOffer | null>(null);
 
   useEffect(() => {
@@ -44,19 +46,25 @@ export function OpenLoopReturnPrompt({
         className="mobile-touch-target mt-4 min-h-[3rem] w-full sm:w-auto"
         data-primary-cta="recorder"
         onClick={() => {
-          startRecordReturnFlow(
-            buildRecordReturnFromOpenLoop({
-              openLoopId: offer.openLoopId,
-              anchorQuote: offer.text,
-              sourceEntryId: offer.sourceEntryId,
+          const ctx = buildRecordReturnFromOpenLoop({
+            openLoopId: offer.openLoopId,
+            anchorQuote: offer.text,
+            sourceEntryId: offer.sourceEntryId,
+          });
+          startRecordReturnFlow(ctx);
+          writeTrackOpenLoopReturnPromptEngaged(offer.openLoopId);
+          router.push(
+            buildDirectRecordHref({
+              source: "open_loop",
+              quote: offer.text,
+              loopId: offer.openLoopId,
+              entryId: offer.sourceEntryId,
             }),
           );
-          writeTrackOpenLoopReturnPromptEngaged(offer.openLoopId);
           onRecordAgain?.();
         }}
       >
-        <Mic className="h-5 w-5" />
-        Record again
+        Record where this is now
       </Button>
       <button
         type="button"

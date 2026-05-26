@@ -89,6 +89,7 @@ import {
   qualifiesForClarityPrompt,
 } from "@/lib/clarity/thinking-out-loud-signals";
 import { recordReflectionAfterResurface } from "@/lib/resurfacing/resurfacing-fatigue";
+import { observeReflectionAfterMode } from "@/lib/resurfacing/resurfacing-mode-observation";
 import {
   peekReflexCaptureContext,
   type ReflexCaptureContext,
@@ -99,6 +100,11 @@ import {
   markReflexRecorderMounted,
 } from "@/lib/reflex/reflex-observation";
 import { recordReflexSessionRecording } from "@/lib/reflex/open-without-record";
+import {
+  markRecordingStartedForVulnerability,
+  markVulnerablePhraseDetected,
+} from "@/lib/capture/vulnerability-timing";
+import { recordInterruptionOutcome } from "@/lib/capture/interruption-timing";
 import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
 import type { RecordReturnContext as RecordReturnContextType } from "@/types/record-return";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
@@ -116,6 +122,9 @@ interface RecorderProps {
   reflexCapture?: ReflexCaptureContext | null;
   /** Faster boot — defer extras, prioritize mic. */
   reflexFastBoot?: boolean;
+  /** Zero-state capture — one line max, no density/explanation modules. */
+  zeroState?: boolean;
+  captureContext?: string;
   quickReflection?: boolean;
 }
 
@@ -135,6 +144,8 @@ export function Recorder({
   clarityRecord: clarityRecordProp,
   reflexCapture: reflexCaptureProp,
   reflexFastBoot = false,
+  zeroState = false,
+  captureContext = "recorder",
   quickReflection = false,
 }: RecorderProps) {
   const router = useRouter();
@@ -161,7 +172,8 @@ export function Recorder({
   const recordReturnRef = useRef<RecordReturnContextType | null>(recordReturnProp ?? null);
   const clarityRecordRef = useRef<ClarityRecordContext | null>(clarityRecordProp ?? null);
   const reflexCaptureRef = useRef<ReflexCaptureContext | null>(reflexCaptureProp ?? null);
-  const quickMode = quickReflection || isQuickReflectionEnabled() || reflexFastBoot;
+  const quickMode =
+    quickReflection || isQuickReflectionEnabled() || reflexFastBoot || zeroState;
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -223,6 +235,11 @@ export function Recorder({
     writeLinkReflectionAfterResurface(newEntry);
     observeReflectionAfterCallback({ id: returnCtx.noteId });
     recordReflectionAfterResurface(returnCtx.noteId);
+    observeReflectionAfterMode(
+      { id: returnCtx.noteId, pastEntryId: returnCtx.pastEntryId, text: returnCtx.anchorQuote },
+      undefined,
+      returnCtx.returnMode,
+    );
     finalizeAfterSaveContinuity(newEntry, returnCtx);
     setContinuityLine(RECORD_RETURN_SAVED_LINE);
   }, []);
@@ -301,6 +318,7 @@ export function Recorder({
         const listeningModeActive = listeningMode;
 
         setLiveTranscript(prepared.transcript);
+        markVulnerablePhraseDetected(prepared.transcript, captureContext);
 
         if ((quickMode || reflexFastBoot) && !listeningModeActive) {
           setStage("saving");
@@ -574,6 +592,8 @@ export function Recorder({
       markRecorderStarted();
       markRecorderEngaged();
       markReflexRecordingStarted();
+      markRecordingStartedForVulnerability(captureContext);
+      recordInterruptionOutcome("recording");
       setState("recording");
 
       timerRef.current = window.setInterval(() => {
@@ -606,6 +626,7 @@ export function Recorder({
 
   useEffect(() => {
     if (
+      zeroState ||
       preRecordLine ||
       reflectionPrompt ||
       recordReturnProp ||
@@ -720,11 +741,27 @@ export function Recorder({
                   Record
                 </Button>
               </div>
-            ) : canShowRecorderCta && activeReturn ? (
+            ) : canShowRecorderCta && activeReturn && !zeroState ? (
               <RecordReturnAnchor
                 context={activeReturn}
                 onRecordAgain={() => void startRecording()}
               />
+            ) : canShowRecorderCta && activeReturn && zeroState ? (
+              <div className="flex w-full max-w-md flex-col items-center gap-5">
+                <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
+                  {activeReturn.anchorQuote}
+                </p>
+                <Button
+                  type="button"
+                  size="lg"
+                  className="mobile-touch-target mobile-recorder-primary min-h-[3.25rem] min-w-[13rem] text-base"
+                  data-primary-cta="recorder"
+                  onClick={() => void startRecording()}
+                >
+                  <Mic className="h-5 w-5" />
+                  Record
+                </Button>
+              </div>
             ) : canShowRecorderCta ? (
               <>
                 <Button

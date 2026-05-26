@@ -8,6 +8,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REQUIRED = [
   "lib/resurfacing/resurfacing-fatigue.ts",
   "lib/resurfacing/behavioral-ranking.ts",
+  "lib/resurfacing/return-modes.ts",
 ];
 
 const failures = [];
@@ -49,6 +50,9 @@ const tuning = fs.readFileSync(
 );
 if (!tuning.includes("shouldSuppressResurfacingNote")) {
   failures.push("callback-tuning must apply resurfacing fatigue suppression");
+}
+if (!tuning.includes("filterCallbacksByModeDiversity")) {
+  failures.push("callback-tuning must apply return-mode diversity");
 }
 
 if (failures.length > 0) {

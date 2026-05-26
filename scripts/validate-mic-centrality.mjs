@@ -47,8 +47,16 @@ if (!home.includes("{!micCentric ?")) {
 }
 
 const recordPage = fs.readFileSync(path.join(ROOT, "app/record/page.tsx"), "utf8");
-if (!recordPage.includes("reflexFastBoot") || !recordPage.includes("Recorder")) {
-  failures.push("/record quick-entry must open Recorder with reflexFastBoot");
+const zeroShell = fs.readFileSync(
+  path.join(ROOT, "components/capture/ZeroStateRecorderShell.tsx"),
+  "utf8",
+);
+if (
+  !recordPage.includes("ZeroStateRecorderShell") ||
+  !zeroShell.includes("reflexFastBoot") ||
+  !zeroShell.includes("<Recorder")
+) {
+  failures.push("/record must use ZeroStateRecorderShell with reflexFastBoot Recorder");
 }
 
 const quickEntry = fs.readFileSync(

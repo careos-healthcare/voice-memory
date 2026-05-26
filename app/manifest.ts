@@ -13,6 +13,20 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#09090b",
     theme_color: "#09090b",
     categories: ["lifestyle", "health"],
+    shortcuts: [
+      {
+        name: "Record now",
+        short_name: "Record",
+        url: "/record",
+        description: "Open directly to recording",
+      },
+      {
+        name: "Return to this",
+        short_name: "Return",
+        url: "/record?source=return",
+        description: "Record with return context",
+      },
+    ],
     icons: [
       {
         src: "/icon",

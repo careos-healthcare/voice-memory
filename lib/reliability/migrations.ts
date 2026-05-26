@@ -1,5 +1,6 @@
 import { normalizeReflection } from "@/lib/reflection";
 import { safeSetJson } from "@/lib/reliability/safe-local-storage";
+import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
 import {
   CURRENT_STORAGE_VERSION,
   readStorageVersion,
@@ -114,7 +115,7 @@ const MIGRATIONS: Record<number, () => void> = {
 
 /** Run pending storage migrations once per session. */
 export function ensureStorageReady(): void {
-  if (!isBrowser() || storageReady) return;
+  if (!isBrowser() || storageReady || isSideEffectBlocked()) return;
 
   let version = readStorageVersion();
 

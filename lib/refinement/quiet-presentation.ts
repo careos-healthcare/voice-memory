@@ -17,6 +17,14 @@ import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryContinuationOpener } from "@/lib/conversation/conversation-continuity";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { pickBestCallback, rankCallbacksByTuning } from "@/lib/refinement/callback-tuning";
+import {
+  bestInterruptionMode,
+  recordInterruptionShown,
+  shouldInterruptNow,
+  shouldStaySilent,
+} from "@/lib/capture/interruption-timing";
+import { capHomepageResurfacingPresentation } from "@/lib/resurfacing/resurfacing-frequency";
+import { naturalizeResurfacingNote } from "@/lib/resurfacing/resurfacing-natural-voice";
 import { pickQualityRevisitNotes } from "@/lib/revisit/revisit-quality";
 import {
   enrichNoteWithResurfacingConfidence,
@@ -112,7 +120,13 @@ export function buildQuietHomepagePresentation(
   ).filter((note) => shouldAllowEmotionalNote("homepage", note));
 
   const firstAha = pickFirstAhaCallback(entries);
-  const primaryNote = pickBestCallback(eligible, entries, 48);
+  const primaryNote =
+    shouldStaySilent() || !shouldInterruptNow()
+      ? null
+      : pickBestCallback(eligible, entries, 48);
+  if (primaryNote) {
+    recordInterruptionShown(bestInterruptionMode());
+  }
   const knowsMe = homepageKnowsMeMoment(entries);
   const resolvedPrimaryRaw = firstAha
     ? firstAhaAsMemoryNote(firstAha)
@@ -141,7 +155,9 @@ export function buildQuietHomepagePresentation(
 
   const calibrated = calibrateHomepagePresentation(
     {
-      primaryNote: resolvedPrimary,
+      primaryNote: resolvedPrimary
+        ? naturalizeResurfacingNote(resolvedPrimary, entries)
+        : null,
       continuation,
       followupPrompt: null,
       recorderLine: continuation.length === 0 ? recorderPreRecordLine(entries) : null,
@@ -151,12 +167,18 @@ export function buildQuietHomepagePresentation(
     entries,
   );
 
-  return {
+  const withFollowup = {
     ...calibrated,
     followupPrompt: buildFollowupPrompt(
       calibrated.primaryNote ? [calibrated.primaryNote] : [],
       entries,
     ),
+  };
+
+  const capped = capHomepageResurfacingPresentation(withFollowup);
+
+  return {
+    ...capped,
     sideEffects,
   };
 }
@@ -224,7 +246,10 @@ export function buildQuietEntryPresentation(
       ? pickBestCallback(eligible, allEntries, revisitMode ? 52 : 44)
       : null;
   const primaryMoment = primaryMomentRaw
-    ? enrichNoteWithResurfacingConfidence(primaryMomentRaw, allEntries)
+    ? naturalizeResurfacingNote(
+        enrichNoteWithResurfacingConfidence(primaryMomentRaw, allEntries),
+        allEntries,
+      )
     : null;
 
   if (primaryMoment) {

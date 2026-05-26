@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 import { CrossDeviceCarryoverLine } from "@/components/sync/CrossDeviceCarryoverLine";
@@ -36,6 +37,7 @@ import {
   consumeRecordReturnContext,
   peekRecordReturnContext,
 } from "@/lib/reflection/record-return";
+import { hrefForRecordReturn, startRecordReturnFlow } from "@/lib/reflection/start-record-return";
 import {
   consumeClarityRecordContext,
   peekClarityRecordContext,
@@ -93,6 +95,7 @@ import {
   REFLEX_EVENTS,
 } from "@/lib/reflex/reflex-observation";
 export default function HomePage() {
+  const router = useRouter();
   const { limits } = useQuietMode();
   const [primaryNote, setPrimaryNote] = useState<MemoryNote | null>(null);
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
@@ -240,19 +243,19 @@ export default function HomePage() {
 
   const handleRecordAgain = useCallback(
     (prompt: FollowupPrompt) => {
-      setRecordReturn(buildRecordReturnFromFollowup(prompt));
-      setRecorderAutoStart(true);
-      scrollToRecorder();
+      const ctx = buildRecordReturnFromFollowup(prompt);
+      startRecordReturnFlow(ctx);
+      router.push(hrefForRecordReturn(ctx));
     },
-    [scrollToRecorder],
+    [router],
   );
 
   const handlePrimaryRecordAgain = useCallback(() => {
     if (!primaryNote) return;
-    setRecordReturn(buildRecordReturnFromNote(primaryNote));
-    setRecorderAutoStart(true);
-    scrollToRecorder();
-  }, [primaryNote, scrollToRecorder]);
+    const ctx = buildRecordReturnFromNote(primaryNote);
+    startRecordReturnFlow(ctx);
+    router.push(hrefForRecordReturn(ctx));
+  }, [primaryNote, router]);
 
   const reflexContinuityLine =
     reflexCapture?.continuityLine ?? recordReturn?.anchorQuote ?? null;

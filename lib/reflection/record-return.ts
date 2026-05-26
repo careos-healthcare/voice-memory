@@ -1,4 +1,6 @@
 import { storeContinuationMeta } from "@/lib/conversation/continuation-loops";
+import { classifyResurfacingReturnMode } from "@/lib/resurfacing/return-modes";
+import { getMemoryEligibleEntries } from "@/lib/storage";
 import { recordFollowUpPrompt } from "@/lib/sync/cross-device-continuity";
 import type { FollowupPrompt } from "@/types/followup-prompt";
 import type { MemoryNote } from "@/types/memory-note";
@@ -39,12 +41,14 @@ export function buildRecordReturnFromNote(
   note: MemoryNote,
   source: RecordReturnSource = "primary_callback",
 ): RecordReturnContext {
+  const entries = getMemoryEligibleEntries();
   return {
     id: `return-${source}-${note.id}`,
     anchorQuote: anchorFromNote(note),
     noteId: note.id,
     source,
     pastEntryId: note.pastEntryId ?? note.entryId,
+    returnMode: classifyResurfacingReturnMode(note, entries),
   };
 }
 

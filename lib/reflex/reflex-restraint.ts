@@ -4,6 +4,7 @@ import {
   getResurfacingFatigueRecords,
   shouldSuppressResurfacingNote,
 } from "@/lib/resurfacing/resurfacing-fatigue";
+import { shouldPreferMicFirstWithoutContinuityStack } from "@/lib/resurfacing/resurfacing-frequency";
 import { buildReadVsSpeakRisk } from "@/lib/reflex/read-vs-speak";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 
@@ -46,7 +47,11 @@ export function shouldSuppressResurfacingForReflex(noteId?: string): boolean {
 }
 
 export function shouldDelayHomepageContinuityStack(): boolean {
-  return shouldSuppressResurfacingForReflex() || buildReadVsSpeakRisk().passiveReadingLikely;
+  return (
+    shouldPreferMicFirstWithoutContinuityStack() ||
+    shouldSuppressResurfacingForReflex() ||
+    buildReadVsSpeakRisk().passiveReadingLikely
+  );
 }
 
 export function reflexEmotionalWallpaperRisk(): boolean {

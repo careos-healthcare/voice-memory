@@ -1,8 +1,10 @@
 "use client";
 
+import { buildInterruptionTimingReport } from "@/lib/capture/interruption-timing";
 import type { ReflectionFrictionReport } from "@/types/reflection-friction";
 
 export function ReflectionFrictionPanel({ report }: { report: ReflectionFrictionReport }) {
+  const interruption = buildInterruptionTimingReport();
   const { metrics, warnings } = report;
 
   return (
@@ -48,6 +50,31 @@ export function ReflectionFrictionPanel({ report }: { report: ReflectionFriction
             <dt>Opened without reflection</dt>
             <dd className="tabular-nums text-zinc-200">
               {metrics.openedWithoutReflection}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-medium text-zinc-300">Interruption timing</h2>
+        <p className="mt-2 text-sm text-zinc-500">{interruption.plain}</p>
+        <dl className="mt-3 grid gap-2 text-sm text-zinc-400">
+          <div className="flex justify-between gap-4">
+            <dt>Shown / suppressed</dt>
+            <dd className="tabular-nums text-zinc-200">
+              {interruption.metrics.shown} / {interruption.metrics.suppressed}
+            </dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt>Led to recording / reading</dt>
+            <dd className="tabular-nums text-zinc-200">
+              {interruption.metrics.ledToRecording} / {interruption.metrics.ledToReading}
+            </dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt>Silence over resurfacing</dt>
+            <dd className="tabular-nums text-zinc-200">
+              {interruption.metrics.silenceChosen}
             </dd>
           </div>
         </dl>

@@ -8,6 +8,7 @@ import { rememberNoteContext } from "@/lib/retention/retention-loops";
 import { resolveSilenceIntelligence } from "@/lib/restraint/silence-intelligence";
 import { recordResurfacingShown } from "@/lib/resurfacing/resurfacing-fatigue";
 import { observeCallbackShown } from "@/lib/revisit/callback-learning";
+import { observeResurfacingModeShown } from "@/lib/resurfacing/resurfacing-mode-observation";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -112,6 +113,7 @@ function applyCallbackObservation(observation: CallbackObservation): void {
     surface,
     ...(context ? { context } : {}),
   });
+  observeResurfacingModeShown(note, entries, { surface });
   observeMagicCallbackSurfaced(note, entries, surface);
 }
 

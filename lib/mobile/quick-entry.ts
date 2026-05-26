@@ -1,10 +1,18 @@
 import {
+  buildClarityRecordContext,
   consumeClarityRecordContext,
   peekClarityRecordContext,
+  storeClarityRecordContext,
 } from "@/lib/clarity/clarity-record";
 import {
+  buildDirectRecordHref,
+  type DirectRecordSource,
+} from "@/lib/capture/direct-record";
+import {
+  buildRecordReturnFromOpenLoop,
   consumeRecordReturnContext,
   peekRecordReturnContext,
+  storeRecordReturnContext,
 } from "@/lib/reflection/record-return";
 import {
   consumeReflexCaptureContext,
@@ -14,6 +22,7 @@ import {
 } from "@/lib/reflex/reflex-context";
 import { detectReflexCapture } from "@/lib/reflex/reflex-capture";
 import { trackReflexEvent, REFLEX_EVENTS } from "@/lib/reflex/reflex-observation";
+import type { RecordReturnContext } from "@/types/record-return";
 
 export const QUICK_ENTRY_PATH = "/record";
 
@@ -29,7 +38,11 @@ export interface QuickEntryResolution {
   directRecorder: boolean;
   autoStart: boolean;
   reflexContext: ReflexCaptureContext | null;
+  recordReturn: RecordReturnContext | null;
   preserveQuote: string | null;
+  source: DirectRecordSource | null;
+  entryId: string | null;
+  loopId: string | null;
   href: string;
 }
 
@@ -37,7 +50,50 @@ function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
-/** Parse URL/hash/search for future deep links — infrastructure only. */
+function mapSourceParam(raw: string | null): DirectRecordSource | null {
+  if (
+    raw === "resurfacing" ||
+    raw === "open_loop" ||
+    raw === "clarity" ||
+    raw === "return" ||
+    raw === "reflex"
+  ) {
+    return raw;
+  }
+  return null;
+}
+
+function buildReturnFromParams(
+  source: DirectRecordSource | null,
+  params: URLSearchParams,
+): RecordReturnContext | null {
+  const quote = params.get("quote")?.trim();
+  const loopId = params.get("loopId");
+  const entryId = params.get("entryId");
+
+  if (source === "open_loop" && loopId && quote) {
+    return buildRecordReturnFromOpenLoop({
+      openLoopId: loopId,
+      anchorQuote: quote,
+      sourceEntryId: entryId ?? "",
+    });
+  }
+
+  if (quote && (source === "resurfacing" || source === "return")) {
+    return {
+      id: `return-${source}-${loopId ?? entryId ?? "quick"}`,
+      anchorQuote: quote.slice(0, 220),
+      noteId: loopId ?? entryId ?? `quick-${source}`,
+      source: source === "resurfacing" ? "resurfacing" : "primary_callback",
+      openLoopId: loopId ?? undefined,
+      pastEntryId: entryId ?? undefined,
+    };
+  }
+
+  return peekRecordReturnContext();
+}
+
+/** Parse URL for direct capture — `/record` is first-class. */
 export function parseQuickEntryIntent(
   location?: Pick<Location, "pathname" | "search" | "hash">,
 ): QuickEntryResolution {
@@ -46,7 +102,11 @@ export function parseQuickEntryIntent(
     directRecorder: false,
     autoStart: false,
     reflexContext: null,
+    recordReturn: null,
     preserveQuote: null,
+    source: null,
+    entryId: null,
+    loopId: null,
     href: "/",
   };
 
@@ -54,6 +114,7 @@ export function parseQuickEntryIntent(
 
   const loc = location ?? window.location;
   const params = new URLSearchParams(loc.search);
+  const source = mapSourceParam(params.get("source"));
 
   if (loc.pathname === QUICK_ENTRY_PATH || params.get("record") === "1") {
     const reflex = detectReflexCapture();
@@ -72,9 +133,29 @@ export function parseQuickEntryIntent(
       storeReflexCaptureContext(ctx);
     }
 
+    const recordReturn = buildReturnFromParams(source, params);
+    if (recordReturn) storeRecordReturnContext(recordReturn);
+
+    if (source === "clarity" && params.get("entryId") && !peekClarityRecordContext()) {
+      storeClarityRecordContext(
+        buildClarityRecordContext({
+          entryId: params.get("entryId")!,
+          anchorSnippet: params.get("quote") ?? "",
+        }),
+      );
+    }
+
     trackReflexEvent(REFLEX_EVENTS.quickEntryOpened, {
       path: loc.pathname,
-      intent: params.get("intent") ?? "record",
+      source: source ?? "record",
+    });
+
+    const href = buildDirectRecordHref({
+      source: source ?? "return",
+      quote: params.get("quote") ?? undefined,
+      loopId: params.get("loopId") ?? undefined,
+      entryId: params.get("entryId") ?? undefined,
+      autostart: params.get("autostart") !== "0",
     });
 
     return {
@@ -82,8 +163,12 @@ export function parseQuickEntryIntent(
       directRecorder: true,
       autoStart: params.get("autostart") !== "0",
       reflexContext: ctx,
-      preserveQuote: params.get("quote") ?? ctx?.anchorQuote ?? null,
-      href: `${QUICK_ENTRY_PATH}${loc.hash === "#recorder" ? "#recorder" : ""}`,
+      recordReturn,
+      preserveQuote: params.get("quote") ?? ctx?.anchorQuote ?? recordReturn?.anchorQuote ?? null,
+      source,
+      entryId: params.get("entryId"),
+      loopId: params.get("loopId"),
+      href,
     };
   }
 
@@ -95,8 +180,12 @@ export function parseQuickEntryIntent(
       directRecorder: true,
       autoStart: true,
       reflexContext: peekReflexCaptureContext(),
+      recordReturn: returnCtx,
       preserveQuote: returnCtx?.anchorQuote ?? clarity?.anchorSnippet ?? null,
-      href: "/#recorder",
+      source: returnCtx ? "return" : clarity ? "clarity" : null,
+      entryId: null,
+      loopId: null,
+      href: buildDirectRecordHref({ source: "return", autostart: true }),
     };
   }
 
@@ -114,3 +203,5 @@ export function consumeQuickEntryContexts(): {
     reflex: consumeReflexCaptureContext(),
   };
 }
+
+export { buildDirectRecordHref, openDirectToRecordingHref } from "@/lib/capture/direct-record";

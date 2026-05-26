@@ -68,8 +68,11 @@ const micHome = fs.readFileSync(
   path.join(ROOT, "components/reflex/MicCentricHome.tsx"),
   "utf8",
 );
-if ((micHome.match(/<Recorder/g) ?? []).length !== 1) {
-  failures.push("MicCentricHome must render exactly one Recorder");
+if (
+  !micHome.includes("ZeroStateRecorderShell") &&
+  (micHome.match(/<Recorder/g) ?? []).length !== 1
+) {
+  failures.push("MicCentricHome must use ZeroStateRecorderShell or one Recorder");
 }
 const continuityBlocks = (micHome.match(/<p className=/g) ?? []).length;
 if (continuityBlocks > 1) {

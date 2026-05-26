@@ -24,6 +24,21 @@ import {
 } from "@/lib/revisit/resurfacing-timing";
 import { applyBehavioralRankingBoost } from "@/lib/resurfacing/behavioral-ranking";
 import { shouldSuppressResurfacingNote } from "@/lib/resurfacing/resurfacing-fatigue";
+import {
+  filterCallbacksByModeDiversity,
+  getReturnModeFatiguePenalty,
+} from "@/lib/resurfacing/return-modes";
+import {
+  hasDetectableChange,
+  shouldSuppressWithoutDetectableChange,
+} from "@/lib/resurfacing/resurfacing-change-detection";
+import { shouldSuppressResurfacingByFrequency } from "@/lib/resurfacing/resurfacing-frequency";
+import {
+  naturalizeResurfacingNote,
+  passesNaturalVoiceGate,
+  syntheticVoicePenalty,
+} from "@/lib/resurfacing/resurfacing-natural-voice";
+import { passesResurfacingSpecificityGate } from "@/lib/resurfacing/resurfacing-specificity-gate";
 import { applyCallbackLearningRankAdjustment } from "@/lib/revisit/callback-learning";
 import { hasConcreteResurfacingEvidence } from "@/lib/resurfacing/evidence-engine";
 import {
@@ -92,6 +107,7 @@ function scorePenalties(text: string, note: MemoryNote): number {
   if (isBlockedResurfacingCopy(text)) penalty += 28;
   if (isGenericResurfacing(text)) penalty += 32;
   if (LOW_CONTRAST_RESURFACE_RE.test(note.id)) penalty += 18;
+  penalty += syntheticVoicePenalty(text);
   return penalty;
 }
 
@@ -192,7 +208,7 @@ export function scoreCallbackTuning(
     specificity += 12;
   }
 
-  const penalties = scorePenalties(text, note);
+  const penalties = scorePenalties(text, note) + getReturnModeFatiguePenalty(note, entries);
   const total = Math.max(
     0,
     emotionalContrast +
@@ -234,14 +250,22 @@ export function pickBestCallback(
   entries: JournalEntry[],
   minTotal = SCORE_WEAK,
 ): MemoryNote | null {
-  const backed = notes.filter(
-    (note) =>
-      hasConcreteResurfacingEvidence(note, entries) &&
-      passesResurfacingGenericityGate(note.text, note, { evidenceBacked: true }),
-  );
+  const backed = notes
+    .map((note) => naturalizeResurfacingNote(note, entries))
+    .filter(
+      (note) =>
+        !shouldSuppressResurfacingByFrequency(note) &&
+        !shouldSuppressWithoutDetectableChange(note, entries) &&
+        hasDetectableChange(note, entries) &&
+        hasConcreteResurfacingEvidence(note, entries) &&
+        passesResurfacingSpecificityGate(note, { evidenceBacked: true }) &&
+        passesNaturalVoiceGate(note) &&
+        passesResurfacingGenericityGate(note.text, note, { evidenceBacked: true }),
+    );
   if (backed.length === 0) return null;
 
-  const ranked = rankCallbacksByTuning(backed, entries).filter(
+  const diverse = filterCallbacksByModeDiversity(backed, entries);
+  const ranked = rankCallbacksByTuning(diverse, entries).filter(
     (row) => !shouldSuppressResurfacingNote(row.note.id),
   );
   const best = ranked.find(

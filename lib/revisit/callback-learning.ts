@@ -16,17 +16,8 @@ import type {
   CallbackLearningVerdict,
 } from "@/types/callback-learning";
 
-export const CALLBACK_LEARNING_EVENTS = {
-  shown: "callback_shown",
-  ignored: "callback_ignored",
-  opened: "callback_opened",
-  reread: "callback_reread",
-  saved: "callback_saved",
-  shared: "callback_shared",
-  dismissed: "callback_dismissed",
-  reflectionAfter: "reflection_after_callback",
-  returnAfter: "return_after_callback",
-} as const satisfies Record<string, CallbackLearningEventName>;
+export { CALLBACK_LEARNING_EVENTS } from "@/lib/revisit/callback-learning-events";
+import { CALLBACK_LEARNING_EVENTS } from "@/lib/revisit/callback-learning-events";
 
 export const LEARNING_WEIGHT_MIN = -18;
 export const LEARNING_WEIGHT_MAX = 18;

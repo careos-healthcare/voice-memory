@@ -9,6 +9,8 @@ import type {
   ProductPressureWarning,
   SurfaceEffectivenessRow,
 } from "@/types/behavior-truth";
+import { buildInterruptionTimingReport } from "@/lib/capture/interruption-timing";
+import { buildVulnerabilityTimingReport } from "@/lib/capture/vulnerability-timing";
 import type { ReadVsSpeakReport, ReflexScoreSnapshot } from "@/types/reflex";
 
 function FunnelCard({ step }: { step: BehaviorFunnelStep }) {
@@ -153,8 +155,43 @@ function PressureList({ warnings }: { warnings: ProductPressureWarning[] }) {
 }
 
 export function BehaviorTruthPanel({ report }: { report: BehaviorTruthReport }) {
+  const interruption = buildInterruptionTimingReport();
+  const vulnerability = buildVulnerabilityTimingReport();
+
   return (
     <div className="space-y-8">
+      <section>
+        <p className="text-xs uppercase tracking-wider text-zinc-600">Time to vulnerable speech</p>
+        <Card className="mt-3 border-violet-500/20 bg-violet-950/10">
+          <CardContent className="space-y-2 py-4 text-sm text-zinc-400">
+            <p>
+              Median to mic:{" "}
+              <span className="text-zinc-200">
+                {vulnerability.medianTimeToMicMs != null
+                  ? `${vulnerability.medianTimeToMicMs}ms`
+                  : "—"}
+              </span>
+            </p>
+            <p>
+              Median to vulnerable phrase:{" "}
+              <span className="text-zinc-200">
+                {vulnerability.medianTimeToVulnerablePhraseMs != null
+                  ? `${vulnerability.medianTimeToVulnerablePhraseMs}ms`
+                  : "—"}
+              </span>
+            </p>
+            <p className="text-xs text-zinc-600">{vulnerability.scopeNote}</p>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <p className="text-xs uppercase tracking-wider text-zinc-600">Interruption timing</p>
+        <Card className="mt-3 border-white/[0.06] bg-zinc-900/40">
+          <CardContent className="py-4 text-sm text-zinc-500">{interruption.plain}</CardContent>
+        </Card>
+      </section>
+
       <section>
         <p className="text-xs uppercase tracking-wider text-zinc-600">Plain-language insights</p>
         <Card className="mt-3 border-violet-500/20 bg-violet-950/10">

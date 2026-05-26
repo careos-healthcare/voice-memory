@@ -15,6 +15,7 @@ import {
   buildClarityRecordContext,
   storeClarityRecordContext,
 } from "@/lib/clarity/clarity-record";
+import { buildDirectRecordHref } from "@/lib/capture/direct-record";
 import {
   writeDismissClarityPrompt,
   writeTrackClarityPromptShown,
@@ -52,7 +53,13 @@ export function SortThisOutAloudPrompt({
             });
             storeClarityRecordContext(context);
             writeTrackClarityRecordClicked(offer.entryId);
-            router.push("/#recorder");
+            router.push(
+              buildDirectRecordHref({
+                source: "clarity",
+                quote: anchorSnippet,
+                entryId: offer.entryId,
+              }),
+            );
           }}
         >
           <Mic className="h-5 w-5" />

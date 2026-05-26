@@ -1,4 +1,5 @@
 import type { FollowupSource } from "@/types/followup-prompt";
+import type { ResurfacingReturnMode } from "@/types/resurfacing-variety";
 
 export type RecordReturnSource = FollowupSource | "primary_callback" | "open_loop";
 
@@ -11,4 +12,5 @@ export interface RecordReturnContext {
   openLoopId?: string;
   pastEntryId?: string;
   promptId?: string;
+  returnMode?: ResurfacingReturnMode;
 }
