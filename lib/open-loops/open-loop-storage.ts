@@ -22,7 +22,7 @@ import type {
 } from "@/types/open-loop";
 
 const OPEN_LOOPS_KEY = "voicememory_open_loops";
-const PROMPT_DISMISS_PREFIX = "voicememory_open_loop_prompt_dismissed:";
+const PROMPT_DISMISS_PREFIX = "voicememory_open_loop_prompt_dismissed_until:";
 
 export const OPEN_LOOP_CHANGE_EVENT = "voicememory-open-loops-changed";
 
@@ -220,14 +220,21 @@ export function hasActiveOpenLoopForEntry(entryId: string): boolean {
   );
 }
 
-export function dismissOpenLoopPrompt(entryId: string): void {
+export function dismissOpenLoopPrompt(entryId: string, dismissMs = 48 * 60 * 60 * 1000): void {
   if (!isBrowser()) return;
-  sessionStorage.setItem(`${PROMPT_DISMISS_PREFIX}${entryId}`, "1");
+  const until = Date.now() + dismissMs;
+  localStorage.setItem(`${PROMPT_DISMISS_PREFIX}${entryId}`, String(until));
 }
 
 export function isOpenLoopPromptDismissed(entryId: string): boolean {
   if (!isBrowser()) return false;
-  return sessionStorage.getItem(`${PROMPT_DISMISS_PREFIX}${entryId}`) === "1";
+  const raw = localStorage.getItem(`${PROMPT_DISMISS_PREFIX}${entryId}`);
+  if (!raw) return false;
+  const until = Number(raw);
+  if (!Number.isFinite(until)) return true;
+  if (Date.now() < until) return true;
+  localStorage.removeItem(`${PROMPT_DISMISS_PREFIX}${entryId}`);
+  return false;
 }
 
 export function shouldShowOpenLoopPrompt(
@@ -235,11 +242,12 @@ export function shouldShowOpenLoopPrompt(
   transcript: string,
   options?: { isRevisit?: boolean },
 ): boolean {
-  void options?.isRevisit;
   if (!transcript.trim()) return false;
   if (isOpenLoopPromptDismissed(entryId)) return false;
   if (hasActiveOpenLoopForEntry(entryId)) return false;
-  return hasUnresolvedThreadLanguage(transcript);
+  if (!hasUnresolvedThreadLanguage(transcript)) return false;
+  if (options?.isRevisit) return true;
+  return true;
 }
 
 export function createOpenLoop(input: {
@@ -434,21 +442,32 @@ export function maybeLinkReflectionAfterOpenLoopResurface(entry: {
     if (loop.sourceEntryId === entry.id) continue;
     if (new Date(entry.createdAt).getTime() <= new Date(loop.firstSeenAt).getTime()) continue;
 
-    const resurfaced = events.some(
+    const resurfaceEvents = events.filter(
       (event) =>
         event.name === OPEN_LOOP_EVENTS.resurfacingShown &&
         event.meta?.openLoopId === loop.openLoopId,
     );
-    if (!resurfaced && loop.recurrenceCount < 2) continue;
+    const lastResurfaceAt = resurfaceEvents.sort(
+      (a, b) => new Date(b.at).getTime() - new Date(a.at).getTime(),
+    )[0]?.at;
+    const resurfaceMs = lastResurfaceAt
+      ? new Date(lastResurfaceAt).getTime()
+      : new Date(loop.lastMentionedAt).getTime();
+    const hoursSinceResurface = (Date.now() - resurfaceMs) / (1000 * 60 * 60);
 
     const matchesAnchor = loop.anchorPhrases.some((phrase) => {
       const fragment = phrase.trim().slice(0, 24);
       return fragment.length >= 10 && entry.transcript.includes(fragment);
     });
-    if (!matchesAnchor) continue;
+    const withinReturnWindow =
+      hoursSinceResurface >= 0 && hoursSinceResurface <= 96 && resurfaceEvents.length > 0;
+
+    if (!matchesAnchor && !withinReturnWindow && loop.recurrenceCount < 2) continue;
 
     touchRelatedEntry(loop.openLoopId, entry.id);
-    trackOpenLoopReflectionAfterResurface(loop.openLoopId, entry.id);
+    if (withinReturnWindow || matchesAnchor) {
+      trackOpenLoopReflectionAfterResurface(loop.openLoopId, entry.id);
+    }
   }
 }
 

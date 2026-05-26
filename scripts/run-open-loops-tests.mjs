@@ -49,14 +49,47 @@ const baseLoop = (overrides = {}) =>
     ...overrides,
   });
 
-const gapLine = pickOpenLoopResurfacingLine(baseLoop());
+const quoteLine = pickOpenLoopResurfacingLine(baseLoop());
+assert.ok(quoteLine);
+assert.match(quoteLine, /From this reflection:|you kept this thread open/i);
+assert.match(quoteLine, /waiting for them/i);
+
+const gapLine = pickOpenLoopResurfacingLine(
+  baseLoop({
+    strongestAnchorPhrase: "still here",
+    userNextStep: "ok",
+    anchorPhrases: ["still here", "again"],
+    concernLabel: "Other",
+  }),
+);
 assert.ok(gapLine);
 assert.match(gapLine, /after \d+ days/i);
 
 const softenedLine = pickOpenLoopResurfacingLine(
   baseLoop({ status: "softened" }),
 );
-assert.equal(softenedLine, "You once marked this as softened.");
+assert.ok(softenedLine);
+assert.match(softenedLine, /softened|kept this thread open/i);
+
+const softenedOnlyLine = pickOpenLoopResurfacingLine(
+  baseLoop({
+    status: "softened",
+    strongestAnchorPhrase: "brief",
+    userNextStep: "ok",
+    anchorPhrases: ["brief"],
+    concernLabel: "Other",
+  }),
+);
+assert.equal(softenedOnlyLine, "You once marked this as softened.");
+
+const specificLine = pickOpenLoopResurfacingLine(
+  baseLoop({
+    strongestAnchorPhrase: "I keep avoiding the conversation with my manager",
+    userNextStep: "Send the email before Friday",
+  }),
+);
+assert.ok(specificLine);
+assert.match(specificLine, /avoiding|Send the email/i);
 
 const absenceLoop = baseLoop({
   mentionHistory: [

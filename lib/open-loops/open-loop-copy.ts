@@ -3,10 +3,15 @@ export const OPEN_LOOP_SECTION_LEAD =
   "Threads you kept open — remembered in your words, without reminders or plans.";
 export const OPEN_LOOP_PAGE_TITLE = "Threads still open";
 export const OPEN_LOOP_ENTRY_TITLE = "Keep this thread open?";
+export const OPEN_LOOP_ENTRY_LEAD =
+  "Something in this reflection sounds unfinished. Save your own next step — nothing suggested for you.";
+export const OPEN_LOOP_ANCHOR_LABEL = "From this reflection";
 export const OPEN_LOOP_PROMPT_PRIMARY =
   "What do you want to remember to do about this?";
 export const OPEN_LOOP_PROMPT_ALTERNATE =
   "Is there a next step tied to this?";
+export const OPEN_LOOP_SAVED_ACK =
+  "Saved — this thread stays in your archive in your words.";
 export const OPEN_LOOP_INPUT_PLACEHOLDER = "Write it in your own words.";
 export const OPEN_LOOP_SAVE_CTA = "Save next step";
 export const OPEN_LOOP_NOT_NOW = "Not now";

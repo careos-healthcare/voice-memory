@@ -8,6 +8,7 @@ import { ArchiveOwnershipSparseLine } from "@/components/archive/ArchiveOwnershi
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
 import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
+import { OpenLoopReturnPrompt } from "@/components/open-loops/OpenLoopReturnPrompt";
 import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { DayTwoReturnPrompt } from "@/components/retention/DayTwoReturnPrompt";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
@@ -152,6 +153,7 @@ export default function HomePage() {
           <ReflectionGoalHint />
           <PrimaryCallbackNote note={primaryNote} />
           <QuietSilenceLine />
+          <OpenLoopReturnPrompt />
           <GentleReturnPrompt />
           <DayTwoReturnPrompt />
           <ArchiveValueMoments />

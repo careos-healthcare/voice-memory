@@ -789,13 +789,13 @@ export default function EntryPage() {
               </section>
             ) : null}
 
-            {entry.transcript && !pending ? (
+            {entry.transcript && !pending && !freshQuiet ? (
               <>
-                <OpenLoopEntryContinuity entryId={entry.id} />
                 <OpenLoopNextStepPrompt
                   entry={entry}
                   isRevisit={Boolean(revisitExperience?.isRevisit)}
                 />
+                <OpenLoopEntryContinuity entryId={entry.id} />
               </>
             ) : null}
 
@@ -840,6 +840,13 @@ export default function EntryPage() {
                     {FRESH_ENTRY_NO_CALLBACK_LINE}
                   </p>
                 )}
+
+                <OpenLoopNextStepPrompt
+                  entry={entry}
+                  isRevisit={Boolean(revisitExperience?.isRevisit)}
+                />
+
+                <OpenLoopEntryContinuity entryId={entry.id} />
 
                 <FollowupPromptInline
                   prompt={activeFollowup}

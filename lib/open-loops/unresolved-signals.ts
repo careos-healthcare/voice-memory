@@ -11,6 +11,11 @@ const UNRESOLVED_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\bi'?m waiting for\b/i, label: "Waiting" },
   { pattern: /\bi still need to\b/i, label: "Still needs doing" },
   { pattern: /\bthis keeps coming back\b/i, label: "Keeps coming back" },
+  { pattern: /\bstill thinking about\b/i, label: "Still thinking about" },
+  { pattern: /\bhaven'?t figured out\b/i, label: "Not figured out yet" },
+  { pattern: /\bcan'?t stop thinking about\b/i, label: "Keeps circling" },
+  { pattern: /\bon my mind\b/i, label: "On my mind" },
+  { pattern: /\bnot sure what to do\b/i, label: "Unsure what to do" },
 ];
 
 function splitSentences(text: string): string[] {

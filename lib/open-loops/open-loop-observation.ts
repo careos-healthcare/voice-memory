@@ -9,6 +9,8 @@ export const OPEN_LOOP_EVENTS = {
   softened: "open_loop_softened",
   closed: "open_loop_closed",
   reflectionAfterResurface: "open_loop_reflection_after_resurface",
+  returnPromptShown: "open_loop_return_prompt_shown",
+  returnPromptEngaged: "open_loop_return_prompt_engaged",
 } as const;
 
 export type OpenLoopEventName = (typeof OPEN_LOOP_EVENTS)[keyof typeof OPEN_LOOP_EVENTS];
@@ -49,4 +51,12 @@ export function trackOpenLoopReflectionAfterResurface(
   entryId: string,
 ): void {
   trackLocalEvent(OPEN_LOOP_EVENTS.reflectionAfterResurface, { openLoopId, entryId });
+}
+
+export function trackOpenLoopReturnPromptShown(openLoopId: string): void {
+  trackLocalEvent(OPEN_LOOP_EVENTS.returnPromptShown, { openLoopId });
+}
+
+export function trackOpenLoopReturnPromptEngaged(openLoopId: string): void {
+  trackLocalEvent(OPEN_LOOP_EVENTS.returnPromptEngaged, { openLoopId });
 }

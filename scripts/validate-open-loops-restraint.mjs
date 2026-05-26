@@ -12,6 +12,8 @@ const REQUIRED_FILES = [
   "lib/open-loops/open-loop-copy.ts",
   "lib/open-loops/open-loop-continuity.ts",
   "lib/open-loops/open-loop-resurfacing-lines.ts",
+  "lib/open-loops/open-loop-activation.ts",
+  "lib/open-loops/open-loop-return-prompt.ts",
   "lib/open-loops/open-loop-silence.ts",
   "lib/open-loops/emotional-shift.ts",
   "lib/open-loops/open-loop-readout.ts",
