@@ -52,6 +52,36 @@ for (const { file, tokens } of checks) {
   }
 }
 
+function assertSingleConstDeclaration(file, name) {
+  const content = fs.readFileSync(path.join(ROOT, file), "utf8");
+  const matches = content.match(new RegExp(`const ${name}\\s*=`, "g")) ?? [];
+  if (matches.length > 1) {
+    console.error(
+      `Homepage CTA validation failed — duplicate const ${name} in ${file} (${matches.length} declarations).`,
+    );
+    process.exit(1);
+  }
+}
+
+for (const [file, names] of [
+  ["components/ActivationOnboarding.tsx", ["isLast", "canShowOnboardingCta"]],
+  ["components/Recorder.tsx", ["canShowRecorderCta", "canShowRetryCta"]],
+]) {
+  for (const name of names) {
+    assertSingleConstDeclaration(file, name);
+  }
+}
+
+const pageContent = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const providerOpens = pageContent.match(/<HomepagePrimaryCtaProvider\b/g) ?? [];
+const providerCloses = pageContent.match(/<\/HomepagePrimaryCtaProvider>/g) ?? [];
+if (providerOpens.length !== 1 || providerCloses.length !== 1) {
+  console.error(
+    `Homepage CTA validation failed — HomepagePrimaryCtaProvider must wrap the homepage exactly once (found ${providerOpens.length} open, ${providerCloses.length} close).`,
+  );
+  process.exit(1);
+}
+
 const activation = fs.readFileSync(
   path.join(ROOT, "components/ActivationOnboarding.tsx"),
   "utf8",
@@ -86,8 +116,7 @@ if (habitRecordMatches.length > 0) {
   }
 }
 
-const page = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
-if (page.includes("Start reflection") || page.includes("Record a reflection")) {
+if (pageContent.includes("Start reflection") || pageContent.includes("Record a reflection")) {
   console.error(
     "Homepage CTA validation failed — page must not inline duplicate recorder CTAs.",
   );

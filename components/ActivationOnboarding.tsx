@@ -31,8 +31,12 @@ export function ActivationOnboarding() {
     setVisible(!isOnboardingDismissed());
   }, []);
 
+  const current = ACTIVATION_ONBOARDING_STEPS[step];
   const isLast = step >= ACTIVATION_ONBOARDING_STEPS.length - 1;
-  const canShowOnboardingCta = usePrimaryCtaClaim("onboarding", hydrated && visible && isLast);
+  const canShowOnboardingCta = usePrimaryCtaClaim(
+    "onboarding",
+    hydrated && visible && isLast,
+  );
 
   if (!hydrated || !visible) return null;
 
@@ -49,8 +53,6 @@ export function ActivationOnboarding() {
       });
     }
   };
-
-  const current = ACTIVATION_ONBOARDING_STEPS[step];
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-5">
