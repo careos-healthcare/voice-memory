@@ -1,5 +1,5 @@
 import { detectEmotionalShift, moodLabelIfConfident } from "@/lib/open-loops/emotional-shift";
-import { primaryAnchorPhrase } from "@/lib/open-loops/open-loop-storage";
+import { readPrimaryAnchorPhrase } from "@/lib/open-loops/open-loop-storage";
 import { getEntry, getMemoryEligibleEntries } from "@/lib/storage";
 import type { OpenLoop, OpenLoopConnectedMoment } from "@/types/open-loop";
 import type { JournalEntry } from "@/types/journal";
@@ -70,7 +70,7 @@ export function refreshOpenLoopContinuity(
   const connectedMoments = buildConnectedMoments(loop, entries);
   const recurrenceCount = Math.max(1, related.length);
   const strongestAnchorPhrase =
-    pickStrongestAnchor(loop.anchorPhrases) || primaryAnchorPhrase(loop);
+    pickStrongestAnchor(loop.anchorPhrases) || readPrimaryAnchorPhrase(loop);
 
   const shift = detectEmotionalShift(related, loop.anchorPhrases);
 

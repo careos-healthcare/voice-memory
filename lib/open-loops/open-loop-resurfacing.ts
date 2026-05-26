@@ -1,13 +1,11 @@
 import { pickOpenLoopResurfacingLine } from "@/lib/open-loops/open-loop-resurfacing-lines";
-import {
-  getActiveOpenLoops,
-  recordOpenLoopMentioned,
-} from "@/lib/open-loops/open-loop-storage";
+import { readActiveOpenLoopsFromStore } from "@/lib/open-loops/open-loop-storage";
+import { writeRecordOpenLoopMentioned } from "@/lib/runtime/write-actions";
 import type { OpenLoop } from "@/types/open-loop";
 
 /** Pick loops that merit quiet continuity surfacing — no productivity framing. */
 export function pickOpenLoopsToResurface(limit = 2, now = Date.now()): OpenLoop[] {
-  const active = getActiveOpenLoops();
+  const active = readActiveOpenLoopsFromStore();
   if (active.length === 0) return [];
 
   const scored = active
@@ -37,7 +35,7 @@ export function pickOpenLoopsToResurface(limit = 2, now = Date.now()): OpenLoop[
 export function markMentionedOpenLoops(loops: OpenLoop[]): void {
   for (const loop of loops) {
     if (pickOpenLoopResurfacingLine(loop)) {
-      recordOpenLoopMentioned(loop.openLoopId);
+      writeRecordOpenLoopMentioned(loop.openLoopId);
     }
   }
 }

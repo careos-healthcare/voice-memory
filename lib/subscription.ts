@@ -1,4 +1,14 @@
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
+import {
+  FREE_ARCHIVE_LIMIT,
+  getCurrentTierId,
+  hasEntitlement,
+  isProTier,
+  setPreviewTier,
+} from "@/lib/entitlement/entitlements";
+import type { EntitlementId } from "@/types/entitlement";
+import { FREE_TIER, PRO_TIER } from "@/lib/entitlement/tiers";
+import { getPaymentStackAudit, isLiveBillingAvailable } from "@/lib/entitlement/payment-stack";
 
 export type PlanId = "free" | "pro";
 
@@ -11,7 +21,8 @@ export type UpgradeClickSource =
   | "journal"
   | "insights"
   | "homepage"
-  | "pilot";
+  | "pilot"
+  | "open_loops";
 
 export interface UpgradeClickEvent {
   source: UpgradeClickSource;
@@ -19,10 +30,9 @@ export interface UpgradeClickEvent {
   feature?: string;
 }
 
-export const FREE_ENTRY_LIMIT = 7;
-export const PRO_PRICE_LABEL = "£8.99/month";
+export const FREE_ENTRY_LIMIT = FREE_ARCHIVE_LIMIT;
+export const PRO_PRICE_LABEL = PRO_TIER.priceLabel;
 
-const PLAN_KEY = "voicememory_plan";
 const UPGRADE_CLICKS_KEY = "voicememory_upgrade_clicks";
 
 export interface ProMemoryFeature {
@@ -34,73 +44,51 @@ export interface ProMemoryFeature {
 
 export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
   {
-    id: "full_history",
-    title: "Full memory history",
-    description: "Every reflection, not just your last 7 entries.",
+    id: "unlimited_archive",
+    title: "Unlimited archive",
+    description: "Every reflection stays active in memory — not just your last seven.",
   },
   {
-    id: "semantic_search",
-    title: "Semantic life search",
-    description: "Search your whole story in plain language across all fields.",
+    id: "encrypted_backup",
+    title: "Encrypted backup",
+    description: "Encrypted sync when you sign in — your archive, not our product feed.",
+    comingSoon: !isLiveBillingAvailable(),
   },
   {
-    id: "weekly_intelligence",
-    title: "Weekly resurfacing",
-    description: "Rolling week comparisons and words that came back in your own voice.",
-  },
-  {
-    id: "entity_memory",
-    title: "Entity memory",
-    description:
-      "Recurring people, concerns, goals, and topics across your full memory history.",
+    id: "open_loops",
+    title: "Open loops",
+    description: "Keep unfinished threads with your own next step — no nudges from us.",
   },
   {
     id: "export_reports",
-    title: "Export reports",
-    description: "JSON archives, weekly text exports, and printable reflection reports.",
+    title: "Export",
+    description: "Full-archive JSON, weekly text exports, and printable reflection reports.",
   },
   {
-    id: "encrypted_sync",
-    title: "Future encrypted sync",
-    description: "End-to-end encrypted backup across devices — coming after billing launches.",
-    comingSoon: true,
+    id: "deeper_resurfacing",
+    title: "Deeper resurfacing",
+    description: "Continuity and callbacks drawn from your full history, in your words.",
   },
 ];
 
-export const FREE_PLAN_FEATURES = [
-  "Last 7 voice reflections on device",
-  "Resurfacing from recent reflections",
-  "Local-first memory (private by default)",
-  "Voice capture & transcript",
-  "In-app contextual reminders",
-];
-
-export const PRO_PLAN_FEATURES = [
-  "Full private memory history",
-  "Full semantic memory search",
-  "Weekly resurfacing from your voice",
-  "Entity memory across all reflections",
-  "Export JSON, weekly summaries & print reports",
-  "Priority access to encrypted sync (coming soon)",
-];
+export const FREE_PLAN_FEATURES = FREE_TIER.featureBullets;
+export const PRO_PLAN_FEATURES = PRO_TIER.featureBullets;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
 export function getPlanId(): PlanId {
-  if (!isBrowser()) return "free";
-  return localStorage.getItem(PLAN_KEY) === "pro" ? "pro" : "free";
+  return getCurrentTierId();
 }
 
 export function isProUser(): boolean {
-  return getPlanId() === "pro";
+  return isProTier();
 }
 
-/** Local-only preview toggle for development (no Stripe). */
+/** Local Pro preview until live billing is connected. */
 export function setPlanId(plan: PlanId): void {
-  if (!isBrowser()) return;
-  localStorage.setItem(PLAN_KEY, plan);
+  setPreviewTier(plan);
 }
 
 export function trackUpgradeClick(
@@ -142,11 +130,20 @@ export function getUpgradeClickEvents(): UpgradeClickEvent[] {
 }
 
 export function requiresProForExportReports(): boolean {
-  return !isProUser();
+  return hasEntitlement("export_reports") === false;
 }
 
-/** Reset local Pro preview toggle (development / settings). */
-export function clearProPreview(): void {
-  if (!isBrowser()) return;
-  localStorage.setItem(PLAN_KEY, "free");
+export function requiresProForOpenLoops(): boolean {
+  return hasEntitlement("open_loops") === false;
 }
+
+export function requiresProForEncryptedBackup(): boolean {
+  return hasEntitlement("encrypted_backup") === false;
+}
+
+export function clearProPreview(): void {
+  setPreviewTier("free");
+}
+
+export { getPaymentStackAudit, hasEntitlement };
+export type { EntitlementId };

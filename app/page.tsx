@@ -133,14 +133,14 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-zinc-950">
+    <div className="relative min-h-screen-mobile overflow-hidden bg-zinc-950 pb-safe">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-0 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-violet-600/20 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-[280px] w-[280px] rounded-full bg-fuchsia-600/10 blur-3xl" />
       </div>
 
       <HomepagePrimaryCtaProvider>
-      <div className="relative mx-auto flex min-h-screen max-w-3xl flex-col px-4 pb-10 sm:px-6">
+      <div className="relative mx-auto flex min-h-screen-mobile max-w-3xl flex-col px-4 pb-10 sm:px-6">
         <SiteHeader />
 
         <div className="mt-6 space-y-10 py-2">

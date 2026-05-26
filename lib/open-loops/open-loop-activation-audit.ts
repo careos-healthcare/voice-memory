@@ -6,8 +6,8 @@ import {
 } from "@/lib/open-loops/unresolved-signals";
 import { logOpenLoopActivationDebug } from "@/lib/open-loops/open-loop-activation-debug";
 import {
-  hasActiveOpenLoopForEntry,
-  isOpenLoopPromptDismissed,
+  readHasActiveOpenLoopForEntry,
+  readIsOpenLoopPromptDismissed,
 } from "@/lib/open-loops/open-loop-storage";
 import type { JournalEntry } from "@/types/journal";
 import type { UnresolvedThreadSignal } from "@/lib/open-loops/unresolved-detect-core";
@@ -52,11 +52,11 @@ export function resolveOpenLoopActivationSuppression(
   if (!unresolvedDetected) return "no_unresolved_language";
 
   const hasLoop =
-    overrides?.hasLoop ?? hasActiveOpenLoopForEntry(entry.id);
+    overrides?.hasLoop ?? readHasActiveOpenLoopForEntry(entry.id);
   if (hasLoop) return "active_loop_for_entry";
 
   const dismissed =
-    overrides?.dismissed ?? isOpenLoopPromptDismissed(entry.id);
+    overrides?.dismissed ?? readIsOpenLoopPromptDismissed(entry.id);
   if (dismissed) return "dismissed_recently";
 
   return null;
@@ -84,9 +84,9 @@ export function auditOpenLoopActivation(
   const freshEntryWindow = isWithinFreshEntryWindow(entry.createdAt);
   const revisitMode = Boolean(options?.isRevisit);
   const existingLoopFound =
-    options?.hasLoop ?? hasActiveOpenLoopForEntry(entry.id);
+    options?.hasLoop ?? readHasActiveOpenLoopForEntry(entry.id);
   const dismissedRecently =
-    options?.dismissed ?? isOpenLoopPromptDismissed(entry.id);
+    options?.dismissed ?? readIsOpenLoopPromptDismissed(entry.id);
 
   const showPrompt = suppression === null;
   const prominent =

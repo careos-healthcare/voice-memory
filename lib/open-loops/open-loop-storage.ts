@@ -3,12 +3,12 @@ import {
   refreshAllOpenLoopContinuity,
   refreshOpenLoopContinuity,
 } from "@/lib/open-loops/open-loop-continuity";
-import { runWhenIdle } from "@/lib/open-loops/open-loop-defer";
 import {
   recordContinuityBuildDuration,
   recordStorageRead,
   recordStorageWrite,
 } from "@/lib/open-loops/open-loop-performance";
+import { assertWriteAllowed } from "@/lib/runtime/render-safe";
 import {
   OPEN_LOOP_EVENTS,
   trackOpenLoopClosed,
@@ -197,6 +197,7 @@ function readLoops(): OpenLoop[] {
 
 function writeLoops(loops: OpenLoop[]): void {
   if (!isBrowser()) return;
+  assertWriteAllowed("open-loop-storage:writeLoops");
   recordStorageWrite();
   localStorage.setItem(OPEN_LOOPS_KEY, JSON.stringify(loops));
   invalidateLoopsReadCache();
@@ -222,55 +223,83 @@ function withFreshContinuity(loops: OpenLoop[]): OpenLoop[] {
   return refreshed;
 }
 
-let continuityRefreshQueued = false;
-
-/** Background continuity refresh — never during render/memo. */
-export function scheduleOpenLoopContinuityRefresh(): void {
-  if (!isBrowser() || continuityRefreshQueued) return;
-  continuityRefreshQueued = true;
-  runWhenIdle(() => {
-    continuityRefreshQueued = false;
-    const stored = readLoops();
-    const refreshed = withFreshContinuity(stored);
-    writeLoops(refreshed);
-    dispatchChange();
-  });
+/** Deferred job target — refreshes continuity and persists. */
+export function persistRefreshedOpenLoopContinuity(): void {
+  if (!isBrowser()) return;
+  const stored = readLoops();
+  writeLoops(withFreshContinuity(stored));
+  dispatchChange();
 }
 
-export function getAllOpenLoops(): OpenLoop[] {
+export function readAllOpenLoopsFromStore(): OpenLoop[] {
   return sortLoops(readLoops());
 }
 
-export function getActiveOpenLoops(): OpenLoop[] {
-  return getAllOpenLoops().filter(
+export function readActiveOpenLoopsFromStore(): OpenLoop[] {
+  return readAllOpenLoopsFromStore().filter(
     (loop) => loop.status === "open" || loop.status === "softened",
   );
 }
 
-export function getOpenLoopById(openLoopId: string): OpenLoop | null {
-  return getAllOpenLoops().find((loop) => loop.openLoopId === openLoopId) ?? null;
+/** @deprecated Use readAllOpenLoops from @/lib/runtime/read-model */
+export function getAllOpenLoops(): OpenLoop[] {
+  return readAllOpenLoopsFromStore();
 }
 
-export function getOpenLoopsForEntry(entryId: string): OpenLoop[] {
-  return getAllOpenLoops().filter(
+/** @deprecated Use readActiveOpenLoops from @/lib/runtime/read-model */
+export function getActiveOpenLoops(): OpenLoop[] {
+  return readActiveOpenLoopsFromStore();
+}
+
+export function readOpenLoopByIdFromStore(openLoopId: string): OpenLoop | null {
+  return readAllOpenLoopsFromStore().find((loop) => loop.openLoopId === openLoopId) ?? null;
+}
+
+/** @deprecated Use readOpenLoopById from @/lib/runtime/read-model */
+export function getOpenLoopById(openLoopId: string): OpenLoop | null {
+  return readOpenLoopByIdFromStore(openLoopId);
+}
+
+export function readOpenLoopsForEntryFromStore(entryId: string): OpenLoop[] {
+  return readAllOpenLoopsFromStore().filter(
     (loop) =>
       loop.sourceEntryId === entryId || loop.relatedEntryIds.includes(entryId),
   );
 }
 
-export function hasActiveOpenLoopForEntry(entryId: string): boolean {
-  return getOpenLoopsForEntry(entryId).some(
+/** @deprecated Use readOpenLoopsForEntry from @/lib/runtime/read-model */
+export function getOpenLoopsForEntry(entryId: string): OpenLoop[] {
+  return readOpenLoopsForEntryFromStore(entryId);
+}
+
+export function readHasActiveOpenLoopForEntry(entryId: string): boolean {
+  return readOpenLoopsForEntryFromStore(entryId).some(
     (loop) => loop.status === "open" || loop.status === "softened",
   );
 }
 
-export function dismissOpenLoopPrompt(entryId: string, dismissMs = 48 * 60 * 60 * 1000): void {
+/** @deprecated Use readHasActiveOpenLoop from @/lib/runtime/read-model */
+export function hasActiveOpenLoopForEntry(entryId: string): boolean {
+  return readHasActiveOpenLoopForEntry(entryId);
+}
+
+export function dismissOpenLoopPromptInStore(
+  entryId: string,
+  dismissMs = 48 * 60 * 60 * 1000,
+): void {
   if (!isBrowser()) return;
+  assertWriteAllowed("open-loop-storage:dismissOpenLoopPrompt");
+  recordStorageWrite();
   const until = Date.now() + dismissMs;
   localStorage.setItem(`${PROMPT_DISMISS_PREFIX}${entryId}`, String(until));
 }
 
-export function isOpenLoopPromptDismissed(entryId: string): boolean {
+/** @deprecated Use writeDismissOpenLoopPrompt from @/lib/runtime/write-actions */
+export function dismissOpenLoopPrompt(entryId: string, dismissMs?: number): void {
+  dismissOpenLoopPromptInStore(entryId, dismissMs);
+}
+
+export function readIsOpenLoopPromptDismissed(entryId: string): boolean {
   if (!isBrowser()) return false;
   recordStorageRead();
   const raw = localStorage.getItem(`${PROMPT_DISMISS_PREFIX}${entryId}`);
@@ -280,20 +309,30 @@ export function isOpenLoopPromptDismissed(entryId: string): boolean {
   return Date.now() < until;
 }
 
-export function shouldShowOpenLoopPrompt(
+/** @deprecated Use readOpenLoopPromptDismissed from @/lib/runtime/read-model */
+export function isOpenLoopPromptDismissed(entryId: string): boolean {
+  return readIsOpenLoopPromptDismissed(entryId);
+}
+
+export function readShouldShowOpenLoopPrompt(
   entryId: string,
   transcript: string,
   options?: { isRevisit?: boolean },
 ): boolean {
   if (!transcript.trim()) return false;
-  if (isOpenLoopPromptDismissed(entryId)) return false;
-  if (hasActiveOpenLoopForEntry(entryId)) return false;
+  if (readIsOpenLoopPromptDismissed(entryId)) return false;
+  if (readHasActiveOpenLoopForEntry(entryId)) return false;
   if (!hasUnresolvedThreadLanguage(transcript)) return false;
   if (options?.isRevisit) return true;
   return true;
 }
 
-export function createOpenLoop(input: {
+/** @deprecated Use writeCreateOpenLoop from @/lib/runtime/write-actions */
+export function createOpenLoop(input: Parameters<typeof createOpenLoopInStore>[0]): OpenLoop {
+  return createOpenLoopInStore(input);
+}
+
+export function createOpenLoopInStore(input: {
   sourceEntryId: string;
   title: string;
   userNextStep: string;
@@ -337,7 +376,15 @@ export function createOpenLoop(input: {
   return next;
 }
 
+/** @deprecated Use writeUpdateOpenLoopStatus from @/lib/runtime/write-actions */
 export function updateOpenLoopStatus(
+  openLoopId: string,
+  status: OpenLoopStatus,
+): OpenLoop | null {
+  return updateOpenLoopStatusInStore(openLoopId, status);
+}
+
+export function updateOpenLoopStatusInStore(
   openLoopId: string,
   status: OpenLoopStatus,
 ): OpenLoop | null {
@@ -359,7 +406,12 @@ export function updateOpenLoopStatus(
   return updated;
 }
 
-export function closeOpenLoop(
+/** @deprecated Use writeCloseOpenLoop from @/lib/runtime/write-actions */
+export function closeOpenLoop(openLoopId: string, closureNote?: string): OpenLoop | null {
+  return closeOpenLoopInStore(openLoopId, closureNote);
+}
+
+export function closeOpenLoopInStore(
   openLoopId: string,
   closureNote?: string,
 ): OpenLoop | null {
@@ -384,7 +436,12 @@ export function closeOpenLoop(
   return updated;
 }
 
+/** @deprecated Use writeTouchOpenLoopRelatedEntry from @/lib/runtime/write-actions */
 export function touchRelatedEntry(openLoopId: string, entryId: string): OpenLoop | null {
+  return touchRelatedEntryInStore(openLoopId, entryId);
+}
+
+export function touchRelatedEntryInStore(openLoopId: string, entryId: string): OpenLoop | null {
   const loops = readLoops();
   const index = loops.findIndex((loop) => loop.openLoopId === openLoopId);
   if (index < 0) return null;
@@ -410,7 +467,12 @@ export function touchRelatedEntry(openLoopId: string, entryId: string): OpenLoop
   return updated;
 }
 
+/** @deprecated Use writeRecordOpenLoopMentioned from @/lib/runtime/write-actions */
 export function recordOpenLoopMentioned(openLoopId: string): void {
+  recordOpenLoopMentionedInStore(openLoopId);
+}
+
+export function recordOpenLoopMentionedInStore(openLoopId: string): void {
   const loops = readLoops();
   const index = loops.findIndex((loop) => loop.openLoopId === openLoopId);
   if (index < 0) return;
@@ -429,7 +491,12 @@ export function recordOpenLoopMentioned(openLoopId: string): void {
   dispatchChange();
 }
 
+/** @deprecated Use writeRemoveOpenLoopsForEntry from @/lib/runtime/write-actions */
 export function removeOpenLoopsForEntry(entryId: string): void {
+  removeOpenLoopsForEntryInStore(entryId);
+}
+
+export function removeOpenLoopsForEntryInStore(entryId: string): void {
   const next = readLoops().filter((loop) => loop.sourceEntryId !== entryId);
   if (next.length === readLoops().length) return;
   writeLoops(next);
@@ -446,7 +513,7 @@ export function attachEntryMeta(loop: OpenLoop): OpenLoopWithEntryMeta {
   };
 }
 
-export function buildOpenLoopPresentation(loop: OpenLoop): OpenLoopPresentation {
+export function readOpenLoopPresentationFromStore(loop: OpenLoop): OpenLoopPresentation {
   const meta = attachEntryMeta(loop);
   return {
     ...meta,
@@ -454,32 +521,48 @@ export function buildOpenLoopPresentation(loop: OpenLoop): OpenLoopPresentation 
   };
 }
 
-export function listOpenLoopsWithMeta(activeOnly = true): OpenLoopWithEntryMeta[] {
-  const loops = activeOnly ? getActiveOpenLoops() : getAllOpenLoops();
+/** @deprecated Use readOpenLoopPresentation from @/lib/runtime/read-model */
+export function buildOpenLoopPresentation(loop: OpenLoop): OpenLoopPresentation {
+  return readOpenLoopPresentationFromStore(loop);
+}
+
+export function readOpenLoopsWithMetaFromStore(activeOnly = true): OpenLoopWithEntryMeta[] {
+  const loops = activeOnly ? readActiveOpenLoopsFromStore() : readAllOpenLoopsFromStore();
   return loops.map(attachEntryMeta);
 }
 
+/** @deprecated Use readOpenLoopsWithMeta from @/lib/runtime/read-model */
+export function listOpenLoopsWithMeta(activeOnly = true): OpenLoopWithEntryMeta[] {
+  return readOpenLoopsWithMetaFromStore(activeOnly);
+}
+
+/** @deprecated Use readOpenLoopPresentations from @/lib/runtime/read-model */
 export function listOpenLoopPresentations(activeOnly = true): OpenLoopPresentation[] {
-  const loops = activeOnly ? getActiveOpenLoops() : getAllOpenLoops();
-  return loops.map(buildOpenLoopPresentation);
+  const loops = activeOnly ? readActiveOpenLoopsFromStore() : readAllOpenLoopsFromStore();
+  return loops.map(readOpenLoopPresentationFromStore);
 }
 
 /** Primary anchor phrase for display — never generated advice. */
-export function primaryAnchorPhrase(loop: OpenLoop): string {
+export function readPrimaryAnchorPhrase(loop: OpenLoop): string {
   return loop.strongestAnchorPhrase?.trim() || loop.anchorPhrases[0]?.trim() || loop.title;
 }
 
-/** One continuity line for an entry view — max one loop, one line. */
-/** Link new reflections to active loops after resurfacing — local validation only. */
+/** @deprecated Use readOpenLoopAnchorPhrase from @/lib/runtime/read-model */
+export function primaryAnchorPhrase(loop: OpenLoop): string {
+  return readPrimaryAnchorPhrase(loop);
+}
+
+/** Link new reflections to active loops — write/deferred only. */
 export function maybeLinkReflectionAfterOpenLoopResurface(entry: {
   id: string;
   createdAt: string;
   transcript: string;
 }): void {
   if (!entry.transcript.trim()) return;
+  assertWriteAllowed("open-loop-storage:maybeLinkReflectionAfterOpenLoopResurface");
 
   const events = readLocalEvents();
-  const loops = getActiveOpenLoops();
+  const loops = readActiveOpenLoopsFromStore();
 
   for (const loop of loops) {
     if (loop.sourceEntryId === entry.id) continue;
@@ -514,10 +597,17 @@ export function maybeLinkReflectionAfterOpenLoopResurface(entry: {
   }
 }
 
-export function pickEntryOpenLoopContinuityLine(entryId: string): string | null {
-  const loops = getOpenLoopsForEntry(entryId).filter(
+export function readEntryOpenLoopContinuityLineFromStore(entryId: string): string | null {
+  const loops = readOpenLoopsForEntryFromStore(entryId).filter(
     (loop) => loop.status === "open" || loop.status === "softened",
   );
   if (loops.length === 0) return null;
   return pickOpenLoopResurfacingLine(loops[0]);
 }
+
+/** @deprecated Use readEntryOpenLoopContinuityLine from @/lib/runtime/read-model */
+export function pickEntryOpenLoopContinuityLine(entryId: string): string | null {
+  return readEntryOpenLoopContinuityLineFromStore(entryId);
+}
+
+export { enqueueRefreshOpenLoopContinuity as scheduleOpenLoopContinuityRefresh } from "@/lib/runtime/deferred-jobs";

@@ -3,25 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { readOpenLoopReturnOffer, type OpenLoopReturnOffer } from "@/lib/runtime/read-model";
 import {
-  trackOpenLoopReturnPromptEngaged,
-  trackOpenLoopReturnPromptShown,
-} from "@/lib/open-loops/open-loop-observation";
-import {
-  pickOpenLoopReturnOffer,
-  recordOpenLoopReturnPromptShown,
-} from "@/lib/open-loops/open-loop-return-prompt";
-import type { OpenLoopReturnOffer } from "@/lib/open-loops/open-loop-return-prompt";
+  writeRecordOpenLoopReturnPromptShown,
+  writeTrackOpenLoopReturnPromptEngaged,
+  writeTrackOpenLoopReturnPromptShown,
+} from "@/lib/runtime/write-actions";
 
 export function OpenLoopReturnPrompt() {
   const [offer, setOffer] = useState<OpenLoopReturnOffer | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
-      const next = pickOpenLoopReturnOffer();
+      const next = readOpenLoopReturnOffer();
       if (next) {
-        recordOpenLoopReturnPromptShown();
-        trackOpenLoopReturnPromptShown(next.openLoopId);
+        writeRecordOpenLoopReturnPromptShown();
+        writeTrackOpenLoopReturnPromptShown(next.openLoopId);
       }
       setOffer(next);
     });
@@ -35,7 +32,7 @@ export function OpenLoopReturnPrompt() {
       <Link
         href={offer.href}
         className="block text-sm leading-relaxed text-zinc-400 hover:text-zinc-200"
-        onClick={() => trackOpenLoopReturnPromptEngaged(offer.openLoopId)}
+        onClick={() => writeTrackOpenLoopReturnPromptEngaged(offer.openLoopId)}
       >
         {offer.text}
       </Link>

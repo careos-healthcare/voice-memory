@@ -4,17 +4,17 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { runWhenIdle } from "@/lib/open-loops/open-loop-defer";
-import {
-  trackOpenLoopEntryReopened,
-  trackOpenLoopResurfacingShown,
-} from "@/lib/open-loops/open-loop-observation";
 import { recordComponentRender } from "@/lib/open-loops/open-loop-performance";
+import { OPEN_LOOP_CHANGE_EVENT } from "@/lib/open-loops/open-loop-storage";
 import {
-  getOpenLoopsForEntry,
-  pickEntryOpenLoopContinuityLine,
-  primaryAnchorPhrase,
-  OPEN_LOOP_CHANGE_EVENT,
-} from "@/lib/open-loops/open-loop-storage";
+  readEntryOpenLoopContinuityLine,
+  readOpenLoopAnchorPhrase,
+  readOpenLoopsForEntry,
+} from "@/lib/runtime/read-model";
+import {
+  writeTrackOpenLoopEntryReopened,
+  writeTrackOpenLoopResurfacingShown,
+} from "@/lib/runtime/write-actions";
 import type { OpenLoop } from "@/types/open-loop";
 
 interface OpenLoopEntryContinuityProps {
@@ -27,11 +27,11 @@ interface ContinuityPayload {
 }
 
 function readContinuityPayload(entryId: string): ContinuityPayload | null {
-  const loop = getOpenLoopsForEntry(entryId).find(
+  const loop = readOpenLoopsForEntry(entryId).find(
     (row) => row.status === "open" || row.status === "softened",
   );
   if (!loop) return null;
-  const line = pickEntryOpenLoopContinuityLine(entryId);
+  const line = readEntryOpenLoopContinuityLine(entryId);
   if (!line) return null;
   return { loop, line };
 }
@@ -69,13 +69,13 @@ export function OpenLoopEntryContinuity({ entryId }: OpenLoopEntryContinuityProp
     if (!payload?.line || !payload.loop) return;
     if (trackedLineRef.current === payload.line) return;
     trackedLineRef.current = payload.line;
-    trackOpenLoopResurfacingShown(payload.loop.openLoopId, payload.line);
+    writeTrackOpenLoopResurfacingShown(payload.loop.openLoopId, payload.line);
   }, [payload?.line, payload?.loop?.openLoopId]);
 
   if (!payload) return null;
 
   const { loop, line } = payload;
-  const anchor = primaryAnchorPhrase(loop);
+  const anchor = readOpenLoopAnchorPhrase(loop);
   const showAnchor = line.includes(anchor) || line.includes(loop.userNextStep.slice(0, 20));
 
   return (
@@ -95,7 +95,9 @@ export function OpenLoopEntryContinuity({ entryId }: OpenLoopEntryContinuityProp
       <Link
         href={`/entry/${loop.sourceEntryId}`}
         className="text-xs text-zinc-500 hover:text-zinc-300"
-        onClick={() => trackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)}
+        onClick={() =>
+          writeTrackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
+        }
       >
         Open source reflection
       </Link>

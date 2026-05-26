@@ -9,7 +9,8 @@ import {
   OPEN_LOOP_SECTION_LEAD,
   OPEN_LOOP_SECTION_TITLE,
 } from "@/lib/open-loops/open-loop-copy";
-import { OPEN_LOOP_CHANGE_EVENT, getActiveOpenLoops } from "@/lib/open-loops/open-loop-storage";
+import { OPEN_LOOP_CHANGE_EVENT } from "@/lib/open-loops/open-loop-storage";
+import { readActiveOpenLoops } from "@/lib/runtime/read-model";
 
 interface OpenLoopsSectionProps {
   maxItems?: number;
@@ -20,7 +21,7 @@ export function OpenLoopsSection({ maxItems = 3, showEmpty = false }: OpenLoopsS
   const [activeCount, setActiveCount] = useState(0);
 
   useEffect(() => {
-    const refresh = () => setActiveCount(getActiveOpenLoops().length);
+    const refresh = () => setActiveCount(readActiveOpenLoops().length);
     refresh();
     window.addEventListener(OPEN_LOOP_CHANGE_EVENT, refresh);
     return () => window.removeEventListener(OPEN_LOOP_CHANGE_EVENT, refresh);

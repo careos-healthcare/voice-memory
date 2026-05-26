@@ -12,13 +12,11 @@ import {
   OPEN_LOOP_SOFTEN_LABEL,
 } from "@/lib/open-loops/open-loop-copy";
 import {
-  trackOpenLoopEntryReopened,
-  trackOpenLoopResurfacingShown,
-} from "@/lib/open-loops/open-loop-observation";
-import {
-  closeOpenLoop,
-  updateOpenLoopStatus,
-} from "@/lib/open-loops/open-loop-storage";
+  writeCloseOpenLoop,
+  writeTrackOpenLoopEntryReopened,
+  writeTrackOpenLoopResurfacingShown,
+  writeUpdateOpenLoopStatus,
+} from "@/lib/runtime/write-actions";
 import { formatEntryDate } from "@/lib/utils";
 import type { OpenLoopPresentation } from "@/types/open-loop";
 
@@ -33,7 +31,7 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
 
   useEffect(() => {
     if (loop.resurfacingLine) {
-      trackOpenLoopResurfacingShown(loop.openLoopId, loop.resurfacingLine);
+      writeTrackOpenLoopResurfacingShown(loop.openLoopId, loop.resurfacingLine);
     }
   }, [loop.openLoopId, loop.resurfacingLine]);
 
@@ -44,7 +42,7 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
   const showEarlier = !compact && earlierMoments.length > 0 ? earlierMoments : [];
 
   const handleClose = () => {
-    closeOpenLoop(loop.openLoopId, closureNote);
+    writeCloseOpenLoop(loop.openLoopId, closureNote);
     setClosing(false);
     setClosureNote("");
   };
@@ -119,12 +117,12 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
               </div>
             </div>
           ) : (
-            <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-600">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-x-5 sm:gap-y-2">
               <Link
                 href={`/entry/${loop.sourceEntryId}`}
-                className="hover:text-zinc-400"
+                className="mobile-touch-target inline-flex items-center text-sm text-zinc-600 hover:text-zinc-400"
                 onClick={() =>
-                  trackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
+                  writeTrackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
                 }
               >
                 Open reflection
@@ -132,23 +130,23 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
               {loop.status === "open" ? (
                 <button
                   type="button"
-                  className="hover:text-zinc-400"
-                  onClick={() => updateOpenLoopStatus(loop.openLoopId, "softened")}
+                  className="mobile-touch-target text-left text-sm text-zinc-600 hover:text-zinc-400"
+                  onClick={() => writeUpdateOpenLoopStatus(loop.openLoopId, "softened")}
                 >
                   {OPEN_LOOP_SOFTEN_LABEL}
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="hover:text-zinc-400"
-                  onClick={() => updateOpenLoopStatus(loop.openLoopId, "open")}
+                  className="mobile-touch-target text-left text-sm text-zinc-600 hover:text-zinc-400"
+                  onClick={() => writeUpdateOpenLoopStatus(loop.openLoopId, "open")}
                 >
                   {OPEN_LOOP_KEEP_OPEN_LABEL}
                 </button>
               )}
               <button
                 type="button"
-                className="hover:text-zinc-400"
+                className="mobile-touch-target text-left text-sm text-zinc-600 hover:text-zinc-400"
                 onClick={() => setClosing(true)}
               >
                 {OPEN_LOOP_CLOSE_LABEL}
@@ -161,7 +159,7 @@ export function OpenLoopCard({ loop, compact = false }: OpenLoopCardProps) {
           href={`/entry/${loop.sourceEntryId}`}
           className="text-sm text-zinc-600 hover:text-zinc-400"
           onClick={() =>
-            trackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
+            writeTrackOpenLoopEntryReopened(loop.openLoopId, loop.sourceEntryId)
           }
         >
           Open reflection

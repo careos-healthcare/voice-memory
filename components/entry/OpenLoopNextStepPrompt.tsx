@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { resolveOpenLoopActivation } from "@/lib/open-loops/open-loop-activation";
 import {
   OPEN_LOOP_ANCHOR_LABEL,
   OPEN_LOOP_ENTRY_LEAD,
@@ -15,13 +14,17 @@ import {
   OPEN_LOOP_SAVE_CTA,
   OPEN_LOOP_SAVED_ACK,
 } from "@/lib/open-loops/open-loop-copy";
-import {
-  trackOpenLoopPromptDismissed,
-  trackOpenLoopPromptShown,
-} from "@/lib/open-loops/open-loop-observation";
 import { recordComponentRender } from "@/lib/open-loops/open-loop-performance";
 import { transcriptCacheKey } from "@/lib/open-loops/open-loop-performance";
-import { createOpenLoop, dismissOpenLoopPrompt } from "@/lib/open-loops/open-loop-storage";
+import { hasEntitlement, entitlementGateCopy } from "@/lib/entitlement/entitlements";
+import { readOpenLoopActivation } from "@/lib/runtime/read-model";
+import Link from "next/link";
+import {
+  writeCreateOpenLoop,
+  writeDismissOpenLoopPrompt,
+  writeTrackOpenLoopPromptDismissed,
+  writeTrackOpenLoopPromptShown,
+} from "@/lib/runtime/write-actions";
 import type { JournalEntry } from "@/types/journal";
 
 interface OpenLoopNextStepPromptProps {
@@ -55,7 +58,7 @@ export function OpenLoopNextStepPrompt({
   );
 
   const activation = useMemo(
-    () => resolveOpenLoopActivation(entry, { isRevisit }),
+    () => readOpenLoopActivation(entry, { isRevisit }),
     [entry.id, transcriptKey, isRevisit, entry.transcript, entry.createdAt],
   );
 
@@ -68,29 +71,42 @@ export function OpenLoopNextStepPrompt({
   useEffect(() => {
     if (!visible || promptTrackedRef.current) return;
     promptTrackedRef.current = true;
-    trackOpenLoopPromptShown(entry.id);
+    writeTrackOpenLoopPromptShown(entry.id);
   }, [visible, entry.id]);
 
   if (!visible || !activation.signal) return null;
+
+  if (!hasEntitlement("open_loops")) {
+    const copy = entitlementGateCopy("open_loops");
+    return (
+      <section className="space-y-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] px-4 py-4">
+        <p className="text-sm text-zinc-400">{copy.title}</p>
+        <p className="text-xs leading-relaxed text-zinc-600">{copy.detail}</p>
+        <Link href="/pricing?from=journal" className="text-xs text-violet-300 hover:text-violet-200">
+          View Pro plans
+        </Link>
+      </section>
+    );
+  }
 
   const handleSave = () => {
     const trimmed = nextStep.trim();
     if (!trimmed || saving) return;
     setSaving(true);
-    createOpenLoop({
+    const created = writeCreateOpenLoop({
       sourceEntryId: entry.id,
       title: activation.signal!.title,
       userNextStep: trimmed,
       anchorPhrases: activation.signal!.anchorPhrases,
       concernLabel: activation.signal!.concernLabel,
     });
-    setSaved(true);
+    if (created) setSaved(true);
     setSaving(false);
   };
 
   const handleNotNow = () => {
-    dismissOpenLoopPrompt(entry.id);
-    trackOpenLoopPromptDismissed(entry.id);
+    writeDismissOpenLoopPrompt(entry.id);
+    writeTrackOpenLoopPromptDismissed(entry.id);
     setDismissed(true);
   };
 

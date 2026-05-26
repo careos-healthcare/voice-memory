@@ -58,7 +58,10 @@ if (!phraseMemory.includes("getCachedPhraseMemory")) {
   process.exit(1);
 }
 
-if (!entryPage.includes("getCachedQuietEntryPresentation") || !entryPage.includes("needsHeavyMemoryBlocks")) {
+const usesPresentationCache =
+  entryPage.includes("readCachedQuietEntryPresentation") ||
+  entryPage.includes("getCachedQuietEntryPresentation");
+if (!usesPresentationCache || !entryPage.includes("needsHeavyMemoryBlocks")) {
   console.error("Performance validation failed — entry page missing resurfacing cache / heavy block gating.");
   process.exit(1);
 }

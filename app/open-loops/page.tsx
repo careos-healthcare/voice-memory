@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CircleDashed } from "lucide-react";
 
+import { EntitlementGate } from "@/components/billing/EntitlementGate";
 import { OpenLoopsList } from "@/components/open-loops/OpenLoopsList";
 import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
@@ -14,14 +15,15 @@ import {
   OPEN_LOOP_SECTION_LEAD,
   OPEN_LOOP_SECTION_TITLE,
 } from "@/lib/open-loops/open-loop-copy";
-import { OPEN_LOOP_CHANGE_EVENT, getActiveOpenLoops } from "@/lib/open-loops/open-loop-storage";
+import { OPEN_LOOP_CHANGE_EVENT } from "@/lib/open-loops/open-loop-storage";
+import { readActiveOpenLoops } from "@/lib/runtime/read-model";
 import { useEffect, useState } from "react";
 
 export default function OpenLoopsPage() {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const refresh = () => setCount(getActiveOpenLoops().length);
+    const refresh = () => setCount(readActiveOpenLoops().length);
     refresh();
     window.addEventListener(OPEN_LOOP_CHANGE_EVENT, refresh);
     return () => window.removeEventListener(OPEN_LOOP_CHANGE_EVENT, refresh);
@@ -31,7 +33,7 @@ export default function OpenLoopsPage() {
   const empty = !loading && count === 0;
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen-mobile bg-zinc-950 pb-safe">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
@@ -56,7 +58,14 @@ export default function OpenLoopsPage() {
               </div>
             </>
           ) : (
-            <OpenLoopsList />
+            <EntitlementGate
+              entitlement="open_loops"
+              source="open_loops"
+              allowExisting
+              hasExisting={count > 0}
+            >
+              <OpenLoopsList />
+            </EntitlementGate>
           )}
         </div>
       </div>

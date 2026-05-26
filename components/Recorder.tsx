@@ -477,7 +477,7 @@ export function Recorder({
   const canShowRetryCta = usePrimaryCtaClaim("retry", state === "error");
 
   return (
-    <div className="w-full max-w-xl">
+    <div className="mobile-recorder-zone w-full max-w-xl px-2">
       <AnimatePresence mode="wait">
         {state === "idle" && (
           <motion.div
@@ -497,6 +497,7 @@ export function Recorder({
               <>
                 <Button
                   size="lg"
+                  className="mobile-touch-target min-w-[12rem]"
                   data-primary-cta="recorder"
                   onClick={() => void startRecording()}
                 >
@@ -559,7 +560,12 @@ export function Recorder({
               </p>
             </div>
 
-            <Button variant="destructive" size="lg" onClick={stopRecording}>
+            <Button
+              variant="destructive"
+              size="lg"
+              className="mobile-touch-target min-w-[11rem]"
+              onClick={stopRecording}
+            >
               <Square className="h-4 w-4 fill-current" />
               {listeningMode ? "Stop & Save" : "Stop & Reflect"}
             </Button>

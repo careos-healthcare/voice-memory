@@ -1,7 +1,8 @@
 import { todayKey } from "@/lib/dates";
 import { readLocalEvents } from "@/lib/local-analytics";
 import { OPEN_LOOP_EVENTS } from "@/lib/open-loops/open-loop-observation";
-import { getActiveOpenLoops } from "@/lib/open-loops/open-loop-storage";
+import { readActiveOpenLoopsFromStore } from "@/lib/open-loops/open-loop-storage";
+import { assertWriteAllowed } from "@/lib/runtime/render-safe";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 
@@ -58,9 +59,13 @@ export function pickOpenLoopReturnOffer(
   now = Date.now(),
 ): OpenLoopReturnOffer | null {
   if (!isBrowser()) return null;
-  if (localStorage.getItem(RETURN_DAY_KEY) === todayKey()) return null;
+  try {
+    if (localStorage.getItem(RETURN_DAY_KEY) === todayKey()) return null;
+  } catch {
+    return null;
+  }
 
-  const loops = getActiveOpenLoops();
+  const loops = readActiveOpenLoopsFromStore();
   if (loops.length === 0) return null;
 
   for (const loop of loops) {
@@ -93,6 +98,7 @@ export function pickOpenLoopReturnOffer(
 
 export function recordOpenLoopReturnPromptShown(): void {
   if (!isBrowser()) return;
+  assertWriteAllowed("open-loop-return-prompt:recordShown");
   localStorage.setItem(RETURN_DAY_KEY, todayKey());
 }
 

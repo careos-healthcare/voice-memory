@@ -10,7 +10,7 @@ import { EntryAtmosphereAttachment } from "@/components/entry/EntryAtmosphereAtt
 import { OpenLoopNextStepPrompt } from "@/components/entry/OpenLoopNextStepPrompt";
 import { OpenLoopEntryContinuity } from "@/components/open-loops/OpenLoopEntryContinuity";
 import { recordComponentRender } from "@/lib/open-loops/open-loop-performance";
-import { scheduleOpenLoopContinuityRefresh } from "@/lib/open-loops/open-loop-storage";
+import { enqueueRefreshOpenLoopContinuity } from "@/lib/runtime/deferred-jobs";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MotionNoteList } from "@/components/motion/MotionNote";
@@ -73,9 +73,9 @@ import { buildMemoryContinuityReport } from "@/lib/memory/memory-continuity";
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
 import { resurfacingDeferMs } from "@/lib/performance/lightweight-mode";
 import {
-  getCachedQuietEntryPresentation,
-  getCachedRevisitExperience,
-} from "@/lib/performance/resurfacing-cache";
+  readCachedQuietEntryPresentation,
+  readCachedRevisitExperience,
+} from "@/lib/runtime/read-model";
 import {
   trackRevisitAudioPlayed,
   trackRevisitFollowupStarted,
@@ -188,7 +188,7 @@ export default function EntryPage() {
   const pending = entry ? isReflectionPending(entry) : false;
 
   useEffect(() => {
-    scheduleOpenLoopContinuityRefresh();
+    enqueueRefreshOpenLoopContinuity();
   }, []);
   const needsHeavyMemoryBlocks =
     heavyReady &&
@@ -219,7 +219,7 @@ export default function EntryPage() {
         const entriesVersion = getMemoryEligibleEntriesVersion();
         const revisit = runEntryPresentationSafe(
           () =>
-            getCachedRevisitExperience(pool, entry.id, limitsPayload, entriesVersion),
+            readCachedRevisitExperience(pool, entry.id, limitsPayload, entriesVersion),
           EMPTY_REVISIT_EXPERIENCE,
         );
         setRevisitExperience(revisit);
@@ -230,7 +230,7 @@ export default function EntryPage() {
           setPresentation(
             runEntryPresentationSafe(
               () =>
-                getCachedQuietEntryPresentation(
+                readCachedQuietEntryPresentation(
                   pool,
                   entry.id,
                   {
@@ -615,7 +615,7 @@ export default function EntryPage() {
   }, [presentation?.continuation, evidenceBackedMoment]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen-mobile mobile-entry-scroll bg-background pb-safe">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
@@ -791,7 +791,7 @@ export default function EntryPage() {
                   />
                 ) : null}
                 {entry.transcript ? (
-                  <p className="text-sm leading-[1.75] text-zinc-400/90">{entry.transcript}</p>
+                  <p className="mobile-prose text-zinc-400/90">{entry.transcript}</p>
                 ) : null}
                 {entry.transcript && !pending ? (
                   <>

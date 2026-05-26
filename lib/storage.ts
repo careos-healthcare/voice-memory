@@ -12,7 +12,9 @@ import { ensureStorageReady } from "@/lib/reliability/migrations";
 import { safeSetJson } from "@/lib/reliability/safe-local-storage";
 import { bumpPhraseScanCache } from "@/lib/performance/phrase-scan-cache";
 import { clearResurfacingCaches } from "@/lib/performance/resurfacing-cache";
-import { FREE_ENTRY_LIMIT, isProUser } from "@/lib/subscription";
+import { FREE_ENTRY_LIMIT } from "@/lib/subscription";
+import { hasEntitlement } from "@/lib/entitlement/entitlements";
+import { entriesForResurfacingScope } from "@/lib/entitlement/resurfacing-scope";
 import type { JournalEntry, Reflection } from "@/types/journal";
 
 const STORAGE_KEY = "voicememory_entries";
@@ -68,7 +70,8 @@ export function getMemoryEligibleEntries(): JournalEntry[] {
   if (memoryEligibleCachedVersion === memoryEligibleVersion) {
     return memoryEligibleCache;
   }
-  memoryEligibleCache = loadAllEntries().filter((entry) => entry.reflectionPending !== true);
+  const eligible = loadAllEntries().filter((entry) => entry.reflectionPending !== true);
+  memoryEligibleCache = entriesForResurfacingScope(eligible);
   memoryEligibleCachedVersion = memoryEligibleVersion;
   return memoryEligibleCache;
 }
@@ -84,7 +87,7 @@ export function isReflectionPendingEntry(entry: JournalEntry): boolean {
 /** Entries visible for the current plan (Free: latest 7). */
 export function getEntries(): JournalEntry[] {
   const all = loadAllEntries();
-  if (isProUser() || all.length <= FREE_ENTRY_LIMIT) return all;
+  if (hasEntitlement("unlimited_archive") || all.length <= FREE_ENTRY_LIMIT) return all;
   return all.slice(0, FREE_ENTRY_LIMIT);
 }
 
@@ -94,7 +97,7 @@ export function getStoredEntryCount(): number {
 
 export function getLockedEntryCount(): number {
   const total = getStoredEntryCount();
-  if (isProUser()) return 0;
+  if (hasEntitlement("unlimited_archive")) return 0;
   return Math.max(0, total - FREE_ENTRY_LIMIT);
 }
 
@@ -133,8 +136,12 @@ export function saveEntry(entry: JournalEntry): void {
   void import("@/lib/intentions/long-term-intentions").then((mod) => {
     mod.syncLongTermIntentions(getMemoryEligibleEntries());
   });
-  void import("@/lib/open-loops/open-loop-storage").then((mod) =>
-    mod.maybeLinkReflectionAfterOpenLoopResurface(entry),
+  void import("@/lib/runtime/deferred-jobs").then((mod) =>
+    mod.enqueueLinkReflectionAfterResurface({
+      id: entry.id,
+      createdAt: entry.createdAt,
+      transcript: entry.transcript,
+    }),
   );
   void import("@/lib/sync/schedule").then((mod) => mod.scheduleEncryptedSync());
 }
@@ -146,8 +153,8 @@ export function deleteEntry(id: string): void {
   persistEntries(entries);
   bumpMemoryEligibleCache();
   removeBookmark(id);
-  void import("@/lib/open-loops/open-loop-storage").then((mod) =>
-    mod.removeOpenLoopsForEntry(id),
+  void import("@/lib/runtime/write-actions").then((mod) =>
+    mod.writeRemoveOpenLoopsForEntry(id),
   );
   void deleteAudio(id);
   void deletePhoto(id);

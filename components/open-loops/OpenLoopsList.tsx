@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { OpenLoopCard } from "@/components/open-loops/OpenLoopCard";
-import {
-  OPEN_LOOP_CHANGE_EVENT,
-  listOpenLoopPresentations,
-} from "@/lib/open-loops/open-loop-storage";
+import { OPEN_LOOP_CHANGE_EVENT } from "@/lib/open-loops/open-loop-storage";
+import { readOpenLoopPresentations } from "@/lib/runtime/read-model";
 import type { OpenLoopPresentation } from "@/types/open-loop";
 
 interface OpenLoopsListProps {
@@ -18,7 +16,7 @@ export function OpenLoopsList({ compact = false, maxItems }: OpenLoopsListProps)
   const [loops, setLoops] = useState<OpenLoopPresentation[] | null>(null);
 
   useEffect(() => {
-    const refresh = () => setLoops(listOpenLoopPresentations(true));
+    const refresh = () => setLoops(readOpenLoopPresentations(true));
     refresh();
     window.addEventListener(OPEN_LOOP_CHANGE_EVENT, refresh);
     return () => window.removeEventListener(OPEN_LOOP_CHANGE_EVENT, refresh);

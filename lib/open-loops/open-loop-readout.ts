@@ -1,7 +1,7 @@
 import { readLocalEvents } from "@/lib/local-analytics";
 import { auditOpenLoopResurfacing } from "@/lib/open-loops/open-loop-resurfacing-lines";
 import { OPEN_LOOP_EVENTS } from "@/lib/open-loops/open-loop-observation";
-import { getAllOpenLoops } from "@/lib/open-loops/open-loop-storage";
+import { readAllOpenLoops } from "@/lib/runtime/read-model";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { OpenLoop } from "@/types/open-loop";
 
@@ -215,7 +215,7 @@ export function buildOpenLoopsReadoutReport(): OpenLoopsReadoutReport {
     return emptyReport("Open loops readout runs in the browser only.");
   }
 
-  const loops = getAllOpenLoops();
+  const loops = readAllOpenLoops();
   const entries = getMemoryEligibleEntries();
   const events = readLocalEvents();
   const eventCounts = countOpenLoopEvents(events);
