@@ -7,6 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
   "lib/atmosphere/memory-atmosphere.ts",
+  "lib/atmosphere/atmosphere-anchors.ts",
   "lib/atmosphere/atmosphere-storage.ts",
   "lib/atmosphere/atmosphere-observation.ts",
   "types/atmosphere.ts",
@@ -35,6 +36,18 @@ const FORBIDDEN_PHRASES = [
   { re: /\bbright theme\b/i, label: "bright theme" },
 ];
 
+const WALLPAPER_LABELS = [
+  "Foggy street",
+  "Morning glow",
+  "Quiet room",
+  "Soft light",
+  "Rainy window",
+  "Dusk field",
+  "Abstract color field",
+  "Create quiet atmosphere",
+  "A quiet visual, not a memory",
+];
+
 const EXT = new Set([".tsx", ".ts", ".jsx", ".js"]);
 const SCAN_DIRS = ["app", "components", "lib"];
 
@@ -45,19 +58,73 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
+const typesAtmosphere = fs.readFileSync(path.join(ROOT, "types/atmosphere.ts"), "utf8");
+if (!typesAtmosphere.includes("AtmosphereFingerprint")) {
+  console.error("Atmosphere validation failed — types/atmosphere.ts must define AtmosphereFingerprint.");
+  process.exit(1);
+}
+
+const memoryAtmosphere = fs.readFileSync(
+  path.join(ROOT, "lib/atmosphere/memory-atmosphere.ts"),
+  "utf8",
+);
+if (!memoryAtmosphere.includes("fingerprint")) {
+  console.error("Atmosphere validation failed — buildAtmosphereMeta must attach fingerprint.");
+  process.exit(1);
+}
+
+const anchors = fs.readFileSync(
+  path.join(ROOT, "lib/atmosphere/atmosphere-anchors.ts"),
+  "utf8",
+);
+for (const token of ["EMOTIONAL_ATMOSPHERE_CATALOG", "buildAtmosphereFingerprint", "pickEmotionalContextLine"]) {
+  if (!anchors.includes(token)) {
+    console.error(`Atmosphere validation failed — atmosphere-anchors.ts must export ${token}.`);
+    process.exit(1);
+  }
+}
+
 const component = fs.readFileSync(
   path.join(ROOT, "components/entry/EntryAtmosphereAttachment.tsx"),
   "utf8",
 );
-for (const copy of [
-  "Create quiet atmosphere",
-  "A quiet visual, not a memory.",
-  "Generated images may not match what happened.",
-]) {
-  if (!component.includes(copy)) {
-    console.error(`Atmosphere validation failed — missing copy "${copy}".`);
+const componentMarkers = [
+  ["A visual echo", "ATMOSPHERE_SECTION_TITLE"],
+  ["Add a visual echo", "ATMOSPHERE_EXPAND_LABEL"],
+  ["Generate another", "ATMOSPHERE_GENERATE_ANOTHER"],
+  ["Generated images may not match what happened.", "ATMOSPHERE_SECTION_DISCLAIMER"],
+  "buildAtmospherePickerPresentation",
+  "AtmosphereChoiceCard",
+];
+for (const marker of componentMarkers) {
+  const options = Array.isArray(marker) ? marker : [marker];
+  if (!options.some((token) => component.includes(token))) {
+    console.error(
+      `Atmosphere validation failed — missing ${options.join(" or ")} in EntryAtmosphereAttachment.`,
+    );
     process.exit(1);
   }
+}
+
+if (!anchors.includes("A visual echo")) {
+  console.error('Atmosphere validation failed — atmosphere-anchors must define "A visual echo" title.');
+  process.exit(1);
+}
+
+for (const banned of WALLPAPER_LABELS) {
+  if (component.includes(banned)) {
+    console.error(
+      `Atmosphere validation failed — wallpaper-picker label "${banned}" in EntryAtmosphereAttachment.`,
+    );
+    process.exit(1);
+  }
+}
+
+if (component.includes("ATMOSPHERE_STYLE_OPTIONS")) {
+  console.error(
+    "Atmosphere validation failed — equal-weight style grid must not appear in EntryAtmosphereAttachment.",
+  );
+  process.exit(1);
 }
 
 function shouldSkip(filePath) {

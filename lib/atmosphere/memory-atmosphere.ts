@@ -1,7 +1,9 @@
 import type { JournalEntry } from "@/types/journal";
+import { buildAtmosphereFingerprint } from "@/lib/atmosphere/atmosphere-anchors";
 import type {
   AtmosphereSignals,
   AtmosphereStyle,
+  EmotionalAtmosphereLabel,
   EntryAtmosphereMeta,
 } from "@/types/atmosphere";
 
@@ -315,7 +317,10 @@ export function buildAtmosphereMeta(
   width: number,
   height: number,
   byteLength: number,
+  emotionalLabel: EmotionalAtmosphereLabel,
 ): EntryAtmosphereMeta {
+  const createdAt = new Date().toISOString();
+  const fingerprint = buildAtmosphereFingerprint(entryId, emotionalLabel, createdAt);
   return {
     atmosphereId: entryId,
     style,
@@ -325,7 +330,9 @@ export function buildAtmosphereMeta(
     width,
     height,
     byteLength,
-    createdAt: new Date().toISOString(),
+    createdAt,
+    emotionalLabel,
+    fingerprint,
   };
 }
 
