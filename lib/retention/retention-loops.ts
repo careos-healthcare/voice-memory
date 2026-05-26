@@ -6,6 +6,10 @@ import {
   observeMagicFollowupRecorded,
 } from "@/lib/retention/first-magic-moment";
 import {
+  observeCallbackShared,
+  observeReflectionAfterCallback,
+} from "@/lib/revisit/callback-learning";
+import {
   markMoatRevisitBookmark,
   markMoatRevisitCopy,
 } from "@/lib/retention/moat-metrics";
@@ -311,6 +315,7 @@ export function trackFollowupRecordingCompleted(newEntryId: string): void {
     recordSilenceNoteAction(context.noteId);
     unlockRelatedNoteAfterAction(context.noteId, "recording_after_revisit");
     observeMagicFollowupRecorded(context.noteId, newEntryId);
+    observeReflectionAfterCallback({ id: context.noteId, entryId: newEntryId });
   }
   checkVoluntaryReturns(newEntryId);
 }
@@ -340,6 +345,7 @@ export function trackCopiedMemoryMoment(input: {
   if (actionNoteId) recordSilenceNoteAction(actionNoteId);
   if (actionNoteId) unlockRelatedNoteAfterAction(actionNoteId, "bookmark_copy");
   if (actionNoteId) observeMagicCandidateShared(actionNoteId, input.sourceId);
+  if (actionNoteId) observeCallbackShared({ id: actionNoteId, entryId: input.entryId });
   if (input.entryId) markMoatRevisitCopy(input.entryId);
 }
 

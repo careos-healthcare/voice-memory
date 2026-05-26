@@ -24,6 +24,7 @@ import {
   enrichNoteWithResurfacingConfidence,
   pickConfidenceEligibleNotes,
 } from "@/lib/revisit/resurfacing-confidence";
+import { observeCallbackShown } from "@/lib/revisit/callback-learning";
 import { homepageKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
 import {
   calibrateEntryPresentation,
@@ -120,6 +121,7 @@ export function buildQuietHomepagePresentation(
 
   if (resolvedPrimary) {
     recordCallbackSurfaced(resolvedPrimary.id, "homepage");
+    observeCallbackShown(resolvedPrimary, entries, { surface: "homepage" });
     observeMagicCallbackSurfaced(resolvedPrimary, entries, "homepage");
     if (resolvedPrimary.entryId) {
       rememberNoteContext(
@@ -218,6 +220,7 @@ export function buildQuietEntryPresentation(
 
   if (primaryMoment) {
     recordCallbackSurfaced(primaryMoment.id, "entry");
+    observeCallbackShown(primaryMoment, allEntries, { surface: "entry" });
     observeMagicCallbackSurfaced(primaryMoment, allEntries, "entry");
   }
 

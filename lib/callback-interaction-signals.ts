@@ -5,6 +5,10 @@ import { recordSilenceNoteAction } from "@/lib/refinement/silence-calibration";
 import { formatEntryDate } from "@/lib/utils";
 import { getEntry } from "@/lib/storage";
 import type { CallbackInteractionSignals, CallbackRetentionSummary } from "@/types/callback-quality-review";
+import {
+  observeCallbackIgnored,
+  observeReflectionAfterCallback,
+} from "@/lib/revisit/callback-learning";
 
 const INTERACTION_KEY = "voicememory_callback_interactions";
 const FOLLOWUP_KEY = "voicememory_followup_continuations";
@@ -123,10 +127,12 @@ export function recordCallbackSurfaced(callbackId: string, surface?: string): vo
 
 export function recordCallbackIgnored(callbackId: string): void {
   pushRetention(callbackId, "ignored");
+  observeCallbackIgnored({ id: callbackId });
 }
 
 export function recordRecordingAfterCallback(callbackId: string): void {
   pushRetention(callbackId, "recording");
+  observeReflectionAfterCallback({ id: callbackId });
 }
 
 export function readCallbackRetention(callbackId: string): CallbackRetentionRecord[] {

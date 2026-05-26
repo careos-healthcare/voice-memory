@@ -20,6 +20,10 @@ import {
   trackFirstSessionOldReflectionOpened,
 } from "@/lib/marketing/first-session-comprehension";
 import { observeMagicCandidateOpened } from "@/lib/retention/first-magic-moment";
+import {
+  observeCallbackOpened,
+  observeCallbackReread,
+} from "@/lib/revisit/callback-learning";
 
 export function RevisitEntryLink({
   entryId,
@@ -57,6 +61,14 @@ export function RevisitEntryLink({
             entryId,
             source: resolvedSource,
           });
+          observeCallbackOpened(
+            { id: noteId, entryId },
+            undefined,
+            { source: resolvedSource, linkRole },
+          );
+          if (linkRole === "past") {
+            observeCallbackReread({ id: noteId, entryId: entryId, pastEntryId: entryId });
+          }
           recordMemoryLineClicked({
             noteId,
             noteText,

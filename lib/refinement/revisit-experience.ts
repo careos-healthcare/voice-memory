@@ -52,6 +52,7 @@ import {
   shouldSuppressResurfacingConfidence,
 } from "@/lib/revisit/resurfacing-confidence";
 import { shouldSuppressResurfacingTiming } from "@/lib/revisit/resurfacing-timing";
+import { observeCallbackShown } from "@/lib/revisit/callback-learning";
 import { pickLivingResurfacingForEntry } from "@/lib/memory/living-resurfacing";
 import { pickEmotionalChapterForEntry } from "@/lib/memory/emotional-chapters";
 import { pickVoiceIdentityForEntry } from "@/lib/memory/voice-identity";
@@ -384,6 +385,7 @@ export function buildRevisitExperience(
 
   for (const note of [calibrated.revisitReward, calibrated.thenVsNow].filter(Boolean) as MemoryNote[]) {
     recordCallbackSurfaced(note.id, "entry");
+    observeCallbackShown(note, allEntries, { surface: "entry", context: "revisit_experience" });
     observeMagicCallbackSurfaced(note, allEntries, "entry");
     const contextEntryId = note.entryId ?? note.pastEntryId ?? entryId;
     rememberNoteContext(contextEntryId, note.id, note.text);

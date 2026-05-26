@@ -4,7 +4,9 @@ import {
   RETENTION_EVENTS,
   trackLocalEvent,
 } from "@/lib/local-analytics";
+import { observeFunnelReturnVisit } from "@/lib/retention/first-week-funnel";
 import { observeMagicReturnAfterCallback } from "@/lib/retention/first-magic-moment";
+import { observeReturnAfterCallback } from "@/lib/revisit/callback-learning";
 import type {
   ReturnTriggerEventName,
   ReturnTriggerKind,
@@ -196,6 +198,7 @@ export function maybeDetectReturnTriggers(): void {
   if (!lastOpenRaw) return;
 
   const hoursSinceLastOpen = hoursBetween(lastOpenRaw, nowMs);
+  observeFunnelReturnVisit(hoursSinceLastOpen);
   if (hoursSinceLastOpen < MIN_RETURN_GAP_HOURS) return;
   if (hoursSinceLastOpen > MAX_RETURN_WINDOW_HOURS) return;
 
@@ -241,6 +244,7 @@ export function registerArchiveExportReturnTrigger(surface: string): void {
 
 export function registerFirstCallbackReturnTrigger(noteId: string, entryId: string): void {
   recordReturnTriggerAnchor("first_callback", { noteId, entryId });
+  observeReturnAfterCallback({ id: noteId, entryId });
 }
 
 export function registerPromptReturnTrigger(promptId: string): void {

@@ -22,6 +22,7 @@ import {
   applyResurfacingTimingRankAdjustment,
   shouldSuppressResurfacingTiming,
 } from "@/lib/revisit/resurfacing-timing";
+import { applyCallbackLearningRankAdjustment } from "@/lib/revisit/callback-learning";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
@@ -249,5 +250,6 @@ export function applyTuningScoreBoost(
   const withLoops = applyLoopOptimizationBoost(note, entries, tuned);
   const withQuality = applyRevisitQualityRankAdjustment(note, entries, withLoops);
   const withConfidence = applyResurfacingConfidenceRankAdjustment(note, entries, withQuality);
-  return applyResurfacingTimingRankAdjustment(note, entries, withConfidence);
+  const withTiming = applyResurfacingTimingRankAdjustment(note, entries, withConfidence);
+  return applyCallbackLearningRankAdjustment(note, entries, withTiming);
 }

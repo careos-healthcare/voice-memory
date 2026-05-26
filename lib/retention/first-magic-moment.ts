@@ -13,6 +13,10 @@ import {
 import { assessResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
 import { hasResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
 import { isResurfacingTimingEligible } from "@/lib/revisit/resurfacing-timing";
+import {
+  observeCallbackSaved,
+  observeCallbackShared,
+} from "@/lib/revisit/callback-learning";
 import { getAllEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -347,6 +351,7 @@ export function observeMagicCandidateSaved(noteId: string, entryId?: string): vo
     noteId,
     entryId: entryId ?? "",
   });
+  observeCallbackSaved({ id: noteId, entryId });
   confirmFirstMagicMoment(noteId, "saved");
 }
 
@@ -357,6 +362,7 @@ export function observeMagicCandidateShared(noteId: string, sourceId?: string): 
     noteId,
     sourceId: sourceId ?? "",
   });
+  observeCallbackShared({ id: noteId });
   confirmFirstMagicMoment(noteId, "shared");
 }
 

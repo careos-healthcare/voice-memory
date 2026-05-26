@@ -23,6 +23,9 @@ import {
   collectRevisitQualityCandidates,
   isRevisitQualityNote,
 } from "@/lib/revisit/revisit-quality";
+import {
+  getCallbackLearningInteractionBoost,
+} from "@/lib/revisit/callback-learning";
 import { shouldSuppressResurfacingTiming } from "@/lib/revisit/resurfacing-timing";
 import type { JournalEntry } from "@/types/journal";
 import type { Reflection } from "@/types/journal";
@@ -244,6 +247,7 @@ function scoreInteractionReinforcement(note: MemoryNote, entries: JournalEntry[]
   if (signals.followupContinued) score += 18;
   if (retention.recording > 0) score += 12;
   score -= Math.min(ignored * 14, 42);
+  score += getCallbackLearningInteractionBoost(note, entries);
 
   return Math.max(0, Math.min(score, 100));
 }
