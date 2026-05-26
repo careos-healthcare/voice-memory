@@ -67,7 +67,6 @@ import { entryTimeMemoryNotes } from "@/lib/memory/time-memory";
 import { entryMemoryNotes } from "@/lib/patterns/memory-notes";
 import { buildMemoryContinuityReport } from "@/lib/memory/memory-continuity";
 import type { QuietEntryPresentation } from "@/lib/refinement/quiet-presentation";
-import { bumpRenderCount } from "@/lib/performance/perf-instrumentation";
 import { resurfacingDeferMs } from "@/lib/performance/lightweight-mode";
 import {
   getCachedQuietEntryPresentation,
@@ -96,6 +95,16 @@ import { useFreshEntryQuietMode } from "@/lib/hooks/useFreshEntryQuietMode";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { pickEvidenceBackedEntryMoment } from "@/lib/refinement/entry-quiet-state";
 import { FRESH_ENTRY_NO_CALLBACK_LINE } from "@/lib/entry/fresh-entry-copy";
+import { scheduleAfterMount } from "@/lib/entry/defer-after-mount";
+import {
+  EMPTY_REVISIT_EXPERIENCE,
+  runEntryPresentationSafe,
+} from "@/lib/entry/entry-presentation-runtime";
+import {
+  isInvalidEntryRouteId,
+  normalizeEntryRouteId,
+  shouldRunEntryPresentationBuilders,
+} from "@/lib/entry/entry-route-guard";
 import { isReflectionPending } from "@/lib/pending-reflection";
 import { deleteEntry, getEntry, getMemoryEligibleEntries, getMemoryEligibleEntriesVersion } from "@/lib/storage";
 import { formatEntryDate } from "@/lib/utils";
@@ -111,28 +120,39 @@ function isDuplicateNote(a: MemoryNote, b: MemoryNote | null | undefined): boole
 export default function EntryPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const entryId = normalizeEntryRouteId(params.id);
+  const routeInvalid = isInvalidEntryRouteId(entryId);
   const { quiet, limits } = useQuietMode();
   const [entry, setEntry] = useState<JournalEntry | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const [heavyReady, setHeavyReady] = useState(false);
   const [presentation, setPresentation] = useState<QuietEntryPresentation | null>(null);
   const [revisitExperience, setRevisitExperience] =
     useState<RevisitExperiencePresentation | null>(null);
+  const canRunBuilders = shouldRunEntryPresentationBuilders(entryId, entry, { loading });
   const { freshQuiet, expandFreshQuiet } = useFreshEntryQuietMode(
     entry,
     Boolean(revisitExperience?.isRevisit),
+    heavyReady,
   );
   const [showReopenFollowup, setShowReopenFollowup] = useState(false);
   const [revisitAudioReplayed, setRevisitAudioReplayed] = useState(false);
   const [momentCopied, setMomentCopied] = useState(false);
 
   useEffect(() => {
-    const found = getEntry(params.id);
+    if (routeInvalid) {
+      setEntry(undefined);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const found = getEntry(entryId);
     setEntry(found ?? undefined);
     setLoading(false);
-  }, [params.id]);
+  }, [entryId, routeInvalid]);
 
   useEffect(() => {
-    if (!entry) return;
+    if (!entry || routeInvalid) return;
     recordEntryView(entry.id);
     recordLastOpenedEntry(entry.id);
     const started = Date.now();
@@ -142,10 +162,10 @@ export default function EntryPage() {
       recordAmbientSessionActivity(entry.id, dwellMs);
       trackDwellForActiveCallback(dwellMs, "entry");
     };
-  }, [entry?.id]);
+  }, [entry?.id, routeInvalid]);
 
   useEffect(() => {
-    if (!entry) {
+    if (!entry || routeInvalid) {
       clearAmbientPageContext();
       return;
     }
@@ -156,17 +176,21 @@ export default function EntryPage() {
     return () => clearAmbientPageContext();
   }, [entry, revisitExperience?.isRevisit]);
 
-  const allEntries = useMemo(() => getMemoryEligibleEntries(), [entry?.id, entry?.createdAt]);
+  const allEntries = useMemo(() => {
+    if (!heavyReady || !entry) return [];
+    return getMemoryEligibleEntries();
+  }, [heavyReady, entry?.id, entry?.createdAt]);
   const pending = entry ? isReflectionPending(entry) : false;
   const needsHeavyMemoryBlocks =
-    !pending && !freshQuiet && !quiet && !revisitExperience?.isRevisit;
+    heavyReady &&
+    !pending &&
+    !freshQuiet &&
+    !quiet &&
+    !revisitExperience?.isRevisit;
 
   useEffect(() => {
-    bumpRenderCount("entry-page");
-  });
-
-  useEffect(() => {
-    if (!entry || pending) {
+    if (!canRunBuilders || !entry) {
+      setHeavyReady(false);
       setPresentation(null);
       setRevisitExperience(null);
       return;
@@ -178,66 +202,66 @@ export default function EntryPage() {
       familiarityResurfacing: limits.familiarityResurfacing,
       resurfacing: limits.resurfacing,
     };
-    const entriesVersion = getMemoryEligibleEntriesVersion();
 
-    const run = () => {
+    const runHeavyPath = () => {
       if (cancelled) return;
-      const revisit = getCachedRevisitExperience(
-        allEntries,
-        entry.id,
-        limitsPayload,
-        entriesVersion,
-      );
-      setRevisitExperience(revisit);
-      if (revisit.isRevisit) {
-        setPresentation(null);
-        trackRevisitOpened(entry.id, revisit.sources);
-      } else {
-        setPresentation(
-          getCachedQuietEntryPresentation(
-            allEntries,
-            entry.id,
-            {
-              ...limitsPayload,
-              familiarity: limits.familiarity,
-            },
-            entriesVersion,
-          ),
+      try {
+        const pool = getMemoryEligibleEntries();
+        const entriesVersion = getMemoryEligibleEntriesVersion();
+        const revisit = runEntryPresentationSafe(
+          () =>
+            getCachedRevisitExperience(pool, entry.id, limitsPayload, entriesVersion),
+          EMPTY_REVISIT_EXPERIENCE,
         );
+        setRevisitExperience(revisit);
+        if (revisit.isRevisit) {
+          setPresentation(null);
+          queueMicrotask(() => trackRevisitOpened(entry.id, revisit.sources));
+        } else {
+          setPresentation(
+            runEntryPresentationSafe(
+              () =>
+                getCachedQuietEntryPresentation(
+                  pool,
+                  entry.id,
+                  {
+                    ...limitsPayload,
+                    familiarity: limits.familiarity,
+                  },
+                  entriesVersion,
+                ),
+              null,
+            ),
+          );
+        }
+      } catch {
+        setPresentation(null);
+        setRevisitExperience(EMPTY_REVISIT_EXPERIENCE);
       }
+      if (!cancelled) setHeavyReady(true);
     };
 
     const deferMs = resurfacingDeferMs();
-    if (deferMs > 0) {
-      const timer = window.setTimeout(run, deferMs);
-      return () => {
-        cancelled = true;
-        window.clearTimeout(timer);
-      };
-    }
-
-    const frame = requestAnimationFrame(run);
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(frame);
-    };
+    return scheduleAfterMount(runHeavyPath, {
+      delayMs: deferMs,
+      timeoutMs: 1500,
+    });
   }, [
+    canRunBuilders,
     entry?.id,
-    pending,
     limits.changeMoments,
     limits.familiarity,
     limits.familiarityResurfacing,
     limits.resurfacing,
-    allEntries,
   ]);
 
   useEffect(() => {
-    if (!entry?.id || !revisitExperience?.revisitReward) return;
+    if (routeInvalid || !entry?.id || !heavyReady || !revisitExperience?.revisitReward) return;
     trackRevisitRewardSeen(entry.id, revisitExperience.revisitReward.id);
   }, [entry?.id, revisitExperience?.revisitReward?.id]);
 
   useEffect(() => {
-    if (!entry?.id || !revisitExperience?.thenVsNow) return;
+    if (routeInvalid || !entry?.id || !heavyReady || !revisitExperience?.thenVsNow) return;
     trackRevisitThenNowSeen(entry.id, revisitExperience.thenVsNow.id);
     recordThenVsNowSeen({
       noteId: revisitExperience.thenVsNow.id,
@@ -247,13 +271,23 @@ export default function EntryPage() {
   }, [entry?.id, revisitExperience?.thenVsNow?.id]);
 
   useEffect(() => {
-    if (!entry?.id || !entry.photo?.photoId || !revisitExperience?.isRevisit) return;
+    if (routeInvalid || !entry?.id || !heavyReady || !entry.photo?.photoId || !revisitExperience?.isRevisit) {
+      return;
+    }
     trackPhotoEvent(PHOTO_EVENTS.entryRevisited, { entryId: entry.id });
     registerPhotoReturnTrigger(entry.id);
   }, [entry?.id, entry?.photo?.photoId, revisitExperience?.isRevisit]);
 
   useEffect(() => {
-    if (!entry?.id || !entry.atmosphere?.atmosphereId || !revisitExperience?.isRevisit) return;
+    if (
+      routeInvalid ||
+      !entry?.id ||
+      !heavyReady ||
+      !entry.atmosphere?.atmosphereId ||
+      !revisitExperience?.isRevisit
+    ) {
+      return;
+    }
     trackAtmosphereRevisited(entry.id);
   }, [entry?.id, entry?.atmosphere?.atmosphereId, revisitExperience?.isRevisit]);
 
@@ -278,19 +312,19 @@ export default function EntryPage() {
   }, [needsHeavyMemoryBlocks, entry, allEntries]);
 
   const revisitShareCard = useMemo(() => {
-    if (!entry || !revisitExperience?.isRevisit) return null;
+    if (!heavyReady || !entry || !revisitExperience?.isRevisit) return null;
     return buildRevisitQuietShareCard(revisitExperience, entry.id);
-  }, [entry, revisitExperience]);
+  }, [heavyReady, entry, revisitExperience]);
 
   const copiedShareCard = useMemo(() => {
-    if (!entry || revisitExperience?.isRevisit) return null;
+    if (!heavyReady || !entry || revisitExperience?.isRevisit) return null;
     const text = buildEntrySharedMemoryMoment(entry, allEntries);
     return buildCopiedMomentQuietShareCard({
       text,
       sourceId: entry.id,
       entryId: entry.id,
     });
-  }, [entry, allEntries, revisitExperience?.isRevisit]);
+  }, [heavyReady, entry, allEntries, revisitExperience?.isRevisit]);
 
   const continuationOpener = useMemo(() => {
     if (!needsHeavyMemoryBlocks || !entry) return null;
@@ -559,10 +593,10 @@ export default function EntryPage() {
     return buildMemoryContinuityReport(entry, allEntries);
   }, [needsHeavyMemoryBlocks, entry, allEntries]);
 
-  const evidenceBackedMoment = useMemo(
-    () => pickEvidenceBackedEntryMoment(presentation?.primaryMoment, allEntries),
-    [presentation?.primaryMoment, allEntries],
-  );
+  const evidenceBackedMoment = useMemo(() => {
+    if (!heavyReady) return null;
+    return pickEvidenceBackedEntryMoment(presentation?.primaryMoment, allEntries);
+  }, [heavyReady, presentation?.primaryMoment, allEntries]);
 
   const freshContinuation = useMemo(() => {
     const continuation = presentation?.continuation;
@@ -598,9 +632,12 @@ export default function EntryPage() {
           </div>
         ) : !entry ? (
           <MotionPage className="mt-16 text-center">
-            <p className="text-lg font-normal text-zinc-200">Entry not found</p>
-            <Button asChild className="mt-6">
-              <Link href="/">Record a new entry</Link>
+            <p className="text-lg font-normal text-zinc-200">Reflection not found</p>
+            <p className="mt-2 text-sm text-zinc-500">
+              This link may be outdated, or the reflection was removed from this device.
+            </p>
+            <Button asChild className="mt-6" variant="ghost">
+              <Link href="/journal">Back to reflections</Link>
             </Button>
           </MotionPage>
         ) : (

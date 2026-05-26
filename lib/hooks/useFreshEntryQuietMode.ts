@@ -11,13 +11,14 @@ import type { JournalEntry } from "@/types/journal";
 export function useFreshEntryQuietMode(
   entry: JournalEntry | undefined,
   isRevisit: boolean,
+  presentationEnabled = false,
 ) {
   const [expanded, setExpanded] = useState(false);
 
   const freshQuiet = useMemo(() => {
-    if (!entry || isRevisit || expanded) return false;
+    if (!presentationEnabled || !entry || isRevisit || expanded) return false;
     return isFreshEntryQuietMode(entry.id, entry.createdAt);
-  }, [entry, isRevisit, expanded]);
+  }, [presentationEnabled, entry, isRevisit, expanded]);
 
   const expandFreshQuiet = useCallback(() => {
     if (!entry) return;

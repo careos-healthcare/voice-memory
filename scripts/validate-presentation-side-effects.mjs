@@ -70,7 +70,9 @@ function assertRequiredFiles() {
     "lib/tracking/presentation-guard.ts",
     "lib/refinement/presentation-side-effects.ts",
     "lib/performance/resurfacing-cache.ts",
+    "lib/entry/entry-route-guard.ts",
     "app/page.tsx",
+    "app/entry/[id]/page.tsx",
   ];
   for (const rel of required) {
     if (!fs.existsSync(path.join(ROOT, rel))) {
@@ -91,6 +93,20 @@ function assertRequiredFiles() {
   if (!cache.includes("runPresentationBuild") || !cache.includes("flushPresentationSideEffects")) {
     console.error(
       "Presentation side-effect validation failed — resurfacing cache must guard builds and flush.",
+    );
+    process.exit(1);
+  }
+
+  const entryPage = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
+  if (!entryPage.includes("shouldRunEntryPresentationBuilders")) {
+    console.error(
+      "Presentation side-effect validation failed — entry page must gate presentation builders.",
+    );
+    process.exit(1);
+  }
+  if (!entryPage.includes("runEntryPresentationSafe")) {
+    console.error(
+      "Presentation side-effect validation failed — entry page must use fail-closed presentation runtime.",
     );
     process.exit(1);
   }
