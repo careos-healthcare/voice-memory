@@ -11,6 +11,7 @@ import {
   REVISIT_QUALITY_MEANINGFUL_MIN,
 } from "@/lib/revisit/revisit-quality";
 import { assessResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
+import { hasResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
 import { getAllEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
@@ -194,6 +195,7 @@ export function qualifyMagicCandidate(
   ) {
     return null;
   }
+  if (!hasResurfacingWhyNow(note, entries)) return null;
 
   const evidence = collectMagicEvidence(
     note,

@@ -16,6 +16,10 @@ import {
   pickResurfacingEvidenceReason,
 } from "@/lib/revisit/resurfacing-copy";
 import {
+  hasResurfacingWhyNow,
+  pickResurfacingWhyNowExplanation,
+} from "@/lib/revisit/resurfacing-why-now";
+import {
   collectRevisitQualityCandidates,
   isRevisitQualityNote,
 } from "@/lib/revisit/revisit-quality";
@@ -289,14 +293,8 @@ function countEvidenceSignals(evidence: ResurfacingConfidenceEvidence): number {
   return count;
 }
 
-function answersWhyNow(
-  evidence: ResurfacingConfidenceEvidence,
-  dimensions: ResurfacingConfidenceDimensions,
-): boolean {
-  if (evidence.repeatedPhrase || evidence.repeatedConcern) return true;
-  if (evidence.moodShift && evidence.daysSincePrior >= 3) return true;
-  if (evidence.daysSincePrior >= 7 && dimensions.semanticSimilarityScore >= 45) return true;
-  return false;
+function answersWhyNow(note: MemoryNote, entries: JournalEntry[]): boolean {
+  return hasResurfacingWhyNow(note, entries);
 }
 
 function buildFalsePositiveRisks(
@@ -394,7 +392,7 @@ export function assessResurfacingConfidence(
   }
   if (isTopicRecurrenceCopy(text)) suppressReasons.push("topic_recurrence_template");
   if (!hasPriorReflection) suppressReasons.push("no_prior_reflection");
-  if (!answersWhyNow(evidence, dimensions)) suppressReasons.push("no_why_now");
+  if (!answersWhyNow(note, entries)) suppressReasons.push("no_why_now");
   if (
     past &&
     current &&
@@ -434,7 +432,9 @@ export function assessResurfacingConfidence(
     hasPriorReflection,
   );
 
-  const evidenceReason = pickResurfacingEvidenceReason(evidence, gapDays);
+  const evidenceReason =
+    pickResurfacingWhyNowExplanation(note, entries) ??
+    pickResurfacingEvidenceReason(evidence, gapDays);
 
   return {
     noteId: note.id,
@@ -475,10 +475,12 @@ export function enrichNoteWithResurfacingConfidence(
   entries: JournalEntry[],
 ): MemoryNote {
   const verdict = assessResurfacingConfidence(note, entries);
-  if (verdict.suppressed || !verdict.evidenceReason) return note;
+  const explanation =
+    pickResurfacingWhyNowExplanation(note, entries) ?? verdict.evidenceReason;
+  if (verdict.suppressed || !explanation) return note;
   return {
     ...note,
-    evidenceReason: verdict.evidenceReason,
+    evidenceReason: explanation,
   };
 }
 

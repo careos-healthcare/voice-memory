@@ -63,10 +63,11 @@ if (!confidence.includes("mood_only_match") || !confidence.includes("no_why_now"
 }
 
 const evidenceLines = [
-  "Because you used similar words before.",
-  "Because this concern appeared again.",
-  "Because your tone changed around the same topic.",
-  "Because this came back after",
+  "You used similar words",
+  "This concern showed up again after a quiet stretch.",
+  "You mentioned",
+  "Your tone changed around the same topic.",
+  "This came back on the same kind of day.",
 ];
 
 for (const line of evidenceLines) {
@@ -76,7 +77,7 @@ for (const line of evidenceLines) {
   }
 }
 
-if (!copy.includes("pickResurfacingEvidenceReason")) {
+if (!copy.includes("pickResurfacingEvidenceReason") || !copy.includes("RESURFACING_WHY_NOW_COPY")) {
   console.error("Resurfacing confidence validation failed — missing evidence reason picker.");
   process.exit(1);
 }

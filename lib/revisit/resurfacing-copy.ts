@@ -225,11 +225,36 @@ export function isGenericResurfacingCopy(text: string): boolean {
   return GENERIC_RESURFACING_COPY.some((pattern) => pattern.test(trimmed));
 }
 
+/** Quiet “why now?” lines — evidence-backed, no scores or certainty claims. */
+export const RESURFACING_WHY_NOW_COPY = {
+  similarWordsDaysAgo: (days: number) => `You used similar words ${formatGapLabel(days)}.`,
+  concernAfterQuietStretch: "This concern showed up again after a quiet stretch.",
+  concernAgainAfterGap: (days: number) =>
+    `This concern showed up again ${formatGapLabel(days)}.`,
+  personAgainAfterDays: (name: string, days: number) =>
+    `You mentioned ${name} again ${formatGapLabel(days)}.`,
+  topicAgainAfterDays: (topic: string, days: number) =>
+    `You mentioned ${topic} again ${formatGapLabel(days)}.`,
+  toneChangedSameTopic: "Your tone changed around the same topic.",
+  sameKindOfDay: "This came back on the same kind of day.",
+  sameTimeOfDay: (bucket: string) => `This came back during a similar ${bucket}.`,
+  sameEmotionalStateReturn: (days: number) =>
+    `This mood came back ${formatGapLabel(days)}.`,
+  repeatedAvoidanceLanguage: (days: number) =>
+    `You used similar indirect wording ${formatGapLabel(days)}.`,
+  repeatedFutureLanguage: (days: number) =>
+    `You spoke about what comes next ${formatGapLabel(days)}.`,
+  cameBackAfterGap: (days: number) => `This came back ${formatGapLabel(days)}.`,
+} as const;
+
 /** Quiet evidence lines — answer “why am I seeing this now?” without scores or certainty. */
 export const RESURFACING_EVIDENCE_COPY = {
-  similarWordsBefore: "Because you used similar words before.",
+  similarWordsBefore: RESURFACING_WHY_NOW_COPY.similarWordsDaysAgo(7).replace(
+    formatGapLabel(7),
+    "before",
+  ),
   concernAgain: "Because this concern appeared again.",
-  toneChangedSameTopic: "Because your tone changed around the same topic.",
+  toneChangedSameTopic: `Because ${RESURFACING_WHY_NOW_COPY.toneChangedSameTopic.slice(0, 1).toLowerCase()}${RESURFACING_WHY_NOW_COPY.toneChangedSameTopic.slice(1)}`,
   cameBackAfterDays: (days: number) =>
     `Because this came back after ${formatGapLabel(days)}.`,
 } as const;
@@ -238,16 +263,25 @@ export function pickResurfacingEvidenceReason(
   evidence: ResurfacingConfidenceEvidence,
   gapDays: number,
 ): string | null {
-  if (evidence.repeatedPhrase) return RESURFACING_EVIDENCE_COPY.similarWordsBefore;
-  if (evidence.repeatedConcern) return RESURFACING_EVIDENCE_COPY.concernAgain;
+  if (evidence.repeatedPhrase) {
+    return gapDays >= 3
+      ? RESURFACING_WHY_NOW_COPY.similarWordsDaysAgo(gapDays)
+      : RESURFACING_EVIDENCE_COPY.similarWordsBefore;
+  }
+  if (evidence.repeatedConcern) {
+    return gapDays >= 7
+      ? RESURFACING_WHY_NOW_COPY.concernAfterQuietStretch
+      : RESURFACING_WHY_NOW_COPY.concernAgainAfterGap(gapDays);
+  }
   if (evidence.moodShift && evidence.daysSincePrior >= 3) {
-    return RESURFACING_EVIDENCE_COPY.toneChangedSameTopic;
+    return RESURFACING_WHY_NOW_COPY.toneChangedSameTopic;
   }
   if (evidence.daysSincePrior >= 3) {
-    return RESURFACING_EVIDENCE_COPY.cameBackAfterDays(gapDays);
+    return RESURFACING_WHY_NOW_COPY.cameBackAfterGap(gapDays);
   }
   if (evidence.sharedEntities.length > 0 && evidence.daysSincePrior >= 7) {
-    return RESURFACING_EVIDENCE_COPY.cameBackAfterDays(gapDays);
+    const name = evidence.sharedEntities[0];
+    return RESURFACING_WHY_NOW_COPY.personAgainAfterDays(name, gapDays);
   }
   return null;
 }
