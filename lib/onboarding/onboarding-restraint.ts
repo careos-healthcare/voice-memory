@@ -5,6 +5,7 @@ export const ONBOARDING_BLOCKED_TERMS = [
   "game-changer",
   "unlock your potential",
   "self-improvement",
+  "self-awareness",
   "productivity",
   "habit stack",
   "AI-powered",
@@ -24,6 +25,13 @@ export const ONBOARDING_BLOCKED_TERMS = [
   "living resurfacing",
   "voice identity",
   "emotional chapter",
+  "discover patterns",
+  "mindfulness",
+  "coaching",
+  "growth journey",
+  "healing journey",
+  "your journey",
+  "AI journal",
 ] as const;
 
 const VAGUE_UNGROUNDED = [
@@ -42,6 +50,12 @@ const VAGUE_UNGROUNDED = [
   /\bintelligence layer\b/i,
   /\bwhat keeps coming back\b/i,
   /\brecurring patterns over time\b/i,
+  /\bdiscover patterns\b/i,
+  /\bself-awareness\b/i,
+  /\bmindfulness\b/i,
+  /\binsights?\s+summary\b/i,
+  /\b(?:healing|growth|inner)\s+journey\b/i,
+  /\bcoaching\b(?!\s+plan)/i,
 ] as const;
 
 export function isOnboardingCopyAllowed(line: string): boolean {

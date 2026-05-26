@@ -160,7 +160,7 @@ export function buildInsightsSummaryText(): string {
   const insights = analyzeJournalEntries();
 
   const lines = [
-    "VoiceMemory — Insights Summary",
+    "VoiceMemory — Memory timeline summary",
     `Generated: ${formatDateLabel(new Date().toISOString())}`,
     `Total entries: ${insights.totalEntries}`,
     "",

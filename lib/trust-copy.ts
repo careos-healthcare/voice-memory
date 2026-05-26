@@ -90,7 +90,7 @@ export const PRIVACY_SECTIONS = [
   },
   {
     title: "What we do not do",
-    body: "We do not sell your reflections. We do not provide therapy or clinical diagnosis. We do not use guilt, streaks, or pressure to keep you recording. AI summaries describe patterns in what you said — they are not complete or authoritative.",
+    body: "We do not sell your reflections. We do not provide therapy or clinical diagnosis. We do not use guilt, streaks, or pressure to keep you recording. Summaries from your transcript describe repeated words and themes — they are not complete or authoritative.",
   },
   {
     title: "Export your data",
@@ -109,7 +109,7 @@ export const PRIVACY_SECTIONS = [
 export const TERMS_SECTIONS = [
   {
     title: "Service description",
-    body: `${SERVICE_DESCRIPTION} The product is provided as-is for personal self-reflection.`,
+    body: `${SERVICE_DESCRIPTION} The product is provided as-is for recording your own reflections.`,
   },
   {
     title: "Not medical or therapeutic advice",
@@ -129,7 +129,7 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "Limitation of liability",
-    body: "VoiceMemory is a software tool, not a crisis service. We are not liable for decisions you make based on AI-generated summaries. See the Safety page for crisis resources.",
+    body: "VoiceMemory is a software tool, not a crisis service. We are not liable for decisions you make based on summaries generated from your transcript. See the Safety page for crisis resources.",
   },
 ] as const;
 
@@ -163,7 +163,7 @@ export const SAFETY_SECTIONS = [
   },
   {
     title: "No diagnosis",
-    body: "AI outputs may label moods or themes in plain language. That is not a mental health diagnosis, risk assessment, or treatment plan.",
+    body: "Automated outputs may label moods or themes in plain language. That is not a diagnosis, risk assessment, or treatment plan.",
   },
   ...EMOTIONAL_SAFETY_SECTIONS,
   {

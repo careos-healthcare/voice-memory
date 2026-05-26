@@ -34,18 +34,22 @@ const REQUIRED_EVENTS = [
 const REQUIRED_COPY = [
   "Record one short reflection.",
   "VoiceMemory saves it on this device.",
-  "Your past words come back when they match today.",
+  "Your own words came back.",
   "Sign in only if you want encrypted sync.",
   "The value appears when today connects to something you said before.",
   "Speak for about a minute. Your words stay on this device.",
   "Not therapy, not a diagnosis",
   "VoiceMemory is not an AI journal.",
+  "Patterns you forgot you were repeating.",
+  "You used similar words before.",
+  "Your voice makes the pattern harder to ignore.",
 ];
 
 const FORBIDDEN_RE = [
   { re: /\blife-changing\b/i, label: "life-changing" },
   { re: /\bAI-powered\b/i, label: "AI-powered" },
   { re: /\bself-improvement\b/i, label: "self-improvement" },
+  { re: /\bself-awareness\b/i, label: "self-awareness" },
   { re: /\bproductivity\b/i, label: "productivity" },
   { re: /\breflective intelligence\b/i, label: "reflective intelligence" },
   { re: /\blongitudinal memory\b/i, label: "longitudinal memory" },
@@ -56,6 +60,12 @@ const FORBIDDEN_RE = [
   { re: /\bemotional chapter\b/i, label: "emotional chapter" },
   { re: /\breflective mirror\b/i, label: "reflective mirror" },
   { re: /\bgently return\b/i, label: "gently return" },
+  { re: /\bdiscover patterns\b/i, label: "discover patterns" },
+  { re: /\bmindfulness\b/i, label: "mindfulness" },
+  { re: /\b(?:healing|growth|inner|self-care)\s+journey\b/i, label: "wellness journey" },
+  { re: /\binsights summary\b/i, label: "insights summary" },
+  { re: /\bcoaching\b/i, label: "coaching" },
+  { re: /\bAI journal\b/i, label: "AI journal" },
 ];
 
 const USER_SCAN = [
@@ -136,8 +146,10 @@ function scanFile(relPath) {
   const lines = fs.readFileSync(full, "utf8").split("\n");
   for (const line of lines) {
     if (line.includes("FORBIDDEN_RE") || line.includes("ONBOARDING_BLOCKED")) continue;
+    if (/\bnot an ai journal\b/i.test(line)) continue;
     for (const { re, label } of FORBIDDEN_RE) {
       if (re.test(line)) {
+        if (label === "AI journal" && /\bnot an ai journal\b/i.test(line)) continue;
         console.error(`Onboarding restraint validation failed — forbidden "${label}" in ${relPath}`);
         process.exit(1);
       }

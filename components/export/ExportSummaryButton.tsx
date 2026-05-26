@@ -12,7 +12,7 @@ import {
 } from "@/lib/memory-export";
 
 interface ExportSummaryButtonProps {
-  variant: "weekly" | "insights";
+  variant: "weekly" | "timeline";
   className?: string;
 }
 
@@ -27,7 +27,7 @@ export function ExportSummaryButton({
       downloadTextFile(`voicememory-weekly-${date}.txt`, buildWeeklySummaryText());
       return;
     }
-    downloadTextFile(`voicememory-insights-${date}.txt`, buildInsightsSummaryText());
+    downloadTextFile(`voicememory-timeline-${date}.txt`, buildInsightsSummaryText());
   };
 
   return (
@@ -39,7 +39,7 @@ export function ExportSummaryButton({
       onClick={handleExport}
     >
       <Download className="h-4 w-4" />
-      Export {variant === "weekly" ? "weekly" : "insights"} summary
+      Export {variant === "weekly" ? "weekly" : "timeline"} summary
     </Button>
   );
 }

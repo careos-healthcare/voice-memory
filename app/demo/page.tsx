@@ -57,7 +57,7 @@ export default function DemoPage() {
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Demo mode</h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
             Explore VoiceMemory with realistic sample reflections — entities, weekly
-            intelligence, and search examples. Your real data is backed
+            resurfacing, and search examples. Your real data is backed
             up before entering and restored when you exit.
           </p>
         </header>
@@ -96,7 +96,7 @@ export default function DemoPage() {
                     Exit demo mode
                   </Button>
                   <Button type="button" variant="ghost" onClick={() => router.push("/weekly")}>
-                    View weekly intelligence
+                    View weekly summary
                   </Button>
                   <Button type="button" variant="ghost" onClick={() => router.push("/memory")}>
                     View entity memory

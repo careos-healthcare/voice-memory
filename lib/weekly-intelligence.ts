@@ -508,7 +508,7 @@ export function buildLocalWeeklySummary(report: WeeklyIntelligenceReport): strin
   if (comparison.entryCount.lastWeek > 0) {
     const diff = thisWeek.entryCount - comparison.entryCount.lastWeek;
     if (diff > 0) {
-      parts.push(`You checked in ${diff} more time${diff === 1 ? "" : "s"} than last week — that consistency builds self-awareness.`);
+      parts.push(`You checked in ${diff} more time${diff === 1 ? "" : "s"} than last week — more chances for your own words to come back.`);
     }
   }
 

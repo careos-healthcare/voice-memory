@@ -199,7 +199,7 @@ export default function ExportPage() {
                 <FileText className="h-4 w-4 text-emerald-300" />
                 <CardTitle className="text-base">Weekly summary</CardTitle>
               </div>
-              <p className="text-xs text-zinc-500">Plain text · rolling 7-day intelligence</p>
+              <p className="text-xs text-zinc-500">Plain text · rolling 7-day summary</p>
             </CardHeader>
             <CardContent>
               <Button

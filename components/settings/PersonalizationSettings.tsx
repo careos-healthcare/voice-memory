@@ -175,7 +175,7 @@ export function PersonalizationSettings() {
       </div>
 
       <div className="space-y-3 border-t border-white/5 pt-6">
-        <p className="text-sm font-medium text-zinc-300">Silence intelligence</p>
+        <p className="text-sm font-medium text-zinc-300">Quiet mode</p>
         <p className="text-sm text-zinc-400">
           Lets the app say less for a while when callbacks are ignored, revisits feel heavy, or you
           mostly want to record. Saved entries stay visible — recording and export are never blocked.
@@ -190,7 +190,7 @@ export function PersonalizationSettings() {
             setSilenceIntelligence(next);
           }}
         >
-          {silenceIntelligence ? "Silence intelligence on" : "Enable silence intelligence"}
+          {silenceIntelligence ? "Quiet mode on" : "Enable quiet mode"}
         </Button>
       </div>
 

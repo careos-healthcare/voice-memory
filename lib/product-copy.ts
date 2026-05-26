@@ -12,18 +12,21 @@ export const NOT_AI_JOURNAL_LINE = WEDGE_POSITIONING.notAiJournal;
 /** Concrete resurfacing lines — prefer evidence over abstraction. */
 export const WEDGE_RESURFACING = {
   forgottenPatterns: "Patterns you forgot you were repeating.",
-  pastWordsMatch: "Your past words come back when they match today.",
+  wordsCameBack: "Your own words came back.",
+  pastWordsMatch: "Your own words came back when they match today.",
   similarWordsBefore: "You used similar words before.",
   concernAgain: "This concern showed up again.",
   saidBeforeLeftAlone: "You said this before, then left it alone.",
-  ownVoicePattern: "Your own voice makes the pattern harder to ignore.",
+  ownVoicePattern: "Your voice makes the pattern harder to ignore.",
+  returnedAfterDays: (days: number) =>
+    `This returned after ${days} day${days === 1 ? "" : "s"}.`,
 } as const;
 
 export const APP_EYEBROW = "Private voice reflections";
 export const APP_TAGLINE = "Record a short reflection. Keep it on this device.";
 export const APP_LEAD =
   "Record one short reflection. VoiceMemory saves it here until you export or delete it.";
-export const APP_SUPPORT = `${WEDGE_RESURFACING.pastWordsMatch} Sign in only if you want encrypted backup.`;
+export const APP_SUPPORT = `${WEDGE_RESURFACING.wordsCameBack} Sign in only if you want encrypted backup.`;
 export const APP_HONESTY =
   "Local-first on this device. Not therapy, not a diagnosis, and not a score or streak.";
 export const APP_DEVICE_LINE = "Speak for about a minute. Your words stay on this device.";
@@ -70,7 +73,7 @@ export const ONBOARDING_ACTIVATION = {
   quietEarly: "The first day may feel quiet. That is normal.",
   whyReturn: ONBOARDING_WHY_RETURN,
   stepRecord: "Record one short reflection. VoiceMemory saves it on this device.",
-  stepReturn: WEDGE_RESURFACING.pastWordsMatch,
+  stepReturn: WEDGE_RESURFACING.wordsCameBack,
   stepBackup: "You can use it without backup. Sign in only if you want encrypted sync.",
   finish: "Go at your pace. Nothing to catch up on.",
 } as const;

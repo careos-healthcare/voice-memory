@@ -75,8 +75,13 @@ const settings = fs.readFileSync(
   path.join(ROOT, "components/settings/PersonalizationSettings.tsx"),
   "utf8",
 );
-if (!settings.includes("Silence intelligence")) {
+if (!settings.includes("Quiet mode")) {
   console.error("Silence intelligence validation failed — missing settings toggle.");
+  process.exit(1);
+}
+
+if (/\bSilence intelligence\b/i.test(settings)) {
+  console.error("Silence intelligence validation failed — settings must not use generic intelligence phrasing.");
   process.exit(1);
 }
 

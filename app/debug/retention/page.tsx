@@ -165,7 +165,7 @@ export default function RetentionDebugPage() {
               <CardContent className="space-y-4">
                 <PatternSpecificityDebugPanel
                   insights={specificityReport.insights}
-                  title="Ranked insight specificity"
+                  title="Ranked pattern specificity"
                   compact
                 />
                 <p className="text-xs text-zinc-600">

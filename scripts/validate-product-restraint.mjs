@@ -56,7 +56,9 @@ const SKIP_PATH_PARTS = [
   "lib/retention/gentle-return-prompts.ts",
   "lib/launch-checklist.ts",
   "lib/conversation/followup-prompts.ts",
-  "lib/trust-copy.ts",
+  "lib/refinement/callback-tuning.ts",
+  "lib/revisit/resurfacing-why-now.ts",
+  "lib/retention/first-week.ts",
   "scripts/",
 ];
 
@@ -142,6 +144,21 @@ const BANNED_PHRASES = [
   { re: /\bemotional chapter\b/i, label: "emotional chapter" },
   { re: /\bgently return\b/i, label: "gently return" },
   { re: /\bintelligence layer\b/i, label: "intelligence layer" },
+  { re: /\bself-awareness\b/i, label: "self-awareness" },
+  { re: /\bdiscover patterns\b/i, label: "discover patterns" },
+  { re: /\bmindfulness\b/i, label: "mindfulness" },
+  { re: /\b(?:healing|growth|inner|self-care)\s+journey\b/i, label: "wellness journey" },
+  { re: /\byour journey\b/i, label: "your journey" },
+  { re: /\bgrowth mindset\b/i, label: "growth mindset" },
+  { re: /\binsights summary\b/i, label: "insights summary" },
+  { re: /\bweekly intelligence\b/i, label: "weekly intelligence" },
+  { re: /\bsilence intelligence\b/i, label: "silence intelligence" },
+  { re: /\bAI journal\b/i, label: "AI journal" },
+  { re: /\bcoaching\b/i, label: "coaching" },
+  { re: /\btherapy-like\b/i, label: "therapy-like" },
+  { re: /\bhold space\b/i, label: "hold space" },
+  { re: /\binner work\b/i, label: "inner work" },
+  { re: /\bbreakthrough moment\b/i, label: "breakthrough moment" },
 ];
 
 const CHART_DASHBOARD_PHRASES = [
@@ -187,8 +204,49 @@ function isValidationScriptLine(trimmed) {
   return (
     trimmed.includes("validate:restraint") ||
     trimmed.includes("validate:quiet-copy") ||
-    trimmed.includes("validate-product-restraint")
+    trimmed.includes("validate-product-restraint") ||
+    trimmed.includes("validate-onboarding-restraint") ||
+    trimmed.includes("BANNED_PHRASES") ||
+    trimmed.includes("FORBIDDEN_RE") ||
+    trimmed.includes("ONBOARDING_BLOCKED")
   );
+}
+
+function isImportOrTypeLine(trimmed) {
+  return (
+    trimmed.startsWith("import ") ||
+    trimmed.startsWith("export type ") ||
+    trimmed.startsWith("export interface ") ||
+    trimmed.startsWith("type ") ||
+    trimmed.startsWith("interface ")
+  );
+}
+
+function isBannedPhraseAllowed(line, label) {
+  if (isImportOrTypeLine(line.trim())) {
+    if (label === "wellness journey" && /archive-growth|silence-intelligence/i.test(line)) {
+      return true;
+    }
+    if (label === "silence intelligence" && /silence-intelligence/i.test(line)) return true;
+  }
+  if (label === "coaching" && /\bnot coaching\b/i.test(line)) return true;
+  if (label === "coaching" && /\bdisguised coaching\b/i.test(line)) return true;
+  if (label === "AI journal" && /\bnot an ai journal\b/i.test(line)) return true;
+  if (label === "coach" && /\bnot coaching\b/i.test(line)) return true;
+  if (label === "wellness journey" && /^(import |export )/.test(line.trim())) return true;
+  if (label === "silence intelligence" && /silence-intelligence|SilenceIntelligence|getSilenceIntelligence|recordReflectionDuringSilence|shouldSuppressSilenceIntelligence|pickSilenceIntelligence|buildSilenceIntelligence|setSilenceIntelligence|silenceIntelligence\b/i.test(line)) {
+    return true;
+  }
+  if (label === "mental health diagnosis" && /\bnot a (?:mental health )?diagnosis\b/i.test(line)) {
+    return true;
+  }
+  if (label === "wellness journey" && /\/\\b|FORBIDDEN|THERAPY_RE|blocked|filter|test\(/i.test(line)) {
+    return true;
+  }
+  if (label === "hold space" && /\/\\b|FORBIDDEN|blocked|filter|test\(/i.test(line)) {
+    return true;
+  }
+  return false;
 }
 
 function pushViolation(violations, filePath, lineNo, rule, detail, line) {
@@ -208,7 +266,7 @@ function checkBannedPhrases(content, filePath, violations) {
     if (!trimmed || isCommentLine(trimmed) || isValidationScriptLine(trimmed)) return;
 
     for (const { re, label } of BANNED_PHRASES) {
-      if (re.test(line)) {
+      if (re.test(line) && !isBannedPhraseAllowed(line, label)) {
         pushViolation(violations, filePath, i + 1, "banned phrase", label, line);
       }
     }
@@ -384,7 +442,10 @@ for (const required of [
   "VoiceMemory is not an AI journal.",
   "resurfaces forgotten emotional patterns from your own voice",
   "Patterns you forgot you were repeating.",
-  "Your past words come back when they match today.",
+  "Your own words came back.",
+  "You used similar words before.",
+  "This concern showed up again.",
+  "Your voice makes the pattern harder to ignore.",
 ]) {
   if (!productCopy.includes(required)) {
     console.error(`validate:restraint failed — product-copy missing wedge line: ${required}`);

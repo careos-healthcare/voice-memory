@@ -20,7 +20,7 @@ interface PatternSpecificityDebugPanelProps {
 
 export function PatternSpecificityDebugPanel({
   insights,
-  title = "Insight specificity debug",
+  title = "Pattern specificity debug",
   compact = false,
 }: PatternSpecificityDebugPanelProps) {
   const weak = insights.filter((i) => i.specificity.isWeakOrGeneric);

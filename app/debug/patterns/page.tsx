@@ -36,7 +36,7 @@ export default function PatternsDebugPage() {
               Pattern engine debug
             </p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-              Insight specificity
+              Pattern specificity
             </h1>
             <p className="mt-2 text-sm text-zinc-400">
               Local scoring for exact phrases, recurrence, cross-entry grounding,
@@ -61,7 +61,7 @@ export default function PatternsDebugPage() {
               <Card>
                 <CardHeader className="pb-1">
                   <CardTitle className="text-xs font-normal uppercase tracking-wider text-zinc-500">
-                    Insights scored
+                    Patterns scored
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -118,7 +118,7 @@ export default function PatternsDebugPage() {
                 Retention dashboard →
               </Link>
               <Link href="/insights" className="text-zinc-500 hover:text-zinc-300">
-                Insights →
+                Timeline →
               </Link>
               <Link href="/demo" className="text-zinc-500 hover:text-zinc-300">
                 Demo mode →

@@ -41,7 +41,7 @@ const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
   rich: {
     tier: "rich",
     headline: "Depth is here",
-    body: `${WEDGE_RESURFACING.forgottenPatterns} Worth revisiting when they still fit.`,
+    body: `${WEDGE_RESURFACING.forgottenPatterns} ${WEDGE_RESURFACING.ownVoicePattern}`,
   },
 };
 

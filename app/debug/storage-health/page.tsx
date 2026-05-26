@@ -226,7 +226,7 @@ export default function StorageHealthDebugPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-normal text-zinc-200">
-                  Cross-device emotional continuity
+                  Cross-device archive sync
                 </CardTitle>
               </CardHeader>
               <CardContent>
