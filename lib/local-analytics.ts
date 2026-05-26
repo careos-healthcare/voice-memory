@@ -121,4 +121,7 @@ export function trackReflectionMilestones(totalAfterSave: number): void {
   if (totalAfterSave >= 2 && !hasLocalEvent(LAUNCH_EVENTS.secondReflectionCreated)) {
     trackLaunchEvent(LAUNCH_EVENTS.secondReflectionCreated);
   }
+  void import("@/lib/retention/first-week-funnel").then((mod) => {
+    mod.observeFunnelReflectionSaved(totalAfterSave);
+  });
 }

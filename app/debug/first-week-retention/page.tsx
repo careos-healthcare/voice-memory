@@ -55,7 +55,10 @@ export default function FirstWeekRetentionDebugPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
-          <Link href="/debug/retention" className="text-violet-300 hover:text-violet-200">
+          <Link href="/debug/first-week-funnel" className="text-violet-300 hover:text-violet-200">
+            First-week funnel →
+          </Link>
+          <Link href="/debug/retention" className="text-zinc-500 hover:text-zinc-300">
             Retention dashboard →
           </Link>
           <Link href="/debug/return-triggers" className="text-zinc-500 hover:text-zinc-300">

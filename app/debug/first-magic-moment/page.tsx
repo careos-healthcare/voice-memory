@@ -61,6 +61,9 @@ export default function FirstMagicMomentDebugPage() {
           <Link href="/debug/revisit-quality" className="text-zinc-500 hover:text-zinc-300">
             Revisit quality →
           </Link>
+          <Link href="/debug/first-week-funnel" className="text-zinc-500 hover:text-zinc-300">
+            First-week funnel →
+          </Link>
           <Link href="/debug/onboarding-clarity" className="text-zinc-500 hover:text-zinc-300">
             Onboarding clarity →
           </Link>
