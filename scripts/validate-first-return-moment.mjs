@@ -17,6 +17,35 @@ for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }
 
+const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+if (!home.includes("FirstReturnMoment")) {
+  failures.push("homepage must render FirstReturnMoment");
+}
+if (!home.includes("desktopRecognitionCenter")) {
+  failures.push("homepage must center desktop on first return moment");
+}
+if (!home.includes("presentation=\"quiet\"")) {
+  failures.push("homepage must use quiet first-return presentation");
+}
+
+if (!fs.existsSync(path.join(ROOT, "lib/continuity/first-return-observation.ts"))) {
+  failures.push("missing first-return-observation metrics");
+}
+const observation = fs.readFileSync(
+  path.join(ROOT, "lib/continuity/first-return-observation.ts"),
+  "utf8",
+);
+for (const token of [
+  "firstReturnShownAt",
+  "firstReturnOpenedAt",
+  "rerecordWithin10MinAt",
+  "recordFirstReturnShown",
+  "recordFirstReturnOpened",
+  "maybeRecordFirstReturnRerecordWithin10Min",
+]) {
+  if (!observation.includes(token)) failures.push(`first-return metrics missing ${token}`);
+}
+
 const journal = fs.readFileSync(path.join(ROOT, "app/journal/page.tsx"), "utf8");
 if (!journal.includes("FirstReturnMoment")) {
   failures.push("journal must render FirstReturnMoment");

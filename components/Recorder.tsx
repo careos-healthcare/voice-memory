@@ -100,6 +100,7 @@ import {
   markReflexRecordingStarted,
   markReflexRecorderMounted,
 } from "@/lib/reflex/reflex-observation";
+import { maybeRecordFirstReturnRerecordWithin10Min } from "@/lib/continuity/first-return-observation";
 import { recordReflexSessionRecording } from "@/lib/reflex/open-without-record";
 import {
   isMicrophonePermissionGranted,
@@ -677,6 +678,7 @@ export function Recorder({
       markRecorderStarted();
       markRecorderEngaged();
       markReflexRecordingStarted();
+      maybeRecordFirstReturnRerecordWithin10Min();
       markRecordingStartedForVulnerability(captureContext);
       markSpeechStartedAfterHesitation();
       clearHesitationWatch();

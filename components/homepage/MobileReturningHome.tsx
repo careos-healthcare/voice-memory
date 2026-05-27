@@ -26,33 +26,37 @@ export function MobileReturningHome({
     () => (returnMoment ? null : pickMobileHomeSecondary(entries)),
     [entries, returnMoment],
   );
-  const showRhythm = countCompletedReflections() >= 2;
+  const showRhythm = countCompletedReflections() >= 2 && !returnMoment;
 
   return (
     <div className="flex w-full max-w-md flex-col items-center text-center">
-      <div className="w-full">{recorder}</div>
-
-      {continuityLine ? (
-        <p className="mt-5 max-w-sm text-sm leading-[1.75] text-zinc-400/95">
+      {returnMoment ? (
+        <div className="mb-8 w-full">
+          <FirstReturnMoment
+            entries={entries}
+            presentation="quiet"
+            trackShown
+          />
+        </div>
+      ) : continuityLine ? (
+        <p className="mb-6 max-w-sm text-sm leading-[1.75] text-zinc-400/95">
           {continuityLine}
         </p>
       ) : null}
 
-      {returnMoment ? (
-        <div className="mt-8 w-full text-left">
-          <FirstReturnMoment entries={entries} />
-        </div>
-      ) : secondary?.kind === "return_thread" && secondary.thread ? (
+      <div className="w-full">{recorder}</div>
+
+      {!returnMoment && secondary?.kind === "return_thread" && secondary.thread ? (
         <div className="mt-8 w-full text-left">
           <ReturnThreadCard thread={secondary.thread} />
         </div>
-      ) : secondary?.kind === "latest_reflection" && secondary.entry ? (
+      ) : !returnMoment && secondary?.kind === "latest_reflection" && secondary.entry ? (
         <Link
           href={`/entry/${secondary.entry.id}`}
           className="group mt-8 block w-full rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-left transition-colors hover:border-violet-400/25"
         >
           <EntryListRowMeta createdAt={secondary.entry.createdAt} />
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-400">
+          <p className="mt-2 line-clamp-1 text-xs leading-relaxed text-zinc-500">
             {secondary.snippet}
           </p>
           <span className="mt-3 inline-flex items-center gap-1 text-xs text-zinc-600 group-hover:text-violet-300">

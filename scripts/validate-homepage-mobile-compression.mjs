@@ -25,8 +25,11 @@ const returning = fs.readFileSync(
   path.join(ROOT, "components/homepage/MobileReturningHome.tsx"),
   "utf8",
 );
-if (!returning.includes("ReturnThreadCard") || !returning.includes("HabitLoopCard")) {
-  failures.push("MobileReturningHome must show thread OR latest, rhythm below");
+if (!returning.includes("FirstReturnMoment") || !returning.includes('presentation="quiet"')) {
+  failures.push("MobileReturningHome must lead with quiet FirstReturnMoment when available");
+}
+if (!returning.includes("ReturnThreadCard")) {
+  failures.push("MobileReturningHome must keep thread fallback");
 }
 
 const habit = fs.readFileSync(path.join(ROOT, "components/HabitLoopCard.tsx"), "utf8");

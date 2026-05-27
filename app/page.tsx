@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -32,10 +32,16 @@ import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MobileCompressedHome } from "@/components/homepage/MobileCompressedHome";
 import { MobileReturningHome } from "@/components/homepage/MobileReturningHome";
+import { FirstReturnMoment } from "@/components/continuity/FirstReturnMoment";
+import { pickFirstReturnMoment } from "@/lib/continuity/first-return-moment";
 import { MicCentricHome } from "@/components/reflex/MicCentricHome";
 import { surfacedContinuityLine } from "@/lib/continuity/build-continuity-lines";
 import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
-import { isMobileFirstRunHome, isMobileReturningHome } from "@/lib/mobile/mobile-first-run";
+import {
+  isMobileFirstRunHome,
+  isMobileReturningHome,
+  isNarrowMobileViewport,
+} from "@/lib/mobile/mobile-first-run";
 import {
   buildRecordReturnFromFollowup,
   buildRecordReturnFromNote,
@@ -106,6 +112,16 @@ export default function HomePage() {
   const hydrated = useClientHydrated();
   const mobileFirstRun = hydrated && isMobileFirstRunHome();
   const mobileReturning = hydrated && isMobileReturningHome();
+  const entriesForHome = useMemo(
+    () => (hydrated ? getMemoryEligibleEntries() : []),
+    [hydrated],
+  );
+  const firstReturnMoment = useMemo(
+    () => (hydrated ? pickFirstReturnMoment(entriesForHome) : null),
+    [hydrated, entriesForHome],
+  );
+  const desktopRecognitionCenter =
+    hydrated && !isNarrowMobileViewport() && Boolean(firstReturnMoment);
   const { limits } = useQuietMode();
   const [primaryNote, setPrimaryNote] = useState<MemoryNote | null>(null);
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
@@ -132,7 +148,8 @@ export default function HomePage() {
 
   const micCentric =
     directToMic || silenceFirstReflex || Boolean(recordReturn || clarityRecord || reflexCapture);
-  const captureFirstHome = micCentric || mobileFirstRun || mobileReturning;
+  const captureFirstHome =
+    micCentric || mobileFirstRun || mobileReturning || desktopRecognitionCenter;
 
   useEffect(() => {
     if (shouldForceDirectMicNextSession()) {
@@ -182,6 +199,8 @@ export default function HomePage() {
       }
 
       const delayStack = shouldDelayHomepageContinuityStack();
+      const recognitionCentered =
+        Boolean(pickFirstReturnMoment(entries)) && !isNarrowMobileViewport();
       const presentation = runPresentationBuild(() =>
         buildQuietHomepagePresentation(entries, limits),
       );
@@ -190,7 +209,7 @@ export default function HomePage() {
       }
       const silenceEffects = getSilenceIntelligenceEffects(entries);
 
-      if (delayStack) {
+      if (delayStack || recognitionCentered) {
         setPrimaryNote(null);
         setContinuation([]);
         setFollowupPrompt(null);
@@ -291,7 +310,7 @@ export default function HomePage() {
           <SiteHeader compact={mobileFirstRun || mobileReturning} />
         ) : null}
 
-        {!micCentric && !mobileFirstRun && !mobileReturning ? (
+        {!micCentric && !mobileFirstRun && !mobileReturning && !desktopRecognitionCenter ? (
           <div className="mt-6 space-y-10 py-2">
             <ActivationOnboarding />
             <CalmComprehensionPrompt />
@@ -344,6 +363,26 @@ export default function HomePage() {
               recorderAutoStart={recorderAutoStart}
               quickReflection={isQuickReflectionEnabled()}
             />
+          ) : desktopRecognitionCenter ? (
+            <div className="flex w-full max-w-xl flex-col items-center text-center">
+              <FirstReturnMoment
+                entries={entriesForHome}
+                presentation="quiet"
+                trackShown
+                className="w-full"
+              />
+              <div className="mt-8 w-full" ref={recorderRef} id="recorder">
+                <Recorder
+                  autoStart={recorderAutoStart}
+                  preRecordLine={null}
+                  recordReturn={recordReturn}
+                  clarityRecord={clarityRecord}
+                  reflexCapture={reflexCapture}
+                  reflexFastBoot={directToMic || silenceFirstReflex}
+                  quickReflection={isQuickReflectionEnabled()}
+                />
+              </div>
+            </div>
           ) : mobileFirstRun ? (
             <MobileCompressedHome
               recorder={
