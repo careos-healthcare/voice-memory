@@ -36,7 +36,7 @@ const REQUIRED_COPY = [
   "VoiceMemory saves it on this device.",
   "This came back.", // via MEMORY_LANGUAGE / WEDGE_RESURFACING
   "Sign in only if you want encrypted sync.",
-  "The value appears when today connects to something you said before.",
+  "After a few real reflections, a phrase you used before can show up again when today sounds similar.",
   "Speak for about a minute. Your words stay on this device.",
   "Not therapy, not a diagnosis",
   "Your words stay yours",

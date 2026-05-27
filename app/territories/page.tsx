@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TerritoryList } from "@/components/territories/TerritorySections";
 import { Button } from "@/components/ui/button";
@@ -44,21 +44,7 @@ export default function TerritoriesPage() {
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : territories.length === 0 ? (
-            <>
-              <EmptyStateIntelligence className="mb-4" />
-              <div className="px-2 py-16 text-center">
-                <MapPin className="mx-auto h-7 w-7 text-zinc-600/80" />
-                <p className="mt-5 text-base font-normal text-zinc-400">
-                  No territories yet
-                </p>
-                <p className="mt-2 text-sm text-zinc-600">
-                  These emerge when the same life context shows up more than once.
-                </p>
-                <Button asChild className="mt-8" variant="secondary">
-                  <Link href="/">Start recording</Link>
-                </Button>
-              </div>
-            </>
+            <AnticipatoryEmptyState icon={<MapPin className="h-6 w-6 text-violet-300" />} />
           ) : (
             <TerritoryList territories={territories} />
           )}

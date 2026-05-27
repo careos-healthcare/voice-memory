@@ -9,12 +9,12 @@ import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { Card, CardContent } from "@/components/ui/card";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
-import { APP_SUBTITLE, WEDGE_RESURFACING } from "@/lib/product-copy";
+import { APP_SUBTITLE } from "@/lib/product-copy";
 import type { ReturnThreadsReport } from "@/types/return-thread";
 
 export default function InsightsPage() {
@@ -54,8 +54,8 @@ export default function InsightsPage() {
           <UpgradeCta
             source="insights"
             feature="weekly_patterns"
-            headline="Search your full reflection history"
-            description="Pro unlocks full history search, export reports, and weekly resurfacing. Free searches recent reflections on this device."
+            headline="Full-archive memory return"
+            description="Pro connects return threads and weekly remembered moments across your whole archive. Export stays available when you need a copy."
             compact
           />
         </div>
@@ -70,17 +70,7 @@ export default function InsightsPage() {
               </CardContent>
             </Card>
           ) : !report.hasData ? (
-            <Card className="border-dashed border-white/5">
-              <CardContent className="py-16 text-center">
-                <p className="text-zinc-400">Not enough yet to see what returns.</p>
-                <p className="mt-2 text-sm text-zinc-600">
-                  Talk naturally a few times. {WEDGE_RESURFACING.pastWordsMatch}
-                </p>
-                <Button asChild className="mt-6" variant="secondary">
-                  <Link href="/">Record a reflection</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <AnticipatoryEmptyState showPromise />
           ) : (
             <>
               <ReturnThreadsOverview report={report} />

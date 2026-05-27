@@ -445,7 +445,10 @@ if (!fs.existsSync(productCopyPath)) {
 const productCopy = fs.readFileSync(productCopyPath, "utf8");
 const productCopyRequired = [
   ["Your words stay yours"],
-  ["brings back what you already said"],
+  [
+    "brings back what you already said",
+    "brings back phrases you already spoke",
+  ],
   ["Words you forgot you had already spoken."],
   ["This came back.", "MEMORY_LANGUAGE.thisCameBack"],
   ["Your own words came back.", "MEMORY_LANGUAGE.wordsReturned"],

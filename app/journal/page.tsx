@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock3 } from "lucide-react";
 
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -64,28 +64,11 @@ export default function JournalPage() {
               ))}
             </div>
           ) : surfacedEntries.length === 0 ? (
-            <>
-              <EmptyStateIntelligence className="mb-4" />
-              <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center gap-4 px-6 py-14 text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500/10">
-                    <BookOpen className="h-6 w-6 text-violet-300" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-medium text-white">
-                      No reflections yet
-                    </p>
-                    <p className="mt-2 max-w-sm text-sm text-zinc-400">
-                      Talk naturally for a minute. VoiceMemory notices when your
-                      words repeat across days — starting with one voice reflection.
-                    </p>
-                  </div>
-                  <Button asChild>
-                    <Link href="/">Start a reflection</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </>
+            <AnticipatoryEmptyState
+              entryCount={entries.length}
+              showPromise
+              icon={<BookOpen className="h-6 w-6 text-violet-300" />}
+            />
           ) : (
             <div className="relative space-y-4 before:absolute before:bottom-0 before:left-4 before:top-0 before:w-px before:bg-white/10 sm:before:left-5">
               {surfacedEntries.map((entry, index) => (

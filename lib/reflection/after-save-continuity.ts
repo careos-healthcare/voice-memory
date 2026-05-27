@@ -1,3 +1,4 @@
+import { postSaveAcknowledgmentLine } from "@/lib/continuity/memory-starts-immediately";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { readLocalEvents } from "@/lib/local-analytics";
 import { CALLBACK_LEARNING_EVENTS } from "@/lib/revisit/callback-learning";
@@ -107,7 +108,15 @@ export function pickAfterSaveContinuityLine(
     if (days) candidates.push(days);
   }
 
-  return candidates[0] ?? null;
+  if (candidates[0]) return candidates[0];
+
+  const entriesWithNew = entries.some((row) => row.id === entry.id)
+    ? entries
+    : [...entries, entry];
+  return {
+    kind: "quote_resurfaced",
+    text: postSaveAcknowledgmentLine(entriesWithNew),
+  };
 }
 
 export function storeAfterSaveContinuityLine(line: AfterSaveContinuityLine): void {

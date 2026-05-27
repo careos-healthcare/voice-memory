@@ -22,8 +22,10 @@ export function EmptyStateIntelligence({
   if (hideWhenRich && message.tier === "rich") return null;
 
   return (
-    <p className={`px-1 py-1 text-xs leading-relaxed text-zinc-600 ${className ?? ""}`}>
-      {message.body}
-    </p>
+    <div className={`space-y-1 px-1 py-1 text-xs leading-relaxed text-zinc-600 ${className ?? ""}`}>
+      <p className="font-medium text-zinc-500">{message.headline}</p>
+      <p>{message.body}</p>
+      {message.hint ? <p className="text-zinc-600">{message.hint}</p> : null}
+    </div>
   );
 }

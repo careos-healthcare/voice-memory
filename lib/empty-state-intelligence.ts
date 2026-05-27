@@ -1,14 +1,12 @@
-export type EntryTier = "none" | "one" | "few" | "building" | "rich";
-
+import {
+  getAnticipatoryEmptyCopy,
+  getEntryTier,
+  type EntryTier,
+} from "@/lib/product/anticipatory-memory-copy";
 import { WEDGE_RESURFACING } from "@/lib/product-copy";
 
-export function getEntryTier(count: number): EntryTier {
-  if (count === 0) return "none";
-  if (count === 1) return "one";
-  if (count < 5) return "few";
-  if (count <= 10) return "building";
-  return "rich";
-}
+export type { EntryTier } from "@/lib/product/anticipatory-memory-copy";
+export { getEntryTier } from "@/lib/product/anticipatory-memory-copy";
 
 export interface EmptyStateMessage {
   tier: EntryTier;
@@ -17,37 +15,29 @@ export interface EmptyStateMessage {
   hint?: string;
 }
 
-const MESSAGES: Record<EntryTier, EmptyStateMessage> = {
-  none: {
-    tier: "none",
-    headline: "Start with one voice reflection",
-    body: "Talk naturally for a minute. Your words stay on this device.",
-  },
-  one: {
-    tier: "one",
-    headline: "One reflection in",
-    body: "VoiceMemory gets clearer when your own words repeat across different days.",
-    hint: "Record again when the same concern or phrase comes back.",
-  },
-  few: {
-    tier: "few",
-    headline: "Words starting to repeat",
-    body: "A handful of reflections is enough for similar phrases, moods, and concerns to show up again.",
-  },
-  building: {
-    tier: "building",
-    headline: "Enough history to revisit",
-    body: "Older reflections can return when something you say today connects to words you used before.",
-  },
-  rich: {
-    tier: "rich",
-    headline: "Depth is here",
-    body: `${WEDGE_RESURFACING.forgottenPatterns} ${WEDGE_RESURFACING.ownVoicePattern}`,
-  },
-};
-
 export function getEmptyStateMessage(entryCount: number): EmptyStateMessage {
-  return MESSAGES[getEntryTier(entryCount)];
+  const anticipatory = getAnticipatoryEmptyCopy(entryCount);
+  const tier = anticipatory.tier;
+  if (tier === "one") {
+    return {
+      tier,
+      headline: anticipatory.headline,
+      body: anticipatory.body,
+      hint: "Record again when the same concern or phrase comes back.",
+    };
+  }
+  if (tier === "rich") {
+    return {
+      tier,
+      headline: anticipatory.headline,
+      body: `${WEDGE_RESURFACING.forgottenPatterns} ${WEDGE_RESURFACING.ownVoicePattern}`,
+    };
+  }
+  return {
+    tier,
+    headline: anticipatory.headline,
+    body: anticipatory.body,
+  };
 }
 
 export function getTierProgressLabel(entryCount: number): string {

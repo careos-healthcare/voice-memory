@@ -5,6 +5,7 @@ import { Crown, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PRO_DESCRIPTION, PRO_HEADLINE } from "@/lib/product/pro-framing";
 import {
   isProUser,
   PRO_PRICE_LABEL,
@@ -23,8 +24,8 @@ interface UpgradeCtaProps {
 export function UpgradeCta({
   source,
   feature,
-  headline = "Unlock your full voice archive",
-  description = "Pro unlocks your full history, semantic search, weekly resurfacing, entity memory, and export reports.",
+  headline = PRO_HEADLINE,
+  description = PRO_DESCRIPTION,
   compact = false,
 }: UpgradeCtaProps) {
   if (isProUser()) return null;

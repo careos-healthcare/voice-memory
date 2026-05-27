@@ -5,10 +5,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarRange } from "lucide-react";
 
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MemoryNotesOverview } from "@/components/patterns/MemoryNote";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
@@ -54,18 +53,9 @@ export default function WeeklyPage() {
               </CardContent>
             </Card>
           ) : !hasData ? (
-            <>
-              <EmptyStateIntelligence className="mb-4" />
-              <Card className="border-dashed border-white/5">
-                <CardContent className="px-6 py-16 text-center">
-                  <CalendarRange className="mx-auto h-8 w-8 text-zinc-600" />
-                  <p className="mt-4 text-lg font-medium text-zinc-300">Nothing this week yet</p>
-                  <Button asChild className="mt-8" variant="secondary">
-                    <Link href="/">Record today&apos;s reflection</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </>
+            <AnticipatoryEmptyState
+              icon={<CalendarRange className="h-6 w-6 text-violet-300" />}
+            />
           ) : notes?.hasData ? (
             <MemoryNotesOverview
               changed={notes.changed}

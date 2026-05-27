@@ -101,7 +101,7 @@ export function HabitLoopCard({
             <Button asChild size="sm" className="shrink-0">
               <Link href="/">
                 <Mic className="h-4 w-4" />
-                Record today&apos;s reflection
+                Record when ready
               </Link>
             </Button>
           )}
@@ -137,7 +137,7 @@ export function HabitLoopCard({
               <Button asChild size="sm" className="shrink-0">
                 <Link href="/">
                   <Mic className="h-4 w-4" />
-                  Record today&apos;s reflection
+                  Record when ready
                 </Link>
               </Button>
             )}
@@ -163,7 +163,9 @@ export function HabitLoopCard({
         </CardHeader>
         <CardContent className="text-sm text-zinc-400">
           {recap.entryCount === 0 ? (
-            <p>No reflections this week yet. Your recap appears after your first entry.</p>
+            <p>
+              After 1–3 real reflections, a weekly recap can name what repeated in your words.
+            </p>
           ) : (
             <ul className="space-y-2">
               <li>

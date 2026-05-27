@@ -1,16 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { CircleDashed } from "lucide-react";
 
 import { EntitlementGate } from "@/components/billing/EntitlementGate";
 import { OpenLoopsList } from "@/components/open-loops/OpenLoopsList";
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
 import {
-  OPEN_LOOP_EMPTY,
   OPEN_LOOP_PAGE_TITLE,
   OPEN_LOOP_SECTION_LEAD,
   OPEN_LOOP_SECTION_TITLE,
@@ -46,17 +43,9 @@ export default function OpenLoopsPage() {
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : empty ? (
-            <>
-              <EmptyStateIntelligence className="mb-4" />
-              <div className="px-2 py-16 text-center">
-                <CircleDashed className="mx-auto h-7 w-7 text-zinc-600/80" />
-                <p className="mt-5 text-base font-normal text-zinc-400">No open loops yet</p>
-                <p className="mt-2 text-sm text-zinc-600">{OPEN_LOOP_EMPTY}</p>
-                <Button asChild className="mt-8" variant="secondary">
-                  <Link href="/journal">Browse reflections</Link>
-                </Button>
-              </div>
-            </>
+            <AnticipatoryEmptyState
+              icon={<CircleDashed className="h-6 w-6 text-violet-300" />}
+            />
           ) : (
             <EntitlementGate
               entitlement="open_loops"

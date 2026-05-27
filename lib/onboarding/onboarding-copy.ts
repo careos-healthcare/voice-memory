@@ -14,10 +14,12 @@ export const ONBOARDING_RECORDER = {
 } as const;
 
 export const ONBOARDING_MEMORY = {
-  title: "Your reflections",
-  empty: "Nothing here yet. One short voice reflection is enough to start.",
+  title: "What returns",
+  empty:
+    "After 1–3 real reflections, repeated phrases and return threads can appear here—in your words.",
   loading: "One moment…",
-  wedge: "Words you forgot you had already spoken may show up here as your archive grows.",
+  wedge:
+    "Phrases you already spoke resurface when today connects to a past reflection. No scores, no fake previews.",
 } as const;
 
 export const ONBOARDING_ARCHIVE = {

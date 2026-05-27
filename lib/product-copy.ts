@@ -3,8 +3,9 @@
 import { MEMORY_LANGUAGE } from "@/lib/memory-language";
 
 export const WEDGE_POSITIONING = {
-  notAiJournal: "Your words stay yours — speak privately and revisit when something returns.",
-  wedge: "VoiceMemory brings back what you already said, when it matters again.",
+  notAiJournal: "Your words stay yours — speak privately; past phrases resurface when today matches.",
+  wedge:
+    "VoiceMemory brings back phrases you already spoke when today sounds like a past reflection.",
 } as const;
 
 export const PRODUCT_WEDGE_LINE = WEDGE_POSITIONING.wedge;
@@ -37,10 +38,10 @@ export const APP_DEVICE_LINE = "Speak for about a minute. Your words stay on thi
 /** Homepage hero — understandable in ~5 seconds. */
 export const HOMEPAGE_CLARITY = {
   stepSpeak: "Speak thoughts aloud",
-  stepRemember: "Your past words stay here",
-  stepReturn: "Similar words return when they match today",
+  stepRemember: "Your past words stay on this device",
+  stepReturn: "Repeated phrases from past reflections can surface before you speak again",
   ctaLine:
-    "Record thoughts with your voice. VoiceMemory quietly brings back moments that repeat in your words.",
+    "Record with your voice. After a few real reflections, wording you repeat across days can return in your own words.",
   exampleLabel: "Example",
   example:
     "Three weeks apart, you mentioned waiting for the same phone call.",
@@ -72,7 +73,7 @@ export const HONESTY_LINE = APP_HONESTY;
 export const DEVICE_PRIVACY_LINE = APP_DEVICE_LINE;
 
 export const ONBOARDING_WHY_RETURN =
-  "The value appears when today connects to something you said before.";
+  "After a few real reflections, a phrase you used before can show up again when today sounds similar.";
 
 export const ONBOARDING_HOME = {
   eyebrow: APP_EYEBROW,
@@ -85,7 +86,8 @@ export const ONBOARDING_HOME = {
 
 export const ONBOARDING_ACTIVATION = {
   lead: "Record a short voice reflection. VoiceMemory keeps it on this device.",
-  quietEarly: "The first day may feel quiet. That is normal.",
+  quietEarly:
+    "The first day is often quiet. Return threads and timeline cards appear after a few real reflections—not from filler recordings.",
   whyReturn: ONBOARDING_WHY_RETURN,
   stepRecord: "Record one short reflection. VoiceMemory saves it on this device.",
   stepReturn: WEDGE_RESURFACING.wordsCameBack,

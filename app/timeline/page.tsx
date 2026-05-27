@@ -8,7 +8,7 @@ import { CalendarRange } from "lucide-react";
 import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { OpenLoopsSection } from "@/components/open-loops/OpenLoopsSection";
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
@@ -82,16 +82,10 @@ export default function TimelinePage() {
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : entries.length === 0 ? (
-            <>
-              <EmptyStateIntelligence className="mb-4" />
-              <div className="px-2 py-16 text-center">
-                <CalendarRange className="mx-auto h-7 w-7 text-zinc-600/80" />
-                <p className="mt-5 text-base font-normal text-zinc-400">No timeline yet</p>
-                <Button asChild className="mt-8" variant="secondary">
-                  <Link href="/">Start recording</Link>
-                </Button>
-              </div>
-            </>
+            <AnticipatoryEmptyState
+              showPromise
+              icon={<CalendarRange className="h-6 w-6 text-violet-300" />}
+            />
           ) : (
             <>
               <OpenLoopsSection maxItems={2} />

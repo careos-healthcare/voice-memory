@@ -1,3 +1,4 @@
+import { PRO_FEATURE_BULLETS, PRO_HEADLINE } from "@/lib/product/pro-framing";
 import type { EntitlementId, TierId } from "@/types/entitlement";
 
 export const FREE_ARCHIVE_LIMIT = 7;
@@ -26,12 +27,12 @@ export const FREE_TIER: TierDefinition = {
   ],
 };
 
-/** Pro — unlimited archive, backup, open loops, export, deeper resurfacing. */
+/** Pro — deeper resurfacing and long-term continuity; export is secondary. */
 export const PRO_TIER: TierDefinition = {
   id: "pro",
   label: "Pro",
   priceLabel: "£8.99/month",
-  headline: "Your full private archive",
+  headline: PRO_HEADLINE,
   entitlements: [
     "local_recording",
     "unlimited_archive",
@@ -41,13 +42,7 @@ export const PRO_TIER: TierDefinition = {
     "open_loops",
     "export_reports",
   ],
-  featureBullets: [
-    "Unlimited reflection archive on device",
-    "Encrypted backup when you sign in (sync)",
-    "Open loops — your words, your next step",
-    "Export JSON, weekly summaries, and print reports",
-    "Deeper resurfacing across your full history",
-  ],
+  featureBullets: [...PRO_FEATURE_BULLETS],
 };
 
 export const TIER_BY_ID: Record<TierId, TierDefinition> = {

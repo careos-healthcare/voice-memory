@@ -1,4 +1,9 @@
 import { entitlementsForTier, FREE_ARCHIVE_LIMIT, TIER_BY_ID } from "@/lib/entitlement/tiers";
+import {
+  PRO_GATE_DEEPER_RESURFACING,
+  PRO_GATE_EXPORT,
+  PRO_GATE_UNLIMITED_ARCHIVE,
+} from "@/lib/product/pro-framing";
 import { isLiveBillingAvailable } from "@/lib/entitlement/payment-stack";
 import type { EntitlementId, EntitlementRecord, TierId, TierSnapshot } from "@/types/entitlement";
 
@@ -103,31 +108,19 @@ export function requiresEntitlement(id: EntitlementId): boolean {
 const GATE_COPY: Partial<
   Record<EntitlementId, { title: string; detail: string; feature: string }>
 > = {
-  unlimited_archive: {
-    title: "Full archive is part of Pro",
-    detail: "Your reflections stay on device. Pro unlocks your full history in memory and search.",
-    feature: "unlimited_archive",
-  },
+  unlimited_archive: PRO_GATE_UNLIMITED_ARCHIVE,
   open_loops: {
     title: "Open loops are part of Pro",
     detail: "Keep unfinished threads in your own words — no tasks, reminders, or advice.",
     feature: "open_loops",
   },
-  export_reports: {
-    title: "Export reports are part of Pro",
-    detail: "Full-archive export, weekly summaries, and printable reports.",
-    feature: "export_reports",
-  },
+  export_reports: PRO_GATE_EXPORT,
   encrypted_backup: {
     title: "Encrypted backup is part of Pro",
     detail: "Sign in to sync an encrypted copy of your archive across devices.",
     feature: "encrypted_backup",
   },
-  deeper_resurfacing: {
-    title: "Full-history resurfacing is part of Pro",
-    detail: "Pro connects patterns across your whole archive, not just recent reflections.",
-    feature: "deeper_resurfacing",
-  },
+  deeper_resurfacing: PRO_GATE_DEEPER_RESURFACING,
 };
 
 export function entitlementGateCopy(id: EntitlementId): {

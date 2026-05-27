@@ -21,9 +21,9 @@ const copy = fs.readFileSync(copyPath, "utf8");
 const required = [
   "HOMEPAGE_CLARITY",
   "Speak thoughts aloud",
-  "Your past words stay here",
-  "Similar words return when they match today",
-  "Record thoughts with your voice",
+  "Your past words stay on this device",
+  "Repeated phrases from past reflections can surface before you speak again",
+  "Record with your voice",
   "Three weeks apart, you mentioned waiting for the same phone call",
 ];
 

@@ -23,6 +23,7 @@ import {
   type PlanId,
   type UpgradeClickSource,
 } from "@/lib/subscription";
+import { PRO_DESCRIPTION, PRO_HEADLINE } from "@/lib/product/pro-framing";
 import { APP_SUBTITLE, HONESTY_LINE, NOT_AI_JOURNAL_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
 import { trackPilotPricingOpened } from "@/lib/pilot/pilot-interest";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
@@ -87,15 +88,14 @@ export default function PricingPage() {
             Plans for your voice archive
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            {POSITIONING_TAGLINE} Free stays local-first on your device. Pro unlocks
-            full history search, export, and weekly resurfacing from your own voice.
+            {POSITIONING_TAGLINE} Free stays local-first on your device. {PRO_DESCRIPTION}
           </p>
           <p className="mt-2 text-xs text-zinc-600">{NOT_AI_JOURNAL_LINE}</p>
           <p className="mt-1 text-xs text-zinc-600">{HONESTY_LINE}</p>
           {storedCount > FREE_ENTRY_LIMIT && !isProUser() ? (
             <p className="mt-3 text-sm text-amber-200/90">
               You have {storedCount} reflections — {lockedCount} beyond the free
-              limit are saved locally and unlock with Pro.
+              limit are saved locally; Pro restores full-archive continuity.
             </p>
           ) : null}
         </motion.div>
@@ -174,7 +174,7 @@ export default function PricingPage() {
 
         <section className="mt-10">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">
-            What Pro unlocks in your memory
+            {PRO_HEADLINE}
           </h2>
           <ul className="mt-4 space-y-3">
             {PRO_MEMORY_FEATURES.map((feature) => (

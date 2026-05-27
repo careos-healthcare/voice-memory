@@ -1,9 +1,11 @@
 import {
   gateContinuityLine,
   gateContinuityQuote,
-  passesHardContinuityGate,
-  resolveContinuityLineOrFallback,
 } from "@/lib/continuity/continuity-quality-gate";
+import {
+  resolveEarlyPreMicLine,
+  resolveSurfacedPreMicLine,
+} from "@/lib/continuity/memory-starts-immediately";
 import {
   isJunkReflectionTranscript,
   isPrimarySurfacedReflection,
@@ -16,15 +18,6 @@ import type { JournalEntry } from "@/types/journal";
 
 const BANNED_LINE_RE =
   /\b(speaker expresses|the speaker|mood tracker|dominant mood|emotional trend|emotional intensity|intensity trend|ai analysis|analyzed your|therapy|diagnosis|coping plan|you should|you need to|try to|i recommend)\b/i;
-
-const HOMEPAGE_LINES = [
-  "This came back.",
-  "You said this differently tonight.",
-  "You stopped talking about this for a while.",
-  "You returned to this.",
-  "You mentioned this again.",
-  "Something here is still unfinished.",
-] as const;
 
 function formatQuote(text: string): string {
   const trimmed = text.trim().slice(0, 140);
@@ -160,23 +153,6 @@ export function pickHomepageContinuityLine(
     return gateContinuityLine(short) ?? short;
   }
 
-  if (passesHardContinuityGate(entries)) {
-    const latest = [...entries]
-      .filter(isPrimarySurfacedReflection)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-    if (latest) {
-      const q = quoteFromEntry(latest);
-      if (q && q.length > 12) {
-        const line = `You mentioned this again tonight. ${formatQuote(q)}`;
-        const gated = gateContinuityLine(line);
-        if (gated) return gated.length > 100 ? gated.slice(0, 97) + "…" : gated;
-      }
-    }
-  }
-
-  for (const fallback of HOMEPAGE_LINES) {
-    if (isAllowedContinuityLine(fallback)) return fallback;
-  }
   return null;
 }
 
@@ -184,14 +160,9 @@ export function gapDaysBetween(firstIso: string, lastIso: string): number {
   return Math.max(0, daysBetweenKeys(toDayKey(firstIso), toDayKey(lastIso)));
 }
 
-/** Single quote-led line before the mic — max one, no stacked interpretation. */
+/** Single quote-led line before the mic — max one, no fake or generic fallbacks. */
 export function preMicContinuityLine(entries: JournalEntry[]): string | null {
-  if (!passesHardContinuityGate(entries)) return null;
-  const { threads } = buildReturnThreads(entries);
-  const picked = pickHomepageContinuityLine(threads, entries);
-  return resolveContinuityLineOrFallback(picked, {
-    allowFallback: true,
-  });
+  return resolveEarlyPreMicLine(entries);
 }
 
 /** Homepage / mic continuity — hard-gated, never quotes junk transcripts. */
@@ -199,6 +170,5 @@ export function surfacedContinuityLine(
   line: string | null | undefined,
   entries: JournalEntry[],
 ): string | null {
-  if (!passesHardContinuityGate(entries)) return null;
-  return resolveContinuityLineOrFallback(line, { allowFallback: true });
+  return resolveSurfacedPreMicLine(line, entries);
 }

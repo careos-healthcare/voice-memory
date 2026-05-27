@@ -8,6 +8,7 @@ import {
 } from "@/lib/entitlement/entitlements";
 import type { EntitlementId } from "@/types/entitlement";
 import { FREE_TIER, PRO_TIER } from "@/lib/entitlement/tiers";
+import { PRO_DESCRIPTION } from "@/lib/product/pro-framing";
 import { getPaymentStackAudit, isLiveBillingAvailable } from "@/lib/entitlement/payment-stack";
 
 export type PlanId = "free" | "pro";
@@ -44,9 +45,20 @@ export interface ProMemoryFeature {
 
 export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
   {
+    id: "deeper_resurfacing",
+    title: "Deeper resurfacing",
+    description:
+      "Return threads and callbacks drawn from your full archive — in your words, not summaries.",
+  },
+  {
     id: "unlimited_archive",
-    title: "Unlimited archive",
-    description: "Every reflection stays active in memory — not just your last seven.",
+    title: "Full archive continuity",
+    description: "Every reflection stays active in memory and search — not just your last seven.",
+  },
+  {
+    id: "open_loops",
+    title: "Long-term open loops",
+    description: "Unfinished threads stay in your own words across months of speech.",
   },
   {
     id: "encrypted_backup",
@@ -55,19 +67,10 @@ export const PRO_MEMORY_FEATURES: ProMemoryFeature[] = [
     comingSoon: !isLiveBillingAvailable(),
   },
   {
-    id: "open_loops",
-    title: "Open loops",
-    description: "Keep unfinished threads with your own next step — no nudges from us.",
-  },
-  {
     id: "export_reports",
-    title: "Export",
-    description: "Full-archive JSON, weekly text exports, and printable reflection reports.",
-  },
-  {
-    id: "deeper_resurfacing",
-    title: "Deeper resurfacing",
-    description: "Continuity and callbacks drawn from your full history, in your words.",
+    title: "Printable archive & export",
+    description:
+      "Weekly remembered moments and a printable private record. JSON when you want a portable copy.",
   },
 ];
 

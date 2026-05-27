@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Leaf } from "lucide-react";
 
 import { MemorySeasonOverview } from "@/components/memory/MemorySeasonSection";
-import { EmptyStateIntelligence } from "@/components/EmptyStateIntelligence";
+import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
 import {
   calendarSeasonsOnly,
   listMemorySeasons,
@@ -42,21 +40,7 @@ export default function SeasonsPage() {
           {loading ? (
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : !seasons || seasons.length === 0 ? (
-            <>
-              <EmptyStateIntelligence className="mb-4" />
-              <div className="px-2 py-16 text-center">
-                <Leaf className="mx-auto h-7 w-7 text-zinc-600/80" />
-                <p className="mt-5 text-base font-normal text-zinc-400">
-                  No seasons yet
-                </p>
-                <p className="mt-2 text-sm text-zinc-600">
-                  Seasons appear once you have a few reflections spread across time.
-                </p>
-                <Button asChild className="mt-8" variant="secondary">
-                  <Link href="/">Start recording</Link>
-                </Button>
-              </div>
-            </>
+            <AnticipatoryEmptyState icon={<Leaf className="h-6 w-6 text-violet-300" />} />
           ) : (
             <MemorySeasonOverview
               calendarSeasons={calendarSeasons}

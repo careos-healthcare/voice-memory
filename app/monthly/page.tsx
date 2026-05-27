@@ -164,7 +164,7 @@ export default function MonthlyPage() {
               <CalendarDays className="mx-auto h-7 w-7 text-zinc-600/80" />
               <p className="mt-5 text-base font-normal text-zinc-400">Not enough yet</p>
               <p className="mt-3 text-sm leading-relaxed text-zinc-600">
-                A few more reflections and this page will remember what shifted.
+                After a few days of real speech, this page can show what shifted in your words.
               </p>
               <Button asChild className="mt-8" variant="secondary">
                 <Link href="/">Record a reflection</Link>
