@@ -291,7 +291,7 @@ export default function HomePage() {
           <SiteHeader compact={mobileFirstRun || mobileReturning} />
         ) : null}
 
-        {!captureFirstHome ? (
+        {!micCentric && !mobileFirstRun && !mobileReturning ? (
           <div className="mt-6 space-y-10 py-2">
             <ActivationOnboarding />
             <CalmComprehensionPrompt />
