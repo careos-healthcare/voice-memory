@@ -1,3 +1,4 @@
+import { gateContinuityLine } from "@/lib/continuity/continuity-quality-gate";
 import { buildHesitationReport } from "@/lib/capture/hesitation-signals";
 import { readLocalEvents, trackLocalEvent } from "@/lib/local-analytics";
 import { isSideEffectBlocked } from "@/lib/tracking/presentation-guard";
@@ -109,10 +110,10 @@ function fastVulnerableSpeechCount(): number {
 }
 
 export function capInterruptionLine(line: string | null): string | null {
-  if (!line?.trim()) return null;
-  const trimmed = line.trim();
-  if (trimmed.length <= INTERRUPTION_LINE_MAX_CHARS) return trimmed;
-  return `${trimmed.slice(0, INTERRUPTION_LINE_MAX_CHARS - 1)}…`;
+  const gated = gateContinuityLine(line);
+  if (!gated) return null;
+  if (gated.length <= INTERRUPTION_LINE_MAX_CHARS) return gated;
+  return `${gated.slice(0, INTERRUPTION_LINE_MAX_CHARS - 1)}…`;
 }
 
 export function shouldStaySilent(): boolean {

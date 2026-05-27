@@ -31,9 +31,11 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { MotionPage } from "@/components/motion/MotionPage";
 import { MobileCompressedHome } from "@/components/homepage/MobileCompressedHome";
+import { MobileReturningHome } from "@/components/homepage/MobileReturningHome";
 import { MicCentricHome } from "@/components/reflex/MicCentricHome";
+import { resolveContinuityLineOrFallback } from "@/lib/continuity/continuity-quality-gate";
 import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
-import { isMobileFirstRunHome } from "@/lib/mobile/mobile-first-run";
+import { isMobileFirstRunHome, isMobileReturningHome } from "@/lib/mobile/mobile-first-run";
 import {
   buildRecordReturnFromFollowup,
   buildRecordReturnFromNote,
@@ -103,6 +105,7 @@ export default function HomePage() {
   const router = useRouter();
   const hydrated = useClientHydrated();
   const mobileFirstRun = hydrated && isMobileFirstRunHome();
+  const mobileReturning = hydrated && isMobileReturningHome();
   const { limits } = useQuietMode();
   const [primaryNote, setPrimaryNote] = useState<MemoryNote | null>(null);
   const [continuation, setContinuation] = useState<MemoryNote[]>([]);
@@ -269,8 +272,10 @@ export default function HomePage() {
     router.push(hrefForRecordReturn(ctx));
   }, [primaryNote, router]);
 
-  const reflexContinuityLine =
-    reflexCapture?.continuityLine ?? recorderLine ?? recordReturn?.anchorQuote ?? null;
+  const reflexContinuityLine = resolveContinuityLineOrFallback(
+    reflexCapture?.continuityLine ?? recorderLine ?? recordReturn?.anchorQuote ?? null,
+    { allowFallback: mobileReturning || micCentric || Boolean(recordReturn) },
+  );
 
   return (
     <div className="relative min-h-screen-mobile overflow-hidden bg-zinc-950 pb-safe">
@@ -281,9 +286,9 @@ export default function HomePage() {
 
       <HomepagePrimaryCtaProvider>
       <div className="relative mx-auto flex min-h-screen-mobile max-w-3xl flex-col px-4 pb-10 sm:px-6">
-        <SiteHeader compact={mobileFirstRun} />
+        <SiteHeader compact={mobileFirstRun || mobileReturning} />
 
-        {!micCentric && !mobileFirstRun ? (
+        {!micCentric && !mobileFirstRun && !mobileReturning ? (
           <div className="mt-6 space-y-10 py-2">
             <ActivationOnboarding />
             <CalmComprehensionPrompt />
@@ -346,6 +351,24 @@ export default function HomePage() {
                   />
                 </div>
               }
+            />
+          ) : mobileReturning ? (
+            <MobileReturningHome
+              continuityLine={reflexContinuityLine}
+              recorder={
+                <div className="w-full" ref={recorderRef} id="recorder">
+                  <Recorder
+                    autoStart={recorderAutoStart}
+                    preRecordLine={recordReturn || clarityRecord ? null : recorderLine}
+                    recordReturn={recordReturn}
+                    clarityRecord={clarityRecord}
+                    reflexCapture={reflexCapture}
+                    reflexFastBoot
+                    quickReflection={isQuickReflectionEnabled()}
+                  />
+                </div>
+              }
+              rhythm={<HabitLoopCard compact suppressRecordCta />}
             />
           ) : (
             <>
@@ -434,7 +457,7 @@ export default function HomePage() {
             </>
           )}
 
-          {!micCentric && !mobileFirstRun ? (
+          {!micCentric && !mobileFirstRun && !mobileReturning ? (
             <>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -457,7 +480,9 @@ export default function HomePage() {
           ) : null}
         </main>
 
-        {!micCentric && !mobileFirstRun ? <SiteFooter className="mt-auto pt-8" /> : null}
+        {!micCentric && !mobileFirstRun && !mobileReturning ? (
+          <SiteFooter className="mt-auto pt-8" />
+        ) : null}
       </div>
       </HomepagePrimaryCtaProvider>
     </div>

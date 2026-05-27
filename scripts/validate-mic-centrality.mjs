@@ -43,6 +43,7 @@ if (!micBranch) {
 }
 
 if (
+  !home.includes("{!micCentric && !mobileFirstRun && !mobileReturning ?") &&
   !home.includes("{!micCentric && !mobileFirstRun ?") &&
   !home.includes("{!micCentric ?")
 ) {

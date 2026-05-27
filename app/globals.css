@@ -106,6 +106,15 @@ body {
   margin-inline: auto;
 }
 
+.record-fullscreen-capture {
+  background-color: #09090b;
+  color: #fafafa;
+}
+
+.record-fullscreen-capture .record-capture-main {
+  min-height: min(100dvh, 100vh);
+}
+
 .mobile-recorder-primary {
   box-shadow: 0 12px 40px rgba(124, 58, 237, 0.22);
 }

@@ -23,13 +23,15 @@ const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
 if (!home.includes("MobileCompressedHome") || !home.includes("mobileFirstRun")) {
   failures.push("homepage must use mobile first-run compression");
 }
-if (!home.includes('compact={mobileFirstRun}')) {
-  failures.push("homepage must use compact header on mobile first run");
+if (!home.includes("compact={mobileFirstRun || mobileReturning}")) {
+  failures.push("homepage must use compact header on mobile first run and returning");
 }
 
 const onboarding = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
-if (!onboarding.match(/!micCentric && !mobileFirstRun[\s\S]*ActivationOnboarding/)) {
-  failures.push("ActivationOnboarding must hide on mobile first run");
+if (
+  !onboarding.match(/!micCentric && !mobileFirstRun && !mobileReturning[\s\S]*ActivationOnboarding/)
+) {
+  failures.push("ActivationOnboarding must hide on compressed mobile homepage");
 }
 
 if (failures.length > 0) {

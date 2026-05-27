@@ -4,6 +4,11 @@ import {
   gapDaysBetween,
   quoteFromEntry,
 } from "@/lib/continuity/build-continuity-lines";
+import {
+  gateContinuityLine,
+  gateContinuityQuote,
+  isLowQualityTranscript,
+} from "@/lib/continuity/continuity-quality-gate";
 import { buildEntityMemoryFromEntries } from "@/lib/entity-memory";
 import { getActiveOpenLoops } from "@/lib/open-loops/open-loop-storage";
 import { detectAllContradictions } from "@/lib/patterns/contradictions";
@@ -53,21 +58,31 @@ function pushThread(
   draft: Omit<ReturnThread, "continuityLine"> & { continuityLine?: string },
 ): void {
   if (seen.has(draft.id)) return;
-  if (!draft.anchorQuote.trim() && !draft.latestQuote.trim()) return;
+  const anchor = gateContinuityQuote(draft.anchorQuote) ?? "";
+  const latest = gateContinuityQuote(draft.latestQuote) ?? "";
+  if (!anchor.trim() && !latest.trim()) return;
 
   const continuityLine =
     draft.continuityLine ??
     buildContinuityLineForThread({
       type: draft.type,
-      anchorQuote: draft.anchorQuote,
-      latestQuote: draft.latestQuote,
+      anchorQuote: anchor || draft.anchorQuote,
+      latestQuote: latest || draft.latestQuote,
       gapDays: draft.gapDays,
       contextLabel: draft.contextLabel,
       appearances: draft.appearances,
     });
 
+  const gatedLine = gateContinuityLine(continuityLine);
+  if (!gatedLine) return;
+
   seen.add(draft.id);
-  list.push({ ...draft, continuityLine });
+  list.push({
+    ...draft,
+    anchorQuote: anchor || draft.anchorQuote,
+    latestQuote: latest || draft.latestQuote,
+    continuityLine: gatedLine,
+  });
 }
 
 function threadsFromPhrases(entries: JournalEntry[], seen: Set<string>): ReturnThread[] {
@@ -347,9 +362,12 @@ export function groupReturnThreads(threads: ReturnThread[]): ReturnThreadGroups 
 
 /** Build return threads across the archive — human recognizability over clever scoring. */
 export function buildReturnThreads(entries: JournalEntry[]): ReturnThreadsReport {
-  const eligible = entries.filter(
-    (e) => e.reflectionPending !== true && (e.transcript?.trim() || quoteFromEntry(e)),
-  );
+  const eligible = entries.filter((e) => {
+    if (e.reflectionPending === true) return false;
+    const transcript = e.transcript?.trim();
+    if (transcript && isLowQualityTranscript(transcript)) return false;
+    return Boolean(transcript || quoteFromEntry(e));
+  });
   if (eligible.length < 2) {
     return {
       threads: [],

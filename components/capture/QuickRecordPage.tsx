@@ -22,7 +22,7 @@ import type { ClarityRecordContext } from "@/lib/clarity/clarity-record";
 import type { RecordReturnContext } from "@/types/record-return";
 import type { ReflexCaptureContext } from "@/lib/reflex/reflex-context";
 
-/** Primary fast capture route — mic visible on first paint, hydration deferred. */
+/** Primary fast capture route — mic only, no site nav or footer. */
 export function QuickRecordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -80,29 +80,25 @@ export function QuickRecordPage() {
   const captureContext = resolution?.source ?? preview.source ?? "record";
 
   return (
-    <div className="min-h-screen-mobile bg-zinc-950 pb-safe">
-      <div className="mx-auto flex min-h-screen-mobile max-w-xl flex-col px-4 pb-10 sm:px-6">
-        <main className="flex flex-1 flex-col justify-center">
-          <ZeroStateRecorderShell
-            route="record"
-            recordReturn={recordReturn}
-            clarityRecord={clarityRecord}
-            reflexCapture={reflexContext}
-            preserveQuote={preserveQuote}
-            captureContext={captureContext}
-            autoStartOverride={autoStart}
-            onComplete={() => {
-              const entryId = resolution?.entryId ?? preview.entryId;
-              if (entryId) {
-                router.push(`/entry/${entryId}`);
-                return;
-              }
-              router.push("/");
-            }}
-            quickReflection
-          />
-        </main>
-      </div>
-    </div>
+    <main className="record-capture-main mobile-recorder-dominant flex flex-1 flex-col justify-center pb-safe">
+      <ZeroStateRecorderShell
+        route="record"
+        recordReturn={recordReturn}
+        clarityRecord={clarityRecord}
+        reflexCapture={reflexContext}
+        preserveQuote={preserveQuote}
+        captureContext={captureContext}
+        autoStartOverride={autoStart}
+        onComplete={() => {
+          const entryId = resolution?.entryId ?? preview.entryId;
+          if (entryId) {
+            router.push(`/entry/${entryId}`);
+            return;
+          }
+          router.push("/");
+        }}
+        quickReflection
+      />
+    </main>
   );
 }

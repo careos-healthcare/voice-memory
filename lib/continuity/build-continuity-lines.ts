@@ -1,3 +1,9 @@
+import {
+  gateContinuityLine,
+  gateContinuityQuote,
+  isLowQualityTranscript,
+  resolveContinuityLineOrFallback,
+} from "@/lib/continuity/continuity-quality-gate";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { sanitizeUserFacingObservation } from "@/lib/product/human-continuity-ui";
@@ -36,22 +42,25 @@ export function isAllowedContinuityLine(line: string): boolean {
   const trimmed = line.trim();
   if (!trimmed || trimmed.length > 220) return false;
   if (BANNED_LINE_RE.test(trimmed)) return false;
+  if (!gateContinuityLine(trimmed)) return false;
   return sanitizeUserFacingObservation(trimmed) !== null || !BANNED_LINE_RE.test(trimmed);
 }
 
 export function quoteFromEntry(entry: JournalEntry): string {
   if (entry.reflection.exactLanguagePattern?.trim()) {
-    return entry.reflection.exactLanguagePattern.trim().slice(0, 140);
+    const q = gateContinuityQuote(entry.reflection.exactLanguagePattern.trim().slice(0, 140));
+    if (q) return q;
   }
   const transcript = entry.transcript?.trim();
-  if (transcript) {
+  if (transcript && !isLowQualityTranscript(transcript)) {
     const slice = transcript.slice(0, 140);
-    return transcript.length > 140 ? `${slice}…` : slice;
+    const raw = transcript.length > 140 ? `${slice}…` : slice;
+    return gateContinuityQuote(raw) ?? "";
   }
   const obs =
     entry.reflection.concreteObservation?.trim() ??
     entry.reflection.patternObservations?.find((o) => o.trim())?.trim();
-  if (obs) return obs.slice(0, 140);
+  if (obs) return gateContinuityQuote(obs.slice(0, 140)) ?? "";
   return "";
 }
 
@@ -136,13 +145,15 @@ export function pickHomepageContinuityLine(
   });
 
   for (const thread of sorted) {
-    if (thread.continuityLine && isAllowedContinuityLine(thread.continuityLine)) {
-      const short =
-        thread.continuityLine.length <= 72
-          ? thread.continuityLine
-          : thread.continuityLine.slice(0, 69) + "…";
-      return short;
+    if (!thread.continuityLine || !isAllowedContinuityLine(thread.continuityLine)) continue;
+    if (!gateContinuityQuote(thread.anchorQuote) && !gateContinuityQuote(thread.latestQuote)) {
+      continue;
     }
+    const short =
+      thread.continuityLine.length <= 72
+        ? thread.continuityLine
+        : thread.continuityLine.slice(0, 69) + "…";
+    return gateContinuityLine(short) ?? short;
   }
 
   const latest = [...entries].sort(
@@ -152,7 +163,8 @@ export function pickHomepageContinuityLine(
     const q = quoteFromEntry(latest);
     if (q && q.length > 12) {
       const line = `You mentioned this again tonight. ${formatQuote(q)}`;
-      if (isAllowedContinuityLine(line)) return line.length > 100 ? line.slice(0, 97) + "…" : line;
+      const gated = gateContinuityLine(line);
+      if (gated) return gated.length > 100 ? gated.slice(0, 97) + "…" : gated;
     }
   }
 
@@ -169,5 +181,8 @@ export function gapDaysBetween(firstIso: string, lastIso: string): number {
 /** Single quote-led line before the mic — max one, no stacked interpretation. */
 export function preMicContinuityLine(entries: JournalEntry[]): string | null {
   const { threads } = buildReturnThreads(entries);
-  return pickHomepageContinuityLine(threads, entries);
+  const picked = pickHomepageContinuityLine(threads, entries);
+  return resolveContinuityLineOrFallback(picked, {
+    allowFallback: entries.length > 0,
+  });
 }

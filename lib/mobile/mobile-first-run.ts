@@ -16,3 +16,9 @@ export function isMobileFirstRunHome(): boolean {
   if (!isNarrowMobileViewport()) return false;
   return countCompletedReflections() === 0;
 }
+
+/** Mobile with at least one save — mic-first, rhythm below recorder. */
+export function isMobileReturningHome(): boolean {
+  if (!isNarrowMobileViewport()) return false;
+  return countCompletedReflections() >= 1;
+}

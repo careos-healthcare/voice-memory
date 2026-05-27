@@ -87,12 +87,6 @@ export function HabitLoopCard({
               <Calendar className="h-5 w-5 text-violet-300/80" />
               {formatLastReflectionLabel(stats.lastReflectionDate)}
             </p>
-            {stats.weeklyRecap.entryCount > 0 ? (
-              <p className="mt-2 text-sm text-zinc-400">
-                {stats.weeklyRecap.entryCount} reflection
-                {stats.weeklyRecap.entryCount === 1 ? "" : "s"} this week — your pace
-              </p>
-            ) : null}
             <p className="mt-2 text-sm text-zinc-500">
               {recap.entryCount > 0
                 ? `${recap.entryCount} reflection${recap.entryCount === 1 ? "" : "s"} this week`
