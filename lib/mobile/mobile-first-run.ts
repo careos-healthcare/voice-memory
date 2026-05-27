@@ -1,7 +1,6 @@
 import { countCompletedReflections } from "@/lib/mobile/install-prompt-gate";
 
-export const MOBILE_FIRST_RUN_TAGLINE =
-  "Speak aloud. After a few reflections, your own words can return when today matches.";
+export const MOBILE_FIRST_RUN_TAGLINE = "Speak aloud. What repeats can come back.";
 
 export const MOBILE_FIRST_RUN_PRIVACY =
   "Your words stay on this device. Sign in only if you want encrypted backup.";

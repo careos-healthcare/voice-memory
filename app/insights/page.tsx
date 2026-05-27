@@ -70,7 +70,7 @@ export default function InsightsPage() {
               </CardContent>
             </Card>
           ) : !report.hasData ? (
-            <AnticipatoryEmptyState showPromise />
+            <AnticipatoryEmptyState />
           ) : (
             <>
               <ReturnThreadsOverview report={report} />

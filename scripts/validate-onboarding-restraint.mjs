@@ -32,11 +32,10 @@ const REQUIRED_EVENTS = [
 ];
 
 const REQUIRED_COPY = [
-  "Record one short reflection.",
-  "VoiceMemory saves it on this device.",
+  "Record a short reflection. It stays on this device.",
   "This came back.", // via MEMORY_LANGUAGE / WEDGE_RESURFACING
-  "Sign in only if you want encrypted sync.",
-  "After a few real reflections, a phrase you used before can show up again when today sounds similar.",
+  "Sign in only if you want encrypted backup across devices.",
+  "A phrase you said before can show up again.",
   "Speak for about a minute. Your words stay on this device.",
   "Not therapy, not a diagnosis",
   "Your words stay yours",
@@ -99,6 +98,7 @@ const homeCopy = [
 const copyAlternatives = {
   "This came back.": ["MEMORY_LANGUAGE.thisCameBack", "WEDGE_RESURFACING.wordsCameBack"],
   "Your own words came back.": ["MEMORY_LANGUAGE.wordsReturned", "WEDGE_RESURFACING.pastWordsMatch"],
+  "Your words stay yours": ["RECOGNITION_COPY.notAiJournal", "NOT_AI_JOURNAL_LINE"],
 };
 for (const line of REQUIRED_COPY) {
   const alts = copyAlternatives[line];

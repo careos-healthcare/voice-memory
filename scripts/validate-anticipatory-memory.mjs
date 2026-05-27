@@ -16,8 +16,8 @@ const copy = fs.readFileSync(copyPath, "utf8");
 for (const token of [
   "REFLECTION_MILESTONES",
   "RECORD_CTA_LABEL",
-  "MEMORY_PROMISE_CONCRETE",
-  "After 1–3 real reflections",
+  "REFLECTION_MILESTONES",
+  "By three, what repeats may show up",
 ]) {
   if (!copy.includes(token)) failures.push(`anticipatory copy missing ${token}`);
 }

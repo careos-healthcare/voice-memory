@@ -1,9 +1,9 @@
 /** Pro positioning — memory return and continuity, not export/productivity. */
 
-export const PRO_HEADLINE = "Deeper resurfacing across your full archive";
+export const PRO_HEADLINE = "More of your words, remembered longer";
 
 export const PRO_DESCRIPTION =
-  "Pro connects long-term continuity: full-archive return threads, weekly remembered moments, and a printable private record. Export stays available when you need a copy.";
+  "Pro keeps more of your archive alive: what returned, weekly remembered moments, and a printable private record. Export when you need a copy.";
 
 export const PRO_FEATURE_BULLETS = [
   "Full-archive resurfacing — phrases and threads across your whole history",

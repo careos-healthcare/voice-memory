@@ -40,6 +40,7 @@ const SKIP_PATH_PARTS = [
   "lib/photo-storage.ts",
   "lib/restraint/",
   "lib/memory-language.ts",
+  "lib/product/recognition-copy.ts",
   "lib/onboarding/",
   "lib/resurfacing/emotional-specificity.ts",
   "lib/resurfacing/genericity-filter.ts",
@@ -444,11 +445,8 @@ if (!fs.existsSync(productCopyPath)) {
 }
 const productCopy = fs.readFileSync(productCopyPath, "utf8");
 const productCopyRequired = [
-  ["Your words stay yours"],
-  [
-    "brings back what you already said",
-    "brings back phrases you already spoke",
-  ],
+  ["Your words stay yours", "RECOGNITION_COPY.notAiJournal"],
+  ["You said this before", "RECOGNITION_COPY.wedge", "brings back what you already said", "brings back phrases you already spoke"],
   ["Words you forgot you had already spoken."],
   ["This came back.", "MEMORY_LANGUAGE.thisCameBack"],
   ["Your own words came back.", "MEMORY_LANGUAGE.wordsReturned"],

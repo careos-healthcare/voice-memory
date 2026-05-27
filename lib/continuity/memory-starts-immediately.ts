@@ -3,14 +3,13 @@ import {
   resolveContinuityLine,
 } from "@/lib/continuity/continuity-quality-gate";
 import { pickEarlyResurfacingMagicLine } from "@/lib/continuity/early-resurfacing-magic";
+import { RECOGNITION_COPY } from "@/lib/product/recognition-copy";
 import { isPrimarySurfacedReflection } from "@/lib/reflection/reflection-quality-gate";
 import type { JournalEntry } from "@/types/journal";
 
-export const FIRST_REFLECTION_SAVED_LINE =
-  "Saved. Say one more later and VoiceMemory can begin noticing what returns.";
+export const FIRST_REFLECTION_SAVED_LINE = RECOGNITION_COPY.firstSave;
 
-export const NOTHING_RETURNED_YET_LINE =
-  "Nothing has returned yet. Keep speaking naturally.";
+export const NOTHING_RETURNED_YET_LINE = RECOGNITION_COPY.nothingReturned;
 
 export function countQualityReflections(entries: JournalEntry[]): number {
   return entries.filter(isPrimarySurfacedReflection).length;

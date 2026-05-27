@@ -117,9 +117,6 @@ export default function LaunchPage() {
           <Button type="button" variant="ghost" size="sm" onClick={() => { resetLaunchChecklist(); refresh(); }}>
             Reset checklist
           </Button>
-          <Link href="/debug/retention" className="text-sm text-violet-300 hover:text-violet-200 self-center">
-            Retention dashboard →
-          </Link>
           <Link href="/demo" className="text-sm text-zinc-500 hover:text-zinc-300 self-center">
             Demo mode →
           </Link>

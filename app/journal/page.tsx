@@ -3,21 +3,17 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Clock3 } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
-import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
-import { HabitLoopCard } from "@/components/HabitLoopCard";
+import { FirstReturnMoment } from "@/components/continuity/FirstReturnMoment";
+import { JournalArchiveRow } from "@/components/journal/JournalArchiveRow";
 import { SiteHeader } from "@/components/SiteHeader";
-import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RECOGNITION_COPY } from "@/lib/product/recognition-copy";
 import { isPrimarySurfacedReflection } from "@/lib/reflection/reflection-quality-gate";
 import { getEntries } from "@/lib/storage";
-import { entryContinuitySnippet } from "@/lib/product/human-continuity-ui";
-import { APP_HONESTY, APP_SUBTITLE } from "@/lib/product-copy";
-import { formatEntryDate, formatRelativeDate } from "@/lib/utils";
 import type { JournalEntry } from "@/types/journal";
 
 export default function JournalPage() {
@@ -42,80 +38,51 @@ export default function JournalPage() {
         >
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
-                {APP_SUBTITLE}
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold text-white">Journal</h1>
-              <p className="mt-2 text-sm text-zinc-400">
-                Voice captures on this device — {APP_HONESTY.toLowerCase()}
-              </p>
+              <h1 className="text-3xl font-semibold text-white">Journal</h1>
+              <p className="mt-2 text-sm text-zinc-500">{RECOGNITION_COPY.journalLead}</p>
             </div>
             <Button asChild variant="secondary" size="sm">
-              <Link href="/">New entry</Link>
+              <Link href="/record">Record</Link>
             </Button>
           </div>
         </motion.div>
 
-        <div className="relative mt-8">
+        <div className="mt-10">
           {loading ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[1, 2, 3].map((item) => (
-                <Skeleton key={item} className="h-28 w-full" />
+                <Skeleton key={item} className="h-16 w-full" />
               ))}
             </div>
           ) : surfacedEntries.length === 0 ? (
             <AnticipatoryEmptyState
               entryCount={entries.length}
-              showPromise
               icon={<BookOpen className="h-6 w-6 text-violet-300" />}
             />
           ) : (
-            <div className="relative space-y-4 before:absolute before:bottom-0 before:left-4 before:top-0 before:w-px before:bg-white/10 sm:before:left-5">
-              {surfacedEntries.map((entry, index) => (
-                <motion.div
-                  key={entry.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link href={`/entry/${entry.id}`} className="group block">
-                    <Card className="relative ml-8 transition-colors hover:border-violet-400/30 hover:bg-white/[0.05] sm:ml-10">
-                      <CardContent className="p-5">
-                        <div className="absolute -left-[1.35rem] top-6 hidden h-3 w-3 rounded-full border border-violet-400/40 bg-violet-500 sm:block" />
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0 flex-1">
-                            <EntryListRowMeta createdAt={entry.createdAt} />
-                            <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-zinc-300">
-                              {entryContinuitySnippet(entry)}
-                            </p>
-                            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
-                              <span className="inline-flex items-center gap-1">
-                                <Clock3 className="h-3.5 w-3.5" />
-                                {entry.durationSeconds}s
-                              </span>
-                              <span>{formatRelativeDate(entry.createdAt)}</span>
-                              <span className="hidden sm:inline">
-                                {formatEntryDate(entry.createdAt)}
-                              </span>
-                            </div>
-                          </div>
-                          <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-zinc-600 transition-transform group-hover:translate-x-0.5 group-hover:text-violet-300" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+            <>
+              <FirstReturnMoment entries={entries} className="mb-12" />
+
+              <div className="space-y-1">
+                <p className="mb-4 px-1 text-[10px] uppercase tracking-[0.2em] text-zinc-700">
+                  What you said
+                </p>
+                <div className="space-y-2">
+                  {surfacedEntries.map((entry, index) => (
+                    <motion.div
+                      key={entry.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                    >
+                      <JournalArchiveRow entry={entry} />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
         </div>
-
-        {!loading && surfacedEntries.length > 0 ? (
-          <div className="mt-12 space-y-10">
-            <ReturnThreadsOverview compact />
-            <HabitLoopCard compact />
-          </div>
-        ) : null}
       </div>
     </div>
   );

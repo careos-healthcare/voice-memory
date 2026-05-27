@@ -1,11 +1,11 @@
 /** Shared product positioning — user-facing strings only. */
 
 import { MEMORY_LANGUAGE } from "@/lib/memory-language";
+import { RECOGNITION_COPY } from "@/lib/product/recognition-copy";
 
 export const WEDGE_POSITIONING = {
-  notAiJournal: "Your words stay yours — speak privately; past phrases resurface when today matches.",
-  wedge:
-    "VoiceMemory brings back phrases you already spoke when today sounds like a past reflection.",
+  notAiJournal: RECOGNITION_COPY.notAiJournal,
+  wedge: RECOGNITION_COPY.wedge,
 } as const;
 
 export const PRODUCT_WEDGE_LINE = WEDGE_POSITIONING.wedge;
@@ -26,9 +26,8 @@ export const WEDGE_RESURFACING = {
 } as const;
 
 export const APP_EYEBROW = "Private voice reflections";
-export const APP_TAGLINE = "Voice reflections that resurface in your own words.";
-export const APP_LEAD =
-  "Speak thoughts aloud. What you said before can return when it connects to today.";
+export const APP_TAGLINE = RECOGNITION_COPY.appTagline;
+export const APP_LEAD = RECOGNITION_COPY.appLead;
 export const APP_SUPPORT =
   "Record on this device. Sign in only if you want encrypted backup.";
 export const APP_HONESTY =
@@ -37,19 +36,18 @@ export const APP_DEVICE_LINE = "Speak for about a minute. Your words stay on thi
 
 /** Homepage hero — understandable in ~5 seconds. */
 export const HOMEPAGE_CLARITY = {
-  stepSpeak: "Speak thoughts aloud",
-  stepRemember: "Your past words stay on this device",
-  stepReturn: "Repeated phrases from past reflections can surface before you speak again",
-  ctaLine:
-    "Record with your voice. After a few real reflections, wording you repeat across days can return in your own words.",
+  stepSpeak: RECOGNITION_COPY.homepageSpeak,
+  stepRemember: RECOGNITION_COPY.homepageRemember,
+  stepReturn: RECOGNITION_COPY.homepageReturn,
+  ctaLine: RECOGNITION_COPY.homepageCta,
   exampleLabel: "Example",
   example:
     "Three weeks apart, you mentioned waiting for the same phone call.",
 } as const;
 
-export const APP_SUBTITLE = PRODUCT_WEDGE_LINE;
+export const APP_SUBTITLE = RECOGNITION_COPY.appSubtitle;
 export const APP_DESCRIPTION_SHORT =
-  "Private voice reflections that resurface forgotten moments from your own voice.";
+  "Private voice reflections that return in your own words.";
 
 export const SERVICE_DESCRIPTION = `${NOT_AI_JOURNAL_LINE} ${PRODUCT_WEDGE_LINE}`;
 
@@ -72,8 +70,7 @@ export const HONESTY_LINE = APP_HONESTY;
 /** @deprecated Use APP_DEVICE_LINE */
 export const DEVICE_PRIVACY_LINE = APP_DEVICE_LINE;
 
-export const ONBOARDING_WHY_RETURN =
-  "After a few real reflections, a phrase you used before can show up again when today sounds similar.";
+export const ONBOARDING_WHY_RETURN = "A phrase you said before can show up again.";
 
 export const ONBOARDING_HOME = {
   eyebrow: APP_EYEBROW,
@@ -85,19 +82,17 @@ export const ONBOARDING_HOME = {
 } as const;
 
 export const ONBOARDING_ACTIVATION = {
-  lead: "Record a short voice reflection. VoiceMemory keeps it on this device.",
-  quietEarly:
-    "The first day is often quiet. Return threads and timeline cards appear after a few real reflections—not from filler recordings.",
+  lead: "Record a short reflection. It stays on this device.",
+  quietEarly: "The first day is often quiet. That is normal.",
   whyReturn: ONBOARDING_WHY_RETURN,
-  stepRecord: "Record one short reflection. VoiceMemory saves it on this device.",
+  stepRecord: "Say it once. It stays here.",
   stepReturn: WEDGE_RESURFACING.wordsCameBack,
-  stepBackup: "You can use it without backup. Sign in only if you want encrypted sync.",
-  finish: "Go at your pace. Nothing to catch up on.",
+  stepBackup: "Sign in only if you want a copy on another device.",
+  finish: "Go at your pace.",
 } as const;
 
 export const ONBOARDING_WELCOME = {
-  description:
-    "Record short voice reflections on this device. For early testers — no performance, no scoring.",
+  description: "Speak privately on this device. No performance, no scoring.",
   memoryGrows: WEDGE_RESURFACING.similarWordsBefore,
 } as const;
 

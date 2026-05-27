@@ -7,7 +7,6 @@ import { Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  MEMORY_PROMISE_CONCRETE,
   RECORD_CTA_LABEL,
   REFLECTION_MILESTONES,
   getAnticipatoryEmptyCopy,
@@ -19,14 +18,11 @@ export function AnticipatoryEmptyState({
   icon,
   className,
   recordHref = "/record",
-  showPromise = false,
 }: {
   entryCount?: number;
   icon?: ReactNode;
   className?: string;
   recordHref?: string;
-  /** Show one-line concrete promise under body (primary empty pages). */
-  showPromise?: boolean;
 }) {
   const count =
     entryCount ??
@@ -44,9 +40,6 @@ export function AnticipatoryEmptyState({
         <div className="max-w-md space-y-2">
           <p className="text-lg font-medium text-white">{copy.headline}</p>
           <p className="text-sm leading-relaxed text-zinc-400">{copy.body}</p>
-          {showPromise ? (
-            <p className="text-xs leading-relaxed text-zinc-600">{MEMORY_PROMISE_CONCRETE}</p>
-          ) : null}
         </div>
         {copy.showMilestones ? (
           <ul className="max-w-sm space-y-2 text-left text-xs leading-relaxed text-zinc-500">

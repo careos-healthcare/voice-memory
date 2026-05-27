@@ -7,8 +7,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const pagePath = path.join(ROOT, "app/page.tsx");
 const copyPath = path.join(ROOT, "lib/product-copy.ts");
+const recognitionPath = path.join(ROOT, "lib/product/recognition-copy.ts");
 
-for (const rel of [pagePath, copyPath]) {
+for (const rel of [pagePath, copyPath, recognitionPath]) {
   if (!fs.existsSync(rel)) {
     console.error(`Homepage clarity validation failed — missing ${rel}`);
     process.exit(1);
@@ -17,18 +18,20 @@ for (const rel of [pagePath, copyPath]) {
 
 const page = fs.readFileSync(pagePath, "utf8");
 const copy = fs.readFileSync(copyPath, "utf8");
+const recognition = fs.readFileSync(recognitionPath, "utf8");
+const copySources = `${copy}\n${recognition}`;
 
 const required = [
   "HOMEPAGE_CLARITY",
-  "Speak thoughts aloud",
-  "Your past words stay on this device",
-  "Repeated phrases from past reflections can surface before you speak again",
-  "Record with your voice",
+  "Speak aloud",
+  "Your words stay here",
+  "What repeats can come back",
+  "Say it in your voice",
   "Three weeks apart, you mentioned waiting for the same phone call",
 ];
 
 for (const token of required) {
-  if (!page.includes(token) && !copy.includes(token)) {
+  if (!page.includes(token) && !copySources.includes(token)) {
     console.error(`Homepage clarity validation failed — missing ${token}`);
     process.exit(1);
   }

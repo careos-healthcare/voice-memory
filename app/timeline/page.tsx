@@ -83,7 +83,6 @@ export default function TimelinePage() {
             <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
           ) : entries.length === 0 ? (
             <AnticipatoryEmptyState
-              showPromise
               icon={<CalendarRange className="h-6 w-6 text-violet-300" />}
             />
           ) : (

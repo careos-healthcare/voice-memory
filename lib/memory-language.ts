@@ -24,7 +24,11 @@ export const BANNED_USER_MEMORY_PHRASES = [
   "metrics dashboard",
   "intelligence layer",
   "memory intelligence",
+  "memory resurfacing",
+  "continuity intelligence",
+  "archive resonance",
   "generated insight",
+  "ai summary",
   "we detected",
   "our system",
   "the system recommends",
@@ -36,4 +40,6 @@ export const BANNED_USER_MEMORY_PHRASES = [
   "emotional intensity trend",
   "mood tracker",
   "intensity/10",
+  "voice notes app",
+  "voicememory brings back",
 ] as const;

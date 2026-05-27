@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Brain } from "lucide-react";
 
+import { FirstReturnMoment } from "@/components/continuity/FirstReturnMoment";
 import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
@@ -13,7 +14,7 @@ import { OpenLoopReturnPrompt } from "@/components/open-loops/OpenLoopReturnProm
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ONBOARDING_MEMORY } from "@/lib/onboarding/onboarding-copy";
-import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
+import { RECOGNITION_COPY } from "@/lib/product/recognition-copy";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
 import { followupPromptFromReturnThreads } from "@/lib/continuity/followup-from-threads";
 import {
@@ -59,8 +60,7 @@ export default function MemoryPage() {
         <SiteHeader />
 
         <MotionPageTitle title={ONBOARDING_MEMORY.title} />
-        <p className="mt-3 text-sm leading-relaxed text-zinc-500">{PRODUCT_WEDGE_LINE}</p>
-        <p className="mt-2 text-sm leading-relaxed text-zinc-600">{ONBOARDING_MEMORY.wedge}</p>
+        <p className="mt-3 text-sm leading-relaxed text-zinc-500">{RECOGNITION_COPY.journalLead}</p>
 
         <div className="mt-12 space-y-12">
           {loading ? (
@@ -68,14 +68,14 @@ export default function MemoryPage() {
           ) : !report?.hasData ? (
             <AnticipatoryEmptyState
               entryCount={entries.length}
-              showPromise
               icon={<Brain className="h-6 w-6 text-violet-300" />}
             />
           ) : (
             <>
+              <FirstReturnMoment entries={entries} className="mb-10" />
               <OpenLoopReturnPrompt />
               <OpenLoopsSection maxItems={3} />
-              <ReturnThreadsOverview report={report} />
+              <ReturnThreadsOverview report={report} compact />
 
               <FollowupPromptInline
                 prompt={followupPrompt}

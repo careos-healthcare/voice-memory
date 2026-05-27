@@ -4,7 +4,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
+import { FirstReturnMoment } from "@/components/continuity/FirstReturnMoment";
 import { ReturnThreadCard } from "@/components/continuity/ReturnThreadCard";
+import { pickFirstReturnMoment } from "@/lib/continuity/first-return-moment";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
 import { pickMobileHomeSecondary } from "@/lib/mobile/homepage-mobile-compression";
@@ -18,7 +20,12 @@ export function MobileReturningHome({
   continuityLine: string | null;
   recorder: ReactNode;
 }) {
-  const secondary = useMemo(() => pickMobileHomeSecondary(getMemoryEligibleEntries()), []);
+  const entries = useMemo(() => getMemoryEligibleEntries(), []);
+  const returnMoment = useMemo(() => pickFirstReturnMoment(entries), [entries]);
+  const secondary = useMemo(
+    () => (returnMoment ? null : pickMobileHomeSecondary(entries)),
+    [entries, returnMoment],
+  );
   const showRhythm = countCompletedReflections() >= 2;
 
   return (
@@ -31,7 +38,11 @@ export function MobileReturningHome({
         </p>
       ) : null}
 
-      {secondary?.kind === "return_thread" && secondary.thread ? (
+      {returnMoment ? (
+        <div className="mt-8 w-full text-left">
+          <FirstReturnMoment entries={entries} />
+        </div>
+      ) : secondary?.kind === "return_thread" && secondary.thread ? (
         <div className="mt-8 w-full text-left">
           <ReturnThreadCard thread={secondary.thread} />
         </div>

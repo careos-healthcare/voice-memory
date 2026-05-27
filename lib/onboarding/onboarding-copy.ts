@@ -14,12 +14,10 @@ export const ONBOARDING_RECORDER = {
 } as const;
 
 export const ONBOARDING_MEMORY = {
-  title: "What returns",
-  empty:
-    "After 1–3 real reflections, repeated phrases and return threads can appear here—in your words.",
+  title: "What returned",
+  empty: "When something repeats in your words, it shows up here.",
   loading: "One moment…",
-  wedge:
-    "Phrases you already spoke resurface when today connects to a past reflection. No scores, no fake previews.",
+  wedge: "In your words — not a summary.",
 } as const;
 
 export const ONBOARDING_ARCHIVE = {

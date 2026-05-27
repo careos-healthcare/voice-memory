@@ -8,25 +8,21 @@ export function getEntryTier(count: number): EntryTier {
   return "rich";
 }
 
-/** Concrete product promise — specific return behavior, not “AI intelligence”. */
-export const MEMORY_PROMISE_CONCRETE =
-  "Speak across a few days. When today sounds like something you already said, those words can surface again—in your voice, not as a summary.";
-
 export const RECORD_CTA_LABEL = "Record now";
 
 /** What honestly appears after real reflections — no fabricated previews. */
 export const REFLECTION_MILESTONES = [
   {
     after: 1 as const,
-    line: "Your reflection is saved here to replay and reopen anytime.",
+    line: "Saved here to replay.",
   },
   {
     after: 2 as const,
-    line: "A second reflection lets VoiceMemory compare wording across days.",
+    line: "A second entry — VoiceMemory can compare your words.",
   },
   {
     after: 3 as const,
-    line: "By three, repeated phrases and return threads can show up before you speak again.",
+    line: "By three, what repeats may show up before you speak.",
   },
 ] as const;
 
@@ -40,32 +36,32 @@ export interface AnticipatoryEmptyCopy {
 const ANTICIPATORY_BY_TIER: Record<EntryTier, AnticipatoryEmptyCopy> = {
   none: {
     tier: "none",
-    headline: "Your past words have not arrived yet",
-    body: "One short voice reflection starts the archive. After a few real entries, repeated phrases and unfinished threads can return in your own words.",
+    headline: "Nothing has returned yet",
+    body: "Say it once. When you repeat yourself across days, it may come back.",
     showMilestones: true,
   },
   one: {
     tier: "one",
-    headline: "One reflection in — the return loop is starting",
-    body: "Record again when the same concern or phrase comes back. A second day of real speech is when cross-day wording usually becomes visible.",
+    headline: "One entry in",
+    body: "Say one more when the same words come back.",
     showMilestones: true,
   },
   few: {
     tier: "few",
-    headline: "Enough speech for words to repeat",
-    body: "Similar phrases, people, and concerns can begin showing up across entries. Return threads and timeline cards fill in as your archive grows.",
+    headline: "Words are starting to repeat",
+    body: "What you said before may surface again.",
     showMilestones: false,
   },
   building: {
     tier: "building",
-    headline: "History deep enough to revisit",
-    body: "Older reflections can resurface when something you say today connects to words you used before.",
+    headline: "Something is returning",
+    body: "Older words can meet what you say today.",
     showMilestones: false,
   },
   rich: {
     tier: "rich",
-    headline: "Depth is here",
-    body: "Return threads, open loops, and timeline cards draw from your own transcripts—not scores or mood labels.",
+    headline: "Your words keep meeting each other",
+    body: "Returns draw from what you actually said.",
     showMilestones: false,
   },
 };
@@ -78,7 +74,7 @@ export function getAnticipatoryEmptyCopy(entryCount: number): AnticipatoryEmptyC
 export function anticipatoryHint(entryCount: number): string {
   const copy = getAnticipatoryEmptyCopy(entryCount);
   if (copy.tier === "none") {
-    return "After 1–3 real reflections, repeated phrases and return threads can appear here.";
+    return "After a few entries, what repeats may appear here.";
   }
   return copy.body;
 }
