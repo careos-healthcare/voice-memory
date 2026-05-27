@@ -17,6 +17,9 @@ if (!gateSrc.includes("CONTINUITY_FALLBACK_LINE")) {
 if (!gateSrc.includes("isLowQualityTranscript")) {
   failures.push("continuity-quality-gate incomplete");
 }
+if (!gateSrc.includes("passesHardContinuityGate")) {
+  failures.push("continuity-quality-gate must export passesHardContinuityGate");
+}
 
 const buildSrc = await import("node:fs").then((fs) => fs.readFileSync(buildPath, "utf8"));
 if (!buildSrc.includes("continuity-quality-gate")) {
@@ -30,6 +33,8 @@ const bad = [
   "this is just a test",
   "please please please",
   "123",
+  "thank you for watching",
+  "You mentioned this again tonight. Thank you for watching.",
 ];
 for (const sample of bad) {
   if (!mod.isLowQualityTranscript(sample) && !mod.isLowQualityContinuityQuote(sample)) {

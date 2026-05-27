@@ -19,6 +19,9 @@ if (!capture.includes('data-record-capture="true"')) {
 if (!capture.includes("bg-zinc-950")) {
   failures.push("RecordFullscreenCapture must use dark background");
 }
+if (!capture.includes("fixed inset-0")) {
+  failures.push("RecordFullscreenCapture must cover viewport (fixed inset-0)");
+}
 if (quick.includes("SiteHeader") || quick.includes("SiteFooter")) {
   failures.push("QuickRecordPage must not include site header/footer");
 }

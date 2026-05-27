@@ -33,7 +33,7 @@ import { MotionPage } from "@/components/motion/MotionPage";
 import { MobileCompressedHome } from "@/components/homepage/MobileCompressedHome";
 import { MobileReturningHome } from "@/components/homepage/MobileReturningHome";
 import { MicCentricHome } from "@/components/reflex/MicCentricHome";
-import { resolveContinuityLineOrFallback } from "@/lib/continuity/continuity-quality-gate";
+import { surfacedContinuityLine } from "@/lib/continuity/build-continuity-lines";
 import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { isMobileFirstRunHome, isMobileReturningHome } from "@/lib/mobile/mobile-first-run";
 import {
@@ -132,6 +132,7 @@ export default function HomePage() {
 
   const micCentric =
     directToMic || silenceFirstReflex || Boolean(recordReturn || clarityRecord || reflexCapture);
+  const captureFirstHome = micCentric || mobileFirstRun || mobileReturning;
 
   useEffect(() => {
     if (shouldForceDirectMicNextSession()) {
@@ -272,9 +273,9 @@ export default function HomePage() {
     router.push(hrefForRecordReturn(ctx));
   }, [primaryNote, router]);
 
-  const reflexContinuityLine = resolveContinuityLineOrFallback(
+  const reflexContinuityLine = surfacedContinuityLine(
     reflexCapture?.continuityLine ?? recorderLine ?? recordReturn?.anchorQuote ?? null,
-    { allowFallback: mobileReturning || micCentric || Boolean(recordReturn) },
+    getMemoryEligibleEntries(),
   );
 
   return (
@@ -286,9 +287,11 @@ export default function HomePage() {
 
       <HomepagePrimaryCtaProvider>
       <div className="relative mx-auto flex min-h-screen-mobile max-w-3xl flex-col px-4 pb-10 sm:px-6">
-        <SiteHeader compact={mobileFirstRun || mobileReturning} />
+        {!captureFirstHome ? (
+          <SiteHeader compact={mobileFirstRun || mobileReturning} />
+        ) : null}
 
-        {!micCentric && !mobileFirstRun && !mobileReturning ? (
+        {!captureFirstHome ? (
           <div className="mt-6 space-y-10 py-2">
             <ActivationOnboarding />
             <CalmComprehensionPrompt />
@@ -327,7 +330,11 @@ export default function HomePage() {
           </div>
         ) : null}
 
-        <main className="flex flex-1 flex-col items-center justify-center py-10 text-center">
+        <main
+          className={`flex flex-1 flex-col items-center justify-center text-center ${
+            captureFirstHome ? "min-h-[70vh] py-6" : "py-10"
+          }`}
+        >
           {micCentric ? (
             <MicCentricHome
               continuityLine={reflexContinuityLine}
@@ -368,7 +375,6 @@ export default function HomePage() {
                   />
                 </div>
               }
-              rhythm={<HabitLoopCard compact suppressRecordCta />}
             />
           ) : (
             <>
@@ -422,19 +428,6 @@ export default function HomePage() {
                   delay: MOTION.delay.hero * 2,
                   ease: MOTION.ease,
                 }}
-                className="mt-8 w-full text-left"
-              >
-                <HabitLoopCard compact suppressRecordCta />
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: MOTION.offset.page }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: MOTION.duration.page,
-                  delay: MOTION.delay.hero * 3,
-                  ease: MOTION.ease,
-                }}
                 className="mt-10 w-full"
                 ref={recorderRef}
                 id="recorder"
@@ -454,10 +447,14 @@ export default function HomePage() {
                   quickReflection={isQuickReflectionEnabled()}
                 />
               </motion.div>
+
+              <div className="mt-10 w-full text-left">
+                <HabitLoopCard compact suppressRecordCta />
+              </div>
             </>
           )}
 
-          {!micCentric && !mobileFirstRun && !mobileReturning ? (
+          {!captureFirstHome ? (
             <>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -480,9 +477,7 @@ export default function HomePage() {
           ) : null}
         </main>
 
-        {!micCentric && !mobileFirstRun && !mobileReturning ? (
-          <SiteFooter className="mt-auto pt-8" />
-        ) : null}
+        {!captureFirstHome ? <SiteFooter className="mt-auto pt-8" /> : null}
       </div>
       </HomepagePrimaryCtaProvider>
     </div>

@@ -13,6 +13,7 @@ import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { isPrimarySurfacedReflection } from "@/lib/reflection/reflection-quality-gate";
 import { getEntries } from "@/lib/storage";
 import { entryContinuitySnippet } from "@/lib/product/human-continuity-ui";
 import { APP_HONESTY, APP_SUBTITLE } from "@/lib/product-copy";
@@ -22,6 +23,7 @@ import type { JournalEntry } from "@/types/journal";
 export default function JournalPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const surfacedEntries = entries.filter(isPrimarySurfacedReflection);
 
   useEffect(() => {
     setEntries(getEntries());
@@ -43,9 +45,9 @@ export default function JournalPage() {
               <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
                 {APP_SUBTITLE}
               </p>
-              <h1 className="mt-2 text-3xl font-semibold text-white">Your reflections</h1>
+              <h1 className="mt-2 text-3xl font-semibold text-white">Journal</h1>
               <p className="mt-2 text-sm text-zinc-400">
-                Voice reflections on this device — {APP_HONESTY.toLowerCase()}
+                Voice captures on this device — {APP_HONESTY.toLowerCase()}
               </p>
             </div>
             <Button asChild variant="secondary" size="sm">
@@ -54,19 +56,14 @@ export default function JournalPage() {
           </div>
         </motion.div>
 
-        <div className="mt-8 space-y-10">
-          <HabitLoopCard compact />
-          <ReturnThreadsOverview compact />
-        </div>
-
-        <div className="relative mt-10">
+        <div className="relative mt-8">
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((item) => (
                 <Skeleton key={item} className="h-28 w-full" />
               ))}
             </div>
-          ) : entries.length === 0 ? (
+          ) : surfacedEntries.length === 0 ? (
             <>
               <EmptyStateIntelligence className="mb-4" />
               <Card className="border-dashed">
@@ -91,7 +88,7 @@ export default function JournalPage() {
             </>
           ) : (
             <div className="relative space-y-4 before:absolute before:bottom-0 before:left-4 before:top-0 before:w-px before:bg-white/10 sm:before:left-5">
-              {entries.map((entry, index) => (
+              {surfacedEntries.map((entry, index) => (
                 <motion.div
                   key={entry.id}
                   initial={{ opacity: 0, y: 12 }}
@@ -129,6 +126,13 @@ export default function JournalPage() {
             </div>
           )}
         </div>
+
+        {!loading && surfacedEntries.length > 0 ? (
+          <div className="mt-12 space-y-10">
+            <ReturnThreadsOverview compact />
+            <HabitLoopCard compact />
+          </div>
+        ) : null}
       </div>
     </div>
   );

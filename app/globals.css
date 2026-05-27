@@ -111,8 +111,14 @@ body {
   color: #fafafa;
 }
 
+body[data-record-capture="true"] {
+  overflow: hidden;
+  background-color: #09090b;
+}
+
 .record-fullscreen-capture .record-capture-main {
-  min-height: min(100dvh, 100vh);
+  flex: 1;
+  min-height: 0;
 }
 
 .mobile-recorder-primary {

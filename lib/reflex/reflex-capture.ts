@@ -3,6 +3,7 @@ import { readLocalEvents } from "@/lib/local-analytics";
 import { OPEN_LOOP_EVENTS } from "@/lib/open-loops/open-loop-observation";
 import { CALLBACK_LEARNING_EVENTS } from "@/lib/revisit/callback-learning";
 import { REFLEX_CONTINUITY_LINES } from "@/lib/reflex/reflex-copy";
+import { isPrimarySurfacedReflection } from "@/lib/reflection/reflection-quality-gate";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
 import type { ReflexCaptureResult, ReflexTriggerType } from "@/types/reflex";
@@ -16,10 +17,10 @@ function isLateNight(now = new Date()): boolean {
 }
 
 function latestEntry(entries: JournalEntry[]): JournalEntry | null {
-  if (entries.length === 0) return null;
-  return [...entries].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  )[0];
+  const sorted = [...entries]
+    .filter(isPrimarySurfacedReflection)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return sorted[0] ?? null;
 }
 
 function openLoopResurfaceRecent(withinHours = 48): boolean {
@@ -47,6 +48,7 @@ function rapidCallbackReopen(): boolean {
 
 function uncertaintyRepeat(entries: JournalEntry[]): boolean {
   const recent = [...entries]
+    .filter(isPrimarySurfacedReflection)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 4);
   let uncertain = 0;

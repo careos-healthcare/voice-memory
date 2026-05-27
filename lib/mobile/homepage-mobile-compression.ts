@@ -1,6 +1,9 @@
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
 import { gateContinuityLine } from "@/lib/continuity/continuity-quality-gate";
-import { entryContinuitySnippet } from "@/lib/product/human-continuity-ui";
+import {
+  isPrimarySurfacedReflection,
+  primaryReflectionSnippet,
+} from "@/lib/reflection/reflection-quality-gate";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { ReturnThread } from "@/types/return-thread";
 import type { JournalEntry } from "@/types/journal";
@@ -25,12 +28,12 @@ export function pickMobileHomeSecondary(
   }
 
   const sorted = [...entries]
-    .filter((e) => e.reflectionPending !== true)
+    .filter(isPrimarySurfacedReflection)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const latest = sorted[0];
   if (!latest) return null;
 
-  const snippet = entryContinuitySnippet(latest);
-  if (!snippet || snippet === "Voice reflection") return null;
+  const snippet = primaryReflectionSnippet(latest);
+  if (!snippet) return null;
   return { kind: "latest_reflection", entry: latest, snippet };
 }

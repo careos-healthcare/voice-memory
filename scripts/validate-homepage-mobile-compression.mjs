@@ -25,7 +25,7 @@ const returning = fs.readFileSync(
   path.join(ROOT, "components/homepage/MobileReturningHome.tsx"),
   "utf8",
 );
-if (!returning.includes("ReturnThreadCard") || !returning.includes("rhythm")) {
+if (!returning.includes("ReturnThreadCard") || !returning.includes("HabitLoopCard")) {
   failures.push("MobileReturningHome must show thread OR latest, rhythm below");
 }
 
@@ -38,11 +38,14 @@ const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
 if (!home.includes("MobileReturningHome") || !home.includes("mobileReturning")) {
   failures.push("homepage must use mobile returning compression");
 }
-if (!home.match(/!micCentric && !mobileFirstRun && !mobileReturning/)) {
-  failures.push("homepage explanatory stack must hide on mobile returning");
+if (!home.includes("captureFirstHome")) {
+  failures.push("homepage must define captureFirstHome");
 }
-if (!home.includes("rhythm={<HabitLoopCard")) {
-  failures.push("rhythm must render below recorder on mobile returning");
+if (!home.match(/!captureFirstHome/)) {
+  failures.push("homepage explanatory stack must hide when capture-first");
+}
+if (!home.includes("captureFirstHome")) {
+  failures.push("homepage must use captureFirstHome for mobile returning compression");
 }
 
 const compression = fs.readFileSync(

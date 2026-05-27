@@ -7,8 +7,8 @@ import {
 import {
   gateContinuityLine,
   gateContinuityQuote,
-  isLowQualityTranscript,
 } from "@/lib/continuity/continuity-quality-gate";
+import { isPrimarySurfacedReflection } from "@/lib/reflection/reflection-quality-gate";
 import { buildEntityMemoryFromEntries } from "@/lib/entity-memory";
 import { getActiveOpenLoops } from "@/lib/open-loops/open-loop-storage";
 import { detectAllContradictions } from "@/lib/patterns/contradictions";
@@ -362,12 +362,9 @@ export function groupReturnThreads(threads: ReturnThread[]): ReturnThreadGroups 
 
 /** Build return threads across the archive — human recognizability over clever scoring. */
 export function buildReturnThreads(entries: JournalEntry[]): ReturnThreadsReport {
-  const eligible = entries.filter((e) => {
-    if (e.reflectionPending === true) return false;
-    const transcript = e.transcript?.trim();
-    if (transcript && isLowQualityTranscript(transcript)) return false;
-    return Boolean(transcript || quoteFromEntry(e));
-  });
+  const eligible = entries.filter(
+    (e) => isPrimarySurfacedReflection(e) || Boolean(quoteFromEntry(e)),
+  );
   if (eligible.length < 2) {
     return {
       threads: [],

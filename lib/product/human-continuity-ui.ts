@@ -1,4 +1,8 @@
 import { getEntryPreviewLine } from "@/lib/reflection";
+import {
+  isPrimarySurfacedReflection,
+  primaryReflectionSnippet,
+} from "@/lib/reflection/reflection-quality-gate";
 import type { JournalEntry } from "@/types/journal";
 import type { RelatedReflection } from "@/types/memory-continuity";
 
@@ -27,12 +31,12 @@ export function sanitizeUserFacingObservation(text: string): string | null {
   return trimmed;
 }
 
-/** One-line list preview — quote or observation, never a mood label. */
+/** One-line list preview — meaningful words only; junk entries stay private. */
 export function entryContinuitySnippet(entry: JournalEntry, maxLen = 160): string {
-  const fromTranscript = entry.transcript?.trim();
-  if (fromTranscript) {
-    const slice = fromTranscript.slice(0, maxLen);
-    return fromTranscript.length > maxLen ? `${slice}…` : slice;
+  const snippet = primaryReflectionSnippet(entry, maxLen);
+  if (snippet) return snippet;
+  if (!isPrimarySurfacedReflection(entry)) {
+    return "Voice capture on this device";
   }
   const observation = sanitizeUserFacingObservation(getEntryPreviewLine(entry.reflection));
   return observation ?? "Voice reflection";

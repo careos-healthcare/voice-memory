@@ -1,9 +1,13 @@
 import {
   gateContinuityLine,
   gateContinuityQuote,
-  isLowQualityTranscript,
+  passesHardContinuityGate,
   resolveContinuityLineOrFallback,
 } from "@/lib/continuity/continuity-quality-gate";
+import {
+  isJunkReflectionTranscript,
+  isPrimarySurfacedReflection,
+} from "@/lib/reflection/reflection-quality-gate";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
 import { sanitizeUserFacingObservation } from "@/lib/product/human-continuity-ui";
@@ -52,7 +56,7 @@ export function quoteFromEntry(entry: JournalEntry): string {
     if (q) return q;
   }
   const transcript = entry.transcript?.trim();
-  if (transcript && !isLowQualityTranscript(transcript)) {
+  if (transcript && !isJunkReflectionTranscript(transcript)) {
     const slice = transcript.slice(0, 140);
     const raw = transcript.length > 140 ? `${slice}…` : slice;
     return gateContinuityQuote(raw) ?? "";
@@ -123,11 +127,11 @@ export function buildContinuityLineForThread(thread: {
         : "The same uncertainty showed up again.";
       break;
     default:
-      line = "You mentioned this again tonight.";
+      line = "You mentioned this again.";
   }
 
   if (!isAllowedContinuityLine(line)) {
-    line = "You mentioned this again.";
+    line = "This came back.";
   }
   return line;
 }
@@ -156,15 +160,17 @@ export function pickHomepageContinuityLine(
     return gateContinuityLine(short) ?? short;
   }
 
-  const latest = [...entries].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  )[0];
-  if (latest) {
-    const q = quoteFromEntry(latest);
-    if (q && q.length > 12) {
-      const line = `You mentioned this again tonight. ${formatQuote(q)}`;
-      const gated = gateContinuityLine(line);
-      if (gated) return gated.length > 100 ? gated.slice(0, 97) + "…" : gated;
+  if (passesHardContinuityGate(entries)) {
+    const latest = [...entries]
+      .filter(isPrimarySurfacedReflection)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+    if (latest) {
+      const q = quoteFromEntry(latest);
+      if (q && q.length > 12) {
+        const line = `You mentioned this again tonight. ${formatQuote(q)}`;
+        const gated = gateContinuityLine(line);
+        if (gated) return gated.length > 100 ? gated.slice(0, 97) + "…" : gated;
+      }
     }
   }
 
@@ -180,9 +186,19 @@ export function gapDaysBetween(firstIso: string, lastIso: string): number {
 
 /** Single quote-led line before the mic — max one, no stacked interpretation. */
 export function preMicContinuityLine(entries: JournalEntry[]): string | null {
+  if (!passesHardContinuityGate(entries)) return null;
   const { threads } = buildReturnThreads(entries);
   const picked = pickHomepageContinuityLine(threads, entries);
   return resolveContinuityLineOrFallback(picked, {
-    allowFallback: entries.length > 0,
+    allowFallback: true,
   });
+}
+
+/** Homepage / mic continuity — hard-gated, never quotes junk transcripts. */
+export function surfacedContinuityLine(
+  line: string | null | undefined,
+  entries: JournalEntry[],
+): string | null {
+  if (!passesHardContinuityGate(entries)) return null;
+  return resolveContinuityLineOrFallback(line, { allowFallback: true });
 }

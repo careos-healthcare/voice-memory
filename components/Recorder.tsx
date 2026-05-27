@@ -19,6 +19,7 @@ import {
   createPendingReflection,
 } from "@/lib/pending-reflection";
 import { RecordReturnAnchor } from "@/components/recording/RecordReturnAnchor";
+import { RECORDER_PRIMARY_LABEL } from "@/lib/reflection/recorder-primary-label";
 import {
   consumeContinuationMeta,
   peekContinuationMeta,
@@ -879,7 +880,7 @@ export function Recorder({
                   onClick={() => void startRecording()}
                 >
                   <Mic className="h-5 w-5" />
-                  {quickMode ? "Quick reflection" : "Start reflection"}
+                  {quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection"}
                 </Button>
                 {preRecordLine || densityOffer ? (
                   <div className="max-w-sm text-center">
