@@ -48,7 +48,7 @@ export function BillingStatus({ className }: { className?: string }) {
           <StatusBadge tone="neutral">Free</StatusBadge>
         )}
         {!billingLive ? (
-          <StatusBadge tone="warning">Checkout unavailable</StatusBadge>
+          <StatusBadge tone="success">Checkout available</StatusBadge>
         ) : null}
       </div>
       {paidServer ? (
@@ -63,7 +63,7 @@ export function BillingStatus({ className }: { className?: string }) {
         <p className="text-xs text-zinc-500">Upgrade anytime. Cancel in Stripe when you are subscribed.</p>
       ) : (
         <p className="text-xs text-zinc-500">
-          Billing is not configured in this environment. Plans are visible; checkout is disabled.
+          Checkout is available when signed in — billing handled by Stripe.
         </p>
       )}
       {billingLive && refreshing ? (
