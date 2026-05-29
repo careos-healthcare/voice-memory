@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 
+import {
+  RecordCaptureChrome,
+  type RecordUiPhase,
+} from "@/components/capture/RecordCaptureChrome";
 import { Recorder } from "@/components/Recorder";
+import { getStoredEntryCount } from "@/lib/storage";
 import { markAppOpenForCapture, markFastCaptureReady } from "@/lib/capture/fast-capture";
 import { setRecorderSurfaceActive } from "@/lib/mobile/install-prompt-gate";
 import { markMicVisibleForHesitation } from "@/lib/capture/hesitation-signals";
@@ -58,6 +63,8 @@ export function ZeroStateRecorderShell({
   const autoStart =
     autoStartOverride ?? shouldAutoStartZeroStateRecorder(input);
   const zeroState = shouldUseZeroStateRecorder(input);
+  const [phase, setPhase] = useState<RecordUiPhase>("ready");
+  const firstTime = useMemo(() => getStoredEntryCount() === 0, []);
 
   useLayoutEffect(() => {
     setRecorderSurfaceActive(true);
@@ -71,11 +78,13 @@ export function ZeroStateRecorderShell({
   }, [captureContext]);
 
   return (
-    <div className="mobile-recorder-dominant flex w-full flex-col items-center justify-center py-6">
+    <div className="mobile-recorder-dominant flex w-full max-w-lg flex-col items-center justify-center gap-6 py-6">
+      <RecordCaptureChrome
+        phase={phase}
+        showFirstTimeHint={firstTime && phase === "ready"}
+      />
       {line ? (
-        <p className="mb-6 max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">
-          {line}
-        </p>
+        <p className="max-w-sm text-center text-sm leading-[1.75] text-zinc-400/95">{line}</p>
       ) : null}
       <Recorder
         autoStart={autoStart}
@@ -86,6 +95,7 @@ export function ZeroStateRecorderShell({
         zeroState={zeroState}
         quickReflection={quickReflection}
         onComplete={onComplete}
+        onUiPhaseChange={setPhase}
       />
     </div>
   );

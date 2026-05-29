@@ -31,7 +31,7 @@ export const FREE_TIER: TierDefinition = {
 export const PRO_TIER: TierDefinition = {
   id: "pro",
   label: "Pro",
-  priceLabel: "£8.99/month",
+  priceLabel: "£9.99/month",
   headline: PRO_HEADLINE,
   entitlements: [
     "local_recording",

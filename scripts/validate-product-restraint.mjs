@@ -116,7 +116,7 @@ const FORBIDDEN_LINK_PREFIXES = [
   "/achievements",
   "/insights-engine",
   "/performance",
-  "/debug/",
+  "/internal/",
 ];
 
 const BANNED_PHRASES = [

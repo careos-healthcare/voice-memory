@@ -7,8 +7,8 @@ import { isFalsePositiveNote } from "@/lib/refinement/false-positive-suppression
 import { calibrateFollowupPrompt } from "@/lib/refinement/silence-calibration";
 import { continuationBoostForNote } from "@/lib/retention/loop-optimization";
 import { recordFollowUpPrompt } from "@/lib/sync/cross-device-continuity";
+import { CONTINUATION_COPY } from "@/lib/conversation/continuation-copy";
 import {
-  CONTINUATION_COPY,
   gatherContinuationCandidates,
   storeContinuationMeta,
   type ContinuationKind,

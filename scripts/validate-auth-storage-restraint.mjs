@@ -14,7 +14,7 @@ const REQUIRED_FILES = [
   "lib/auth/auth-errors.ts",
   "instrumentation.ts",
   "app/api/auth/send-code/route.ts",
-  "app/api/debug/auth-env/route.ts",
+  "app/api/internal/auth-env/route.ts",
 ];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
@@ -44,7 +44,7 @@ const productionDeploy = fs.readFileSync(
   "utf8",
 );
 const authEnvRoute = fs.readFileSync(
-  path.join(ROOT, "app/api/debug/auth-env/route.ts"),
+  path.join(ROOT, "app/api/internal/auth-env/route.ts"),
   "utf8",
 );
 

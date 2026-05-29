@@ -6,6 +6,7 @@ import { EntitlementGate } from "@/components/billing/EntitlementGate";
 import { OpenLoopsList } from "@/components/open-loops/OpenLoopsList";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   OPEN_LOOP_PAGE_TITLE,
@@ -34,14 +35,15 @@ export default function OpenLoopsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain className="mt-4">
         <MotionPageTitle eyebrow={OPEN_LOOP_SECTION_TITLE} title={OPEN_LOOP_PAGE_TITLE} />
-        <p className="mt-6 max-w-xl text-sm leading-relaxed text-zinc-600">
+        <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted">
           {OPEN_LOOP_SECTION_LEAD}
         </p>
 
         <div className="mt-24">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <p className="py-20 text-center text-sm text-muted" role="status">One moment…</p>
           ) : empty ? (
             <AnticipatoryEmptyState
               icon={<CircleDashed className="h-6 w-6 text-violet-300" />}
@@ -57,6 +59,7 @@ export default function OpenLoopsPage() {
             </EntitlementGate>
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

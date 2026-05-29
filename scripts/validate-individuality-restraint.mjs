@@ -13,8 +13,8 @@ const REQUIRED_FILES = [
   "lib/refinement/anti-template.ts",
   "lib/debug/archive-individuality-review.ts",
   "lib/debug/archive-divergence-review.ts",
-  "app/debug/archive-individuality/page.tsx",
-  "app/debug/archive-divergence/page.tsx",
+  "app/internal/archive-individuality/page.tsx",
+  "app/internal/archive-divergence/page.tsx",
 ];
 
 const SCAN_DIRS = ["app", "components", "lib"];

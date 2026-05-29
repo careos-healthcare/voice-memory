@@ -5,13 +5,9 @@ import { Crown, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useBillingPublicConfig } from "@/lib/billing/use-billing-public-config";
 import { PRO_DESCRIPTION, PRO_HEADLINE } from "@/lib/product/pro-framing";
-import {
-  isProUser,
-  PRO_PRICE_LABEL,
-  trackUpgradeClick,
-  type UpgradeClickSource,
-} from "@/lib/subscription";
+import { isProUser, trackUpgradeClick, type UpgradeClickSource } from "@/lib/subscription";
 
 interface UpgradeCtaProps {
   source: UpgradeClickSource;
@@ -28,6 +24,7 @@ export function UpgradeCta({
   description = PRO_DESCRIPTION,
   compact = false,
 }: UpgradeCtaProps) {
+  const { proPriceLabel } = useBillingPublicConfig();
   if (isProUser()) return null;
 
   const handleClick = () => {
@@ -39,10 +36,10 @@ export function UpgradeCta({
       <div className="flex flex-col gap-3 rounded-2xl border border-violet-400/25 bg-violet-500/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="text-sm font-medium text-violet-100">{headline}</p>
-          <p className="mt-0.5 text-xs text-zinc-400">{description}</p>
+          <p className="mt-0.5 text-xs text-zinc-300">{description}</p>
         </div>
         <Button asChild size="sm" className="shrink-0" onClick={handleClick}>
-          <Link href={`/pricing?from=${source}`}>Upgrade · {PRO_PRICE_LABEL}</Link>
+          <Link href={`/pricing?from=${source}`}>Upgrade · {proPriceLabel}</Link>
         </Button>
       </div>
     );
@@ -56,16 +53,16 @@ export function UpgradeCta({
             <Crown className="h-5 w-5 text-violet-300" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-violet-300/90">
+            <p className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-violet-200">
               <Sparkles className="h-3.5 w-3.5" />
               VoiceMemory Pro
             </p>
             <p className="mt-1 text-base font-medium text-white">{headline}</p>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+            <p className="mt-2 text-sm leading-relaxed text-zinc-300">
               {description}
             </p>
-            <p className="mt-2 text-xs text-zinc-500">
-              {PRO_PRICE_LABEL} · Billing not connected yet — tap to see plans
+            <p className="mt-2 text-xs text-muted">
+              {proPriceLabel} · Tap to see plans and upgrade
             </p>
             <Button asChild className="mt-4 w-full sm:w-auto" onClick={handleClick}>
               <Link href={`/pricing?from=${source}`}>View Pro plans</Link>

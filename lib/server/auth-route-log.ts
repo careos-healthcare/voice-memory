@@ -1,10 +1,16 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
+
+export function hashEmailForLog(email: string): string {
+  return createHash("sha256").update(email.trim().toLowerCase()).digest("hex").slice(0, 16);
+}
+
 export interface AuthSendCodeLogContext {
   requestId: string;
   route: "send-code";
   method: string;
-  email: string | null;
+  emailHash: string | null;
   resendInitialized: boolean | null;
   emailFromPresent: boolean | null;
   apiKeyPresent: boolean | null;
@@ -31,7 +37,7 @@ export function createAuthSendCodeLog(): {
     requestId,
     route: "send-code",
     method: "POST",
-    email: null,
+    emailHash: null,
     resendInitialized: null,
     emailFromPresent: null,
     apiKeyPresent: null,

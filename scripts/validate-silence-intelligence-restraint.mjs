@@ -9,7 +9,7 @@ const REQUIRED_FILES = [
   "lib/restraint/silence-intelligence.ts",
   "lib/restraint/silence-intelligence-observation.ts",
   "lib/debug/silence-intelligence.ts",
-  "app/debug/silence-intelligence/page.tsx",
+  "app/internal/silence-intelligence/page.tsx",
   "components/restraint/QuietSilenceLine.tsx",
   "types/silence-intelligence.ts",
 ];

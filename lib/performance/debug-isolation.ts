@@ -4,7 +4,7 @@ export function isProductionBuild(): boolean {
 }
 
 export function isDebugRoutePath(pathname: string): boolean {
-  return pathname.startsWith("/debug");
+  return pathname.startsWith("/internal");
 }
 
 /** Debug-only work must not run on normal product surfaces. */

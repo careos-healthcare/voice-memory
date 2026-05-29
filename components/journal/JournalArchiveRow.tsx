@@ -15,7 +15,7 @@ export function JournalArchiveRow({ entry }: { entry: JournalEntry }) {
   return (
     <Link
       href={`/entry/${entry.id}`}
-      className="group flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 py-3 transition-colors hover:border-white/12 hover:bg-white/[0.03]"
+      className="group flex min-h-[3.25rem] items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 py-3 transition-colors hover:border-white/12 hover:bg-white/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50"
     >
       <div className="min-w-0 flex-1">
         <EntryListRowMeta createdAt={entry.createdAt} />
@@ -27,7 +27,10 @@ export function JournalArchiveRow({ entry }: { entry: JournalEntry }) {
           <p className="mt-1.5 text-xs text-zinc-600">Voice capture</p>
         )}
       </div>
-      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-zinc-700 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500" />
+      <ArrowRight
+        className="h-4 w-4 shrink-0 text-zinc-500 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-400"
+        aria-hidden
+      />
     </Link>
   );
 }

@@ -29,11 +29,13 @@ import { CopyMemoryMomentButton } from "@/components/memory/CopyMemoryMomentButt
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
 import { MemoryContinuitySection } from "@/components/memory/MemoryContinuitySection";
 import { MarkReflectionButton } from "@/components/memory/ReflectionBookmarkMark";
+import { EntryPrimaryCallback } from "@/components/entry/EntryPrimaryCallback";
 import { ThreadMentionsSection } from "@/components/memory/ConversationThreadSection";
 import { TerritoryMentionsSection } from "@/components/territories/TerritorySections";
 import { ReflectOnEntryButton } from "@/components/ReflectOnEntryButton";
 import { VoicePlayback } from "@/components/VoicePlayback";
 import { VoicePlaybackContinuity } from "@/components/VoicePlaybackContinuity";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
 import { OnboardingTrustLine } from "@/components/social-proof/OnboardingTrustLine";
@@ -687,16 +689,22 @@ export default function EntryPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader compact />
 
-        <div className="mt-2 flex items-center justify-between gap-4 sm:mt-4">
+        <PrimaryMain className="mt-2 sm:mt-4">
+        <div className="flex items-center justify-between gap-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/journal">
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4" aria-hidden />
               Reflections
             </Link>
           </Button>
           {!loading && entry ? (
-            <Button variant="ghost" size="sm" onClick={handleDelete}>
-              <Trash2 className="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDelete}
+              aria-label="Delete reflection"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
               Delete
             </Button>
           ) : null}
@@ -704,13 +712,14 @@ export default function EntryPage() {
 
         {loading ? (
           <div className="mt-8 space-y-8">
+            <h1 className="sr-only">Reflection</h1>
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-32 w-full" />
           </div>
         ) : !entry ? (
           <MotionPage className="mt-16 text-center">
-            <p className="text-lg font-normal text-zinc-200">Reflection not found</p>
-            <p className="mt-2 text-sm text-zinc-500">
+            <h1 className="text-lg font-normal text-zinc-100">Reflection not found</h1>
+            <p className="mt-2 text-sm text-muted">
               This link may be outdated, or the reflection was removed from this device.
             </p>
             <Button asChild className="mt-6" variant="ghost">
@@ -925,9 +934,7 @@ export default function EntryPage() {
                 ) : freshContinuation ? (
                   <ContinuationNotes notes={[freshContinuation]} max={1} />
                 ) : evidenceBackedMoment ? (
-                  <MotionNoteList className="space-y-20">
-                    <AnimatedMemoryNote note={evidenceBackedMoment} index={0} />
-                  </MotionNoteList>
+                  <EntryPrimaryCallback note={evidenceBackedMoment} />
                 ) : (
                   <p className="text-sm leading-[1.75] text-zinc-500/90">
                     {FRESH_ENTRY_NO_CALLBACK_LINE}
@@ -956,9 +963,7 @@ export default function EntryPage() {
                     <TerritoryMentionsSection territories={entryTerritories} />
 
                     {presentation?.primaryMoment ? (
-                      <MotionNoteList className="space-y-20">
-                        <AnimatedMemoryNote note={presentation.primaryMoment} index={0} />
-                      </MotionNoteList>
+                      <EntryPrimaryCallback note={presentation.primaryMoment} />
                     ) : null}
 
                     <FollowupPromptInline
@@ -999,7 +1004,7 @@ export default function EntryPage() {
 
                 <MotionNoteList className="space-y-20">
                   {notes?.primaryCallback ? (
-                    <AnimatedMemoryNote note={notes.primaryCallback} index={0} />
+                    <EntryPrimaryCallback note={notes.primaryCallback} />
                   ) : null}
 
                   {notes?.secondaryCallback &&
@@ -1040,6 +1045,7 @@ export default function EntryPage() {
                 )}
           </MotionPage>
         )}
+        </PrimaryMain>
       </div>
     </div>
   );

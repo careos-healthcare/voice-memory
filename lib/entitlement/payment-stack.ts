@@ -1,7 +1,8 @@
 /**
- * Payment stack audit — source of truth for what is wired vs copy-only.
- * Update when Stripe or another provider is integrated.
+ * Payment stack audit — reflects env + routes at runtime.
  */
+
+import { isStripeConfigured } from "@/lib/billing/stripe-config";
 
 export type PaymentProviderId = "none" | "stripe" | "revenuecat";
 
@@ -17,24 +18,25 @@ export interface PaymentStackAudit {
   summary: string;
 }
 
-/** Static audit — no network calls. Reflects repo state at build time. */
-export const PAYMENT_STACK_AUDIT: PaymentStackAudit = {
-  stripeSdkPresent: false,
-  stripeCheckoutRoute: false,
-  stripeWebhookRoute: false,
-  revenueCatPresent: false,
-  subscriptionStorage: true,
-  entitlementLayer: true,
-  checkoutImplemented: false,
-  billingPortalImplemented: false,
-  summary:
-    "Copy, pricing page, local Pro preview, and upgrade-click analytics only. No Stripe, RevenueCat, or live checkout.",
-};
-
 export function getPaymentStackAudit(): PaymentStackAudit {
-  return PAYMENT_STACK_AUDIT;
+  const stripeOn = isStripeConfigured();
+  const checkoutImplemented = stripeOn;
+
+  return {
+    stripeSdkPresent: true,
+    stripeCheckoutRoute: true,
+    stripeWebhookRoute: true,
+    revenueCatPresent: false,
+    subscriptionStorage: true,
+    entitlementLayer: true,
+    checkoutImplemented,
+    billingPortalImplemented: false,
+    summary: checkoutImplemented
+      ? "Stripe checkout + webhook wired; entitlements stored server-side when DATABASE_URL is set."
+      : "Stripe env incomplete — checkout disabled (fail closed). Founder preview remains separate.",
+  };
 }
 
 export function isLiveBillingAvailable(): boolean {
-  return PAYMENT_STACK_AUDIT.checkoutImplemented;
+  return getPaymentStackAudit().checkoutImplemented;
 }

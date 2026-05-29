@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
 import { ArrowRight, Filter, Search } from "lucide-react";
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
 import { Button } from "@/components/ui/button";
@@ -53,7 +55,7 @@ function FilterSelect({
 }) {
   return (
     <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-      <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+      <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
         {label}
       </span>
       <select
@@ -120,12 +122,9 @@ export default function SearchPage() {
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         <SiteHeader />
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2"
-        >
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
+        <PrimaryMain className="mt-2">
+        <AnimatedReveal className="mt-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">
             {APP_SUBTITLE}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
@@ -135,7 +134,7 @@ export default function SearchPage() {
             Search your private memory in plain language — thoughts, moods, themes,
             concerns, and people. All on this device.
           </p>
-        </motion.div>
+        </AnimatedReveal>
 
         <div className="mt-6">
           <UpgradeCta
@@ -148,13 +147,14 @@ export default function SearchPage() {
         </div>
 
         <div className="relative mt-6">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search your memory"
             placeholder='Try "when did I feel anxious?"'
-            className="w-full rounded-2xl border border-white/10 bg-white/[0.04] py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-600 focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+            className="w-full rounded-2xl border border-white/10 bg-white/[0.04] py-3.5 pl-11 pr-4 text-sm text-white focus:border-violet-400/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
             autoFocus
           />
         </div>
@@ -165,7 +165,7 @@ export default function SearchPage() {
               key={example}
               type="button"
               onClick={() => setQuery(example)}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-left text-xs text-zinc-400 transition-colors hover:border-violet-400/30 hover:text-violet-200"
+              className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-left text-xs text-zinc-300 transition-colors hover:border-violet-400/30 hover:text-violet-100"
             >
               {example}
             </button>
@@ -217,7 +217,7 @@ export default function SearchPage() {
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
                     From
                   </span>
                   <input
@@ -230,7 +230,7 @@ export default function SearchPage() {
                   />
                 </label>
                 <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
                     To
                   </span>
                   <input
@@ -246,7 +246,7 @@ export default function SearchPage() {
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
                     Min intensity
                   </span>
                   <select
@@ -270,7 +270,7 @@ export default function SearchPage() {
                   </select>
                 </label>
                 <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
                     Max intensity
                   </span>
                   <select
@@ -307,14 +307,14 @@ export default function SearchPage() {
           </Card>
         ) : null}
 
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-zinc-600">
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-muted">
           Search across transcript · mood · themes · concerns · signals · entities
         </p>
 
         <div className="mt-6 space-y-3">
           {!hasInput ? (
             <Card className="border-dashed">
-              <CardContent className="px-6 py-10 text-center text-sm text-zinc-500">
+              <CardContent className="px-6 py-10 text-center text-sm text-muted">
                 Ask a question or apply filters to search across your voice
                 reflections on this device.
               </CardContent>
@@ -323,14 +323,14 @@ export default function SearchPage() {
             <Card>
               <CardContent className="px-6 py-10 text-center">
                 <p className="text-sm font-medium text-white">No matches</p>
-                <p className="mt-2 text-sm text-zinc-500">
+                <p className="mt-2 text-sm text-muted">
                   Try a shorter phrase, an example query, or loosen your filters.
                 </p>
               </CardContent>
             </Card>
           ) : (
             <>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-muted">
                 {results.length} result{results.length === 1 ? "" : "s"}
               </p>
               {results.map((result, index) => {
@@ -378,7 +378,7 @@ export default function SearchPage() {
                                   {result.matches.slice(1).map((match) => (
                                     <li
                                       key={`${match.field}-${match.matchedPhrase}`}
-                                      className="text-xs text-zinc-500"
+                                      className="text-xs text-muted"
                                     >
                                       <span className="text-zinc-400">
                                         {LIFE_SEARCH_FIELD_LABELS[match.field]}:
@@ -389,7 +389,7 @@ export default function SearchPage() {
                                 </ul>
                               ) : null}
                             </div>
-                            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-zinc-600 transition-transform group-hover:translate-x-0.5 group-hover:text-violet-300" />
+                            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-violet-200" aria-hidden />
                           </div>
                         </CardContent>
                       </Card>
@@ -400,6 +400,7 @@ export default function SearchPage() {
             </>
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

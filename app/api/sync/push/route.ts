@@ -4,6 +4,7 @@ import {
   syncApiSuccess,
   syncApiUnauthorized,
 } from "@/lib/server/sync-api-response";
+import { hashEmailForLog } from "@/lib/server/auth-route-log";
 import {
   createSyncRouteLog,
   parseRequestJson,
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
     return syncApiUnauthorized();
   }
 
-  log({ email: session.email });
+  log({ emailHash: hashEmailForLog(session.email) });
 
   const rawBody = await readRequestBodyText(request);
   const contentLength = readContentLength(request);

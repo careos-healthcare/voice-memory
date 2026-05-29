@@ -6,6 +6,7 @@ import { Leaf } from "lucide-react";
 import { MemorySeasonOverview } from "@/components/memory/MemorySeasonSection";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   calendarSeasonsOnly,
@@ -34,11 +35,12 @@ export default function SeasonsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain>
         <MotionPageTitle title="Over the year" />
 
         <div className="mt-20 space-y-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <p className="py-20 text-center text-sm text-muted" role="status">One moment…</p>
           ) : !seasons || seasons.length === 0 ? (
             <AnticipatoryEmptyState icon={<Leaf className="h-6 w-6 text-violet-300" />} />
           ) : (
@@ -48,6 +50,7 @@ export default function SeasonsPage() {
             />
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

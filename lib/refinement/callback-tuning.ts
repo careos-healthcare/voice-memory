@@ -41,6 +41,7 @@ import {
 import { passesResurfacingSpecificityGate } from "@/lib/resurfacing/resurfacing-specificity-gate";
 import { applyCallbackLearningRankAdjustment } from "@/lib/revisit/callback-learning";
 import { hasConcreteResurfacingEvidence } from "@/lib/resurfacing/evidence-engine";
+import { runCanonicalPipelineForMemoryNote } from "@/lib/resurfacing/canonical-resurfacing-pipeline";
 import {
   isGenericResurfacing,
   passesResurfacingGenericityGate,
@@ -258,6 +259,7 @@ export function pickBestCallback(
         !shouldSuppressWithoutDetectableChange(note, entries) &&
         hasDetectableChange(note, entries) &&
         hasConcreteResurfacingEvidence(note, entries) &&
+        runCanonicalPipelineForMemoryNote(note, entries).show &&
         passesResurfacingSpecificityGate(note, { evidenceBacked: true }) &&
         passesNaturalVoiceGate(note) &&
         passesResurfacingGenericityGate(note.text, note, { evidenceBacked: true }),

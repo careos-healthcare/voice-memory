@@ -9,8 +9,10 @@ import {
 import { entriesForResurfacingScope } from "../lib/entitlement/resurfacing-scope.ts";
 
 const audit = getPaymentStackAudit();
-assert.equal(audit.checkoutImplemented, false);
-assert.equal(isLiveBillingAvailable(), false);
+assert.equal(audit.checkoutImplemented, isLiveBillingAvailable());
+if (!process.env.STRIPE_SECRET_KEY) {
+  assert.equal(isLiveBillingAvailable(), false);
+}
 
 const free = entitlementsForTier("free");
 assert.ok(free.includes("local_recording"));

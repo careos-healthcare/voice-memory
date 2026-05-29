@@ -117,9 +117,11 @@ export default function LaunchPage() {
           <Button type="button" variant="ghost" size="sm" onClick={() => { resetLaunchChecklist(); refresh(); }}>
             Reset checklist
           </Button>
-          <Link href="/demo" className="text-sm text-zinc-500 hover:text-zinc-300 self-center">
-            Demo mode →
-          </Link>
+          {process.env.NODE_ENV === "development" ? (
+            <Link href="/demo" className="text-sm text-zinc-500 hover:text-zinc-300 self-center">
+              Demo mode (dev only) →
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>

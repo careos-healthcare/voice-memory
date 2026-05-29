@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
 
 import { RelationshipContinuityNotes } from "@/components/memory/RelationshipContinuityNotes";
-import { ThreadList } from "@/components/memory/ConversationThreadSection";
+import { ThreadListCompact } from "@/components/memory/ThreadListCard";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
+import { LoadingState } from "@/components/system";
 import { threadsRelationshipNotes } from "@/lib/memory/relationship-continuity";
 import { listConversationThreads } from "@/lib/memory/conversation-threads";
 import { getMemoryEligibleEntries } from "@/lib/storage";
@@ -34,22 +36,29 @@ export default function ThreadsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain>
         <MotionPageTitle title="Worth returning to" />
 
-        <div className="mt-20">
+        <div className="mt-12 sm:mt-16">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <LoadingState lines={4} label="Loading threads" className="py-12" />
           ) : threads.length === 0 ? (
             <AnticipatoryEmptyState
               icon={<MessageCircle className="h-6 w-6 text-violet-300" />}
             />
           ) : (
-            <div className="space-y-20">
+            <div className="space-y-10 sm:space-y-12">
               <RelationshipContinuityNotes notes={relationshipNotes} max={3} />
-              <ThreadList threads={threads} />
+              <section aria-label="Conversation threads">
+                <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                  Threads · {threads.length}
+                </p>
+                <ThreadListCompact threads={threads} />
+              </section>
             </div>
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

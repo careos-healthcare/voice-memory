@@ -11,6 +11,11 @@ const required = [
   "components/continuity/FirstReturnMoment.tsx",
   "components/journal/JournalArchiveRow.tsx",
   "lib/product/recognition-copy.ts",
+  "lib/resurfacing/resurfacing-feedback.ts",
+  "lib/resurfacing/resurfacing-scoring.ts",
+  "lib/resurfacing/resurfacing-evidence-gate.ts",
+  "lib/resurfacing/resurfacing-metrics.ts",
+  "app/api/account/delete/route.ts",
 ];
 
 for (const rel of required) {
@@ -26,6 +31,21 @@ if (!home.includes("desktopRecognitionCenter")) {
 }
 if (!home.includes("presentation=\"quiet\"")) {
   failures.push("homepage must use quiet first-return presentation");
+}
+
+const momentComponent = fs.readFileSync(
+  path.join(ROOT, "components/continuity/FirstReturnMoment.tsx"),
+  "utf8",
+);
+if (!momentComponent.includes("onFeedback")) {
+  failures.push("FirstReturnMoment must wire onFeedback to MemoryConfidence");
+}
+const memoryConfidence = fs.readFileSync(
+  path.join(ROOT, "components/system/MemoryConfidence.tsx"),
+  "utf8",
+);
+if (!memoryConfidence.includes("Not me") || !memoryConfidence.includes("That fits")) {
+  failures.push("MemoryConfidence must offer not-me and that-fits feedback");
 }
 
 if (!fs.existsSync(path.join(ROOT, "lib/continuity/first-return-observation.ts"))) {

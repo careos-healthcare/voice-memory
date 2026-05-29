@@ -1,4 +1,4 @@
-import "server-only";
+import { isEmailDisabled } from "@/lib/server/email-mode";
 
 const EMAIL_FROM_RE = /^.+<[^@\s]+@[^>\s]+>$/;
 const PLAIN_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,11 +9,10 @@ export interface AuthEmailEnvStatus {
   resendConfigured: boolean;
   emailFromConfigured: boolean;
   emailFromFormatValid: boolean;
-  /** True when EMAIL_FROM still uses Resend's sandbox sender (not production-ready). */
   emailFromUsesResendSandbox: boolean;
-  /** Domain part of the From address, for ops checks (no local-part). */
   emailFromDomain: string | null;
   appUrlConfigured: boolean;
+  emailDisabled: boolean;
 }
 
 function parseEmailFromDomain(from: string): string | null {
@@ -38,6 +37,7 @@ export function readAuthEmailEnvStatus(): AuthEmailEnvStatus {
     emailFromUsesResendSandbox: RESEND_SANDBOX_FROM.test(from),
     emailFromDomain: from ? parseEmailFromDomain(from) : null,
     appUrlConfigured: Boolean(process.env.NEXT_PUBLIC_APP_URL?.trim()),
+    emailDisabled: isEmailDisabled(),
   };
 }
 
@@ -46,6 +46,8 @@ export function validateProductionAuthEmailEnv(): void {
   if (process.env.NODE_ENV !== "production") return;
   if (process.env.NEXT_PHASE === "phase-production-build") return;
 
+  if (isEmailDisabled()) return;
+
   const status = readAuthEmailEnvStatus();
   const missing: string[] = [];
   if (!status.resendConfigured) missing.push("RESEND_API_KEY");
@@ -53,12 +55,13 @@ export function validateProductionAuthEmailEnv(): void {
 
   if (missing.length > 0) {
     throw new Error(
-      `Production auth email misconfigured. Set: ${missing.join(", ")}. Sign-in codes cannot be delivered.`,
+      `Production auth email misconfigured. Set: ${missing.join(", ")} or EMAIL_DISABLED=true.`,
     );
   }
 }
 
 export function assertEmailFromConfigured(): void {
+  if (isEmailDisabled()) return;
   const from = process.env.EMAIL_FROM?.trim();
   if (!from) {
     throw new Error("EMAIL_FROM is not configured.");

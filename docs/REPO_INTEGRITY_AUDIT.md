@@ -189,7 +189,7 @@ VoiceMemory does not inherit Flutter `.cursor/rules` from disk; Cursor only appl
 
 **Untracked (orphaned until committed or ignored):**
 
-- `app/debug/onboarding-clarity/`
+- `app/internal/onboarding-clarity/`
 - `components/onboarding/`, `lib/onboarding/`
 - `scripts/verify-production-auth-email.sh`
 - `scripts/validate-onboarding-restraint.mjs`

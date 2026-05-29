@@ -350,6 +350,7 @@ export default function HomePage() {
         ) : null}
 
         <main
+          id="main-content"
           className={`flex flex-1 flex-col items-center justify-center text-center ${
             captureFirstHome ? "min-h-[70vh] py-6" : "py-10"
           }`}

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
 import { CalendarRange } from "lucide-react";
 
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MemoryNotesOverview } from "@/components/patterns/MemoryNote";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -39,16 +40,17 @@ export default function WeeklyPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Weekly</p>
+        <PrimaryMain className="mt-2">
+        <AnimatedReveal>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">Weekly</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">This week</h1>
-          {weekLabel ? <p className="mt-2 text-sm text-zinc-600">{weekLabel}</p> : null}
-        </motion.div>
+          {weekLabel ? <p className="mt-2 text-sm text-muted">{weekLabel}</p> : null}
+        </AnimatedReveal>
 
         <div className="mt-16 space-y-16">
           {loading ? (
             <Card>
-              <CardContent className="py-16 text-center text-sm text-zinc-600">
+              <CardContent className="py-16 text-center text-sm text-muted">
                 Reading your archive…
               </CardContent>
             </Card>
@@ -70,11 +72,12 @@ export default function WeeklyPage() {
 
         {hasData ? (
           <div className="mt-16">
-            <Link href="/roundups/week" className="text-sm text-zinc-500 transition-colors hover:text-zinc-300">
+            <Link href="/roundups/week" className="text-sm text-muted transition-colors hover:text-zinc-200">
               Weekly roundup →
             </Link>
           </div>
         ) : null}
+        </PrimaryMain>
       </div>
     </div>
   );

@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 
-import { fadeUp } from "@/lib/motion/variants";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { pageMotionVariants } from "@/lib/motion/reduced-motion";
 import { cn } from "@/lib/utils";
 
 export function MotionPage({
@@ -12,16 +13,18 @@ export function MotionPage({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={fadeUp}
-      className={cn(className)}
-    >
-      {children}
-    </motion.div>
-  );
+  const reduced = useReducedMotion();
+  const Component = reduced ? "div" : motion.div;
+  const props = reduced
+    ? { className: cn(className) }
+    : {
+        initial: "hidden" as const,
+        animate: "visible" as const,
+        variants: pageMotionVariants(reduced),
+        className: cn(className),
+      };
+
+  return <Component {...props}>{children}</Component>;
 }
 
 export function MotionPageTitle({
@@ -36,7 +39,7 @@ export function MotionPageTitle({
   return (
     <MotionPage className={cn("mt-2", className)}>
       {eyebrow ? (
-        <p className="text-xs tracking-[0.18em] text-zinc-600">{eyebrow}</p>
+        <p className="text-xs tracking-[0.18em] text-muted">{eyebrow}</p>
       ) : null}
       <h1 className="mt-3 text-2xl font-normal tracking-tight text-zinc-100 sm:text-3xl">
         {title}

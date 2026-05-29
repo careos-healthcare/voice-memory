@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { ThreadDetail } from "@/components/memory/ConversationThreadSection";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { getConversationThreadBySlug } from "@/lib/memory/conversation-threads";
@@ -33,29 +34,34 @@ export default function ThreadDetailPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <div className="mt-4">
+        <PrimaryMain className="mt-4">
           <Button asChild variant="ghost" size="sm">
-            <Link href="/threads">
-              <ArrowLeft className="h-4 w-4" />
+            <Link href="/threads" aria-label="Back to all threads">
+              <ArrowLeft className="h-4 w-4" aria-hidden />
               All threads
             </Link>
           </Button>
-        </div>
 
-        <div className="mt-10">
-          {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">Reading your archive…</p>
-          ) : !thread ? (
-            <div className="py-16 text-center">
-              <p className="text-lg font-normal text-zinc-200">Thread not found</p>
-              <Button asChild className="mt-6" variant="secondary">
-                <Link href="/threads">Back to threads</Link>
-              </Button>
-            </div>
-          ) : (
-            <ThreadDetail thread={thread} />
-          )}
-        </div>
+          <div className="mt-10">
+            {loading ? (
+              <>
+                <h1 className="sr-only">Thread</h1>
+                <p className="py-20 text-center text-sm text-muted" role="status">
+                  Reading your archive…
+                </p>
+              </>
+            ) : !thread ? (
+              <div className="py-16 text-center">
+                <h1 className="text-lg font-normal text-zinc-100">Thread not found</h1>
+                <Button asChild className="mt-6" variant="secondary">
+                  <Link href="/threads">Back to threads</Link>
+                </Button>
+              </div>
+            ) : (
+              <ThreadDetail thread={thread} />
+            )}
+          </div>
+        </PrimaryMain>
       </div>
     </div>
   );

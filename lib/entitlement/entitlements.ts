@@ -4,11 +4,22 @@ import {
   PRO_GATE_EXPORT,
   PRO_GATE_UNLIMITED_ARCHIVE,
 } from "@/lib/product/pro-framing";
+import { isProPreviewAllowed } from "@/lib/billing/billing-state";
 import { isLiveBillingAvailable } from "@/lib/entitlement/payment-stack";
 import type { EntitlementId, EntitlementRecord, TierId, TierSnapshot } from "@/types/entitlement";
 
 const PLAN_KEY = "voicememory_plan";
 const BILLING_ENTITLEMENT_KEY = "voicememory_billing_entitlements";
+const SERVER_ENTITLEMENT_CACHE_KEY = "voicememory_server_entitlement_snapshot";
+
+interface ServerEntitlementSnapshot {
+  tier: TierId;
+  entitlements: EntitlementId[];
+  source: "paid" | "free_tier";
+  billingConnected: boolean;
+  previewMode: boolean;
+  founderPreview: boolean;
+}
 
 export { FREE_ARCHIVE_LIMIT };
 
@@ -16,10 +27,55 @@ function isBrowser(): boolean {
   return typeof window !== "undefined";
 }
 
-/** Active tier from local plan flag (Pro preview or future billing sync). */
+/** Raw plan flag in localStorage (may be preview-only). */
 export function getCurrentTierId(): TierId {
   if (!isBrowser()) return "free";
   return localStorage.getItem(PLAN_KEY) === "pro" ? "pro" : "free";
+}
+
+function readServerEntitlementSnapshot(): ServerEntitlementSnapshot | null {
+  if (!isBrowser()) return null;
+  try {
+    const raw = sessionStorage.getItem(SERVER_ENTITLEMENT_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as ServerEntitlementSnapshot;
+  } catch {
+    return null;
+  }
+}
+
+/** Pull tier + entitlements from server when billing is live (fail closed until synced). */
+export async function refreshServerEntitlements(): Promise<ServerEntitlementSnapshot | null> {
+  if (!isBrowser() || !isLiveBillingAvailable()) return null;
+  try {
+    const res = await fetch("/api/billing/entitlements", { credentials: "include" });
+    if (!res.ok) return null;
+    const data = (await res.json()) as ServerEntitlementSnapshot;
+    sessionStorage.setItem(SERVER_ENTITLEMENT_CACHE_KEY, JSON.stringify(data));
+    if (data.tier === "pro" && data.source === "paid") {
+      setBillingGrantedEntitlements(entitlementsForTier("pro"));
+    } else if (data.tier === "free") {
+      clearBillingGrantedEntitlements();
+      localStorage.setItem(PLAN_KEY, "free");
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+/** Effective tier — server-backed when billing live; preview never masquerades as paid. */
+export function getEffectiveTierId(): TierId {
+  if (isLiveBillingAvailable()) {
+    const server = readServerEntitlementSnapshot();
+    if (server) return server.tier;
+    return "free";
+  }
+  const raw = getCurrentTierId();
+  if (raw === "pro" && !isProPreviewAllowed()) {
+    return "free";
+  }
+  return raw;
 }
 
 function readBillingGrantedEntitlements(): EntitlementId[] {
@@ -63,8 +119,24 @@ export function setPreviewTier(tier: TierId): void {
 }
 
 export function getTierSnapshot(): TierSnapshot {
-  const tier = getCurrentTierId();
-  const previewMode = isBrowser() && !isLiveBillingAvailable() && tier === "pro";
+  const billingConnected = isLiveBillingAvailable();
+  const server = readServerEntitlementSnapshot();
+  const previewMode =
+    isBrowser() &&
+    !billingConnected &&
+    getCurrentTierId() === "pro" &&
+    isProPreviewAllowed();
+
+  if (billingConnected && server) {
+    return {
+      tier: server.tier,
+      entitlements: server.entitlements,
+      billingConnected: true,
+      previewMode: false,
+    };
+  }
+
+  const tier = getEffectiveTierId();
   const granted = new Set<EntitlementId>(entitlementsForTier(tier));
   for (const id of readBillingGrantedEntitlements()) {
     granted.add(id);
@@ -72,7 +144,7 @@ export function getTierSnapshot(): TierSnapshot {
   return {
     tier,
     entitlements: [...granted],
-    billingConnected: isLiveBillingAvailable(),
+    billingConnected,
     previewMode,
   };
 }
@@ -138,5 +210,5 @@ export function entitlementGateCopy(id: EntitlementId): {
 }
 
 export function isProTier(): boolean {
-  return getCurrentTierId() === "pro";
+  return getEffectiveTierId() === "pro";
 }

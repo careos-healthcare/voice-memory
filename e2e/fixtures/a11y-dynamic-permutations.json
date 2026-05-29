@@ -1,0 +1,4462 @@
+{
+  "anchorEndDayKey": "2026-05-20",
+  "storageKey": "voicememory_entries",
+  "storageVersionKey": "voicememory_storage_version",
+  "storageVersion": 1,
+  "permutations": [
+    {
+      "id": "very-short",
+      "label": "very-short",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-short",
+          "createdAt": "2026-05-10T12:00:00.000Z",
+          "transcript": "Ok.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Brief.",
+            "exactLanguagePattern": "Ok."
+          },
+          "durationSeconds": 3
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-filler-013",
+        "thread": "/threads/work-stress",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-filler-013",
+        "/threads/work-stress",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "very-long",
+      "label": "very-long",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-long",
+          "createdAt": "2026-05-11T12:00:00.000Z",
+          "transcript": "I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. I keep thinking about work and my manager. The project deadline will not leave my head.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 7,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "A long span of worry about work.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 600
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-filler-013",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-filler-013",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "empty-optional-fields",
+      "label": "empty-optional-fields",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-empty-opt",
+          "createdAt": "2026-05-12T12:00:00.000Z",
+          "transcript": "Work meeting with my manager about the project.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": ""
+          },
+          "durationSeconds": 20
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-filler-013",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-filler-013",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "long-unbroken-token",
+      "label": "long-unbroken-token",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-url",
+          "createdAt": "2026-05-13T12:00:00.000Z",
+          "transcript": "See https://example.com/very/long/path/without/breaks/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa and my manager at work.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 25
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-filler-013",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-filler-013",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "quotes",
+      "label": "quotes",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-quotes",
+          "createdAt": "2026-05-14T12:00:00.000Z",
+          "transcript": "My manager said \"not yet\" and I replied, \"I hear you.\" Work on the project continues.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "\"not yet\""
+          },
+          "durationSeconds": 28
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-quotes",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-quotes",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "emoji",
+      "label": "emoji",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-emoji",
+          "createdAt": "2026-05-15T12:00:00.000Z",
+          "transcript": "Heavy day at work 😮‍💨 — manager and project still on my mind ✨",
+          "reflection": {
+            "mood": "heavy",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 22
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-emoji",
+        "thread": "/threads/work-stress",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-emoji",
+        "/threads/work-stress",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "high-intensity",
+      "label": "high-intensity",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-high",
+          "createdAt": "2026-05-16T12:00:00.000Z",
+          "transcript": "I am completely overwhelmed at work. My manager and the project feel unbearable today.",
+          "reflection": {
+            "mood": "overwhelmed",
+            "emotionalIntensity": 10,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 35
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-high",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-high",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "low-intensity",
+      "label": "low-intensity",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-low",
+          "createdAt": "2026-05-17T12:00:00.000Z",
+          "transcript": "Quiet note: work was fine. Manager mentioned the project briefly.",
+          "reflection": {
+            "mood": "quiet",
+            "emotionalIntensity": 1,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 12
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-low",
+        "thread": "/threads/work-stress",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-low",
+        "/threads/work-stress",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "minimal-reflection",
+      "label": "minimal-reflection",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-min-refl",
+          "createdAt": "2026-05-18T12:00:00.000Z",
+          "transcript": "Work project manager meeting.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": ""
+          },
+          "durationSeconds": 15
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-min-refl",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-min-refl",
+        "/threads/my-manager",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "repeated-phrases",
+      "label": "repeated-phrases",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-repeat",
+          "createdAt": "2026-05-19T12:00:00.000Z",
+          "transcript": "My manager. My manager. The project. The project. Work. Work. I said my manager again about the project at work.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager",
+            "repeatedSignal": "You named your manager repeatedly."
+          },
+          "durationSeconds": 40
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-repeat",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-repeat",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "multiple-speakers",
+      "label": "multiple-speakers",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-speakers",
+          "createdAt": "2026-05-20T12:00:00.000Z",
+          "transcript": "Alex said one thing, Sam said another, and my manager closed the work meeting about the project.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Alex",
+              "Sam"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 38
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-speakers",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-speakers",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "no-transcript-pending",
+      "label": "no-transcript-pending",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": true,
+          "id": "a11y-perm-pending",
+          "createdAt": "2026-05-20T13:00:00.000Z",
+          "transcript": "",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 5
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-pending",
+        "thread": "/threads/work-stress",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-pending",
+        "/threads/work-stress",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "very-old-date",
+      "label": "very-old-date",
+      "entries": [
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-old",
+          "createdAt": "2019-03-01T12:00:00.000Z",
+          "transcript": "Old memory: work, manager, and the project felt distant then.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 18
+        },
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-filler-013",
+        "thread": "/threads/work-stress",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-filler-013",
+        "/threads/work-stress",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "future-date-guarded",
+      "label": "future-date-guarded",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-future",
+          "createdAt": "2031-01-15T12:00:00.000Z",
+          "transcript": "If this date is odd, work and my manager still parse for layout tests.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 16
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-future",
+        "thread": "/threads/my-manager",
+        "territory": "/territories/my-manager",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-future",
+        "/threads/my-manager",
+        "/territories/my-manager",
+        "/roundups/week-2026-05-20"
+      ]
+    },
+    {
+      "id": "tolerant-extra-fields",
+      "label": "tolerant-extra-fields",
+      "entries": [
+        {
+          "id": "a11y-perm-filler-001",
+          "createdAt": "2026-05-02T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-002",
+          "createdAt": "2026-05-03T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-003",
+          "createdAt": "2026-05-04T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-004",
+          "createdAt": "2026-05-05T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-005",
+          "createdAt": "2026-05-06T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-006",
+          "createdAt": "2026-05-07T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-007",
+          "createdAt": "2026-05-08T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-008",
+          "createdAt": "2026-05-09T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-009",
+          "createdAt": "2026-05-10T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-010",
+          "createdAt": "2026-05-11T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-011",
+          "createdAt": "2026-05-12T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-012",
+          "createdAt": "2026-05-13T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "id": "a11y-perm-filler-013",
+          "createdAt": "2026-05-14T10:00:00.000Z",
+          "transcript": "At work with Alex and Sam I discussed the project and my manager in a meeting about deadlines.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress",
+              "Deadlines"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 30,
+          "reflectionPending": false
+        },
+        {
+          "reflectionPending": false,
+          "id": "a11y-perm-extra",
+          "createdAt": "2026-05-20T14:00:00.000Z",
+          "transcript": "Work with manager on project — extra metadata tolerated.",
+          "reflection": {
+            "mood": "steady",
+            "emotionalIntensity": 5,
+            "recurringThemes": [
+              "Work stress"
+            ],
+            "hiddenConcern": "",
+            "positiveSignal": "",
+            "recommendation": "",
+            "concreteObservation": "Work and meetings kept returning.",
+            "exactLanguagePattern": "the project and my manager"
+          },
+          "durationSeconds": 20,
+          "_legacyUnknownField": "stripped by normalize on load",
+          "extraClientOnly": true
+        }
+      ],
+      "routes": {
+        "entry": "/entry/a11y-perm-extra",
+        "thread": "/threads/work-stress",
+        "territory": "/territories/work",
+        "roundupWeek": "/roundups/week-2026-05-20"
+      },
+      "testPaths": [
+        "/entry/a11y-perm-extra",
+        "/threads/work-stress",
+        "/territories/work",
+        "/roundups/week-2026-05-20"
+      ]
+    }
+  ]
+}

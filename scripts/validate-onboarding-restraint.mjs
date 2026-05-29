@@ -17,8 +17,8 @@ const REQUIRED_FILES = [
   "lib/debug/onboarding-clarity.ts",
   "components/onboarding/OnboardingNavigationTracker.tsx",
   "components/onboarding/CalmComprehensionPrompt.tsx",
-  "components/debug/OnboardingClarityDebugPanel.tsx",
-  "app/debug/onboarding-clarity/page.tsx",
+  "components/internal/OnboardingClarityDebugPanel.tsx",
+  "app/internal/onboarding-clarity/page.tsx",
 ];
 
 const REQUIRED_EVENTS = [

@@ -4,6 +4,7 @@ import {
   syncApiSuccess,
   syncApiUnauthorized,
 } from "@/lib/server/sync-api-response";
+import { hashEmailForLog } from "@/lib/server/auth-route-log";
 import {
   createSyncRouteLog,
   readContentLength,
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
     return syncApiUnauthorized();
   }
 
-  log({ email: session.email });
+  log({ emailHash: hashEmailForLog(session.email) });
 
   try {
     const manifest = await readSyncManifest(session.userId);

@@ -17,8 +17,8 @@ const REQUIRED = [
   "lib/behavior/insight-summary.ts",
   "lib/behavior/behavior-truth-report.ts",
   "types/behavior-truth.ts",
-  "app/debug/behavior-truth/page.tsx",
-  "components/debug/BehaviorTruthPanel.tsx",
+  "app/internal/behavior-truth/page.tsx",
+  "components/internal/BehaviorTruthPanel.tsx",
 ];
 
 const BANNED = [
@@ -54,7 +54,7 @@ if (!insight.includes("buildBehaviorInsightSummary")) {
   failures.push("insight-summary must export buildBehaviorInsightSummary");
 }
 
-const page = fs.readFileSync(path.join(ROOT, "app/debug/behavior-truth/page.tsx"), "utf8");
+const page = fs.readFileSync(path.join(ROOT, "app/internal/behavior-truth/page.tsx"), "utf8");
 for (const section of [
   "BehaviorTruthPanel",
   "buildBehaviorTruthReport",
@@ -66,7 +66,7 @@ for (const section of [
 }
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/debug/BehaviorTruthPanel.tsx"),
+  path.join(ROOT, "components/internal/BehaviorTruthPanel.tsx"),
   "utf8",
 );
 for (const section of ["Read vs speak", "Reflex decompression score"]) {
@@ -75,7 +75,7 @@ for (const section of ["Read vs speak", "Reflex decompression score"]) {
   }
 }
 
-const scanDirs = ["lib/behavior", "components/debug/BehaviorTruthPanel.tsx", "app/debug/behavior-truth"];
+const scanDirs = ["lib/behavior", "components/internal/BehaviorTruthPanel.tsx", "app/internal/behavior-truth"];
 for (const rel of scanDirs) {
   const full = path.join(ROOT, rel);
   if (!fs.existsSync(full)) continue;

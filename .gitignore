@@ -41,6 +41,19 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Capacitor / native build artifacts (commit ios/ and android/ sources, not caches)
+ios/App/DerivedData/
+ios/App/Pods/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+
+# Flutter mobile app
+apps/voicememory_mobile/.dart_tool/
+apps/voicememory_mobile/build/
+apps/voicememory_mobile/.flutter-plugins-dependencies
+
 # local data
 /data/*.json
 !/data/.gitkeep

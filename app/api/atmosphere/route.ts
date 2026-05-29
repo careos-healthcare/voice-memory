@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+import {
+  apiPayloadTooLarge,
+  guardOpenAiRoute,
+  MAX_ATMOSPHERE_PROMPT_CHARS,
+} from "@/lib/server/api-guard";
 import { getOpenAIClient } from "@/lib/openai";
 import type { AtmosphereStyle } from "@/types/atmosphere";
 
@@ -15,8 +20,11 @@ function isApiEnabled(): boolean {
   );
 }
 
-/** Optional image API — returns fallback signal when unavailable. Never automatic. */
+/** Optional image API — gated; returns fallback when unavailable. */
 export async function POST(request: Request) {
+  const guard = await guardOpenAiRoute(request, "atmosphere");
+  if (!guard.ok) return guard.response;
+
   let body: { prompt?: string; style?: AtmosphereStyle };
   try {
     body = (await request.json()) as { prompt?: string; style?: AtmosphereStyle };
@@ -27,6 +35,12 @@ export async function POST(request: Request) {
   const prompt = body.prompt?.trim();
   if (!prompt) {
     return NextResponse.json({ source: "fallback", reason: "missing_prompt" }, { status: 400 });
+  }
+
+  if (prompt.length > MAX_ATMOSPHERE_PROMPT_CHARS) {
+    return apiPayloadTooLarge(
+      `Prompt must be under ${MAX_ATMOSPHERE_PROMPT_CHARS} characters.`,
+    );
   }
 
   if (!isApiEnabled()) {

@@ -1,3 +1,4 @@
+import { captureAuthHeaders, ensureCaptureAttested } from "@/lib/client/capture-attest";
 import { normalizeReflection } from "@/lib/reflection";
 import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, getEntry, saveEntry } from "@/lib/storage";
@@ -56,9 +57,18 @@ export async function generateReflectionForEntry(
       themes: e.reflection.recurringThemes,
     }));
 
+  const attested = await ensureCaptureAttested();
+  if (!attested) {
+    throw new Error("Device attestation required before analysis.");
+  }
+
   const analyzeResponse = await fetch("/api/analyze", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...captureAuthHeaders(),
+    },
     body: JSON.stringify({ transcript: entry.transcript, priorContext }),
   });
 

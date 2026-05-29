@@ -80,7 +80,11 @@ export function QuickRecordPage() {
   const captureContext = resolution?.source ?? preview.source ?? "record";
 
   return (
-    <main className="record-capture-main mobile-recorder-dominant flex flex-1 flex-col justify-center pb-safe">
+    <main
+      id="main-content"
+      className="record-capture-main mobile-recorder-dominant flex flex-1 flex-col justify-center pb-safe"
+    >
+      <h1 className="sr-only">Record a reflection</h1>
       <ZeroStateRecorderShell
         route="record"
         recordReturn={recordReturn}

@@ -79,7 +79,7 @@ export function ShareMemoryCardButton({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted">
             Share this moment
           </p>
           <p className="mt-1 text-sm font-medium text-white">{CARD_LABELS[kind]}</p>
@@ -100,7 +100,7 @@ export function ShareMemoryCardButton({
       </div>
 
       {showTranscriptToggle ? (
-        <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs text-zinc-400">
+        <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs text-zinc-300">
           <input
             type="checkbox"
             checked={includeTranscript}

@@ -23,11 +23,11 @@ function ComparisonRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
-      <span className="text-zinc-500">{label}</span>
+      <span className="text-muted">{label}</span>
       <div className="flex items-center gap-3 tabular-nums">
         <span className="text-white">{today}</span>
-        <span className="text-zinc-600">vs</span>
-        <span className="text-zinc-400">{yesterday}</span>
+        <span className="text-muted">vs</span>
+        <span className="text-zinc-300">{yesterday}</span>
       </div>
     </div>
   );

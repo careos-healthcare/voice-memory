@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { ThreadListCompact } from "@/components/memory/ThreadListCard";
 import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
 import {
@@ -58,35 +59,7 @@ export function ThreadList({
 }: {
   threads: ConversationThread[];
 }) {
-  if (threads.length === 0) return null;
-
-  return (
-    <ul className="space-y-10">
-      {threads.map((thread) => (
-        <li key={thread.id}>
-          <Link
-            href={`/threads/${thread.slug}`}
-            className="group block space-y-3 px-1 py-1 transition-colors"
-          >
-            <p className="text-base font-normal text-zinc-200 transition-colors group-hover:text-zinc-100">
-              {thread.title}
-            </p>
-            <p className="text-xs text-zinc-500">
-              {thread.mentionCount} reflection{thread.mentionCount === 1 ? "" : "s"}
-            </p>
-            <p className="text-xs text-zinc-600">
-              Older: {thread.firstAppearanceLabel} · Today: {thread.latestAppearanceLabel}
-            </p>
-            {thread.evolution.whatCameBack ? (
-              <p className="text-sm leading-relaxed text-zinc-500/90">
-                {thread.evolution.whatCameBack}
-              </p>
-            ) : null}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
+  return <ThreadListCompact threads={threads} />;
 }
 
 export function ThreadDetail({
@@ -115,11 +88,11 @@ export function ThreadDetail({
         <h1 className="text-2xl font-normal tracking-tight text-zinc-100 sm:text-3xl">
           {thread.title}
         </h1>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted">
           {thread.mentionCount} related reflection
           {thread.mentionCount === 1 ? "" : "s"}
         </p>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-zinc-600">
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted">
           <span>Older: {thread.firstAppearanceLabel}</span>
           <span>Today: {thread.latestAppearanceLabel}</span>
         </div>
@@ -158,7 +131,7 @@ export function ThreadDetail({
                   />
                 </div>
                 {related.snippet ? (
-                  <p className="text-sm leading-[1.75] text-zinc-500/90 transition-colors group-hover:text-zinc-400">
+                  <p className="line-clamp-3 text-sm leading-[1.75] text-zinc-500/90 transition-colors group-hover:text-zinc-400">
                     {related.snippet}
                   </p>
                 ) : (

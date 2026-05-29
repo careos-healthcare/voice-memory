@@ -93,7 +93,7 @@ if (!report.includes("buildReadVsSpeakReport") || !report.includes("buildReflexS
 }
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/debug/BehaviorTruthPanel.tsx"),
+  path.join(ROOT, "components/internal/BehaviorTruthPanel.tsx"),
   "utf8",
 );
 if (!panel.includes("Read vs speak") || !panel.includes("Reflex decompression score")) {

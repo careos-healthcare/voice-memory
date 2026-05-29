@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 
+import {
+  guardOpenAiRoute,
+  MAX_TRANSCRIPT_CHARS,
+} from "@/lib/server/api-guard";
 import { NOT_AI_JOURNAL_LINE } from "@/lib/product-copy";
 import { normalizeReflection } from "@/lib/reflection";
 import { buildPatternObservationsFromAnalysis } from "@/lib/observation-language";
@@ -170,6 +174,9 @@ function formatPriorContext(
 }
 
 export async function POST(request: Request) {
+  const guard = await guardOpenAiRoute(request, "analyze");
+  if (!guard.ok) return guard.response;
+
   try {
     const body = (await request.json()) as {
       transcript?: string;
@@ -179,8 +186,18 @@ export async function POST(request: Request) {
 
     if (!transcript) {
       return NextResponse.json(
-        { error: "Transcript is required" },
+        { error: "Transcript is required", code: "TRANSCRIPT_REQUIRED" },
         { status: 400 },
+      );
+    }
+
+    if (transcript.length > MAX_TRANSCRIPT_CHARS) {
+      return NextResponse.json(
+        {
+          error: "Transcript is too long to analyze.",
+          code: "TRANSCRIPT_TOO_LONG",
+        },
+        { status: 413 },
       );
     }
 

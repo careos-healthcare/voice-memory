@@ -6,7 +6,7 @@ export interface SyncRouteLogContext {
   requestId: string;
   route: SyncApiRoute;
   method: string;
-  email: string | null;
+  emailHash: string | null;
   contentLength: number | null;
   bodyPresent: boolean;
   parseSuccess: boolean | null;
@@ -31,7 +31,7 @@ export function createSyncRouteLog(route: SyncApiRoute, method: string): {
     requestId,
     route,
     method,
-    email: null,
+    emailHash: null,
     contentLength: null,
     bodyPresent: false,
     parseSuccess: null,

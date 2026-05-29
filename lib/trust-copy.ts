@@ -33,8 +33,10 @@ export const DELETE_ALL_CONFIRM_PHRASE = "DELETE";
 export const DELETE_ALL_LOCAL_PROMPT =
   "Delete ALL local VoiceMemory data on this device? This removes reflections, audio, bookmarks, preferences, and goals. This cannot be undone.";
 
-export const DELETE_ACCOUNT_PLACEHOLDER =
-  "Full account deletion from our servers is not available yet. Sign out to stop syncing. Delete all local data in Settings to remove everything on this device. Email hello@voicememory.app if you need help removing encrypted backup data.";
+export const DELETE_ACCOUNT_LEAD =
+  "Removes encrypted backup blobs and sessions from our servers. Your journal on this device is not deleted until you clear local data in Settings.";
+
+export const DELETE_ACCOUNT_CONFIRM_PHRASE = "DELETE MY ACCOUNT";
 
 export const TRUST_FOOTER_LINKS = [
   { href: "/privacy", label: "Privacy" },

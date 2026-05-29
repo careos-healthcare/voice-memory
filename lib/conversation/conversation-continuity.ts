@@ -1,6 +1,6 @@
 import { daysBetweenKeys, toDayKey } from "@/lib/dates";
+import { CONTINUATION_COPY } from "@/lib/conversation/continuation-copy";
 import {
-  CONTINUATION_COPY,
   detectEndingUncertainty,
   detectPartialReturn,
   detectRepeatedUnresolvedLine,

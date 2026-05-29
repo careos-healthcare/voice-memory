@@ -107,12 +107,22 @@ export function getEntry(id: string): JournalEntry | undefined {
 
 function persistEntries(entries: JournalEntry[]): void {
   safeSetJson(STORAGE_KEY, entries);
+  void import("@/lib/persistence/journal-store").then((mod) => {
+    void mod.persistJournalDualWrite(entries);
+  });
+  void import("@/lib/persistence/journal-server-sync").then((mod) => {
+    void mod.pushJournalToServer(entries);
+  });
 }
 
 export function saveEntry(entry: JournalEntry): void {
   if (!isBrowser()) return;
 
   ensureStorageReady();
+
+  void import("@/lib/persistence/journal-sync-engine").then(async (sync) => {
+    await sync.syncEntryServerFirst(entry);
+  });
 
   const entries = loadAllEntries().filter((existing) => existing.id !== entry.id);
   entries.unshift(entry);
@@ -170,6 +180,7 @@ export async function deleteAllEntries(): Promise<number> {
   persistEntries([]);
   bumpMemoryEligibleCache();
   clearHabitState();
+  void import("@/lib/persistence/journal-indexeddb").then((mod) => mod.clearJournalIndexedDb());
 
   for (const entry of entries) {
     await deleteAudio(entry.id);

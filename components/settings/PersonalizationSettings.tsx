@@ -64,7 +64,7 @@ export function PersonalizationSettings() {
     <div className="space-y-6">
       <div className="space-y-3">
         <p className="text-sm font-medium text-zinc-300">Visual tone</p>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted">
           Calm, minimal palettes — no bright themes or decorative styling.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
@@ -82,7 +82,7 @@ export function PersonalizationSettings() {
               }}
             >
               <span className="text-sm">{option.label}</span>
-              <span className="text-xs font-normal text-zinc-500">{option.detail}</span>
+              <span className="text-xs font-normal text-muted">{option.detail}</span>
             </Button>
           ))}
         </div>
@@ -90,7 +90,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Automatic time-of-day tone</p>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted">
           Morning uses warmer light, evening uses dusk, night uses soft dark.
         </p>
         <Button
@@ -109,7 +109,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Ambient adaptation</p>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted">
           Subtle shifts for long rereads, revisits, and time of day — never decorative or
           mood-reactive.
         </p>
@@ -130,7 +130,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Warmth preference</p>
-        <p className="text-sm text-zinc-400">How warm the interface should feel over a session.</p>
+        <p className="text-sm text-muted">How warm the interface should feel over a session.</p>
         <div className="flex flex-wrap gap-2">
           {WARMTH_OPTIONS.map((option) => (
             <Button
@@ -152,7 +152,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Contrast comfort</p>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted">
           Softer contrast during long reading sessions or when you prefer less visual weight.
         </p>
         <div className="flex flex-wrap gap-2">
@@ -176,7 +176,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Quiet mode</p>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted">
           Lets the app say less for a while when callbacks are ignored, revisits feel heavy, or you
           mostly want to record. Saved entries stay visible — recording and export are never blocked.
         </p>
@@ -196,7 +196,7 @@ export function PersonalizationSettings() {
 
       <div className="space-y-3 border-t border-white/5 pt-6">
         <p className="text-sm font-medium text-zinc-300">Photo attachments</p>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted">
           One optional photo per reflection — stored on this device only. No feed, filters, or
           sharing prompts.
         </p>

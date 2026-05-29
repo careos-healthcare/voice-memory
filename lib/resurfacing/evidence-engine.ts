@@ -1,3 +1,4 @@
+import { runCanonicalPipelineForMemoryNote } from "@/lib/resurfacing/canonical-resurfacing-pipeline";
 import { getMemoryEligibleEntriesVersion } from "@/lib/storage";
 import { assessResurfacingConfidence } from "@/lib/revisit/resurfacing-confidence";
 import { assessResurfacingWhyNow } from "@/lib/revisit/resurfacing-why-now";
@@ -119,7 +120,10 @@ export function hasConcreteResurfacingEvidence(
   const key = evidenceCacheKey(note.id, getMemoryEligibleEntriesVersion());
   const cached = backedCache.get(key);
   if (cached !== undefined) return cached;
-  const backed = assessConcreteResurfacingEvidence(note, entries).backed;
+  const pipeline = runCanonicalPipelineForMemoryNote(note, entries);
+  const backed =
+    pipeline.show &&
+    assessConcreteResurfacingEvidence(note, entries).backed;
   backedCache.set(key, backed);
   return backed;
 }

@@ -6,6 +6,7 @@ import { Bookmark } from "lucide-react";
 import { ReflectionBookmarkList } from "@/components/memory/ReflectionBookmarkList";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BOOKMARK_CHANGE_EVENT, listBookmarksWithEntries } from "@/lib/reflection-bookmarks";
 import { getAllEntries } from "@/lib/storage";
@@ -32,15 +33,16 @@ export default function BookmarksPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain className="mt-4">
         <MotionPageTitle eyebrow="Bookmarks" title="Moments that mattered" />
 
-        <p className="mt-4 text-sm leading-relaxed text-zinc-500">
+        <p className="mt-4 text-sm leading-relaxed text-muted">
           Reflections you marked — kept on this device only.
         </p>
 
         <div className="mt-20">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <p className="py-20 text-center text-sm text-muted" role="status">One moment…</p>
           ) : bookmarks.length === 0 ? (
             <AnticipatoryEmptyState
               icon={<Bookmark className="h-6 w-6 text-violet-300" />}
@@ -49,6 +51,7 @@ export default function BookmarksPage() {
             <ReflectionBookmarkList bookmarks={bookmarks} />
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

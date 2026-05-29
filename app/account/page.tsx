@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Cloud, LogOut, RefreshCw, Shield } from "lucide-react";
 
+import { SyncStatus } from "@/components/system/SyncStatus";
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
 import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +33,13 @@ import {
 import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
 import { ACCOUNT_BACKUP, PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
-import { DELETE_ACCOUNT_PLACEHOLDER, PRIVATE_BY_DEFAULT_LINE } from "@/lib/trust-copy";
+import {
+  DELETE_ACCOUNT_CONFIRM_PHRASE,
+  DELETE_ACCOUNT_LEAD,
+  PRIVATE_BY_DEFAULT_LINE,
+} from "@/lib/trust-copy";
+import { deleteServerAccountData } from "@/lib/account/delete-account";
+import { runFullLocalReset } from "@/lib/data-controls";
 import { getAllEntries } from "@/lib/storage";
 import type { ArchiveOwnershipReport } from "@/types/archive-ownership";
 
@@ -98,6 +106,8 @@ export default function AccountPage() {
   const [busy, setBusy] = useState(false);
   const [allowDebugEvents, setAllowDebugEvents] = useState(false);
   const [audioPlanCount, setAudioPlanCount] = useState(0);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleteLocalToo, setDeleteLocalToo] = useState(true);
   const [ownership, setOwnership] = useState<ArchiveOwnershipReport | null>(null);
   const [continuity, setContinuity] = useState<AccountContinuityStatus>({
     archiveContinuesLine: null,
@@ -168,6 +178,34 @@ export default function AccountPage() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!status.session) {
+      showMessage("Sign in first to delete server account data.");
+      return;
+    }
+    if (deleteConfirm.trim() !== DELETE_ACCOUNT_CONFIRM_PHRASE) {
+      showMessage(`Type ${DELETE_ACCOUNT_CONFIRM_PHRASE} to confirm.`);
+      return;
+    }
+    setBusy(true);
+    try {
+      const result = await deleteServerAccountData(true);
+      if (!result.ok) {
+        throw new Error(result.error ?? "Account deletion failed.");
+      }
+      await signOut();
+      if (deleteLocalToo) {
+        await runFullLocalReset();
+      }
+      setDeleteConfirm("");
+      showMessage(result.message ?? "Server account data removed.");
+    } catch (error) {
+      showMessage(error instanceof Error ? error.message : "Account deletion failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleSync = async () => {
     setBusy(true);
     try {
@@ -228,6 +266,7 @@ export default function AccountPage() {
     <div className="min-h-screen bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
+        <PrimaryMain>
         <MotionPageTitle title="Account" />
 
         <div className="mt-16 space-y-8">
@@ -259,6 +298,7 @@ export default function AccountPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-zinc-400">
+              <SyncStatus />
               <p>
                 Backup status:{" "}
                 <span className="text-zinc-300">{statusLabel(status.state)}</span>
@@ -317,6 +357,8 @@ export default function AccountPage() {
                   <p className="text-zinc-500">{ACCOUNT_BACKUP.signInPrompt}</p>
                   <input
                     type="email"
+                    id="account-email"
+                    aria-label="Email address"
                     value={email}
                     onChange={(event) => {
                       setEmail(event.target.value);
@@ -347,6 +389,8 @@ export default function AccountPage() {
                   <input
                     type="text"
                     inputMode="numeric"
+                    id="account-code"
+                    aria-label="Sign-in code"
                     value={code}
                     onChange={(event) => setCode(event.target.value)}
                     placeholder="6-digit code"
@@ -372,12 +416,42 @@ export default function AccountPage() {
 
           <section className="rounded-2xl border border-white/[0.06] bg-zinc-900/40 p-5">
             <h2 className="text-base font-normal text-zinc-200">Delete account</h2>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-500">{DELETE_ACCOUNT_PLACEHOLDER}</p>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-500">{DELETE_ACCOUNT_LEAD}</p>
+            {status.session ? (
+              <div className="mt-4 space-y-3">
+                <label className="flex items-start gap-3 text-sm text-zinc-500">
+                  <input
+                    type="checkbox"
+                    checked={deleteLocalToo}
+                    onChange={(e) => setDeleteLocalToo(e.target.checked)}
+                    className="mt-1"
+                  />
+                  <span>Also delete all local data on this device after server removal.</span>
+                </label>
+                <input
+                  value={deleteConfirm}
+                  onChange={(e) => setDeleteConfirm(e.target.value)}
+                  placeholder={DELETE_ACCOUNT_CONFIRM_PHRASE}
+                  aria-label={`Type ${DELETE_ACCOUNT_CONFIRM_PHRASE} to confirm deletion`}
+                  className="w-full rounded-lg border border-white/[0.08] bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none ring-red-500/20 focus:ring-2"
+                />
+                <Button
+                  variant="secondary"
+                  disabled={busy || deleteConfirm.trim() !== DELETE_ACCOUNT_CONFIRM_PHRASE}
+                  onClick={() => void handleDeleteAccount()}
+                  className="border-red-500/30 text-red-300 hover:bg-red-500/10"
+                >
+                  Delete server account data
+                </Button>
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-zinc-500">Sign in to remove encrypted backup from our servers.</p>
+            )}
             <Link
               href="/settings"
               className="mt-3 inline-block text-sm text-violet-300 hover:text-violet-200"
             >
-              Delete all local data →
+              Delete all local data only →
             </Link>
           </section>
 
@@ -393,6 +467,7 @@ export default function AccountPage() {
             </Link>
           </p>
         </div>
+        </PrimaryMain>
 
         <SiteFooter className="mt-16" />
       </div>

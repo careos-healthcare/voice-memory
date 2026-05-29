@@ -16,11 +16,11 @@ export function MemoryReminderNote({
     <MotionNoteList className="py-1">
       <MotionNoteItem tone="quiet" index={0}>
         <Link href={reminder.href} className="group block space-y-2 px-1 py-2">
-          <p className="text-sm font-normal leading-[1.75] text-zinc-500/90 transition-colors group-hover:text-zinc-400">
+          <p className="text-sm font-normal leading-[1.75] text-muted transition-colors group-hover:text-zinc-200">
             {reminder.text}
           </p>
           {reminder.pastDateLabel ? (
-            <p className="text-xs text-zinc-600">{reminder.pastDateLabel}</p>
+            <p className="text-xs text-muted">{reminder.pastDateLabel}</p>
           ) : null}
         </Link>
       </MotionNoteItem>
@@ -40,11 +40,11 @@ export function MemoryReminderList({
       {reminders.map((reminder) => (
         <li key={reminder.id}>
           <Link href={reminder.href} className="group block space-y-2 px-1 py-2">
-            <p className="text-sm font-normal leading-[1.75] text-zinc-400 transition-colors group-hover:text-zinc-300">
+            <p className="text-sm font-normal leading-[1.75] text-zinc-300 transition-colors group-hover:text-zinc-100">
               {reminder.text}
             </p>
             {reminder.pastDateLabel ? (
-              <p className="text-xs text-zinc-600">{reminder.pastDateLabel}</p>
+              <p className="text-xs text-muted">{reminder.pastDateLabel}</p>
             ) : null}
           </Link>
         </li>

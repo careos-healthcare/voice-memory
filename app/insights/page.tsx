@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
 
 import { ReturnThreadsOverview } from "@/components/continuity/ReturnThreadsOverview";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,22 +34,19 @@ export default function InsightsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2"
-        >
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
+        <PrimaryMain className="mt-2">
+        <AnimatedReveal className="mt-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">
             {APP_SUBTITLE}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             What keeps returning
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+          <p className="mt-2 text-sm leading-relaxed text-muted">
             Unfinished conversations in your own words — what came back, what changed,
             and what is still open.
           </p>
-        </motion.div>
+        </AnimatedReveal>
 
         <div className="mt-6">
           <UpgradeCta
@@ -65,7 +63,7 @@ export default function InsightsPage() {
 
           {report === null ? (
             <Card>
-              <CardContent className="py-16 text-center text-sm text-zinc-600">
+              <CardContent className="py-16 text-center text-sm text-muted">
                 Reading what came back…
               </CardContent>
             </Card>
@@ -76,7 +74,7 @@ export default function InsightsPage() {
               <ReturnThreadsOverview report={report} />
 
               <section className="space-y-3 border-t border-white/5 pt-8">
-                <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">
+                <h2 className="text-sm font-medium uppercase tracking-wider text-muted">
                   Share a moment
                 </h2>
                 <ShareMemoryCardButton kind="weekly_summary" />
@@ -84,6 +82,7 @@ export default function InsightsPage() {
             </>
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

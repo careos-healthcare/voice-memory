@@ -9,8 +9,8 @@ const REQUIRED = [
   "lib/transcript/transcript-cleanup.ts",
   "types/transcript-cleanup.ts",
   "lib/debug/transcript-cleanup-review.ts",
-  "components/debug/TranscriptCleanupDebugPanel.tsx",
-  "app/debug/transcript-cleanup/page.tsx",
+  "components/internal/TranscriptCleanupDebugPanel.tsx",
+  "app/internal/transcript-cleanup/page.tsx",
   "types/journal.ts",
   "lib/patterns/phrase-memory.ts",
 ];

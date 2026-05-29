@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MapPin } from "lucide-react";
 
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TerritoryList } from "@/components/territories/TerritorySections";
 import { Button } from "@/components/ui/button";
@@ -30,19 +31,20 @@ export default function TerritoriesPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <header className="mt-6 space-y-3">
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Life context</p>
+        <PrimaryMain className="mt-6">
+        <header className="space-y-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">Life context</p>
           <h1 className="text-2xl font-normal tracking-tight text-white sm:text-3xl">
             Emotional territories
           </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-zinc-500">
+          <p className="max-w-xl text-sm leading-relaxed text-muted">
             Soft places your reflections gather — not mood categories, not labels, not a chart wall.
           </p>
         </header>
 
         <div className="mt-14">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <p className="py-20 text-center text-sm text-muted" role="status">One moment…</p>
           ) : territories.length === 0 ? (
             <AnticipatoryEmptyState icon={<MapPin className="h-6 w-6 text-violet-300" />} />
           ) : (
@@ -54,10 +56,11 @@ export default function TerritoriesPage() {
           <Link href="/feelings-timeline" className="text-violet-300 hover:text-violet-200">
             Feelings timeline →
           </Link>
-          <Link href="/threads" className="text-zinc-500 hover:text-zinc-300">
+          <Link href="/threads" className="text-muted hover:text-zinc-200">
             Threads →
           </Link>
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

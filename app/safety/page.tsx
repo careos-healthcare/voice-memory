@@ -17,7 +17,7 @@ export default function SafetyPage() {
     >
       <section className="rounded-2xl border border-amber-500/20 bg-amber-950/20 p-5">
         <h2 className="text-base font-semibold text-amber-100">If you need urgent help</h2>
-        <p className="mt-2 text-sm leading-relaxed text-amber-100/90">{CRISIS_DISCLAIMER}</p>
+        <p className="mt-2 text-sm leading-relaxed text-amber-50">{CRISIS_DISCLAIMER}</p>
       </section>
       {SAFETY_SECTIONS.map((section) => (
         <TrustSection key={section.title} title={section.title} body={section.body} />

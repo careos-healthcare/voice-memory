@@ -21,6 +21,6 @@ export function ArchiveProtectionLine({ surface }: { surface: PremiumSurface }) 
   if (!line) return null;
 
   return (
-    <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">{line}</p>
+    <p className="text-sm font-normal leading-[1.75] text-muted">{line}</p>
   );
 }

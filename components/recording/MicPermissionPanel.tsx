@@ -5,11 +5,15 @@ import { MIC_PERMISSION_COPY } from "@/lib/capture/mic-permission-copy";
 
 export function MicPermissionPanel({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="mx-auto max-w-sm space-y-4 text-center">
-      <p className="text-sm leading-relaxed text-zinc-300">
+    <div
+      className="mx-auto max-w-sm space-y-4 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <p className="text-sm leading-relaxed text-zinc-200">
         {MIC_PERMISSION_COPY.primary}
       </p>
-      <p className="text-xs leading-relaxed text-zinc-500">
+      <p className="text-xs leading-relaxed text-muted">
         {MIC_PERMISSION_COPY.braveHint}
       </p>
       <Button

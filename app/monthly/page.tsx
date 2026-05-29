@@ -14,6 +14,7 @@ import { EmotionalChapterNote } from "@/components/memory/EmotionalChapterNote";
 import { VoiceIdentityNote } from "@/components/memory/VoiceIdentityNote";
 import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/components/patterns/MemoryNote";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
@@ -154,6 +155,7 @@ export default function MonthlyPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain>
         <MotionPageTitle title="This month" />
 
         <div className="mt-20 space-y-20">
@@ -213,6 +215,7 @@ export default function MonthlyPage() {
             </Link>
           </div>
         ) : null}
+        </PrimaryMain>
       </div>
     </div>
   );

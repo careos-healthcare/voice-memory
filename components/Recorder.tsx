@@ -11,7 +11,6 @@ import {
 } from "@/components/InsightCardStatus";
 import { Button } from "@/components/ui/button";
 import { MOTION } from "@/lib/motion/tokens";
-import { presenceFade } from "@/lib/motion/variants";
 import { useListeningMode } from "@/lib/hooks/useListeningMode";
 import { LISTENING_SAVED_COPY } from "@/lib/listening-mode";
 import {
@@ -100,6 +99,10 @@ import {
   markReflexRecordingStarted,
   markReflexRecorderMounted,
 } from "@/lib/reflex/reflex-observation";
+import {
+  captureAuthHeaders,
+  ensureCaptureAttested,
+} from "@/lib/client/capture-attest";
 import { maybeRecordFirstReturnRerecordWithin10Min } from "@/lib/continuity/first-return-observation";
 import { recordReflexSessionRecording } from "@/lib/reflex/open-without-record";
 import {
@@ -134,12 +137,28 @@ import { recordInterruptionOutcome } from "@/lib/capture/interruption-timing";
 import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
 import type { RecordReturnContext as RecordReturnContextType } from "@/types/record-return";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
+import type { RecordUiPhase } from "@/components/capture/RecordCaptureChrome";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { presenceMotionVariants } from "@/lib/motion/reduced-motion";
 
 const MAX_SECONDS = 60;
+
+function recorderStateToUiPhase(
+  state: RecorderState,
+  micBlocked: boolean,
+): RecordUiPhase {
+  if (state === "idle") return micBlocked ? "error" : "ready";
+  if (state === "recording") return "recording";
+  if (state === "processing") return "processing";
+  if (state === "complete") return "complete";
+  return "error";
+}
 
 interface RecorderProps {
   autoStart?: boolean;
   onComplete?: (entry: JournalEntry) => void;
+  /** Surface recorder phase to parent chrome (status badge, first-time hint). */
+  onUiPhaseChange?: (phase: RecordUiPhase) => void;
   preRecordLine?: string | null;
   /** @deprecated Use recordReturn — one-tap return flow with anchor quote. */
   reflectionPrompt?: string | null;
@@ -173,8 +192,10 @@ export function Recorder({
   zeroState = false,
   captureContext = "recorder",
   quickReflection = false,
+  onUiPhaseChange,
 }: RecorderProps) {
   const router = useRouter();
+  const reducedMotion = useReducedMotion();
   const { listeningMode } = useListeningMode();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -205,6 +226,10 @@ export function Recorder({
   const reflexCaptureRef = useRef<ReflexCaptureContext | null>(reflexCaptureProp ?? null);
   const quickMode =
     quickReflection || isQuickReflectionEnabled() || reflexFastBoot || zeroState;
+
+  useEffect(() => {
+    onUiPhaseChange?.(recorderStateToUiPhase(state, micBlocked));
+  }, [state, micBlocked, onUiPhaseChange]);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -332,11 +357,22 @@ export function Recorder({
             type: blob.type || mimeTypeRef.current,
           }),
         );
+        formData.append("durationSeconds", String(durationSeconds));
+
+        const attested = await ensureCaptureAttested();
+        if (!attested) {
+          processingRef.current = false;
+          setState("error");
+          setError("This device needs a quick security check. Refresh and try again.");
+          return;
+        }
 
         let transcribeResponse: Response;
         try {
           transcribeResponse = await fetch("/api/transcribe", {
             method: "POST",
+            credentials: "include",
+            headers: captureAuthHeaders(),
             body: formData,
           });
         } catch (fetchError) {
@@ -453,7 +489,11 @@ export function Recorder({
 
         const analyzeResponse = await fetch("/api/analyze", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            ...captureAuthHeaders(),
+          },
           body: JSON.stringify({
             transcript: prepared.transcript,
             priorContext,
@@ -808,13 +848,31 @@ export function Recorder({
         }
       : null);
 
+  const presenceVariants = presenceMotionVariants(reducedMotion);
+
+  const recorderStatusLabel =
+    state === "recording"
+      ? "Recording in progress"
+      : state === "processing"
+        ? "Processing your reflection"
+        : state === "error" || micBlocked
+          ? micBlocked
+            ? "Microphone permission required"
+            : "Recording error"
+          : state === "complete"
+            ? "Reflection saved"
+            : "Ready to record";
+
   return (
     <div className="mobile-recorder-zone mobile-recorder-dominant w-full max-w-xl px-2">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {recorderStatusLabel}
+      </p>
       <AnimatePresence mode="wait">
         {state === "idle" && (
           <motion.div
             key="idle"
-            variants={presenceFade}
+            variants={presenceVariants}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -879,9 +937,10 @@ export function Recorder({
                   size="lg"
                   className="mobile-touch-target mobile-recorder-primary min-h-[3.25rem] min-w-[13rem] text-base"
                   data-primary-cta="recorder"
+                  aria-label={quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection"}
                   onClick={() => void startRecording()}
                 >
-                  <Mic className="h-5 w-5" />
+                  <Mic className="h-5 w-5" aria-hidden />
                   {quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection"}
                 </Button>
                 {preRecordLine || densityOffer ? (
@@ -914,7 +973,7 @@ export function Recorder({
         {state === "recording" && (
           <motion.div
             key="recording"
-            variants={presenceFade}
+            variants={presenceVariants}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -940,9 +999,18 @@ export function Recorder({
             ) : null}
             <div className="relative flex h-28 w-28 items-center justify-center">
               <motion.span
-                animate={{ scale: [1, 1.08, 1], opacity: [0.35, 0.15, 0.35] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: MOTION.ease }}
+                animate={
+                  reducedMotion
+                    ? { scale: 1, opacity: 0.25 }
+                    : { scale: [1, 1.08, 1], opacity: [0.35, 0.15, 0.35] }
+                }
+                transition={
+                  reducedMotion
+                    ? { duration: 0 }
+                    : { duration: 2.4, repeat: Infinity, ease: MOTION.ease }
+                }
                 className="absolute inset-0 rounded-full bg-red-500/15"
+                aria-hidden
               />
               <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-red-500/90 shadow-lg shadow-red-500/20">
                 <Mic className="h-7 w-7 text-white" />
@@ -975,7 +1043,7 @@ export function Recorder({
         {state === "processing" && (
           <motion.div
             key="processing"
-            variants={presenceFade}
+            variants={presenceVariants}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -992,7 +1060,7 @@ export function Recorder({
         {state === "complete" && entry && (
           <motion.div
             key="complete"
-            variants={presenceFade}
+            variants={presenceVariants}
             initial="initial"
             animate="animate"
             className="text-center"
@@ -1019,7 +1087,7 @@ export function Recorder({
         {state === "error" && (
           <motion.div
             key="error"
-            variants={presenceFade}
+            variants={presenceVariants}
             initial="initial"
             animate="animate"
             className="space-y-4"
@@ -1049,6 +1117,12 @@ export function Recorder({
                   <div className="flex justify-center">
                     <Button
                       data-primary-cta="retry"
+                      className="mobile-touch-target min-h-11"
+                      aria-label={
+                        pendingOfflineRetry
+                          ? "Retry transcription"
+                          : MIC_PERMISSION_COPY.retry
+                      }
                       onClick={() =>
                         pendingOfflineRetry
                           ? void retryLastRecording()

@@ -13,7 +13,7 @@ const REQUIRED_FILES = [
   "lib/restraint/restraint-escalation.ts",
   "lib/refinement/rarity-preservation.ts",
   "lib/debug/sacredness-review.ts",
-  "app/debug/sacredness-review/page.tsx",
+  "app/internal/sacredness-review/page.tsx",
 ];
 
 const SCAN_DIRS = ["app", "components", "lib"];

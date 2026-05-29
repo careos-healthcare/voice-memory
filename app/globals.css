@@ -52,6 +52,11 @@
   border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
 }
 
+html {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -60,6 +65,8 @@ body {
   text-rendering: optimizeLegibility;
   transition: background-color 0.35s ease, color 0.35s ease;
   -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+  max-width: 100vw;
 }
 
 .min-h-screen-mobile {
@@ -162,9 +169,87 @@ body[data-record-capture="true"] {
     animation: none;
   }
 
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   body {
     transition: none;
   }
+}
+
+/* WCAG focus — visible on keyboard, subtle on pointer */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--vm-accent) 70%, white);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Readable muted copy — use .text-muted or zinc-400+ on dark surfaces */
+.text-muted {
+  color: var(--vm-muted);
+}
+
+html[data-tone="deep-dark"] [class*="text-zinc-700"],
+html[data-tone="deep-dark"] [class*="text-zinc-600"],
+html[data-tone="deep-dark"] [class*="text-zinc-500"],
+html[data-tone="soft-dark"] [class*="text-zinc-700"],
+html[data-tone="soft-dark"] [class*="text-zinc-600"],
+html[data-tone="soft-dark"] [class*="text-zinc-500"],
+html[data-tone="dusk"] [class*="text-zinc-700"],
+html[data-tone="dusk"] [class*="text-zinc-600"],
+html[data-tone="dusk"] [class*="text-zinc-500"] {
+  color: var(--vm-muted);
+}
+
+html[data-tone="deep-dark"] .text-violet-300,
+html[data-tone="soft-dark"] .text-violet-300,
+html[data-tone="dusk"] .text-violet-300 {
+  color: #c4b5fd;
+}
+
+html[data-tone="deep-dark"] .text-violet-200,
+html[data-tone="soft-dark"] .text-violet-200,
+html[data-tone="dusk"] .text-violet-200 {
+  color: #ddd6fe;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--vm-muted);
+  opacity: 1;
+}
+
+/* Primary CTA — WCAG AA white on violet (avoid 500/400 pair at 4.4:1) */
+.bg-violet-500.text-white,
+.bg-violet-500:not(.text-transparent) {
+  background-color: #6d28d9;
+}
+
+.bg-violet-600 .text-muted,
+.bg-violet-600 [class*="text-muted"],
+.bg-violet-500 .text-muted,
+.bg-violet-500 [class*="text-muted"] {
+  color: #f5f3ff;
+}
+
+[data-tone="deep-dark"] a:not([class*="underline"]):not([class*="btn"]):not([role="button"]) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in oklab, currentColor 55%, transparent);
 }
 
 ::selection {

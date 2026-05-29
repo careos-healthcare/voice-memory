@@ -1,6 +1,6 @@
 /**
- * Platform abstraction for web PWA vs future Capacitor wrapper.
- * No native plugins yet — boundaries only.
+ * Platform abstraction for web PWA vs Capacitor native wrapper.
+ * Capacitor shell loads the hosted Next.js app; plugins are opt-in only.
  */
 
 export type MobileRuntime = "web" | "pwa" | "capacitor" | "unknown";
@@ -23,7 +23,7 @@ export function getMobileRuntime(): MobileRuntime {
   return "web";
 }
 
-/** True when running inside a native shell (Capacitor) — not wired yet. */
+/** True when running inside the Capacitor iOS/Android shell. */
 export function isNativeWrapper(): boolean {
   return getMobileRuntime() === "capacitor";
 }
@@ -47,16 +47,16 @@ export function isAndroid(): boolean {
   return /Android/i.test(navigator.userAgent);
 }
 
-/** Push via Web Push or native bridge — placeholder until provider is chosen. */
+/** Web Push only — native push is not implemented (no fake readiness). */
 export function supportsPush(): boolean {
   if (!isBrowser()) return false;
-  if (isNativeWrapper()) return true;
+  if (isNativeWrapper()) return false;
   return "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
 }
 
-/** Background audio while screen locked — native-only for now. */
+/** Background audio while screen locked — not implemented on any platform yet. */
 export function supportsBackgroundAudio(): boolean {
-  if (isNativeWrapper()) return true;
+  if (isNativeWrapper()) return false;
   if (!isBrowser()) return false;
   return "mediaSession" in navigator;
 }

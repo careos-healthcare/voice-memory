@@ -1,5 +1,5 @@
 import { authApiFailure, authApiSuccess } from "@/lib/server/auth-api-response";
-import { createAuthSendCodeLog } from "@/lib/server/auth-route-log";
+import { createAuthSendCodeLog, hashEmailForLog } from "@/lib/server/auth-route-log";
 import {
   isPostgresAuthError,
   logAuthError,
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     return authApiFailure("Email is required.", "AUTH_EMAIL_REQUIRED", 400);
   }
 
-  log({ email });
+  log({ emailHash: hashEmailForLog(email) });
 
   try {
     const { code } = await issueEmailLoginCode(email);

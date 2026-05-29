@@ -13,8 +13,8 @@ const REQUIRED = [
   "lib/reflection/start-record-return.ts",
   "types/reflection-friction.ts",
   "types/record-return.ts",
-  "app/debug/reflection-friction/page.tsx",
-  "components/debug/ReflectionFrictionPanel.tsx",
+  "app/internal/reflection-friction/page.tsx",
+  "components/internal/ReflectionFrictionPanel.tsx",
   "components/recording/RecordReturnAnchor.tsx",
 ];
 
@@ -35,7 +35,7 @@ if (!report.includes("buildReflectionFrictionReport")) {
 }
 
 const page = fs.readFileSync(
-  path.join(ROOT, "app/debug/reflection-friction/page.tsx"),
+  path.join(ROOT, "app/internal/reflection-friction/page.tsx"),
   "utf8",
 );
 for (const token of ["ReflectionFrictionPanel", "buildReflectionFrictionReport"]) {

@@ -45,6 +45,10 @@ const BEHAVIOR_SHIFT_RE =
 const REPEATED_WORDING_RE =
   /\b(same (concern|phrase|words|call|person|topic)|similar words|something similar|mentioned .+ again)\b/i;
 
+/** First-person lines with a concrete verb — not coaching-generic. */
+const FIRST_PERSON_SPECIFIC_RE =
+  /\bI\b.*\b(not sure if|need to|have to|should|avoiding|tell them|call (her|him|them)|stop|keep saying|said that)\b/i;
+
 function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
@@ -71,6 +75,7 @@ export function scoreSpecificity(text: string, note?: Pick<MemoryNote, "pastQuot
   let score = 8;
 
   if (REPEATED_WORDING_RE.test(body)) score += 22;
+  if (FIRST_PERSON_SPECIFIC_RE.test(body)) score += 22;
   if (TIME_REF_RE.test(body)) score += 18;
   if (NAMED_ENTITY_RE.test(body)) score += 14;
   if (QUOTE_FRAGMENT_RE.test(body)) score += 20;

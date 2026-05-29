@@ -56,7 +56,7 @@ import {
   markMoatRevisitThenVsNow,
   trackOldEntryMoatRevisit,
 } from "@/lib/retention/moat-metrics";
-import { CONTINUATION_COPY } from "@/lib/conversation/continuation-loops";
+import { CONTINUATION_COPY } from "@/lib/conversation/continuation-copy";
 import { recordRevisitContext } from "@/lib/sync/cross-device-continuity";
 import { trackEntryRevisited as trackRetentionEntryRevisited } from "@/lib/retention/retention-loops";
 import type { FollowupPrompt } from "@/types/followup-prompt";

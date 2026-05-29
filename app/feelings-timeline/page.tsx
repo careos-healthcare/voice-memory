@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { buildSoftEmotionalTimelineReport } from "@/lib/personalization/soft-emotional-timeline";
@@ -60,16 +61,17 @@ function FeelingsTimelineContent() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <header className="mt-6 space-y-3">
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Optional view</p>
+        <PrimaryMain className="mt-6">
+        <header className="space-y-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">Optional view</p>
           <h1 className="text-2xl font-normal tracking-tight text-foreground sm:text-3xl">
             How this has felt over time
           </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-zinc-500">
+          <p className="max-w-xl text-sm leading-relaxed text-muted">
             A quiet read of movement across weeks — not a chart wall, not a score, not a diagnosis.
           </p>
           {activeTerritory ? (
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-zinc-300">
               In context: {activeTerritory.label}
             </p>
           ) : null}
@@ -153,6 +155,7 @@ function FeelingsTimelineContent() {
             Personalization →
           </Link>
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );
@@ -165,7 +168,10 @@ export default function FeelingsTimelinePage() {
         <div className="min-h-screen bg-background">
           <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
             <SiteHeader />
-            <p className="mt-20 text-sm text-zinc-600">One moment…</p>
+            <main id="main-content" className="mt-20">
+              <h1 className="sr-only">How this has felt over time</h1>
+              <p className="text-sm text-muted" role="status">One moment…</p>
+            </main>
           </div>
         </div>
       }

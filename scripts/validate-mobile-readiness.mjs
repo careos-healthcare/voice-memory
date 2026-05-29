@@ -20,7 +20,7 @@ const REQUIRED = [
   "app/offline/page.tsx",
   "components/mobile/PwaBootstrap.tsx",
   "components/mobile/InstallPrompt.tsx",
-  "app/debug/mobile-readiness/page.tsx",
+  "app/internal/mobile-readiness/page.tsx",
   "docs/MOBILE_SUBSCRIPTION_STRATEGY.md",
 ];
 

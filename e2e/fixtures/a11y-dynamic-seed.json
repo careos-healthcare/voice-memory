@@ -1,0 +1,285 @@
+{
+  "anchorEndDayKey": "2026-05-20",
+  "storageKey": "voicememory_entries",
+  "storageVersionKey": "voicememory_storage_version",
+  "storageVersion": 1,
+  "entries": [
+    {
+      "id": "a11y-seed-001",
+      "createdAt": "2026-05-01T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-002",
+      "createdAt": "2026-05-02T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-003",
+      "createdAt": "2026-05-03T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-004",
+      "createdAt": "2026-05-04T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-005",
+      "createdAt": "2026-05-05T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-006",
+      "createdAt": "2026-05-06T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-007",
+      "createdAt": "2026-05-07T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-008",
+      "createdAt": "2026-05-08T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-009",
+      "createdAt": "2026-05-09T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-010",
+      "createdAt": "2026-05-10T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-011",
+      "createdAt": "2026-05-11T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-012",
+      "createdAt": "2026-05-12T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-013",
+      "createdAt": "2026-05-13T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    },
+    {
+      "id": "a11y-seed-014",
+      "createdAt": "2026-05-14T14:00:00.000Z",
+      "transcript": "Today at work I thought about the project and my manager. The meeting felt heavy but I named what I will do next.",
+      "reflection": {
+        "mood": "steady",
+        "emotionalIntensity": 5,
+        "recurringThemes": [
+          "Work stress"
+        ],
+        "hiddenConcern": "",
+        "positiveSignal": "",
+        "recommendation": "",
+        "concreteObservation": "Work and meetings kept returning in your words.",
+        "exactLanguagePattern": "the project and my manager"
+      },
+      "durationSeconds": 42,
+      "reflectionPending": false
+    }
+  ],
+  "routes": [
+    "/entry/a11y-seed-001",
+    "/threads/my-manager",
+    "/territories/my-manager",
+    "/roundups/week-2026-05-20"
+  ],
+  "threadSlug": "my-manager",
+  "territorySlug": "my-manager",
+  "weekPeriodSlug": "week-2026-05-20",
+  "monthPeriodSlug": "month-2026-05",
+  "primaryEntryId": "a11y-seed-001"
+}

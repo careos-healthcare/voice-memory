@@ -12,8 +12,8 @@ const REQUIRED = [
   "lib/performance/phrase-scan-cache.ts",
   "lib/performance/resurfacing-cache.ts",
   "lib/debug/performance-health.ts",
-  "components/debug/PerformanceHealthPanel.tsx",
-  "app/debug/performance-health/page.tsx",
+  "components/internal/PerformanceHealthPanel.tsx",
+  "app/internal/performance-health/page.tsx",
   "lib/local-analytics.ts",
   "lib/storage.ts",
 ];

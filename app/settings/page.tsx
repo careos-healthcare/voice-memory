@@ -8,6 +8,7 @@ import { ReflectionGoalSetting } from "@/components/settings/ReflectionGoalSetti
 import { PersonalizationSettings } from "@/components/settings/PersonalizationSettings";
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -115,14 +116,13 @@ export default function SettingsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         <SiteHeader />
 
-        <header className="mt-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">Data & privacy</p>
+        <PrimaryMain className="mt-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">Data & privacy</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Settings</h1>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+          <p className="mt-2 text-sm leading-relaxed text-muted">
             Manage data stored on this device. VoiceMemory is local-first — these actions affect
             only this browser unless you use encrypted backup.
           </p>
-        </header>
 
         {message ? (
           <p className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
@@ -135,7 +135,7 @@ export default function SettingsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Privacy & your data</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-sm text-zinc-400">
+            <CardContent className="space-y-4 text-sm text-muted">
               <PrivacyTrustPanel compact />
               <p>
                 Stored reflections:{" "}
@@ -143,7 +143,7 @@ export default function SettingsPage() {
               </p>
               <p className="text-xs">{DATA_EXPORT_SUMMARY}</p>
               {ownershipLine ? (
-                <p className="text-sm leading-relaxed text-zinc-500">{ownershipLine}</p>
+                <p className="text-sm leading-relaxed text-muted">{ownershipLine}</p>
               ) : null}
               <div className="flex flex-wrap gap-2 pt-1">
                 <Link href="/account" className="text-violet-300 hover:text-violet-200 text-sm">
@@ -158,7 +158,7 @@ export default function SettingsPage() {
                 <Link href="/safety" className="text-violet-300 hover:text-violet-200 text-sm">
                   Emotional safety →
                 </Link>
-                <Link href="/privacy" className="text-zinc-500 hover:text-zinc-300 text-sm">
+                <Link href="/privacy" className="text-muted hover:text-zinc-200 text-sm">
                   Privacy policy →
                 </Link>
               </div>
@@ -180,7 +180,7 @@ export default function SettingsPage() {
               <CardTitle className="text-base text-red-200">Delete all local data</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-muted">
                 Permanently removes reflections, transcripts, audio, bookmarks, goals,
                 reminder preferences, and onboarding state from this device. Encrypted cloud
                 backup (if enabled) is not removed — sign out on Account or contact us.
@@ -229,7 +229,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="space-y-3">
                 <p className="text-sm font-medium text-zinc-300">Reflection goal</p>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-muted">
                   Optional. A quiet intention for how often you might return — not a target
                   to hit and not a streak to keep.
                 </p>
@@ -238,7 +238,7 @@ export default function SettingsPage() {
 
               <div className="space-y-3 border-t border-white/5 pt-6">
                 <p className="text-sm font-medium text-zinc-300">Listening mode</p>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-muted">
                   Save recordings without immediate reflection. Your transcript and audio
                   are kept — you can reflect later when it feels right.
                 </p>
@@ -259,7 +259,7 @@ export default function SettingsPage() {
 
               <div className="space-y-3 border-t border-white/5 pt-6">
                 <p className="text-sm font-medium text-zinc-300">Full detail</p>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-muted">
                   Off by default. Turn on only if you want fuller reads and more detail
                   on each page.
                 </p>
@@ -281,6 +281,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         </div>
+        </PrimaryMain>
 
         <SiteFooter className="mt-12" />
       </div>

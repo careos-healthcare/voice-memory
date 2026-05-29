@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-
+import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { ReflectiveRoundupIndex } from "@/components/roundups/ReflectiveRoundupView";
 import { CustomPeriodReview } from "@/components/roundups/CustomPeriodReview";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -29,20 +29,21 @@ export default function RoundupsPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
-        <motion.header initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-2">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">Roundups</p>
+        <PrimaryMain className="mt-2">
+        <AnimatedReveal>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">Roundups</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Remembered continuity</h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-500">
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
             A few lines from what kept returning, what faded, and what changed — not a report.
           </p>
-        </motion.header>
+        </AnimatedReveal>
 
         <div className="mt-16 space-y-16">
           <CustomPeriodReview />
 
           {loading ? (
             <Card>
-              <CardContent className="py-16 text-center text-sm text-zinc-600">
+              <CardContent className="py-16 text-center text-sm text-muted">
                 Reading your archive…
               </CardContent>
             </Card>
@@ -67,6 +68,7 @@ export default function RoundupsPage() {
             </Button>
           </div>
         ) : null}
+        </PrimaryMain>
       </div>
     </div>
   );

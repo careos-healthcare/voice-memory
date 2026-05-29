@@ -4,20 +4,23 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { MemoryConfidence } from "@/components/system/MemoryConfidence";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { presenceMotionVariants } from "@/lib/motion/reduced-motion";
+
 import {
   recordFirstReturnOpened,
   recordFirstReturnShown,
 } from "@/lib/continuity/first-return-observation";
 import { pickFirstReturnMoment } from "@/lib/continuity/first-return-moment";
 import type { FirstReturnMomentData } from "@/lib/continuity/first-return-moment";
+import { recordResurfacingFeedback } from "@/lib/resurfacing/resurfacing-feedback";
+import {
+  recordResurfacingMetric,
+  syncRerecordMetricFromFirstReturn,
+} from "@/lib/resurfacing/resurfacing-metrics";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import type { JournalEntry } from "@/types/journal";
-
-const fade = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
-};
 
 export function FirstReturnMoment({
   entries: entriesProp,
@@ -27,12 +30,12 @@ export function FirstReturnMoment({
 }: {
   entries?: JournalEntry[];
   className?: string;
-  /** Home uses borderless quote-first layout; journal/memory keep a soft frame. */
   presentation?: "card" | "quiet";
-  /** Record local first-return metrics (homepage). */
   trackShown?: boolean;
 }) {
   const [moment, setMoment] = useState<FirstReturnMomentData | null>(null);
+  const [dismissed, setDismissed] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -45,9 +48,10 @@ export function FirstReturnMoment({
   useEffect(() => {
     if (!moment || !trackShown) return;
     recordFirstReturnShown();
+    syncRerecordMetricFromFirstReturn();
   }, [moment, trackShown]);
 
-  if (!moment) return null;
+  if (!moment || dismissed) return null;
 
   const href = moment.relatedEntryIds[0]
     ? `/entry/${moment.relatedEntryIds[0]}`
@@ -55,30 +59,29 @@ export function FirstReturnMoment({
 
   const quiet = presentation === "quiet";
 
+  const handleFeedback = (kind: Parameters<typeof recordResurfacingFeedback>[0]["kind"]) => {
+    recordResurfacingFeedback({
+      kind,
+      quote: moment.quote,
+      surface: "first_return",
+    });
+    if (kind !== "that_fits") setDismissed(true);
+    if (kind === "that_fits") {
+      recordResurfacingMetric("callback_fit_clicked", {
+        phraseKey: moment.phraseKey,
+      });
+    }
+  };
+
   const body = (
-    <div
-      className={`space-y-3 ${quiet ? "px-0 py-2 text-center" : "space-y-4 px-1 py-1 text-center sm:text-left"}`}
-    >
-      <p
-        className={
-          quiet
-            ? "font-serif text-[1.75rem] leading-[1.25] tracking-tight text-zinc-50 sm:text-[2.15rem]"
-            : "font-serif text-2xl leading-snug tracking-tight text-zinc-100 sm:text-[1.65rem]"
-        }
-      >
-        {moment.quote}
-      </p>
-      <p
-        className={
-          quiet
-            ? "text-sm leading-relaxed text-zinc-400"
-            : "text-sm leading-relaxed text-violet-200/85"
-        }
-      >
-        {moment.subline}
-      </p>
-      <p className="text-xs tracking-wide text-zinc-600">{moment.meta}</p>
-    </div>
+    <MemoryConfidence
+      quote={moment.quote}
+      subline={moment.subline}
+      whySurfaced={moment.whySurfaced}
+      confidenceLabel={moment.uncertain ? moment.meta : moment.meta}
+      onFeedback={handleFeedback}
+      className={quiet ? "px-0 py-2 text-center sm:text-center" : "text-center sm:text-left"}
+    />
   );
 
   const shellClass = quiet
@@ -89,7 +92,12 @@ export function FirstReturnMoment({
     <Link
       href={href}
       className="block transition-opacity hover:opacity-95"
-      onClick={() => recordFirstReturnOpened()}
+      onClick={() => {
+        recordFirstReturnOpened();
+        recordResurfacingMetric("related_memory_opened", {
+          phraseKey: moment.phraseKey,
+        });
+      }}
     >
       {body}
     </Link>
@@ -97,15 +105,18 @@ export function FirstReturnMoment({
     body
   );
 
+  if (quiet) {
+    return <div className={shellClass}>{content}</div>;
+  }
+
   return (
-    <motion.section
-      initial={fade.initial}
-      animate={fade.animate}
-      transition={fade.transition}
+    <motion.div
       className={shellClass}
-      aria-label="You said this before"
+      variants={presenceMotionVariants(reducedMotion)}
+      initial="hidden"
+      animate="visible"
     >
       {content}
-    </motion.section>
+    </motion.div>
   );
 }

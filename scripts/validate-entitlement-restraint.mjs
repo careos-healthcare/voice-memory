@@ -21,8 +21,14 @@ if (entitlementsSrc.includes("localStorage.setItem(PLAN_KEY") === false) {
 }
 
 const paymentSrc = fs.readFileSync(path.join(ROOT, "lib/entitlement/payment-stack.ts"), "utf8");
-if (!paymentSrc.includes("checkoutImplemented: false")) {
-  console.error("payment-stack audit must reflect checkout not implemented until wired");
+if (!paymentSrc.includes("isStripeConfigured")) {
+  console.error("payment-stack must use isStripeConfigured for fail-closed checkout");
+  process.exit(1);
+}
+
+const billingState = fs.readFileSync(path.join(ROOT, "lib/billing/billing-state.ts"), "utf8");
+if (!billingState.includes("isBillingEnabled")) {
+  console.error("billing-state.ts must expose isBillingEnabled");
   process.exit(1);
 }
 

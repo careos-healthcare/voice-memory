@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
 import {
   Download,
   FileJson,
   FileText,
   Printer,
-  Shield,
 } from "lucide-react";
 
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
 import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PrivacyNotice, TrustNotice } from "@/components/system";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requiresProForExportReports } from "@/lib/subscription";
@@ -89,28 +90,25 @@ export default function ExportPage() {
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         <SiteHeader />
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2"
-        >
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">
+        <PrimaryMain className="mt-2">
+        <AnimatedReveal className="mt-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">
             Export memory
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             Take your memory with you
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+          <p className="mt-2 text-sm leading-relaxed text-muted">
             Download or print your private memory layer from this device. No account,
             no cloud upload.
           </p>
-          <p className="mt-2 text-xs text-zinc-500">
+          <p className="mt-2 text-xs text-muted">
             {exportLocked
               ? `${entryCount} of ${storedCount} reflections exportable on Free`
               : `${entryCount} reflection${entryCount === 1 ? "" : "s"} available`}
             {lockedCount > 0 ? ` · ${lockedCount} locked on Pro` : null}
           </p>
-        </motion.div>
+        </AnimatedReveal>
 
         <ArchiveProtectionLine surface="export" />
 
@@ -121,13 +119,11 @@ export default function ExportPage() {
           description="Free can export JSON for your last 7 entries. Pro adds full-archive JSON, weekly summary text, and printable reflection reports with mood timelines and entity memory."
         />
 
-        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
-          <Shield className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" />
-          <p className="text-xs leading-relaxed text-zinc-500">
-            Exports include transcripts and reflections. Store files where you trust.
-            VoiceMemory does not upload exports to any server.
-          </p>
-        </div>
+        <TrustNotice className="mt-6">
+          Exports include transcripts and reflections. Store files where you trust. VoiceMemory
+          does not upload exports to any server.
+        </TrustNotice>
+        <PrivacyNotice className="mt-3" />
 
         <Card className="mt-6">
           <CardHeader className="pb-2">
@@ -138,7 +134,7 @@ export default function ExportPage() {
           </CardHeader>
           <CardContent className="flex flex-col gap-3 sm:flex-row">
             <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
                 From
               </span>
               <input
@@ -149,7 +145,7 @@ export default function ExportPage() {
               />
             </label>
             <label className="flex min-w-0 flex-1 flex-col gap-1.5">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
                 To
               </span>
               <input
@@ -173,7 +169,7 @@ export default function ExportPage() {
             <CardContent className="flex flex-col gap-3 sm:flex-row">
               <Button
                 type="button"
-                className="flex-1"
+                className="mobile-touch-target min-h-11 flex-1"
                 onClick={exportAllJson}
                 disabled={entryCount === 0}
               >
@@ -199,7 +195,7 @@ export default function ExportPage() {
                 <FileText className="h-4 w-4 text-emerald-300" />
                 <CardTitle className="text-base">Weekly summary</CardTitle>
               </div>
-              <p className="text-xs text-zinc-500">Plain text · rolling 7-day summary</p>
+              <p className="text-xs text-muted">Plain text · rolling 7-day summary</p>
             </CardHeader>
             <CardContent>
               <Button
@@ -220,7 +216,7 @@ export default function ExportPage() {
                 <Printer className="h-4 w-4 text-violet-300" />
                 <CardTitle className="text-base">Printable reflection report</CardTitle>
               </div>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-muted">
                 Mood timeline, themes, entities, weekly summary, and entry excerpts
               </p>
             </CardHeader>
@@ -234,7 +230,7 @@ export default function ExportPage() {
                 <Printer className="h-4 w-4" />
                 {exportLocked ? "Upgrade to print" : "Print reflection report"}
               </Button>
-              <p className="text-xs text-zinc-600">
+              <p className="text-xs text-muted">
                 Opens a print-friendly tab. Use Save as PDF in your browser if you prefer a
                 file.
               </p>
@@ -243,13 +239,14 @@ export default function ExportPage() {
         </div>
 
         {entryCount === 0 ? (
-          <p className="mt-8 text-center text-sm text-zinc-500">
-            <Link href="/" className="text-violet-300 hover:underline">
+          <p className="mt-8 text-center text-sm text-muted">
+            <Link href="/" className="text-violet-200 hover:underline">
               Record a reflection
             </Link>{" "}
             to enable exports.
           </p>
         ) : null}
+        </PrimaryMain>
       </div>
     </div>
   );

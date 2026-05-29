@@ -13,9 +13,9 @@ const REQUIRED_FILES = [
   "lib/integrity/durability-review.ts",
   "lib/refinement/callback-deduplication.ts",
   "lib/debug/emotional-integrity-review.ts",
-  "app/debug/emotional-integrity/page.tsx",
-  "app/debug/archive-simplicity/page.tsx",
-  "app/debug/durability-review/page.tsx",
+  "app/internal/emotional-integrity/page.tsx",
+  "app/internal/archive-simplicity/page.tsx",
+  "app/internal/durability-review/page.tsx",
 ];
 
 const SCAN_DIRS = ["app", "components", "lib"];

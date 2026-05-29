@@ -12,6 +12,7 @@ import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptySta
 import { MotionPageTitle } from "@/components/motion/MotionPage";
 import { BookmarkIndicator } from "@/components/memory/ReflectionBookmarkMark";
 import { RevisitEntryLink } from "@/components/navigation/RevisitEntryLink";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
@@ -66,21 +67,22 @@ export default function TimelinePage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain className="mt-4">
         <MotionPageTitle title="Over time" />
-        <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+        <p className="mt-3 text-sm leading-relaxed text-muted">
           What keeps returning, what changed, and what stayed unresolved — in your
           own words.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3 text-sm">
-          <Link href="/open-loops" className="text-zinc-500 hover:text-zinc-300">
+          <Link href="/open-loops" className="text-muted hover:text-zinc-200">
             Open loops →
           </Link>
         </div>
 
         <div className="mt-10 space-y-12">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+            <p className="py-20 text-center text-sm text-muted" role="status">One moment…</p>
           ) : entries.length === 0 ? (
             <AnticipatoryEmptyState
               icon={<CalendarRange className="h-6 w-6 text-violet-300" />}
@@ -96,7 +98,7 @@ export default function TimelinePage() {
               />
 
               <section className="space-y-4 border-t border-white/5 pt-8">
-                <h2 className="text-xs font-normal tracking-wide text-zinc-600">
+                <h2 className="text-xs font-normal tracking-wide text-muted">
                   Reflections
                 </h2>
                 <ul className="space-y-2">
@@ -105,7 +107,7 @@ export default function TimelinePage() {
                       <RevisitEntryLink
                         entryId={entry.id}
                         source="timeline"
-                        className="flex items-center gap-3 px-1 py-3 text-sm text-zinc-500 transition-colors hover:text-zinc-300"
+                        className="flex items-center gap-3 px-1 py-3 text-sm text-muted transition-colors hover:text-zinc-200"
                       >
                         <span>{formatEntryDate(entry.createdAt)}</span>
                         <BookmarkIndicator
@@ -117,7 +119,7 @@ export default function TimelinePage() {
                   ))}
                 </ul>
                 {entries.filter((entry) => entry.reflectionPending !== true).length > 12 ? (
-                  <Button asChild variant="ghost" size="sm" className="text-zinc-600">
+                  <Button asChild variant="ghost" size="sm" className="text-muted">
                     <Link href="/journal">All reflections</Link>
                   </Button>
                 ) : null}
@@ -125,6 +127,7 @@ export default function TimelinePage() {
             </>
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

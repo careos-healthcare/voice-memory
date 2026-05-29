@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
-
+import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { ReflectiveRoundupView } from "@/components/roundups/ReflectiveRoundupView";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -96,30 +96,28 @@ export default function RoundupPeriodPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain className="mt-2">
         {invalid ? (
-          <div className="mt-16 space-y-6">
-            <p className="text-sm text-zinc-500">That period could not be read.</p>
+          <div className="mt-14 space-y-6">
+            <h1 className="text-2xl font-semibold text-white">Roundup</h1>
+            <p className="text-sm text-muted">That period could not be read.</p>
             <Button asChild variant="secondary">
               <Link href="/roundups">All roundups</Link>
             </Button>
           </div>
         ) : (
           <>
-            <motion.header
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-2"
-            >
-              <p className="text-xs uppercase tracking-[0.2em] text-zinc-600">{periodEyebrow}</p>
+            <AnimatedReveal>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted">{periodEyebrow}</p>
               <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
                 {period?.label}
               </h1>
-            </motion.header>
+            </AnimatedReveal>
 
             <div className="mt-16">
               {loading ? (
                 <Card>
-                  <CardContent className="py-16 text-center text-sm text-zinc-600">
+                  <CardContent className="py-16 text-center text-sm text-muted" role="status">
                     Reading this period…
                   </CardContent>
                 </Card>
@@ -145,23 +143,24 @@ export default function RoundupPeriodPage() {
         )}
 
         <div className="mt-16 flex flex-wrap gap-4 text-sm">
-          <Link href="/roundups" className="text-zinc-500 transition-colors hover:text-zinc-300">
+          <Link href="/roundups" className="text-muted transition-colors hover:text-zinc-200">
             All roundups →
           </Link>
           {period?.kind === "weekly" ? (
-            <Link href="/weekly" className="text-zinc-500 transition-colors hover:text-zinc-300">
+            <Link href="/weekly" className="text-muted transition-colors hover:text-zinc-200">
               This week →
             </Link>
           ) : null}
           {period?.kind === "monthly" ? (
-            <Link href="/monthly" className="text-zinc-500 transition-colors hover:text-zinc-300">
+            <Link href="/monthly" className="text-muted transition-colors hover:text-zinc-200">
               This month →
             </Link>
           ) : null}
-          <Link href="/intentions" className="text-zinc-500 transition-colors hover:text-zinc-300">
+          <Link href="/intentions" className="text-muted transition-colors hover:text-zinc-200">
             Intentions →
           </Link>
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

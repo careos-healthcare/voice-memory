@@ -33,6 +33,9 @@ export function ProcessingStatus({ stage }: { stage: ProcessingStage }) {
 
   return (
     <motion.div
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-10 text-center"
@@ -46,7 +49,7 @@ export function ProcessingStatus({ stage }: { stage: ProcessingStage }) {
       </motion.div>
       <div>
         <p className="text-lg font-medium text-white">{labels[stage]}</p>
-        <p className="mt-1 text-sm text-zinc-400">
+        <p className="mt-1 text-sm text-muted">
           A mirror for your words — not therapy or diagnosis.
         </p>
       </div>

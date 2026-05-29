@@ -12,7 +12,9 @@ import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptySta
 import { OpenLoopsSection } from "@/components/open-loops/OpenLoopsSection";
 import { OpenLoopReturnPrompt } from "@/components/open-loops/OpenLoopReturnPrompt";
 import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
+import { LoadingState, PrivacyNotice } from "@/components/system";
 import { ONBOARDING_MEMORY } from "@/lib/onboarding/onboarding-copy";
 import { RECOGNITION_COPY } from "@/lib/product/recognition-copy";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
@@ -59,12 +61,14 @@ export default function MemoryPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
 
+        <PrimaryMain>
         <MotionPageTitle title={ONBOARDING_MEMORY.title} />
-        <p className="mt-3 text-sm leading-relaxed text-zinc-500">{RECOGNITION_COPY.journalLead}</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted">{RECOGNITION_COPY.journalLead}</p>
+        <PrivacyNotice className="mt-4" />
 
         <div className="mt-12 space-y-12">
           {loading ? (
-            <p className="py-20 text-center text-sm text-zinc-600">{ONBOARDING_MEMORY.loading}</p>
+            <LoadingState lines={4} label={ONBOARDING_MEMORY.loading} className="py-8" />
           ) : !report?.hasData ? (
             <AnticipatoryEmptyState
               entryCount={entries.length}
@@ -84,6 +88,7 @@ export default function MemoryPage() {
             </>
           )}
         </div>
+        </PrimaryMain>
       </div>
     </div>
   );

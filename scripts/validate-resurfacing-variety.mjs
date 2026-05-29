@@ -13,8 +13,8 @@ const REQUIRED = [
   "lib/resurfacing/resurfacing-change-detection.ts",
   "lib/resurfacing/resurfacing-natural-voice.ts",
   "types/resurfacing-variety.ts",
-  "app/debug/resurfacing-variety/page.tsx",
-  "components/debug/ResurfacingVarietyPanel.tsx",
+  "app/internal/resurfacing-variety/page.tsx",
+  "components/internal/ResurfacingVarietyPanel.tsx",
 ];
 
 const BANNED = [
@@ -69,7 +69,7 @@ if (!sideEffects.includes("observeResurfacingModeShown")) {
 }
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/debug/ResurfacingVarietyPanel.tsx"),
+  path.join(ROOT, "components/internal/ResurfacingVarietyPanel.tsx"),
   "utf8",
 );
 for (const section of [
@@ -84,7 +84,7 @@ for (const section of [
   }
 }
 
-for (const rel of ["lib/resurfacing/return-modes.ts", "components/debug/ResurfacingVarietyPanel.tsx"]) {
+for (const rel of ["lib/resurfacing/return-modes.ts", "components/internal/ResurfacingVarietyPanel.tsx"]) {
   const text = fs.readFileSync(path.join(ROOT, rel), "utf8");
   for (const re of BANNED) {
     if (re.test(text)) failures.push(`${rel}: banned ${re}`);

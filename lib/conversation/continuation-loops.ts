@@ -6,16 +6,11 @@ import { buildPhraseMemory } from "@/lib/patterns/phrase-memory";
 import { readRetentionLoopEvents } from "@/lib/retention/retention-loops";
 import { entrySnippet, hedgeCount } from "@/lib/memory/language-fingerprint";
 import { formatRelativeDate } from "@/lib/utils";
+import { CONTINUATION_COPY } from "@/lib/conversation/continuation-copy";
 import type { JournalEntry } from "@/types/journal";
 import type { MemoryNote } from "@/types/memory-note";
 
-export const CONTINUATION_COPY = {
-  stoppedHere: "You stopped here.",
-  moreToSay: "There may be more to say now.",
-  neverFinished: "You never finished this thought.",
-  cameBackNotFully: "You came back, but not fully.",
-  sayBackToSelf: "What would you say back to this version of you?",
-} as const;
+export { CONTINUATION_COPY } from "@/lib/conversation/continuation-copy";
 
 export type ContinuationKind =
   | "stopped_here"
