@@ -163,6 +163,7 @@ import '../features/daily_discoveries/daily_discovery_models.dart';
 import '../features/daily_discoveries/daily_discovery_store.dart';
 import '../services/product_analytics.dart';
 import '../widgets/capture_entry_actions.dart';
+import '../widgets/first_session/first_session_explanation_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
 
@@ -2694,6 +2695,16 @@ class _RecordScreenState extends State<RecordScreen> {
       ]);
     }
     if (ui == RecordUiState.ready) {
+      // First-session explainer: brand-new users (no entries / no pressure
+      // check-ins yet) get a clear, emotionally framed starting point.
+      if (FirstSessionExplanationCard.shouldShow(_reflectionCount)) {
+        actions.add(
+          FirstSessionExplanationCard(
+            onLogPressure: () => context.push('/pressure-check-in'),
+            onRecord: _start,
+          ),
+        );
+      }
       actions.add(
         CaptureEntryActions(
           onRecord: _start,

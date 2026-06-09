@@ -53,7 +53,15 @@ class PressureCheckInService {
     await journalStore.save(built.entry, first25Source: first25Source);
     await store.save(built.record);
 
-    return PressureCheckInSaveResult(entry: built.entry, record: built.record);
+    // First-win detection: was this the user's very first pressure moment?
+    final all = await store.loadAll();
+    final isFirst = all.length <= 1;
+
+    return PressureCheckInSaveResult(
+      entry: built.entry,
+      record: built.record,
+      isFirst: isFirst,
+    );
   }
 }
 
@@ -61,8 +69,12 @@ class PressureCheckInSaveResult {
   const PressureCheckInSaveResult({
     required this.entry,
     required this.record,
+    this.isFirst = false,
   });
 
   final JournalEntry entry;
   final PressureCheckInRecord record;
+
+  /// True when this save was the user's first pressure check-in.
+  final bool isFirst;
 }

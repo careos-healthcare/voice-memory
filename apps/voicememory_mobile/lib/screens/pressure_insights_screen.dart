@@ -14,6 +14,8 @@ import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
+import '../widgets/pressure_retention/pressure_first_week_nudge.dart';
+import '../widgets/pressure_retention/pressure_insights_empty_state.dart';
 import '../widgets/pressure_retention/pressure_loop_visibility_card.dart';
 import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
@@ -109,6 +111,27 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   Widget _buildContent(BuildContext context, _InsightsData data) {
     final records = data.records;
     final isPro = data.isPro;
+
+    // Not enough data yet: replace the cards with a single clear next step.
+    if (records.isEmpty) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'What your pressure loop looks like',
+              style: ArchiveMobileTypography.responsivePageTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            PressureInsightsEmptyState(
+              onLogPressure: () => context.push('/pressure-check-in'),
+            ),
+          ],
+        ),
+      );
+    }
+
     final visibility = _visibilityEngine.build(records);
     final recap = _recapEngine.build(records);
     final confidence = _confidenceEngine.fromRecords(records);
@@ -119,6 +142,10 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         style: ArchiveMobileTypography.responsivePageTitle(context),
       ),
       const SizedBox(height: AppSpacing.md),
+      if (records.length <= 2) ...[
+        const PressureFirstWeekNudge(),
+        const SizedBox(height: AppSpacing.sm),
+      ],
       PressureLoopVisibilityCard(
         visibility: visibility,
         locked: !isPro,

@@ -14,6 +14,7 @@ import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
 import '../widgets/prove_enough/prove_enough_post_record_payoff.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
+import '../widgets/pressure_retention/pressure_first_win_card.dart';
 import '../widgets/pressure_retention/pressure_quick_save_success.dart';
 
 /// One-tap pressure check-in: pick a pressure, quick save, see the payoff.
@@ -222,7 +223,12 @@ class _PressureCheckInScreenState extends State<PressureCheckInScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const PressureQuickSaveSuccess(),
+        if (saved.isFirst)
+          PressureFirstWinCard(
+            onSeeMeaning: () => context.push('/pressure-insights'),
+          )
+        else
+          const PressureQuickSaveSuccess(),
         const SizedBox(height: AppSpacing.sm),
         ProveEnoughPostRecordPayoff(
           entryId: saved.entry.id,
