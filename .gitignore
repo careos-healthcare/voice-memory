@@ -59,3 +59,6 @@ apps/voicememory_mobile/.flutter-plugins-dependencies
 !/data/.gitkeep
 .data/
 .env*.local
+
+# Flutter test temp files
+apps/voicememory_mobile/test/tmp/
