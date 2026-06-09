@@ -7,12 +7,24 @@ import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
 /// "Weekly pressure recap" card built from local entries in the last 7 days.
+///
+/// Free users see a limited preview (count + chose-to-stop, with the deeper
+/// "where it repeats" insight locked). Pro users see the full recap.
 class PressureWeeklyRecapCard extends StatelessWidget {
-  const PressureWeeklyRecapCard({super.key, required this.recap});
+  const PressureWeeklyRecapCard({
+    super.key,
+    required this.recap,
+    this.locked = false,
+  });
 
   final PressureWeeklyRecap recap;
 
+  /// When true, the deeper insight (most common context/option) is locked.
+  final bool locked;
+
   static const title = 'Weekly pressure recap';
+  static const previewMoreCopy =
+      'Your archive has more to say about where this repeats.';
 
   @override
   Widget build(BuildContext context) {
@@ -31,30 +43,84 @@ class PressureWeeklyRecapCard extends StatelessWidget {
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            recap.sentence,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          if (recap.hasData) ...[
-            const SizedBox(height: AppSpacing.md),
-            _row(context, 'Pressure moments', '${recap.count}'),
-            if (recap.mostCommonOptionLabel != null) ...[
-              const SizedBox(height: AppSpacing.xs),
-              _row(context, 'Most common', recap.mostCommonOptionLabel!),
-            ],
-            if (recap.mostCommonContextLabel != null) ...[
-              const SizedBox(height: AppSpacing.xs),
-              _row(context, 'Most common context',
-                  recap.mostCommonContextLabel!),
-            ],
-            const SizedBox(height: AppSpacing.xs),
-            _row(context, 'Chose to stop', '${recap.choseToStopCount}'),
-          ],
+          if (locked)
+            ..._lockedBody(context)
+          else
+            ..._fullBody(context),
         ],
       ),
     );
+  }
+
+  List<Widget> _fullBody(BuildContext context) {
+    return [
+      Text(
+        recap.sentence,
+        style: ArchiveMobileTypography.body(context).copyWith(
+          color: AppColors.textPrimary,
+        ),
+      ),
+      if (recap.hasData) ...[
+        const SizedBox(height: AppSpacing.md),
+        _row(context, 'Pressure moments', '${recap.count}'),
+        if (recap.mostCommonOptionLabel != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          _row(context, 'Most common', recap.mostCommonOptionLabel!),
+        ],
+        if (recap.mostCommonContextLabel != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          _row(context, 'Most common context', recap.mostCommonContextLabel!),
+        ],
+        const SizedBox(height: AppSpacing.xs),
+        _row(context, 'Chose to stop', '${recap.choseToStopCount}'),
+      ],
+    ];
+  }
+
+  List<Widget> _lockedBody(BuildContext context) {
+    if (!recap.hasData) {
+      return [
+        Text(
+          recap.sentence,
+          style: ArchiveMobileTypography.body(context).copyWith(
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ];
+    }
+    return [
+      _row(context, 'Pressure moments this week', '${recap.count}'),
+      const SizedBox(height: AppSpacing.xs),
+      _row(context, 'Chose to stop', '${recap.choseToStopCount}'),
+      const SizedBox(height: AppSpacing.xs),
+      Row(
+        children: [
+          const Icon(Icons.lock_outline, size: 16, color: AppColors.textSecondary),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              'Most common context',
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+          ),
+          Text(
+            '•••••',
+            style: ArchiveMobileTypography.body(context).copyWith(
+              color: AppColors.textSecondary,
+              letterSpacing: 2,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: AppSpacing.sm),
+      Text(
+        previewMoreCopy,
+        style: ArchiveMobileTypography.body(context).copyWith(
+          color: AppColors.accentPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ];
   }
 
   Widget _row(BuildContext context, String label, String value) => Row(

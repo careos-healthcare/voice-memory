@@ -1,16 +1,33 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/pressure_retention/pressure_evidence_confidence.dart';
 import '../../features/pressure_retention/pressure_loop_visibility_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'pressure_confidence_label.dart';
 
 /// "Pressure loop visibility" card — simple, non-guilt weekly metrics.
+///
+/// Free users see a basic version (count + chose-to-stop). Pro users see the
+/// full card with the strongest pressure, the streak, and an evidence
+/// confidence label.
 class PressureLoopVisibilityCard extends StatelessWidget {
-  const PressureLoopVisibilityCard({super.key, required this.visibility});
+  const PressureLoopVisibilityCard({
+    super.key,
+    required this.visibility,
+    this.locked = false,
+    this.confidence,
+  });
 
   final PressureLoopVisibility visibility;
+
+  /// When true, only the basic free metrics are shown.
+  final bool locked;
+
+  /// Pro-only evidence confidence; shown only when provided and unlocked.
+  final PressureEvidenceConfidence? confidence;
 
   static const title = 'Your pressure loop, this week';
   static const emptyBody =
@@ -36,19 +53,22 @@ class PressureLoopVisibilityCard extends StatelessWidget {
             ? 'You chose to stop ${_times(visibility.choseToStopCount)}.'
             : "You haven't logged a stop yet — and that's okay.",
       ));
-      final strongest = visibility.strongestPhrase;
-      if (strongest != null) {
-        lines.add(const SizedBox(height: AppSpacing.xs));
-        lines.add(_line(context, 'Showed up most: "$strongest".'));
-      }
-      if (visibility.streakDays > 0) {
-        lines.add(const SizedBox(height: AppSpacing.xs));
-        lines.add(_line(
-          context,
-          'Noticed-the-loop streak: '
-          '${visibility.streakDays} '
-          'day${visibility.streakDays == 1 ? '' : 's'}.',
-        ));
+      // Strongest pressure + streak are part of the full (Pro) view only.
+      if (!locked) {
+        final strongest = visibility.strongestPhrase;
+        if (strongest != null) {
+          lines.add(const SizedBox(height: AppSpacing.xs));
+          lines.add(_line(context, 'Showed up most: "$strongest".'));
+        }
+        if (visibility.streakDays > 0) {
+          lines.add(const SizedBox(height: AppSpacing.xs));
+          lines.add(_line(
+            context,
+            'Noticed-the-loop streak: '
+            '${visibility.streakDays} '
+            'day${visibility.streakDays == 1 ? '' : 's'}.',
+          ));
+        }
       }
     }
 
@@ -66,6 +86,13 @@ class PressureLoopVisibilityCard extends StatelessWidget {
             title,
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
+          if (!locked && confidence != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: PressureConfidenceLabel(confidence: confidence!),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           ...lines,
           const SizedBox(height: AppSpacing.sm),

@@ -1,26 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../billing/archive_entitlement_reader.dart';
+import '../billing/paywall_route_args.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/pressure_retention/archive_reflection_engine.dart';
 import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
+import '../features/pressure_retention/pressure_evidence_confidence.dart';
 import '../features/pressure_retention/pressure_loop_visibility_engine.dart';
+import '../features/pressure_retention/pressure_report_builder.dart';
 import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
 import '../widgets/pressure_retention/pressure_loop_visibility_card.dart';
+import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
+import '../widgets/pressure_retention/pressure_report_share_button.dart';
 import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
 
 /// Pressure loop screen: weekly visibility, recap, and the focused reflection.
+///
+/// The free loop is never blocked — free users can always log moments and see
+/// a basic loop card plus a limited recap preview. Pro unlocks the full
+/// visibility, the full recap, Ask the Archive, evidence confidence, and a
+/// shareable pressure report.
 class PressureInsightsScreen extends StatefulWidget {
   const PressureInsightsScreen({
     super.key,
     this.store,
+    this.entitlementReader,
     @visibleForTesting this.records,
   });
 
   final PressureCheckInStore? store;
+
+  /// Injectable Pro reader; defaults to the live entitlement check.
+  final ArchiveEntitlementReader? entitlementReader;
 
   /// Injected for tests; production loads from [PressureCheckInStore].
   @visibleForTesting
@@ -34,8 +50,10 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _visibilityEngine = PressureLoopVisibilityEngine();
   static const _recapEngine = PressureWeeklyRecapEngine();
   static const _reflectionEngine = ArchiveReflectionEngine();
+  static const _confidenceEngine = PressureEvidenceConfidenceEngine();
+  static const _reportBuilder = PressureReportBuilder();
 
-  late Future<List<PressureCheckInRecord>> _future;
+  late Future<_InsightsData> _future;
 
   @override
   void initState() {
@@ -43,10 +61,24 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     _future = _load();
   }
 
-  Future<List<PressureCheckInRecord>> _load() async {
-    if (widget.records != null) return widget.records!;
-    final store = widget.store ?? PressureCheckInStore.instance();
-    return store.loadAll();
+  Future<_InsightsData> _load() async {
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    final records = widget.records ??
+        await (widget.store ?? PressureCheckInStore.instance()).loadAll();
+    return _InsightsData(records: records, isPro: isPro);
+  }
+
+  void _openPaywall(String title, String body) {
+    context.push(
+      '/subscription',
+      extra: PaywallRouteArgs(
+        previewTitle: title,
+        previewBody: body,
+        sourceRoute: '/pressure-insights',
+      ),
+    );
   }
 
   @override
@@ -59,47 +91,114 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: FutureBuilder<List<PressureCheckInRecord>>(
+        child: FutureBuilder<_InsightsData>(
           future: _future,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Center(child: CircularProgressIndicator());
             }
-            final records = snapshot.data ?? const <PressureCheckInRecord>[];
-            return _buildContent(context, records);
+            final data = snapshot.data ??
+                const _InsightsData(records: [], isPro: false);
+            return _buildContent(context, data);
           },
         ),
       ),
     );
   }
 
-  Widget _buildContent(
-    BuildContext context,
-    List<PressureCheckInRecord> records,
-  ) {
+  Widget _buildContent(BuildContext context, _InsightsData data) {
+    final records = data.records;
+    final isPro = data.isPro;
     final visibility = _visibilityEngine.build(records);
     final recap = _recapEngine.build(records);
+    final confidence = _confidenceEngine.fromRecords(records);
+
+    final children = <Widget>[
+      Text(
+        'What your pressure loop looks like',
+        style: ArchiveMobileTypography.responsivePageTitle(context),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      PressureLoopVisibilityCard(
+        visibility: visibility,
+        locked: !isPro,
+        confidence: isPro ? confidence : null,
+      ),
+      const SizedBox(height: AppSpacing.sm),
+      PressureWeeklyRecapCard(recap: recap, locked: !isPro),
+    ];
+
+    if (!isPro) {
+      children
+        ..add(const SizedBox(height: AppSpacing.sm))
+        ..add(PressureProUpgradeCard(
+          title: 'Unlock your full pressure pattern',
+          body: 'See where this keeps repeating, week after week.',
+          onUnlock: () => _openPaywall(
+            'Unlock your full pressure pattern',
+            'See where this keeps repeating, week after week.',
+          ),
+        ))
+        ..add(const SizedBox(height: AppSpacing.sm))
+        ..add(PressureProUpgradeCard(
+          title: 'Ask your archive what this pressure is trying to prove',
+          body: 'Pro turns your saved moments into evidence-based answers.',
+          onUnlock: () => _openPaywall(
+            'Ask your archive what this pressure is trying to prove',
+            'Pro turns your saved moments into evidence-based answers.',
+          ),
+        ));
+    }
+
+    children
+      ..add(const SizedBox(height: AppSpacing.sm))
+      ..add(AskTheArchiveCard(
+        records: records,
+        engine: _reflectionEngine,
+        locked: !isPro,
+        onUnlock: () => _openPaywall(
+          'Ask your archive what this pressure is trying to prove',
+          'Pro turns your saved moments into evidence-based answers.',
+        ),
+      ));
+
+    if (isPro) {
+      children
+        ..add(const SizedBox(height: AppSpacing.sm))
+        ..add(PressureReportShareButton(
+          reportText: _reportBuilder.toText(
+            records: records,
+            visibility: visibility,
+            recap: recap,
+            confidence: confidence,
+          ),
+        ));
+    } else {
+      children
+        ..add(const SizedBox(height: AppSpacing.sm))
+        ..add(PressureProUpgradeCard(
+          title: 'Keep the evidence trail, not just the moment',
+          body: 'Pro keeps your full pressure report across weeks and months.',
+          onUnlock: () => _openPaywall(
+            'Keep the evidence trail, not just the moment',
+            'Pro keeps your full pressure report across weeks and months.',
+          ),
+        ));
+    }
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'What your pressure loop looks like',
-            style: ArchiveMobileTypography.responsivePageTitle(context),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          PressureLoopVisibilityCard(visibility: visibility),
-          const SizedBox(height: AppSpacing.sm),
-          PressureWeeklyRecapCard(recap: recap),
-          const SizedBox(height: AppSpacing.sm),
-          AskTheArchiveCard(
-            records: records,
-            engine: _reflectionEngine,
-          ),
-        ],
+        children: children,
       ),
     );
   }
+}
+
+class _InsightsData {
+  const _InsightsData({required this.records, required this.isPro});
+
+  final List<PressureCheckInRecord> records;
+  final bool isPro;
 }
