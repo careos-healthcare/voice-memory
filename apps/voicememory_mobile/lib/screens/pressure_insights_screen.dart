@@ -12,6 +12,8 @@ import '../features/pressure_retention/pressure_loop_visibility_engine.dart';
 import '../features/pressure_retention/pressure_micro_experiment_store.dart';
 import '../features/pressure_retention/pressure_pattern_reveal_engine.dart';
 import '../features/pressure_retention/pressure_pattern_reveal_model.dart';
+import '../features/pressure_retention/pressure_pattern_review_engine.dart';
+import '../features/pressure_retention/pressure_pattern_review_model.dart';
 import '../features/pressure_retention/pressure_report_builder.dart';
 import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
 import '../theme/app_colors.dart';
@@ -22,6 +24,7 @@ import '../widgets/pressure_retention/pressure_insights_empty_state.dart';
 import '../widgets/pressure_retention/pressure_loop_visibility_card.dart';
 import '../widgets/pressure_retention/pressure_micro_experiment_card.dart';
 import '../widgets/pressure_retention/pressure_pattern_reveal_card.dart';
+import '../widgets/pressure_retention/pressure_pattern_review_card.dart';
 import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
 import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
@@ -64,6 +67,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _confidenceEngine = PressureEvidenceConfidenceEngine();
   static const _reportBuilder = PressureReportBuilder();
   static const _patternEngine = PressurePatternRevealEngine();
+  static const _reviewEngine = PressurePatternReviewEngine();
 
   late Future<_InsightsData> _future;
 
@@ -187,6 +191,18 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
             onDismiss: () => setState(() => _showMicroExperiment = false),
           ),
         ],
+        const SizedBox(height: AppSpacing.sm),
+      ],
+      if (records.length >= PressurePatternReview.minEntries) ...[
+        PressurePatternReviewCard(
+          review: _reviewEngine.build(records),
+          isPro: isPro,
+          onUnlock: () => _openPaywall(
+            'Unlock full review',
+            'Your full pressure review — costs, changes, and next week\'s '
+                'experiment — is part of ArchiveMe Pro.',
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
       ],
       PressureLoopVisibilityCard(
