@@ -7,10 +7,10 @@ import 'package:voicememory_mobile/billing/value_moment_paywall.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
-  test('paywall headline sells pattern memory', () {
+  test('paywall headline sells testing the loop', () {
     expect(
       ConsumerUiCopy.paywallHeadline,
-      'Keep your pattern memory growing',
+      'Keep testing the loop ArchiveMe found.',
     );
     expect(
       ArchivePaywallVariantConfig.headline(ArchivePaywallVariant.b),
@@ -19,17 +19,26 @@ void main() {
     expect(ValueMomentPaywallLogic.copyHeadline, ConsumerUiCopy.paywallHeadline);
   });
 
-  test('paywall subhead mentions weeks and months', () {
+  test('paywall subhead sells tracking the loop across moments', () {
     expect(
       ConsumerUiCopy.paywallSubhead,
-      'ArchiveMe works best when it can remember moments across weeks and months.',
+      'ArchiveMe works best when it can track the same loop across more moments.',
     );
   });
 
   test('paywall benefits include launch bullets', () {
-    expect(ConsumerUiCopy.paywallBullets, contains('Full pattern memory'));
-    expect(ConsumerUiCopy.paywallBullets, contains('Key moments by day'));
-    expect(ConsumerUiCopy.paywallBullets, contains('Pattern map over time'));
+    expect(
+      ConsumerUiCopy.paywallBullets,
+      contains('Track the loop across more moments'),
+    );
+    expect(
+      ConsumerUiCopy.paywallBullets,
+      contains('See what confirms or challenges it'),
+    );
+    expect(
+      ConsumerUiCopy.paywallBullets,
+      contains('Review what changed over time'),
+    );
     expect(ConsumerUiCopy.paywallBullets, contains('Archive timeline'));
     expect(ConsumerUiCopy.paywallBullets, contains('Monthly review'));
     expect(ConsumerUiCopy.paywallBullets.length, 5);

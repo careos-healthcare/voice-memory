@@ -17,7 +17,10 @@ void main() {
       'Purchases are not available in this TestFlight build yet.',
     );
     expect(PaywallUnavailableFallback.benefits.length, 5);
-    expect(PaywallUnavailableFallback.benefits.first, 'Full pattern memory');
+    expect(
+      PaywallUnavailableFallback.benefits.first,
+      'Track the loop across more moments',
+    );
   });
 
   test('annual appears before monthly when both present', () {
@@ -48,7 +51,7 @@ void main() {
       find.textContaining('Purchases are not available in this TestFlight build yet'),
       findsOneWidget,
     );
-    expect(find.text('Full pattern memory'), findsOneWidget);
+    expect(find.text('Track the loop across more moments'), findsOneWidget);
     expect(find.text('Monthly review'), findsOneWidget);
     expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
     expect(find.text('Done'), findsAtLeast(1));
