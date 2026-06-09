@@ -9,6 +9,9 @@ import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
 import '../features/pressure_retention/pressure_evidence_confidence.dart';
 import '../features/pressure_retention/pressure_loop_visibility_engine.dart';
+import '../features/pressure_retention/pressure_micro_experiment_store.dart';
+import '../features/pressure_retention/pressure_pattern_reveal_engine.dart';
+import '../features/pressure_retention/pressure_pattern_reveal_model.dart';
 import '../features/pressure_retention/pressure_report_builder.dart';
 import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
 import '../theme/app_colors.dart';
@@ -17,6 +20,8 @@ import '../widgets/pressure_retention/ask_the_archive_card.dart';
 import '../widgets/pressure_retention/pressure_first_week_nudge.dart';
 import '../widgets/pressure_retention/pressure_insights_empty_state.dart';
 import '../widgets/pressure_retention/pressure_loop_visibility_card.dart';
+import '../widgets/pressure_retention/pressure_micro_experiment_card.dart';
+import '../widgets/pressure_retention/pressure_pattern_reveal_card.dart';
 import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
 import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
@@ -32,6 +37,7 @@ class PressureInsightsScreen extends StatefulWidget {
     super.key,
     this.store,
     this.entitlementReader,
+    this.microExperimentStore,
     @visibleForTesting this.records,
   });
 
@@ -39,6 +45,9 @@ class PressureInsightsScreen extends StatefulWidget {
 
   /// Injectable Pro reader; defaults to the live entitlement check.
   final ArchiveEntitlementReader? entitlementReader;
+
+  /// Injectable store for the micro-experiment accepted flag.
+  final PressureMicroExperimentStore? microExperimentStore;
 
   /// Injected for tests; production loads from [PressureCheckInStore].
   @visibleForTesting
@@ -54,13 +63,25 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _reflectionEngine = ArchiveReflectionEngine();
   static const _confidenceEngine = PressureEvidenceConfidenceEngine();
   static const _reportBuilder = PressureReportBuilder();
+  static const _patternEngine = PressurePatternRevealEngine();
 
   late Future<_InsightsData> _future;
+
+  bool _showMicroExperiment = false;
+  bool _experimentAccepted = false;
 
   @override
   void initState() {
     super.initState();
     _future = _load();
+  }
+
+  Future<void> _acceptExperiment() async {
+    final store =
+        widget.microExperimentStore ?? PressureMicroExperimentStore.instance();
+    await store.markAccepted();
+    if (!mounted) return;
+    setState(() => _experimentAccepted = true);
   }
 
   Future<_InsightsData> _load() async {
@@ -144,6 +165,28 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       const SizedBox(height: AppSpacing.md),
       if (records.length <= 2) ...[
         const PressureFirstWeekNudge(),
+        const SizedBox(height: AppSpacing.sm),
+      ],
+      if (records.length >= PressurePatternReveal.minEntries) ...[
+        PressurePatternRevealCard(
+          reveal: _patternEngine.build(records),
+          isPro: isPro,
+          onTryInterruption: () =>
+              setState(() => _showMicroExperiment = true),
+          onUnlock: () => _openPaywall(
+            'Unlock full pattern history',
+            'Pro keeps your full pressure pattern history across weeks and '
+                'months.',
+          ),
+        ),
+        if (_showMicroExperiment) ...[
+          const SizedBox(height: AppSpacing.sm),
+          PressureMicroExperimentCard(
+            accepted: _experimentAccepted,
+            onAccept: _acceptExperiment,
+            onDismiss: () => setState(() => _showMicroExperiment = false),
+          ),
+        ],
         const SizedBox(height: AppSpacing.sm),
       ],
       PressureLoopVisibilityCard(
