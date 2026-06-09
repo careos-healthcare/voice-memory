@@ -1,49 +1,105 @@
 import '../api/api_client.dart';
 import '../api/api_exceptions.dart';
 import '../config/app_config.dart';
-import '../models/sync_status.dart';
+import '../product/consumer_ui_copy.dart';
+import '../storage/journal_store.dart';
+import '../storage/mobile_prefs_store.dart';
+import 'capture_save_messages.dart';
 
-class SyncSnapshot {
-  const SyncSnapshot({
-    required this.status,
+class SyncResult {
+  const SyncResult({
+    required this.cloudSyncSucceeded,
     required this.message,
-    required this.lastCheckedAt,
+    this.syncNote,
+    required this.pushed,
+    required this.pulled,
   });
 
-  final SyncStatus status;
+  final bool cloudSyncSucceeded;
   final String message;
-  final DateTime lastCheckedAt;
+  final String? syncNote;
+  final int pushed;
+  final int pulled;
+
+  /// Legacy alias — cloud sync only.
+  bool get ok => cloudSyncSucceeded;
 }
 
-/// Sync status — read-only probe; push/pull APIs not wired in Flutter yet.
 class SyncService {
-  SyncService(this._api);
+  SyncService(
+    this._api,
+    this._journal,
+    this._prefs,
+  );
 
   final ApiClient _api;
+  final JournalStore _journal;
+  final MobilePrefsStore _prefs;
 
-  Future<SyncSnapshot> checkStatus() async {
-    try {
-      await _api.health();
-      try {
-        await _api.listJournal();
-        return SyncSnapshot(
-          status: SyncStatus.synced,
-          message: 'Server reachable; journal API responded (auth may be required).',
-          lastCheckedAt: DateTime.now(),
-        );
-      } on AuthRequiredException {
-        return SyncSnapshot(
-          status: SyncStatus.pendingUpload,
-          message: 'Server reachable — sign in on web to sync journal.',
-          lastCheckedAt: DateTime.now(),
-        );
-      }
-    } catch (e) {
-      return SyncSnapshot(
-        status: SyncStatus.error,
-        message: 'Cannot reach API at ${AppConfig.apiBaseUrl}: $e',
-        lastCheckedAt: DateTime.now(),
+  Future<SyncResult> syncNow() async {
+    if (!AppConfig.isBackendConfigured) {
+      return const SyncResult(
+        cloudSyncSucceeded: false,
+        message: 'Your moments stay on this device.',
+        syncNote: CaptureSaveMessages.syncNotAvailableTestFlight,
+        pushed: 0,
+        pulled: 0,
       );
     }
+    try {
+      final pending = await _journal.pendingSyncQueue();
+      if (pending.isNotEmpty) {
+        await _api.createJournalEntry(pending);
+        for (final e in pending) {
+          await _journal.markSynced(e.id);
+        }
+      }
+
+      final remote = await _api.listJournal();
+      await _journal.mergeRemote(remote);
+
+      await _prefs.setLastSyncAt(DateTime.now());
+      return SyncResult(
+        cloudSyncSucceeded: true,
+        message:
+            'Sync complete. If anything looks duplicated, newer copies were kept.',
+        pushed: pending.length,
+        pulled: remote.length,
+      );
+    } on AuthRequiredException {
+      return const SyncResult(
+        cloudSyncSucceeded: false,
+        message: 'Sign in to sync your archive to the server.',
+        pushed: 0,
+        pulled: 0,
+      );
+    } on BackendNotConfiguredException {
+      return const SyncResult(
+        cloudSyncSucceeded: false,
+        message: 'Your moments stay on this device.',
+        syncNote: CaptureSaveMessages.syncNotAvailableTestFlight,
+        pushed: 0,
+        pulled: 0,
+      );
+    } catch (e) {
+      return SyncResult(
+        cloudSyncSucceeded: false,
+        message: 'Sync did not complete.',
+        syncNote: CaptureSaveMessages.syncNoteFor(e),
+        pushed: 0,
+        pulled: 0,
+      );
+    }
+  }
+
+  Future<String> lastSyncLabel() async {
+    if (!AppConfig.isBackendConfigured) {
+      return ConsumerUiCopy.syncNotAvailableTestFlight;
+    }
+    final raw = await _prefs.lastSyncAt;
+    if (raw == null) return ConsumerUiCopy.syncOnDeviceOnly;
+    final at = DateTime.tryParse(raw);
+    if (at == null) return ConsumerUiCopy.syncOnDeviceOnly;
+    return 'Last sync ${at.toLocal()}';
   }
 }

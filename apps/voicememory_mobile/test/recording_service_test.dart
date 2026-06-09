@@ -9,6 +9,6 @@ void main() {
 
   test('RecordingPhase enum covers permission states', () {
     expect(RecordingPhase.permissionDenied, isNot(RecordingPhase.ready));
-    expect(RecordingPhase.values, contains(RecordingPhase.recording));
+    expect(RecordingPhase.values, contains(RecordingPhase.permissionDenied));
   });
 }

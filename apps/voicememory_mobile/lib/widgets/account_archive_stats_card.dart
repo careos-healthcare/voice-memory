@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+
+import '../features/archive_beliefs/archive_belief_models.dart';
+import '../product/belief_product_copy.dart';
+import '../theme/app_spacing.dart';
+import '../theme/voicememory_cards.dart';
+import '../theme/voicememory_typography.dart';
+
+class AccountArchiveStatsCard extends StatelessWidget {
+  const AccountArchiveStatsCard({super.key, required this.stats});
+
+  final ArchiveBeliefStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: VoiceMemoryCards.standard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            BeliefProductCopy.accountStatsTitle,
+            style: VoiceMemoryTypography.sectionTitleStyle(),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _row(
+            BeliefProductCopy.accountBeliefsIdentified,
+            '${stats.beliefsIdentified}',
+          ),
+          _row(
+            BeliefProductCopy.accountStrongestBelief,
+            stats.strongestBelief ?? '—',
+          ),
+          _row(
+            BeliefProductCopy.accountEvidenceAnalysed,
+            '${stats.reflectionsAnalysed}',
+          ),
+          _row(
+            BeliefProductCopy.accountArchiveAge,
+            stats.archiveAgeDays <= 0
+                ? 'Just started'
+                : '${stats.archiveAgeDays} days',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(label, style: VoiceMemoryTypography.metadataStyle()),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(value, style: VoiceMemoryTypography.bodyStyle()),
+          ),
+        ],
+      ),
+    );
+  }
+}

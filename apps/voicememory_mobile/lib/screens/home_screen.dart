@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../config/app_config.dart';
 import '../services/app_services.dart';
+import '../widgets/memory_resurfacing_section.dart';
 import '../widgets/placeholder_panel.dart';
 import '../widgets/scaffold_shell.dart';
 
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final h = await AppServices.instance.api.health();
       setState(() => _health = h['status']?.toString() ?? 'ok');
     } catch (e) {
-      setState(() => _health = 'unreachable: $e');
+      setState(() => _health = 'unreachable');
     }
   }
 
@@ -38,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const MemoryResurfacingSection(showStats: true),
+          const SizedBox(height: 20),
           PlaceholderPanel(
             title: 'Native MVP',
             body:

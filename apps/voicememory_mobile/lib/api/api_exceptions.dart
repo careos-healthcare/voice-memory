@@ -6,7 +6,7 @@ class ApiException implements Exception {
   final String? code;
 
   @override
-  String toString() => 'ApiException($statusCode, $code): $message';
+  String toString() => message;
 }
 
 class AuthRequiredException extends ApiException {
@@ -17,4 +17,33 @@ class AuthRequiredException extends ApiException {
 class NotImplementedNativeException extends ApiException {
   NotImplementedNativeException(String feature)
       : super('$feature is not implemented in the native app yet.');
+}
+
+class BillingUnavailableException extends ApiException {
+  BillingUnavailableException()
+      : super(
+          'Billing is not available right now.',
+          statusCode: 503,
+          code: 'BILLING_DISABLED',
+        );
+}
+
+class NetworkOfflineException extends ApiException {
+  NetworkOfflineException([String? detail])
+      : super(
+          detail ?? 'You appear to be offline. Your reflection is saved locally.',
+          code: 'OFFLINE',
+        );
+}
+
+/// Thrown when a physical device has no API base URL dart-define.
+class BackendNotConfiguredException extends ApiException {
+  BackendNotConfiguredException()
+      : super(
+          BackendNotConfiguredException.userMessage,
+          code: 'BACKEND_NOT_CONFIGURED',
+        );
+
+  static const userMessage =
+      'Cloud features are unavailable because a backend connection has not been configured.';
 }

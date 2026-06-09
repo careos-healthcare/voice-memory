@@ -22,6 +22,13 @@ class PremiumEntitlements {
         source: 'local_placeholder',
       );
 
+  Map<String, dynamic> toJson() => {
+        'tier': tier == BillingTier.pro ? 'pro' : 'free',
+        'entitlements': entitlementIds,
+        'billingConnected': billingConnected,
+        'source': source,
+      };
+
   factory PremiumEntitlements.fromJson(Map<String, dynamic> json) {
     final tierRaw = json['tier'] as String? ?? 'free';
     final ids = (json['entitlements'] as List<dynamic>? ?? [])

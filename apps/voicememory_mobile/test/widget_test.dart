@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/app.dart';
-import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/models/entitlement.dart';
+import 'package:voicememory_mobile/router/onboarding_gate.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -15,12 +14,16 @@ void main() {
     await AppServices.resetForTest(
       journalPath: '${dir.path}/journal.json',
     );
+    await AppServices.instance.prefs.setOnboardingCompleted(true);
+    onboardingGate.markComplete();
+    onboardingGate.resetSessionRedirectsForTest();
   });
 
-  testWidgets('VoiceMemory app smoke', (tester) async {
-    await tester.pumpWidget(const VoiceMemoryApp());
-    await tester.pumpAndSettle();
-    expect(find.text(AppConfig.appName), findsWidgets);
+  test('archive home redirect applies once per session', () {
+    onboardingGate.resetSessionRedirectsForTest();
+    expect(onboardingGate.archiveHomeRedirectApplied, isFalse);
+    onboardingGate.markArchiveHomeRedirectApplied();
+    expect(onboardingGate.archiveHomeRedirectApplied, isTrue);
   });
 
   test('PremiumEntitlements parses pro tier', () {

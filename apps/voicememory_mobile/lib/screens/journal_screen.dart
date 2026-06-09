@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/sync_status.dart';
+import '../models/journal_entry.dart';
+import '../design/empty_archive_experience.dart';
+import '../features/timeline/timeline_entry_display.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
-import '../widgets/scaffold_shell.dart';
+import '../widgets/pushed_screen_shell.dart';
+import '../widgets/timeline_sync_badge.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key});
@@ -15,74 +18,77 @@ class JournalScreen extends StatefulWidget {
 
 class _JournalScreenState extends State<JournalScreen> {
   var _loading = true;
+  List<JournalEntry> _entries = const [];
 
   @override
   void initState() {
     super.initState();
+    final peek = peekJournalEntriesSync(AppServices.instance.journalStore);
+    if (isIntentionalEmptyArchive(peek)) {
+      _entries = peek;
+      _loading = false;
+    }
     _load();
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
-    await AppServices.instance.journalStore.loadAll();
-    if (mounted) setState(() => _loading = false);
+    final entries = await AppServices.instance.journalStore.loadAll();
+    if (!mounted) return;
+    setState(() {
+      _entries = entries;
+      _loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldShell(
+    return PushedScreenShell(
       title: 'Journal',
       actions: [
         IconButton(
           onPressed: _load,
           icon: const Icon(Icons.refresh),
-          tooltip: 'Refresh list',
+          tooltip: 'Refresh journal list',
         ),
       ],
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : FutureBuilder(
-              future: AppServices.instance.journalStore.loadAll(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('${snapshot.error}'));
-                }
-                final entries = snapshot.data ?? [];
-                if (entries.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('No reflections yet.'),
-                          const SizedBox(height: 16),
-                          FilledButton(
-                            onPressed: () => context.go('/record'),
-                            child: const Text('Record first reflection'),
-                          ),
-                        ],
-                      ),
+          : _entries.isEmpty
+              ? CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: const [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: IntentionalEmptyArchiveView(fillViewport: false),
                     ),
-                  );
-                }
-                return ListView.separated(
+                  ],
+                )
+              : ListView.separated(
                   padding: const EdgeInsets.all(16),
-                  itemCount: entries.length,
+                  itemCount: _entries.length,
                   separatorBuilder: (context, index) => const Divider(height: 1),
                   itemBuilder: (context, index) {
-                    final e = entries[index];
-                    final preview = e.transcript.isEmpty
-                        ? 'Untitled'
-                        : e.transcript.split('\n').first;
+                    final e = _entries[index];
+                    final badge = timelineSyncBadgeLabel(e.syncStatus);
                     return ListTile(
-                      title: Text(
-                        preview,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      title: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              timelineEntryTitle(e),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (badge != null) ...[
+                            const SizedBox(width: 8),
+                            TimelineSyncBadge(label: badge),
+                          ],
+                        ],
                       ),
                       subtitle: Text(
-                        '${e.createdAt.toLocal()} · ${e.durationSeconds}s · ${e.syncStatus.label}',
+                        '${e.createdAt.toLocal()} · ${e.durationSeconds}s',
                         style: const TextStyle(color: AppTheme.muted, fontSize: 12),
                       ),
                       onTap: () => context.go('/entry/${e.id}'),
@@ -96,9 +102,7 @@ class _JournalScreenState extends State<JournalScreen> {
                       ),
                     );
                   },
-                );
-              },
-            ),
+                ),
     );
   }
 }

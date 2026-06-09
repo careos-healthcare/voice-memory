@@ -25,6 +25,11 @@ class ApiErrorMapper {
         );
       case 429:
         return RateLimitedException(message, code: code);
+      case 503:
+        if (code == 'BILLING_DISABLED') {
+          return BillingUnavailableException();
+        }
+        return ApiException(message, statusCode: 503, code: code);
       case 422:
         return ApiException(message, statusCode: 422, code: code ?? 'NO_SPEECH');
       default:
@@ -41,3 +46,4 @@ class RateLimitedException extends ApiException {
   RateLimitedException(super.message, {String? code})
       : super(statusCode: 429, code: code ?? 'RATE_LIMIT');
 }
+

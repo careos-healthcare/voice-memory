@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../config/production_navigation.dart';
 import '../theme/app_theme.dart';
 import 'trust_banner.dart';
 
@@ -9,7 +11,7 @@ class ScaffoldShell extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
-    this.showTrustBanner = true,
+    this.showTrustBanner = !kReleaseMode,
     this.actions,
   });
 
@@ -26,12 +28,14 @@ class ScaffoldShell extends StatelessWidget {
         actions: actions,
       ),
       drawer: const _AppDrawer(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (showTrustBanner) const TrustBanner(),
-          Expanded(child: body),
-        ],
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (showTrustBanner) const TrustBanner(),
+            Expanded(child: body),
+          ],
+        ),
       ),
     );
   }
@@ -54,7 +58,7 @@ class _AppDrawer extends StatelessWidget {
       ('/export', 'Export', Icons.download_outlined),
       ('/delete-account', 'Delete account', Icons.delete_outline),
       ('/settings', 'Settings', Icons.settings_outlined),
-    ];
+    ].where((r) => ProductionNavigation.isNavRouteVisible(r.$1)).toList();
     return Drawer(
       backgroundColor: AppTheme.surface,
       child: ListView(
@@ -63,7 +67,7 @@ class _AppDrawer extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-              'VoiceMemory',
+              'ArchiveMe',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ),

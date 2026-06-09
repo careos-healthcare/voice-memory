@@ -1,9 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
+
+void _recordLog(String message) {
+  debugPrint('RECORD: $message');
+}
 
 enum RecordingPhase {
   idle,
@@ -49,9 +54,16 @@ class RecordingService {
   Stream<int> get durationSeconds => _durationController.stream;
 
   Future<RecordingPhase> checkMicrophone() async {
-    if (_testMode) return RecordingPhase.ready;
-    if (!await _activeRecorder.hasPermission()) {
-      final status = await Permission.microphone.status;
+    if (_testMode) {
+      _recordLog('permission result ready (test mode)');
+      return RecordingPhase.ready;
+    }
+    final hasRecorder = await _activeRecorder.hasPermission();
+    final status = await Permission.microphone.status;
+    _recordLog(
+      'permission result hasRecorder=$hasRecorder status=$status',
+    );
+    if (!hasRecorder) {
       if (status.isPermanentlyDenied) {
         return RecordingPhase.permissionPermanentlyDenied;
       }
@@ -61,10 +73,15 @@ class RecordingService {
   }
 
   Future<RecordingPhase> requestMicrophone() async {
-    if (_testMode) return RecordingPhase.ready;
+    if (_testMode) {
+      _recordLog('permission result ready (test mode)');
+      return RecordingPhase.ready;
+    }
     final result = await Permission.microphone.request();
+    _recordLog('permission result request=$result');
     if (result.isGranted) {
       final has = await _activeRecorder.hasPermission();
+      _recordLog('permission result hasRecorder=$has after grant');
       return has ? RecordingPhase.ready : RecordingPhase.permissionDenied;
     }
     if (result.isPermanentlyDenied) {
@@ -74,8 +91,10 @@ class RecordingService {
   }
 
   Future<void> startRecording() async {
+    _recordLog('start requested');
     final phase = await checkMicrophone();
     if (phase != RecordingPhase.ready) {
+      _recordLog('start failed — microphone phase=$phase');
       throw RecordingException('Microphone not available: $phase');
     }
     final dir = await getTemporaryDirectory();
@@ -90,14 +109,27 @@ class RecordingService {
       _elapsedSeconds += 1;
       _durationController.add(_elapsedSeconds);
     });
-    await _activeRecorder.start(
-      const RecordConfig(
-        encoder: AudioEncoder.aacLc,
-        sampleRate: 44100,
-        numChannels: 1,
-      ),
-      path: path,
-    );
+    try {
+      await _activeRecorder.start(
+        const RecordConfig(
+          encoder: AudioEncoder.aacLc,
+          sampleRate: 44100,
+          numChannels: 1,
+        ),
+        path: path,
+      );
+      _recordLog('start success path=$path');
+    } catch (e, st) {
+      _durationTimer?.cancel();
+      _durationTimer = null;
+      _startedAt = null;
+      _activePath = null;
+      _recordLog('start failed $e');
+      if (kDebugMode) {
+        debugPrint('$st');
+      }
+      throw RecordingException('Could not start recording: $e');
+    }
   }
 
   Future<RecordingResult> stopRecording() async {
