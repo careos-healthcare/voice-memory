@@ -15,7 +15,11 @@ import '../features/pressure_retention/pressure_pattern_reveal_model.dart';
 import '../features/pressure_retention/pressure_pattern_review_engine.dart';
 import '../features/pressure_retention/pressure_pattern_review_model.dart';
 import '../features/pressure_retention/pressure_report_builder.dart';
+import '../features/pressure_retention/pressure_return_trigger_engine.dart';
+import '../features/pressure_retention/pressure_return_trigger_model.dart';
+import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
+import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
@@ -27,6 +31,7 @@ import '../widgets/pressure_retention/pressure_pattern_reveal_card.dart';
 import '../widgets/pressure_retention/pressure_pattern_review_card.dart';
 import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
+import '../widgets/pressure_retention/pressure_return_trigger_card.dart';
 import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
 
 /// Pressure loop screen: weekly visibility, recap, and the focused reflection.
@@ -41,6 +46,7 @@ class PressureInsightsScreen extends StatefulWidget {
     this.store,
     this.entitlementReader,
     this.microExperimentStore,
+    this.returnTriggerStore,
     @visibleForTesting this.records,
   });
 
@@ -51,6 +57,9 @@ class PressureInsightsScreen extends StatefulWidget {
 
   /// Injectable store for the micro-experiment accepted flag.
   final PressureMicroExperimentStore? microExperimentStore;
+
+  /// Injectable store for the return trigger accepted/dismissed state.
+  final PressureReturnTriggerStore? returnTriggerStore;
 
   /// Injected for tests; production loads from [PressureCheckInStore].
   @visibleForTesting
@@ -68,11 +77,13 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _reportBuilder = PressureReportBuilder();
   static const _patternEngine = PressurePatternRevealEngine();
   static const _reviewEngine = PressurePatternReviewEngine();
+  static const _returnTriggerEngine = PressureReturnTriggerEngine();
 
   late Future<_InsightsData> _future;
 
   bool _showMicroExperiment = false;
   bool _experimentAccepted = false;
+  PressureReturnTriggerStatus? _triggerOverride;
 
   @override
   void initState() {
@@ -80,12 +91,32 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     _future = _load();
   }
 
+  PressureMicroExperimentStore? get _experimentStore =>
+      widget.microExperimentStore ??
+      (AppServices.isInitialized
+          ? PressureMicroExperimentStore.instance()
+          : null);
+
+  PressureReturnTriggerStore? get _triggerStore =>
+      widget.returnTriggerStore ??
+      (AppServices.isInitialized ? PressureReturnTriggerStore.instance() : null);
+
   Future<void> _acceptExperiment() async {
-    final store =
-        widget.microExperimentStore ?? PressureMicroExperimentStore.instance();
-    await store.markAccepted();
+    await _experimentStore?.markAccepted();
     if (!mounted) return;
     setState(() => _experimentAccepted = true);
+  }
+
+  Future<void> _acceptReturnTrigger() async {
+    await _triggerStore?.markAccepted();
+    if (!mounted) return;
+    setState(() => _triggerOverride = PressureReturnTriggerStatus.accepted);
+  }
+
+  Future<void> _dismissReturnTrigger() async {
+    await _triggerStore?.markDismissed();
+    if (!mounted) return;
+    setState(() => _triggerOverride = PressureReturnTriggerStatus.dismissed);
   }
 
   Future<_InsightsData> _load() async {
@@ -94,7 +125,16 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     final isPro = await reader.isPro;
     final records = widget.records ??
         await (widget.store ?? PressureCheckInStore.instance()).loadAll();
-    return _InsightsData(records: records, isPro: isPro);
+    final experimentAccepted = await _experimentStore?.accepted ?? false;
+    final triggerAccepted = await _triggerStore?.accepted ?? false;
+    final triggerDismissed = await _triggerStore?.dismissed ?? false;
+    return _InsightsData(
+      records: records,
+      isPro: isPro,
+      experimentAccepted: experimentAccepted,
+      triggerAccepted: triggerAccepted,
+      triggerDismissed: triggerDismissed,
+    );
   }
 
   void _openPaywall(String title, String body) {
@@ -205,6 +245,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
       ],
+      ..._returnTriggerSection(data),
       PressureLoopVisibilityCard(
         visibility: visibility,
         locked: !isPro,
@@ -280,11 +321,44 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       ),
     );
   }
+
+  /// Return trigger card, below the reveal/review/micro-experiment area.
+  /// Session taps (accept/dismiss, accepting the experiment) override the
+  /// loaded state so the card responds immediately.
+  List<Widget> _returnTriggerSection(_InsightsData data) {
+    final trigger = _triggerOverride != null
+        ? PressureReturnTrigger(status: _triggerOverride!)
+        : _returnTriggerEngine.build(
+            entryCount: data.records.length,
+            experimentAccepted: data.experimentAccepted || _experimentAccepted,
+            accepted: data.triggerAccepted,
+            dismissed: data.triggerDismissed,
+          );
+    if (!trigger.show) return const [];
+    return [
+      PressureReturnTriggerCard(
+        trigger: trigger,
+        isPro: data.isPro,
+        onAccept: _acceptReturnTrigger,
+        onDismiss: _dismissReturnTrigger,
+      ),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
 }
 
 class _InsightsData {
-  const _InsightsData({required this.records, required this.isPro});
+  const _InsightsData({
+    required this.records,
+    required this.isPro,
+    this.experimentAccepted = false,
+    this.triggerAccepted = false,
+    this.triggerDismissed = false,
+  });
 
   final List<PressureCheckInRecord> records;
   final bool isPro;
+  final bool experimentAccepted;
+  final bool triggerAccepted;
+  final bool triggerDismissed;
 }

@@ -162,8 +162,10 @@ import '../features/daily_discoveries/daily_discovery_engine.dart';
 import '../features/daily_discoveries/daily_discovery_models.dart';
 import '../features/daily_discoveries/daily_discovery_store.dart';
 import '../services/product_analytics.dart';
+import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
 import '../widgets/first_session/first_session_explanation_card.dart';
+import '../widgets/pressure_retention/pressure_return_trigger_reminder.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
 
@@ -298,6 +300,7 @@ class _RecordScreenState extends State<RecordScreen> {
     _loadReflectionCount();
     _loadFirstThreeJourney();
     _loadFirstLoop();
+    _loadReturnTriggerAccepted();
     final seed = widget.initialPrompt?.trim();
     if (seed != null && seed.isNotEmpty) {
       _selectedPromptLine = seed;
@@ -848,6 +851,15 @@ class _RecordScreenState extends State<RecordScreen> {
       _firstArchiveMilestoneCompleted =
           ExamplePromptVisibility.hasCompletedFirstArchiveMilestone(all);
     });
+  }
+
+  bool _returnTriggerAccepted = false;
+
+  Future<void> _loadReturnTriggerAccepted() async {
+    if (!AppServices.isInitialized) return;
+    final accepted = await PressureReturnTriggerStore.instance().accepted;
+    if (!mounted) return;
+    setState(() => _returnTriggerAccepted = accepted);
   }
 
   Future<void> _loadFirstThreeJourney() async {
@@ -2702,6 +2714,18 @@ class _RecordScreenState extends State<RecordScreen> {
           FirstSessionExplanationCard(
             onLogPressure: () => context.push('/pressure-check-in'),
             onRecord: _start,
+          ),
+        );
+      }
+      // Compact return-trigger reminder for users who accepted it; never
+      // shown alongside the first-session card.
+      if (PressureReturnTriggerReminder.shouldShow(
+        accepted: _returnTriggerAccepted,
+        entryCount: _reflectionCount,
+      )) {
+        actions.add(
+          PressureReturnTriggerReminder(
+            onLogPressure: () => context.push('/pressure-check-in'),
           ),
         );
       }

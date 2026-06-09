@@ -13,6 +13,8 @@ import 'package:voicememory_mobile/widgets/pressure_retention/pressure_first_wee
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_first_win_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_insights_empty_state.dart';
 
+import 'support/memory_pressure_stores.dart';
+
 PressureCheckInRecord _record({String id = 'a'}) {
   return PressureCheckInRecord(
     entryId: id,
@@ -45,6 +47,10 @@ Future<void> _pumpInsights(
     MaterialApp(
       home: PressureInsightsScreen(
         entitlementReader: FakeArchiveEntitlementReader(pro: pro),
+        // In-memory stores: AppServices may be initialized by earlier tests
+        // in this file, and live stores would do file IO in the widget zone.
+        microExperimentStore: MemoryExperimentStore(),
+        returnTriggerStore: MemoryReturnTriggerStore(),
         records: records,
       ),
     ),
