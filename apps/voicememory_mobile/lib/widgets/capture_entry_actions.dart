@@ -12,6 +12,7 @@ class CaptureEntryActions extends StatelessWidget {
     this.onGradient = false,
     this.typeCapturePrompt,
     this.recordButtonLabel,
+    this.onLogPressureMoment,
   });
 
   final VoidCallback onRecord;
@@ -20,6 +21,11 @@ class CaptureEntryActions extends StatelessWidget {
 
   /// Prefills quick text capture when user chose a Start Here prompt first.
   final String? typeCapturePrompt;
+
+  /// When set, surfaces a low-friction "Log pressure moment" entry point.
+  final VoidCallback? onLogPressureMoment;
+
+  static const logPressureMomentLabel = 'Log pressure moment';
 
   void _typeInstead(BuildContext context) {
     final prompt = typeCapturePrompt?.trim();
@@ -54,6 +60,15 @@ class CaptureEntryActions extends StatelessWidget {
             ),
             child: const Text(EmptyArchiveCopy.typeInsteadCta),
           ),
+          if (onLogPressureMoment != null)
+            TextButton(
+              onPressed: onLogPressureMoment,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white.withValues(alpha: 0.92),
+                minimumSize: const Size(48, 44),
+              ),
+              child: const Text(logPressureMomentLabel),
+            ),
         ],
       );
     }
@@ -80,6 +95,18 @@ class CaptureEntryActions extends StatelessWidget {
             label: const Text(EmptyArchiveCopy.typeInsteadCta),
           ),
         ),
+        if (onLogPressureMoment != null) ...[
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onLogPressureMoment,
+              icon: const Icon(Icons.bolt_outlined),
+              label: const Text(logPressureMomentLabel),
+            ),
+          ),
+        ],
       ],
     );
   }

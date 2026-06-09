@@ -2698,6 +2698,7 @@ class _RecordScreenState extends State<RecordScreen> {
         CaptureEntryActions(
           onRecord: _start,
           typeCapturePrompt: selectedPrompt,
+          onLogPressureMoment: () => context.push('/pressure-check-in'),
           recordButtonLabel: suppressDuplicateRecordCtas
               ? ConsumerUiCopy.startRecording
               : (_reflectionCount == 0

@@ -60,6 +60,8 @@ import '../screens/signal_journey_screen.dart';
 import '../screens/signal_review_screen.dart';
 import '../screens/record_screen.dart';
 import '../screens/quick_text_capture_screen.dart';
+import '../screens/pressure_check_in_screen.dart';
+import '../screens/pressure_insights_screen.dart';
 // Timeline/Search screens unreachable — global redirect to Patterns.
 import '../screens/identity_screen.dart';
 import '../screens/life_chapters_screen.dart';
@@ -415,6 +417,16 @@ final GoRouter appRouter = GoRouter(
         final initialText = extra is String ? extra : null;
         return QuickTextCaptureScreen(initialText: initialText);
       },
+    ),
+    GoRoute(
+      path: '/pressure-check-in',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PressureCheckInScreen(),
+    ),
+    GoRoute(
+      path: '/pressure-insights',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PressureInsightsScreen(),
     ),
     GoRoute(
       path: '/journal',
