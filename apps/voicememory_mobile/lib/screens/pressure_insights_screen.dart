@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../billing/archive_entitlement_reader.dart';
 import '../billing/paywall_route_args.dart';
+import '../billing/paywall_source.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/pressure_retention/archive_reflection_engine.dart';
 import '../features/pressure_retention/pressure_check_in_record.dart';
@@ -137,13 +138,18 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     );
   }
 
-  void _openPaywall(String title, String body) {
+  void _openPaywall(
+    String title,
+    String body, {
+    PaywallSource source = PaywallSource.generalPro,
+  }) {
     context.push(
       '/subscription',
       extra: PaywallRouteArgs(
         previewTitle: title,
         previewBody: body,
         sourceRoute: '/pressure-insights',
+        source: source,
       ),
     );
   }
@@ -221,6 +227,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
             'Unlock full pattern history',
             'Pro keeps your full pressure pattern history across weeks and '
                 'months.',
+            source: PaywallSource.pressurePatternHistory,
           ),
         ),
         if (_showMicroExperiment) ...[
@@ -241,6 +248,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
             'Unlock full review',
             'Your full pressure review — costs, changes, and next week\'s '
                 'experiment — is part of ArchiveMe Pro.',
+            source: PaywallSource.pressureReview,
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -264,6 +272,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
           onUnlock: () => _openPaywall(
             'Unlock your full pressure pattern',
             'See where this keeps repeating, week after week.',
+            source: PaywallSource.pressurePatternHistory,
           ),
         ))
         ..add(const SizedBox(height: AppSpacing.sm))
@@ -273,6 +282,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
           onUnlock: () => _openPaywall(
             'Ask your archive what this pressure is trying to prove',
             'Pro turns your saved moments into evidence-based answers.',
+            source: PaywallSource.askArchive,
           ),
         ));
     }
@@ -286,6 +296,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         onUnlock: () => _openPaywall(
           'Ask your archive what this pressure is trying to prove',
           'Pro turns your saved moments into evidence-based answers.',
+          source: PaywallSource.askArchive,
         ),
       ));
 

@@ -11,6 +11,8 @@ class PaywallUnavailableFallback extends StatelessWidget {
   const PaywallUnavailableFallback({
     super.key,
     required this.body,
+    this.headline,
+    this.subhead,
     this.onRestore,
     this.busy = false,
     this.showRetry = false,
@@ -18,6 +20,12 @@ class PaywallUnavailableFallback extends StatelessWidget {
   });
 
   final String body;
+
+  /// Source-aware headline; defaults to the general paywall headline.
+  final String? headline;
+
+  /// Optional source-aware subheadline shown above [body].
+  final String? subhead;
   final VoidCallback? onRestore;
   final bool busy;
   final bool showRetry;
@@ -36,10 +44,18 @@ class PaywallUnavailableFallback extends StatelessWidget {
         children: [
           const SizedBox(height: 8),
           Text(
-            ConsumerUiCopy.paywallHeadline,
+            headline ?? ConsumerUiCopy.paywallHeadline,
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
             textAlign: TextAlign.center,
           ),
+          if (subhead != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              subhead!,
+              style: ArchiveMobileTypography.responsiveBody(context),
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: 10),
           Text(
             body,

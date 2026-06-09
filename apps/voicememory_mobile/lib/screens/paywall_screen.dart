@@ -8,6 +8,7 @@ import '../api/api_error_message.dart';
 import '../config/screenshot_mode.dart';
 import '../billing/archive_paywall_plans.dart';
 import '../billing/paywall_route_args.dart';
+import '../billing/paywall_source.dart';
 import '../design/archive_responsive_layout.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/activation/activation_tracker.dart';
@@ -54,6 +55,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
   _PaywallPlan _selected = _PaywallPlan.yearly;
 
   bool get _billingReady => RevenueCatService.instance.isConfigured;
+
+  /// Source-aware copy variant, when the opener passed a [PaywallSource].
+  PaywallSourceCopy? get _sourceCopy {
+    final source = widget.triggerArgs?.source;
+    return source == null ? null : PaywallSourceCopy.forSource(source);
+  }
 
   String get _unavailableBodyText {
     if (!_billingReady) return ConsumerUiCopy.paywallBillingNotConfigured;
@@ -343,7 +350,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _unavailableBody() {
+    final sourceCopy = _sourceCopy;
     return PaywallUnavailableFallback(
+      headline: sourceCopy?.headline,
+      subhead: sourceCopy?.subheadline,
       body: _unavailableBodyText,
       busy: _busy,
       showRetry: _billingReady,
@@ -447,17 +457,24 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final yearly = _packageFor(_PaywallPlan.yearly);
     final triggerArgs = widget.triggerArgs;
     final valuePreview = triggerArgs?.valuePreview;
-    final headline = triggerArgs?.hasTriggerCopy == true
-        ? triggerArgs!.previewTitle!
-        : ConsumerUiCopy.paywallHeadline;
-    final subhead = triggerArgs?.hasTriggerCopy == true
-        ? triggerArgs!.previewBody!
-        : ConsumerUiCopy.paywallSubhead;
-    final benefitRows = valuePreview != null
-        ? valuePreview.previewBullets
+    final sourceCopy = _sourceCopy;
+    final headline = sourceCopy?.headline ??
+        (triggerArgs?.hasTriggerCopy == true
+            ? triggerArgs!.previewTitle!
+            : ConsumerUiCopy.paywallHeadline);
+    final subhead = sourceCopy?.subheadline ??
+        (triggerArgs?.hasTriggerCopy == true
+            ? triggerArgs!.previewBody!
+            : ConsumerUiCopy.paywallSubhead);
+    final benefitRows = sourceCopy != null
+        ? sourceCopy.bullets
             .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
             .toList()
-        : _benefits;
+        : valuePreview != null
+            ? valuePreview.previewBullets
+                .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
+                .toList()
+            : _benefits;
 
     return ArchiveResponsiveLayout.constrainContent(
       context: context,
@@ -532,9 +549,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     color: VoiceMemoryColors.onPrimary,
                   ),
                 )
-              : const Text(
-                  ConsumerUiCopy.paywallPrimaryCta,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+              : Text(
+                  sourceCopy?.cta ?? ConsumerUiCopy.paywallPrimaryCta,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
         ),
         const SizedBox(height: 10),

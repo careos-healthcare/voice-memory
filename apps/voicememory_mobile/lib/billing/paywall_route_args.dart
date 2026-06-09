@@ -1,3 +1,4 @@
+import 'paywall_source.dart';
 import 'paywall_trigger_model.dart';
 import 'pro_value_preview_engine.dart';
 import 'pro_value_preview_model.dart';
@@ -10,6 +11,7 @@ class PaywallRouteArgs {
     this.previewBody,
     this.sourceRoute,
     this.valuePreview,
+    this.source,
   });
 
   final PaywallTrigger? trigger;
@@ -17,6 +19,9 @@ class PaywallRouteArgs {
   final String? previewBody;
   final String? sourceRoute;
   final ProValuePreview? valuePreview;
+
+  /// Which surface opened the paywall; drives source-aware headline copy.
+  final PaywallSource? source;
 
   factory PaywallRouteArgs.fromContext(PaywallTriggerContext context) {
     final preview = buildProValuePreview(context);
