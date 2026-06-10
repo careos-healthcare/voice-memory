@@ -1,7 +1,7 @@
 name: voicememory_mobile
 description: ArchiveMe native iOS/Android — MVP core loop (record, transcribe, analyze, local journal).
 publish_to: "none"
-version: 0.2.0+15
+version: 0.2.0+16
 
 environment:
   sdk: ^3.10.4
