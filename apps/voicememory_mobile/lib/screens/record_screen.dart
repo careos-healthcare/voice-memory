@@ -173,6 +173,8 @@ import '../billing/suggestion_attribution_event.dart';
 import '../billing/suggestion_attribution_store.dart';
 import '../features/pressure_retention/daily_return_suggestion_engine.dart';
 import '../features/pressure_retention/daily_return_suggestion_model.dart';
+import '../features/pressure_retention/one_small_recording_engine.dart';
+import '../features/pressure_retention/one_small_recording_model.dart';
 import '../features/pressure_retention/personal_return_prompt_engine.dart';
 import '../features/pressure_retention/personal_return_prompt_model.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
@@ -180,6 +182,7 @@ import '../features/pressure_retention/start_here_save_receipt_engine.dart';
 import '../features/pressure_retention/start_here_save_receipt_model.dart';
 import '../widgets/record/start_here_save_receipt_card.dart';
 import '../widgets/record/daily_return_suggestions_card.dart';
+import '../widgets/record/one_small_recording_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
 
@@ -884,6 +887,7 @@ class _RecordScreenState extends State<RecordScreen> {
   PersonalReturnPromptSet? _personalReturnPrompts;
   DailyReturnSuggestionSet _dailyReturnSuggestions =
       DailyReturnSuggestionSet.empty;
+  OneSmallRecording _oneSmallRecording = OneSmallRecording.none();
 
   /// Suggestion-to-Pro funnel state. The pending source is set on tap and
   /// consumed on the next successful save — never blocks recording.
@@ -989,6 +993,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _personalReturnPrompts = const PersonalReturnPromptEngine().build(records);
       _dailyReturnSuggestions =
           const DailyReturnSuggestionEngine().build(records);
+      _oneSmallRecording = const OneSmallRecordingEngine().build(records);
     });
     if (_dailyReturnSuggestions.hasSuggestions &&
         !_dailySuggestionsSeenTracked) {
@@ -2329,6 +2334,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                     ],
                     if (ui == RecordUiState.ready && stack.showStarterPrompts) ...[
+                      if (_oneSmallRecording.hasRecording) ...[
+                        const SizedBox(height: 12),
+                        OneSmallRecordingCard(
+                          recording: _oneSmallRecording,
+                          onRecordThis: (p) {
+                            ActivationTracker
+                                .trackActivationStarterPromptSelected();
+                            setState(() => _selectedPromptLine = p);
+                          },
+                        ),
+                      ],
                       if (_dailyReturnSuggestions.hasSuggestions) ...[
                         const SizedBox(height: 12),
                         DailyReturnSuggestionsCard(
