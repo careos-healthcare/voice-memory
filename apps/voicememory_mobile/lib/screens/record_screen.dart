@@ -166,6 +166,9 @@ import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
 import '../widgets/first_session/first_session_explanation_card.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_reminder.dart';
+import '../features/pressure_retention/personal_return_prompt_engine.dart';
+import '../features/pressure_retention/personal_return_prompt_model.dart';
+import '../features/pressure_retention/pressure_check_in_store.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
 
@@ -301,6 +304,7 @@ class _RecordScreenState extends State<RecordScreen> {
     _loadFirstThreeJourney();
     _loadFirstLoop();
     _loadReturnTriggerAccepted();
+    _loadPersonalReturnPrompts();
     final seed = widget.initialPrompt?.trim();
     if (seed != null && seed.isNotEmpty) {
       _selectedPromptLine = seed;
@@ -854,12 +858,24 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   bool _returnTriggerAccepted = false;
+  PersonalReturnPromptSet? _personalReturnPrompts;
 
   Future<void> _loadReturnTriggerAccepted() async {
     if (!AppServices.isInitialized) return;
     final accepted = await PressureReturnTriggerStore.instance().accepted;
     if (!mounted) return;
     setState(() => _returnTriggerAccepted = accepted);
+  }
+
+  /// Builds "Try saying one of these" from the user's own pressure entries
+  /// when there is evidence; otherwise the section keeps generic prompts.
+  Future<void> _loadPersonalReturnPrompts() async {
+    if (!AppServices.isInitialized) return;
+    final records = await PressureCheckInStore.instance().loadAll();
+    if (!mounted) return;
+    setState(() {
+      _personalReturnPrompts = const PersonalReturnPromptEngine().build(records);
+    });
   }
 
   Future<void> _loadFirstThreeJourney() async {
@@ -2186,6 +2202,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                       ConsumerRecordPromptsSection(
                         selectedPrompt: _selectedPromptLine,
+                        personalPrompts: _personalReturnPrompts,
                         onSelectPrompt: (p) {
                           ActivationTracker
                               .trackActivationStarterPromptSelected();

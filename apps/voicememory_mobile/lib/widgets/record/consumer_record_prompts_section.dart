@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/pressure_retention/personal_return_prompt_model.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -11,13 +12,24 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
     super.key,
     required this.onSelectPrompt,
     this.selectedPrompt,
+    this.personalPrompts,
   });
 
   final ValueChanged<String> onSelectPrompt;
   final String? selectedPrompt;
 
+  /// Prompts built from the user's own entries; when null or empty the
+  /// generic starter prompts are shown.
+  final PersonalReturnPromptSet? personalPrompts;
+
   @override
   Widget build(BuildContext context) {
+    final personalized = personalPrompts?.personalized == true &&
+        personalPrompts!.prompts.isNotEmpty;
+    final prompts = personalized
+        ? personalPrompts!.prompts
+        : ConsumerUiCopy.recordStarterPrompts;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -27,8 +39,18 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
             color: AppColors.accentPrimary,
           ).copyWith(fontWeight: FontWeight.w600),
         ),
+        if (personalized) ...[
+          const SizedBox(height: 2),
+          Text(
+            PersonalReturnPromptSet.personalizedLabel,
+            key: const Key('personal_prompts_label'),
+            style: VoiceMemoryTypography.metadataStyle(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.sm),
-        for (final prompt in ConsumerUiCopy.recordStarterPrompts)
+        for (final prompt in prompts)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.xs),
             child: _StarterCard(
