@@ -176,6 +176,9 @@ import '../features/pressure_retention/daily_return_suggestion_model.dart';
 import '../features/pressure_retention/personal_return_prompt_engine.dart';
 import '../features/pressure_retention/personal_return_prompt_model.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
+import '../features/pressure_retention/start_here_save_receipt_engine.dart';
+import '../features/pressure_retention/start_here_save_receipt_model.dart';
+import '../widgets/record/start_here_save_receipt_card.dart';
 import '../widgets/record/daily_return_suggestions_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
@@ -885,8 +888,12 @@ class _RecordScreenState extends State<RecordScreen> {
   /// Suggestion-to-Pro funnel state. The pending source is set on tap and
   /// consumed on the next successful save — never blocks recording.
   PaywallSource? _pendingSuggestionSource;
+  DailyReturnSuggestion? _pendingTappedSuggestion;
   bool _dailySuggestionsSeenTracked = false;
   PaywallSource? _suggestionProNudgeSource;
+
+  /// Post-save "Saved to your archive" receipt for suggestion-sourced saves.
+  StartHereSaveReceipt? _saveReceipt;
 
   /// The post-save Pro nudge shows at most once per app session.
   static bool _suggestionProNudgeShownThisSession = false;
@@ -907,6 +914,7 @@ class _RecordScreenState extends State<RecordScreen> {
     final source =
         isPrimary ? PaywallSource.startHereToday : PaywallSource.dailySuggestion;
     _pendingSuggestionSource = source;
+    _pendingTappedSuggestion = suggestion;
     final store = _suggestionAttribution;
     if (store == null) return;
     unawaited(
@@ -917,12 +925,15 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  /// Records the saved-from-suggestion event and decides whether the gentle
-  /// post-save Pro nudge may show. Runs only after the save fully succeeded.
+  /// Records the saved-from-suggestion event and shows the "Saved to your
+  /// archive" receipt for suggestion-sourced saves. Runs only after the save
+  /// fully succeeded — generic prompt saves never reach the receipt.
   Future<void> _handleSuggestionAttributionAfterSave(int entryCount) async {
     final source = _pendingSuggestionSource;
+    final tapped = _pendingTappedSuggestion;
     if (source == null) return;
     _pendingSuggestionSource = null;
+    _pendingTappedSuggestion = null;
 
     final store = _suggestionAttribution;
     if (store != null) {
@@ -931,6 +942,17 @@ class _RecordScreenState extends State<RecordScreen> {
       );
     }
 
+    final receipt = const StartHereSaveReceiptEngine().build(
+      source: source,
+      suggestion: tapped,
+    );
+    if (receipt != null) {
+      if (!mounted) return;
+      setState(() => _saveReceipt = receipt);
+      return;
+    }
+
+    // Fallback when no tapped suggestion was retained: the gentle Pro nudge.
     final reader =
         widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
     final isPro = await reader.isPro;
@@ -1818,6 +1840,8 @@ class _RecordScreenState extends State<RecordScreen> {
         _selectedPromptLine = _postSaveFollowUp;
       }
       _postSaveFollowUp = null;
+      _saveReceipt = null;
+      _suggestionProNudgeSource = null;
       _tomorrowReturnLoop = null;
       _returnComparison = null;
       _returnStreak = null;
@@ -1914,6 +1938,8 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() {
       _showPostSaveLoop = false;
       _postSaveFollowUp = null;
+      _saveReceipt = null;
+      _suggestionProNudgeSource = null;
       _tomorrowReturnLoop = null;
       _localSaveTitle = null;
       _syncNote = null;
@@ -2323,6 +2349,10 @@ class _RecordScreenState extends State<RecordScreen> {
                         onSelectPrompt: (p) {
                           ActivationTracker
                               .trackActivationStarterPromptSelected();
+                          // Generic prompt picked — the next save is no
+                          // longer suggestion-sourced, so no receipt.
+                          _pendingSuggestionSource = null;
+                          _pendingTappedSuggestion = null;
                           setState(() => _selectedPromptLine = p);
                         },
                       ),
@@ -2371,7 +2401,14 @@ class _RecordScreenState extends State<RecordScreen> {
                           onSelected: _onLanguageSelected,
                         ),
                       ],
-                      if (_suggestionProNudgeSource != null) ...[
+                      if (_saveReceipt != null) ...[
+                        const SizedBox(height: 16),
+                        StartHereSaveReceiptCard(
+                          receipt: _saveReceipt!,
+                          onDismiss: () =>
+                              setState(() => _saveReceipt = null),
+                        ),
+                      ] else if (_suggestionProNudgeSource != null) ...[
                         const SizedBox(height: 16),
                         _SuggestionProNudgeCard(
                           onUnlock: () {
@@ -3077,9 +3114,20 @@ class _SuggestionProNudgeCard extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              FilledButton(
-                onPressed: onUnlock,
-                child: const Text('Unlock Pro'),
+              Expanded(
+                child: FilledButton(
+                  // Compact override: the app-wide FilledButton theme is
+                  // full-width, which cannot live inside this Row.
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(0, 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                  onPressed: onUnlock,
+                  child: const Text(
+                    'Unlock Pro',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
               TextButton(
