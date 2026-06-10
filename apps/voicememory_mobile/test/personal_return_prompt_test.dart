@@ -56,8 +56,26 @@ const _certaintyPhrases = [
   'certainly',
   'proven',
   'every time',
-  'diagnos',
+  'you are',
+  'you must',
 ];
+
+const _diagnosticWords = [
+  'diagnos',
+  'anxiety',
+  'disorder',
+  'symptom',
+  'depress',
+  'burnout',
+  'condition',
+];
+
+/// Sharper prompts ask about action, fear, cost, avoidance, or triggers.
+final _sharpQuestion = RegExp(
+  r'(what did|what were you afraid|what happened right before'
+  r'|what did you do today)',
+  caseSensitive: false,
+);
 
 void main() {
   const engine = PersonalReturnPromptEngine();
@@ -80,13 +98,14 @@ void main() {
       expect(
         set.prompts,
         contains(
-          'Last time, stopping felt difficult. What made it hard today?',
+          'Last time, stopping felt difficult. '
+          'What were you afraid would happen if you stopped today?',
         ),
       );
       expect(
         set.prompts,
         contains(
-          'You logged evening pressure before. Did it show up again today?',
+          'You logged evening pressure before. What did it cost you today?',
         ),
       );
     });
@@ -100,11 +119,15 @@ void main() {
       expect(
         set.prompts,
         contains(
-          'Last time, resting came with guilt. Did it show up again today?',
+          'Last time, resting came with guilt. '
+          'What did that guilt stop you from doing today?',
         ),
       );
       // No evidence-claims with this little data.
-      expect(set.prompts.join(' '), isNot(contains('Your archive has seen')));
+      expect(
+        set.prompts.join(' '),
+        isNot(contains('pressure has shown up before')),
+      );
     });
 
     test('3+ entries with repeated evidence return personalized prompts', () {
@@ -115,18 +138,43 @@ void main() {
         set.prompts,
         contains(
           'You mentioned deadline and work before. '
-          'Is that still showing up today?',
+          'What did that pressure make you do today?',
         ),
       );
       expect(
         set.prompts,
         contains(
-          'Your archive has seen deadline repeat. '
-          'What happened around that today?',
+          'Deadline pressure has shown up before. '
+          'What did it make you rush, overdo, or avoid today?',
         ),
       );
       expect(set.sourceTerms, contains('deadline'));
       expect(set.sourceTerms, contains('work'));
+    });
+
+    test('evidence prompts ask about action, cost, fear, or trigger', () {
+      final set = engine.build(_richRecords());
+      for (final prompt in set.prompts) {
+        expect(prompt, matches(_sharpQuestion),
+            reason: 'prompt should provoke action/cost/fear/trigger '
+                'reflection: "$prompt"');
+        expect(prompt.toLowerCase(), isNot(contains('still showing up')),
+            reason: 'evidence prompts should go beyond '
+                '"is it still showing up": "$prompt"');
+      }
+    });
+
+    test('prompts stay short enough for the prompt cards', () {
+      final variants = [
+        engine.build([_record(id: 'a', contextIds: const ['evening'])]),
+        engine.build(_richRecords()),
+      ];
+      for (final set in variants) {
+        for (final prompt in set.prompts) {
+          expect(prompt.length, lessThanOrEqualTo(110),
+              reason: 'prompt too long: "$prompt"');
+        }
+      }
     });
 
     test('previous terms appear in prompt copy', () {
@@ -144,14 +192,26 @@ void main() {
       ]);
       expect(set.personalized, isTrue);
       expect(set.prompts.join(' '), isNot(contains('You mentioned')));
-      expect(set.prompts.join(' '), isNot(contains('Your archive has seen')));
+      expect(
+        set.prompts.join(' '),
+        isNot(contains('pressure has shown up before')),
+      );
     });
 
-    test('prompts avoid certainty language in every variant', () {
+    test('prompts avoid certainty and diagnostic language in every variant',
+        () {
       final variants = [
         engine.build(const []),
         engine.build([_record(id: 'a', contextIds: const ['work'])]),
+        engine.build([
+          _record(id: 'a', daysAgo: 1, optionId: 'could_not_stop'),
+          _record(id: 'b', daysAgo: 0, optionId: 'guilty_resting'),
+        ]),
         engine.build(_richRecords()),
+        engine.build([
+          ..._richRecords(),
+          _record(id: 'e', daysAgo: 4, optionId: 'had_to_prove_enough'),
+        ]),
       ];
       for (final set in variants) {
         final copy = [
@@ -159,7 +219,7 @@ void main() {
           set.emptyStateFallback ?? '',
           PersonalReturnPromptSet.personalizedLabel,
         ].join(' ').toLowerCase();
-        for (final phrase in _certaintyPhrases) {
+        for (final phrase in [..._certaintyPhrases, ..._diagnosticWords]) {
           expect(copy, isNot(contains(phrase)),
               reason: 'prompt copy must not contain "$phrase"');
         }

@@ -7,9 +7,10 @@ import 'pressure_personal_evidence_summary_engine.dart';
 /// Builds Record-screen starter prompts from the user's own local evidence.
 ///
 /// Pure and deterministic. Prompts only ever reference what the user actually
-/// logged — repeated terms, contexts, and the last pressure option — and
-/// always ask, never assert ("Is this still showing up today?", never
-/// "you always"). With no evidence it falls back to the generic prompts.
+/// logged — repeated terms, contexts, and the last pressure option — and ask
+/// sharper questions about action, cost, fear, and triggers ("What did that
+/// pressure make you do today?"), never asserting ("you always"). With no
+/// evidence it falls back to the generic prompts.
 class PersonalReturnPromptEngine {
   const PersonalReturnPromptEngine();
 
@@ -22,7 +23,10 @@ class PersonalReturnPromptEngine {
       'Start with whatever happened today — one honest sentence is enough.';
 
   static const String _smallMomentPrompt =
-      'What happened around that today, even in a small way?';
+      'What did the pressure make you do today, even something small?';
+
+  static String _capitalize(String term) =>
+      term.isEmpty ? term : term[0].toUpperCase() + term.substring(1);
 
   PersonalReturnPromptSet build(List<PressureCheckInRecord> records) {
     if (records.isEmpty) {
@@ -54,23 +58,34 @@ class PersonalReturnPromptEngine {
     if (terms.length >= 2) {
       prompts.add(
         'You mentioned ${terms[0]} and ${terms[1]} before. '
-        'Is that still showing up today?',
+        'What did that pressure make you do today?',
       );
     } else {
       prompts.add(
-        'You mentioned ${terms.first} before. Is it still showing up today?',
+        'You mentioned ${terms.first} before. '
+        'What did that pressure make you do today?',
       );
     }
     prompts.add(
-      'Your archive has seen ${terms.first} repeat. '
-      'What happened around that today?',
+      '${_capitalize(terms.first)} pressure has shown up before. '
+      'What did it make you rush, overdo, or avoid today?',
     );
 
     final optionLine = _optionLine(_latestOption(records));
     if (optionLine != null) prompts.add(optionLine);
 
-    final contextLine = _repeatedContextLine(records);
-    if (contextLine != null) prompts.add(contextLine);
+    final contextLabel = _topRepeatedContextLabel(records);
+    if (contextLabel != null) {
+      // Alternate the context question with entry count so the prompt area
+      // doesn't read identically every day.
+      prompts.add(
+        records.length.isOdd
+            ? 'You logged $contextLabel pressure before. '
+                'What did it cost you today?'
+            : 'This came up before around $contextLabel. '
+                'What happened right before it started today?',
+      );
+    }
 
     return PersonalReturnPromptSet(
       prompts: _capped(prompts),
@@ -79,7 +94,8 @@ class PersonalReturnPromptEngine {
     );
   }
 
-  /// 1–2 entries: continue from the last logged moment, gently.
+  /// 1–2 entries: continue from the last logged moment — sharper questions,
+  /// still gentle.
   PersonalReturnPromptSet _gentleContinuation(
     List<PressureCheckInRecord> records,
   ) {
@@ -93,7 +109,8 @@ class PersonalReturnPromptEngine {
       sourceTerms.add(_optionTerm(option)!);
     } else {
       prompts.add(
-        'You logged a pressure moment before. Is it still showing up today?',
+        'You logged a pressure moment before. '
+        'What did that pressure make you do today?',
       );
     }
 
@@ -105,7 +122,7 @@ class PersonalReturnPromptEngine {
 
     prompts
       ..add(_smallMomentPrompt)
-      ..add('What felt different today, if anything?');
+      ..add('What did you avoid today, if anything?');
 
     return PersonalReturnPromptSet(
       prompts: _capped(prompts),
@@ -130,23 +147,25 @@ class PersonalReturnPromptEngine {
     return sorted.first.option;
   }
 
-  /// Continuation line for the last logged option — asks, never asserts.
+  /// Continuation line for the last logged option — asks about fear, cost,
+  /// or action; never asserts.
   String? _optionLine(PressureCheckInOption? option) {
     switch (option) {
       case PressureCheckInOption.couldNotStop:
-        return 'Last time, stopping felt difficult. What made it hard today?';
+        return 'Last time, stopping felt difficult. '
+            'What were you afraid would happen if you stopped today?';
       case PressureCheckInOption.didMoreToNotFeelBehind:
         return 'Last time, feeling behind pushed you to do more. '
-            'Is that still showing up today?';
+            'What did it make you take on today?';
       case PressureCheckInOption.hadToProveEnough:
         return 'Last time, proving yourself came up. '
-            'Is that still showing up today?';
+            'What did you do today to feel like enough?';
       case PressureCheckInOption.guiltyResting:
         return 'Last time, resting came with guilt. '
-            'Did it show up again today?';
+            'What did that guilt stop you from doing today?';
       case PressureCheckInOption.keptGoingToFeelProductive:
         return 'Last time, you kept going to feel productive. '
-            'What happened around that today?';
+            'What did it cost you today?';
       case null:
         return null;
     }
@@ -169,7 +188,7 @@ class PersonalReturnPromptEngine {
     }
   }
 
-  /// "You logged evening pressure before. Did it show up again today?"
+  /// "You logged evening pressure before. What did it cost you today?"
   /// With [requireRepeat], the context must appear in 2+ entries.
   String? _repeatedContextLine(
     List<PressureCheckInRecord> records, {
@@ -179,7 +198,7 @@ class PersonalReturnPromptEngine {
         ? _topRepeatedContextLabel(records)
         : _latestContextLabel(records);
     if (label == null) return null;
-    return 'You logged $label pressure before. Did it show up again today?';
+    return 'You logged $label pressure before. What did it cost you today?';
   }
 
   String? _latestContextLabel(List<PressureCheckInRecord> records) {
