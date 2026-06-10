@@ -166,9 +166,12 @@ import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
 import '../widgets/first_session/first_session_explanation_card.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_reminder.dart';
+import '../features/pressure_retention/daily_return_suggestion_engine.dart';
+import '../features/pressure_retention/daily_return_suggestion_model.dart';
 import '../features/pressure_retention/personal_return_prompt_engine.dart';
 import '../features/pressure_retention/personal_return_prompt_model.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
+import '../widgets/record/daily_return_suggestions_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
 
@@ -191,6 +194,7 @@ class RecordScreen extends StatefulWidget {
     super.key,
     this.initialPrompt,
     this.autostartWithPrompt = false,
+    this.pressureCheckInStore,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -198,6 +202,9 @@ class RecordScreen extends StatefulWidget {
 
   /// When true (and mic is ready), begins recording after applying [initialPrompt].
   final bool autostartWithPrompt;
+
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final PressureCheckInStore? pressureCheckInStore;
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();
@@ -859,6 +866,8 @@ class _RecordScreenState extends State<RecordScreen> {
 
   bool _returnTriggerAccepted = false;
   PersonalReturnPromptSet? _personalReturnPrompts;
+  DailyReturnSuggestionSet _dailyReturnSuggestions =
+      DailyReturnSuggestionSet.empty;
 
   Future<void> _loadReturnTriggerAccepted() async {
     if (!AppServices.isInitialized) return;
@@ -867,14 +876,20 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() => _returnTriggerAccepted = accepted);
   }
 
-  /// Builds "Try saying one of these" from the user's own pressure entries
-  /// when there is evidence; otherwise the section keeps generic prompts.
+  /// Builds "Try saying one of these" and "Worth checking today" from the
+  /// user's own pressure entries when there is evidence; otherwise the
+  /// section keeps generic prompts and no suggestion card is shown.
   Future<void> _loadPersonalReturnPrompts() async {
-    if (!AppServices.isInitialized) return;
-    final records = await PressureCheckInStore.instance().loadAll();
+    if (widget.pressureCheckInStore == null && !AppServices.isInitialized) {
+      return;
+    }
+    final store = widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+    final records = await store.loadAll();
     if (!mounted) return;
     setState(() {
       _personalReturnPrompts = const PersonalReturnPromptEngine().build(records);
+      _dailyReturnSuggestions =
+          const DailyReturnSuggestionEngine().build(records);
     });
   }
 
@@ -2199,6 +2214,18 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                     ],
                     if (ui == RecordUiState.ready && stack.showStarterPrompts) ...[
+                      if (_dailyReturnSuggestions.hasSuggestions) ...[
+                        const SizedBox(height: 12),
+                        DailyReturnSuggestionsCard(
+                          suggestionSet: _dailyReturnSuggestions,
+                          selectedPrompt: _selectedPromptLine,
+                          onSelectPrompt: (p) {
+                            ActivationTracker
+                                .trackActivationStarterPromptSelected();
+                            setState(() => _selectedPromptLine = p);
+                          },
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       ConsumerRecordPromptsSection(
                         selectedPrompt: _selectedPromptLine,

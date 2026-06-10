@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
+import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_micro_experiment_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_return_trigger_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -22,6 +24,25 @@ class MemoryExperimentStore extends PressureMicroExperimentStore {
   @override
   Future<DateTime?> acceptedAt() async =>
       acceptedFlag ? DateTime(2026, 6, 7) : null;
+}
+
+/// In-memory pressure check-in store for widget tests.
+class MemoryPressureCheckInStore extends PressureCheckInStore {
+  MemoryPressureCheckInStore([List<PressureCheckInRecord>? records])
+      : records = records ?? [],
+        super(_dummyPrefs());
+
+  final List<PressureCheckInRecord> records;
+
+  @override
+  Future<void> save(PressureCheckInRecord record) async => records.add(record);
+
+  @override
+  Future<List<PressureCheckInRecord>> loadAll() async {
+    final sorted = [...records]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return sorted;
+  }
 }
 
 /// In-memory return-trigger store for widget tests.

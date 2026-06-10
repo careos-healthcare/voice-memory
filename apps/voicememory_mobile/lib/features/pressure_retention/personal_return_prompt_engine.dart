@@ -126,9 +126,12 @@ class PersonalReturnPromptEngine {
     return sorted.first.option;
   }
 
-  /// Edge line for the last logged option — built for self-recognition,
-  /// never asserting, never shaming.
-  String? _optionLine(PressureCheckInOption? option) {
+  String? _optionLine(PressureCheckInOption? option) =>
+      optionEdgePrompt(option);
+
+  /// Edge line for a logged option — built for self-recognition, never
+  /// asserting, never shaming. Shared with the daily return suggestions.
+  static String? optionEdgePrompt(PressureCheckInOption? option) {
     switch (option) {
       case PressureCheckInOption.couldNotStop:
         return 'Where did stopping feel unsafe today?';
