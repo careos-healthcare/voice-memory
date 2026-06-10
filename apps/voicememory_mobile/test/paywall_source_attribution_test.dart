@@ -7,9 +7,13 @@ import 'package:voicememory_mobile/billing/paywall_attribution_event.dart';
 import 'package:voicememory_mobile/billing/paywall_attribution_store.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
+import 'package:voicememory_mobile/billing/suggestion_attribution_event.dart';
+import 'package:voicememory_mobile/billing/suggestion_attribution_store.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+
+import 'support/memory_pressure_stores.dart';
 
 MobilePrefsStore _dummyPrefs() =>
     MobilePrefsStore(file: File('test/tmp/attribution/unused_prefs.json'));
@@ -52,6 +56,7 @@ Future<PaywallAttributionStore> _openFileStore(String name) async {
 Future<_MemoryAttributionStore> _pumpPaywall(
   WidgetTester tester, {
   PaywallRouteArgs? args,
+  MemorySuggestionAttributionStore? suggestionStore,
 }) async {
   final store = _MemoryAttributionStore();
   await tester.binding.setSurfaceSize(const Size(390, 1800));
@@ -65,6 +70,8 @@ Future<_MemoryAttributionStore> _pumpPaywall(
             builder: (context, state) => PaywallScreen(
               triggerArgs: args,
               attributionStore: store,
+              suggestionAttributionStore:
+                  suggestionStore ?? MemorySuggestionAttributionStore(),
             ),
           ),
         ],
@@ -73,6 +80,15 @@ Future<_MemoryAttributionStore> _pumpPaywall(
   );
   await tester.pumpAndSettle();
   return store;
+}
+
+Future<SuggestionAttributionStore> _openSuggestionFileStore(
+  String name,
+) async {
+  final path = 'test/tmp/attribution/suggestion_$name.json';
+  final file = File(path);
+  if (await file.exists()) await file.delete();
+  return SuggestionAttributionStore.forPrefs(await MobilePrefsStore.open(path));
 }
 
 void main() {
@@ -275,6 +291,231 @@ void main() {
       for (final source in PaywallSource.values) {
         expect(source.id, isNot(contains('VoiceMemory')));
       }
+    });
+  });
+
+  group('Suggestion attribution events', () {
+    test('event types use stable ids and round-trip through fromId', () {
+      expect(
+        SuggestionAttributionEventType.dailySuggestionsSeen.id,
+        'daily_suggestions_seen',
+      );
+      expect(
+        SuggestionAttributionEventType.startHereTapped.id,
+        'start_here_tapped',
+      );
+      expect(
+        SuggestionAttributionEventType.dailySuggestionTapped.id,
+        'daily_suggestion_tapped',
+      );
+      expect(
+        SuggestionAttributionEventType.startHereRecordingSaved.id,
+        'start_here_recording_saved',
+      );
+      expect(
+        SuggestionAttributionEventType.dailySuggestionRecordingSaved.id,
+        'daily_suggestion_recording_saved',
+      );
+      expect(
+        SuggestionAttributionEventType.suggestionToPaywallSeen.id,
+        'suggestion_to_paywall_seen',
+      );
+      expect(
+        SuggestionAttributionEventType.suggestionToPurchaseStarted.id,
+        'suggestion_to_purchase_started',
+      );
+      expect(
+        SuggestionAttributionEventType.suggestionToPurchaseCompleted.id,
+        'suggestion_to_purchase_completed',
+      );
+      for (final type in SuggestionAttributionEventType.values) {
+        expect(SuggestionAttributionEventType.fromId(type.id), type);
+      }
+      expect(SuggestionAttributionEventType.fromId('unknown'), isNull);
+    });
+
+    test('tap and save events map to the right surface', () {
+      expect(
+        SuggestionAttributionEventType.tappedFor(PaywallSource.startHereToday),
+        SuggestionAttributionEventType.startHereTapped,
+      );
+      expect(
+        SuggestionAttributionEventType.tappedFor(PaywallSource.dailySuggestion),
+        SuggestionAttributionEventType.dailySuggestionTapped,
+      );
+      expect(
+        SuggestionAttributionEventType.savedFor(PaywallSource.startHereToday),
+        SuggestionAttributionEventType.startHereRecordingSaved,
+      );
+      expect(
+        SuggestionAttributionEventType.savedFor(PaywallSource.dailySuggestion),
+        SuggestionAttributionEventType.dailySuggestionRecordingSaved,
+      );
+    });
+
+    test('event json round-trips type, suggestion id, and timestamp', () {
+      final event = SuggestionAttributionEvent(
+        type: SuggestionAttributionEventType.startHereTapped,
+        suggestionId: 'recent_option_could_not_stop',
+        at: DateTime(2026, 6, 10, 9, 15),
+      );
+      final restored = SuggestionAttributionEvent.fromJson(event.toJson());
+      expect(restored, isNotNull);
+      expect(restored!.type, SuggestionAttributionEventType.startHereTapped);
+      expect(restored.suggestionId, 'recent_option_could_not_stop');
+      expect(restored.at, DateTime(2026, 6, 10, 9, 15));
+    });
+  });
+
+  group('Suggestion attribution store (prefs-backed)', () {
+    test('start-here tap event is recorded with the suggestion id', () async {
+      final store = await _openSuggestionFileStore('start_here_tap');
+      await store.record(
+        SuggestionAttributionEventType.startHereTapped,
+        suggestionId: 'recent_option_guilty_resting',
+      );
+
+      final events = await store.events();
+      expect(events, hasLength(1));
+      expect(events.single.type.id, 'start_here_tapped');
+      expect(events.single.suggestionId, 'recent_option_guilty_resting');
+    });
+
+    test('daily suggestion tap event is recorded', () async {
+      final store = await _openSuggestionFileStore('daily_tap');
+      await store.record(
+        SuggestionAttributionEventType.dailySuggestionTapped,
+        suggestionId: 'term_deadline',
+      );
+
+      final tapped = await store.eventsOfType(
+        SuggestionAttributionEventType.dailySuggestionTapped,
+      );
+      expect(tapped, hasLength(1));
+      expect(tapped.single.suggestionId, 'term_deadline');
+    });
+
+    test('recording saved from start-here records attribution', () async {
+      final store = await _openSuggestionFileStore('start_here_saved');
+      await store.record(
+        SuggestionAttributionEventType.savedFor(PaywallSource.startHereToday),
+      );
+
+      final saved = await store.eventsOfType(
+        SuggestionAttributionEventType.startHereRecordingSaved,
+      );
+      expect(saved, hasLength(1));
+      expect(saved.single.type.id, 'start_here_recording_saved');
+    });
+
+    test('event log is capped at maxEvents', () async {
+      final store = await _openSuggestionFileStore('cap');
+      for (var i = 0; i < SuggestionAttributionStore.maxEvents + 5; i++) {
+        await store.record(
+          SuggestionAttributionEventType.dailySuggestionsSeen,
+          now: DateTime(2026, 1, 1).add(Duration(minutes: i)),
+        );
+      }
+      final events = await store.events();
+      expect(events, hasLength(SuggestionAttributionStore.maxEvents));
+      expect(
+        events.first.at,
+        DateTime(2026, 1, 1).add(const Duration(minutes: 5)),
+      );
+    });
+  });
+
+  group('Suggestion-to-Pro paywall funnel', () {
+    testWidgets('start-here sourced paywall records suggestion_to_paywall_seen',
+        (tester) async {
+      final suggestionStore = MemorySuggestionAttributionStore();
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(
+          source: PaywallSource.startHereToday,
+          sourceRoute: '/record',
+        ),
+        suggestionStore: suggestionStore,
+      );
+
+      final seen = suggestionStore.recorded
+          .where(
+            (e) =>
+                e.type == SuggestionAttributionEventType.suggestionToPaywallSeen,
+          )
+          .toList();
+      expect(seen, hasLength(1));
+    });
+
+    testWidgets(
+        'daily suggestion sourced paywall records suggestion_to_paywall_seen',
+        (tester) async {
+      final suggestionStore = MemorySuggestionAttributionStore();
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
+        suggestionStore: suggestionStore,
+      );
+
+      expect(
+        suggestionStore.recorded.map((e) => e.type),
+        contains(SuggestionAttributionEventType.suggestionToPaywallSeen),
+      );
+    });
+
+    testWidgets('non-suggestion sources record no suggestion funnel events',
+        (tester) async {
+      final suggestionStore = MemorySuggestionAttributionStore();
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.pressureReview),
+        suggestionStore: suggestionStore,
+      );
+
+      expect(suggestionStore.recorded, isEmpty);
+    });
+  });
+
+  group('Suggestion Pro trigger rule', () {
+    test('Pro users are never shown the suggestion-trigger paywall', () {
+      expect(
+        SuggestionProTrigger.shouldShow(
+          isPro: true,
+          entryCount: 10,
+          alreadyShownThisSession: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('requires at least three entries', () {
+      expect(
+        SuggestionProTrigger.shouldShow(
+          isPro: false,
+          entryCount: 2,
+          alreadyShownThisSession: false,
+        ),
+        isFalse,
+      );
+      expect(
+        SuggestionProTrigger.shouldShow(
+          isPro: false,
+          entryCount: 3,
+          alreadyShownThisSession: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('shows at most once per session', () {
+      expect(
+        SuggestionProTrigger.shouldShow(
+          isPro: false,
+          entryCount: 5,
+          alreadyShownThisSession: true,
+        ),
+        isFalse,
+      );
     });
   });
 }

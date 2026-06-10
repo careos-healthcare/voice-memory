@@ -11,6 +11,8 @@ import '../billing/paywall_attribution_event.dart';
 import '../billing/paywall_attribution_store.dart';
 import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
+import '../billing/suggestion_attribution_event.dart';
+import '../billing/suggestion_attribution_store.dart';
 import '../design/archive_responsive_layout.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/activation/activation_tracker.dart';
@@ -27,13 +29,21 @@ import '../widgets/archive_paywall/paywall_unavailable_fallback.dart';
 
 /// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
 class PaywallScreen extends StatefulWidget {
-  const PaywallScreen({super.key, this.triggerArgs, this.attributionStore});
+  const PaywallScreen({
+    super.key,
+    this.triggerArgs,
+    this.attributionStore,
+    this.suggestionAttributionStore,
+  });
 
   /// Trigger-specific preview copy when opened from a memory limit gate.
   final PaywallRouteArgs? triggerArgs;
 
   /// Injectable for tests; defaults to the live prefs-backed store.
   final PaywallAttributionStore? attributionStore;
+
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final SuggestionAttributionStore? suggestionAttributionStore;
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -74,17 +84,35 @@ class _PaywallScreenState extends State<PaywallScreen> {
       widget.attributionStore ??
       (AppServices.isInitialized ? PaywallAttributionStore.instance() : null);
 
+  /// True when this paywall was opened from a daily suggestion surface.
+  bool get _fromSuggestion =>
+      _attributionSource == PaywallSource.dailySuggestion ||
+      _attributionSource == PaywallSource.startHereToday;
+
+  SuggestionAttributionStore? get _suggestionAttribution =>
+      widget.suggestionAttributionStore ??
+      (AppServices.isInitialized ? SuggestionAttributionStore.instance() : null);
+
   /// Fire-and-forget local attribution write; no-op when services are absent.
-  void _recordAttribution(PaywallAttributionEventType type) {
+  /// Suggestion-sourced opens also log the suggestion-to-Pro funnel stage.
+  void _recordAttribution(
+    PaywallAttributionEventType type, {
+    SuggestionAttributionEventType? suggestionStage,
+  }) {
     final store = _attribution;
-    if (store == null) return;
-    unawaited(
-      store.record(
-        type,
-        source: _attributionSource,
-        sourceRoute: widget.triggerArgs?.sourceRoute,
-      ),
-    );
+    if (store != null) {
+      unawaited(
+        store.record(
+          type,
+          source: _attributionSource,
+          sourceRoute: widget.triggerArgs?.sourceRoute,
+        ),
+      );
+    }
+    if (suggestionStage == null || !_fromSuggestion) return;
+    final suggestionStore = _suggestionAttribution;
+    if (suggestionStore == null) return;
+    unawaited(suggestionStore.record(suggestionStage));
   }
 
   String get _unavailableBodyText {
@@ -106,7 +134,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   void initState() {
     super.initState();
-    _recordAttribution(PaywallAttributionEventType.paywallSeen);
+    _recordAttribution(
+      PaywallAttributionEventType.paywallSeen,
+      suggestionStage: SuggestionAttributionEventType.suggestionToPaywallSeen,
+    );
     _load();
   }
 
@@ -233,7 +264,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Future<void> _continue() async {
-    _recordAttribution(PaywallAttributionEventType.purchaseStarted);
+    _recordAttribution(
+      PaywallAttributionEventType.purchaseStarted,
+      suggestionStage:
+          SuggestionAttributionEventType.suggestionToPurchaseStarted,
+    );
     final package = _packageFor(_selected);
     if (package == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -254,7 +289,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       final ent = await AppServices.instance.billing.purchaseNative(package);
       if (ent.isPro) {
-        _recordAttribution(PaywallAttributionEventType.purchaseCompleted);
+        _recordAttribution(
+          PaywallAttributionEventType.purchaseCompleted,
+          suggestionStage:
+              SuggestionAttributionEventType.suggestionToPurchaseCompleted,
+        );
         await First25UserMetrics.trackPaywallPurchased(
           surface: 'paywall_screen',
           period: period,

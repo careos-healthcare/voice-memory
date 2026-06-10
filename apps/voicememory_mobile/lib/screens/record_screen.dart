@@ -166,6 +166,11 @@ import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
 import '../widgets/first_session/first_session_explanation_card.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_reminder.dart';
+import '../billing/archive_entitlement_reader.dart';
+import '../billing/paywall_route_args.dart';
+import '../billing/paywall_source.dart';
+import '../billing/suggestion_attribution_event.dart';
+import '../billing/suggestion_attribution_store.dart';
 import '../features/pressure_retention/daily_return_suggestion_engine.dart';
 import '../features/pressure_retention/daily_return_suggestion_model.dart';
 import '../features/pressure_retention/personal_return_prompt_engine.dart';
@@ -195,6 +200,8 @@ class RecordScreen extends StatefulWidget {
     this.initialPrompt,
     this.autostartWithPrompt = false,
     this.pressureCheckInStore,
+    this.suggestionAttributionStore,
+    this.entitlementReader,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -205,6 +212,12 @@ class RecordScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live prefs-backed store.
   final PressureCheckInStore? pressureCheckInStore;
+
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final SuggestionAttributionStore? suggestionAttributionStore;
+
+  /// Injectable for tests; defaults to the live billing-backed reader.
+  final ArchiveEntitlementReader? entitlementReader;
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();
@@ -869,6 +882,70 @@ class _RecordScreenState extends State<RecordScreen> {
   DailyReturnSuggestionSet _dailyReturnSuggestions =
       DailyReturnSuggestionSet.empty;
 
+  /// Suggestion-to-Pro funnel state. The pending source is set on tap and
+  /// consumed on the next successful save — never blocks recording.
+  PaywallSource? _pendingSuggestionSource;
+  bool _dailySuggestionsSeenTracked = false;
+  PaywallSource? _suggestionProNudgeSource;
+
+  /// The post-save Pro nudge shows at most once per app session.
+  static bool _suggestionProNudgeShownThisSession = false;
+
+  @visibleForTesting
+  static void resetSuggestionProNudgeSessionForTest() {
+    _suggestionProNudgeShownThisSession = false;
+  }
+
+  SuggestionAttributionStore? get _suggestionAttribution =>
+      widget.suggestionAttributionStore ??
+      (AppServices.isInitialized ? SuggestionAttributionStore.instance() : null);
+
+  void _onDailySuggestionTapped(
+    DailyReturnSuggestion suggestion,
+    bool isPrimary,
+  ) {
+    final source =
+        isPrimary ? PaywallSource.startHereToday : PaywallSource.dailySuggestion;
+    _pendingSuggestionSource = source;
+    final store = _suggestionAttribution;
+    if (store == null) return;
+    unawaited(
+      store.record(
+        SuggestionAttributionEventType.tappedFor(source),
+        suggestionId: suggestion.id,
+      ),
+    );
+  }
+
+  /// Records the saved-from-suggestion event and decides whether the gentle
+  /// post-save Pro nudge may show. Runs only after the save fully succeeded.
+  Future<void> _handleSuggestionAttributionAfterSave(int entryCount) async {
+    final source = _pendingSuggestionSource;
+    if (source == null) return;
+    _pendingSuggestionSource = null;
+
+    final store = _suggestionAttribution;
+    if (store != null) {
+      unawaited(
+        store.record(SuggestionAttributionEventType.savedFor(source)),
+      );
+    }
+
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    if (!SuggestionProTrigger.shouldShow(
+      isPro: isPro,
+      entryCount: entryCount,
+      alreadyShownThisSession: _suggestionProNudgeShownThisSession,
+    )) {
+      return;
+    }
+    _suggestionProNudgeShownThisSession = true;
+    if (!mounted) return;
+    setState(() => _suggestionProNudgeSource = source);
+  }
+
   Future<void> _loadReturnTriggerAccepted() async {
     if (!AppServices.isInitialized) return;
     final accepted = await PressureReturnTriggerStore.instance().accepted;
@@ -891,6 +968,16 @@ class _RecordScreenState extends State<RecordScreen> {
       _dailyReturnSuggestions =
           const DailyReturnSuggestionEngine().build(records);
     });
+    if (_dailyReturnSuggestions.hasSuggestions &&
+        !_dailySuggestionsSeenTracked) {
+      _dailySuggestionsSeenTracked = true;
+      final store = _suggestionAttribution;
+      if (store != null) {
+        unawaited(
+          store.record(SuggestionAttributionEventType.dailySuggestionsSeen),
+        );
+      }
+    }
   }
 
   Future<void> _loadFirstThreeJourney() async {
@@ -1247,6 +1334,8 @@ class _RecordScreenState extends State<RecordScreen> {
       _showPostSaveLoop = cloudOk;
       _postSaveFollowUp = null;
     });
+
+    unawaited(_handleSuggestionAttributionAfterSave(all.length));
 
     // Keep a long-term Key Moment so this reflection (or closed loop) is easy
     // to find again by day. Original text is preserved verbatim.
@@ -2219,6 +2308,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         DailyReturnSuggestionsCard(
                           suggestionSet: _dailyReturnSuggestions,
                           selectedPrompt: _selectedPromptLine,
+                          onSuggestionTap: _onDailySuggestionTapped,
                           onSelectPrompt: (p) {
                             ActivationTracker
                                 .trackActivationStarterPromptSelected();
@@ -2279,6 +2369,27 @@ class _RecordScreenState extends State<RecordScreen> {
                           languageCode: _languageCode,
                           detectedCode: _detectedLanguageCode,
                           onSelected: _onLanguageSelected,
+                        ),
+                      ],
+                      if (_suggestionProNudgeSource != null) ...[
+                        const SizedBox(height: 16),
+                        _SuggestionProNudgeCard(
+                          onUnlock: () {
+                            final source = _suggestionProNudgeSource!;
+                            setState(
+                              () => _suggestionProNudgeSource = null,
+                            );
+                            context.push(
+                              '/subscription',
+                              extra: PaywallRouteArgs(
+                                source: source,
+                                sourceRoute: '/record',
+                              ),
+                            );
+                          },
+                          onDismiss: () => setState(
+                            () => _suggestionProNudgeSource = null,
+                          ),
                         ),
                       ],
                       if (stack.showInputQualityCoach) ...[
@@ -2918,6 +3029,68 @@ class _RecordScreenState extends State<RecordScreen> {
       default:
         return 'Recording';
     }
+  }
+}
+
+/// Gentle post-save Pro nudge shown after a recording that started from a
+/// daily suggestion. Dismissible, shows at most once per session, and never
+/// appears for Pro users or before three saved entries.
+class _SuggestionProNudgeCard extends StatelessWidget {
+  const _SuggestionProNudgeCard({
+    required this.onUnlock,
+    required this.onDismiss,
+  });
+
+  final VoidCallback onUnlock;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('suggestion_pro_nudge_card'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: VoiceMemoryColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Keep your daily archive prompts improving',
+            style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'ArchiveMe uses what you record to surface sharper things '
+            'worth checking each day.',
+            style: TextStyle(
+              fontSize: 13,
+              color: VoiceMemoryColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              FilledButton(
+                onPressed: onUnlock,
+                child: const Text('Unlock Pro'),
+              ),
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: onDismiss,
+                child: const Text('Not now'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 

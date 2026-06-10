@@ -6,6 +6,8 @@ enum PaywallSource {
   pressurePatternHistory(id: 'pressure_pattern_history'),
   pressureReview(id: 'pressure_review'),
   askArchive(id: 'ask_archive'),
+  dailySuggestion(id: 'daily_suggestion'),
+  startHereToday(id: 'start_here_today'),
   generalPro(id: 'general_pro');
 
   const PaywallSource({required this.id});
@@ -66,6 +68,21 @@ class PaywallSourceCopy {
     cta: unlockProCta,
   );
 
+  /// Daily Return Suggestions + Start here today share the daily-prompt pitch:
+  /// the user just experienced the prompts, so the pitch is about keeping them
+  /// improving — not a generic Pro list.
+  static const dailySuggestions = PaywallSourceCopy(
+    headline: 'Keep your daily archive prompts improving',
+    subheadline: 'ArchiveMe uses what you record to surface sharper things '
+        'worth checking each day.',
+    bullets: [
+      'See the patterns behind your daily prompts',
+      'Keep evidence from past recordings connected',
+      'Ask your archive what keeps repeating',
+    ],
+    cta: 'Unlock Pro',
+  );
+
   static const generalPro = PaywallSourceCopy(
     headline: 'Unlock ArchiveMe Pro',
     subheadline: 'Turn saved moments into patterns, reviews, and evidence you '
@@ -81,6 +98,9 @@ class PaywallSourceCopy {
         return pressure;
       case PaywallSource.askArchive:
         return askArchive;
+      case PaywallSource.dailySuggestion:
+      case PaywallSource.startHereToday:
+        return dailySuggestions;
       case PaywallSource.generalPro:
         return generalPro;
     }

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
+import 'package:voicememory_mobile/billing/suggestion_attribution_event.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
@@ -74,9 +76,13 @@ final _edgeTitle = RegExp(
 
 String _allCopy(DailyReturnSuggestionSet set) => [
       set.label,
+      set.recommendationReason,
       DailyReturnSuggestionSet.heading,
       DailyReturnSuggestionSet.subLabel,
       DailyReturnSuggestionSet.evidenceLabel,
+      DailyReturnSuggestionSet.primaryHeading,
+      DailyReturnSuggestionSet.whyLabel,
+      DailyReturnSuggestionSet.othersHeading,
       for (final s in set.suggestions) ...[s.title, s.prompt, s.reason],
     ].join(' ').toLowerCase();
 
@@ -178,6 +184,94 @@ void main() {
       expect(set.suggestions.length, lessThanOrEqualTo(4));
     });
 
+    test('recommendation picks the latest option suggestion first', () {
+      final set = engine.build(_richRecords());
+      expect(set.recommendedSuggestion!.id, 'recent_option_guilty_resting');
+      expect(set.recommendationReason, 'This showed up most recently.');
+      expect(
+        set.otherSuggestions.length,
+        set.suggestions.length - 1,
+      );
+      expect(
+        set.otherSuggestions.map((s) => s.id),
+        isNot(contains('recent_option_guilty_resting')),
+      );
+    });
+
+    test('snippet-backed suggestion wins when no latest option exists', () {
+      // Unknown option ids mean no recent-option candidate exists.
+      final set = engine.build([
+        _record(
+          id: 'a',
+          daysAgo: 2,
+          optionId: 'mystery',
+          contextIds: const ['work'],
+          fear: 'Missing the deadline',
+        ),
+        _record(
+          id: 'b',
+          daysAgo: 1,
+          optionId: 'mystery',
+          contextIds: const ['work'],
+          fear: 'The deadline slipping',
+        ),
+        _record(
+          id: 'c',
+          daysAgo: 0,
+          optionId: 'mystery',
+          contextIds: const ['work'],
+        ),
+      ]);
+      final recommended = set.recommendedSuggestion!;
+      expect(recommended.evidenceSnippet, isNotNull);
+      expect(
+        set.recommendationReason,
+        'This uses your own words from a recent entry.',
+      );
+    });
+
+    test('repeated context wins when no option or snippet exists', () {
+      final set = engine.build([
+        _record(
+          id: 'a',
+          daysAgo: 1,
+          optionId: 'mystery',
+          contextIds: const ['work'],
+        ),
+        _record(
+          id: 'b',
+          daysAgo: 0,
+          optionId: 'mystery',
+          contextIds: const ['work'],
+        ),
+      ]);
+      expect(set.recommendedSuggestion!.id, 'context_work');
+      expect(
+        set.recommendationReason,
+        'This has repeated across recent entries.',
+      );
+    });
+
+    test('filler is never recommended over real evidence', () {
+      final sparse = engine.build([_record(id: 'a')]);
+      expect(sparse.recommendedSuggestion!.id, isNot('todays_pressure'));
+
+      // Filler leads only when it is genuinely all there is.
+      final fillerOnly = engine.build([
+        _record(id: 'a', optionId: 'mystery'),
+      ]);
+      expect(
+        fillerOnly.suggestions.map((s) => s.id).toList(),
+        ['todays_pressure'],
+      );
+      expect(fillerOnly.recommendedSuggestion!.id, 'todays_pressure');
+      expect(
+        fillerOnly.recommendationReason,
+        'One honest sentence is enough.',
+      );
+      expect(fillerOnly.otherSuggestions, isEmpty);
+    });
+
     test('suggestions carry the user\'s own words as evidence snippets', () {
       final set = engine.build(_richRecords());
       final deadlineRow =
@@ -262,6 +356,7 @@ void main() {
       WidgetTester tester, {
       required DailyReturnSuggestionSet suggestionSet,
       ValueChanged<String>? onSelect,
+      void Function(DailyReturnSuggestion, bool)? onSuggestionTap,
     }) async {
       await tester.binding.setSurfaceSize(const Size(390, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -273,6 +368,7 @@ void main() {
               child: DailyReturnSuggestionsCard(
                 suggestionSet: suggestionSet,
                 onSelectPrompt: onSelect ?? (_) {},
+                onSuggestionTap: onSuggestionTap,
               ),
             ),
           ),
@@ -306,6 +402,99 @@ void main() {
       await tester.tap(find.text(set.suggestions.first.title));
       await tester.pump();
       expect(selected, set.suggestions.first.prompt);
+    });
+
+    testWidgets('renders primary recommendation and other suggestions',
+        (tester) async {
+      final set = engine.build(_richRecords());
+      await pumpCard(tester, suggestionSet: set);
+
+      expect(find.text('Start here today'), findsOneWidget);
+      expect(find.textContaining('Why this one:'), findsOneWidget);
+      expect(find.text('Other things worth checking'), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_return_primary_recommendation')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('single suggestion shows only the primary block',
+        (tester) async {
+      final fillerOnly = engine.build([
+        _record(id: 'a', optionId: 'mystery'),
+      ]);
+      await pumpCard(tester, suggestionSet: fillerOnly);
+
+      expect(find.text('Start here today'), findsOneWidget);
+      expect(find.text('Other things worth checking'), findsNothing);
+    });
+
+    testWidgets('tapping the primary recommendation selects its prompt',
+        (tester) async {
+      String? selected;
+      final set = engine.build(_richRecords());
+      await pumpCard(tester, suggestionSet: set, onSelect: (p) => selected = p);
+
+      await tester.tap(
+        find.byKey(const Key('daily_return_primary_recommendation')),
+      );
+      await tester.pump();
+      expect(selected, set.recommendedSuggestion!.prompt);
+    });
+
+    testWidgets('tapping a secondary suggestion selects its prompt',
+        (tester) async {
+      String? selected;
+      final set = engine.build(_richRecords());
+      await pumpCard(tester, suggestionSet: set, onSelect: (p) => selected = p);
+
+      final secondary = set.otherSuggestions.first;
+      await tester.tap(find.text(secondary.title));
+      await tester.pump();
+      expect(selected, secondary.prompt);
+    });
+
+    testWidgets('primary tap reports the suggestion as Start here today',
+        (tester) async {
+      DailyReturnSuggestion? tapped;
+      bool? primary;
+      final set = engine.build(_richRecords());
+      await pumpCard(
+        tester,
+        suggestionSet: set,
+        onSuggestionTap: (s, isPrimary) {
+          tapped = s;
+          primary = isPrimary;
+        },
+      );
+
+      await tester.tap(
+        find.byKey(const Key('daily_return_primary_recommendation')),
+      );
+      await tester.pump();
+      expect(tapped!.id, set.recommendedSuggestion!.id);
+      expect(primary, isTrue);
+    });
+
+    testWidgets('secondary tap reports the suggestion as not primary',
+        (tester) async {
+      DailyReturnSuggestion? tapped;
+      bool? primary;
+      final set = engine.build(_richRecords());
+      await pumpCard(
+        tester,
+        suggestionSet: set,
+        onSuggestionTap: (s, isPrimary) {
+          tapped = s;
+          primary = isPrimary;
+        },
+      );
+
+      final secondary = set.otherSuggestions.first;
+      await tester.tap(find.text(secondary.title));
+      await tester.pump();
+      expect(tapped!.id, secondary.id);
+      expect(primary, isFalse);
     });
 
     testWidgets('renders "From your archive:" when a snippet exists',
@@ -365,6 +554,7 @@ void main() {
     Future<void> pumpRecordScreen(
       WidgetTester tester, {
       MemoryPressureCheckInStore? store,
+      MemorySuggestionAttributionStore? suggestionStore,
     }) async {
       await tester.binding.setSurfaceSize(const Size(390, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -372,7 +562,12 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: RecordScreen(pressureCheckInStore: store),
+            body: RecordScreen(
+              pressureCheckInStore: store,
+              suggestionAttributionStore:
+                  suggestionStore ?? MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
           ),
         ),
       );
@@ -423,6 +618,70 @@ void main() {
         findsNothing,
       );
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('records seen and tap attribution events', (tester) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          JournalEntry(
+            id: 'e1',
+            createdAt: DateTime(2026, 6, 1, 12),
+            transcript:
+                'A long enough transcript to count as a saved reflection.',
+            durationSeconds: 30,
+            reflection: const Reflection(
+              mood: 'thoughtful',
+              emotionalIntensity: 2,
+              recurringThemes: ['work'],
+              exactLanguagePattern: 'pattern',
+              concreteObservation: 'Work pressure showed up again today.',
+              repeatedSignal: 'signal',
+            ),
+          ),
+        );
+      });
+
+      final suggestionStore = MemorySuggestionAttributionStore();
+      await pumpRecordScreen(
+        tester,
+        store: MemoryPressureCheckInStore(_richRecords()),
+        suggestionStore: suggestionStore,
+      );
+
+      expect(
+        suggestionStore.recorded.map((e) => e.type),
+        contains(SuggestionAttributionEventType.dailySuggestionsSeen),
+      );
+
+      // Tap the primary "Start here today" recommendation.
+      final primary =
+          find.byKey(const Key('daily_return_primary_recommendation'));
+      await tester.ensureVisible(primary);
+      await tester.tap(primary);
+      await tester.pump();
+
+      final tapped = suggestionStore.recorded
+          .where(
+            (e) => e.type == SuggestionAttributionEventType.startHereTapped,
+          )
+          .toList();
+      expect(tapped, hasLength(1));
+      expect(tapped.single.suggestionId, isNotNull);
+
+      // Tap a secondary suggestion as well.
+      final card = tester.widget<DailyReturnSuggestionsCard>(
+        find.byType(DailyReturnSuggestionsCard),
+      );
+      final secondary = card.suggestionSet.otherSuggestions.first;
+      final secondaryRow = find.text(secondary.title);
+      await tester.ensureVisible(secondaryRow);
+      await tester.tap(secondaryRow);
+      await tester.pump();
+
+      expect(
+        suggestionStore.recorded.map((e) => e.type),
+        contains(SuggestionAttributionEventType.dailySuggestionTapped),
+      );
     });
   });
 }

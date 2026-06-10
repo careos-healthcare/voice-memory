@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:voicememory_mobile/billing/suggestion_attribution_event.dart';
+import 'package:voicememory_mobile/billing/suggestion_attribution_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_micro_experiment_store.dart';
@@ -43,6 +45,31 @@ class MemoryPressureCheckInStore extends PressureCheckInStore {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return sorted;
   }
+}
+
+/// In-memory suggestion-to-Pro attribution store for widget tests.
+class MemorySuggestionAttributionStore extends SuggestionAttributionStore {
+  MemorySuggestionAttributionStore() : super(_dummyPrefs());
+
+  final List<SuggestionAttributionEvent> recorded = [];
+
+  @override
+  Future<void> record(
+    SuggestionAttributionEventType type, {
+    String? suggestionId,
+    DateTime? now,
+  }) async {
+    recorded.add(
+      SuggestionAttributionEvent(
+        type: type,
+        suggestionId: suggestionId,
+        at: now ?? DateTime(2026, 6, 10),
+      ),
+    );
+  }
+
+  @override
+  Future<List<SuggestionAttributionEvent>> events() async => List.of(recorded);
 }
 
 /// In-memory return-trigger store for widget tests.

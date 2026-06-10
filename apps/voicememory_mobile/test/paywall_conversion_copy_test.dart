@@ -132,6 +132,42 @@ void main() {
       ]);
     });
 
+    test('start here today shows daily-prompt copy', () {
+      final copy = PaywallSourceCopy.forSource(PaywallSource.startHereToday);
+      expect(copy.headline, 'Keep your daily archive prompts improving');
+      expect(
+        copy.subheadline,
+        'ArchiveMe uses what you record to surface sharper things '
+        'worth checking each day.',
+      );
+      expect(copy.bullets, const [
+        'See the patterns behind your daily prompts',
+        'Keep evidence from past recordings connected',
+        'Ask your archive what keeps repeating',
+      ]);
+      expect(copy.cta, 'Unlock Pro');
+    });
+
+    test('daily suggestion shares the daily-prompt copy', () {
+      final copy = PaywallSourceCopy.forSource(PaywallSource.dailySuggestion);
+      expect(copy.headline, 'Keep your daily archive prompts improving');
+      expect(copy.cta, 'Unlock Pro');
+      expect(
+        copy.bullets,
+        contains('See the patterns behind your daily prompts'),
+      );
+    });
+
+    test('daily-prompt copy avoids overclaiming language', () {
+      final copy = PaywallSourceCopy.forSource(PaywallSource.startHereToday);
+      final all = [copy.headline, copy.subheadline, copy.cta, ...copy.bullets]
+          .join(' ')
+          .toLowerCase();
+      for (final banned in ['ai therapist', 'diagnosis', 'fix yourself']) {
+        expect(all, isNot(contains(banned)));
+      }
+    });
+
     test('general Pro fallback copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.generalPro);
       expect(copy.headline, 'Unlock ArchiveMe Pro');
@@ -208,6 +244,38 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('VoiceMemory'), findsNothing);
+    });
+
+    testWidgets('start here today source shows daily-prompt headline',
+        (tester) async {
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
+      );
+      expect(
+        find.text('Keep your daily archive prompts improving'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'ArchiveMe uses what you record to surface sharper things '
+          'worth checking each day.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('VoiceMemory'), findsNothing);
+    });
+
+    testWidgets('daily suggestion source shows daily-prompt headline',
+        (tester) async {
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
+      );
+      expect(
+        find.text('Keep your daily archive prompts improving'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('general Pro source shows fallback headline', (tester) async {
