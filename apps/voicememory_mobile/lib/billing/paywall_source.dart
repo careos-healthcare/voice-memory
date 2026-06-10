@@ -68,16 +68,17 @@ class PaywallSourceCopy {
     cta: unlockProCta,
   );
 
-  /// Daily Return Suggestions + Start here today share the daily-prompt pitch:
-  /// the user just experienced the prompts, so the pitch is about keeping them
-  /// improving — not a generic Pro list.
+  /// Daily Return Suggestions + Start here today share the thread pitch:
+  /// buyers say "threads connected" is why Pro makes sense, so the headline
+  /// makes that the main promise — a continuation of the value the user just
+  /// experienced, not a generic Pro list.
   static const dailySuggestions = PaywallSourceCopy(
-    headline: 'Keep your daily archive prompts improving',
-    subheadline: 'ArchiveMe uses what you record to surface sharper things '
-        'worth checking each day.',
+    headline: 'Keep the thread connected',
+    subheadline: 'ArchiveMe uses what you record to connect today\u2019s '
+        'pressure with what shows up again later.',
     bullets: [
-      'See the patterns behind your daily prompts',
-      'Keep evidence from past recordings connected',
+      'Track when this pattern returns',
+      'See how the evidence changes',
       'Ask your archive what keeps repeating',
     ],
     cta: 'Unlock Pro',
@@ -111,6 +112,39 @@ class PaywallSourceCopy {
         return generalPro;
     }
   }
+}
+
+/// One row of the "What Pro continues" preview.
+class PaywallProThreadPreviewRow {
+  const PaywallProThreadPreviewRow({required this.title, required this.body});
+
+  final String title;
+  final String body;
+}
+
+/// Compact paywall preview of what Pro continues — only shown to users who
+/// arrived from a suggestion surface, so it always refers to a thread they
+/// just experienced. Never implies free users lose anything.
+class PaywallProThreadPreview {
+  static const String heading = 'What Pro continues';
+
+  static const List<PaywallProThreadPreviewRow> rows = [
+    PaywallProThreadPreviewRow(
+      title: 'This thread',
+      body: 'Keep today\u2019s save connected to future recordings.',
+    ),
+    PaywallProThreadPreviewRow(
+      title: 'Pattern returns',
+      body: 'See when the same pressure shows up again.',
+    ),
+    PaywallProThreadPreviewRow(
+      title: 'Evidence changes',
+      body: 'Notice if the story is getting stronger or fading.',
+    ),
+  ];
+
+  static bool showFor(PaywallSource? source) =>
+      PaywallSourceCopy.isSuggestionSource(source);
 }
 
 /// Calm trust copy near the purchase CTA. Reassuring, never defensive — and

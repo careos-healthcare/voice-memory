@@ -432,9 +432,50 @@ class _PaywallScreenState extends State<PaywallScreen> {
           onRetry: _load,
           onRestore: _restore,
         ),
+        if (PaywallProThreadPreview.showFor(widget.triggerArgs?.source)) ...[
+          const SizedBox(height: 16),
+          _proThreadPreviewSection(),
+        ],
         const SizedBox(height: 16),
         _confidenceSection(),
       ],
+    );
+  }
+
+  /// "What Pro continues" — compact preview shown only to users arriving from
+  /// Start here today / Daily Suggestions, so it continues the thread they
+  /// just saved instead of pitching abstract features.
+  Widget _proThreadPreviewSection() {
+    return Container(
+      key: const Key('paywall_pro_thread_preview'),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: VoiceMemoryColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: VoiceMemoryColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            PaywallProThreadPreview.heading,
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          for (final row in PaywallProThreadPreview.rows) ...[
+            const SizedBox(height: 8),
+            Text(
+              row.title,
+              style: ArchiveMobileTypography.responsiveHelper(context)
+                  .copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 1),
+            Text(
+              row.body,
+              style: ArchiveMobileTypography.responsiveHelper(context),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -627,6 +668,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ),
             textAlign: TextAlign.center,
           ),
+        ],
+        if (PaywallProThreadPreview.showFor(widget.triggerArgs?.source)) ...[
+          const SizedBox(height: 18),
+          _proThreadPreviewSection(),
         ],
         const SizedBox(height: 18),
         _confidenceSection(),

@@ -132,29 +132,29 @@ void main() {
       ]);
     });
 
-    test('start here today shows daily-prompt copy', () {
+    test('start here today shows thread-connection copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.startHereToday);
-      expect(copy.headline, 'Keep your daily archive prompts improving');
+      expect(copy.headline, 'Keep the thread connected');
       expect(
         copy.subheadline,
-        'ArchiveMe uses what you record to surface sharper things '
-        'worth checking each day.',
+        'ArchiveMe uses what you record to connect today\u2019s '
+        'pressure with what shows up again later.',
       );
       expect(copy.bullets, const [
-        'See the patterns behind your daily prompts',
-        'Keep evidence from past recordings connected',
+        'Track when this pattern returns',
+        'See how the evidence changes',
         'Ask your archive what keeps repeating',
       ]);
       expect(copy.cta, 'Unlock Pro');
     });
 
-    test('daily suggestion shares the daily-prompt copy', () {
+    test('daily suggestion shares the thread-connection copy', () {
       final copy = PaywallSourceCopy.forSource(PaywallSource.dailySuggestion);
-      expect(copy.headline, 'Keep your daily archive prompts improving');
+      expect(copy.headline, 'Keep the thread connected');
       expect(copy.cta, 'Unlock Pro');
       expect(
         copy.bullets,
-        contains('See the patterns behind your daily prompts'),
+        contains('Track when this pattern returns'),
       );
     });
 
@@ -246,36 +246,30 @@ void main() {
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('start here today source shows daily-prompt headline',
+    testWidgets('start here today source shows thread headline',
         (tester) async {
       await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
       );
-      expect(
-        find.text('Keep your daily archive prompts improving'),
-        findsOneWidget,
-      );
+      expect(find.text('Keep the thread connected'), findsOneWidget);
       expect(
         find.text(
-          'ArchiveMe uses what you record to surface sharper things '
-          'worth checking each day.',
+          'ArchiveMe uses what you record to connect today\u2019s '
+          'pressure with what shows up again later.',
         ),
         findsOneWidget,
       );
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('daily suggestion source shows daily-prompt headline',
+    testWidgets('daily suggestion source shows thread headline',
         (tester) async {
       await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
       );
-      expect(
-        find.text('Keep your daily archive prompts improving'),
-        findsOneWidget,
-      );
+      expect(find.text('Keep the thread connected'), findsOneWidget);
     });
 
     testWidgets('general Pro source shows fallback headline', (tester) async {
@@ -380,11 +374,8 @@ void main() {
         find.text('Cancel anytime through the App Store.'),
         findsOneWidget,
       );
-      // Existing suggestion headline stays unchanged.
-      expect(
-        find.text('Keep your daily archive prompts improving'),
-        findsOneWidget,
-      );
+      // Suggestion headline renders alongside the confidence copy.
+      expect(find.text('Keep the thread connected'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
@@ -404,6 +395,110 @@ void main() {
       // Existing generic copy stays unchanged.
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
+    });
+  });
+
+  group('Pro thread preview', () {
+    test('preview shows only for suggestion sources', () {
+      expect(PaywallProThreadPreview.showFor(PaywallSource.startHereToday),
+          isTrue);
+      expect(PaywallProThreadPreview.showFor(PaywallSource.dailySuggestion),
+          isTrue);
+      expect(PaywallProThreadPreview.showFor(PaywallSource.generalPro),
+          isFalse);
+      expect(
+          PaywallProThreadPreview.showFor(PaywallSource.pressureReview),
+          isFalse);
+      expect(PaywallProThreadPreview.showFor(null), isFalse);
+    });
+
+    test('preview copy avoids banned and loss-implying wording', () {
+      final all = [
+        PaywallProThreadPreview.heading,
+        for (final row in PaywallProThreadPreview.rows) ...[
+          row.title,
+          row.body,
+        ],
+      ].join(' ').toLowerCase();
+      for (final banned in [
+        'must',
+        'should',
+        'problem',
+        'unresolved',
+        'failure',
+        'lazy',
+        'weak',
+        'fix',
+        'diagnose',
+        'limited time',
+        'last chance',
+        'expires',
+        'lose access',
+        'deleted',
+        'disappear',
+        'removed',
+        'voicememory',
+      ]) {
+        expect(all, isNot(contains(banned)),
+            reason: 'preview copy must not contain "$banned"');
+      }
+    });
+
+    testWidgets('"What Pro continues" renders for startHereToday',
+        (tester) async {
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
+      );
+
+      expect(find.text('What Pro continues'), findsOneWidget);
+      expect(find.text('This thread'), findsOneWidget);
+      expect(
+        find.text('Keep today\u2019s save connected to future recordings.'),
+        findsOneWidget,
+      );
+      expect(find.text('Pattern returns'), findsOneWidget);
+      expect(
+        find.text('See when the same pressure shows up again.'),
+        findsOneWidget,
+      );
+      expect(find.text('Evidence changes'), findsOneWidget);
+      expect(
+        find.text('Notice if the story is getting stronger or fading.'),
+        findsOneWidget,
+      );
+      // Confidence copy and restore stay present alongside the preview.
+      expect(
+        find.text('Today\u2019s save stays in your archive.'),
+        findsOneWidget,
+      );
+      expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
+    });
+
+    testWidgets('preview renders for dailySuggestion', (tester) async {
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
+      );
+      expect(find.text('What Pro continues'), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_pro_thread_preview')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('preview does not render for the generic paywall',
+        (tester) async {
+      await _pumpPaywall(tester);
+
+      expect(find.text('What Pro continues'), findsNothing);
+      expect(
+        find.byKey(const Key('paywall_pro_thread_preview')),
+        findsNothing,
+      );
+      // Generic headline and confidence copy remain unchanged.
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(find.text('Your archive is yours.'), findsOneWidget);
     });
   });
 
