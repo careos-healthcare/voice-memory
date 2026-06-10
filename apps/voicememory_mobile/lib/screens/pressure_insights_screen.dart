@@ -6,6 +6,7 @@ import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/pressure_retention/archive_reflection_engine.dart';
+import '../features/pressure_retention/guided_thread_plan_engine.dart';
 import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
 import '../features/pressure_retention/pressure_evidence_confidence.dart';
@@ -26,6 +27,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
+import '../widgets/pressure_retention/guided_thread_plan_card.dart';
 import '../widgets/pressure_retention/pressure_first_week_nudge.dart';
 import '../widgets/pressure_retention/pressure_insights_empty_state.dart';
 import '../widgets/pressure_retention/pressure_loop_visibility_card.dart';
@@ -85,6 +87,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _personalEvidenceEngine = PressurePersonalEvidenceSummaryEngine();
   static const _returnTriggerEngine = PressureReturnTriggerEngine();
   static const _threadReturnEngine = ThreadReturnEvidenceEngine();
+  static const _guidedPlanEngine = GuidedThreadPlanEngine();
 
   late Future<_InsightsData> _future;
 
@@ -226,6 +229,9 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       // Thread continuity first: evidence that a real thread is being tracked
       // over time. Renders only when a thread actually repeated.
       ..._threadReturnSection(records),
+      // The guided plan turns that evidence into a light "yesterday → today"
+      // structure with one small next recording.
+      ..._guidedPlanSection(records),
       // Personal evidence next: why the pattern below is believed to exist.
       // Free and Pro both see it; renders only with enough repeated evidence.
       ..._personalEvidenceSection(records),
@@ -353,6 +359,17 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     if (!evidence.hasEvidence) return const [];
     return [
       ThreadReturnEvidenceCard(evidence: evidence),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// Guided thread plan — directly under the thread evidence it is built
+  /// from. Shows nothing without enough related entries.
+  List<Widget> _guidedPlanSection(List<PressureCheckInRecord> records) {
+    final plan = _guidedPlanEngine.build(records);
+    if (!plan.hasPlan) return const [];
+    return [
+      GuidedThreadPlanCard(plan: plan),
       const SizedBox(height: AppSpacing.sm),
     ];
   }
