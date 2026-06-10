@@ -420,14 +420,42 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _unavailableBody() {
     final sourceCopy = _sourceCopy;
-    return PaywallUnavailableFallback(
-      headline: sourceCopy?.headline,
-      subhead: sourceCopy?.subheadline,
-      body: _unavailableBodyText,
-      busy: _busy,
-      showRetry: _billingReady,
-      onRetry: _load,
-      onRestore: _restore,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        PaywallUnavailableFallback(
+          headline: sourceCopy?.headline,
+          subhead: sourceCopy?.subheadline,
+          body: _unavailableBodyText,
+          busy: _busy,
+          showRetry: _billingReady,
+          onRetry: _load,
+          onRestore: _restore,
+        ),
+        const SizedBox(height: 16),
+        _confidenceSection(),
+      ],
+    );
+  }
+
+  /// Calm trust lines near the CTA — reassuring, not defensive. Suggestion
+  /// sources get the continuity framing the post-save receipt already used.
+  Widget _confidenceSection() {
+    final lines = PaywallConfidenceCopy.forSource(widget.triggerArgs?.source);
+    return Column(
+      key: const Key('paywall_confidence_section'),
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        for (final line in lines)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              line,
+              textAlign: TextAlign.center,
+              style: ArchiveMobileTypography.responsiveHelper(context),
+            ),
+          ),
+      ],
     );
   }
 
@@ -600,7 +628,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
             textAlign: TextAlign.center,
           ),
         ],
-        const SizedBox(height: 24),
+        const SizedBox(height: 18),
+        _confidenceSection(),
+        const SizedBox(height: 18),
         FilledButton(
           onPressed: _busy ? null : _continue,
           style: FilledButton.styleFrom(

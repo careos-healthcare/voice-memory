@@ -91,6 +91,12 @@ class PaywallSourceCopy {
     cta: ConsumerUiCopy.paywallPrimaryCta,
   );
 
+  /// True for the daily-suggestion surfaces (Start here today / Daily
+  /// Suggestion) that share the daily-prompt pitch.
+  static bool isSuggestionSource(PaywallSource? source) =>
+      source == PaywallSource.startHereToday ||
+      source == PaywallSource.dailySuggestion;
+
   static PaywallSourceCopy forSource(PaywallSource source) {
     switch (source) {
       case PaywallSource.pressurePatternHistory:
@@ -105,4 +111,27 @@ class PaywallSourceCopy {
         return generalPro;
     }
   }
+}
+
+/// Calm trust copy near the purchase CTA. Reassuring, never defensive — and
+/// never implying free users lose their saved recordings.
+class PaywallConfidenceCopy {
+  /// Default lines for the generic paywall and non-suggestion sources.
+  static const List<String> generic = [
+    'Your archive is yours.',
+    'Today\u2019s saves stay even if you don\u2019t upgrade.',
+    'Cancel anytime through the App Store.',
+    'Pro unlocks deeper continuity, not access to your basic saves.',
+  ];
+
+  /// Shorter continuity-focused lines for users arriving from a suggestion —
+  /// the same framing the post-save receipt already used.
+  static const List<String> suggestion = [
+    'Today\u2019s save stays in your archive.',
+    'Pro keeps the thread connected across future recordings.',
+    'Cancel anytime through the App Store.',
+  ];
+
+  static List<String> forSource(PaywallSource? source) =>
+      PaywallSourceCopy.isSuggestionSource(source) ? suggestion : generic;
 }

@@ -301,6 +301,112 @@ void main() {
     });
   });
 
+  group('Purchase confidence layer', () {
+    test('suggestion sources get the continuity confidence lines', () {
+      expect(
+        PaywallConfidenceCopy.forSource(PaywallSource.startHereToday),
+        PaywallConfidenceCopy.suggestion,
+      );
+      expect(
+        PaywallConfidenceCopy.forSource(PaywallSource.dailySuggestion),
+        PaywallConfidenceCopy.suggestion,
+      );
+      expect(
+        PaywallConfidenceCopy.suggestion,
+        contains('Today\u2019s save stays in your archive.'),
+      );
+      expect(
+        PaywallConfidenceCopy.suggestion,
+        contains('Cancel anytime through the App Store.'),
+      );
+    });
+
+    test('generic and non-suggestion sources get the default lines', () {
+      expect(PaywallConfidenceCopy.forSource(null), PaywallConfidenceCopy.generic);
+      expect(
+        PaywallConfidenceCopy.forSource(PaywallSource.generalPro),
+        PaywallConfidenceCopy.generic,
+      );
+      expect(
+        PaywallConfidenceCopy.forSource(PaywallSource.pressureReview),
+        PaywallConfidenceCopy.generic,
+      );
+      expect(
+        PaywallConfidenceCopy.generic,
+        contains('Your archive is yours.'),
+      );
+      expect(
+        PaywallConfidenceCopy.generic,
+        contains('Cancel anytime through the App Store.'),
+      );
+    });
+
+    test('confidence copy has no scarcity, loss framing, or VoiceMemory', () {
+      final all = [
+        ...PaywallConfidenceCopy.generic,
+        ...PaywallConfidenceCopy.suggestion,
+      ].join(' ').toLowerCase();
+      for (final banned in [
+        'limited time',
+        'last chance',
+        'expires',
+        'lose access',
+        'deleted',
+        'disappear',
+        'removed',
+        'voicememory',
+      ]) {
+        expect(all, isNot(contains(banned)),
+            reason: 'confidence copy must not contain "$banned"');
+      }
+    });
+
+    testWidgets('confidence copy renders on suggestion-source paywall',
+        (tester) async {
+      await _pumpPaywall(
+        tester,
+        args: const PaywallRouteArgs(source: PaywallSource.startHereToday),
+      );
+
+      expect(
+        find.text('Today\u2019s save stays in your archive.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Pro keeps the thread connected across future recordings.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Cancel anytime through the App Store.'),
+        findsOneWidget,
+      );
+      // Existing suggestion headline stays unchanged.
+      expect(
+        find.text('Keep your daily archive prompts improving'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('VoiceMemory'), findsNothing);
+    });
+
+    testWidgets('confidence copy renders on the generic paywall',
+        (tester) async {
+      await _pumpPaywall(tester);
+
+      expect(find.text('Your archive is yours.'), findsOneWidget);
+      expect(
+        find.text('Today\u2019s saves stay even if you don\u2019t upgrade.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Cancel anytime through the App Store.'),
+        findsOneWidget,
+      );
+      // Existing generic copy stays unchanged.
+      expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
+      expect(find.textContaining('VoiceMemory'), findsNothing);
+    });
+  });
+
   group('Locked CTAs route with the right paywall source', () {
     testWidgets('locked pattern history row passes pattern history source',
         (tester) async {
