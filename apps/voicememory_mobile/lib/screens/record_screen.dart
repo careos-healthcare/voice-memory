@@ -173,15 +173,19 @@ import '../billing/suggestion_attribution_event.dart';
 import '../billing/suggestion_attribution_store.dart';
 import '../features/pressure_retention/daily_return_suggestion_engine.dart';
 import '../features/pressure_retention/daily_return_suggestion_model.dart';
+import '../features/pressure_retention/done_for_today_receipt_engine.dart';
+import '../features/pressure_retention/done_for_today_receipt_model.dart';
 import '../features/pressure_retention/one_small_recording_engine.dart';
 import '../features/pressure_retention/one_small_recording_model.dart';
 import '../features/pressure_retention/personal_return_prompt_engine.dart';
 import '../features/pressure_retention/personal_return_prompt_model.dart';
+import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
 import '../features/pressure_retention/start_here_save_receipt_engine.dart';
 import '../features/pressure_retention/start_here_save_receipt_model.dart';
 import '../widgets/record/start_here_save_receipt_card.dart';
 import '../widgets/record/daily_return_suggestions_card.dart';
+import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
@@ -899,6 +903,9 @@ class _RecordScreenState extends State<RecordScreen> {
   /// Post-save "Saved to your archive" receipt for suggestion-sourced saves.
   StartHereSaveReceipt? _saveReceipt;
 
+  /// Post-save "Done for today" closure receipt — every successful save.
+  DoneForTodayReceipt? _doneForTodayReceipt;
+
   /// The post-save Pro nudge shows at most once per app session.
   static bool _suggestionProNudgeShownThisSession = false;
 
@@ -1005,6 +1012,22 @@ class _RecordScreenState extends State<RecordScreen> {
         );
       }
     }
+  }
+
+  /// Builds the "Done for today" closure receipt — only ever called after a
+  /// save succeeded, so a failed save can never surface it.
+  Future<void> _buildDoneForTodayReceipt() async {
+    List<PressureCheckInRecord> records = const [];
+    if (widget.pressureCheckInStore != null || AppServices.isInitialized) {
+      final store =
+          widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+      records = await store.loadAll();
+    }
+    if (!mounted) return;
+    setState(() {
+      _doneForTodayReceipt =
+          const DoneForTodayReceiptEngine().build(saved: true, records: records);
+    });
   }
 
   Future<void> _loadFirstThreeJourney() async {
@@ -1363,6 +1386,7 @@ class _RecordScreenState extends State<RecordScreen> {
     });
 
     unawaited(_handleSuggestionAttributionAfterSave(all.length));
+    unawaited(_buildDoneForTodayReceipt());
 
     // Keep a long-term Key Moment so this reflection (or closed loop) is easy
     // to find again by day. Original text is preserved verbatim.
@@ -1847,6 +1871,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _postSaveFollowUp = null;
       _saveReceipt = null;
       _suggestionProNudgeSource = null;
+      _doneForTodayReceipt = null;
       _tomorrowReturnLoop = null;
       _returnComparison = null;
       _returnStreak = null;
@@ -1945,6 +1970,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _postSaveFollowUp = null;
       _saveReceipt = null;
       _suggestionProNudgeSource = null;
+      _doneForTodayReceipt = null;
       _tomorrowReturnLoop = null;
       _localSaveTitle = null;
       _syncNote = null;
@@ -2443,6 +2469,13 @@ class _RecordScreenState extends State<RecordScreen> {
                           onDismiss: () => setState(
                             () => _suggestionProNudgeSource = null,
                           ),
+                        ),
+                      ],
+                      if (_doneForTodayReceipt != null &&
+                          _doneForTodayReceipt!.hasReceipt) ...[
+                        const SizedBox(height: 16),
+                        DoneForTodayReceiptCard(
+                          receipt: _doneForTodayReceipt!,
                         ),
                       ],
                       if (stack.showInputQualityCoach) ...[
