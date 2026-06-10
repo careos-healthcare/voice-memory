@@ -70,10 +70,21 @@ const _diagnosticWords = [
   'condition',
 ];
 
-/// Sharper prompts ask about action, fear, cost, avoidance, or triggers.
-final _sharpQuestion = RegExp(
-  r'(what did|what were you afraid|what happened right before'
-  r'|what did you do today)',
+const _shameWords = [
+  'lazy',
+  'weak',
+  'pathetic',
+  'failure',
+  'ashamed',
+  'no excuse',
+  'fault',
+];
+
+/// Edge prompts ask about proving, feeling behind, unsafe stopping,
+/// continuing past usefulness, avoidance, honesty, or what pressure forced.
+final _edgeQuestion = RegExp(
+  r'(prove|behind|unsafe|stopped helping|avoid admitting'
+  r'|archive to notice|overdo|rush|talk yourself out|make you)',
   caseSensitive: false,
 );
 
@@ -97,16 +108,11 @@ void main() {
       expect(set.prompts.length, inInclusiveRange(3, 4));
       expect(
         set.prompts,
-        contains(
-          'Last time, stopping felt difficult. '
-          'What were you afraid would happen if you stopped today?',
-        ),
+        contains('Where did stopping feel unsafe today?'),
       );
       expect(
         set.prompts,
-        contains(
-          'You logged evening pressure before. What did it cost you today?',
-        ),
+        contains('What did evening pressure make you overdo today?'),
       );
     });
 
@@ -118,16 +124,10 @@ void main() {
       expect(set.personalized, isTrue);
       expect(
         set.prompts,
-        contains(
-          'Last time, resting came with guilt. '
-          'What did that guilt stop you from doing today?',
-        ),
+        contains('What rest did you talk yourself out of today?'),
       );
-      // No evidence-claims with this little data.
-      expect(
-        set.prompts.join(' '),
-        isNot(contains('pressure has shown up before')),
-      );
+      // The honest-archive closer is reserved for repeated evidence.
+      expect(set.prompts.join(' '), isNot(contains('archive to notice')));
     });
 
     test('3+ entries with repeated evidence return personalized prompts', () {
@@ -136,42 +136,48 @@ void main() {
       expect(set.prompts.length, inInclusiveRange(3, 4));
       expect(
         set.prompts,
-        contains(
-          'You mentioned deadline and work before. '
-          'What did that pressure make you do today?',
-        ),
+        contains('What did deadline pressure make you rush or hide today?'),
       );
       expect(
         set.prompts,
-        contains(
-          'Deadline pressure has shown up before. '
-          'What did it make you rush, overdo, or avoid today?',
-        ),
+        contains('What did work pressure make you overdo today?'),
+      );
+      expect(
+        set.prompts,
+        contains('What would you not want your archive to notice about today?'),
       );
       expect(set.sourceTerms, contains('deadline'));
       expect(set.sourceTerms, contains('work'));
     });
 
-    test('evidence prompts ask about action, cost, fear, or trigger', () {
-      final set = engine.build(_richRecords());
-      for (final prompt in set.prompts) {
-        expect(prompt, matches(_sharpQuestion),
-            reason: 'prompt should provoke action/cost/fear/trigger '
-                'reflection: "$prompt"');
-        expect(prompt.toLowerCase(), isNot(contains('still showing up')),
-            reason: 'evidence prompts should go beyond '
-                '"is it still showing up": "$prompt"');
+    test('every prompt uses an edge frame, never "still showing up"', () {
+      final variants = [
+        engine.build([_record(id: 'a', contextIds: const ['evening'])]),
+        engine.build([
+          _record(id: 'a', daysAgo: 1, optionId: 'could_not_stop'),
+          _record(id: 'b', daysAgo: 0, optionId: 'guilty_resting'),
+        ]),
+        engine.build(_richRecords()),
+      ];
+      for (final set in variants) {
+        for (final prompt in set.prompts) {
+          expect(prompt, matches(_edgeQuestion),
+              reason: 'prompt should use a self-recognition edge frame: '
+                  '"$prompt"');
+          expect(prompt.toLowerCase(), isNot(contains('still showing up')),
+              reason: 'no soft "is it still showing up" wording: "$prompt"');
+        }
       }
     });
 
-    test('prompts stay short enough for the prompt cards', () {
+    test('prompts stay under 115 characters', () {
       final variants = [
         engine.build([_record(id: 'a', contextIds: const ['evening'])]),
         engine.build(_richRecords()),
       ];
       for (final set in variants) {
         for (final prompt in set.prompts) {
-          expect(prompt.length, lessThanOrEqualTo(110),
+          expect(prompt.length, lessThan(115),
               reason: 'prompt too long: "$prompt"');
         }
       }
@@ -191,15 +197,14 @@ void main() {
         _record(id: 'c', daysAgo: 0, optionId: 'had_to_prove_enough'),
       ]);
       expect(set.personalized, isTrue);
-      expect(set.prompts.join(' '), isNot(contains('You mentioned')));
-      expect(
-        set.prompts.join(' '),
-        isNot(contains('pressure has shown up before')),
-      );
+      // Evidence-only frames stay out of the gentle path.
+      expect(set.prompts.join(' '), isNot(contains('rush or hide')));
+      expect(set.prompts.join(' '), isNot(contains('archive to notice')));
     });
 
-    test('prompts avoid certainty and diagnostic language in every variant',
-        () {
+    test(
+        'prompts avoid certainty, diagnostic, and shame language '
+        'in every variant', () {
       final variants = [
         engine.build(const []),
         engine.build([_record(id: 'a', contextIds: const ['work'])]),
@@ -219,7 +224,11 @@ void main() {
           set.emptyStateFallback ?? '',
           PersonalReturnPromptSet.personalizedLabel,
         ].join(' ').toLowerCase();
-        for (final phrase in [..._certaintyPhrases, ..._diagnosticWords]) {
+        for (final phrase in [
+          ..._certaintyPhrases,
+          ..._diagnosticWords,
+          ..._shameWords,
+        ]) {
           expect(copy, isNot(contains(phrase)),
               reason: 'prompt copy must not contain "$phrase"');
         }

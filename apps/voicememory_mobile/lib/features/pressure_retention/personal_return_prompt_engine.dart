@@ -8,9 +8,10 @@ import 'pressure_personal_evidence_summary_engine.dart';
 ///
 /// Pure and deterministic. Prompts only ever reference what the user actually
 /// logged — repeated terms, contexts, and the last pressure option — and ask
-/// sharper questions about action, cost, fear, and triggers ("What did that
-/// pressure make you do today?"), never asserting ("you always"). With no
-/// evidence it falls back to the generic prompts.
+/// edge questions built for self-recognition: proving enough, fear of
+/// stopping, avoiding feeling behind, continuing after it stopped helping,
+/// and what an honest archive would notice. Never asserting ("you always"),
+/// never shaming. With no evidence it falls back to the generic prompts.
 class PersonalReturnPromptEngine {
   const PersonalReturnPromptEngine();
 
@@ -25,8 +26,9 @@ class PersonalReturnPromptEngine {
   static const String _smallMomentPrompt =
       'What did the pressure make you do today, even something small?';
 
-  static String _capitalize(String term) =>
-      term.isEmpty ? term : term[0].toUpperCase() + term.substring(1);
+  /// Honest-archive closer — the strongest self-recognition frame.
+  static const String _archiveNoticePrompt =
+      'What would you not want your archive to notice about today?';
 
   PersonalReturnPromptSet build(List<PressureCheckInRecord> records) {
     if (records.isEmpty) {
@@ -53,39 +55,16 @@ class PersonalReturnPromptEngine {
     List<PressureCheckInRecord> records,
     List<String> terms,
   ) {
-    final prompts = <String>[];
-
-    if (terms.length >= 2) {
-      prompts.add(
-        'You mentioned ${terms[0]} and ${terms[1]} before. '
-        'What did that pressure make you do today?',
-      );
-    } else {
-      prompts.add(
-        'You mentioned ${terms.first} before. '
-        'What did that pressure make you do today?',
-      );
-    }
-    prompts.add(
-      '${_capitalize(terms.first)} pressure has shown up before. '
-      'What did it make you rush, overdo, or avoid today?',
-    );
+    final prompts = <String>[
+      'What did ${terms.first} pressure make you rush or hide today?',
+      if (terms.length >= 2)
+        'What did ${terms[1]} pressure make you overdo today?',
+    ];
 
     final optionLine = _optionLine(_latestOption(records));
     if (optionLine != null) prompts.add(optionLine);
 
-    final contextLabel = _topRepeatedContextLabel(records);
-    if (contextLabel != null) {
-      // Alternate the context question with entry count so the prompt area
-      // doesn't read identically every day.
-      prompts.add(
-        records.length.isOdd
-            ? 'You logged $contextLabel pressure before. '
-                'What did it cost you today?'
-            : 'This came up before around $contextLabel. '
-                'What happened right before it started today?',
-      );
-    }
+    prompts.add(_archiveNoticePrompt);
 
     return PersonalReturnPromptSet(
       prompts: _capped(prompts),
@@ -121,8 +100,8 @@ class PersonalReturnPromptEngine {
     }
 
     prompts
-      ..add(_smallMomentPrompt)
-      ..add('What did you avoid today, if anything?');
+      ..add('What did you avoid admitting today?')
+      ..add(_smallMomentPrompt);
 
     return PersonalReturnPromptSet(
       prompts: _capped(prompts),
@@ -147,25 +126,20 @@ class PersonalReturnPromptEngine {
     return sorted.first.option;
   }
 
-  /// Continuation line for the last logged option — asks about fear, cost,
-  /// or action; never asserts.
+  /// Edge line for the last logged option — built for self-recognition,
+  /// never asserting, never shaming.
   String? _optionLine(PressureCheckInOption? option) {
     switch (option) {
       case PressureCheckInOption.couldNotStop:
-        return 'Last time, stopping felt difficult. '
-            'What were you afraid would happen if you stopped today?';
+        return 'Where did stopping feel unsafe today?';
       case PressureCheckInOption.didMoreToNotFeelBehind:
-        return 'Last time, feeling behind pushed you to do more. '
-            'What did it make you take on today?';
+        return 'What did you do today mainly to avoid feeling behind?';
       case PressureCheckInOption.hadToProveEnough:
-        return 'Last time, proving yourself came up. '
-            'What did you do today to feel like enough?';
+        return 'What did you do today to prove you were enough?';
       case PressureCheckInOption.guiltyResting:
-        return 'Last time, resting came with guilt. '
-            'What did that guilt stop you from doing today?';
+        return 'What rest did you talk yourself out of today?';
       case PressureCheckInOption.keptGoingToFeelProductive:
-        return 'Last time, you kept going to feel productive. '
-            'What did it cost you today?';
+        return 'What did you keep doing after it stopped helping?';
       case null:
         return null;
     }
@@ -188,7 +162,7 @@ class PersonalReturnPromptEngine {
     }
   }
 
-  /// "You logged evening pressure before. What did it cost you today?"
+  /// "What did evening pressure make you overdo today?"
   /// With [requireRepeat], the context must appear in 2+ entries.
   String? _repeatedContextLine(
     List<PressureCheckInRecord> records, {
@@ -198,7 +172,7 @@ class PersonalReturnPromptEngine {
         ? _topRepeatedContextLabel(records)
         : _latestContextLabel(records);
     if (label == null) return null;
-    return 'You logged $label pressure before. What did it cost you today?';
+    return 'What did $label pressure make you overdo today?';
   }
 
   String? _latestContextLabel(List<PressureCheckInRecord> records) {
