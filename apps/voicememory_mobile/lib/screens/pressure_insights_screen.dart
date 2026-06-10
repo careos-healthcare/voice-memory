@@ -15,6 +15,7 @@ import '../features/pressure_retention/pressure_pattern_reveal_engine.dart';
 import '../features/pressure_retention/pressure_pattern_reveal_model.dart';
 import '../features/pressure_retention/pressure_pattern_review_engine.dart';
 import '../features/pressure_retention/pressure_pattern_review_model.dart';
+import '../features/pressure_retention/pressure_personal_evidence_summary_engine.dart';
 import '../features/pressure_retention/pressure_report_builder.dart';
 import '../features/pressure_retention/pressure_return_trigger_engine.dart';
 import '../features/pressure_retention/pressure_return_trigger_model.dart';
@@ -30,6 +31,7 @@ import '../widgets/pressure_retention/pressure_loop_visibility_card.dart';
 import '../widgets/pressure_retention/pressure_micro_experiment_card.dart';
 import '../widgets/pressure_retention/pressure_pattern_reveal_card.dart';
 import '../widgets/pressure_retention/pressure_pattern_review_card.dart';
+import '../widgets/pressure_retention/pressure_personal_evidence_summary_card.dart';
 import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_card.dart';
@@ -78,6 +80,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _reportBuilder = PressureReportBuilder();
   static const _patternEngine = PressurePatternRevealEngine();
   static const _reviewEngine = PressurePatternReviewEngine();
+  static const _personalEvidenceEngine = PressurePersonalEvidenceSummaryEngine();
   static const _returnTriggerEngine = PressureReturnTriggerEngine();
 
   late Future<_InsightsData> _future;
@@ -217,6 +220,9 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         const PressureFirstWeekNudge(),
         const SizedBox(height: AppSpacing.sm),
       ],
+      // Personal evidence first: why the pattern below is believed to exist.
+      // Free and Pro both see it; renders only with enough repeated evidence.
+      ..._personalEvidenceSection(records),
       if (records.length >= PressurePatternReveal.minEntries) ...[
         PressurePatternRevealCard(
           reveal: _patternEngine.build(records),
@@ -334,6 +340,17 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   }
 
   /// Return trigger card, below the reveal/review/micro-experiment area.
+  /// "Why this may be your pattern" — only when the user's own entries hold
+  /// enough repeated evidence (3+ entries with real repetition).
+  List<Widget> _personalEvidenceSection(List<PressureCheckInRecord> records) {
+    final summary = _personalEvidenceEngine.build(records);
+    if (!summary.hasSummary) return const [];
+    return [
+      PressurePersonalEvidenceSummaryCard(summary: summary),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
   /// Session taps (accept/dismiss, accepting the experiment) override the
   /// loaded state so the card responds immediately.
   List<Widget> _returnTriggerSection(_InsightsData data) {
