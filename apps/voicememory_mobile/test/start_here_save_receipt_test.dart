@@ -42,8 +42,11 @@ const _bannedWords = [
 String _receiptCopy(StartHereSaveReceipt receipt) => [
       receipt.title,
       receipt.explanation,
+      receipt.freeValueLine,
+      receipt.proContinuationLine,
       receipt.proCtaLabel,
       receipt.dismissLabel,
+      ...receipt.proPreviewBullets,
       ...receipt.connectedTerms,
     ].join(' ').toLowerCase();
 
@@ -212,6 +215,57 @@ void main() {
     });
   });
 
+  group('Pro incentive copy', () {
+    final receipt = _engine.build(
+      source: PaywallSource.startHereToday,
+      suggestion: _suggestion(),
+    )!;
+
+    test('receipt carries free value and Pro continuation copy', () {
+      expect(
+        receipt.freeValueLine,
+        'Today\u2019s save stays in your archive.',
+      );
+      expect(
+        receipt.proContinuationLine,
+        'Pro keeps this thread connected across future recordings.',
+      );
+      expect(receipt.proPreviewBullets, const [
+        'Track when this pattern returns',
+        'See how the evidence changes',
+        'Ask what keeps repeating',
+      ]);
+    });
+
+    test('CTA and dismiss labels are unchanged', () {
+      expect(receipt.proCtaLabel, 'See what Pro unlocks');
+      expect(receipt.dismissLabel, 'Not now');
+    });
+
+    test('copy never implies the saved recording disappears', () {
+      final copy = _receiptCopy(receipt);
+      for (final implied in ['disappear', 'delete', 'removed', 'gone', 'lose']) {
+        expect(copy, isNot(contains(implied)),
+            reason: 'receipt copy must not imply loss via "$implied"');
+      }
+      // The free line states the save is kept, explicitly.
+      expect(copy, contains('stays in your archive'));
+    });
+
+    test('no false scarcity wording', () {
+      final copy = _receiptCopy(receipt);
+      for (final scarcity in [
+        'limited time',
+        'expires',
+        'lose access',
+        'last chance',
+      ]) {
+        expect(copy, isNot(contains(scarcity)),
+            reason: 'receipt copy must not use false scarcity "$scarcity"');
+      }
+    });
+  });
+
   group('Receipt copy guardrails', () {
     test('no banned words and no VoiceMemory in receipt copy', () {
       final receipt = _engine.build(
@@ -278,6 +332,53 @@ void main() {
       expect(find.text('See what Pro unlocks'), findsOneWidget);
       expect(find.text('Not now'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
+    });
+
+    testWidgets('renders free value line, Pro continuation, and bullets',
+        (tester) async {
+      await _pumpReceiptCard(tester, receipt: richReceipt);
+
+      expect(
+        find.text('Today\u2019s save stays in your archive.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Pro keeps this thread connected across future recordings.'),
+        findsOneWidget,
+      );
+      for (final bullet in richReceipt.proPreviewBullets) {
+        expect(find.text(bullet), findsOneWidget);
+      }
+    });
+
+    testWidgets('free value line renders above the Pro continuation line',
+        (tester) async {
+      await _pumpReceiptCard(tester, receipt: richReceipt);
+
+      final freeY = tester
+          .getTopLeft(find.text('Today\u2019s save stays in your archive.'))
+          .dy;
+      final proY = tester
+          .getTopLeft(
+            find.text(
+              'Pro keeps this thread connected across future recordings.',
+            ),
+          )
+          .dy;
+      expect(freeY, lessThan(proY),
+          reason: 'free value must be stated before the Pro continuation');
+    });
+
+    testWidgets('connected terms stay visible above the Pro incentive copy',
+        (tester) async {
+      await _pumpReceiptCard(tester, receipt: richReceipt);
+
+      final termY =
+          tester.getTopLeft(find.text(richReceipt.connectedTerms.first)).dy;
+      final freeY = tester
+          .getTopLeft(find.text('Today\u2019s save stays in your archive.'))
+          .dy;
+      expect(termY, lessThan(freeY));
     });
 
     testWidgets('no auto-paywall before CTA tap', (tester) async {

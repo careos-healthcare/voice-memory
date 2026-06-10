@@ -79,6 +79,52 @@ class StartHereSaveReceiptCard extends StatelessWidget {
               ],
             ),
           ],
+          // Free value first, so Pro reads as a continuation — never as a
+          // threat to what the user just saved.
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            receipt.freeValueLine,
+            style: VoiceMemoryTypography.bodyStyle().copyWith(
+              fontSize: 12.5,
+              color: AppColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            receipt.proContinuationLine,
+            style: VoiceMemoryTypography.bodyStyle().copyWith(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+            ),
+          ),
+          if (receipt.proPreviewBullets.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            for (final bullet in receipt.proPreviewBullets)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '\u2022 ',
+                      style: VoiceMemoryTypography.metadataStyle(
+                        color: AppColors.textSecondary,
+                      ).copyWith(fontSize: 12),
+                    ),
+                    Expanded(
+                      child: Text(
+                        bullet,
+                        style: VoiceMemoryTypography.metadataStyle(
+                          color: AppColors.textSecondary,
+                        ).copyWith(fontSize: 12, height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [

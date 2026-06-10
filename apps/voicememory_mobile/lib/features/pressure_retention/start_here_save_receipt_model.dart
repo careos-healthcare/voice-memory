@@ -8,6 +8,9 @@ class StartHereSaveReceipt {
     this.title = defaultTitle,
     this.explanation = defaultExplanation,
     this.connectedTerms = const [],
+    this.freeValueLine = defaultFreeValueLine,
+    this.proContinuationLine = defaultProContinuationLine,
+    this.proPreviewBullets = defaultProPreviewBullets,
     this.proCtaLabel = defaultProCtaLabel,
     this.dismissLabel = defaultDismissLabel,
     required this.paywallSource,
@@ -16,6 +19,22 @@ class StartHereSaveReceipt {
   static const String defaultTitle = 'Saved to your archive';
   static const String defaultExplanation =
       'This connects to what your archive has already noticed.';
+
+  /// What free users keep — stated first, so Pro never reads as a threat to
+  /// the recording the user just saved.
+  static const String defaultFreeValueLine =
+      'Today\u2019s save stays in your archive.';
+
+  /// What continues with Pro — a continuation of value, never scarcity.
+  static const String defaultProContinuationLine =
+      'Pro keeps this thread connected across future recordings.';
+
+  static const List<String> defaultProPreviewBullets = [
+    'Track when this pattern returns',
+    'See how the evidence changes',
+    'Ask what keeps repeating',
+  ];
+
   static const String defaultProCtaLabel = 'See what Pro unlocks';
   static const String defaultDismissLabel = 'Not now';
 
@@ -25,6 +44,13 @@ class StartHereSaveReceipt {
   /// Up to three personal, phrase-like labels this recording connects to,
   /// e.g. "work pressure" or "stopping felt unsafe". May be empty.
   final List<String> connectedTerms;
+
+  /// Shown before [proContinuationLine].
+  final String freeValueLine;
+  final String proContinuationLine;
+
+  /// Compact preview of what Pro continues; may be empty.
+  final List<String> proPreviewBullets;
 
   final String proCtaLabel;
   final String dismissLabel;
