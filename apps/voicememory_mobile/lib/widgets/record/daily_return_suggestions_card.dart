@@ -122,6 +122,18 @@ class _SuggestionRow extends StatelessWidget {
                   ).copyWith(fontSize: 11),
                 ),
               ],
+              if (suggestion.evidenceSnippet != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  '${DailyReturnSuggestionSet.evidenceLabel} '
+                  '\u201C${suggestion.evidenceSnippet}\u201D',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: VoiceMemoryTypography.metadataStyle(
+                    color: AppColors.textSecondary,
+                  ).copyWith(fontSize: 11, fontStyle: FontStyle.italic),
+                ),
+              ],
             ],
           ),
         ),

@@ -21,6 +21,7 @@ PressureCheckInRecord _record({
   String optionId = 'could_not_stop',
   List<String> contextIds = const [],
   String? fear,
+  String? stopCostNote,
 }) {
   return PressureCheckInRecord(
     entryId: id,
@@ -28,6 +29,7 @@ PressureCheckInRecord _record({
     optionId: optionId,
     contextIds: contextIds,
     fear: fear,
+    stopCostNote: stopCostNote,
     transcript: 'pressure moment',
   );
 }
@@ -74,6 +76,7 @@ String _allCopy(DailyReturnSuggestionSet set) => [
       set.label,
       DailyReturnSuggestionSet.heading,
       DailyReturnSuggestionSet.subLabel,
+      DailyReturnSuggestionSet.evidenceLabel,
       for (final s in set.suggestions) ...[s.title, s.prompt, s.reason],
     ].join(' ').toLowerCase();
 
@@ -175,6 +178,66 @@ void main() {
       expect(set.suggestions.length, lessThanOrEqualTo(4));
     });
 
+    test('suggestions carry the user\'s own words as evidence snippets', () {
+      final set = engine.build(_richRecords());
+      final deadlineRow =
+          set.suggestions.firstWhere((s) => s.id == 'term_deadline');
+      // The newest note that actually mentions the term.
+      expect(deadlineRow.evidenceSnippet, 'The deadline slipping');
+      // The latest entry has no written note — no snippet, never fabricated.
+      final recentRow = set.suggestions
+          .firstWhere((s) => s.id == 'recent_option_guilty_resting');
+      expect(recentRow.evidenceSnippet, isNull);
+    });
+
+    test('snippets are capped at 80 characters and trimmed', () {
+      final longNote = '  I kept checking messages and rereading every '
+          'reply long after I told myself I would stop for the evening.  ';
+      final set = engine.build([
+        _record(id: 'a', fear: longNote),
+      ]);
+      final snippet = set.suggestions.first.evidenceSnippet;
+      expect(snippet, isNotNull);
+      expect(snippet!.length, lessThanOrEqualTo(80));
+      expect(snippet, endsWith('\u2026'));
+      expect(snippet, startsWith('I kept checking messages'));
+    });
+
+    test('no snippet appears when no safe text exists', () {
+      final set = engine.build([
+        _record(id: 'a', daysAgo: 1, contextIds: const ['work']),
+        _record(id: 'b', daysAgo: 0, contextIds: const ['work']),
+      ]);
+      for (final suggestion in set.suggestions) {
+        expect(suggestion.evidenceSnippet, isNull,
+            reason: 'no user-written note exists, so "$suggestion.id" '
+                'must not carry a snippet');
+      }
+    });
+
+    test('snippets are never fabricated and never repeated', () {
+      final records = _richRecords();
+      final set = engine.build(records);
+      final notes = [
+        for (final r in records) ...[r.fear, r.stopCostNote],
+      ].whereType<String>().toList();
+      final seen = <String>{};
+      for (final suggestion in set.suggestions) {
+        final snippet = suggestion.evidenceSnippet;
+        if (snippet == null) continue;
+        final raw = snippet.endsWith('\u2026')
+            ? snippet.substring(0, snippet.length - 1)
+            : snippet;
+        expect(
+          notes.any((note) => note.contains(raw)),
+          isTrue,
+          reason: 'snippet must come from the user\'s own notes: "$snippet"',
+        );
+        expect(seen.add(snippet), isTrue,
+            reason: 'each note shows at most once across the card');
+      }
+    });
+
     test('copy avoids homework and overclaiming language', () {
       final variants = [
         engine.build([_record(id: 'a')]),
@@ -243,6 +306,25 @@ void main() {
       await tester.tap(find.text(set.suggestions.first.title));
       await tester.pump();
       expect(selected, set.suggestions.first.prompt);
+    });
+
+    testWidgets('renders "From your archive:" when a snippet exists',
+        (tester) async {
+      await pumpCard(tester, suggestionSet: engine.build(_richRecords()));
+      expect(find.textContaining('From your archive:'), findsWidgets);
+      expect(
+        find.textContaining('The deadline slipping'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('renders no evidence line without snippets', (tester) async {
+      final set = engine.build([
+        _record(id: 'a', daysAgo: 1, contextIds: const ['work']),
+        _record(id: 'b', daysAgo: 0, contextIds: const ['work']),
+      ]);
+      await pumpCard(tester, suggestionSet: set);
+      expect(find.textContaining('From your archive:'), findsNothing);
     });
 
     testWidgets('renders nothing for the empty set', (tester) async {

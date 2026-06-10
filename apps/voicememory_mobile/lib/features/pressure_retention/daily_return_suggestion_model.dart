@@ -6,6 +6,7 @@ class DailyReturnSuggestion {
     required this.prompt,
     required this.reason,
     this.sourceTerms = const [],
+    this.evidenceSnippet,
   });
 
   /// Stable id for dedupe and tests.
@@ -22,6 +23,11 @@ class DailyReturnSuggestion {
 
   /// The user terms this suggestion was built from (may be empty).
   final List<String> sourceTerms;
+
+  /// A short line of the user's own previous words (fear / stop-cost note),
+  /// already trimmed and capped. Null when no safe snippet exists — the
+  /// evidence line is simply omitted, never fabricated.
+  final String? evidenceSnippet;
 }
 
 /// The full suggestion list shown above the Record prompt area.
@@ -41,6 +47,7 @@ class DailyReturnSuggestionSet {
   static const String subLabel = "Based on what you've recorded";
   static const String archiveNoticedReason =
       'Your archive noticed this might be worth revisiting.';
+  static const String evidenceLabel = 'From your archive:';
 
   final List<DailyReturnSuggestion> suggestions;
 

@@ -18,18 +18,29 @@ class DailyReturnSuggestionEngine {
   static const int maxSuggestions = 4;
   static const int minSuggestions = 2;
 
+  /// Evidence snippets stay short — the user's words, never a wall of text.
+  static const int maxSnippetLength = 80;
+
   DailyReturnSuggestionSet build(List<PressureCheckInRecord> records) {
     if (records.isEmpty) return DailyReturnSuggestionSet.empty;
 
     final sorted = [...records]
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
+    // Each user-written note is shown at most once across the whole card.
+    final usedSnippets = <String>{};
+    String? claim(String? raw) {
+      final snippet = _trimmedSnippet(raw);
+      if (snippet == null || !usedSnippets.add(snippet)) return null;
+      return snippet;
+    }
+
     final candidates = <DailyReturnSuggestion>[
       // Recent evidence first: the option from the latest entry.
-      ..._recentOptionSuggestion(sorted),
-      ..._termSuggestions(records),
-      ..._repeatedContextSuggestion(records),
-      ..._recentFearSuggestion(sorted),
+      ..._recentOptionSuggestion(sorted, claim),
+      ..._termSuggestions(records, sorted, claim),
+      ..._repeatedContextSuggestion(records, sorted, claim),
+      ..._recentFearSuggestion(sorted, claim),
       // Gentle filler so a single sparse entry still yields two rows.
       const DailyReturnSuggestion(
         id: 'todays_pressure',
@@ -50,8 +61,10 @@ class DailyReturnSuggestionEngine {
 
   List<DailyReturnSuggestion> _recentOptionSuggestion(
     List<PressureCheckInRecord> newestFirst,
+    String? Function(String?) claim,
   ) {
-    final option = newestFirst.first.option;
+    final latest = newestFirst.first;
+    final option = latest.option;
     final prompt = PersonalReturnPromptEngine.optionEdgePrompt(option);
     if (option == null || prompt == null) return const [];
     return [
@@ -60,6 +73,7 @@ class DailyReturnSuggestionEngine {
         title: _optionTitle(option),
         prompt: prompt,
         reason: 'This came up in a recent pressure moment.',
+        evidenceSnippet: claim(latest.fear ?? latest.stopCostNote),
       ),
     ];
   }
@@ -67,6 +81,8 @@ class DailyReturnSuggestionEngine {
   /// Repeated terms from the personal evidence summary (3+ entries).
   List<DailyReturnSuggestion> _termSuggestions(
     List<PressureCheckInRecord> records,
+    List<PressureCheckInRecord> newestFirst,
+    String? Function(String?) claim,
   ) {
     final summary = _evidenceEngine.build(records);
     if (!summary.hasSummary || summary.evidenceTerms.isEmpty) return const [];
@@ -79,6 +95,7 @@ class DailyReturnSuggestionEngine {
             'rush or hide today?',
         reason: 'You mentioned this before.',
         sourceTerms: [terms.first],
+        evidenceSnippet: claim(_noteMentioning(newestFirst, terms.first)),
       ),
       if (terms.length >= 2)
         DailyReturnSuggestion(
@@ -87,6 +104,7 @@ class DailyReturnSuggestionEngine {
           prompt: 'What did ${terms[1]} pressure make you overdo today?',
           reason: '${_capitalize(terms[1])} appeared across recent entries.',
           sourceTerms: [terms[1]],
+          evidenceSnippet: claim(_noteMentioning(newestFirst, terms[1])),
         ),
     ];
   }
@@ -94,6 +112,8 @@ class DailyReturnSuggestionEngine {
   /// A context label seen in 2+ entries, even before the summary kicks in.
   List<DailyReturnSuggestion> _repeatedContextSuggestion(
     List<PressureCheckInRecord> records,
+    List<PressureCheckInRecord> newestFirst,
+    String? Function(String?) claim,
   ) {
     final counts = <String, int>{};
     for (final record in records) {
@@ -119,6 +139,7 @@ class DailyReturnSuggestionEngine {
         prompt: 'What did $best pressure make you overdo today?',
         reason: '${_capitalize(best)} appeared across recent entries.',
         sourceTerms: [best],
+        evidenceSnippet: claim(_noteForContext(newestFirst, best)),
       ),
     ];
   }
@@ -126,20 +147,60 @@ class DailyReturnSuggestionEngine {
   /// The most recent entry that carries a written fear note.
   List<DailyReturnSuggestion> _recentFearSuggestion(
     List<PressureCheckInRecord> newestFirst,
+    String? Function(String?) claim,
   ) {
     for (final record in newestFirst) {
       final fear = record.fear?.trim() ?? '';
       if (fear.isEmpty) continue;
       return [
-        const DailyReturnSuggestion(
+        DailyReturnSuggestion(
           id: 'recent_fear',
           title: 'What you were afraid would happen',
           prompt: 'What were you afraid would happen if you stopped today?',
           reason: DailyReturnSuggestionSet.archiveNoticedReason,
+          evidenceSnippet: claim(fear),
         ),
       ];
     }
     return const [];
+  }
+
+  /// The newest user-written note that actually mentions [term] —
+  /// never attributed across topics, never fabricated.
+  String? _noteMentioning(
+    List<PressureCheckInRecord> newestFirst,
+    String term,
+  ) {
+    final needle = term.toLowerCase();
+    for (final record in newestFirst) {
+      for (final note in [record.fear, record.stopCostNote]) {
+        if (note != null && note.toLowerCase().contains(needle)) return note;
+      }
+    }
+    return null;
+  }
+
+  /// The newest user-written note from an entry logged with [contextLabel].
+  String? _noteForContext(
+    List<PressureCheckInRecord> newestFirst,
+    String contextLabel,
+  ) {
+    for (final record in newestFirst) {
+      final labels =
+          record.contexts.map((c) => c.label.toLowerCase()).toList();
+      if (!labels.contains(contextLabel)) continue;
+      final note = record.fear ?? record.stopCostNote;
+      if (note != null && note.trim().isNotEmpty) return note;
+    }
+    return null;
+  }
+
+  /// Trims and caps a user note; null when there is nothing safe to show.
+  String? _trimmedSnippet(String? raw) {
+    final trimmed = raw?.trim() ?? '';
+    if (trimmed.isEmpty) return null;
+    if (trimmed.length <= maxSnippetLength) return trimmed;
+    return '${trimmed.substring(0, maxSnippetLength - 1).trimRight()}…';
   }
 
   /// Drops duplicate ids and duplicate prompts, keeping first (highest
