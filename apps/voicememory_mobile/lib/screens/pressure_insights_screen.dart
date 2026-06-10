@@ -21,6 +21,7 @@ import '../features/pressure_retention/pressure_return_trigger_engine.dart';
 import '../features/pressure_retention/pressure_return_trigger_model.dart';
 import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
+import '../features/pressure_retention/thread_return_evidence_engine.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -36,6 +37,7 @@ import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_card.dart';
 import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
+import '../widgets/pressure_retention/thread_return_evidence_card.dart';
 
 /// Pressure loop screen: weekly visibility, recap, and the focused reflection.
 ///
@@ -82,6 +84,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _reviewEngine = PressurePatternReviewEngine();
   static const _personalEvidenceEngine = PressurePersonalEvidenceSummaryEngine();
   static const _returnTriggerEngine = PressureReturnTriggerEngine();
+  static const _threadReturnEngine = ThreadReturnEvidenceEngine();
 
   late Future<_InsightsData> _future;
 
@@ -220,7 +223,10 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         const PressureFirstWeekNudge(),
         const SizedBox(height: AppSpacing.sm),
       ],
-      // Personal evidence first: why the pattern below is believed to exist.
+      // Thread continuity first: evidence that a real thread is being tracked
+      // over time. Renders only when a thread actually repeated.
+      ..._threadReturnSection(records),
+      // Personal evidence next: why the pattern below is believed to exist.
       // Free and Pro both see it; renders only with enough repeated evidence.
       ..._personalEvidenceSection(records),
       if (records.length >= PressurePatternReveal.minEntries) ...[
@@ -340,6 +346,17 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   }
 
   /// Return trigger card, below the reveal/review/micro-experiment area.
+  /// Thread continuity card — only when a thread genuinely repeated across
+  /// the user's entries. Shows nothing otherwise.
+  List<Widget> _threadReturnSection(List<PressureCheckInRecord> records) {
+    final evidence = _threadReturnEngine.build(records);
+    if (!evidence.hasEvidence) return const [];
+    return [
+      ThreadReturnEvidenceCard(evidence: evidence),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
   /// "Why this may be your pattern" — only when the user's own entries hold
   /// enough repeated evidence (3+ entries with real repetition).
   List<Widget> _personalEvidenceSection(List<PressureCheckInRecord> records) {
