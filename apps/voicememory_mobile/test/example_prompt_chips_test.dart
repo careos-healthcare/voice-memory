@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/models/journal_entry.dart';
+import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/record/example_prompt_catalog.dart';
 import 'package:voicememory_mobile/record/start_here_catalog.dart';
 import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
@@ -125,7 +128,32 @@ void main() {
     });
 
     testWidgets('shows Start Here above record CTA when ready', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(390, 800));
+      // The Record screen no longer renders the Start Here section on first
+      // run — the first-recording handoff card owns that state now. The
+      // "Try saying one of these" prompt area (same section title) appears
+      // for returning users, so seed one reflection and verify it still
+      // renders above the record CTA.
+      await tester.runAsync(
+        () => AppServices.instance.journalStore.save(
+          JournalEntry(
+            id: 'e1',
+            createdAt: DateTime(2026, 6, 1, 12),
+            transcript:
+                'A long enough transcript to count as a saved reflection.',
+            durationSeconds: 30,
+            reflection: const Reflection(
+              mood: 'thoughtful',
+              emotionalIntensity: 2,
+              recurringThemes: ['work'],
+              exactLanguagePattern: 'pattern',
+              concreteObservation: 'Work pressure showed up again today.',
+              repeatedSignal: 'signal',
+            ),
+          ),
+        ),
+      );
+
+      await tester.binding.setSurfaceSize(const Size(390, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
@@ -138,7 +166,18 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text(StartHereCatalog.sectionTitle), findsOneWidget);
-      expect(find.text(StartHereCatalog.prompts.first), findsOneWidget);
+      expect(
+        find.text(ConsumerUiCopy.recordStarterPrompts.first),
+        findsOneWidget,
+      );
+
+      final sectionY =
+          tester.getTopLeft(find.text(StartHereCatalog.sectionTitle)).dy;
+      final ctaY = tester
+          .getTopLeft(find.text(ConsumerUiCopy.startRecording).first)
+          .dy;
+      expect(sectionY, lessThan(ctaY),
+          reason: 'prompt section should render above the record CTA');
     });
   });
 
