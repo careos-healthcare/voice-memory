@@ -6,6 +6,7 @@ import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/pressure_retention/archive_reflection_engine.dart';
+import '../features/pressure_retention/belief_distance_engine.dart';
 import '../features/pressure_retention/guided_thread_plan_engine.dart';
 import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
@@ -27,6 +28,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
+import '../widgets/pressure_retention/belief_distance_card.dart';
 import '../widgets/pressure_retention/guided_thread_plan_card.dart';
 import '../widgets/pressure_retention/pressure_first_week_nudge.dart';
 import '../widgets/pressure_retention/pressure_insights_empty_state.dart';
@@ -88,6 +90,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _returnTriggerEngine = PressureReturnTriggerEngine();
   static const _threadReturnEngine = ThreadReturnEvidenceEngine();
   static const _guidedPlanEngine = GuidedThreadPlanEngine();
+  static const _beliefDistanceEngine = BeliefDistanceEngine();
 
   late Future<_InsightsData> _future;
 
@@ -232,6 +235,9 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       // The guided plan turns that evidence into a light "yesterday → today"
       // structure with one small next recording.
       ..._guidedPlanSection(records),
+      // A repeated belief-like phrase in the user's own words, with gentle
+      // distance from it. Renders only when a phrase can be safely formed.
+      ..._beliefDistanceSection(records),
       // Personal evidence next: why the pattern below is believed to exist.
       // Free and Pro both see it; renders only with enough repeated evidence.
       ..._personalEvidenceSection(records),
@@ -370,6 +376,17 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     if (!plan.hasPlan) return const [];
     return [
       GuidedThreadPlanCard(plan: plan),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// Belief distance — only when the user's own notes hold a genuinely
+  /// repeated belief-like phrase. Shows nothing otherwise.
+  List<Widget> _beliefDistanceSection(List<PressureCheckInRecord> records) {
+    final belief = _beliefDistanceEngine.build(records);
+    if (!belief.hasBelief) return const [];
+    return [
+      BeliefDistanceCard(belief: belief),
       const SizedBox(height: AppSpacing.sm),
     ];
   }
