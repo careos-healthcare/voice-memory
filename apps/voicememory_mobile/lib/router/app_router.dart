@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/account_auth_screen.dart';
 import '../screens/account_screen.dart';
+import '../screens/security_settings_screen.dart';
 import '../screens/blind_spots_screen.dart';
 import '../screens/delete_account_screen.dart';
 import '../screens/belief_changes_screen.dart';
@@ -45,6 +47,7 @@ import '../screens/onboarding_loop_screen.dart';
 import '../screens/loop_start_screen.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
+import '../features/referral/invite_attribution.dart';
 import '../screens/loop_mode_screen.dart';
 import '../screens/prove_enough_evidence_trail_screen.dart';
 import '../screens/monthly_ambition_pressure_review_screen.dart';
@@ -114,6 +117,10 @@ final GoRouter appRouter = GoRouter(
       return AcquisitionCohortCoordinator.resolveStartRedirect(state.uri);
     }
 
+    if (path == '/invite') {
+      return InviteAttributionLink.resolveInviteRedirect(state.uri);
+    }
+
     final cohortFastPath =
         await AcquisitionCohortCoordinator.fastPathRedirect(path);
     if (cohortFastPath != null) return cohortFastPath;
@@ -177,6 +184,12 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       redirect: (context, state) =>
           AcquisitionCohortCoordinator.resolveStartRedirect(state.uri),
+    ),
+    GoRoute(
+      path: '/invite',
+      parentNavigatorKey: _rootNavigatorKey,
+      redirect: (context, state) =>
+          InviteAttributionLink.resolveInviteRedirect(state.uri),
     ),
     GoRoute(
       path: '/start/capacity-yes',
@@ -255,6 +268,25 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: '/security',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const SecuritySettingsScreen(),
+    ),
+    GoRoute(
+      path: '/account/create',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AccountAuthScreen(
+        intent: AccountAuthIntent.createAccount,
+      ),
+    ),
+    GoRoute(
+      path: '/account/sign-in',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AccountAuthScreen(
+        intent: AccountAuthIntent.signIn,
+      ),
     ),
     GoRoute(
       path: '/discover',

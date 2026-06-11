@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../api/api_error_message.dart';
+import '../auth/account_auth.dart';
 import '../config/app_config.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
@@ -22,8 +22,6 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  final _emailController = TextEditingController();
-  final _codeController = TextEditingController();
   String _sessionLabel = 'Loading…';
   String _syncLabel = '';
   String _status = '';
@@ -34,13 +32,6 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     super.initState();
     _refresh();
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _codeController.dispose();
-    super.dispose();
   }
 
   Future<void> _refresh() async {
@@ -57,10 +48,7 @@ class _AccountScreenState extends State<AccountScreen> {
     final syncLabel = AppConfig.isBackendConfigured
         ? await AppServices.instance.sync.lastSyncLabel()
         : ConsumerUiCopy.syncNotAvailableTestFlight;
-    final lastEmail = await auth.lastEmail();
-    if (lastEmail != null && _emailController.text.isEmpty) {
-      _emailController.text = lastEmail;
-    }
+    if (!mounted) return;
     setState(() {
       _sessionLabel = s == null ? 'Not signed in' : s.email;
       _syncLabel = syncLabel;
@@ -68,32 +56,9 @@ class _AccountScreenState extends State<AccountScreen> {
     });
   }
 
-  Future<void> _sendCode() async {
-    setState(() => _busy = true);
-    try {
-      await AppServices.instance.auth.sendAuthCode(_emailController.text);
-      setState(() => _status = 'Code sent — check your email.');
-    } catch (e) {
-      setState(() => _status = userFacingErrorMessage(e, fallback: 'Could not send sign-in code.'));
-    } finally {
-      setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _verify() async {
-    setState(() => _busy = true);
-    try {
-      await AppServices.instance.auth.verifyAuthCode(
-        email: _emailController.text,
-        code: _codeController.text,
-      );
-      setState(() => _status = 'Signed in.');
-      await _refresh();
-    } catch (e) {
-      setState(() => _status = userFacingErrorMessage(e, fallback: 'Sign-in failed. Check the code and try again.'));
-    } finally {
-      setState(() => _busy = false);
-    }
+  Future<void> _openAuth(String route) async {
+    await context.push(route);
+    await _refresh();
   }
 
   Future<void> _sync() async {
@@ -177,39 +142,37 @@ class _AccountScreenState extends State<AccountScreen> {
             if (_showSignIn) ...[
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Sign in to sync across devices',
-                style: ArchiveMobileTypography.responsiveSectionTitle(context),
+                AccountAuthCopy.createBody,
+                style: ArchiveMobileTypography.responsiveHelper(context),
               ),
               const SizedBox(height: AppSpacing.sm),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
+              FilledButton(
+                key: const Key('account_create_cta'),
+                onPressed: _busy ? null : () => _openAuth('/account/create'),
+                child: const Text(AccountAuthCopy.createCta),
               ),
               const SizedBox(height: AppSpacing.xs),
-              FilledButton(
-                onPressed: _busy ? null : _sendCode,
-                child: const Text('Send sign-in code'),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              TextField(
-                controller: _codeController,
-                decoration: const InputDecoration(labelText: 'Code'),
-              ),
-              FilledButton(
-                onPressed: _busy ? null : _verify,
-                child: const Text('Sign in'),
+              OutlinedButton(
+                key: const Key('account_sign_in_cta'),
+                onPressed: _busy ? null : () => _openAuth('/account/sign-in'),
+                child: const Text(AccountAuthCopy.signInCta),
               ),
             ] else ...[
               const SizedBox(height: AppSpacing.md),
               TextButton(
+                key: const Key('account_sign_out_cta'),
                 onPressed: _busy
                     ? null
                     : () async {
                         await AppServices.instance.auth.signOut();
                         await _refresh();
                       },
-                child: const Text('Sign out'),
+                child: const Text(AccountAuthCopy.signOut),
+              ),
+              Text(
+                AccountAuthCopy.signOutKeepsArchive,
+                textAlign: TextAlign.center,
+                style: ArchiveMobileTypography.responsiveHelper(context),
               ),
             ],
             if (ScreenshotMode.enabled) ...[

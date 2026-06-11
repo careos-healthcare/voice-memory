@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 
 import '../api/api_client.dart';
+import '../auth/account_auth.dart';
 import '../models/session.dart';
 import '../storage/session_cookie_store.dart';
 import '../storage/secure_storage.dart';
+import 'activation_funnel_analytics.dart';
 
 class AuthService {
   AuthService(this._api, this._secure, this._cookies);
@@ -66,6 +68,8 @@ class AuthService {
     return session;
   }
 
+  /// Ends the server session and clears the local cookie. Never touches
+  /// the local journal — recordings stay on this device after sign-out.
   Future<void> signOut() async {
     try {
       await _api.signOut();
@@ -73,6 +77,10 @@ class AuthService {
     _cached = null;
     _api.setSessionCookie(null);
     await _cookies.clear();
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.accountSignout,
+      method: AccountAuth.method,
+    );
   }
 
   Future<String?> lastEmail() => _secure.read('last_email');
