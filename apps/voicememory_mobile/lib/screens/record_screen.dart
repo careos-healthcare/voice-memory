@@ -161,23 +161,37 @@ import '../widgets/indigo_capture_waveform.dart';
 import '../features/daily_discoveries/daily_discovery_engine.dart';
 import '../features/daily_discoveries/daily_discovery_models.dart';
 import '../features/daily_discoveries/daily_discovery_store.dart';
+import '../services/activation_funnel_analytics.dart';
 import '../services/product_analytics.dart';
 import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
+import '../features/first_session/day_two_reminder.dart';
+import '../features/first_session/two_day_activation_engine.dart';
+import '../widgets/first_session/day_two_reminder_card.dart';
+import '../widgets/first_session/first_save_rescue_card.dart';
 import '../widgets/first_session/first_session_explanation_card.dart';
+import '../widgets/first_session/two_day_activation_card.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_reminder.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
 import '../billing/suggestion_attribution_event.dart';
 import '../billing/suggestion_attribution_store.dart';
+import '../features/pressure_retention/archive_proof_counter_engine.dart';
+import '../features/pressure_retention/archive_proof_counter_model.dart';
 import '../features/pressure_retention/daily_return_suggestion_engine.dart';
 import '../features/pressure_retention/daily_return_suggestion_model.dart';
 import '../features/pressure_retention/done_for_today_receipt_engine.dart';
 import '../features/pressure_retention/done_for_today_receipt_model.dart';
+import '../features/pressure_retention/low_effort_check_in_engine.dart';
+import '../features/pressure_retention/low_effort_check_in_model.dart';
 import '../features/pressure_retention/one_small_recording_engine.dart';
 import '../features/pressure_retention/one_small_recording_model.dart';
 import '../features/pressure_retention/personal_return_prompt_engine.dart';
+import '../features/pressure_retention/pressure_context.dart';
+import '../billing/value_moment_paywall_trigger.dart';
+import '../features/pressure_retention/shareable_archive_proof_engine.dart';
+import '../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../features/pressure_retention/personal_return_prompt_model.dart';
 import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
@@ -185,7 +199,12 @@ import '../features/pressure_retention/start_here_save_receipt_engine.dart';
 import '../features/pressure_retention/start_here_save_receipt_model.dart';
 import '../widgets/record/start_here_save_receipt_card.dart';
 import '../widgets/record/daily_return_suggestions_card.dart';
+import '../widgets/billing/value_moment_pro_bridge.dart';
+import '../widgets/pressure_retention/archive_proof_counter_card.dart';
+import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/record/done_for_today_receipt_card.dart';
+import '../widgets/record/evidence_context_tag_card.dart';
+import '../widgets/record/low_effort_check_in_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
@@ -243,6 +262,10 @@ class _RecordScreenState extends State<RecordScreen> {
   ArchiveMovementUpdate? _archiveMovement;
   int _reflectionCount = 0;
   DateTime? _lastReflectionAt;
+
+  /// Saved entry dates for the 2-day activation path; falls back to
+  /// count-only cautious copy when empty or unreliable.
+  List<DateTime> _entryDates = const [];
   bool _firstArchiveMilestoneCompleted = false;
   bool _autostartWithPromptAttempted = false;
   String _stageLabel = '';
@@ -350,6 +373,13 @@ class _RecordScreenState extends State<RecordScreen> {
         if (payload != null &&
             (payload.startsWith('next_evidence') || payload.contains('reminder'))) {
           await ReturnReasonCaptureCoordinator.markOpenedFromReminder();
+        }
+        // The day-2 gentle reminder was tapped to open the app.
+        if (payload == DayTwoReminder.reminderId) {
+          ActivationFunnelAnalytics.track(
+            ActivationFunnelAnalytics.day2ReminderOpened,
+            oncePerSession: true,
+          );
         }
         await _applyAcquisitionIntentPrompt();
       }));
@@ -882,6 +912,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _reflectionCount = all.length;
       _lastReflectionAt =
           all.isEmpty ? null : all.last.createdAt;
+      _entryDates = all.map((e) => e.createdAt).toList();
       _firstArchiveMilestoneCompleted =
           ExamplePromptVisibility.hasCompletedFirstArchiveMilestone(all);
     });
@@ -905,6 +936,21 @@ class _RecordScreenState extends State<RecordScreen> {
 
   /// Post-save "Done for today" closure receipt — every successful save.
   DoneForTodayReceipt? _doneForTodayReceipt;
+
+  /// One optional day-2 reminder offer — only after the very first save.
+  bool _offerDayTwoReminder = false;
+
+  /// Post-save archive proof counter — real evidence counts, never fabricated.
+  ArchiveProofCounter? _archiveProofCounter;
+
+  /// Post-save optional context tag prompt — only after a successful save.
+  bool _showEvidenceContextTag = false;
+
+  /// Post-save anonymous share card — counts only, never user text.
+  ShareableArchiveProof? _shareableProof;
+
+  /// Post-save Pro bridge — only after a real value moment, never blocking.
+  ValueMomentBridge? _valueMomentBridge;
 
   /// The post-save Pro nudge shows at most once per app session.
   static bool _suggestionProNudgeShownThisSession = false;
@@ -1023,11 +1069,61 @@ class _RecordScreenState extends State<RecordScreen> {
           widget.pressureCheckInStore ?? PressureCheckInStore.instance();
       records = await store.loadAll();
     }
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    // Day 2 gentle reminder: offered once, only right after the very first
+    // successful save — value exists before anything is asked.
+    final offerDayTwoReminder = await DayTwoReminderCoordinator()
+        .shouldOffer(entryCount: _reflectionCount);
     if (!mounted) return;
     setState(() {
+      _offerDayTwoReminder = offerDayTwoReminder;
       _doneForTodayReceipt =
           const DoneForTodayReceiptEngine().build(saved: true, records: records);
+      // Same evidence, one more honest count: the save that just happened.
+      _archiveProofCounter = const ArchiveProofCounterEngine()
+          .build(records, savedToday: true);
+      // Anonymous share card built from the same counts — never user text.
+      _shareableProof = const ShareableArchiveProofEngine()
+          .build(records, savedToday: true);
+      // Pro bridge only after a real value moment — and the save is already
+      // done, so it can never block recording or saving.
+      _valueMomentBridge =
+          const ValueMomentPaywallTrigger().build(records, isPro: isPro);
+      // Optional, skippable context tag — only reachable after a real save.
+      _showEvidenceContextTag = _entriesAfterSave.isNotEmpty;
     });
+  }
+
+  /// Persists a one-tap low-effort check-in as a real lightweight evidence
+  /// record. The card only confirms "Saved" after this completes.
+  Future<void> _saveLowEffortCheckIn(LowEffortCheckInOption option) async {
+    if (widget.pressureCheckInStore == null && !AppServices.isInitialized) {
+      return;
+    }
+    final store =
+        widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+    final existing = await store.loadAll();
+    await store.save(
+      const LowEffortCheckInEngine().buildRecord(option, existing),
+    );
+  }
+
+  /// Stores the single optional context tag against the entry that was just
+  /// saved, then retires the prompt. Skipping never stores anything.
+  Future<void> _saveEvidenceContextTag(PressureContext tag) async {
+    setState(() => _showEvidenceContextTag = false);
+    if (_entriesAfterSave.isEmpty) return;
+    if (widget.pressureCheckInStore == null && !AppServices.isInitialized) {
+      return;
+    }
+    final store =
+        widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+    await store.addContextTag(
+      entryId: _entriesAfterSave.last.id,
+      contextId: tag.id,
+    );
   }
 
   Future<void> _loadFirstThreeJourney() async {
@@ -1128,6 +1224,10 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _start() async {
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.recordCtaTapped,
+      entryCount: _reflectionCount,
+    );
     if (_reflectionCount == 0 && _dueCheckInToday == null) {
       ActivationTracker.trackActivationFirstRecordCtaTapped();
     }
@@ -1379,6 +1479,7 @@ class _RecordScreenState extends State<RecordScreen> {
           : CaptureSaveMessages.savedPrivatelyOnDevice;
       _archiveMovement = movement;
       _reflectionCount = all.length;
+      _entryDates = all.map((e) => e.createdAt).toList();
       _firstArchiveMilestoneCompleted =
           ExamplePromptVisibility.hasCompletedFirstArchiveMilestone(all);
       _showPostSaveLoop = cloudOk;
@@ -1872,6 +1973,11 @@ class _RecordScreenState extends State<RecordScreen> {
       _saveReceipt = null;
       _suggestionProNudgeSource = null;
       _doneForTodayReceipt = null;
+      _offerDayTwoReminder = false;
+      _archiveProofCounter = null;
+      _shareableProof = null;
+      _valueMomentBridge = null;
+      _showEvidenceContextTag = false;
       _tomorrowReturnLoop = null;
       _returnComparison = null;
       _returnStreak = null;
@@ -1971,6 +2077,11 @@ class _RecordScreenState extends State<RecordScreen> {
       _saveReceipt = null;
       _suggestionProNudgeSource = null;
       _doneForTodayReceipt = null;
+      _offerDayTwoReminder = false;
+      _archiveProofCounter = null;
+      _shareableProof = null;
+      _valueMomentBridge = null;
+      _showEvidenceContextTag = false;
       _tomorrowReturnLoop = null;
       _localSaveTitle = null;
       _syncNote = null;
@@ -2370,6 +2481,12 @@ class _RecordScreenState extends State<RecordScreen> {
                             setState(() => _selectedPromptLine = p);
                           },
                         ),
+                        // Secondary one-tap fallback: contributes a real
+                        // entry on days a full recording feels like too much.
+                        const SizedBox(height: 8),
+                        LowEffortCheckInCard(
+                          onSelect: _saveLowEffortCheckIn,
+                        ),
                       ],
                       if (_dailyReturnSuggestions.hasSuggestions) ...[
                         const SizedBox(height: 12),
@@ -2388,6 +2505,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ConsumerRecordPromptsSection(
                         selectedPrompt: _selectedPromptLine,
                         personalPrompts: _personalReturnPrompts,
+                        // One clear primary action when a one-small-recording
+                        // exists — generic prompts stay, but step back.
+                        deemphasized: _oneSmallRecording.hasRecording,
                         onSelectPrompt: (p) {
                           ActivationTracker
                               .trackActivationStarterPromptSelected();
@@ -2476,6 +2596,68 @@ class _RecordScreenState extends State<RecordScreen> {
                         const SizedBox(height: 16),
                         DoneForTodayReceiptCard(
                           receipt: _doneForTodayReceipt!,
+                        ),
+                        // 2-day path day-1 closure: only after the very
+                        // first save, alongside (never instead of) the
+                        // Done for today receipt.
+                        Builder(builder: (context) {
+                          final path = const TwoDayActivationEngine()
+                              .buildPostSave(entryCount: _reflectionCount);
+                          if (!path.show) return const SizedBox.shrink();
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: TwoDayActivationCard(path: path),
+                          );
+                        }),
+                        // One optional day-2 reminder offer — first save
+                        // only, below (never instead of) the receipt.
+                        if (_offerDayTwoReminder)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: DayTwoReminderCard(),
+                          ),
+                      ],
+                      if (_archiveProofCounter != null &&
+                          _archiveProofCounter!.hasProof) ...[
+                        const SizedBox(height: 16),
+                        ArchiveProofCounterCard(
+                          counter: _archiveProofCounter!,
+                        ),
+                      ],
+                      if (_shareableProof != null &&
+                          _shareableProof!.hasProof) ...[
+                        const SizedBox(height: 16),
+                        ShareableArchiveProofCard(proof: _shareableProof!),
+                      ],
+                      if (_valueMomentBridge != null &&
+                          _valueMomentBridge!.show) ...[
+                        const SizedBox(height: 16),
+                        ValueMomentProBridge(
+                          bridge: _valueMomentBridge!,
+                          onSeePro: () {
+                            setState(() => _valueMomentBridge = null);
+                            context.push(
+                              '/subscription',
+                              extra: PaywallRouteArgs(
+                                source: PaywallSource.valueMoment,
+                                sourceRoute: '/record',
+                              ),
+                            );
+                          },
+                          onDismiss: () => setState(() {
+                            ValueMomentPaywallTrigger.dismissedThisSession =
+                                true;
+                            _valueMomentBridge = null;
+                          }),
+                        ),
+                      ],
+                      if (_showEvidenceContextTag) ...[
+                        const SizedBox(height: 16),
+                        EvidenceContextTagCard(
+                          onSaveTag: _saveEvidenceContextTag,
+                          onSkip: () => setState(
+                            () => _showEvidenceContextTag = false,
+                          ),
                         ),
                       ],
                       if (stack.showInputQualityCoach) ...[
@@ -2957,6 +3139,22 @@ class _RecordScreenState extends State<RecordScreen> {
             onRecord: _start,
           ),
         );
+      }
+      // First Save Rescue: a 10-second, deletable test recording for users
+      // with an empty archive. One CTA into the existing recording flow —
+      // sits alongside (never instead of) the explainer above.
+      if (FirstSaveRescueCard.shouldShow(_reflectionCount)) {
+        actions.add(FirstSaveRescueCard(onStart: _start));
+      }
+      // Calm 2-day path: the plan before the first save, the return moment
+      // on day 2, nothing once the loop is running. Passive — never blocks
+      // recording.
+      final twoDayPath = const TwoDayActivationEngine().build(
+        entryCount: _reflectionCount,
+        entryDates: _entryDates,
+      );
+      if (twoDayPath.show) {
+        actions.add(TwoDayActivationCard(path: twoDayPath));
       }
       // Compact return-trigger reminder for users who accepted it; never
       // shown alongside the first-session card.

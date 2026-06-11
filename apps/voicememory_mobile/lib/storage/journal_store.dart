@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../features/first25/first25_journal_hooks.dart';
+import '../features/first_session/first_save_rescue.dart';
 import '../models/journal_entry.dart';
 import '../models/sync_status.dart';
+import '../services/activation_funnel_analytics.dart';
 
 /// Durable JSON journal file on device.
 class JournalStore {
@@ -45,6 +47,24 @@ class JournalStore {
     final isNew = !all.any((e) => e.id == entry.id);
     final next = [entry, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
+    // Funnel: the very first successful save in this archive.
+    if (isNew && next.length == 1) {
+      ActivationFunnelAnalytics.track(
+        ActivationFunnelAnalytics.firstRecordingSaved,
+        entryCount: 1,
+        oncePerSession: true,
+      );
+      // Attribute the first save to the rescue card when its CTA started
+      // this recording. Counts only — never recording content.
+      if (FirstSaveRescue.startedFromRescueThisSession) {
+        FirstSaveRescue.startedFromRescueThisSession = false;
+        ActivationFunnelAnalytics.track(
+          ActivationFunnelAnalytics.firstSaveRescueSaved,
+          entryCount: 1,
+          oncePerSession: true,
+        );
+      }
+    }
     await First25JournalHooks.onJournalSave(
       entry: entry,
       isNew: isNew,
