@@ -165,9 +165,16 @@ import '../services/activation_funnel_analytics.dart';
 import '../services/product_analytics.dart';
 import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
+import '../billing/purchase_intent_return_cue.dart';
+import '../features/first_session/day_seven_continuity_loop.dart';
 import '../features/first_session/day_two_reminder.dart';
+import '../features/first_session/day_two_return_preview.dart';
+import '../features/first_session/first_recording_sample.dart';
 import '../features/first_session/two_day_activation_engine.dart';
+import '../widgets/first_session/day_seven_continuity_card.dart';
 import '../widgets/first_session/day_two_reminder_card.dart';
+import '../widgets/first_session/day_two_return_preview_card.dart';
+import '../widgets/first_session/first_recording_sample_card.dart';
 import '../widgets/first_session/first_save_rescue_card.dart';
 import '../widgets/first_session/first_session_explanation_card.dart';
 import '../widgets/first_session/two_day_activation_card.dart';
@@ -197,8 +204,11 @@ import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
 import '../features/pressure_retention/start_here_save_receipt_engine.dart';
 import '../features/pressure_retention/start_here_save_receipt_model.dart';
+import '../features/pressure_retention/thread_return_evidence_engine.dart';
+import '../features/pressure_retention/weekly_thread_review_engine.dart';
 import '../widgets/record/start_here_save_receipt_card.dart';
 import '../widgets/record/daily_return_suggestions_card.dart';
+import '../widgets/billing/purchase_intent_return_cue_card.dart';
 import '../widgets/billing/value_moment_pro_bridge.dart';
 import '../widgets/pressure_retention/archive_proof_counter_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
@@ -231,6 +241,7 @@ class RecordScreen extends StatefulWidget {
     this.pressureCheckInStore,
     this.suggestionAttributionStore,
     this.entitlementReader,
+    this.purchaseIntentStore,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -247,6 +258,9 @@ class RecordScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live billing-backed reader.
   final ArchiveEntitlementReader? entitlementReader;
+
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final PurchaseIntentStore? purchaseIntentStore;
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();
@@ -331,6 +345,9 @@ class _RecordScreenState extends State<RecordScreen> {
   SignalJourney? _signalJourney;
   SignalReview? _signalReview;
   bool _journeyCompletionDismissed = false;
+  PendingPurchaseIntent? _purchaseIntentCue;
+  bool _hasWeeklyReviewForContinuity = false;
+  bool _hasConnectedThreadForContinuity = false;
 
   /// Active UI language for post-save cards. Defaults to English; updated from
   /// reflection detection (or the screenshot override) and the language chip.
@@ -358,6 +375,7 @@ class _RecordScreenState extends State<RecordScreen> {
     _loadFirstLoop();
     _loadReturnTriggerAccepted();
     _loadPersonalReturnPrompts();
+    unawaited(_loadPurchaseIntentCue());
     final seed = widget.initialPrompt?.trim();
     if (seed != null && seed.isNotEmpty) {
       _selectedPromptLine = seed;
@@ -936,6 +954,7 @@ class _RecordScreenState extends State<RecordScreen> {
 
   /// Post-save "Done for today" closure receipt — every successful save.
   DoneForTodayReceipt? _doneForTodayReceipt;
+  DayTwoReturnPreview? _dayTwoReturnPreview;
 
   /// One optional day-2 reminder offer — only after the very first save.
   bool _offerDayTwoReminder = false;
@@ -1047,6 +1066,13 @@ class _RecordScreenState extends State<RecordScreen> {
       _dailyReturnSuggestions =
           const DailyReturnSuggestionEngine().build(records);
       _oneSmallRecording = const OneSmallRecordingEngine().build(records);
+      // Day 7 continuity inputs — both from existing engines, never new
+      // claims. The loop itself is built at render time with the current
+      // entry count.
+      _hasWeeklyReviewForContinuity =
+          const WeeklyThreadReviewEngine().build(records).hasReview;
+      _hasConnectedThreadForContinuity =
+          const ThreadReturnEvidenceEngine().build(records).hasEvidence;
     });
     if (_dailyReturnSuggestions.hasSuggestions &&
         !_dailySuggestionsSeenTracked) {
@@ -1093,6 +1119,12 @@ class _RecordScreenState extends State<RecordScreen> {
           const ValueMomentPaywallTrigger().build(records, isPro: isPro);
       // Optional, skippable context tag — only reachable after a real save.
       _showEvidenceContextTag = _entriesAfterSave.isNotEmpty;
+      // Tomorrow's-check preview — safe labels only, never user text.
+      _dayTwoReturnPreview = const DayTwoReturnPreviewEngine().build(
+        entryCount: _reflectionCount,
+        contextTagIds: [for (final r in records) ...r.contextIds],
+        entryDates: [for (final r in records) r.createdAt],
+      );
     });
   }
 
@@ -1124,12 +1156,46 @@ class _RecordScreenState extends State<RecordScreen> {
       entryId: _entriesAfterSave.last.id,
       contextId: tag.id,
     );
+    // The just-saved tag can make tomorrow's-check preview more specific.
+    final records = await store.loadAll();
+    if (!mounted) return;
+    setState(() {
+      _dayTwoReturnPreview = const DayTwoReturnPreviewEngine().build(
+        entryCount: _reflectionCount,
+        contextTagIds: [for (final r in records) ...r.contextIds],
+        entryDates: [for (final r in records) r.createdAt],
+      );
+    });
   }
 
   Future<void> _loadFirstThreeJourney() async {
     final model = await FirstThreeJourneyCoordinator.load();
     if (!mounted) return;
     setState(() => _firstThreeJourney = model);
+  }
+
+  /// Purchase Intent Return Cue: a previous purchase start without a
+  /// completion, surfaced calmly on a later visit. Loaded once at init —
+  /// the session that started the purchase never shows it.
+  Future<void> _loadPurchaseIntentCue() async {
+    if (widget.purchaseIntentStore == null && !AppServices.isInitialized) {
+      return;
+    }
+    final store = widget.purchaseIntentStore ?? PurchaseIntentStore();
+    final intent = await store.pendingIntent();
+    if (intent == null) return;
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    if (!mounted) return;
+    if (!PurchaseIntentReturnCue.shouldShow(
+      isPro: isPro,
+      hasPendingIntent: true,
+    )) {
+      return;
+    }
+    PurchaseIntentReturnCue.shownThisSession = true;
+    setState(() => _purchaseIntentCue = intent);
   }
 
   Future<void> _loadFirstLoop() async {
@@ -1973,6 +2039,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _saveReceipt = null;
       _suggestionProNudgeSource = null;
       _doneForTodayReceipt = null;
+      _dayTwoReturnPreview = null;
       _offerDayTwoReminder = false;
       _archiveProofCounter = null;
       _shareableProof = null;
@@ -2077,6 +2144,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _saveReceipt = null;
       _suggestionProNudgeSource = null;
       _doneForTodayReceipt = null;
+      _dayTwoReturnPreview = null;
       _offerDayTwoReminder = false;
       _archiveProofCounter = null;
       _shareableProof = null;
@@ -2616,6 +2684,17 @@ class _RecordScreenState extends State<RecordScreen> {
                             padding: EdgeInsets.only(top: 16),
                             child: DayTwoReminderCard(),
                           ),
+                        // Tomorrow's-check preview — passive, no CTA,
+                        // safe labels only.
+                        if (_dayTwoReturnPreview != null &&
+                            _dayTwoReturnPreview!.show)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: DayTwoReturnPreviewCard(
+                              preview: _dayTwoReturnPreview!,
+                              entryCount: _reflectionCount,
+                            ),
+                          ),
                       ],
                       if (_archiveProofCounter != null &&
                           _archiveProofCounter!.hasProof) ...[
@@ -3146,6 +3225,17 @@ class _RecordScreenState extends State<RecordScreen> {
       if (FirstSaveRescueCard.shouldShow(_reflectionCount)) {
         actions.add(FirstSaveRescueCard(onStart: _start));
       }
+      // First Recording Sample: one tiny editable starter sentence for an
+      // empty archive. The CTA seeds the existing recording flow (the line
+      // shows as the "Try saying" helper) — never a new flow, never a list.
+      if (FirstRecordingSampleCard.shouldShow(_reflectionCount)) {
+        actions.add(
+          FirstRecordingSampleCard(
+            onUseStarter: () =>
+                _onStartHereSelected(FirstRecordingSample.sample),
+          ),
+        );
+      }
       // Calm 2-day path: the plan before the first save, the return moment
       // on day 2, nothing once the loop is running. Passive — never blocks
       // recording.
@@ -3155,6 +3245,24 @@ class _RecordScreenState extends State<RecordScreen> {
       );
       if (twoDayPath.show) {
         actions.add(TwoDayActivationCard(path: twoDayPath));
+      }
+      // Day 7 continuity: after the Day 2 return (2+ entries), a calm note
+      // on where the archive is — passive until the existing weekly review
+      // is genuinely ready, then a single CTA into it. Never blocks
+      // recording.
+      final continuityLoop = const DaySevenContinuityEngine().build(
+        entryCount: _reflectionCount,
+        hasWeeklyReview: _hasWeeklyReviewForContinuity,
+      );
+      if (continuityLoop.show) {
+        actions.add(
+          DaySevenContinuityCard(
+            loop: continuityLoop,
+            entryCount: _reflectionCount,
+            hasConnectedThread: _hasConnectedThreadForContinuity,
+            onViewWeeklyReview: () => context.push('/pressure-insights'),
+          ),
+        );
       }
       // Compact return-trigger reminder for users who accepted it; never
       // shown alongside the first-session card.
@@ -3178,8 +3286,37 @@ class _RecordScreenState extends State<RecordScreen> {
               : (_reflectionCount == 0
                   ? ConsumerUiCopy.recordOneMomentCta
                   : ConsumerUiCopy.startRecording),
+          // First-save confidence: tiny helper, only before the first save.
+          underRecordHelper: _reflectionCount == 0
+              ? FirstSaveRescueCard.oneSentenceLine
+              : null,
         ),
       );
+      // Purchase Intent Return Cue: below the record actions so free use is
+      // never blocked. Dismissible; routes to the existing paywall.
+      if (_purchaseIntentCue != null) {
+        actions.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: PurchaseIntentReturnCueCard(
+              intent: _purchaseIntentCue!,
+              onSeePro: () {
+                final intent = _purchaseIntentCue!;
+                setState(() => _purchaseIntentCue = null);
+                context.push(
+                  '/subscription',
+                  extra: PaywallRouteArgs(
+                    source: PaywallSource.fromId(intent.source) ??
+                        PaywallSource.generalPro,
+                    sourceRoute: '/record',
+                  ),
+                );
+              },
+              onDismiss: () => setState(() => _purchaseIntentCue = null),
+            ),
+          ),
+        );
+      }
     }
     if (ui == RecordUiState.recording) {
       actions.add(

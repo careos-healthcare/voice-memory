@@ -35,8 +35,33 @@ abstract final class ActivationFunnelAnalytics {
   static const String firstSaveRescueSeen = 'first_save_rescue_seen';
   static const String firstSaveRescueTapped = 'first_save_rescue_tapped';
   static const String firstSaveRescueSaved = 'first_save_rescue_saved';
+
+  /// First Recording Sample — the zero-entry starter sentence. `saved`
+  /// fires when the very first save follows a starter-seeded recording.
+  /// Counts only — never recording content.
+  static const String firstRecordingSampleSeen = 'first_recording_sample_seen';
+  static const String firstRecordingSampleTapped =
+      'first_recording_sample_tapped';
+  static const String firstRecordingSampleSaved =
+      'first_recording_sample_saved';
+
+  /// First-save confidence lines (privacy/reversibility + "one sentence is
+  /// enough") rendered for users with an empty archive.
+  static const String firstSaveConfidenceSeen = 'first_save_confidence_seen';
   static const String doneForTodaySeen = 'done_for_today_seen';
   static const String day1CompleteSeen = 'day_1_complete_seen';
+
+  /// The concrete day-1 return reason ("did this return, fade, or change?")
+  /// rendered after the very first save.
+  static const String day1ReturnReasonSeen = 'day_1_return_reason_seen';
+
+  /// Day 7 Continuity Loop — calm continuity copy after the Day 2 return,
+  /// closing into the existing weekly review. Counts and stable stage ids
+  /// only — never content.
+  static const String day7ContinuitySeen = 'day_7_continuity_seen';
+  static const String day7ContinuityWeeklyReviewTapped =
+      'day_7_continuity_weekly_review_tapped';
+
   static const String day2ReturnSeen = 'day_2_return_seen';
 
   /// Day 2 Gentle Reminder — one optional reminder offered once after the
@@ -77,6 +102,41 @@ abstract final class ActivationFunnelAnalytics {
   /// The final purchase reassurance block rendered above the purchase CTA.
   static const String purchaseReassuranceSeen = 'purchase_reassurance_seen';
 
+  /// Tomorrow's-check preview shown after the first save.
+  static const String day2ReturnPreviewSeen = 'day_2_return_preview_seen';
+
+  /// The above-fold "What Pro continues" clarity block under the headline.
+  static const String paywallAboveFoldClaritySeen =
+      'paywall_above_fold_clarity_seen';
+
+  /// The price-confidence lines near the plans and purchase CTA.
+  static const String priceConfidenceSeen = 'price_confidence_seen';
+
+  /// Objection-specific reassurance block on a later paywall visit.
+  static const String paywallObjectionFollowUpSeen =
+      'paywall_objection_follow_up_seen';
+
+  /// The plan-choice helper near the plan selector.
+  static const String planSelectionConfidenceSeen =
+      'plan_selection_confidence_seen';
+
+  /// A plan card was tapped — stable plan id only.
+  static const String paywallPlanSelected = 'paywall_plan_selected';
+
+  /// Pro Retention Check — one optional "is the connected archive still
+  /// useful?" question for Pro users. Stable ids and counts only.
+  static const String proRetentionCheckSeen = 'pro_retention_check_seen';
+  static const String proRetentionCheckYes = 'pro_retention_check_yes';
+  static const String proRetentionCheckNotYet = 'pro_retention_check_not_yet';
+
+  /// Calm return cue after a purchase start that never completed.
+  static const String purchaseIntentReturnCueSeen =
+      'purchase_intent_return_cue_seen';
+  static const String purchaseIntentReturnCueTapped =
+      'purchase_intent_return_cue_tapped';
+  static const String purchaseIntentReturnCueDismissed =
+      'purchase_intent_return_cue_dismissed';
+
   /// Fired by the existing paywall flow (kept here so the funnel reads as
   /// one list): `paywall_seen` via First25 metrics on paywall open, and the
   /// purchase stages forwarded from the paywall attribution events.
@@ -92,6 +152,7 @@ abstract final class ActivationFunnelAnalytics {
     'stage',
     'card_type',
     'reason',
+    'plan',
   };
 
   /// Stable-id shape for string values — user text never matches this.
@@ -111,6 +172,7 @@ abstract final class ActivationFunnelAnalytics {
     String? stage,
     String? cardType,
     String? reason,
+    String? plan,
     bool oncePerSession = false,
   }) {
     if (oncePerSession) {
@@ -127,6 +189,7 @@ abstract final class ActivationFunnelAnalytics {
       if (cardType != null && _safeValue.hasMatch(cardType))
         'card_type': cardType,
       if (reason != null && _safeValue.hasMatch(reason)) 'reason': reason,
+      if (plan != null && _safeValue.hasMatch(plan)) 'plan': plan,
     };
 
     final sink = _sink;

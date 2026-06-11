@@ -4,7 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
+import '../billing/pro_retention_check.dart';
+import '../billing/value_moment_paywall_trigger.dart';
 import '../design/archive_mobile_typography.dart';
+import '../features/pressure_retention/archive_proof_counter_engine.dart';
+import '../features/pressure_retention/archive_proof_counter_model.dart';
 import '../features/pressure_retention/archive_reflection_engine.dart';
 import '../features/pressure_retention/belief_distance_engine.dart';
 import '../features/pressure_retention/guided_thread_plan_engine.dart';
@@ -23,10 +27,15 @@ import '../features/pressure_retention/pressure_return_trigger_engine.dart';
 import '../features/pressure_retention/pressure_return_trigger_model.dart';
 import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
+import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/pressure_retention/thread_return_evidence_engine.dart';
+import '../features/pressure_retention/weekly_thread_review_engine.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/pressure_retention/archive_proof_counter_card.dart';
+import '../widgets/billing/pro_retention_check_card.dart';
+import '../widgets/billing/value_moment_pro_bridge.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
 import '../widgets/pressure_retention/belief_distance_card.dart';
 import '../widgets/pressure_retention/guided_thread_plan_card.dart';
@@ -41,7 +50,9 @@ import '../widgets/pressure_retention/pressure_pro_upgrade_card.dart';
 import '../widgets/pressure_retention/pressure_report_share_button.dart';
 import '../widgets/pressure_retention/pressure_return_trigger_card.dart';
 import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
+import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/pressure_retention/thread_return_evidence_card.dart';
+import '../widgets/pressure_retention/weekly_thread_review_card.dart';
 
 /// Pressure loop screen: weekly visibility, recap, and the focused reflection.
 ///
@@ -91,12 +102,20 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _threadReturnEngine = ThreadReturnEvidenceEngine();
   static const _guidedPlanEngine = GuidedThreadPlanEngine();
   static const _beliefDistanceEngine = BeliefDistanceEngine();
+  static const _proofCounterEngine = ArchiveProofCounterEngine();
+  static const _weeklyReviewEngine = WeeklyThreadReviewEngine();
+  static const _shareableProofEngine = ShareableArchiveProofEngine();
+  static const _valueMomentTrigger = ValueMomentPaywallTrigger();
 
   late Future<_InsightsData> _future;
 
   bool _showMicroExperiment = false;
   bool _experimentAccepted = false;
   PressureReturnTriggerStatus? _triggerOverride;
+
+  /// Decided once per screen instance so the check (and its answer ack)
+  /// survives rebuilds; the session flag stops later instances.
+  bool? _proRetentionEligible;
 
   @override
   void initState() {
@@ -229,6 +248,12 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         const PressureFirstWeekNudge(),
         const SizedBox(height: AppSpacing.sm),
       ],
+      // Compact proof that evidence is accumulating — counts only, built from
+      // the same thread detection as the evidence card below it.
+      ..._proofCounterSection(records),
+      // Privacy-safe share card right next to the proof counter — counts
+      // only, never user text. Renders nothing without a connected thread.
+      ..._shareableProofSection(records),
       // Thread continuity first: evidence that a real thread is being tracked
       // over time. Renders only when a thread actually repeated.
       ..._threadReturnSection(records),
@@ -238,6 +263,16 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       // A repeated belief-like phrase in the user's own words, with gentle
       // distance from it. Renders only when a phrase can be safely formed.
       ..._beliefDistanceSection(records),
+      // Compact weekly review: what returned, faded, or changed across the
+      // archive this week. Renders only when something genuinely moved.
+      ..._weeklyReviewSection(records),
+      // Pro retention check: one optional two-tap question for Pro users
+      // who genuinely saw a Pro-value surface above. Never a cancellation
+      // flow; manage/cancel info stays where it already is.
+      ..._proRetentionSection(records, isPro),
+      // Small dismissible Pro bridge — only after a real value moment, and
+      // only below the evidence it refers to. Never blocks anything.
+      ..._valueMomentSection(records, isPro),
       // Personal evidence next: why the pattern below is believed to exist.
       // Free and Pro both see it; renders only with enough repeated evidence.
       ..._personalEvidenceSection(records),
@@ -357,6 +392,51 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     );
   }
 
+  /// Compact archive-proof counter — only when a thread genuinely connects
+  /// 2+ entries. Never replaces or hides the evidence cards below it.
+  List<Widget> _proofCounterSection(List<PressureCheckInRecord> records) {
+    final counter = _proofCounterEngine.build(records);
+    if (!counter.hasProof) return const [];
+    return [
+      ArchiveProofCounterCard(counter: counter),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// Pro bridge after a value moment. Dismissal hides it for the session.
+  List<Widget> _valueMomentSection(
+    List<PressureCheckInRecord> records,
+    bool isPro,
+  ) {
+    final bridge = _valueMomentTrigger.build(records, isPro: isPro);
+    if (!bridge.show) return const [];
+    return [
+      ValueMomentProBridge(
+        bridge: bridge,
+        onSeePro: () => _openPaywall(
+          ValueMomentBridge.title,
+          bridge.body,
+          source: PaywallSource.valueMoment,
+        ),
+        onDismiss: () => setState(
+          () => ValueMomentPaywallTrigger.dismissedThisSession = true,
+        ),
+      ),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// Anonymous share card — counts only, no user text. Renders nothing
+  /// without a connected thread.
+  List<Widget> _shareableProofSection(List<PressureCheckInRecord> records) {
+    final proof = _shareableProofEngine.build(records);
+    if (!proof.hasProof) return const [];
+    return [
+      ShareableArchiveProofCard(proof: proof),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
   /// Return trigger card, below the reveal/review/micro-experiment area.
   /// Thread continuity card — only when a thread genuinely repeated across
   /// the user's entries. Shows nothing otherwise.
@@ -387,6 +467,46 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     if (!belief.hasBelief) return const [];
     return [
       BeliefDistanceCard(belief: belief),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// Pro retention check — Pro users only, and only when at least one
+  /// Pro-value surface above genuinely rendered. Eligibility is decided
+  /// once per screen instance; the session flag stops later instances.
+  List<Widget> _proRetentionSection(
+    List<PressureCheckInRecord> records,
+    bool isPro,
+  ) {
+    final counter = _proofCounterEngine.build(records);
+    final evidence = _threadReturnEngine.build(records);
+    final cardType = ProRetentionCheck.valueSurfaceCardType(
+      hasWeeklyReview: _weeklyReviewEngine.build(records).hasReview,
+      hasBeliefDistance: _beliefDistanceEngine.build(records).hasBelief,
+      hasThreadReturnEvidence: evidence.hasEvidence,
+      hasConnectedProofCounter: counter.hasProof &&
+          counter.connectedCount >= ArchiveProofCounter.minConnectedEntries,
+    );
+    _proRetentionEligible ??=
+        ProRetentionCheck.shouldShow(isPro: isPro, cardType: cardType);
+    if (!_proRetentionEligible! || cardType == null) return const [];
+    return [
+      ProRetentionCheckCard(
+        cardType: cardType,
+        entryCount: records.length,
+        hasConnectedThread: evidence.hasEvidence,
+      ),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// Weekly thread review — what returned, faded, or changed over the last
+  /// 7 days. Shows nothing without enough evidence or genuine movement.
+  List<Widget> _weeklyReviewSection(List<PressureCheckInRecord> records) {
+    final review = _weeklyReviewEngine.build(records);
+    if (!review.hasReview) return const [];
+    return [
+      WeeklyThreadReviewCard(review: review),
       const SizedBox(height: AppSpacing.sm),
     ];
   }
