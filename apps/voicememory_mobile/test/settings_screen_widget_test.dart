@@ -25,7 +25,9 @@ void main() {
 
     expect(find.text('Privacy policy'), findsOneWidget);
     expect(find.text('Restore purchases'), findsOneWidget);
-    expect(find.text('Export archive'), findsOneWidget);
+    await tester.drag(find.byType(ListView), const Offset(0, -400));
+    await tester.pump();
+    expect(find.text('Export reflections'), findsOneWidget);
     expect(find.text('Developer'), findsNothing);
     expect(find.text('RevenueCat verification'), findsNothing);
     expect(find.text('API base URL'), findsNothing);
@@ -37,6 +39,8 @@ void main() {
 
     await pumpSettings(tester);
 
+    await tester.drag(find.byType(ListView), const Offset(0, -400));
+    await tester.pump();
     expect(find.text('Developer diagnostics'), findsOneWidget);
     expect(find.text('RevenueCat verification'), findsNothing);
   });

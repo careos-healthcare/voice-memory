@@ -13,6 +13,7 @@ import '../design/archive_responsive_layout.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import '../product/consumer_ui_copy.dart';
+import '../security/security_settings_copy.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -30,7 +31,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _restoreBusy = false;
   bool _remindersEnabled = false;
   bool _remindersBusy = false;
-
   @override
   void initState() {
     super.initState();
@@ -166,6 +166,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               value: _remindersEnabled,
               onChanged: _remindersBusy ? null : _toggleReminders,
+            ),
+            ListTile(
+              key: const Key('settings_security_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                SecuritySettingsCopy.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                SecuritySettingsCopy.subtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/security'),
             ),
             _tile(
               ConsumerUiCopy.exportReflections,

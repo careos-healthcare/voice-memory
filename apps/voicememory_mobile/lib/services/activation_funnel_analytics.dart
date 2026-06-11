@@ -129,6 +129,56 @@ abstract final class ActivationFunnelAnalytics {
   static const String proRetentionCheckYes = 'pro_retention_check_yes';
   static const String proRetentionCheckNotYet = 'pro_retention_check_not_yet';
 
+  /// Referral invite after a value moment — stable source/card ids only,
+  /// never archive content.
+  static const String referralInviteSeen = 'referral_invite_seen';
+  static const String referralInviteCopied = 'referral_invite_copied';
+  static const String referralInviteDismissed = 'referral_invite_dismissed';
+
+  /// The source-specific proof line rendered above the invite body —
+  /// stable source/card ids only, never archive content.
+  static const String referralProofMomentSeen = 'referral_proof_moment_seen';
+
+  /// App Store review prompt after a value moment — stable source/card
+  /// ids and counts only, never archive content.
+  static const String reviewPromptSeen = 'review_prompt_seen';
+  static const String reviewPromptTapped = 'review_prompt_tapped';
+  static const String reviewPromptDismissed = 'review_prompt_dismissed';
+
+  /// The copied invite included the attribution link — fixed ref plus a
+  /// whitelisted source id, never the invite text itself.
+  static const String referralInviteLinkCopied = 'referral_invite_link_copied';
+
+  /// An `/invite?ref=archive_invite` deep link was opened. Fixed ref and a
+  /// whitelisted source id only.
+  static const String inviteAttributionReceived = 'invite_attribution_received';
+
+  /// Invited User Welcome — the source-tailored welcome before the first
+  /// save. `first_save` fires when the very first save follows a
+  /// welcome-started recording. Stable source ids and counts only.
+  static const String invitedUserWelcomeSeen = 'invited_user_welcome_seen';
+  static const String invitedUserWelcomeTapped = 'invited_user_welcome_tapped';
+  static const String invitedUserFirstSave = 'invited_user_first_save';
+
+  /// Invite funnel mirror events — fired only for users with a first-touch
+  /// invite attribution, additive to (never instead of) the normal funnel.
+  /// Stable invite source ids and card types only.
+  static const String invitedAppOpened = 'invited_app_opened';
+  static const String invitedRecordCtaTapped = 'invited_record_cta_tapped';
+  static const String invitedFirstSave = 'invited_first_save';
+  static const String invitedDay2ReturnSeen = 'invited_day_2_return_seen';
+  static const String invitedValueMomentSeen = 'invited_value_moment_seen';
+  static const String invitedProBridgeTapped = 'invited_pro_bridge_tapped';
+  static const String invitedPaywallSeen = 'invited_paywall_seen';
+  static const String invitedPurchaseStarted = 'invited_purchase_started';
+  static const String invitedPurchaseCompleted = 'invited_purchase_completed';
+
+  /// Invited Day 2 return copy — the source-tailored second-visit card that
+  /// replaces the generic Day 2 card for invited users. Stable invite
+  /// source ids and counts only.
+  static const String invitedDay2CopySeen = 'invited_day_2_copy_seen';
+  static const String invitedDay2CopyTapped = 'invited_day_2_copy_tapped';
+
   /// Calm return cue after a purchase start that never completed.
   static const String purchaseIntentReturnCueSeen =
       'purchase_intent_return_cue_seen';
@@ -136,6 +186,29 @@ abstract final class ActivationFunnelAnalytics {
       'purchase_intent_return_cue_tapped';
   static const String purchaseIntentReturnCueDismissed =
       'purchase_intent_return_cue_dismissed';
+
+  /// App lock — optional PIN/biometric protection. Method and enabled-state
+  /// ids only; no PIN, hash, salt, or archive content has a path in.
+  static const String appLockEnabled = 'app_lock_enabled';
+  static const String appLockDisabled = 'app_lock_disabled';
+  static const String appLockUnlocked = 'app_lock_unlocked';
+  static const String appLockFailed = 'app_lock_failed';
+  static const String biometricUnlockAttempted = 'biometric_unlock_attempted';
+  static const String biometricUnlockSucceeded = 'biometric_unlock_succeeded';
+  static const String biometricUnlockFailed = 'biometric_unlock_failed';
+
+  /// Account flow — the existing backend email + one-time-code provider
+  /// (passwordless). Method and stable error ids only; no email, code,
+  /// password, or archive content has a path in. `password_reset_requested`
+  /// is reserved: the provider is passwordless today, so it can only fire
+  /// if a password flow ever ships.
+  static const String accountSignupStarted = 'account_signup_started';
+  static const String accountSignupCompleted = 'account_signup_completed';
+  static const String accountSigninStarted = 'account_signin_started';
+  static const String accountSigninCompleted = 'account_signin_completed';
+  static const String accountSignout = 'account_signout';
+  static const String passwordResetRequested = 'password_reset_requested';
+  static const String authErrorShown = 'auth_error_shown';
 
   /// Fired by the existing paywall flow (kept here so the funnel reads as
   /// one list): `paywall_seen` via First25 metrics on paywall open, and the
@@ -153,6 +226,10 @@ abstract final class ActivationFunnelAnalytics {
     'card_type',
     'reason',
     'plan',
+    'ref',
+    'method',
+    'enabled',
+    'error_type',
   };
 
   /// Stable-id shape for string values — user text never matches this.
@@ -173,6 +250,10 @@ abstract final class ActivationFunnelAnalytics {
     String? cardType,
     String? reason,
     String? plan,
+    String? ref,
+    String? method,
+    bool? enabled,
+    String? errorType,
     bool oncePerSession = false,
   }) {
     if (oncePerSession) {
@@ -190,6 +271,11 @@ abstract final class ActivationFunnelAnalytics {
         'card_type': cardType,
       if (reason != null && _safeValue.hasMatch(reason)) 'reason': reason,
       if (plan != null && _safeValue.hasMatch(plan)) 'plan': plan,
+      if (ref != null && _safeValue.hasMatch(ref)) 'ref': ref,
+      if (method != null && _safeValue.hasMatch(method)) 'method': method,
+      if (enabled != null) 'enabled': enabled ? 'true' : 'false',
+      if (errorType != null && _safeValue.hasMatch(errorType))
+        'error_type': errorType,
     };
 
     final sink = _sink;
