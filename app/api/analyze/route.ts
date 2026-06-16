@@ -1,61 +1,32 @@
 import { NextResponse } from "next/server";
 
+import { parseReflectionResponse } from "@/lib/analyze/parse-reflection-response";
+import {
+  analyzeRouteErrorResponse,
+  classifyAnalyzeRouteError,
+  logAnalyzeFailure,
+  logAnalyzeStep,
+} from "@/lib/server/analyze-route-errors";
 import {
   guardOpenAiRoute,
   MAX_TRANSCRIPT_CHARS,
 } from "@/lib/server/api-guard";
+import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
 import { NOT_AI_JOURNAL_LINE } from "@/lib/product-copy";
-import { normalizeReflection } from "@/lib/reflection";
-import { buildPatternObservationsFromAnalysis } from "@/lib/observation-language";
+import { buildEvidencePacket } from "@/lib/evidence/evidence-pipeline";
+import { isWebMemoryScope } from "@/lib/evidence/evidence-policy";
+import type { EvidenceCandidate } from "@/lib/evidence/evidence-source";
+import {
+  buildPromptContext,
+  composePromptUserContent,
+  logPromptContextMetadata,
+} from "@/lib/evidence/prompt-context";
 import { getOpenAIClient } from "@/lib/openai";
 import type { Reflection } from "@/types/journal";
 
 export const runtime = "nodejs";
 
-const BANNED_PHRASES = [
-  "deep-seated",
-  "deep seated",
-  "you may be seeking",
-  "you might be seeking",
-  "seeking balance",
-  "resilience",
-  "resilience and commitment",
-  "inner journey",
-  "hold space",
-  "self-care journey",
-  "emotional landscape",
-  "navigate your feelings",
-  "you should",
-  "consider trying",
-  "be kind to yourself",
-  "healing journey",
-  "inner child",
-  "positive signal",
-  "hidden concern",
-  "underlying worry",
-  "gentle intention",
-  "take care of yourself",
-  "it's okay to feel",
-  "remember that you",
-  "trust the process",
-  "honor your feelings",
-  "give yourself permission",
-  "self-compassion",
-  "processing your emotions",
-  "validating your experience",
-  "you deserve",
-  "proud of you",
-  "stay strong",
-  "everything happens for a reason",
-  "speaker expresses",
-  "the speaker expresses",
-  "user expresses",
-  "the user feels",
-  "appears to be feeling",
-  "seems to feel",
-];
-
-const SYSTEM_PROMPT = `You read voice transcripts for VoiceMemory — ${NOT_AI_JOURNAL_LINE} Return sharp, concrete notes from the speaker's own words — not therapy, not coaching, not diagnosis.
+const SYSTEM_PROMPT = `You read voice transcripts for ArchiveMe — ${NOT_AI_JOURNAL_LINE} Return sharp, concrete notes from the speaker's own words — not therapy, not coaching, not diagnosis.
 
 VOICE:
 - Short sentences. No filler. No warmth padding. No AI cheerleading.
@@ -93,116 +64,109 @@ If the transcript is thin, say what is missing — do not invent depth.
 
 Never mention being an AI.`;
 
-function containsBannedPhrase(text: string): boolean {
-  const lower = text.toLowerCase();
-  return BANNED_PHRASES.some((phrase) => lower.includes(phrase));
-}
+/**
+ * Prompt Context Contract: additional context enters this route only as
+ * prior-entry references (safe id + timestamp), becomes a structured
+ * evidence packet, and reaches the prompt through the rendered contract
+ * block. Raw archive text is never accepted or interpolated.
+ */
+const MAX_PRIOR_EVIDENCE_INPUTS = 20;
 
-function optionalField(value: unknown): string | undefined {
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}
-
-function parseReflection(raw: string): Reflection {
-  const parsed = JSON.parse(raw) as Partial<Reflection>;
-
-  const intensity = Number(parsed.emotionalIntensity);
-  const themes = Array.isArray(parsed.recurringThemes)
-    ? parsed.recurringThemes.filter((theme): theme is string => typeof theme === "string")
-    : [];
-
-  if (
-    typeof parsed.mood !== "string" ||
-    !Number.isFinite(intensity) ||
-    typeof parsed.exactLanguagePattern !== "string" ||
-    typeof parsed.concreteObservation !== "string" ||
-    typeof parsed.repeatedSignal !== "string"
-  ) {
-    throw new Error("Invalid reflection structure from model");
-  }
-
-  const base = normalizeReflection({
-    mood: parsed.mood,
-    emotionalIntensity: intensity,
-    recurringThemes: themes,
-    hiddenConcern: "",
-    positiveSignal: "",
-    recommendation: "",
-    exactLanguagePattern: parsed.exactLanguagePattern,
-    concreteObservation: parsed.concreteObservation,
-    repeatedSignal: parsed.repeatedSignal,
-    tensionOrContradiction: optionalField(parsed.tensionOrContradiction),
-    avoidedOrVagueArea: optionalField(parsed.avoidedOrVagueArea),
-    nextSmallAction: optionalField(parsed.nextSmallAction),
-    patternObservations: buildPatternObservationsFromAnalysis({
-      exactLanguagePattern: parsed.exactLanguagePattern,
-      concreteObservation: parsed.concreteObservation,
-      tensionOrContradiction: optionalField(parsed.tensionOrContradiction),
-      repeatedSignal: parsed.repeatedSignal,
-      avoidedOrVagueArea: optionalField(parsed.avoidedOrVagueArea),
-      nextSmallAction: optionalField(parsed.nextSmallAction),
-    }),
+function toArchiveCandidates(input: unknown): EvidenceCandidate[] {
+  if (!Array.isArray(input)) return [];
+  return input.slice(0, MAX_PRIOR_EVIDENCE_INPUTS).flatMap((raw): EvidenceCandidate[] => {
+    if (typeof raw !== "object" || raw === null) return [];
+    const ref = raw as { id?: unknown; createdAt?: unknown; userConfirmed?: unknown };
+    return [
+      {
+        sourceType: "user_archive",
+        sourceRef: typeof ref.id === "string" ? ref.id : undefined,
+        createdAt: typeof ref.createdAt === "string" ? ref.createdAt : undefined,
+        userConfirmed: ref.userConfirmed === true,
+      },
+    ];
   });
-
-  const textFields = [
-    base.exactLanguagePattern ?? "",
-    base.concreteObservation ?? "",
-    base.tensionOrContradiction ?? "",
-    base.repeatedSignal ?? "",
-    base.avoidedOrVagueArea ?? "",
-    base.nextSmallAction ?? "",
-    ...(base.patternObservations ?? []),
-  ];
-
-  if (textFields.some(containsBannedPhrase)) {
-    throw new Error("Reflection contained generic therapy or advice language");
-  }
-
-  return base;
 }
 
-function formatPriorContext(
-  snippets: Array<{ date: string; excerpt: string; themes: string[] }>,
-): string {
-  if (snippets.length === 0) return "";
-  const lines = snippets.map(
-    (s, i) =>
-      `[Prior ${i + 1} — ${s.date}] themes: ${s.themes.join(", ") || "none"}\n"${s.excerpt.slice(0, 200)}"`,
+export async function GET() {
+  return NextResponse.json(
+    {
+      route: "/api/analyze",
+      methods: ["POST"],
+      captureTokenHeader: "x-vm-capture-token",
+      code: "METHOD_NOT_ALLOWED",
+      error: "Use POST with JSON { transcript, priorEvidence? } and x-vm-capture-token.",
+    },
+    { status: 405 },
   );
-  return `\n\nPrior entries for cross-entry context (mirror their wording, do not advise):\n${lines.join("\n\n")}`;
 }
 
 export async function POST(request: Request) {
-  const guard = await guardOpenAiRoute(request, "analyze");
-  if (!guard.ok) return guard.response;
-
+  let transcript = "";
   try {
-    const body = (await request.json()) as {
+    logAnalyzeStep("request_received");
+
+    if (!process.env.OPENAI_API_KEY?.trim()) {
+      return analyzeRouteErrorResponse(
+        "missing_openai_key",
+        "Analysis is not configured on the server.",
+        503,
+      );
+    }
+
+    let body: {
       transcript?: string;
-      priorContext?: Array<{ date: string; excerpt: string; themes: string[] }>;
+      memoryScope?: unknown;
+      priorEvidence?: unknown;
     };
-    const transcript = body.transcript?.trim();
+    try {
+      body = (await request.json()) as typeof body;
+    } catch {
+      return analyzeRouteErrorResponse(
+        "invalid_request_body",
+        "Request body must be valid JSON.",
+        400,
+      );
+    }
+
+    transcript = body.transcript?.trim() ?? "";
 
     if (!transcript) {
-      return NextResponse.json(
-        { error: "Transcript is required", code: "TRANSCRIPT_REQUIRED" },
-        { status: 400 },
+      return analyzeRouteErrorResponse(
+        "transcript_required",
+        "Transcript is required",
+        400,
       );
     }
 
     if (transcript.length > MAX_TRANSCRIPT_CHARS) {
-      return NextResponse.json(
-        {
-          error: "Transcript is too long to analyze.",
-          code: "TRANSCRIPT_TOO_LONG",
-        },
-        { status: 413 },
+      return analyzeRouteErrorResponse(
+        "transcript_too_long",
+        "Transcript is too long to analyze.",
+        413,
       );
     }
 
-    const priorBlock = formatPriorContext(body.priorContext ?? []);
+    logAnalyzeStep(`transcript_chars=${transcript.length}`);
 
+    const guard = await guardOpenAiRoute(request, "analyze", {
+      transcriptChars: transcript.length,
+    });
+    if (!guard.ok) return guard.response;
+
+    const memoryScope = isWebMemoryScope(body.memoryScope)
+      ? body.memoryScope
+      : "automatic";
+    const { packet } = buildEvidencePacket(toArchiveCandidates(body.priorEvidence), {
+      memoryScope,
+    });
+    const promptContext = buildPromptContext({
+      currentEntry: { transcript },
+      evidencePacket: packet,
+    });
+    logPromptContextMetadata(promptContext);
+
+    logAnalyzeStep("openai_request_start model=gpt-4o-mini");
     const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -212,26 +176,35 @@ export async function POST(request: Request) {
         { role: "system", content: SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Read this voice reflection like a sharp mirror. Quote their words. Observations only:\n\n${transcript}${priorBlock}`,
+          content: `Read this voice reflection like a sharp mirror. Quote their words. Observations only:\n\n${composePromptUserContent(promptContext)}`,
         },
       ],
     });
 
     const content = completion.choices[0]?.message?.content;
-
     if (!content) {
-      return NextResponse.json(
-        { error: "No reflection returned from model" },
-        { status: 502 },
+      return analyzeRouteErrorResponse(
+        "model_error",
+        "No reflection returned from model",
+        502,
       );
     }
 
-    const reflection = parseReflection(content);
+    let reflection: Reflection;
+    reflection = parseReflectionResponse(content, transcript);
+
+    logAnalyzeStep(
+      `success observationLength=${reflection.concreteObservation?.trim().length ?? 0}`,
+    );
     return NextResponse.json({ reflection });
   } catch (error) {
     console.error("Analysis failed:", error);
-    const message =
-      error instanceof Error ? error.message : "Analysis failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const classified = classifyAnalyzeRouteError(error);
+    logAnalyzeFailure(classified.code, classified.message);
+    const safe = safeOpenAiRouteError("analyze", error);
+    return NextResponse.json(
+      { error: safe.message, code: safe.code },
+      { status: classified.status },
+    );
   }
 }

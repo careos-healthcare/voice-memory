@@ -13,14 +13,21 @@ import {
   type ApiUsageKind,
 } from "@/lib/server/api-usage-store";
 import {
+  guardOpenAiBudget,
+  isOpenAiKillSwitchActive,
+  openAiKillSwitchResponse,
+} from "@/lib/server/openai-budget-guard";
+import {
   ipHashFromRequest,
   userAgentHashFromRequest,
 } from "@/lib/server/request-identity";
 import { getServerSession } from "@/lib/server/session";
 
-export const MAX_AUDIO_BYTES = 12 * 1024 * 1024;
-export const MAX_TRANSCRIPT_CHARS = 24_000;
-export const MAX_ATMOSPHERE_PROMPT_CHARS = 2_000;
+export {
+  MAX_AUDIO_BYTES,
+  MAX_ATMOSPHERE_PROMPT_CHARS,
+  MAX_TRANSCRIPT_CHARS,
+} from "@/lib/server/api-limits";
 
 export interface ApiGuardContext {
   subject: string;
@@ -100,18 +107,48 @@ export function apiPayloadTooLarge(message: string): NextResponse {
   return NextResponse.json({ error: message, code: "PAYLOAD_TOO_LARGE" }, { status: 413 });
 }
 
+export async function resolveCaptureAuthFailureCode(
+  request: Request,
+): Promise<"missing_capture_token" | "unauthorized_capture_token"> {
+  const session = await getServerSession();
+  if (session) {
+    return "unauthorized_capture_token";
+  }
+
+  const headerToken = request.headers.get("x-vm-capture-token")?.trim();
+  const cookieStore = await cookies();
+  const cookieToken = cookieStore.get(CAPTURE_COOKIE)?.value?.trim();
+
+  if (!headerToken && !cookieToken) {
+    return "missing_capture_token";
+  }
+
+  return "unauthorized_capture_token";
+}
+
 export async function guardOpenAiRoute(
   request: Request,
   kind: ApiUsageKind,
+  options?: {
+    transcriptChars?: number;
+    durationSeconds?: number;
+    audioBytes?: number;
+  },
 ): Promise<{ ok: true; ctx: ApiGuardContext } | { ok: false; response: NextResponse }> {
+  if (isOpenAiKillSwitchActive()) {
+    return { ok: false, response: openAiKillSwitchResponse() };
+  }
+
   const ctx = await resolveApiGuardContext(request);
   if (!ctx) {
+    const code = await resolveCaptureAuthFailureCode(request);
+    const message =
+      code === "missing_capture_token"
+        ? "Capture token is required before using voice analysis."
+        : "Sign in or attest this device before using voice analysis.";
     return {
       ok: false,
-      response: apiUnauthorized(
-        "CAPTURE_AUTH_REQUIRED",
-        "Sign in or attest this device before using voice analysis.",
-      ),
+      response: NextResponse.json({ error: message, code }, { status: 401 }),
     };
   }
 
@@ -125,6 +162,11 @@ export async function guardOpenAiRoute(
   const ipUsage = await checkAndRecordApiUsage(ipSubject, kind);
   if (!ipUsage.allowed) {
     return rateLimitResponse(ipUsage);
+  }
+
+  const budget = await guardOpenAiBudget(ctx, request, kind, options);
+  if (!budget.ok) {
+    return budget;
   }
 
   return { ok: true, ctx };
