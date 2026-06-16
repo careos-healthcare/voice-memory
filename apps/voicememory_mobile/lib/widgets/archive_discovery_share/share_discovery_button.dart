@@ -52,10 +52,6 @@ class ShareDiscoveryButton extends StatelessWidget {
       surface: surface,
     );
     if (!context.mounted) return;
-    await showArchiveDiscoveryShareSheet(
-      context,
-      card: card,
-      surface: surface,
-    );
+    await showArchiveDiscoveryShareSheet(context, card: card, surface: surface);
   }
 }

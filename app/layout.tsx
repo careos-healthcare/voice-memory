@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoiceMemory — Private voice reflections",
+  title: "ArchiveMe — Private voice reflections",
   description:
-    "VoiceMemory brings back what you already said, when it matters again. Local-first — not therapy.",
-  applicationName: "VoiceMemory",
+    "ArchiveMe brings back what you already said, when it matters again. Local-first — not therapy.",
+  applicationName: "ArchiveMe",
   appleWebApp: {
     capable: true,
-    title: "VoiceMemory",
+    title: "ArchiveMe",
     statusBarStyle: "black-translucent",
   },
   formatDetection: {

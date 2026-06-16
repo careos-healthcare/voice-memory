@@ -36,6 +36,5 @@ class BeliefChangeAlert {
   final List<String> evidenceEntryIds;
   final int confidence;
 
-  String get confidenceRangeLabel =>
-      '$priorPercent% → $currentPercent%';
+  String get confidenceRangeLabel => '$priorPercent% → $currentPercent%';
 }

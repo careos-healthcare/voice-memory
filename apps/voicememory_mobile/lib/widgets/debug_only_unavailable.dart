@@ -18,10 +18,7 @@ class DebugOnlyUnavailableScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
-      appBar: AppBar(
-        backgroundColor: AppTheme.background,
-        title: Text(title),
-      ),
+      appBar: AppBar(backgroundColor: AppTheme.background, title: Text(title)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Text(

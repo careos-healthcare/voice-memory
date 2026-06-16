@@ -18,9 +18,10 @@ class SelectedSignalStore {
   Future<void> save(SelectedSignalRecord record) async {
     await _prefs.writeMap(_currentKey, record.toJson());
     final history = await loadHistory();
-    final next = [record, ...history.where((r) => r.id != record.id)]
-        .take(_maxHistory)
-        .toList();
+    final next = [
+      record,
+      ...history.where((r) => r.id != record.id),
+    ].take(_maxHistory).toList();
     await _prefs.writeMap(_historyKey, {
       'items': next.map((r) => r.toJson()).toList(),
     });
@@ -37,11 +38,13 @@ class SelectedSignalStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => SelectedSignalRecord.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : (e is Map ? Map<String, dynamic>.from(e) : null),
-            ))
+        .map(
+          (e) => SelectedSignalRecord.fromJson(
+            e is Map<String, dynamic>
+                ? e
+                : (e is Map ? Map<String, dynamic>.from(e) : null),
+          ),
+        )
         .whereType<SelectedSignalRecord>()
         .toList();
   }

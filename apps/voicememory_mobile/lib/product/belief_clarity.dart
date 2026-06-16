@@ -2,7 +2,7 @@ import '../features/archive_beliefs/archive_belief_models.dart';
 import 'consumer_ui_copy.dart';
 
 /// User-facing pattern explanations for cards and detail screens.
-abstract final class BeliefClarity {
+abstract class BeliefClarity {
   BeliefClarity._();
 
   static String quotedBelief(String statement) {
@@ -73,7 +73,9 @@ abstract final class BeliefClarity {
 
   static String? _themeHint(String statement) {
     final s = statement.toLowerCase();
-    if (s.contains('prove') || s.contains('achievement') || s.contains('work')) {
+    if (s.contains('prove') ||
+        s.contains('achievement') ||
+        s.contains('work')) {
       return 'work, achievement, and self-worth';
     }
     if (s.contains('avoid') || s.contains('conversation')) {

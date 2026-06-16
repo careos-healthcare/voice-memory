@@ -9,7 +9,7 @@ import 'prove_enough_pattern_report_model.dart';
 import 'prove_enough_pattern_report_pdf_exporter.dart';
 
 /// Shares a prove_enough pattern report when the user taps export.
-abstract final class ProveEnoughPatternReportService {
+abstract class ProveEnoughPatternReportService {
   ProveEnoughPatternReportService._();
 
   static const _exporter = ProveEnoughPatternReportExporter();

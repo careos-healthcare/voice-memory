@@ -29,7 +29,10 @@ class ArchiveProgressIdentity {
 class ArchiveProgressIdentityBuilder {
   const ArchiveProgressIdentityBuilder();
 
-  ArchiveProgressIdentity build(List<JournalEntry> entries, {String? currentBelief}) {
+  ArchiveProgressIdentity build(
+    List<JournalEntry> entries, {
+    String? currentBelief,
+  }) {
     if (entries.isEmpty) {
       return const ArchiveProgressIdentity(
         recordings: 0,
@@ -42,12 +45,15 @@ class ArchiveProgressIdentityBuilder {
       );
     }
 
-    final sorted = [...entries]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...entries]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final first = sorted.first.createdAt.toLocal();
     final today = DateTime.now();
-    final ageDays = DateTime(today.year, today.month, today.day)
-        .difference(DateTime(first.year, first.month, first.day))
-        .inDays;
+    final ageDays = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).difference(DateTime(first.year, first.month, first.day)).inDays;
 
     final themeKeys = DiscoverLocalThemeCounts.count(entries).keys.length;
     final shifts = const BeliefShiftEngine()

@@ -68,33 +68,41 @@ class DiscoverLocalEngine {
       final before = baselineThemes[entry.key] ?? 0;
       final after = entry.value;
       if (before == 0 && after >= 2) {
-        newItems.add(DiscoverChangeItem(
-          title: entry.key,
-          detail: 'May be emerging across recent reflections.',
-          kind: 'new',
-        ));
+        newItems.add(
+          DiscoverChangeItem(
+            title: entry.key,
+            detail: 'May be emerging across recent reflections.',
+            kind: 'new',
+          ),
+        );
       } else if (after > before) {
-        strengthened.add(DiscoverChangeItem(
-          title: entry.key,
-          detail: 'May be showing up more often since your last visit.',
-          kind: 'strengthened',
-        ));
+        strengthened.add(
+          DiscoverChangeItem(
+            title: entry.key,
+            detail: 'May be showing up more often since your last visit.',
+            kind: 'strengthened',
+          ),
+        );
       } else if (after < before && before >= 2) {
-        weakened.add(DiscoverChangeItem(
-          title: entry.key,
-          detail: 'May be appearing less in recent reflections.',
-          kind: 'weakened',
-        ));
+        weakened.add(
+          DiscoverChangeItem(
+            title: entry.key,
+            detail: 'May be appearing less in recent reflections.',
+            kind: 'weakened',
+          ),
+        );
       }
     }
 
     if (entries.length > (baselineThemes['__count'] ?? 0)) {
-      evidence.add(DiscoverChangeItem(
-        title: 'New reflections',
-        detail:
-            '${entries.length - (baselineThemes['__count'] ?? 0)} new reflection(s) since last visit.',
-        kind: 'evidence',
-      ));
+      evidence.add(
+        DiscoverChangeItem(
+          title: 'New reflections',
+          detail:
+              '${entries.length - (baselineThemes['__count'] ?? 0)} new reflection(s) since last visit.',
+          kind: 'evidence',
+        ),
+      );
     }
 
     final total = strengthened.length + weakened.length + newItems.length;

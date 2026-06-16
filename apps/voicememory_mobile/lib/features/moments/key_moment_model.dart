@@ -1,12 +1,7 @@
 import 'moment_tag_model.dart';
 
 /// Where a saved key moment came from.
-enum KeyMomentSource {
-  reflection,
-  checkIn,
-  patternMemory,
-  weeklyRecap,
-}
+enum KeyMomentSource { reflection, checkIn, patternMemory, weeklyRecap }
 
 extension KeyMomentSourceIds on KeyMomentSource {
   String get id => name;
@@ -111,18 +106,18 @@ class KeyMoment {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'date': date.toIso8601String(),
-        'title': title,
-        'originalText': originalText,
-        'shortSummary': shortSummary,
-        if (patternTitle != null) 'patternTitle': patternTitle,
-        if (resultHint != null) 'resultHint': resultHint,
-        if (nextCheck != null) 'nextCheck': nextCheck,
-        'tags': tags,
-        if (languageCode != null) 'languageCode': languageCode,
-        'source': source.id,
-      };
+    'id': id,
+    'date': date.toIso8601String(),
+    'title': title,
+    'originalText': originalText,
+    'shortSummary': shortSummary,
+    if (patternTitle != null) 'patternTitle': patternTitle,
+    if (resultHint != null) 'resultHint': resultHint,
+    if (nextCheck != null) 'nextCheck': nextCheck,
+    'tags': tags,
+    if (languageCode != null) 'languageCode': languageCode,
+    'source': source.id,
+  };
 
   static KeyMoment? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

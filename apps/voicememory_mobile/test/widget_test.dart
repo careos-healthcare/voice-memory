@@ -11,9 +11,7 @@ import 'dart:io';
 void main() {
   setUp(() async {
     final dir = Directory.systemTemp.createTempSync('vm_test_');
-    await AppServices.resetForTest(
-      journalPath: '${dir.path}/journal.json',
-    );
+    await AppServices.resetForTest(journalPath: '${dir.path}/journal.json');
     await AppServices.instance.prefs.setOnboardingCompleted(true);
     onboardingGate.markComplete();
     onboardingGate.resetSessionRedirectsForTest();

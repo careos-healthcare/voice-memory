@@ -1,3 +1,7 @@
+import '../memory/memory_authority_framing_engine.dart';
+import '../memory/memory_control_model.dart';
+import '../memory/memory_governance_policy.dart';
+import '../memory/memory_priority_governance.dart';
 import 'belief_distance_model.dart';
 import 'pressure_check_in_record.dart';
 
@@ -22,26 +26,133 @@ class BeliefDistanceEngine {
   /// Filler plus generic app words — a belief named after these would read
   /// like template copy, not the user's own repeated language.
   static const Set<String> _ignoredWords = {
-    'the', 'and', 'for', 'that', 'this', 'with', 'was', 'were', 'will',
-    'would', 'wont', "won't", 'its', "it's", 'not', 'but', 'had', 'have',
-    'has', 'did', 'does', 'about', 'from', 'they', 'them', 'when', 'then',
-    'than', 'what', 'how', 'why', 'who', 'all', 'too', 'very', 'just',
-    'like', 'get', 'got', 'gets', 'into', 'out', 'off', 'might', 'maybe',
-    'could', 'should', 'because', 'being', 'been', 'still', 'even', 'more',
-    'again', 'myself', 'dont', "don't", 'cant', "can't", 'ill', "i'll",
-    'pressure', 'moment', 'moments', 'pattern', 'patterns', 'archive',
-    'entry', 'entries', 'check', 'checkin', 'app', 'archiveme', 'feel',
-    'feels', 'felt', 'feeling', 'today', 'yesterday', 'tomorrow',
+    'the',
+    'and',
+    'for',
+    'that',
+    'this',
+    'with',
+    'was',
+    'were',
+    'will',
+    'would',
+    'wont',
+    "won't",
+    'its',
+    "it's",
+    'not',
+    'but',
+    'had',
+    'have',
+    'has',
+    'did',
+    'does',
+    'about',
+    'from',
+    'they',
+    'them',
+    'when',
+    'then',
+    'than',
+    'what',
+    'how',
+    'why',
+    'who',
+    'all',
+    'too',
+    'very',
+    'just',
+    'like',
+    'get',
+    'got',
+    'gets',
+    'into',
+    'out',
+    'off',
+    'might',
+    'maybe',
+    'could',
+    'should',
+    'because',
+    'being',
+    'been',
+    'still',
+    'even',
+    'more',
+    'again',
+    'myself',
+    'dont',
+    "don't",
+    'cant',
+    "can't",
+    'ill',
+    "i'll",
+    'pressure',
+    'moment',
+    'moments',
+    'pattern',
+    'patterns',
+    'archive',
+    'entry',
+    'entries',
+    'check',
+    'checkin',
+    'app',
+    'archiveme',
+    'feel',
+    'feels',
+    'felt',
+    'feeling',
+    'today',
+    'yesterday',
+    'tomorrow',
   };
 
-  BeliefDistance build(List<PressureCheckInRecord> records) {
-    if (records.length < BeliefDistance.minRelatedEntries) {
+  BeliefDistance build(List<PressureCheckInRecord> records, {int? entryCount}) {
+    final count = entryCount ?? records.length;
+    final governance = MemoryGovernancePolicy.evaluate(
+      cardType: MemoryCardType.beliefDistance,
+      records: records,
+      entryCount: count,
+    );
+    if (!MemoryGovernancePolicy.permitsEngineBuild(governance)) {
+      return BeliefDistance.none();
+    }
+    // Authority framing: memory scope eligibility, retrieval scoring,
+    // and the explicit authority/influence decision all run before any
+    // evidence may seed a belief-distance claim. Renders only when the
+    // frame's influence is compare or high authority.
+    final framing = const MemoryAuthorityFramingEngine().frame(
+      records,
+      cardType: MemoryCardType.beliefDistance,
+    );
+    if (!framing.allowsConnectionClaims) return BeliefDistance.none();
+    final priority = MemoryPriorityGovernance.evaluate(
+      cardType: MemoryCardType.beliefDistance,
+      records: records,
+      governance: governance,
+      framing: framing,
+      entryCount: count,
+      trackAnalytics: false,
+    );
+    if (!MemoryPriorityGovernance.permitsEngineBuild(
+      priority,
+      confirmationPending: governance.requiresUserConfirmation,
+    )) {
+      return BeliefDistance.none();
+    }
+    final eligible = MemoryPriorityGovernance.filterCandidates(
+      framing.candidates,
+      cardType: MemoryCardType.beliefDistance,
+      priority: priority,
+    );
+    if (eligible.length < BeliefDistance.minRelatedEntries) {
       return BeliefDistance.none();
     }
 
     // Meaningful note words → the entries they appeared in (once per entry).
     final wordEntries = <String, List<PressureCheckInRecord>>{};
-    for (final record in records) {
+    for (final record in eligible) {
       for (final word in _noteWords(record)) {
         wordEntries.putIfAbsent(word, () => []).add(record);
       }
@@ -49,13 +160,14 @@ class BeliefDistanceEngine {
 
     // Repeated pressure language only: words present in 2+ entries' notes,
     // strongest repetition first.
-    final repeatedWords = wordEntries.entries
-        .where((e) => e.value.length >= BeliefDistance.minRelatedEntries)
-        .toList()
-      ..sort((a, b) {
-        final byCount = b.value.length.compareTo(a.value.length);
-        return byCount != 0 ? byCount : a.key.compareTo(b.key);
-      });
+    final repeatedWords =
+        wordEntries.entries
+            .where((e) => e.value.length >= BeliefDistance.minRelatedEntries)
+            .toList()
+          ..sort((a, b) {
+            final byCount = b.value.length.compareTo(a.value.length);
+            return byCount != 0 ? byCount : a.key.compareTo(b.key);
+          });
     if (repeatedWords.isEmpty) return BeliefDistance.none();
 
     for (final entry in repeatedWords) {
@@ -132,8 +244,10 @@ class BeliefDistanceEngine {
     final note = text?.trim() ?? '';
     if (note.isEmpty) return null;
     for (final sentence in note.split(RegExp(r'[.!?\u2026]+\s*'))) {
-      final phrase = sentence
-          .replaceAll(RegExp(r'^[\s,;:\u2013\u2014-]+|[\s,;:\u2013\u2014-]+$'), '');
+      final phrase = sentence.replaceAll(
+        RegExp(r'^[\s,;:\u2013\u2014-]+|[\s,;:\u2013\u2014-]+$'),
+        '',
+      );
       if (phrase.isEmpty || phrase.length > BeliefDistance.maxPhraseLength) {
         continue;
       }

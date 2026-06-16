@@ -4,19 +4,19 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
 JournalEntry _entry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime.parse('2026-01-0${id.length}T12:00:00Z'),
-      transcript: 'Reflection $id',
-      durationSeconds: 10,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: [],
-        exactLanguagePattern: 'pattern',
-        concreteObservation: 'observation',
-        repeatedSignal: 'signal',
-      ),
-    );
+  id: id,
+  createdAt: DateTime.parse('2026-01-0${id.length}T12:00:00Z'),
+  transcript: 'Reflection $id',
+  durationSeconds: 10,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: 'pattern',
+    concreteObservation: 'observation',
+    repeatedSignal: 'signal',
+  ),
+);
 
 void main() {
   test('maturity score is 0-100', () {

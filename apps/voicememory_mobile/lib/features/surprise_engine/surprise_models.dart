@@ -42,24 +42,24 @@ class ArchiveSurprise {
       type == SurpriseType.newLifeChapter;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type.name,
-        'headline': headline,
-        'why': why,
-        'evidenceIds': evidenceIds,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'chapterId': chapterId,
-        'themeKey': themeKey,
-        'insightRefId': insightRef.id,
-        'insightKind': insightRef.kind.name,
-        'themeKeyRef': insightRef.themeKey,
-        'chapterIdRef': insightRef.chapterId,
-        'entryIdA': insightRef.entryIdA,
-        'entryIdB': insightRef.entryIdB,
-        'surpriseIndex': insightRef.surpriseIndex,
-        'challengeIndex': insightRef.challengeIndex,
-        'askPrompt': insightRef.askPrompt,
-      };
+    'id': id,
+    'type': type.name,
+    'headline': headline,
+    'why': why,
+    'evidenceIds': evidenceIds,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'chapterId': chapterId,
+    'themeKey': themeKey,
+    'insightRefId': insightRef.id,
+    'insightKind': insightRef.kind.name,
+    'themeKeyRef': insightRef.themeKey,
+    'chapterIdRef': insightRef.chapterId,
+    'entryIdA': insightRef.entryIdA,
+    'entryIdB': insightRef.entryIdB,
+    'surpriseIndex': insightRef.surpriseIndex,
+    'challengeIndex': insightRef.challengeIndex,
+    'askPrompt': insightRef.askPrompt,
+  };
 
   static ArchiveSurprise? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -67,7 +67,8 @@ class ArchiveSurprise {
     if (id.isEmpty) return null;
     final type = SurpriseType.values.asNameMap()[json['type']?.toString()];
     if (type == null) return null;
-    final evidence = (json['evidenceIds'] as List<dynamic>?)
+    final evidence =
+        (json['evidenceIds'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??

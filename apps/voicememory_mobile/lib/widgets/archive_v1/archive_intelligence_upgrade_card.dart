@@ -39,7 +39,9 @@ class ArchiveIntelligenceUpgradeCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            ArchivePaywallVariantConfig.headline(ArchivePaywallVariantConfig.active),
+            ArchivePaywallVariantConfig.headline(
+              ArchivePaywallVariantConfig.active,
+            ),
             style: compact
                 ? const TextStyle(
                     fontSize: 15,

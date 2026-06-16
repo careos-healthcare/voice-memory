@@ -1,0 +1,41 @@
+import {
+  ARCHIVE_NAV_DISCOVER_MEANING,
+  DISCOVER_PAGE_EYEBROW,
+  DISCOVER_PAGE_HEADING,
+  DISCOVER_PAGE_LEAD,
+  DISCOVER_PAGE_SUBHEADLINE,
+} from "@/lib/product/archive-product-copy";
+
+export const DISCOVER_PAGE = {
+  eyebrow: DISCOVER_PAGE_EYEBROW,
+  title: DISCOVER_PAGE_HEADING,
+  heading: DISCOVER_PAGE_HEADING,
+  subheadline: DISCOVER_PAGE_SUBHEADLINE,
+  lead: DISCOVER_PAGE_LEAD,
+  emptyTitle: "Nothing to report yet",
+  emptyBody: "Changes appear after your next visit.",
+  firstVisitBody: "Record a few reflections, then return.",
+  baselineFallbackTitle: "Building baseline",
+  baselineFallbackBody: "Nothing to compare yet.",
+  strengthenedTitle: "Strengthened",
+  weakenedTitle: "Weakened",
+  newTitle: "New",
+  resolvedTitle: "Resolved",
+  viewTheoriesLink: "View all archive beliefs",
+  evidenceSectionTitle: "Since your last visit",
+  evidenceEmpty:
+    "No new evidence yet. Record again when something is on your mind.",
+  evidenceKindLabels: {
+    new_supporting: "New supporting evidence",
+    new_contradicting: "New contradicting evidence",
+    confidence_movement: "Confidence movement",
+    new_life_area: "New life-area spread",
+    new_cost_evidence: "New cost evidence",
+    prediction_outcome: "Prediction outcome",
+  } as const,
+  theoryChangesTitle: "Belief changes",
+  resolutionSectionTitle: "May no longer fit",
+  resolutionSectionLead: "Theories that may no longer fit.",
+  resolutionResolvedTitle: "Resolved",
+  resolutionRetiredTitle: "Retired",
+} as const;

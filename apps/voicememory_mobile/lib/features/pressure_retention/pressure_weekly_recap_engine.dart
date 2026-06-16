@@ -18,8 +18,11 @@ class PressureWeeklyRecapEngine {
     final weekStart = reference.subtract(const Duration(days: 7));
 
     final week = records
-        .where((r) =>
-            !r.createdAt.isBefore(weekStart) && !r.createdAt.isAfter(reference))
+        .where(
+          (r) =>
+              !r.createdAt.isBefore(weekStart) &&
+              !r.createdAt.isAfter(reference),
+        )
         .toList();
 
     final count = week.length;

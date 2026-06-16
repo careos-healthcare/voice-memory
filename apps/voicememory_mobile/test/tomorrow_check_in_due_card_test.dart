@@ -44,7 +44,9 @@ void main() {
           body: SingleChildScrollView(
             child: TomorrowCheckInDueCard(
               checkIn: _checkIn(),
-              plannedAnchor: const RoutineAnchor(type: RoutineAnchorType.evening),
+              plannedAnchor: const RoutineAnchor(
+                type: RoutineAnchorType.evening,
+              ),
               onRecord: () {},
               onSelectOption: (_) async {},
             ),
@@ -70,7 +72,10 @@ void main() {
       findsOneWidget,
     );
     expect(find.text(ConsumerUiCopy.tomorrowCheckInDueTitle), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.tomorrowCheckInDueSubtitle), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.tomorrowCheckInDueSubtitle),
+      findsOneWidget,
+    );
   });
 
   testWidgets('due card renders four answer options', (tester) async {
@@ -93,10 +98,7 @@ void main() {
   testWidgets('helper line hidden until option selected', (tester) async {
     await _pumpDueCard(tester);
 
-    expect(
-      find.text('Short is fine. One sentence is enough.'),
-      findsNothing,
-    );
+    expect(find.text('Short is fine. One sentence is enough.'), findsNothing);
   });
 
   testWidgets('examples expand and render all four examples', (tester) async {
@@ -105,7 +107,10 @@ void main() {
     await tester.tap(find.text(ConsumerUiCopy.tomorrowCheckInNeedExamples));
     await tester.pump();
 
-    expect(find.textContaining('I said yes before asking for help'), findsOneWidget);
+    expect(
+      find.textContaining('I said yes before asking for help'),
+      findsOneWidget,
+    );
     expect(find.textContaining('paused before answering'), findsOneWidget);
     expect(find.textContaining('felt drained'), findsOneWidget);
     expect(find.textContaining('did not come up'), findsOneWidget);
@@ -138,8 +143,9 @@ void main() {
     expect(find.text('Not today'), findsNothing);
   });
 
-  testWidgets('guided card reveals two primary answers after start',
-      (tester) async {
+  testWidgets('guided card reveals two primary answers after start', (
+    tester,
+  ) async {
     await _pumpGuided(tester);
 
     await tester.tap(find.text(ConsumerUiCopy.guidedCheckInAnswerCta));
@@ -167,17 +173,16 @@ void main() {
     expect(find.text('What made it lighter?'), findsOneWidget);
     expect(find.text('Record one moment'), findsOneWidget);
     expect(find.text(ConsumerUiCopy.tomorrowCheckInRecordCta), findsOneWidget);
-    expect(
-      find.text('Short is fine. One sentence is enough.'),
-      findsOneWidget,
-    );
+    expect(find.text('Short is fine. One sentence is enough.'), findsOneWidget);
     expect(
       find.textContaining('ArchiveMe can compare today with yesterday'),
       findsOneWidget,
     );
   });
 
-  testWidgets('Spanish localizes labels, options and follow-up', (tester) async {
+  testWidgets('Spanish localizes labels, options and follow-up', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

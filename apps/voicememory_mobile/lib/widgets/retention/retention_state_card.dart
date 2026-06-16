@@ -117,8 +117,9 @@ class _RetentionStateCardState extends State<RetentionStateCard> {
           ],
           Text(
             state.title,
-            style: VoiceMemoryTypography.cardTitleStyle()
-                .copyWith(fontSize: titleSize),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: titleSize,
+            ),
           ),
           if (!compact || state.type != RetentionStateType.nextCheckChosen) ...[
             SizedBox(height: compact ? 4 : AppSpacing.sm),
@@ -134,13 +135,14 @@ class _RetentionStateCardState extends State<RetentionStateCard> {
             SizedBox(height: compact ? AppSpacing.xs : AppSpacing.sm),
             Text(
               state.checkQuestion!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(
-                fontSize: compact ? 14 : 15,
-                fontWeight: FontWeight.w600,
-                height: 1.4,
-              ),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: compact ? 14 : 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           if (!compact &&
@@ -162,9 +164,14 @@ class _RetentionStateCardState extends State<RetentionStateCard> {
             SizedBox(height: AppSpacing.xs),
             Text(
               'Example: ${widget.checkExampleAnswer!}',
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
-              ).copyWith(fontSize: 12, height: 1.4, fontStyle: FontStyle.italic),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textSecondary,
+                  ).copyWith(
+                    fontSize: 12,
+                    height: 1.4,
+                    fontStyle: FontStyle.italic,
+                  ),
             ),
           ],
           if (widget.onPrimaryTap != null) ...[

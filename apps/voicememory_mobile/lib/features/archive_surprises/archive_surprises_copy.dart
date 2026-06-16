@@ -2,7 +2,7 @@ import '../../design/user_facing_date.dart';
 import 'archive_surprises_models.dart';
 
 /// User-facing Archive Surprises strings.
-abstract final class ArchiveSurprisesCopy {
+abstract class ArchiveSurprisesCopy {
   ArchiveSurprisesCopy._();
 
   static const String sectionTitle = 'Surprises';

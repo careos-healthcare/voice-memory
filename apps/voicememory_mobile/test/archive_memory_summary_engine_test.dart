@@ -16,19 +16,18 @@ PatternMemory _memory({
   PatternMemoryStatus status = PatternMemoryStatus.active,
   DateTime? createdAt,
   DateTime? updatedAt,
-}) =>
-    PatternMemory(
-      id: 'm1',
-      patternTitle: title,
-      createdAt: createdAt ?? DateTime(2026, 5, 4),
-      updatedAt: updatedAt ?? DateTime(2026, 5, 25),
-      checkInCount: checkInCount,
-      commonBeforeMoments: before,
-      helpedMoments: helped,
-      harderMoments: harder,
-      nextBestQuestion: nextBestQuestion,
-      status: status,
-    );
+}) => PatternMemory(
+  id: 'm1',
+  patternTitle: title,
+  createdAt: createdAt ?? DateTime(2026, 5, 4),
+  updatedAt: updatedAt ?? DateTime(2026, 5, 25),
+  checkInCount: checkInCount,
+  commonBeforeMoments: before,
+  helpedMoments: helped,
+  harderMoments: harder,
+  nextBestQuestion: nextBestQuestion,
+  status: status,
+);
 
 void main() {
   test('returns null below 3 usable moments/check-ins', () {
@@ -40,36 +39,48 @@ void main() {
     final summary = buildArchiveMemorySummary(memory: _memory(checkInCount: 4));
     expect(summary, isNotNull);
     // Gerund title normalized to a natural base verb: "Taking" -> "take".
-    expect(summary!.primaryMemoryLine,
-        'You often take responsibility before asking for help.');
+    expect(
+      summary!.primaryMemoryLine,
+      'You often take responsibility before asking for help.',
+    );
   });
 
   test('normalizes common gerund pattern titles to natural copy', () {
-    String line(String title) =>
-        buildArchiveMemorySummary(memory: _memory(title: title))!
-            .primaryMemoryLine;
+    String line(String title) => buildArchiveMemorySummary(
+      memory: _memory(title: title),
+    )!.primaryMemoryLine;
 
-    expect(line('Taking responsibility before asking for help'),
-        'You often take responsibility before asking for help.');
-    expect(line('Trying to prove you are enough'),
-        'You often try to prove you are enough.');
-    expect(line('Putting off what matters'),
-        'You often put off what matters.');
+    expect(
+      line('Taking responsibility before asking for help'),
+      'You often take responsibility before asking for help.',
+    );
+    expect(
+      line('Trying to prove you are enough'),
+      'You often try to prove you are enough.',
+    );
+    expect(line('Putting off what matters'), 'You often put off what matters.');
     expect(line('Running on empty'), 'You often run on empty.');
     expect(line('Carrying it alone'), 'You often carry it alone.');
-    expect(line('Avoiding hard conversations'),
-        'You often avoid hard conversations.');
+    expect(
+      line('Avoiding hard conversations'),
+      'You often avoid hard conversations.',
+    );
     expect(line('Feeling behind'), 'You often feel behind.');
-    expect(line('Worrying about what they think'),
-        'You often worry about what they think.');
-    expect(line('Replaying old conversations'),
-        'You often replay old conversations.');
+    expect(
+      line('Worrying about what they think'),
+      'You often worry about what they think.',
+    );
+    expect(
+      line('Replaying old conversations'),
+      'You often replay old conversations.',
+    );
     expect(line('Saying yes too fast'), 'You often say yes too fast.');
   });
 
   test('falls back to lower-casing the first letter when no verb matches', () {
-    final summary =
-        buildArchiveMemorySummary(memory: _memory(title: 'Pressure at work'));
+    final summary = buildArchiveMemorySummary(
+      memory: _memory(title: 'Pressure at work'),
+    );
     expect(summary!.primaryMemoryLine, 'You often pressure at work.');
   });
 
@@ -97,23 +108,29 @@ void main() {
         confidenceLabel: 'Based on 4 check-ins',
       ),
     );
-    expect(summary!.startsBeforeLine,
-        'It often starts before: a hard conversation.');
+    expect(
+      summary!.startsBeforeLine,
+      'It often starts before: a hard conversation.',
+    );
   });
 
   test('includes helped and heavier only when known', () {
     final withHelp = buildArchiveMemorySummary(
       memory: _memory(helped: const ['pausing before answering']),
     );
-    expect(withHelp!.helpedLine,
-        'It has felt lighter when: pausing before answering.');
+    expect(
+      withHelp!.helpedLine,
+      'It has felt lighter when: pausing before answering.',
+    );
     expect(withHelp.heavierLine, isNull);
 
     final withHeavier = buildArchiveMemorySummary(
       memory: _memory(harder: const ['taking it on alone']),
     );
-    expect(withHeavier!.heavierLine,
-        'It has felt heavier when: taking it on alone.');
+    expect(
+      withHeavier!.heavierLine,
+      'It has felt heavier when: taking it on alone.',
+    );
     expect(withHeavier.helpedLine, isNull);
   });
 
@@ -161,7 +178,9 @@ void main() {
       'Clear pattern',
     );
     expect(
-      buildArchiveMemorySummary(memory: _memory(checkInCount: 10))!.clarityLabel,
+      buildArchiveMemorySummary(
+        memory: _memory(checkInCount: 10),
+      )!.clarityLabel,
       'Strong pattern',
     );
   });

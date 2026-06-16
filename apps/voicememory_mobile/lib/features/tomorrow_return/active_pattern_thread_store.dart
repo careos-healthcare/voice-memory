@@ -35,11 +35,11 @@ class ActivePatternThreadStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => ActivePatternThread.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => ActivePatternThread.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<ActivePatternThread>()
         .toList();
   }

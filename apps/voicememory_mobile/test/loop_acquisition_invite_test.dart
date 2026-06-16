@@ -95,14 +95,8 @@ void main() {
 
     test('short and long text include ArchiveMe', () {
       for (final variant in TestFlightInviteVariant.values) {
-        expect(
-          TestFlightInviteCopy.shortText(variant),
-          contains('ArchiveMe'),
-        );
-        expect(
-          TestFlightInviteCopy.longText(variant),
-          contains('ArchiveMe'),
-        );
+        expect(TestFlightInviteCopy.shortText(variant), contains('ArchiveMe'));
+        expect(TestFlightInviteCopy.longText(variant), contains('ArchiveMe'));
       }
     });
 

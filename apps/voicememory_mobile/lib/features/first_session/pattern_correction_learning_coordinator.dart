@@ -5,7 +5,7 @@ import 'pattern_correction_learning_model.dart';
 import 'pattern_correction_learning_store.dart';
 
 /// Records corrections and supplies category boosts for the pattern engine.
-abstract final class PatternCorrectionLearningCoordinator {
+abstract class PatternCorrectionLearningCoordinator {
   PatternCorrectionLearningCoordinator._();
 
   static const double categoryBoostAmount = 0.12;
@@ -50,7 +50,7 @@ abstract final class PatternCorrectionLearningCoordinator {
   }
 
   static Future<Map<FirstSessionPatternCategory, double>>
-      preferredCategoryBoosts() async {
+  preferredCategoryBoosts() async {
     final recent = await _store().loadRecent(limit: _boostLookback);
     final counts = <String, int>{};
     for (final item in recent) {
@@ -75,7 +75,8 @@ abstract final class PatternCorrectionLearningCoordinator {
     await _store().markUsedForNextPrompt(id);
   }
 
-  static Future<PatternCorrectionLearningSummary> buildDeveloperSummary() async {
+  static Future<PatternCorrectionLearningSummary>
+  buildDeveloperSummary() async {
     final all = await _store().readAll();
     final used = all.where((e) => e.usedForNextPrompt).length;
     final counts = <String, int>{};

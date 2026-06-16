@@ -109,8 +109,9 @@ class ArchiveEvolutionStore {
       if (state.lastEntryIdWhenEvolved != null)
         'lastEntryIdWhenEvolved': state.lastEntryIdWhenEvolved,
       if (state.lastArchiveUpdateAt != null)
-        'lastArchiveUpdateAt':
-            state.lastArchiveUpdateAt!.toUtc().toIso8601String(),
+        'lastArchiveUpdateAt': state.lastArchiveUpdateAt!
+            .toUtc()
+            .toIso8601String(),
     });
   }
 

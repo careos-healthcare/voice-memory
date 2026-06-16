@@ -1,8 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import '../config/creator_demo_mode.dart';
 import '../features/first25/first25_journal_hooks.dart';
+import '../features/memory/entry_memory_mode.dart';
+import '../features/memory/entry_save_coordinator.dart';
+import '../features/memory/entry_thread_scope.dart';
+import '../features/first_session/first_recording_sample.dart';
 import '../features/first_session/first_save_rescue.dart';
+import '../features/referral/invite_funnel_metrics.dart';
+import '../features/referral/invited_user_welcome.dart';
 import '../models/journal_entry.dart';
 import '../models/sync_status.dart';
 import '../services/activation_funnel_analytics.dart';
@@ -28,6 +35,9 @@ class JournalStore {
 
   /// Same as [loadAll] but synchronous — for instant empty-archive UI on cold open.
   List<JournalEntry> loadAllSync() {
+    // Creator demo mode: safe demo entries only — the real journal file
+    // is never read.
+    if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
     if (!file.existsSync()) return [];
     final raw = file.readAsStringSync();
     if (raw.trim().isEmpty) return [];
@@ -43,9 +53,19 @@ class JournalStore {
     JournalEntry entry, {
     String first25Source = 'journal_save',
   }) async {
+    // Creator demo mode: never write demo (or new) entries into the real
+    // journal file, and never fire first-save funnel hooks.
+    if (CreatorDemoMode.isActive) return;
     final all = await loadAll();
     final isNew = !all.any((e) => e.id == entry.id);
-    final next = [entry, ...all.where((e) => e.id != entry.id)];
+    var toPersist = entry;
+    if (isNew) {
+      toPersist = await EntrySaveCoordinator.applyNewEntryOptions(
+        entry,
+        entryCount: all.length + 1,
+      );
+    }
+    final next = [toPersist, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
     // Funnel: the very first successful save in this archive.
     if (isNew && next.length == 1) {
@@ -64,6 +84,30 @@ class JournalStore {
           oncePerSession: true,
         );
       }
+      // Attribute the first save to the starter sentence when its CTA
+      // seeded this recording. Counts only — never recording content.
+      if (FirstRecordingSample.startedFromSampleThisSession) {
+        FirstRecordingSample.startedFromSampleThisSession = false;
+        ActivationFunnelAnalytics.track(
+          ActivationFunnelAnalytics.firstRecordingSampleSaved,
+          entryCount: 1,
+          oncePerSession: true,
+        );
+      }
+      // Invited funnel mirror: the very first save of an invited user.
+      // Silent without a first-touch invite attribution.
+      InviteFunnelMetrics.firstSave();
+      // Attribute the first save to the invited-user welcome when its CTA
+      // started this recording. Stable source id and counts only.
+      if (InvitedUserWelcome.startedFromWelcomeThisSession) {
+        InvitedUserWelcome.startedFromWelcomeThisSession = false;
+        ActivationFunnelAnalytics.track(
+          ActivationFunnelAnalytics.invitedUserFirstSave,
+          source: InvitedUserWelcome.sessionSource,
+          entryCount: 1,
+          oncePerSession: true,
+        );
+      }
     }
     await First25JournalHooks.onJournalSave(
       entry: entry,
@@ -73,6 +117,34 @@ class JournalStore {
   }
 
   Future<void> update(JournalEntry entry) async => save(entry);
+
+  /// Copy with memory metadata only — id, text, and timestamps untouched.
+  static JournalEntry _withMemoryFlags(
+    JournalEntry entry, {
+    bool? treatAsNew,
+    bool? connectionApproved,
+    bool? keepSeparate,
+    String? archiveThreadId,
+    String? archivePackId,
+  }) => JournalEntry(
+    id: entry.id,
+    createdAt: entry.createdAt,
+    transcript: entry.transcript,
+    durationSeconds: entry.durationSeconds,
+    reflection: entry.reflection,
+    syncStatus: entry.syncStatus,
+    localAudioPath: entry.localAudioPath,
+    treatAsNew: treatAsNew ?? entry.treatAsNew,
+    connectionApproved: connectionApproved ?? entry.connectionApproved,
+    keepExactDetails: entry.keepExactDetails,
+    keepSeparate: keepSeparate ?? entry.keepSeparate,
+    archiveThreadId: archiveThreadId ?? entry.archiveThreadId,
+    archivePackId: archivePackId ?? entry.archivePackId,
+    isPinned: entry.isPinned,
+    pinnedAt: entry.pinnedAt,
+    isArchived: entry.isArchived,
+    archivedAt: entry.archivedAt,
+  );
 
   /// Completed reflections (non-empty transcript).
   Future<List<JournalEntry>> loadEligible() async {
@@ -111,6 +183,16 @@ class JournalStore {
         reflection: entry.reflection,
         syncStatus: SyncStatus.synced,
         localAudioPath: entry.localAudioPath,
+        treatAsNew: entry.treatAsNew,
+        connectionApproved: entry.connectionApproved,
+        keepExactDetails: entry.keepExactDetails,
+        keepSeparate: entry.keepSeparate,
+        archiveThreadId: entry.archiveThreadId,
+        archivePackId: entry.archivePackId,
+        isPinned: entry.isPinned,
+        pinnedAt: entry.pinnedAt,
+        isArchived: entry.isArchived,
+        archivedAt: entry.archivedAt,
       ),
     );
   }
@@ -130,6 +212,19 @@ class JournalStore {
           reflection: r.reflection,
           syncStatus: SyncStatus.synced,
           localAudioPath: existing?.localAudioPath,
+          // Local memory metadata survives a remote merge.
+          treatAsNew: r.treatAsNew || (existing?.treatAsNew ?? false),
+          connectionApproved:
+              r.connectionApproved || (existing?.connectionApproved ?? false),
+          keepExactDetails:
+              r.keepExactDetails || (existing?.keepExactDetails ?? false),
+          keepSeparate: r.keepSeparate || (existing?.keepSeparate ?? false),
+          archiveThreadId: r.archiveThreadId ?? existing?.archiveThreadId,
+          archivePackId: r.archivePackId ?? existing?.archivePackId,
+          isPinned: r.isPinned || (existing?.isPinned ?? false),
+          pinnedAt: r.pinnedAt ?? existing?.pinnedAt,
+          isArchived: r.isArchived || (existing?.isArchived ?? false),
+          archivedAt: r.archivedAt ?? existing?.archivedAt,
         );
       }
     }
@@ -153,12 +248,14 @@ class JournalStore {
 
   Future<String> exportJson() async {
     final all = await loadAll();
-    return const JsonEncoder.withIndent('  ').convert(
-      all.map((e) => e.toJson()).toList(),
-    );
+    return const JsonEncoder.withIndent(
+      '  ',
+    ).convert(all.map((e) => e.toJson()).toList());
   }
 
   Future<void> _writeAll(List<JournalEntry> entries) async {
+    // Creator demo mode: the real journal file is never touched.
+    if (CreatorDemoMode.isActive) return;
     final encoded = jsonEncode(entries.map((e) => e.toJson()).toList());
     await file.writeAsString(encoded);
   }

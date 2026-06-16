@@ -11,11 +11,7 @@ import 'loop_trigger_map_card.dart';
 
 /// Loads journal entries and renders the prove_enough loop trigger map.
 class LoopTriggerMapSection extends StatefulWidget {
-  const LoopTriggerMapSection({
-    super.key,
-    this.entries,
-    this.activeLoop,
-  });
+  const LoopTriggerMapSection({super.key, this.entries, this.activeLoop});
 
   final List<JournalEntry>? entries;
   final LoopMode? activeLoop;

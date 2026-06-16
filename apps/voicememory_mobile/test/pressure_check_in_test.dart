@@ -38,10 +38,8 @@ Future<_Stores> _openStores(String stamp) async {
   );
 }
 
-PressureCheckInService _service(_Stores stores) => PressureCheckInService(
-      journalStore: stores.journal,
-      store: stores.store,
-    );
+PressureCheckInService _service(_Stores stores) =>
+    PressureCheckInService(journalStore: stores.journal, store: stores.store);
 
 void main() {
   group('PressureCheckInService quick save (task 1)', () {
@@ -105,14 +103,10 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(home: PressureCheckInScreen()),
-      );
+      await tester.pumpWidget(const MaterialApp(home: PressureCheckInScreen()));
       await tester.pump();
 
-      await tester.tap(
-        find.text("I couldn't stop even though I wanted to"),
-      );
+      await tester.tap(find.text("I couldn't stop even though I wanted to"));
       await tester.pump();
 
       await tester.runAsync(() async {
@@ -135,14 +129,13 @@ void main() {
   });
 
   group('Pressure context capture (task 3)', () {
-    testWidgets('context chips render after selecting an option',
-        (tester) async {
+    testWidgets('context chips render after selecting an option', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 2000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        const MaterialApp(home: PressureCheckInScreen()),
-      );
+      await tester.pumpWidget(const MaterialApp(home: PressureCheckInScreen()));
       await tester.pump();
 
       // No context chips until an option is chosen.
@@ -151,7 +144,10 @@ void main() {
       await tester.tap(find.text('I felt guilty about resting'));
       await tester.pump();
 
-      expect(find.byType(FilterChip), findsNWidgets(PressureContext.values.length));
+      expect(
+        find.byType(FilterChip),
+        findsNWidgets(PressureContext.values.length),
+      );
       expect(find.text('Work'), findsOneWidget);
       expect(find.text('Before sleep'), findsOneWidget);
       expect(find.text('After praise/criticism'), findsOneWidget);

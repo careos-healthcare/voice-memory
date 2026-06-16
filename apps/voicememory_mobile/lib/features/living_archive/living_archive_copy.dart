@@ -5,7 +5,7 @@ import '../daily_discoveries/daily_discovery_models.dart';
 import 'living_archive_models.dart';
 
 /// Curiosity-first copy for Living Archive — no new engines, strings only.
-abstract final class LivingArchiveCopy {
+abstract class LivingArchiveCopy {
   LivingArchiveCopy._();
 
   static const int minConfidenceChangePercent = 10;
@@ -29,13 +29,16 @@ abstract final class LivingArchiveCopy {
     required MostImportantInsightPriority priority,
     bool isArchiveWasWrong = false,
   }) {
-    if (isArchiveWasWrong || priority == MostImportantInsightPriority.archiveWasWrong) {
+    if (isArchiveWasWrong ||
+        priority == MostImportantInsightPriority.archiveWasWrong) {
       return WarmArchiveCopy.archiveChangedMindSectionTitle;
     }
     return 'YOUR ARCHIVE NOTICED';
   }
 
-  static String curiosityHeadlineForPriority(MostImportantInsightPriority priority) {
+  static String curiosityHeadlineForPriority(
+    MostImportantInsightPriority priority,
+  ) {
     return switch (priority) {
       MostImportantInsightPriority.archiveWasWrong =>
         'The archive changed its mind.',
@@ -94,8 +97,7 @@ abstract final class LivingArchiveCopy {
     required String priorThemeKey,
     required String currentThemeKey,
   }) {
-    if (_isWorkOrStress(priorThemeKey) &&
-        _isRelationship(currentThemeKey)) {
+    if (_isWorkOrStress(priorThemeKey) && _isRelationship(currentThemeKey)) {
       return 'Your archive no longer believes work is your biggest source of stress.';
     }
     if (_isWorkOrStress(priorThemeKey)) {

@@ -76,7 +76,8 @@ class _YourStorySoFarSectionState extends State<YourStorySoFarSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (!archiveHasMinimumEvidence(widget.entries)) return const SizedBox.shrink();
+    if (!archiveHasMinimumEvidence(widget.entries))
+      return const SizedBox.shrink();
     if (_loading) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 12),
@@ -91,7 +92,8 @@ class _YourStorySoFarSectionState extends State<YourStorySoFarSection> {
     }
 
     final narrative = _narrative;
-    if (narrative == null || !narrative.hasNarrative) return const SizedBox.shrink();
+    if (narrative == null || !narrative.hasNarrative)
+      return const SizedBox.shrink();
 
     return _YourStorySoFarCard(narrative: narrative);
   }
@@ -156,14 +158,17 @@ class _YourStorySoFarCardState extends State<_YourStorySoFarCard> {
                 ],
                 const SizedBox(height: 12),
                 InkWell(
-                  onTap: () => setState(() => _evidenceExpanded = !_evidenceExpanded),
+                  onTap: () =>
+                      setState(() => _evidenceExpanded = !_evidenceExpanded),
                   borderRadius: BorderRadius.circular(6),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       children: [
                         Icon(
-                          _evidenceExpanded ? Icons.expand_less : Icons.expand_more,
+                          _evidenceExpanded
+                              ? Icons.expand_less
+                              : Icons.expand_more,
                           size: 20,
                           color: AppTheme.muted,
                         ),

@@ -19,7 +19,8 @@ class SearchHighlightText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseStyle = style ??
+    final baseStyle =
+        style ??
         const TextStyle(color: AppTheme.foreground, fontSize: 14, height: 1.35);
     final trimmed = query.trim();
     if (trimmed.isEmpty) {
@@ -45,7 +46,9 @@ class SearchHighlightText extends StatelessWidget {
         break;
       }
       if (index > start) {
-        spans.add(TextSpan(text: text.substring(start, index), style: baseStyle));
+        spans.add(
+          TextSpan(text: text.substring(start, index), style: baseStyle),
+        );
       }
       spans.add(
         TextSpan(

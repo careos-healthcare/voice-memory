@@ -9,16 +9,15 @@ KeyMoment _moment({
   String? patternTitle,
   List<String> tags = const [],
   String title = 'Moment',
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: title,
-      originalText: 'text',
-      shortSummary: 'text',
-      patternTitle: patternTitle,
-      tags: tags,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: title,
+  originalText: 'text',
+  shortSummary: 'text',
+  patternTitle: patternTitle,
+  tags: tags,
+);
 
 void main() {
   test('groups by patternTitle when count is at least 3', () {
@@ -32,8 +31,10 @@ void main() {
     expect(groups.first.title, title);
     expect(groups.first.patternTitle, title);
     expect(groups.first.count, 3);
-    expect(groups.first.suggestedAction,
-        ArchiveCompressionSuggestedAction.keepTogether);
+    expect(
+      groups.first.suggestedAction,
+      ArchiveCompressionSuggestedAction.keepTogether,
+    );
   });
 
   test('does not create groups below 3 moments', () {
@@ -105,7 +106,10 @@ void main() {
         tags: const ['pressure', 'work'],
       ),
     ]);
-    expect(groups.first.suggestedAction, ArchiveCompressionSuggestedAction.split);
+    expect(
+      groups.first.suggestedAction,
+      ArchiveCompressionSuggestedAction.split,
+    );
   });
 
   test('sorts by count desc then latest lastDate desc', () {

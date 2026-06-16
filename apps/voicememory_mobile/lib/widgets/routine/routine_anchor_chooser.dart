@@ -97,10 +97,7 @@ class _RoutineAnchorChooserState extends State<RoutineAnchorChooser> {
           runSpacing: AppSpacing.xs,
           children: [
             for (final type in RoutineAnchorType.values)
-              _AnchorChip(
-                label: type.label,
-                onTap: () => _pick(type),
-              ),
+              _AnchorChip(label: type.label, onTap: () => _pick(type)),
           ],
         ),
         if (_customOpen) ...[

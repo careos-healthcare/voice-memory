@@ -25,15 +25,12 @@ void main() {
   test('creates four quick answers', () {
     final model = engine.build(pending: _pending());
     expect(model.quickAnswers, hasLength(4));
-    expect(
-      model.quickAnswers.map((a) => a.id).toList(),
-      [
-        'showed_up_again',
-        'felt_lighter',
-        'felt_heavier',
-        'not_today',
-      ],
-    );
+    expect(model.quickAnswers.map((a) => a.id).toList(), [
+      'showed_up_again',
+      'felt_lighter',
+      'felt_heavier',
+      'not_today',
+    ]);
   });
 
   test('each quick answer has correct follow-up prompt', () {

@@ -3,7 +3,7 @@ import '../features/trial/hook_rescue_decision_model.dart';
 
 /// Screenshot / App Store capture — compile with
 /// `--dart-define=VOICE_MEMORY_SCREENSHOT_MODE=true`
-abstract final class ScreenshotMode {
+abstract class ScreenshotMode {
   ScreenshotMode._();
 
   static const bool enabled = bool.fromEnvironment(
@@ -17,8 +17,7 @@ abstract final class ScreenshotMode {
     defaultValue: 'return_day',
   );
 
-  static bool get recordPostSavePreview =>
-      enabled && recordView == 'post_save';
+  static bool get recordPostSavePreview => enabled && recordView == 'post_save';
 
   static bool get recordFirstSessionPreview =>
       enabled && recordView == 'first_session';
@@ -73,7 +72,8 @@ abstract final class ScreenshotMode {
   }
 
   static bool get patternsFirstThreePreview =>
-      enabled && screenshotJourneyReflectionCount >= 0 &&
+      enabled &&
+      screenshotJourneyReflectionCount >= 0 &&
       screenshotJourneyReflectionCount < 3;
 
   /// First-loop activation stage preview:
@@ -103,11 +103,7 @@ abstract final class ScreenshotMode {
     defaultValue: '',
   );
 
-  static const Set<String> _returnDayStages = {
-    'due',
-    'answered',
-    'closed',
-  };
+  static const Set<String> _returnDayStages = {'due', 'answered', 'closed'};
 
   /// Validated return-day stage, or null when not in screenshot mode / unset.
   static String? get returnDayStage {
@@ -145,8 +141,8 @@ abstract final class ScreenshotMode {
 
   static String? get screenshotCheckInSelectedOptionId =>
       enabled && recordCheckInDuePreview
-          ? _checkInOptionId(checkInOption)
-          : null;
+      ? _checkInOptionId(checkInOption)
+      : null;
 
   /// Hook-fix preview: `sharper`, `very_sharp`, or `better_result`.
   static const String hookFixRaw = String.fromEnvironment(
@@ -518,8 +514,8 @@ abstract final class ScreenshotMode {
   /// Better-result intensity to preview, derived from [hookFix].
   static HookRescueIntensity get screenshotBetterResultIntensity =>
       hookFix == 'better_result'
-          ? HookRescueIntensity.aggressive
-          : HookRescueIntensity.normal;
+      ? HookRescueIntensity.aggressive
+      : HookRescueIntensity.normal;
 
   static ReturnCaptureSelection? get returnCaptureSelection {
     if (!enabled) return null;

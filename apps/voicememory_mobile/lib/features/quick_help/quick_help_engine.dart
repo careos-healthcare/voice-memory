@@ -17,7 +17,8 @@ QuickHelpResponse buildQuickHelpResponse({
       return const QuickHelpResponse(
         intent: QuickHelpIntent.whatToRecord,
         title: 'Record one moment',
-        body: 'Do not explain the whole day. Say one moment that stayed with '
+        body:
+            'Do not explain the whole day. Say one moment that stayed with '
             'you.',
         actionLabel: 'Start recording',
         action: QuickHelpAction.startRecording,

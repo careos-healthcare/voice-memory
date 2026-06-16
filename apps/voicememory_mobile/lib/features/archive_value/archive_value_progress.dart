@@ -73,8 +73,7 @@ class ArchiveValueProgress {
     final count = eligible.length;
     final stage = stageForCount(count);
     final ready = count >= target;
-    final progressPercent =
-        ((count.clamp(0, target) / target) * 100).round();
+    final progressPercent = ((count.clamp(0, target) / target) * 100).round();
     return ArchiveValueSnapshot(
       reflectionCount: count,
       stage: stage,

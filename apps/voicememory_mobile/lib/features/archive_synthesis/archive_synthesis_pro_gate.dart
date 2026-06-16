@@ -6,7 +6,7 @@ import '../archive_v1/archive_v1_models.dart';
 import 'archive_synthesis_trigger.dart';
 
 /// GPT-5 archive synthesis requires RevenueCat `pro` entitlement.
-abstract final class ArchiveSynthesisProGate {
+abstract class ArchiveSynthesisProGate {
   ArchiveSynthesisProGate._();
 
   static const String upgradeHeadline = ArchivePaywallCopy.headline;
@@ -34,8 +34,7 @@ abstract final class ArchiveSynthesisProGate {
       ArchiveIntelligenceSurface.monthlyReview ||
       ArchiveIntelligenceSurface.historian ||
       ArchiveIntelligenceSurface.milestoneReview ||
-      ArchiveIntelligenceSurface.narrativeDeepDive =>
-        true,
+      ArchiveIntelligenceSurface.narrativeDeepDive => true,
       _ => false,
     };
   }

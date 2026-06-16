@@ -58,7 +58,8 @@ String userFacingErrorMessage(
   if (text.isEmpty || _looksLikeInternalErrorText(text)) {
     return fallback;
   }
-  if (text.contains('Connection refused') || text.contains('connection refused')) {
+  if (text.contains('Connection refused') ||
+      text.contains('connection refused')) {
     return _connectionRefusedMessage();
   }
   return fallback;

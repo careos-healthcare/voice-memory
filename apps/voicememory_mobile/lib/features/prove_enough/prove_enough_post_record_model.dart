@@ -56,6 +56,5 @@ class ProveEnoughPostRecordModel {
     return 'Pressure looks high';
   }
 
-  String get restGuiltLabel =>
-      restGuiltPresent ? 'Present' : 'Not clear';
+  String get restGuiltLabel => restGuiltPresent ? 'Present' : 'Not clear';
 }

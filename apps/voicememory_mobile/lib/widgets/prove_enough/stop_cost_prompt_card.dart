@@ -82,9 +82,9 @@ class _StopCostPromptCardState extends State<StopCostPromptCard> {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 ProveEnoughPostRecordEngine.imaginedStopCostPrompt,
-                style: ArchiveMobileTypography.body(context).copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: ArchiveMobileTypography.body(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.md),
               TextField(
@@ -114,10 +114,7 @@ class _StopCostPromptCardState extends State<StopCostPromptCard> {
     controller.dispose();
     if (answer == null || answer.trim().isEmpty) return;
 
-    await _store.save(
-      entryId: widget.entryId,
-      answer: answer,
-    );
+    await _store.save(entryId: widget.entryId, answer: answer);
     await RetentionMetricsTracker.track(
       RetentionMetricsTracker.stopCostPromptAnswered,
     );
@@ -146,17 +143,17 @@ class _StopCostPromptCardState extends State<StopCostPromptCard> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             ProveEnoughPostRecordEngine.imaginedStopCostPrompt,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           if (_savedAnswer != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               _savedAnswer!,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                fontStyle: FontStyle.italic,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(fontStyle: FontStyle.italic),
             ),
           ],
           const SizedBox(height: AppSpacing.md),

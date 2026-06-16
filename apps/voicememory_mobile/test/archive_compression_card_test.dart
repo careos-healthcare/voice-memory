@@ -4,16 +4,16 @@ import 'package:voicememory_mobile/features/archive_compression/archive_compress
 import 'package:voicememory_mobile/widgets/patterns/archive_compression_card.dart';
 
 ArchiveMomentGroup _group() => ArchiveMomentGroup(
-      id: 'g1',
-      title: 'Taking responsibility before asking for help',
-      momentIds: const ['m1', 'm2', 'm3', 'm4', 'm5'],
-      patternTitle: 'Taking responsibility before asking for help',
-      tags: const ['pressure', 'work', 'helped'],
-      firstDate: DateTime(2026, 5, 12),
-      lastDate: DateTime(2026, 5, 26),
-      count: 5,
-      suggestedAction: ArchiveCompressionSuggestedAction.keepTogether,
-    );
+  id: 'g1',
+  title: 'Taking responsibility before asking for help',
+  momentIds: const ['m1', 'm2', 'm3', 'm4', 'm5'],
+  patternTitle: 'Taking responsibility before asking for help',
+  tags: const ['pressure', 'work', 'helped'],
+  firstDate: DateTime(2026, 5, 12),
+  lastDate: DateTime(2026, 5, 26),
+  count: 5,
+  suggestedAction: ArchiveCompressionSuggestedAction.keepTogether,
+);
 
 Future<void> _pump(
   WidgetTester tester, {

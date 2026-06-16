@@ -27,7 +27,8 @@ class DailyArchiveNoticedSection extends StatefulWidget {
       _DailyArchiveNoticedSectionState();
 }
 
-class _DailyArchiveNoticedSectionState extends State<DailyArchiveNoticedSection> {
+class _DailyArchiveNoticedSectionState
+    extends State<DailyArchiveNoticedSection> {
   DailyDiscovery? _discovery;
   bool _loading = true;
 

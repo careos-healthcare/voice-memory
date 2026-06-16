@@ -13,19 +13,18 @@ PatternMemory _memory({
   int lighterCount = 1,
   int heavierCount = 0,
   String? nextBestQuestion = 'Did it show up before lunch?',
-}) =>
-    PatternMemory(
-      id: 'pm1',
-      patternTitle: 'saying yes when you mean no',
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 4),
-      checkInCount: checkInCount,
-      showedAgainCount: showedAgainCount,
-      lighterCount: lighterCount,
-      heavierCount: heavierCount,
-      nextBestQuestion: nextBestQuestion,
-      status: PatternMemoryStatus.active,
-    );
+}) => PatternMemory(
+  id: 'pm1',
+  patternTitle: 'saying yes when you mean no',
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 4),
+  checkInCount: checkInCount,
+  showedAgainCount: showedAgainCount,
+  lighterCount: lighterCount,
+  heavierCount: heavierCount,
+  nextBestQuestion: nextBestQuestion,
+  status: PatternMemoryStatus.active,
+);
 
 PatternProgressMoment _progress({bool shouldShow = true}) =>
     PatternProgressMoment(
@@ -43,20 +42,20 @@ PatternProgressMoment _progress({bool shouldShow = true}) =>
     );
 
 WeeklyPatternRecap _weekly({bool shouldShow = true}) => WeeklyPatternRecap(
-      id: 'wr_pm1_20260601_repeated',
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      weekStart: DateTime(2026, 6, 1),
-      weekEnd: DateTime(2026, 6, 7),
-      type: WeeklyPatternRecapType.repeated,
-      patternTitle: 'saying yes when you mean no',
-      headline: 'This pattern kept showing up this week.',
-      body: 'You checked it 4 times and caught it more than once.',
-      usefulLine: 'It often starts around: before saying yes',
-      nextQuestion: 'What happens right before it starts?',
-      checkInCount: 4,
-      shouldShow: shouldShow,
-    );
+  id: 'wr_pm1_20260601_repeated',
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  weekStart: DateTime(2026, 6, 1),
+  weekEnd: DateTime(2026, 6, 7),
+  type: WeeklyPatternRecapType.repeated,
+  patternTitle: 'saying yes when you mean no',
+  headline: 'This pattern kept showing up this week.',
+  body: 'You checked it 4 times and caught it more than once.',
+  usefulLine: 'It often starts around: before saying yes',
+  nextQuestion: 'What happens right before it starts?',
+  checkInCount: 4,
+  shouldShow: shouldShow,
+);
 
 void main() {
   test('weekly recap priority wins', () {
@@ -80,7 +79,10 @@ void main() {
     );
     expect(r.type, PatternShareRecapType.progress);
     expect(r.title, 'Pattern progress');
-    expect(r.lines, contains('Next check: What happens right before it starts?'));
+    expect(
+      r.lines,
+      contains('Next check: What happens right before it starts?'),
+    );
   });
 
   test('memory recap works at checkInCount >= 2', () {
@@ -107,6 +109,9 @@ void main() {
     final r = _engine.build(weekly: _weekly());
     expect(r.plainText, contains('Made with ArchiveMe'));
     expect(r.plainText, contains('This week\u2019s pattern'));
-    expect(r.plainText, contains('- It often starts around: before saying yes'));
+    expect(
+      r.plainText,
+      contains('- It often starts around: before saying yes'),
+    );
   });
 }

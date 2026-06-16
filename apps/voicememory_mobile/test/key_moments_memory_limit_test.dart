@@ -15,13 +15,13 @@ KeyMoment _moment(String id, DateTime date, {String title = 'Moment'}) =>
     );
 
 List<KeyMoment> _manyMoments(int count) => List.generate(
-      count,
-      (i) => _moment(
-        'm$i',
-        DateTime.now().subtract(Duration(days: i)),
-        title: 'Moment $i',
-      ),
-    );
+  count,
+  (i) => _moment(
+    'm$i',
+    DateTime.now().subtract(Duration(days: i)),
+    title: 'Moment $i',
+  ),
+);
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -42,8 +42,9 @@ Future<void> _pump(
 }
 
 void main() {
-  testWidgets('memory-limit card appears when more than 7 moments',
-      (tester) async {
+  testWidgets('memory-limit card appears when more than 7 moments', (
+    tester,
+  ) async {
     await _pump(tester, moments: _manyMoments(8));
 
     expect(find.text(ConsumerUiCopy.patternMemoryGrowingTitle), findsOneWidget);

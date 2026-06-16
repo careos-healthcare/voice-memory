@@ -11,57 +11,57 @@ KeyMoment _moment(
   DateTime date, {
   String? patternTitle,
   String? resultHint,
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: 'Moment $id',
-      originalText: 'text',
-      shortSummary: 'text',
-      patternTitle: patternTitle,
-      resultHint: resultHint,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: 'Moment $id',
+  originalText: 'text',
+  shortSummary: 'text',
+  patternTitle: patternTitle,
+  resultHint: resultHint,
+);
 
 ArchiveMemorySummary _summary({String? nextCheck}) => ArchiveMemorySummary(
-      id: 's1',
-      patternTitle: 'Pressure before yes',
-      primaryMemoryLine: 'You often say yes before checking in.',
-      basedOnMomentCount: 4,
-      basedOnWeekCount: 2,
-      clarityLabel: 'Clear pattern',
-      nextCheck: nextCheck,
-    );
+  id: 's1',
+  patternTitle: 'Pressure before yes',
+  primaryMemoryLine: 'You often say yes before checking in.',
+  basedOnMomentCount: 4,
+  basedOnWeekCount: 2,
+  clarityLabel: 'Clear pattern',
+  nextCheck: nextCheck,
+);
 
 PatternMap _map({String? nextCheck}) => PatternMap(
-      patternTitle: 'Pressure before yes',
-      seenCount: 4,
-      confidenceLabel: 'Getting clearer',
-      nextCheck: nextCheck,
-    );
+  patternTitle: 'Pressure before yes',
+  seenCount: 4,
+  confidenceLabel: 'Getting clearer',
+  nextCheck: nextCheck,
+);
 
 PatternMemory _memory({String? nextCheck, int checkIns = 4}) => PatternMemory(
-      id: 'p1',
-      patternTitle: 'Memory pattern title',
-      createdAt: DateTime(2026, 5, 1),
-      updatedAt: DateTime(2026, 6, 1),
-      checkInCount: checkIns,
-      nextBestQuestion: nextCheck,
-    );
+  id: 'p1',
+  patternTitle: 'Memory pattern title',
+  createdAt: DateTime(2026, 5, 1),
+  updatedAt: DateTime(2026, 6, 1),
+  checkInCount: checkIns,
+  nextBestQuestion: nextCheck,
+);
 
 void main() {
   test('returns null without pattern data', () {
-    expect(
-      buildPatternProfile(keyMoments: const []),
-      isNull,
-    );
+    expect(buildPatternProfile(keyMoments: const []), isNull);
   });
 
   test('builds from summary', () {
     final profile = buildPatternProfile(
       summary: _summary(),
       keyMoments: [
-        _moment('a', DateTime(2026, 6, 1),
-            patternTitle: 'Pressure before yes', resultHint: 'lighter'),
+        _moment(
+          'a',
+          DateTime(2026, 6, 1),
+          patternTitle: 'Pressure before yes',
+          resultHint: 'lighter',
+        ),
       ],
     );
     expect(profile, isNotNull);
@@ -76,10 +76,7 @@ void main() {
     );
     expect(fromMemory!.patternTitle, 'Memory pattern title');
 
-    final fromMap = buildPatternProfile(
-      map: _map(),
-      keyMoments: const [],
-    );
+    final fromMap = buildPatternProfile(map: _map(), keyMoments: const []);
     expect(fromMap!.patternTitle, 'Pressure before yes');
 
     final fromTimeline = buildPatternProfile(
@@ -133,7 +130,11 @@ void main() {
     final early = buildPatternProfile(
       memory: _memory(checkIns: 1),
       keyMoments: [
-        _moment('a', DateTime(2026, 6, 1), patternTitle: 'Memory pattern title'),
+        _moment(
+          'a',
+          DateTime(2026, 6, 1),
+          patternTitle: 'Memory pattern title',
+        ),
       ],
     );
     expect(early!.clarityLabel, 'Early read');
@@ -143,8 +144,11 @@ void main() {
     final profile = buildPatternProfile(
       summary: _summary(),
       keyMoments: [
-        _moment('match', DateTime(2026, 6, 2),
-            patternTitle: 'Pressure before yes'),
+        _moment(
+          'match',
+          DateTime(2026, 6, 2),
+          patternTitle: 'Pressure before yes',
+        ),
         _moment('other', DateTime(2026, 6, 1), patternTitle: 'Other pattern'),
       ],
     );

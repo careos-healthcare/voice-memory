@@ -13,6 +13,7 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
     required this.onSelectPrompt,
     this.selectedPrompt,
     this.personalPrompts,
+    this.deemphasized = false,
   });
 
   final ValueChanged<String> onSelectPrompt;
@@ -22,22 +23,33 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
   /// generic starter prompts are shown.
   final PersonalReturnPromptSet? personalPrompts;
 
+  /// True when a primary starter (one small recording) already exists above:
+  /// the same prompts stay available, but visually step back so the screen
+  /// reads as one clear action instead of many equal choices.
+  final bool deemphasized;
+
   @override
   Widget build(BuildContext context) {
-    final personalized = personalPrompts?.personalized == true &&
+    final personalized =
+        personalPrompts?.personalized == true &&
         personalPrompts!.prompts.isNotEmpty;
     final prompts = personalized
         ? personalPrompts!.prompts
         : ConsumerUiCopy.recordStarterPrompts;
 
-    return Column(
+    final section = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           ConsumerUiCopy.trySayingOneOfThese,
-          style: VoiceMemoryTypography.metadataStyle(
-            color: AppColors.accentPrimary,
-          ).copyWith(fontWeight: FontWeight.w600),
+          style:
+              VoiceMemoryTypography.metadataStyle(
+                color: deemphasized
+                    ? AppColors.textSecondary
+                    : AppColors.accentPrimary,
+              ).copyWith(
+                fontWeight: deemphasized ? FontWeight.w500 : FontWeight.w600,
+              ),
         ),
         if (personalized) ...[
           const SizedBox(height: 2),
@@ -103,6 +115,13 @@ class ConsumerRecordPromptsSection extends StatelessWidget {
         ),
       ],
     );
+
+    if (!deemphasized) return section;
+    return Opacity(
+      key: const Key('generic_prompts_deemphasized'),
+      opacity: 0.82,
+      child: section,
+    );
   }
 }
 
@@ -135,18 +154,16 @@ class _StarterCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color:
-                    selected ? AppColors.accentPrimary : AppColors.borderSubtle,
+                color: selected
+                    ? AppColors.accentPrimary
+                    : AppColors.borderSubtle,
                 width: selected ? 1.5 : 1,
               ),
               color: selected
                   ? AppColors.accentLight
                   : AppColors.backgroundSecondary,
             ),
-            child: Text(
-              prompt,
-              style: VoiceMemoryTypography.bodyStyle(),
-            ),
+            child: Text(prompt, style: VoiceMemoryTypography.bodyStyle()),
           ),
         ),
       ),

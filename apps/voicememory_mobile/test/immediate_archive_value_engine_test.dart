@@ -43,7 +43,10 @@ void main() {
     expect(insight.primaryTheme, 'Career');
     expect(insight.firstObservation, contains('career uncertainty'));
     expect(insight.strongestQuote, isNotNull);
-    expect(insight.strongestQuote!.split(RegExp(r'\s+')).length, greaterThanOrEqualTo(8));
+    expect(
+      insight.strongestQuote!.split(RegExp(r'\s+')).length,
+      greaterThanOrEqualTo(8),
+    );
   });
 
   test('comparison detects shared career across two recordings', () {
@@ -73,18 +76,21 @@ void main() {
     final pattern = buildThirdRecordingPattern([
       _entry(
         id: '1',
-        transcript: 'Career uncertainty keeps coming up when I think about my job future.',
+        transcript:
+            'Career uncertainty keeps coming up when I think about my job future.',
       ),
       _entry(
         id: '2',
         createdAt: DateTime.utc(2026, 5, 2),
-        transcript: 'Another day worrying about my career and whether to switch roles.',
+        transcript:
+            'Another day worrying about my career and whether to switch roles.',
         themes: const ['career'],
       ),
       _entry(
         id: '3',
         createdAt: DateTime.utc(2026, 5, 4),
-        transcript: 'I talked with my manager about career growth and next steps at work.',
+        transcript:
+            'I talked with my manager about career growth and next steps at work.',
         themes: const ['career'],
       ),
     ]);

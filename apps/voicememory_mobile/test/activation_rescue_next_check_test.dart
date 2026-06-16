@@ -17,16 +17,16 @@ Future<void> _reset(String stamp) async {
 }
 
 TomorrowCheckIn _completed() => TomorrowCheckIn(
-      id: 't1',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'Did this pattern show up again?',
-      options: kDefaultTomorrowCheckInOptions,
-      selectedOptionId: 'lighter',
-      completedAt: DateTime(2026, 5, 26),
-    );
+  id: 't1',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'Did this pattern show up again?',
+  options: kDefaultTomorrowCheckInOptions,
+  selectedOptionId: 'lighter',
+  completedAt: DateTime(2026, 5, 26),
+);
 
 void main() {
   testWidgets('Use this tomorrow confirms tomorrow check', (tester) async {
@@ -48,10 +48,15 @@ void main() {
     await tester.pump();
 
     expect(created, isNotNull);
-    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('routine anchor is optional after next-check use', (tester) async {
+  testWidgets('routine anchor is optional after next-check use', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -69,7 +74,10 @@ void main() {
     await tester.tap(find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta));
     await tester.pump();
 
-    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
+      findsOneWidget,
+    );
     expect(find.text(RoutineAnchorChooser.title), findsNothing);
   });
 

@@ -14,19 +14,18 @@ KeyMoment _moment(
   String? nextCheck,
   List<String> tags = const [],
   KeyMomentSource source = KeyMomentSource.reflection,
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: 'Moment',
-      originalText: text,
-      shortSummary: text,
-      resultHint: resultHint,
-      patternTitle: patternTitle,
-      nextCheck: nextCheck,
-      tags: tags,
-      source: source,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: 'Moment',
+  originalText: text,
+  shortSummary: text,
+  resultHint: resultHint,
+  patternTitle: patternTitle,
+  nextCheck: nextCheck,
+  tags: tags,
+  source: source,
+);
 
 PatternMemory _memory(
   String id, {
@@ -36,18 +35,17 @@ PatternMemory _memory(
   List<String> helped = const [],
   List<String> harder = const [],
   String? nextBestQuestion,
-}) =>
-    PatternMemory(
-      id: id,
-      patternTitle: title,
-      createdAt: _now,
-      updatedAt: _now,
-      checkInCount: checkInCount,
-      showedAgainCount: showedAgainCount,
-      helpedMoments: helped,
-      harderMoments: harder,
-      nextBestQuestion: nextBestQuestion,
-    );
+}) => PatternMemory(
+  id: id,
+  patternTitle: title,
+  createdAt: _now,
+  updatedAt: _now,
+  checkInCount: checkInCount,
+  showedAgainCount: showedAgainCount,
+  helpedMoments: helped,
+  harderMoments: harder,
+  nextBestQuestion: nextBestQuestion,
+);
 
 void main() {
   group('gating', () {
@@ -65,8 +63,12 @@ void main() {
       final review = buildMonthlyPatternReview(
         moments: [
           for (var i = 0; i < 8; i++)
-            _moment('m$i', DateTime(2026, 6, 1 + i),
-                resultHint: 'lighter', text: 'I paused'),
+            _moment(
+              'm$i',
+              DateTime(2026, 6, 1 + i),
+              resultHint: 'lighter',
+              text: 'I paused',
+            ),
         ],
         now: _now,
       );
@@ -77,7 +79,9 @@ void main() {
 
     test('shown with at least 4 completed check-ins', () {
       final review = buildMonthlyPatternReview(
-        moments: [_moment('m', _now, resultHint: 'heavier', text: 'I carried it')],
+        moments: [
+          _moment('m', _now, resultHint: 'heavier', text: 'I carried it'),
+        ],
         completedCheckInCount: 4,
         now: _now,
       );
@@ -114,17 +118,31 @@ void main() {
     test('fills repeating, lighter, heavier, helped, and next check', () {
       final review = buildMonthlyPatternReview(
         moments: [
-          _moment('a', DateTime(2026, 6, 2),
-              resultHint: 'lighter', text: 'It felt lighter after I paused'),
-          _moment('b', DateTime(2026, 6, 3),
-              resultHint: 'heavier', text: 'It felt heavier when I carried it'),
-          _moment('c', DateTime(2026, 6, 4),
-              tags: const ['helped'], text: 'I asked for help'),
+          _moment(
+            'a',
+            DateTime(2026, 6, 2),
+            resultHint: 'lighter',
+            text: 'It felt lighter after I paused',
+          ),
+          _moment(
+            'b',
+            DateTime(2026, 6, 3),
+            resultHint: 'heavier',
+            text: 'It felt heavier when I carried it',
+          ),
+          _moment(
+            'c',
+            DateTime(2026, 6, 4),
+            tags: const ['helped'],
+            text: 'I asked for help',
+          ),
         ],
         patternMemories: [
-          _memory('p',
-              title: 'Taking on too much',
-              nextBestQuestion: 'What happens right before it shows up?'),
+          _memory(
+            'p',
+            title: 'Taking on too much',
+            nextBestQuestion: 'What happens right before it shows up?',
+          ),
         ],
         completedCheckInCount: 4,
         now: _now,
@@ -142,8 +160,12 @@ void main() {
     test('never invents empty sections', () {
       final review = buildMonthlyPatternReview(
         moments: [
-          _moment('lead', DateTime(2026, 6, 1),
-              text: 'a quiet note', nextCheck: 'What was the moment today?'),
+          _moment(
+            'lead',
+            DateTime(2026, 6, 1),
+            text: 'a quiet note',
+            nextCheck: 'What was the moment today?',
+          ),
           for (var i = 0; i < 7; i++)
             _moment('m$i', DateTime(2026, 6, 2 + i), text: 'a quiet note'),
         ],

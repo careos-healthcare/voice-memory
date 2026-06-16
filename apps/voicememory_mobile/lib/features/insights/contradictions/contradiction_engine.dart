@@ -38,25 +38,30 @@ class ContradictionInsightEngine {
       for (final text in archiveStatementTexts(e)) {
         final lower = text.toLowerCase();
         if (_hits(lower, InsightTextSignals.desireMarkers)) {
-          desireLines.add(InsightEvidenceLine(
-            entryId: e.id,
-            quote: text,
-            recordedAt: e.createdAt,
-            label: 'Stated desire',
-          ));
+          desireLines.add(
+            InsightEvidenceLine(
+              entryId: e.id,
+              quote: text,
+              recordedAt: e.createdAt,
+              label: 'Stated desire',
+            ),
+          );
         }
         if (_hits(lower, InsightTextSignals.responsibilityMarkers)) {
-          actionLines.add(InsightEvidenceLine(
-            entryId: e.id,
-            quote: text,
-            recordedAt: e.createdAt,
-            label: 'Observed action',
-          ));
+          actionLines.add(
+            InsightEvidenceLine(
+              entryId: e.id,
+              quote: text,
+              recordedAt: e.createdAt,
+              label: 'Observed action',
+            ),
+          );
         }
       }
     }
 
-    if (desireLines.length < 2 || actionLines.length < minSupportingReferences) {
+    if (desireLines.length < 2 ||
+        actionLines.length < minSupportingReferences) {
       return const [];
     }
 
@@ -85,8 +90,14 @@ class ContradictionInsightEngine {
         statedAction: 'taking on responsibility',
         recurringPattern: 'freedom language vs responsibility choices',
         evidence: [
-          ContradictionEvidence(role: 'stated_desire', lines: desireLines.take(4).toList()),
-          ContradictionEvidence(role: 'stated_action', lines: actionLines.take(4).toList()),
+          ContradictionEvidence(
+            role: 'stated_desire',
+            lines: desireLines.take(4).toList(),
+          ),
+          ContradictionEvidence(
+            role: 'stated_action',
+            lines: actionLines.take(4).toList(),
+          ),
         ],
         firstSeen: dates.first,
         lastSeen: dates.last,

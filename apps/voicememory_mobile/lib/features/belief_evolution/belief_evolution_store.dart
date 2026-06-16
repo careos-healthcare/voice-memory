@@ -23,8 +23,6 @@ class BeliefEvolutionStore {
 
   Future<void> markSynced(DateTime at) async {
     final state = await load();
-    await save(
-      state.copyWith(lastSyncedAt: at.toUtc().toIso8601String()),
-    );
+    await save(state.copyWith(lastSyncedAt: at.toUtc().toIso8601String()));
   }
 }

@@ -20,12 +20,18 @@ class GuidedThreadPlanEngine {
   static const ThreadReturnEvidenceEngine _threadEngine =
       ThreadReturnEvidenceEngine();
 
-  /// [now] is injectable for tests and forwarded to the thread engine.
+  /// [now] and [entryCount] are injectable for tests; [entryCount] is the
+  /// saved journal reflection count and gates archive-context cards.
   GuidedThreadPlan build(
     List<PressureCheckInRecord> records, {
     DateTime? now,
+    int? entryCount,
   }) {
-    final evidence = _threadEngine.build(records, now: now);
+    final evidence = _threadEngine.build(
+      records,
+      now: now,
+      entryCount: entryCount,
+    );
     if (!evidence.hasEvidence ||
         evidence.occurrenceCount < GuidedThreadPlan.minRelatedEntries ||
         evidence.sourceTerms.isEmpty) {
@@ -37,10 +43,12 @@ class GuidedThreadPlanEngine {
       alreadyCovered: _alreadyCovered(evidence),
       worthChecking: _worthChecking(evidence.status),
       nextPrompt: _nextPrompt(evidence),
-      sourceTerms:
-          evidence.sourceTerms.take(GuidedThreadPlan.maxTerms).toList(),
-      evidenceSnippets:
-          evidence.evidenceSnippets.take(GuidedThreadPlan.maxSnippets).toList(),
+      sourceTerms: evidence.sourceTerms
+          .take(GuidedThreadPlan.maxTerms)
+          .toList(),
+      evidenceSnippets: evidence.evidenceSnippets
+          .take(GuidedThreadPlan.maxSnippets)
+          .toList(),
       entryIds: evidence.entryIds,
     );
   }

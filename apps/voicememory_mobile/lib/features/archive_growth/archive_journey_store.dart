@@ -23,9 +23,7 @@ class ArchiveJourneyStore {
   Future<void> markComplete(ArchiveJourneyStepId id) async {
     final set = await readCompleted();
     set.add(id);
-    await _prefs.writeJsonMap(_key, {
-      'steps': set.map((s) => s.name).toList(),
-    });
+    await _prefs.writeJsonMap(_key, {'steps': set.map((s) => s.name).toList()});
   }
 
   static ArchiveJourneyStepId? _parseId(String name) {

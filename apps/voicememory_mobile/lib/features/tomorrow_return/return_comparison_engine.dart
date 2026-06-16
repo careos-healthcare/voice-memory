@@ -212,10 +212,7 @@ class ReturnComparisonEngine {
     }
   }
 
-  String _headline(
-    ReturnComparisonStatus status, {
-    String? comparisonHint,
-  }) {
+  String _headline(ReturnComparisonStatus status, {String? comparisonHint}) {
     if (comparisonHint == ReturnCaptureComparisonHints.lighter) {
       return ConsumerUiCopy.returnComparisonHeadlineEased;
     }
@@ -343,7 +340,11 @@ class ReturnComparisonEngine {
       entry.reflection.repeatedSignal,
       entry.reflection.exactLanguagePattern,
     ];
-    return parts.map((p) => p.trim()).where((p) => p.isNotEmpty).join(' ').length;
+    return parts
+        .map((p) => p.trim())
+        .where((p) => p.isNotEmpty)
+        .join(' ')
+        .length;
   }
 
   String _clip(String text, int max) {

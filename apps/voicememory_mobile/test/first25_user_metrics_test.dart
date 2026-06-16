@@ -96,7 +96,9 @@ void main() {
 
     test('fires missed milestones when user returns later', () async {
       final anchor = DateTime.utc(2026, 5, 1);
-      await First25RecordingRetention.recordEligibleRecording(createdAt: anchor);
+      await First25RecordingRetention.recordEligibleRecording(
+        createdAt: anchor,
+      );
 
       final day3 = await First25RecordingRetention.recordEligibleRecording(
         createdAt: DateTime.utc(2026, 5, 4),

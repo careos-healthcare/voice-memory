@@ -25,9 +25,9 @@ class FirstInsightSharpnessRow extends StatelessWidget {
         Text(
           ConsumerUiCopy.firstInsightSharpnessQuestion,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 16,
-                color: AppColors.textSecondary,
-              ),
+            fontSize: 16,
+            color: AppColors.textSecondary,
+          ),
         ),
         const SizedBox(height: AppSpacing.sm),
         OutlinedButton(

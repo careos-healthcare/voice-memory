@@ -9,6 +9,7 @@ import '../../security/app_lock_settings.dart';
 import '../../security/pin_hash.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import 'wipe_local_archive_dialog.dart';
 
 /// Full-screen lock shown before any archive content. PIN entry with an
 /// optional biometric button; a failed or cancelled biometric simply falls
@@ -98,15 +99,17 @@ class _AppLockScreenState extends State<AppLockScreen> {
                   Text(
                     AppLockCopy.lockTitle,
                     textAlign: TextAlign.center,
-                    style:
-                        ArchiveMobileTypography.responsiveSectionTitle(context),
+                    style: ArchiveMobileTypography.responsiveSectionTitle(
+                      context,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     AppLockCopy.lockBody,
                     textAlign: TextAlign.center,
-                    style: ArchiveMobileTypography.responsiveHelper(context)
-                        .copyWith(color: AppColors.textSecondary),
+                    style: ArchiveMobileTypography.responsiveHelper(
+                      context,
+                    ).copyWith(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   TextField(
@@ -117,9 +120,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                     autofocus: true,
                     maxLength: PinHash.maxLength,
                     textAlign: TextAlign.center,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onSubmitted: (_) => _submitPin(),
                     decoration: const InputDecoration(
                       counterText: '',
@@ -132,8 +133,9 @@ class _AppLockScreenState extends State<AppLockScreen> {
                       AppLockCopy.lockTryAgain,
                       key: const Key('app_lock_try_again'),
                       textAlign: TextAlign.center,
-                      style: ArchiveMobileTypography.responsiveHelper(context)
-                          .copyWith(color: AppColors.error),
+                      style: ArchiveMobileTypography.responsiveHelper(
+                        context,
+                      ).copyWith(color: AppColors.error),
                     ),
                   ],
                   const SizedBox(height: AppSpacing.md),
@@ -150,6 +152,20 @@ class _AppLockScreenState extends State<AppLockScreen> {
                       child: const Text(AppLockCopy.lockBiometricsLabel),
                     ),
                   ],
+                  const SizedBox(height: AppSpacing.md),
+                  TextButton(
+                    key: const Key('app_lock_emergency_wipe'),
+                    onPressed: _busy
+                        ? null
+                        : () async {
+                            final wiped = await showWipeLocalArchiveDialog(
+                              context,
+                            );
+                            if (!mounted || !wiped) return;
+                            await widget.service.disableAfterEmergencyWipe();
+                          },
+                    child: const Text(AppLockCopy.emergencyWipeLabel),
+                  ),
                 ],
               ),
             ),

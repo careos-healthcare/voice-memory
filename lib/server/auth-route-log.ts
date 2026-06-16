@@ -52,14 +52,14 @@ export function createAuthSendCodeLog(): {
 
   const log = (patch: Partial<AuthSendCodeLogContext>) => {
     context = { ...context, ...patch };
-    console.info("[VoiceMemory auth]", JSON.stringify(context));
+    console.info("[ArchiveMe auth]", JSON.stringify(context));
   };
 
   const finalize = (error?: unknown) => {
     if (error instanceof Error && !context.stack) {
       log({ stack: error.stack ?? error.message });
     }
-    console.info("[VoiceMemory auth]", JSON.stringify(context));
+    console.info("[ArchiveMe auth]", JSON.stringify(context));
   };
 
   return { requestId, log, finalize };

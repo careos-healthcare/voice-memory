@@ -49,7 +49,10 @@ void main() {
       await store.saveLearning(_sample('pcl-$i'));
     }
 
-    expect((await store.readAll()).length, PatternCorrectionLearningStore.maxItems);
+    expect(
+      (await store.readAll()).length,
+      PatternCorrectionLearningStore.maxItems,
+    );
   });
 
   test('loadByCorrectedCategory filters by category', () async {

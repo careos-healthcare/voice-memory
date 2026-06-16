@@ -16,7 +16,9 @@ Future<void> _reset(String stamp) async {
 }
 
 void main() {
-  testWidgets('tomorrow check section shows Tomorrow, check this', (tester) async {
+  testWidgets('tomorrow check section shows Tomorrow, check this', (
+    tester,
+  ) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await tester.pumpWidget(
@@ -39,7 +41,10 @@ void main() {
     );
     expect(find.text('Tomorrow, check this'), findsOneWidget);
     expect(find.text(ConsumerUiCopy.tomorrowCheckReasonLine), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.firstSessionUseTomorrowCta), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.firstSessionUseTomorrowCta),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Make it sharper changes the check option', (tester) async {

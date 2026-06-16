@@ -14,6 +14,8 @@ class StartHereRecordingSection extends StatefulWidget {
     required this.onPromptSelected,
     this.surface = 'record',
     this.captureMode = 'voice',
+    this.compactPrompts = false,
+    this.maxPrompts,
   });
 
   final int recordingCount;
@@ -23,8 +25,14 @@ class StartHereRecordingSection extends StatefulWidget {
   /// Analytics surface id (record, text_capture, empty_archive, …).
   final String surface;
 
-  /// `voice` autostarts recording on record tab; `text` prefills only.
+  /// `voice` autostarts recording on record tab; `text` sets a hint only.
   final String captureMode;
+
+  /// Wrap prompts and use less vertical space — for tight fallback screens.
+  final bool compactPrompts;
+
+  /// When [compactPrompts] is true, show at most this many prompt chips.
+  final int? maxPrompts;
 
   @override
   State<StartHereRecordingSection> createState() =>
@@ -35,9 +43,9 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
   bool _shownLogged = false;
 
   bool get _showStartHere => StartHereVisibility.shouldShowStartHere(
-        recordingCount: widget.recordingCount,
-        firstArchiveMilestoneCompleted: widget.firstArchiveMilestoneCompleted,
-      );
+    recordingCount: widget.recordingCount,
+    firstArchiveMilestoneCompleted: widget.firstArchiveMilestoneCompleted,
+  );
 
   @override
   void didUpdateWidget(StartHereRecordingSection oldWidget) {
@@ -75,9 +83,9 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
           StartHereCatalog.continueBuildingArchive,
           key: const Key('start_here_continue_message'),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: VoiceMemoryColors.textSecondary,
-                height: 1.45,
-              ),
+            color: VoiceMemoryColors.textSecondary,
+            height: 1.45,
+          ),
         ),
       );
     }
@@ -87,6 +95,44 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
         ? scheme.surfaceContainerHighest
         : VoiceMemoryColors.surfaceSecondary;
     final optionBorder = scheme.outline.withValues(alpha: 0.45);
+    final prompts = widget.compactPrompts && widget.maxPrompts != null
+        ? StartHereCatalog.prompts.take(widget.maxPrompts!).toList()
+        : StartHereCatalog.prompts;
+
+    Widget promptOptions() {
+      if (widget.compactPrompts) {
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final prompt in prompts)
+              _StartHereOption(
+                label: prompt,
+                fillColor: optionFill,
+                borderColor: optionBorder,
+                compact: true,
+                onTap: () => _onTap(prompt),
+              ),
+          ],
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final prompt in prompts)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: _StartHereOption(
+                label: prompt,
+                fillColor: optionFill,
+                borderColor: optionBorder,
+                onTap: () => _onTap(prompt),
+              ),
+            ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -96,30 +142,16 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
           StartHereCatalog.sectionTitle,
           key: const Key('start_here_section_title'),
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: VoiceMemoryColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
+            color: VoiceMemoryColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 10),
         Semantics(
           container: true,
           label:
-              '${StartHereCatalog.sectionTitle}. ${StartHereCatalog.prompts.length} options.',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final prompt in StartHereCatalog.prompts)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _StartHereOption(
-                    label: prompt,
-                    fillColor: optionFill,
-                    borderColor: optionBorder,
-                    onTap: () => _onTap(prompt),
-                  ),
-                ),
-            ],
-          ),
+              '${StartHereCatalog.sectionTitle}. ${prompts.length} options.',
+          child: promptOptions(),
         ),
       ],
     );
@@ -132,12 +164,14 @@ class _StartHereOption extends StatelessWidget {
     required this.fillColor,
     required this.borderColor,
     required this.onTap,
+    this.compact = false,
   });
 
   final String label;
   final Color fillColor;
   final Color borderColor;
   final VoidCallback onTap;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -147,23 +181,30 @@ class _StartHereOption extends StatelessWidget {
       child: Material(
         color: fillColor,
         elevation: 0,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(compact ? 10 : 12),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(compact ? 10 : 12),
           child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            width: compact ? null : double.infinity,
+            constraints: compact
+                ? const BoxConstraints(maxWidth: 320)
+                : null,
+            padding: EdgeInsets.symmetric(
+              horizontal: compact ? 12 : 14,
+              vertical: compact ? 8 : 12,
+            ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(compact ? 10 : 12),
               border: Border.all(color: borderColor),
             ),
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: VoiceMemoryColors.textPrimary,
-                    height: 1.35,
-                  ),
+                color: VoiceMemoryColors.textPrimary,
+                height: 1.35,
+                fontSize: compact ? 13 : null,
+              ),
             ),
           ),
         ),

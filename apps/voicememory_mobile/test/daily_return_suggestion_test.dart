@@ -38,21 +38,21 @@ PressureCheckInRecord _record({
 
 /// Repeated evidence: "deadline" written twice, work x3, evening x2.
 List<PressureCheckInRecord> _richRecords() => [
-      _record(
-        id: 'a',
-        daysAgo: 3,
-        contextIds: const ['work', 'evening'],
-        fear: 'Missing the deadline',
-      ),
-      _record(
-        id: 'b',
-        daysAgo: 2,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
-      _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
-    ];
+  _record(
+    id: 'a',
+    daysAgo: 3,
+    contextIds: const ['work', 'evening'],
+    fear: 'Missing the deadline',
+  ),
+  _record(
+    id: 'b',
+    daysAgo: 2,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
+  _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
+];
 
 const _bannedCopy = [
   'need to',
@@ -75,16 +75,16 @@ final _edgeTitle = RegExp(
 );
 
 String _allCopy(DailyReturnSuggestionSet set) => [
-      set.label,
-      set.recommendationReason,
-      DailyReturnSuggestionSet.heading,
-      DailyReturnSuggestionSet.subLabel,
-      DailyReturnSuggestionSet.evidenceLabel,
-      DailyReturnSuggestionSet.primaryHeading,
-      DailyReturnSuggestionSet.whyLabel,
-      DailyReturnSuggestionSet.othersHeading,
-      for (final s in set.suggestions) ...[s.title, s.prompt, s.reason],
-    ].join(' ').toLowerCase();
+  set.label,
+  set.recommendationReason,
+  DailyReturnSuggestionSet.heading,
+  DailyReturnSuggestionSet.subLabel,
+  DailyReturnSuggestionSet.evidenceLabel,
+  DailyReturnSuggestionSet.primaryHeading,
+  DailyReturnSuggestionSet.whyLabel,
+  DailyReturnSuggestionSet.othersHeading,
+  for (final s in set.suggestions) ...[s.title, s.prompt, s.reason],
+].join(' ').toLowerCase();
 
 void main() {
   const engine = DailyReturnSuggestionEngine();
@@ -113,7 +113,10 @@ void main() {
         _record(id: 'b', daysAgo: 0, optionId: 'guilty_resting'),
       ]);
       expect(set.suggestions.first.id, 'recent_option_guilty_resting');
-      expect(set.suggestions.first.title, 'The rest you talked yourself out of');
+      expect(
+        set.suggestions.first.title,
+        'The rest you talked yourself out of',
+      );
       expect(
         set.suggestions.first.prompt,
         'What rest did you talk yourself out of today?',
@@ -145,7 +148,9 @@ void main() {
 
     test('titles use edge wording, stay short, never "came up again"', () {
       final variants = [
-        engine.build([_record(id: 'a', contextIds: const ['evening'])]),
+        engine.build([
+          _record(id: 'a', contextIds: const ['evening']),
+        ]),
         engine.build([
           _record(id: 'a', daysAgo: 1, contextIds: const ['work']),
           _record(id: 'b', daysAgo: 0, contextIds: const ['work']),
@@ -154,15 +159,23 @@ void main() {
       ];
       for (final set in variants) {
         for (final suggestion in set.suggestions) {
-          expect(suggestion.title, matches(_edgeTitle),
-              reason: 'title should pull with a curiosity/action frame: '
-                  '"${suggestion.title}"');
-          expect(suggestion.title.length, lessThan(60),
-              reason: 'title too long: "${suggestion.title}"');
+          expect(
+            suggestion.title,
+            matches(_edgeTitle),
+            reason:
+                'title should pull with a curiosity/action frame: '
+                '"${suggestion.title}"',
+          );
+          expect(
+            suggestion.title.length,
+            lessThan(60),
+            reason: 'title too long: "${suggestion.title}"',
+          );
           expect(
             suggestion.title.toLowerCase(),
             isNot(contains('came up again')),
-            reason: 'soft topic title where a sharper frame exists: '
+            reason:
+                'soft topic title where a sharper frame exists: '
                 '"${suggestion.title}"',
           );
         }
@@ -188,10 +201,7 @@ void main() {
       final set = engine.build(_richRecords());
       expect(set.recommendedSuggestion!.id, 'recent_option_guilty_resting');
       expect(set.recommendationReason, 'This showed up most recently.');
-      expect(
-        set.otherSuggestions.length,
-        set.suggestions.length - 1,
-      );
+      expect(set.otherSuggestions.length, set.suggestions.length - 1);
       expect(
         set.otherSuggestions.map((s) => s.id),
         isNot(contains('recent_option_guilty_resting')),
@@ -257,39 +267,34 @@ void main() {
       expect(sparse.recommendedSuggestion!.id, isNot('todays_pressure'));
 
       // Filler leads only when it is genuinely all there is.
-      final fillerOnly = engine.build([
-        _record(id: 'a', optionId: 'mystery'),
+      final fillerOnly = engine.build([_record(id: 'a', optionId: 'mystery')]);
+      expect(fillerOnly.suggestions.map((s) => s.id).toList(), [
+        'todays_pressure',
       ]);
-      expect(
-        fillerOnly.suggestions.map((s) => s.id).toList(),
-        ['todays_pressure'],
-      );
       expect(fillerOnly.recommendedSuggestion!.id, 'todays_pressure');
-      expect(
-        fillerOnly.recommendationReason,
-        'One honest sentence is enough.',
-      );
+      expect(fillerOnly.recommendationReason, 'One honest sentence is enough.');
       expect(fillerOnly.otherSuggestions, isEmpty);
     });
 
     test('suggestions carry the user\'s own words as evidence snippets', () {
       final set = engine.build(_richRecords());
-      final deadlineRow =
-          set.suggestions.firstWhere((s) => s.id == 'term_deadline');
+      final deadlineRow = set.suggestions.firstWhere(
+        (s) => s.id == 'term_deadline',
+      );
       // The newest note that actually mentions the term.
       expect(deadlineRow.evidenceSnippet, 'The deadline slipping');
       // The latest entry has no written note — no snippet, never fabricated.
-      final recentRow = set.suggestions
-          .firstWhere((s) => s.id == 'recent_option_guilty_resting');
+      final recentRow = set.suggestions.firstWhere(
+        (s) => s.id == 'recent_option_guilty_resting',
+      );
       expect(recentRow.evidenceSnippet, isNull);
     });
 
     test('snippets are capped at 80 characters and trimmed', () {
-      final longNote = '  I kept checking messages and rereading every '
+      final longNote =
+          '  I kept checking messages and rereading every '
           'reply long after I told myself I would stop for the evening.  ';
-      final set = engine.build([
-        _record(id: 'a', fear: longNote),
-      ]);
+      final set = engine.build([_record(id: 'a', fear: longNote)]);
       final snippet = set.suggestions.first.evidenceSnippet;
       expect(snippet, isNotNull);
       expect(snippet!.length, lessThanOrEqualTo(80));
@@ -303,9 +308,13 @@ void main() {
         _record(id: 'b', daysAgo: 0, contextIds: const ['work']),
       ]);
       for (final suggestion in set.suggestions) {
-        expect(suggestion.evidenceSnippet, isNull,
-            reason: 'no user-written note exists, so "$suggestion.id" '
-                'must not carry a snippet');
+        expect(
+          suggestion.evidenceSnippet,
+          isNull,
+          reason:
+              'no user-written note exists, so "$suggestion.id" '
+              'must not carry a snippet',
+        );
       }
     });
 
@@ -327,8 +336,11 @@ void main() {
           isTrue,
           reason: 'snippet must come from the user\'s own notes: "$snippet"',
         );
-        expect(seen.add(snippet), isTrue,
-            reason: 'each note shows at most once across the card');
+        expect(
+          seen.add(snippet),
+          isTrue,
+          reason: 'each note shows at most once across the card',
+        );
       }
     });
 
@@ -344,8 +356,11 @@ void main() {
       for (final set in variants) {
         final copy = _allCopy(set);
         for (final banned in _bannedCopy) {
-          expect(copy, isNot(contains(banned)),
-              reason: 'suggestion copy must not contain "$banned"');
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'suggestion copy must not contain "$banned"',
+          );
         }
       }
     });
@@ -377,8 +392,9 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders heading, sublabel, and suggestion rows',
-        (tester) async {
+    testWidgets('renders heading, sublabel, and suggestion rows', (
+      tester,
+    ) async {
       final set = engine.build(_richRecords());
       await pumpCard(tester, suggestionSet: set);
 
@@ -393,19 +409,16 @@ void main() {
     testWidgets('tapping a suggestion selects its prompt', (tester) async {
       String? selected;
       final set = engine.build(_richRecords());
-      await pumpCard(
-        tester,
-        suggestionSet: set,
-        onSelect: (p) => selected = p,
-      );
+      await pumpCard(tester, suggestionSet: set, onSelect: (p) => selected = p);
 
       await tester.tap(find.text(set.suggestions.first.title));
       await tester.pump();
       expect(selected, set.suggestions.first.prompt);
     });
 
-    testWidgets('renders primary recommendation and other suggestions',
-        (tester) async {
+    testWidgets('renders primary recommendation and other suggestions', (
+      tester,
+    ) async {
       final set = engine.build(_richRecords());
       await pumpCard(tester, suggestionSet: set);
 
@@ -418,19 +431,19 @@ void main() {
       );
     });
 
-    testWidgets('single suggestion shows only the primary block',
-        (tester) async {
-      final fillerOnly = engine.build([
-        _record(id: 'a', optionId: 'mystery'),
-      ]);
+    testWidgets('single suggestion shows only the primary block', (
+      tester,
+    ) async {
+      final fillerOnly = engine.build([_record(id: 'a', optionId: 'mystery')]);
       await pumpCard(tester, suggestionSet: fillerOnly);
 
       expect(find.text('Start here today'), findsOneWidget);
       expect(find.text('Other things worth checking'), findsNothing);
     });
 
-    testWidgets('tapping the primary recommendation selects its prompt',
-        (tester) async {
+    testWidgets('tapping the primary recommendation selects its prompt', (
+      tester,
+    ) async {
       String? selected;
       final set = engine.build(_richRecords());
       await pumpCard(tester, suggestionSet: set, onSelect: (p) => selected = p);
@@ -442,8 +455,9 @@ void main() {
       expect(selected, set.recommendedSuggestion!.prompt);
     });
 
-    testWidgets('tapping a secondary suggestion selects its prompt',
-        (tester) async {
+    testWidgets('tapping a secondary suggestion selects its prompt', (
+      tester,
+    ) async {
       String? selected;
       final set = engine.build(_richRecords());
       await pumpCard(tester, suggestionSet: set, onSelect: (p) => selected = p);
@@ -454,8 +468,9 @@ void main() {
       expect(selected, secondary.prompt);
     });
 
-    testWidgets('primary tap reports the suggestion as Start here today',
-        (tester) async {
+    testWidgets('primary tap reports the suggestion as Start here today', (
+      tester,
+    ) async {
       DailyReturnSuggestion? tapped;
       bool? primary;
       final set = engine.build(_richRecords());
@@ -476,8 +491,9 @@ void main() {
       expect(primary, isTrue);
     });
 
-    testWidgets('secondary tap reports the suggestion as not primary',
-        (tester) async {
+    testWidgets('secondary tap reports the suggestion as not primary', (
+      tester,
+    ) async {
       DailyReturnSuggestion? tapped;
       bool? primary;
       final set = engine.build(_richRecords());
@@ -497,14 +513,12 @@ void main() {
       expect(primary, isFalse);
     });
 
-    testWidgets('renders "From your archive:" when a snippet exists',
-        (tester) async {
+    testWidgets('renders "From your archive:" when a snippet exists', (
+      tester,
+    ) async {
       await pumpCard(tester, suggestionSet: engine.build(_richRecords()));
       expect(find.textContaining('From your archive:'), findsWidgets);
-      expect(
-        find.textContaining('The deadline slipping'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('The deadline slipping'), findsOneWidget);
     });
 
     testWidgets('renders no evidence line without snippets', (tester) async {
@@ -517,10 +531,7 @@ void main() {
     });
 
     testWidgets('renders nothing for the empty set', (tester) async {
-      await pumpCard(
-        tester,
-        suggestionSet: DailyReturnSuggestionSet.empty,
-      );
+      await pumpCard(tester, suggestionSet: DailyReturnSuggestionSet.empty);
       expect(find.text('Worth checking today'), findsNothing);
       expect(
         find.byKey(const Key('daily_return_suggestions_card')),
@@ -575,8 +586,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('shows suggestions when pressure evidence exists',
-        (tester) async {
+    testWidgets('shows suggestions when pressure evidence exists', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         // A saved reflection puts the screen past first-run so the prompt
         // area (and suggestion card) renders.
@@ -609,8 +621,9 @@ void main() {
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('shows no suggestion card without pressure evidence',
-        (tester) async {
+    testWidgets('shows no suggestion card without pressure evidence', (
+      tester,
+    ) async {
       await pumpRecordScreen(tester);
       expect(find.text('Worth checking today'), findsNothing);
       expect(
@@ -654,8 +667,9 @@ void main() {
       );
 
       // Tap the primary "Start here today" recommendation.
-      final primary =
-          find.byKey(const Key('daily_return_primary_recommendation'));
+      final primary = find.byKey(
+        const Key('daily_return_primary_recommendation'),
+      );
       await tester.ensureVisible(primary);
       await tester.tap(primary);
       await tester.pump();

@@ -20,31 +20,38 @@ class OneSmallRecordingEngine {
   static const DailyReturnSuggestionEngine _suggestionEngine =
       DailyReturnSuggestionEngine();
 
-  /// [now] is injectable for tests and forwarded to the plan engine.
+  /// [now] and [entryCount] are injectable for tests; [entryCount] is the
+  /// saved journal reflection count and gates archive-context cards.
   OneSmallRecording build(
     List<PressureCheckInRecord> records, {
     DateTime? now,
+    int? entryCount,
   }) {
-    final plan = _planEngine.build(records, now: now);
+    final plan = _planEngine.build(
+      records,
+      now: now,
+      entryCount: entryCount,
+    );
     if (plan.hasPlan && plan.nextPrompt.trim().isNotEmpty) {
       return OneSmallRecording(
         hasRecording: true,
         prompt: plan.nextPrompt,
-        sourceTerms:
-            plan.sourceTerms.take(OneSmallRecording.maxTerms).toList(),
+        sourceTerms: plan.sourceTerms.take(OneSmallRecording.maxTerms).toList(),
         entryIds: plan.entryIds,
       );
     }
 
     final suggestions = _suggestionEngine.build(records);
-    final primary =
-        suggestions.hasSuggestions ? suggestions.recommendedSuggestion : null;
+    final primary = suggestions.hasSuggestions
+        ? suggestions.recommendedSuggestion
+        : null;
     if (primary != null && primary.prompt.trim().isNotEmpty) {
       return OneSmallRecording(
         hasRecording: true,
         prompt: primary.prompt,
-        sourceTerms:
-            primary.sourceTerms.take(OneSmallRecording.maxTerms).toList(),
+        sourceTerms: primary.sourceTerms
+            .take(OneSmallRecording.maxTerms)
+            .toList(),
       );
     }
 

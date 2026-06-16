@@ -1,0 +1,115 @@
+{
+  "audit": "revenuecat_e2e_production",
+  "generated_at": "2026-06-03T18:37:06.577144Z",
+  "device": "sdk_gphone16k_arm64 (emulator-5554)",
+  "platform": "android",
+  "sandbox_account": "not_used",
+  "sdk_initialized": false,
+  "overall_pass": false,
+  "pass_count": 0,
+  "fail_count": 12,
+  "revenuecat_logs": [
+    "platform=android",
+    "sdk_configured=false",
+    "entitlements_after_init=free; pro=false; ids=; source=local_placeholder",
+    "RevenueCat: disabled — no API key at build time",
+    "archive_intelligence_gate=false",
+    "offline_cache=empty"
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "name": "RevenueCat initializes successfully",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step01_sdk_init.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "No REVENUECAT_ANDROID_API_KEY / REVENUECAT_IOS_API_KEY in build"
+    },
+    {
+      "step": 2,
+      "name": "Offerings load",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step02_offerings.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder"
+    },
+    {
+      "step": 3,
+      "name": "Monthly product loads",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step03_monthly_product.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder"
+    },
+    {
+      "step": 4,
+      "name": "Annual product loads",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step04_annual_product.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder"
+    },
+    {
+      "step": 5,
+      "name": "Purchase flow completes",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step05_purchase.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Not executed: SDK/store not configured for sandbox IAP in this automated run"
+    },
+    {
+      "step": 6,
+      "name": "RevenueCat dashboard shows transaction",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step06_rc_dashboard.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Not executed: SDK/store not configured for sandbox IAP in this automated run"
+    },
+    {
+      "step": 7,
+      "name": "Entitlement pro becomes active",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step07_pro_entitlement.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Not executed: SDK/store not configured for sandbox IAP in this automated run"
+    },
+    {
+      "step": 8,
+      "name": "Archive Intelligence unlocks",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step08_archive_unlock.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Pro gate from current entitlements: false"
+    },
+    {
+      "step": 9,
+      "name": "App restart preserves entitlement",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step09_restart.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Not executed: SDK/store not configured for sandbox IAP in this automated run"
+    },
+    {
+      "step": 10,
+      "name": "Restore purchases works",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step10_restore.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Not executed: SDK/store not configured for sandbox IAP in this automated run"
+    },
+    {
+      "step": 11,
+      "name": "Fresh install restores entitlement",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step11_fresh_install.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Not executed: SDK/store not configured for sandbox IAP in this automated run"
+    },
+    {
+      "step": 12,
+      "name": "Offline entitlement cache works",
+      "result": "FAIL",
+      "screenshot": "/sdcard/Download/revenuecat_e2e/step12_offline_cache.png",
+      "entitlement_state": "free; pro=false; ids=; source=local_placeholder",
+      "notes": "Cache read only; no Pro purchase to verify offline Pro persistence. cached=false"
+    }
+  ],
+  "adb_pull_dir": "/sdcard/Download/revenuecat_e2e"
+}

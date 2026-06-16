@@ -1,18 +1,8 @@
 import 'tomorrow_commitment_model.dart';
 
-enum WatchForStatus {
-  pending,
-  checked,
-  skipped,
-}
+enum WatchForStatus { pending, checked, skipped }
 
-enum WatchForResult {
-  showedAgain,
-  didNotShow,
-  changedShape,
-  unclear,
-  none,
-}
+enum WatchForResult { showedAgain, didNotShow, changedShape, unclear, none }
 
 /// A specific watch-for prompt saved for the next return day.
 class WatchForItem {
@@ -71,7 +61,8 @@ class WatchForItem {
     return rich.isNotEmpty ? rich : text;
   }
 
-  static DateTime dateOnly(DateTime value) => TomorrowCommitment.dateOnly(value);
+  static DateTime dateOnly(DateTime value) =>
+      TomorrowCommitment.dateOnly(value);
 
   bool isDueOn(DateTime day) =>
       status == WatchForStatus.pending && dateOnly(targetDate) == dateOnly(day);
@@ -106,8 +97,7 @@ class WatchForItem {
       chips: chips ?? this.chips,
       status: status ?? this.status,
       result: result ?? this.result,
-      completedAt:
-          clearCompletedAt ? null : (completedAt ?? this.completedAt),
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
       patternTitle: patternTitle ?? this.patternTitle,
       shortPrompt: shortPrompt ?? this.shortPrompt,
       specificPrompt: specificPrompt ?? this.specificPrompt,
@@ -122,26 +112,25 @@ class WatchForItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'targetDate': dateOnly(targetDate).toIso8601String(),
-        if (sourceReflectionId != null)
-          'sourceReflectionId': sourceReflectionId,
-        'text': text,
-        'chips': chips,
-        'status': status.name,
-        'result': result.name,
-        if (completedAt != null)
-          'completedAt': completedAt!.toUtc().toIso8601String(),
-        if (patternTitle != null) 'patternTitle': patternTitle,
-        if (shortPrompt != null) 'shortPrompt': shortPrompt,
-        if (specificPrompt != null) 'specificPrompt': specificPrompt,
-        if (situationHint != null) 'situationHint': situationHint,
-        if (emotionalHint != null) 'emotionalHint': emotionalHint,
-        if (checkInQuestion != null) 'checkInQuestion': checkInQuestion,
-        if (promptStrength != null) 'promptStrength': promptStrength,
-        if (comparisonHint != null) 'comparisonHint': comparisonHint,
-      };
+    'id': id,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'targetDate': dateOnly(targetDate).toIso8601String(),
+    if (sourceReflectionId != null) 'sourceReflectionId': sourceReflectionId,
+    'text': text,
+    'chips': chips,
+    'status': status.name,
+    'result': result.name,
+    if (completedAt != null)
+      'completedAt': completedAt!.toUtc().toIso8601String(),
+    if (patternTitle != null) 'patternTitle': patternTitle,
+    if (shortPrompt != null) 'shortPrompt': shortPrompt,
+    if (specificPrompt != null) 'specificPrompt': specificPrompt,
+    if (situationHint != null) 'situationHint': situationHint,
+    if (emotionalHint != null) 'emotionalHint': emotionalHint,
+    if (checkInQuestion != null) 'checkInQuestion': checkInQuestion,
+    if (promptStrength != null) 'promptStrength': promptStrength,
+    if (comparisonHint != null) 'comparisonHint': comparisonHint,
+  };
 
   static WatchForItem? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -159,9 +148,9 @@ class WatchForItem {
     final chipsRaw = json['chips'];
     final chips = chipsRaw is List
         ? chipsRaw
-            .map((e) => e.toString().trim())
-            .where((c) => c.isNotEmpty)
-            .toList()
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
 
     DateTime? completedAt;

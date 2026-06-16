@@ -6,7 +6,7 @@ import '../../design/archive_responsive_layout.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../../theme/voicememory_colors.dart';
 
-/// Polished paywall when RevenueCat plans are unavailable (TestFlight / setup).
+/// Polished paywall when subscription plans are unavailable.
 class PaywallUnavailableFallback extends StatelessWidget {
   const PaywallUnavailableFallback({
     super.key,

@@ -17,25 +17,31 @@ ArchiveFeedback _feedback(
   String id,
   ArchiveFeedbackType type,
   DateTime createdAt, {
-  ArchiveFeedbackTargetType targetType = ArchiveFeedbackTargetType.checkInResult,
+  ArchiveFeedbackTargetType targetType =
+      ArchiveFeedbackTargetType.checkInResult,
   String? targetId,
-}) =>
-    ArchiveFeedback(
-      id: id,
-      type: type,
-      targetType: targetType,
-      createdAt: createdAt,
-      targetId: targetId,
-    );
+}) => ArchiveFeedback(
+  id: id,
+  type: type,
+  targetType: targetType,
+  createdAt: createdAt,
+  targetId: targetId,
+);
 
 void main() {
   test('save then loadAll returns newest first', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.save(_feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)));
-    await store.save(_feedback('b', ArchiveFeedbackType.notMe, DateTime(2026, 6, 3)));
-    await store.save(_feedback('c', ArchiveFeedbackType.tooGeneric, DateTime(2026, 6, 2)));
+    await store.save(
+      _feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)),
+    );
+    await store.save(
+      _feedback('b', ArchiveFeedbackType.notMe, DateTime(2026, 6, 3)),
+    );
+    await store.save(
+      _feedback('c', ArchiveFeedbackType.tooGeneric, DateTime(2026, 6, 2)),
+    );
 
     final all = await store.loadAll();
     expect(all.map((f) => f.id), ['b', 'c', 'a']);
@@ -45,8 +51,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.save(_feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)));
-    await store.save(_feedback('a', ArchiveFeedbackType.notMe, DateTime(2026, 6, 1)));
+    await store.save(
+      _feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)),
+    );
+    await store.save(
+      _feedback('a', ArchiveFeedbackType.notMe, DateTime(2026, 6, 1)),
+    );
 
     final all = await store.loadAll();
     expect(all, hasLength(1));
@@ -57,19 +67,44 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.save(_feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1),
-        targetType: ArchiveFeedbackTargetType.firstPattern, targetId: 'p1'));
-    await store.save(_feedback('b', ArchiveFeedbackType.notMe, DateTime(2026, 6, 2),
-        targetType: ArchiveFeedbackTargetType.firstPattern, targetId: 'p2'));
-    await store.save(_feedback('c', ArchiveFeedbackType.useful, DateTime(2026, 6, 3),
-        targetType: ArchiveFeedbackTargetType.nextCheck, targetId: 'p1'));
+    await store.save(
+      _feedback(
+        'a',
+        ArchiveFeedbackType.useful,
+        DateTime(2026, 6, 1),
+        targetType: ArchiveFeedbackTargetType.firstPattern,
+        targetId: 'p1',
+      ),
+    );
+    await store.save(
+      _feedback(
+        'b',
+        ArchiveFeedbackType.notMe,
+        DateTime(2026, 6, 2),
+        targetType: ArchiveFeedbackTargetType.firstPattern,
+        targetId: 'p2',
+      ),
+    );
+    await store.save(
+      _feedback(
+        'c',
+        ArchiveFeedbackType.useful,
+        DateTime(2026, 6, 3),
+        targetType: ArchiveFeedbackTargetType.nextCheck,
+        targetId: 'p1',
+      ),
+    );
 
-    final byType =
-        await store.loadForTarget(ArchiveFeedbackTargetType.firstPattern, null);
+    final byType = await store.loadForTarget(
+      ArchiveFeedbackTargetType.firstPattern,
+      null,
+    );
     expect(byType.map((f) => f.id).toSet(), {'a', 'b'});
 
-    final byId =
-        await store.loadForTarget(ArchiveFeedbackTargetType.firstPattern, 'p1');
+    final byId = await store.loadForTarget(
+      ArchiveFeedbackTargetType.firstPattern,
+      'p1',
+    );
     expect(byId.map((f) => f.id), ['a']);
   });
 
@@ -77,9 +112,15 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.save(_feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)));
-    await store.save(_feedback('b', ArchiveFeedbackType.tooGeneric, DateTime(2026, 6, 2)));
-    await store.save(_feedback('c', ArchiveFeedbackType.tooGeneric, DateTime(2026, 6, 3)));
+    await store.save(
+      _feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)),
+    );
+    await store.save(
+      _feedback('b', ArchiveFeedbackType.tooGeneric, DateTime(2026, 6, 2)),
+    );
+    await store.save(
+      _feedback('c', ArchiveFeedbackType.tooGeneric, DateTime(2026, 6, 3)),
+    );
 
     final summary = await store.summary();
     expect(summary.total, 3);
@@ -108,8 +149,11 @@ void main() {
 
     for (var i = 0; i < 305; i++) {
       await store.save(
-        _feedback('f$i', ArchiveFeedbackType.useful,
-            DateTime(2026, 1, 1).add(Duration(days: i))),
+        _feedback(
+          'f$i',
+          ArchiveFeedbackType.useful,
+          DateTime(2026, 1, 1).add(Duration(days: i)),
+        ),
       );
     }
     final all = await store.loadAll();
@@ -122,7 +166,9 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.save(_feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)));
+    await store.save(
+      _feedback('a', ArchiveFeedbackType.useful, DateTime(2026, 6, 1)),
+    );
     await store.clear();
     expect(await store.loadAll(), isEmpty);
   });

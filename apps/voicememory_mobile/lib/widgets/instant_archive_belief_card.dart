@@ -46,12 +46,15 @@ class _InstantArchiveBeliefCardState extends State<InstantArchiveBeliefCard> {
 
   @override
   Widget build(BuildContext context) {
-    final card = const DiscoverBeliefEngine()
-        .build(entries: widget.entries, state: widget.state);
+    final card = const DiscoverBeliefEngine().build(
+      entries: widget.entries,
+      state: widget.state,
+    );
     final hasMinimum = archiveHasMinimumEvidence(widget.entries);
     final eligible = archiveEligibleEvidenceEntries(widget.entries);
 
-    final learning = !hasMinimum ||
+    final learning =
+        !hasMinimum ||
         card == null ||
         card.statement.contains('still gathering') ||
         card.statement.contains('still learning');
@@ -82,7 +85,9 @@ class _InstantArchiveBeliefCardState extends State<InstantArchiveBeliefCard> {
               if (!learning && card != null) ...[
                 const SizedBox(height: 10),
                 Text(
-                  WarmArchiveCopy.confidenceStrengthLine(card.confidencePercent),
+                  WarmArchiveCopy.confidenceStrengthLine(
+                    card.confidencePercent,
+                  ),
                   semanticsLabel: WarmArchiveCopy.confidenceStrengthSemantics(
                     card.confidencePercent,
                   ),
@@ -121,13 +126,19 @@ class _InstantArchiveBeliefCardState extends State<InstantArchiveBeliefCard> {
                       compact: true,
                     ),
                   TextButton(
-                    onPressed: eligible.isEmpty && (card?.supportingEntries.isEmpty ?? true)
+                    onPressed:
+                        eligible.isEmpty &&
+                            (card?.supportingEntries.isEmpty ?? true)
                         ? null
                         : () {
-                            setState(() => _evidenceExpanded = !_evidenceExpanded);
+                            setState(
+                              () => _evidenceExpanded = !_evidenceExpanded,
+                            );
                             RetentionAnalytics.instantBeliefEvidenceOpened();
                           },
-                    style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(48, 48),
+                    ),
                     child: Text(
                       _evidenceExpanded
                           ? ConsumerUiCopy.hideMoments
@@ -136,7 +147,9 @@ class _InstantArchiveBeliefCardState extends State<InstantArchiveBeliefCard> {
                   ),
                   TextButton(
                     onPressed: () => context.go('/discover-yourself'),
-                    style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(48, 48),
+                    ),
                     child: const Text(ConsumerUiCopy.viewAllPatterns),
                   ),
                 ],

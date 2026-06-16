@@ -8,20 +8,21 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/widgets/record/result_next_check_card.dart';
 
 TomorrowCheckIn _completed(String optionId) => TomorrowCheckIn(
-      id: 't1',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'Did this pattern show up again?',
-      options: kDefaultTomorrowCheckInOptions,
-      selectedOptionId: optionId,
-      completedAt: DateTime(2026, 5, 26),
-    );
+  id: 't1',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'Did this pattern show up again?',
+  options: kDefaultTomorrowCheckInOptions,
+  selectedOptionId: optionId,
+  completedAt: DateTime(2026, 5, 26),
+);
 
 void main() {
-  testWidgets('shows the next useful check with title, question and example',
-      (tester) async {
+  testWidgets('shows the next useful check with title, question and example', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -37,19 +38,24 @@ void main() {
 
     expect(find.text(ConsumerUiCopy.resultNextCheckTitle), findsOneWidget);
     expect(find.text('Check what happens before it starts'), findsOneWidget);
+    expect(find.text('What happens right before it shows up?'), findsOneWidget);
     expect(
-      find.text('What happens right before it shows up?'),
+      find.text(ConsumerUiCopy.resultNextCheckExampleLabel),
       findsOneWidget,
     );
-    expect(find.text(ConsumerUiCopy.resultNextCheckExampleLabel), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta),
-        findsOneWidget);
-    expect(find.text(ConsumerUiCopy.resultNextCheckChooseDifferentCta),
-        findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckChooseDifferentCta),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Use this tomorrow creates the check-in and confirms',
-      (tester) async {
+  testWidgets('Use this tomorrow creates the check-in and confirms', (
+    tester,
+  ) async {
     String? created;
     await tester.pumpWidget(
       MaterialApp(
@@ -68,12 +74,19 @@ void main() {
     await tester.pump();
 
     expect(created, 'What helped make it lighter?');
-    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta), findsNothing);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta),
+      findsNothing,
+    );
   });
 
-  testWidgets('Use this tomorrow attaches a routine anchor when picked',
-      (tester) async {
+  testWidgets('Use this tomorrow attaches a routine anchor when picked', (
+    tester,
+  ) async {
     RoutineAnchor? chosen;
     await tester.pumpWidget(
       MaterialApp(
@@ -96,10 +109,15 @@ void main() {
 
     expect(chosen, isNotNull);
     expect(chosen!.type, RoutineAnchorType.evening);
-    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('skipping the anchor picker still locks the check', (tester) async {
+  testWidgets('skipping the anchor picker still locks the check', (
+    tester,
+  ) async {
     RoutineAnchor? chosen;
     await tester.pumpWidget(
       MaterialApp(
@@ -120,11 +138,15 @@ void main() {
     await tester.pump();
 
     expect(chosen, isNull);
-    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Choose a different check creates an alternate check-in',
-      (tester) async {
+  testWidgets('Choose a different check creates an alternate check-in', (
+    tester,
+  ) async {
     String? created;
     await tester.pumpWidget(
       MaterialApp(
@@ -139,21 +161,28 @@ void main() {
       ),
     );
 
-    await tester
-        .tap(find.text(ConsumerUiCopy.resultNextCheckChooseDifferentCta));
+    await tester.tap(
+      find.text(ConsumerUiCopy.resultNextCheckChooseDifferentCta),
+    );
     await tester.pumpAndSettle();
 
-    expect(find.text(ConsumerUiCopy.resultNextCheckChooseSheetTitle),
-        findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckChooseSheetTitle),
+      findsOneWidget,
+    );
     await tester.tap(find.text(ConsumerUiCopy.resultNextCheckAltHeavier));
     await tester.pumpAndSettle();
 
     expect(created, ConsumerUiCopy.resultNextCheckAltHeavier);
-    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('shows one feedback row by default and hides it when asked',
-      (tester) async {
+  testWidgets('shows one feedback row by default and hides it when asked', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -184,8 +213,9 @@ void main() {
     expect(find.text('Was this useful?'), findsNothing);
   });
 
-  testWidgets('tooGeneric feedback hint surfaces a concrete next check',
-      (tester) async {
+  testWidgets('tooGeneric feedback hint surfaces a concrete next check', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -207,22 +237,24 @@ void main() {
     );
   });
 
-  test('result next check policy enables feedback and suppresses competitors',
-      () {
-    final d = decideRecordStack(
-      hasDueCheck: false,
-      isFirstRun: false,
-      isTrialMode: false,
-      isRecording: false,
-      hasSavedReflection: true,
-      inputQualityNeedsCoach: false,
-      hasCompletedResult: true,
-      hasResultNextCheck: true,
-      hasRoutineAnchorOffer: true,
-      hasArchiveProof: true,
-    );
-    expect(d.showResultNextCheck, isTrue);
-    expect(d.showFeedback, isTrue);
-    expect(d.suppressDuplicateUseTomorrowCtas, isTrue);
-  });
+  test(
+    'result next check policy enables feedback and suppresses competitors',
+    () {
+      final d = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: true,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: true,
+        hasResultNextCheck: true,
+        hasRoutineAnchorOffer: true,
+        hasArchiveProof: true,
+      );
+      expect(d.showResultNextCheck, isTrue);
+      expect(d.showFeedback, isTrue);
+      expect(d.suppressDuplicateUseTomorrowCtas, isTrue);
+    },
+  );
 }

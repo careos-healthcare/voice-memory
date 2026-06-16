@@ -15,7 +15,7 @@ class ObjectiveShortcutAction {
 }
 
 /// Supported shortcut actions for ArchiveMe objective flows.
-abstract final class ObjectiveShortcutRegistry {
+abstract class ObjectiveShortcutRegistry {
   ObjectiveShortcutRegistry._();
 
   static const openRecord = ObjectiveShortcutAction(

@@ -49,7 +49,10 @@ void main() {
     expect(view.hasObservations, isTrue);
     for (final o in view.observations) {
       expect(o.observation.toLowerCase(), isNot(contains('you focus on')));
-      expect(o.observation.toLowerCase(), isNot(contains('you may keep returning')));
+      expect(
+        o.observation.toLowerCase(),
+        isNot(contains('you may keep returning')),
+      );
     }
   });
 

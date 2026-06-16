@@ -7,7 +7,7 @@ test.describe("UI smoke", () => {
     expect(res.ok()).toBeTruthy();
     const html = await res.text();
     expect(html).toContain('id="recorder"');
-    expect(html).toContain("VoiceMemory");
+    expect(html).toContain("ArchiveMe");
     expect(html).not.toMatch(/href="\/internal/);
   });
 
@@ -61,7 +61,7 @@ test.describe("UI smoke", () => {
     expect(res.ok()).toBeTruthy();
     const html = await res.text();
     expect(html).toMatch(/memory/i);
-    expect(html).toContain("VoiceMemory");
+    expect(html).toContain("ArchiveMe");
   });
 
   test("threads page uses compact thread list markers", async ({ request }) => {

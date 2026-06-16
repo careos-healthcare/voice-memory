@@ -16,8 +16,11 @@ class PressureLoopVisibilityEngine {
     final weekStart = reference.subtract(const Duration(days: 7));
 
     final week = records
-        .where((r) =>
-            !r.createdAt.isBefore(weekStart) && !r.createdAt.isAfter(reference))
+        .where(
+          (r) =>
+              !r.createdAt.isBefore(weekStart) &&
+              !r.createdAt.isAfter(reference),
+        )
         .toList();
 
     final noticed = week.length;
@@ -55,7 +58,9 @@ class PressureLoopVisibilityEngine {
 
   int _streakDays(List<PressureCheckInRecord> records, DateTime reference) {
     final days = records
-        .map((r) => DateTime(r.createdAt.year, r.createdAt.month, r.createdAt.day))
+        .map(
+          (r) => DateTime(r.createdAt.year, r.createdAt.month, r.createdAt.day),
+        )
         .toSet();
     if (days.isEmpty) return 0;
 

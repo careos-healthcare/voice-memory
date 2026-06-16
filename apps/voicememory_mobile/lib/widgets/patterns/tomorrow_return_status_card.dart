@@ -40,15 +40,14 @@ class _AwaitingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chips = commitment.displayWatchChips;
-    final chipText =
-        chips.isEmpty ? 'what you saved yesterday' : chips.join(', ');
+    final chipText = chips.isEmpty
+        ? 'what you saved yesterday'
+        : chips.join(', ');
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.flat(
-        background: const Color(0xFFFFFBF5),
-      ),
+      decoration: VoiceMemoryCards.flat(background: const Color(0xFFFFFBF5)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -114,7 +113,9 @@ class _CompletedCard extends StatelessWidget {
             height: 44,
             child: OutlinedButton(
               onPressed: () => context.go('/belief-changes'),
-              child: const Text(ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta),
+              child: const Text(
+                ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta,
+              ),
             ),
           ),
         ],

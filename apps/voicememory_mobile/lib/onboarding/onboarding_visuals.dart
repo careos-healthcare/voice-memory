@@ -5,7 +5,7 @@ import '../theme/app_spacing.dart';
 import 'onboarding_pages.dart';
 
 /// Onboarding layout and type scale — compact on phone, readable on tablet.
-abstract final class OnboardingLayout {
+abstract class OnboardingLayout {
   OnboardingLayout._();
 
   static const double maxContentWidth = 560;
@@ -29,7 +29,7 @@ abstract final class OnboardingLayout {
 }
 
 /// Onboarding-specific type scale.
-abstract final class OnboardingTypography {
+abstract class OnboardingTypography {
   OnboardingTypography._();
 
   static double titleSize(BuildContext context) {
@@ -54,40 +54,40 @@ abstract final class OnboardingTypography {
 
   static double sectionGap(BuildContext context) =>
       OnboardingLayout.isCompact(context)
-          ? OnboardingLayout.compactSectionGap
-          : OnboardingLayout.sectionGap;
+      ? OnboardingLayout.compactSectionGap
+      : OnboardingLayout.sectionGap;
 
   static const double chipSize = 14;
   static const double labelSize = 13;
 
   static TextStyle title(BuildContext context, {Color? color}) => TextStyle(
-        fontSize: titleSize(context),
-        fontWeight: FontWeight.w700,
-        height: 1.25,
-        letterSpacing: -0.4,
-        color: color ?? AppColors.textPrimary,
-      );
+    fontSize: titleSize(context),
+    fontWeight: FontWeight.w700,
+    height: 1.25,
+    letterSpacing: -0.4,
+    color: color ?? AppColors.textPrimary,
+  );
 
   static TextStyle body(BuildContext context, {Color? color}) => TextStyle(
-        fontSize: bodySize(context),
-        fontWeight: FontWeight.w400,
-        height: 1.5,
-        color: color ?? AppColors.textSecondary,
-      );
+    fontSize: bodySize(context),
+    fontWeight: FontWeight.w400,
+    height: 1.5,
+    color: color ?? AppColors.textSecondary,
+  );
 
   static TextStyle chip({Color? color}) => TextStyle(
-        fontSize: chipSize,
-        fontWeight: FontWeight.w500,
-        height: 1.35,
-        color: color ?? AppColors.textPrimary,
-      );
+    fontSize: chipSize,
+    fontWeight: FontWeight.w500,
+    height: 1.35,
+    color: color ?? AppColors.textPrimary,
+  );
 
   static TextStyle label({Color? color}) => TextStyle(
-        fontSize: labelSize,
-        fontWeight: FontWeight.w600,
-        height: 1.3,
-        color: color ?? AppColors.textSecondary,
-      );
+    fontSize: labelSize,
+    fontWeight: FontWeight.w600,
+    height: 1.3,
+    color: color ?? AppColors.textSecondary,
+  );
 }
 
 class OnboardingPageVisual extends StatelessWidget {
@@ -99,18 +99,25 @@ class OnboardingPageVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (page.visual) {
       OnboardingVisualKind.patternNetwork => const _PatternNetworkVisual(),
-      OnboardingVisualKind.evidenceChips =>
-        _EvidenceChipsVisual(examples: page.evidenceExamples),
-      OnboardingVisualKind.confidenceGrowth =>
-        _ConfidenceGrowthVisual(steps: page.confidenceSteps),
+      OnboardingVisualKind.evidenceChips => _EvidenceChipsVisual(
+        examples: page.evidenceExamples,
+      ),
+      OnboardingVisualKind.confidenceGrowth => _ConfidenceGrowthVisual(
+        steps: page.confidenceSteps,
+      ),
       OnboardingVisualKind.beliefShift => _BeliefShiftVisual(
-          oldBelief: page.oldBelief ?? '',
-          newBelief: page.newBelief ?? '',
-        ),
-      OnboardingVisualKind.insightPreview =>
-        _InsightPreviewVisual(bullets: page.insightBullets),
-      OnboardingVisualKind.checkPreview =>
-        _InsightPreviewVisual(bullets: page.insightBullets),
+        oldBelief: page.oldBelief ?? '',
+        newBelief: page.newBelief ?? '',
+      ),
+      OnboardingVisualKind.insightPreview => _InsightPreviewVisual(
+        bullets: page.insightBullets,
+      ),
+      OnboardingVisualKind.checkPreview => _InsightPreviewVisual(
+        bullets: page.insightBullets,
+      ),
+      OnboardingVisualKind.stepBadge => _StepBadgeVisual(
+        stepNumber: page.stepNumber ?? 1,
+      ),
     };
   }
 }
@@ -136,9 +143,7 @@ class _PatternNetworkVisual extends StatelessWidget {
             ),
           ],
         ),
-        child: const CustomPaint(
-          painter: _PatternNetworkPainter(),
-        ),
+        child: const CustomPaint(painter: _PatternNetworkPainter()),
       ),
     );
   }
@@ -204,10 +209,7 @@ class _PatternNetworkPainter extends CustomPainter {
       final dx = nodes[i].dx - tp.width / 2;
       final dy = nodes[i].dy + 18;
       final maxDx = size.width - tp.width - 4;
-      tp.paint(
-        canvas,
-        Offset(dx.clamp(4.0, maxDx > 4 ? maxDx : 4.0), dy),
-      );
+      tp.paint(canvas, Offset(dx.clamp(4.0, maxDx > 4 ? maxDx : 4.0), dy));
     }
   }
 
@@ -265,9 +267,7 @@ class _EvidenceChip extends StatelessWidget {
             color: AppColors.accentPrimary.withValues(alpha: 0.75),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Text(text, style: OnboardingTypography.chip()),
-          ),
+          Expanded(child: Text(text, style: OnboardingTypography.chip())),
         ],
       ),
     );
@@ -319,9 +319,7 @@ class _ConfidenceRow extends StatelessWidget {
             ),
             Text(
               '$percent%',
-              style: OnboardingTypography.label(
-                color: AppColors.accentPrimary,
-              ),
+              style: OnboardingTypography.label(color: AppColors.accentPrimary),
             ),
           ],
         ),
@@ -342,17 +340,14 @@ class _ConfidenceRow extends StatelessWidget {
   }
 
   String _beliefLabel(int index) => switch (index) {
-        0 => 'Early observation',
-        1 => 'Growing pattern',
-        _ => 'Clear pattern',
-      };
+    0 => 'Early observation',
+    1 => 'Growing pattern',
+    _ => 'Clear pattern',
+  };
 }
 
 class _BeliefShiftVisual extends StatelessWidget {
-  const _BeliefShiftVisual({
-    required this.oldBelief,
-    required this.newBelief,
-  });
+  const _BeliefShiftVisual({required this.oldBelief, required this.newBelief});
 
   final String oldBelief;
   final String newBelief;
@@ -362,11 +357,7 @@ class _BeliefShiftVisual extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _BeliefCard(
-          label: 'Earlier',
-          belief: oldBelief,
-          faded: true,
-        ),
+        _BeliefCard(label: 'Earlier', belief: oldBelief, faded: true),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
           child: Row(
@@ -380,11 +371,7 @@ class _BeliefShiftVisual extends StatelessWidget {
             ],
           ),
         ),
-        _BeliefCard(
-          label: 'Now',
-          belief: newBelief,
-          faded: false,
-        ),
+        _BeliefCard(label: 'Now', belief: newBelief, faded: false),
       ],
     );
   }
@@ -407,9 +394,7 @@ class _BeliefCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: faded
-            ? AppColors.backgroundPrimary
-            : AppColors.accentLight,
+        color: faded ? AppColors.backgroundPrimary : AppColors.accentLight,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: faded
@@ -424,16 +409,50 @@ class _BeliefCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             belief,
-            style: OnboardingTypography.chip(
-              color: faded
-                  ? AppColors.textSecondary
-                  : AppColors.textPrimary,
-            ).copyWith(
-              decoration: faded ? TextDecoration.lineThrough : null,
-              decorationColor: AppColors.textSecondary,
-            ),
+            style:
+                OnboardingTypography.chip(
+                  color: faded
+                      ? AppColors.textSecondary
+                      : AppColors.textPrimary,
+                ).copyWith(
+                  decoration: faded ? TextDecoration.lineThrough : null,
+                  decorationColor: AppColors.textSecondary,
+                ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _StepBadgeVisual extends StatelessWidget {
+  const _StepBadgeVisual({required this.stepNumber});
+
+  final int stepNumber;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = OnboardingLayout.isWide(context) ? 88.0 : 72.0;
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: AppColors.accentLight,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: AppColors.accentPrimary.withValues(alpha: 0.25),
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '$stepNumber',
+          style: OnboardingTypography.title(context).copyWith(
+            fontSize: OnboardingLayout.isWide(context) ? 34 : 28,
+            color: AppColors.accentPrimary,
+          ),
+        ),
       ),
     );
   }
@@ -501,10 +520,7 @@ class OnboardingAmbientGlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: _AmbientGlowPainter(),
-      ),
+      child: CustomPaint(size: Size.infinite, painter: _AmbientGlowPainter()),
     );
   }
 }

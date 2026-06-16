@@ -9,10 +9,7 @@ import '../../theme/voicememory_cards.dart';
 /// Sits alongside the capture actions — it never replaces the first-session
 /// card and is only a quiet pointer back to the pressure check-in.
 class PressureReturnTriggerReminder extends StatelessWidget {
-  const PressureReturnTriggerReminder({
-    super.key,
-    required this.onLogPressure,
-  });
+  const PressureReturnTriggerReminder({super.key, required this.onLogPressure});
 
   final VoidCallback onLogPressure;
 
@@ -22,10 +19,7 @@ class PressureReturnTriggerReminder extends StatelessWidget {
 
   /// Show only when the trigger is accepted and the user is past their first
   /// session (the first-session card owns the brand-new-user moment).
-  static bool shouldShow({
-    required bool accepted,
-    required int entryCount,
-  }) =>
+  static bool shouldShow({required bool accepted, required int entryCount}) =>
       accepted && entryCount > 0;
 
   @override
@@ -35,9 +29,7 @@ class PressureReturnTriggerReminder extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: AppSpacing.xs),
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: VoiceMemoryCards.flat(
-        background: const Color(0xFFF0F6FF),
-      ),
+      decoration: VoiceMemoryCards.flat(background: const Color(0xFFF0F6FF)),
       child: Row(
         children: [
           const Icon(
@@ -60,10 +52,9 @@ class PressureReturnTriggerReminder extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subcopy,
-                  style:
-                      ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.responsiveHelper(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),

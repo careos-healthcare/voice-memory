@@ -1,9 +1,5 @@
 /// User response to the archive's current theory (metadata only).
-enum ArchiveTheoryAgreementResponse {
-  agree,
-  unsure,
-  disagree,
-}
+enum ArchiveTheoryAgreementResponse { agree, unsure, disagree }
 
 /// One saved agreement event.
 class ArchiveAgreementRecord {
@@ -24,13 +20,13 @@ class ArchiveAgreementRecord {
   final int? confidencePercent;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'theoryStatement': theoryStatement,
-        'theoryKey': theoryKey,
-        'response': response.name,
-        'recordedAt': recordedAt.toUtc().toIso8601String(),
-        if (confidencePercent != null) 'confidencePercent': confidencePercent,
-      };
+    'id': id,
+    'theoryStatement': theoryStatement,
+    'theoryKey': theoryKey,
+    'response': response.name,
+    'recordedAt': recordedAt.toUtc().toIso8601String(),
+    if (confidencePercent != null) 'confidencePercent': confidencePercent,
+  };
 
   static ArchiveAgreementRecord? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;

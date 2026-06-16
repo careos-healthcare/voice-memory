@@ -15,6 +15,7 @@ class ArchiveDiscoveryShareCardModel {
   final String id;
   final ArchiveDiscoveryShareCardType type;
   final String introLine;
+
   /// Main insight — plain language, no forced quote wrapping in storage.
   final String insight;
   final int evidenceRecordingCount;

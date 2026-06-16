@@ -16,22 +16,21 @@ Future<WeeklyPatternRecapStore> _store(String stamp) async {
 WeeklyPatternRecap _recap({
   String id = 'wr_pm1_20260601_repeated',
   WeeklyPatternRecapType type = WeeklyPatternRecapType.repeated,
-}) =>
-    WeeklyPatternRecap(
-      id: id,
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      weekStart: DateTime(2026, 6, 1),
-      weekEnd: DateTime(2026, 6, 7),
-      type: type,
-      patternTitle: 'saying yes when you mean no',
-      headline: 'This pattern kept showing up this week.',
-      body: 'You checked it 4 times and caught it more than once.',
-      usefulLine: 'It often starts around: before saying yes',
-      nextQuestion: 'What happens right before it starts?',
-      checkInCount: 4,
-      shouldShow: true,
-    );
+}) => WeeklyPatternRecap(
+  id: id,
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  weekStart: DateTime(2026, 6, 1),
+  weekEnd: DateTime(2026, 6, 7),
+  type: type,
+  patternTitle: 'saying yes when you mean no',
+  headline: 'This pattern kept showing up this week.',
+  body: 'You checked it 4 times and caught it more than once.',
+  usefulLine: 'It often starts around: before saying yes',
+  nextQuestion: 'What happens right before it starts?',
+  checkInCount: 4,
+  shouldShow: true,
+);
 
 void main() {
   test('saveLatest and loadLatest round-trip', () async {

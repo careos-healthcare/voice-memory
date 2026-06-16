@@ -1,7 +1,7 @@
 import '../../services/product_analytics.dart';
 
 /// Early Archive Wins V1 analytics.
-abstract final class EarlyArchiveInsightAnalytics {
+abstract class EarlyArchiveInsightAnalytics {
   EarlyArchiveInsightAnalytics._();
 
   static Future<void> shown({
@@ -11,11 +11,7 @@ abstract final class EarlyArchiveInsightAnalytics {
   }) {
     return ProductAnalytics.track(
       'early_insight_shown',
-      parameters: {
-        'surface': surface,
-        'kind': kind,
-        'topic_label': topicLabel,
-      },
+      parameters: {'surface': surface, 'kind': kind, 'topic_label': topicLabel},
     );
   }
 
@@ -26,11 +22,7 @@ abstract final class EarlyArchiveInsightAnalytics {
   }) {
     return ProductAnalytics.track(
       'early_insight_opened',
-      parameters: {
-        'surface': surface,
-        'kind': kind,
-        'topic_label': topicLabel,
-      },
+      parameters: {'surface': surface, 'kind': kind, 'topic_label': topicLabel},
     );
   }
 }

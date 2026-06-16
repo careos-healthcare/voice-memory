@@ -24,8 +24,9 @@ class TomorrowReturnLoopEngine {
     final today = _entriesOnDay(entries, clock);
     final latest = entries.isEmpty
         ? null
-        : ([...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt)))
-            .first;
+        : ([
+            ...entries,
+          ]..sort((a, b) => b.createdAt.compareTo(a.createdAt))).first;
 
     final noticedToday = _noticedToday(
       today: today,
@@ -103,8 +104,8 @@ class TomorrowReturnLoopEngine {
           : contradiction.title;
     }
 
-    final strongest = beliefs?.current.firstOrNull ??
-        beliefs?.homeBeliefs.firstOrNull;
+    final strongest =
+        beliefs?.current.firstOrNull ?? beliefs?.homeBeliefs.firstOrNull;
     if (strongest != null && today.isNotEmpty) {
       return 'Today connects with a pattern you keep mentioning: '
           '${_clip(strongest.statement, 120)}';
@@ -284,16 +285,15 @@ class TomorrowReturnLoopEngine {
     if (t.isEmpty) return '';
     if (t.contains('work')) return 'work pressure';
     if (t.contains('family')) return 'family pressure';
-    if (t.contains('rest') || t.contains('slow')) return 'guilt when you slow down';
+    if (t.contains('rest') || t.contains('slow'))
+      return 'guilt when you slow down';
     if (t.contains('respons')) return 'feeling responsible';
     if (t.length <= 28) return _titleCase(t);
     return _clip(_titleCase(t), 28);
   }
 
   List<JournalEntry> _entriesOnDay(List<JournalEntry> entries, DateTime day) {
-    return entries
-        .where((e) => _sameCalendarDay(e.createdAt, day))
-        .toList();
+    return entries.where((e) => _sameCalendarDay(e.createdAt, day)).toList();
   }
 
   bool _sameCalendarDay(DateTime a, DateTime b) {

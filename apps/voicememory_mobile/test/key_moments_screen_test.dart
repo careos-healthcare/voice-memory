@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/key_moments_screen.dart';
 
-KeyMoment _moment(String id, DateTime date,
-        {String title = 'Moment from today',
-        String text = 'a moment',
-        String? resultHint,
-        String? patternTitle,
-        List<String> tags = const []}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: title,
-      originalText: text,
-      shortSummary: text,
-      resultHint: resultHint,
-      patternTitle: patternTitle,
-      tags: tags,
-    );
+KeyMoment _moment(
+  String id,
+  DateTime date, {
+  String title = 'Moment from today',
+  String text = 'a moment',
+  String? resultHint,
+  String? patternTitle,
+  List<String> tags = const [],
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: title,
+  originalText: text,
+  shortSummary: text,
+  resultHint: resultHint,
+  patternTitle: patternTitle,
+  tags: tags,
+);
 
 Future<void> _pump(WidgetTester tester, List<KeyMoment> moments) async {
   await tester.pumpWidget(
@@ -46,16 +49,19 @@ void main() {
   testWidgets('empty state invites recording a moment', (tester) async {
     await _pump(tester, const []);
 
-    expect(find.textContaining('Record one moment'), findsOneWidget);
+    expect(find.text(ConsumerUiCopy.archiveMomentsMatterLine), findsOneWidget);
   });
 
   testWidgets('today filter shows today\u2019s moment', (tester) async {
     final now = DateTime.now();
     await _pump(tester, [
-      _moment('today', now,
-          title: 'Something felt heavier',
-          text: 'I said yes before checking.',
-          resultHint: 'heavier'),
+      _moment(
+        'today',
+        now,
+        title: 'Something felt heavier',
+        text: 'I said yes before checking.',
+        resultHint: 'heavier',
+      ),
     ]);
 
     expect(find.text('Something felt heavier'), findsOneWidget);
@@ -78,12 +84,16 @@ void main() {
     expect(find.text('Something changed'), findsOneWidget);
   });
 
-  testWidgets('search filter shows a search field and matches text',
-      (tester) async {
+  testWidgets('search filter shows a search field and matches text', (
+    tester,
+  ) async {
     await _pump(tester, [
-      _moment('a', DateTime.now().subtract(const Duration(days: 10)),
-          title: 'Moment from today',
-          text: 'The worry came back when things got quiet.'),
+      _moment(
+        'a',
+        DateTime.now().subtract(const Duration(days: 10)),
+        title: 'Moment from today',
+        text: 'The worry came back when things got quiet.',
+      ),
     ]);
 
     await tester.tap(find.text('Search'));
@@ -111,10 +121,20 @@ void main() {
   testWidgets('selecting a tag narrows the visible moments', (tester) async {
     final now = DateTime.now();
     await _pump(tester, [
-      _moment('w', now,
-          title: 'A work moment', text: 'meeting ran over', tags: const ['work']),
-      _moment('f', now,
-          title: 'A family moment', text: 'called mum', tags: const ['family']),
+      _moment(
+        'w',
+        now,
+        title: 'A work moment',
+        text: 'meeting ran over',
+        tags: const ['work'],
+      ),
+      _moment(
+        'f',
+        now,
+        title: 'A family moment',
+        text: 'called mum',
+        tags: const ['family'],
+      ),
     ]);
 
     expect(find.text('A work moment'), findsOneWidget);

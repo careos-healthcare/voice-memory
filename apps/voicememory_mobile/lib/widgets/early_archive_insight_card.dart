@@ -20,7 +20,8 @@ class EarlyArchiveInsightCard extends StatefulWidget {
   final bool compact;
 
   @override
-  State<EarlyArchiveInsightCard> createState() => _EarlyArchiveInsightCardState();
+  State<EarlyArchiveInsightCard> createState() =>
+      _EarlyArchiveInsightCardState();
 }
 
 class _EarlyArchiveInsightCardState extends State<EarlyArchiveInsightCard> {
@@ -29,9 +30,9 @@ class _EarlyArchiveInsightCardState extends State<EarlyArchiveInsightCard> {
   var _loggedOpened = false;
 
   String get _kindParam => switch (widget.insight.kind) {
-        EarlyArchiveInsightKind.topicInRecentWindow => 'topic_mention',
-        EarlyArchiveInsightKind.patternMayBeForming => 'pattern_forming',
-      };
+    EarlyArchiveInsightKind.topicInRecentWindow => 'topic_mention',
+    EarlyArchiveInsightKind.patternMayBeForming => 'pattern_forming',
+  };
 
   @override
   void didChangeDependencies() {
@@ -58,11 +59,11 @@ class _EarlyArchiveInsightCardState extends State<EarlyArchiveInsightCard> {
   }
 
   String get _supportingLine => switch (widget.insight.kind) {
-        EarlyArchiveInsightKind.topicInRecentWindow =>
-          '$topic appears often in your recent reflections — the archive is still gathering evidence.',
-        EarlyArchiveInsightKind.patternMayBeForming =>
-          '$topic shows up often across your archive. This may be worth watching as you add more reflections.',
-      };
+    EarlyArchiveInsightKind.topicInRecentWindow =>
+      '$topic appears often in your recent reflections — the archive is still gathering evidence.',
+    EarlyArchiveInsightKind.patternMayBeForming =>
+      '$topic shows up often across your archive. This may be worth watching as you add more reflections.',
+  };
 
   String get topic => widget.insight.topicLabel;
 

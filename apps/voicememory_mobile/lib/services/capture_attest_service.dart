@@ -7,9 +7,9 @@ class CaptureAttestService {
     required ApiClient api,
     required DeviceIdStore deviceIds,
     required CaptureTokenCache tokenCache,
-  })  : _api = api,
-        _deviceIds = deviceIds,
-        _tokenCache = tokenCache;
+  }) : _api = api,
+       _deviceIds = deviceIds,
+       _tokenCache = tokenCache;
 
   final ApiClient _api;
   final DeviceIdStore _deviceIds;

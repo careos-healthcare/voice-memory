@@ -22,7 +22,8 @@ class ArchivedStatement {
   final int positiveScore;
   final int softNegativeScore;
 
-  bool get isStrongNegative => negativeScore >= 2 || _hasStrongNegativePhrase(text);
+  bool get isStrongNegative =>
+      negativeScore >= 2 || _hasStrongNegativePhrase(text);
   bool get isNegative =>
       isStrongNegative || negativeScore > positiveScore && negativeScore > 0;
   bool get isSoftNegative =>
@@ -74,7 +75,9 @@ class ArchivedStatement {
   }
 }
 
-List<ArchivedStatement> archivedStatementsFromEntries(List<JournalEntry> entries) {
+List<ArchivedStatement> archivedStatementsFromEntries(
+  List<JournalEntry> entries,
+) {
   final statements = <ArchivedStatement>[];
   for (final entry in entries) {
     for (final text in archiveStatementTexts(entry)) {
@@ -165,7 +168,12 @@ bool hasReversalPhrase(String earlier, String later) {
 
 bool _hasStrongNegativePhrase(String text) {
   final lower = text.toLowerCase();
-  return const ['hate', "can't stand", 'cannot stand', 'despise'].any(lower.contains);
+  return const [
+    'hate',
+    "can't stand",
+    'cannot stand',
+    'despise',
+  ].any(lower.contains);
 }
 
 const negativeMarkers = [

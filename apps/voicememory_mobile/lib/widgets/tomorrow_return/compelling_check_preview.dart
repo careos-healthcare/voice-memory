@@ -94,8 +94,9 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
                         ? null
                         : (_) => _onSelect(label, options[label]!),
                     backgroundColor: Colors.white,
-                    selectedColor:
-                        AppColors.accentPrimary.withValues(alpha: 0.15),
+                    selectedColor: AppColors.accentPrimary.withValues(
+                      alpha: 0.15,
+                    ),
                     side: BorderSide(
                       color: label == selected
                           ? AppColors.accentPrimary
@@ -115,13 +116,12 @@ class _CompellingCheckPreviewState extends State<CompellingCheckPreview> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           check.question,
-          style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
-          ).copyWith(
-            fontSize: widget.compact ? 14 : 15,
-            fontWeight: FontWeight.w600,
-            height: 1.4,
-          ),
+          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+              .copyWith(
+                fontSize: widget.compact ? 14 : 15,
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+              ),
         ),
         if (!widget.compact) ...[
           const SizedBox(height: AppSpacing.sm),

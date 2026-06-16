@@ -1,6 +1,6 @@
 # Memory surfacing — internal guide
 
-How VoiceMemory decides what to show, and what we deliberately avoid building.
+How ArchiveMe decides what to show, and what we deliberately avoid building.
 
 ## How memory surfacing works
 

@@ -31,7 +31,9 @@ class _RestoreProductionVerificationScreenState
 
   Future<void> _restoreAfterReinstall() async {
     if (!_purchaseConfirmed || !_reinstallConfirmed) {
-      setState(() => _message = 'Confirm purchase and reinstall before restore');
+      setState(
+        () => _message = 'Confirm purchase and reinstall before restore',
+      );
       return;
     }
     setState(() {
@@ -71,16 +73,18 @@ class _RestoreProductionVerificationScreenState
     if (_exportJson == null) return;
     await Clipboard.setData(ClipboardData(text: _exportJson!));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Evidence JSON copied')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Evidence JSON copied')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const DebugOnlyUnavailableScreen(title: 'Restore production verify');
+      return const DebugOnlyUnavailableScreen(
+        title: 'Restore production verify',
+      );
     }
     final result = _result;
     return Scaffold(
@@ -136,10 +140,10 @@ class _RestoreProductionVerificationScreenState
             child: OutlinedButton(
               onPressed: _purchaseConfirmed
                   ? () => setState(() {
-                        _reinstallConfirmed = true;
-                        _message =
-                            'Reinstall confirmed — tap Restore after opening this screen on fresh install';
-                      })
+                      _reinstallConfirmed = true;
+                      _message =
+                          'Reinstall confirmed — tap Restore after opening this screen on fresh install';
+                    })
                   : null,
               child: const Text('I reinstalled the app (fresh install)'),
             ),
@@ -148,7 +152,9 @@ class _RestoreProductionVerificationScreenState
             title: '4. Restore',
             done: result?.isPro == true,
             child: FilledButton(
-              onPressed: _busy || !_reinstallConfirmed ? null : _restoreAfterReinstall,
+              onPressed: _busy || !_reinstallConfirmed
+                  ? null
+                  : _restoreAfterReinstall,
               child: _busy
                   ? const SizedBox(
                       width: 22,
@@ -173,13 +179,19 @@ class _RestoreProductionVerificationScreenState
           ],
           if (_exportJson != null) ...[
             const SizedBox(height: 20),
-            const Text('Evidence', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Evidence',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
             SelectableText(
               _exportJson!,
               style: const TextStyle(fontSize: 11, color: AppTheme.muted),
             ),
-            TextButton(onPressed: _copyExport, child: const Text('Copy evidence JSON')),
+            TextButton(
+              onPressed: _copyExport,
+              child: const Text('Copy evidence JSON'),
+            ),
           ],
         ],
       ),
@@ -199,7 +211,9 @@ class _RestoreProductionVerificationScreenState
           Row(
             children: [
               Icon(
-                done ? Icons.check_circle_outline : Icons.radio_button_unchecked,
+                done
+                    ? Icons.check_circle_outline
+                    : Icons.radio_button_unchecked,
                 size: 18,
                 color: done ? Colors.greenAccent : AppTheme.muted,
               ),

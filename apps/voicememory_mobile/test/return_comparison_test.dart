@@ -57,7 +57,9 @@ JournalEntry _entry(String text) {
   );
 }
 
-TomorrowCommitment _commitment({List<String> chips = const ['doing it alone']}) {
+TomorrowCommitment _commitment({
+  List<String> chips = const ['doing it alone'],
+}) {
   return TomorrowCommitment(
     committedAt: DateTime(2026, 5, 24),
     targetDate: DateTime(2026, 5, 25),
@@ -181,8 +183,9 @@ void main() {
     expect(sample.comparisonStatus, ReturnComparisonStatus.repeated);
   });
 
-  testWidgets('return comparison card renders without banned words',
-      (tester) async {
+  testWidgets('return comparison card renders without banned words', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -199,10 +202,7 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(
-      find.text(ConsumerUiCopy.returnComparisonCardTitle),
-      findsOneWidget,
-    );
+    expect(find.text(ConsumerUiCopy.returnComparisonCardTitle), findsOneWidget);
 
     final visible = find
         .byType(Text)

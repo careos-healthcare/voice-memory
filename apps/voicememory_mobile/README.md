@@ -1,4 +1,4 @@
-# VoiceMemory Mobile (Flutter)
+# ArchiveMe Mobile (Flutter)
 
 Native iOS/Android MVP — **record → attest → transcribe → analyze → local journal**.
 

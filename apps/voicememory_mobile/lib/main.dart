@@ -3,13 +3,9 @@ import 'package:flutter/services.dart';
 
 import 'app.dart';
 import 'config/app_config.dart';
-import 'config/developer_settings_gate.dart';
-import 'config/trial_mode.dart';
-import 'router/onboarding_gate.dart';
-import 'features/activation/activation_tracker.dart';
-import 'features/objective/current_objective_widget_refresh_service.dart';
-import 'features/tomorrow_return/check_in_reminder_service.dart';
-import 'services/app_services.dart';
+import 'config/force_screenshot_repeat_card.dart';
+import 'startup/archive_me_startup.dart';
+import 'storage/app_storage_paths.dart';
 import 'theme/app_colors.dart';
 
 Future<void> main() async {
@@ -23,27 +19,15 @@ Future<void> main() async {
     ),
   );
   await AppConfig.initApiResolution();
-  await AppServices.initialize();
-  await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
-  // Prepare the reminder backend (no permission prompt happens here).
-  await CheckInReminderService.ensureInitialized();
-  if (TrialMode.enabled) {
-    onboardingGate.markComplete();
-    await ActivationTracker.trackTrialAppOpened();
-  } else {
-    await _loadDeveloperSettingsGate();
-    await onboardingGate.refresh();
+  if (ForceScreenshotRepeatCard.enabled) {
+    debugPrint('FORCE_SCREENSHOT_REPEAT_CARD enabled');
   }
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  runApp(const ArchiveMeApp());
-}
 
-Future<void> _loadDeveloperSettingsGate() async {
-  final unlocked = await AppServices.instance.prefs.readBool(
-    DeveloperSettingsGate.prefsUnlockKey,
-  );
-  DeveloperSettingsGate.loadFromPrefs(unlocked);
+  if (await AppStoragePaths.shouldDeferLocalStorageUntilFirstFrame()) {
+    runApp(const ArchiveMeBootstrapApp());
+    return;
+  }
+
+  await completeArchiveMeStartup();
+  runApp(const ArchiveMeApp());
 }

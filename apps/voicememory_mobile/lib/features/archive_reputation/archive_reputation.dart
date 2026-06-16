@@ -75,14 +75,26 @@ class ArchiveReputationEngine {
     final count = eligible.length;
     final daysTracked = count >= 2 ? (count * 3).clamp(1, 120) : 1;
     final supportingReflections = count;
-    final lifeAreas = count >= 5 ? 2 : count >= 3 ? 1 : 0;
+    final lifeAreas = count >= 5
+        ? 2
+        : count >= 3
+        ? 1
+        : 0;
     final contradictionsSurvived = count >= 4 ? 1 : 0;
-    final beliefChangesObserved = count >= 6 ? 2 : count >= 4 ? 1 : 0;
+    final beliefChangesObserved = count >= 6
+        ? 2
+        : count >= 4
+        ? 1
+        : 0;
     final accuracySignals = count >= 5 ? 1 : 0;
 
     var score = 0;
     score += (supportingReflections * 3).clamp(0, 24);
-    score += lifeAreas >= 2 ? 14 : lifeAreas >= 1 ? 6 : 0;
+    score += lifeAreas >= 2
+        ? 14
+        : lifeAreas >= 1
+        ? 6
+        : 0;
     score += (contradictionsSurvived * 4).clamp(0, 16);
     score += ((daysTracked ~/ 7) * 2).clamp(0, 14);
     score += (beliefChangesObserved * 2).clamp(0, 10);

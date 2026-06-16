@@ -37,10 +37,17 @@ class BeliefDossierCompact extends StatelessWidget {
             const SizedBox(height: 6),
             const Text(
               'This is the current case your archive can support.',
-              style: TextStyle(color: AppTheme.muted, height: 1.45, fontSize: 13),
+              style: TextStyle(
+                color: AppTheme.muted,
+                height: 1.45,
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: 10),
-            Text(beliefText!, style: const TextStyle(fontWeight: FontWeight.w500, height: 1.45)),
+            Text(
+              beliefText!,
+              style: const TextStyle(fontWeight: FontWeight.w500, height: 1.45),
+            ),
             if (confidencePercent != null) ...[
               const SizedBox(height: 8),
               Text(
@@ -57,7 +64,11 @@ class BeliefDossierCompact extends StatelessWidget {
             const Text(
               '— Contradicting evidence would reduce confidence.\n'
               '— More reflections in another area would change how far the archive generalizes.',
-              style: TextStyle(color: AppTheme.muted, height: 1.45, fontSize: 12),
+              style: TextStyle(
+                color: AppTheme.muted,
+                height: 1.45,
+                fontSize: 12,
+              ),
             ),
           ],
         ),

@@ -36,7 +36,8 @@ class DeveloperSettingsGate {
   }
 
   /// Verification JSON, tokens, dart-defines — same gate as developer settings.
-  static bool get canShowInternalVerificationDetails => canShowDeveloperSettings;
+  static bool get canShowInternalVerificationDetails =>
+      canShowDeveloperSettings;
 
   static void applyLoadedUnlock(bool unlocked) {
     _unlockedViaGesture = unlocked;

@@ -1,7 +1,7 @@
 import '../services/product_analytics.dart';
 
 /// Start Here recording flow analytics.
-abstract final class StartHereAnalytics {
+abstract class StartHereAnalytics {
   StartHereAnalytics._();
 
   static Future<void> shown({required String surface}) {

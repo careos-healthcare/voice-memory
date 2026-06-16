@@ -1,4 +1,4 @@
-/* VoiceMemory offline shell — warm capture route, cache recorder shell only. */
+/* ArchiveMe offline shell — warm capture route, cache recorder shell only. */
 const CACHE = "voicememory-shell-v2";
 const SHELL = ["/", "/record", "/offline"];
 

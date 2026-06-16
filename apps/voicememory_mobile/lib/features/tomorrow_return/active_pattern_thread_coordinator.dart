@@ -7,7 +7,7 @@ import 'active_pattern_thread_store.dart';
 import 'watch_for_model.dart';
 
 /// Persists and loads the user's active pattern thread.
-abstract final class ActivePatternThreadCoordinator {
+abstract class ActivePatternThreadCoordinator {
   ActivePatternThreadCoordinator._();
 
   static const _engine = ActivePatternThreadEngine();
@@ -26,7 +26,9 @@ abstract final class ActivePatternThreadCoordinator {
       ScreenshotSampleData.activePatternThreadSample;
 
   /// Seeds the active thread after first-session accept (no watch-for check yet).
-  static Future<void> writeCurrentForFirstSession(ActivePatternThread thread) async {
+  static Future<void> writeCurrentForFirstSession(
+    ActivePatternThread thread,
+  ) async {
     if (ScreenshotMode.enabled) return;
     await _store().writeCurrent(thread);
   }
@@ -41,7 +43,8 @@ abstract final class ActivePatternThreadCoordinator {
     final clock = now ?? DateTime.now();
     final store = _store();
     final existing = await store.readCurrentIncludingPaused();
-    final sameWatch = existing != null &&
+    final sameWatch =
+        existing != null &&
         existing.watchForText.trim() == completed.text.trim();
 
     final thread = _engine.buildFromWatchForResult(
@@ -78,7 +81,8 @@ abstract final class ActivePatternThreadCoordinator {
     if (ScreenshotMode.enabled) return screenshotSample();
     final store = _store();
     final inactive = await store.readLatestInactive();
-    if (inactive == null || inactive.status != ActivePatternThreadStatus.paused) {
+    if (inactive == null ||
+        inactive.status != ActivePatternThreadStatus.paused) {
       return store.readCurrent();
     }
     final clock = now ?? DateTime.now();

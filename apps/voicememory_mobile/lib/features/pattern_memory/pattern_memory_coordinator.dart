@@ -22,7 +22,7 @@ import 'weekly_pattern_recap_model.dart';
 import 'weekly_pattern_recap_store.dart';
 
 /// Connects completed check-ins to the evolving pattern memory thread.
-abstract final class PatternMemoryCoordinator {
+abstract class PatternMemoryCoordinator {
   PatternMemoryCoordinator._();
 
   static const _defaultPrompt =

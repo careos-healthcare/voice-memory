@@ -68,7 +68,7 @@ void main() {
       firstLoopClosed: true,
     );
     expect(trigger?.trigger, PaywallTrigger.patternMapFull);
-    expect(trigger?.previewTitle, 'Unlock your full pattern map');
+    expect(trigger?.previewTitle, 'See more of your pattern map');
   });
 
   test('archive timeline full triggers when loop closed', () {

@@ -18,7 +18,8 @@ class DeveloperDiagnosticsScreen extends StatefulWidget {
       _DeveloperDiagnosticsScreenState();
 }
 
-class _DeveloperDiagnosticsScreenState extends State<DeveloperDiagnosticsScreen> {
+class _DeveloperDiagnosticsScreenState
+    extends State<DeveloperDiagnosticsScreen> {
   String _health = '…';
   int _entryCount = 0;
   bool _loading = true;
@@ -65,9 +66,9 @@ class _DeveloperDiagnosticsScreenState extends State<DeveloperDiagnosticsScreen>
     ];
     await Clipboard.setData(ClipboardData(text: lines.join('\n')));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Diagnostics copied')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Diagnostics copied')));
     }
   }
 
@@ -110,13 +111,17 @@ class _DeveloperDiagnosticsScreenState extends State<DeveloperDiagnosticsScreen>
           const SizedBox(height: 24),
           ListTile(
             title: const Text('First pattern quality'),
-            subtitle: const Text('Run QA samples through the first-session engine'),
+            subtitle: const Text(
+              'Run QA samples through the first-session engine',
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/first-pattern-quality'),
           ),
           ListTile(
             title: const Text('Trial control'),
-            subtitle: const Text('Reset participant state and export trial summary'),
+            subtitle: const Text(
+              'Reset participant state and export trial summary',
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/trial-control'),
           ),
@@ -138,7 +143,10 @@ class _DeveloperDiagnosticsScreenState extends State<DeveloperDiagnosticsScreen>
         children: [
           Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          Text(body, style: const TextStyle(color: AppTheme.muted, fontSize: 13)),
+          Text(
+            body,
+            style: const TextStyle(color: AppTheme.muted, fontSize: 13),
+          ),
         ],
       ),
     );

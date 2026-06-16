@@ -21,13 +21,13 @@ class ArchiveIntegritySnapshot {
   final String archiveHealth;
 
   Map<String, dynamic> toJson() => {
-        'eligibleCount': eligibleCount,
-        'reflectionTimestamps': reflectionTimestamps,
-        'beliefActive': beliefActive,
-        'beliefText': beliefText,
-        'evidenceCount': evidenceCount,
-        'archiveHealth': archiveHealth,
-      };
+    'eligibleCount': eligibleCount,
+    'reflectionTimestamps': reflectionTimestamps,
+    'beliefActive': beliefActive,
+    'beliefText': beliefText,
+    'evidenceCount': evidenceCount,
+    'archiveHealth': archiveHealth,
+  };
 
   factory ArchiveIntegritySnapshot.fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -45,7 +45,7 @@ class ArchiveIntegritySnapshot {
       eligibleCount: (json['eligibleCount'] as num?)?.toInt() ?? 0,
       reflectionTimestamps: ts is List
           ? ts.map((e) => e.toString()).toList()
-        : const [],
+          : const [],
       beliefActive: json['beliefActive'] == true,
       beliefText: json['beliefText']?.toString() ?? '',
       evidenceCount: (json['evidenceCount'] as num?)?.toInt() ?? 0,
@@ -59,10 +59,9 @@ class ArchiveIntegritySnapshot {
     final eligible = await journal.loadEligible();
     final state = buildArchiveStateObjectV3(entries: entries);
 
-    final timestamps = eligible
-        .map((e) => e.createdAt.toUtc().toIso8601String())
-        .toList()
-      ..sort();
+    final timestamps =
+        eligible.map((e) => e.createdAt.toUtc().toIso8601String()).toList()
+          ..sort();
 
     return ArchiveIntegritySnapshot(
       eligibleCount: eligible.length,
@@ -79,7 +78,8 @@ class ArchiveIntegritySnapshot {
       return false;
     }
     for (var i = 0; i < reflectionTimestamps.length; i++) {
-      if (reflectionTimestamps[i] != other.reflectionTimestamps[i]) return false;
+      if (reflectionTimestamps[i] != other.reflectionTimestamps[i])
+        return false;
     }
     return true;
   }

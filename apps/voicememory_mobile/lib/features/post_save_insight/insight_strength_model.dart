@@ -8,11 +8,11 @@ enum InsightStrengthLabel {
 
 extension InsightStrengthLabelCopy on InsightStrengthLabel {
   String get displayLabel => switch (this) {
-        InsightStrengthLabel.earlySignal => 'Early signal',
-        InsightStrengthLabel.possibleRepeat => 'Possible repeat',
-        InsightStrengthLabel.gettingClearer => 'Getting clearer',
-        InsightStrengthLabel.strongPattern => 'Strong pattern',
-      };
+    InsightStrengthLabel.earlySignal => 'Early signal',
+    InsightStrengthLabel.possibleRepeat => 'Possible repeat',
+    InsightStrengthLabel.gettingClearer => 'Getting clearer',
+    InsightStrengthLabel.strongPattern => 'Strong pattern',
+  };
 }
 
 class InsightStrength {

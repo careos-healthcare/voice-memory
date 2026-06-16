@@ -1,5 +1,5 @@
 /// User-facing Archive Deep Dive strings.
-abstract final class ArchiveDeepDiveCopy {
+abstract class ArchiveDeepDiveCopy {
   ArchiveDeepDiveCopy._();
 
   static const String screenTitle = 'Archive Deep Dive';

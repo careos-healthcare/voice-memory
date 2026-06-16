@@ -53,9 +53,7 @@ const _grepForbiddenPatterns = <String>[
   'VoiceMemory connects what you mention often',
 ];
 
-const _grepAllowlistedLibPaths = {
-  'lib/product/consumer_copy_guard.dart',
-};
+const _grepAllowlistedLibPaths = {'lib/product/consumer_copy_guard.dart'};
 
 const _cloudCopyPatterns = <String>[
   'Cloud processing pending',
@@ -117,15 +115,19 @@ void main() {
     });
   }
 
-  test('allowlisted technical paths may keep internal voicememory identifiers', () {
-    for (final path in _allowlistedPaths) {
-      expect(File(path).existsSync(), isTrue, reason: path);
-    }
-  });
+  test(
+    'allowlisted technical paths may keep internal voicememory identifiers',
+    () {
+      for (final path in _allowlistedPaths) {
+        expect(File(path).existsSync(), isTrue, reason: path);
+      }
+    },
+  );
 
   test('patterns empty view source has no stale fake statements', () {
-    final source =
-        File('lib/widgets/patterns/patterns_empty_view.dart').readAsStringSync();
+    final source = File(
+      'lib/widgets/patterns/patterns_empty_view.dart',
+    ).readAsStringSync();
     for (final stale in _staleFakePatterns) {
       expect(source, isNot(contains(stale)));
     }
@@ -139,8 +141,9 @@ void main() {
   });
 
   test('capture messages avoid confusing cloud copy', () {
-    final source =
-        File('lib/services/capture_save_messages.dart').readAsStringSync();
+    final source = File(
+      'lib/services/capture_save_messages.dart',
+    ).readAsStringSync();
     for (final cloud in _cloudCopyPatterns) {
       expect(source, isNot(contains(cloud)));
     }

@@ -15,15 +15,15 @@ class SurpriseStore {
 
     final seenRaw = raw['lastSurpriseSeenAt']?.toString();
     final typeName = raw['lastSurpriseType']?.toString();
-    final evidence = (raw['lastSurpriseEvidence'] as List<dynamic>?)
+    final evidence =
+        (raw['lastSurpriseEvidence'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??
         const <String>[];
 
     return SurpriseEngagementState(
-      lastSurpriseSeenAt:
-          seenRaw != null ? DateTime.tryParse(seenRaw) : null,
+      lastSurpriseSeenAt: seenRaw != null ? DateTime.tryParse(seenRaw) : null,
       lastSurpriseType: SurpriseType.values.asNameMap()[typeName],
       lastSurpriseEvidence: evidence,
       lastDismissedSurpriseId: raw['lastDismissedSurpriseId']?.toString(),
@@ -31,8 +31,8 @@ class SurpriseStore {
         raw['activeSurprise'] is Map<String, dynamic>
             ? raw['activeSurprise'] as Map<String, dynamic>
             : raw['activeSurprise'] is Map
-                ? Map<String, dynamic>.from(raw['activeSurprise'] as Map)
-                : null,
+            ? Map<String, dynamic>.from(raw['activeSurprise'] as Map)
+            : null,
       ),
       lastEntryIdWhenSurprised: raw['lastEntryIdWhenSurprised']?.toString(),
     );
@@ -80,7 +80,9 @@ class SurpriseStore {
   Future<void> _write(SurpriseEngagementState state) async {
     await _prefs.writeJsonMap(_stateKey, {
       if (state.lastSurpriseSeenAt != null)
-        'lastSurpriseSeenAt': state.lastSurpriseSeenAt!.toUtc().toIso8601String(),
+        'lastSurpriseSeenAt': state.lastSurpriseSeenAt!
+            .toUtc()
+            .toIso8601String(),
       if (state.lastSurpriseType != null)
         'lastSurpriseType': state.lastSurpriseType!.name,
       'lastSurpriseEvidence': state.lastSurpriseEvidence,
@@ -110,8 +112,9 @@ extension _SurpriseEngagementCopy on SurpriseEngagementState {
       lastSurpriseEvidence: lastSurpriseEvidence ?? this.lastSurpriseEvidence,
       lastDismissedSurpriseId:
           lastDismissedSurpriseId ?? this.lastDismissedSurpriseId,
-      activeSurprise:
-          clearActiveSurprise ? null : (activeSurprise ?? this.activeSurprise),
+      activeSurprise: clearActiveSurprise
+          ? null
+          : (activeSurprise ?? this.activeSurprise),
       lastEntryIdWhenSurprised:
           lastEntryIdWhenSurprised ?? this.lastEntryIdWhenSurprised,
     );

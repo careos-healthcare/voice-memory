@@ -115,7 +115,9 @@ void main() {
       expect(tapped, "What's bothering you?");
     });
 
-    testWidgets('shows continue message after milestone threshold', (tester) async {
+    testWidgets('shows continue message after milestone threshold', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

@@ -5,11 +5,11 @@ import 'package:voicememory_mobile/features/trial/hook_rescue_decision_model.dar
 import 'package:voicememory_mobile/features/trial/trial_summary_model.dart';
 
 HookDiagnosisSummary _emptyDiagnosis() => buildHookDiagnosisSummary(
-      events: const [],
-      checkInsCreated: 0,
-      checkInsDueShown: 0,
-      checkInsCompleted: 0,
-    );
+  events: const [],
+  checkInsCreated: 0,
+  checkInsDueShown: 0,
+  checkInsCompleted: 0,
+);
 
 void main() {
   test('markdown includes metrics and verdict', () {
@@ -306,10 +306,7 @@ void main() {
     expect(summary.hookRescuePrimaryAction.id, 'sharperQuestion');
     final md = const TrialSummaryExporter().toMarkdown(summary);
     expect(md, contains('**Primary action:** sharperQuestion'));
-    expect(
-      md,
-      contains('People do not care enough about the question.'),
-    );
+    expect(md, contains('People do not care enough about the question.'));
   });
 
   test('markdown reminder readiness reflects ready signal', () {

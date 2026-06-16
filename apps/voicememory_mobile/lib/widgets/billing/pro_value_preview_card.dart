@@ -81,7 +81,9 @@ class _ProValuePreviewCardState extends State<ProValuePreviewCard> {
         children: [
           Text(
             preview.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

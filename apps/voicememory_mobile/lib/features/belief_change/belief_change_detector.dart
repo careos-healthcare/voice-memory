@@ -18,7 +18,8 @@ class BeliefChangeDetector {
   final BeliefTimelineEngine timelineEngine;
   final BeliefShiftEngine beliefShiftEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
   static const int minEvidenceIds = 3;
   static const int minMagnitude = 12;
   static const int emergingPriorMax = 18;
@@ -181,7 +182,8 @@ class BeliefChangeDetector {
     ArchiveStateObjectV3? state,
   ) {
     final out = <String>{};
-    final primary = state?.belief?.trim() ?? archiveBeliefFromReflections(entries);
+    final primary =
+        state?.belief?.trim() ?? archiveBeliefFromReflections(entries);
     if (primary != null && primary.length >= 12) out.add(primary);
 
     out.addAll(_trackedBeliefPhrases);
@@ -210,10 +212,7 @@ class BeliefChangeDetector {
       final p2 = _percentMatching(second, belief);
       return (p1, p2);
     }
-    return (
-      _percentMatching(prior, belief),
-      _percentMatching(recent, belief),
-    );
+    return (_percentMatching(prior, belief), _percentMatching(recent, belief));
   }
 
   static int _percentMatching(List<JournalEntry> entries, String belief) {
@@ -246,17 +245,15 @@ class BeliefChangeDetector {
         .toList();
   }
 
-  List<String> _evidenceForBelief(
-    List<JournalEntry> eligible,
-    String belief,
-  ) {
+  List<String> _evidenceForBelief(List<JournalEntry> eligible, String belief) {
     final keywords = belief
         .toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9\s]'), ' ')
         .split(RegExp(r'\s+'))
         .where((w) => w.length >= 4)
         .toSet();
-    if (keywords.isEmpty) return eligible.reversed.take(4).map((e) => e.id).toList();
+    if (keywords.isEmpty)
+      return eligible.reversed.take(4).map((e) => e.id).toList();
 
     final ids = <String>[];
     for (final e in eligible.reversed) {
@@ -290,10 +287,10 @@ ArchiveInsightRef insightRefForBeliefChangeAlert(
 ) {
   return switch (alert.type) {
     BeliefChangeAlertType.newBeliefEmerging ||
-    BeliefChangeAlertType.confidenceIncrease =>
-      ArchiveInsightRef.beliefChange(index),
+    BeliefChangeAlertType.confidenceIncrease => ArchiveInsightRef.beliefChange(
+      index,
+    ),
     BeliefChangeAlertType.confidenceDecrease ||
-    BeliefChangeAlertType.disappearingBelief =>
-      ArchiveInsightRef.belief(),
+    BeliefChangeAlertType.disappearingBelief => ArchiveInsightRef.belief(),
   };
 }

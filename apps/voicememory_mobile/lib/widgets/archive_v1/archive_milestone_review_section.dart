@@ -15,10 +15,7 @@ import 'archive_intelligence_upgrade_card.dart';
 
 /// Permanent GPT milestone reviews — Pro only.
 class ArchiveMilestoneReviewSection extends StatefulWidget {
-  const ArchiveMilestoneReviewSection({
-    super.key,
-    required this.view,
-  });
+  const ArchiveMilestoneReviewSection({super.key, required this.view});
 
   final ArchiveV1View view;
 
@@ -51,7 +48,9 @@ class _ArchiveMilestoneReviewSectionState
     if (!ArchiveSynthesisProGate.canAccessArchiveIntelligence(entitlements)) {
       if (!mounted) return;
       setState(() {
-        _showUpgrade = ArchiveSynthesisProGate.shouldShowUpgradeTeaser(widget.view);
+        _showUpgrade = ArchiveSynthesisProGate.shouldShowUpgradeTeaser(
+          widget.view,
+        );
         _reviews = const [];
         _loading = false;
       });

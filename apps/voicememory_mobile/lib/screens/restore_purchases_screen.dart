@@ -110,7 +110,11 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
             const SizedBox(height: 8),
             SelectableText(
               _evidenceJson!,
-              style: const TextStyle(fontSize: 11, fontFamily: 'monospace', color: AppTheme.muted),
+              style: const TextStyle(
+                fontSize: 11,
+                fontFamily: 'monospace',
+                color: AppTheme.muted,
+              ),
             ),
             const SizedBox(height: 8),
             TextButton(

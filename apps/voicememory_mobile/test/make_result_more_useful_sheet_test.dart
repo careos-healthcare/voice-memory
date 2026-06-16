@@ -8,7 +8,10 @@ void main() {
     final byLabel = {
       for (final o in MakeResultMoreUsefulSheet.options) o.label: o.reason,
     };
-    expect(byLabel[ConsumerUiCopy.makeResultMoreUsefulMoreSpecific], 'too_vague');
+    expect(
+      byLabel[ConsumerUiCopy.makeResultMoreUsefulMoreSpecific],
+      'too_vague',
+    );
     expect(
       byLabel[ConsumerUiCopy.makeResultMoreUsefulMoreAccurate],
       'not_accurate',
@@ -40,12 +43,18 @@ void main() {
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
 
-    expect(find.text(ConsumerUiCopy.makeResultMoreUsefulSheetTitle),
-        findsOneWidget);
-    expect(find.text(ConsumerUiCopy.makeResultMoreUsefulMoreSpecific),
-        findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.makeResultMoreUsefulSheetTitle),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.makeResultMoreUsefulMoreSpecific),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.text(ConsumerUiCopy.makeResultMoreUsefulMoreSpecific));
+    await tester.tap(
+      find.text(ConsumerUiCopy.makeResultMoreUsefulMoreSpecific),
+    );
     await tester.pumpAndSettle();
 
     expect(result, 'too_vague');

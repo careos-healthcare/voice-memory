@@ -47,25 +47,25 @@ class LoopMode {
   bool get isFullyImplementedLoop => isCapacityYes || isProveEnough;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'shortPromise': shortPromise,
-        'active': active,
-        'startedAt': startedAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-        'targetRecordingCount': targetRecordingCount,
-        'completedRecordingCount': completedRecordingCount,
-        'activePrompt': activePrompt,
-        'interpretationBiasTags': interpretationBiasTags,
-        'confirmSignals': confirmSignals,
-        'contradictionSignals': contradictionSignals,
-        'reminderCopy': reminderCopy,
-        'reviewTitle': reviewTitle,
-        'firstPromptUsed': firstPromptUsed,
-        'readAccepted': readAccepted,
-        'unsupportedRecording': unsupportedRecording,
-        'completed': completed,
-      };
+    'id': id,
+    'title': title,
+    'shortPromise': shortPromise,
+    'active': active,
+    'startedAt': startedAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    'targetRecordingCount': targetRecordingCount,
+    'completedRecordingCount': completedRecordingCount,
+    'activePrompt': activePrompt,
+    'interpretationBiasTags': interpretationBiasTags,
+    'confirmSignals': confirmSignals,
+    'contradictionSignals': contradictionSignals,
+    'reminderCopy': reminderCopy,
+    'reviewTitle': reviewTitle,
+    'firstPromptUsed': firstPromptUsed,
+    'readAccepted': readAccepted,
+    'unsupportedRecording': unsupportedRecording,
+    'completed': completed,
+  };
 
   static LoopMode? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -79,6 +79,7 @@ class LoopMode {
       if (raw is! List) return const [];
       return raw.map((e) => e.toString()).toList();
     }
+
     return LoopMode(
       id: id,
       title: map['title'] as String? ?? id,
@@ -148,7 +149,7 @@ class LoopMode {
 }
 
 /// Known loop ids — capacity_yes and prove_enough are fully implemented.
-abstract final class LoopModeIds {
+abstract class LoopModeIds {
   LoopModeIds._();
 
   static const capacityYes = 'capacity_yes';

@@ -30,21 +30,27 @@ JournalEntry _entryWithObservation(String observation) {
 }
 
 void main() {
-  test('return loop engine hides legacy cloud observation from noticed copy', () {
-    const engine = TomorrowReturnLoopEngine();
-    final loop = engine.build(
-      entries: [
-        _entryWithObservation(
-          'Saved on this device. Cloud processing pending.',
-        ),
-      ],
-      now: DateTime(2026, 6, 6, 14),
-    );
+  test(
+    'return loop engine hides legacy cloud observation from noticed copy',
+    () {
+      const engine = TomorrowReturnLoopEngine();
+      final loop = engine.build(
+        entries: [
+          _entryWithObservation(
+            'Saved on this device. Cloud processing pending.',
+          ),
+        ],
+        now: DateTime(2026, 6, 6, 14),
+      );
 
-    expect(loop.noticedToday, ConsumerUiCopy.savedPrivatelyOnDevice);
-    expect(loop.noticedToday.toLowerCase(), isNot(contains('cloud processing')));
-    expect(loop.noticedToday.toLowerCase(), isNot(contains('voicememory')));
-  });
+      expect(loop.noticedToday, ConsumerUiCopy.savedPrivatelyOnDevice);
+      expect(
+        loop.noticedToday.toLowerCase(),
+        isNot(contains('cloud processing')),
+      );
+      expect(loop.noticedToday.toLowerCase(), isNot(contains('voicememory')));
+    },
+  );
 
   test('return loop watch-for uses neutral prompt for system observations', () {
     const engine = TomorrowReturnLoopEngine();
@@ -57,17 +63,16 @@ void main() {
       now: DateTime(2026, 6, 6, 14),
     );
 
-    expect(
-      loop.watchForNextTime,
-      ConsumerUiCopy.tomorrowNoticePrompt,
-    );
+    expect(loop.watchForNextTime, ConsumerUiCopy.tomorrowNoticePrompt);
     for (final chip in loop.displayWatchChips) {
       expect(chip.toLowerCase(), isNot(contains('cloud processing')));
       expect(chip.toLowerCase(), isNot(contains('saved on this device')));
     }
   });
 
-  testWidgets('post-save cards use ArchiveMe copy and hide cloud strings', (tester) async {
+  testWidgets('post-save cards use ArchiveMe copy and hide cloud strings', (
+    tester,
+  ) async {
     final loop = TomorrowReturnLoop(
       noticedToday: 'You mentioned pressure before saying yes.',
       comeBackTomorrow: 'Come back tomorrow to see what repeats.',
@@ -101,7 +106,9 @@ void main() {
     expect(find.text(ConsumerUiCopy.viewPatternsCta), findsOneWidget);
   });
 
-  testWidgets('post-save shows saved privately on device for local save', (tester) async {
+  testWidgets('post-save shows saved privately on device for local save', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -128,7 +135,9 @@ void main() {
     expect(find.textContaining('Today VoiceMemory noticed'), findsNothing);
   });
 
-  testWidgets('today noticed card hidden for system observation leak', (tester) async {
+  testWidgets('today noticed card hidden for system observation leak', (
+    tester,
+  ) async {
     final loop = TomorrowReturnLoop(
       noticedToday: 'Saved on this device. Cloud processing pending.',
       comeBackTomorrow: 'Come back tomorrow.',

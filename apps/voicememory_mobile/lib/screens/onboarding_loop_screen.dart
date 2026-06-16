@@ -34,8 +34,7 @@ class _OnboardingLoopScreenState extends State<OnboardingLoopScreen> {
     (
       id: LoopModeIds.capacityYes,
       title: 'Saying yes when I have no capacity',
-      body:
-          'Catch the moment you agree before checking whether you have room.',
+      body: 'Catch the moment you agree before checking whether you have room.',
       primary: false,
     ),
     (
@@ -101,10 +100,9 @@ class _OnboardingLoopScreenState extends State<OnboardingLoopScreen> {
               const SizedBox(height: AppSpacing.md),
               Text(
                 LoopModeCopy.onboardingTitle,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontSize: 26,
-                      height: 1.3,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineSmall?.copyWith(fontSize: 26, height: 1.3),
               ),
               const SizedBox(height: AppSpacing.lg),
               Expanded(
@@ -181,17 +179,17 @@ class _LoopOptionCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 body,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                      height: 1.45,
-                    ),
+                  color: AppColors.textSecondary,
+                  height: 1.45,
+                ),
               ),
             ],
           ),

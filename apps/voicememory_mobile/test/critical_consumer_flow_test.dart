@@ -20,8 +20,9 @@ Future<void> _reset(String stamp) async {
   );
 }
 
-Widget _wrap(Widget child) =>
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child)));
+Widget _wrap(Widget child) => MaterialApp(
+  home: Scaffold(body: SingleChildScrollView(child: child)),
+);
 
 void main() {
   group('first run framing', () {
@@ -34,8 +35,9 @@ void main() {
 
     testWidgets('record CTA fires its callback', (tester) async {
       var tapped = false;
-      await tester
-          .pumpWidget(_wrap(FirstLoopStartCard(onRecord: () => tapped = true)));
+      await tester.pumpWidget(
+        _wrap(FirstLoopStartCard(onRecord: () => tapped = true)),
+      );
       await tester.tap(find.text(FirstLoopStartCard.cta));
       expect(tapped, isTrue);
     });
@@ -50,13 +52,17 @@ void main() {
       expect((await store.load()).stage, FirstLoopActivationStage.notStarted);
 
       await store.markFirstMomentSaved();
-      expect((await store.load()).stage,
-          FirstLoopActivationStage.firstMomentSaved);
+      expect(
+        (await store.load()).stage,
+        FirstLoopActivationStage.firstMomentSaved,
+      );
 
       await store.markFirstPatternShown('Saying yes too fast');
       await store.markTomorrowCheckChosen('Did this show up again?');
-      final ready =
-          await store.markLoopReady('Saying yes too fast', 'Did this show up again?');
+      final ready = await store.markLoopReady(
+        'Saying yes too fast',
+        'Did this show up again?',
+      );
 
       expect(ready.stage, FirstLoopActivationStage.loopReady);
       expect(ready.isComplete, isTrue);
@@ -94,19 +100,24 @@ void main() {
       expect(fresh.stage, ReturnDayFrictionStage.dueShown);
     });
 
-    testWidgets('answer step exposes a record-one-moment CTA copy',
-        (tester) async {
+    testWidgets('answer step exposes a record-one-moment CTA copy', (
+      tester,
+    ) async {
       // The one-tap return-day flow asks for one short moment after an answer.
       expect(ConsumerUiCopy.tomorrowCheckInOneTapRecordCta, isNotEmpty);
     });
 
     testWidgets('post-save shows "Loop closed"', (tester) async {
-      await tester.pumpWidget(_wrap(ReturnDayClosedCard(
-        resultHeadline: 'This pattern showed up again.',
-        usefulLine: 'It often starts before saying yes.',
-        nextCheck: 'What happens right before it starts?',
-        onDone: () {},
-      )));
+      await tester.pumpWidget(
+        _wrap(
+          ReturnDayClosedCard(
+            resultHeadline: 'This pattern showed up again.',
+            usefulLine: 'It often starts before saying yes.',
+            nextCheck: 'What happens right before it starts?',
+            onDone: () {},
+          ),
+        ),
+      );
       expect(find.text(ReturnDayClosedCard.title), findsOneWidget);
       expect(find.text('Loop closed'), findsOneWidget);
       expect(find.text('What happens right before it starts?'), findsOneWidget);

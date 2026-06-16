@@ -1,10 +1,5 @@
 /// How useful a reflection is for finding a pattern.
-enum InputQualityLevel {
-  strong,
-  usable,
-  vague,
-  tooShort,
-}
+enum InputQualityLevel { strong, usable, vague, tooShort }
 
 /// A specific reason a reflection is hard to turn into a pattern.
 enum InputQualityIssue {

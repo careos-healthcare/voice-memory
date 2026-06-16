@@ -88,10 +88,7 @@ void main() {
     expect(discovery!.type, DailyDiscoveryType.themeDecline);
     expect(discovery.evidenceIds, isNotEmpty);
     expect(discovery.summary.toLowerCase(), isNot(contains('something new')));
-    expect(
-      discovery.summary.toLowerCase(),
-      contains('last 3 recordings'),
-    );
+    expect(discovery.summary.toLowerCase(), contains('last 3 recordings'));
   });
 
   test('new entry replaces stale pending discovery', () async {

@@ -4,24 +4,21 @@ import 'package:voicememory_mobile/features/objective/objective_shortcut_registr
 void main() {
   test('registry includes all supported actions', () {
     final ids = ObjectiveShortcutRegistry.all.map((a) => a.id).toSet();
-    expect(ids, containsAll([
-      'openRecord',
-      'answerCheck',
-      'recordMoment',
-      'openPatterns',
-    ]));
+    expect(
+      ids,
+      containsAll([
+        'openRecord',
+        'answerCheck',
+        'recordMoment',
+        'openPatterns',
+      ]),
+    );
     expect(ObjectiveShortcutRegistry.all.length, 4);
   });
 
   test('byId resolves known actions', () {
-    expect(
-      ObjectiveShortcutRegistry.byId('openRecord')?.route,
-      '/record',
-    );
-    expect(
-      ObjectiveShortcutRegistry.byId('openPatterns')?.route,
-      '/patterns',
-    );
+    expect(ObjectiveShortcutRegistry.byId('openRecord')?.route, '/record');
+    expect(ObjectiveShortcutRegistry.byId('openPatterns')?.route, '/patterns');
     expect(ObjectiveShortcutRegistry.byId('unknown'), isNull);
   });
 

@@ -94,7 +94,9 @@ void main() {
     );
     expect(checkIn.question, 'Did this pattern show up again?');
     expect(checkIn.prompt, contains('Tomorrow'));
-    final events = await ActivationEventsStore(AppServices.instance.prefs).read();
+    final events = await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(events.tomorrowCheckInCreated, 1);
   });
 
@@ -119,8 +121,9 @@ void main() {
     );
     expect(completed, isNotNull);
 
-    final memory =
-        await PatternMemoryStore(AppServices.instance.prefs).loadActive();
+    final memory = await PatternMemoryStore(
+      AppServices.instance.prefs,
+    ).loadActive();
     expect(memory, isNotNull);
     expect(memory!.checkInCount, 1);
     expect(memory.lastResult, PatternMemoryResultHint.lighter);
@@ -128,99 +131,106 @@ void main() {
 
     // Metrics are tracked fire-and-forget; let the write flush.
     await Future<void>.delayed(const Duration(milliseconds: 100));
-    final events =
-        await ActivationEventsStore(AppServices.instance.prefs).read();
+    final events = await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(events.patternMemoryCreated, 1);
   });
 
   TomorrowCheckIn _completed(String optionId, int day) => TomorrowCheckIn(
-        id: 'tci_$day',
-        createdAt: DateTime(2026, 6, day),
-        targetDate: '2026-06-0$day',
-        patternTitle: 'Taking responsibility before asking for help',
-        prompt: 'Tomorrow, check whether this pattern shows up again.',
-        question: 'Did this pattern show up again?',
-        options: kDefaultTomorrowCheckInOptions,
-        selectedOptionId: optionId,
-        completedAt: DateTime(2026, 6, day),
-      );
+    id: 'tci_$day',
+    createdAt: DateTime(2026, 6, day),
+    targetDate: '2026-06-0$day',
+    patternTitle: 'Taking responsibility before asking for help',
+    prompt: 'Tomorrow, check whether this pattern shows up again.',
+    question: 'Did this pattern show up again?',
+    options: kDefaultTomorrowCheckInOptions,
+    selectedOptionId: optionId,
+    completedAt: DateTime(2026, 6, day),
+  );
 
-  test('progress is saved after the third check-in, without duplicates',
-      () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
-    final progressStore = PatternProgressStore(AppServices.instance.prefs);
+  test(
+    'progress is saved after the third check-in, without duplicates',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+      final progressStore = PatternProgressStore(AppServices.instance.prefs);
 
-    await PatternMemoryCoordinator.recordCheckInCompletion(
-      completed: _completed('showed_up_again', 1),
-      now: DateTime(2026, 6, 1),
-    );
-    expect(await progressStore.loadLatest(), isNull);
-
-    await PatternMemoryCoordinator.recordCheckInCompletion(
-      completed: _completed('showed_up_again', 2),
-      now: DateTime(2026, 6, 2),
-    );
-    expect(await progressStore.loadLatest(), isNull);
-
-    await PatternMemoryCoordinator.recordCheckInCompletion(
-      completed: _completed('showed_up_again', 3),
-      now: DateTime(2026, 6, 3),
-    );
-    final latest = await progressStore.loadLatest();
-    expect(latest, isNotNull);
-    expect(latest!.type, PatternProgressType.stillRepeating);
-    expect(latest.checkInCount, 3);
-
-    final history = await progressStore.loadHistory();
-    expect(history, hasLength(1));
-
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-    final events =
-        await ActivationEventsStore(AppServices.instance.prefs).read();
-    expect(events.patternProgressMomentCreated, 1);
-  });
-
-  test('next action is generated after progress and CTA locks a check-in',
-      () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
-    final actionStore = PatternNextActionStore(AppServices.instance.prefs);
-
-    for (var day = 1; day <= 3; day++) {
       await PatternMemoryCoordinator.recordCheckInCompletion(
-        completed: _completed('showed_up_again', day),
-        now: DateTime(2026, 6, day),
+        completed: _completed('showed_up_again', 1),
+        now: DateTime(2026, 6, 1),
       );
-    }
+      expect(await progressStore.loadLatest(), isNull);
 
-    final action = await PatternMemoryCoordinator.loadLatestNextAction();
-    expect(action, isNotNull);
-    expect(action!.type, PatternNextActionType.repeatCheck);
-    expect(action.question, 'What happens right before it shows up?');
+      await PatternMemoryCoordinator.recordCheckInCompletion(
+        completed: _completed('showed_up_again', 2),
+        now: DateTime(2026, 6, 2),
+      );
+      expect(await progressStore.loadLatest(), isNull);
 
-    // One action per check-in (sharpen, sharpen, then repeatCheck), each a
-    // distinct id, so no duplicate is recorded for the same memory + count.
-    final history = await actionStore.loadHistory();
-    expect(history, hasLength(3));
-    expect(history.map((a) => a.id).toSet(), hasLength(3));
+      await PatternMemoryCoordinator.recordCheckInCompletion(
+        completed: _completed('showed_up_again', 3),
+        now: DateTime(2026, 6, 3),
+      );
+      final latest = await progressStore.loadLatest();
+      expect(latest, isNotNull);
+      expect(latest!.type, PatternProgressType.stillRepeating);
+      expect(latest.checkInCount, 3);
 
-    final checkIn = await PatternMemoryCoordinator.useNextAction(
-      action,
-      now: DateTime(2026, 6, 3, 12),
-    );
-    expect(checkIn, isNotNull);
+      final history = await progressStore.loadHistory();
+      expect(history, hasLength(1));
 
-    final due = await TomorrowCheckInCoordinator.loadDueToday(
-      now: DateTime(2026, 6, 4, 9),
-    );
-    expect(due, isNotNull);
-    expect(due!.question, 'What happens right before it shows up?');
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final events = await ActivationEventsStore(
+        AppServices.instance.prefs,
+      ).read();
+      expect(events.patternProgressMomentCreated, 1);
+    },
+  );
 
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-    final events =
-        await ActivationEventsStore(AppServices.instance.prefs).read();
-    expect(events.patternNextActionCreated, 3);
-    expect(events.patternNextActionUsed, 1);
-  });
+  test(
+    'next action is generated after progress and CTA locks a check-in',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+      final actionStore = PatternNextActionStore(AppServices.instance.prefs);
+
+      for (var day = 1; day <= 3; day++) {
+        await PatternMemoryCoordinator.recordCheckInCompletion(
+          completed: _completed('showed_up_again', day),
+          now: DateTime(2026, 6, day),
+        );
+      }
+
+      final action = await PatternMemoryCoordinator.loadLatestNextAction();
+      expect(action, isNotNull);
+      expect(action!.type, PatternNextActionType.repeatCheck);
+      expect(action.question, 'What happens right before it shows up?');
+
+      // One action per check-in (sharpen, sharpen, then repeatCheck), each a
+      // distinct id, so no duplicate is recorded for the same memory + count.
+      final history = await actionStore.loadHistory();
+      expect(history, hasLength(3));
+      expect(history.map((a) => a.id).toSet(), hasLength(3));
+
+      final checkIn = await PatternMemoryCoordinator.useNextAction(
+        action,
+        now: DateTime(2026, 6, 3, 12),
+      );
+      expect(checkIn, isNotNull);
+
+      final due = await TomorrowCheckInCoordinator.loadDueToday(
+        now: DateTime(2026, 6, 4, 9),
+      );
+      expect(due, isNotNull);
+      expect(due!.question, 'What happens right before it shows up?');
+
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final events = await ActivationEventsStore(
+        AppServices.instance.prefs,
+      ).read();
+      expect(events.patternNextActionCreated, 3);
+      expect(events.patternNextActionUsed, 1);
+    },
+  );
 }

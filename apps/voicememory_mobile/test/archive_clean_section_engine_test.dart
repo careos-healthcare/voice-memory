@@ -7,30 +7,27 @@ import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
 import 'package:voicememory_mobile/features/pattern_memory/pattern_memory_model.dart';
 
 KeyMoment _moment(String id, DateTime date) => KeyMoment(
-      id: id,
-      date: date,
-      title: 'Moment $id',
-      originalText: 'text',
-      shortSummary: 'text',
-    );
+  id: id,
+  date: date,
+  title: 'Moment $id',
+  originalText: 'text',
+  shortSummary: 'text',
+);
 
 ArchiveMemorySummary _summary() => const ArchiveMemorySummary(
-      id: 's1',
-      patternTitle: 'Pressure before yes',
-      primaryMemoryLine: 'You often say yes before checking in.',
-      basedOnMomentCount: 4,
-      basedOnWeekCount: 2,
-      clarityLabel: 'Clear pattern',
-    );
+  id: 's1',
+  patternTitle: 'Pressure before yes',
+  primaryMemoryLine: 'You often say yes before checking in.',
+  basedOnMomentCount: 4,
+  basedOnWeekCount: 2,
+  clarityLabel: 'Clear pattern',
+);
 
 void main() {
   final now = DateTime(2026, 6, 6, 12);
 
   test('returns sections only when available', () {
-    final sections = buildArchiveCleanSections(
-      keyMoments: const [],
-      now: now,
-    );
+    final sections = buildArchiveCleanSections(keyMoments: const [], now: now);
     expect(sections, isEmpty);
   });
 
@@ -54,33 +51,32 @@ void main() {
     expect(review.route, '/archive-review');
   });
 
-  test('order is Today, This week, This pattern, Ask Archive, Older moments',
-      () {
-    final sections = buildArchiveCleanSections(
-      keyMoments: [
-        _moment('today', DateTime(2026, 6, 6, 9)),
-        _moment('week', DateTime(2026, 6, 3)),
-        _moment('old', DateTime(2026, 5, 20)),
-      ],
-      memory: PatternMemory(
-        id: 'p1',
-        patternTitle: 'Test pattern',
-        createdAt: DateTime(2026, 5, 1),
-        updatedAt: DateTime(2026, 6, 6),
-      ),
-      now: now,
-    );
-    expect(
-      sections.map((s) => s.type),
-      [
+  test(
+    'order is Today, This week, This pattern, Ask Archive, Older moments',
+    () {
+      final sections = buildArchiveCleanSections(
+        keyMoments: [
+          _moment('today', DateTime(2026, 6, 6, 9)),
+          _moment('week', DateTime(2026, 6, 3)),
+          _moment('old', DateTime(2026, 5, 20)),
+        ],
+        memory: PatternMemory(
+          id: 'p1',
+          patternTitle: 'Test pattern',
+          createdAt: DateTime(2026, 5, 1),
+          updatedAt: DateTime(2026, 6, 6),
+        ),
+        now: now,
+      );
+      expect(sections.map((s) => s.type), [
         ArchiveCleanSectionType.today,
         ArchiveCleanSectionType.thisWeek,
         ArchiveCleanSectionType.thisPattern,
         ArchiveCleanSectionType.askArchive,
         ArchiveCleanSectionType.olderMoments,
-      ],
-    );
-  });
+      ]);
+    },
+  );
 
   test('counts are conservative and grounded', () {
     final sections = buildArchiveCleanSections(
@@ -91,10 +87,15 @@ void main() {
       ],
       now: now,
     );
-    final today = sections.firstWhere((s) => s.type == ArchiveCleanSectionType.today);
-    final week = sections.firstWhere((s) => s.type == ArchiveCleanSectionType.thisWeek);
-    final older =
-        sections.firstWhere((s) => s.type == ArchiveCleanSectionType.olderMoments);
+    final today = sections.firstWhere(
+      (s) => s.type == ArchiveCleanSectionType.today,
+    );
+    final week = sections.firstWhere(
+      (s) => s.type == ArchiveCleanSectionType.thisWeek,
+    );
+    final older = sections.firstWhere(
+      (s) => s.type == ArchiveCleanSectionType.olderMoments,
+    );
 
     expect(today.count, 1);
     expect(week.count, 2);
@@ -171,8 +172,9 @@ void main() {
       sections.any((s) => s.type == ArchiveCleanSectionType.today),
       isTrue,
     );
-    final today =
-        sections.firstWhere((s) => s.type == ArchiveCleanSectionType.today);
+    final today = sections.firstWhere(
+      (s) => s.type == ArchiveCleanSectionType.today,
+    );
     expect(today.count, isNull);
   });
 
@@ -189,8 +191,9 @@ void main() {
       sections.any((s) => s.type == ArchiveCleanSectionType.cleanUpArchive),
       isTrue,
     );
-    final cleanup = sections
-        .firstWhere((s) => s.type == ArchiveCleanSectionType.cleanUpArchive);
+    final cleanup = sections.firstWhere(
+      (s) => s.type == ArchiveCleanSectionType.cleanUpArchive,
+    );
     expect(cleanup.route, '/archive-cleanup');
     expect(cleanup.title, 'Clean up archive');
   });

@@ -165,7 +165,15 @@ extension AudienceWedgeIds on AudienceWedge {
           'they',
         ];
       case AudienceWedge.avoidingDirectConversations:
-        return ['avoid', 'say', 'tell', 'direct', 'conversation', "didn't", 'did not'];
+        return [
+          'avoid',
+          'say',
+          'tell',
+          'direct',
+          'conversation',
+          "didn't",
+          'did not',
+        ];
       case AudienceWedge.repeatingHabit:
         return ['again', 'repeat', 'habit', 'noticed', 'keep', 'same'];
     }

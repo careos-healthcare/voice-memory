@@ -65,7 +65,32 @@ void main() {
       ),
     ]);
     expect(result.possibleRepeat, isTrue);
+    expect(result.body, ConsumerUiCopy.secondSessionSoundsClose);
     expect(result.whatRepeated, isNotNull);
+    expect(result.whatRepeated, isNot(contains('Your words sound like')));
+  });
+
+  test('uses screenshot fallback copy when repeat is not grounded in user words',
+      () {
+    final result = engine.build([
+      _entry(
+        '1',
+        'Something at work felt familiar today but I could not name it clearly.',
+      ),
+      _entry(
+        '2',
+        'Another work moment felt familiar again but still hard to explain.',
+      ),
+    ]);
+    expect(result.possibleRepeat, isTrue);
+    expect(result.whatRepeated, ConsumerUiCopy.secondSessionFallbackWhatRepeated);
+    expect(result.whatChanged, ConsumerUiCopy.secondSessionFallbackWhatChanged);
+    expect(
+      result.whatToTestNext,
+      ConsumerUiCopy.secondSessionFallbackWhatToTestNext,
+    );
+    expect(result.previousSignalLabel, isNull);
+    expect(result.latestSignalLabel, isNull);
   });
 
   test('changed signal text appears when latest differs', () {

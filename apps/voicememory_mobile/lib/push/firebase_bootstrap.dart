@@ -44,7 +44,9 @@ class FirebaseBootstrap {
     }
 
     if (Firebase.apps.isEmpty) {
-      debugPrint('FCM: Firebase app list empty after initializeApp — push disabled');
+      debugPrint(
+        'FCM: Firebase app list empty after initializeApp — push disabled',
+      );
       return false;
     }
 

@@ -1,7 +1,7 @@
 import 'archive_insight.dart';
 
 /// Thresholds and rejection rules — no generic AI fluff.
-abstract final class InsightQualityRules {
+abstract class InsightQualityRules {
   InsightQualityRules._();
 
   static const int minEvidenceCount = 3;

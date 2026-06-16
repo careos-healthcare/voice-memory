@@ -9,7 +9,9 @@ class ArchiveExplanationAnalytics {
   }
 
   static void deeperOpened({required String insightKind}) {
-    ProductAnalytics.trackStrings('archive_deeper_opened', {'kind': insightKind});
+    ProductAnalytics.trackStrings('archive_deeper_opened', {
+      'kind': insightKind,
+    });
   }
 
   static void contradictionOpened() {

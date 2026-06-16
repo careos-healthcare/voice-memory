@@ -12,13 +12,9 @@ class NextEvidencePromptEngine {
     int rotation = 0,
   }) {
     final primary = signal.recordNextQuestion.trim();
-    final cat =
-        firstSessionPatternCategoryFromIdOrFallback(signal.categoryId);
+    final cat = firstSessionPatternCategoryFromIdOrFallback(signal.categoryId);
     final alts = _alternatesFor(cat, pattern);
-    final pool = <String>[
-      if (primary.isNotEmpty) primary,
-      ...alts,
-    ];
+    final pool = <String>[if (primary.isNotEmpty) primary, ...alts];
     final deduped = <String>[];
     for (final p in pool) {
       if (p.trim().isEmpty) continue;
@@ -43,45 +39,44 @@ class NextEvidencePromptEngine {
   ) {
     return switch (cat) {
       FirstSessionPatternCategory.responsibility => const [
-          'When did you next feel pressure to say yes?',
-          'What happened before you felt responsible again?',
-          'What would have made this feel lighter?',
-        ],
+        'When did you next feel pressure to say yes?',
+        'What happened before you felt responsible again?',
+        'What would have made this feel lighter?',
+      ],
       FirstSessionPatternCategory.worry => const [
-          'When did the same worry show up again?',
-          'What triggered it this time?',
-          'What helped even briefly?',
-        ],
+        'When did the same worry show up again?',
+        'What triggered it this time?',
+        'What helped even briefly?',
+      ],
       FirstSessionPatternCategory.selfDoubt => const [
-          'When did you last feel enough without proving anything?',
-          'What were you comparing yourself to?',
-          'What would enough look like here?',
-        ],
+        'When did you last feel enough without proving anything?',
+        'What were you comparing yourself to?',
+        'What would enough look like here?',
+      ],
       FirstSessionPatternCategory.avoidance => const [
-          'What did you avoid saying directly?',
-          'What made starting feel hard?',
-          'What would make starting easier?',
-        ],
+        'What did you avoid saying directly?',
+        'What made starting feel hard?',
+        'What would make starting easier?',
+      ],
       FirstSessionPatternCategory.relationship => const [
-          'What did you want to say but did not?',
-          'When did tension show up again?',
-          'What felt unresolved after?',
-        ],
+        'What did you want to say but did not?',
+        'When did tension show up again?',
+        'What felt unresolved after?',
+      ],
       FirstSessionPatternCategory.burnout => const [
-          'What would you drop if you had more energy?',
-          'When did you say yes while tired?',
-          'What rest did you skip?',
-        ],
+        'What would you drop if you had more energy?',
+        'When did you say yes while tired?',
+        'What rest did you skip?',
+      ],
       FirstSessionPatternCategory.lighter => const [
-          'What felt lighter — and what was different before?',
-          'When did ease show up again?',
-          'What made this moment stand out?',
-        ],
+        'What felt lighter — and what was different before?',
+        'When did ease show up again?',
+        'What made this moment stand out?',
+      ],
       FirstSessionPatternCategory.fallback => [
-          'What part of today might be worth recording again tomorrow?',
-          if (pattern.watchForText.isNotEmpty)
-            'Notice ${pattern.watchForText}.',
-        ],
+        'What part of today might be worth recording again tomorrow?',
+        if (pattern.watchForText.isNotEmpty) 'Notice ${pattern.watchForText}.',
+      ],
     };
   }
 }

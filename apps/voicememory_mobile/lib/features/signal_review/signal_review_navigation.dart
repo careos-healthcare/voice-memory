@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Navigation helpers for signal review surfaces.
-abstract final class SignalReviewNavigation {
+abstract class SignalReviewNavigation {
   SignalReviewNavigation._();
 
   static void openFullReview(BuildContext context) {

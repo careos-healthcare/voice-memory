@@ -77,13 +77,13 @@ class _ResultNextCheckCardState extends State<ResultNextCheckCard> {
   String get _resultHint => widget.checkIn.selectedOptionId ?? 'same';
 
   ResultNextCheck get _nextCheck => ResultNextCheckEngine.build(
-        resultHint: _resultHint,
-        checkInQuestion: widget.checkIn.question,
-        notUsefulReason: widget.notUsefulReason,
-        patternTitle: widget.checkIn.patternTitle,
-        feedback: widget.feedbackHint,
-        preferDirect: widget.preferDirect,
-      );
+    resultHint: _resultHint,
+    checkInQuestion: widget.checkIn.question,
+    notUsefulReason: widget.notUsefulReason,
+    patternTitle: widget.checkIn.patternTitle,
+    feedback: widget.feedbackHint,
+    preferDirect: widget.preferDirect,
+  );
 
   Map<String, CompellingCheckQuestion> get _options =>
       ResultNextCheckEngine.compellingOptions(
@@ -101,7 +101,8 @@ class _ResultNextCheckCardState extends State<ResultNextCheckCard> {
       feedback: widget.feedbackHint,
       preferDirect: widget.preferDirect,
     );
-    _selectedCheck = _options[_selectedSharpness] ??
+    _selectedCheck =
+        _options[_selectedSharpness] ??
         CompellingCheckQuestion(
           type: CompellingCheckType.repeatMoment,
           question: _nextCheck.nextQuestion,
@@ -187,8 +188,9 @@ class _ResultNextCheckCardState extends State<ResultNextCheckCard> {
             children: [
               Text(
                 ConsumerUiCopy.resultNextCheckChooseSheetTitle,
-                style:
-                    VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+                style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               _altTile(sheetContext, ConsumerUiCopy.resultNextCheckAltBefore),
@@ -236,7 +238,9 @@ class _ResultNextCheckCardState extends State<ResultNextCheckCard> {
         children: [
           Text(
             ConsumerUiCopy.resultNextCheckTitle,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -256,8 +260,11 @@ class _ResultNextCheckCardState extends State<ResultNextCheckCard> {
           if (_done)
             Row(
               children: [
-                const Icon(Icons.check_circle,
-                    color: AppColors.success, size: 18),
+                const Icon(
+                  Icons.check_circle,
+                  color: AppColors.success,
+                  size: 18,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(
@@ -275,9 +282,7 @@ class _ResultNextCheckCardState extends State<ResultNextCheckCard> {
               height: 44,
               child: FilledButton(
                 onPressed: _busy ? null : _onUseThis,
-                child: const Text(
-                  ConsumerUiCopy.resultNextCheckUseTomorrowCta,
-                ),
+                child: const Text(ConsumerUiCopy.resultNextCheckUseTomorrowCta),
               ),
             ),
             const SizedBox(height: AppSpacing.xs),

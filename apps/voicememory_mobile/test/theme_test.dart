@@ -34,15 +34,15 @@ void main() {
 
     test('secondary loop accent is teal', () {
       expect(AppColors.accentSecondary, const Color(0xFF0F766E));
-      expect(
-        AppTheme.light().colorScheme.secondary,
-        AppColors.accentSecondary,
-      );
+      expect(AppTheme.light().colorScheme.secondary, AppColors.accentSecondary);
     });
 
     test('surface cards are white on warm background', () {
       expect(AppColors.backgroundSecondary, const Color(0xFFFFFFFF));
-      expect(AppTheme.light().colorScheme.surface, AppColors.backgroundSecondary);
+      expect(
+        AppTheme.light().colorScheme.surface,
+        AppColors.backgroundSecondary,
+      );
     });
 
     test('text contrast remains readable on light surfaces', () {

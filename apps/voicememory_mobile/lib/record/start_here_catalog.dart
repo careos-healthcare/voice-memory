@@ -1,7 +1,7 @@
 import '../product/consumer_ui_copy.dart';
 
 /// Start Here recording flow — static prompts, no LLM.
-abstract final class StartHereCatalog {
+abstract class StartHereCatalog {
   StartHereCatalog._();
 
   static const String sectionTitle = ConsumerUiCopy.trySayingOneOfThese;

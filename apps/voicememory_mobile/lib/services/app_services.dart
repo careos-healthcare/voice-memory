@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 
 import '../api/api_client.dart';
 import '../audio/recording_service.dart';
 import '../billing/value_moment_paywall.dart';
+import '../storage/app_storage_paths.dart';
 import '../storage/capture_token_cache.dart';
 import '../storage/device_id.dart';
 import '../storage/entitlement_cache.dart';
@@ -80,8 +81,7 @@ class AppServices {
       return;
     }
     final s = AppServices._();
-    final dir = await getApplicationDocumentsDirectory();
-    final base = dir.path;
+    final base = await _resolveDocumentsBasePath();
 
     s.secureStorage = SecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
@@ -109,14 +109,14 @@ class AppServices {
     s.journal = JournalService(s.journalStore);
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
     s.auth.onSignedIn = () => GuestFirstAuth(
-          s.prefs,
-          attest: s.attest,
-          sync: s.sync,
-        ).registerDeviceAfterSignIn();
+      s.prefs,
+      attest: s.attest,
+      sync: s.sync,
+    ).registerDeviceAfterSignIn();
     await s.auth.loadPersistedSession();
-    await GuestFirstAuth(s.prefs).markGuestModeStartedIfNeeded(
-      isSignedIn: s.auth.currentSession != null,
-    );
+    await GuestFirstAuth(
+      s.prefs,
+    ).markGuestModeStartedIfNeeded(isSignedIn: s.auth.currentSession != null);
     await RevenueCatService.instance.initialize();
     s.billing = BillingService(
       s.api,
@@ -128,12 +128,13 @@ class AppServices {
     s.fcm = FcmService(
       store: s.nativePushStore,
       getDeviceId: () => s.deviceIds.getOrCreate(),
-      registerToken: ({required deviceId, required platform, required fcmToken}) =>
-          s.api.registerPushDevice(
-            deviceId: deviceId,
-            platform: platform,
-            fcmToken: fcmToken,
-          ),
+      registerToken:
+          ({required deviceId, required platform, required fcmToken}) =>
+              s.api.registerPushDevice(
+                deviceId: deviceId,
+                platform: platform,
+                fcmToken: fcmToken,
+              ),
       sendTestPush: ({required deviceId, required targetRoute}) =>
           s.api.sendInternalTestPush(
             deviceId: deviceId,
@@ -158,8 +159,7 @@ class AppServices {
   /// Trial participants: local journal + prefs only; no push, analytics, or billing.
   static Future<void> _initializeForTrial() async {
     final s = AppServices._();
-    final dir = await getApplicationDocumentsDirectory();
-    final base = dir.path;
+    final base = await _resolveDocumentsBasePath();
 
     s.secureStorage = SecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
@@ -191,7 +191,9 @@ class AppServices {
     s.fcm = FcmService(
       store: s.nativePushStore,
       getDeviceId: () => s.deviceIds.getOrCreate(),
-      registerToken: ({required deviceId, required platform, required fcmToken}) async => {},
+      registerToken:
+          ({required deviceId, required platform, required fcmToken}) async =>
+              {},
       sendTestPush: ({required deviceId, required targetRoute}) async => {},
     );
     s.nativePush = NativePushService(s.fcm);
@@ -206,11 +208,31 @@ class AppServices {
     _initialized = true;
   }
 
+  static Future<String> _resolveDocumentsBasePath() async {
+    try {
+      final dir = await AppStoragePaths.applicationDocumentsDirectory();
+      return dir.path;
+    } catch (e, st) {
+      if (kDebugMode && Platform.isIOS) {
+        debugPrint(
+          'ARCHIVEME_SIMULATOR_NATIVE_ASSETS: documents path failed, '
+          'using debug temp fallback: $e',
+        );
+        debugPrint('$st');
+        return AppStoragePaths.debugSimulatorDocumentsDirectorySync(
+          reason: e,
+        ).path;
+      }
+      rethrow;
+    }
+  }
+
   static Future<void> resetForTest({
     required String journalPath,
     String? prefsPath,
     ApiClient? api,
     bool skipRevenueCat = false,
+    RecordingService? recording,
   }) async {
     _initialized = false;
     final s = AppServices._();
@@ -238,7 +260,7 @@ class AppServices {
       attest: s.attest,
       journalStore: s.journalStore,
     );
-    s.recording = RecordingService(testMode: true);
+    s.recording = recording ?? RecordingService(testMode: true);
     s.journal = JournalService(s.journalStore);
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
     if (!skipRevenueCat) {
@@ -258,12 +280,13 @@ class AppServices {
     s.fcm = FcmService(
       store: s.nativePushStore,
       getDeviceId: () => s.deviceIds.getOrCreate(),
-      registerToken: ({required deviceId, required platform, required fcmToken}) =>
-          s.api.registerPushDevice(
-            deviceId: deviceId,
-            platform: platform,
-            fcmToken: fcmToken,
-          ),
+      registerToken:
+          ({required deviceId, required platform, required fcmToken}) =>
+              s.api.registerPushDevice(
+                deviceId: deviceId,
+                platform: platform,
+                fcmToken: fcmToken,
+              ),
       sendTestPush: ({required deviceId, required targetRoute}) =>
           s.api.sendInternalTestPush(
             deviceId: deviceId,

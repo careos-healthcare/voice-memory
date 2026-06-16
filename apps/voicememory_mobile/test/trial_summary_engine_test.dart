@@ -296,9 +296,9 @@ void main() {
   test('friction permissionIssue in summary', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
-    await ActivationEventsStore(AppServices.instance.prefs).write(
-      const ActivationEventCounts(trialMicPermissionDenied: 1),
-    );
+    await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).write(const ActivationEventCounts(trialMicPermissionDenied: 1));
     final summary = await const TrialSummaryEngine().build();
     expect(summary.trialFrictionVerdict, TrialFrictionVerdict.permissionIssue);
     expect(summary.micDeniedCount, 1);
@@ -347,18 +347,18 @@ void main() {
     );
     final summary = await const TrialSummaryEngine().build();
     expect(
-      summary.hookDiagnosis.notUsefulReasonCounts[
-          HookDiagnosisNotUsefulReason.tooVague],
+      summary.hookDiagnosis.notUsefulReasonCounts[HookDiagnosisNotUsefulReason
+          .tooVague],
       1,
     );
   });
 
   HookDiagnosisEvent _missed(String reason, String id) => HookDiagnosisEvent(
-        id: id,
-        createdAt: DateTime(2026, 5, 26),
-        type: HookDiagnosisEventType.checkInMissedReason,
-        reason: reason,
-      );
+    id: id,
+    createdAt: DateTime(2026, 5, 26),
+    type: HookDiagnosisEventType.checkInMissedReason,
+    reason: reason,
+  );
 
   HookDiagnosisEvent _questionRated(String rating, String id) =>
       HookDiagnosisEvent(
@@ -468,30 +468,32 @@ void main() {
     expect(summary.hookRescueReason, 'People are confused by the check-in.');
   });
 
-  test('escalation intensities and reminder status exposed on summary',
-      () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
-    await ActivationEventsStore(AppServices.instance.prefs).write(
-      const ActivationEventCounts(
-        firstReflectionSaved: 1,
-        tomorrowCheckInCreated: 5,
-        tomorrowCheckInDueShown: 5,
-      ),
-    );
-    final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
-    await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd2'));
+  test(
+    'escalation intensities and reminder status exposed on summary',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+      await ActivationEventsStore(AppServices.instance.prefs).write(
+        const ActivationEventCounts(
+          firstReflectionSaved: 1,
+          tomorrowCheckInCreated: 5,
+          tomorrowCheckInDueShown: 5,
+        ),
+      );
+      final hook = HookDiagnosisStore(AppServices.instance.prefs);
+      await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
+      await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd2'));
 
-    final summary = await const TrialSummaryEngine().build();
-    expect(summary.sharperQuestionIntensity, HookRescueIntensity.aggressive);
-    expect(
-      summary.reminderImplementationStatus,
-      ReminderImplementationStatus.noOp,
-    );
-    expect(summary.reminderScheduledCount, 0);
-    expect(summary.reminderEnabled, isFalse);
-  });
+      final summary = await const TrialSummaryEngine().build();
+      expect(summary.sharperQuestionIntensity, HookRescueIntensity.aggressive);
+      expect(
+        summary.reminderImplementationStatus,
+        ReminderImplementationStatus.noOp,
+      );
+      expect(summary.reminderScheduledCount, 0);
+      expect(summary.reminderEnabled, isFalse);
+    },
+  );
 
   test('summary surfaces reminder counts and enabled flag', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
@@ -618,7 +620,8 @@ void main() {
         createdAt: DateTime(2026, 6, 4),
         type: HabitProofType.progressFound,
         headline: 'Now there is something to compare.',
-        body: 'You can see whether this pattern is repeating, '
+        body:
+            'You can see whether this pattern is repeating, '
             'getting lighter, getting heavier, or changing.',
         proofLine: 'This pattern is still showing up.',
         nextLine: 'What happens right before it shows up?',
@@ -684,7 +687,9 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationTracker.trackTrialExportCopied();
-    final events = await ActivationEventsStore(AppServices.instance.prefs).read();
+    final events = await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(events.trialExportCopied, 1);
   });
 
@@ -694,8 +699,10 @@ void main() {
     final store = FirstLoopActivationStore(AppServices.instance.prefs);
     await store.markOpenedRecord(at: DateTime(2026, 6, 4, 9, 0, 0));
     await store.markFirstMomentSaved(at: DateTime(2026, 6, 4, 9, 0, 20));
-    await store.markFirstPatternShown('saying yes',
-        at: DateTime(2026, 6, 4, 9, 0, 25));
+    await store.markFirstPatternShown(
+      'saying yes',
+      at: DateTime(2026, 6, 4, 9, 0, 25),
+    );
     await store.markLoopReady(
       'saying yes',
       'What happens right before you say yes?',
@@ -713,8 +720,9 @@ void main() {
   test('summary reports first-loop dropoff when user stalls', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
-    await FirstLoopActivationStore(AppServices.instance.prefs)
-        .markRecordingStarted();
+    await FirstLoopActivationStore(
+      AppServices.instance.prefs,
+    ).markRecordingStarted();
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.firstLoopStage, FirstLoopActivationStage.recordingStarted);
@@ -772,36 +780,39 @@ void main() {
     expect(summary.positioningArchiveMemoryRate, 0.6);
   });
 
-  test('compelling check and real reminder counts surface in summary', () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
-    await ActivationEventsStore(AppServices.instance.prefs).write(
-      const ActivationEventCounts(
-        compellingCheckShown: 4,
-        compellingCheckSelected: 3,
-        compellingCheckMostSpecificSelected: 2,
-        compellingCheckAccepted: 1,
-        realReminderPermissionRequested: 2,
-        realReminderPermissionGranted: 1,
-        realReminderPermissionDenied: 1,
-        realReminderScheduled: 1,
-        realReminderCancelled: 1,
-        realReminderUnavailable: 1,
-      ),
-    );
+  test(
+    'compelling check and real reminder counts surface in summary',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+      await ActivationEventsStore(AppServices.instance.prefs).write(
+        const ActivationEventCounts(
+          compellingCheckShown: 4,
+          compellingCheckSelected: 3,
+          compellingCheckMostSpecificSelected: 2,
+          compellingCheckAccepted: 1,
+          realReminderPermissionRequested: 2,
+          realReminderPermissionGranted: 1,
+          realReminderPermissionDenied: 1,
+          realReminderScheduled: 1,
+          realReminderCancelled: 1,
+          realReminderUnavailable: 1,
+        ),
+      );
 
-    final summary = await const TrialSummaryEngine().build();
-    expect(summary.compellingCheckShownCount, 4);
-    expect(summary.compellingCheckSelectedCount, 3);
-    expect(summary.compellingCheckMostSpecificSelectedCount, 2);
-    expect(summary.compellingCheckAcceptedCount, 1);
-    expect(summary.realReminderPermissionRequestedCount, 2);
-    expect(summary.realReminderPermissionGrantedCount, 1);
-    expect(summary.realReminderPermissionDeniedCount, 1);
-    expect(summary.realReminderScheduledCount, 1);
-    expect(summary.realReminderCancelledCount, 1);
-    expect(summary.realReminderUnavailableCount, 1);
-  });
+      final summary = await const TrialSummaryEngine().build();
+      expect(summary.compellingCheckShownCount, 4);
+      expect(summary.compellingCheckSelectedCount, 3);
+      expect(summary.compellingCheckMostSpecificSelectedCount, 2);
+      expect(summary.compellingCheckAcceptedCount, 1);
+      expect(summary.realReminderPermissionRequestedCount, 2);
+      expect(summary.realReminderPermissionGrantedCount, 1);
+      expect(summary.realReminderPermissionDeniedCount, 1);
+      expect(summary.realReminderScheduledCount, 1);
+      expect(summary.realReminderCancelledCount, 1);
+      expect(summary.realReminderUnavailableCount, 1);
+    },
+  );
 
   test('current objective counts surface in summary', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();

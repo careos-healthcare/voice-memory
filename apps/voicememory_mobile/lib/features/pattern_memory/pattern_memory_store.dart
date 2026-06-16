@@ -29,11 +29,11 @@ class PatternMemoryStore {
     final list = raw['items'];
     if (list is! List) return const [];
     final memories = list
-        .map((e) => PatternMemory.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => PatternMemory.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<PatternMemory>()
         .toList();
     return memories.take(limit).toList();
@@ -65,7 +65,8 @@ class PatternMemoryStore {
   }) async {
     final existing = await loadActive();
     final title = patternTitle.trim();
-    final samePattern = existing != null &&
+    final samePattern =
+        existing != null &&
         title.isNotEmpty &&
         existing.patternTitle.trim().toLowerCase() == title.toLowerCase();
     final previous = samePattern ? existing : null;

@@ -19,10 +19,7 @@ class KeyMomentStore {
 
   Future<void> save(KeyMoment moment) async {
     final all = await loadAll();
-    final next = <KeyMoment>[
-      moment,
-      ...all.where((m) => m.id != moment.id),
-    ];
+    final next = <KeyMoment>[moment, ...all.where((m) => m.id != moment.id)];
     next.sort((a, b) => b.date.compareTo(a.date));
     final capped = next.take(_maxMoments).toList();
     await _prefs.writeMap(_key, {

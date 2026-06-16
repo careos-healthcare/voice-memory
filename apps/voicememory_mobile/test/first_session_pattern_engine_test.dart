@@ -53,12 +53,15 @@ void main() {
     expect(pattern.negativeMatchPenaltyApplied, isTrue);
   });
 
-  test('finally asked for help does not produce responsibility without guilt', () {
-    final pattern = engine.build(
-      _entry('I finally asked for help and it felt okay'),
-    );
-    expect(pattern.title, isNot(FirstPatternQualityTitles.responsibility));
-  });
+  test(
+    'finally asked for help does not produce responsibility without guilt',
+    () {
+      final pattern = engine.build(
+        _entry('I finally asked for help and it felt okay'),
+      );
+      expect(pattern.title, isNot(FirstPatternQualityTitles.responsibility));
+    },
+  );
 
   test('tired alone does not produce burnout', () {
     final pattern = engine.build(_entry('I was tired'));

@@ -13,7 +13,7 @@ import 'tomorrow_commitment_store.dart';
 import 'tomorrow_return_loop_models.dart';
 
 /// Builds and persists return comparisons after a due commitment is fulfilled.
-abstract final class ReturnComparisonCoordinator {
+abstract class ReturnComparisonCoordinator {
   ReturnComparisonCoordinator._();
 
   static ReturnComparisonStore _comparisonStore() =>
@@ -44,8 +44,9 @@ abstract final class ReturnComparisonCoordinator {
       return null;
     }
 
-    final latest = ([...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt)))
-        .first;
+    final latest = ([
+      ...entries,
+    ]..sort((a, b) => b.createdAt.compareTo(a.createdAt))).first;
 
     final selection = await ReturnCaptureStore.instance().loadLatest();
     final comparisonHint = selection?.comparisonHint;

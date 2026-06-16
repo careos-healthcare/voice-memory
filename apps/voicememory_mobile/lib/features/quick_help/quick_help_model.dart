@@ -12,11 +12,7 @@ extension QuickHelpIntentIds on QuickHelpIntent {
 }
 
 /// The kind of action the primary button performs for a response.
-enum QuickHelpAction {
-  startRecording,
-  useThisCheck,
-  showPerspective,
-}
+enum QuickHelpAction { startRecording, useThisCheck, showPerspective }
 
 /// One short, practical answer for a [QuickHelpIntent].
 ///

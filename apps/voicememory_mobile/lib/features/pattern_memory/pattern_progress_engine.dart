@@ -13,7 +13,8 @@ class PatternProgressEngine {
   PatternProgressMoment build(PatternMemory memory) {
     final count = memory.checkInCount;
     final type = _type(memory);
-    final shouldShow = count >= _minCheckIns && type != PatternProgressType.notEnoughYet;
+    final shouldShow =
+        count >= _minCheckIns && type != PatternProgressType.notEnoughYet;
 
     String? beforeLine;
     String? helpedLine;
@@ -24,7 +25,8 @@ class PatternProgressEngine {
     switch (type) {
       case PatternProgressType.gettingLighter:
         headline = 'This pattern may be getting lighter.';
-        body = 'You have checked it $count times. '
+        body =
+            'You have checked it $count times. '
             'Lately, it has felt lighter more than heavier.';
         if (memory.helpedMoments.isNotEmpty) {
           helpedLine = 'What helped: ${memory.helpedMoments.first}';
@@ -33,7 +35,8 @@ class PatternProgressEngine {
         break;
       case PatternProgressType.gettingHeavier:
         headline = 'This pattern may be getting heavier.';
-        body = 'You have checked it $count times. '
+        body =
+            'You have checked it $count times. '
             'Lately, it has felt heavier more than lighter.';
         if (memory.harderMoments.isNotEmpty) {
           beforeLine = 'What made it harder: ${memory.harderMoments.first}';
@@ -42,16 +45,19 @@ class PatternProgressEngine {
         break;
       case PatternProgressType.stillRepeating:
         headline = 'This pattern is still showing up.';
-        body = 'You have caught it $count times. '
+        body =
+            'You have caught it $count times. '
             'The useful part is that you are noticing the moment.';
         if (memory.commonBeforeMoments.isNotEmpty) {
-          beforeLine = 'It often starts around: ${memory.commonBeforeMoments.first}';
+          beforeLine =
+              'It often starts around: ${memory.commonBeforeMoments.first}';
         }
         nextLine = 'Next, watch what happens right before it starts.';
         break;
       case PatternProgressType.changing:
         headline = 'This pattern is changing.';
-        body = 'You have checked it $count times, and today was not just a repeat.';
+        body =
+            'You have checked it $count times, and today was not just a repeat.';
         nextLine = 'Next, watch what was different.';
         break;
       case PatternProgressType.notEnoughYet:

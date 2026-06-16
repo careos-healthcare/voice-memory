@@ -54,7 +54,9 @@ class _ArchiveCleanViewCardState extends State<ArchiveCleanViewCard> {
         children: [
           Text(
             'Your archive',
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
@@ -100,10 +102,7 @@ class _ArchiveCleanViewCardState extends State<ArchiveCleanViewCard> {
                           '${section.count}',
                           style: VoiceMemoryTypography.metadataStyle(
                             color: AppColors.textSecondary,
-                          ).copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          ).copyWith(fontSize: 12, fontWeight: FontWeight.w700),
                         ),
                     ],
                   ),

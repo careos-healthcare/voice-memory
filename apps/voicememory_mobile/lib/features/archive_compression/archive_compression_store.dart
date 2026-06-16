@@ -27,29 +27,17 @@ class ArchiveCompressionStore {
 
   Future<void> markKept(String id) async {
     final prefs = await loadPrefs();
-    await _save(
-      prefs.copyWith(
-        keptGroupIds: {...prefs.keptGroupIds, id},
-      ),
-    );
+    await _save(prefs.copyWith(keptGroupIds: {...prefs.keptGroupIds, id}));
   }
 
   Future<void> markSplit(String id) async {
     final prefs = await loadPrefs();
-    await _save(
-      prefs.copyWith(
-        splitGroupIds: {...prefs.splitGroupIds, id},
-      ),
-    );
+    await _save(prefs.copyWith(splitGroupIds: {...prefs.splitGroupIds, id}));
   }
 
   Future<void> markHidden(String id) async {
     final prefs = await loadPrefs();
-    await _save(
-      prefs.copyWith(
-        hiddenGroupIds: {...prefs.hiddenGroupIds, id},
-      ),
-    );
+    await _save(prefs.copyWith(hiddenGroupIds: {...prefs.hiddenGroupIds, id}));
   }
 
   Future<bool> isKept(String id) async =>

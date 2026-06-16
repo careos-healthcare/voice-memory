@@ -159,8 +159,9 @@ class _ImmediateDiscoveryCardState extends State<ImmediateDiscoveryCard> {
                     ),
                     const SizedBox(width: 8),
                     TextButton(
-                      onPressed:
-                          _evidenceEntries.isEmpty ? null : _openEvidence,
+                      onPressed: _evidenceEntries.isEmpty
+                          ? null
+                          : _openEvidence,
                       style: TextButton.styleFrom(
                         foregroundColor: VoiceMemoryColors.primaryIndigo,
                         padding: EdgeInsets.zero,

@@ -44,8 +44,9 @@ void main() {
     expect(find.text('Use this check'), findsOneWidget);
   });
 
-  testWidgets('Show another perspective cycles to a different angle',
-      (tester) async {
+  testWidgets('Show another perspective cycles to a different angle', (
+    tester,
+  ) async {
     await _pump(tester);
     expect(find.text('One pattern to notice'), findsOneWidget);
 
@@ -55,8 +56,9 @@ void main() {
     expect(find.text('One pattern to notice'), findsNothing);
   });
 
-  testWidgets('Use this check creates the check-in and confirms',
-      (tester) async {
+  testWidgets('Use this check creates the check-in and confirms', (
+    tester,
+  ) async {
     String? created;
     await _pump(
       tester,
@@ -75,8 +77,9 @@ void main() {
     expect(find.text('Early read'), findsOneWidget);
   });
 
-  testWidgets('compact variant shows the short "Show another" control',
-      (tester) async {
+  testWidgets('compact variant shows the short "Show another" control', (
+    tester,
+  ) async {
     await _pump(tester, compact: true);
     expect(find.text('Another perspective'), findsOneWidget);
     expect(find.text('Use this check'), findsOneWidget);

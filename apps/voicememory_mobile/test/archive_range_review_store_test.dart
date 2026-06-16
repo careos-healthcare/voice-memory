@@ -5,18 +5,18 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 ArchiveRangeReview _review(String id) => ArchiveRangeReview(
-      id: id,
-      preset: ArchiveReviewRangePreset.thisWeek,
-      startDate: DateTime(2026, 6, 1),
-      endDate: DateTime(2026, 6, 6),
-      title: 'This week',
-      type: ArchiveRangeReviewType.repeated,
-      momentCount: 4,
-      patternCount: 1,
-      repeatedLine: 'This pattern showed up 3 times.',
-      nextCheck: 'What happens right before it shows up?',
-      keyMomentIds: const ['m1', 'm2'],
-    );
+  id: id,
+  preset: ArchiveReviewRangePreset.thisWeek,
+  startDate: DateTime(2026, 6, 1),
+  endDate: DateTime(2026, 6, 6),
+  title: 'This week',
+  type: ArchiveRangeReviewType.repeated,
+  momentCount: 4,
+  patternCount: 1,
+  repeatedLine: 'This pattern showed up 3 times.',
+  nextCheck: 'What happens right before it shows up?',
+  keyMomentIds: const ['m1', 'm2'],
+);
 
 Future<ArchiveRangeReviewStore> _store(String stamp) async {
   await AppServices.resetForTest(

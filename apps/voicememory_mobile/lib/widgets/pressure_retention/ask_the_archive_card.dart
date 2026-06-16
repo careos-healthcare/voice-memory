@@ -30,8 +30,7 @@ class AskTheArchiveCard extends StatefulWidget {
   final VoidCallback? onUnlock;
 
   static const title = 'Ask the archive';
-  static const subtitle =
-      'Evidence-based answers from your own saved moments.';
+  static const subtitle = 'Evidence-based answers from your own saved moments.';
   static const lockedSubtitle =
       'Ask your archive what this pressure is trying to prove — with Pro.';
 
@@ -77,9 +76,9 @@ class _AskTheArchiveCardState extends State<AskTheArchiveCard> {
             widget.locked
                 ? AskTheArchiveCard.lockedSubtitle
                 : AskTheArchiveCard.subtitle,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           for (final question in questions) ...[
@@ -106,8 +105,9 @@ class _AskTheArchiveCardState extends State<AskTheArchiveCard> {
                 _answer!.text,
                 style: ArchiveMobileTypography.body(context).copyWith(
                   color: AppColors.textPrimary,
-                  fontStyle:
-                      _answer!.hasEvidence ? FontStyle.normal : FontStyle.italic,
+                  fontStyle: _answer!.hasEvidence
+                      ? FontStyle.normal
+                      : FontStyle.italic,
                 ),
               ),
             ),

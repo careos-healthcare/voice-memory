@@ -12,10 +12,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Single post-save belief insight — one card, one next action.
 class PostSaveBeliefInsight extends StatelessWidget {
-  const PostSaveBeliefInsight({
-    super.key,
-    required this.entries,
-  });
+  const PostSaveBeliefInsight({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 
@@ -83,9 +80,7 @@ class PostSaveBeliefInsight extends StatelessWidget {
           width: 100,
           child: Text(label, style: VoiceMemoryTypography.metadataStyle()),
         ),
-        Expanded(
-          child: Text(value, style: VoiceMemoryTypography.bodyStyle()),
-        ),
+        Expanded(child: Text(value, style: VoiceMemoryTypography.bodyStyle())),
       ],
     );
   }
@@ -105,10 +100,11 @@ class PostSaveBeliefInsight extends StatelessWidget {
     final n = needle.toLowerCase();
     var count = 0;
     for (final e in entries) {
-      final blob = '${e.transcript} ${e.reflection.concreteObservation} '
-              '${e.reflection.repeatedSignal} '
-              '${e.reflection.recurringThemes.join(' ')}'
-          .toLowerCase();
+      final blob =
+          '${e.transcript} ${e.reflection.concreteObservation} '
+                  '${e.reflection.repeatedSignal} '
+                  '${e.reflection.recurringThemes.join(' ')}'
+              .toLowerCase();
       if (blob.contains(n.split(' ').first)) count++;
     }
     return count.clamp(1, entries.length);

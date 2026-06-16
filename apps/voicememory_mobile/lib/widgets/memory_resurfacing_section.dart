@@ -19,7 +19,8 @@ class MemoryResurfacingSection extends StatefulWidget {
   final bool showStats;
 
   @override
-  State<MemoryResurfacingSection> createState() => _MemoryResurfacingSectionState();
+  State<MemoryResurfacingSection> createState() =>
+      _MemoryResurfacingSectionState();
 }
 
 class _MemoryResurfacingSectionState extends State<MemoryResurfacingSection> {
@@ -123,10 +124,7 @@ class _MemoryResurfacingSectionState extends State<MemoryResurfacingSection> {
 }
 
 class _MemoryResurfacingCard extends StatelessWidget {
-  const _MemoryResurfacingCard({
-    required this.data,
-    required this.onTap,
-  });
+  const _MemoryResurfacingCard({required this.data, required this.onTap});
 
   final MemoryResurfacingCardData data;
   final VoidCallback onTap;
@@ -170,7 +168,11 @@ class _MemoryResurfacingCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 data.beliefRelation,
-                style: const TextStyle(fontSize: 12, color: AppTheme.muted, height: 1.35),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppTheme.muted,
+                  height: 1.35,
+                ),
               ),
             ],
           ),

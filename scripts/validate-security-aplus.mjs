@@ -28,6 +28,7 @@ const deletionChecks = [
   ["billing_entitlements", /billing_entitlements|deleteServerBilling/],
   ["resurfacing_events", /resurfacing_events/],
   ["api_usage", /api_usage/],
+  ["openai_daily_spend", /openai_daily_spend/],
 ];
 for (const [label, re] of deletionChecks) {
   if (!re.test(accountDel)) failures.push(`account-deletion missing ${label}`);

@@ -29,7 +29,7 @@ const TEMPLATE_OPENERS: RegExp[] = [
   /^More of your reflections /i,
   /^Your archive has /i,
   /^Older reflections are /i,
-  /^VoiceMemory /i,
+  /^ArchiveMe /i,
 ];
 
 const UNIVERSAL_PHRASES: RegExp[] = [

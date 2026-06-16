@@ -24,7 +24,8 @@ class ArchiveInsightsEngine {
       return ArchiveInsightsSnapshot.empty;
     }
 
-    final beliefsInput = candidateBeliefs ?? _defaultCandidates(entries, discoverFeed);
+    final beliefsInput =
+        candidateBeliefs ?? _defaultCandidates(entries, discoverFeed);
     final beliefBundles = BeliefEvidenceEngine().build(
       entries: entries,
       candidateBeliefs: beliefsInput,

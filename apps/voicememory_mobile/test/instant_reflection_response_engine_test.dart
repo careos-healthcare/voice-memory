@@ -31,7 +31,9 @@ void main() {
 
   test('returns null for short transcript', () {
     expect(
-      engine.respond(entry: _entry(id: '1', transcript: 'too short')),
+      engine.respond(
+        entry: _entry(id: '1', transcript: 'too short'),
+      ),
       isNull,
     );
   });

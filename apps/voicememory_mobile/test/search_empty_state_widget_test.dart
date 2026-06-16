@@ -109,7 +109,9 @@ void main() {
       onboardingGate.markComplete();
     });
 
-    testWidgets('does not autofocus search field when screen opens', (tester) async {
+    testWidgets('does not autofocus search field when screen opens', (
+      tester,
+    ) async {
       await tester.pumpWidget(_searchTestApp(child: const SearchScreen()));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -119,8 +121,9 @@ void main() {
       expect(_focusNodeHasFocus(tester), isFalse);
     });
 
-    testWidgets('shows SearchEmptyState when there are no recordings',
-        (tester) async {
+    testWidgets('shows SearchEmptyState when there are no recordings', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(400, 960));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 

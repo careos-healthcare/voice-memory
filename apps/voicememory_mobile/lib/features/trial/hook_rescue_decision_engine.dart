@@ -31,13 +31,15 @@ class HookRescueDecisionEngine {
     final questionNotUsefulRate = questionRatedTotal == 0
         ? 0.0
         : d.checkInQuestionRatedNotUseful / questionRatedTotal;
-    final questionNotUsefulHigh = d.checkInQuestionRatedNotUseful >= 1 &&
+    final questionNotUsefulHigh =
+        d.checkInQuestionRatedNotUseful >= 1 &&
         d.checkInQuestionRatedNotUseful >= positiveQuestion;
     final sharperQuestion = didNotCareRate >= 0.25 || questionNotUsefulHigh;
 
     // betterResult: people return but do not find the result useful.
-    final resultNotUsefulRate =
-        completed == 0 ? 0.0 : d.resultNotUsefulCount / completed;
+    final resultNotUsefulRate = completed == 0
+        ? 0.0
+        : d.resultNotUsefulCount / completed;
     final topNotUsefulReasonCount = d.notUsefulReasonCounts.isEmpty
         ? 0
         : d.notUsefulReasonCounts.values.reduce((a, b) => a > b ? a : b);
@@ -46,8 +48,8 @@ class HookRescueDecisionEngine {
 
     // betterFirstRecord: people struggle to save the first moment.
     final noReflectionYet = summary.firstReflectionSaved == 0 && created == 0;
-    final startedButNotSaved = summary.recordingStartedCount >= 1 &&
-        summary.firstReflectionSaved == 0;
+    final startedButNotSaved =
+        summary.recordingStartedCount >= 1 && summary.firstReflectionSaved == 0;
     final betterFirstRecord = noReflectionYet || startedButNotSaved;
 
     // Priority order for the primary fix.
@@ -140,7 +142,8 @@ class HookRescueDecisionEngine {
 
   HookRescueConfidence _confidence(TrialSummaryModel summary) {
     final HookDiagnosisSummary d = summary.hookDiagnosis;
-    final volume = d.checkInsCreated +
+    final volume =
+        d.checkInsCreated +
         d.questionRatedTotal +
         d.resultRatedTotal +
         summary.recordingStartedCount;

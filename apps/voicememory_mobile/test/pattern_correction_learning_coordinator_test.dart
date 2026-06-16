@@ -56,19 +56,19 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    final learning = await PatternCorrectionLearningCoordinator
-        .recordFirstSessionCorrection(
-      originalPattern: _pattern(
-        title: 'Taking responsibility before asking for help',
-        categoryId: 'responsibility',
-      ),
-      correctedPattern: _pattern(
-        title: 'The same worry returning',
-        categoryId: 'worry',
-      ),
-      reflectionText:
-          'I keep saying yes and feel guilty but the same worry came back',
-    );
+    final learning =
+        await PatternCorrectionLearningCoordinator.recordFirstSessionCorrection(
+          originalPattern: _pattern(
+            title: 'Taking responsibility before asking for help',
+            categoryId: 'responsibility',
+          ),
+          correctedPattern: _pattern(
+            title: 'The same worry returning',
+            categoryId: 'worry',
+          ),
+          reflectionText:
+              'I keep saying yes and feel guilty but the same worry came back',
+        );
 
     expect(learning.correctedCategoryId, 'worry');
     expect(learning.reflectionSnippet.length, lessThanOrEqualTo(160));
@@ -77,29 +77,32 @@ void main() {
     expect(await store.readAll(), hasLength(1));
   });
 
-  test('preferredCategoryBoosts includes recently corrected category', () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+  test(
+    'preferredCategoryBoosts includes recently corrected category',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
 
-    await PatternCorrectionLearningCoordinator.recordFirstSessionCorrection(
-      originalPattern: _pattern(
-        title: 'Taking responsibility before asking for help',
-        categoryId: 'responsibility',
-      ),
-      correctedPattern: _pattern(
-        title: 'The same worry returning',
-        categoryId: 'worry',
-      ),
-      reflectionText: 'worried and guilty',
-    );
+      await PatternCorrectionLearningCoordinator.recordFirstSessionCorrection(
+        originalPattern: _pattern(
+          title: 'Taking responsibility before asking for help',
+          categoryId: 'responsibility',
+        ),
+        correctedPattern: _pattern(
+          title: 'The same worry returning',
+          categoryId: 'worry',
+        ),
+        reflectionText: 'worried and guilty',
+      );
 
-    final boosts =
-        await PatternCorrectionLearningCoordinator.preferredCategoryBoosts();
-    expect(
-      boosts[FirstSessionPatternCategory.worry],
-      PatternCorrectionLearningCoordinator.categoryBoostAmount,
-    );
-  });
+      final boosts =
+          await PatternCorrectionLearningCoordinator.preferredCategoryBoosts();
+      expect(
+        boosts[FirstSessionPatternCategory.worry],
+        PatternCorrectionLearningCoordinator.categoryBoostAmount,
+      );
+    },
+  );
 
   test('recentCorrectionForReflection matches snippet overlap', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
@@ -117,10 +120,10 @@ void main() {
       reflectionText: 'Exhausted after a long week at work',
     );
 
-    final recent = await PatternCorrectionLearningCoordinator
-        .recentCorrectionForReflection(
-      'Exhausted after a long week at work',
-    );
+    final recent =
+        await PatternCorrectionLearningCoordinator.recentCorrectionForReflection(
+          'Exhausted after a long week at work',
+        );
     expect(recent?.correctedCategoryId, 'burnout');
   });
 

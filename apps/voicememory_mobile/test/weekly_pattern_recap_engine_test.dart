@@ -15,22 +15,21 @@ PatternMemory _memory({
   List<String> helpedMoments = const [],
   List<String> harderMoments = const [],
   PatternMemoryStatus status = PatternMemoryStatus.active,
-}) =>
-    PatternMemory(
-      id: 'pm1',
-      patternTitle: 'saying yes when you mean no',
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 4),
-      checkInCount: checkInCount,
-      showedAgainCount: showedAgainCount,
-      lighterCount: lighterCount,
-      heavierCount: heavierCount,
-      changedCount: changedCount,
-      commonBeforeMoments: commonBeforeMoments,
-      helpedMoments: helpedMoments,
-      harderMoments: harderMoments,
-      status: status,
-    );
+}) => PatternMemory(
+  id: 'pm1',
+  patternTitle: 'saying yes when you mean no',
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 4),
+  checkInCount: checkInCount,
+  showedAgainCount: showedAgainCount,
+  lighterCount: lighterCount,
+  heavierCount: heavierCount,
+  changedCount: changedCount,
+  commonBeforeMoments: commonBeforeMoments,
+  helpedMoments: helpedMoments,
+  harderMoments: harderMoments,
+  status: status,
+);
 
 void main() {
   test('checkInCount < 4 gives notEnoughYet / shouldShow false', () {

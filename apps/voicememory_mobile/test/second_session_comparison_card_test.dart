@@ -21,11 +21,13 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: SecondSessionComparisonCard(
-            comparison: comparison,
-            onGoDeeper: () {},
-            onRecordNextEvidence: () {},
-            onNotTheSame: () {},
+          body: SingleChildScrollView(
+            child: SecondSessionComparisonCard(
+              comparison: comparison,
+              onGoDeeper: () {},
+              onRecordNextEvidence: () {},
+              onNotTheSame: () {},
+            ),
           ),
         ),
       ),
@@ -39,6 +41,43 @@ void main() {
     );
     expect(find.text(ConsumerUiCopy.secondSessionNotTheSame), findsOneWidget);
     expect(find.text(ConsumerUiCopy.secondSessionWhatRepeated), findsOneWidget);
+  });
+
+  testWidgets('fallback possible repeat card shows screenshot-ready copy',
+      (tester) async {
+    const comparison = SecondSessionComparison(
+      hasEnoughData: true,
+      title: ConsumerUiCopy.secondSessionPossibleRepeatTitle,
+      body: ConsumerUiCopy.secondSessionSoundsClose,
+      whatRepeated: ConsumerUiCopy.secondSessionFallbackWhatRepeated,
+      whatChanged: ConsumerUiCopy.secondSessionFallbackWhatChanged,
+      whatToTestNext: ConsumerUiCopy.secondSessionFallbackWhatToTestNext,
+      possibleRepeat: true,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: SecondSessionComparisonCard(
+              comparison: comparison,
+              onGoDeeper: () {},
+              onRecordNextEvidence: () {},
+              onNotTheSame: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(
+      find.text(ConsumerUiCopy.secondSessionPossibleRepeatTitle),
+      findsOneWidget,
+    );
+    expect(find.text(ConsumerUiCopy.secondSessionSoundsClose), findsOneWidget);
+    expect(find.text('Your words sound like'), findsNothing);
+    expect(find.text('Using achievement to feel safe'), findsNothing);
   });
 
   testWidgets('insufficient data shows record CTA', (tester) async {

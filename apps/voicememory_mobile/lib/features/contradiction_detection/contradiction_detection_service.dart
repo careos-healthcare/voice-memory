@@ -15,7 +15,10 @@ class ContradictionDetectionService {
         currentBelief?.trim() ?? archiveBeliefFromReflections(entries)?.trim();
     final eligible = archiveEligibleEvidenceEntries(entries);
     if (eligible.length < 2) {
-      return ContradictionDetectionResult(reports: const [], currentBelief: belief);
+      return ContradictionDetectionResult(
+        reports: const [],
+        currentBelief: belief,
+      );
     }
 
     final statements = archivedStatementsFromEntries(eligible);
@@ -46,19 +49,25 @@ class ContradictionDetectionService {
   }
 }
 
-ContradictionReport? _comparePair(ArchivedStatement earlier, ArchivedStatement later) {
+ContradictionReport? _comparePair(
+  ArchivedStatement earlier,
+  ArchivedStatement later,
+) {
   final sharedThemes = earlier.themes.intersection(later.themes).toList();
   final sharedKeywords = earlier.keywords.intersection(later.keywords);
 
   final hasTopicLink = sharedThemes.isNotEmpty || sharedKeywords.length >= 2;
   if (!hasTopicLink) return null;
 
-  final hardOpposition = (earlier.isStrongNegative && later.isPositive) ||
+  final hardOpposition =
+      (earlier.isStrongNegative && later.isPositive) ||
       (earlier.isPositive && later.isStrongNegative);
   final softToPositive =
-      (earlier.isSoftNegative || earlier.softNegativeScore > 0) && later.isPositive;
+      (earlier.isSoftNegative || earlier.softNegativeScore > 0) &&
+      later.isPositive;
   final gradualPolarity = softToPositive && !hardOpposition;
-  final opposingPolarity = hardOpposition ||
+  final opposingPolarity =
+      hardOpposition ||
       ((earlier.isNegative && later.isPositive) ||
           (earlier.isPositive && later.isNegative));
 
@@ -70,7 +79,8 @@ ContradictionReport? _comparePair(ArchivedStatement earlier, ArchivedStatement l
   if (gradualPolarity) {
     kind = ContradictionKind.gradualShift;
     confidence = 58;
-    if (earlier.isSoftNegative || earlier.text.toLowerCase().contains('uncomfortable')) {
+    if (earlier.isSoftNegative ||
+        earlier.text.toLowerCase().contains('uncomfortable')) {
       confidence += 8;
     }
     if (later.isPositive) confidence += 8;

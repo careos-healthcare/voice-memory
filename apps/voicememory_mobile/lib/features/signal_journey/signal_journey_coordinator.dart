@@ -46,7 +46,7 @@ class SignalJourneyAcceptInput {
 }
 
 /// Orchestrates signal journey lifecycle — create, update, reject, archive.
-abstract final class SignalJourneyCoordinator {
+abstract class SignalJourneyCoordinator {
   SignalJourneyCoordinator._();
 
   static const _engine = SignalJourneyEngine();
@@ -174,7 +174,10 @@ abstract final class SignalJourneyCoordinator {
     return completed >= 1;
   }
 
-  static SignalJourney _newJourney(SignalJourneyAcceptInput input, DateTime now) {
+  static SignalJourney _newJourney(
+    SignalJourneyAcceptInput input,
+    DateTime now,
+  ) {
     final supporting = <String>[];
     if (input.entryId != null) supporting.add(input.entryId!);
     return SignalJourney(

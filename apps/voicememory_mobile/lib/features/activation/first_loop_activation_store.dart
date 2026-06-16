@@ -26,15 +26,17 @@ class FirstLoopActivationStore {
   }
 
   Future<FirstLoopActivationState> _mutate(
-    FirstLoopActivationState Function(FirstLoopActivationState current) change, {
+    FirstLoopActivationState Function(FirstLoopActivationState current)
+    change, {
     required FirstLoopActivationStage atLeast,
   }) async {
     final raw = await _prefs.updateMap(_key, (current) {
       final state = FirstLoopActivationState.fromJson(current);
       final next = change(state);
       // Stage only moves forward: max(current, target).
-      final targetIndex =
-          atLeast.index > state.stage.index ? atLeast.index : state.stage.index;
+      final targetIndex = atLeast.index > state.stage.index
+          ? atLeast.index
+          : state.stage.index;
       return next
           .copyWith(stage: FirstLoopActivationStage.values[targetIndex])
           .toJson();

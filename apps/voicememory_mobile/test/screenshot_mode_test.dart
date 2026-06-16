@@ -4,6 +4,7 @@ import 'package:voicememory_mobile/features/archive_review/archive_range_review_
 import 'package:voicememory_mobile/config/screenshot_sample_data.dart';
 import 'package:voicememory_mobile/features/activation/first_loop_activation_model.dart';
 import 'package:voicememory_mobile/features/activation/first_three_journey_engine.dart';
+import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/tomorrow_return/return_capture_model.dart';
 import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_model.dart';
 import 'package:voicememory_mobile/features/tomorrow_return/watch_for_model.dart';
@@ -66,8 +67,10 @@ void main() {
   test('objective samples have title and body', () {
     expect(ScreenshotSampleData.objectiveDueCheckSample.title, isNotEmpty);
     expect(ScreenshotSampleData.objectiveFirstMomentSample.body, isNotEmpty);
-    expect(ScreenshotSampleData.objectiveNextReadySample.checkQuestion,
-        isNotNull);
+    expect(
+      ScreenshotSampleData.objectiveNextReadySample.checkQuestion,
+      isNotNull,
+    );
   });
 
   test('retention preview is inert when screenshot mode is off', () {
@@ -201,8 +204,10 @@ void main() {
 
   test('archive memory sample is a filled-in remembered pattern', () {
     final summary = ScreenshotSampleData.archiveMemorySummarySample;
-    expect(summary.primaryMemoryLine,
-        'You often take responsibility before asking for help.');
+    expect(
+      summary.primaryMemoryLine,
+      'You often take responsibility before asking for help.',
+    );
     expect(summary.clarityLabel, 'Clear pattern');
     expect(summary.basedOnMomentCount, 8);
     expect(summary.basedOnWeekCount, 3);
@@ -235,16 +240,21 @@ void main() {
     expect(beliefs.stats.reflectionsAnalysed, 12);
     expect(beliefs.current.first.confidencePercent, 78);
     expect(beliefs.current.first.timeline.length, 3);
-    expect(ScreenshotSampleData.changingStories.first.detail, contains(
-      'cost of carrying everything alone',
-    ));
+    expect(
+      ScreenshotSampleData.changingStories.first.detail,
+      contains('cost of carrying everything alone'),
+    );
     expect(ScreenshotSampleData.insightsSnapshot.blindSpots, isNotEmpty);
     expect(
       ScreenshotSampleData.insightsSnapshot.blindSpots.first.summary,
       contains('support you need'),
     );
     expect(
-      ScreenshotSampleData.insightsSnapshot.strongestBelief?.supportingEvidence.length,
+      ScreenshotSampleData
+          .insightsSnapshot
+          .strongestBelief
+          ?.supportingEvidence
+          .length,
       3,
     );
     expect(
@@ -269,10 +279,7 @@ void main() {
       ScreenshotSampleData.changeSummarySample.title,
       contains('still here'),
     );
-    expect(
-      ScreenshotSampleData.weeklyRecapSample.title,
-      contains('week'),
-    );
+    expect(ScreenshotSampleData.weeklyRecapSample.title, contains('week'));
     final watchPending = ScreenshotSampleData.watchForPendingForToday(
       DateTime(2026, 5, 26),
     );
@@ -301,14 +308,14 @@ void main() {
       contains('responsibility'),
     );
     final journey0 = ScreenshotSampleData.firstThreeJourneyForCount(0);
-    expect(journey0.progressLabel, '0 of 3 reflections');
-    expect(journey0.nextAction, 'Record your first moment');
+    expect(journey0.progressLabel, 'Start your archive');
+    expect(journey0.nextAction, 'Record one moment');
     final journey3 = ScreenshotSampleData.firstThreeJourneyForCount(3);
     expect(journey3.completed, isTrue);
-    expect(journey3.nextAction, 'View your pattern');
+    expect(journey3.nextAction, 'View archive');
     expect(
       const FirstThreeJourneyEngine().build(reflectionCount: 2).title,
-      contains('compare'),
+      FirstThreeSessionCopy.session2StartingToNoticeTitle,
     );
   });
 
@@ -335,10 +342,7 @@ void main() {
 
   test('pattern memory sample has counts and next question', () {
     final memory = ScreenshotSampleData.patternMemorySample;
-    expect(
-      memory.patternTitle,
-      'Taking responsibility before asking for help',
-    );
+    expect(memory.patternTitle, 'Taking responsibility before asking for help');
     expect(memory.checkInCount, 4);
     expect(memory.showedAgainCount, 2);
     expect(memory.lighterCount, 1);
@@ -346,10 +350,7 @@ void main() {
     expect(memory.status.name, 'active');
     expect(memory.commonBeforeMoments, hasLength(2));
     expect(memory.helpedMoments, contains('paused before answering'));
-    expect(
-      memory.nextBestQuestion,
-      'What happens right before it shows up?',
-    );
+    expect(memory.nextBestQuestion, 'What happens right before it shows up?');
   });
 
   test('pattern progress sample shows the what-changed payoff', () {

@@ -1,6 +1,6 @@
 # Mobile subscription strategy
 
-VoiceMemory keeps **one entitlement layer** (`lib/entitlement/entitlements.ts`) regardless of how the user pays.
+ArchiveMe keeps **one entitlement layer** (`lib/entitlement/entitlements.ts`) regardless of how the user pays.
 
 ## Web (current path)
 

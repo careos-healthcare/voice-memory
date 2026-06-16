@@ -6,13 +6,13 @@ import 'package:voicememory_mobile/features/export/private_recap_model.dart';
 import 'package:voicememory_mobile/features/export/private_recap_service.dart';
 
 PrivateRecap _recap() => const PrivateRecap(
-      type: PrivateRecapType.pattern,
-      title: 'Taking on too much',
-      dateRange: 'Seen 4 times',
-      summary: 'Based on 4 check-ins',
-      usefulMoments: ['Gets lighter when: I paused'],
-      nextCheck: 'What happens right before it shows up?',
-    );
+  type: PrivateRecapType.pattern,
+  title: 'Taking on too much',
+  dateRange: 'Seen 4 times',
+  summary: 'Based on 4 check-ins',
+  usefulMoments: ['Gets lighter when: I paused'],
+  nextCheck: 'What happens right before it shows up?',
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +23,9 @@ void main() {
 
   setUp(() {
     clipboardText = null;
-    messenger.setMockMethodCallHandler(SystemChannels.platform,
-        (MethodCall call) async {
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (
+      MethodCall call,
+    ) async {
       if (call.method == 'Clipboard.setData') {
         clipboardText = (call.arguments as Map)['text'] as String?;
         return null;
@@ -47,13 +48,15 @@ void main() {
     expect(clipboardText, recap.plainText);
   });
 
-  test('shareText falls back to copy when native share is unavailable',
-      () async {
-    final recap = _recap();
-    final shared = await PrivateRecapService.shareText(recap);
-    expect(shared, isFalse);
-    expect(clipboardText, recap.plainText);
-  });
+  test(
+    'shareText falls back to copy when native share is unavailable',
+    () async {
+      final recap = _recap();
+      final shared = await PrivateRecapService.shareText(recap);
+      expect(shared, isFalse);
+      expect(clipboardText, recap.plainText);
+    },
+  );
 
   test('saveText writes a file with the recap text', () async {
     final dir = await Directory.systemTemp.createTemp('vm_recap_test');

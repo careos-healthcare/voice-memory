@@ -28,7 +28,9 @@ class AuthService {
         _cached = await _api.getSession();
       }
     } catch (e, st) {
-      debugPrint('Auth: persisted session refresh failed — continuing startup: $e');
+      debugPrint(
+        'Auth: persisted session refresh failed — continuing startup: $e',
+      );
       if (kDebugMode) {
         debugPrint('$st');
       }

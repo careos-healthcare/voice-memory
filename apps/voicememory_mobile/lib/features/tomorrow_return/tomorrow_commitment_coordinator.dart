@@ -8,7 +8,7 @@ import 'tomorrow_commitment_store.dart';
 import 'tomorrow_return_loop_models.dart';
 
 /// Creates, completes, and resolves tomorrow commitments.
-abstract final class TomorrowCommitmentCoordinator {
+abstract class TomorrowCommitmentCoordinator {
   TomorrowCommitmentCoordinator._();
 
   static TomorrowCommitmentStore _store() =>
@@ -22,7 +22,9 @@ abstract final class TomorrowCommitmentCoordinator {
     return _store().read();
   }
 
-  static Future<TomorrowCommitmentDisplayState> displayState({DateTime? now}) async {
+  static Future<TomorrowCommitmentDisplayState> displayState({
+    DateTime? now,
+  }) async {
     final clock = now ?? DateTime.now();
     final commitment = await load(now: clock);
     if (commitment == null) return TomorrowCommitmentDisplayState.hidden;

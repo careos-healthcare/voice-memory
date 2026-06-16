@@ -1,4 +1,4 @@
-# VoiceMemory Product Principles
+# ArchiveMe Product Principles
 
 Permanent rules for a long-term personal archive. When in doubt, choose silence, continuity, and trust.
 

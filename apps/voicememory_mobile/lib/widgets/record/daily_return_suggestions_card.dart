@@ -27,7 +27,7 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
   /// Optional tap detail for local attribution — which suggestion was tapped
   /// and whether it was the primary "Start here today" pick.
   final void Function(DailyReturnSuggestion suggestion, bool isPrimary)?
-      onSuggestionTap;
+  onSuggestionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,8 @@ class _PrimaryRecommendation extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label: '${DailyReturnSuggestionSet.primaryHeading}. '
+      label:
+          '${DailyReturnSuggestionSet.primaryHeading}. '
           '${suggestion.title}. ${suggestion.prompt}',
       child: InkWell(
         onTap: onTap,
@@ -209,8 +210,9 @@ class _SuggestionRow extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color:
-                  selected ? AppColors.accentPrimary : AppColors.borderSubtle,
+              color: selected
+                  ? AppColors.accentPrimary
+                  : AppColors.borderSubtle,
             ),
             color: selected ? AppColors.accentLight : Colors.white,
           ),

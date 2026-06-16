@@ -36,7 +36,7 @@ class PatternHypothesisEngine {
     final watchNext = selected?.nextPrompt.trim().isNotEmpty == true
         ? selected!.nextPrompt
         : (comparison.whatToTestNext ??
-            'Notice whether ${latestPattern.watchForText}.');
+              'Notice whether ${latestPattern.watchForText}.');
 
     return PatternHypothesis(
       hasEnoughData: true,

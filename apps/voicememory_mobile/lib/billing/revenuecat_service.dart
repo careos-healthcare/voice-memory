@@ -47,16 +47,23 @@ class RevenueCatService {
 
   String? get _apiKey {
     if (Platform.isIOS) {
-      const key = String.fromEnvironment('REVENUECAT_IOS_API_KEY', defaultValue: '');
+      const key = String.fromEnvironment(
+        'REVENUECAT_IOS_API_KEY',
+        defaultValue: '',
+      );
       if (key.trim().isNotEmpty) return key.trim();
     }
     if (Platform.isAndroid) {
-      const key =
-          String.fromEnvironment('REVENUECAT_ANDROID_API_KEY', defaultValue: '');
+      const key = String.fromEnvironment(
+        'REVENUECAT_ANDROID_API_KEY',
+        defaultValue: '',
+      );
       if (key.trim().isNotEmpty) return key.trim();
     }
-    const fallback =
-        String.fromEnvironment('REVENUECAT_API_KEY', defaultValue: '');
+    const fallback = String.fromEnvironment(
+      'REVENUECAT_API_KEY',
+      defaultValue: '',
+    );
     return fallback.trim().isEmpty ? null : fallback.trim();
   }
 

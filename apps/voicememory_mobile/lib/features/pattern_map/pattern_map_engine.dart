@@ -12,10 +12,12 @@ PatternMap buildPatternMap({
   List<KeyMoment> moments = const [],
 }) {
   final related = moments
-      .where((m) =>
-          m.patternTitle != null &&
-          m.patternTitle!.trim().toLowerCase() ==
-              memory.patternTitle.trim().toLowerCase())
+      .where(
+        (m) =>
+            m.patternTitle != null &&
+            m.patternTitle!.trim().toLowerCase() ==
+                memory.patternTitle.trim().toLowerCase(),
+      )
       .toList();
 
   final seenCount = memory.checkInCount > 0
@@ -28,13 +30,14 @@ PatternMap buildPatternMap({
     patternTitle: memory.patternTitle,
     seenCount: seenCount,
     lastSeenDate: lastSeen,
-    usuallyStartsBefore: _first(memory.commonBeforeMoments) ??
+    usuallyStartsBefore:
+        _first(memory.commonBeforeMoments) ??
         _fromMoments(related, tag: 'pressure'),
     oftenFeelsLike: _oftenFeelsLike(memory),
-    getsLighterWhen: _first(memory.helpedMoments) ??
-        _fromMoments(related, hint: 'lighter'),
-    getsHeavierWhen: _first(memory.harderMoments) ??
-        _fromMoments(related, hint: 'heavier'),
+    getsLighterWhen:
+        _first(memory.helpedMoments) ?? _fromMoments(related, hint: 'lighter'),
+    getsHeavierWhen:
+        _first(memory.harderMoments) ?? _fromMoments(related, hint: 'heavier'),
     nextCheck: (memory.nextBestQuestion ?? '').trim().isNotEmpty
         ? memory.nextBestQuestion!.trim()
         : _fallbackNextCheck,

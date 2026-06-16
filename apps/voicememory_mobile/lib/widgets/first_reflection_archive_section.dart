@@ -10,10 +10,7 @@ import 'top_themes_section.dart';
 
 /// Early archive (< 5 reflections) — noticed themes and phrases, not empty belief UI.
 class FirstReflectionArchiveSection extends StatelessWidget {
-  const FirstReflectionArchiveSection({
-    super.key,
-    required this.entries,
-  });
+  const FirstReflectionArchiveSection({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 
@@ -108,7 +105,11 @@ class FirstReflectionArchiveSection extends StatelessWidget {
           child: Text(
             '$firstReflectionDisclaimer '
             '(${insights.reflectionCount} of $firstReflectionModeThreshold reflections so far.)',
-            style: const TextStyle(color: AppTheme.muted, height: 1.45, fontSize: 13),
+            style: const TextStyle(
+              color: AppTheme.muted,
+              height: 1.45,
+              fontSize: 13,
+            ),
           ),
         ),
         const SizedBox(height: 20),

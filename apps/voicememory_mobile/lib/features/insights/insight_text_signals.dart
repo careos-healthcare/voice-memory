@@ -2,7 +2,7 @@ import '../../models/journal_entry.dart';
 import '../contradiction_detection/statement_analysis.dart';
 
 /// Lexicons for measurable, evidence-only inference (no LLM).
-abstract final class InsightTextSignals {
+abstract class InsightTextSignals {
   InsightTextSignals._();
 
   static const desireMarkers = [

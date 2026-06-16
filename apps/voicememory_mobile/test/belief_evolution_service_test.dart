@@ -15,7 +15,8 @@ JournalEntry _entry({
   return JournalEntry(
     id: id,
     createdAt: at,
-    transcript: 'Transcript for $id with enough characters to count as evidence.',
+    transcript:
+        'Transcript for $id with enough characters to count as evidence.',
     durationSeconds: 30,
     reflection: Reflection(
       mood: '',

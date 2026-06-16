@@ -79,7 +79,8 @@ class HabitProofEngine {
       case HabitProofType.progressFound:
         return _ProofSpec(
           headline: 'Now there is something to compare.',
-          body: 'You can see whether this pattern is repeating, '
+          body:
+              'You can see whether this pattern is repeating, '
               'getting lighter, getting heavier, or changing.',
           proofLine: progress?.headline ?? 'Checked $count times.',
           nextLine: action?.question,

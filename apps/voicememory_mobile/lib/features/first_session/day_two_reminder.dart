@@ -17,13 +17,13 @@ enum DayTwoReminderOutcome { scheduled, permissionDenied, notAvailable }
 ///   never repeats.
 /// - Notification permission is requested only after the user explicitly
 ///   taps "Remind me tomorrow", and a denial fails quietly.
-abstract final class DayTwoReminder {
+abstract class DayTwoReminder {
   DayTwoReminder._();
 
   // Prompt copy.
   static const String promptTitle = 'Check this tomorrow?';
   static const String promptBody =
-      'ArchiveMe can remind you once to see whether this returned, faded, '
+      'ArchiveMe can remind you once to check whether this returned, faded, '
       'or changed.';
   static const String acceptLabel = 'Remind me tomorrow';
   static const String declineLabel = 'Not now';
@@ -49,8 +49,7 @@ abstract final class DayTwoReminder {
   static bool shouldOffer({
     required int entryCount,
     required bool alreadyResolved,
-  }) =>
-      entryCount == 1 && !alreadyResolved;
+  }) => entryCount == 1 && !alreadyResolved;
 }
 
 /// Handles persistence and scheduling for the day-2 reminder offer.
@@ -60,9 +59,9 @@ class DayTwoReminderCoordinator {
     MobilePrefsStore? prefs,
     CheckInReminderBackend? backend,
     DateTime Function()? now,
-  })  : _prefs = prefs,
-        _backend = backend,
-        _now = now ?? DateTime.now;
+  }) : _prefs = prefs,
+       _backend = backend,
+       _now = now ?? DateTime.now;
 
   final MobilePrefsStore? _prefs;
   final CheckInReminderBackend? _backend;

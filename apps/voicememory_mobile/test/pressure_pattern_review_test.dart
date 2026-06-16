@@ -30,18 +30,20 @@ PressureCheckInRecord _record({
 /// Five entries: dominant option `could_not_stop`, repeated `work` context,
 /// first (oldest) entry did not stop, two later stops.
 List<PressureCheckInRecord> _fiveRecords() => [
-      _record(id: 'e', daysAgo: 0, choseToStop: true, contextIds: const ['work']),
-      _record(id: 'd', daysAgo: 1, contextIds: const ['work']),
-      _record(id: 'c', daysAgo: 2, choseToStop: true, contextIds: const ['work']),
-      _record(id: 'b', daysAgo: 3, optionId: 'guilty_resting'),
-      _record(id: 'a', daysAgo: 4, contextIds: const ['personal']),
-    ];
+  _record(id: 'e', daysAgo: 0, choseToStop: true, contextIds: const ['work']),
+  _record(id: 'd', daysAgo: 1, contextIds: const ['work']),
+  _record(id: 'c', daysAgo: 2, choseToStop: true, contextIds: const ['work']),
+  _record(id: 'b', daysAgo: 3, optionId: 'guilty_resting'),
+  _record(id: 'a', daysAgo: 4, contextIds: const ['personal']),
+];
 
 Future<void> _pumpCard(WidgetTester tester, Widget child) async {
   await tester.binding.setSurfaceSize(const Size(390, 2400));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))),
+    MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: child)),
+    ),
   );
   await tester.pump();
 }
@@ -88,7 +90,10 @@ void main() {
       // Supported: first entry didn't stop, later entries did.
       final supported = engine.build(_fiveRecords());
       expect(supported.changeSummary, isNotNull);
-      expect(supported.changeSummary!.toLowerCase(), contains('chosen to stop'));
+      expect(
+        supported.changeSummary!.toLowerCase(),
+        contains('chosen to stop'),
+      );
 
       // Not supported: nobody ever stopped.
       final noStops = engine.build([
@@ -133,8 +138,11 @@ void main() {
         'guaranteed',
         'every time',
       ]) {
-        expect(allCopy, isNot(contains(overclaim)),
-            reason: 'review copy must not contain "$overclaim"');
+        expect(
+          allCopy,
+          isNot(contains(overclaim)),
+          reason: 'review copy must not contain "$overclaim"',
+        );
       }
       // No invented context from one-offs.
       expect(review.strongestTrigger!.toLowerCase(), isNot(contains('around')));
@@ -142,12 +150,17 @@ void main() {
   });
 
   group('Pattern review card', () {
-    testWidgets('free user sees preview + locked full review CTA',
-        (tester) async {
+    testWidgets('free user sees preview + locked full review CTA', (
+      tester,
+    ) async {
       final review = engine.build(_fiveRecords());
       await _pumpCard(
         tester,
-        PressurePatternReviewCard(review: review, isPro: false, onUnlock: () {}),
+        PressurePatternReviewCard(
+          review: review,
+          isPro: false,
+          onUnlock: () {},
+        ),
       );
 
       expect(find.text(PressurePatternReview.title), findsOneWidget);
@@ -189,10 +202,7 @@ void main() {
         find.text(PressurePatternReview.repeatingSectionTitle),
         findsOneWidget,
       );
-      expect(
-        find.text(PressurePatternReview.costSectionTitle),
-        findsOneWidget,
-      );
+      expect(find.text(PressurePatternReview.costSectionTitle), findsOneWidget);
       expect(
         find.text(PressurePatternReview.changeSectionTitle),
         findsOneWidget,
@@ -209,8 +219,9 @@ void main() {
   });
 
   group('Pressure Insights integration', () {
-    testWidgets('no review on screen with 4 entries (reveal only)',
-        (tester) async {
+    testWidgets('no review on screen with 4 entries (reveal only)', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 3600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -235,8 +246,9 @@ void main() {
       );
     });
 
-    testWidgets('5 entries show reveal + review, and CTA opens subscription',
-        (tester) async {
+    testWidgets('5 entries show reveal + review, and CTA opens subscription', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 4200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -304,8 +316,9 @@ void main() {
   });
 
   group('No VoiceMemory consumer copy', () {
-    testWidgets('free and pro review cards never show VoiceMemory',
-        (tester) async {
+    testWidgets('free and pro review cards never show VoiceMemory', (
+      tester,
+    ) async {
       final review = engine.build(_fiveRecords());
       await _pumpCard(
         tester,

@@ -6,10 +6,7 @@ import '../theme/voicememory_typography.dart';
 
 /// Compact archive stage hint — light card styling.
 class ArchiveQuickExplainCard extends StatelessWidget {
-  const ArchiveQuickExplainCard({
-    super.key,
-    required this.reflectionCount,
-  });
+  const ArchiveQuickExplainCard({super.key, required this.reflectionCount});
 
   final int reflectionCount;
 

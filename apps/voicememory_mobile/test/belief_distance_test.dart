@@ -5,7 +5,9 @@ import 'package:voicememory_mobile/features/pressure_retention/belief_distance_e
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/belief_distance_card.dart';
+import 'package:voicememory_mobile/widgets/pressure_retention/value_accuracy_feedback_row.dart';
 
 final DateTime _base = DateTime(2026, 6, 9, 12);
 
@@ -30,49 +32,45 @@ PressureCheckInRecord _record({
 
 /// Three entries whose notes repeat the same belief-like language.
 List<PressureCheckInRecord> _checkingBelief3() => [
-      _record(id: 'c0', daysAgo: 6, fear: 'I have to keep checking messages'),
-      _record(id: 'c1', daysAgo: 3, fear: 'Checking messages again at night'),
-      _record(
-        id: 'c2',
-        daysAgo: 0,
-        fear: 'I have to keep checking before I rest',
-      ),
-    ];
+  _record(id: 'c0', daysAgo: 6, fear: 'I have to keep checking messages'),
+  _record(id: 'c1', daysAgo: 3, fear: 'Checking messages again at night'),
+  _record(id: 'c2', daysAgo: 0, fear: 'I have to keep checking before I rest'),
+];
 
 /// Two entries sharing belief-like language — early, cautious territory.
 List<PressureCheckInRecord> _checkingBelief2() => [
-      _record(id: 'd0', daysAgo: 4, fear: 'I have to keep checking messages'),
-      _record(id: 'd1', daysAgo: 0, fear: 'Checking messages again tonight'),
-    ];
+  _record(id: 'd0', daysAgo: 4, fear: 'I have to keep checking messages'),
+  _record(id: 'd1', daysAgo: 0, fear: 'Checking messages again tonight'),
+];
 
 /// A real thread (shared work context) whose notes share no repeated words —
 /// a thread exists, but no belief-like phrase can be safely formed.
 List<PressureCheckInRecord> _threadWithoutRepeatedWords() => [
-      _record(id: 'w0', daysAgo: 7, contextIds: const ['work']),
-      _record(
-        id: 'w1',
-        daysAgo: 3,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(
-        id: 'w2',
-        daysAgo: 0,
-        contextIds: const ['work'],
-        fear: 'Too many open browser tabs at midnight',
-      ),
-    ];
+  _record(id: 'w0', daysAgo: 7, contextIds: const ['work']),
+  _record(
+    id: 'w1',
+    daysAgo: 3,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(
+    id: 'w2',
+    daysAgo: 0,
+    contextIds: const ['work'],
+    fear: 'Too many open browser tabs at midnight',
+  ),
+];
 
 String _allCopy(BeliefDistance belief) => [
-      belief.title,
-      belief.beliefLine,
-      belief.frequencyLine,
-      belief.distanceLine,
-      belief.confidenceLabel,
-      ...belief.evidenceSnippets,
-      ...belief.sourceTerms,
-      BeliefDistance.evidenceHeading,
-    ].join(' ');
+  belief.title,
+  belief.beliefLine,
+  belief.frequencyLine,
+  belief.distanceLine,
+  belief.confidenceLabel,
+  ...belief.evidenceSnippets,
+  ...belief.sourceTerms,
+  BeliefDistance.evidenceHeading,
+].join(' ');
 
 void main() {
   const engine = BeliefDistanceEngine();
@@ -81,9 +79,9 @@ void main() {
     test('no belief with fewer than 2 entries', () {
       expect(engine.build(const []).hasBelief, isFalse);
       expect(
-        engine
-            .build([_record(id: 'a', fear: 'I have to keep checking')])
-            .hasBelief,
+        engine.build([
+          _record(id: 'a', fear: 'I have to keep checking'),
+        ]).hasBelief,
         isFalse,
       );
     });
@@ -135,10 +133,7 @@ void main() {
     test('2 entries use the cautious starting-to-repeat title', () {
       final belief = engine.build(_checkingBelief2());
       expect(belief.hasBelief, isTrue);
-      expect(
-        belief.title,
-        'This may be a belief that is starting to repeat.',
-      );
+      expect(belief.title, 'This may be a belief that is starting to repeat.');
       expect(belief.confidenceLabel, 'Early signal');
       expect(
         belief.frequencyLine,
@@ -160,7 +155,11 @@ void main() {
     test('prefers a first-person pressure phrase over a newer plain note', () {
       final belief = engine.build([
         _record(id: 'm0', daysAgo: 4, fear: 'I have to keep checking messages'),
-        _record(id: 'm1', daysAgo: 0, fear: 'Checking messages crept back tonight'),
+        _record(
+          id: 'm1',
+          daysAgo: 0,
+          fear: 'Checking messages crept back tonight',
+        ),
       ]);
       expect(belief.hasBelief, isTrue);
       expect(
@@ -174,7 +173,8 @@ void main() {
         _record(
           id: 'p0',
           daysAgo: 3,
-          fear: 'A long winding lead-in sentence that rambles on for a while '
+          fear:
+              'A long winding lead-in sentence that rambles on for a while '
               'without getting anywhere near the point at all. '
               'I cannot stop checking messages.',
         ),
@@ -208,8 +208,11 @@ void main() {
       final realNotes = records.map((r) => r.fear).whereType<String>().toList();
 
       for (final snippet in belief.evidenceSnippets) {
-        expect(realNotes, contains(snippet),
-            reason: 'snippet must be an exact saved note: "$snippet"');
+        expect(
+          realNotes,
+          contains(snippet),
+          reason: 'snippet must be an exact saved note: "$snippet"',
+        );
       }
       // The quoted belief phrase itself is one of the user's saved notes.
       final quoted = RegExp('\u201C(.+)\u201D').firstMatch(belief.beliefLine);
@@ -242,8 +245,10 @@ void main() {
 
     test('source terms are capped at 3 and start with the repeated word', () {
       final belief = engine.build(_checkingBelief3());
-      expect(belief.sourceTerms.length,
-          lessThanOrEqualTo(BeliefDistance.maxTerms));
+      expect(
+        belief.sourceTerms.length,
+        lessThanOrEqualTo(BeliefDistance.maxTerms),
+      );
       expect(belief.sourceTerms.first, 'checking');
     });
   });
@@ -282,8 +287,11 @@ void main() {
           'regulated',
           'cured',
         ]) {
-          expect(lower, isNot(contains(banned)),
-              reason: 'copy must not contain "$banned"');
+          expect(
+            lower,
+            isNot(contains(banned)),
+            reason: 'copy must not contain "$banned"',
+          );
         }
         // ACT checked case-sensitively so "fact" stays allowed.
         expect(copy, isNot(contains('ACT')));
@@ -305,8 +313,11 @@ void main() {
           'fix',
           'definitely',
         ]) {
-          expect(copy, isNot(contains(banned)),
-              reason: 'copy must not contain "$banned"');
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'copy must not contain "$banned"',
+          );
         }
       }
     });
@@ -319,8 +330,9 @@ void main() {
   });
 
   group('Belief distance card', () {
-    testWidgets('renders title, belief, frequency, evidence, and distance',
-        (tester) async {
+    testWidgets('renders title, belief, frequency, evidence, and distance', (
+      tester,
+    ) async {
       final belief = engine.build(_checkingBelief3());
       await tester.pumpWidget(
         MaterialApp(
@@ -360,8 +372,9 @@ void main() {
       expect(find.textContaining('Pro'), findsNothing);
     });
 
-    testWidgets('renders nothing without a safely formed belief',
-        (tester) async {
+    testWidgets('renders nothing without a safely formed belief', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -375,30 +388,33 @@ void main() {
   });
 
   group('Pressure Insights integration', () {
-    testWidgets('renders the belief card when eligible, near the thread cards',
-        (tester) async {
-      await tester.binding.setSurfaceSize(const Size(390, 5200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: PressureInsightsScreen(
-            entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            records: _checkingBelief3(),
+    testWidgets(
+      'renders the belief card when eligible, near the thread cards',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(390, 5200));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: PressureInsightsScreen(
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              records: _checkingBelief3(),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('belief_distance_card')), findsOneWidget);
-      // Existing cards are not hidden by the new one.
-      expect(
-        find.byKey(const Key('thread_return_evidence_card')),
-        findsOneWidget,
-      );
-    });
+        expect(find.byKey(const Key('belief_distance_card')), findsOneWidget);
+        // Existing cards are not hidden by the new one.
+        expect(
+          find.byKey(const Key('thread_return_evidence_card')),
+          findsOneWidget,
+        );
+      },
+    );
 
-    testWidgets('hides the belief card when no phrase can be formed',
-        (tester) async {
+    testWidgets('hides the belief card when no phrase can be formed', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 5200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -417,6 +433,95 @@ void main() {
         find.byKey(const Key('thread_return_evidence_card')),
         findsOneWidget,
       );
+    });
+  });
+
+  group('Value accuracy feedback — belief distance card', () {
+    late List<({String event, Map<String, Object> properties})> captured;
+
+    setUp(() {
+      captured = [];
+      ActivationFunnelAnalytics.resetForTest();
+      ActivationFunnelAnalytics.captureForTest(
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
+      );
+    });
+
+    tearDown(ActivationFunnelAnalytics.resetForTest);
+
+    List<({String event, Map<String, Object> properties})> feedbackEvents() =>
+        captured
+            .where(
+              (e) =>
+                  e.event == ActivationFunnelAnalytics.valueFeedbackUseful ||
+                  e.event == ActivationFunnelAnalytics.valueFeedbackNotQuite,
+            )
+            .toList();
+
+    Future<void> pumpCard(WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: BeliefDistanceCard(
+                belief: const BeliefDistanceEngine().build(_checkingBelief3()),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+    }
+
+    testWidgets('feedback row renders on the card', (tester) async {
+      await pumpCard(tester);
+      expect(find.text(ValueAccuracyFeedbackRow.question), findsOneWidget);
+    });
+
+    testWidgets('Not quite logs without the belief phrase', (tester) async {
+      await pumpCard(tester);
+      await tester.tap(
+        find.byKey(const Key('value_feedback_not_quite_belief_distance')),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(ValueAccuracyFeedbackRow.notQuiteThanksLine),
+        findsOneWidget,
+      );
+      final events = feedbackEvents();
+      expect(events, hasLength(1));
+      expect(
+        events.single.event,
+        ActivationFunnelAnalytics.valueFeedbackNotQuite,
+      );
+      expect(events.single.properties, {'card_type': 'belief_distance'});
+      final flat = events.single.properties.values.join(' ').toLowerCase();
+      for (final word in const ['checking', 'messages', 'keep']) {
+        expect(flat, isNot(contains(word)));
+      }
+    });
+
+    testWidgets('one tap disables duplicate feedback', (tester) async {
+      await pumpCard(tester);
+      await tester.tap(
+        find.byKey(const Key('value_feedback_yes_belief_distance')),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('value_feedback_yes_belief_distance')),
+        findsNothing,
+      );
+      // The optional testimonial ask follows a useful rating.
+      expect(
+        find.byKey(const Key('value_testimonial_ask_belief_distance')),
+        findsOneWidget,
+      );
+      expect(feedbackEvents(), hasLength(1));
     });
   });
 }

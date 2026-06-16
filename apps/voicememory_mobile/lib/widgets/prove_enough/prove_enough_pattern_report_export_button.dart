@@ -51,7 +51,8 @@ class _ProveEnoughPatternReportExportButtonState
     setState(() => _busy = true);
     try {
       final report =
-          widget.initialReport ?? await ProveEnoughPatternReportService.loadReport();
+          widget.initialReport ??
+          await ProveEnoughPatternReportService.loadReport();
       if (!report.hasExportableContent) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -140,9 +141,9 @@ class _ProveEnoughPatternReportExportButtonState
             ),
             child: Text(
               ProveEnoughPatternReport.proGateTitle,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
           ),
         ],

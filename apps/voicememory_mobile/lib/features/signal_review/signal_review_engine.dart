@@ -81,9 +81,7 @@ class SignalReviewEngine {
         needsMoreEvidence: true,
         correctionTitle: previous?.correctionTitle,
         loopModeId: loopSpecific ? activeLoop!.id : previous?.loopModeId,
-        loopTitle: loopSpecific
-            ? activeLoop!.reviewTitle
-            : previous?.loopTitle,
+        loopTitle: loopSpecific ? activeLoop!.reviewTitle : previous?.loopTitle,
       );
     }
 
@@ -257,7 +255,8 @@ class SignalReviewEngine {
 
   String _watchNext(SignalJourney journey, SelectedSignalRecord? signal) {
     if (journey.nextPrompt.trim().isNotEmpty) return journey.nextPrompt;
-    final confirm = signal?.wouldConfirm?.trim() ?? journey.wouldConfirm?.trim();
+    final confirm =
+        signal?.wouldConfirm?.trim() ?? journey.wouldConfirm?.trim();
     if (confirm != null && confirm.isNotEmpty) return confirm;
     return _journeyEngine.completionWatchNext(journey);
   }
@@ -308,7 +307,10 @@ class SignalReviewEngine {
     LoopMode? activeLoop,
   }) {
     if (activeLoop?.isFullyImplementedLoop == true) {
-      return _loopEngine.nextPrompt(activeLoop!, rotation: journey.supportingCount);
+      return _loopEngine.nextPrompt(
+        activeLoop!,
+        rotation: journey.supportingCount,
+      );
     }
     final fromSignal = signal?.nextPrompt.trim() ?? '';
     if (fromSignal.isNotEmpty) return fromSignal;

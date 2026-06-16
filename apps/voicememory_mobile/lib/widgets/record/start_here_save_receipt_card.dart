@@ -79,6 +79,18 @@ class StartHereSaveReceiptCard extends StatelessWidget {
               ],
             ),
           ],
+          // Tomorrow's return cue sits between the user's terms and the Pro
+          // incentive — cautious phrasing, never a promise.
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            receipt.returnCueLine,
+            style: VoiceMemoryTypography.bodyStyle().copyWith(
+              fontSize: 12.5,
+              fontStyle: FontStyle.italic,
+              color: AppColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
           // Free value first, so Pro reads as a continuation — never as a
           // threat to what the user just saved.
           const SizedBox(height: AppSpacing.xs),

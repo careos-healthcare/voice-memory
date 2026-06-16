@@ -1,0 +1,20 @@
+{
+  "ios": {
+    "permission_granted": false,
+    "notification_received": false,
+    "notification_opened": false,
+    "archive_destination_verified": false,
+    "discover_destination_verified": false,
+    "record_destination_verified": false,
+    "timestamp": ""
+  },
+  "android": {
+    "permission_granted": false,
+    "notification_received": false,
+    "notification_opened": false,
+    "archive_destination_verified": false,
+    "discover_destination_verified": false,
+    "record_destination_verified": false,
+    "timestamp": ""
+  }
+}

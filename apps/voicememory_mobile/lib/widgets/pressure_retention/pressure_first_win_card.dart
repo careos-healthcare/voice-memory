@@ -24,9 +24,7 @@ class PressureFirstWinCard extends StatelessWidget {
       key: const Key('pressure_first_win_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.accentLight,
-      ),
+      decoration: VoiceMemoryCards.standard(background: AppColors.accentLight),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -41,8 +39,9 @@ class PressureFirstWinCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -50,9 +49,9 @@ class PressureFirstWinCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.md),
           FilledButton(

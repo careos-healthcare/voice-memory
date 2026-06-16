@@ -33,9 +33,11 @@ class InterpretationQualityStore {
     if (list is! List) return const [];
     return list
         .whereType<Map>()
-        .map((e) => InterpretationQualitySignal.fromJson(
-              Map<String, dynamic>.from(e),
-            ))
+        .map(
+          (e) => InterpretationQualitySignal.fromJson(
+            Map<String, dynamic>.from(e),
+          ),
+        )
         .toList();
   }
 
@@ -112,8 +114,9 @@ class InterpretationQualityStore {
     if (store == null) return;
     final raw = await store._prefs.readMap(_microFeedbackKey);
     final list = raw?['items'];
-    final items =
-        list is List ? List<Map<String, dynamic>>.from(list) : <Map<String, dynamic>>[];
+    final items = list is List
+        ? List<Map<String, dynamic>>.from(list)
+        : <Map<String, dynamic>>[];
     items.add({
       'readId': readId,
       'useful': useful,

@@ -24,7 +24,7 @@ class LoopAcquisitionVariant {
 }
 
 /// Loop-specific landing copy — prove_enough is the primary wedge.
-abstract final class LoopAcquisitionCopy {
+abstract class LoopAcquisitionCopy {
   LoopAcquisitionCopy._();
 
   static const proveEnough = LoopAcquisitionVariant(

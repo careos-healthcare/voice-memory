@@ -15,7 +15,8 @@ class ArchiveChallengeEngine {
 
   final ArchiveExplanationEngine explanationEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
   static const int minEvidenceCount = 2;
   static const int minConfidence = 65;
 
@@ -73,10 +74,12 @@ class ArchiveChallengeEngine {
     _mapExplanationChallenges(entries, candidates);
 
     final fresh = candidates
-        .where((c) =>
-            c.confidence >= minConfidence &&
-            c.evidenceEntryIds.length >= minEvidenceCount &&
-            c.id != dismissedId)
+        .where(
+          (c) =>
+              c.confidence >= minConfidence &&
+              c.evidenceEntryIds.length >= minEvidenceCount &&
+              c.id != dismissedId,
+        )
         .toList();
 
     if (fresh.isEmpty) return null;
@@ -151,7 +154,8 @@ class ArchiveChallengeEngine {
     final themeCounts = DiscoverLocalThemeCounts.count(eligible);
     final workTheme = themeCounts['work'] ?? themeCounts['career'] ?? 0;
     final relTheme =
-        (themeCounts['relationship'] ?? 0) + (themeCounts['relationships'] ?? 0);
+        (themeCounts['relationship'] ?? 0) +
+        (themeCounts['relationships'] ?? 0);
 
     if (workFraming < 1) return;
     if (workMentions >= relTheme && workTheme >= relTheme) return;
@@ -197,10 +201,10 @@ class ArchiveChallengeEngine {
     if (confidenceProblem < 1) return;
 
     final themeCounts = DiscoverLocalThemeCounts.count(eligible);
-    final conf =
-        (themeCounts['confidence'] ?? 0) + confidenceProblem;
+    final conf = (themeCounts['confidence'] ?? 0) + confidenceProblem;
     final rel =
-        (themeCounts['relationship'] ?? 0) + (themeCounts['relationships'] ?? 0);
+        (themeCounts['relationship'] ?? 0) +
+        (themeCounts['relationships'] ?? 0);
 
     if (rel < minEvidenceCount || rel <= conf) return;
     if (ids.length < minEvidenceCount) {

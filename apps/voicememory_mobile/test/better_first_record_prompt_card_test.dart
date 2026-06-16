@@ -6,9 +6,7 @@ void main() {
   testWidgets('shows title, body, examples and CTA', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: BetterFirstRecordPromptCard(onRecord: () {}),
-        ),
+        home: Scaffold(body: BetterFirstRecordPromptCard(onRecord: () {})),
       ),
     );
 

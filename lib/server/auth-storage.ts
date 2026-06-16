@@ -19,6 +19,10 @@ export interface PendingCode {
   email: string;
   codeHash: string;
   expiresAt: number;
+  /** Failed verify attempts against this code (limit enforced in the store). */
+  attempts?: number;
+  /** When the code was issued — drives the resend cooldown. */
+  issuedAt?: number;
 }
 
 export interface AuthStoreShape {

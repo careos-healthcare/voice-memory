@@ -8,9 +8,7 @@ Future<void> _pump(WidgetTester tester) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
-      home: Scaffold(
-        body: ArchiveMemoryDemoCard(onRecord: () {}),
-      ),
+      home: Scaffold(body: ArchiveMemoryDemoCard(onRecord: () {})),
     ),
   );
 }
@@ -22,7 +20,10 @@ void main() {
     expect(find.textContaining('Day 1:'), findsOneWidget);
     expect(find.textContaining('Day 3:'), findsOneWidget);
     expect(find.textContaining('Day 7:'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.archiveMemoryDemoRememberLine), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.archiveMemoryDemoRememberLine),
+      findsOneWidget,
+    );
   });
 
   testWidgets('demo CTA fires onRecord', (tester) async {

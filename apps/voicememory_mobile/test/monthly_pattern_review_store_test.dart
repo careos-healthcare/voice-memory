@@ -14,16 +14,16 @@ Future<MonthlyPatternReviewStore> _store(String stamp) async {
 }
 
 MonthlyPatternReview _review() => const MonthlyPatternReview(
-      monthLabel: 'June',
-      momentCount: 9,
-      checkInCount: 4,
-      keptRepeating: 'Taking on too much',
-      gotLighter: 'It felt lighter after I paused',
-      gotHeavier: 'It felt heavier when I carried it',
-      helped: 'I asked for help',
-      nextCheck: 'What happens right before it shows up?',
-      confidenceLabel: 'Based on 9 moments this month',
-    );
+  monthLabel: 'June',
+  momentCount: 9,
+  checkInCount: 4,
+  keptRepeating: 'Taking on too much',
+  gotLighter: 'It felt lighter after I paused',
+  gotHeavier: 'It felt heavier when I carried it',
+  helped: 'I asked for help',
+  nextCheck: 'What happens right before it shows up?',
+  confidenceLabel: 'Based on 9 moments this month',
+);
 
 void main() {
   test('save then load round-trips the review', () async {

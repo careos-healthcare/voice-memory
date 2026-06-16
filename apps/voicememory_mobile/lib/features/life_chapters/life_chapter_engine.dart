@@ -80,15 +80,18 @@ List<List<JournalEntry>> _segmentTimeline(List<JournalEntry> eligible) {
   return _splitOversizedSegments(segments);
 }
 
-List<List<JournalEntry>> _splitOversizedSegments(List<List<JournalEntry>> segments) {
+List<List<JournalEntry>> _splitOversizedSegments(
+  List<List<JournalEntry>> segments,
+) {
   final out = <List<JournalEntry>>[];
   for (final segment in segments) {
     if (segment.length < LifeChapterEngine.minEntriesPerChapter) {
       out.add(segment);
       continue;
     }
-    final spanDays =
-        segment.last.createdAt.difference(segment.first.createdAt).inDays;
+    final spanDays = segment.last.createdAt
+        .difference(segment.first.createdAt)
+        .inDays;
     if (spanDays <= LifeChapterEngine.maxChapterSpanDays) {
       out.add(segment);
       continue;
@@ -115,7 +118,8 @@ int _themeShiftSplitIndex(List<JournalEntry> segment) {
     final earlyTop = _dominantThemeIds(early).keys.firstOrNull;
     final lateTop = _dominantThemeIds(late).keys.firstOrNull;
     if (earlyTop == null || lateTop == null || earlyTop == lateTop) continue;
-    final delta = (_dominantThemeIds(early)[earlyTop] ?? 0) +
+    final delta =
+        (_dominantThemeIds(early)[earlyTop] ?? 0) +
         (_dominantThemeIds(late)[lateTop] ?? 0);
     if (delta > bestDelta) {
       bestDelta = delta;
@@ -125,7 +129,10 @@ int _themeShiftSplitIndex(List<JournalEntry> segment) {
   return bestIndex;
 }
 
-LifeChapter? _chapterFromSegment(List<JournalEntry> segment, {required int index}) {
+LifeChapter? _chapterFromSegment(
+  List<JournalEntry> segment, {
+  required int index,
+}) {
   final themeCounts = _dominantThemeIds(segment);
   final ranked = themeCounts.entries.toList()
     ..sort((a, b) => b.value.compareTo(a.value));
@@ -138,7 +145,12 @@ LifeChapter? _chapterFromSegment(List<JournalEntry> segment, {required int index
   final blob = segment.map(_entryBlob).join(' ').toLowerCase();
   var primary = qualifying.first.key;
   if (qualifying.any((e) => e.key == 'health') &&
-      _containsAny(blob, const ['burnout', 'exhausted', 'drained', 'depleted'])) {
+      _containsAny(blob, const [
+        'burnout',
+        'exhausted',
+        'drained',
+        'depleted',
+      ])) {
     primary = 'health';
   } else if (qualifying.any((e) => e.key == 'confidence') &&
       _confidenceRebuild(segment)) {
@@ -179,10 +191,7 @@ Map<String, int> _dominantThemeIds(List<JournalEntry> segment) {
 }
 
 String _titleForChapter(String primaryTheme, List<JournalEntry> segment) {
-  final blob = segment
-      .map(_entryBlob)
-      .join(' ')
-      .toLowerCase();
+  final blob = segment.map(_entryBlob).join(' ').toLowerCase();
 
   switch (primaryTheme) {
     case 'career':
@@ -198,7 +207,12 @@ String _titleForChapter(String primaryTheme, List<JournalEntry> segment) {
       }
       return 'Career Focus';
     case 'health':
-      if (_containsAny(blob, const ['burnout', 'exhausted', 'drained', 'depleted'])) {
+      if (_containsAny(blob, const [
+        'burnout',
+        'exhausted',
+        'drained',
+        'depleted',
+      ])) {
         return 'Burnout Period';
       }
       return 'Health Reset';
@@ -274,7 +288,9 @@ List<LifeChapterQuote> _importantQuotes(List<JournalEntry> segment) {
     if (!seen.add(key)) return;
     quotes.add(
       LifeChapterQuote(
-        quote: trimmed.length <= 140 ? trimmed : '${trimmed.substring(0, 140).trim()}…',
+        quote: trimmed.length <= 140
+            ? trimmed
+            : '${trimmed.substring(0, 140).trim()}…',
         entryId: entry.id,
       ),
     );
@@ -304,8 +320,7 @@ String _entryBlob(JournalEntry entry) {
   ].join(' ');
 }
 
-bool _containsAny(String blob, List<String> terms) =>
-    terms.any(blob.contains);
+bool _containsAny(String blob, List<String> terms) => terms.any(blob.contains);
 
 String _titleCase(String raw) {
   if (raw.isEmpty) return raw;

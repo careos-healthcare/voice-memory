@@ -32,13 +32,15 @@ class _FakeBackend implements CheckInReminderBackend {
   bool grantPermission;
   int permissionRequests = 0;
   final List<
-      ({
-        String checkInId,
-        String title,
-        String body,
-        DateTime when,
-        String payload,
-      })> scheduled = [];
+    ({
+      String checkInId,
+      String title,
+      String body,
+      DateTime when,
+      String payload,
+    })
+  >
+  scheduled = [];
 
   @override
   bool get isAvailable => available;
@@ -96,12 +98,11 @@ void main() {
   DayTwoReminderCoordinator coordinator({
     _MemoryPrefs? prefs,
     _FakeBackend? backend,
-  }) =>
-      DayTwoReminderCoordinator(
-        prefs: prefs ?? _MemoryPrefs(),
-        backend: backend ?? _FakeBackend(),
-        now: () => DateTime(2026, 6, 11, 18, 30),
-      );
+  }) => DayTwoReminderCoordinator(
+    prefs: prefs ?? _MemoryPrefs(),
+    backend: backend ?? _FakeBackend(),
+    now: () => DateTime(2026, 6, 11, 18, 30),
+  );
 
   group('Offer gate', () {
     test('offers only after the very first save, never before', () {
@@ -137,35 +138,37 @@ void main() {
   });
 
   group('Accept path', () {
-    test('schedules exactly one reminder with the exact notification copy',
-        () async {
-      final prefs = _MemoryPrefs();
-      final backend = _FakeBackend();
-      final c = coordinator(prefs: prefs, backend: backend);
+    test(
+      'schedules exactly one reminder with the exact notification copy',
+      () async {
+        final prefs = _MemoryPrefs();
+        final backend = _FakeBackend();
+        final c = coordinator(prefs: prefs, backend: backend);
 
-      final outcome = await c.accept();
-      expect(outcome, DayTwoReminderOutcome.scheduled);
-      expect(backend.scheduled, hasLength(1));
+        final outcome = await c.accept();
+        expect(outcome, DayTwoReminderOutcome.scheduled);
+        expect(backend.scheduled, hasLength(1));
 
-      final reminder = backend.scheduled.single;
-      expect(reminder.title, 'Check what changed');
-      expect(
-        reminder.body,
-        'See whether yesterday\u2019s thread returned, faded, or changed.',
-      );
-      expect(reminder.checkInId, DayTwoReminder.reminderId);
-      expect(reminder.payload, DayTwoReminder.reminderId);
-      // Tomorrow morning, once — never recurring.
-      expect(reminder.when, DateTime(2026, 6, 12, 9));
+        final reminder = backend.scheduled.single;
+        expect(reminder.title, 'Check what changed');
+        expect(
+          reminder.body,
+          'See whether yesterday\u2019s thread returned, faded, or changed.',
+        );
+        expect(reminder.checkInId, DayTwoReminder.reminderId);
+        expect(reminder.payload, DayTwoReminder.reminderId);
+        // Tomorrow morning, once — never recurring.
+        expect(reminder.when, DateTime(2026, 6, 12, 9));
 
-      expect(
-        eventsNamed(ActivationFunnelAnalytics.day2ReminderAccepted),
-        hasLength(1),
-      );
-      expect(prefs.maps[DayTwoReminder.prefsKey]?['status'], 'scheduled');
-      // Resolved — a second offer can never appear.
-      expect(await c.shouldOffer(entryCount: 1), isFalse);
-    });
+        expect(
+          eventsNamed(ActivationFunnelAnalytics.day2ReminderAccepted),
+          hasLength(1),
+        );
+        expect(prefs.maps[DayTwoReminder.prefsKey]?['status'], 'scheduled');
+        // Resolved — a second offer can never appear.
+        expect(await c.shouldOffer(entryCount: 1), isFalse);
+      },
+    );
 
     test('permission is requested only on accept, never earlier', () async {
       final backend = _FakeBackend();
@@ -196,18 +199,20 @@ void main() {
       expect(await c.shouldOffer(entryCount: 1), isFalse);
     });
 
-    test('unavailable backend resolves quietly without a permission ask',
-        () async {
-      final prefs = _MemoryPrefs();
-      final backend = _FakeBackend(available: false);
-      final c = coordinator(prefs: prefs, backend: backend);
+    test(
+      'unavailable backend resolves quietly without a permission ask',
+      () async {
+        final prefs = _MemoryPrefs();
+        final backend = _FakeBackend(available: false);
+        final c = coordinator(prefs: prefs, backend: backend);
 
-      final outcome = await c.accept();
-      expect(outcome, DayTwoReminderOutcome.notAvailable);
-      expect(backend.permissionRequests, 0);
-      expect(backend.scheduled, isEmpty);
-      expect(prefs.maps[DayTwoReminder.prefsKey]?['status'], 'not_available');
-    });
+        final outcome = await c.accept();
+        expect(outcome, DayTwoReminderOutcome.notAvailable);
+        expect(backend.permissionRequests, 0);
+        expect(backend.scheduled, isEmpty);
+        expect(prefs.maps[DayTwoReminder.prefsKey]?['status'], 'not_available');
+      },
+    );
   });
 
   group('Reminder offer card', () {
@@ -229,15 +234,16 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders the exact offer copy and logs seen once',
-        (tester) async {
+    testWidgets('renders the exact offer copy and logs seen once', (
+      tester,
+    ) async {
       await pumpCard(tester);
 
       expect(find.byKey(const Key('day_two_reminder_card')), findsOneWidget);
       expect(find.text('Check this tomorrow?'), findsOneWidget);
       expect(
         find.text(
-          'ArchiveMe can remind you once to see whether this returned, '
+          'ArchiveMe can remind you once to check whether this returned, '
           'faded, or changed.',
         ),
         findsOneWidget,
@@ -253,8 +259,7 @@ void main() {
       );
     });
 
-    testWidgets('Not now dismisses quietly and logs declined',
-        (tester) async {
+    testWidgets('Not now dismisses quietly and logs declined', (tester) async {
       final prefs = _MemoryPrefs();
       await pumpCard(tester, c: coordinator(prefs: prefs));
 
@@ -284,8 +289,9 @@ void main() {
       expect(backend.scheduled, hasLength(1));
     });
 
-    testWidgets('denied permission shows the calm fallback line',
-        (tester) async {
+    testWidgets('denied permission shows the calm fallback line', (
+      tester,
+    ) async {
       final backend = _FakeBackend(grantPermission: false);
       await pumpCard(tester, c: coordinator(backend: backend));
 
@@ -301,10 +307,13 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('Done for today receipt still appears alongside the offer',
-        (tester) async {
-      final receipt = const DoneForTodayReceiptEngine()
-          .build(saved: true, now: DateTime(2026, 6, 11, 12));
+    testWidgets('Done for today receipt still appears alongside the offer', (
+      tester,
+    ) async {
+      final receipt = const DoneForTodayReceiptEngine().build(
+        saved: true,
+        now: DateTime(2026, 6, 11, 12),
+      );
       await tester.binding.setSurfaceSize(const Size(390, 2000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -371,8 +380,11 @@ void main() {
         'therapy',
         'treatment',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'reminder copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'reminder copy must not contain "$banned"',
+        );
       }
       expect(copy, isNot(contains('voicememory')));
     });

@@ -8,7 +8,11 @@ import '../api/api_error_message.dart';
 import '../config/screenshot_mode.dart';
 import '../billing/archive_paywall_plans.dart';
 import '../billing/paywall_attribution_event.dart';
+import '../features/referral/invite_funnel_metrics.dart';
 import '../billing/paywall_attribution_store.dart';
+import '../billing/paywall_objection_follow_up.dart';
+import '../billing/paywall_rejection_reason.dart';
+import '../billing/purchase_intent_return_cue.dart';
 import '../billing/paywall_route_args.dart';
 import '../billing/paywall_source.dart';
 import '../billing/suggestion_attribution_event.dart';
@@ -21,9 +25,13 @@ import '../billing/subscription_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../features/first25/first25_user_metrics.dart';
 import '../models/entitlement.dart';
+import '../services/activation_funnel_analytics.dart';
 import '../services/app_services.dart';
 import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
+import '../widgets/billing/paywall_objection_follow_up_card.dart';
+import '../widgets/billing/paywall_rejection_prompt.dart';
+import '../widgets/billing/plan_selection_confidence_block.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../widgets/archive_paywall/paywall_unavailable_fallback.dart';
 
@@ -34,6 +42,8 @@ class PaywallScreen extends StatefulWidget {
     this.triggerArgs,
     this.attributionStore,
     this.suggestionAttributionStore,
+    this.objectionStore,
+    this.purchaseIntentStore,
   });
 
   /// Trigger-specific preview copy when opened from a memory limit gate.
@@ -44,6 +54,12 @@ class PaywallScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live prefs-backed store.
   final SuggestionAttributionStore? suggestionAttributionStore;
+
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final PaywallObjectionStore? objectionStore;
+
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final PurchaseIntentStore? purchaseIntentStore;
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -56,9 +72,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   static const String _entitlementLabel = 'ArchiveMe Pro';
 
   static final _benefits = ConsumerUiCopy.paywallBullets
-      .map(
-        (b) => _PaywallBenefit(Icons.check_circle_outline, b),
-      )
+      .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
       .toList();
 
   Offerings? _offerings;
@@ -68,6 +82,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   bool _paywallSeenTracked = false;
   String? _error;
   _PaywallPlan _selected = _PaywallPlan.yearly;
+
+  /// Last captured rejection reason — loaded once at init, so the same flow
+  /// that captures a reason can never render its own follow-up.
+  PaywallRejectionReason? _objectionFollowUpReason;
 
   bool get _billingReady => RevenueCatService.instance.isConfigured;
 
@@ -91,7 +109,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   SuggestionAttributionStore? get _suggestionAttribution =>
       widget.suggestionAttributionStore ??
-      (AppServices.isInitialized ? SuggestionAttributionStore.instance() : null);
+      (AppServices.isInitialized
+          ? SuggestionAttributionStore.instance()
+          : null);
 
   /// Fire-and-forget local attribution write; no-op when services are absent.
   /// Suggestion-sourced opens also log the suggestion-to-Pro funnel stage.
@@ -99,6 +119,27 @@ class _PaywallScreenState extends State<PaywallScreen> {
     PaywallAttributionEventType type, {
     SuggestionAttributionEventType? suggestionStage,
   }) {
+    // Purchase stages also feed the product funnel — source id only, never
+    // user content. paywall_seen already reaches analytics via First25.
+    if (type == PaywallAttributionEventType.purchaseStarted ||
+        type == PaywallAttributionEventType.purchaseCompleted) {
+      ActivationFunnelAnalytics.track(type.id, source: _attributionSource.id);
+    }
+    // Invited funnel mirror — additive, attribution-gated, carrying only
+    // the invite source (never the paywall source or any URL).
+    switch (type) {
+      case PaywallAttributionEventType.paywallSeen:
+        InviteFunnelMetrics.paywallSeen();
+        break;
+      case PaywallAttributionEventType.purchaseStarted:
+        InviteFunnelMetrics.purchaseStarted();
+        break;
+      case PaywallAttributionEventType.purchaseCompleted:
+        InviteFunnelMetrics.purchaseCompleted();
+        break;
+      default:
+        break;
+    }
     final store = _attribution;
     if (store != null) {
       unawaited(
@@ -138,14 +179,38 @@ class _PaywallScreenState extends State<PaywallScreen> {
       PaywallAttributionEventType.paywallSeen,
       suggestionStage: SuggestionAttributionEventType.suggestionToPaywallSeen,
     );
+    _loadObjectionFollowUp();
     _load();
+  }
+
+  PaywallObjectionStore get _objectionStore =>
+      widget.objectionStore ?? PaywallObjectionStore();
+
+  PurchaseIntentStore get _purchaseIntentStore =>
+      widget.purchaseIntentStore ?? PurchaseIntentStore();
+
+  /// Reads the reason stored by a previous paywall visit. Pro users and
+  /// repeat renders within one session show nothing; the Pro-active body
+  /// additionally never includes the block.
+  Future<void> _loadObjectionFollowUp() async {
+    final reason = await _objectionStore.lastReason();
+    if (!mounted) return;
+    if (!PaywallObjectionFollowUp.shouldShow(
+      isPro: _entitlements?.isPro == true,
+      reason: reason,
+    )) {
+      return;
+    }
+    PaywallObjectionFollowUp.shownThisSession = true;
+    setState(() => _objectionFollowUpReason = reason);
   }
 
   Package? _packageFor(_PaywallPlan plan, [Offerings? offerings]) {
     final current = (offerings ?? _offerings)?.current;
     if (current == null) return null;
     for (final p in current.availablePackages) {
-      if (plan == _PaywallPlan.monthly && p.packageType == PackageType.monthly) {
+      if (plan == _PaywallPlan.monthly &&
+          p.packageType == PackageType.monthly) {
         return p;
       }
       if (plan == _PaywallPlan.yearly && p.packageType == PackageType.annual) {
@@ -193,9 +258,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
     String? error;
 
     try {
-      offerings = await rc
-          .fetchOfferings()
-          .timeout(_loadTimeout, onTimeout: () => null);
+      offerings = await rc.fetchOfferings().timeout(
+        _loadTimeout,
+        onTimeout: () => null,
+      );
       entitlements = await AppServices.instance.billing
           .loadEntitlements(forceRefresh: true)
           .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
@@ -263,6 +329,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
   }
 
+  /// Stable plan id for analytics — never user text.
+  String _planIdFor(_PaywallPlan plan) => plan == _PaywallPlan.yearly
+      ? PaywallPlanSelectionConfidence.yearlyPlanId
+      : PaywallPlanSelectionConfidence.monthlyPlanId;
+
   Future<void> _continue() async {
     _recordAttribution(
       PaywallAttributionEventType.purchaseStarted,
@@ -280,6 +351,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
     setState(() => _busy = true);
     _trackPlanSelected(_selected);
     ActivationTracker.trackPaywallContinueTapped();
+    // Purchase intent: remember the start (stable ids only) and suppress
+    // the return cue for the rest of this session — cancelling the App
+    // Store sheet never triggers an immediate nudge.
+    PurchaseIntentReturnCue.purchaseStartedThisSession = true;
+    unawaited(
+      _purchaseIntentStore.recordPurchaseStarted(
+        source: _attributionSource.id,
+        plan: _planIdFor(_selected),
+      ),
+    );
     final period = _selected == _PaywallPlan.monthly ? 'monthly' : 'yearly';
     First25UserMetrics.trackPaywallStarted(
       surface: 'paywall_screen',
@@ -289,6 +370,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       final ent = await AppServices.instance.billing.purchaseNative(package);
       if (ent.isPro) {
+        unawaited(_purchaseIntentStore.recordPurchaseCompleted());
         _recordAttribution(
           PaywallAttributionEventType.purchaseCompleted,
           suggestionStage:
@@ -339,9 +421,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
       if (!mounted) return;
       if (ent.isPro) {
         _recordAttribution(PaywallAttributionEventType.restoreCompleted);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$_entitlementLabel restored.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$_entitlementLabel restored.')));
         await _load();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -364,10 +446,58 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
   }
 
+  /// Exit paths (back arrow, Done, "Not now") run the one-tap rejection
+  /// capture first — never shown to Pro users (covers just-purchased) and at
+  /// most once per session. Navigation always follows; nothing blocks.
+  Future<void> _dismissWithCapture() async {
+    await _maybeCaptureRejection();
+    if (!mounted) return;
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/record');
+    }
+  }
+
+  Future<void> _maybeCaptureRejection() async {
+    if (!PaywallRejectionCapture.shouldPrompt(
+      isPro: _entitlements?.isPro == true,
+    )) {
+      return;
+    }
+    PaywallRejectionCapture.promptShownThisSession = true;
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.paywallRejectionPromptSeen,
+      source: _attributionSource.id,
+    );
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => PaywallRejectionPrompt(
+        source: _attributionSource.id,
+        // Persist the stable id so the next paywall visit can answer the
+        // objection. Never shown in this flow — the screen is popping.
+        onReason: (reason) => unawaited(
+          _objectionStore.recordRejection(
+            reason,
+            source: _attributionSource.id,
+          ),
+        ),
+      ),
+    );
+    // Swipe/barrier dismissal is a skip too — the prompt logged nothing.
+    if (result == null) {
+      ActivationFunnelAnalytics.track(
+        ActivationFunnelAnalytics.paywallRejectionPromptSkipped,
+        source: _attributionSource.id,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PushedScreenShell(
       title: _entitlementLabel,
+      onBack: () => unawaited(_dismissWithCapture()),
       body: ListView(
         padding: ArchiveResponsiveLayout.pagePadding(context),
         children: [
@@ -395,7 +525,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 8),
-          Icon(Icons.verified_outlined, size: 48, color: VoiceMemoryColors.success),
+          Icon(
+            Icons.verified_outlined,
+            size: 48,
+            color: VoiceMemoryColors.success,
+          ),
           const SizedBox(height: 12),
           Text(
             '$_entitlementLabel is active',
@@ -432,22 +566,49 @@ class _PaywallScreenState extends State<PaywallScreen> {
           onRetry: _load,
           onRestore: _restore,
         ),
-        if (PaywallProThreadPreview.showFor(widget.triggerArgs?.source)) ...[
+        // Same above-fold clarity as the live paywall body.
+        const SizedBox(height: 16),
+        _aboveFoldClaritySection(),
+        // Same objection follow-up placement as the live paywall body.
+        if (_objectionFollowUpReason != null) ...[
+          const SizedBox(height: 14),
+          _objectionFollowUpSection(),
+        ],
+        if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
           const SizedBox(height: 16),
-          _proThreadPreviewSection(),
+          _longTermArchiveLine(),
+        ],
+        if (PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
+          const SizedBox(height: 16),
+          _proofPreviewSection(),
         ],
         const SizedBox(height: 16),
         _confidenceSection(),
+        // Same price confidence as the live paywall body.
+        const SizedBox(height: 10),
+        _priceConfidenceLines(),
+        const SizedBox(height: 4),
+        _appStoreConfirmLine(),
       ],
     );
   }
 
-  /// "What Pro continues" — compact preview shown only to users arriving from
-  /// Start here today / Daily Suggestions, so it continues the thread they
-  /// just saved instead of pitching abstract features.
-  Widget _proThreadPreviewSection() {
+  /// Long-term archive framing near the plan cards — addresses subscription
+  /// resistance by being honest about what kind of product this is.
+  Widget _longTermArchiveLine() {
+    return Text(
+      PaywallAnnualValueCopy.longTermLine,
+      key: const Key('paywall_long_term_line'),
+      textAlign: TextAlign.center,
+      style: ArchiveMobileTypography.responsiveHelper(context),
+    );
+  }
+
+  /// "Proof you can look for" — observable checks so the user can judge for
+  /// themselves whether Pro is helping. Suggestion sources only.
+  Widget _proofPreviewSection() {
     return Container(
-      key: const Key('paywall_pro_thread_preview'),
+      key: const Key('paywall_proof_preview'),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: VoiceMemoryColors.surface,
@@ -458,20 +619,27 @@ class _PaywallScreenState extends State<PaywallScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            PaywallProThreadPreview.heading,
+            PaywallProofPreview.heading,
             style: ArchiveMobileTypography.listTitle(context),
           ),
-          for (final row in PaywallProThreadPreview.rows) ...[
+          for (final row in PaywallProofPreview.rows) ...[
             const SizedBox(height: 8),
-            Text(
-              row.title,
-              style: ArchiveMobileTypography.responsiveHelper(context)
-                  .copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 1),
-            Text(
-              row.body,
-              style: ArchiveMobileTypography.responsiveHelper(context),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.visibility_outlined,
+                  size: 16,
+                  color: VoiceMemoryColors.primaryIndigo,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    row,
+                    style: ArchiveMobileTypography.responsiveHelper(context),
+                  ),
+                ),
+              ],
             ),
           ],
         ],
@@ -479,10 +647,138 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
-  /// Calm trust lines near the CTA — reassuring, not defensive. Suggestion
-  /// sources get the continuity framing the post-save receipt already used.
+  /// True only when one of the loaded App Store products carries an actual
+  /// zero-price introductory offer. No offerings (or paid intro pricing)
+  /// means no trial copy — the line is never a generic promise.
+  bool get _hasFreeTrialOffer {
+    for (final plan in _PaywallPlan.values) {
+      final intro = _packageFor(plan)?.storeProduct.introductoryPrice;
+      if (intro != null && intro.price == 0) return true;
+    }
+    return false;
+  }
+
+  /// Above-fold clarity: the paid promise in plain words, directly under
+  /// the headline and before any plan card or CTA. Same block for every
+  /// source so the continuity framing lives in one place.
+  Widget _aboveFoldClaritySection() {
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.paywallAboveFoldClaritySeen,
+      source: widget.triggerArgs?.source?.id,
+      oncePerSession: true,
+    );
+    return Builder(
+      builder: (context) => Container(
+        key: const Key('paywall_above_fold_clarity'),
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: VoiceMemoryColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: VoiceMemoryColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              PaywallAboveFoldClarity.title,
+              style: ArchiveMobileTypography.responsiveSectionTitle(context),
+            ),
+            const SizedBox(height: 8),
+            for (final line in PaywallAboveFoldClarity.lines)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline,
+                      size: 18,
+                      color: VoiceMemoryColors.primaryIndigo,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        line,
+                        style: ArchiveMobileTypography.responsiveBody(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 4),
+            Text(
+              PaywallAboveFoldClarity.freeReassuranceLine,
+              style: ArchiveMobileTypography.responsiveHelper(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// One objection-specific reassurance block — only on a paywall visit
+  /// after a rejection reason was captured, below the above-fold clarity
+  /// block and above the plan cards. The CTA is untouched.
+  Widget _objectionFollowUpSection() {
+    return PaywallObjectionFollowUpCard(
+      reason: _objectionFollowUpReason!,
+      source: widget.triggerArgs?.source?.id,
+    );
+  }
+
+  /// Price confidence immediately below the plan cards: manage-anytime,
+  /// plus the trial handling line only when a real free trial was detected
+  /// on a loaded product. Reduces hesitation at the App Store sheet.
+  Widget _priceConfidenceLines() {
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.priceConfidenceSeen,
+      source: widget.triggerArgs?.source?.id,
+      oncePerSession: true,
+    );
+    return Column(
+      key: const Key('paywall_price_confidence'),
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        for (final line in PaywallPriceConfidenceCopy.planLines(
+          hasFreeTrial: _hasFreeTrialOffer,
+        ))
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              line,
+              textAlign: TextAlign.center,
+              style: ArchiveMobileTypography.responsiveHelper(context),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// Final price-confidence line directly before the purchase CTA — the App
+  /// Store confirms before anything is charged.
+  Widget _appStoreConfirmLine() {
+    return Text(
+      PaywallPriceConfidenceCopy.confirmLine,
+      key: const Key('paywall_app_store_confirm_line'),
+      textAlign: TextAlign.center,
+      style: ArchiveMobileTypography.responsiveHelper(context),
+    );
+  }
+
+  /// Final purchase reassurance immediately above the purchase CTA —
+  /// reassuring, not defensive. Suggestion sources add the explicit
+  /// no-pressure line the post-save receipt already used.
   Widget _confidenceSection() {
-    final lines = PaywallConfidenceCopy.forSource(widget.triggerArgs?.source);
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.purchaseReassuranceSeen,
+      source: widget.triggerArgs?.source?.id,
+      oncePerSession: true,
+    );
+    final lines = PaywallConfidenceCopy.linesFor(
+      widget.triggerArgs?.source,
+      hasFreeTrial: _hasFreeTrialOffer,
+    );
     return Column(
       key: const Key('paywall_confidence_section'),
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -540,10 +836,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               child: const Text(ConsumerUiCopy.paywallContinue),
             ),
             const SizedBox(height: 10),
-            TextButton(
-              onPressed: null,
-              child: const Text('Restore purchases'),
-            ),
+            TextButton(onPressed: null, child: const Text('Restore purchases')),
           ],
         ),
       ),
@@ -596,129 +889,167 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final triggerArgs = widget.triggerArgs;
     final valuePreview = triggerArgs?.valuePreview;
     final sourceCopy = _sourceCopy;
-    final headline = sourceCopy?.headline ??
+    final headline =
+        sourceCopy?.headline ??
         (triggerArgs?.hasTriggerCopy == true
             ? triggerArgs!.previewTitle!
             : ConsumerUiCopy.paywallHeadline);
-    final subhead = sourceCopy?.subheadline ??
+    final subhead =
+        sourceCopy?.subheadline ??
         (triggerArgs?.hasTriggerCopy == true
             ? triggerArgs!.previewBody!
             : ConsumerUiCopy.paywallSubhead);
     final benefitRows = sourceCopy != null
         ? sourceCopy.bullets
-            .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
-            .toList()
+              .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
+              .toList()
         : valuePreview != null
-            ? valuePreview.previewBullets
-                .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
-                .toList()
-            : _benefits;
+        ? valuePreview.previewBullets
+              .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
+              .toList()
+        : _benefits;
 
     return ArchiveResponsiveLayout.constrainContent(
       context: context,
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          headline,
-          style: ArchiveMobileTypography.responsivePageTitle(context),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 10),
-        Text(
-          subhead,
-          style: ArchiveMobileTypography.responsiveBody(context),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
-        ...benefitRows.map(_benefitRow),
-        const SizedBox(height: 24),
-        ...orderedPaywallPlans(
-          hasAnnual: yearly != null,
-          hasMonthly: monthly != null,
-        ).map((kind) {
-          final plan = kind == PaywallPlanKind.annual
-              ? _PaywallPlan.yearly
-              : _PaywallPlan.monthly;
-          final package = kind == PaywallPlanKind.annual ? yearly! : monthly!;
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: kind == PaywallPlanKind.annual && monthly != null ? 12 : 0,
-            ),
-            child: _planCard(
-              context: context,
-              plan: plan,
-              title: kind == PaywallPlanKind.annual
-                  ? ArchivePaywallPlanCopy.annualLabel
-                  : ArchivePaywallPlanCopy.monthlyLabel,
-              helper: kind == PaywallPlanKind.annual
-                  ? ArchivePaywallPlanCopy.annualHelper
-                  : ArchivePaywallPlanCopy.monthlyHelper,
-              price: package.storeProduct.priceString,
-            ),
-          );
-        }),
-        if (_error != null) ...[
-          const SizedBox(height: 14),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
           Text(
-            _error!,
-            style: ArchiveMobileTypography.responsiveHelper(
-              context,
-              color: VoiceMemoryColors.error,
-            ),
+            headline,
+            style: ArchiveMobileTypography.responsivePageTitle(context),
             textAlign: TextAlign.center,
           ),
-        ],
-        if (PaywallProThreadPreview.showFor(widget.triggerArgs?.source)) ...[
-          const SizedBox(height: 18),
-          _proThreadPreviewSection(),
-        ],
-        const SizedBox(height: 18),
-        _confidenceSection(),
-        const SizedBox(height: 18),
-        FilledButton(
-          onPressed: _busy ? null : _continue,
-          style: FilledButton.styleFrom(
-            backgroundColor: VoiceMemoryColors.primaryIndigo,
-            foregroundColor: VoiceMemoryColors.onPrimary,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          const SizedBox(height: 10),
+          Text(
+            subhead,
+            style: ArchiveMobileTypography.responsiveBody(context),
+            textAlign: TextAlign.center,
           ),
-          child: _busy
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: VoiceMemoryColors.onPrimary,
+          // Above-fold clarity: the paid promise before plan cards or CTA.
+          const SizedBox(height: 14),
+          _aboveFoldClaritySection(),
+          // Objection follow-up: below the clarity block, above plan cards.
+          if (_objectionFollowUpReason != null) ...[
+            const SizedBox(height: 14),
+            _objectionFollowUpSection(),
+          ],
+          SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
+          ...benefitRows.map(_benefitRow),
+          if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
+            const SizedBox(height: 14),
+            _longTermArchiveLine(),
+          ],
+          const SizedBox(height: 24),
+          ...orderedPaywallPlans(
+            hasAnnual: yearly != null,
+            hasMonthly: monthly != null,
+          ).map((kind) {
+            final plan = kind == PaywallPlanKind.annual
+                ? _PaywallPlan.yearly
+                : _PaywallPlan.monthly;
+            final package = kind == PaywallPlanKind.annual ? yearly! : monthly!;
+            final suggestionFraming = PaywallAnnualValueCopy.showFor(
+              widget.triggerArgs?.source,
+            );
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: kind == PaywallPlanKind.annual && monthly != null
+                    ? 12
+                    : 0,
+              ),
+              child: _planCard(
+                context: context,
+                plan: plan,
+                title: kind == PaywallPlanKind.annual
+                    ? ArchivePaywallPlanCopy.annualLabel
+                    : ArchivePaywallPlanCopy.monthlyLabel,
+                helper: kind == PaywallPlanKind.annual
+                    ? (suggestionFraming
+                          ? PaywallAnnualValueCopy.yearlyHelper
+                          : ArchivePaywallPlanCopy.annualHelper)
+                    : (suggestionFraming
+                          ? PaywallAnnualValueCopy.monthlyHelper
+                          : ArchivePaywallPlanCopy.monthlyHelper),
+                price: package.storeProduct.priceString,
+              ),
+            );
+          }),
+          // Plan-selection confidence: follows the selected plan, before the
+          // purchase CTA.
+          const SizedBox(height: 14),
+          PlanSelectionConfidenceBlock(
+            selectedPlanId: _planIdFor(_selected),
+            source: widget.triggerArgs?.source?.id,
+          ),
+          // Price confidence directly below the plan cards.
+          const SizedBox(height: 10),
+          _priceConfidenceLines(),
+          if (_error != null) ...[
+            const SizedBox(height: 14),
+            Text(
+              _error!,
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+                color: VoiceMemoryColors.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          if (PaywallProofPreview.showFor(widget.triggerArgs?.source)) ...[
+            const SizedBox(height: 18),
+            _proofPreviewSection(),
+          ],
+          const SizedBox(height: 18),
+          _confidenceSection(),
+          // Final price-confidence line directly before the purchase CTA.
+          const SizedBox(height: 10),
+          _appStoreConfirmLine(),
+          const SizedBox(height: 14),
+          FilledButton(
+            onPressed: _busy ? null : _continue,
+            style: FilledButton.styleFrom(
+              backgroundColor: VoiceMemoryColors.primaryIndigo,
+              foregroundColor: VoiceMemoryColors.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            child: _busy
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: VoiceMemoryColors.onPrimary,
+                    ),
+                  )
+                : Text(
+                    sourceCopy?.cta ?? ConsumerUiCopy.paywallPrimaryCta,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                )
-              : Text(
-                  sourceCopy?.cta ?? ConsumerUiCopy.paywallPrimaryCta,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-        ),
-        const SizedBox(height: 10),
-        TextButton(
-          onPressed: _busy
-              ? null
-              : () {
-                  ActivationTracker.trackPaywallDismissed();
-                  First25UserMetrics.trackPaywallDismissed(
-                    surface: 'paywall_screen',
-                  );
-                  context.pop();
-                },
-          child: const Text(ConsumerUiCopy.paywallSecondaryCta),
-        ),
-        TextButton(
-          onPressed: _busy ? null : _restore,
-          child: Text(ConsumerUiCopy.restorePurchases),
-        ),
-      ],
+          ),
+          const SizedBox(height: 10),
+          TextButton(
+            onPressed: _busy
+                ? null
+                : () {
+                    ActivationTracker.trackPaywallDismissed();
+                    First25UserMetrics.trackPaywallDismissed(
+                      surface: 'paywall_screen',
+                    );
+                    unawaited(_dismissWithCapture());
+                  },
+            child: const Text(ConsumerUiCopy.paywallSecondaryCta),
+          ),
+          TextButton(
+            onPressed: _busy ? null : _restore,
+            child: Text(ConsumerUiCopy.restorePurchases),
+          ),
+        ],
       ),
     );
   }
@@ -726,19 +1057,23 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget _benefitRow(_PaywallBenefit benefit) {
     return Builder(
       builder: (context) => Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Icon(benefit.icon, size: 22, color: VoiceMemoryColors.primaryIndigo),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              benefit.label,
-              style: ArchiveMobileTypography.explanationBody(context),
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          children: [
+            Icon(
+              benefit.icon,
+              size: 22,
+              color: VoiceMemoryColors.primaryIndigo,
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                benefit.label,
+                style: ArchiveMobileTypography.explanationBody(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -761,6 +1096,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
             : () {
                 setState(() => _selected = plan);
                 _trackPlanSelected(plan);
+                // Funnel event with the stable plan id only — fired on the
+                // explicit tap, never during purchase.
+                ActivationFunnelAnalytics.track(
+                  ActivationFunnelAnalytics.paywallPlanSelected,
+                  source: _attributionSource.id,
+                  plan: _planIdFor(plan),
+                );
               },
         borderRadius: BorderRadius.circular(16),
         child: Ink(
@@ -791,9 +1133,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           child: Row(
             children: [
               Icon(
-                selected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_off,
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
                 color: selected
                     ? VoiceMemoryColors.primaryIndigo
                     : VoiceMemoryColors.textTertiary,

@@ -28,8 +28,10 @@ class ArchiveFollowupQuestionEngine {
             : 'What happened immediately before this pattern appeared in your archive?',
       ArchiveInsightKind.chapter =>
         'What detail from this chapter would you want the archive to weigh more heavily?',
-      ArchiveInsightKind.surprise =>
-        _emotionOrSurpriseQuestion(entries, explanation),
+      ArchiveInsightKind.surprise => _emotionOrSurpriseQuestion(
+        entries,
+        explanation,
+      ),
       ArchiveInsightKind.challenge =>
         'What recording would most clearly show whether the archive should keep this challenge open?',
       ArchiveInsightKind.blindSpot =>
@@ -51,10 +53,12 @@ class ArchiveFollowupQuestionEngine {
     if (recent.length >= 2) {
       final latest = recent.last;
       final prior = recent[recent.length - 2];
-      if (latest.reflection.emotionalIntensity > prior.reflection.emotionalIntensity + 1) {
+      if (latest.reflection.emotionalIntensity >
+          prior.reflection.emotionalIntensity + 1) {
         return 'What happened on the day before your most intense recent reflection?';
       }
-      if (latest.reflection.emotionalIntensity < prior.reflection.emotionalIntensity - 1) {
+      if (latest.reflection.emotionalIntensity <
+          prior.reflection.emotionalIntensity - 1) {
         return 'When do you feel this pattern least strongly in your day?';
       }
     }
@@ -73,8 +77,18 @@ class ArchiveFollowupQuestionEngine {
 
   static String _monthDay(DateTime d) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[d.month - 1]} ${d.day}';
   }

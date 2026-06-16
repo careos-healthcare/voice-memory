@@ -21,7 +21,8 @@ KinderAngle buildKinderAngle({
   KinderAngleTrigger? triggerOverride,
 }) {
   final trimmed = reflectionText.trim();
-  final trigger = triggerOverride ??
+  final trigger =
+      triggerOverride ??
       detectKinderAngleTrigger(trimmed) ??
       KinderAngleTrigger.genericHardMoment;
   final source = _sourcePhrase(trimmed, patternTitle);

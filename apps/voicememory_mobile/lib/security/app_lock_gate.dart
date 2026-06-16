@@ -22,8 +22,7 @@ class AppLockGate extends StatefulWidget {
   State<AppLockGate> createState() => _AppLockGateState();
 }
 
-class _AppLockGateState extends State<AppLockGate>
-    with WidgetsBindingObserver {
+class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
   AppLockService get _service => widget.service ?? AppLockService.instance;
 
   /// Null while loading — content stays hidden until the state is known.

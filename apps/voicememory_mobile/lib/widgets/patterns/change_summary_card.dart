@@ -52,9 +52,7 @@ class ChangeSummaryCard extends StatelessWidget {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: [
-                for (final chip in chips) _Chip(label: chip),
-              ],
+              children: [for (final chip in chips) _Chip(label: chip)],
             ),
           ],
           const SizedBox(height: AppSpacing.sm),
@@ -63,7 +61,9 @@ class ChangeSummaryCard extends StatelessWidget {
             height: 40,
             child: TextButton(
               onPressed: () => context.go('/belief-changes'),
-              child: const Text(ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta),
+              child: const Text(
+                ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta,
+              ),
             ),
           ),
         ],

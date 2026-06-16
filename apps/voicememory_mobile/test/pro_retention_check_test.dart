@@ -28,30 +28,29 @@ PressureCheckInRecord _checkIn({
 /// A connected work thread — produces the weekly review, thread evidence,
 /// and a connected proof counter (every Pro-value surface).
 List<PressureCheckInRecord> _proValueRecords() => [
-      _checkIn(id: 'a', daysAgo: 6),
-      _checkIn(id: 'b', daysAgo: 3, fear: 'The deadline slipping'),
-      _checkIn(id: 'c', daysAgo: 0, fear: 'Late emails piling up'),
-    ];
+  _checkIn(id: 'a', daysAgo: 6),
+  _checkIn(id: 'b', daysAgo: 3, fear: 'The deadline slipping'),
+  _checkIn(id: 'c', daysAgo: 0, fear: 'Late emails piling up'),
+];
 
 /// Unrelated, stale entries — no thread, no review, no Pro-value surface.
 List<PressureCheckInRecord> _noValueRecords() => [
-      PressureCheckInRecord(
-        entryId: 'u0',
-        createdAt: DateTime.now().subtract(const Duration(days: 20)),
-        optionId: 'could_not_stop',
-        contextIds: const [],
-        fear: null,
-        transcript: 'pressure moment',
-      ),
-    ];
+  PressureCheckInRecord(
+    entryId: 'u0',
+    createdAt: DateTime.now().subtract(const Duration(days: 20)),
+    optionId: 'could_not_stop',
+    contextIds: const [],
+    fear: null,
+    transcript: 'pressure moment',
+  ),
+];
 
 void main() {
   late List<({String event, Map<String, Object> properties})> captured;
 
   List<({String event, Map<String, Object> properties})> eventsNamed(
     String name,
-  ) =>
-      captured.where((e) => e.event == name).toList();
+  ) => captured.where((e) => e.event == name).toList();
 
   setUp(() {
     captured = [];
@@ -114,8 +113,11 @@ void main() {
         'discount',
         'offer',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'retention check copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'retention check copy must not contain "$banned"',
+        );
       }
     });
   });
@@ -212,8 +214,9 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders the question with two equal options, no text input',
-        (tester) async {
+    testWidgets('renders the question with two equal options, no text input', (
+      tester,
+    ) async {
       await pumpCard(tester);
       expect(find.text(ProRetentionCheck.title), findsOneWidget);
       expect(find.text(ProRetentionCheck.question), findsOneWidget);
@@ -223,8 +226,7 @@ void main() {
       expect(find.byType(TextFormField), findsNothing);
       // Seen fired once with safe properties, and the session is marked.
       expect(ProRetentionCheck.shownThisSession, isTrue);
-      final seen =
-          eventsNamed(ActivationFunnelAnalytics.proRetentionCheckSeen);
+      final seen = eventsNamed(ActivationFunnelAnalytics.proRetentionCheckSeen);
       expect(seen, hasLength(1));
       expect(seen.single.properties, {
         'entry_count': 3,
@@ -233,8 +235,9 @@ void main() {
       });
     });
 
-    testWidgets('Yes logs the event and shows the calm acknowledgement',
-        (tester) async {
+    testWidgets('Yes logs the event and shows the calm acknowledgement', (
+      tester,
+    ) async {
       await pumpCard(tester);
       await tester.tap(find.byKey(const Key('pro_retention_check_yes')));
       await tester.pump();
@@ -255,14 +258,16 @@ void main() {
       );
     });
 
-    testWidgets('Not yet logs the event and shows the calm acknowledgement',
-        (tester) async {
+    testWidgets('Not yet logs the event and shows the calm acknowledgement', (
+      tester,
+    ) async {
       await pumpCard(tester);
       await tester.tap(find.byKey(const Key('pro_retention_check_not_yet')));
       await tester.pump();
 
-      final notYet =
-          eventsNamed(ActivationFunnelAnalytics.proRetentionCheckNotYet);
+      final notYet = eventsNamed(
+        ActivationFunnelAnalytics.proRetentionCheckNotYet,
+      );
       expect(notYet, hasLength(1));
       expect(notYet.single.properties, {
         'entry_count': 3,
@@ -276,8 +281,7 @@ void main() {
       );
     });
 
-    testWidgets('no private content in any retention payload',
-        (tester) async {
+    testWidgets('no private content in any retention payload', (tester) async {
       await pumpCard(tester);
       await tester.tap(find.byKey(const Key('pro_retention_check_yes')));
       await tester.pump();
@@ -286,12 +290,12 @@ void main() {
       for (final e in captured) {
         expect(
           e.properties.keys.toSet().difference(
-                ActivationFunnelAnalytics.allowedPropertyKeys,
-              ),
+            ActivationFunnelAnalytics.allowedPropertyKeys,
+          ),
           isEmpty,
         );
-        final flat =
-            '${e.event} ${e.properties.values.join(' ')}'.toLowerCase();
+        final flat = '${e.event} ${e.properties.values.join(' ')}'
+            .toLowerCase();
         expect(flat, isNot(contains('deadline')));
         expect(flat, isNot(contains('voicememory')));
       }
@@ -317,64 +321,52 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('appears for Pro users once a Pro-value surface exists',
-        (tester) async {
+    testWidgets('appears for Pro users once a Pro-value surface exists', (
+      tester,
+    ) async {
       await pumpInsights(tester, pro: true, records: _proValueRecords());
-      expect(
-        find.byKey(const Key('pro_retention_check_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('pro_retention_check_card')), findsOneWidget);
       // The Pro-value surfaces themselves stay visible.
       expect(
         find.byKey(const Key('weekly_thread_review_card')),
         findsOneWidget,
       );
-      final seen =
-          eventsNamed(ActivationFunnelAnalytics.proRetentionCheckSeen);
+      final seen = eventsNamed(ActivationFunnelAnalytics.proRetentionCheckSeen);
       expect(seen, hasLength(1));
       expect(seen.single.properties['card_type'], 'weekly_review');
     });
 
-    testWidgets('never appears for free users, even with the same evidence',
-        (tester) async {
+    testWidgets('never appears for free users, even with the same evidence', (
+      tester,
+    ) async {
       await pumpInsights(tester, pro: false, records: _proValueRecords());
-      expect(
-        find.byKey(const Key('pro_retention_check_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('pro_retention_check_card')), findsNothing);
       expect(
         eventsNamed(ActivationFunnelAnalytics.proRetentionCheckSeen),
         isEmpty,
       );
     });
 
-    testWidgets('never appears for Pro users without a Pro-value surface',
-        (tester) async {
+    testWidgets('never appears for Pro users without a Pro-value surface', (
+      tester,
+    ) async {
       await pumpInsights(tester, pro: true, records: _noValueRecords());
-      expect(
-        find.byKey(const Key('pro_retention_check_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('pro_retention_check_card')), findsNothing);
     });
 
     testWidgets('only one appearance per session', (tester) async {
       await pumpInsights(tester, pro: true, records: _proValueRecords());
-      expect(
-        find.byKey(const Key('pro_retention_check_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('pro_retention_check_card')), findsOneWidget);
 
       // A fresh screen in the same session shows nothing.
       await tester.pumpWidget(const SizedBox.shrink());
       await pumpInsights(tester, pro: true, records: _proValueRecords());
-      expect(
-        find.byKey(const Key('pro_retention_check_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('pro_retention_check_card')), findsNothing);
     });
 
-    testWidgets('answering keeps the card calm — ack only, no follow-up',
-        (tester) async {
+    testWidgets('answering keeps the card calm — ack only, no follow-up', (
+      tester,
+    ) async {
       await pumpInsights(tester, pro: true, records: _proValueRecords());
       final yes = find.byKey(const Key('pro_retention_check_yes'));
       await tester.ensureVisible(yes);
@@ -395,8 +387,9 @@ void main() {
     });
 
     test('manage/cancel information stays where it already is', () {
-      final paywallSource =
-          File('lib/billing/paywall_source.dart').readAsStringSync();
+      final paywallSource = File(
+        'lib/billing/paywall_source.dart',
+      ).readAsStringSync();
       expect(
         paywallSource.contains(
           'You can manage or cancel this anytime through the App Store.',
@@ -408,10 +401,12 @@ void main() {
         isTrue,
       );
       // The retention check never references cancellation at all.
-      final check =
-          File('lib/billing/pro_retention_check.dart').readAsStringSync();
-      final card = File('lib/widgets/billing/pro_retention_check_card.dart')
-          .readAsStringSync();
+      final check = File(
+        'lib/billing/pro_retention_check.dart',
+      ).readAsStringSync();
+      final card = File(
+        'lib/widgets/billing/pro_retention_check_card.dart',
+      ).readAsStringSync();
       for (final source in [check, card]) {
         expect(source.toLowerCase(), isNot(contains('purchasenative')));
         expect(source.toLowerCase(), isNot(contains('revenuecat')));

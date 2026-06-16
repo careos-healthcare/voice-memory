@@ -15,8 +15,8 @@ MobilePrefsStore _dummyPrefs() =>
 /// avoiding real file IO inside the fake-async test zone.
 class MemoryExperimentStore extends PressureMicroExperimentStore {
   MemoryExperimentStore({bool accepted = false})
-      : acceptedFlag = accepted,
-        super(_dummyPrefs());
+    : acceptedFlag = accepted,
+      super(_dummyPrefs());
 
   bool acceptedFlag;
 
@@ -31,8 +31,8 @@ class MemoryExperimentStore extends PressureMicroExperimentStore {
 /// In-memory pressure check-in store for widget tests.
 class MemoryPressureCheckInStore extends PressureCheckInStore {
   MemoryPressureCheckInStore([List<PressureCheckInRecord>? records])
-      : records = records ?? [],
-        super(_dummyPrefs());
+    : records = records ?? [],
+      super(_dummyPrefs());
 
   final List<PressureCheckInRecord> records;
 
@@ -44,6 +44,41 @@ class MemoryPressureCheckInStore extends PressureCheckInStore {
     final sorted = [...records]
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return sorted;
+  }
+
+  @override
+  Future<void> addContextTag({
+    required String entryId,
+    required String contextId,
+    DateTime? now,
+    bool treatAsNew = false,
+  }) async {
+    final index = records.indexWhere((r) => r.entryId == entryId);
+    if (index >= 0) {
+      final record = records[index];
+      if (record.contextIds.contains(contextId)) return;
+      records[index] = PressureCheckInRecord(
+        entryId: record.entryId,
+        createdAt: record.createdAt,
+        optionId: record.optionId,
+        contextIds: [...record.contextIds, contextId],
+        fear: record.fear,
+        stopCostNote: record.stopCostNote,
+        choseToStop: record.choseToStop,
+        transcript: record.transcript,
+        treatAsNew: record.treatAsNew,
+      );
+      return;
+    }
+    records.add(
+      PressureCheckInRecord(
+        entryId: entryId,
+        createdAt: now ?? DateTime(2026, 6, 10),
+        optionId: PressureCheckInRecord.contextOnlyOptionId,
+        contextIds: [contextId],
+        treatAsNew: treatAsNew,
+      ),
+    );
   }
 }
 
@@ -75,9 +110,9 @@ class MemorySuggestionAttributionStore extends SuggestionAttributionStore {
 /// In-memory return-trigger store for widget tests.
 class MemoryReturnTriggerStore extends PressureReturnTriggerStore {
   MemoryReturnTriggerStore({bool accepted = false, bool dismissed = false})
-      : acceptedFlag = accepted,
-        dismissedFlag = dismissed,
-        super(_dummyPrefs());
+    : acceptedFlag = accepted,
+      dismissedFlag = dismissed,
+      super(_dummyPrefs());
 
   bool acceptedFlag;
   bool dismissedFlag;

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const DEVICE_ID = "550e8400-e29b-41d4-a716-446655440000";
+const DEVICE_ID = crypto.randomUUID();
 
 test.describe("Hostile user — API abuse", () => {
   test("rejects unauthenticated analyze and atmosphere", async ({ request }) => {
@@ -29,6 +29,7 @@ test.describe("Hostile user — API abuse", () => {
   test("rejects replayed or mismatched capture binding", async ({ request }) => {
     const attest = await request.post("/api/capture/attest", {
       data: { deviceId: DEVICE_ID },
+      headers: { "x-voicememory-test-ip": `hostile-proof-${crypto.randomUUID()}` },
     });
     expect(attest.ok()).toBeTruthy();
     const { token } = (await attest.json()) as { token: string };

@@ -80,17 +80,18 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
   String? get _effectiveReason => _moreUsefulReason ?? widget.notUsefulReason;
 
   /// English keeps the existing constant; other languages use localized copy.
-  String _label(String key, String enValue) =>
-      widget.languageCode == 'en' ? enValue : localized(key, widget.languageCode);
+  String _label(String key, String enValue) => widget.languageCode == 'en'
+      ? enValue
+      : localized(key, widget.languageCode);
 
   UsefulResultTakeaway get _takeaway => buildUsefulResultTakeaway(
-        resultHint: widget.checkIn.selectedOptionId ?? 'same',
-        checkInQuestion: widget.checkIn.question,
-        reflectionText: null,
-        notUsefulReason: _effectiveReason,
-        inputQualityWeak: widget.weakInput,
-        languageCode: widget.languageCode,
-      );
+    resultHint: widget.checkIn.selectedOptionId ?? 'same',
+    checkInQuestion: widget.checkIn.question,
+    reflectionText: null,
+    notUsefulReason: _effectiveReason,
+    inputQualityWeak: widget.weakInput,
+    languageCode: widget.languageCode,
+  );
 
   HookRescueIntensity get _intensity {
     if (widget.betterResultIntensity != HookRescueIntensity.normal) {
@@ -182,7 +183,9 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
           const SizedBox(height: AppSpacing.sm),
           Text(
             localizedResultHeadline(
-                checkIn.selectedOptionId, widget.languageCode),
+              checkIn.selectedOptionId,
+              widget.languageCode,
+            ),
             style: VoiceMemoryTypography.cardTitleStyle().copyWith(
               fontSize: 18,
               height: 1.35,
@@ -222,13 +225,14 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       _interpretation.nextCheck,
-                      style: VoiceMemoryTypography.bodyStyle(
-                        color: AppColors.textPrimary,
-                      ).copyWith(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        height: 1.4,
-                      ),
+                      style:
+                          VoiceMemoryTypography.bodyStyle(
+                            color: AppColors.textPrimary,
+                          ).copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            height: 1.4,
+                          ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
@@ -251,8 +255,10 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
             child: TextButton(
               onPressed: _onMakeMoreUseful,
               child: Text(
-                _label('makeThisMoreUseful',
-                    ConsumerUiCopy.makeResultMoreUsefulCta),
+                _label(
+                  'makeThisMoreUseful',
+                  ConsumerUiCopy.makeResultMoreUsefulCta,
+                ),
               ),
             ),
           ),
@@ -358,17 +364,11 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
           ).copyWith(fontSize: 16, fontWeight: FontWeight.w700, height: 1.35),
         ),
         const SizedBox(height: AppSpacing.sm),
-        Text(
-          _label('whatChanged', 'What changed'),
-          style: labelStyle,
-        ),
+        Text(_label('whatChanged', 'What changed'), style: labelStyle),
         const SizedBox(height: AppSpacing.xs),
         Text(takeaway.whatItMeans, style: bodyStyle),
         const SizedBox(height: AppSpacing.sm),
-        Text(
-          _label('whyUseful', 'Why this is useful'),
-          style: labelStyle,
-        ),
+        Text(_label('whyUseful', 'Why this is useful'), style: labelStyle),
         const SizedBox(height: AppSpacing.xs),
         Text(takeaway.whyUseful, style: bodyStyle),
         if (takeaway.confidenceLabel != null) ...[
@@ -414,8 +414,10 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _label('exampleLabel',
-                      ConsumerUiCopy.usefulTakeawayExampleLabel),
+                  _label(
+                    'exampleLabel',
+                    ConsumerUiCopy.usefulTakeawayExampleLabel,
+                  ),
                   style: labelStyle,
                 ),
                 const SizedBox(height: AppSpacing.xs),

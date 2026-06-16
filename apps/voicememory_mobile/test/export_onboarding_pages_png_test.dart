@@ -27,7 +27,8 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     final home = Platform.environment['HOME'] ?? '';
-    final outDir = Platform.environment['ONBOARDING_SCREENSHOT_ROOT'] ??
+    final outDir =
+        Platform.environment['ONBOARDING_SCREENSHOT_ROOT'] ??
         (home.isNotEmpty
             ? '$home/Desktop/upload12/screenshots'
             : 'build/onboarding_screenshots');
@@ -64,10 +65,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      await _writePng(
-        tester: tester,
-        path: '$outDir/onboarding-${i + 1}.png',
-      );
+      await _writePng(tester: tester, path: '$outDir/onboarding-${i + 1}.png');
     }
 
     // ignore: avoid_print
@@ -90,93 +88,103 @@ class _OnboardingExportFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            const Positioned.fill(child: OnboardingAmbientGlow()),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.sm,
-                    AppSpacing.xs,
-                    AppSpacing.xs,
-                    0,
-                  ),
-                  child: Text(
-                    'ArchiveMe',
-                    style: OnboardingTypography.label(
-                      color: AppColors.accentPrimary,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              const Positioned.fill(child: OnboardingAmbientGlow()),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
                     padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
                       AppSpacing.sm,
-                      AppSpacing.lg,
-                      AppSpacing.md,
+                      AppSpacing.xs,
+                      AppSpacing.xs,
+                      0,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Text(
+                      'ArchiveMe',
+                      style: OnboardingTypography.label(
+                        color: AppColors.accentPrimary,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        AppSpacing.sm,
+                        AppSpacing.lg,
+                        AppSpacing.md,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            page.title,
+                            style: OnboardingTypography.title(context),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Text(
+                            page.body,
+                            style: OnboardingTypography.body(context),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          OnboardingPageVisual(page: page),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
+                    child: Row(
                       children: [
-                        Text(page.title, style: OnboardingTypography.title(context)),
-                        const SizedBox(height: AppSpacing.md),
-                        Text(page.body, style: OnboardingTypography.body(context)),
-                        const SizedBox(height: AppSpacing.lg),
-                        OnboardingPageVisual(page: page),
+                        for (var j = 0; j < OnboardingPages.pageCount; j++)
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                right: j < OnboardingPages.pageCount - 1
+                                    ? 6
+                                    : 0,
+                              ),
+                              height: 4,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(2),
+                                color: j <= pageIndex
+                                    ? AppColors.accentPrimary
+                                    : AppColors.borderSubtle,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Row(
-                    children: [
-                      for (var j = 0; j < OnboardingPages.pageCount; j++)
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              right: j < OnboardingPages.pageCount - 1 ? 6 : 0,
-                            ),
-                            height: 4,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              color: j <= pageIndex
-                                  ? AppColors.accentPrimary
-                                  : AppColors.borderSubtle,
-                            ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.sm,
+                      AppSpacing.md,
+                      AppSpacing.md,
+                    ),
+                    child: isLast
+                        ? FilledButton(
+                            onPressed: () {},
+                            child: Text(ConsumerUiCopy.onboardingFinalCta),
+                          )
+                        : FilledButton(
+                            onPressed: () {},
+                            child: const Text('Continue'),
                           ),
-                        ),
-                    ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.sm,
-                    AppSpacing.md,
-                    AppSpacing.md,
-                  ),
-                  child: isLast
-                      ? FilledButton(
-                          onPressed: () {},
-                          child: Text(ConsumerUiCopy.onboardingFinalCta),
-                        )
-                      : FilledButton(
-                          onPressed: () {},
-                          child: const Text('Continue'),
-                        ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }

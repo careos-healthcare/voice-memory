@@ -1,17 +1,11 @@
 /// Evidence-backed quote tied to a recording in a life chapter.
 class LifeChapterQuote {
-  const LifeChapterQuote({
-    required this.quote,
-    required this.entryId,
-  });
+  const LifeChapterQuote({required this.quote, required this.entryId});
 
   final String quote;
   final String entryId;
 
-  Map<String, dynamic> toJson() => {
-        'quote': quote,
-        'entryId': entryId,
-      };
+  Map<String, dynamic> toJson() => {'quote': quote, 'entryId': entryId};
 
   static LifeChapterQuote? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -49,20 +43,19 @@ class LifeChapter {
   String get themeSummary =>
       dominantThemes.isEmpty ? 'Mixed themes' : dominantThemes.join(' · ');
 
-  String? get primaryBelief =>
-      keyBeliefs.isNotEmpty ? keyBeliefs.first : null;
+  String? get primaryBelief => keyBeliefs.isNotEmpty ? keyBeliefs.first : null;
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': 1,
-        'id': id,
-        'title': title,
-        'startDate': startDate.toUtc().toIso8601String(),
-        'endDate': endDate.toUtc().toIso8601String(),
-        'dominantThemes': dominantThemes,
-        'keyBeliefs': keyBeliefs,
-        'importantQuotes': importantQuotes.map((q) => q.toJson()).toList(),
-        'evidenceIds': evidenceIds,
-      };
+    'schemaVersion': 1,
+    'id': id,
+    'title': title,
+    'startDate': startDate.toUtc().toIso8601String(),
+    'endDate': endDate.toUtc().toIso8601String(),
+    'dominantThemes': dominantThemes,
+    'keyBeliefs': keyBeliefs,
+    'importantQuotes': importantQuotes.map((q) => q.toJson()).toList(),
+    'evidenceIds': evidenceIds,
+  };
 
   static LifeChapter? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -117,8 +110,18 @@ class LifeChapterResult {
 
 String _formatRange(DateTime start, DateTime end) {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   String label(DateTime d) =>
       '${months[d.toLocal().month - 1]} ${d.toLocal().year}';

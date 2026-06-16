@@ -11,8 +11,8 @@ import {
 } from "@/lib/tester-onboarding-copy";
 
 export const metadata: Metadata = {
-  title: "How it works — VoiceMemory",
-  description: "How VoiceMemory works for early testers: local reflections, optional resurfacing, optional backup.",
+  title: "How it works — ArchiveMe",
+  description: "How ArchiveMe works for early testers: local reflections, optional resurfacing, optional backup.",
 };
 
 export default function HowItWorksPage() {

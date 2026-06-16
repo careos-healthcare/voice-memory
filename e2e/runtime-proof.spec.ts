@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const DEVICE_ID = "550e8400-e29b-41d4-a716-446655440000";
+const DEVICE_ID = crypto.randomUUID();
 
 test.describe("Runtime proof — HTTP surface", () => {
   test("health returns checks without secrets", async ({ request }) => {
@@ -54,6 +54,7 @@ test.describe("Runtime proof — HTTP surface", () => {
   test("capture attest issues token", async ({ request }) => {
     const attest = await request.post("/api/capture/attest", {
       data: { deviceId: DEVICE_ID },
+      headers: { "x-voicememory-test-ip": `runtime-proof-${crypto.randomUUID()}` },
     });
     expect(attest.ok()).toBeTruthy();
     const { token } = (await attest.json()) as { token: string };

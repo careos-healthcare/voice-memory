@@ -22,15 +22,14 @@ abstract class BiometricAuthenticator {
 /// "not available" / "not authenticated", never an exception.
 class LocalAuthBiometricAuthenticator implements BiometricAuthenticator {
   LocalAuthBiometricAuthenticator({LocalAuthentication? auth})
-      : _auth = auth ?? LocalAuthentication();
+    : _auth = auth ?? LocalAuthentication();
 
   final LocalAuthentication _auth;
 
   @override
   Future<bool> available() async {
     try {
-      return await _auth.isDeviceSupported() &&
-          await _auth.canCheckBiometrics;
+      return await _auth.isDeviceSupported() && await _auth.canCheckBiometrics;
     } catch (_) {
       return false;
     }
@@ -70,9 +69,9 @@ class AppLockService extends ChangeNotifier {
     AppLockStore? store,
     BiometricAuthenticator? biometrics,
     DateTime Function()? clock,
-  })  : _store = store ?? AppLockStore(store: SecureAppLockStore()),
-        _biometrics = biometrics ?? LocalAuthBiometricAuthenticator(),
-        _clock = clock ?? DateTime.now;
+  }) : _store = store ?? AppLockStore(store: SecureAppLockStore()),
+       _biometrics = biometrics ?? LocalAuthBiometricAuthenticator(),
+       _clock = clock ?? DateTime.now;
 
   final AppLockStore _store;
   final BiometricAuthenticator _biometrics;
@@ -100,8 +99,7 @@ class AppLockService extends ChangeNotifier {
   Future<bool> isEnabled() => _store.enabled();
 
   /// True when the lock screen must be shown before any archive content.
-  Future<bool> isLocked() async =>
-      await isEnabled() && !_unlockedThisSession;
+  Future<bool> isLocked() async => await isEnabled() && !_unlockedThisSession;
 
   /// Device capability — independent of the user's opt-in.
   Future<bool> biometricsAvailable() => _biometrics.available();
@@ -136,7 +134,8 @@ class AppLockService extends ChangeNotifier {
   /// session; both outcomes are tracked with the method id only.
   Future<bool> verifyPin(String pin) async {
     final credentials = await _store.readCredentials();
-    final ok = credentials != null &&
+    final ok =
+        credentials != null &&
         PinHash.verify(
           pin: pin,
           salt: credentials.salt,
@@ -204,7 +203,17 @@ class AppLockService extends ChangeNotifier {
   /// while this session is unlocked.
   Future<bool> disable() async {
     if (!_unlockedThisSession) return false;
+    return _clearLockCredentials();
+  }
+
+  /// Emergency wipe path — clears lock credentials without an unlocked session.
+  Future<void> disableAfterEmergencyWipe() async {
+    await _clearLockCredentials();
+  }
+
+  Future<bool> _clearLockCredentials() async {
     await _store.clear();
+    _unlockedThisSession = false;
     ActivationFunnelAnalytics.track(
       ActivationFunnelAnalytics.appLockDisabled,
       enabled: false,

@@ -4,49 +4,50 @@ import 'package:voicememory_mobile/features/archive_clean/archive_clean_section_
 import 'package:voicememory_mobile/widgets/patterns/archive_clean_view_card.dart';
 
 List<ArchiveCleanSection> _sampleSections() => const [
-      ArchiveCleanSection(
-        type: ArchiveCleanSectionType.today,
-        title: 'Today',
-        subtitle: 'Moments and checks from today',
-        primaryCtaLabel: 'Open today',
-        route: '/moments',
-        count: 1,
-      ),
-      ArchiveCleanSection(
-        type: ArchiveCleanSectionType.thisWeek,
-        title: 'This week',
-        subtitle: 'Moments from the last 7 days',
-        primaryCtaLabel: 'Open this week',
-        route: '/moments',
-        count: 3,
-      ),
-      ArchiveCleanSection(
-        type: ArchiveCleanSectionType.thisPattern,
-        title: 'This pattern',
-        subtitle: 'Taking on too much before checking in',
-        primaryCtaLabel: 'Open pattern',
-        route: '/pattern-profile',
-      ),
-      ArchiveCleanSection(
-        type: ArchiveCleanSectionType.askArchive,
-        title: 'Ask my Archive',
-        subtitle: 'Find what ArchiveMe remembers.',
-        primaryCtaLabel: 'Search moments',
-        route: '/ask-archive',
-      ),
-      ArchiveCleanSection(
-        type: ArchiveCleanSectionType.olderMoments,
-        title: 'Older moments',
-        subtitle: 'Moments from before this week',
-        primaryCtaLabel: 'Find older moments',
-        route: '/moments',
-        count: 2,
-      ),
-    ];
+  ArchiveCleanSection(
+    type: ArchiveCleanSectionType.today,
+    title: 'Today',
+    subtitle: 'Moments and checks from today',
+    primaryCtaLabel: 'Open today',
+    route: '/moments',
+    count: 1,
+  ),
+  ArchiveCleanSection(
+    type: ArchiveCleanSectionType.thisWeek,
+    title: 'This week',
+    subtitle: 'Moments from the last 7 days',
+    primaryCtaLabel: 'Open this week',
+    route: '/moments',
+    count: 3,
+  ),
+  ArchiveCleanSection(
+    type: ArchiveCleanSectionType.thisPattern,
+    title: 'This pattern',
+    subtitle: 'Taking on too much before checking in',
+    primaryCtaLabel: 'Open pattern',
+    route: '/pattern-profile',
+  ),
+  ArchiveCleanSection(
+    type: ArchiveCleanSectionType.askArchive,
+    title: 'Ask my Archive',
+    subtitle: 'Find what ArchiveMe remembers.',
+    primaryCtaLabel: 'Search moments',
+    route: '/ask-archive',
+  ),
+  ArchiveCleanSection(
+    type: ArchiveCleanSectionType.olderMoments,
+    title: 'Older moments',
+    subtitle: 'Moments from before this week',
+    primaryCtaLabel: 'Find older moments',
+    route: '/moments',
+    count: 2,
+  ),
+];
 
 void main() {
-  testWidgets('renders title, subtitle, and all available sections',
-      (tester) async {
+  testWidgets('renders title, subtitle, and all available sections', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

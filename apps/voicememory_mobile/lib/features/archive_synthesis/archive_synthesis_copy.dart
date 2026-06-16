@@ -1,5 +1,5 @@
 /// Archive Monthly Review — pilot copy.
-abstract final class ArchiveSynthesisCopy {
+abstract class ArchiveSynthesisCopy {
   ArchiveSynthesisCopy._();
 
   static const String sectionTitle = 'Archive Monthly Review';

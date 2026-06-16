@@ -1,11 +1,12 @@
 /// App Lock — all consumer-facing copy in one place. Calm, factual lines
 /// only: no fear, no overclaiming, no security theater.
-abstract final class AppLockCopy {
+abstract class AppLockCopy {
   AppLockCopy._();
 
   // Security settings.
-  static const String settingsTitle = 'App lock';
-  static const String settingsBody = 'Protect ArchiveMe with a PIN.';
+  static const String settingsTitle = 'Require Face ID or passcode';
+  static const String settingsBody =
+      'Lock ArchiveMe on this device until you unlock it.';
   static const String settingsBiometricsLabel =
       'Use Face ID or Touch ID when available.';
   static const String settingsChangePin = 'Change PIN';
@@ -13,7 +14,8 @@ abstract final class AppLockCopy {
 
   // PIN setup.
   static const String setupTitle = 'Create a PIN';
-  static const String setupBody = 'Use this to unlock ArchiveMe on this device.';
+  static const String setupBody =
+      'Use this to unlock ArchiveMe on this device.';
   static const String setupConfirmTitle = 'Confirm PIN';
   static const String setupPrivacyLine = 'PINs do not leave this device.';
   static const String setupMismatch = 'Try again';
@@ -30,4 +32,7 @@ abstract final class AppLockCopy {
 
   /// The reason line passed to the platform biometric prompt.
   static const String biometricReason = 'Unlock ArchiveMe';
+
+  /// Emergency path — wipe local data without PIN (double confirmation).
+  static const String emergencyWipeLabel = 'Delete all local archive data';
 }

@@ -45,7 +45,10 @@ void main() {
         contains('responsibility'),
       ),
     );
-    expect(top.nextEvidencePrompt.toLowerCase(), anyOf(contains('yes'), contains('capacity'), contains('agree')));
+    expect(
+      top.nextEvidencePrompt.toLowerCase(),
+      anyOf(contains('yes'), contains('capacity'), contains('agree')),
+    );
     expect(top.whatWouldConfirm, isNotEmpty);
     expect(top.whatWouldContradict, isNotEmpty);
     expect(top.specificityLevel, isNot(InterpretationSpecificityLevel.low));
@@ -61,10 +64,7 @@ void main() {
       'I agreed to help again because I did not want to disappoint them.',
     );
 
-    final result = engine.build(
-      latestEntry: latest,
-      priorEntries: [prior],
-    );
+    final result = engine.build(latestEntry: latest, priorEntries: [prior]);
 
     expect(result.reads, isNotEmpty);
     expect(
@@ -200,7 +200,10 @@ void main() {
     expect(alts, isNotEmpty);
     expect(alts.length, lessThanOrEqualTo(2));
     for (final alt in alts) {
-      expect(alt.title.toLowerCase(), isNot(contains('saying yes before checking')));
+      expect(
+        alt.title.toLowerCase(),
+        isNot(contains('saying yes before checking')),
+      );
     }
   });
 }

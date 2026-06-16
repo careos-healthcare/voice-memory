@@ -10,6 +10,11 @@ import '../config/app_config.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
+import '../features/archive_packs/archive_pack.dart';
+import '../features/action_items/archive_action_item.dart';
+import '../features/fact_ledger/archive_fact.dart';
+import '../features/collections/archive_collection.dart';
+import '../features/pins/pinned_evidence_store.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import '../product/consumer_ui_copy.dart';
@@ -17,6 +22,7 @@ import '../security/security_settings_copy.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/memory/memory_scope_settings_section.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -84,9 +90,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open $url')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not open $url')));
       }
     }
   }
@@ -95,7 +101,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!RevenueCatService.instance.isConfigured) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(SubscriptionCopy.temporarilyUnavailable)),
+          const SnackBar(
+            content: Text(SubscriptionCopy.temporarilyUnavailable),
+          ),
         );
       }
       return;
@@ -141,9 +149,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: EdgeInsets.zero,
           children: [
             _tile(
-              ConsumerUiCopy.privacyPolicy,
-              onTap: () => _openUrl(AppConfig.privacyUrl),
-              trailing: const Icon(Icons.open_in_new, size: 18),
+              ConsumerUiCopy.privacy,
+              onTap: () => context.push('/privacy'),
             ),
             _tile(
               ConsumerUiCopy.termsOfUse,
@@ -167,6 +174,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               value: _remindersEnabled,
               onChanged: _remindersBusy ? null : _toggleReminders,
             ),
+            // Memory: when ArchiveMe may connect entries. Persistent and
+            // user-only — "Memory off" stays off until changed here.
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: MemoryScopeSettingsSection(),
+            ),
             ListTile(
               key: const Key('settings_security_tile'),
               contentPadding: EdgeInsets.zero,
@@ -184,6 +197,76 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _tile(
               ConsumerUiCopy.exportReflections,
               onTap: () => context.push('/export'),
+            ),
+            ListTile(
+              key: const Key('settings_pinned_evidence_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                PinnedEvidenceCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                PinnedEvidenceCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/pinned-evidence'),
+            ),
+            ListTile(
+              key: const Key('settings_archive_packs_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                ArchivePacksCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                ArchivePacksCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/archive-packs'),
+            ),
+            ListTile(
+              key: const Key('settings_details_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                FactLedgerCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                FactLedgerCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/details'),
+            ),
+            ListTile(
+              key: const Key('settings_action_items_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                ActionItemsCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                ActionItemsCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/action-items'),
+            ),
+            ListTile(
+              key: const Key('settings_collections_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                ArchiveCollectionsCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                ArchiveCollectionsCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/collections'),
             ),
             _tile(
               ConsumerUiCopy.deleteAccount,

@@ -68,18 +68,14 @@ class OfflineSyncJourneyStore {
     final raw = await _read();
     final block = raw['startSnapshot'];
     if (block is! Map) return null;
-    return ArchiveIntegritySnapshot.fromJson(
-      Map<String, dynamic>.from(block),
-    );
+    return ArchiveIntegritySnapshot.fromJson(Map<String, dynamic>.from(block));
   }
 
   Future<ArchiveIntegritySnapshot?> baselineSnapshot() async {
     final raw = await _read();
     final block = raw['baselineSnapshot'];
     if (block is! Map) return null;
-    return ArchiveIntegritySnapshot.fromJson(
-      Map<String, dynamic>.from(block),
-    );
+    return ArchiveIntegritySnapshot.fromJson(Map<String, dynamic>.from(block));
   }
 
   Future<void> markRestartVerified() async {

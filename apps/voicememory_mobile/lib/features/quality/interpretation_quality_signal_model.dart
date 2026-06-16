@@ -1,9 +1,5 @@
 /// Specificity of a post-save read.
-enum ReadSpecificityLevel {
-  low,
-  medium,
-  high,
-}
+enum ReadSpecificityLevel { low, medium, high }
 
 extension ReadSpecificityLevelIds on ReadSpecificityLevel {
   String get id => name;
@@ -35,11 +31,7 @@ extension ReadSourceKindIds on ReadSourceKind {
 }
 
 /// Internal quality label for retention analysis — not shown in consumer UI.
-enum InterpretationQualityLabel {
-  strong,
-  weak,
-  unclear,
-}
+enum InterpretationQualityLabel { strong, weak, unclear }
 
 extension InterpretationQualityLabelIds on InterpretationQualityLabel {
   String get id => name;
@@ -74,19 +66,18 @@ class InterpretationQualitySignal {
   final InterpretationQualityLabel? qualityLabel;
 
   Map<String, dynamic> toJson() => {
-        'readId': readId,
-        'readTitle': readTitle,
-        'specificityLevel': specificityLevel.id,
-        if (strengthLabel != null) 'strengthLabel': strengthLabel,
-        'evidenceCount': evidenceCount,
-        'userAction': userAction.id,
-        if (timeToActionSeconds != null)
-          'timeToActionSeconds': timeToActionSeconds,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'source': source.id,
-        'nextPromptUsed': nextPromptUsed,
-        if (qualityLabel != null) 'qualityLabel': qualityLabel!.id,
-      };
+    'readId': readId,
+    'readTitle': readTitle,
+    'specificityLevel': specificityLevel.id,
+    if (strengthLabel != null) 'strengthLabel': strengthLabel,
+    'evidenceCount': evidenceCount,
+    'userAction': userAction.id,
+    if (timeToActionSeconds != null) 'timeToActionSeconds': timeToActionSeconds,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'source': source.id,
+    'nextPromptUsed': nextPromptUsed,
+    if (qualityLabel != null) 'qualityLabel': qualityLabel!.id,
+  };
 
   factory InterpretationQualitySignal.fromJson(Map<String, dynamic> json) {
     return InterpretationQualitySignal(
@@ -103,7 +94,8 @@ class InterpretationQualitySignal {
         orElse: () => ReadUserAction.ignored,
       ),
       timeToActionSeconds: (json['timeToActionSeconds'] as num?)?.toInt(),
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
       source: ReadSourceKind.values.firstWhere(
         (e) => e.id == json['source'],

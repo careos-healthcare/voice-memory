@@ -34,11 +34,7 @@ JournalEntry _entry({
 void main() {
   test('first recording shows learning belief without inflated confidence', () {
     final entries = [
-      _entry(
-        id: '1',
-        at: DateTime.now(),
-        line: 'I feel uncertain about work',
-      ),
+      _entry(id: '1', at: DateTime.now(), line: 'I feel uncertain about work'),
     ];
     final card = const DiscoverBeliefEngine().build(entries: entries);
     expect(card == null || card.confidencePercent < 60, isTrue);
@@ -134,9 +130,6 @@ void main() {
     ];
     final story = const WeeklyStoryEngine().build(entries: entries, now: now);
     expect(story, isNotNull);
-    expect(
-      story!.growingThemes.any((t) => t.label == 'Confidence'),
-      isTrue,
-    );
+    expect(story!.growingThemes.any((t) => t.label == 'Confidence'), isTrue);
   });
 }

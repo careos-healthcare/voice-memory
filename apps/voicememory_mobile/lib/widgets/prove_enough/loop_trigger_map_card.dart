@@ -8,10 +8,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Shows what tends to trigger the prove_enough loop across saved moments.
 class LoopTriggerMapCard extends StatelessWidget {
-  const LoopTriggerMapCard({
-    super.key,
-    required this.model,
-  });
+  const LoopTriggerMapCard({super.key, required this.model});
 
   final LoopTriggerMapModel model;
 
@@ -35,16 +32,16 @@ class LoopTriggerMapCard extends StatelessWidget {
           if (!model.hasEnoughData)
             Text(
               LoopTriggerMapModel.notEnoughDataCopy,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             )
           else ...[
             Text(
               LoopTriggerMapModel.enoughDataHeadline,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.sm),
             ...model.rankedRows.map(
@@ -80,9 +77,9 @@ class _TriggerRow extends StatelessWidget {
             ),
             Text(
               '${row.count}',
-              style: ArchiveMobileTypography.body(context).copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(fontWeight: FontWeight.w700),
             ),
           ],
         ),

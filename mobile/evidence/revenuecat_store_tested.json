@@ -1,0 +1,16 @@
+{
+  "success": false,
+  "device": "sdk_gphone16k_arm64 (emulator-5554)",
+  "platform": "android",
+  "offering_loaded": false,
+  "purchase_completed": false,
+  "entitlement_received": false,
+  "restore_completed": false,
+  "timestamp": "2026-06-03T18:37:06.577Z",
+  "sdk_initialized": false,
+  "e2e_pass_count": 0,
+  "e2e_fail_count": 12,
+  "audit": "revenuecat_e2e_production",
+  "runtime_json": "apps/voicememory_mobile/tool/screenshots/revenuecat_e2e/revenuecat_e2e_runtime.json",
+  "note": "E2E audit 2026-06-03: no REVENUECAT_* dart-defines. See REVENUECAT_PRODUCTION_EVIDENCE.md. Re-run on physical device with API keys + sandbox purchase."
+}

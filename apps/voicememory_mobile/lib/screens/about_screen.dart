@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,10 +45,11 @@ class _AboutScreenState extends State<AboutScreen> {
 
   Future<void> _openUrl(String url) async {
     final uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not open $url')),
-      );
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+        mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not open $url')));
     }
   }
 
@@ -83,7 +85,13 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Privacy policy'),
+            title: const Text('Privacy'),
+            trailing: const Icon(Icons.chevron_right, size: 18),
+            onTap: () => context.push('/privacy'),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Full privacy policy'),
             trailing: const Icon(Icons.open_in_new, size: 18),
             onTap: () => _openUrl(AppConfig.privacyUrl),
           ),

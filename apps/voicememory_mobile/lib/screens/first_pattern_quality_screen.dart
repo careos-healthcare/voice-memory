@@ -85,7 +85,10 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
                       '${result.accepted} accepted · ${result.rejected} rejected · ${result.total} total',
                 ),
                 _metricRow('Fallback count', '${result.fallbackCount}'),
-                _metricRow('Low-confidence count', '${result.lowConfidenceCount}'),
+                _metricRow(
+                  'Low-confidence count',
+                  '${result.lowConfidenceCount}',
+                ),
                 _metricRow(
                   'Correction recommended',
                   '${result.correctionRecommendedCount}',
@@ -158,10 +161,7 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
   List<Widget> _returnCaptureSection(ActivationSummary? summary) {
     if (summary == null) {
       return const [
-        Text(
-          'Loading…',
-          style: TextStyle(color: AppTheme.muted, fontSize: 13),
-        ),
+        Text('Loading…', style: TextStyle(color: AppTheme.muted, fontSize: 13)),
       ];
     }
     final selectionRate = summary.returnCaptureQuickAnswerSelectionRate;
@@ -181,11 +181,15 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
       ),
       _metricRow(
         'Selection rate',
-        selectionRate == null ? '—' : '${(selectionRate * 100).toStringAsFixed(0)}%',
+        selectionRate == null
+            ? '—'
+            : '${(selectionRate * 100).toStringAsFixed(0)}%',
       ),
       _metricRow(
         'Recorded after selection rate',
-        recordedRate == null ? '—' : '${(recordedRate * 100).toStringAsFixed(0)}%',
+        recordedRate == null
+            ? '—'
+            : '${(recordedRate * 100).toStringAsFixed(0)}%',
       ),
     ];
   }
@@ -193,10 +197,7 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
   List<Widget> _watchForPromptSection(ActivationSummary? summary) {
     if (summary == null) {
       return const [
-        Text(
-          'Loading…',
-          style: TextStyle(color: AppTheme.muted, fontSize: 13),
-        ),
+        Text('Loading…', style: TextStyle(color: AppTheme.muted, fontSize: 13)),
       ];
     }
     final rate = summary.watchForPromptAcceptanceRate;
@@ -205,10 +206,7 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
         'Watch-for accepted',
         '${summary.watchForPromptAcceptedCount}',
       ),
-      _metricRow(
-        'Watch-for shown',
-        '${summary.watchForPromptShownCount}',
-      ),
+      _metricRow('Watch-for shown', '${summary.watchForPromptShownCount}'),
       _metricRow(
         'Acceptance rate',
         rate == null ? '—' : '${(rate * 100).toStringAsFixed(0)}%',
@@ -221,10 +219,7 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
   ) {
     if (summary == null) {
       return const [
-        Text(
-          'Loading…',
-          style: TextStyle(color: AppTheme.muted, fontSize: 13),
-        ),
+        Text('Loading…', style: TextStyle(color: AppTheme.muted, fontSize: 13)),
       ];
     }
     if (summary.totalLearned == 0) {
@@ -247,10 +242,7 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
         'Most corrected-to pattern',
         summary.mostCorrectedTitle.isEmpty ? '—' : summary.mostCorrectedTitle,
       ),
-      _metricRow(
-        'Used for next prompt',
-        '${summary.usedForNextPromptCount}',
-      ),
+      _metricRow('Used for next prompt', '${summary.usedForNextPromptCount}'),
       const SizedBox(height: 8),
       const Text(
         'Recent corrections',
@@ -333,9 +325,7 @@ class _FirstPatternQualityScreenState extends State<FirstPatternQualityScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(label, style: const TextStyle(fontSize: 14)),
-          ),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
           Text(
             value,
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),

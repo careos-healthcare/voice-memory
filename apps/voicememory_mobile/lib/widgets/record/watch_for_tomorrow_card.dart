@@ -169,7 +169,8 @@ class _WatchForTomorrowCardState extends State<WatchForTomorrowCard> {
   Future<void> _onAccept() async {
     setState(() => _saving = true);
     try {
-      final accept = widget.onAccept ?? WatchForCoordinator.acceptSuggestedWatchFor;
+      final accept =
+          widget.onAccept ?? WatchForCoordinator.acceptSuggestedWatchFor;
       await accept(widget.suggestion);
       await TomorrowCheckInCoordinator.createFromWatchFor(widget.suggestion);
       if (widget.suggestion.promptStrength != null) {

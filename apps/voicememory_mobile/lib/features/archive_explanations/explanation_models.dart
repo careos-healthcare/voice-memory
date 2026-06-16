@@ -44,62 +44,61 @@ class ArchiveInsightRef {
       const ArchiveInsightRef(id: 'belief', kind: ArchiveInsightKind.belief);
 
   static ArchiveInsightRef beliefChange(int index) => ArchiveInsightRef(
-        id: 'belief-change:$index',
-        kind: ArchiveInsightKind.beliefChange,
-        index: index,
-      );
+    id: 'belief-change:$index',
+    kind: ArchiveInsightKind.beliefChange,
+    index: index,
+  );
 
   static ArchiveInsightRef theme(String key) => ArchiveInsightRef(
-        id: 'theme:$key',
-        kind: ArchiveInsightKind.theme,
-        themeKey: key,
-      );
+    id: 'theme:$key',
+    kind: ArchiveInsightKind.theme,
+    themeKey: key,
+  );
 
   static ArchiveInsightRef contradiction({
     required String entryIdA,
     required String entryIdB,
-  }) =>
-      ArchiveInsightRef(
-        id: 'contradiction:$entryIdA|$entryIdB',
-        kind: ArchiveInsightKind.contradiction,
-        entryIdA: entryIdA,
-        entryIdB: entryIdB,
-      );
+  }) => ArchiveInsightRef(
+    id: 'contradiction:$entryIdA|$entryIdB',
+    kind: ArchiveInsightKind.contradiction,
+    entryIdA: entryIdA,
+    entryIdB: entryIdB,
+  );
 
   static ArchiveInsightRef blindSpot(String spotId) => ArchiveInsightRef(
-        id: 'blindspot:$spotId',
-        kind: ArchiveInsightKind.blindSpot,
-        blindSpotId: spotId,
-      );
+    id: 'blindspot:$spotId',
+    kind: ArchiveInsightKind.blindSpot,
+    blindSpotId: spotId,
+  );
 
   static ArchiveInsightRef chapter(String chapterId) => ArchiveInsightRef(
-        id: 'chapter:$chapterId',
-        kind: ArchiveInsightKind.chapter,
-        chapterId: chapterId,
-      );
+    id: 'chapter:$chapterId',
+    kind: ArchiveInsightKind.chapter,
+    chapterId: chapterId,
+  );
 
   static ArchiveInsightRef weeklyStory() => const ArchiveInsightRef(
-        id: 'weekly-story',
-        kind: ArchiveInsightKind.weeklyStory,
-      );
+    id: 'weekly-story',
+    kind: ArchiveInsightKind.weeklyStory,
+  );
 
   static ArchiveInsightRef askArchive(String prompt) => ArchiveInsightRef(
-        id: 'ask:${prompt.hashCode}',
-        kind: ArchiveInsightKind.askArchive,
-        askPrompt: prompt,
-      );
+    id: 'ask:${prompt.hashCode}',
+    kind: ArchiveInsightKind.askArchive,
+    askPrompt: prompt,
+  );
 
   static ArchiveInsightRef surprise(int index) => ArchiveInsightRef(
-        id: 'surprise:$index',
-        kind: ArchiveInsightKind.surprise,
-        surpriseIndex: index,
-      );
+    id: 'surprise:$index',
+    kind: ArchiveInsightKind.surprise,
+    surpriseIndex: index,
+  );
 
   static ArchiveInsightRef challenge(int index) => ArchiveInsightRef(
-        id: 'challenge:$index',
-        kind: ArchiveInsightKind.challenge,
-        challengeIndex: index,
-      );
+    id: 'challenge:$index',
+    kind: ArchiveInsightKind.challenge,
+    challengeIndex: index,
+  );
 
   static ArchiveInsightRef? parseRouteId(String routeId) {
     if (routeId.isEmpty) return null;
@@ -169,10 +168,7 @@ class RelatedTheme {
 }
 
 class RelatedBelief {
-  const RelatedBelief({
-    required this.statement,
-    required this.relevanceScore,
-  });
+  const RelatedBelief({required this.statement, required this.relevanceScore});
 
   final String statement;
   final int relevanceScore;
@@ -285,9 +281,9 @@ class ArchiveExplanation {
   final bool hasDeeperContent;
 
   List<String> get allEntryIds => [
-        ...supportingEvidence.map((e) => e.entryId),
-        ...contradictingEvidence.map((e) => e.entryId),
-      ].toSet().toList();
+    ...supportingEvidence.map((e) => e.entryId),
+    ...contradictingEvidence.map((e) => e.entryId),
+  ].toSet().toList();
 }
 
 /// Surprise pattern for "Your Archive Noticed".

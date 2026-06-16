@@ -4,8 +4,9 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/widgets/record/first_reflection_result_card.dart';
 
 void main() {
-  testWidgets('first reflection result card shows signal saved copy and CTAs',
-      (tester) async {
+  testWidgets('first reflection result card shows signal saved copy and CTAs', (
+    tester,
+  ) async {
     var recordTapped = false;
     var patternsTapped = false;
 

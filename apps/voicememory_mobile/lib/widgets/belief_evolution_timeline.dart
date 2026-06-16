@@ -6,10 +6,7 @@ import '../design/warm_archive_copy.dart';
 import '../theme/app_theme.dart';
 
 class BeliefEvolutionTimelineWidget extends StatelessWidget {
-  const BeliefEvolutionTimelineWidget({
-    super.key,
-    required this.timeline,
-  });
+  const BeliefEvolutionTimelineWidget({super.key, required this.timeline});
 
   final BeliefEvolutionTimeline timeline;
 
@@ -121,7 +118,11 @@ class _EvidenceTile extends StatelessWidget {
               children: [
                 Text(
                   '"${line.quote}"',
-                  style: const TextStyle(color: AppTheme.muted, fontSize: 13, height: 1.35),
+                  style: const TextStyle(
+                    color: AppTheme.muted,
+                    fontSize: 13,
+                    height: 1.35,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(

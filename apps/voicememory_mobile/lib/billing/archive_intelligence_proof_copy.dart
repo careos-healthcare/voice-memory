@@ -1,5 +1,5 @@
 /// Value proof before payment — real counts only.
-abstract final class ArchiveIntelligenceProofCopy {
+abstract class ArchiveIntelligenceProofCopy {
   ArchiveIntelligenceProofCopy._();
 
   static const String headline = 'ArchiveMe has already noticed:';

@@ -3,7 +3,7 @@ import 'signal_feedback_model.dart';
 import 'signal_feedback_store.dart';
 
 /// Records post-save signal interactions locally.
-abstract final class SignalFeedbackCoordinator {
+abstract class SignalFeedbackCoordinator {
   SignalFeedbackCoordinator._();
 
   static SignalFeedbackStore _store() => SignalFeedbackStore.instance();

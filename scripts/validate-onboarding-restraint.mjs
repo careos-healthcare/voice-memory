@@ -17,7 +17,7 @@ const REQUIRED_FILES = [
   "lib/debug/onboarding-clarity.ts",
   "components/onboarding/OnboardingNavigationTracker.tsx",
   "components/onboarding/CalmComprehensionPrompt.tsx",
-  "components/internal/OnboardingClarityDebugPanel.tsx",
+  "components/debug/OnboardingClarityDebugPanel.tsx",
   "app/internal/onboarding-clarity/page.tsx",
 ];
 
@@ -32,7 +32,7 @@ const REQUIRED_EVENTS = [
 ];
 
 const REQUIRED_COPY = [
-  "Record a short reflection. It stays on this device.",
+  "Your archive keeps track of what keeps repeating.",
   "This came back.", // via MEMORY_LANGUAGE / WEDGE_RESURFACING
   "Sign in only if you want encrypted backup across devices.",
   "A phrase you said before can show up again.",
@@ -71,6 +71,8 @@ const USER_SCAN = [
   "lib/onboarding/onboarding-copy.ts",
   "components/onboarding",
   "components/ActivationOnboarding.tsx",
+  "components/onboarding/ArchiveOnboarding.tsx",
+  "lib/onboarding/archive-onboarding-copy.ts",
 ];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
@@ -93,12 +95,24 @@ for (const event of REQUIRED_EVENTS) {
 
 const homeCopy = [
   fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "lib/onboarding/archive-onboarding-copy.ts"), "utf8"),
   fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "lib/trust-copy.ts"), "utf8"),
 ].join("\n");
 const copyAlternatives = {
   "This came back.": ["MEMORY_LANGUAGE.thisCameBack", "WEDGE_RESURFACING.wordsCameBack"],
   "Your own words came back.": ["MEMORY_LANGUAGE.wordsReturned", "WEDGE_RESURFACING.pastWordsMatch"],
   "Your words stay yours": ["RECOGNITION_COPY.notAiJournal", "NOT_AI_JOURNAL_LINE"],
+  "Speak for about a minute. Your words stay on this device.": [
+    "ONBOARDING_RECORDER",
+    "Tap to speak",
+    "APP_DEVICE_LINE",
+  ],
+  "Sign in only if you want encrypted backup across devices.": [
+    "signInPrompt",
+    "ACCOUNT_BACKUP",
+  ],
+  "Not therapy, not a diagnosis": ["NOT_THERAPY", "product-clarity-copy", "TRUST"],
 };
 for (const line of REQUIRED_COPY) {
   const alts = copyAlternatives[line];
@@ -115,17 +129,19 @@ if (!calm.includes("You don't need to organize anything here.")) {
 }
 
 const activation = fs.readFileSync(path.join(ROOT, "lib/activation-guidance.ts"), "utf8");
-if (
-  !activation.includes('id: "record"') ||
-  !activation.includes('id: "return"') ||
-  !activation.includes('id: "backup"') ||
-  activation.includes('id: "day-one"')
-) {
-  console.error("Onboarding restraint validation failed — activation must use 3 concrete steps.");
+if (!activation.includes("ARCHIVE_ONBOARDING_SCREENS")) {
+  console.error("Onboarding restraint validation failed — must use archive onboarding screens.");
   process.exit(1);
 }
 
-if (!fs.readFileSync(path.join(ROOT, "components/ActivationOnboarding.tsx"), "utf8").includes("Record a reflection")) {
+const archiveOnboarding = fs.readFileSync(
+  path.join(ROOT, "components/onboarding/ArchiveOnboarding.tsx"),
+  "utf8",
+);
+if (
+  !archiveOnboarding.includes("ARCHIVE_ONBOARDING_RECORD_CTA") &&
+  !archiveOnboarding.includes("Record your first reflection")
+) {
   console.error("Onboarding restraint validation failed — primary CTA must lead to recording.");
   process.exit(1);
 }

@@ -89,7 +89,7 @@ export default function SettingsPage() {
       showMessage(
         removed > 0
           ? `Deleted ${removed} reflection${removed === 1 ? "" : "s"} and cleared local preferences.`
-          : "All local VoiceMemory data cleared.",
+          : "All local ArchiveMe data cleared.",
       );
     } finally {
       setBusy(false);
@@ -120,7 +120,7 @@ export default function SettingsPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-violet-200">Data & privacy</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Settings</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Manage data stored on this device. VoiceMemory is local-first — these actions affect
+            Manage data stored on this device. ArchiveMe is local-first — these actions affect
             only this browser unless you use encrypted backup.
           </p>
 
@@ -224,7 +224,7 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">How you use VoiceMemory</CardTitle>
+              <CardTitle className="text-base">How you use ArchiveMe</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">

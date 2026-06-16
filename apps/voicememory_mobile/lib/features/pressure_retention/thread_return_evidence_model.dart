@@ -19,6 +19,7 @@ class ThreadReturnEvidence {
   const ThreadReturnEvidence({
     required this.hasEvidence,
     this.headline = '',
+    this.namedLine = '',
     this.summaryLine = '',
     this.status = ThreadReturnStatus.earlySignal,
     this.occurrenceCount = 0,
@@ -27,6 +28,8 @@ class ThreadReturnEvidence {
     this.evidenceSnippets = const [],
     this.entryIds = const [],
     this.confidenceLabel = '',
+    this.followUpPrompt = '',
+    this.followUpCtaLabel = '',
   });
 
   /// A thread needs at least this many occurrences before anything is shown.
@@ -54,10 +57,35 @@ class ThreadReturnEvidence {
   static const String evidenceHeading = 'Evidence behind this';
   static const String basedOnLine = 'Based on your recent archive';
 
+  /// Light affect-label fallback when no strong term exists — words were
+  /// added, nothing more is claimed.
+  static const String genericNamedLine =
+      'You added words to something that was repeating.';
+
+  // Follow-up CTA labels per status — a clear next action, never a demand.
+  static const String returnedFollowUpCta = 'Record what happened this time';
+  static const String buildingFollowUpCta = 'Record what happened this time';
+  static const String fadingFollowUpCta = 'Add what felt different';
+  static const String earlySignalFollowUpCta = 'Add another example';
+
+  // Follow-up prompts handed to the Record screen — cautious, no certainty.
+  static const String returnedFollowUpPrompt =
+      'This thread returned. What happened this time?';
+  static const String buildingFollowUpPrompt =
+      'This pattern is building. What did it make you do today?';
+  static const String fadingFollowUpPrompt =
+      'This may be fading. What felt different this time?';
+  static const String earlySignalFollowUpPrompt =
+      'This may be starting. What is another example?';
+
   /// False when the archive does not hold enough repeated evidence.
   final bool hasEvidence;
 
   final String headline;
+
+  /// Light affect label using the user's own term, e.g. "You named the work
+  /// thread." Naming only — never processing, healing, or resolution.
+  final String namedLine;
 
   /// One grounded sentence, e.g. "Work pressure has appeared 3 times in
   /// 8 days."
@@ -85,6 +113,12 @@ class ThreadReturnEvidence {
   final List<String> entryIds;
 
   final String confidenceLabel;
+
+  /// Prompt handed to the Record screen when the user follows up.
+  final String followUpPrompt;
+
+  /// Consumer-facing label for the follow-up CTA on the card.
+  final String followUpCtaLabel;
 
   factory ThreadReturnEvidence.none() =>
       const ThreadReturnEvidence(hasEvidence: false);

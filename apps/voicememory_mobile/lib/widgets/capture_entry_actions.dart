@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../design/archive_mobile_typography.dart';
+import '../features/pressure_retention/start_here_save_receipt_model.dart';
+import '../services/capture_pipeline_service.dart';
 import '../design/empty_archive_experience.dart';
 import '../product/consumer_ui_copy.dart';
+import '../services/activation_funnel_analytics.dart';
+import '../theme/app_colors.dart';
 
 /// Primary voice capture + secondary typed capture — same labels everywhere.
 class CaptureEntryActions extends StatelessWidget {
@@ -12,28 +19,51 @@ class CaptureEntryActions extends StatelessWidget {
     this.onGradient = false,
     this.typeCapturePrompt,
     this.recordButtonLabel,
+    this.recordButtonKey,
     this.onLogPressureMoment,
+    this.onTextThoughtSaved,
+    this.underRecordHelper,
   });
 
   final VoidCallback onRecord;
   final bool onGradient;
   final String? recordButtonLabel;
+  final Key? recordButtonKey;
 
-  /// Prefills quick text capture when user chose a Start Here prompt first.
+  /// Tiny confidence helper rendered directly under the record CTA — only
+  /// passed before the first save. Plain text, never a new choice.
+  final String? underRecordHelper;
+
+  /// Passes a prompt hint into quick text capture when user chose one first.
   final String? typeCapturePrompt;
 
   /// When set, surfaces a low-friction "Log pressure moment" entry point.
   final VoidCallback? onLogPressureMoment;
 
+  /// Called after a typed thought saves successfully (Record post-save flow).
+  final Future<void> Function(CapturePipelineResult result)? onTextThoughtSaved;
+
   static const logPressureMomentLabel = 'Log pressure moment';
 
-  void _typeInstead(BuildContext context) {
+  Future<void> _typeInstead(BuildContext context) async {
     final prompt = typeCapturePrompt?.trim();
+    final CapturePipelineResult? result;
     if (prompt != null && prompt.isNotEmpty) {
-      context.push('/quick-capture', extra: prompt);
+      result = await context.push<CapturePipelineResult>(
+        '/quick-capture',
+        extra: prompt,
+      );
+    } else {
+      result = await context.push<CapturePipelineResult>('/quick-capture');
+    }
+    if (result == null || !context.mounted) return;
+    if (onTextThoughtSaved != null) {
+      await onTextThoughtSaved!(result);
       return;
     }
-    context.push('/quick-capture');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(StartHereSaveReceipt.defaultTitle)),
+    );
   }
 
   @override
@@ -53,7 +83,7 @@ class CaptureEntryActions extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => _typeInstead(context),
+            onPressed: () => unawaited(_typeInstead(context)),
             style: TextButton.styleFrom(
               foregroundColor: Colors.white.withValues(alpha: 0.92),
               minimumSize: const Size(48, 44),
@@ -73,6 +103,14 @@ class CaptureEntryActions extends StatelessWidget {
       );
     }
 
+    final helper = underRecordHelper;
+    if (helper != null) {
+      ActivationFunnelAnalytics.track(
+        ActivationFunnelAnalytics.firstSaveConfidenceSeen,
+        entryCount: 0,
+        oncePerSession: true,
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -80,17 +118,30 @@ class CaptureEntryActions extends StatelessWidget {
           height: 48,
           width: double.infinity,
           child: FilledButton.icon(
+            key: recordButtonKey,
             onPressed: onRecord,
             icon: const Icon(Icons.mic),
             label: Text(recordButtonLabel ?? ConsumerUiCopy.startRecording),
           ),
         ),
+        if (helper != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              helper,
+              key: const Key('first_save_one_sentence_helper'),
+              textAlign: TextAlign.center,
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
+            ),
+          ),
         const SizedBox(height: 8),
         SizedBox(
           height: 48,
           width: double.infinity,
           child: OutlinedButton.icon(
-            onPressed: () => _typeInstead(context),
+            onPressed: () => unawaited(_typeInstead(context)),
             icon: const Icon(Icons.keyboard_outlined),
             label: const Text(EmptyArchiveCopy.typeInsteadCta),
           ),

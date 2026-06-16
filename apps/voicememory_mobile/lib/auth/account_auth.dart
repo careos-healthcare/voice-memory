@@ -8,7 +8,7 @@ import '../api/api_exceptions.dart';
 /// password fields, nothing password-shaped to store, and "forgot
 /// password" is replaced by resending a fresh code. Calm, factual lines:
 /// the account prepares restore/access; it does not claim full cloud sync.
-abstract final class AccountAuthCopy {
+abstract class AccountAuthCopy {
   AccountAuthCopy._();
 
   // Create account.
@@ -50,7 +50,7 @@ abstract final class AccountAuthCopy {
 /// Pure helpers for the account flow: validation and the mapping from
 /// thrown errors to stable, non-sensitive analytics ids. No emails,
 /// codes, or messages ever leave this mapping — only fixed ids.
-abstract final class AccountAuth {
+abstract class AccountAuth {
   AccountAuth._();
 
   /// The stable method id for the existing provider.
@@ -58,8 +58,7 @@ abstract final class AccountAuth {
 
   static final RegExp _emailShape = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
 
-  static bool isValidEmail(String email) =>
-      _emailShape.hasMatch(email.trim());
+  static bool isValidEmail(String email) => _emailShape.hasMatch(email.trim());
 
   /// A stable, non-sensitive id for an auth error — never the message,
   /// email, or any user input.
@@ -67,7 +66,8 @@ abstract final class AccountAuth {
     if (error is BackendNotConfiguredException) return 'backend_not_configured';
     if (error is NetworkOfflineException) return 'offline';
     if (error is ApiException) {
-      if (error.code == 'BACKEND_NOT_CONFIGURED') return 'backend_not_configured';
+      if (error.code == 'BACKEND_NOT_CONFIGURED')
+        return 'backend_not_configured';
       final status = error.statusCode ?? 0;
       if (status == 401) return 'invalid_code';
       if (status == 429) return 'rate_limited';

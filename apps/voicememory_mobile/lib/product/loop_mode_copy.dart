@@ -1,5 +1,5 @@
 /// Consumer copy for Loop Mode — no banned language.
-abstract final class LoopModeCopy {
+abstract class LoopModeCopy {
   LoopModeCopy._();
 
   // ——— Onboarding ———
@@ -163,7 +163,8 @@ abstract final class LoopModeCopy {
   // ——— prove_enough journey ———
   static const String proveEnoughJourneyTitle = 'Proving-enough journey';
   static String proveEnoughProgress(int count) => '$count of 3 proving moments';
-  static const String proveEnoughRecordCardTitle = 'Record the next proving moment';
+  static const String proveEnoughRecordCardTitle =
+      'Record the next proving moment';
   static const String proveEnoughRecordCardBody =
       'ArchiveMe is watching whether you do more because stopping feels unsafe.';
   static const List<String> proveEnoughNextPrompts = [
@@ -188,7 +189,8 @@ abstract final class LoopModeCopy {
       'ArchiveMe reviewed your proving-enough loop';
   static const String proveEnoughReviewSubtitle =
       'So far, this looks like a loop worth watching.';
-  static const String reviewWhatTriggeredEffort = 'What triggered the extra effort';
+  static const String reviewWhatTriggeredEffort =
+      'What triggered the extra effort';
   static const String reviewRecordNextProve = 'Record next proving moment';
   static const String reviewProveWrongProveEnough =
       'You chose the effort freely, felt satisfied afterward, and could stop or rest without guilt.';
@@ -217,7 +219,8 @@ abstract final class LoopModeCopy {
       'Record next proving moment';
 
   // ——— Secondary loop stubs (selection only) ———
-  static const String relationshipReplayTitle = 'Replaying relationship moments';
+  static const String relationshipReplayTitle =
+      'Replaying relationship moments';
   static const String relationshipReplayPromise =
       'Catch interactions that keep replaying in your head.';
   static const String avoidConversationTitle = 'Avoiding direct conversations';

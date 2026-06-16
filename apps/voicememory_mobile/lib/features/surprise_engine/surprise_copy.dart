@@ -2,7 +2,7 @@ import '../living_archive/living_archive_copy.dart';
 import 'surprise_models.dart';
 
 /// Copy for Surprise Pipeline V1 — reflective, curiosity-first.
-abstract final class SurpriseCopy {
+abstract class SurpriseCopy {
   SurpriseCopy._();
 
   static const String sectionHeadline = 'YOUR ARCHIVE NOTICED SOMETHING';
@@ -17,21 +17,25 @@ abstract final class SurpriseCopy {
     String? chapterTitle,
   }) {
     return switch (type) {
-      SurpriseType.archiveChangedMind => priorThemeLabel != null
-          ? 'The archive is less convinced that $priorThemeLabel is your biggest problem.'
-          : 'The archive changed its mind about what your recordings emphasize.',
+      SurpriseType.archiveChangedMind =>
+        priorThemeLabel != null
+            ? 'The archive is less convinced that $priorThemeLabel is your biggest problem.'
+            : 'The archive changed its mind about what your recordings emphasize.',
       SurpriseType.confidenceChangedSharply => 'This belief is weakening.',
       SurpriseType.newContradiction =>
         'Two of your reflections no longer line up the way they used to.',
-      SurpriseType.unexpectedThemeRise => themeLabel != null
-          ? 'This pattern appeared unexpectedly — you keep returning to $themeLabel.'
-          : 'This pattern appeared unexpectedly.',
-      SurpriseType.themeDisappearance => themeLabel != null
-          ? 'You mention $themeLabel far less than before.'
-          : 'Something you used to return to has gone quiet in recent recordings.',
-      SurpriseType.newLifeChapter => chapterTitle != null
-          ? 'Your archive grouped recent reflections into “$chapterTitle”.'
-          : 'A new life chapter may be opening in your archive.',
+      SurpriseType.unexpectedThemeRise =>
+        themeLabel != null
+            ? 'This pattern appeared unexpectedly — you keep returning to $themeLabel.'
+            : 'This pattern appeared unexpectedly.',
+      SurpriseType.themeDisappearance =>
+        themeLabel != null
+            ? 'You mention $themeLabel far less than before.'
+            : 'Something you used to return to has gone quiet in recent recordings.',
+      SurpriseType.newLifeChapter =>
+        chapterTitle != null
+            ? 'Your archive grouped recent reflections into “$chapterTitle”.'
+            : 'A new life chapter may be opening in your archive.',
       SurpriseType.emotionalShift =>
         'The emotional weight in your recent recordings shifted.',
     };

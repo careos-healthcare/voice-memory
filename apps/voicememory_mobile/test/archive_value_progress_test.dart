@@ -5,28 +5,37 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 
 Reflection _reflection() => const Reflection(
-      mood: 'calm',
-      emotionalIntensity: 1,
-      recurringThemes: ['work'],
-      exactLanguagePattern: 'pattern',
-      concreteObservation: 'obs',
-      repeatedSignal: 'signal',
-    );
+  mood: 'calm',
+  emotionalIntensity: 1,
+  recurringThemes: ['work'],
+  exactLanguagePattern: 'pattern',
+  concreteObservation: 'obs',
+  repeatedSignal: 'signal',
+);
 
 JournalEntry _entry(int i) => JournalEntry(
-      id: 'e$i',
-      createdAt: DateTime.utc(2026, 1, i),
-      transcript: 'Reflection text number $i about work stress',
-      durationSeconds: 10,
-      reflection: _reflection(),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: 'e$i',
+  createdAt: DateTime.utc(2026, 1, i),
+  transcript: 'Reflection text number $i about work stress',
+  durationSeconds: 10,
+  reflection: _reflection(),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
   test('stage ladder maps reflection counts', () {
-    expect(ArchiveValueProgress.stageForCount(1), ArchiveValueStage.oneDataPoint);
-    expect(ArchiveValueProgress.stageForCount(2), ArchiveValueStage.possibleRepeat);
-    expect(ArchiveValueProgress.stageForCount(5), ArchiveValueStage.patternReviewUnlocked);
+    expect(
+      ArchiveValueProgress.stageForCount(1),
+      ArchiveValueStage.oneDataPoint,
+    );
+    expect(
+      ArchiveValueProgress.stageForCount(2),
+      ArchiveValueStage.possibleRepeat,
+    );
+    expect(
+      ArchiveValueProgress.stageForCount(5),
+      ArchiveValueStage.patternReviewUnlocked,
+    );
   });
 
   test('value copy includes One data point', () {

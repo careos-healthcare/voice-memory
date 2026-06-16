@@ -73,34 +73,33 @@ class SignalJourney {
 
   bool get isConfirmed => status == SignalJourneyStatus.confirmedPattern;
 
-  bool get showCompletion =>
-      isConfirmed && !completionAcknowledged;
+  bool get showCompletion => isConfirmed && !completionAcknowledged;
 
   int get supportingCount => supportingMomentIds.length;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'signalId': signalId,
-        'signalTitle': signalTitle,
-        'status': status.id,
-        'evidenceCount': evidenceCount,
-        'targetEvidenceCount': targetEvidenceCount,
-        'acceptedReadCount': acceptedReadCount,
-        'rejectedReadCount': rejectedReadCount,
-        'contradictionCount': contradictionCount,
-        'startedAt': startedAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-        'nextPrompt': nextPrompt,
-        if (readId != null) 'readId': readId,
-        if (categoryId != null) 'categoryId': categoryId,
-        if (wouldConfirm != null) 'wouldConfirm': wouldConfirm,
-        if (wouldChallenge != null) 'wouldChallenge': wouldChallenge,
-        if (evidenceSummary != null) 'evidenceSummary': evidenceSummary,
-        'supportingMomentIds': supportingMomentIds,
-        'contradictingMomentIds': contradictingMomentIds,
-        'unclearMomentIds': unclearMomentIds,
-        'completionAcknowledged': completionAcknowledged,
-      };
+    'id': id,
+    'signalId': signalId,
+    'signalTitle': signalTitle,
+    'status': status.id,
+    'evidenceCount': evidenceCount,
+    'targetEvidenceCount': targetEvidenceCount,
+    'acceptedReadCount': acceptedReadCount,
+    'rejectedReadCount': rejectedReadCount,
+    'contradictionCount': contradictionCount,
+    'startedAt': startedAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'nextPrompt': nextPrompt,
+    if (readId != null) 'readId': readId,
+    if (categoryId != null) 'categoryId': categoryId,
+    if (wouldConfirm != null) 'wouldConfirm': wouldConfirm,
+    if (wouldChallenge != null) 'wouldChallenge': wouldChallenge,
+    if (evidenceSummary != null) 'evidenceSummary': evidenceSummary,
+    'supportingMomentIds': supportingMomentIds,
+    'contradictingMomentIds': contradictingMomentIds,
+    'unclearMomentIds': unclearMomentIds,
+    'completionAcknowledged': completionAcknowledged,
+  };
 
   static SignalJourney? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

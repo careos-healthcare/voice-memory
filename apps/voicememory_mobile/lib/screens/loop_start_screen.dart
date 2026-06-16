@@ -17,27 +17,21 @@ import '../theme/app_spacing.dart';
 
 /// Sharp loop-specific acquisition start — cohort / deep-link entry.
 class LoopStartScreen extends StatefulWidget {
-  const LoopStartScreen({
-    super.key,
-    required this.cohortId,
-  });
+  const LoopStartScreen({super.key, required this.cohortId});
 
   final AcquisitionCohortId cohortId;
 
   @visibleForTesting
-  static LoopStartScreen capacity() => const LoopStartScreen(
-        cohortId: AcquisitionCohortId.capacityYesDirect,
-      );
+  static LoopStartScreen capacity() =>
+      const LoopStartScreen(cohortId: AcquisitionCohortId.capacityYesDirect);
 
   @visibleForTesting
-  static LoopStartScreen proveEnough() => const LoopStartScreen(
-        cohortId: AcquisitionCohortId.proveEnoughDirect,
-      );
+  static LoopStartScreen proveEnough() =>
+      const LoopStartScreen(cohortId: AcquisitionCohortId.proveEnoughDirect);
 
   @visibleForTesting
-  static LoopStartScreen generic() => const LoopStartScreen(
-        cohortId: AcquisitionCohortId.genericArchive,
-      );
+  static LoopStartScreen generic() =>
+      const LoopStartScreen(cohortId: AcquisitionCohortId.genericArchive);
 
   @override
   State<LoopStartScreen> createState() => _LoopStartScreenState();
@@ -56,9 +50,7 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
     await AcquisitionCohortCoordinator.assignFromRoutePath(
       widget.cohortId.startRoutePath,
     );
-    await AcquisitionCohortCoordinator.markStartScreenViewed(
-      widget.cohortId,
-    );
+    await AcquisitionCohortCoordinator.markStartScreenViewed(widget.cohortId);
   }
 
   String get _title {

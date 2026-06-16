@@ -20,8 +20,12 @@ class PressureReportBuilder {
       ..writeln('ArchiveMe — Pressure report')
       ..writeln()
       ..writeln('Confidence: ${confidence.label}')
-      ..writeln('Pressure moments noticed this week: ${visibility.noticedThisWeek}')
-      ..writeln('Times you chose to stop this week: ${visibility.choseToStopCount}');
+      ..writeln(
+        'Pressure moments noticed this week: ${visibility.noticedThisWeek}',
+      )
+      ..writeln(
+        'Times you chose to stop this week: ${visibility.choseToStopCount}',
+      );
 
     final strongest = visibility.strongestPhrase;
     if (strongest != null) {
@@ -39,8 +43,10 @@ class PressureReportBuilder {
 
     buffer
       ..writeln()
-      ..writeln('Based on ${records.length} saved '
-          'moment${records.length == 1 ? '' : 's'} on this device.');
+      ..writeln(
+        'Based on ${records.length} saved '
+        'moment${records.length == 1 ? '' : 's'} on this device.',
+      );
 
     return buffer.toString().trimRight();
   }

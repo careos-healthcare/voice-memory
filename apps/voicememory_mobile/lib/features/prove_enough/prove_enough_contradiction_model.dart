@@ -4,14 +4,8 @@ enum ProveEnoughContradictionOption {
     'stopped_nothing_bad',
     'I stopped and nothing bad happened',
   ),
-  restedWithoutGuilt(
-    'rested_no_guilt',
-    'I rested without guilt',
-  ),
-  effortChosen(
-    'effort_chosen',
-    'The effort felt chosen',
-  ),
+  restedWithoutGuilt('rested_no_guilt', 'I rested without guilt'),
+  effortChosen('effort_chosen', 'The effort felt chosen'),
   satisfiedNotBehind(
     'satisfied_not_behind',
     'I felt satisfied instead of behind',
@@ -50,18 +44,20 @@ class ProveEnoughContradictionRecord {
   String get label => option.label;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'optionId': option.id,
-        'label': option.label,
-        'savedAt': savedAt.toIso8601String(),
-        if (journeyId != null) 'journeyId': journeyId,
-        if (entryId != null) 'entryId': entryId,
-      };
+    'id': id,
+    'optionId': option.id,
+    'label': option.label,
+    'savedAt': savedAt.toIso8601String(),
+    if (journeyId != null) 'journeyId': journeyId,
+    if (entryId != null) 'entryId': entryId,
+  };
 
   static ProveEnoughContradictionRecord? fromJson(Map<String, dynamic>? map) {
     if (map == null) return null;
     final id = map['id'] as String?;
-    final option = ProveEnoughContradictionOption.fromId(map['optionId'] as String?);
+    final option = ProveEnoughContradictionOption.fromId(
+      map['optionId'] as String?,
+    );
     final savedAt = DateTime.tryParse(map['savedAt'] as String? ?? '');
     if (id == null || option == null || savedAt == null) return null;
     return ProveEnoughContradictionRecord(

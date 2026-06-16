@@ -23,13 +23,26 @@ class FirstSaveRescueCard extends StatelessWidget {
   static const reassurance = 'You can delete it after.';
   static const ctaLabel = 'Start test recording';
 
+  /// Calm privacy/reversibility line — first-save confidence polish.
+  static const confidenceLine =
+      'This can be short, private, and deleted anytime.';
+
+  /// Tiny helper rendered under the normal record CTA before the first save.
+  static const oneSentenceLine = 'One sentence is enough.';
+
   /// Only for a completely empty archive; hides after the first save.
-  static bool shouldShow(int entryCount) => FirstSaveRescue.shouldShow(entryCount);
+  static bool shouldShow(int entryCount) =>
+      FirstSaveRescue.shouldShow(entryCount);
 
   @override
   Widget build(BuildContext context) {
     ActivationFunnelAnalytics.track(
       ActivationFunnelAnalytics.firstSaveRescueSeen,
+      entryCount: 0,
+      oncePerSession: true,
+    );
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.firstSaveConfidenceSeen,
       entryCount: 0,
       oncePerSession: true,
     );
@@ -51,16 +64,24 @@ class FirstSaveRescueCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             reassurance,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            confidenceLine,
+            key: const Key('first_save_confidence_line'),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           FilledButton.icon(

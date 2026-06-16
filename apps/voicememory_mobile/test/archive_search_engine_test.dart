@@ -12,18 +12,17 @@ KeyMoment _moment(
   String? patternTitle,
   List<String> tags = const [],
   String? nextCheck,
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: title,
-      originalText: text,
-      shortSummary: text,
-      resultHint: resultHint,
-      patternTitle: patternTitle,
-      tags: tags,
-      nextCheck: nextCheck,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: title,
+  originalText: text,
+  shortSummary: text,
+  resultHint: resultHint,
+  patternTitle: patternTitle,
+  tags: tags,
+  nextCheck: nextCheck,
+);
 
 void main() {
   const engine = ArchiveSearchEngine();
@@ -45,7 +44,12 @@ void main() {
 
   test('helpedBefore uses helped tag or lighter result', () {
     final moments = [
-      _moment('a', DateTime(2026, 6, 1), text: 'I paused', tags: const ['helped']),
+      _moment(
+        'a',
+        DateTime(2026, 6, 1),
+        text: 'I paused',
+        tags: const ['helped'],
+      ),
       _moment('b', DateTime(2026, 6, 2), resultHint: 'lighter'),
       _moment('c', DateTime(2026, 6, 3), resultHint: 'heavier'),
     ];
@@ -122,9 +126,17 @@ void main() {
 
   test('free text searches original text and tags', () {
     final moments = [
-      _moment('a', DateTime(2026, 6, 1),
-          text: 'The worry came back when things got quiet.'),
-      _moment('b', DateTime(2026, 6, 2), text: 'A calm morning.', tags: const ['work']),
+      _moment(
+        'a',
+        DateTime(2026, 6, 1),
+        text: 'The worry came back when things got quiet.',
+      ),
+      _moment(
+        'b',
+        DateTime(2026, 6, 2),
+        text: 'A calm morning.',
+        tags: const ['work'],
+      ),
     ];
     final byText = engine.search(
       ArchiveSearchQuery.fromText('worry'),

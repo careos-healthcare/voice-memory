@@ -1,11 +1,5 @@
 /// What a private recap is about.
-enum PrivateRecapType {
-  keyMoment,
-  pattern,
-  weekly,
-  monthly,
-  selectedRange,
-}
+enum PrivateRecapType { keyMoment, pattern, weekly, monthly, selectedRange }
 
 extension PrivateRecapTypeIds on PrivateRecapType {
   String get id => name;
@@ -71,8 +65,10 @@ class PrivateRecap {
       blocks.add(summaryText);
     }
 
-    final moments =
-        usefulMoments.map((m) => m.trim()).where((m) => m.isNotEmpty).toList();
+    final moments = usefulMoments
+        .map((m) => m.trim())
+        .where((m) => m.isNotEmpty)
+        .toList();
     if (moments.isNotEmpty) {
       final buffer = StringBuffer('Useful moments');
       for (final m in moments) {

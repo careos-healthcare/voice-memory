@@ -19,12 +19,12 @@ class ArchiveTheme {
   String get trendGlyph => trend.glyph;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'frequency': frequency,
-        'trend': trend.name,
-        if (firstSeen != null) 'firstSeen': firstSeen!.toUtc().toIso8601String(),
-        if (lastSeen != null) 'lastSeen': lastSeen!.toUtc().toIso8601String(),
-      };
+    'name': name,
+    'frequency': frequency,
+    'trend': trend.name,
+    if (firstSeen != null) 'firstSeen': firstSeen!.toUtc().toIso8601String(),
+    if (lastSeen != null) 'lastSeen': lastSeen!.toUtc().toIso8601String(),
+  };
 
   static ArchiveTheme? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -57,22 +57,20 @@ enum ThemeTrend {
   }
 
   String get glyph => switch (this) {
-        ThemeTrend.up => '↑',
-        ThemeTrend.down => '↓',
-        ThemeTrend.stable => '→',
-      };
+    ThemeTrend.up => '↑',
+    ThemeTrend.down => '↓',
+    ThemeTrend.stable => '→',
+  };
 
   String get displayLabel => switch (this) {
-        ThemeTrend.up => 'Rising',
-        ThemeTrend.down => 'Falling',
-        ThemeTrend.stable => 'Steady',
-      };
+    ThemeTrend.up => 'Rising',
+    ThemeTrend.down => 'Falling',
+    ThemeTrend.stable => 'Steady',
+  };
 }
 
 class ThemeTrackingResult {
-  const ThemeTrackingResult({
-    required this.topThemes,
-  });
+  const ThemeTrackingResult({required this.topThemes});
 
   final List<ArchiveTheme> topThemes;
 

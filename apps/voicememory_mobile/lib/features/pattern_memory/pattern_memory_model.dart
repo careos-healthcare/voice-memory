@@ -1,11 +1,5 @@
 /// How a single active pattern is trending across several check-ins.
-enum PatternMemoryStatus {
-  forming,
-  active,
-  easing,
-  needsAttention,
-  changing,
-}
+enum PatternMemoryStatus { forming, active, easing, needsAttention, changing }
 
 extension PatternMemoryStatusIds on PatternMemoryStatus {
   String get id => name;
@@ -19,7 +13,7 @@ PatternMemoryStatus patternMemoryStatusFromId(String? raw) {
 }
 
 /// Allowed result hints for a single check-in answer.
-abstract final class PatternMemoryResultHint {
+abstract class PatternMemoryResultHint {
   PatternMemoryResultHint._();
 
   static const same = 'same';
@@ -106,22 +100,22 @@ class PatternMemory {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'patternTitle': patternTitle,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-        'checkInCount': checkInCount,
-        'showedAgainCount': showedAgainCount,
-        'lighterCount': lighterCount,
-        'heavierCount': heavierCount,
-        'changedCount': changedCount,
-        if (lastResult != null) 'lastResult': lastResult,
-        'commonBeforeMoments': commonBeforeMoments,
-        'helpedMoments': helpedMoments,
-        'harderMoments': harderMoments,
-        if (nextBestQuestion != null) 'nextBestQuestion': nextBestQuestion,
-        'status': status.id,
-      };
+    'id': id,
+    'patternTitle': patternTitle,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    'checkInCount': checkInCount,
+    'showedAgainCount': showedAgainCount,
+    'lighterCount': lighterCount,
+    'heavierCount': heavierCount,
+    'changedCount': changedCount,
+    if (lastResult != null) 'lastResult': lastResult,
+    'commonBeforeMoments': commonBeforeMoments,
+    'helpedMoments': helpedMoments,
+    'harderMoments': harderMoments,
+    if (nextBestQuestion != null) 'nextBestQuestion': nextBestQuestion,
+    'status': status.id,
+  };
 
   static PatternMemory? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

@@ -7,15 +7,13 @@ import 'example_prompt_chips.dart';
 
 /// Loads journal state and renders [ExamplePromptChips] for empty / onboarding surfaces.
 class ExamplePromptChipsLoader extends StatefulWidget {
-  const ExamplePromptChipsLoader({
-    super.key,
-    required this.surface,
-  });
+  const ExamplePromptChipsLoader({super.key, required this.surface});
 
   final String surface;
 
   @override
-  State<ExamplePromptChipsLoader> createState() => _ExamplePromptChipsLoaderState();
+  State<ExamplePromptChipsLoader> createState() =>
+      _ExamplePromptChipsLoaderState();
 }
 
 class _ExamplePromptChipsLoaderState extends State<ExamplePromptChipsLoader> {

@@ -2,18 +2,14 @@ import '../../services/app_services.dart';
 import '../activation/activation_tracker.dart';
 
 /// User rating of first-insight sharpness — trial/debug only.
-enum FirstInsightSpecificityRating {
-  yesSpecific,
-  tooGeneric,
-  wrongAngle,
-}
+enum FirstInsightSpecificityRating { yesSpecific, tooGeneric, wrongAngle }
 
 extension FirstInsightSpecificityRatingIds on FirstInsightSpecificityRating {
   String get id => name;
 }
 
 /// Persists first-use sharpness check responses.
-abstract final class FirstInsightSpecificityStore {
+abstract class FirstInsightSpecificityStore {
   FirstInsightSpecificityStore._();
 
   static const _key = 'firstInsightSpecificity';
@@ -23,8 +19,9 @@ abstract final class FirstInsightSpecificityStore {
     final prefs = AppServices.instance.prefs;
     final raw = await prefs.readMap(_key);
     final list = raw?['ratings'];
-    final items =
-        list is List ? List<Map<String, dynamic>>.from(list) : <Map<String, dynamic>>[];
+    final items = list is List
+        ? List<Map<String, dynamic>>.from(list)
+        : <Map<String, dynamic>>[];
     items.add({
       'rating': rating.id,
       'at': DateTime.now().toUtc().toIso8601String(),

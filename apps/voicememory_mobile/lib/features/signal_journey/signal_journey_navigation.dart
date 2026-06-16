@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Navigation helpers for signal journey surfaces.
-abstract final class SignalJourneyNavigation {
+abstract class SignalJourneyNavigation {
   SignalJourneyNavigation._();
 
   static void openJourneyDetail(BuildContext context) {

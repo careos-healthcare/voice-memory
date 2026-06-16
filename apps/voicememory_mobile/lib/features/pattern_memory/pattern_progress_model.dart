@@ -47,18 +47,18 @@ class PatternProgressMoment {
   final bool shouldShow;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'memoryId': memoryId,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'type': type.id,
-        'headline': headline,
-        'body': body,
-        if (beforeLine != null) 'beforeLine': beforeLine,
-        if (helpedLine != null) 'helpedLine': helpedLine,
-        'nextLine': nextLine,
-        'checkInCount': checkInCount,
-        'shouldShow': shouldShow,
-      };
+    'id': id,
+    'memoryId': memoryId,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'type': type.id,
+    'headline': headline,
+    'body': body,
+    if (beforeLine != null) 'beforeLine': beforeLine,
+    if (helpedLine != null) 'helpedLine': helpedLine,
+    'nextLine': nextLine,
+    'checkInCount': checkInCount,
+    'shouldShow': shouldShow,
+  };
 
   static PatternProgressMoment? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

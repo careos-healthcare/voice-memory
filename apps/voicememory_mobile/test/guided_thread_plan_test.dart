@@ -31,49 +31,49 @@ PressureCheckInRecord _record({
 
 /// Three work-context entries across 8 days, newest on the "today" base day.
 List<PressureCheckInRecord> _workThread3() => [
-      _record(id: 'a', daysAgo: 7, contextIds: const ['work']),
-      _record(
-        id: 'b',
-        daysAgo: 3,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(
-        id: 'c',
-        daysAgo: 0,
-        contextIds: const ['work'],
-        fear: 'I kept checking messages after I wanted to stop.',
-      ),
-    ];
+  _record(id: 'a', daysAgo: 7, contextIds: const ['work']),
+  _record(
+    id: 'b',
+    daysAgo: 3,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(
+    id: 'c',
+    daysAgo: 0,
+    contextIds: const ['work'],
+    fear: 'I kept checking messages after I wanted to stop.',
+  ),
+];
 
 /// Work-context thread that appeared less often recently → fading.
 List<PressureCheckInRecord> _fadingThread() => [
-      _record(id: 'f0', daysAgo: 8, contextIds: const ['work']),
-      _record(id: 'f1', daysAgo: 7, contextIds: const ['work']),
-      _record(id: 'f2', daysAgo: 6, contextIds: const ['work']),
-      _record(id: 'f3', daysAgo: 1, contextIds: const ['work']),
-    ];
+  _record(id: 'f0', daysAgo: 8, contextIds: const ['work']),
+  _record(id: 'f1', daysAgo: 7, contextIds: const ['work']),
+  _record(id: 'f2', daysAgo: 6, contextIds: const ['work']),
+  _record(id: 'f3', daysAgo: 1, contextIds: const ['work']),
+];
 
 List<PressureCheckInRecord> _unrelatedRecords() => [
-      _record(id: 'u0', daysAgo: 2, optionId: 'could_not_stop'),
-      _record(id: 'u1', daysAgo: 1, optionId: 'guilty_resting'),
-      _record(id: 'u2', daysAgo: 0, optionId: 'had_to_prove_enough'),
-    ];
+  _record(id: 'u0', daysAgo: 2, optionId: 'could_not_stop'),
+  _record(id: 'u1', daysAgo: 1, optionId: 'guilty_resting'),
+  _record(id: 'u2', daysAgo: 0, optionId: 'had_to_prove_enough'),
+];
 
 /// All consumer copy carried by one plan, joined for language sweeps.
 String _planCopy(GuidedThreadPlan plan) => [
-      plan.title,
-      plan.basedOnLine,
-      plan.encouragementLine,
-      plan.nextPrompt,
-      ...plan.alreadyCovered,
-      ...plan.worthChecking,
-      ...plan.sourceTerms,
-      GuidedThreadPlan.alreadyCoveredHeading,
-      GuidedThreadPlan.worthCheckingHeading,
-      GuidedThreadPlan.nextRecordingHeading,
-      GuidedThreadPlan.recordCtaLabel,
-    ].join(' ');
+  plan.title,
+  plan.basedOnLine,
+  plan.encouragementLine,
+  plan.nextPrompt,
+  ...plan.alreadyCovered,
+  ...plan.worthChecking,
+  ...plan.sourceTerms,
+  GuidedThreadPlan.alreadyCoveredHeading,
+  GuidedThreadPlan.worthCheckingHeading,
+  GuidedThreadPlan.nextRecordingHeading,
+  GuidedThreadPlan.recordCtaLabel,
+].join(' ');
 
 void main() {
   const engine = GuidedThreadPlanEngine();
@@ -82,9 +82,9 @@ void main() {
     test('no plan before enough related evidence', () {
       expect(engine.build(const [], now: _base).hasPlan, isFalse);
       expect(
-        engine
-            .build([_record(id: 'a', contextIds: const ['work'])], now: _base)
-            .hasPlan,
+        engine.build([
+          _record(id: 'a', contextIds: const ['work']),
+        ], now: _base).hasPlan,
         isFalse,
       );
       expect(engine.build(_unrelatedRecords(), now: _base).hasPlan, isFalse);
@@ -108,7 +108,10 @@ void main() {
   group('Guided thread plan engine — plan content', () {
     test('alreadyCovered uses real terms and real counts', () {
       final plan = engine.build(_workThread3(), now: _base);
-      expect(plan.alreadyCovered, contains('You already named the work thread.'));
+      expect(
+        plan.alreadyCovered,
+        contains('You already named the work thread.'),
+      );
       expect(
         plan.alreadyCovered,
         contains('You already logged 3 moments on it.'),
@@ -194,8 +197,11 @@ void main() {
       };
       expect(plan.evidenceSnippets, isNotEmpty);
       for (final snippet in plan.evidenceSnippets) {
-        expect(realText, contains(snippet),
-            reason: 'snippet "$snippet" must come from a real entry');
+        expect(
+          realText,
+          contains(snippet),
+          reason: 'snippet "$snippet" must come from a real entry',
+        );
       }
     });
   });
@@ -209,10 +215,7 @@ void main() {
       );
 
       final returned = engine.build(_workThread3(), now: _base);
-      expect(
-        _planCopy(returned).toLowerCase(),
-        isNot(contains('settling')),
-      );
+      expect(_planCopy(returned).toLowerCase(), isNot(contains('settling')));
 
       // Nothing is ever called resolved.
       for (final plan in [fading, returned]) {
@@ -260,9 +263,19 @@ void main() {
           'always',
           'certain',
           'shame',
+          'healed',
+          'processed',
+          'regulated',
+          'anxious',
+          'trauma',
+          'cure',
+          'resolved',
         ]) {
-          expect(copy, isNot(contains(banned)),
-              reason: 'plan copy must not contain "$banned"');
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'plan copy must not contain "$banned"',
+          );
         }
       }
     });
@@ -277,8 +290,9 @@ void main() {
   });
 
   group('Guided thread plan card', () {
-    testWidgets('renders the full plan without feeling like a task list',
-        (tester) async {
+    testWidgets('renders the full plan without feeling like a task list', (
+      tester,
+    ) async {
       final plan = engine.build(_workThread3(), now: _base);
       await tester.pumpWidget(
         MaterialApp(
@@ -314,8 +328,9 @@ void main() {
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('tapping Record this hands the prompt to the Record screen',
-        (tester) async {
+    testWidgets('tapping Record this hands the prompt to the Record screen', (
+      tester,
+    ) async {
       final plan = engine.build(_workThread3(), now: _base);
       String? capturedPrompt;
 
@@ -333,9 +348,7 @@ void main() {
             path: '/record',
             builder: (context, state) {
               capturedPrompt = state.uri.queryParameters['prompt'];
-              return const Scaffold(
-                body: Center(child: Text('RECORD_MARKER')),
-              );
+              return const Scaffold(body: Center(child: Text('RECORD_MARKER')));
             },
           ),
         ],
@@ -368,8 +381,9 @@ void main() {
   });
 
   group('Pressure Insights integration', () {
-    testWidgets('renders the plan directly under the thread evidence card',
-        (tester) async {
+    testWidgets('renders the plan directly under the thread evidence card', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 5000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -383,8 +397,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final planFinder = find.byKey(const Key('guided_thread_plan_card'));
-      final threadFinder =
-          find.byKey(const Key('thread_return_evidence_card'));
+      final threadFinder = find.byKey(const Key('thread_return_evidence_card'));
       expect(planFinder, findsOneWidget);
       expect(threadFinder, findsOneWidget);
       expect(

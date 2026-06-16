@@ -12,7 +12,7 @@ export const WHY_THIS_MATTERS_TOPICS: WhyThisMattersTopic[] = [
     title: "What keeps coming back",
     summary: "Themes that keep showing up in your own words.",
     detail:
-      "When you speak regularly, certain moods, topics, and phrases return. VoiceMemory brings those repeats forward so you can notice what your days keep circling back to — without labeling or diagnosing you.",
+      "When you speak regularly, certain moods, topics, and phrases return. ArchiveMe brings those repeats forward so you can notice what your days keep circling back to — without labeling or diagnosing you.",
   },
   {
     id: "emotional_drift",
@@ -33,7 +33,7 @@ export const WHY_THIS_MATTERS_TOPICS: WhyThisMattersTopic[] = [
     title: "Your story over time",
     summary: "More than today alone.",
     detail:
-      "VoiceMemory is built for accumulation. Weekly summaries, search, and exports let you look back across weeks of voice notes and ask what changed, what stayed, and what you might want to name out loud next.",
+      "ArchiveMe is built for accumulation. Weekly summaries, search, and exports let you look back across weeks of voice notes and ask what changed, what stayed, and what you might want to name out loud next.",
   },
 ];
 

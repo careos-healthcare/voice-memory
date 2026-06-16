@@ -14,8 +14,10 @@ void main() {
     final r = build('same');
     expect(r.headline, 'It showed up again.');
     expect(r.whatChanged, 'This was a repeat, not a one-off.');
-    expect(r.whyItMatters,
-        'Repeats are useful because they show where the pattern starts.');
+    expect(
+      r.whyItMatters,
+      'Repeats are useful because they show where the pattern starts.',
+    );
     expect(r.nextCheck, 'What happened right before it showed up?');
     expect(r.oneSentenceSummary, contains('It showed up again.'));
   });
@@ -32,8 +34,10 @@ void main() {
     final r = build('heavier');
     expect(r.headline, 'It felt heavier today.');
     expect(r.whatChanged, 'This took more from you today.');
-    expect(r.whyItMatters,
-        'That is useful because it shows what needs attention.');
+    expect(
+      r.whyItMatters,
+      'That is useful because it shows what needs attention.',
+    );
     expect(r.nextCheck, 'What made it heavier?');
   });
 
@@ -41,8 +45,10 @@ void main() {
     final r = build('changed');
     expect(r.headline, 'Something changed today.');
     expect(r.whatChanged, 'Today was not just a repeat.');
-    expect(r.whyItMatters,
-        'Change is useful because it shows the pattern can move.');
+    expect(
+      r.whyItMatters,
+      'Change is useful because it shows the pattern can move.',
+    );
     expect(r.nextCheck, 'What was different today?');
   });
 

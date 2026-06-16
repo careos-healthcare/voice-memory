@@ -8,7 +8,9 @@ const String kWidgetPayloadDefaultAction = 'Open';
 const String kWidgetPayloadDefaultRoute = '/record';
 
 /// Builds a platform-safe string map for native widgets.
-Map<String, String> buildWidgetPayload(CurrentObjectiveWidgetSnapshot? snapshot) {
+Map<String, String> buildWidgetPayload(
+  CurrentObjectiveWidgetSnapshot? snapshot,
+) {
   if (snapshot == null) {
     return _defaults(updatedAt: DateTime.now().toUtc().toIso8601String());
   }
@@ -37,14 +39,14 @@ Map<String, String> buildWidgetPayload(CurrentObjectiveWidgetSnapshot? snapshot)
 }
 
 Map<String, String> _defaults({required String updatedAt}) => {
-      'title': kWidgetPayloadDefaultTitle,
-      'body': kWidgetPayloadDefaultBody,
-      'checkQuestion': '',
-      'primaryActionLabel': kWidgetPayloadDefaultAction,
-      'route': kWidgetPayloadDefaultRoute,
-      'type': '',
-      'updatedAt': updatedAt,
-    };
+  'title': kWidgetPayloadDefaultTitle,
+  'body': kWidgetPayloadDefaultBody,
+  'checkQuestion': '',
+  'primaryActionLabel': kWidgetPayloadDefaultAction,
+  'route': kWidgetPayloadDefaultRoute,
+  'type': '',
+  'updatedAt': updatedAt,
+};
 
 String _nonEmpty(String value, String fallback) {
   final trimmed = value.trim();

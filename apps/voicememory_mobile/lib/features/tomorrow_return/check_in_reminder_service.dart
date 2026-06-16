@@ -69,7 +69,7 @@ class NoOpReminderBackend implements CheckInReminderBackend {
 }
 
 /// Safe, diagnosis-gated local reminder for the tomorrow check-in.
-abstract final class CheckInReminderService {
+abstract class CheckInReminderService {
   CheckInReminderService._();
 
   /// Consumer-visible reminder copy.
@@ -230,7 +230,8 @@ abstract final class CheckInReminderService {
 
     final ready = s.reminderReadiness == ReminderReadiness.ready;
     final decision = const HookRescueDecisionEngine().decide(s);
-    final gated = (decision.includes(HookRescueAction.reminder) && ready) ||
+    final gated =
+        (decision.includes(HookRescueAction.reminder) && ready) ||
         (TrialMode.enabled && ready);
     if (!gated) return ReminderScheduleOutcome.notGated;
 

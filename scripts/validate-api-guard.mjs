@@ -9,6 +9,9 @@ const failures = [];
 
 for (const rel of [
   "lib/server/api-guard.ts",
+  "lib/server/openai-budget-guard.ts",
+  "lib/server/openai-cost-estimator.ts",
+  "lib/server/openai-spend-store.ts",
   "lib/server/capture-auth-crypto.ts",
   "lib/server/api-usage-store.ts",
   "app/api/capture/attest/route.ts",

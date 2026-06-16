@@ -10,25 +10,25 @@ PatternMemory _memory({
   int checkInCount = 3,
   String? nextBestQuestion,
   PatternMemoryStatus status = PatternMemoryStatus.active,
-}) =>
-    PatternMemory(
-      id: 'pm1',
-      patternTitle: 'saying yes when you mean no',
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 4),
-      checkInCount: checkInCount,
-      showedAgainCount: 0,
-      lighterCount: 0,
-      heavierCount: 0,
-      changedCount: 0,
-      commonBeforeMoments: const [],
-      helpedMoments: const [],
-      harderMoments: const [],
-      nextBestQuestion: nextBestQuestion,
-      status: status,
-    );
+}) => PatternMemory(
+  id: 'pm1',
+  patternTitle: 'saying yes when you mean no',
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 4),
+  checkInCount: checkInCount,
+  showedAgainCount: 0,
+  lighterCount: 0,
+  heavierCount: 0,
+  changedCount: 0,
+  commonBeforeMoments: const [],
+  helpedMoments: const [],
+  harderMoments: const [],
+  nextBestQuestion: nextBestQuestion,
+  status: status,
+);
 
-PatternProgressMoment _progress(PatternProgressType type) => PatternProgressMoment(
+PatternProgressMoment _progress(PatternProgressType type) =>
+    PatternProgressMoment(
       id: 'pp_pm1_3',
       memoryId: 'pm1',
       createdAt: DateTime(2026, 6, 4),
@@ -42,7 +42,10 @@ PatternProgressMoment _progress(PatternProgressType type) => PatternProgressMome
 
 void main() {
   test('stillRepeating creates repeatCheck', () {
-    final a = _engine.build(_memory(), _progress(PatternProgressType.stillRepeating));
+    final a = _engine.build(
+      _memory(),
+      _progress(PatternProgressType.stillRepeating),
+    );
     expect(a.type, PatternNextActionType.repeatCheck);
     expect(a.title, 'Check what happens before it starts');
     expect(a.question, 'What happens right before it shows up?');
@@ -52,14 +55,20 @@ void main() {
   });
 
   test('gettingLighter creates lookForHelped', () {
-    final a = _engine.build(_memory(), _progress(PatternProgressType.gettingLighter));
+    final a = _engine.build(
+      _memory(),
+      _progress(PatternProgressType.gettingLighter),
+    );
     expect(a.type, PatternNextActionType.lookForHelped);
     expect(a.title, 'Look for what helped');
     expect(a.question, 'What helped make it lighter?');
   });
 
   test('gettingHeavier creates lookForHeavier', () {
-    final a = _engine.build(_memory(), _progress(PatternProgressType.gettingHeavier));
+    final a = _engine.build(
+      _memory(),
+      _progress(PatternProgressType.gettingHeavier),
+    );
     expect(a.type, PatternNextActionType.lookForHeavier);
     expect(a.title, 'Look for what made it heavier');
     expect(a.question, 'What made it heavier?');

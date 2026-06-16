@@ -39,23 +39,23 @@ class PostSaveInsightSignal {
   final String? readId;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'explanation': explanation,
-        'mightMean': mightMean,
-        'wouldConfirm': wouldConfirm,
-        'wouldContradict': wouldContradict,
-        'recordNextQuestion': recordNextQuestion,
-        'categoryId': categoryId,
-        if (evidenceLine != null) 'evidenceLine': evidenceLine,
-        if (angleCategory != null) 'angleCategory': angleCategory,
-        if (strengthLabel != null) 'strengthLabel': strengthLabel,
-        if (whySuggested != null) 'whySuggested': whySuggested,
-        'evidenceChips': evidenceChips,
-        'isPrimary': isPrimary,
-        if (evidenceUsed != null) 'evidenceUsed': evidenceUsed,
-        if (readId != null) 'readId': readId,
-      };
+    'id': id,
+    'title': title,
+    'explanation': explanation,
+    'mightMean': mightMean,
+    'wouldConfirm': wouldConfirm,
+    'wouldContradict': wouldContradict,
+    'recordNextQuestion': recordNextQuestion,
+    'categoryId': categoryId,
+    if (evidenceLine != null) 'evidenceLine': evidenceLine,
+    if (angleCategory != null) 'angleCategory': angleCategory,
+    if (strengthLabel != null) 'strengthLabel': strengthLabel,
+    if (whySuggested != null) 'whySuggested': whySuggested,
+    'evidenceChips': evidenceChips,
+    'isPrimary': isPrimary,
+    if (evidenceUsed != null) 'evidenceUsed': evidenceUsed,
+    if (readId != null) 'readId': readId,
+  };
 }
 
 /// Two-signal A/B read choice shown after recording.

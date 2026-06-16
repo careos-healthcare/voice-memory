@@ -17,11 +17,12 @@ ArchiveEvolutionTimeline? buildArchiveEvolutionTimeline({
   WeeklyPatternRecap? weeklyRecap,
   ResultNextCheck? nextCheck,
 }) {
-  final patternTitle = _firstNonEmpty([
-    memory?.patternTitle,
-    weeklyRecap?.patternTitle,
-    _firstMomentTitle(keyMoments),
-  ]) ??
+  final patternTitle =
+      _firstNonEmpty([
+        memory?.patternTitle,
+        weeklyRecap?.patternTitle,
+        _firstMomentTitle(keyMoments),
+      ]) ??
       'This pattern';
 
   final related = _relatedMoments(keyMoments, patternTitle);
@@ -103,7 +104,8 @@ ArchiveEvolutionEvent _eventFromMoment(
     date: moment.date,
     type: type,
     title: _titleForType(type),
-    body: type == ArchiveEvolutionEventType.checkChosen &&
+    body:
+        type == ArchiveEvolutionEventType.checkChosen &&
             (moment.nextCheck ?? '').trim().isNotEmpty
         ? moment.nextCheck!.trim()
         : _bodyForMoment(moment),

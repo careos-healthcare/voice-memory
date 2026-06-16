@@ -1,11 +1,5 @@
 /// Outcome of comparing today's reflection with yesterday's watch-for commitment.
-enum ReturnComparisonStatus {
-  repeated,
-  shifted,
-  eased,
-  absent,
-  unclear,
-}
+enum ReturnComparisonStatus { repeated, shifted, eased, absent, unclear }
 
 class ReturnComparison {
   const ReturnComparison({
@@ -29,14 +23,14 @@ class ReturnComparison {
   String get statusKey => comparisonStatus.name;
 
   Map<String, dynamic> toJson() => {
-        'yesterdayWatchFor': yesterdayWatchFor,
-        'todayReflectionSummary': todayReflectionSummary,
-        'comparisonStatus': statusKey,
-        'headline': headline,
-        'body': body,
-        'chips': chips,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'yesterdayWatchFor': yesterdayWatchFor,
+    'todayReflectionSummary': todayReflectionSummary,
+    'comparisonStatus': statusKey,
+    'headline': headline,
+    'body': body,
+    'chips': chips,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   static ReturnComparison? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -59,9 +53,9 @@ class ReturnComparison {
     final chipsRaw = json['chips'];
     final chips = chipsRaw is List
         ? chipsRaw
-            .map((e) => e.toString().trim())
-            .where((c) => c.isNotEmpty)
-            .toList()
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
 
     return ReturnComparison(

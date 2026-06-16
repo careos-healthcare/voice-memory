@@ -11,7 +11,7 @@ import 'result_next_check_model.dart';
 /// The goal is to make the result feel actionable: people who close the loop
 /// but do not choose a next check get a clear, concrete thing to carry into
 /// tomorrow.
-abstract final class ResultNextCheckEngine {
+abstract class ResultNextCheckEngine {
   ResultNextCheckEngine._();
 
   static const String _ctaLabel = 'Use this tomorrow';
@@ -38,7 +38,8 @@ abstract final class ResultNextCheckEngine {
     // A gentle nudge: feedback only fills in a reason when none was set, so an
     // explicit "not useful" complaint always wins over a feedback chip.
     final feedbackType = feedback ?? feedbackSummary?.dominantIssue;
-    final effectiveReason = notUsefulReason ?? _reasonFromFeedback(feedbackType);
+    final effectiveReason =
+        notUsefulReason ?? _reasonFromFeedback(feedbackType);
 
     // Non-English reflections get a localized next-check. English is unchanged.
     if (languageCode != 'en' && isSupportedLanguage(languageCode)) {

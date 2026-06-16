@@ -18,11 +18,14 @@ class ReminderTimingStore {
   Future<ReminderTimingOffer?> loadLatest() async {
     final raw = await _prefs.readMap(_key);
     if (raw == null || raw.isEmpty) return null;
-    final variants = (raw['offered'] as List?)
-            ?.map((e) => ReminderTimingVariant.values.firstWhere(
-                  (v) => v.id == e,
-                  orElse: () => ReminderTimingVariant.tomorrowMorning,
-                ))
+    final variants =
+        (raw['offered'] as List?)
+            ?.map(
+              (e) => ReminderTimingVariant.values.firstWhere(
+                (v) => v.id == e,
+                orElse: () => ReminderTimingVariant.tomorrowMorning,
+              ),
+            )
             .toList() ??
         const [];
     final selectedId = raw['selected'] as String?;
@@ -79,8 +82,7 @@ class ReminderTimingStore {
     final count = await ignoreCount();
     if (count < 2) return false;
     final raw = await _prefs.readMap(_key);
-    final dismissedAt =
-        DateTime.tryParse(raw?['dismissedAt'] as String? ?? '');
+    final dismissedAt = DateTime.tryParse(raw?['dismissedAt'] as String? ?? '');
     if (dismissedAt == null) return count >= 2;
     return DateTime.now().difference(dismissedAt).inDays < 3;
   }

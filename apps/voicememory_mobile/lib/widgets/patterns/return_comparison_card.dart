@@ -12,10 +12,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Shows how today's reflection compares with yesterday's watch-for commitment.
 class ReturnComparisonCard extends StatefulWidget {
-  const ReturnComparisonCard({
-    super.key,
-    required this.comparison,
-  });
+  const ReturnComparisonCard({super.key, required this.comparison});
 
   final ReturnComparison comparison;
 
@@ -83,9 +80,7 @@ class _ReturnComparisonCardState extends State<ReturnComparisonCard> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: [
-                for (final chip in chips) _Chip(label: chip),
-              ],
+              children: [for (final chip in chips) _Chip(label: chip)],
             ),
           ],
           const SizedBox(height: AppSpacing.md),
@@ -108,7 +103,9 @@ class _ReturnComparisonCardState extends State<ReturnComparisonCard> {
             height: 44,
             child: FilledButton(
               onPressed: () => context.go('/record'),
-              child: const Text(ConsumerUiCopy.returnComparisonRecordAnotherCta),
+              child: const Text(
+                ConsumerUiCopy.returnComparisonRecordAnotherCta,
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -117,7 +114,9 @@ class _ReturnComparisonCardState extends State<ReturnComparisonCard> {
             height: 40,
             child: OutlinedButton(
               onPressed: () => context.go('/belief-changes'),
-              child: const Text(ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta),
+              child: const Text(
+                ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta,
+              ),
             ),
           ),
         ],

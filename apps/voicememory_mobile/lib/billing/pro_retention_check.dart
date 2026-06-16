@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart';
 ///   flows — subscription manage/cancel information stays exactly where it
 ///   already is.
 /// - Answers are stable ids only; no private content is ever collected.
-abstract final class ProRetentionCheck {
+abstract class ProRetentionCheck {
   ProRetentionCheck._();
 
   static const String title = 'Is Pro helping?';

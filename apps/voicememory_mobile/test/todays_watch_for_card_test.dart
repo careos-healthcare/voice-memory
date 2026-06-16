@@ -16,8 +16,7 @@ WatchForItem _pending() {
     chips: const ['saying yes fast'],
     status: WatchForStatus.pending,
     result: WatchForResult.none,
-    shortPrompt:
-        'Notice if you take responsibility before asking for help.',
+    shortPrompt: 'Notice if you take responsibility before asking for help.',
     specificPrompt:
         'Tomorrow, notice if you say yes or carry something before checking what you need.',
     situationHint: 'especially when someone expects something from you',
@@ -27,39 +26,43 @@ WatchForItem _pending() {
 }
 
 void main() {
-  testWidgets('Today watch-for card renders specific prompt and quick answers',
-      (tester) async {
-    ReturnCaptureSelection? saved;
-    final pending = _pending();
+  testWidgets(
+    'Today watch-for card renders specific prompt and quick answers',
+    (tester) async {
+      ReturnCaptureSelection? saved;
+      final pending = _pending();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light(),
-        home: Scaffold(
-          body: TodaysWatchForCard(
-            pending: pending,
-            persistSelection: (selection) async => saved = selection,
-            loadSelection: () async => null,
-            trackActivation: false,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: TodaysWatchForCard(
+              pending: pending,
+              persistSelection: (selection) async => saved = selection,
+              loadSelection: () async => null,
+              trackActivation: false,
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pump();
+      );
+      await tester.pump();
 
-    expect(find.text(ConsumerUiCopy.todaysWatchForTitle), findsOneWidget);
-    expect(find.text(pending.displaySpecificPrompt), findsOneWidget);
-    expect(find.text(pending.situationHint!), findsOneWidget);
-    expect(find.text(pending.checkInQuestion!), findsOneWidget);
-    expect(find.text('It showed up again'), findsOneWidget);
-    expect(find.text('It felt lighter'), findsOneWidget);
-    expect(find.text('It felt heavier'), findsOneWidget);
-    expect(find.text('Not today'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.todaysWatchForRecordCta), findsOneWidget);
-    expect(saved, isNull);
-  });
+      expect(find.text(ConsumerUiCopy.todaysWatchForTitle), findsOneWidget);
+      expect(find.text(pending.displaySpecificPrompt), findsOneWidget);
+      expect(find.text(pending.situationHint!), findsOneWidget);
+      expect(find.text(pending.checkInQuestion!), findsOneWidget);
+      expect(find.text('It showed up again'), findsOneWidget);
+      expect(find.text('It felt lighter'), findsOneWidget);
+      expect(find.text('It felt heavier'), findsOneWidget);
+      expect(find.text('Not today'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.todaysWatchForRecordCta), findsOneWidget);
+      expect(saved, isNull);
+    },
+  );
 
-  testWidgets('selecting It felt lighter shows follow-up prompt', (tester) async {
+  testWidgets('selecting It felt lighter shows follow-up prompt', (
+    tester,
+  ) async {
     ReturnCaptureSelection? saved;
     final pending = _pending();
 

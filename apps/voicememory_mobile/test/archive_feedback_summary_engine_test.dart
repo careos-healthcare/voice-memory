@@ -3,11 +3,11 @@ import 'package:voicememory_mobile/features/feedback/archive_feedback_model.dart
 import 'package:voicememory_mobile/features/feedback/archive_feedback_summary_engine.dart';
 
 ArchiveFeedback _f(ArchiveFeedbackType type) => ArchiveFeedback(
-      id: '${type.id}-${DateTime.now().microsecondsSinceEpoch}',
-      type: type,
-      targetType: ArchiveFeedbackTargetType.checkInResult,
-      createdAt: DateTime(2026, 6, 1),
-    );
+  id: '${type.id}-${DateTime.now().microsecondsSinceEpoch}',
+  type: type,
+  targetType: ArchiveFeedbackTargetType.checkInResult,
+  createdAt: DateTime(2026, 6, 1),
+);
 
 void main() {
   test('empty feedback yields the empty summary', () {

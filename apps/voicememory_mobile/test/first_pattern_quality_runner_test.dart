@@ -49,8 +49,9 @@ void main() {
 
   test('tracks fallback on neutral sample', () {
     final result = runner.run([
-      FirstPatternQualitySamples.ambiguous
-          .firstWhere((s) => s.id == 'neutral-1'),
+      FirstPatternQualitySamples.ambiguous.firstWhere(
+        (s) => s.id == 'neutral-1',
+      ),
     ]);
     expect(result.fallbackCount, 1);
     expect(result.accepted, 1);

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../billing/pro_retention_check.dart';
 import '../../design/archive_mobile_typography.dart';
+import '../../features/referral/referral_invite_after_value.dart';
+import '../../features/review/review_prompt_after_value.dart';
 import '../../services/activation_funnel_analytics.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -34,6 +36,12 @@ class _ProRetentionCheckCardState extends State<ProRetentionCheckCard> {
   String? _ack;
 
   void _answer({required bool useful}) {
+    // A Pro "yes" is a value signal the referral invite and the review
+    // prompt may follow.
+    if (useful) {
+      ReferralInviteAfterValue.recordProRetentionYes();
+      ReviewPromptAfterValue.recordProRetentionYes();
+    }
     ActivationFunnelAnalytics.track(
       useful
           ? ActivationFunnelAnalytics.proRetentionCheckYes
@@ -77,17 +85,16 @@ class _ProRetentionCheckCardState extends State<ProRetentionCheckCard> {
             Text(
               _ack!,
               key: const Key('pro_retention_check_ack'),
-              style:
-                  ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             )
           else ...[
             Text(
               ProRetentionCheck.question,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                color: AppColors.textPrimary,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
             ),
             const SizedBox(height: AppSpacing.sm),
             Row(

@@ -61,7 +61,8 @@ class FirstLoopStateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showQuestion = phase == FirstLoopStatePhase.ready &&
+    final showQuestion =
+        phase == FirstLoopStatePhase.ready &&
         question != null &&
         question!.isNotEmpty;
     return Container(
@@ -93,23 +94,21 @@ class FirstLoopStateCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               question!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                height: 1.4,
-              ),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
             height: 44,
-            child: FilledButton(
-              onPressed: onRecord,
-              child: Text(_cta),
-            ),
+            child: FilledButton(onPressed: onRecord, child: Text(_cta)),
           ),
           if (phase == FirstLoopStatePhase.ready) ...[
             const SizedBox(height: AppSpacing.sm),

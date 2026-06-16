@@ -10,7 +10,7 @@ import 'paywall_trigger_engine.dart';
 import 'paywall_trigger_model.dart';
 
 /// Loads access state and opens the paywall when a Pro feature is gated.
-abstract final class PaywallAccess {
+abstract class PaywallAccess {
   PaywallAccess._();
 
   static Future<bool> isFirstLoopClosed() async {
@@ -27,7 +27,8 @@ abstract final class PaywallAccess {
     int weekCount = 0,
     String sourceRoute = '',
   }) async {
-    final reader = entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final reader =
+        entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
     final isPro = await reader.isPro;
     final loopClosed = firstLoopClosed ?? await isFirstLoopClosed();
     return buildPaywallTrigger(
@@ -69,9 +70,6 @@ abstract final class PaywallAccess {
 
   static void openPaywall(BuildContext context, PaywallTriggerContext trigger) {
     ActivationTracker.trackPaywallTriggerShown();
-    context.push(
-      '/subscription',
-      extra: PaywallRouteArgs.fromContext(trigger),
-    );
+    context.push('/subscription', extra: PaywallRouteArgs.fromContext(trigger));
   }
 }

@@ -13,10 +13,12 @@ class LoopModeFirstHandoffCard extends StatelessWidget {
     super.key,
     required this.loop,
     required this.onStartRecording,
+    this.showRecordCta = true,
   });
 
   final LoopMode loop;
   final VoidCallback onStartRecording;
+  final bool showRecordCta;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,8 @@ class LoopModeFirstHandoffCard extends StatelessWidget {
     final cta = loop.isProveEnough
         ? LoopModeCopy.proveEnoughHandoffCta
         : loop.isCapacityYes
-            ? LoopModeCopy.capacityHandoffCta
-            : 'Record this moment';
+        ? LoopModeCopy.capacityHandoffCta
+        : 'Record this moment';
 
     return Container(
       width: double.infinity,
@@ -62,20 +64,22 @@ class LoopModeFirstHandoffCard extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: FilledButton(
-              onPressed: () {
-                RetentionMetricsTracker.track(
-                  RetentionMetricsTracker.firstRecordCtaTapped,
-                );
-                onStartRecording();
-              },
-              child: Text(cta),
+          if (showRecordCta) ...[
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: FilledButton(
+                onPressed: () {
+                  RetentionMetricsTracker.track(
+                    RetentionMetricsTracker.firstRecordCtaTapped,
+                  );
+                  onStartRecording();
+                },
+                child: Text(cta),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

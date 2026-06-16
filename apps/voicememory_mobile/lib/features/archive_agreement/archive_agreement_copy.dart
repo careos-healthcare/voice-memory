@@ -1,7 +1,7 @@
 import 'archive_agreement_models.dart';
 
 /// User-facing archive agreement strings.
-abstract final class ArchiveAgreementCopy {
+abstract class ArchiveAgreementCopy {
   ArchiveAgreementCopy._();
 
   static const String sectionTitle = 'Your take on this theory';

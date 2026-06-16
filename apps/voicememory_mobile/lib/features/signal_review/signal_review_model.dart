@@ -1,13 +1,7 @@
 import '../loop_mode/loop_mode_model.dart';
 
 /// User-facing lifecycle of a signal review payoff.
-enum SignalReviewStatus {
-  draft,
-  ready,
-  confirmed,
-  corrected,
-  watching,
-}
+enum SignalReviewStatus { draft, ready, confirmed, corrected, watching }
 
 extension SignalReviewStatusIds on SignalReviewStatus {
   String get id => name;
@@ -86,31 +80,31 @@ class SignalReview {
       reviewStatus == SignalReviewStatus.watching;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'journeyId': journeyId,
-        'signalTitle': signalTitle,
-        'reviewStatus': reviewStatus.id,
-        'evidenceCount': evidenceCount,
-        'whatRepeated': whatRepeated,
-        'whatChanged': whatChanged,
-        'evidenceLines': evidenceLines,
-        'possibleContradictions': possibleContradictions,
-        'whatToWatchNext': whatToWatchNext,
-        'nextEvidencePrompt': nextEvidencePrompt,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-        'needsMoreEvidence': needsMoreEvidence,
-        if (correctionTitle != null) 'correctionTitle': correctionTitle,
-        if (loopModeId != null) 'loopModeId': loopModeId,
-        if (loopTitle != null) 'loopTitle': loopTitle,
-        if (reviewSubtitle != null) 'reviewSubtitle': reviewSubtitle,
-        if (whatItSeemedToCost != null) 'whatItSeemedToCost': whatItSeemedToCost,
-        if (commonTrigger != null) 'commonTrigger': commonTrigger,
-        if (whatWouldProveThisWrong != null)
-          'whatWouldProveThisWrong': whatWouldProveThisWrong,
-        if (reviewConfidenceLabel != null)
-          'reviewConfidenceLabel': reviewConfidenceLabel,
-      };
+    'id': id,
+    'journeyId': journeyId,
+    'signalTitle': signalTitle,
+    'reviewStatus': reviewStatus.id,
+    'evidenceCount': evidenceCount,
+    'whatRepeated': whatRepeated,
+    'whatChanged': whatChanged,
+    'evidenceLines': evidenceLines,
+    'possibleContradictions': possibleContradictions,
+    'whatToWatchNext': whatToWatchNext,
+    'nextEvidencePrompt': nextEvidencePrompt,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'needsMoreEvidence': needsMoreEvidence,
+    if (correctionTitle != null) 'correctionTitle': correctionTitle,
+    if (loopModeId != null) 'loopModeId': loopModeId,
+    if (loopTitle != null) 'loopTitle': loopTitle,
+    if (reviewSubtitle != null) 'reviewSubtitle': reviewSubtitle,
+    if (whatItSeemedToCost != null) 'whatItSeemedToCost': whatItSeemedToCost,
+    if (commonTrigger != null) 'commonTrigger': commonTrigger,
+    if (whatWouldProveThisWrong != null)
+      'whatWouldProveThisWrong': whatWouldProveThisWrong,
+    if (reviewConfidenceLabel != null)
+      'reviewConfidenceLabel': reviewConfidenceLabel,
+  };
 
   static SignalReview? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

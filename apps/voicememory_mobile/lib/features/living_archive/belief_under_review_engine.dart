@@ -40,11 +40,9 @@ class BeliefUnderReviewEngine {
 
     final trendLabel = LivingArchiveCopy.beliefTrendLabel(trend);
 
-    final evidence = archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    final evidence = archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
 
     return BeliefUnderReview(
       belief: belief,

@@ -9,10 +9,7 @@ import 'expandable_observation_field.dart';
 
 /// Recording #1 — primary theme, quote, phrase, observation.
 class FirstArchiveInsightSection extends StatelessWidget {
-  const FirstArchiveInsightSection({
-    super.key,
-    required this.entries,
-  });
+  const FirstArchiveInsightSection({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 
@@ -55,7 +52,8 @@ class FirstArchiveInsightSection extends StatelessWidget {
             else
               const ArchiveInsightField(
                 label: 'Quote',
-                value: 'A standout line will appear when your transcript has enough detail.',
+                value:
+                    'A standout line will appear when your transcript has enough detail.',
               ),
             if (insight.interestingPhrase != null)
               ArchiveInsightField(
@@ -65,7 +63,8 @@ class FirstArchiveInsightSection extends StatelessWidget {
             else
               const ArchiveInsightField(
                 label: 'Interesting phrase',
-                value: 'Distinctive wording from your recording will show here.',
+                value:
+                    'Distinctive wording from your recording will show here.',
               ),
             if (insight.firstObservation != null)
               ExpandableObservationField(

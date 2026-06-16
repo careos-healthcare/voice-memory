@@ -58,8 +58,7 @@ class TomorrowCommitment {
       targetDate: targetDate ?? this.targetDate,
       promptText: promptText ?? this.promptText,
       watchForChips: watchForChips ?? this.watchForChips,
-      completedAt:
-          clearCompletedAt ? null : (completedAt ?? this.completedAt),
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
       lastOpenedDate: clearLastOpenedDate
           ? null
           : (lastOpenedDate ?? this.lastOpenedDate),
@@ -67,15 +66,15 @@ class TomorrowCommitment {
   }
 
   Map<String, dynamic> toJson() => {
-        'committedAt': committedAt.toUtc().toIso8601String(),
-        'targetDate': dateOnly(targetDate).toIso8601String(),
-        'promptText': promptText,
-        'watchForChips': watchForChips,
-        if (completedAt != null)
-          'completedAt': completedAt!.toUtc().toIso8601String(),
-        if (lastOpenedDate != null)
-          'lastOpenedDate': lastOpenedDate!.toUtc().toIso8601String(),
-      };
+    'committedAt': committedAt.toUtc().toIso8601String(),
+    'targetDate': dateOnly(targetDate).toIso8601String(),
+    'promptText': promptText,
+    'watchForChips': watchForChips,
+    if (completedAt != null)
+      'completedAt': completedAt!.toUtc().toIso8601String(),
+    if (lastOpenedDate != null)
+      'lastOpenedDate': lastOpenedDate!.toUtc().toIso8601String(),
+  };
 
   static TomorrowCommitment? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -92,9 +91,9 @@ class TomorrowCommitment {
     final chipsRaw = json['watchForChips'];
     final chips = chipsRaw is List
         ? chipsRaw
-            .map((e) => e.toString().trim())
-            .where((c) => c.isNotEmpty)
-            .toList()
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
 
     DateTime? completedAt;
@@ -120,8 +119,4 @@ class TomorrowCommitment {
   }
 }
 
-enum TomorrowCommitmentDisplayState {
-  hidden,
-  awaitingReturn,
-  completedToday,
-}
+enum TomorrowCommitmentDisplayState { hidden, awaitingReturn, completedToday }

@@ -27,10 +27,12 @@ class ArchiveBeliefSummaryBanner extends StatelessWidget {
     if (entries.isEmpty) return const SizedBox.shrink();
     if (!archiveHasMinimumEvidence(entries)) return const SizedBox.shrink();
 
-    final sorted = [...entries]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...entries]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final first = sorted.first.createdAt;
     final last = sorted.last.createdAt;
-    final count = state?.evidenceReflectionCount ??
+    final count =
+        state?.evidenceReflectionCount ??
         archiveEvidenceReflectionCount(entries);
 
     final belief = state?.belief?.trim();
@@ -73,10 +75,9 @@ class ArchiveBeliefSummaryBanner extends StatelessWidget {
                   hasBelief
                       ? '"$belief"'
                       : 'Your archive is still gathering evidence from your recordings.',
-                  style: VoiceMemoryTypography.bodyStyle(color: VoiceMemoryColors.onPrimary).copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 17,
-                  ),
+                  style: VoiceMemoryTypography.bodyStyle(
+                    color: VoiceMemoryColors.onPrimary,
+                  ).copyWith(fontWeight: FontWeight.w500, fontSize: 17),
                 ),
               ),
               if (hasBelief)
@@ -88,10 +89,7 @@ class ArchiveBeliefSummaryBanner extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           _metaRow(WarmArchiveCopy.confidenceConcept, confidencePct),
-          _metaRow(
-            'Evidence',
-            '$count ${count == 1 ? 'entry' : 'entries'}',
-          ),
+          _metaRow('Evidence', '$count ${count == 1 ? 'entry' : 'entries'}'),
           _metaRow('First seen', formatUserFacingMonthYear(first)),
           _metaRow('Last reinforced', formatUserFacingDate(last)),
         ],

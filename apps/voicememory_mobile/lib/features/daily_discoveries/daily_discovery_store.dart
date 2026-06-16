@@ -21,10 +21,10 @@ class DailyDiscoveryStore {
   Future<void> markViewed(String discoveryId) async {
     final viewed = await readViewedIds();
     viewed.add(discoveryId);
-    final trimmed = viewed.length > 200 ? viewed.skip(viewed.length - 200) : viewed;
-    await _prefs.writeJsonMap(_viewedKey, {
-      'ids': trimmed.toList(),
-    });
+    final trimmed = viewed.length > 200
+        ? viewed.skip(viewed.length - 200)
+        : viewed;
+    await _prefs.writeJsonMap(_viewedKey, {'ids': trimmed.toList()});
   }
 
   Future<DailyDiscoveryBaseline?> readBaseline() async {

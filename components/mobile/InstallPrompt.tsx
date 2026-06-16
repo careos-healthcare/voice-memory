@@ -86,7 +86,7 @@ export function InstallPrompt() {
       role="status"
       className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 mx-auto max-w-md rounded-2xl border border-white/10 bg-zinc-900/95 px-4 py-4 shadow-xl backdrop-blur-sm"
     >
-      <p className="text-sm text-zinc-300">Add VoiceMemory to your home screen</p>
+      <p className="text-sm text-zinc-300">Add ArchiveMe to your home screen</p>
       <p className="mt-1 text-xs leading-relaxed text-zinc-600">
         Opens like an app — still private and on your device.
       </p>

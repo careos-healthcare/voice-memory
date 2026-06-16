@@ -13,9 +13,7 @@ class ArchiveSynthesisStore {
   static const _historianKey = 'archiveHistorianReports';
   static const _metaKey = 'archiveSynthesisMeta';
 
-  Future<ArchiveMonthlyReview?> readMonthly({
-    required String cacheKey,
-  }) async {
+  Future<ArchiveMonthlyReview?> readMonthly({required String cacheKey}) async {
     final raw = await _prefs.readJsonMap(_monthlyKey);
     if (raw == null) return null;
     final entry = raw[cacheKey];
@@ -69,8 +67,9 @@ class ArchiveSynthesisStore {
       'evidenceSynthesis': narrative.evidenceSynthesis
           .map(ArchiveMonthlyReview.conclusionToJson)
           .toList(),
-      'beliefEvolutionSummary':
-          ArchiveMonthlyReview.conclusionToJson(narrative.beliefEvolutionSummary),
+      'beliefEvolutionSummary': ArchiveMonthlyReview.conclusionToJson(
+        narrative.beliefEvolutionSummary,
+      ),
       'uncertaintyNote': narrative.uncertaintyNote,
       'reviewVersion': 2,
     };

@@ -18,7 +18,7 @@ import {
 import { isPhotoAttachmentEnabled } from "@/lib/personalization/photo-preferences";
 import type {
   ArchiveAudioFile,
-  VoiceMemoryArchivePackage,
+  ArchiveMeArchivePackage,
 } from "@/types/archive-permanence";
 import type { ArchivePhotoFile } from "@/types/personalization";
 
@@ -106,7 +106,7 @@ export async function collectArchivePhotos(includePhotos: boolean): Promise<Arch
 export async function buildFullArchivePackage(
   includeAudio = true,
   includePhotos = true,
-): Promise<VoiceMemoryArchivePackage> {
+): Promise<ArchiveMeArchivePackage> {
   const audio = await collectArchiveAudio(includeAudio);
   const photos = await collectArchivePhotos(includePhotos);
   const entries = getAllEntries();
@@ -144,16 +144,16 @@ export function downloadBlob(filename: string, blob: Blob): void {
   URL.revokeObjectURL(url);
 }
 
-export function downloadArchiveJson(archive: VoiceMemoryArchivePackage): void {
+export function downloadArchiveJson(archive: ArchiveMeArchivePackage): void {
   downloadBlob(
-    `voicememory-archive-${slugExportDate()}.json`,
+    `archiveme-archive-${slugExportDate()}.json`,
     new Blob([JSON.stringify(archive, null, 2)], { type: "application/json" }),
   );
 }
 
 export function downloadArchiveMarkdown(markdown: string): void {
   downloadBlob(
-    `voicememory-archive-${slugExportDate()}.md`,
+    `archiveme-archive-${slugExportDate()}.md`,
     new Blob([markdown], { type: "text/markdown;charset=utf-8" }),
   );
 }

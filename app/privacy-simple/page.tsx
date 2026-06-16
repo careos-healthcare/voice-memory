@@ -11,8 +11,8 @@ import {
 } from "@/lib/tester-onboarding-copy";
 
 export const metadata: Metadata = {
-  title: "Privacy, simply — VoiceMemory",
-  description: "A short privacy summary for VoiceMemory testers.",
+  title: "Privacy, simply — ArchiveMe",
+  description: "A short privacy summary for ArchiveMe testers.",
 };
 
 export default function PrivacySimplePage() {

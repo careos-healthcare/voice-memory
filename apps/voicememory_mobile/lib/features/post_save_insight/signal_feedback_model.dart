@@ -41,14 +41,14 @@ class PostSaveSignalFeedback {
   final String? categoryId;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'signalId': signalId,
-        'signalTitle': signalTitle,
-        'action': action.id,
-        'createdAt': createdAt.toIso8601String(),
-        if (entryId != null) 'entryId': entryId,
-        if (categoryId != null) 'categoryId': categoryId,
-      };
+    'id': id,
+    'signalId': signalId,
+    'signalTitle': signalTitle,
+    'action': action.id,
+    'createdAt': createdAt.toIso8601String(),
+    if (entryId != null) 'entryId': entryId,
+    if (categoryId != null) 'categoryId': categoryId,
+  };
 
   static PostSaveSignalFeedback? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

@@ -32,6 +32,7 @@ export const TIER_B_ROUTES = [
   "/seasons",
   "/bookmarks",
   "/open-loops",
+  "/blind-spots",
   "/export/print",
 ] as const;
 

@@ -20,7 +20,8 @@ class NativePushVerificationScreen extends StatefulWidget {
       _NativePushVerificationScreenState();
 }
 
-class _NativePushVerificationScreenState extends State<NativePushVerificationScreen> {
+class _NativePushVerificationScreenState
+    extends State<NativePushVerificationScreen> {
   String? _message;
   String? _exportJson;
   bool _busy = false;
@@ -115,7 +116,8 @@ class _NativePushVerificationScreenState extends State<NativePushVerificationScr
   Future<void> _export() async {
     if (!_debugDetails) return;
     setState(() => _busy = true);
-    final json = await AppServices.instance.nativePushStore.exportEvidenceJson();
+    final json = await AppServices.instance.nativePushStore
+        .exportEvidenceJson();
     await Clipboard.setData(ClipboardData(text: json));
     setState(() {
       _busy = false;
@@ -169,11 +171,14 @@ class _NativePushVerificationScreenState extends State<NativePushVerificationScr
               child: Text(
                 _debugDetails
                     ? '$cloudBackendUnavailableMessage\n\n'
-                        'Physical devices require a reachable backend URL:\n'
-                        'flutter run --dart-define=${AppConfig.apiBaseUrlDefineKey}=http://YOUR_LAN_IP:3000\n\n'
-                        'Android emulator uses ${AppConfig.defaultAndroidEmulatorBaseUrl} automatically.'
+                          'Physical devices require a reachable backend URL:\n'
+                          'flutter run --dart-define=${AppConfig.apiBaseUrlDefineKey}=http://YOUR_LAN_IP:3000\n\n'
+                          'Android emulator uses ${AppConfig.defaultAndroidEmulatorBaseUrl} automatically.'
                     : cloudBackendUnavailableMessage,
-                style: const TextStyle(color: AppTheme.foreground, height: 1.45),
+                style: const TextStyle(
+                  color: AppTheme.foreground,
+                  height: 1.45,
+                ),
               ),
             ),
           ],
@@ -187,15 +192,27 @@ class _NativePushVerificationScreenState extends State<NativePushVerificationScr
           const SizedBox(height: 20),
           _button('Refresh status', _refresh),
           _button('Request permission + register token', _requestPermission),
-          _button('Send Archive Push (backend)', () => _sendBackend('/archive-belief', 'Archive')),
-          _button('Send Discover Push (backend)', () => _sendBackend('/discover', 'Discover')),
-          _button('Send Record Push (backend)', () => _sendBackend('/record', 'Record')),
+          _button(
+            'Send Archive Push (backend)',
+            () => _sendBackend('/archive-belief', 'Archive'),
+          ),
+          _button(
+            'Send Discover Push (backend)',
+            () => _sendBackend('/discover', 'Discover'),
+          ),
+          _button(
+            'Send Record Push (backend)',
+            () => _sendBackend('/record', 'Record'),
+          ),
           if (_debugDetails) ...[
             const SizedBox(height: 12),
             _button('Export evidence JSON', _export),
             if (_exportJson != null) ...[
               const SizedBox(height: 16),
-              const Text('Preview', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                'Preview',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 8),
               SelectableText(
                 _exportJson!,
@@ -209,7 +226,11 @@ class _NativePushVerificationScreenState extends State<NativePushVerificationScr
               'FCM init: ${FirebaseBootstrap.isInitialized ? "Firebase ready" : "push disabled"}\n'
               'Expected defines: ${AppConfig.apiBaseUrlDefineKey}, FIREBASE_API_KEY, '
               'FIREBASE_APP_ID, FIREBASE_PROJECT_ID, FIREBASE_MESSAGING_SENDER_ID',
-              style: const TextStyle(fontSize: 11, color: AppTheme.muted, height: 1.4),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppTheme.muted,
+                height: 1.4,
+              ),
             ),
           ],
         ],

@@ -30,7 +30,8 @@ class TodaysWatchForCard extends StatefulWidget {
   final WatchForItem pending;
 
   /// Test hook; defaults to [ReturnCaptureStore.instance].
-  final Future<void> Function(ReturnCaptureSelection selection)? persistSelection;
+  final Future<void> Function(ReturnCaptureSelection selection)?
+  persistSelection;
 
   final Future<ReturnCaptureSelection?> Function()? loadSelection;
 
@@ -68,13 +69,15 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
   }
 
   Future<ReturnCaptureSelection?> _readSelection() async {
-    final load = widget.loadSelection ??
+    final load =
+        widget.loadSelection ??
         () => ReturnCaptureStore.instance().loadLatest();
     return load();
   }
 
   Future<void> _writeSelection(ReturnCaptureSelection selection) async {
-    final save = widget.persistSelection ??
+    final save =
+        widget.persistSelection ??
         (value) => ReturnCaptureStore.instance().saveSelection(value);
     await save(selection);
   }
@@ -94,7 +97,8 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
     });
   }
 
-  ReturnCaptureModel get _capture => _captureEngine.build(pending: widget.pending);
+  ReturnCaptureModel get _capture =>
+      _captureEngine.build(pending: widget.pending);
 
   ReturnQuickAnswer? get _selectedAnswer {
     final id = _selectedQuickAnswerId;
@@ -202,13 +206,14 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               selected.followUpPrompt,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(
-                fontSize: 15,
-                height: 1.4,
-                fontWeight: FontWeight.w600,
-              ),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    height: 1.4,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),
@@ -258,12 +263,15 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
           ),
           child: Text(
             answer.label,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
-            ).copyWith(
-              fontSize: 13,
-              fontWeight: selected ? FontWeight.w600 : null,
-            ),
+            style:
+                VoiceMemoryTypography.bodyStyle(
+                  color: selected
+                      ? AppColors.accentPrimary
+                      : AppColors.textSecondary,
+                ).copyWith(
+                  fontSize: 13,
+                  fontWeight: selected ? FontWeight.w600 : null,
+                ),
           ),
         ),
       ),

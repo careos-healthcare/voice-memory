@@ -91,25 +91,24 @@ class _ContradictionCaptureCardState extends State<ContradictionCaptureCard> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             'ArchiveMe should track evidence that proves the loop wrong too.',
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           if (_savedLabel != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               _savedCopy,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                color: AppColors.success,
-                fontWeight: FontWeight.w600,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.success, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               _savedLabel!,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                fontStyle: FontStyle.italic,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(fontStyle: FontStyle.italic),
             ),
           ] else ...[
             const SizedBox(height: AppSpacing.sm),

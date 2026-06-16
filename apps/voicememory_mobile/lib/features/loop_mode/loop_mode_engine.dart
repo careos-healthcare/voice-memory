@@ -194,7 +194,9 @@ class LoopModeEngine {
     if (!mode.isCapacityYes) return '';
     final text = entries.map((e) => e.transcript.toLowerCase()).join(' ');
     final costs = <String>[];
-    if (text.contains('tired') || text.contains('drained') || text.contains('exhausted')) {
+    if (text.contains('tired') ||
+        text.contains('drained') ||
+        text.contains('exhausted')) {
       costs.add('energy felt lower after agreeing');
     }
     if (text.contains('pressure') || text.contains('stress')) {
@@ -239,7 +241,9 @@ class LoopModeEngine {
       if (entry != null) supporting.add(entry);
     }
 
-    final combined = supporting.map((e) => e.transcript.toLowerCase()).join(' ');
+    final combined = supporting
+        .map((e) => e.transcript.toLowerCase())
+        .join(' ');
     final whatRepeated =
         'Across ${journey.supportingCount} moments, agreeing, helping, or taking something on before checking room or capacity may be repeating.';
 
@@ -276,7 +280,9 @@ class LoopModeEngine {
       if (entry != null) supporting.add(entry);
     }
 
-    final combined = supporting.map((e) => e.transcript.toLowerCase()).join(' ');
+    final combined = supporting
+        .map((e) => e.transcript.toLowerCase())
+        .join(' ');
     final whatRepeated =
         'Across ${journey.supportingCount} moments, doing more because stopping felt unsafe or not enough may be repeating.';
 
@@ -335,7 +341,9 @@ class LoopModeEngine {
   }
 
   String _capacityTrigger(List<JournalEntry> supporting) {
-    final combined = supporting.map((e) => e.transcript.toLowerCase()).join(' ');
+    final combined = supporting
+        .map((e) => e.transcript.toLowerCase())
+        .join(' ');
     final triggers = <String>[];
     if (combined.contains('disappoint')) {
       triggers.add('not wanting to disappoint someone');
@@ -432,7 +440,9 @@ class LoopModeEngine {
   }
 
   String _proveEnoughTrigger(List<JournalEntry> supporting) {
-    final combined = supporting.map((e) => e.transcript.toLowerCase()).join(' ');
+    final combined = supporting
+        .map((e) => e.transcript.toLowerCase())
+        .join(' ');
     final triggers = <String>[];
     if (combined.contains('behind') || combined.contains('falling behind')) {
       triggers.add('feeling behind');
@@ -490,7 +500,10 @@ class LoopModeEngine {
     return 'Not enough difference yet across the three moments.';
   }
 
-  String _capacityConfidence(List<JournalEntry> supporting, SignalJourney journey) {
+  String _capacityConfidence(
+    List<JournalEntry> supporting,
+    SignalJourney journey,
+  ) {
     final resolved = supporting.where((e) {
       final t = e.transcript.trim();
       return t.length >= ArchiveEvidenceGuard.minimumTranscriptChars;

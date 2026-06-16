@@ -1,7 +1,7 @@
 import '../services/product_analytics.dart';
 
 /// First-recording conversation starter analytics.
-abstract final class ExamplePromptAnalytics {
+abstract class ExamplePromptAnalytics {
   ExamplePromptAnalytics._();
 
   static Future<void> shown({required String surface}) {

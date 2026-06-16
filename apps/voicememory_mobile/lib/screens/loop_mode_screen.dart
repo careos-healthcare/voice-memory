@@ -70,10 +70,7 @@ class _LoopModeScreenState extends State<LoopModeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          _Section(
-            label: LoopModeCopy.detailPromise,
-            body: loop.shortPromise,
-          ),
+          _Section(label: LoopModeCopy.detailPromise, body: loop.shortPromise),
           _Section(
             label: LoopModeCopy.detailProgress,
             body: '${_engine.progressFraction(loop)} · $statusLabel',
@@ -105,9 +102,7 @@ class _LoopModeScreenState extends State<LoopModeScreen> {
             onPressed: () => context.go(
               '/record?prompt=${Uri.encodeComponent(loop.activePrompt)}&autostart=1',
             ),
-            child: Text(
-              LoopModeCopy.progressRecordCtaForLoop(loop.id),
-            ),
+            child: Text(LoopModeCopy.progressRecordCtaForLoop(loop.id)),
           ),
           const SizedBox(height: AppSpacing.sm),
           OutlinedButton(

@@ -7,6 +7,10 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart';
 import 'package:voicememory_mobile/features/first_session/two_day_activation_engine.dart';
+import 'package:voicememory_mobile/features/referral/invite_attribution.dart';
+import 'package:voicememory_mobile/features/referral/invite_funnel_metrics.dart';
+import 'package:voicememory_mobile/features/referral/invited_day_two_return.dart';
+import 'package:voicememory_mobile/features/referral/invited_user_welcome.dart';
 import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -16,6 +20,7 @@ import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/widgets/first_session/first_save_rescue_card.dart';
@@ -25,8 +30,24 @@ import 'package:voicememory_mobile/widgets/record/done_for_today_receipt_card.da
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_first_week_nudge.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_first_win_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_insights_empty_state.dart';
+import 'package:voicememory_mobile/widgets/referral/invited_day_two_return_card.dart';
+import 'package:voicememory_mobile/widgets/referral/invited_user_welcome_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+
+class _MemoryPrefs extends MobilePrefsStore {
+  _MemoryPrefs() : super(file: File('test/tmp/invited_welcome/unused.json'));
+
+  final Map<String, Map<String, dynamic>> maps = {};
+
+  @override
+  Future<Map<String, dynamic>?> readMap(String key) async => maps[key];
+
+  @override
+  Future<void> writeMap(String key, Map<String, dynamic> value) async {
+    maps[key] = value;
+  }
+}
 
 PressureCheckInRecord _record({String id = 'a'}) {
   return PressureCheckInRecord(
@@ -44,7 +65,9 @@ Future<void> _pumpCard(WidgetTester tester, Widget child) async {
   await tester.binding.setSurfaceSize(const Size(390, 1600));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))),
+    MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: child)),
+    ),
   );
   await tester.pump();
 }
@@ -98,7 +121,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('That is enough for today.'), findsOneWidget);
-      expect(find.text(FirstSessionExplanationCard.primaryLabel), findsOneWidget);
+      expect(
+        find.text(FirstSessionExplanationCard.primaryLabel),
+        findsOneWidget,
+      );
       expect(
         find.text(FirstSessionExplanationCard.secondaryLabel),
         findsOneWidget,
@@ -110,8 +136,9 @@ void main() {
       expect(recorded, 1);
     });
 
-    testWidgets('adds no extra choices beyond the two existing starts',
-        (tester) async {
+    testWidgets('adds no extra choices beyond the two existing starts', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         FirstSessionExplanationCard(onLogPressure: () {}, onRecord: () {}),
@@ -125,10 +152,7 @@ void main() {
         find.byKey(const Key('first_session_log_pressure_cta')),
         findsOneWidget,
       );
-      expect(
-        find.byKey(const Key('first_session_record_cta')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('first_session_record_cta')), findsOneWidget);
       expect(find.text('Record this'), findsNothing);
     });
 
@@ -155,8 +179,11 @@ void main() {
         'therapy',
         'treatment',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'copy must not contain "$banned"',
+        );
       }
       expect(copy, isNot(contains('voicememory')));
     });
@@ -198,11 +225,55 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('You can delete it after.'), findsOneWidget);
+      expect(
+        find.text('This can be short, private, and deleted anytime.'),
+        findsOneWidget,
+      );
       expect(find.text('Start test recording'), findsOneWidget);
       // Exactly one new CTA — nothing else to choose.
       expect(
         find.byWidgetPredicate((w) => w is ButtonStyleButton),
         findsOneWidget,
+      );
+    });
+
+    testWidgets('confidence seen fires once per session across surfaces', (
+      tester,
+    ) async {
+      await _pumpCard(
+        tester,
+        Column(
+          children: [
+            FirstSaveRescueCard(onStart: () {}),
+            CaptureEntryActions(
+              onRecord: () {},
+              underRecordHelper: FirstSaveRescueCard.oneSentenceLine,
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+
+      // Both confidence surfaces rendered, the event logged exactly once.
+      expect(
+        find.byKey(const Key('first_save_confidence_line')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('first_save_one_sentence_helper')),
+        findsOneWidget,
+      );
+      final seen = captured
+          .where(
+            (e) => e.event == ActivationFunnelAnalytics.firstSaveConfidenceSeen,
+          )
+          .toList();
+      expect(seen, hasLength(1));
+      expect(seen.single.properties, {'entry_count': 0});
+      // Plain text only — the helper adds no new CTA.
+      expect(
+        find.widgetWithText(ButtonStyleButton, 'One sentence is enough.'),
+        findsNothing,
       );
     });
 
@@ -217,8 +288,9 @@ void main() {
       expect(seen.single.properties, {'entry_count': 0});
     });
 
-    testWidgets('CTA starts the existing recording flow and logs the tap',
-        (tester) async {
+    testWidgets('CTA starts the existing recording flow and logs the tap', (
+      tester,
+    ) async {
       var started = 0;
       await _pumpCard(tester, FirstSaveRescueCard(onStart: () => started++));
 
@@ -236,21 +308,19 @@ void main() {
     });
 
     testWidgets('no private content in any rescue payload', (tester) async {
-      await _pumpCard(
-        tester,
-        FirstSaveRescueCard(onStart: () {}),
-      );
+      await _pumpCard(tester, FirstSaveRescueCard(onStart: () {}));
       await tester.tap(find.byKey(const Key('first_save_rescue_cta')));
 
       expect(captured, isNotEmpty);
       for (final e in captured) {
         expect(
           e.properties.keys.toSet().difference(
-                ActivationFunnelAnalytics.allowedPropertyKeys,
-              ),
+            ActivationFunnelAnalytics.allowedPropertyKeys,
+          ),
           isEmpty,
         );
-        final flat = '${e.event} ${e.properties.values.join(' ')}'.toLowerCase();
+        final flat = '${e.event} ${e.properties.values.join(' ')}'
+            .toLowerCase();
         expect(flat, isNot(contains('repeating lately')));
         expect(flat, isNot(contains('voicememory')));
       }
@@ -262,6 +332,8 @@ void main() {
         FirstSaveRescueCard.body,
         FirstSaveRescueCard.reassurance,
         FirstSaveRescueCard.ctaLabel,
+        FirstSaveRescueCard.confidenceLine,
+        FirstSaveRescueCard.oneSentenceLine,
       ].join(' ').toLowerCase();
       for (final banned in const [
         'task',
@@ -278,8 +350,11 @@ void main() {
         'therapy',
         'treatment',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'rescue copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'rescue copy must not contain "$banned"',
+        );
       }
       expect(copy, isNot(contains('voicememory')));
     });
@@ -301,8 +376,9 @@ void main() {
       expect(tapped, 1);
     });
 
-    testWidgets('first check-in shows first-win and CTA opens insights',
-        (tester) async {
+    testWidgets('first check-in shows first-win and CTA opens insights', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final dir = Directory('test/tmp/first_session');
         if (!await dir.exists()) await dir.create(recursive: true);
@@ -395,7 +471,10 @@ void main() {
     testWidgets('early-signal nudge appears for two entries', (tester) async {
       await _pumpInsights(
         tester,
-        records: [_record(id: 'a'), _record(id: 'b')],
+        records: [
+          _record(id: 'a'),
+          _record(id: 'b'),
+        ],
       );
       expect(
         find.byKey(const Key('pressure_first_week_nudge')),
@@ -403,11 +482,16 @@ void main() {
       );
     });
 
-    testWidgets('nudge is gone once there are three or more entries',
-        (tester) async {
+    testWidgets('nudge is gone once there are three or more entries', (
+      tester,
+    ) async {
       await _pumpInsights(
         tester,
-        records: [_record(id: 'a'), _record(id: 'b'), _record(id: 'c')],
+        records: [
+          _record(id: 'a'),
+          _record(id: 'b'),
+          _record(id: 'c'),
+        ],
       );
       expect(find.byKey(const Key('pressure_first_week_nudge')), findsNothing);
     });
@@ -448,8 +532,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('loop explanation appears before the first save',
-        (tester) async {
+    testWidgets('loop explanation appears before the first save', (
+      tester,
+    ) async {
       await pumpRecordScreen(tester);
       expect(
         find.byKey(const Key('first_session_explanation_card')),
@@ -460,8 +545,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('rescue appears at zero entries alongside the explainer',
-        (tester) async {
+    testWidgets('rescue appears at zero entries alongside the explainer', (
+      tester,
+    ) async {
       await pumpRecordScreen(tester);
       // Both first-session surfaces coexist; the rescue replaces nothing.
       expect(find.byKey(const Key('first_save_rescue_card')), findsOneWidget);
@@ -473,6 +559,32 @@ void main() {
       expect(find.text('How ArchiveMe works'), findsOneWidget);
       // The normal recording path stays available — never blocked.
       expect(find.byType(CaptureEntryActions), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('confidence lines appear at zero entries', (tester) async {
+      await pumpRecordScreen(tester);
+      expect(
+        find.text('This can be short, private, and deleted anytime.'),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('first_save_one_sentence_helper')),
+        findsOneWidget,
+      );
+      expect(find.text('One sentence is enough.'), findsOneWidget);
+      // Plain text — no new CTA, no new prompt choice.
+      expect(
+        find.widgetWithText(ButtonStyleButton, 'One sentence is enough.'),
+        findsNothing,
+      );
+      expect(
+        find.widgetWithText(
+          ButtonStyleButton,
+          'This can be short, private, and deleted anytime.',
+        ),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -499,11 +611,22 @@ void main() {
       await pumpRecordScreen(tester);
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.text('Try a 10-second test'), findsNothing);
+      // All first-save confidence lines are gone after the first save.
+      expect(
+        find.text('This can be short, private, and deleted anytime.'),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('first_save_one_sentence_helper')),
+        findsNothing,
+      );
+      expect(find.text('One sentence is enough.'), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('loop explanation hides once a recording is saved',
-        (tester) async {
+    testWidgets('loop explanation hides once a recording is saved', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await AppServices.instance.journalStore.save(
           JournalEntry(
@@ -557,9 +680,41 @@ void main() {
       expect(first.title, 'Day 1 complete');
       expect(first.lines, const [
         'Tomorrow, ArchiveMe can compare this with what shows up next.',
+        'Tomorrow\u2019s check is simple: did this return, fade, or change?',
       ]);
       expect(engine.buildPostSave(entryCount: 0).show, isFalse);
       expect(engine.buildPostSave(entryCount: 2).show, isFalse);
+    });
+
+    test('the return reason exists only in the day-1 closure stage', () {
+      const reason = TwoDayActivationPath.dayOneReturnReasonLine;
+      // Not before the first save.
+      expect(
+        engine.build(entryCount: 0, now: now).lines,
+        isNot(contains(reason)),
+      );
+      // Not in the day-2 return moment.
+      expect(
+        engine.build(entryCount: 1, entryDates: [yesterday], now: now).lines,
+        isNot(contains(reason)),
+      );
+      // Gone after the return moment and at 3+ entries.
+      expect(
+        engine
+            .build(entryCount: 2, entryDates: [yesterday, today], now: now)
+            .show,
+        isFalse,
+      );
+      expect(
+        engine
+            .build(
+              entryCount: 3,
+              entryDates: [threeDaysAgo, yesterday, today],
+              now: now,
+            )
+            .show,
+        isFalse,
+      );
     });
 
     test('day 2 return moment when yesterday holds the only save', () {
@@ -588,11 +743,7 @@ void main() {
     });
 
     test('nothing on the day of the first save itself', () {
-      final path = engine.build(
-        entryCount: 1,
-        entryDates: [today],
-        now: now,
-      );
+      final path = engine.build(entryCount: 1, entryDates: [today], now: now);
       expect(path.show, isFalse);
     });
 
@@ -634,6 +785,7 @@ void main() {
         ...TwoDayActivationPath.dayOneLines,
         TwoDayActivationPath.dayOneCompleteTitle,
         TwoDayActivationPath.dayOneCompleteLine,
+        TwoDayActivationPath.dayOneReturnReasonLine,
         TwoDayActivationPath.dayTwoTitle,
         TwoDayActivationPath.dayTwoLine,
         TwoDayActivationPath.dayTwoCautiousLine,
@@ -641,6 +793,9 @@ void main() {
       final lower = copy.toLowerCase();
       for (final banned in const [
         'streak',
+        'daily',
+        'habit',
+        'behind',
         'must',
         'should',
         'task',
@@ -658,8 +813,11 @@ void main() {
         'every day',
         'don\u2019t break',
       ]) {
-        expect(lower, isNot(contains(banned)),
-            reason: '2-day path copy must not contain "$banned"');
+        expect(
+          lower,
+          isNot(contains(banned)),
+          reason: '2-day path copy must not contain "$banned"',
+        );
       }
       expect(copy, isNot(contains('VoiceMemory')));
     });
@@ -684,8 +842,10 @@ void main() {
       );
       expect(find.text('That is enough.'), findsOneWidget);
       // Passive card — no buttons, nothing to block or require.
-      expect(find.byWidgetPredicate((w) => w is ButtonStyleButton),
-          findsNothing);
+      expect(
+        find.byWidgetPredicate((w) => w is ButtonStyleButton),
+        findsNothing,
+      );
     });
 
     testWidgets('renders nothing without a stage', (tester) async {
@@ -696,11 +856,14 @@ void main() {
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
     });
 
-    testWidgets('day 1 closure coexists with the Done for today receipt',
-        (tester) async {
+    testWidgets('day 1 closure coexists with the Done for today receipt', (
+      tester,
+    ) async {
       const twoDay = TwoDayActivationEngine();
-      final receipt = const DoneForTodayReceiptEngine()
-          .build(saved: true, now: DateTime(2026, 6, 11, 12));
+      final receipt = const DoneForTodayReceiptEngine().build(
+        saved: true,
+        now: DateTime(2026, 6, 11, 12),
+      );
       await _pumpCard(
         tester,
         Column(
@@ -722,6 +885,14 @@ void main() {
       expect(
         find.text(
           'Tomorrow, ArchiveMe can compare this with what shows up next.',
+        ),
+        findsOneWidget,
+      );
+      // The concrete return reason renders with day-1 closure, below the
+      // Done for today receipt — never instead of it.
+      expect(
+        find.text(
+          'Tomorrow\u2019s check is simple: did this return, fade, or change?',
         ),
         findsOneWidget,
       );
@@ -798,12 +969,11 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('day 2 return copy appears when yesterday holds one save',
-        (tester) async {
+    testWidgets('day 2 return copy appears when yesterday holds one save', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
-        await seedEntries([
-          DateTime.now().subtract(const Duration(days: 1)),
-        ]);
+        await seedEntries([DateTime.now().subtract(const Duration(days: 1))]);
       });
       await pumpRecordScreen(tester);
       expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
@@ -819,9 +989,7 @@ void main() {
 
     testWidgets('the path never blocks recording', (tester) async {
       await tester.runAsync(() async {
-        await seedEntries([
-          DateTime.now().subtract(const Duration(days: 1)),
-        ]);
+        await seedEntries([DateTime.now().subtract(const Duration(days: 1))]);
       });
       await pumpRecordScreen(tester);
       // The day-2 card and the normal record entry actions coexist.
@@ -830,8 +998,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('hides once the archive holds three or more entries',
-        (tester) async {
+    testWidgets('hides once the archive holds three or more entries', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await seedEntries([
           DateTime.now().subtract(const Duration(days: 3)),
@@ -844,8 +1013,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('hides after the second-day return moment is complete',
-        (tester) async {
+    testWidgets('hides after the second-day return moment is complete', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await seedEntries([
           DateTime.now().subtract(const Duration(days: 1)),
@@ -858,8 +1028,852 @@ void main() {
     });
   });
 
+  group('Invited user welcome', () {
+    late List<({String event, Map<String, Object> properties})> captured;
+
+    List<({String event, Map<String, Object> properties})> eventsNamed(
+      String name,
+    ) => captured.where((e) => e.event == name).toList();
+
+    setUp(() {
+      captured = [];
+      ActivationFunnelAnalytics.resetForTest();
+      ActivationFunnelAnalytics.captureForTest(
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
+      );
+      InvitedUserWelcome.resetSessionForTest();
+    });
+
+    tearDown(() {
+      ActivationFunnelAnalytics.resetForTest();
+      InvitedUserWelcome.resetSessionForTest();
+    });
+
+    test('source-specific copy is exact', () {
+      expect(
+        InvitedUserWelcome.titleFor('weekly_review'),
+        'You were invited after a weekly review',
+      );
+      expect(
+        InvitedUserWelcome.bodyFor('weekly_review'),
+        'Start with one small recording. Later, ArchiveMe can compare what '
+        'returned, faded, or changed.',
+      );
+      expect(
+        InvitedUserWelcome.titleFor('thread_return'),
+        'You were invited because a thread came back',
+      );
+      expect(
+        InvitedUserWelcome.bodyFor('thread_return'),
+        'Start with one small recording. ArchiveMe can help notice what '
+        'keeps returning.',
+      );
+      expect(
+        InvitedUserWelcome.titleFor('belief_distance'),
+        'You were invited because something kept showing up',
+      );
+      expect(
+        InvitedUserWelcome.bodyFor('belief_distance'),
+        'Start with one small recording. ArchiveMe can help notice repeated '
+        'phrases over time.',
+      );
+      expect(
+        InvitedUserWelcome.titleFor('proof_counter'),
+        'You were invited after recordings started connecting',
+      );
+      expect(
+        InvitedUserWelcome.bodyFor('proof_counter'),
+        'Start with one small recording. ArchiveMe can help connect '
+        'evidence over time.',
+      );
+      expect(
+        InvitedUserWelcome.titleFor('pro_retention_yes'),
+        'You were invited by someone using ArchiveMe',
+      );
+      expect(
+        InvitedUserWelcome.bodyFor('pro_retention_yes'),
+        'Start with one small recording. ArchiveMe helps keep track of what '
+        'returns, fades, or changes.',
+      );
+      // Unknown and default sources get the default copy.
+      for (final source in const ['default', 'something_else', '']) {
+        expect(
+          InvitedUserWelcome.titleFor(source),
+          'You were invited to try ArchiveMe',
+        );
+        expect(
+          InvitedUserWelcome.bodyFor(source),
+          'Start with one small recording. ArchiveMe helps notice what '
+          'keeps returning, fading, or changing.',
+        );
+      }
+      expect(InvitedUserWelcome.ctaLabel, 'Record one small thing');
+      expect(InvitedUserWelcome.dismissLabel, 'Not now');
+    });
+
+    test('no banned words, promises, or VoiceMemory in any welcome copy', () {
+      final copy = [
+        InvitedUserWelcome.defaultTitle,
+        InvitedUserWelcome.defaultBody,
+        InvitedUserWelcome.weeklyReviewTitle,
+        InvitedUserWelcome.weeklyReviewBody,
+        InvitedUserWelcome.threadReturnTitle,
+        InvitedUserWelcome.threadReturnBody,
+        InvitedUserWelcome.beliefDistanceTitle,
+        InvitedUserWelcome.beliefDistanceBody,
+        InvitedUserWelcome.proofCounterTitle,
+        InvitedUserWelcome.proofCounterBody,
+        InvitedUserWelcome.proRetentionTitle,
+        InvitedUserWelcome.proRetentionBody,
+        InvitedUserWelcome.ctaLabel,
+        InvitedUserWelcome.dismissLabel,
+      ].join(' ').toLowerCase();
+      for (final banned in const [
+        'streak',
+        'daily',
+        'habit',
+        'guilt',
+        'missed',
+        'must',
+        'should',
+        'task',
+        'homework',
+        'diagnos',
+        'therapy',
+        'treatment',
+        'problem',
+        'fix',
+        'failure',
+        'lazy',
+        'weak',
+        // Never a promise of results.
+        'definitely',
+        'will find',
+        'voicememory',
+      ]) {
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'welcome copy must not contain "$banned"',
+        );
+      }
+    });
+
+    test('shows only before the first save and once per session', () {
+      expect(InvitedUserWelcome.shouldShow(entryCount: 0), isTrue);
+      expect(InvitedUserWelcome.shouldShow(entryCount: 1), isFalse);
+      expect(InvitedUserWelcome.shouldShow(entryCount: 5), isFalse);
+      InvitedUserWelcome.shownThisSession = true;
+      expect(InvitedUserWelcome.shouldShow(entryCount: 0), isFalse);
+    });
+
+    testWidgets('card renders copy with CTA into the existing flow', (
+      tester,
+    ) async {
+      var recorded = 0;
+      await _pumpCard(
+        tester,
+        InvitedUserWelcomeCard(
+          source: 'thread_return',
+          onRecord: () => recorded++,
+          onDismiss: () {},
+        ),
+      );
+
+      expect(
+        find.text('You were invited because a thread came back'),
+        findsOneWidget,
+      );
+      expect(find.text(InvitedUserWelcome.ctaLabel), findsOneWidget);
+      expect(find.text(InvitedUserWelcome.dismissLabel), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('invited_user_welcome_cta')));
+      expect(recorded, 1);
+      expect(InvitedUserWelcome.startedFromWelcomeThisSession, isTrue);
+      expect(InvitedUserWelcome.sessionSource, 'thread_return');
+
+      final seen = eventsNamed(
+        ActivationFunnelAnalytics.invitedUserWelcomeSeen,
+      );
+      expect(seen, hasLength(1));
+      expect(seen.single.properties, {
+        'source': 'thread_return',
+        'entry_count': 0,
+      });
+      final tapped = eventsNamed(
+        ActivationFunnelAnalytics.invitedUserWelcomeTapped,
+      );
+      expect(tapped, hasLength(1));
+      expect(tapped.single.properties, {
+        'source': 'thread_return',
+        'entry_count': 0,
+      });
+    });
+
+    testWidgets('payloads carry source and entry_count only — no referrer', (
+      tester,
+    ) async {
+      await _pumpCard(
+        tester,
+        InvitedUserWelcomeCard(
+          source: 'weekly_review',
+          onRecord: () {},
+          onDismiss: () {},
+        ),
+      );
+      await tester.tap(find.byKey(const Key('invited_user_welcome_cta')));
+
+      expect(captured, isNotEmpty);
+      for (final e in captured) {
+        expect(e.properties.keys.toSet(), {'source', 'entry_count'});
+        final flat = '${e.event} ${e.properties.values.join(' ')}'
+            .toLowerCase();
+        expect(flat, isNot(contains('voicememory')));
+        expect(flat, isNot(contains('@')));
+      }
+    });
+
+    testWidgets(
+      'first save attribution fires only when the welcome CTA started it',
+      (tester) async {
+        final dir = Directory.systemTemp.createTempSync('vm_invited_save_');
+        await tester.runAsync(() async {
+          await AppServices.resetForTest(
+            journalPath: '${dir.path}/journal.json',
+          );
+        });
+
+        JournalEntry entry(String id) => JournalEntry(
+          id: id,
+          createdAt: DateTime(2026, 6, 11, 12),
+          transcript:
+              'A long enough transcript to count as a saved reflection.',
+          durationSeconds: 30,
+          reflection: const Reflection(
+            mood: 'thoughtful',
+            emotionalIntensity: 2,
+            recurringThemes: ['work'],
+            exactLanguagePattern: 'pattern',
+            concreteObservation: 'Work pressure showed up again today.',
+            repeatedSignal: 'signal',
+          ),
+        );
+
+        // First save without the welcome flag: no attribution event.
+        await tester.runAsync(
+          () => AppServices.instance.journalStore.save(entry('e1')),
+        );
+        expect(
+          eventsNamed(ActivationFunnelAnalytics.invitedUserFirstSave),
+          isEmpty,
+        );
+
+        // Reset to an empty archive; flag set by the welcome CTA → fires.
+        await tester.runAsync(() async {
+          final dir2 = Directory.systemTemp.createTempSync('vm_invited_save2_');
+          await AppServices.resetForTest(
+            journalPath: '${dir2.path}/journal.json',
+          );
+        });
+        InvitedUserWelcome.startedFromWelcomeThisSession = true;
+        InvitedUserWelcome.sessionSource = 'proof_counter';
+        await tester.runAsync(
+          () => AppServices.instance.journalStore.save(entry('e2')),
+        );
+        final fired = eventsNamed(
+          ActivationFunnelAnalytics.invitedUserFirstSave,
+        );
+        expect(fired, hasLength(1));
+        expect(fired.single.properties, {
+          'source': 'proof_counter',
+          'entry_count': 1,
+        });
+        expect(InvitedUserWelcome.startedFromWelcomeThisSession, isFalse);
+      },
+    );
+  });
+
+  group('Invited user welcome on the record screen', () {
+    late Directory tempDir;
+
+    setUp(() async {
+      tempDir = Directory.systemTemp.createTempSync('vm_invited_welcome_');
+      await AppServices.resetForTest(
+        journalPath: '${tempDir.path}/journal.json',
+      );
+      ActivationFunnelAnalytics.resetForTest();
+      InvitedUserWelcome.resetSessionForTest();
+      VisualAuditOverrides.setRecordPresentation(
+        const RecordAuditPresentation(ui: RecordUiState.ready),
+      );
+    });
+
+    tearDown(() {
+      VisualAuditOverrides.setRecordPresentation(null);
+      ActivationFunnelAnalytics.resetForTest();
+      InvitedUserWelcome.resetSessionForTest();
+    });
+
+    InviteAttributionStore storeWith({String? source}) {
+      final prefs = _MemoryPrefs();
+      if (source != null) {
+        prefs.maps[InviteAttributionStore.prefsKey] = {
+          'ref': 'archive_invite',
+          'source': source,
+        };
+      }
+      return InviteAttributionStore(prefs: prefs);
+    }
+
+    Future<void> pumpRecordScreen(
+      WidgetTester tester, {
+      required InviteAttributionStore store,
+    }) async {
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              inviteAttributionStore: store,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    testWidgets('appears with invite attribution and replaces the explainer', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+
+      expect(
+        find.byKey(const Key('invited_user_welcome_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text('You were invited after a weekly review'),
+        findsOneWidget,
+      );
+      // Replaces (never joins) the generic explainer — no extra crowding.
+      expect(
+        find.byKey(const Key('first_session_explanation_card')),
+        findsNothing,
+      );
+      // The normal recording path stays available — never blocked.
+      expect(find.byType(CaptureEntryActions), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('hidden without attribution — explainer stays', (tester) async {
+      await pumpRecordScreen(tester, store: storeWith());
+
+      expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_session_explanation_card')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('hidden after the first save', (tester) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          JournalEntry(
+            id: 'e1',
+            createdAt: DateTime(2026, 6, 1, 12),
+            transcript:
+                'A long enough transcript to count as a saved reflection.',
+            durationSeconds: 30,
+            reflection: const Reflection(
+              mood: 'thoughtful',
+              emotionalIntensity: 2,
+              recurringThemes: ['work'],
+              exactLanguagePattern: 'pattern',
+              concreteObservation: 'Work pressure showed up again today.',
+              repeatedSignal: 'signal',
+            ),
+          ),
+        );
+      });
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+
+      expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('dismiss hides it and shows nothing else in its place', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, store: storeWith(source: 'proof_counter'));
+      final dismiss = find.byKey(const Key('invited_user_welcome_dismiss'));
+      await tester.ensureVisible(dismiss);
+      await tester.pump();
+      await tester.tap(dismiss);
+      await tester.pump();
+      expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('only once per session across screen instances', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+      expect(
+        find.byKey(const Key('invited_user_welcome_card')),
+        findsOneWidget,
+      );
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+      expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('Invited Day 2 return copy', () {
+    late List<({String event, Map<String, Object> properties})> captured;
+
+    List<({String event, Map<String, Object> properties})> eventsNamed(
+      String name,
+    ) => captured.where((e) => e.event == name).toList();
+
+    setUp(() {
+      captured = [];
+      ActivationFunnelAnalytics.resetForTest();
+      ActivationFunnelAnalytics.captureForTest(
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
+      );
+      InvitedUserWelcome.resetSessionForTest();
+      InviteFunnelMetrics.resetForTest();
+    });
+
+    tearDown(() {
+      ActivationFunnelAnalytics.resetForTest();
+      InvitedUserWelcome.resetSessionForTest();
+      InviteFunnelMetrics.resetForTest();
+    });
+
+    test('source-specific copy is exact', () {
+      expect(
+        InvitedDayTwoReturn.titleFor('weekly_review'),
+        'Start your own weekly thread',
+      );
+      expect(
+        InvitedDayTwoReturn.bodyFor('weekly_review'),
+        'See whether your first recording is beginning to return, fade, or '
+        'change.',
+      );
+      expect(
+        InvitedDayTwoReturn.titleFor('thread_return'),
+        'Check whether it came back',
+      );
+      expect(
+        InvitedDayTwoReturn.bodyFor('thread_return'),
+        'ArchiveMe can help notice whether the same thread is showing up '
+        'again.',
+      );
+      expect(
+        InvitedDayTwoReturn.titleFor('belief_distance'),
+        'Check what keeps showing up',
+      );
+      expect(
+        InvitedDayTwoReturn.bodyFor('belief_distance'),
+        'See whether a phrase or feeling from your first recording is '
+        'appearing again.',
+      );
+      expect(
+        InvitedDayTwoReturn.titleFor('proof_counter'),
+        'Start connecting evidence',
+      );
+      expect(
+        InvitedDayTwoReturn.bodyFor('proof_counter'),
+        'A second recording can help ArchiveMe compare what is beginning to '
+        'connect.',
+      );
+      expect(
+        InvitedDayTwoReturn.titleFor('pro_retention_yes'),
+        'Build your own archive',
+      );
+      expect(
+        InvitedDayTwoReturn.bodyFor('pro_retention_yes'),
+        'See whether your first recording returned, faded, or changed.',
+      );
+      // Unknown and default sources fall back to the default copy.
+      for (final source in const ['default', 'something_else', '']) {
+        expect(InvitedDayTwoReturn.titleFor(source), 'Your second check');
+        expect(
+          InvitedDayTwoReturn.bodyFor(source),
+          'See whether your first recording returned, faded, or changed.',
+        );
+      }
+      expect(InvitedDayTwoReturn.ctaLabel, 'Check now');
+    });
+
+    test('no banned words, referrer identity, or VoiceMemory in any copy', () {
+      final copy = [
+        InvitedDayTwoReturn.defaultTitle,
+        InvitedDayTwoReturn.defaultBody,
+        InvitedDayTwoReturn.weeklyReviewTitle,
+        InvitedDayTwoReturn.weeklyReviewBody,
+        InvitedDayTwoReturn.threadReturnTitle,
+        InvitedDayTwoReturn.threadReturnBody,
+        InvitedDayTwoReturn.beliefDistanceTitle,
+        InvitedDayTwoReturn.beliefDistanceBody,
+        InvitedDayTwoReturn.proofCounterTitle,
+        InvitedDayTwoReturn.proofCounterBody,
+        InvitedDayTwoReturn.proRetentionYesTitle,
+        InvitedDayTwoReturn.proRetentionYesBody,
+        InvitedDayTwoReturn.ctaLabel,
+      ].join(' ').toLowerCase();
+      for (final banned in const [
+        'streak',
+        'daily',
+        'habit',
+        'guilt',
+        'missed',
+        'behind',
+        'must',
+        'should',
+        'task',
+        'homework',
+        'diagnos',
+        'therapy',
+        'treatment',
+        'problem',
+        'fix',
+        'failure',
+        'lazy',
+        'weak',
+        // Never a referrer identity or old branding.
+        'friend',
+        'invited by',
+        'voicememory',
+      ]) {
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'Day 2 copy must not contain "$banned"',
+        );
+      }
+    });
+
+    test('shows only with attribution and only in the Day 2 return stage', () {
+      expect(
+        InvitedDayTwoReturn.shouldShow(
+          inviteSource: 'weekly_review',
+          stage: TwoDayActivationStage.dayTwoReturn,
+        ),
+        isTrue,
+      );
+      // Non-invited users never see it.
+      expect(
+        InvitedDayTwoReturn.shouldShow(
+          inviteSource: null,
+          stage: TwoDayActivationStage.dayTwoReturn,
+        ),
+        isFalse,
+      );
+      // Never before the first save or after Day 2 is complete.
+      for (final stage in const [
+        TwoDayActivationStage.dayOneIntro,
+        TwoDayActivationStage.dayOneComplete,
+        TwoDayActivationStage.none,
+      ]) {
+        expect(
+          InvitedDayTwoReturn.shouldShow(
+            inviteSource: 'weekly_review',
+            stage: stage,
+          ),
+          isFalse,
+          reason: 'must not show in $stage',
+        );
+      }
+    });
+
+    test(
+      'engine stages pin the gate: pre-first-save and post-Day-2 hide it',
+      () {
+        const engine = TwoDayActivationEngine();
+        final now = DateTime(2026, 6, 11, 9);
+        // Before the first save: day-one intro stage → hidden.
+        expect(
+          engine.build(entryCount: 0, now: now).stage,
+          TwoDayActivationStage.dayOneIntro,
+        );
+        // Day 2 complete (entries on two distinct days) → hidden.
+        expect(
+          engine
+              .build(
+                entryCount: 2,
+                entryDates: [
+                  DateTime(2026, 6, 9, 18),
+                  DateTime(2026, 6, 10, 18),
+                ],
+                now: now,
+              )
+              .stage,
+          TwoDayActivationStage.none,
+        );
+        // The Day 2 return moment is the only visible stage.
+        expect(
+          engine
+              .build(
+                entryCount: 1,
+                entryDates: [DateTime(2026, 6, 10, 18)],
+                now: now,
+              )
+              .stage,
+          TwoDayActivationStage.dayTwoReturn,
+        );
+      },
+    );
+
+    testWidgets('card renders exact copy and the CTA uses the existing flow', (
+      tester,
+    ) async {
+      var checked = 0;
+      await _pumpCard(
+        tester,
+        InvitedDayTwoReturnCard(
+          source: 'thread_return',
+          entryCount: 1,
+          onCheck: () => checked++,
+        ),
+      );
+
+      expect(find.text('Check whether it came back'), findsOneWidget);
+      expect(
+        find.text(
+          'ArchiveMe can help notice whether the same thread is showing up '
+          'again.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(InvitedDayTwoReturn.ctaLabel), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('invited_day_two_return_cta')));
+      expect(checked, 1);
+
+      final seen = eventsNamed(ActivationFunnelAnalytics.invitedDay2CopySeen);
+      expect(seen, hasLength(1));
+      expect(seen.single.properties, {
+        'source': 'thread_return',
+        'entry_count': 1,
+        'stage': 'day_2',
+      });
+      final tapped = eventsNamed(
+        ActivationFunnelAnalytics.invitedDay2CopyTapped,
+      );
+      expect(tapped, hasLength(1));
+      expect(tapped.single.properties, {
+        'source': 'thread_return',
+        'entry_count': 1,
+        'stage': 'day_2',
+      });
+      // The normal Day 2 funnel keeps firing when this card replaces the
+      // generic one.
+      expect(
+        eventsNamed(ActivationFunnelAnalytics.day2ReturnSeen),
+        hasLength(1),
+      );
+    });
+
+    testWidgets('analytics payloads are safe', (tester) async {
+      await _pumpCard(
+        tester,
+        InvitedDayTwoReturnCard(
+          source: 'proof_counter',
+          entryCount: 2,
+          onCheck: () {},
+        ),
+      );
+      await tester.tap(find.byKey(const Key('invited_day_two_return_cta')));
+
+      expect(captured, isNotEmpty);
+      for (final e in captured) {
+        expect(
+          e.properties.keys.toSet().difference(const {
+            'source',
+            'entry_count',
+            'stage',
+          }),
+          isEmpty,
+          reason: '${e.event} carries a non-whitelisted key',
+        );
+        final flat = '${e.event} ${e.properties.values.join(' ')}'
+            .toLowerCase();
+        expect(flat, isNot(contains('https://')));
+        expect(flat, isNot(contains('@')));
+        expect(flat, isNot(contains('voicememory')));
+      }
+    });
+  });
+
+  group('Invited Day 2 return copy on the record screen', () {
+    late Directory tempDir;
+
+    setUp(() async {
+      tempDir = Directory.systemTemp.createTempSync('vm_invited_day2_');
+      await AppServices.resetForTest(
+        journalPath: '${tempDir.path}/journal.json',
+      );
+      ActivationFunnelAnalytics.resetForTest();
+      InvitedUserWelcome.resetSessionForTest();
+      InviteFunnelMetrics.resetForTest();
+      VisualAuditOverrides.setRecordPresentation(
+        const RecordAuditPresentation(ui: RecordUiState.ready),
+      );
+    });
+
+    tearDown(() {
+      VisualAuditOverrides.setRecordPresentation(null);
+      ActivationFunnelAnalytics.resetForTest();
+      InvitedUserWelcome.resetSessionForTest();
+      InviteFunnelMetrics.resetForTest();
+    });
+
+    InviteAttributionStore storeWith({String? source}) {
+      final prefs = _MemoryPrefs();
+      if (source != null) {
+        prefs.maps[InviteAttributionStore.prefsKey] = {
+          'ref': 'archive_invite',
+          'source': source,
+        };
+      }
+      return InviteAttributionStore(prefs: prefs);
+    }
+
+    Future<void> saveEntry(
+      WidgetTester tester, {
+      required String id,
+      required DateTime createdAt,
+    }) {
+      return tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          JournalEntry(
+            id: id,
+            createdAt: createdAt,
+            transcript:
+                'A long enough transcript to count as a saved reflection.',
+            durationSeconds: 30,
+            reflection: const Reflection(
+              mood: 'thoughtful',
+              emotionalIntensity: 2,
+              recurringThemes: ['work'],
+              exactLanguagePattern: 'pattern',
+              concreteObservation: 'Work pressure showed up again today.',
+              repeatedSignal: 'signal',
+            ),
+          ),
+        );
+      });
+    }
+
+    Future<void> pumpRecordScreen(
+      WidgetTester tester, {
+      required InviteAttributionStore store,
+    }) async {
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              inviteAttributionStore: store,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    testWidgets('replaces the generic Day 2 card for invited users', (
+      tester,
+    ) async {
+      await saveEntry(
+        tester,
+        id: 'e1',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      );
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+
+      expect(
+        find.byKey(const Key('invited_day_two_return_card')),
+        findsOneWidget,
+      );
+      expect(find.text('Start your own weekly thread'), findsOneWidget);
+      // Replaces (never joins) the generic Day 2 card.
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      // The normal recording path stays available — never blocked.
+      expect(find.byType(CaptureEntryActions), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('non-invited users keep the generic Day 2 card', (
+      tester,
+    ) async {
+      await saveEntry(
+        tester,
+        id: 'e1',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      );
+      await pumpRecordScreen(tester, store: storeWith());
+
+      expect(
+        find.byKey(const Key('invited_day_two_return_card')),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('hidden before the first save', (tester) async {
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+
+      expect(
+        find.byKey(const Key('invited_day_two_return_card')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('hidden after Day 2 is complete', (tester) async {
+      await saveEntry(
+        tester,
+        id: 'e1',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      );
+      await saveEntry(
+        tester,
+        id: 'e2',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      );
+      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+
+      expect(
+        find.byKey(const Key('invited_day_two_return_card')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('No VoiceMemory consumer copy', () {
-    testWidgets('first-session surfaces never show VoiceMemory', (tester) async {
+    testWidgets('first-session surfaces never show VoiceMemory', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         Column(

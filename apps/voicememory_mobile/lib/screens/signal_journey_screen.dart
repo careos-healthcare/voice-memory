@@ -178,11 +178,14 @@ class _SignalJourneyScreenState extends State<SignalJourneyScreen> {
                 SignalReviewCard(
                   review: _review!,
                   onConfirm: () async {
-                    await SignalReviewCoordinator.confirm(reviewId: _review!.id);
+                    await SignalReviewCoordinator.confirm(
+                      reviewId: _review!.id,
+                    );
                     if (!mounted) return;
                     await _load();
                   },
-                  onCorrect: () => SignalReviewNavigation.openFullReview(context),
+                  onCorrect: () =>
+                      SignalReviewNavigation.openFullReview(context),
                   onKeepWatching: () async {
                     await SignalReviewCoordinator.keepWatching(
                       reviewId: _review!.id,
@@ -240,7 +243,10 @@ class _SignalJourneyScreenState extends State<SignalJourneyScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(journey.signalTitle, style: ArchiveMobileTypography.listTitle(context)),
+          Text(
+            journey.signalTitle,
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
           SizedBox(height: gap),
           Text(
             _engine.statusLabel(journey.status),
@@ -286,9 +292,9 @@ class _SignalJourneyScreenState extends State<SignalJourneyScreen> {
           onPressed: _busy
               ? null
               : () => SignalJourneyNavigation.recordNextEvidence(
-                    context,
-                    prompt: journey.nextPrompt,
-                  ),
+                  context,
+                  prompt: journey.nextPrompt,
+                ),
           child: Text(ConsumerUiCopy.signalJourneyRecordEvidence),
         ),
         SizedBox(height: gap),

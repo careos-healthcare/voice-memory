@@ -25,8 +25,8 @@ class PressureReturnTriggerEngine {
         status: PressureReturnTriggerStatus.dismissed,
       );
     }
-    final eligible = experimentAccepted ||
-        entryCount >= PressurePatternReview.minEntries;
+    final eligible =
+        experimentAccepted || entryCount >= PressurePatternReview.minEntries;
     return PressureReturnTrigger(
       status: eligible
           ? PressureReturnTriggerStatus.eligible

@@ -56,8 +56,9 @@ class PressurePatternReviewCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   PressurePatternReview.title,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -65,9 +66,9 @@ class PressurePatternReviewCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             'Built from ${review.entryCount} pressure moments on this device.',
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.md),
           if (review.repeatingSummary != null)
@@ -76,10 +77,7 @@ class PressurePatternReviewCard extends StatelessWidget {
               PressurePatternReview.repeatingSectionTitle,
               review.repeatingSummary!,
             ),
-          if (isPro)
-            ..._fullSections(context)
-          else
-            ..._lockedSections(context),
+          if (isPro) ..._fullSections(context) else ..._lockedSections(context),
         ],
       ),
     );
@@ -115,9 +113,9 @@ class PressurePatternReviewCard extends StatelessWidget {
           ),
           Text(
             'Confidence: ${review.confidence.label}',
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -129,9 +127,9 @@ class PressurePatternReviewCard extends StatelessWidget {
       const SizedBox(height: AppSpacing.sm),
       Text(
         lockedHint,
-        style: ArchiveMobileTypography.body(context).copyWith(
-          color: AppColors.textSecondary,
-        ),
+        style: ArchiveMobileTypography.body(
+          context,
+        ).copyWith(color: AppColors.textSecondary),
       ),
       const SizedBox(height: AppSpacing.sm),
       InkWell(
@@ -181,9 +179,9 @@ class PressurePatternReviewCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
         ],
       ),

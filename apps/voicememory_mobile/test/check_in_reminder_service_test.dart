@@ -15,14 +15,14 @@ Future<void> _reset(String stamp) async {
 }
 
 TomorrowCheckIn _checkIn() => TomorrowCheckIn(
-      id: 'tci1',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'Did this pattern show up again?',
-      options: kDefaultTomorrowCheckInOptions,
-    );
+  id: 'tci1',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'Did this pattern show up again?',
+  options: kDefaultTomorrowCheckInOptions,
+);
 
 /// Fake backend that reports as available and records calls.
 class _FakeBackend implements CheckInReminderBackend {
@@ -77,18 +77,22 @@ Future<void> _makeReady() async {
     ),
   );
   final hook = HookDiagnosisStore(prefs);
-  await hook.append(HookDiagnosisEvent(
-    id: 'q1',
-    createdAt: DateTime(2026, 5, 26),
-    type: HookDiagnosisEventType.checkInQuestionRated,
-    rating: HookDiagnosisRating.yes,
-  ));
-  await hook.append(HookDiagnosisEvent(
-    id: 'q2',
-    createdAt: DateTime(2026, 5, 26),
-    type: HookDiagnosisEventType.checkInQuestionRated,
-    rating: HookDiagnosisRating.sortOf,
-  ));
+  await hook.append(
+    HookDiagnosisEvent(
+      id: 'q1',
+      createdAt: DateTime(2026, 5, 26),
+      type: HookDiagnosisEventType.checkInQuestionRated,
+      rating: HookDiagnosisRating.yes,
+    ),
+  );
+  await hook.append(
+    HookDiagnosisEvent(
+      id: 'q2',
+      createdAt: DateTime(2026, 5, 26),
+      type: HookDiagnosisEventType.checkInQuestionRated,
+      rating: HookDiagnosisRating.sortOf,
+    ),
+  );
 }
 
 void main() {
@@ -110,7 +114,9 @@ void main() {
     await CheckInReminderService.setRemindersEnabled(true);
 
     final scheduled =
-        await CheckInReminderService.scheduleTomorrowCheckInReminder(_checkIn());
+        await CheckInReminderService.scheduleTomorrowCheckInReminder(
+          _checkIn(),
+        );
     expect(scheduled, ReminderScheduleOutcome.notAvailable);
 
     await CheckInReminderService.cancelCheckInReminder('tci1');
@@ -122,8 +128,9 @@ void main() {
     await _reset(stamp);
     CheckInReminderService.setBackendForTest(_FakeBackend());
 
-    final maybe =
-        await CheckInReminderService.maybeScheduleForCheckIn(_checkIn());
+    final maybe = await CheckInReminderService.maybeScheduleForCheckIn(
+      _checkIn(),
+    );
     expect(maybe, ReminderScheduleOutcome.notGated);
   });
 
@@ -135,8 +142,9 @@ void main() {
     CheckInReminderService.setBackendForTest(backend);
     await CheckInReminderService.setRemindersEnabled(true);
 
-    final outcome =
-        await CheckInReminderService.maybeScheduleForCheckIn(_checkIn());
+    final outcome = await CheckInReminderService.maybeScheduleForCheckIn(
+      _checkIn(),
+    );
 
     expect(outcome, ReminderScheduleOutcome.scheduled);
     expect(backend.scheduleCalls, 1);
@@ -151,8 +159,9 @@ void main() {
     CheckInReminderService.setBackendForTest(backend);
     // Reminders left disabled (the default).
 
-    final outcome =
-        await CheckInReminderService.maybeScheduleForCheckIn(_checkIn());
+    final outcome = await CheckInReminderService.maybeScheduleForCheckIn(
+      _checkIn(),
+    );
 
     expect(outcome, ReminderScheduleOutcome.disabled);
     expect(backend.scheduleCalls, 0);
@@ -165,8 +174,9 @@ void main() {
     CheckInReminderService.setBackendForTest(_FakeBackend(permission: false));
     await CheckInReminderService.setRemindersEnabled(true);
 
-    final outcome =
-        await CheckInReminderService.maybeScheduleForCheckIn(_checkIn());
+    final outcome = await CheckInReminderService.maybeScheduleForCheckIn(
+      _checkIn(),
+    );
 
     expect(outcome, ReminderScheduleOutcome.permissionDenied);
   });
@@ -178,8 +188,9 @@ void main() {
     await CheckInReminderService.setRemindersEnabled(true);
     // Default no-op backend.
 
-    final outcome =
-        await CheckInReminderService.maybeScheduleForCheckIn(_checkIn());
+    final outcome = await CheckInReminderService.maybeScheduleForCheckIn(
+      _checkIn(),
+    );
     expect(outcome, ReminderScheduleOutcome.notAvailable);
   });
 

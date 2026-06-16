@@ -33,13 +33,15 @@ class ValueMomentPaywallLogic {
 
   Future<void> recordBlindSpotsVisit() async {
     final s = await _state();
-    s['blindSpotsVisitCount'] = ((s['blindSpotsVisitCount'] as num?)?.toInt() ?? 0) + 1;
+    s['blindSpotsVisitCount'] =
+        ((s['blindSpotsVisitCount'] as num?)?.toInt() ?? 0) + 1;
     await _save(s);
   }
 
   Future<void> recordDiscoverVisit() async {
     final s = await _state();
-    s['discoverVisitCount'] = ((s['discoverVisitCount'] as num?)?.toInt() ?? 0) + 1;
+    s['discoverVisitCount'] =
+        ((s['discoverVisitCount'] as num?)?.toInt() ?? 0) + 1;
     await _save(s);
   }
 

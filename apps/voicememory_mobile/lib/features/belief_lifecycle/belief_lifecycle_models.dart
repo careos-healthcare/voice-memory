@@ -8,12 +8,7 @@ enum BeliefLifecycleStatus {
 }
 
 /// Tracked phase in the belief lifecycle.
-enum BeliefLifecyclePhase {
-  firstAppearance,
-  strengthening,
-  weakening,
-  death,
-}
+enum BeliefLifecyclePhase { firstAppearance, strengthening, weakening, death }
 
 class BeliefLifecycleEvent {
   const BeliefLifecycleEvent({
@@ -51,10 +46,7 @@ class BeliefLifecycleEntry {
 
 /// Current + retired beliefs from evolution history.
 class BeliefLifecycleView {
-  const BeliefLifecycleView({
-    required this.current,
-    required this.retired,
-  });
+  const BeliefLifecycleView({required this.current, required this.retired});
 
   final BeliefLifecycleEntry? current;
   final List<BeliefLifecycleEntry> retired;

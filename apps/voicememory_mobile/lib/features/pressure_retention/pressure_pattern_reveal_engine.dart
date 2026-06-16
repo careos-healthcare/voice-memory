@@ -53,12 +53,16 @@ class PressurePatternRevealEngine {
       'Your archive is starting to see a pattern: you often $phrase',
     );
     if (contextLabel != null) {
-      buffer.write(', especially around ${contextLabel.toLowerCase()} pressure');
+      buffer.write(
+        ', especially around ${contextLabel.toLowerCase()} pressure',
+      );
     }
     buffer.write('.');
     if (fear != null) {
-      buffer.write(' You\'ve named the same worry more than once, so far: '
-          '"$fear".');
+      buffer.write(
+        ' You\'ve named the same worry more than once, so far: '
+        '"$fear".',
+      );
     }
     return buffer.toString();
   }

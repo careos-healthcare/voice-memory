@@ -7,7 +7,7 @@ import type {
   ArchiveImportPreview,
   ArchiveSettingsSnapshot,
   ArchiveValidationIssue,
-  VoiceMemoryArchivePackage,
+  ArchiveMeArchivePackage,
 } from "@/types/archive-permanence";
 import type { ReflectionBookmark } from "@/types/reflection-bookmark";
 import type { ArchiveReviewLabel } from "@/types/archive-permanence";
@@ -26,7 +26,7 @@ function isJournalEntry(value: unknown): value is JournalEntry {
   );
 }
 
-function normalizeLegacyExport(raw: Record<string, unknown>): VoiceMemoryArchivePackage | null {
+function normalizeLegacyExport(raw: Record<string, unknown>): ArchiveMeArchivePackage | null {
   const entries = raw.entries;
   if (!Array.isArray(entries) || entries.length === 0) return null;
   if (!entries.every(isJournalEntry)) return null;
@@ -53,7 +53,7 @@ function normalizeLegacyExport(raw: Record<string, unknown>): VoiceMemoryArchive
   };
 }
 
-function normalizeFullArchive(raw: Record<string, unknown>): VoiceMemoryArchivePackage | null {
+function normalizeFullArchive(raw: Record<string, unknown>): ArchiveMeArchivePackage | null {
   if (raw.format !== "voicememory-archive" && raw.format !== undefined) return null;
 
   const entries = raw.entries;
@@ -98,7 +98,7 @@ function normalizeFullArchive(raw: Record<string, unknown>): VoiceMemoryArchiveP
   };
 }
 
-export function parseArchiveJson(raw: unknown): VoiceMemoryArchivePackage | null {
+export function parseArchiveJson(raw: unknown): ArchiveMeArchivePackage | null {
   if (!isObject(raw)) return null;
   return normalizeFullArchive(raw) ?? normalizeLegacyExport(raw);
 }
@@ -110,7 +110,7 @@ function dateRangeForEntries(entries: JournalEntry[]) {
 }
 
 export function validateArchiveImport(
-  archive: VoiceMemoryArchivePackage | null,
+  archive: ArchiveMeArchivePackage | null,
 ): ArchiveImportPreview {
   const issues: ArchiveValidationIssue[] = [];
 
@@ -126,7 +126,7 @@ export function validateArchiveImport(
       hasSettings: false,
       dateRange: { from: null, to: null },
       localOverlapCount: 0,
-      issues: [{ level: "error", message: "This file does not look like a VoiceMemory archive." }],
+      issues: [{ level: "error", message: "This file does not look like a ArchiveMe archive." }],
       package: null,
     };
   }
@@ -166,7 +166,7 @@ export function validateArchiveImport(
 
   return {
     valid: !finalHasErrors,
-    formatLabel: "VoiceMemory archive",
+    formatLabel: "ArchiveMe archive",
     entryCount: archive.entries.length,
     bookmarkCount: archive.bookmarks.length,
     audioCount: archive.audio?.length ?? 0,
@@ -180,7 +180,7 @@ export function validateArchiveImport(
   };
 }
 
-export async function parseArchiveFile(file: File): Promise<VoiceMemoryArchivePackage | null> {
+export async function parseArchiveFile(file: File): Promise<ArchiveMeArchivePackage | null> {
   if (file.name.endsWith(".zip")) {
     const { unzipArchivePackage } = await import("@/lib/archive/zip-import");
     return unzipArchivePackage(await file.arrayBuffer());

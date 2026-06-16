@@ -62,7 +62,9 @@ void main() {
       expect(tapped, ExamplePromptCatalog.prompts.first);
     });
 
-    testWidgets('hides chips after threshold and shows continue copy', (tester) async {
+    testWidgets('hides chips after threshold and shows continue copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -84,7 +86,9 @@ void main() {
       );
     });
 
-    testWidgets('chips have accessible conversation starter labels', (tester) async {
+    testWidgets('chips have accessible conversation starter labels', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -153,7 +157,9 @@ void main() {
         ),
       );
 
-      await tester.binding.setSurfaceSize(const Size(390, 2400));
+      // Tall enough for the full zero-entry stack (first-60 intro,
+      // explainer, rescue, sample, prompts, record controls).
+      await tester.binding.setSurfaceSize(const Size(390, 3000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
@@ -171,13 +177,17 @@ void main() {
         findsOneWidget,
       );
 
-      final sectionY =
-          tester.getTopLeft(find.text(StartHereCatalog.sectionTitle)).dy;
+      final sectionY = tester
+          .getTopLeft(find.text(StartHereCatalog.sectionTitle))
+          .dy;
       final ctaY = tester
           .getTopLeft(find.text(ConsumerUiCopy.startRecording).first)
           .dy;
-      expect(sectionY, lessThan(ctaY),
-          reason: 'prompt section should render above the record CTA');
+      expect(
+        sectionY,
+        lessThan(ctaY),
+        reason: 'prompt section should render above the record CTA',
+      );
     });
   });
 
@@ -191,7 +201,9 @@ void main() {
       );
     });
 
-    testWidgets('tap prefills text field', (tester) async {
+    testWidgets('tap shows prompt as hint without prefilling field', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -205,7 +217,10 @@ void main() {
       await tester.pump();
 
       final field = tester.widget<TextField>(find.byType(TextField));
-      expect(field.controller?.text, StartHereCatalog.prompts[1]);
+      expect(field.controller?.text, isEmpty);
+      expect(find.text(ConsumerUiCopy.trySayingLabel), findsOneWidget);
+      expect(find.text(StartHereCatalog.prompts[1]), findsWidgets);
+      expect(field.decoration?.hintText, StartHereCatalog.prompts[1]);
     });
   });
 }

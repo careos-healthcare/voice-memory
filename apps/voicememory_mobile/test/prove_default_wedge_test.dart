@@ -20,16 +20,13 @@ Future<void> _reset(String stamp) async {
 
 void main() {
   group('prove_enough default wedge', () {
-    test('onboarding has four prove-focused pages', () {
+    test('onboarding has four loop-step pages', () {
       expect(OnboardingPages.pageCount, 4);
       expect(
         OnboardingPages.pages.first.title,
-        'Doing more does not always feel like enough',
+        ConsumerUiCopy.onboardingPositioningHeadline,
       );
-      expect(
-        ConsumerUiCopy.onboardingFinalCta,
-        'Start with one moment',
-      );
+      expect(ConsumerUiCopy.onboardingFinalCta, 'Start my archive');
     });
 
     test('loop acquisition copy lists prove_enough first', () {
@@ -46,10 +43,7 @@ void main() {
         AudienceWedge.sayingYesNoCapacity.mappedLoopId,
         LoopModeIds.capacityYes,
       );
-      expect(
-        AudienceWedge.notSureYet.mappedLoopId,
-        LoopModeIds.proveEnough,
-      );
+      expect(AudienceWedge.notSureYet.mappedLoopId, LoopModeIds.proveEnough);
     });
 
     test('unknown deep link defaults to prove_enough cohort', () async {
@@ -107,10 +101,7 @@ void main() {
     test('capacity handoff copy unchanged', () {
       expect(LoopModeCopy.capacityHandoffTitle, 'Catch your first yes');
       expect(LoopModeCopy.capacityHandoffCta, 'Record this moment');
-      expect(
-        LoopModeCopy.capacityHandoffPrompt,
-        contains('capacity'),
-      );
+      expect(LoopModeCopy.capacityHandoffPrompt, contains('capacity'));
     });
 
     test('prove handoff copy is default shape', () {
@@ -126,7 +117,10 @@ void main() {
     });
 
     test('onboarding loop screen lists prove_enough first', () {
-      expect(LoopModeCopy.proveEnoughTitle, 'Trying to prove I am doing enough');
+      expect(
+        LoopModeCopy.proveEnoughTitle,
+        'Trying to prove I am doing enough',
+      );
       expect(
         LoopModeCopy.proveEnoughPromise,
         contains('stopping makes you feel behind'),

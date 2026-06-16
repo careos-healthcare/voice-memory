@@ -58,10 +58,7 @@ void main() {
       patternTitle: 'Taking responsibility before saying yes',
     );
     expect(check.type, CompellingCheckType.beforeMoment);
-    expect(
-      check.question,
-      'Did you say yes before checking what you needed?',
-    );
+    expect(check.question, 'Did you say yes before checking what you needed?');
   });
 
   test('vague base question falls back to before-it-shows-up question', () {
@@ -72,14 +69,17 @@ void main() {
     expect(check.question, 'What happens right before it shows up?');
   });
 
-  test('default sharpness is Most specific when feedback says moreSpecific', () {
-    expect(
-      defaultCompellingSharpnessLabel(
-        feedback: ArchiveFeedbackType.moreSpecific,
-      ),
-      CompellingCheckSharpness.mostSpecific,
-    );
-  });
+  test(
+    'default sharpness is Most specific when feedback says moreSpecific',
+    () {
+      expect(
+        defaultCompellingSharpnessLabel(
+          feedback: ArchiveFeedbackType.moreSpecific,
+        ),
+        CompellingCheckSharpness.mostSpecific,
+      );
+    },
+  );
 
   test('default sharpness is Direct when preferDirect is true', () {
     expect(

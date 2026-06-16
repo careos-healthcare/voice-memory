@@ -12,6 +12,7 @@ import '../features/pressure_retention/pressure_context.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
+import '../widgets/memory/fresh_entry_choice.dart';
 import '../widgets/prove_enough/prove_enough_post_record_payoff.dart';
 import '../widgets/pressure_retention/ask_the_archive_card.dart';
 import '../widgets/pressure_retention/pressure_first_win_card.dart';
@@ -19,10 +20,7 @@ import '../widgets/pressure_retention/pressure_quick_save_success.dart';
 
 /// One-tap pressure check-in: pick a pressure, quick save, see the payoff.
 class PressureCheckInScreen extends StatefulWidget {
-  const PressureCheckInScreen({
-    super.key,
-    this.service,
-  });
+  const PressureCheckInScreen({super.key, this.service});
 
   /// Injected for tests; production uses [PressureCheckInService.instance].
   final PressureCheckInService? service;
@@ -57,7 +55,10 @@ class _PressureCheckInScreenState extends State<PressureCheckInScreen> {
     super.dispose();
   }
 
-  Future<void> _quickSave() async {
+  /// [withoutConnecting] saves the moment with no connection signals
+  /// attached (no contexts, no free text) — the raw choice is still kept,
+  /// it just cannot be pulled into old patterns.
+  Future<void> _quickSave({bool withoutConnecting = false}) async {
     final option = _selected;
     if (option == null || _saving) return;
     setState(() => _saving = true);
@@ -65,9 +66,9 @@ class _PressureCheckInScreenState extends State<PressureCheckInScreen> {
     final service = widget.service ?? PressureCheckInService.instance();
     final result = await service.save(
       option: option,
-      contexts: _contexts.toList(),
-      fear: _fear.text,
-      stopCostNote: _note.text,
+      contexts: withoutConnecting ? const [] : _contexts.toList(),
+      fear: withoutConnecting ? '' : _fear.text,
+      stopCostNote: withoutConnecting ? '' : _note.text,
       choseToStop: _choseToStop,
     );
 
@@ -110,9 +111,9 @@ class _PressureCheckInScreenState extends State<PressureCheckInScreen> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           'Pick the closest. One tap is enough — the rest is optional.',
-          style: ArchiveMobileTypography.body(context).copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: ArchiveMobileTypography.body(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.md),
         for (final option in PressureCheckInOption.values) ...[
@@ -142,6 +143,11 @@ class _PressureCheckInScreenState extends State<PressureCheckInScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           _buildOptionalSection(context),
+          const SizedBox(height: AppSpacing.sm),
+          // Memory stays optional: this save never has to join a thread.
+          FreshEntryChoice(
+            onSaveWithoutConnecting: () => _quickSave(withoutConnecting: true),
+          ),
         ],
       ],
     );
@@ -150,9 +156,7 @@ class _PressureCheckInScreenState extends State<PressureCheckInScreen> {
   Widget _buildOptionalSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.flat(
-        background: AppColors.surfaceAlt,
-      ),
+      decoration: VoiceMemoryCards.flat(background: AppColors.surfaceAlt),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -297,21 +301,26 @@ class _OptionTile extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.flat(
-          background: selected ? AppColors.accentLight : null,
-        ).copyWith(
-          border: Border.all(
-            color: selected ? AppColors.accentPrimary : AppColors.borderSubtle,
-            width: selected ? 2 : 1,
-          ),
-        ),
+        decoration:
+            VoiceMemoryCards.flat(
+              background: selected ? AppColors.accentLight : null,
+            ).copyWith(
+              border: Border.all(
+                color: selected
+                    ? AppColors.accentPrimary
+                    : AppColors.borderSubtle,
+                width: selected ? 2 : 1,
+              ),
+            ),
         child: Row(
           children: [
             Icon(
               selected
                   ? Icons.radio_button_checked
                   : Icons.radio_button_unchecked,
-              color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
+              color: selected
+                  ? AppColors.accentPrimary
+                  : AppColors.textSecondary,
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(

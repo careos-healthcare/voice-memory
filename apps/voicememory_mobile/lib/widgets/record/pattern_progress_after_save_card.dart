@@ -63,7 +63,9 @@ class _PatternProgressAfterSaveCardState
           const SizedBox(height: AppSpacing.xs),
           Text(
             p.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -76,9 +78,14 @@ class _PatternProgressAfterSaveCardState
             const SizedBox(height: AppSpacing.sm),
             Text(
               beforeOrHelped,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 14, height: 1.4, fontStyle: FontStyle.italic),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 14,
+                    height: 1.4,
+                    fontStyle: FontStyle.italic,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),

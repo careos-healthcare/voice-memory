@@ -86,10 +86,7 @@ class _ContradictionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            c.youSay,
-            style: const TextStyle(fontSize: 14, height: 1.4),
-          ),
+          Text(c.youSay, style: const TextStyle(fontSize: 14, height: 1.4)),
           const SizedBox(height: 10),
           const Text(
             'But:',
@@ -152,7 +149,8 @@ class _ContradictionCard extends StatelessWidget {
               ],
             ),
           ],
-          if (ArchiveDiscoveryShareMoments.fromContradiction(c) case final shareCard?) ...[
+          if (ArchiveDiscoveryShareMoments.fromContradiction(c)
+              case final shareCard?) ...[
             const SizedBox(height: 4),
             ShareDiscoveryButton(
               card: shareCard,

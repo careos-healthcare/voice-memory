@@ -21,6 +21,7 @@ class ArchivePaywallStats {
   final int spanDays;
   final int recurringThemeCount;
   final int activeTheoryCount;
+
   /// Detected shifts since last archive review ([ArchiveChangeFeedView.totalChangeCount]).
   final int changeCount;
   final int contradictionCount;
@@ -74,9 +75,9 @@ class ArchivePaywallStats {
   }
 
   String subheadlineFor(ArchivePaywallVariant variant) => switch (variant) {
-        ArchivePaywallVariant.b => subheadlineVariantB(),
-        _ => subheadlineLegacy(),
-      };
+    ArchivePaywallVariant.b => subheadlineVariantB(),
+    _ => subheadlineLegacy(),
+  };
 
   /// Hero line: "127 recordings" / "6 months" (Variant B).
   String heroRecordingLine() {
@@ -103,9 +104,7 @@ class ArchivePaywallStats {
       );
     }
     if (changeCount > 0) {
-      lines.add(
-        '$changeCount change${changeCount == 1 ? '' : 's'} over time',
-      );
+      lines.add('$changeCount change${changeCount == 1 ? '' : 's'} over time');
     }
     if (contradictionCount > 0) {
       lines.add(
@@ -125,9 +124,9 @@ class ArchivePaywallStats {
   }
 
   String preCtaFor(ArchivePaywallVariant variant) => switch (variant) {
-        ArchivePaywallVariant.b => preCtaVariantB(),
-        _ => preCtaLegacy(),
-      };
+    ArchivePaywallVariant.b => preCtaVariantB(),
+    _ => preCtaLegacy(),
+  };
 
   static ArchivePaywallStats fromEntries({
     required List<JournalEntry> entries,
@@ -140,7 +139,9 @@ class ArchivePaywallStats {
     if (eligible.length >= 2) {
       final sorted = [...eligible]
         ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-      spanDays = sorted.last.createdAt.difference(sorted.first.createdAt).inDays;
+      spanDays = sorted.last.createdAt
+          .difference(sorted.first.createdAt)
+          .inDays;
       if (spanDays < 1) spanDays = 1;
     }
 

@@ -7,10 +7,7 @@ import 'package:voicememory_mobile/features/pattern_memory/pattern_progress_mode
 
 const _engine = HabitProofEngine();
 
-PatternMemory _memory({
-  int checkInCount = 3,
-  String? nextBestQuestion,
-}) =>
+PatternMemory _memory({int checkInCount = 3, String? nextBestQuestion}) =>
     PatternMemory(
       id: 'pm1',
       patternTitle: 'saying yes when you mean no',
@@ -28,7 +25,8 @@ PatternMemory _memory({
       status: PatternMemoryStatus.active,
     );
 
-PatternProgressMoment _progress({bool shouldShow = true}) => PatternProgressMoment(
+PatternProgressMoment _progress({bool shouldShow = true}) =>
+    PatternProgressMoment(
       id: 'pp_pm1_3',
       memoryId: 'pm1',
       createdAt: DateTime(2026, 6, 4),
@@ -41,17 +39,17 @@ PatternProgressMoment _progress({bool shouldShow = true}) => PatternProgressMome
     );
 
 PatternNextAction _action() => PatternNextAction(
-      id: 'na_pm1_3_repeatCheck',
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      type: PatternNextActionType.repeatCheck,
-      title: 'Check what happens before it starts',
-      body: 'body',
-      question: 'What happens right before it shows up?',
-      ctaLabel: 'Use this check',
-      sourceProgressType: 'stillRepeating',
-      sourceStatus: 'active',
-    );
+  id: 'na_pm1_3_repeatCheck',
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  type: PatternNextActionType.repeatCheck,
+  title: 'Check what happens before it starts',
+  body: 'body',
+  question: 'What happens right before it shows up?',
+  ctaLabel: 'Use this check',
+  sourceProgressType: 'stillRepeating',
+  sourceStatus: 'active',
+);
 
 void main() {
   test('less than 2 check-ins gives notEnoughYet / shouldShow false', () {
@@ -82,7 +80,10 @@ void main() {
 
   test('3 check-ins with no progress and no action gives memoryBuilding', () {
     final p = _engine.build(
-      _memory(checkInCount: 3, nextBestQuestion: 'Did it show up before lunch?'),
+      _memory(
+        checkInCount: 3,
+        nextBestQuestion: 'Did it show up before lunch?',
+      ),
       null,
       null,
     );
@@ -105,13 +106,16 @@ void main() {
     expect(p.type, HabitProofType.nextCheckReady);
   });
 
-  test('next action with 3+ check-ins gives nextCheckReady when no progress', () {
-    final p = _engine.build(_memory(checkInCount: 3), null, _action());
-    expect(p.type, HabitProofType.nextCheckReady);
-    expect(p.headline, 'Tomorrow\u2019s check is clearer now.');
-    expect(p.proofLine, 'Check what happens before it starts');
-    expect(p.nextLine, 'What happens right before it shows up?');
-  });
+  test(
+    'next action with 3+ check-ins gives nextCheckReady when no progress',
+    () {
+      final p = _engine.build(_memory(checkInCount: 3), null, _action());
+      expect(p.type, HabitProofType.nextCheckReady);
+      expect(p.headline, 'Tomorrow\u2019s check is clearer now.');
+      expect(p.proofLine, 'Check what happens before it starts');
+      expect(p.nextLine, 'What happens right before it shows up?');
+    },
+  );
 
   test('priority progressFound beats nextCheckReady', () {
     final p = _engine.build(_memory(), _progress(), _action());

@@ -50,7 +50,8 @@ class ArchiveTheoryEngine {
       maxContradictionScore: maxContradictionScore,
     );
 
-    final updated = lastUpdated ??
+    final updated =
+        lastUpdated ??
         (split.supporting.isNotEmpty
             ? split.supporting.last.createdAt
             : eligible.last.createdAt);

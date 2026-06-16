@@ -73,8 +73,9 @@ class _InputQualityCoachCardState extends State<InputQualityCoachCard> {
     widget.onUseAnyway();
   }
 
-  String _t(String key, String enValue) =>
-      widget.languageCode == 'en' ? enValue : localized(key, widget.languageCode);
+  String _t(String key, String enValue) => widget.languageCode == 'en'
+      ? enValue
+      : localized(key, widget.languageCode);
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +99,9 @@ class _InputQualityCoachCardState extends State<InputQualityCoachCard> {
         children: [
           Text(
             _t('inputQualityCoachTitle', ConsumerUiCopy.inputQualityCoachTitle),
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -133,19 +136,23 @@ class _InputQualityCoachCardState extends State<InputQualityCoachCard> {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _onSubmitSentence(),
               decoration: InputDecoration(
-                hintText: _t('addSentenceHint',
-                    ConsumerUiCopy.inputQualityCoachAddSentenceHint),
+                hintText: _t(
+                  'addSentenceHint',
+                  ConsumerUiCopy.inputQualityCoachAddSentenceHint,
+                ),
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide:
-                      BorderSide(color: InputQualityCoachCard._warmBorder),
+                  borderSide: BorderSide(
+                    color: InputQualityCoachCard._warmBorder,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide:
-                      BorderSide(color: InputQualityCoachCard._warmBorder),
+                  borderSide: BorderSide(
+                    color: InputQualityCoachCard._warmBorder,
+                  ),
                 ),
               ),
             ),
@@ -158,8 +165,8 @@ class _InputQualityCoachCardState extends State<InputQualityCoachCard> {
               onPressed: _submitting
                   ? null
                   : (_expanded
-                      ? _onSubmitSentence
-                      : () => setState(() => _expanded = true)),
+                        ? _onSubmitSentence
+                        : () => setState(() => _expanded = true)),
               child: _submitting
                   ? const SizedBox(
                       width: 20,
@@ -167,8 +174,10 @@ class _InputQualityCoachCardState extends State<InputQualityCoachCard> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Text(
-                      _t('addOneSentence',
-                          ConsumerUiCopy.inputQualityCoachAddSentenceCta),
+                      _t(
+                        'addOneSentence',
+                        ConsumerUiCopy.inputQualityCoachAddSentenceCta,
+                      ),
                     ),
             ),
           ),
@@ -178,8 +187,7 @@ class _InputQualityCoachCardState extends State<InputQualityCoachCard> {
             child: TextButton(
               onPressed: _submitting ? null : _onUseAnyway,
               child: Text(
-                _t('useItAnyway',
-                    ConsumerUiCopy.inputQualityCoachUseAnywayCta),
+                _t('useItAnyway', ConsumerUiCopy.inputQualityCoachUseAnywayCta),
               ),
             ),
           ),

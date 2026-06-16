@@ -18,23 +18,23 @@ class ArchiveReflectionEngine {
   static const fearProvenWrongId = 'fear_proven_wrong';
 
   List<ArchiveReflectionQuestion> questions() => const [
-        ArchiveReflectionQuestion(
-          id: choiceOrPressureId,
-          prompt: 'Was this choice or pressure?',
-        ),
-        ArchiveReflectionQuestion(
-          id: whereRepeatId,
-          prompt: 'Where does this repeat?',
-        ),
-        ArchiveReflectionQuestion(
-          id: whatFearedId,
-          prompt: 'What did I fear would happen if I stopped?',
-        ),
-        ArchiveReflectionQuestion(
-          id: fearProvenWrongId,
-          prompt: 'Has that fear been proven wrong?',
-        ),
-      ];
+    ArchiveReflectionQuestion(
+      id: choiceOrPressureId,
+      prompt: 'Was this choice or pressure?',
+    ),
+    ArchiveReflectionQuestion(
+      id: whereRepeatId,
+      prompt: 'Where does this repeat?',
+    ),
+    ArchiveReflectionQuestion(
+      id: whatFearedId,
+      prompt: 'What did I fear would happen if I stopped?',
+    ),
+    ArchiveReflectionQuestion(
+      id: fearProvenWrongId,
+      prompt: 'Has that fear been proven wrong?',
+    ),
+  ];
 
   ArchiveReflectionAnswer answer(
     String questionId,
@@ -61,13 +61,15 @@ class ArchiveReflectionEngine {
     final stopped = records.where((r) => r.choseToStop).length;
     if (stopped > 0) {
       return ArchiveReflectionAnswer(
-        text: 'You noticed pressure ${records.length} times and chose to stop '
+        text:
+            'You noticed pressure ${records.length} times and chose to stop '
             '$stopped of them — so far both choice and pressure show up.',
         hasEvidence: true,
       );
     }
     return ArchiveReflectionAnswer(
-      text: 'Across ${records.length} moments, this looked more like pressure '
+      text:
+          'Across ${records.length} moments, this looked more like pressure '
           'than free choice so far.',
       hasEvidence: true,
     );
@@ -92,7 +94,8 @@ class ArchiveReflectionEngine {
     final label = PressureContext.fromId(topId)?.label;
     if (label == null) return _insufficient();
     return ArchiveReflectionAnswer(
-      text: 'So far this shows up most around ${label.toLowerCase()} '
+      text:
+          'So far this shows up most around ${label.toLowerCase()} '
           '($topCount moments).',
       hasEvidence: true,
     );
@@ -124,7 +127,8 @@ class ArchiveReflectionEngine {
     // testing has begun and that it does not yet hold the evidence to say so.
     if (records.length >= 3 && stopped >= 1 && hasFear) {
       return const ArchiveReflectionAnswer(
-        text: "You've started testing this by choosing to stop at least once — "
+        text:
+            "You've started testing this by choosing to stop at least once — "
             'but your archive needs more evidence before it can answer that '
             'confidently.',
         hasEvidence: true,
@@ -134,7 +138,7 @@ class ArchiveReflectionEngine {
   }
 
   ArchiveReflectionAnswer _insufficient() => const ArchiveReflectionAnswer(
-        text: insufficientEvidence,
-        hasEvidence: false,
-      );
+    text: insufficientEvidence,
+    hasEvidence: false,
+  );
 }

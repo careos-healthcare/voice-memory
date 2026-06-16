@@ -238,23 +238,18 @@ void main() {
     test('$path has no banned consumer jargon in string literals', () {
       final source = File(path).readAsStringSync();
       final violations = _scanBannedWords(source, path, _bannedPatterns);
-      expect(
-        violations,
-        isEmpty,
-        reason: violations.join('\n'),
-      );
+      expect(violations, isEmpty, reason: violations.join('\n'));
     });
 
     test('$path has no companion or therapy-style copy in string literals', () {
       if (_companionCopyAllowedFiles.contains(path)) return;
       final source = File(path).readAsStringSync();
-      final violations =
-          _scanBannedWords(source, path, _companionBannedPatterns);
-      expect(
-        violations,
-        isEmpty,
-        reason: violations.join('\n'),
+      final violations = _scanBannedWords(
+        source,
+        path,
+        _companionBannedPatterns,
       );
+      expect(violations, isEmpty, reason: violations.join('\n'));
     });
   }
 }
@@ -278,7 +273,8 @@ List<String> _scanBannedWords(
       final value = match.group(1) ?? '';
       if (value.isEmpty || value.contains('/')) continue;
       if (value.contains(r'${')) continue;
-      if (value.startsWith('screenshot-') || RegExp(r'^[bs]\d+$').hasMatch(value)) {
+      if (value.startsWith('screenshot-') ||
+          RegExp(r'^[bs]\d+$').hasMatch(value)) {
         continue;
       }
       if (value.startsWith('value_moment_') || value.startsWith('PAYWALL_')) {

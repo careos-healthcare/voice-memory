@@ -12,6 +12,7 @@ import '../theme/voicememory_typography.dart';
 import 'archive_evidence_panel.dart';
 import 'archive_evolution_card.dart';
 import '../features/archive_explanations/archive_explanation_navigation.dart';
+
 /// Archive home — one evolution hero, anticipation, optional View More.
 class LivingArchiveQuickView extends StatefulWidget {
   const LivingArchiveQuickView({
@@ -146,10 +147,7 @@ class _ArchiveStillLearningCard extends StatelessWidget {
 }
 
 class _SecondaryInsightCard extends StatefulWidget {
-  const _SecondaryInsightCard({
-    required this.insight,
-    required this.entries,
-  });
+  const _SecondaryInsightCard({required this.insight, required this.entries});
 
   final MostImportantInsight insight;
   final List<JournalEntry> entries;
@@ -215,10 +213,7 @@ class _SecondaryInsightCardState extends State<_SecondaryInsightCard> {
 }
 
 class _WhatChangedTodayCard extends StatelessWidget {
-  const _WhatChangedTodayCard({
-    required this.changed,
-    required this.entries,
-  });
+  const _WhatChangedTodayCard({required this.changed, required this.entries});
 
   final WhatChangedToday changed;
   final List<JournalEntry> entries;
@@ -247,7 +242,8 @@ class _WhatChangedTodayCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                line.displayText ?? '${line.label}: ${line.before} → ${line.after}',
+                line.displayText ??
+                    '${line.label}: ${line.before} → ${line.after}',
                 style: VoiceMemoryTypography.bodyStyle().copyWith(height: 1.4),
               ),
             ),

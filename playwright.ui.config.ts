@@ -7,6 +7,7 @@ const webServerEnv = {
   ...process.env,
   NODE_ENV: "production",
   VOICEMEMORY_UI_E2E: "1",
+  VOICEMEMORY_E2E_TEST_MODE: "1",
   EMAIL_DISABLED: "true",
   AUTH_SECRET: process.env.AUTH_SECRET ?? "e2e-test-auth-secret-min-32-chars-long",
 };

@@ -1,9 +1,5 @@
 /// What ArchiveMe suggests the user do with a group of similar moments.
-enum ArchiveCompressionSuggestedAction {
-  keepTogether,
-  split,
-  review,
-}
+enum ArchiveCompressionSuggestedAction { keepTogether, split, review }
 
 extension ArchiveCompressionSuggestedActionIds
     on ArchiveCompressionSuggestedAction {
@@ -85,16 +81,16 @@ class ArchiveMomentGroup {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'momentIds': momentIds,
-        if (patternTitle != null) 'patternTitle': patternTitle,
-        'tags': tags,
-        'firstDate': firstDate.toIso8601String(),
-        'lastDate': lastDate.toIso8601String(),
-        'count': count,
-        'suggestedAction': suggestedAction.id,
-      };
+    'id': id,
+    'title': title,
+    'momentIds': momentIds,
+    if (patternTitle != null) 'patternTitle': patternTitle,
+    'tags': tags,
+    'firstDate': firstDate.toIso8601String(),
+    'lastDate': lastDate.toIso8601String(),
+    'count': count,
+    'suggestedAction': suggestedAction.id,
+  };
 
   static ArchiveMomentGroup? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -136,8 +132,18 @@ class ArchiveMomentGroup {
 
   static String _dayLabel(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }
@@ -168,10 +174,10 @@ class ArchiveCompressionPrefs {
   }
 
   Map<String, dynamic> toJson() => {
-        'keptGroupIds': keptGroupIds.toList(),
-        'splitGroupIds': splitGroupIds.toList(),
-        'hiddenGroupIds': hiddenGroupIds.toList(),
-      };
+    'keptGroupIds': keptGroupIds.toList(),
+    'splitGroupIds': splitGroupIds.toList(),
+    'hiddenGroupIds': hiddenGroupIds.toList(),
+  };
 
   static ArchiveCompressionPrefs fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return const ArchiveCompressionPrefs();

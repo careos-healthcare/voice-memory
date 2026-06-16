@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, Square } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,32 @@ import {
   createListeningModeEntry,
   createPendingReflection,
 } from "@/lib/pending-reflection";
+import { ActivationTheoryPreview } from "@/components/product/ActivationTheoryPreview";
+import { FirstBlindSpotSimulator } from "@/components/product/FirstBlindSpotSimulator";
+import { ImmediateEngagementPanel } from "@/components/archive/ImmediateEngagementPanel";
+import { ArchiveProgressBar } from "@/components/archive/ArchiveProgressBar";
+import { EffortCompoundsPanel } from "@/components/archive/EffortCompoundsPanel";
+import { FirstSessionValueCard } from "@/components/archive/FirstSessionValueCard";
+import { ReflectionImpactReceipt } from "@/components/archive/ReflectionImpactReceipt";
+import { WhatIsMyArchive } from "@/components/archive/WhatIsMyArchive";
+import { SessionMovementSummary } from "@/components/archive/SessionMovementSummary";
+import { buildReflectionImpactReceipt } from "@/lib/archive/reflection-impact-receipt";
+import { EvidenceArchivePreview } from "@/components/product/EvidenceArchivePreview";
+import { ArchiveProofStories } from "@/components/social-proof/ArchiveProofStories";
+import {
+  markPostFiveReflectionMilestone,
+  trackReflectionSixArchiveMovementSeen,
+} from "@/lib/metrics/archive-as-product-events";
+import { friendlyOpenAiApiError } from "@/lib/recording/openai-api-response";
+import { buildArchiveValueSnapshot } from "@/lib/product/archive-value-progress";
+import { WhyMoreEvidenceMatters } from "@/components/archive/WhyMoreEvidenceMatters";
+import { buildImmediateEngagement } from "@/lib/archive/immediate-engagement";
+import { EvidenceBuildingCard } from "@/components/theories/EvidenceBuildingCard";
+import { ArchivePostSaveLoop } from "@/components/recording/ArchivePostSaveLoop";
+import { LowEffortMode } from "@/components/recording/LowEffortMode";
 import { RecordReturnAnchor } from "@/components/recording/RecordReturnAnchor";
+import { buildPostSaveFollowUp } from "@/lib/archive/archive-prompt-engine";
+import { trackArchivePromptRecorded } from "@/lib/metrics/archive-prompt-events";
 import { RECORDER_PRIMARY_LABEL } from "@/lib/reflection/recorder-primary-label";
 import {
   consumeContinuationMeta,
@@ -29,7 +54,7 @@ import {
   trackFollowupRecordingCompleted,
 } from "@/lib/retention/retention-loops";
 import { maybeTrackRoundupFollowupRecorded } from "@/lib/roundups/roundup-observation";
-import { formatEntryDate } from "@/lib/utils";
+import { buildPriorEvidenceRefs } from "@/lib/evidence/prior-evidence-client";
 import { markFirstReflectionCreated } from "@/lib/marketing/first-session-comprehension";
 import { ONBOARDING_RECORDER } from "@/lib/onboarding/onboarding-copy";
 import { observeFunnelRecorderViewed } from "@/lib/retention/first-week-funnel";
@@ -49,7 +74,7 @@ import {
   prepareTranscriptForSaveOnce,
   trackTranscriptCleanupEvents,
 } from "@/lib/transcript/transcript-cleanup";
-import { getAllEntries, getEntry, saveEntry } from "@/lib/storage";
+import { getAllEntries, getEntry, getMemoryEligibleEntries, saveEntry } from "@/lib/storage";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { recordReflectionDuringSilence } from "@/lib/restraint/silence-intelligence";
 import {
@@ -71,6 +96,7 @@ import {
 import { isQuickReflectionEnabled } from "@/lib/reflection/quick-reflection";
 import { recordResurfacingOpenedWithoutReflection } from "@/lib/resurfacing/resurfacing-fatigue";
 import { observeReflectionAfterCallback } from "@/lib/revisit/callback-learning";
+import { MiniWowPanel } from "@/components/blind-spots/MiniWowPanel";
 import { pickAfterSaveClarityLine } from "@/lib/clarity/after-save-clarity";
 import {
   consumeClarityRecordContext,
@@ -135,6 +161,7 @@ import {
 } from "@/lib/capture/vulnerability-timing";
 import { recordInterruptionOutcome } from "@/lib/capture/interruption-timing";
 import type { RecurrenceDensityPromptOffer } from "@/types/recurrence-density";
+import type { ArchivePrompt } from "@/types/archive-prompt";
 import type { RecordReturnContext as RecordReturnContextType } from "@/types/record-return";
 import type { JournalEntry, ProcessingStage } from "@/types/journal";
 import type { RecordUiPhase } from "@/components/capture/RecordCaptureChrome";
@@ -221,11 +248,25 @@ export function Recorder({
   const [densityOffer, setDensityOffer] = useState<RecurrenceDensityPromptOffer | null>(null);
   const [liveTranscript, setLiveTranscript] = useState<string | null>(null);
   const [continuityLine, setContinuityLine] = useState<string | null>(null);
+  const [promptLine, setPromptLine] = useState<string | null>(null);
+  const [showPostSaveLoop, setShowPostSaveLoop] = useState(false);
+  const [postSaveFollowUp, setPostSaveFollowUp] = useState<
+    import("@/types/archive-prompt").ArchivePostSaveFollowUp | null
+  >(null);
+  const pendingPromptRef = useRef<ArchivePrompt | null>(null);
+  const [postSaveEntries, setPostSaveEntries] = useState<
+    import("@/types/journal").JournalEntry[] | null
+  >(null);
+  const immediateEngagement = useMemo(() => {
+    if (!postSaveEntries || !entry) return null;
+    return buildImmediateEngagement(postSaveEntries, { newEntryId: entry.id });
+  }, [postSaveEntries, entry]);
   const recordReturnRef = useRef<RecordReturnContextType | null>(recordReturnProp ?? null);
   const clarityRecordRef = useRef<ClarityRecordContext | null>(clarityRecordProp ?? null);
   const reflexCaptureRef = useRef<ReflexCaptureContext | null>(reflexCaptureProp ?? null);
   const quickMode =
     quickReflection || isQuickReflectionEnabled() || reflexFastBoot || zeroState;
+  const promptSurface = zeroState || quickMode ? "record" : "home";
 
   useEffect(() => {
     onUiPhaseChange?.(recorderStateToUiPhase(state, micBlocked));
@@ -303,7 +344,14 @@ export function Recorder({
   const finalizeEntry = useCallback(
     (newEntry: JournalEntry, recoveredDraft = false) => {
       if (navigatingAfterSaveRef.current) return;
-      navigatingAfterSaveRef.current = true;
+      const holdPostSave =
+        (quickMode || zeroState) &&
+        !recordReturnRef.current &&
+        !clarityRecordRef.current &&
+        !reflexCaptureRef.current;
+      if (!holdPostSave) {
+        navigatingAfterSaveRef.current = true;
+      }
       processingRef.current = false;
 
       recordReflectionDuringSilence();
@@ -314,15 +362,33 @@ export function Recorder({
       if (recoveredDraft) {
         setNotice(DRAFT_RECOVERED_COPY);
       }
+      const savedEntries = [
+        ...getMemoryEligibleEntries().filter((e) => e.id !== newEntry.id),
+        newEntry,
+      ];
+      setPostSaveEntries(savedEntries);
+      const reflectionCount = buildArchiveValueSnapshot(savedEntries).reflectionCount;
+      if (reflectionCount >= 5) markPostFiveReflectionMilestone();
+      if (reflectionCount >= 6) trackReflectionSixArchiveMovementSeen();
       setEntry(newEntry);
       setState("complete");
       recorderCompletedRef.current = true;
       markRecorderCompleted();
       clearForceDirectMicAfterCapture();
       completeFirstSessionStep("first_reflection");
+      void import("@/lib/product/activation-metrics").then((mod) => {
+        mod.observeActivationReflectionCount();
+      });
       onComplete?.(newEntry);
 
       recordReflexSessionRecording();
+
+      if (holdPostSave) {
+        setPostSaveFollowUp(buildPostSaveFollowUp(savedEntries));
+        setShowPostSaveLoop(true);
+        return;
+      }
+
       const delayMs =
         reflexFastBoot || quickMode || recordReturnRef.current || reflexCaptureRef.current
           ? 500
@@ -332,8 +398,22 @@ export function Recorder({
         router.push(`/entry/${newEntry.id}`);
       }, delayMs);
     },
-    [onComplete, quickMode, reflexFastBoot, router],
+    [onComplete, quickMode, reflexFastBoot, router, zeroState],
   );
+
+  const handleKeepRecording = useCallback(() => {
+    const followUp = postSaveFollowUp;
+    setShowPostSaveLoop(false);
+    setPostSaveFollowUp(null);
+    setEntry(null);
+    setPostSaveEntries(null);
+    setContinuityLine(null);
+    navigatingAfterSaveRef.current = false;
+    processingRef.current = false;
+    recorderCompletedRef.current = false;
+    setState("idle");
+    if (followUp) setPromptLine(followUp.text);
+  }, [postSaveFollowUp]);
 
   const processRecording = useCallback(
     async (blob: Blob, durationSeconds: number) => {
@@ -395,9 +475,25 @@ export function Recorder({
         const transcribeData = (await transcribeResponse.json()) as {
           transcript?: string;
           error?: string;
+          code?: string;
         };
 
         if (!transcribeResponse.ok || !transcribeData.transcript) {
+          if (
+            !transcribeResponse.ok &&
+            transcribeResponse.status === 429
+          ) {
+            processingRef.current = false;
+            setState("error");
+            setError(
+              friendlyOpenAiApiError(
+                transcribeResponse.status,
+                transcribeData,
+                "Could not transcribe your recording",
+              ),
+            );
+            return;
+          }
           if (!transcribeResponse.ok && (isLikelyOffline() || transcribeResponse.status >= 500)) {
             await saveOfflineRecordingDraft(
               blob,
@@ -412,7 +508,11 @@ export function Recorder({
             return;
           }
           throw new Error(
-            transcribeData.error ?? "Could not transcribe your recording",
+            friendlyOpenAiApiError(
+              transcribeResponse.status,
+              transcribeData,
+              "Could not transcribe your recording",
+            ),
           );
         }
 
@@ -479,13 +579,9 @@ export function Recorder({
 
         setStage("analyzing");
 
-        const priorContext = getAllEntries()
-          .slice(0, 5)
-          .map((e) => ({
-            date: formatEntryDate(e.createdAt),
-            excerpt: e.transcript.slice(0, 300),
-            themes: e.reflection.recurringThemes,
-          }));
+        // Prompt Context Contract: prior entries travel as references
+        // only — the server builds a structured evidence packet.
+        const priorEvidence = buildPriorEvidenceRefs(getAllEntries());
 
         const analyzeResponse = await fetch("/api/analyze", {
           method: "POST",
@@ -496,16 +592,30 @@ export function Recorder({
           },
           body: JSON.stringify({
             transcript: prepared.transcript,
-            priorContext,
+            priorEvidence,
           }),
         });
 
         const analyzeData = (await analyzeResponse.json()) as {
           reflection?: JournalEntry["reflection"];
           error?: string;
+          code?: string;
         };
 
         setStage("saving");
+
+        if (!analyzeResponse.ok && analyzeResponse.status === 429) {
+          processingRef.current = false;
+          setState("error");
+          setError(
+            friendlyOpenAiApiError(
+              analyzeResponse.status,
+              analyzeData,
+              "Analysis is temporarily limited. Try again later.",
+            ),
+          );
+          return;
+        }
 
         if (!analyzeResponse.ok || !analyzeData.reflection) {
           const entryId = crypto.randomUUID();
@@ -716,6 +826,15 @@ export function Recorder({
       setSeconds(0);
       recorderStartedRef.current = true;
       markRecorderStarted();
+      const pendingPrompt = pendingPromptRef.current;
+      if (pendingPrompt) {
+        trackArchivePromptRecorded({
+          promptId: pendingPrompt.id,
+          type: pendingPrompt.type,
+          surface: promptSurface,
+        });
+        pendingPromptRef.current = null;
+      }
       markRecorderEngaged();
       markReflexRecordingStarted();
       maybeRecordFirstReturnRerecordWithin10Min();
@@ -850,6 +969,12 @@ export function Recorder({
 
   const presenceVariants = presenceMotionVariants(reducedMotion);
 
+  const impactReceiptLabel = useMemo(() => {
+    if (state !== "complete" || !entry) return null;
+    const entries = postSaveEntries ?? getMemoryEligibleEntries();
+    return buildReflectionImpactReceipt(entries, entry.id).displayLabel;
+  }, [state, entry, postSaveEntries]);
+
   const recorderStatusLabel =
     state === "recording"
       ? "Recording in progress"
@@ -859,8 +984,8 @@ export function Recorder({
           ? micBlocked
             ? "Microphone permission required"
             : "Recording error"
-          : state === "complete"
-            ? "Reflection saved"
+          : state === "complete" && impactReceiptLabel
+            ? impactReceiptLabel
             : "Ready to record";
 
   return (
@@ -943,12 +1068,21 @@ export function Recorder({
                   <Mic className="h-5 w-5" aria-hidden />
                   {quickMode ? RECORDER_PRIMARY_LABEL : "Start reflection"}
                 </Button>
-                {preRecordLine || densityOffer ? (
+                {!activeReturn && !activeClarity && !activeReflex ? (
+                  <LowEffortMode
+                    surface={promptSurface}
+                    onSelectPrompt={(prompt) => {
+                      pendingPromptRef.current = prompt;
+                      setPromptLine(prompt.text);
+                    }}
+                  />
+                ) : null}
+                {promptLine || preRecordLine || densityOffer ? (
                   <div className="max-w-sm text-center">
                     <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
-                      {preRecordLine ?? densityOffer?.text}
+                      {promptLine ?? preRecordLine ?? densityOffer?.text}
                     </p>
-                    {densityOffer && !preRecordLine ? (
+                    {densityOffer && !preRecordLine && !promptLine ? (
                       <button
                         type="button"
                         onClick={() => {
@@ -1065,22 +1199,126 @@ export function Recorder({
             animate="animate"
             className="text-center"
           >
-            <p className="text-sm font-normal leading-[1.75] text-zinc-500/90">
-              {listeningMode ? LISTENING_SAVED_COPY : "Saved."}
-            </p>
-            {continuityLine ? (
+            {showPostSaveLoop && postSaveFollowUp ? (
+              <ArchivePostSaveLoop
+                followUp={postSaveFollowUp}
+                onKeepRecording={handleKeepRecording}
+                className="mb-4"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries && entry ? (
+              <ReflectionImpactReceipt
+                entriesOverride={postSaveEntries}
+                newEntryId={entry.id}
+                className="mb-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <FirstSessionValueCard
+                entriesOverride={postSaveEntries}
+                className="mb-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <WhatIsMyArchive
+                entriesOverride={postSaveEntries}
+                compact
+                className="mb-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries && entry ? (
+              <SessionMovementSummary
+                entriesOverride={postSaveEntries}
+                newEntryId={entry.id}
+                surface="record_complete"
+                className="text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && immediateEngagement ? (
+              <ImmediateEngagementPanel
+                engagement={immediateEngagement}
+                className={`text-left ${postSaveEntries ? "mt-3" : ""}`}
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <EvidenceArchivePreview
+                entriesOverride={postSaveEntries}
+                surface="record_complete"
+                className="mt-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <ArchiveProgressBar
+                entriesOverride={postSaveEntries}
+                surface="record_complete"
+                className="mt-3 text-left"
+                linkHref="/archive-belief"
+              />
+            ) : null}
+            {!showPostSaveLoop &&
+            postSaveEntries &&
+            buildArchiveValueSnapshot(postSaveEntries).reflectionCount === 5 ? (
+              <ArchiveProofStories className="mt-3 text-left" />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <EffortCompoundsPanel
+                entriesOverride={postSaveEntries}
+                className="mt-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && continuityLine ? (
               <p className="mt-3 text-sm leading-[1.75] text-zinc-400/95">
                 {continuityLine}
               </p>
+            ) : null}
+            {!showPostSaveLoop ? (
+              <p className="mt-3 text-xs text-zinc-600">
+                {listeningMode ? LISTENING_SAVED_COPY : "Captured on this device."}
+              </p>
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <EvidenceBuildingCard
+                entriesOverride={postSaveEntries}
+                className="mt-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <WhyMoreEvidenceMatters
+                entriesOverride={postSaveEntries}
+                className="mt-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <ActivationTheoryPreview
+                entriesOverride={postSaveEntries}
+                compact
+                className="mt-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <FirstBlindSpotSimulator
+                entriesOverride={postSaveEntries}
+                compact
+                className="mt-3 text-left"
+              />
+            ) : null}
+            {!showPostSaveLoop && postSaveEntries ? (
+              <MiniWowPanel
+                entriesOverride={postSaveEntries}
+                compact
+                className="mt-3 text-left"
+              />
             ) : null}
             {notice ? (
               <p className="mt-2 text-sm leading-relaxed text-amber-200/80">
                 {notice}
               </p>
             ) : null}
-            <p className="mt-2 text-center text-sm text-zinc-500">
-              Opening your entry…
-            </p>
+            {!showPostSaveLoop ? (
+              <p className="mt-2 text-center text-sm text-zinc-500">
+                Opening your entry…
+              </p>
+            ) : null}
           </motion.div>
         )}
 

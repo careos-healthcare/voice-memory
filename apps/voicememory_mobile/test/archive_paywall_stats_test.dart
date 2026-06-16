@@ -73,7 +73,10 @@ void main() {
 
   test('variant B subheadline uses change-over-time copy', () {
     final stats = ArchivePaywallStats.fromEntries(
-      entries: List.generate(10, (i) => _entry('e$i', DateTime.utc(2026, 1, i + 1), const ['work'])),
+      entries: List.generate(
+        10,
+        (i) => _entry('e$i', DateTime.utc(2026, 1, i + 1), const ['work']),
+      ),
     );
     final text = stats.subheadlineFor(ArchivePaywallVariant.b);
     expect(text, contains('tracking patterns'));
@@ -109,7 +112,8 @@ void main() {
   test('intelligence proof view lists only non-zero counts', () {
     final entries = List.generate(
       12,
-      (i) => _entry('e$i', DateTime.utc(2026, 1, i + 1), const ['work', 'stress']),
+      (i) =>
+          _entry('e$i', DateTime.utc(2026, 1, i + 1), const ['work', 'stress']),
     );
     final stats = ArchivePaywallStats.fromEntries(
       entries: entries,
@@ -140,9 +144,14 @@ void main() {
 
   test('uses fallback pre-cta when few recordings', () {
     final stats = ArchivePaywallStats.fromEntries(
-      entries: [_entry('e1', DateTime.utc(2026, 1, 1), const ['work'])],
+      entries: [
+        _entry('e1', DateTime.utc(2026, 1, 1), const ['work']),
+      ],
     );
-    expect(stats.preCtaFor(ArchivePaywallVariant.b), ArchivePaywallCopy.preCtaFallback);
+    expect(
+      stats.preCtaFor(ArchivePaywallVariant.b),
+      ArchivePaywallCopy.preCtaFallback,
+    );
   });
 
   test('proof fallback when no themes theories or changes', () {
@@ -195,7 +204,10 @@ void main() {
       surprises: ArchiveSurprisesView.empty,
       eligibleEntries: entries,
     );
-    final stats = ArchivePaywallStats.fromEntries(entries: entries, archiveV1: v1);
+    final stats = ArchivePaywallStats.fromEntries(
+      entries: entries,
+      archiveV1: v1,
+    );
     expect(stats.changeCount, greaterThan(0));
     final proof = ArchiveIntelligenceProofView.fromStats(stats);
     expect(proof.bodyText, contains('change'));

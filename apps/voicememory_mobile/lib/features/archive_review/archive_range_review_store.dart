@@ -30,11 +30,11 @@ class ArchiveRangeReviewStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => ArchiveRangeReview.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => ArchiveRangeReview.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<ArchiveRangeReview>()
         .take(limit)
         .toList();

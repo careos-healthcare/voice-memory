@@ -1,7 +1,12 @@
+import '../../models/journal_entry.dart';
 import '../../product/consumer_ui_copy.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
+import '../retention/second_session_signal_engine.dart';
 import '../tomorrow_return/active_pattern_thread_model.dart';
 import '../tomorrow_return/return_comparison_model.dart';
 import 'first_three_journey_model.dart';
+import 'first_three_session_copy.dart';
+import 'first_three_session_gates.dart';
 
 /// Builds copy and step state for the first-three reflections journey.
 class FirstThreeJourneyEngine {
@@ -9,12 +14,18 @@ class FirstThreeJourneyEngine {
 
   FirstThreeJourneyModel build({
     required int reflectionCount,
+    List<JournalEntry> entries = const [],
     ActivePatternThread? activeThread,
     ReturnComparison? latestComparison,
   }) {
     final count = reflectionCount.clamp(0, 99);
-    if (count >= 3) {
-      return _complete(count, activeThread, latestComparison);
+    if (count >= FirstThreeSessionGates.minEntriesForUsefulArchive) {
+      return _complete(
+        count,
+        entries: entries,
+        activeThread: activeThread,
+        latestComparison: latestComparison,
+      );
     }
     if (count == 2) {
       return _stepTwo(count);
@@ -25,15 +36,48 @@ class FirstThreeJourneyEngine {
     return _stepZero(count);
   }
 
+  int journeyStepIndexForCount(int reflectionCount) {
+    if (reflectionCount <= 0) return 0;
+    if (reflectionCount < FirstThreeSessionGates.minEntriesForUsefulArchive) {
+      return 1;
+    }
+    return 2;
+  }
+
+  bool hasRepeatMatch({
+    required List<JournalEntry> entries,
+    ActivePatternThread? activeThread,
+  }) {
+    if (entries.length < FirstThreeSessionGates.minEntriesForUsefulArchive) {
+      return false;
+    }
+    if (activeThread != null && activeThread.title.trim().isNotEmpty) {
+      return true;
+    }
+
+    const engine = SecondSessionSignalEngine();
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 2) return false;
+
+    final windowStart = eligible.length >= 3 ? eligible.length - 3 : 0;
+    for (var i = windowStart; i < eligible.length - 1; i++) {
+      if (engine.hasGroundedRepeatMatch(eligible.sublist(i, i + 2))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   FirstThreeJourneyModel _stepZero(int count) {
     return const FirstThreeJourneyModel(
       reflectionCount: 0,
       currentStep: FirstThreeJourneyStep.one,
-      title: 'Start with one ordinary moment.',
+      title: FirstThreeSessionCopy.session0Title,
       body: ConsumerUiCopy.patternsEarlyStateBody,
-      progressLabel: '0 of 3 reflections',
-      nextAction: 'Record your first moment',
+      progressLabel: FirstThreeSessionCopy.journeyStep1,
+      nextAction: 'Record one moment',
       completed: false,
+      journeyStepIndex: 0,
     );
   }
 
@@ -41,12 +85,12 @@ class FirstThreeJourneyEngine {
     return FirstThreeJourneyModel(
       reflectionCount: count,
       currentStep: FirstThreeJourneyStep.two,
-      title: 'One pattern may be starting.',
-      body:
-          'Add one more reflection so ArchiveMe can see whether this shows up again.',
-      progressLabel: '1 of 3 reflections',
-      nextAction: 'Add one more moment',
+      title: FirstThreeSessionCopy.session1CardTitle,
+      body: FirstThreeSessionCopy.session1CardBody,
+      progressLabel: FirstThreeSessionCopy.journeyStep2,
+      nextAction: FirstThreeSessionCopy.session1NextAction,
       completed: false,
+      journeyStepIndex: 1,
     );
   }
 
@@ -54,38 +98,55 @@ class FirstThreeJourneyEngine {
     return FirstThreeJourneyModel(
       reflectionCount: count,
       currentStep: FirstThreeJourneyStep.three,
-      title: 'Now ArchiveMe can compare.',
-      body:
-          'A third reflection helps separate a one-off moment from something that may be repeating.',
-      progressLabel: '2 of 3 reflections',
-      nextAction: 'Add the third moment',
+      title: FirstThreeSessionCopy.session2StartingToNoticeTitle,
+      body: FirstThreeSessionCopy.session2StartingToNoticeBody,
+      progressLabel: FirstThreeSessionCopy.journeyStep2,
+      nextAction: FirstThreeSessionCopy.session1NextAction,
       completed: false,
+      journeyStepIndex: 1,
     );
   }
 
   FirstThreeJourneyModel _complete(
-    int count,
+    int count, {
+    required List<JournalEntry> entries,
     ActivePatternThread? activeThread,
     ReturnComparison? latestComparison,
-  ) {
-    var body =
-        'ArchiveMe now has enough to start showing what repeats, changes, or eases.';
-    if (activeThread != null && activeThread.title.trim().isNotEmpty) {
+  }) {
+    final repeatMatch = hasRepeatMatch(
+      entries: entries,
+      activeThread: activeThread,
+    );
+
+    var title = FirstThreeSessionCopy.session3Title;
+    var body = FirstThreeSessionCopy.session3HonestMoment;
+
+    if (repeatMatch) {
+      title = FirstThreeSessionCopy.session2RepeatTitle;
+      final signal = const SecondSessionSignalEngine().build(entries);
+      if (signal.body.trim().isNotEmpty) {
+        body = signal.body.trim();
+      } else {
+        body = ConsumerUiCopy.secondSessionSoundsClose;
+      }
+    } else if (activeThread != null && activeThread.title.trim().isNotEmpty) {
       body =
-          'ArchiveMe is tracking “${activeThread.title.trim()}” across your moments.';
-    } else if (latestComparison != null) {
-      body =
-          'ArchiveMe can compare today with yesterday and show what keeps repeating.';
+          '${FirstThreeSessionCopy.session3KeepsReturning} '
+          '“${activeThread.title.trim()}” may keep showing up across your moments.';
+    } else if (latestComparison != null &&
+        latestComparison.body.trim().isNotEmpty) {
+      body = latestComparison.body.trim();
     }
 
     return FirstThreeJourneyModel(
       reflectionCount: count,
       currentStep: FirstThreeJourneyStep.complete,
-      title: 'Your first pattern is forming.',
+      title: title,
       body: body,
-      progressLabel: '3 of 3 reflections',
-      nextAction: 'View your pattern',
+      progressLabel: FirstThreeSessionCopy.journeyStep3,
+      nextAction: 'View archive',
       completed: true,
+      journeyStepIndex: 2,
     );
   }
 }

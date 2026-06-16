@@ -12,10 +12,7 @@ import '../widgets/pushed_screen_shell.dart';
 
 /// Evidence trail — why the archive believes what it believes.
 class ArchiveEvidenceTrailScreen extends StatelessWidget {
-  const ArchiveEvidenceTrailScreen({
-    super.key,
-    required this.view,
-  });
+  const ArchiveEvidenceTrailScreen({super.key, required this.view});
 
   final ArchiveV1View view;
 

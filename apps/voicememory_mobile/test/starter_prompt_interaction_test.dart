@@ -54,24 +54,23 @@ Future<void> _pumpHarness(WidgetTester tester) async {
   await tester.binding.setSurfaceSize(const Size(420, 900));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(
-      theme: AppTheme.light(),
-      home: const _PromptHarness(),
-    ),
+    MaterialApp(theme: AppTheme.light(), home: const _PromptHarness()),
   );
 }
 
 void main() {
-  testWidgets('shows "Show more prompt ideas" instead of the old link',
-      (tester) async {
+  testWidgets('shows "Show more prompt ideas" instead of the old link', (
+    tester,
+  ) async {
     await _pumpHarness(tester);
 
     expect(find.text(ConsumerUiCopy.showMorePromptIdeas), findsOneWidget);
     expect(find.text('Need a starter prompt?'), findsNothing);
   });
 
-  testWidgets('tapping the link opens the sheet titled "Pick a prompt"',
-      (tester) async {
+  testWidgets('tapping the link opens the sheet titled "Pick a prompt"', (
+    tester,
+  ) async {
     await _pumpHarness(tester);
 
     await tester.tap(find.text(ConsumerUiCopy.showMorePromptIdeas));
@@ -83,30 +82,35 @@ void main() {
   });
 
   testWidgets(
-      'tapping a sheet prompt closes the sheet and shows it under "Try saying:"',
-      (tester) async {
-    await _pumpHarness(tester);
+    'tapping a sheet prompt closes the sheet and shows it under "Try saying:"',
+    (tester) async {
+      await _pumpHarness(tester);
 
-    await tester.tap(find.text(ConsumerUiCopy.showMorePromptIdeas));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(ConsumerUiCopy.showMorePromptIdeas));
+      await tester.pumpAndSettle();
 
-    // A sheet-only prompt (not present among the main starter cards) so the
-    // selection display is unambiguous.
-    const sheetPrompt = 'What decision are you avoiding?';
-    expect(ConsumerUiCopy.recordStarterPrompts.contains(sheetPrompt), isFalse);
+      // A sheet-only prompt (not present among the main starter cards) so the
+      // selection display is unambiguous.
+      const sheetPrompt = 'What decision are you avoiding?';
+      expect(
+        ConsumerUiCopy.recordStarterPrompts.contains(sheetPrompt),
+        isFalse,
+      );
 
-    await tester.tap(find.text(sheetPrompt));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(sheetPrompt));
+      await tester.pumpAndSettle();
 
-    // Sheet is dismissed.
-    expect(find.text(ConsumerUiCopy.recordHelpSheetTitle), findsNothing);
-    // Selection surfaced under "Try saying:".
-    expect(find.text(ConsumerUiCopy.trySayingLabel), findsOneWidget);
-    expect(find.text(sheetPrompt), findsOneWidget);
-  });
+      // Sheet is dismissed.
+      expect(find.text(ConsumerUiCopy.recordHelpSheetTitle), findsNothing);
+      // Selection surfaced under "Try saying:".
+      expect(find.text(ConsumerUiCopy.trySayingLabel), findsOneWidget);
+      expect(find.text(sheetPrompt), findsOneWidget);
+    },
+  );
 
-  testWidgets('selected prompt is preserved when tapping Start recording',
-      (tester) async {
+  testWidgets('selected prompt is preserved when tapping Start recording', (
+    tester,
+  ) async {
     await _pumpHarness(tester);
 
     const mainPrompt = 'What felt heavy or unresolved this week?';
@@ -129,17 +133,12 @@ void main() {
     final router = GoRouter(
       initialLocation: '/',
       routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const _PromptHarness(),
-        ),
+        GoRoute(path: '/', builder: (context, state) => const _PromptHarness()),
         GoRoute(
           path: '/quick-capture',
           builder: (context, state) {
             capturedExtra = state.extra as String?;
-            return Scaffold(
-              body: Text('captured:${state.extra}'),
-            );
+            return Scaffold(body: Text('captured:${state.extra}'));
           },
         ),
       ],
@@ -148,10 +147,7 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(420, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: AppTheme.light(),
-        routerConfig: router,
-      ),
+      MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
     );
 
     const mainPrompt = 'What felt heavy or unresolved this week?';

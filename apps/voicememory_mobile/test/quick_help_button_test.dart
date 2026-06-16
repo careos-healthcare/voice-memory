@@ -6,9 +6,7 @@ void main() {
   testWidgets('shows a quiet Need help? pill', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: QuickHelpButton(onStartRecording: () async {}),
-        ),
+        home: Scaffold(body: QuickHelpButton(onStartRecording: () async {})),
       ),
     );
     expect(find.text('Need help?'), findsOneWidget);
@@ -17,9 +15,7 @@ void main() {
   testWidgets('tapping the button opens the Quick help sheet', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: QuickHelpButton(onStartRecording: () async {}),
-        ),
+        home: Scaffold(body: QuickHelpButton(onStartRecording: () async {})),
       ),
     );
 

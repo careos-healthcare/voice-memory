@@ -1,7 +1,7 @@
 import '../product/consumer_ui_copy.dart';
 
 /// Static conversation starters for first-time capture — no LLM.
-abstract final class ExamplePromptCatalog {
+abstract class ExamplePromptCatalog {
   ExamplePromptCatalog._();
 
   static const String sectionTitle = ConsumerUiCopy.needAnIdea;

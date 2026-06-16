@@ -72,7 +72,10 @@ class _BlindSpotsScreenState extends State<BlindSpotsScreen> {
   Future<void> _saveReaction(String value) async {
     final review = _review;
     if (review == null) return;
-    await AppServices.instance.prefs.saveBlindSpotReaction(review.reviewId, value);
+    await AppServices.instance.prefs.saveBlindSpotReaction(
+      review.reviewId,
+      value,
+    );
     setState(() => _reaction = value);
   }
 
@@ -89,75 +92,89 @@ class _BlindSpotsScreenState extends State<BlindSpotsScreen> {
       ),
       body: SafeArea(
         child: ArchiveMobilePageTemplate(
-        eyebrow: 'Archive Insight',
-        title: 'Archive Insight',
-        lead:
-            'This is one reason your archive currently believes what it believes.',
-        currentArchiveState: ArchiveValueBanner(entries: _entries),
-        actionArea: TextButton(
-          onPressed: () => context.go('/archive-belief'),
-          child: const Text('Back to Archive'),
-        ),
-        mainContent: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-          if (count < AppConfig.patternReviewReflectionTarget) ...[
-            const Text(
-              'Not enough reflections yet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '$count of ${AppConfig.patternReviewReflectionTarget} reflections for a full pattern review. '
-              'Recording is never blocked — keep building your archive.',
-              style: const TextStyle(color: AppTheme.muted),
-            ),
-            FilledButton(
-              onPressed: () => context.go('/record'),
-              child: const Text('Add another reflection'),
-            ),
-          ] else if (_review == null)
-            const Text('Could not build a review from local archive yet.')
-          else ...[
-            Text(_review!.headline, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-            _section('Observation', _review!.observation),
-            _section('Supporting evidence', _review!.possiblePattern),
-            _section('Why it may matter', _review!.whyMayMatter),
-            _section('One small experiment to try', _review!.experiment),
-            const SizedBox(height: 8),
-            const Text('Evidence', style: TextStyle(fontWeight: FontWeight.w600)),
-            for (final q in _review!.evidenceQuotes)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text('“${q.quote}”\n${q.dateLabel}',
-                    style: const TextStyle(color: AppTheme.muted, fontSize: 13)),
-              ),
-            const SizedBox(height: 16),
-            const Text('How did this land?', style: TextStyle(fontWeight: FontWeight.w600)),
-            for (final label in [
-              'Obvious',
-              'Interesting',
-              'Surprising',
-              'Uncomfortably accurate',
-              'Completely wrong',
-            ])
-              RadioListTile<String>(
-                value: label,
-                groupValue: _reaction,
-                onChanged: (v) => v == null ? null : _saveReaction(v),
-                title: Text(label),
-              ),
-            ValueMomentPaywallCard(
-              surface: PaywallSurface.blindSpot,
-              reflectionCount: count,
-              entitlements: _entitlements,
-              shouldShow: _showPaywall,
-              onDismissed: () => setState(() => _showPaywall = false),
-            ),
-          ],
-        ],
-        ),
+          eyebrow: 'Archive Insight',
+          title: 'Archive Insight',
+          lead:
+              'This is one reason your archive currently believes what it believes.',
+          currentArchiveState: ArchiveValueBanner(entries: _entries),
+          actionArea: TextButton(
+            onPressed: () => context.go('/archive-belief'),
+            child: const Text('Back to Archive'),
+          ),
+          mainContent: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (count < AppConfig.patternReviewReflectionTarget) ...[
+                const Text(
+                  'Not enough reflections yet',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '$count of ${AppConfig.patternReviewReflectionTarget} reflections for a full pattern review. '
+                  'Recording is never blocked — keep building your archive.',
+                  style: const TextStyle(color: AppTheme.muted),
+                ),
+                FilledButton(
+                  onPressed: () => context.go('/record'),
+                  child: const Text('Add another reflection'),
+                ),
+              ] else if (_review == null)
+                const Text('Could not build a review from local archive yet.')
+              else ...[
+                Text(
+                  _review!.headline,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 12),
+                _section('Observation', _review!.observation),
+                _section('Supporting evidence', _review!.possiblePattern),
+                _section('Why it may matter', _review!.whyMayMatter),
+                _section('One small experiment to try', _review!.experiment),
+                const SizedBox(height: 8),
+                const Text(
+                  'Evidence',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                for (final q in _review!.evidenceQuotes)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      '“${q.quote}”\n${q.dateLabel}',
+                      style: const TextStyle(
+                        color: AppTheme.muted,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                const Text(
+                  'How did this land?',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                for (final label in [
+                  'Obvious',
+                  'Interesting',
+                  'Surprising',
+                  'Uncomfortably accurate',
+                  'Completely wrong',
+                ])
+                  RadioListTile<String>(
+                    value: label,
+                    groupValue: _reaction,
+                    onChanged: (v) => v == null ? null : _saveReaction(v),
+                    title: Text(label),
+                  ),
+                ValueMomentPaywallCard(
+                  surface: PaywallSurface.blindSpot,
+                  reflectionCount: count,
+                  entitlements: _entitlements,
+                  shouldShow: _showPaywall,
+                  onDismissed: () => setState(() => _showPaywall = false),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -171,7 +188,10 @@ class _BlindSpotsScreenState extends State<BlindSpotsScreen> {
         children: [
           Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          Text(body, style: const TextStyle(color: AppTheme.muted, height: 1.4)),
+          Text(
+            body,
+            style: const TextStyle(color: AppTheme.muted, height: 1.4),
+          ),
         ],
       ),
     );

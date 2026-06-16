@@ -1,0 +1,14 @@
+/// User-facing copy when microphone permission blocks voice capture.
+abstract class MicrophonePermissionCopy {
+  MicrophonePermissionCopy._();
+
+  static const String deniedTitle = 'Microphone access is off';
+  static const String deniedBody =
+      'Microphone access is off. Turn it on in Settings, or type instead.';
+
+  static const String openSettingsCta = 'Open Settings';
+  static const String allowMicrophoneCta = 'Allow microphone';
+  static const String typeInsteadCta = 'Type Instead';
+
+  static const String statusBlocked = 'Microphone blocked';
+}

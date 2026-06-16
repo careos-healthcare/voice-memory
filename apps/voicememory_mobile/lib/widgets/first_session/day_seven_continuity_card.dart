@@ -60,18 +60,17 @@ class DaySevenContinuityCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             loop.body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           if (loop.helper.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
               loop.helper,
-              style:
-                  ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
           ],
           if (loop.hasCta && onViewWeeklyReview != null) ...[

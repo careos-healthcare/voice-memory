@@ -38,7 +38,9 @@ class _SubscriptionReviewPreviewScreenState
               return SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight - 36),
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - 36,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -46,11 +48,12 @@ class _SubscriptionReviewPreviewScreenState
                       const SizedBox(height: 22),
                       Text(
                         ConsumerUiCopy.paywallHeadline,
-                        style: VoiceMemoryTypography.sectionTitleStyle().copyWith(
-                          fontSize: 26,
-                          height: 1.2,
-                          letterSpacing: -0.4,
-                        ),
+                        style: VoiceMemoryTypography.sectionTitleStyle()
+                            .copyWith(
+                              fontSize: 26,
+                              height: 1.2,
+                              letterSpacing: -0.4,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 10),
@@ -246,9 +249,7 @@ class _SubscriptionReviewPreviewScreenState
           child: Row(
             children: [
               Icon(
-                selected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_off,
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
                 color: selected
                     ? VoiceMemoryColors.primaryIndigo
                     : VoiceMemoryColors.textTertiary,
@@ -289,7 +290,9 @@ class _SubscriptionReviewPreviewScreenState
                   decoration: BoxDecoration(
                     color: VoiceMemoryColors.discoveryGoldBackground,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: VoiceMemoryColors.discoveryGoldBorder),
+                    border: Border.all(
+                      color: VoiceMemoryColors.discoveryGoldBorder,
+                    ),
                   ),
                   child: Text(
                     badge,

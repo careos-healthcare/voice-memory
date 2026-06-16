@@ -35,7 +35,8 @@ void main() {
 
   test('avoidance trigger creates an avoidance kinder angle', () {
     final angle = buildKinderAngle(
-      reflectionText: 'I avoided the email after lunch and put off starting it.',
+      reflectionText:
+          'I avoided the email after lunch and put off starting it.',
     );
     expect(angle.trigger, KinderAngleTrigger.avoidance);
     expect(angle.nextCheck, 'What pressure showed up before you delayed it?');
@@ -73,15 +74,9 @@ void main() {
 
   test('does not show on a clearly lighter result unless self-blame', () {
     const tired = 'I was exhausted and drained but it felt lighter after.';
-    expect(
-      shouldShowKinderAngle(tired, resultHint: 'lighter'),
-      isFalse,
-    );
+    expect(shouldShowKinderAngle(tired, resultHint: 'lighter'), isFalse);
     const blame = 'It felt lighter, but I still felt stupid about it.';
-    expect(
-      shouldShowKinderAngle(blame, resultHint: 'lighter'),
-      isTrue,
-    );
+    expect(shouldShowKinderAngle(blame, resultHint: 'lighter'), isTrue);
   });
 
   test('shows on a heavier result with a trigger', () {

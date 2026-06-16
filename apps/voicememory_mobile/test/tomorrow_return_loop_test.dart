@@ -135,11 +135,7 @@ void main() {
 
     final loop = const TomorrowReturnLoopEngine().build(
       entries: [
-        _entry(
-          id: 'e1',
-          at: now,
-          line: 'Career stress reflection today',
-        ),
+        _entry(id: 'e1', at: now, line: 'Career stress reflection today'),
       ],
       immediateDiscovery: discovery,
       now: now,
@@ -178,10 +174,7 @@ void main() {
       contains('responsibility'),
     );
     expect(ScreenshotSampleData.returnLoopWatchChips.length, 3);
-    expect(
-      ScreenshotSampleData.returnLoopTomorrowPrompt,
-      contains('Tomorrow'),
-    );
+    expect(ScreenshotSampleData.returnLoopTomorrowPrompt, contains('Tomorrow'));
     final loop = ScreenshotSampleData.tomorrowReturnLoop;
     expect(loop.displayWatchChips, ScreenshotSampleData.returnLoopWatchChips);
   });
@@ -257,8 +250,9 @@ void main() {
     expect(withChips.displayWatchChips, hasLength(2));
   });
 
-  testWidgets('TomorrowReturnCard visible strings avoid banned jargon',
-      (tester) async {
+  testWidgets('TomorrowReturnCard visible strings avoid banned jargon', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -296,9 +290,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
-        home: const Scaffold(
-          body: PatternsComeBackTomorrowCard(),
-        ),
+        home: const Scaffold(body: PatternsComeBackTomorrowCard()),
       ),
     );
     await tester.pump();
@@ -325,18 +317,14 @@ void main() {
         ),
         GoRoute(
           path: '/archive-belief',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('patterns-tab')),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Center(child: Text('patterns-tab'))),
         ),
       ],
     );
 
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: AppTheme.light(),
-        routerConfig: router,
-      ),
+      MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
     );
     await tester.pump();
 
@@ -356,24 +344,19 @@ void main() {
       routes: [
         GoRoute(
           path: '/archive-belief',
-          builder: (context, state) => const Scaffold(
-            body: PatternsComeBackTomorrowCard(),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: PatternsComeBackTomorrowCard()),
         ),
         GoRoute(
           path: '/record',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('record-tab')),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Center(child: Text('record-tab'))),
         ),
       ],
     );
 
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: AppTheme.light(),
-        routerConfig: router,
-      ),
+      MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
     );
     await tester.pump();
 

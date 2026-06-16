@@ -80,7 +80,9 @@ DetectedLanguage _englishResult(int tokenCount) {
     displayName: 'English',
     confidence: confidence,
     isSupported: true,
-    source: confidence < 0.3 ? LanguageSource.fallback : LanguageSource.heuristic,
+    source: confidence < 0.3
+        ? LanguageSource.fallback
+        : LanguageSource.heuristic,
   );
 }
 

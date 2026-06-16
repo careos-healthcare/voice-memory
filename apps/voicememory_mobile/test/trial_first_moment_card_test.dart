@@ -46,19 +46,14 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: TrialFirstMomentCard(
-            onStartRecording: () => started = true,
-          ),
+          body: TrialFirstMomentCard(onStartRecording: () => started = true),
         ),
       ),
     );
 
     expect(find.text('Try this once'), findsOneWidget);
     expect(find.text('Start recording'), findsOneWidget);
-    expect(
-      find.textContaining('pattern showed up again'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('pattern showed up again'), findsOneWidget);
 
     await tester.tap(find.text('Start recording'));
     await tester.pump();

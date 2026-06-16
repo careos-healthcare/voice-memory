@@ -22,8 +22,10 @@ class YourArchiveNoticedSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = const ArchiveExplanationEngine()
-        .buildNoticedFeed(entries: entries, state: state);
+    final items = const ArchiveExplanationEngine().buildNoticedFeed(
+      entries: entries,
+      state: state,
+    );
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -91,7 +93,9 @@ class _NoticedCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   item.preview,
-                  style: VoiceMemoryTypography.bodyStyle().copyWith(height: 1.4),
+                  style: VoiceMemoryTypography.bodyStyle().copyWith(
+                    height: 1.4,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(

@@ -15,11 +15,11 @@ import '../../theme/voicememory_typography.dart';
 /// Patterns top: due check-in waiting or loop recently closed.
 class PatternsCheckInStatusCard extends StatelessWidget {
   const PatternsCheckInStatusCard.waiting({super.key, this.question})
-      : completed = null,
-        due = true,
-        betterResultIntensity = HookRescueIntensity.normal,
-        notUsefulReason = null,
-        onUseCheck = null;
+    : completed = null,
+      due = true,
+      betterResultIntensity = HookRescueIntensity.normal,
+      notUsefulReason = null,
+      onUseCheck = null;
 
   const PatternsCheckInStatusCard.closed({
     super.key,
@@ -27,8 +27,8 @@ class PatternsCheckInStatusCard extends StatelessWidget {
     this.betterResultIntensity = HookRescueIntensity.normal,
     this.notUsefulReason,
     this.onUseCheck,
-  })  : due = false,
-        question = null;
+  }) : due = false,
+       question = null;
 
   final bool due;
   final TomorrowCheckIn? completed;
@@ -57,14 +57,18 @@ class PatternsCheckInStatusCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: _warmSurface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.accentPrimary.withValues(alpha: 0.4)),
+          border: Border.all(
+            color: AppColors.accentPrimary.withValues(alpha: 0.4),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               ConsumerUiCopy.patternsCheckInWaitingTitle,
-              style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+              style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                fontSize: 17,
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
@@ -77,13 +81,14 @@ class PatternsCheckInStatusCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 question!,
-                style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textPrimary,
-                ).copyWith(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  height: 1.4,
-                ),
+                style:
+                    VoiceMemoryTypography.bodyStyle(
+                      color: AppColors.textPrimary,
+                    ).copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
               ),
             ],
             const SizedBox(height: AppSpacing.md),
@@ -153,11 +158,7 @@ class PatternsCheckInStatusCard extends StatelessWidget {
             _takeaway(checkIn).nextCheck,
             style: VoiceMemoryTypography.bodyStyle(
               color: AppColors.textPrimary,
-            ).copyWith(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
+            ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
           ),
           const SizedBox(height: AppSpacing.md),
           _PatternsUseCheckButton(

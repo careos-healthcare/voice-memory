@@ -53,7 +53,10 @@ class ArchiveMilestoneTimelineMobile extends StatelessWidget {
                     children: [
                       Text(
                         m.periodLabel,
-                        style: const TextStyle(fontSize: 11, color: AppTheme.muted),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.muted,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(

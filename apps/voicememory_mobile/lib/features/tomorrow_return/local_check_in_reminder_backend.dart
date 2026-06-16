@@ -11,7 +11,7 @@ import 'check_in_reminder_service.dart';
 /// [isAvailable] as false and the service falls back to its no-op behavior.
 class LocalCheckInReminderBackend implements CheckInReminderBackend {
   LocalCheckInReminderBackend({FlutterLocalNotificationsPlugin? plugin})
-      : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+    : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   final FlutterLocalNotificationsPlugin _plugin;
 
@@ -23,8 +23,7 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
 
   static const String channelId = 'check_in_reminders';
   static const String channelName = 'Check reminders';
-  static const String channelDescription =
-      'Reminders for checks you chose.';
+  static const String channelDescription = 'Reminders for checks you chose.';
 
   @override
   bool get isAvailable => _available;
@@ -54,8 +53,10 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
         onDidReceiveNotificationResponse: _handleResponse,
       );
 
-      final android0 = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android0 = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       await android0?.createNotificationChannel(
         const AndroidNotificationChannel(
           channelId,
@@ -75,8 +76,10 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
   Future<bool> requestPermission() async {
     if (!_available) return false;
     try {
-      final ios = _plugin.resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>();
+      final ios = _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       if (ios != null) {
         return await ios.requestPermissions(
               alert: true,
@@ -85,13 +88,17 @@ class LocalCheckInReminderBackend implements CheckInReminderBackend {
             ) ??
             false;
       }
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (android != null) {
         return await android.requestNotificationsPermission() ?? false;
       }
-      final macos = _plugin.resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin>();
+      final macos = _plugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >();
       if (macos != null) {
         return await macos.requestPermissions(
               alert: true,

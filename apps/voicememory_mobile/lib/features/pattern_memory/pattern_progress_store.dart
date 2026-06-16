@@ -26,11 +26,11 @@ class PatternProgressStore {
     final list = raw['items'];
     if (list is! List) return const [];
     final moments = list
-        .map((e) => PatternProgressMoment.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => PatternProgressMoment.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<PatternProgressMoment>()
         .toList();
     return moments.take(limit).toList();

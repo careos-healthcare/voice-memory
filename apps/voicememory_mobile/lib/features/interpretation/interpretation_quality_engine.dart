@@ -142,8 +142,8 @@ class InterpretationQualityEngine {
             source: archiveOverlap >= 0.45
                 ? InterpretationSource.archiveRepeat
                 : (rejectedIds.contains(template.id)
-                    ? InterpretationSource.feedbackAdjusted
-                    : InterpretationSource.latestOnly),
+                      ? InterpretationSource.feedbackAdjusted
+                      : InterpretationSource.latestOnly),
             categoryId: template.categoryId,
             angleCategory: template.angleCategory,
             rankScore: adjusted,
@@ -190,7 +190,8 @@ class InterpretationQualityEngine {
     final archiveRepeat = topReads.any(
       (r) => r.source == InterpretationSource.archiveRepeat,
     );
-    final changedAngle = priorEntries.isNotEmpty &&
+    final changedAngle =
+        priorEntries.isNotEmpty &&
         topReads.isNotEmpty &&
         !archiveRepeat &&
         priorTags.isNotEmpty &&
@@ -223,12 +224,7 @@ class InterpretationQualityEngine {
     final out = <InterpretationRead>[];
     for (final template in pool) {
       if (out.length >= max) break;
-      final score = _scoreTemplate(
-        template,
-        normalizedText,
-        fragments,
-        tags,
-      );
+      final score = _scoreTemplate(template, normalizedText, fragments, tags);
       if (score.total <= 0) continue;
       final deep = _deepContent(template, fragments, tags, 0);
       out.add(
@@ -267,7 +263,11 @@ class InterpretationQualityEngine {
   String _normalize(String text) =>
       text.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
 
-  bool _isTooVague(String normalized, List<String> fragments, List<String> tags) {
+  bool _isTooVague(
+    String normalized,
+    List<String> fragments,
+    List<String> tags,
+  ) {
     if (normalized.length < 18) return true;
     if (tags.isEmpty && fragments.isEmpty) return true;
     final words = normalized.split(RegExp(r'\s+')).where((w) => w.length > 2);
@@ -416,12 +416,11 @@ class InterpretationQualityEngine {
         evidenceCount >= 3) {
       return 'Strong pattern';
     }
-    if (reflectionCount >= 3 &&
-        archiveOverlap >= 0.35 &&
-        evidenceCount >= 2) {
+    if (reflectionCount >= 3 && archiveOverlap >= 0.35 && evidenceCount >= 2) {
       return 'Getting clearer';
     }
-    if (archiveOverlap >= 0.45 || (reflectionCount >= 2 && evidenceCount >= 2)) {
+    if (archiveOverlap >= 0.45 ||
+        (reflectionCount >= 2 && evidenceCount >= 2)) {
       return 'Possible repeat';
     }
     return 'Early signal';
@@ -440,7 +439,7 @@ class InterpretationQualityEngine {
       return 'You mentioned ${tags.take(3).join(', ')}.';
     }
     if (fragments.isNotEmpty) {
-      return 'Your words sound like they touch on ${template.shortRead.toLowerCase()}.';
+      return template.shortRead;
     }
     return template.shortRead;
   }
@@ -453,8 +452,7 @@ class InterpretationQualityEngine {
   ) {
     final evidenceParts = <String>[
       if (tags.isNotEmpty) 'You mentioned ${tags.take(3).join(', ')}.',
-      if (fragments.isNotEmpty)
-        'From your moment: "${fragments.first}".',
+      if (fragments.isNotEmpty) 'From your moment: "${fragments.first}".',
     ];
     final evidenceUsed = evidenceParts.isNotEmpty
         ? evidenceParts.join(' ')
@@ -497,7 +495,16 @@ class InterpretationQualityEngine {
 
   double _clusterOverlap(List<String> a, List<String> b) {
     const clusters = [
-      {'saying yes', 'agreeing', 'pressure', 'disappoint', 'guilt', 'help', 'responsibility', 'time pressure'},
+      {
+        'saying yes',
+        'agreeing',
+        'pressure',
+        'disappoint',
+        'guilt',
+        'help',
+        'responsibility',
+        'time pressure',
+      },
       {'prove', 'enough', 'behind', 'achievement'},
       {'avoid', 'say', 'conversation'},
       {'rest', 'tired', 'drained', 'worry'},
@@ -640,7 +647,8 @@ class InterpretationQualityEngine {
           'This keeps showing up when someone else is involved and guilt shows up fast.',
       contradict:
           'Your next moments feel more about your own choice than fear of letting someone down.',
-      nextPrompt: 'When did you last agree mainly to avoid disappointing someone?',
+      nextPrompt:
+          'When did you last agree mainly to avoid disappointing someone?',
       evidenceFallback: 'You mentioned disappointing someone or guilt.',
       alternativeIds: ['saying_yes_capacity', 'avoid_saying_no'],
     ),
@@ -749,7 +757,8 @@ class InterpretationQualityEngine {
       contradict:
           'You rest without guilt, stop when enough is done, or feel satisfied.',
       nextPrompt: 'What did stopping feel like it would cost you?',
-      evidenceFallback: 'You mentioned rest, stopping, tiredness, or keeping going.',
+      evidenceFallback:
+          'You mentioned rest, stopping, tiredness, or keeping going.',
       alternativeIds: ['prove_enough', 'achievement_feel_safe'],
     ),
     _ReadTemplate(
@@ -780,8 +789,7 @@ class InterpretationQualityEngine {
       repeatHint: 'trying to prove you are doing enough',
       mightMean:
           'You may be trying to do more to feel like you are keeping up or enough.',
-      confirm:
-          'You compare yourself, push harder, or doubt your pace.',
+      confirm: 'You compare yourself, push harder, or doubt your pace.',
       confirmRepeat:
           'Both moments may involve proving, comparing, or feeling behind.',
       contradict:
@@ -804,19 +812,22 @@ class InterpretationQualityEngine {
       repeatHint: 'trying to stay in control',
       mightMean:
           'This may be less about the situation and more about needing things to feel managed first.',
-      confirm: 'You plan tightly, fix things early, or struggle when things feel uncertain.',
-      confirmRepeat: 'Both moments may involve control or planning before ease.',
+      confirm:
+          'You plan tightly, fix things early, or struggle when things feel uncertain.',
+      confirmRepeat:
+          'Both moments may involve control or planning before ease.',
       contradict:
           'Your next moments feel more flexible, curious, or unplanned.',
-      nextPrompt: 'What felt unsafe or uncertain right before you tightened control?',
-      evidenceFallback: 'You mentioned control, planning, or needing things settled.',
+      nextPrompt:
+          'What felt unsafe or uncertain right before you tightened control?',
+      evidenceFallback:
+          'You mentioned control, planning, or needing things settled.',
       alternativeIds: ['prove_enough', 'avoid_conversation'],
     ),
     _ReadTemplate(
       id: 'avoid_conversation',
       title: 'Avoiding a direct conversation',
-      shortRead:
-          'This may be about not saying what you need directly yet.',
+      shortRead: 'This may be about not saying what you need directly yet.',
       categoryId: 'avoidance',
       angleCategory: 'behaviour',
       phrases: [
@@ -833,12 +844,9 @@ class InterpretationQualityEngine {
       repeatHint: 'avoiding saying something directly',
       mightMean:
           'Putting off a direct conversation may be protecting you from tension or rejection.',
-      confirm:
-          'You delay saying what you need, feel stuck, or talk around it.',
-      confirmRepeat:
-          'Both moments may involve something left unsaid.',
-      contradict:
-          'You say what you need directly and feel clearer afterward.',
+      confirm: 'You delay saying what you need, feel stuck, or talk around it.',
+      confirmRepeat: 'Both moments may involve something left unsaid.',
+      contradict: 'You say what you need directly and feel clearer afterward.',
       nextPrompt: 'What did you avoid saying directly?',
       evidenceFallback: 'You mentioned avoiding saying or telling something.',
       alternativeIds: ['disappoint_someone', 'stay_in_control'],
@@ -858,11 +866,12 @@ class InterpretationQualityEngine {
       mightMean:
           'Low energy may be shaping what you agree to even when you need rest.',
       confirm: 'You say yes while tired, skip rest, or feel flat afterward.',
-      confirmRepeat: 'Both moments may involve tiredness and still taking on more.',
-      contradict:
-          'You rest without guilt or protect energy before committing.',
+      confirmRepeat:
+          'Both moments may involve tiredness and still taking on more.',
+      contradict: 'You rest without guilt or protect energy before committing.',
       nextPrompt: 'What would you drop if you had more energy today?',
-      evidenceFallback: 'You mentioned tiredness, rest, or running low on energy.',
+      evidenceFallback:
+          'You mentioned tiredness, rest, or running low on energy.',
       alternativeIds: ['saying_yes_capacity', 'responsibility_before_help'],
     ),
     _ReadTemplate(
@@ -871,12 +880,25 @@ class InterpretationQualityEngine {
       shortRead: 'A worry may be taking up more space than you want it to.',
       categoryId: 'worry',
       angleCategory: 'emotion',
-      phrases: ['same worry', 'keep worrying', 'cannot switch off', 'overthinking'],
-      keywords: ['worry', 'worried', 'anxious', 'anxiety', 'stress', 'replaying'],
+      phrases: [
+        'same worry',
+        'keep worrying',
+        'cannot switch off',
+        'overthinking',
+      ],
+      keywords: [
+        'worry',
+        'worried',
+        'anxious',
+        'anxiety',
+        'stress',
+        'replaying',
+      ],
       requiredAny: ['worry', 'anxious', 'anxiety', 'stress'],
       tagBoost: {'worry'},
       repeatHint: 'the same worry returning',
-      mightMean: 'A worry may be staying with you longer than the moment itself.',
+      mightMean:
+          'A worry may be staying with you longer than the moment itself.',
       confirm: 'The same worry returns when you try to switch off or move on.',
       confirmRepeat: 'Both moments may involve the same worry taking up space.',
       contradict: 'You notice the worry but can move on without replaying it.',
@@ -925,9 +947,9 @@ class InterpretationQualityEngine {
           'Both moments may involve the same habit showing up again.',
       contradict:
           'Your next moments show you paused, changed the move, or broke the loop.',
-      nextPrompt:
-          'What did you do again even though you noticed it?',
-      evidenceFallback: 'You mentioned doing something again or repeating a habit.',
+      nextPrompt: 'What did you do again even though you noticed it?',
+      evidenceFallback:
+          'You mentioned doing something again or repeating a habit.',
       alternativeIds: ['avoid_conversation', 'saying_yes_capacity'],
     ),
   ];

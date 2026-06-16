@@ -35,13 +35,14 @@ class TheoryRankingEngine {
     List<ArchiveV1Contradiction> contradictions = const [],
     List<ArchiveSurpriseObservation> surprises = const [],
   }) {
-    final contradictionEntryIds =
-        contradictions.expand((c) => c.entryIds).toSet();
+    final contradictionEntryIds = contradictions
+        .expand((c) => c.entryIds)
+        .toSet();
     final maxCtr = contradictions.isEmpty
         ? 0
         : contradictions
-            .map((c) => c.confidenceScore)
-            .reduce((a, b) => a > b ? a : b);
+              .map((c) => c.confidenceScore)
+              .reduce((a, b) => a > b ? a : b);
 
     final candidates = catalog.collect(
       entries: entries,
@@ -140,7 +141,10 @@ class TheoryRankingEngine {
     final volume = (support * 3).clamp(0, 35);
     final consistency = (consistencyRatio * 20).round().clamp(0, 20);
     final recency = (recencyRatio * 15).round().clamp(0, 15);
-    final contradiction = _contradictionRelevanceScore(statement, contradictions);
+    final contradiction = _contradictionRelevanceScore(
+      statement,
+      contradictions,
+    );
     final surprise = _surpriseScore(statement, surprises);
     final counterQuality = _counterQualityScore(
       support: support,
@@ -148,7 +152,12 @@ class TheoryRankingEngine {
       rawCounter: rawCounter,
     );
 
-    return (volume + consistency + recency + contradiction + surprise + counterQuality)
+    return (volume +
+            consistency +
+            recency +
+            contradiction +
+            surprise +
+            counterQuality)
         .clamp(0, 100);
   }
 

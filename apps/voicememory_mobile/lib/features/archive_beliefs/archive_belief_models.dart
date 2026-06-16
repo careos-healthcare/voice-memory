@@ -1,16 +1,8 @@
 /// Belief surfaced by the archive — user-facing card + detail payload.
-enum ArchiveBeliefSection {
-  current,
-  emerging,
-  changing,
-  hiddenPattern,
-}
+enum ArchiveBeliefSection { current, emerging, changing, hiddenPattern }
 
 class BeliefEvidenceQuote {
-  const BeliefEvidenceQuote({
-    required this.periodLabel,
-    required this.quote,
-  });
+  const BeliefEvidenceQuote({required this.periodLabel, required this.quote});
 
   final String periodLabel;
   final String quote;

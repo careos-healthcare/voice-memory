@@ -1,8 +1,17 @@
 import { test, expect } from "@playwright/test";
 
-const DEVICE_ID = "550e8400-e29b-41d4-a716-446655440000";
+const DEVICE_ID = crypto.randomUUID();
 
 test.describe("API security", () => {
+  test("GET transcribe returns JSON route info", async ({ request }) => {
+    const res = await request.get("/api/transcribe");
+    expect(res.status()).toBe(405);
+    expect(res.headers()["content-type"]).toContain("application/json");
+    const body = await res.json();
+    expect(body.route).toBe("/api/transcribe");
+    expect(body.code).toBe("METHOD_NOT_ALLOWED");
+  });
+
   test("rejects unauthenticated transcribe", async ({ request }) => {
     const res = await request.post("/api/transcribe", {
       multipart: {
@@ -15,7 +24,7 @@ test.describe("API security", () => {
     });
     expect(res.status()).toBe(401);
     const body = await res.json();
-    expect(body.code).toBe("CAPTURE_AUTH_REQUIRED");
+    expect(body.code).toBe("missing_capture_token");
   });
 
   test("rejects unauthenticated analyze", async ({ request }) => {
@@ -23,6 +32,8 @@ test.describe("API security", () => {
       data: { transcript: "hello" },
     });
     expect(res.status()).toBe(401);
+    const body = await res.json();
+    expect(body.code).toBe("missing_capture_token");
   });
 
   test("rejects unauthenticated atmosphere", async ({ request }) => {

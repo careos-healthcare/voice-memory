@@ -5,8 +5,16 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
 import '../config/screenshot_mode.dart';
+import '../config/force_screenshot_repeat_card.dart';
 import '../config/screenshot_sample_data.dart';
 import '../design/empty_archive_experience.dart';
+import '../features/archive_evidence/archive_belief_correction_store.dart';
+import '../features/archive_evidence/archive_belief_thread_engine.dart';
+import '../features/archive_evidence/archive_belief_thread_model.dart';
+import '../features/archive_evidence/archive_intelligence_tier.dart';
+import '../features/archive_evidence/archive_intelligence_tier_resolver.dart';
+import '../features/archive_evidence/archive_evidence.dart';
+import '../features/onboarding/record_return_pro_store.dart';
 import '../features/archive_beliefs/archive_belief_models.dart';
 import '../features/archive_beliefs/archive_beliefs_presenter.dart';
 import '../features/archive_clean/archive_clean_section_engine.dart';
@@ -100,6 +108,7 @@ import '../widgets/quick_help/quick_help_button.dart';
 import '../widgets/record/kinder_angle_card.dart';
 import '../widgets/record/perspective_shift_card.dart';
 import '../widgets/patterns/patterns_come_back_tomorrow_card.dart';
+import '../widgets/patterns/patterns_first_archive_view.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
@@ -107,7 +116,17 @@ import '../widgets/patterns/return_streak_card.dart';
 import '../widgets/patterns/tomorrow_return_status_card.dart';
 import '../widgets/patterns/weekly_pattern_recap_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
+import '../widgets/activation/third_session_archive_usefulness_card.dart';
+import '../widgets/patterns/archive_belief_thread_card.dart';
+import '../widgets/patterns/archive_oh_wow_moment_card.dart';
+import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
+import '../widgets/patterns/weekly_what_changed_review_card.dart';
+import '../billing/archive_entitlement_reader.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
+import '../features/activation/first_three_session_gates.dart';
+import '../features/activation/third_session_archive_usefulness_engine.dart';
+import '../features/activation/third_session_archive_usefulness_model.dart';
+import '../features/retention/second_session_signal_engine.dart';
 import '../widgets/activation/first_three_journey_card.dart';
 import '../widgets/export/private_recap_actions.dart';
 import '../features/post_save_insight/selected_signal_coordinator.dart';
@@ -127,6 +146,7 @@ import '../widgets/signal/archive_watching_card.dart';
 import '../widgets/signal/signal_journey_card.dart';
 import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
+import '../widgets/record/second_session_comparison_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -175,17 +195,28 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   List<ArchiveMomentGroup> _compressionGroups = const [];
   FirstLoopActivationState _firstLoop = FirstLoopActivationState.empty;
   bool _loading = true;
+  bool _reloadScheduled = false;
+  bool _archiveIsPro = false;
+  bool _proBridgeResolved = false;
+  static const _tierResolver = ArchiveIntelligenceTierResolver();
+
+  ArchiveIntelligenceTier get _archiveIntelligenceTier =>
+      _tierResolver.resolveSync(isPro: _archiveIsPro);
 
   @override
   void initState() {
     super.initState();
+    if (ForceScreenshotRepeatCard.enabled) {
+      _loading = false;
+      return;
+    }
     if (ScreenshotMode.enabled) {
       _applyScreenshotSample();
       unawaited(_refreshCompressionGroups());
       return;
     }
     final peek = peekJournalEntriesSync(AppServices.instance.journalStore);
-    if (isIntentionalEmptyArchive(peek)) {
+    if (peek.isEmpty || peek.length == 1) {
       _entries = peek;
       _loading = false;
     }
@@ -298,26 +329,34 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     if (journeyCount >= 0) {
       setState(() {
         _entries = const [];
-        _beliefs = journeyCount >= 3 ? ScreenshotSampleData.beliefsSnapshot : null;
+        _beliefs = journeyCount >= 3
+            ? ScreenshotSampleData.beliefsSnapshot
+            : null;
         _changing = const [];
         _insights = ArchiveInsightsSnapshot.empty;
         _commitment = null;
         _commitmentState = TomorrowCommitmentDisplayState.hidden;
-        _returnComparison =
-            journeyCount >= 3 ? ScreenshotSampleData.returnComparisonSample : null;
-        _returnStreak =
-            journeyCount >= 3 ? ScreenshotSampleData.returnStreakSample : null;
-        _changeSummary =
-            journeyCount >= 3 ? ScreenshotSampleData.changeSummarySample : null;
-        _weeklyRecap =
-            journeyCount >= 3 ? ScreenshotSampleData.weeklyRecapSample : null;
-        _watchForCompleted =
-            journeyCount >= 3 ? ScreenshotSampleData.watchForCompletedSample : null;
+        _returnComparison = journeyCount >= 3
+            ? ScreenshotSampleData.returnComparisonSample
+            : null;
+        _returnStreak = journeyCount >= 3
+            ? ScreenshotSampleData.returnStreakSample
+            : null;
+        _changeSummary = journeyCount >= 3
+            ? ScreenshotSampleData.changeSummarySample
+            : null;
+        _weeklyRecap = journeyCount >= 3
+            ? ScreenshotSampleData.weeklyRecapSample
+            : null;
+        _watchForCompleted = journeyCount >= 3
+            ? ScreenshotSampleData.watchForCompletedSample
+            : null;
         _activePatternThread = journeyCount >= 1
             ? ScreenshotSampleData.activePatternThreadSample
             : null;
-        _firstThreeJourney =
-            ScreenshotSampleData.firstThreeJourneyForCount(journeyCount);
+        _firstThreeJourney = ScreenshotSampleData.firstThreeJourneyForCount(
+          journeyCount,
+        );
         _loading = false;
       });
       return;
@@ -343,8 +382,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
     final sample = ScreenshotSampleData.beliefsSnapshot;
     final previewDay = DateTime.now();
-    final commitment =
-        ScreenshotSampleData.tomorrowCommitmentForPreview(previewDay);
+    final commitment = ScreenshotSampleData.tomorrowCommitmentForPreview(
+      previewDay,
+    );
     setState(() {
       _entries = const [];
       _beliefs = sample;
@@ -372,11 +412,44 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _applyScreenshotSample();
       return;
     }
+    await ArchiveBeliefCorrectionStore.ensureLoaded();
+    final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
+    final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
     if (!mounted) return;
 
+    if (entries.isEmpty) {
+      setState(() {
+        _entries = entries;
+        _beliefs = null;
+        _changing = const [];
+        _insights = ArchiveInsightsSnapshot.empty;
+        _loading = false;
+      });
+      First25UserMetrics.trackArchiveOpened(surface: 'archive_beliefs_empty');
+      return;
+    }
+
+    if (entries.length == 1) {
+      setState(() {
+        _archiveIsPro = isPro;
+        _proBridgeResolved = recordReturnPro.proBridgeResolved;
+        _entries = entries;
+        _beliefs = null;
+        _changing = const [];
+        _insights = ArchiveInsightsSnapshot.empty;
+        _loading = false;
+      });
+      First25UserMetrics.trackArchiveOpened(
+        surface: 'archive_beliefs_first_entry',
+      );
+      return;
+    }
+
     if (isIntentionalEmptyArchive(entries)) {
       setState(() {
+        _archiveIsPro = isPro;
+        _proBridgeResolved = recordReturnPro.proBridgeResolved;
         _entries = entries;
         _beliefs = null;
         _changing = const [];
@@ -420,7 +493,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final changeSummary = await ReturnRetentionCoordinator.loadChangeSummary();
     final weeklyRecap = await ReturnRetentionCoordinator.loadWeeklyRecap();
     final watchForCompleted = await WatchForCoordinator.loadLatestCompleted();
-    final activeThread = await ActivePatternThreadCoordinator.loadCurrentThread();
+    final activeThread =
+        await ActivePatternThreadCoordinator.loadCurrentThread();
     final journey = await FirstThreeJourneyCoordinator.load();
     final selectedSignal = await SelectedSignalCoordinator.loadCurrent();
     final signalArchiveSnapshot = await SignalArchiveCoordinator.load();
@@ -440,8 +514,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ? await TomorrowCheckInCoordinator.loadRecentMissed()
         : null;
     final activeCheckIn = await TomorrowCheckInCoordinator.loadActive();
-    final tomorrowKey =
-        tomorrowCheckInDateKey(DateTime.now().add(const Duration(days: 1)));
+    final tomorrowKey = tomorrowCheckInDateKey(
+      DateTime.now().add(const Duration(days: 1)),
+    );
     TomorrowCheckIn? activeForTomorrow;
     if (activeCheckIn != null &&
         !activeCheckIn.isCompleted &&
@@ -455,11 +530,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final habitProof = await PatternMemoryCoordinator.loadLatestHabitProof();
     final patternWeeklyRecap =
         await PatternMemoryCoordinator.loadLatestWeeklyRecap();
-    final canShareRecap = patternWeeklyRecap != null ||
+    final canShareRecap =
+        patternWeeklyRecap != null ||
         patternProgress != null ||
         (patternMemory != null && patternMemory.checkInCount >= 2);
-    final patternShareRecap =
-        canShareRecap ? await PatternMemoryCoordinator.buildShareRecap() : null;
+    final patternShareRecap = canShareRecap
+        ? await PatternMemoryCoordinator.buildShareRecap()
+        : null;
     final firstLoop = await FirstLoopActivationCoordinator.load();
     final monthlyReview = await _buildMonthlyReview(patternMemory);
     final archiveMemory = await ArchiveMemorySummaryCoordinator.refresh();
@@ -474,6 +551,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
 
     if (!mounted) return;
     setState(() {
+      _archiveIsPro = isPro;
+      _proBridgeResolved = recordReturnPro.proBridgeResolved;
       _entries = entries;
       _firstLoop = firstLoop;
       _beliefs = beliefs;
@@ -574,18 +653,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   ) async {
     if (ScreenshotMode.enabled) return null;
     final moments = await KeyMomentStore.instance().loadAll();
-    final history =
-        await PatternMemoryStore(AppServices.instance.prefs).loadHistory();
+    final history = await PatternMemoryStore(
+      AppServices.instance.prefs,
+    ).loadHistory();
     final memories = <PatternMemory>[
       ?activeMemory,
       ...history.where((h) => h.id != activeMemory?.id),
     ];
     final now = DateTime.now();
     final completedThisMonth = moments
-        .where((m) =>
-            m.source == KeyMomentSource.checkIn &&
-            m.date.year == now.year &&
-            m.date.month == now.month)
+        .where(
+          (m) =>
+              m.source == KeyMomentSource.checkIn &&
+              m.date.year == now.year &&
+              m.date.month == now.month,
+        )
         .length;
     final review = buildMonthlyPatternReview(
       moments: moments,
@@ -682,11 +764,61 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     return all.isEmpty ? null : all.first;
   }
 
+  int get _evidenceReflectionCount => archiveEvidenceReflectionCount(_entries);
+
   bool get _showEmpty {
     if (ScreenshotMode.patternsFirstSessionPreview) return false;
     if (ScreenshotMode.enabled) return false;
-    if (isIntentionalEmptyArchive(_entries)) return true;
-    return _strongest == null;
+    return _entries.isEmpty;
+  }
+
+  bool get _showFirstArchive =>
+      !ScreenshotMode.enabled && _entries.length == 1;
+
+  String? get _firstArchiveEntryId {
+    if (_entries.isEmpty) return null;
+    final sorted = List<JournalEntry>.from(_entries)
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    return sorted.last.id;
+  }
+
+  /// Indexed-stack tabs stay mounted — refresh when journal changed elsewhere.
+  ///
+  /// Only runs while Patterns is the active shell branch, and reloads in the
+  /// background without swapping to the loading scaffold (that swap during tab
+  /// transitions was tripping NavigationBar indicator animations).
+  void _scheduleReloadIfJournalDrifted() {
+    if (ForceScreenshotRepeatCard.enabled) return;
+    if (ScreenshotMode.enabled || _loading || _reloadScheduled) return;
+
+    final shell = StatefulNavigationShell.maybeOf(context);
+    if (shell != null && shell.currentIndex != 1) return;
+
+    final peekEntries = peekJournalEntriesSync(
+      AppServices.instance.journalStore,
+    );
+    final peekEvidence = archiveEvidenceReflectionCount(peekEntries);
+    if (peekEntries.length == _entries.length &&
+        peekEvidence == _evidenceReflectionCount) {
+      return;
+    }
+
+    _reloadScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reloadScheduled = false;
+      if (!mounted || _loading) return;
+      final activeShell = StatefulNavigationShell.maybeOf(context);
+      if (activeShell != null && activeShell.currentIndex != 1) return;
+      unawaited(_load());
+    });
+  }
+
+  void _queueJournalDriftCheck() {
+    if (_reloadScheduled) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _scheduleReloadIfJournalDrifted();
+    });
   }
 
   bool get _patternsFirstThreeStack {
@@ -827,11 +959,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final hasStandaloneNextCheck =
         !_hasMemoryNextCheck && _patternNextAction != null;
     return decidePatternsStack(
-      hasActiveCheckIn: _missedCheckInForDiagnosis != null ||
+      hasActiveCheckIn:
+          _missedCheckInForDiagnosis != null ||
           _checkInDueToday != null ||
           _checkInCompletedRecently != null,
       hasArchiveMemory: _archiveMemory != null,
-      hasNextCheck: _hasMemoryNextCheck ||
+      hasNextCheck:
+          _hasMemoryNextCheck ||
           hasStandaloneNextCheck ||
           (_archiveTimeline?.hasNextCheck ?? false),
       hasArchiveCleanView: _showArchiveCleanView,
@@ -839,12 +973,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       hasRangeReview: _rangeReview?.hasEnoughData ?? false,
       hasArchiveCompression: _compressionGroups.isNotEmpty,
       hasTimeline: _archiveTimeline != null,
-      hasProgress: _patternProgress != null ||
+      hasProgress:
+          _patternProgress != null ||
           _patternNextAction != null ||
           _habitProof != null ||
           _patternMemory != null ||
           _activePatternThread != null,
-      hasRecap: _monthlyReview != null ||
+      hasRecap:
+          _monthlyReview != null ||
           _patternWeeklyRecap != null ||
           (!_patternsHideAdvancedRetention &&
               (_weeklyRecap != null ||
@@ -887,8 +1023,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               children: [
                 Text(
                   'Find a moment',
-                  style: VoiceMemoryTypography.cardTitleStyle()
-                      .copyWith(fontSize: 15),
+                  style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -931,8 +1068,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               children: [
                 Text(
                   'Ask my Archive',
-                  style: VoiceMemoryTypography.cardTitleStyle()
-                      .copyWith(fontSize: 15),
+                  style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -975,8 +1113,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               children: [
                 Text(
                   'Pattern map',
-                  style: VoiceMemoryTypography.cardTitleStyle()
-                      .copyWith(fontSize: 15),
+                  style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -1010,18 +1149,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       }
     }
 
-    section(
-      ConsumerUiCopy.patternsTensionsHeading,
-      _insights.contradictions,
-    );
-    section(
-      ConsumerUiCopy.patternsEvolutionHeading,
-      _insights.evolution,
-    );
-    section(
-      ConsumerUiCopy.patternsWorthNoticingHeading,
-      _insights.blindSpots,
-    );
+    section(ConsumerUiCopy.patternsTensionsHeading, _insights.contradictions);
+    section(ConsumerUiCopy.patternsEvolutionHeading, _insights.evolution);
+    section(ConsumerUiCopy.patternsWorthNoticingHeading, _insights.blindSpots);
     section(
       ConsumerUiCopy.patternsWhatMayComeNextHeading,
       _insights.predictions,
@@ -1031,9 +1161,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
 
   List<Widget> _legacyBeliefSections(ArchiveBeliefCardModel strongest) {
     return [
-      const BeliefSectionHeading(
-        title: ConsumerUiCopy.patternsHeroHeading,
-      ),
+      const BeliefSectionHeading(title: ConsumerUiCopy.patternsHeroHeading),
       const SizedBox(height: AppSpacing.sm),
       ArchiveHeroBeliefCard(
         belief: strongest,
@@ -1044,9 +1172,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         const PatternsComeBackTomorrowCard(),
       if (_commitmentState == TomorrowCommitmentDisplayState.hidden)
         const SizedBox(height: AppSpacing.xl),
-      const BeliefSectionHeading(
-        title: ConsumerUiCopy.patternsShiftingHeading,
-      ),
+      const BeliefSectionHeading(title: ConsumerUiCopy.patternsShiftingHeading),
       const SizedBox(height: AppSpacing.sm),
       BeliefChangeStories(items: _changing),
       ..._insightSections(),
@@ -1069,15 +1195,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
     } else if (_checkInDueToday != null) {
       widgets.add(
-        PatternsCheckInStatusCard.waiting(
-          question: _checkInDueToday!.question,
-        ),
+        PatternsCheckInStatusCard.waiting(question: _checkInDueToday!.question),
       );
     } else if (_checkInCompletedRecently != null) {
       widgets.add(
-        PatternsCheckInStatusCard.closed(
-          completed: _checkInCompletedRecently,
-        ),
+        PatternsCheckInStatusCard.closed(completed: _checkInCompletedRecently),
       );
       widgets.add(const SizedBox(height: AppSpacing.lg));
       if (_checkInCompletedRecently!.selectedOptionId == 'heavier') {
@@ -1086,8 +1208,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             reflectionText: '',
             patternTitle: _checkInCompletedRecently!.patternTitle,
             specificPrompt: _checkInCompletedRecently!.prompt,
-            resultHint:
-                _checkInCompletedRecently!.selectedOptionId ?? 'same',
+            resultHint: _checkInCompletedRecently!.selectedOptionId ?? 'same',
             trigger: KinderAngleTrigger.genericHardMoment,
             compact: true,
             fromPatterns: true,
@@ -1097,8 +1218,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         widgets.add(
           PerspectiveShiftCard(
             reflectionText: '',
-            resultHint:
-                _checkInCompletedRecently!.selectedOptionId ?? 'same',
+            resultHint: _checkInCompletedRecently!.selectedOptionId ?? 'same',
             checkInQuestion: _checkInCompletedRecently!.question,
             patternTitle: _checkInCompletedRecently!.patternTitle,
             specificPrompt: _checkInCompletedRecently!.prompt,
@@ -1126,15 +1246,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       missedCheckIn: _missedCheckInForDiagnosis == null
           ? _recentMissedCheckIn
           : null,
-      hasClosedLoopToday: _checkInCompletedRecently != null &&
+      hasClosedLoopToday:
+          _checkInCompletedRecently != null &&
           _activeCheckInForTomorrow == null &&
           _checkInDueToday == null,
-      hasChosenNextCheck: _retentionDismissed == false &&
+      hasChosenNextCheck:
+          _retentionDismissed == false &&
           _activeCheckInForTomorrow != null &&
           _checkInDueToday == null,
-      latestNextCheck: _activeCheckInForTomorrow?.question ??
+      latestNextCheck:
+          _activeCheckInForTomorrow?.question ??
           _checkInCompletedRecently?.tomorrowsBetterQuestion,
-      latestPatternTitle: _activeCheckInForTomorrow?.patternTitle ??
+      latestPatternTitle:
+          _activeCheckInForTomorrow?.patternTitle ??
           _checkInCompletedRecently?.patternTitle,
       compact: true,
     );
@@ -1142,15 +1266,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       retentionState: state,
       activeCheckIn: _checkInDueToday ?? _activeCheckInForTomorrow,
       hasAnyMoment: _keyMoments.isNotEmpty || _entries.isNotEmpty,
-      hasClosedLoopToday: _checkInCompletedRecently != null &&
+      hasClosedLoopToday:
+          _checkInCompletedRecently != null &&
           _activeCheckInForTomorrow == null &&
           _checkInDueToday == null,
-      hasNextCheckChosen: _activeCheckInForTomorrow != null &&
+      hasNextCheckChosen:
+          _activeCheckInForTomorrow != null &&
           _checkInDueToday == null &&
           !_retentionDismissed,
-      latestNextCheck: _activeCheckInForTomorrow?.question ??
+      latestNextCheck:
+          _activeCheckInForTomorrow?.question ??
           _checkInCompletedRecently?.tomorrowsBetterQuestion,
-      latestPatternTitle: _activeCheckInForTomorrow?.patternTitle ??
+      latestPatternTitle:
+          _activeCheckInForTomorrow?.patternTitle ??
           _checkInCompletedRecently?.patternTitle,
     );
   }
@@ -1208,12 +1336,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       missedCheckIn: _missedCheckInForDiagnosis == null
           ? _recentMissedCheckIn
           : null,
-      hasClosedLoopToday: _checkInCompletedRecently != null &&
+      hasClosedLoopToday:
+          _checkInCompletedRecently != null &&
           _activeCheckInForTomorrow == null &&
           _checkInDueToday == null,
-      latestNextCheck: _activeCheckInForTomorrow?.question ??
+      latestNextCheck:
+          _activeCheckInForTomorrow?.question ??
           _checkInCompletedRecently?.tomorrowsBetterQuestion,
-      latestPatternTitle: _activeCheckInForTomorrow?.patternTitle ??
+      latestPatternTitle:
+          _activeCheckInForTomorrow?.patternTitle ??
           _checkInCompletedRecently?.patternTitle,
       compact: true,
     );
@@ -1315,10 +1446,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           const SizedBox(height: AppSpacing.lg),
         ];
       case PatternsSectionType.patternProfile:
-        return const [
-          PatternProfileCard(),
-          SizedBox(height: AppSpacing.sm),
-        ];
+        return const [PatternProfileCard(), SizedBox(height: AppSpacing.sm)];
       case PatternsSectionType.rangeReview:
         if (_rangeReview == null || !_rangeReview!.hasEnoughData) {
           return const [];
@@ -1340,8 +1468,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             group: _compressionGroups.first,
             onKept: (g) =>
                 _onCompressionAction(g, ArchiveCompressionCoordinator.markKept),
-            onSplit: (g) =>
-                _onCompressionAction(g, ArchiveCompressionCoordinator.markSplit),
+            onSplit: (g) => _onCompressionAction(
+              g,
+              ArchiveCompressionCoordinator.markSplit,
+            ),
             onHidden: (g) => _onCompressionAction(
               g,
               ArchiveCompressionCoordinator.markHidden,
@@ -1398,7 +1528,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             timeline: _archiveTimeline!,
             showOpenTimeline: !decision.suppressSeparateTimelineCard,
             onOpenTimeline: () => context.push('/archive-timeline'),
-            onUseCheck: decision.suppressLowerPriorityCtas ||
+            onUseCheck:
+                decision.suppressLowerPriorityCtas ||
                     !_archiveTimeline!.hasNextCheck
                 ? null
                 : _useArchiveTimelineCheck,
@@ -1426,15 +1557,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           widgets.add(
             weekly_recap_card.WeeklyPatternRecapCard(
               recap: _patternWeeklyRecap!,
-              onUseNext: () =>
-                  _usePatternWeeklyRecapNext(_patternWeeklyRecap!),
+              onUseNext: () => _usePatternWeeklyRecapNext(_patternWeeklyRecap!),
             ),
           );
           widgets.add(const SizedBox(height: AppSpacing.xs));
           widgets.add(
             PrivateRecapActions(
-              recap:
-                  PrivateRecapEngine.fromWeeklyRecap(_patternWeeklyRecap!),
+              recap: PrivateRecapEngine.fromWeeklyRecap(_patternWeeklyRecap!),
             ),
           );
           widgets.add(const SizedBox(height: AppSpacing.lg));
@@ -1498,6 +1627,83 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
   }
 
+  bool _showArchiveIntelligenceProBridge({
+    required ArchiveBeliefThread belief,
+    required WeeklyWhatChangedReview weekly,
+    required ArchiveOhWowMoment ohWow,
+  }) {
+    if (_archiveIsPro || _proBridgeResolved) return false;
+    if (!FirstThreeSessionGates.showSoftProBridge(
+      entryCount: _entries.length,
+      resolved: _proBridgeResolved,
+      isPro: _archiveIsPro,
+    )) {
+      return false;
+    }
+    return belief.hasEnoughData || weekly.hasReview || ohWow.hasMoment;
+  }
+
+  List<Widget> _buildArchiveIntelligenceWidgets({
+    required ArchiveBeliefThread belief,
+    required WeeklyWhatChangedReview weekly,
+    required ArchiveOhWowMoment ohWow,
+  }) {
+    final widgets = <Widget>[];
+    if (ohWow.hasMoment &&
+        !ArchiveBeliefCorrectionStore.isDismissed(ohWow.suggestionId)) {
+      widgets.add(ArchiveOhWowMomentCard(moment: ohWow));
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
+    if (belief.hasEnoughData) {
+      widgets.add(
+        ArchiveBeliefThreadCard(
+          thread: belief,
+          onRecordMoreEvidence: _goToRecord,
+          onDismissed: () => setState(() {}),
+        ),
+      );
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
+    if (weekly.hasReview) {
+      widgets.add(WeeklyWhatChangedReviewCard(review: weekly));
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
+    if (_showArchiveIntelligenceProBridge(
+      belief: belief,
+      weekly: weekly,
+      ohWow: ohWow,
+    )) {
+      widgets.add(
+        ArchiveIntelligenceProBridgeCard(
+          onSeePro: () => context.push('/subscription'),
+          onNotNow: () async {
+            await RecordReturnProStore.instance().markProBridgeResolved();
+            if (!mounted) return;
+            setState(() => _proBridgeResolved = true);
+          },
+        ),
+      );
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
+    return widgets;
+  }
+
+  List<Widget> _archiveDifferentiationSurfaces() {
+    final tier = _archiveIntelligenceTier;
+    const engine = ArchiveBeliefThreadEngine();
+    final belief = engine.build(_entries, tier: tier);
+    final weekly = const WeeklyWhatChangedReviewEngine().build(
+      _entries,
+      tier: tier,
+    );
+    final ohWow = engine.buildOhWow(_entries, tier: tier);
+    return _buildArchiveIntelligenceWidgets(
+      belief: belief,
+      weekly: weekly,
+      ohWow: ohWow,
+    );
+  }
+
   List<Widget> _orderedPatternsStack() {
     final decision = _stackDecision;
     final widgets = <Widget>[
@@ -1509,6 +1715,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ),
       const SizedBox(height: AppSpacing.sm),
     ];
+    widgets.addAll(_archiveDifferentiationSurfaces());
     if (_signalArchiveSnapshot != null &&
         (_signalArchiveSnapshot!.hasActiveSignal ||
             _signalArchiveSnapshot!.reflectionCount > 0 ||
@@ -1536,8 +1743,36 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     return widgets;
   }
 
+  /// Patterns-tab screenshot override — bypasses archive state and empty UI.
+  Widget _buildForcedScreenshotRepeatCardView(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
+      body: SafeArea(
+        child: ListView(
+          key: const Key('force_screenshot_repeat_card_view'),
+          padding: ArchiveMobileSpacing.pagePadding,
+          children: [
+            SecondSessionComparisonCard(
+              key: const Key('force_screenshot_repeat_card'),
+              comparison: ForceScreenshotRepeatCard.comparison,
+              onGoDeeper: () => context.go('/record'),
+              onRecordNextEvidence: () => context.go('/record'),
+              onNotTheSame: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (ForceScreenshotRepeatCard.enabled) {
+      return _buildForcedScreenshotRepeatCardView(context);
+    }
+
+    _queueJournalDriftCheck();
+
     if (_loading) {
       return const Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
@@ -1554,17 +1789,26 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
+              children: const [PatternsEmptyView(fillViewport: false)],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_showFirstArchive) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: ArchiveMobileSpacing.pagePadding,
               children: [
-                if (_firstLoopPhase == FirstLoopStatePhase.recordMoment) ...[
-                  FirstLoopStateCard(
-                    phase: FirstLoopStatePhase.recordMoment,
-                    onRecord: _goToRecord,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
-                const PatternsEmptyView(
+                PatternsFirstArchiveView(
                   fillViewport: false,
-                  reflectionCount: 0,
+                  savedEntryId: _firstArchiveEntryId,
                 ),
               ],
             ),
@@ -1574,10 +1818,32 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     if (_patternsFirstThreeStack) {
-      final journey = _firstThreeJourney ??
+      final journey =
+          _firstThreeJourney ??
           const FirstThreeJourneyEngine().build(
             reflectionCount: _entries.length,
+            entries: _entries,
           );
+      final secondSessionComparison =
+          _entries.length == FirstThreeSessionGates.minEntriesForRepeatSurface
+          ? const SecondSessionSignalEngine().build(_entries)
+          : null;
+      final thirdSessionUsefulness =
+          FirstThreeSessionGates.showSession3ArchiveSurface(_entries.length)
+          ? const ThirdSessionArchiveUsefulnessEngine().build(_entries)
+          : ThirdSessionArchiveUsefulness.insufficient;
+      final archiveBeliefThread = const ArchiveBeliefThreadEngine().build(
+        _entries,
+        tier: _archiveIntelligenceTier,
+      );
+      final weeklyWhatChanged = const WeeklyWhatChangedReviewEngine().build(
+        _entries,
+        tier: _archiveIntelligenceTier,
+      );
+      final ohWowMoment = const ArchiveBeliefThreadEngine().buildOhWow(
+        _entries,
+        tier: _archiveIntelligenceTier,
+      );
       final strongest = _strongest;
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
@@ -1587,6 +1853,35 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
+                ..._buildArchiveIntelligenceWidgets(
+                  belief: archiveBeliefThread,
+                  weekly: weeklyWhatChanged,
+                  ohWow: ohWowMoment,
+                ),
+                if (!archiveBeliefThread.hasEnoughData &&
+                    thirdSessionUsefulness.hasEnoughData) ...[
+                  ThirdSessionArchiveUsefulnessCard(
+                    usefulness: thirdSessionUsefulness,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (secondSessionComparison?.hasEnoughData == true &&
+                    !ArchiveBeliefCorrectionStore.isDismissed(
+                      'second_session_repeat',
+                    )) ...[
+                  SecondSessionComparisonCard(
+                    comparison: secondSessionComparison!,
+                    onGoDeeper: _goToRecord,
+                    onRecordNextEvidence: _goToRecord,
+                    onNotTheSame: () {
+                      ArchiveBeliefCorrectionStore.dismiss(
+                        'second_session_repeat',
+                      );
+                      setState(() {});
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (_firstLoopPhase != null &&
                     _firstLoopPhase != FirstLoopStatePhase.recordMoment) ...[
                   FirstLoopStateCard(

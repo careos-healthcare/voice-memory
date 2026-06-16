@@ -15,37 +15,41 @@ PatternMemory _memory({
   List<String> before = const [],
   List<String> helped = const [],
   List<String> harder = const [],
-}) =>
-    PatternMemory(
-      id: 'pm1',
-      patternTitle: 'Taking responsibility before asking for help',
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 4),
-      checkInCount: checkInCount,
-      showedAgainCount: showedAgainCount,
-      lighterCount: lighterCount,
-      heavierCount: heavierCount,
-      changedCount: changedCount,
-      commonBeforeMoments: before,
-      helpedMoments: helped,
-      harderMoments: harder,
-      status: status,
-    );
+}) => PatternMemory(
+  id: 'pm1',
+  patternTitle: 'Taking responsibility before asking for help',
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 4),
+  checkInCount: checkInCount,
+  showedAgainCount: showedAgainCount,
+  lighterCount: lighterCount,
+  heavierCount: heavierCount,
+  changedCount: changedCount,
+  commonBeforeMoments: before,
+  helpedMoments: helped,
+  harderMoments: harder,
+  status: status,
+);
 
 void main() {
-  test('fewer than three check-ins gives notEnoughYet and shouldShow false', () {
-    final moment = _engine.build(_memory(checkInCount: 2, lighterCount: 2));
-    expect(moment.type, PatternProgressType.notEnoughYet);
-    expect(moment.shouldShow, isFalse);
-  });
+  test(
+    'fewer than three check-ins gives notEnoughYet and shouldShow false',
+    () {
+      final moment = _engine.build(_memory(checkInCount: 2, lighterCount: 2));
+      expect(moment.type, PatternProgressType.notEnoughYet);
+      expect(moment.shouldShow, isFalse);
+    },
+  );
 
   test('two lighter results create gettingLighter with helped line', () {
-    final moment = _engine.build(_memory(
-      checkInCount: 3,
-      lighterCount: 2,
-      heavierCount: 1,
-      helped: const ['paused before answering'],
-    ));
+    final moment = _engine.build(
+      _memory(
+        checkInCount: 3,
+        lighterCount: 2,
+        heavierCount: 1,
+        helped: const ['paused before answering'],
+      ),
+    );
     expect(moment.type, PatternProgressType.gettingLighter);
     expect(moment.shouldShow, isTrue);
     expect(moment.headline, 'This pattern may be getting lighter.');
@@ -55,12 +59,14 @@ void main() {
   });
 
   test('two heavier results create gettingHeavier with harder line', () {
-    final moment = _engine.build(_memory(
-      checkInCount: 3,
-      heavierCount: 2,
-      lighterCount: 0,
-      harder: const ['carried it alone'],
-    ));
+    final moment = _engine.build(
+      _memory(
+        checkInCount: 3,
+        heavierCount: 2,
+        lighterCount: 0,
+        harder: const ['carried it alone'],
+      ),
+    );
     expect(moment.type, PatternProgressType.gettingHeavier);
     expect(moment.headline, 'This pattern may be getting heavier.');
     expect(moment.beforeLine, 'What made it harder: carried it alone');
@@ -68,13 +74,15 @@ void main() {
   });
 
   test('showedAgain dominant creates stillRepeating with before line', () {
-    final moment = _engine.build(_memory(
-      checkInCount: 4,
-      showedAgainCount: 2,
-      lighterCount: 1,
-      heavierCount: 1,
-      before: const ['before saying yes'],
-    ));
+    final moment = _engine.build(
+      _memory(
+        checkInCount: 4,
+        showedAgainCount: 2,
+        lighterCount: 1,
+        heavierCount: 1,
+        before: const ['before saying yes'],
+      ),
+    );
     expect(moment.type, PatternProgressType.stillRepeating);
     expect(moment.headline, 'This pattern is still showing up.');
     expect(moment.body, contains('caught it 4 times'));
@@ -82,33 +90,35 @@ void main() {
   });
 
   test('two changed results create changing', () {
-    final moment = _engine.build(_memory(
-      checkInCount: 3,
-      changedCount: 2,
-      status: PatternMemoryStatus.changing,
-    ));
+    final moment = _engine.build(
+      _memory(
+        checkInCount: 3,
+        changedCount: 2,
+        status: PatternMemoryStatus.changing,
+      ),
+    );
     expect(moment.type, PatternProgressType.changing);
     expect(moment.headline, 'This pattern is changing.');
     expect(moment.nextLine, 'Next, watch what was different.');
   });
 
   test('priority: heavier wins over lighter when heavier dominates', () {
-    final moment = _engine.build(_memory(
-      checkInCount: 5,
-      heavierCount: 3,
-      lighterCount: 2,
-    ));
+    final moment = _engine.build(
+      _memory(checkInCount: 5, heavierCount: 3, lighterCount: 2),
+    );
     expect(moment.type, PatternProgressType.gettingHeavier);
   });
 
   test('shouldShow false when at threshold but no direction matched', () {
-    final moment = _engine.build(_memory(
-      checkInCount: 3,
-      showedAgainCount: 1,
-      lighterCount: 1,
-      heavierCount: 1,
-      status: PatternMemoryStatus.active,
-    ));
+    final moment = _engine.build(
+      _memory(
+        checkInCount: 3,
+        showedAgainCount: 1,
+        lighterCount: 1,
+        heavierCount: 1,
+        status: PatternMemoryStatus.active,
+      ),
+    );
     expect(moment.type, PatternProgressType.notEnoughYet);
     expect(moment.shouldShow, isFalse);
   });

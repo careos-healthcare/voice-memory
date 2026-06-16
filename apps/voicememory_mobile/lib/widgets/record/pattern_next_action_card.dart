@@ -8,11 +8,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Post check-in card offering the one simple next thing to check tomorrow.
 class PatternNextActionCard extends StatefulWidget {
-  const PatternNextActionCard({
-    super.key,
-    required this.action,
-    this.onUse,
-  });
+  const PatternNextActionCard({super.key, required this.action, this.onUse});
 
   final PatternNextAction action;
 
@@ -58,7 +54,9 @@ class _PatternNextActionCardState extends State<PatternNextActionCard> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             action.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(

@@ -15,8 +15,10 @@ class DiscoverBeliefEngine {
     if (entries.isEmpty) return null;
 
     final eligible = archiveEligibleEvidenceEntries(entries);
-    final sorted = [...eligible]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    final beliefText = state?.belief?.trim() ??
+    final sorted = [...eligible]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final beliefText =
+        state?.belief?.trim() ??
         (eligible.isNotEmpty
             ? eligible.last.reflection.concreteObservation
             : null);
@@ -35,7 +37,8 @@ class DiscoverBeliefEngine {
 
     final health = state?.health ?? ArchiveHealthV3.uncertain;
     final evidenceCount =
-        state?.evidenceReflectionCount ?? archiveEvidenceReflectionCount(entries);
+        state?.evidenceReflectionCount ??
+        archiveEvidenceReflectionCount(entries);
 
     return DiscoverBeliefCard(
       statement: beliefText,

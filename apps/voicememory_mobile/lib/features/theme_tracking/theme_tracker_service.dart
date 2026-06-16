@@ -60,7 +60,9 @@ class ThemeTrackerService {
             themeId: id,
             matches: list,
             allEligible: eligible,
-            baseline: baselineCounts?[id] ?? baselineCounts?[_titleCase(id).toLowerCase()],
+            baseline:
+                baselineCounts?[id] ??
+                baselineCounts?[_titleCase(id).toLowerCase()],
           ),
           firstSeen: list.first.createdAt,
           lastSeen: list.last.createdAt,
@@ -69,9 +71,7 @@ class ThemeTrackerService {
     }
 
     themes.sort((a, b) => b.frequency.compareTo(a.frequency));
-    return ThemeTrackingResult(
-      topThemes: themes.take(topLimit).toList(),
-    );
+    return ThemeTrackingResult(topThemes: themes.take(topLimit).toList());
   }
 
   /// Canonical theme ids detected in one journal entry.

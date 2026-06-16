@@ -4,23 +4,26 @@ import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
 import 'package:voicememory_mobile/screens/key_moment_detail_screen.dart';
 
 KeyMoment _moment({String? nextCheck}) => KeyMoment(
-      id: 'm1',
-      date: DateTime(2026, 6, 5),
-      title: 'Something felt heavier',
-      originalText: 'I said yes before checking what I needed.',
-      shortSummary: 'I said yes before checking what I needed.',
-      patternTitle: 'Taking on too much',
-      resultHint: 'heavier',
-      nextCheck: nextCheck,
-    );
+  id: 'm1',
+  date: DateTime(2026, 6, 5),
+  title: 'Something felt heavier',
+  originalText: 'I said yes before checking what I needed.',
+  shortSummary: 'I said yes before checking what I needed.',
+  patternTitle: 'Taking on too much',
+  resultHint: 'heavier',
+  nextCheck: nextCheck,
+);
 
 void main() {
-  testWidgets('shows the original text, pattern, result and next check',
-      (tester) async {
+  testWidgets('shows the original text, pattern, result and next check', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: KeyMomentDetailScreen(
-          moment: _moment(nextCheck: 'What happened right before you said yes?'),
+          moment: _moment(
+            nextCheck: 'What happened right before you said yes?',
+          ),
           onUseCheck: (_) async {},
         ),
       ),
@@ -58,8 +61,9 @@ void main() {
     expect(find.textContaining('check is set'), findsOneWidget);
   });
 
-  testWidgets('no Use this check button when there is no next check',
-      (tester) async {
+  testWidgets('no Use this check button when there is no next check', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: KeyMomentDetailScreen(

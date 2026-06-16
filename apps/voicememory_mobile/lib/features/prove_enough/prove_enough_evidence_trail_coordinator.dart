@@ -8,7 +8,7 @@ import '../signal_review/signal_review_coordinator.dart';
 import '../../services/app_services.dart';
 
 /// Loads journal + journey data for the prove_enough evidence trail screen.
-abstract final class ProveEnoughEvidenceTrailCoordinator {
+abstract class ProveEnoughEvidenceTrailCoordinator {
   ProveEnoughEvidenceTrailCoordinator._();
 
   static const _engine = ProveEnoughEvidenceTrailEngine();
@@ -30,8 +30,9 @@ abstract final class ProveEnoughEvidenceTrailCoordinator {
     final review = await SignalReviewCoordinator.loadForActiveJourney();
     final contradictions = journey == null
         ? await ProveEnoughContradictionStore.instance().loadAll()
-        : await ProveEnoughContradictionStore.instance()
-            .loadForJourney(journey.id);
+        : await ProveEnoughContradictionStore.instance().loadForJourney(
+            journey.id,
+          );
     final mission = await NextEvidenceMissionStore.instance().load();
     final loop = await LoopModeCoordinator.loadActive();
 

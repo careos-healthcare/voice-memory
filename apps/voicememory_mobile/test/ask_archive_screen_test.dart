@@ -12,17 +12,16 @@ KeyMoment _moment(
   String? resultHint,
   List<String> tags = const [],
   String? nextCheck,
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: title,
-      originalText: text,
-      shortSummary: text,
-      resultHint: resultHint,
-      tags: tags,
-      nextCheck: nextCheck,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: title,
+  originalText: text,
+  shortSummary: text,
+  resultHint: resultHint,
+  tags: tags,
+  nextCheck: nextCheck,
+);
 
 Future<void> _pump(
   WidgetTester tester,
@@ -69,8 +68,13 @@ void main() {
 
   testWidgets('tapping a suggested chip shows results', (tester) async {
     await _pump(tester, [
-      _moment('a', DateTime.now(),
-          title: 'Lighter day', resultHint: 'lighter', tags: const ['helped']),
+      _moment(
+        'a',
+        DateTime.now(),
+        title: 'Lighter day',
+        resultHint: 'lighter',
+        tags: const ['helped'],
+      ),
     ]);
 
     await tester.tap(find.text('What helped before?'));
@@ -81,25 +85,27 @@ void main() {
   });
 
   testWidgets('empty results show the empty state copy', (tester) async {
-    await _pump(tester, [
-      _moment('a', DateTime.now(), resultHint: 'heavier'),
-    ]);
+    await _pump(tester, [_moment('a', DateTime.now(), resultHint: 'heavier')]);
 
     await tester.tap(find.text('When did it feel lighter?'));
     await tester.pumpAndSettle();
 
     expect(
-      find.text(
-        'Record a few moments and ArchiveMe will have more to find.',
-      ),
+      find.text('Record a few moments and ArchiveMe will have more to find.'),
       findsOneWidget,
     );
   });
 
-  testWidgets('typing a free-text query searches saved moments', (tester) async {
+  testWidgets('typing a free-text query searches saved moments', (
+    tester,
+  ) async {
     await _pump(tester, [
-      _moment('a', DateTime.now(),
-          title: 'Quiet worry', text: 'The worry came back when it got quiet.'),
+      _moment(
+        'a',
+        DateTime.now(),
+        title: 'Quiet worry',
+        text: 'The worry came back when it got quiet.',
+      ),
     ]);
 
     await tester.enterText(find.byType(TextField), 'worry');
@@ -111,8 +117,13 @@ void main() {
 
   testWidgets('open moment navigates to detail', (tester) async {
     await _pump(tester, [
-      _moment('a', DateTime.now(),
-          title: 'Open me', resultHint: 'lighter', tags: const ['helped']),
+      _moment(
+        'a',
+        DateTime.now(),
+        title: 'Open me',
+        resultHint: 'lighter',
+        tags: const ['helped'],
+      ),
     ]);
 
     await tester.tap(find.text('What helped before?'));
@@ -125,11 +136,14 @@ void main() {
 
   testWidgets('use this check navigates to record', (tester) async {
     await _pump(tester, [
-      _moment('a', DateTime.now(),
-          title: 'Check moment',
-          resultHint: 'lighter',
-          tags: const ['helped'],
-          nextCheck: 'What helped make it lighter?'),
+      _moment(
+        'a',
+        DateTime.now(),
+        title: 'Check moment',
+        resultHint: 'lighter',
+        tags: const ['helped'],
+        nextCheck: 'What helped make it lighter?',
+      ),
     ]);
 
     await tester.tap(find.text('What helped before?'));

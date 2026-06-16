@@ -44,6 +44,15 @@ if (!pageGuard.includes("assertInternalPageAccess")) {
   failures.push("internal-page-guard missing");
 }
 
+const founderMode = fs.readFileSync(path.join(ROOT, "lib/server/founder-mode.ts"), "utf8");
+if (!founderMode.includes("FOUNDER_MODE")) {
+  failures.push("founder-mode.ts must document FOUNDER_MODE");
+}
+const internalAccess = fs.readFileSync(path.join(ROOT, "lib/server/internal-access.ts"), "utf8");
+if (!internalAccess.includes("isFounderModeEnabled")) {
+  failures.push("internal-access must require FOUNDER_MODE");
+}
+
 if (failures.length) {
   console.error("validate-internal-routes failed:\n", failures.join("\n"));
   process.exit(1);

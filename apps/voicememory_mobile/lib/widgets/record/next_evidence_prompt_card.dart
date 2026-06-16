@@ -47,10 +47,7 @@ class NextEvidencePromptCard extends StatelessWidget {
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           SizedBox(height: gap),
-          Text(
-            prompt,
-            style: ArchiveMobileTypography.explanationBody(context),
-          ),
+          Text(prompt, style: ArchiveMobileTypography.explanationBody(context)),
           SizedBox(height: gap),
           FilledButton(
             onPressed: onUsePrompt,

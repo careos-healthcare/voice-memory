@@ -20,9 +20,7 @@ void main() {
   });
 
   test('showedAgain updates active status', () {
-    final status = engine.statusFromRecentResults([
-      WatchForResult.showedAgain,
-    ]);
+    final status = engine.statusFromRecentResults([WatchForResult.showedAgain]);
     expect(status, ActivePatternThreadStatus.active);
   });
 

@@ -53,8 +53,9 @@ class PaywallAttributionStore {
     if (raw is! List) return const [];
     return raw
         .whereType<Map>()
-        .map((e) =>
-            PaywallAttributionEvent.fromJson(Map<String, dynamic>.from(e)))
+        .map(
+          (e) => PaywallAttributionEvent.fromJson(Map<String, dynamic>.from(e)),
+        )
         .whereType<PaywallAttributionEvent>()
         .toList();
   }
@@ -62,6 +63,5 @@ class PaywallAttributionStore {
   /// Events of one funnel stage, oldest first.
   Future<List<PaywallAttributionEvent>> eventsOfType(
     PaywallAttributionEventType type,
-  ) async =>
-      (await events()).where((e) => e.type == type).toList();
+  ) async => (await events()).where((e) => e.type == type).toList();
 }

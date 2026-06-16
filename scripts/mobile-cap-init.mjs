@@ -14,7 +14,7 @@ function run(cmd, args) {
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 
-console.log("VoiceMemory — Capacitor init/sync");
+console.log("ArchiveMe — Capacitor init/sync");
 console.log(
   "Server URL:",
   process.env.CAPACITOR_SERVER_URL ||

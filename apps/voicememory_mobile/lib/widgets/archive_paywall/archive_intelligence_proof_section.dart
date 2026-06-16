@@ -137,10 +137,7 @@ class _ArchiveIntelligenceProofLoaderState
     }
     if (!mounted) return;
     setState(() {
-      _stats = ArchivePaywallStats.fromEntries(
-        entries: entries,
-        archiveV1: v1,
-      );
+      _stats = ArchivePaywallStats.fromEntries(entries: entries, archiveV1: v1);
     });
   }
 

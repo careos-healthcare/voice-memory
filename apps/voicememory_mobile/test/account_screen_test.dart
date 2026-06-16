@@ -34,7 +34,10 @@ void main() {
       expect(find.text('Sync now'), findsOneWidget);
     } else {
       expect(find.text('Sync now'), findsNothing);
-      expect(find.text(ConsumerUiCopy.syncNotAvailableTestFlight), findsOneWidget);
+      expect(
+        find.text(ConsumerUiCopy.syncNotAvailableTestFlight),
+        findsOneWidget,
+      );
     }
   });
 }

@@ -76,7 +76,10 @@ void main() {
     final review = engine.build(
       journey: journey(supporting: 2),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
       ],
     );
@@ -87,7 +90,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -104,7 +110,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -117,11 +126,7 @@ void main() {
   test('weak evidence does not overclaim', () {
     final review = engine.build(
       journey: journey(),
-      entries: [
-        entry('e0', 'short'),
-        entry('e1', 'tiny'),
-        entry('e2', 'x'),
-      ],
+      entries: [entry('e0', 'short'), entry('e1', 'tiny'), entry('e2', 'x')],
     );
 
     expect(review!.needsMoreEvidence, isTrue);
@@ -133,7 +138,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -164,14 +172,19 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
     )!;
     await store.saveActive(review);
 
-    final confirmed = await SignalReviewCoordinator.confirm(reviewId: review.id);
+    final confirmed = await SignalReviewCoordinator.confirm(
+      reviewId: review.id,
+    );
     expect(confirmed!.reviewStatus, SignalReviewStatus.confirmed);
     expect(await store.confirmedReviewCount(), 1);
   });
@@ -184,7 +197,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -207,14 +223,19 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
     )!;
     await store.saveActive(review);
 
-    final watching = await SignalReviewCoordinator.keepWatching(reviewId: review.id);
+    final watching = await SignalReviewCoordinator.keepWatching(
+      reviewId: review.id,
+    );
     expect(watching!.reviewStatus, SignalReviewStatus.watching);
     expect(watching.nextEvidencePrompt.trim(), isNotEmpty);
   });
@@ -224,7 +245,9 @@ void main() {
     await _reset(stamp);
 
     expect(
-      await SignalReviewCoordinator.shouldGatePremiumArchive(entitlements: null),
+      await SignalReviewCoordinator.shouldGatePremiumArchive(
+        entitlements: null,
+      ),
       isFalse,
     );
 
@@ -232,7 +255,9 @@ void main() {
     await store.incrementConfirmedCount();
 
     expect(
-      await SignalReviewCoordinator.shouldGatePremiumArchive(entitlements: null),
+      await SignalReviewCoordinator.shouldGatePremiumArchive(
+        entitlements: null,
+      ),
       isTrue,
     );
   });

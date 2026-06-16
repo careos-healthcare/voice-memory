@@ -188,10 +188,7 @@ void main() {
       final prefs = await _openPrefs('store');
       final store = ProveEnoughStopCostStore.forPrefs(prefs);
 
-      await store.save(
-        entryId: 'e-stop',
-        answer: 'I would fall behind.',
-      );
+      await store.save(entryId: 'e-stop', answer: 'I would fall behind.');
 
       expect(await store.load('e-stop'), 'I would fall behind.');
     });
@@ -223,17 +220,25 @@ void main() {
       );
       await _pumpBounded(tester);
 
-      expect(find.byKey(const Key('prove_enough_post_record_payoff')), findsOneWidget);
+      expect(
+        find.byKey(const Key('prove_enough_post_record_payoff')),
+        findsOneWidget,
+      );
       expect(find.text('Enoughness score'), findsOneWidget);
       expect(find.text('Choice vs pressure'), findsOneWidget);
-      expect(find.text('What would have happened if you stopped?'), findsOneWidget);
+      expect(
+        find.text('What would have happened if you stopped?'),
+        findsOneWidget,
+      );
       expect(find.byType(EnoughnessScoreCard), findsOneWidget);
       expect(find.byType(ChoiceVsPressureCard), findsOneWidget);
       expect(find.byType(StopCostPromptCard), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('cards do not render for capacity_yes in post-save card', (tester) async {
+    testWidgets('cards do not render for capacity_yes in post-save card', (
+      tester,
+    ) async {
       final capacityLoop = loopEngine.activate(LoopModeIds.capacityYes);
       final entry = _entry(
         'e-capacity',
@@ -259,10 +264,16 @@ void main() {
       );
       await _pumpBounded(tester);
 
-      expect(find.byKey(const Key('prove_enough_post_record_payoff')), findsNothing);
+      expect(
+        find.byKey(const Key('prove_enough_post_record_payoff')),
+        findsNothing,
+      );
       expect(find.text('Enoughness score'), findsNothing);
       expect(find.text('Choice vs pressure'), findsNothing);
-      expect(find.text('What would have happened if you stopped?'), findsNothing);
+      expect(
+        find.text('What would have happened if you stopped?'),
+        findsNothing,
+      );
     });
 
     testWidgets('stop-cost prompt tap is wired', (tester) async {
@@ -270,10 +281,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: StopCostPromptCard(
-              entryId: 'e-stop',
-              skipInitialLoad: true,
-            ),
+            body: StopCostPromptCard(entryId: 'e-stop', skipInitialLoad: true),
           ),
         ),
       );
@@ -285,7 +293,10 @@ void main() {
 
       expect(find.text('Save answer'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
-      expect(find.text('What would have happened if you stopped?'), findsWidgets);
+      expect(
+        find.text('What would have happened if you stopped?'),
+        findsWidgets,
+      );
     });
   });
 }

@@ -34,7 +34,11 @@ class ArchiveHomeDashboard extends StatelessWidget {
           Text(
             ConsumerUiCopy.archiveHomeTitle,
             style: ArchiveMobileTypography.archiveSurfaceTitle(context)
-                .copyWith(fontSize: ArchiveResponsiveLayout.isTabletOrDesktop(context) ? 28 : 26),
+                .copyWith(
+                  fontSize: ArchiveResponsiveLayout.isTabletOrDesktop(context)
+                      ? 28
+                      : 26,
+                ),
           ),
           SizedBox(height: gap),
           Text(
@@ -48,7 +52,10 @@ class ArchiveHomeDashboard extends StatelessWidget {
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.xs),
-            Text(signal.title, style: ArchiveMobileTypography.listTitle(context)),
+            Text(
+              signal.title,
+              style: ArchiveMobileTypography.listTitle(context),
+            ),
             if (signal.strengthLabel.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
@@ -106,12 +113,14 @@ class ArchiveHomeDashboard extends StatelessWidget {
             children: [
               if (signal != null)
                 OutlinedButton(
-                  onPressed: () => SignalArchiveNavigation.openSignalDetail(context),
+                  onPressed: () =>
+                      SignalArchiveNavigation.openSignalDetail(context),
                   child: Text(ConsumerUiCopy.archiveHomeOpenDetail),
                 ),
               if (signal != null)
                 OutlinedButton(
-                  onPressed: () => SignalArchiveNavigation.openEvidenceTrail(context),
+                  onPressed: () =>
+                      SignalArchiveNavigation.openEvidenceTrail(context),
                   child: Text(ConsumerUiCopy.archiveHomeOpenTrail),
                 ),
               if (onOpenPatterns != null)

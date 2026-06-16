@@ -2,7 +2,7 @@
 /// `--dart-define=ARCHIVEME_TRIAL_MODE=true`
 ///
 /// Separate from [ScreenshotMode] (marketing captures).
-abstract final class TrialMode {
+abstract class TrialMode {
   TrialMode._();
 
   static const bool enabled = bool.fromEnvironment(

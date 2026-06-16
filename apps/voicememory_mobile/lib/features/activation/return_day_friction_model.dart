@@ -117,20 +117,19 @@ class ReturnDayFrictionState {
   }
 
   Map<String, dynamic> toJson() => {
-        if (checkInId != null) 'checkInId': checkInId,
-        'stage': stage.id,
-        if (dueShownAt != null)
-          'dueShownAt': dueShownAt!.toUtc().toIso8601String(),
-        if (answerSelectedAt != null)
-          'answerSelectedAt': answerSelectedAt!.toUtc().toIso8601String(),
-        if (recordingStartedAt != null)
-          'recordingStartedAt': recordingStartedAt!.toUtc().toIso8601String(),
-        if (momentSavedAt != null)
-          'momentSavedAt': momentSavedAt!.toUtc().toIso8601String(),
-        if (loopClosedAt != null)
-          'loopClosedAt': loopClosedAt!.toUtc().toIso8601String(),
-        if (selectedAnswer != null) 'selectedAnswer': selectedAnswer,
-      };
+    if (checkInId != null) 'checkInId': checkInId,
+    'stage': stage.id,
+    if (dueShownAt != null) 'dueShownAt': dueShownAt!.toUtc().toIso8601String(),
+    if (answerSelectedAt != null)
+      'answerSelectedAt': answerSelectedAt!.toUtc().toIso8601String(),
+    if (recordingStartedAt != null)
+      'recordingStartedAt': recordingStartedAt!.toUtc().toIso8601String(),
+    if (momentSavedAt != null)
+      'momentSavedAt': momentSavedAt!.toUtc().toIso8601String(),
+    if (loopClosedAt != null)
+      'loopClosedAt': loopClosedAt!.toUtc().toIso8601String(),
+    if (selectedAnswer != null) 'selectedAnswer': selectedAnswer,
+  };
 
   static ReturnDayFrictionState fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return empty;

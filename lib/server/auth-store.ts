@@ -1,6 +1,12 @@
 import "server-only";
 
 import {
+  CODE_TTL_MS,
+  evaluateCodeAttempt,
+  sendAllowed,
+  AuthRateLimitError,
+} from "@/lib/auth/auth-code-policy";
+import {
   createVerificationCode,
   hashVerificationCode,
   userIdFromEmail,
@@ -17,10 +23,9 @@ import {
 } from "@/lib/server/auth-storage";
 import { shouldUsePostgresStorage } from "@/lib/server/db";
 
-const CODE_TTL_MS = 1000 * 60 * 10;
-
 export type { StoredUser } from "@/lib/server/auth-storage";
 export { AuthStorageNotConfiguredError, getAuthStorageMode } from "@/lib/server/auth-storage";
+export { AuthRateLimitError } from "@/lib/auth/auth-code-policy";
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -33,6 +38,15 @@ function issueEmailLoginCodeLocal(email: string): { userId: string; code: string
   }
 
   const store = readAuthStore();
+  const now = Date.now();
+
+  // Resend cooldown — one live code per email, no rapid re-issue.
+  const existing = store.pendingCodes.find((row) => row.email === normalized);
+  const gate = sendAllowed(existing?.issuedAt ?? null, now);
+  if (!gate.allowed) {
+    throw new AuthRateLimitError(gate.retryAfterMs);
+  }
+
   let user = store.usersByEmail[normalized];
   if (!user) {
     user = {
@@ -48,7 +62,9 @@ function issueEmailLoginCodeLocal(email: string): { userId: string; code: string
   store.pendingCodes.push({
     email: normalized,
     codeHash: hashVerificationCode(code),
-    expiresAt: Date.now() + CODE_TTL_MS,
+    expiresAt: now + CODE_TTL_MS,
+    attempts: 0,
+    issuedAt: now,
   });
   writeAuthStore(store);
 
@@ -59,15 +75,31 @@ function verifyEmailLoginCodeLocal(email: string, code: string): StoredUser | nu
   const normalized = normalizeEmail(email);
   const store = readAuthStore();
   const pending = store.pendingCodes.find((row) => row.email === normalized);
-  if (!pending || pending.expiresAt < Date.now()) return null;
 
-  if (pending.codeHash !== hashVerificationCode(code.trim())) return null;
+  const decision = evaluateCodeAttempt({
+    pending: pending
+      ? { expiresAtMs: pending.expiresAt, attempts: pending.attempts ?? 0 }
+      : null,
+    hashMatches:
+      Boolean(pending) && pending!.codeHash === hashVerificationCode(code.trim()),
+    nowMs: Date.now(),
+  });
+
+  if (decision.outcome === "mismatch" && !decision.invalidate) {
+    pending!.attempts = decision.nextAttempts;
+    writeAuthStore(store);
+    return null;
+  }
+
+  if (decision.invalidate) {
+    store.pendingCodes = store.pendingCodes.filter((row) => row.email !== normalized);
+    writeAuthStore(store);
+  }
+
+  if (decision.outcome !== "match") return null;
 
   const user = store.usersByEmail[normalized];
   if (!user) return null;
-
-  store.pendingCodes = store.pendingCodes.filter((row) => row.email !== normalized);
-  writeAuthStore(store);
   return user;
 }
 

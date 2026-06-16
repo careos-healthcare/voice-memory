@@ -28,7 +28,7 @@ class CompellingCheckQuestion {
 }
 
 /// Chooser labels surfaced in first-session and post-save cards.
-abstract final class CompellingCheckSharpness {
+abstract class CompellingCheckSharpness {
   CompellingCheckSharpness._();
 
   static const gentle = 'Gentle';

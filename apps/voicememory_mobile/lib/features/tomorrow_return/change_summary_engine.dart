@@ -98,10 +98,7 @@ class ChangeSummaryEngine {
     ReturnComparison latest,
     List<ReturnComparison> recent,
   ) {
-    final chips = <String>[
-      ...latest.chips,
-      ...recent.expand((c) => c.chips),
-    ];
+    final chips = <String>[...latest.chips, ...recent.expand((c) => c.chips)];
     final unique = <String>[];
     for (final c in chips) {
       final t = c.trim();
@@ -124,7 +121,10 @@ class ChangeSummaryEngine {
       case ChangeSummaryStatus.shifted:
         return [
           ConsumerUiCopy.changeSummaryChipChangedShape,
-          if (unique.length > 1) unique[1] else if (unique.isNotEmpty) unique.first,
+          if (unique.length > 1)
+            unique[1]
+          else if (unique.isNotEmpty)
+            unique.first,
           ConsumerUiCopy.changeSummaryChipWatchTomorrow,
         ].take(3).toList();
       case ChangeSummaryStatus.steady:

@@ -121,8 +121,9 @@ class _SignalReviewScreenState extends State<SignalReviewScreen> {
     final review = _review;
     if (review == null || _busy) return;
     setState(() => _busy = true);
-    final updated =
-        await SignalReviewCoordinator.keepWatching(reviewId: review.id);
+    final updated = await SignalReviewCoordinator.keepWatching(
+      reviewId: review.id,
+    );
     if (!mounted) return;
     final banner = review.isLoopSpecificReview
         ? LoopModeCopy.reviewKeepWatchingSaved
@@ -305,8 +306,7 @@ class _SignalReviewScreenState extends State<SignalReviewScreen> {
             _section(
               context,
               LoopModeCopy.reviewProveWrong,
-              review.whatWouldProveThisWrong ??
-                  review.possibleContradictions,
+              review.whatWouldProveThisWrong ?? review.possibleContradictions,
             ),
             _recordNextSection(context, review),
           ],
@@ -341,9 +341,9 @@ class _SignalReviewScreenState extends State<SignalReviewScreen> {
               onPressed: _busy
                   ? null
                   : () => SignalReviewNavigation.recordNextEvidence(
-                        context,
-                        prompt: review.nextEvidencePrompt,
-                      ),
+                      context,
+                      prompt: review.nextEvidencePrompt,
+                    ),
               child: Text(_recordNextCta(review)),
             ),
           ] else if (review.reviewStatus == SignalReviewStatus.confirmed) ...[

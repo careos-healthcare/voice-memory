@@ -6,7 +6,7 @@ import 'archive_feedback_summary_engine.dart';
 
 /// Saves quick feedback on ArchiveMe output and loads a gentle summary for
 /// future checks. Always fails softly — feedback must never block the loop.
-abstract final class ArchiveFeedbackCoordinator {
+abstract class ArchiveFeedbackCoordinator {
   ArchiveFeedbackCoordinator._();
 
   static ArchiveFeedbackStore _store() => ArchiveFeedbackStore.instance();

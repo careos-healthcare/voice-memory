@@ -73,7 +73,9 @@ RecordStackDecision decideRecordStack({
   required bool hasCompletedResult,
   required bool hasResultNextCheck,
   required bool hasRoutineAnchorOffer,
-  required   bool hasArchiveProof,
+  required bool hasArchiveProof,
+  int reflectionCount = 0,
+  bool entryCountLoaded = true,
   bool archiveMemoryDemoEligible = true,
   bool hasRetentionStateCard = false,
   bool suppressRetentionForFirstRunDemo = false,
@@ -81,6 +83,9 @@ RecordStackDecision decideRecordStack({
   bool showReturnDayJourney = false,
 }) {
   final readyNotPostSave = !hasSavedReflection && !isRecording;
+  final hasPatternEvidence = entryCountLoaded && reflectionCount >= 3;
+  final showFirstThreeJourneyEligible =
+      entryCountLoaded && reflectionCount == 2;
 
   RecordPrimaryState primaryState;
   if (isRecording) {
@@ -110,8 +115,7 @@ RecordStackDecision decideRecordStack({
   // Due check wins over first-run guidance.
   final showDueCheckCard = hasDueCheck && readyNotPostSave;
 
-  final inFirstRunReady =
-      isFirstRun && readyNotPostSave && !showDueCheckCard;
+  final inFirstRunReady = isFirstRun && readyNotPostSave && !showDueCheckCard;
 
   var showArchiveMemoryDemo = false;
   var showFirstRecordingHandoff = false;
@@ -119,62 +123,73 @@ RecordStackDecision decideRecordStack({
   var showTrialFirstMomentCard = false;
   var showStarterPrompts = false;
 
-  if (inFirstRunReady) {
-    if (isTrialMode) {
-      showTrialFirstMomentCard = true;
-    } else {
-      showFirstRecordingHandoff = true;
-    }
-  } else if (readyNotPostSave && !showDueCheckCard && !showReturnDayJourney) {
+  if (inFirstRunReady && isTrialMode) {
+    showTrialFirstMomentCard = true;
+  } else if (readyNotPostSave &&
+      !showDueCheckCard &&
+      !showReturnDayJourney &&
+      hasPatternEvidence) {
     showStarterPrompts = true;
   }
 
-  final hasDominantFirstRunCta = showFirstRecordingHandoff ||
+  final hasDominantFirstRunCta =
+      showFirstRecordingHandoff ||
       showFirstLoopStartCard ||
       showTrialFirstMomentCard;
 
   final suppressForReturnDay = showReturnDayJourney;
 
-  final showInputQualityCoach =
-      hasSavedReflection && inputQualityNeedsCoach;
+  final showInputQualityCoach = hasSavedReflection && inputQualityNeedsCoach;
 
-  final showCompletedResult = hasSavedReflection &&
-      hasCompletedResult &&
-      !inputQualityNeedsCoach;
+  final showCompletedResult =
+      hasSavedReflection && hasCompletedResult && !inputQualityNeedsCoach;
 
-  final showResultNextCheck =
-      showCompletedResult && hasResultNextCheck;
+  final showResultNextCheck = showCompletedResult && hasResultNextCheck;
 
   final showRoutineAnchor = showResultNextCheck && hasRoutineAnchorOffer;
 
   final showFeedback = showResultNextCheck;
 
-  final showArchiveProofCards = hasSavedReflection &&
-      hasArchiveProof &&
-      !inputQualityNeedsCoach;
+  final showArchiveProofCards =
+      hasSavedReflection && hasArchiveProof && !inputQualityNeedsCoach;
 
   final suppressDuplicateRecordCtas = hasDominantFirstRunCta;
 
   final suppressDuplicateUseTomorrowCtas = showResultNextCheck;
 
   final showFramingTitle =
-      readyNotPostSave && !showDueCheckCard && !hasDominantFirstRunCta && !suppressForReturnDay;
+      readyNotPostSave && !showDueCheckCard && !suppressForReturnDay;
 
   final showActivePatternThread =
-      readyNotPostSave && !showDueCheckCard && !hasDominantFirstRunCta && !suppressForReturnDay;
+      readyNotPostSave &&
+      !showDueCheckCard &&
+      !hasDominantFirstRunCta &&
+      !suppressForReturnDay &&
+      hasPatternEvidence;
 
   final showFirstThreeJourney =
-      readyNotPostSave && !showDueCheckCard && !hasDominantFirstRunCta && !suppressForReturnDay;
+      readyNotPostSave &&
+      !showDueCheckCard &&
+      !hasDominantFirstRunCta &&
+      !suppressForReturnDay &&
+      showFirstThreeJourneyEligible;
 
   final showPendingWatchFor =
-      readyNotPostSave && !showDueCheckCard && !hasDominantFirstRunCta && !suppressForReturnDay;
+      readyNotPostSave &&
+      !showDueCheckCard &&
+      !hasDominantFirstRunCta &&
+      !suppressForReturnDay &&
+      hasPatternEvidence;
 
-  final showRetentionStateCard = hasRetentionStateCard &&
+  final showRetentionStateCard =
+      hasRetentionStateCard &&
       !showDueCheckCard &&
       !suppressRetentionForFirstRunDemo &&
       !suppressRetentionForPostSaveNextCheck;
 
-  final showCurrentObjectiveCard = readyNotPostSave &&
+  final showCurrentObjectiveCard =
+      entryCountLoaded &&
+      readyNotPostSave &&
       !showDueCheckCard &&
       !showFirstRecordingHandoff &&
       !showFirstLoopStartCard &&

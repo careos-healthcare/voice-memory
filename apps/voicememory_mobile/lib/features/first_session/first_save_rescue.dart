@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 /// lets the journal store attribute the very first save to the rescue path
 /// without threading context through the recording flow. No content is ever
 /// carried — only the fact that the rescue CTA started the recording.
-abstract final class FirstSaveRescue {
+abstract class FirstSaveRescue {
   FirstSaveRescue._();
 
   /// Set when the rescue CTA starts a recording; cleared after the first

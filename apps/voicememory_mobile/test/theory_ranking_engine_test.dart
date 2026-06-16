@@ -14,10 +14,9 @@ void main() {
       ArchiveQualityPersona.relationshipFocused,
       count: 100,
     );
-    final eligible = entries
-        .where((e) => e.transcript.trim().length >= 24)
-        .toList()
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final eligible =
+        entries.where((e) => e.transcript.trim().length >= 24).toList()
+          ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     final result = engine.rank(entries: entries, eligible: eligible);
     final primary = result.primaryTheory;

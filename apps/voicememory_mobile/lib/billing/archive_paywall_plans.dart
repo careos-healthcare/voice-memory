@@ -1,13 +1,10 @@
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// Paid plan identifiers for ArchiveMe Pro paywall ordering.
-enum PaywallPlanKind {
-  annual,
-  monthly,
-}
+enum PaywallPlanKind { annual, monthly }
 
 /// Consumer-facing labels for subscription plans — annual first.
-abstract final class ArchivePaywallPlanCopy {
+abstract class ArchivePaywallPlanCopy {
   ArchivePaywallPlanCopy._();
 
   static const String annualLabel = 'Best for long-term memory';

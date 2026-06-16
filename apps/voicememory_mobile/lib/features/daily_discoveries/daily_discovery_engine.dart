@@ -22,7 +22,8 @@ class DailyDiscoveryEngine {
   final BeliefTimelineEngine beliefTimelineEngine;
   final ArchiveExplanationEngine explanationEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
   static const int minThemeDelta = 2;
   static const int minKeywordMentions = 3;
 
@@ -55,10 +56,12 @@ class DailyDiscoveryEngine {
     final viewed = await store.readViewedIds();
     final pending = await store.readPending();
     final baseline = await store.readBaseline();
-    final sorted = [...entries]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...entries]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final last = sorted.last;
 
-    final journalGrew = baseline == null ||
+    final journalGrew =
+        baseline == null ||
         baseline.lastEntryId != last.id ||
         baseline.entryCount != entries.length;
 
@@ -149,8 +152,9 @@ class DailyDiscoveryEngine {
   }
 
   /// Baseline snapshot excluding the newest journal entry (post-save compare).
-  DailyDiscoveryBaseline? baselineBeforeLatestEntry(List<JournalEntry> entries) =>
-      _baselineBeforeLatestEntry(entries);
+  DailyDiscoveryBaseline? baselineBeforeLatestEntry(
+    List<JournalEntry> entries,
+  ) => _baselineBeforeLatestEntry(entries);
 
   /// Pure detection — compare [baseline] to current archive; skip [viewedIds].
   DailyDiscovery? detectDiscovery({
@@ -175,8 +179,11 @@ class DailyDiscoveryEngine {
     return fresh.first;
   }
 
-  DailyDiscoveryBaseline? _baselineBeforeLatestEntry(List<JournalEntry> entries) {
-    final sorted = [...entries]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+  DailyDiscoveryBaseline? _baselineBeforeLatestEntry(
+    List<JournalEntry> entries,
+  ) {
+    final sorted = [...entries]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     if (sorted.length < 2) return null;
     final prior = sorted.sublist(0, sorted.length - 1);
     if (archiveEvidenceReflectionCount(prior) <
@@ -191,8 +198,10 @@ class DailyDiscoveryEngine {
     List<JournalEntry> entries,
     ArchiveStateObjectV3? state,
   ) {
-    final sorted = [...entries]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    final belief = state?.belief?.trim() ?? archiveBeliefFromReflections(entries);
+    final sorted = [...entries]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final belief =
+        state?.belief?.trim() ?? archiveBeliefFromReflections(entries);
     final contradictions = const ContradictionDetectionService().detect(
       entries: entries,
       currentBelief: belief,
@@ -228,11 +237,9 @@ class DailyDiscoveryEngine {
         baseline?.belief != null && baseline!.belief!.trim().isNotEmpty;
     if (hadBelief) return;
 
-    final evidence = archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    final evidence = archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
     if (evidence.length < 2) return;
 
     out.add(
@@ -260,14 +267,13 @@ class DailyDiscoveryEngine {
     List<DailyDiscovery> out,
   ) {
     if (baseline == null || current.belief == null) return;
-    final delta = current.beliefStrengthPercent - baseline.beliefStrengthPercent;
+    final delta =
+        current.beliefStrengthPercent - baseline.beliefStrengthPercent;
     if (delta.abs() < 15) return;
 
-    final evidence = archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    final evidence = archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
     if (evidence.length < 2) return;
 
     if (delta >= 15) {
@@ -357,11 +363,9 @@ class DailyDiscoveryEngine {
                 'An earlier contradiction is no longer showing up in your latest eligible reflections.',
             whyItMatters:
                 'When opposing lines stop appearing together, the archive reads it as movement — not a final verdict.',
-            evidenceIds: archiveEligibleEvidenceEntries(entries)
-                .reversed
-                .take(3)
-                .map((e) => e.id)
-                .toList(),
+            evidenceIds: archiveEligibleEvidenceEntries(
+              entries,
+            ).reversed.take(3).map((e) => e.id).toList(),
             confidence: 62,
             createdAt: entries.last.createdAt,
             insightRef: ArchiveInsightRef.belief(),
@@ -399,7 +403,10 @@ class DailyDiscoveryEngine {
       }
 
       final label = _themeLabels[key] ?? key;
-      final evidence = _entryIdsWithKeywords(entries, keywords).take(4).toList();
+      final evidence = _entryIdsWithKeywords(
+        entries,
+        keywords,
+      ).take(4).toList();
       if (evidence.length < 2) continue;
 
       if (delta >= minThemeDelta) {
@@ -555,7 +562,10 @@ class DailyDiscoveryEngine {
     return counts;
   }
 
-  static int _countKeywordMentions(List<JournalEntry> entries, List<String> keywords) {
+  static int _countKeywordMentions(
+    List<JournalEntry> entries,
+    List<String> keywords,
+  ) {
     var n = 0;
     for (final e in entries) {
       final t = e.transcript.toLowerCase();

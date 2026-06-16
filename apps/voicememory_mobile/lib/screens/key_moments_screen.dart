@@ -80,15 +80,15 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
       !_isPro && _overFreeLimit && !_previewDismissed;
 
   ProValuePreview _memoryLimitPreview() => buildProValuePreview(
-        PaywallTriggerContext(
-          trigger: PaywallTrigger.fullHistory,
-          sourceRoute: '/moments',
-          momentCount: _all.length,
-          previewTitle: '',
-          previewBody: '',
-          ctaLabel: '',
-        ),
-      );
+    PaywallTriggerContext(
+      trigger: PaywallTrigger.fullHistory,
+      sourceRoute: '/moments',
+      momentCount: _all.length,
+      previewTitle: '',
+      previewBody: '',
+      ctaLabel: '',
+    ),
+  );
 
   List<KeyMoment> get _accessPool {
     if (_isPro || !_overFreeLimit) return _all;
@@ -208,8 +208,18 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
       return 'Yesterday';
     }
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }
@@ -292,12 +302,13 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
       onSelected: (_) => setState(() => _tagFilter = tag),
       backgroundColor: _warmSurface,
       selectedColor: AppColors.accentPrimary.withValues(alpha: 0.15),
-      labelStyle: VoiceMemoryTypography.bodyStyle(
-        color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
-      ).copyWith(
-        fontSize: 12,
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-      ),
+      labelStyle:
+          VoiceMemoryTypography.bodyStyle(
+            color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
+          ).copyWith(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
       visualDensity: VisualDensity.compact,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -314,12 +325,13 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
       onSelected: (_) => _selectFilter(filter),
       backgroundColor: _warmSurface,
       selectedColor: AppColors.accentPrimary.withValues(alpha: 0.15),
-      labelStyle: VoiceMemoryTypography.bodyStyle(
-        color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
-      ).copyWith(
-        fontSize: 13,
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-      ),
+      labelStyle:
+          VoiceMemoryTypography.bodyStyle(
+            color: selected ? AppColors.accentPrimary : AppColors.textSecondary,
+          ).copyWith(
+            fontSize: 13,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(color: _warmBorder),
@@ -422,7 +434,9 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             moment.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           if (moment.shortSummary.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
@@ -473,10 +487,9 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
       ),
       child: Text(
         label,
-        style: VoiceMemoryTypography.metadataStyle(color: color).copyWith(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
+        style: VoiceMemoryTypography.metadataStyle(
+          color: color,
+        ).copyWith(fontSize: 11, fontWeight: FontWeight.w600),
       ),
     );
   }

@@ -16,20 +16,20 @@ Future<HabitProofStore> _store(String stamp) async {
 HabitProofMoment _proof({
   String id = 'hp_pm1_3_progressFound',
   HabitProofType type = HabitProofType.progressFound,
-}) =>
-    HabitProofMoment(
-      id: id,
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      type: type,
-      headline: 'Now there is something to compare.',
-      body: 'You can see whether this pattern is repeating, '
-          'getting lighter, getting heavier, or changing.',
-      proofLine: 'This pattern is still showing up.',
-      nextLine: 'What happens right before it shows up?',
-      checkInCount: 3,
-      shouldShow: true,
-    );
+}) => HabitProofMoment(
+  id: id,
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  type: type,
+  headline: 'Now there is something to compare.',
+  body:
+      'You can see whether this pattern is repeating, '
+      'getting lighter, getting heavier, or changing.',
+  proofLine: 'This pattern is still showing up.',
+  nextLine: 'What happens right before it shows up?',
+  checkInCount: 3,
+  shouldShow: true,
+);
 
 void main() {
   test('saveLatest and loadLatest round-trip', () async {

@@ -2,7 +2,7 @@
 
 import { ONBOARDING_WELCOME } from "@/lib/onboarding/onboarding-copy";
 
-export const WELCOME_EYEBROW = "VoiceMemory";
+export const WELCOME_EYEBROW = "ArchiveMe";
 export const WELCOME_TITLE = "Welcome";
 export const WELCOME_DESCRIPTION = ONBOARDING_WELCOME.description;
 
@@ -25,7 +25,7 @@ export const WELCOME_SECTIONS = [
   },
 ] as const;
 
-export const HOW_IT_WORKS_EYEBROW = "VoiceMemory";
+export const HOW_IT_WORKS_EYEBROW = "ArchiveMe";
 export const HOW_IT_WORKS_TITLE = "How it works";
 export const HOW_IT_WORKS_DESCRIPTION =
   "Short voice reflections, kept locally. Over time, older entries may resurface when they still connect to what you are living now.";
@@ -49,14 +49,14 @@ export const HOW_IT_WORKS_SECTIONS = [
   },
   {
     title: "What this is not",
-    body: "VoiceMemory is not an AI coach, not therapy, and not a productivity system. It does not diagnose, prescribe, or tell you who to become.",
+    body: "ArchiveMe is not an AI coach, not therapy, and not a productivity system. It does not diagnose, prescribe, or tell you who to become.",
   },
 ] as const;
 
 export const PRIVACY_SIMPLE_EYEBROW = "Trust";
 export const PRIVACY_SIMPLE_TITLE = "Privacy, simply";
 export const PRIVACY_SIMPLE_DESCRIPTION =
-  "The short version for testers. Full details live on the Privacy page.";
+  "The short version in plain language. Full details live on the Privacy page.";
 
 export const PRIVACY_SIMPLE_SECTIONS = [
   {

@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { dismissOnboarding, isOnboardingDismissed } from "@/lib/onboarding";
+import { ARCHIVE_ONBOARDING_SCREENS } from "@/lib/onboarding/archive-onboarding-copy";
 import { trackLaunchEvent, LAUNCH_EVENTS } from "@/lib/local-analytics";
 
 export function OnboardingBanner() {
@@ -28,11 +29,8 @@ export function OnboardingBanner() {
     <div className="rounded-2xl border border-violet-400/25 bg-violet-500/10 px-4 py-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-violet-100">Welcome to VoiceMemory</p>
-          <p className="mt-1 text-sm leading-relaxed text-zinc-400">
-            Record a short voice reflection. We transcribe it, keep everything on this device,
-            and notice how your words shift over time. Try{" "}
-            <span className="text-zinc-300">/demo</span> to explore with sample data.
+          <p className="text-sm font-medium leading-relaxed text-violet-100">
+            {ARCHIVE_ONBOARDING_SCREENS[0]!.headline}
           </p>
           <Button type="button" size="sm" className="mt-3" onClick={complete}>
             Got it

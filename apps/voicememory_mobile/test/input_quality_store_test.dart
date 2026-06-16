@@ -34,8 +34,9 @@ void main() {
     final store = InputQualityStore(AppServices.instance.prefs);
 
     final weak = assessReflectionQuality('Today was stressful.');
-    final strong =
-        assessReflectionQuality('I said yes before checking what I needed.');
+    final strong = assessReflectionQuality(
+      'I said yes before checking what I needed.',
+    );
     await store.recordAssessment(weak);
     await store.recordAssessment(strong);
 

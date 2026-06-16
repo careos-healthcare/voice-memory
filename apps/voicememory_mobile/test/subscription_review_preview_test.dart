@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/screens/subscription_review_preview.dart';
 
 void main() {
-  testWidgets('subscription review preview at iPhone 15 Pro size', (tester) async {
+  testWidgets('subscription review preview at iPhone 15 Pro size', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(393, 852));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 

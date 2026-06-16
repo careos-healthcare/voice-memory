@@ -47,10 +47,7 @@ void main() {
 
   test('worry prompt includes same worry and looping language', () {
     final prompt = engine.build(
-      pattern: _pattern(
-        categoryId: 'worry',
-        title: 'The same worry returning',
-      ),
+      pattern: _pattern(categoryId: 'worry', title: 'The same worry returning'),
     );
     expect(prompt.shortPrompt, contains('same worry'));
     expect(prompt.specificPrompt, contains('same worry'));
@@ -92,10 +89,7 @@ void main() {
 
   test('burnout prompt includes tiredness and energy', () {
     final prompt = engine.build(
-      pattern: _pattern(
-        categoryId: 'burnout',
-        title: 'Running on empty',
-      ),
+      pattern: _pattern(categoryId: 'burnout', title: 'Running on empty'),
     );
     expect(prompt.shortPrompt, contains('tiredness'));
     expect(prompt.specificPrompt, contains('energy'));
@@ -116,15 +110,9 @@ void main() {
 
   test('toWatchForItem stores specific prompt as pending text', () {
     final prompt = engine.build(
-      pattern: _pattern(
-        categoryId: 'worry',
-        title: 'The same worry returning',
-      ),
+      pattern: _pattern(categoryId: 'worry', title: 'The same worry returning'),
     );
-    final item = engine.toWatchForItem(
-      prompt,
-      now: DateTime(2026, 5, 25, 10),
-    );
+    final item = engine.toWatchForItem(prompt, now: DateTime(2026, 5, 25, 10));
     expect(item.text, prompt.specificPrompt);
     expect(item.checkInQuestion, prompt.checkInQuestion);
     expect(item.hasRichPrompt, isTrue);
@@ -201,10 +189,7 @@ void main() {
 
   test('legacy sharper flag maps to the very-sharp tier', () {
     final prompt = engine.build(
-      pattern: _pattern(
-        categoryId: 'worry',
-        title: 'The same worry returning',
-      ),
+      pattern: _pattern(categoryId: 'worry', title: 'The same worry returning'),
       sharper: true,
     );
     expect(prompt.selectedVariantId, 'sharper');
@@ -213,7 +198,10 @@ void main() {
       'Did the worry take over when things got quiet?',
     );
     // Selected variant is applied to the live question.
-    expect(prompt.checkInQuestion, 'Did the worry take over when things got quiet?');
+    expect(
+      prompt.checkInQuestion,
+      'Did the worry take over when things got quiet?',
+    );
   });
 
   test('elevated tier uses sharper question per category', () {
@@ -230,8 +218,11 @@ void main() {
         pattern: _pattern(categoryId: categoryId, title: 'Pattern'),
         intensity: HookRescueIntensity.elevated,
       );
-      expect(variantOf(prompt, 'sharper').question, question,
-          reason: 'sharper question for $categoryId');
+      expect(
+        variantOf(prompt, 'sharper').question,
+        question,
+        reason: 'sharper question for $categoryId',
+      );
       expect(prompt.selectedVariantId, 'sharper');
       expect(prompt.checkInQuestion, question);
     });
@@ -251,8 +242,11 @@ void main() {
         pattern: _pattern(categoryId: categoryId, title: 'Pattern'),
         intensity: HookRescueIntensity.aggressive,
       );
-      expect(variantOf(prompt, 'sharper').question, question,
-          reason: 'very-sharp question for $categoryId');
+      expect(
+        variantOf(prompt, 'sharper').question,
+        question,
+        reason: 'very-sharp question for $categoryId',
+      );
       expect(prompt.selectedVariantId, 'sharper');
       expect(prompt.checkInQuestion, question);
     });
@@ -293,8 +287,11 @@ void main() {
         ),
         intensity: HookRescueIntensity.aggressive,
       );
-      expect(prompt.selectedVariantId, isNot('sharper'),
-          reason: '$categoryId should not be sharpened');
+      expect(
+        prompt.selectedVariantId,
+        isNot('sharper'),
+        reason: '$categoryId should not be sharpened',
+      );
     }
   });
 
@@ -316,7 +313,10 @@ void main() {
     );
     expect(prompt.selectedVariantId, 'sharper');
     // elevated keeps the standard (non-very-sharp) sharper wording.
-    expect(variantOf(prompt, 'sharper').question, 'Did you carry it alone again?');
+    expect(
+      variantOf(prompt, 'sharper').question,
+      'Did you carry it alone again?',
+    );
   });
 
   test('elevated intensity keeps fallback default variant', () {
@@ -344,10 +344,7 @@ void main() {
 
   test('aggressive intensity uses very-sharp question and selects sharper', () {
     final prompt = engine.build(
-      pattern: _pattern(
-        categoryId: 'worry',
-        title: 'The same worry returning',
-      ),
+      pattern: _pattern(categoryId: 'worry', title: 'The same worry returning'),
       intensity: HookRescueIntensity.aggressive,
     );
     expect(prompt.selectedVariantId, 'sharper');
@@ -355,7 +352,10 @@ void main() {
       variantOf(prompt, 'sharper').question,
       'Did the worry take over when things got quiet?',
     );
-    expect(prompt.checkInQuestion, 'Did the worry take over when things got quiet?');
+    expect(
+      prompt.checkInQuestion,
+      'Did the worry take over when things got quiet?',
+    );
   });
 
   test('withSelectedVariant swaps question and prompt', () {
@@ -407,10 +407,7 @@ void main() {
       dominantIssue: ArchiveFeedbackType.alreadyKnew,
     );
     final prompt = engine.build(
-      pattern: _pattern(
-        categoryId: 'worry',
-        title: 'The same worry returning',
-      ),
+      pattern: _pattern(categoryId: 'worry', title: 'The same worry returning'),
       feedbackSummary: summary,
     );
     expect(prompt.checkInQuestion, 'What changed today?');

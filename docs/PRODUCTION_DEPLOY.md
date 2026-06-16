@@ -1,6 +1,6 @@
-# Production deploy — VoiceMemory
+# Production deploy — ArchiveMe
 
-Deploy VoiceMemory to Vercel from the `main` branch after local validation passes.
+Deploy ArchiveMe to Vercel from the `main` branch after local validation passes.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ Project → Settings → Environment Variables → Production:
 | `VOICEMEMORY_ENABLE_ATMOSPHERE_API` | `false` | Set `true` only to enable DALL-E atmosphere |
 | `DEBUG_ACCESS_TOKEN` | Optional random string | Enables `/debug/*` in production |
 | `RESEND_API_KEY` | Resend sending key | Required for production OTP email |
-| `EMAIL_FROM` | `VoiceMemory <noreply@your-verified-domain>` | After domain verify — see [RESEND_DOMAIN_AUTH.md](./RESEND_DOMAIN_AUTH.md) |
+| `EMAIL_FROM` | `ArchiveMe <noreply@your-verified-domain>` | After domain verify — see [RESEND_DOMAIN_AUTH.md](./RESEND_DOMAIN_AUTH.md) |
 
 Copy from [`.env.example`](../.env.example). Never commit real secrets.
 

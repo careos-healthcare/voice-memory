@@ -40,15 +40,16 @@ const _bannedWords = [
 ];
 
 String _receiptCopy(StartHereSaveReceipt receipt) => [
-      receipt.title,
-      receipt.explanation,
-      receipt.freeValueLine,
-      receipt.proContinuationLine,
-      receipt.proCtaLabel,
-      receipt.dismissLabel,
-      ...receipt.proPreviewBullets,
-      ...receipt.connectedTerms,
-    ].join(' ').toLowerCase();
+  receipt.title,
+  receipt.explanation,
+  receipt.returnCueLine,
+  receipt.freeValueLine,
+  receipt.proContinuationLine,
+  receipt.proCtaLabel,
+  receipt.dismissLabel,
+  ...receipt.proPreviewBullets,
+  ...receipt.connectedTerms,
+].join(' ').toLowerCase();
 
 /// Pumps the receipt card inside a router with a `/subscription` capture
 /// route, mirroring how the Record screen hosts it.
@@ -105,7 +106,7 @@ void main() {
         receipt.explanation,
         'This connects to what your archive has already noticed.',
       );
-      expect(receipt.proCtaLabel, 'See what Pro unlocks');
+      expect(receipt.proCtaLabel, 'See Pro');
       expect(receipt.dismissLabel, 'Not now');
     });
 
@@ -119,10 +120,7 @@ void main() {
     });
 
     test('no receipt after generic prompt save', () {
-      expect(
-        _engine.build(source: null, suggestion: _suggestion()),
-        isNull,
-      );
+      expect(_engine.build(source: null, suggestion: _suggestion()), isNull);
       expect(
         _engine.build(
           source: PaywallSource.generalPro,
@@ -222,10 +220,7 @@ void main() {
     )!;
 
     test('receipt carries free value and Pro continuation copy', () {
-      expect(
-        receipt.freeValueLine,
-        'Today\u2019s save stays in your archive.',
-      );
+      expect(receipt.freeValueLine, 'Today\u2019s save stays in your archive.');
       expect(
         receipt.proContinuationLine,
         'Pro keeps this thread connected across future recordings.',
@@ -238,15 +233,24 @@ void main() {
     });
 
     test('CTA and dismiss labels are unchanged', () {
-      expect(receipt.proCtaLabel, 'See what Pro unlocks');
+      expect(receipt.proCtaLabel, 'See Pro');
       expect(receipt.dismissLabel, 'Not now');
     });
 
     test('copy never implies the saved recording disappears', () {
       final copy = _receiptCopy(receipt);
-      for (final implied in ['disappear', 'delete', 'removed', 'gone', 'lose']) {
-        expect(copy, isNot(contains(implied)),
-            reason: 'receipt copy must not imply loss via "$implied"');
+      for (final implied in [
+        'disappear',
+        'delete',
+        'removed',
+        'gone',
+        'lose',
+      ]) {
+        expect(
+          copy,
+          isNot(contains(implied)),
+          reason: 'receipt copy must not imply loss via "$implied"',
+        );
       }
       // The free line states the save is kept, explicitly.
       expect(copy, contains('stays in your archive'));
@@ -260,8 +264,70 @@ void main() {
         'lose access',
         'last chance',
       ]) {
-        expect(copy, isNot(contains(scarcity)),
-            reason: 'receipt copy must not use false scarcity "$scarcity"');
+        expect(
+          copy,
+          isNot(contains(scarcity)),
+          reason: 'receipt copy must not use false scarcity "$scarcity"',
+        );
+      }
+    });
+  });
+
+  group('Tomorrow return cue', () {
+    const cue =
+        'Come back tomorrow and your archive can check whether '
+        'this thread appears again.';
+
+    test('return cue exists for Start Here save', () {
+      final receipt = _engine.build(
+        source: PaywallSource.startHereToday,
+        suggestion: _suggestion(),
+      )!;
+      expect(receipt.returnCueLine, cue);
+    });
+
+    test('return cue exists for Daily Suggestion save', () {
+      final receipt = _engine.build(
+        source: PaywallSource.dailySuggestion,
+        suggestion: _suggestion(),
+      )!;
+      expect(receipt.returnCueLine, cue);
+    });
+
+    test('no receipt — and so no cue — for generic save', () {
+      expect(_engine.build(source: null, suggestion: _suggestion()), isNull);
+      expect(
+        _engine.build(
+          source: PaywallSource.generalPro,
+          suggestion: _suggestion(),
+        ),
+        isNull,
+      );
+    });
+
+    test('cue uses cautious wording, never certainty', () {
+      final copy = cue.toLowerCase();
+      expect(copy, contains('can check'));
+      expect(copy, contains('whether'));
+      expect(copy, contains('appears again'));
+
+      final receipt = _engine.build(
+        source: PaywallSource.startHereToday,
+        suggestion: _suggestion(),
+      )!;
+      final all = _receiptCopy(receipt);
+      for (final certainty in [
+        'definitely',
+        'will find',
+        'always',
+        'must',
+        'should',
+      ]) {
+        expect(
+          all,
+          isNot(contains(certainty)),
+          reason: 'receipt copy must avoid certainty word "$certainty"',
+        );
       }
     });
   });
@@ -277,8 +343,11 @@ void main() {
       )!;
       final copy = _receiptCopy(receipt);
       for (final banned in _bannedWords) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'receipt copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'receipt copy must not contain "$banned"',
+        );
       }
       expect(copy, isNot(contains('voicememory')));
     });
@@ -301,8 +370,11 @@ void main() {
         )!;
         final copy = _receiptCopy(receipt);
         for (final banned in _bannedWords) {
-          expect(copy, isNot(contains(banned)),
-              reason: 'option $id phrase must not contain "$banned"');
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'option $id phrase must not contain "$banned"',
+          );
         }
       }
     });
@@ -317,8 +389,9 @@ void main() {
       ),
     )!;
 
-    testWidgets('renders title, explanation, terms, CTA, and dismiss',
-        (tester) async {
+    testWidgets('renders title, explanation, terms, CTA, and dismiss', (
+      tester,
+    ) async {
       await _pumpReceiptCard(tester, receipt: richReceipt);
 
       expect(find.text('Saved to your archive'), findsOneWidget);
@@ -329,13 +402,14 @@ void main() {
       for (final term in richReceipt.connectedTerms) {
         expect(find.text(term), findsOneWidget);
       }
-      expect(find.text('See what Pro unlocks'), findsOneWidget);
+      expect(find.text('See Pro'), findsOneWidget);
       expect(find.text('Not now'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('renders free value line, Pro continuation, and bullets',
-        (tester) async {
+    testWidgets('renders free value line, Pro continuation, and bullets', (
+      tester,
+    ) async {
       await _pumpReceiptCard(tester, receipt: richReceipt);
 
       expect(
@@ -351,8 +425,39 @@ void main() {
       }
     });
 
-    testWidgets('free value line renders above the Pro continuation line',
-        (tester) async {
+    testWidgets('renders the tomorrow return cue', (tester) async {
+      await _pumpReceiptCard(tester, receipt: richReceipt);
+      expect(find.text(richReceipt.returnCueLine), findsOneWidget);
+    });
+
+    testWidgets('cue sits after the terms and before the Pro incentive copy', (
+      tester,
+    ) async {
+      await _pumpReceiptCard(tester, receipt: richReceipt);
+
+      final termY = tester
+          .getTopLeft(find.text(richReceipt.connectedTerms.first))
+          .dy;
+      final cueY = tester.getTopLeft(find.text(richReceipt.returnCueLine)).dy;
+      final freeY = tester
+          .getTopLeft(find.text('Today\u2019s save stays in your archive.'))
+          .dy;
+
+      expect(
+        termY,
+        lessThan(cueY),
+        reason: 'connected terms must stay above the return cue',
+      );
+      expect(
+        cueY,
+        lessThan(freeY),
+        reason: 'return cue must render before the Pro incentive copy',
+      );
+    });
+
+    testWidgets('free value line renders above the Pro continuation line', (
+      tester,
+    ) async {
       await _pumpReceiptCard(tester, receipt: richReceipt);
 
       final freeY = tester
@@ -365,16 +470,21 @@ void main() {
             ),
           )
           .dy;
-      expect(freeY, lessThan(proY),
-          reason: 'free value must be stated before the Pro continuation');
+      expect(
+        freeY,
+        lessThan(proY),
+        reason: 'free value must be stated before the Pro continuation',
+      );
     });
 
-    testWidgets('connected terms stay visible above the Pro incentive copy',
-        (tester) async {
+    testWidgets('connected terms stay visible above the Pro incentive copy', (
+      tester,
+    ) async {
       await _pumpReceiptCard(tester, receipt: richReceipt);
 
-      final termY =
-          tester.getTopLeft(find.text(richReceipt.connectedTerms.first)).dy;
+      final termY = tester
+          .getTopLeft(find.text(richReceipt.connectedTerms.first))
+          .dy;
       final freeY = tester
           .getTopLeft(find.text('Today\u2019s save stays in your archive.'))
           .dy;

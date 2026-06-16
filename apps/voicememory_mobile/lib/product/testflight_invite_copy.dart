@@ -1,11 +1,7 @@
 import 'loop_acquisition_copy.dart';
 
 /// Which TestFlight invite wedge to share with testers.
-enum TestFlightInviteVariant {
-  capacityYes,
-  proveEnough,
-  generic,
-}
+enum TestFlightInviteVariant { capacityYes, proveEnough, generic }
 
 extension TestFlightInviteVariantIds on TestFlightInviteVariant {
   String get id {
@@ -32,7 +28,7 @@ extension TestFlightInviteVariantIds on TestFlightInviteVariant {
 }
 
 /// SMS / WhatsApp, email / DM, and tester task scripts for TestFlight cohorts.
-abstract final class TestFlightInviteCopy {
+abstract class TestFlightInviteCopy {
   TestFlightInviteCopy._();
 
   static const String cohortRouteLabel =

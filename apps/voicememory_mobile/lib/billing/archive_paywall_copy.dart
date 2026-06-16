@@ -1,7 +1,7 @@
 import '../product/consumer_ui_copy.dart';
 
 /// Subscription paywall copy — calm, consumer-facing launch copy.
-abstract final class ArchivePaywallCopy {
+abstract class ArchivePaywallCopy {
   ArchivePaywallCopy._();
 
   static const String screenTitle = 'ArchiveMe Pro';
@@ -49,20 +49,15 @@ abstract final class ArchivePaywallCopy {
 }
 
 class ArchivePaywallLockedCard {
-  const ArchivePaywallLockedCard({
-    required this.title,
-    required this.subtitle,
-  });
+  const ArchivePaywallLockedCard({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
 }
 
-enum ArchivePaywallVariant {
-  b,
-}
+enum ArchivePaywallVariant { b }
 
-abstract final class ArchivePaywallVariantConfig {
+abstract class ArchivePaywallVariantConfig {
   ArchivePaywallVariantConfig._();
 
   static const ArchivePaywallVariant defaultVariant = ArchivePaywallVariant.b;
@@ -74,15 +69,14 @@ abstract final class ArchivePaywallVariantConfig {
 
   static List<ArchivePaywallLockedCard> lockedCards(
     ArchivePaywallVariant variant,
-  ) =>
-      ArchivePaywallCopy.benefits
-          .map(
-            (b) => ArchivePaywallLockedCard(
-              title: b,
-              subtitle: ArchivePaywallCopy.subheadline,
-            ),
-          )
-          .toList();
+  ) => ArchivePaywallCopy.benefits
+      .map(
+        (b) => ArchivePaywallLockedCard(
+          title: b,
+          subtitle: ArchivePaywallCopy.subheadline,
+        ),
+      )
+      .toList();
 
   static bool useKeyValueSection(ArchivePaywallVariant variant) => true;
 

@@ -64,11 +64,9 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
   @override
   Widget build(BuildContext context) {
     final summary = widget.summary;
-    final quality = widget.quality ??
-        buildMemoryQuality(
-          summary: summary,
-          keyMoments: const [],
-        );
+    final quality =
+        widget.quality ??
+        buildMemoryQuality(summary: summary, keyMoments: const []);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -99,7 +97,9 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
           else
             Text(
               summary.clarityLabel,
-              style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+              style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                fontSize: 18,
+              ),
             ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -130,9 +130,14 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
             const SizedBox(height: 2),
             Text(
               summary.nextCheck!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 16, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
             const SizedBox(height: AppSpacing.md),
             SizedBox(

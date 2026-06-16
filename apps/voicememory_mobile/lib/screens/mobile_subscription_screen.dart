@@ -73,7 +73,9 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
     return packages != null && packages.isNotEmpty;
   }
 
-  Future<ArchivePaywallStats> _loadArchiveStats(List<JournalEntry> entries) async {
+  Future<ArchivePaywallStats> _loadArchiveStats(
+    List<JournalEntry> entries,
+  ) async {
     ArchiveV1View? v1;
     if (archiveHasMinimumEvidence(entries)) {
       v1 = await const ArchiveV1Builder().build(
@@ -129,9 +131,10 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
     String? error;
 
     try {
-      offerings = await rc
-          .fetchOfferings()
-          .timeout(_loadTimeout, onTimeout: () => null);
+      offerings = await rc.fetchOfferings().timeout(
+        _loadTimeout,
+        onTimeout: () => null,
+      );
       entitlements = await AppServices.instance.billing
           .loadEntitlements(forceRefresh: true)
           .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
@@ -292,7 +295,8 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final e = _entitlements ?? PremiumEntitlements.free();
-    final stats = _paywallStats ??
+    final stats =
+        _paywallStats ??
         const ArchivePaywallStats(
           recordingCount: 0,
           spanDays: 1,
@@ -315,7 +319,8 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
           else if (e.isPro)
             _proActivePanel()
           else ...[
-            if (_growth != null && _growth!.confidence.maturity.recordingCount > 0) ...[
+            if (_growth != null &&
+                _growth!.confidence.maturity.recordingCount > 0) ...[
               ArchiveGrowthCard(
                 confidence: _growth!.confidence,
                 compact: true,
@@ -326,7 +331,8 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
             ArchivePaywallBody(
               stats: stats,
               busy: _busy,
-              showPurchaseSection: !_productsUnavailable && _subscriptionsAvailable,
+              showPurchaseSection:
+                  !_productsUnavailable && _subscriptionsAvailable,
               plansSection: _plansSection(),
               onPrimaryCta: _purchasePreferred,
               onContinueFree: () => context.pop(),
@@ -387,4 +393,3 @@ class _MobileSubscriptionScreenState extends State<MobileSubscriptionScreen> {
 }
 
 enum BillingPeriod { monthly, yearly }
-

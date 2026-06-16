@@ -7,6 +7,12 @@ import '../billing/paywall_source.dart';
 import '../billing/pro_retention_check.dart';
 import '../billing/value_moment_paywall_trigger.dart';
 import '../design/archive_mobile_typography.dart';
+import '../features/memory/memory_relevance_gate.dart';
+import '../features/memory/memory_relevance_model.dart';
+import '../features/memory/memory_scope_policy.dart';
+import '../features/memory/memory_connection_rules.dart';
+import '../features/memory/wrong_thread_feedback.dart';
+import '../features/memory/memory_scope_store.dart';
 import '../features/pressure_retention/archive_proof_counter_engine.dart';
 import '../features/pressure_retention/archive_proof_counter_model.dart';
 import '../features/pressure_retention/archive_reflection_engine.dart';
@@ -15,6 +21,7 @@ import '../features/pressure_retention/guided_thread_plan_engine.dart';
 import '../features/pressure_retention/pressure_check_in_record.dart';
 import '../features/pressure_retention/pressure_check_in_store.dart';
 import '../features/pressure_retention/pressure_evidence_confidence.dart';
+import '../features/pressure_retention/pressure_insights_copy.dart';
 import '../features/pressure_retention/pressure_loop_visibility_engine.dart';
 import '../features/pressure_retention/pressure_micro_experiment_store.dart';
 import '../features/pressure_retention/pressure_pattern_reveal_engine.dart';
@@ -30,9 +37,17 @@ import '../features/pressure_retention/pressure_weekly_recap_engine.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/pressure_retention/thread_return_evidence_engine.dart';
 import '../features/pressure_retention/weekly_thread_review_engine.dart';
+import '../features/aha/aha_moment_candidate.dart';
+import '../features/aha/aha_moment_engine.dart';
+import '../features/aha/aha_moment_store.dart';
+import '../widgets/aha/first_aha_moment_card.dart';
+import '../widgets/share/aha_proof_share_card.dart';
+import '../features/trust/aha_proof_share_eligibility.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/memory/memory_relevance_chip.dart';
+import '../widgets/memory/memory_scope_control.dart';
 import '../widgets/pressure_retention/archive_proof_counter_card.dart';
 import '../widgets/billing/pro_retention_check_card.dart';
 import '../widgets/billing/value_moment_pro_bridge.dart';
@@ -53,6 +68,9 @@ import '../widgets/pressure_retention/pressure_weekly_recap_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/pressure_retention/thread_return_evidence_card.dart';
 import '../widgets/pressure_retention/weekly_thread_review_card.dart';
+import '../widgets/referral/referral_invite_card.dart';
+import '../widgets/review/review_prompt_card.dart';
+import '../widgets/share/archive_belief_share_card_widget.dart';
 
 /// Pressure loop screen: weekly visibility, recap, and the focused reflection.
 ///
@@ -97,7 +115,8 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _reportBuilder = PressureReportBuilder();
   static const _patternEngine = PressurePatternRevealEngine();
   static const _reviewEngine = PressurePatternReviewEngine();
-  static const _personalEvidenceEngine = PressurePersonalEvidenceSummaryEngine();
+  static const _personalEvidenceEngine =
+      PressurePersonalEvidenceSummaryEngine();
   static const _returnTriggerEngine = PressureReturnTriggerEngine();
   static const _threadReturnEngine = ThreadReturnEvidenceEngine();
   static const _guidedPlanEngine = GuidedThreadPlanEngine();
@@ -106,11 +125,16 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   static const _weeklyReviewEngine = WeeklyThreadReviewEngine();
   static const _shareableProofEngine = ShareableArchiveProofEngine();
   static const _valueMomentTrigger = ValueMomentPaywallTrigger();
+  static const _relevanceGate = MemoryRelevanceGate();
 
   late Future<_InsightsData> _future;
 
   bool _showMicroExperiment = false;
   bool _experimentAccepted = false;
+
+  /// The user marked the archive connection "Not related" during this
+  /// screen instance — keeps the confirmation visible after the rebuild.
+  bool _markedNotRelatedNow = false;
   PressureReturnTriggerStatus? _triggerOverride;
 
   /// Decided once per screen instance so the check (and its answer ack)
@@ -131,7 +155,9 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
 
   PressureReturnTriggerStore? get _triggerStore =>
       widget.returnTriggerStore ??
-      (AppServices.isInitialized ? PressureReturnTriggerStore.instance() : null);
+      (AppServices.isInitialized
+          ? PressureReturnTriggerStore.instance()
+          : null);
 
   Future<void> _acceptExperiment() async {
     await _experimentStore?.markAccepted();
@@ -152,10 +178,22 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
   }
 
   Future<_InsightsData> _load() async {
+    // Persisted memory scope first: the engines below must already know
+    // whether connection claims are allowed at all. Injected records
+    // (tests/previews) control the policy directly instead.
+    if (widget.records == null && AppServices.isInitialized) {
+      await MemoryScopeStore.instance().ensureLoaded();
+      // Per-card connection rules (keep connected / future-fresh) ride
+      // along with scope: loaded before any framing happens.
+      await MemoryConnectionRuleStore.instance().ensureLoaded();
+      await WrongThreadFeedbackStore.instance().ensureLoaded();
+      await AhaMomentStore.ensureLoaded();
+    }
     final reader =
         widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
     final isPro = await reader.isPro;
-    final records = widget.records ??
+    final records =
+        widget.records ??
         await (widget.store ?? PressureCheckInStore.instance()).loadAll();
     final experimentAccepted = await _experimentStore?.accepted ?? false;
     final triggerAccepted = await _triggerStore?.accepted ?? false;
@@ -187,26 +225,32 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      appBar: AppBar(
-        title: const Text('Your pressure loop'),
-        backgroundColor: AppColors.backgroundPrimary,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: FutureBuilder<_InsightsData>(
-          future: _future,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final data = snapshot.data ??
-                const _InsightsData(records: [], isPro: false);
-            return _buildContent(context, data);
-          },
-        ),
-      ),
+    return FutureBuilder<_InsightsData>(
+      future: _future,
+      builder: (context, snapshot) {
+        final entryCount = snapshot.data?.records.length ?? 0;
+        final screenTitle = snapshot.connectionState == ConnectionState.done
+            ? PressureInsightsCopy.screenTitle(entryCount)
+            : PressureInsightsCopy.screenTitleEarly;
+
+        return Scaffold(
+          backgroundColor: AppColors.backgroundPrimary,
+          appBar: AppBar(
+            title: Text(screenTitle),
+            backgroundColor: AppColors.backgroundPrimary,
+            elevation: 0,
+          ),
+          body: SafeArea(
+            child: snapshot.connectionState != ConnectionState.done
+                ? const Center(child: CircularProgressIndicator())
+                : _buildContent(
+                    context,
+                    snapshot.data ??
+                        const _InsightsData(records: [], isPro: false),
+                  ),
+          ),
+        );
+      },
     );
   }
 
@@ -222,7 +266,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'What your pressure loop looks like',
+              PressureInsightsCopy.pageTitle(records.length),
               style: ArchiveMobileTypography.responsivePageTitle(context),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -237,15 +281,38 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     final visibility = _visibilityEngine.build(records);
     final recap = _recapEngine.build(records);
     final confidence = _confidenceEngine.fromRecords(records);
+    final proofCounter = _proofCounterEngine.build(records);
+
+    // Memory relevance gate: the archive may only interpret the present
+    // when an evidence engine already supports the connection, and the
+    // user's session choices (not related / treat as new / save without
+    // connecting) always win. Memory is evidence, not gravity.
+    final relevance = _relevanceGate.assess(records);
+    final showMemoryCards = MemoryRelevanceGate.allowMemoryCards(relevance);
 
     final children = <Widget>[
       Text(
-        'What your pressure loop looks like',
+        PressureInsightsCopy.pageTitle(records.length),
         style: ArchiveMobileTypography.responsivePageTitle(context),
       ),
       const SizedBox(height: AppSpacing.md),
+      // Memory off: a calm notice instead of connection claims. Entries
+      // stay saved; the engines above already return no claims.
+      if (!MemoryScopePolicy.memoryClaimsAllowed) ...[
+        MemoryOffNotice(onChangeSetting: () => context.push('/settings')),
+        const SizedBox(height: AppSpacing.sm),
+      ],
       if (records.length <= 2) ...[
         const PressureFirstWeekNudge(),
+        const SizedBox(height: AppSpacing.sm),
+      ],
+      if (records.length == 1) ...[
+        FilledButton.icon(
+          key: const Key('pressure_insights_add_moment_cta'),
+          onPressed: () => context.push('/pressure-check-in'),
+          icon: const Icon(Icons.bolt_outlined),
+          label: const Text(PressureInsightsCopy.addMomentCtaEarly),
+        ),
         const SizedBox(height: AppSpacing.sm),
       ],
       // Compact proof that evidence is accumulating — counts only, built from
@@ -254,22 +321,56 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       // Privacy-safe share card right next to the proof counter — counts
       // only, never user text. Renders nothing without a connected thread.
       ..._shareableProofSection(records),
-      // Thread continuity first: evidence that a real thread is being tracked
-      // over time. Renders only when a thread actually repeated.
-      ..._threadReturnSection(records),
-      // The guided plan turns that evidence into a light "yesterday → today"
-      // structure with one small next recording.
-      ..._guidedPlanSection(records),
-      // A repeated belief-like phrase in the user's own words, with gentle
-      // distance from it. Renders only when a phrase can be safely formed.
-      ..._beliefDistanceSection(records),
-      // Compact weekly review: what returned, faded, or changed across the
-      // archive this week. Renders only when something genuinely moved.
-      ..._weeklyReviewSection(records),
+      // Relevance label above the memory cards: cautious for "possible",
+      // confident only when engines already hold the evidence, and the
+      // place to mark the connection "Not related".
+      ..._memoryRelevanceSection(relevance),
+      if (showMemoryCards) ...[
+        // First honest aha — only when stronger memory cards are absent.
+        ..._ahaMomentSection(records),
+        // Thread continuity first: evidence that a real thread is being
+        // tracked over time. Renders only when a thread actually repeated.
+        ..._threadReturnSection(records),
+        // The guided plan turns that evidence into a light "yesterday →
+        // today" structure with one small next recording.
+        ..._guidedPlanSection(records),
+        // A repeated belief-like phrase in the user's own words, with
+        // gentle distance from it. Renders only when safely formed.
+        ..._beliefDistanceSection(records),
+        // Compact weekly review: what returned, faded, or changed across
+        // the archive this week. Renders only when something moved.
+        ..._weeklyReviewSection(records),
+      ],
       // Pro retention check: one optional two-tap question for Pro users
       // who genuinely saw a Pro-value surface above. Never a cancellation
       // flow; manage/cancel info stays where it already is.
       ..._proRetentionSection(records, isPro),
+      // Referral invite: only after a real value moment, always below the
+      // value cards it follows. Copy-to-clipboard only — nothing from the
+      // archive is ever shared.
+      ReferralInviteSection(
+        entryCount: records.length,
+        hasWeeklyReview: _weeklyReviewEngine.build(records).hasReview,
+        hasConnectedProofCounter:
+            proofCounter.hasProof &&
+            proofCounter.connectedCount >=
+                ArchiveProofCounter.minConnectedEntries,
+      ),
+      // App Store review prompt: only after a real value moment, once per
+      // session and once ever. One CTA into the native review abstraction
+      // and a clear "Not now" — never a gate, never a follow-up.
+      ReviewPromptSection(
+        entryCount: records.length,
+        hasWeeklyReview: _weeklyReviewEngine.build(records).hasReview,
+      ),
+      // User-approved belief share card: only after a real value moment,
+      // always below the value cards it follows. The user picks a fixed
+      // generalized line — nothing from the archive can enter the card.
+      ArchiveBeliefShareSection(
+        hasBeliefDistance: _beliefDistanceEngine.build(records).hasBelief,
+        hasWeeklyReview: _weeklyReviewEngine.build(records).hasReview,
+        hasThreadReturn: _threadReturnEngine.build(records).hasEvidence,
+      ),
       // Small dismissible Pro bridge — only after a real value moment, and
       // only below the evidence it refers to. Never blocks anything.
       ..._valueMomentSection(records, isPro),
@@ -280,8 +381,7 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         PressurePatternRevealCard(
           reveal: _patternEngine.build(records),
           isPro: isPro,
-          onTryInterruption: () =>
-              setState(() => _showMicroExperiment = true),
+          onTryInterruption: () => setState(() => _showMicroExperiment = true),
           onUnlock: () => _openPaywall(
             'Unlock full pattern history',
             'Pro keeps your full pressure pattern history across weeks and '
@@ -304,9 +404,9 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
           review: _reviewEngine.build(records),
           isPro: isPro,
           onUnlock: () => _openPaywall(
-            'Unlock full review',
+            'See your full pressure review',
             'Your full pressure review — costs, changes, and next week\'s '
-                'experiment — is part of ArchiveMe Pro.',
+                'experiment — continues with ArchiveMe Pro.',
             source: PaywallSource.pressureReview,
           ),
         ),
@@ -317,70 +417,86 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
         visibility: visibility,
         locked: !isPro,
         confidence: isPro ? confidence : null,
+        entryCount: records.length,
       ),
       const SizedBox(height: AppSpacing.sm),
-      PressureWeeklyRecapCard(recap: recap, locked: !isPro),
+      PressureWeeklyRecapCard(
+        recap: recap,
+        locked: !isPro,
+        entryCount: records.length,
+      ),
     ];
 
     if (!isPro) {
       children
         ..add(const SizedBox(height: AppSpacing.sm))
-        ..add(PressureProUpgradeCard(
-          title: 'Unlock your full pressure pattern',
-          body: 'See where this keeps repeating, week after week.',
-          onUnlock: () => _openPaywall(
-            'Unlock your full pressure pattern',
-            'See where this keeps repeating, week after week.',
-            source: PaywallSource.pressurePatternHistory,
+        ..add(
+          PressureProUpgradeCard(
+            title: 'See more of your pressure pattern',
+            body: 'See where this keeps repeating, week after week.',
+            onUnlock: () => _openPaywall(
+              'See more of your pressure pattern',
+              'See where this keeps repeating, week after week.',
+              source: PaywallSource.pressurePatternHistory,
+            ),
           ),
-        ))
+        )
         ..add(const SizedBox(height: AppSpacing.sm))
-        ..add(PressureProUpgradeCard(
-          title: 'Ask your archive what this pressure is trying to prove',
-          body: 'Pro turns your saved moments into evidence-based answers.',
+        ..add(
+          PressureProUpgradeCard(
+            title: 'Ask your archive what this pressure is trying to prove',
+            body: 'Pro turns your saved moments into evidence-based answers.',
+            onUnlock: () => _openPaywall(
+              'Ask your archive what this pressure is trying to prove',
+              'Pro turns your saved moments into evidence-based answers.',
+              source: PaywallSource.askArchive,
+            ),
+          ),
+        );
+    }
+
+    children
+      ..add(const SizedBox(height: AppSpacing.sm))
+      ..add(
+        AskTheArchiveCard(
+          records: records,
+          engine: _reflectionEngine,
+          locked: !isPro,
           onUnlock: () => _openPaywall(
             'Ask your archive what this pressure is trying to prove',
             'Pro turns your saved moments into evidence-based answers.',
             source: PaywallSource.askArchive,
           ),
-        ));
-    }
-
-    children
-      ..add(const SizedBox(height: AppSpacing.sm))
-      ..add(AskTheArchiveCard(
-        records: records,
-        engine: _reflectionEngine,
-        locked: !isPro,
-        onUnlock: () => _openPaywall(
-          'Ask your archive what this pressure is trying to prove',
-          'Pro turns your saved moments into evidence-based answers.',
-          source: PaywallSource.askArchive,
         ),
-      ));
+      );
 
     if (isPro) {
       children
         ..add(const SizedBox(height: AppSpacing.sm))
-        ..add(PressureReportShareButton(
-          reportText: _reportBuilder.toText(
-            records: records,
-            visibility: visibility,
-            recap: recap,
-            confidence: confidence,
+        ..add(
+          PressureReportShareButton(
+            reportText: _reportBuilder.toText(
+              records: records,
+              visibility: visibility,
+              recap: recap,
+              confidence: confidence,
+            ),
           ),
-        ));
+        );
     } else {
       children
         ..add(const SizedBox(height: AppSpacing.sm))
-        ..add(PressureProUpgradeCard(
-          title: 'Keep the evidence trail, not just the moment',
-          body: 'Pro keeps your full pressure report across weeks and months.',
-          onUnlock: () => _openPaywall(
-            'Keep the evidence trail, not just the moment',
-            'Pro keeps your full pressure report across weeks and months.',
+        ..add(
+          PressureProUpgradeCard(
+            title: 'Keep the evidence trail, not just the moment',
+            body:
+                'Pro keeps your full pressure report across weeks and months.',
+            onUnlock: () => _openPaywall(
+              'Keep the evidence trail, not just the moment',
+              'Pro keeps your full pressure report across weeks and months.',
+            ),
           ),
-        ));
+        );
     }
 
     return SingleChildScrollView(
@@ -437,6 +553,70 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
     ];
   }
 
+  /// Relevance chip for possible/strong connections, or the "treated as
+  /// separate" confirmation right after a Not related tap. Fresh and weak
+  /// relevance render nothing — no archive-based interpretation at all.
+  List<Widget> _memoryRelevanceSection(MemoryRelevanceAssessment relevance) {
+    if (MemoryRelevanceGate.bypassThisSession) return const [];
+    final suppressed = MemoryRelevanceGate.isNotRelated(
+      MemoryRelevanceGate.insightsConnectionId,
+    );
+    // Suppressed on a previous screen: stay silent for the session.
+    if (suppressed && !_markedNotRelatedNow) return const [];
+    if (!suppressed &&
+        relevance.relevance != MemoryRelevance.possible &&
+        relevance.relevance != MemoryRelevance.strong) {
+      return const [];
+    }
+    return [
+      MemoryRelevanceChip(
+        assessment: relevance,
+        marked: suppressed,
+        onMarkedNotRelated: () => setState(() => _markedNotRelatedNow = true),
+      ),
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
+  /// First honest archive aha — suppressed when thread return, belief
+  /// distance, or weekly review already render on this screen.
+  List<Widget> _ahaMomentSection(List<PressureCheckInRecord> records) {
+    final entryCount = records.length;
+    final stronger = AhaMomentEngine.hasStrongerMemoryCard(
+      records: records,
+      entryCount: entryCount,
+    );
+    final candidate = const AhaMomentEngine().evaluate(
+      records: records,
+      entryCount: entryCount,
+      hasStrongerMemoryCardVisible: stronger,
+      source: 'insights',
+      trackAnalytics: false,
+    );
+    if (!AhaMomentGates.shouldShow(
+      candidate: candidate,
+      entryCount: entryCount,
+    )) {
+      return const [];
+    }
+    return [
+      FirstAhaMomentCard(
+        candidate: candidate!,
+        source: 'insights',
+        onChanged: () => setState(() {}),
+      ),
+      if (AhaProofShareEligibility.shouldShow) ...[
+        const SizedBox(height: AppSpacing.sm),
+        AhaProofShareCard(
+          entryCount: entryCount,
+          source: 'insights',
+          onDismiss: () => setState(() {}),
+        ),
+      ],
+      const SizedBox(height: AppSpacing.sm),
+    ];
+  }
+
   /// Return trigger card, below the reveal/review/micro-experiment area.
   /// Thread continuity card — only when a thread genuinely repeated across
   /// the user's entries. Shows nothing otherwise.
@@ -484,11 +664,14 @@ class _PressureInsightsScreenState extends State<PressureInsightsScreen> {
       hasWeeklyReview: _weeklyReviewEngine.build(records).hasReview,
       hasBeliefDistance: _beliefDistanceEngine.build(records).hasBelief,
       hasThreadReturnEvidence: evidence.hasEvidence,
-      hasConnectedProofCounter: counter.hasProof &&
+      hasConnectedProofCounter:
+          counter.hasProof &&
           counter.connectedCount >= ArchiveProofCounter.minConnectedEntries,
     );
-    _proRetentionEligible ??=
-        ProRetentionCheck.shouldShow(isPro: isPro, cardType: cardType);
+    _proRetentionEligible ??= ProRetentionCheck.shouldShow(
+      isPro: isPro,
+      cardType: cardType,
+    );
     if (!_proRetentionEligible! || cardType == null) return const [];
     return [
       ProRetentionCheckCard(

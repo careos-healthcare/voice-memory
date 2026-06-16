@@ -68,8 +68,9 @@ class _ProtectArchiveBannerState extends State<ProtectArchiveBanner> {
               ),
               TextButton(
                 onPressed: () async {
-                  await GuestFirstAuth(AppServices.instance.prefs)
-                      .dismissProtectBanner();
+                  await GuestFirstAuth(
+                    AppServices.instance.prefs,
+                  ).dismissProtectBanner();
                   if (mounted) setState(() => _visible = false);
                 },
                 child: const Text('Dismiss'),

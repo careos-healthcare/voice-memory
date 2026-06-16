@@ -25,10 +25,7 @@ class ArchiveSurpriseObservation {
 }
 
 class ArchiveSurprisesView {
-  const ArchiveSurprisesView({
-    required this.observations,
-    this.emptyMessage,
-  });
+  const ArchiveSurprisesView({required this.observations, this.emptyMessage});
 
   final List<ArchiveSurpriseObservation> observations;
   final String? emptyMessage;

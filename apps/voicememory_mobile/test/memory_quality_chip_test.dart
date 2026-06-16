@@ -55,9 +55,7 @@ void main() {
   testWidgets('hides when shouldShow is false', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: MemoryQualityChip(quality: MemoryQuality.hidden),
-        ),
+        home: Scaffold(body: MemoryQualityChip(quality: MemoryQuality.hidden)),
       ),
     );
     expect(find.text('Early read'), findsNothing);

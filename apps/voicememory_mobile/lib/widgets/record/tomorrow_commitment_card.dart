@@ -90,10 +90,7 @@ class _TomorrowCommitmentCardState extends State<TomorrowCommitmentCard> {
           ConsumerUiCopy.tomorrowCommitmentLabel,
           style: VoiceMemoryTypography.metadataStyle(
             color: AppColors.warning,
-          ).copyWith(
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.6,
-          ),
+          ).copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.6),
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
@@ -130,9 +127,7 @@ class _TomorrowCommitmentCardState extends State<TomorrowCommitmentCard> {
           width: double.infinity,
           height: 40,
           child: TextButton(
-            onPressed: _saving
-                ? null
-                : () => setState(() => _dismissed = true),
+            onPressed: _saving ? null : () => setState(() => _dismissed = true),
             child: const Text(ConsumerUiCopy.tomorrowCommitmentDismissCta),
           ),
         ),
@@ -143,7 +138,8 @@ class _TomorrowCommitmentCardState extends State<TomorrowCommitmentCard> {
   Future<void> _onRemind() async {
     setState(() => _saving = true);
     try {
-      final save = widget.onRemindTomorrow ??
+      final save =
+          widget.onRemindTomorrow ??
           TomorrowCommitmentCoordinator.saveFromReturnLoop;
       await save(widget.loop);
       if (!mounted) return;

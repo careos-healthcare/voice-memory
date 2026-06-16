@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Shared navigation for archive signal surfaces.
-abstract final class SignalArchiveNavigation {
+abstract class SignalArchiveNavigation {
   SignalArchiveNavigation._();
 
   static void openSignalDetail(BuildContext context) {

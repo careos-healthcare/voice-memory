@@ -7,10 +7,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Gentle memory-limit upsell — long-term pattern memory, not premium AI.
 class PatternMemoryLimitCard extends StatelessWidget {
-  const PatternMemoryLimitCard({
-    super.key,
-    required this.onUnlock,
-  });
+  const PatternMemoryLimitCard({super.key, required this.onUnlock});
 
   final VoidCallback onUnlock;
 
@@ -32,7 +29,9 @@ class PatternMemoryLimitCard extends StatelessWidget {
         children: [
           Text(
             ConsumerUiCopy.patternMemoryGrowingTitle,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

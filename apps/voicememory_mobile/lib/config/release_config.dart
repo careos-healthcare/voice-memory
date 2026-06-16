@@ -7,7 +7,7 @@ import 'screenshot_mode.dart';
 import 'trial_mode.dart';
 
 /// Release-build guards for screenshot mode, developer routes, and trial surfaces.
-abstract final class ReleaseConfig {
+abstract class ReleaseConfig {
   ReleaseConfig._();
 
   /// Screenshot captures require an explicit compile-time define.

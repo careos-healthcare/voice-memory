@@ -25,7 +25,9 @@ JournalEntry _entry(String text, {int pad = 80}) {
   );
 }
 
-WatchForItem _pending({String text = 'whether you take responsibility before asking for help'}) {
+WatchForItem _pending({
+  String text = 'whether you take responsibility before asking for help',
+}) {
   return WatchForItem(
     id: 'wf1',
     createdAt: DateTime(2026, 5, 24),
@@ -61,8 +63,14 @@ void main() {
   });
 
   test('cycles deterministic alternatives', () {
-    final a = engine.buildSuggested(now: DateTime(2026, 5, 25), alternativeIndex: 0);
-    final b = engine.buildSuggested(now: DateTime(2026, 5, 25), alternativeIndex: 1);
+    final a = engine.buildSuggested(
+      now: DateTime(2026, 5, 25),
+      alternativeIndex: 0,
+    );
+    final b = engine.buildSuggested(
+      now: DateTime(2026, 5, 25),
+      alternativeIndex: 1,
+    );
     expect(a.text, isNot(equals(b.text)));
   });
 
@@ -113,7 +121,10 @@ void main() {
     );
     expect(result, WatchForResult.changedShape);
     expect(
-      engine.resultHeadline(result, comparisonHint: ReturnCaptureComparisonHints.lighter),
+      engine.resultHeadline(
+        result,
+        comparisonHint: ReturnCaptureComparisonHints.lighter,
+      ),
       ConsumerUiCopy.watchForResultFeltLighterToday,
     );
     expect(

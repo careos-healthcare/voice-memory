@@ -23,12 +23,27 @@ const _consumerFacingSources = [
   'lib/screens/account_screen.dart',
   'lib/screens/settings_screen.dart',
   'lib/screens/about_screen.dart',
+  'lib/screens/privacy_screen.dart',
+  'lib/features/trust/privacy_screen_copy.dart',
+  'lib/features/trust/pro_trust_copy.dart',
   'lib/screens/paywall_screen.dart',
   'lib/screens/export_screen.dart',
+  'lib/security/archive_privacy_controls_copy.dart',
+  'lib/widgets/security/archive_privacy_controls_card.dart',
+  'lib/widgets/security/archive_data_flow_sheet.dart',
+  'lib/security/account_privacy_controls_copy.dart',
+  'lib/security/privacy_copy_policy.dart',
+  'lib/widgets/account/account_privacy_controls_section.dart',
+  'lib/record/record_screen_framing_copy.dart',
+  'lib/widgets/record/record_first_run_privacy_reassurance.dart',
   'lib/screens/record_screen.dart',
+  'lib/features/record/daily_mirror_copy.dart',
+  'lib/widgets/record/daily_mirror_record_card.dart',
   'lib/widgets/record/first_recording_handoff_card.dart',
   'lib/widgets/record/loop_mode_first_handoff_card.dart',
   'lib/widgets/record/today_noticed_post_save_card.dart',
+  'lib/widgets/record/post_save_recorded_summary_card.dart',
+  'lib/features/post_save/post_save_recorded_summary_copy.dart',
   'lib/widgets/loop_mode/loop_paywall_teaser_card.dart',
   'lib/widgets/retention/reminder_pre_prompt_sheet.dart',
   'lib/services/capture_save_messages.dart',
@@ -40,6 +55,9 @@ const _forbiddenPatterns = <String, String>{
   r'\bVoiceMemory\b': 'VoiceMemory',
   r'\bvoice memory\b': 'voice memory',
   r'\bVoice Memory\b': 'Voice Memory',
+  r'\bChatGPT\b': 'ChatGPT',
+  r'\bOpenAI processing\b': 'OpenAI processing',
+  r'\bWhisper\b': 'Whisper',
 };
 
 /// Lines that may mention legacy identifiers but are not rendered to users.
@@ -56,11 +74,17 @@ bool _allowlistedLine(String path, String line) {
   if (line.contains('voicememory_colors')) return true;
   if (line.contains('voice-memory-iota')) return true;
   if (line.contains('voicememory.app')) return true;
-  if (line.contains('voice_capture') || line.contains('offline_voice_capture')) {
+  if (line.contains('voice_capture') ||
+      line.contains('offline_voice_capture')) {
     return true;
   }
   if (line.contains('@Deprecated') || line.contains('@deprecated')) return true;
   if (line.contains('voiceMemoryNoticed')) return true;
+  if (line.contains('bannedTerms') ||
+      line.contains('bannedInternalTerms') ||
+      line.contains('bannedFirstImpressionPhrases')) {
+    return true;
+  }
   if (path.endsWith('Info.plist') && line.contains('voicememory')) {
     // URL scheme / bundle id — not consumer copy.
     return line.contains('CFBundleURLSchemes') ||

@@ -27,7 +27,13 @@ class ArchiveThemeGapEngine {
   ];
 
   static const _themeKeywords = <String, List<String>>{
-    'relationships': ['relationship', 'partner', 'marriage', 'family', 'friend'],
+    'relationships': [
+      'relationship',
+      'partner',
+      'marriage',
+      'family',
+      'friend',
+    ],
     'health': ['health', 'sleep', 'exercise', 'body', 'energy', 'tired'],
     'career': ['career', 'work', 'job', 'manager', 'promotion'],
     'money': ['money', 'finance', 'financial', 'salary', 'savings'],
@@ -46,8 +52,7 @@ class ArchiveThemeGapEngine {
     final tracker = const ThemeTrackerService();
     final result = tracker.track(entries: entries);
     final byTheme = {
-      for (final t in result.topThemes)
-        _canonicalKey(t.name): t.frequency,
+      for (final t in result.topThemes) _canonicalKey(t.name): t.frequency,
     };
 
     final out = <ArchiveV1Contradiction>[];
@@ -70,14 +75,17 @@ class ArchiveThemeGapEngine {
       if (share > maxSharePercentForGap) continue;
 
       final display = ThemeTrackerService.displayNames[themeId] ?? themeId;
-      final confidence = (68 + importanceHits.length * 4).clamp(minConfidence, 92);
+      final confidence = (68 + importanceHits.length * 4).clamp(
+        minConfidence,
+        92,
+      );
 
       out.add(
         ArchiveV1Contradiction(
           id: 'gap:$themeId',
-          youSay:
-              'You describe $display as important in your reflections.',
-          but: 'Only $share% of your eligible recordings mention $display '
+          youSay: 'You describe $display as important in your reflections.',
+          but:
+              'Only $share% of your eligible recordings mention $display '
               '($freq of $total).',
           confidenceScore: confidence,
           entryIds: importanceHits.take(4).map((e) => e.id).toList(),
@@ -92,7 +100,9 @@ class ArchiveThemeGapEngine {
 
   int _countMentions(List<JournalEntry> eligible, List<String> keywords) {
     return eligible
-        .where((e) => keywords.any((k) => e.transcript.toLowerCase().contains(k)))
+        .where(
+          (e) => keywords.any((k) => e.transcript.toLowerCase().contains(k)),
+        )
         .length;
   }
 

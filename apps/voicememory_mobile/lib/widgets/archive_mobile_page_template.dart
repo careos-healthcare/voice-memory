@@ -66,10 +66,7 @@ class ArchiveMobilePageTemplate extends StatelessWidget {
         ],
         if (actionArea != null) ...[
           const SizedBox(height: ArchiveMobileSpacing.lg),
-          Align(
-            alignment: Alignment.centerRight,
-            child: actionArea!,
-          ),
+          Align(alignment: Alignment.centerRight, child: actionArea!),
         ],
         const SizedBox(height: ArchiveMobileSpacing.xl),
       ],

@@ -9,39 +9,37 @@ PatternMemory _memory({
   List<String> helped = const [],
   List<String> harder = const [],
   String? lastResult,
-}) =>
-    PatternMemory(
-      id: 'pm1',
-      patternTitle: 'Taking responsibility before asking for help',
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 4),
-      checkInCount: 4,
-      showedAgainCount: 2,
-      lighterCount: 1,
-      heavierCount: 1,
-      lastResult: lastResult,
-      commonBeforeMoments: before,
-      helpedMoments: helped,
-      harderMoments: harder,
-      nextBestQuestion: 'What happens right before it shows up?',
-      status: status,
-    );
+}) => PatternMemory(
+  id: 'pm1',
+  patternTitle: 'Taking responsibility before asking for help',
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 4),
+  checkInCount: 4,
+  showedAgainCount: 2,
+  lighterCount: 1,
+  heavierCount: 1,
+  lastResult: lastResult,
+  commonBeforeMoments: before,
+  helpedMoments: helped,
+  harderMoments: harder,
+  nextBestQuestion: 'What happens right before it shows up?',
+  status: status,
+);
 
 Future<void> _pump(WidgetTester tester, PatternMemory memory) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
-        body: SingleChildScrollView(
-          child: PatternMemoryCard(memory: memory),
-        ),
+        body: SingleChildScrollView(child: PatternMemoryCard(memory: memory)),
       ),
     ),
   );
 }
 
 void main() {
-  testWidgets('active status shows correct copy, count and next question',
-      (tester) async {
+  testWidgets('active status shows correct copy, count and next question', (
+    tester,
+  ) async {
     await _pump(
       tester,
       _memory(
@@ -53,10 +51,7 @@ void main() {
     );
 
     expect(find.text('This pattern keeps showing up.'), findsOneWidget);
-    expect(
-      find.textContaining('Checked 4 times'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Checked 4 times'), findsOneWidget);
     expect(find.text('Before it shows up'), findsOneWidget);
     expect(find.text('· when someone expected something'), findsOneWidget);
     expect(find.text('What helped'), findsOneWidget);
@@ -73,10 +68,7 @@ void main() {
 
   testWidgets('easing status copy', (tester) async {
     await _pump(tester, _memory(status: PatternMemoryStatus.easing));
-    expect(
-      find.text('This pattern may be getting lighter.'),
-      findsOneWidget,
-    );
+    expect(find.text('This pattern may be getting lighter.'), findsOneWidget);
   });
 
   testWidgets('needsAttention status shows harder moments', (tester) async {
@@ -87,10 +79,7 @@ void main() {
         harder: const ['carried it alone'],
       ),
     );
-    expect(
-      find.text('This pattern may need more attention.'),
-      findsOneWidget,
-    );
+    expect(find.text('This pattern may need more attention.'), findsOneWidget);
     expect(find.text('What made it heavier'), findsOneWidget);
     expect(find.text('· carried it alone'), findsOneWidget);
   });

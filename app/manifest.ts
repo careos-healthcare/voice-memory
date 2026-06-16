@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "VoiceMemory",
-    short_name: "VoiceMemory",
+    name: "ArchiveMe",
+    short_name: "ArchiveMe",
     description:
       "Private voice reflections — local-first, resurfaced in your own words.",
     start_url: "/",

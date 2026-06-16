@@ -40,8 +40,7 @@ class CrossReferenceEngine {
     for (final t in themes) {
       var score = 50 + t.frequency * 4;
       if (focusThemeKeys.contains(t.themeKey)) score += 25;
-      if (belief.isNotEmpty &&
-          belief.toLowerCase().contains(t.themeKey)) {
+      if (belief.isNotEmpty && belief.toLowerCase().contains(t.themeKey)) {
         score += 15;
       }
       if (score >= minScore) {
@@ -59,17 +58,12 @@ class CrossReferenceEngine {
 
     final relatedBeliefs = <RelatedBelief>[];
     if (belief.isNotEmpty) {
-      relatedBeliefs.add(
-        RelatedBelief(statement: belief, relevanceScore: 95),
-      );
+      relatedBeliefs.add(RelatedBelief(statement: belief, relevanceScore: 95));
     }
     for (final s in shifts.reports.take(3)) {
       if (s.newBelief.toLowerCase() == belief.toLowerCase()) continue;
       relatedBeliefs.add(
-        RelatedBelief(
-          statement: s.newBelief,
-          relevanceScore: s.confidence,
-        ),
+        RelatedBelief(statement: s.newBelief, relevanceScore: s.confidence),
       );
     }
 
@@ -85,7 +79,9 @@ class CrossReferenceEngine {
         ),
       );
     }
-    relatedBlindSpots.sort((a, b) => b.relevanceScore.compareTo(a.relevanceScore));
+    relatedBlindSpots.sort(
+      (a, b) => b.relevanceScore.compareTo(a.relevanceScore),
+    );
 
     final relatedContradictions = <RelatedContradiction>[];
     for (final c in contradictions.reports) {
@@ -97,8 +93,7 @@ class CrossReferenceEngine {
       relatedContradictions.add(
         RelatedContradiction(
           id: c.id,
-          summary:
-              '“${c.originalStatement}” vs “${c.conflictingStatement}”',
+          summary: '“${c.originalStatement}” vs “${c.conflictingStatement}”',
           relevanceScore: score.clamp(0, 100),
         ),
       );

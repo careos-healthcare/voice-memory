@@ -15,7 +15,7 @@ import 'tomorrow_check_in_store.dart';
 import 'watch_for_model.dart';
 
 /// Creates and completes locked tomorrow check-ins.
-abstract final class TomorrowCheckInCoordinator {
+abstract class TomorrowCheckInCoordinator {
   TomorrowCheckInCoordinator._();
 
   static const _defaultPrompt =
@@ -92,7 +92,9 @@ abstract final class TomorrowCheckInCoordinator {
   }
 
   /// Most recent missed check-in that still needs a "what got in the way?" prompt.
-  static Future<TomorrowCheckIn?> loadMissedNeedingReason({DateTime? now}) async {
+  static Future<TomorrowCheckIn?> loadMissedNeedingReason({
+    DateTime? now,
+  }) async {
     if (ScreenshotMode.enabled) return null;
     final missed = await _store().loadRecentMissed(now: now);
     if (missed == null) return null;

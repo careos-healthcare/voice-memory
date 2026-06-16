@@ -67,7 +67,8 @@ class ArchiveDeepDiveEngine {
       hasDistinctEvolution: v1.thenNow?.hasDistinctEvolution ?? false,
       hasContradictions: v1.contradictions.isNotEmpty,
       beliefWeakening: beliefTimeline.trend == BeliefTimelineTrend.weakening,
-      firstEvidenceAt: v1.thenNow?.firstEvidenceAt ?? eligible.firstOrNull?.createdAt,
+      firstEvidenceAt:
+          v1.thenNow?.firstEvidenceAt ?? eligible.firstOrNull?.createdAt,
     );
 
     return ArchiveDeepDiveView(
@@ -89,7 +90,8 @@ class ArchiveDeepDiveEngine {
     List<JournalEntry> eligible,
     List<JournalEntry> supporting,
   ) {
-    final summary = archiveWhyArchiveBelievesCopy(eligible) ??
+    final summary =
+        archiveWhyArchiveBelievesCopy(eligible) ??
         'The archive weighed ${belief.evidenceCount} reflections with usable transcripts.';
     final excerpts = <ArchiveDeepDiveExcerpt>[];
     for (final e in supporting.take(6)) {
@@ -115,17 +117,16 @@ class ArchiveDeepDiveEngine {
     final latestEntry = supporting.isNotEmpty ? supporting.last : null;
     final peakEntry = _entryNearDate(supporting, beliefTimeline.firstSeen);
 
-    final firstAt = thenNow?.firstEvidenceAt ??
+    final firstAt =
+        thenNow?.firstEvidenceAt ??
         firstEntry?.createdAt ??
         beliefTimeline.firstSeen;
     final latestAt = thenNow?.latestEvidenceAt ?? latestEntry?.createdAt;
 
-    final thenBelief = evo.firstBelief?.beliefText.trim() ??
-        thenNow?.thenBelief ??
-        statement;
-    final nowBelief = evo.currentBelief?.beliefText.trim() ??
-        thenNow?.nowBelief ??
-        statement;
+    final thenBelief =
+        evo.firstBelief?.beliefText.trim() ?? thenNow?.thenBelief ?? statement;
+    final nowBelief =
+        evo.currentBelief?.beliefText.trim() ?? thenNow?.nowBelief ?? statement;
 
     return ArchiveDeepDiveBeliefHistory(
       firstAppearance: ArchiveDeepDiveAppearance(

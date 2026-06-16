@@ -1,10 +1,5 @@
 /// Which part of the pattern story a shareable recap is built from.
-enum PatternShareRecapType {
-  weekly,
-  progress,
-  memory,
-  fallback,
-}
+enum PatternShareRecapType { weekly, progress, memory, fallback }
 
 extension PatternShareRecapTypeIds on PatternShareRecapType {
   String get id => name;

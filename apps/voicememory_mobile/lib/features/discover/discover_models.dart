@@ -15,12 +15,12 @@ enum DiscoverInsightMode {
   }
 
   String get emptyStateMessage => switch (this) {
-        DiscoverInsightMode.empty => '',
-        DiscoverInsightMode.early =>
-          'Keep recording. Your archive needs more spoken detail before beliefs can surface.',
-        DiscoverInsightMode.growing => '',
-        DiscoverInsightMode.full => '',
-      };
+    DiscoverInsightMode.empty => '',
+    DiscoverInsightMode.early =>
+      'Keep recording. Your archive needs more spoken detail before beliefs can surface.',
+    DiscoverInsightMode.growing => '',
+    DiscoverInsightMode.full => '',
+  };
 }
 
 class DiscoverHeaderStats {

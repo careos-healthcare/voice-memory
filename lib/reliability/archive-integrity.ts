@@ -1,7 +1,7 @@
 import { inspectEntryIntegrity } from "@/lib/reliability/integrity";
 import { validateArchivePhotoIntegrity } from "@/lib/photo/integrity";
 import type { JournalEntry } from "@/types/journal";
-import type { VoiceMemoryArchivePackage } from "@/types/archive-permanence";
+import type { ArchiveMeArchivePackage } from "@/types/archive-permanence";
 import type { EncryptedPayload } from "@/types/sync";
 import type {
   SyncAudioMetadataRecord,
@@ -142,7 +142,7 @@ export function crossCheckAudioMetadata(
 }
 
 export function inspectArchivePackageIntegrity(
-  archive: VoiceMemoryArchivePackage,
+  archive: ArchiveMeArchivePackage,
 ): ArchiveIntegrityIssue[] {
   const issues: ArchiveIntegrityIssue[] = [];
 

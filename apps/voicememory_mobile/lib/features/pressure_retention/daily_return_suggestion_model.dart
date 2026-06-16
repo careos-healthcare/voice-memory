@@ -36,6 +36,8 @@ class DailyReturnSuggestionSet {
     required this.suggestions,
     required this.personalized,
     this.label = '',
+    this.recommendedId,
+    this.recommendationReason = '',
   });
 
   static const DailyReturnSuggestionSet empty = DailyReturnSuggestionSet(
@@ -48,6 +50,9 @@ class DailyReturnSuggestionSet {
   static const String archiveNoticedReason =
       'Your archive noticed this might be worth revisiting.';
   static const String evidenceLabel = 'From your archive:';
+  static const String primaryHeading = 'Start here today';
+  static const String whyLabel = 'Why this one';
+  static const String othersHeading = 'Other things worth checking';
 
   final List<DailyReturnSuggestion> suggestions;
 
@@ -57,5 +62,30 @@ class DailyReturnSuggestionSet {
   /// Card heading; empty for the non-personalized empty set.
   final String label;
 
+  /// Id of the single best starting point, chosen by the engine.
+  final String? recommendedId;
+
+  /// One short "Why this one" line for the recommended suggestion.
+  final String recommendationReason;
+
   bool get hasSuggestions => personalized && suggestions.isNotEmpty;
+
+  /// The single primary "Start here today" suggestion.
+  DailyReturnSuggestion? get recommendedSuggestion {
+    if (suggestions.isEmpty) return null;
+    for (final suggestion in suggestions) {
+      if (suggestion.id == recommendedId) return suggestion;
+    }
+    return suggestions.first;
+  }
+
+  /// Everything below the primary recommendation, in original order.
+  List<DailyReturnSuggestion> get otherSuggestions {
+    final recommended = recommendedSuggestion;
+    if (recommended == null) return const [];
+    return [
+      for (final suggestion in suggestions)
+        if (suggestion.id != recommended.id) suggestion,
+    ];
+  }
 }

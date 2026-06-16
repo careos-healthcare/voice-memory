@@ -11,7 +11,7 @@ import '../widgets/capture_entry_actions.dart';
 import '../widgets/record/start_here_loader.dart';
 
 /// Canonical copy for first-time / low-data surfaces.
-abstract final class EmptyArchiveCopy {
+abstract class EmptyArchiveCopy {
   EmptyArchiveCopy._();
 
   static const String intentionalEmptyTitle =
@@ -134,8 +134,9 @@ class EmptyArchivePanel extends StatelessWidget {
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment:
-          centered ? CrossAxisAlignment.center : CrossAxisAlignment.stretch,
+      crossAxisAlignment: centered
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.stretch,
       children: [
         Text(
           title,
@@ -157,10 +158,7 @@ class EmptyArchivePanel extends StatelessWidget {
           ),
         ] else if (ctaLabel != null && onCta != null) ...[
           const SizedBox(height: 20),
-          FilledButton(
-            onPressed: onCta,
-            child: Text(ctaLabel!),
-          ),
+          FilledButton(onPressed: onCta, child: Text(ctaLabel!)),
         ],
       ],
     );
@@ -168,10 +166,7 @@ class EmptyArchivePanel extends StatelessWidget {
     if (!centered) return content;
 
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: content,
-      ),
+      child: Padding(padding: const EdgeInsets.all(32), child: content),
     );
   }
 }
@@ -230,10 +225,7 @@ class IntentionalEmptyArchiveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BeliefEmptyState(
-      centered: centered,
-      fillViewport: fillViewport,
-    );
+    return BeliefEmptyState(centered: centered, fillViewport: fillViewport);
   }
 }
 

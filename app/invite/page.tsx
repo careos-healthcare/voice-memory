@@ -33,7 +33,7 @@ export default function InvitePage() {
 
         <div className="mt-16 space-y-10">
           <p className="text-sm leading-relaxed text-zinc-400">
-            VoiceMemory is in early testing. If someone you trust shared it with you, you can try it
+            ArchiveMe is in early testing. If someone you trust shared it with you, you can try it
             privately — no account required to start.
           </p>
 

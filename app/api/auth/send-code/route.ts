@@ -1,5 +1,7 @@
+import { AuthRateLimitError, recordSendCodeIpHit } from "@/lib/auth/auth-code-policy";
 import { authApiFailure, authApiSuccess } from "@/lib/server/auth-api-response";
 import { createAuthSendCodeLog, hashEmailForLog } from "@/lib/server/auth-route-log";
+import { ipHashFromRequest } from "@/lib/server/request-identity";
 import {
   isPostgresAuthError,
   logAuthError,
@@ -48,11 +50,22 @@ export async function POST(request: Request) {
 
   log({ emailHash: hashEmailForLog(email) });
 
+  // Best-effort per-IP burst limit (hashed key only — never raw IPs).
+  if (!recordSendCodeIpHit(ipHashFromRequest(request), Date.now())) {
+    log({ ok: false, errorCode: "AUTH_RATE_LIMITED" });
+    finalize();
+    return authApiFailure(
+      "Too many requests. Try again shortly.",
+      "AUTH_RATE_LIMITED",
+      429,
+    );
+  }
+
   try {
     const { code } = await issueEmailLoginCode(email);
 
     if (process.env.NODE_ENV !== "production") {
-      console.info(`[VoiceMemory auth] Sign-in code for ${email}: ${code}`);
+      console.info(`[ArchiveMe auth] Sign-in code for ${email}: ${code}`);
       log({ ok: true, resendInitialized: false });
       finalize();
       return authApiSuccess({
@@ -75,6 +88,16 @@ export async function POST(request: Request) {
 
     return authApiSuccess({ message: "Code sent. Check your email." });
   } catch (error) {
+    if (error instanceof AuthRateLimitError) {
+      log({ ok: false, errorCode: "AUTH_RATE_LIMITED" });
+      finalize();
+      return authApiFailure(
+        "A code was sent recently. Check your email or try again in a minute.",
+        "AUTH_RATE_LIMITED",
+        429,
+      );
+    }
+
     if (error instanceof AuthStorageNotConfiguredError) {
       log({ ok: false, errorCode: "AUTH_STORAGE_NOT_CONFIGURED" });
       finalize(error);

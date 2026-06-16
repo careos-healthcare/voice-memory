@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../loop_mode/loop_mode_model.dart';
 
 /// Navigation for the prove_enough full evidence trail.
-abstract final class ProveEnoughEvidenceTrailNavigation {
+abstract class ProveEnoughEvidenceTrailNavigation {
   ProveEnoughEvidenceTrailNavigation._();
 
   static const routePath = '/prove-enough/evidence-trail';

@@ -43,13 +43,20 @@ class EvidenceLockerCompact extends StatelessWidget {
             const SizedBox(height: 6),
             const Text(
               'These are the pieces of evidence your archive would lose.',
-              style: TextStyle(color: AppTheme.muted, height: 1.45, fontSize: 13),
+              style: TextStyle(
+                color: AppTheme.muted,
+                height: 1.45,
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: 10),
             for (var i = 0; i < quotes.length; i++)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text('“${quotes[i]}”', style: const TextStyle(height: 1.4)),
+                child: Text(
+                  '“${quotes[i]}”',
+                  style: const TextStyle(height: 1.4),
+                ),
               ),
           ],
         ),

@@ -20,14 +20,14 @@ Future<void> _reset(String stamp) async {
 String _stamp() => DateTime.now().microsecondsSinceEpoch.toString();
 
 TomorrowCheckIn _checkIn() => TomorrowCheckIn(
-      id: 'tci1',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'Did this pattern show up again?',
-      options: kDefaultTomorrowCheckInOptions,
-    );
+  id: 'tci1',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'Did this pattern show up again?',
+  options: kDefaultTomorrowCheckInOptions,
+);
 
 /// Deterministic, fully in-memory reminder backend. Never touches the platform.
 class _FakeBackend implements CheckInReminderBackend {
@@ -92,8 +92,8 @@ void main() {
 
       final outcome =
           await CheckInReminderService.scheduleTomorrowCheckInReminder(
-        _checkIn(),
-      );
+            _checkIn(),
+          );
 
       expect(outcome, ReminderScheduleOutcome.scheduled);
       expect(backend.permissionCalls, 1);
@@ -110,8 +110,8 @@ void main() {
       // Scheduling is declined gracefully, never throws.
       final outcome =
           await CheckInReminderService.scheduleTomorrowCheckInReminder(
-        _checkIn(),
-      );
+            _checkIn(),
+          );
       expect(outcome, ReminderScheduleOutcome.permissionDenied);
       expect(backend.scheduleCalls, 0);
 
@@ -131,8 +131,8 @@ void main() {
 
       final outcome =
           await CheckInReminderService.scheduleTomorrowCheckInReminder(
-        _checkIn(),
-      );
+            _checkIn(),
+          );
       expect(outcome, ReminderScheduleOutcome.notAvailable);
       expect(backend.permissionCalls, 0);
       expect(backend.scheduleCalls, 0);
@@ -152,8 +152,8 @@ void main() {
 
       final outcome =
           await CheckInReminderService.scheduleTomorrowCheckInReminder(
-        _checkIn(),
-      );
+            _checkIn(),
+          );
       expect(outcome, ReminderScheduleOutcome.disabled);
       expect(backend.permissionCalls, 0);
       expect(backend.scheduleCalls, 0);
@@ -231,7 +231,10 @@ void main() {
             body: Builder(
               builder: (context) => ElevatedButton(
                 onPressed: () async {
-                  outcome = await CheckInReminderPrompt.ask(context, _checkIn());
+                  outcome = await CheckInReminderPrompt.ask(
+                    context,
+                    _checkIn(),
+                  );
                   returned = true;
                 },
                 child: const Text('go'),

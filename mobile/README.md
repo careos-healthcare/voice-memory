@@ -1,4 +1,4 @@
-# VoiceMemory — native mobile shell (Capacitor)
+# ArchiveMe — native mobile shell (Capacitor)
 
 This folder supports **iOS and Android store shells** that load the existing **Next.js web app**. There is **no Flutter** code and **no native UI rewrite** in this repo.
 

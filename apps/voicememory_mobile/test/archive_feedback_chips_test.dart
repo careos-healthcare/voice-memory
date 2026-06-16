@@ -14,9 +14,7 @@ Future<void> _pump(
           child: ArchiveFeedbackChips(
             targetType: ArchiveFeedbackTargetType.checkInResult,
             targetId: 'c1',
-            onSubmit: onSubmit == null
-                ? null
-                : (f) async => onSubmit(f),
+            onSubmit: onSubmit == null ? null : (f) async => onSubmit(f),
           ),
         ),
       ),
@@ -36,8 +34,9 @@ void main() {
     expect(find.text('More specific'), findsOneWidget);
   });
 
-  testWidgets('tapping a chip shows Got it and reports the feedback',
-      (tester) async {
+  testWidgets('tapping a chip shows Got it and reports the feedback', (
+    tester,
+  ) async {
     ArchiveFeedback? captured;
     await _pump(tester, onSubmit: (f) => captured = f);
 

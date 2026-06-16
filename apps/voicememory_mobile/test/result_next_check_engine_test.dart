@@ -59,14 +59,8 @@ void main() {
       notUsefulReason: 'already_knew_this',
     );
     expect(next.type, ResultNextCheckType.repeatBefore);
-    expect(
-      next.whyUseful,
-      contains('The value is not that it happened once.'),
-    );
-    expect(
-      next.whyUseful,
-      contains('whether it keeps happening or changes'),
-    );
+    expect(next.whyUseful, contains('The value is not that it happened once.'));
+    expect(next.whyUseful, contains('whether it keeps happening or changes'));
   });
 
   test('confusing keeps result type but adds simple-answer guidance', () {
@@ -76,10 +70,7 @@ void main() {
     );
     expect(next.type, ResultNextCheckType.reduceHeavier);
     expect(next.whyUseful, contains('Keep tomorrow'));
-    expect(
-      next.whyUseful,
-      contains('lighter, heavier, or different'),
-    );
+    expect(next.whyUseful, contains('lighter, heavier, or different'));
   });
 
   test('tooGeneric feedback gently prefers a concrete next check', () {
@@ -128,22 +119,24 @@ void main() {
     expect(next.type, ResultNextCheckType.makeConcrete);
   });
 
-  test('feedbackSummary dominant issue nudges next check like feedback type',
-      () {
-    final summary = ArchiveFeedbackSummary(
-      total: 2,
-      usefulCount: 0,
-      tooGenericCount: 2,
-      notMeCount: 0,
-      alreadyKnewCount: 0,
-      moreSpecificCount: 0,
-      dominantIssue: ArchiveFeedbackType.tooGeneric,
-    );
-    final next = ResultNextCheckEngine.build(
-      resultHint: 'lighter',
-      feedbackSummary: summary,
-    );
-    expect(next.type, ResultNextCheckType.makeConcrete);
-    expect(next.nextQuestion, 'What was the exact moment this showed up?');
-  });
+  test(
+    'feedbackSummary dominant issue nudges next check like feedback type',
+    () {
+      final summary = ArchiveFeedbackSummary(
+        total: 2,
+        usefulCount: 0,
+        tooGenericCount: 2,
+        notMeCount: 0,
+        alreadyKnewCount: 0,
+        moreSpecificCount: 0,
+        dominantIssue: ArchiveFeedbackType.tooGeneric,
+      );
+      final next = ResultNextCheckEngine.build(
+        resultHint: 'lighter',
+        feedbackSummary: summary,
+      );
+      expect(next.type, ResultNextCheckType.makeConcrete);
+      expect(next.nextQuestion, 'What was the exact moment this showed up?');
+    },
+  );
 }

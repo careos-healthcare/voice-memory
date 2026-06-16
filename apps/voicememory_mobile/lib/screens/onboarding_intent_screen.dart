@@ -55,10 +55,9 @@ class _OnboardingIntentScreenState extends State<OnboardingIntentScreen> {
               const SizedBox(height: AppSpacing.md),
               Text(
                 ConsumerUiCopy.acquisitionIntentQuestion,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontSize: 26,
-                      height: 1.3,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineSmall?.copyWith(fontSize: 26, height: 1.3),
               ),
               const SizedBox(height: AppSpacing.lg),
               Expanded(

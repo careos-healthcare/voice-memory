@@ -8,11 +8,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Post check-in proof: why repeated checks are turning into useful memory.
 class HabitProofCard extends StatefulWidget {
-  const HabitProofCard({
-    super.key,
-    required this.proof,
-    this.onKeepGoing,
-  });
+  const HabitProofCard({super.key, required this.proof, this.onKeepGoing});
 
   final HabitProofMoment proof;
 
@@ -64,7 +60,9 @@ class _HabitProofCardState extends State<HabitProofCard> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             proof.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -84,9 +82,14 @@ class _HabitProofCardState extends State<HabitProofCard> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               proof.nextLine!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),

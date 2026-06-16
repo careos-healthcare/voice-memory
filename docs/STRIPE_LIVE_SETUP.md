@@ -1,6 +1,6 @@
 # Stripe live integration
 
-VoiceMemory uses **Stripe Checkout** (subscription mode) and a **signed webhook** to grant Pro entitlements server-side. Billing is **fail-closed** when any required env var is missing.
+ArchiveMe uses **Stripe Checkout** (subscription mode) and a **signed webhook** to grant Pro entitlements server-side. Billing is **fail-closed** when any required env var is missing.
 
 ## Required environment variables
 
@@ -19,7 +19,7 @@ Optional after manual webhook test:
 
 ### 1. Product and price
 
-1. **Products** → create **VoiceMemory Pro** (recurring).
+1. **Products** → create **ArchiveMe Pro** (recurring).
 2. Add a monthly price (displayed from Stripe via STRIPE_PRO_PRICE_ID, fallback £9.99/month).
 3. Copy the **Price ID** → `STRIPE_PRO_PRICE_ID`.
 

@@ -20,9 +20,7 @@ void main() {
   });
 
   test('practicalNextStep offers one check to use', () {
-    final r = buildQuickHelpResponse(
-      intent: QuickHelpIntent.practicalNextStep,
-    );
+    final r = buildQuickHelpResponse(intent: QuickHelpIntent.practicalNextStep);
     expect(r.action, QuickHelpAction.useThisCheck);
     expect(r.nextCheck, isNotNull);
   });

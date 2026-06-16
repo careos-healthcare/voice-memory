@@ -4,11 +4,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// Do not store API keys, Stripe secrets, or raw passwords here.
 class SecureStorageService {
   SecureStorageService({FlutterSecureStorage? storage})
-      : _storage = storage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-              iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-            );
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.first_unlock,
+            ),
+          );
 
   final FlutterSecureStorage _storage;
   static const _prefix = 'vm_flutter_';
@@ -36,7 +39,14 @@ class SecureStorageService {
 
   void _assertSafeKey(String key) {
     final lower = key.toLowerCase();
-    const banned = ['secret', 'password', 'token', 'api_key', 'stripe', 'openai'];
+    const banned = [
+      'secret',
+      'password',
+      'token',
+      'api_key',
+      'stripe',
+      'openai',
+    ];
     if (banned.any(lower.contains)) {
       throw StateError('Refusing to store sensitive key: $key');
     }

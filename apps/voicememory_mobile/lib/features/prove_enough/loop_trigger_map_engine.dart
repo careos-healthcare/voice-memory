@@ -107,7 +107,8 @@ class LoopTriggerMapEngine {
         .fold<int>(0, (sum, row) => sum + row.count);
 
     final hasEnoughData =
-        eligible.length >= minEntriesForMap && nonUnclearHits >= minEntriesForMap;
+        eligible.length >= minEntriesForMap &&
+        nonUnclearHits >= minEntriesForMap;
 
     return LoopTriggerMapModel(
       rows: rows,

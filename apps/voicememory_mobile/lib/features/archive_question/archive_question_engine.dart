@@ -62,8 +62,8 @@ class ArchiveQuestionEngine {
     }
 
     final eligible = archiveEligibleEvidenceEntries(entries);
-    final strongest = state.strongestEvidenceQuote ??
-        archiveStrongestEvidenceQuote(entries);
+    final strongest =
+        state.strongestEvidenceQuote ?? archiveStrongestEvidenceQuote(entries);
 
     switch (id) {
       case ArchiveQuestionId.why:
@@ -128,8 +128,8 @@ class ArchiveQuestionEngine {
           questionLabel: 'How reliable is this belief?',
           answerLines: [
             '${healthLabel(state.health)} — based on ${eligible.length} '
-            'reflection${eligible.length == 1 ? '' : 's'} with usable transcripts, '
-            'not a confidence score.',
+                'reflection${eligible.length == 1 ? '' : 's'} with usable transcripts, '
+                'not a confidence score.',
           ],
         );
       case ArchiveQuestionId.whereDoesThisAppear:

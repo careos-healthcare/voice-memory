@@ -44,7 +44,9 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>ArchiveMe uses Face ID to unlock the app on this device.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>ArchiveMe uses the microphone so you can record moments.</string>
+	<string>ArchiveMe needs microphone access so you can record private voice moments.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>ArchiveMe uses speech recognition to turn your recording into text when you choose to transcribe.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

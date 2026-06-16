@@ -1,5 +1,5 @@
 /// Loop-specific acquisition start screen copy — no banned language.
-abstract final class AcquisitionStartCopy {
+abstract class AcquisitionStartCopy {
   AcquisitionStartCopy._();
 
   static const String capacityTitle =

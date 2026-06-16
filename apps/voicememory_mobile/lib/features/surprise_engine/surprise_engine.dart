@@ -23,7 +23,8 @@ class SurpriseEngine {
   final DailyDiscoveryEngine dailyEngine;
   final BeliefTimelineEngine timelineEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
 
   /// Compare [baseline] (or pre-latest entry) to the current archive.
   ArchiveSurprise? detect({
@@ -64,8 +65,9 @@ class SurpriseEngine {
 
     if (candidates.isEmpty) return null;
     candidates.sort(
-      (a, b) => SurpriseCopy.priorityIndex(a.type)
-          .compareTo(SurpriseCopy.priorityIndex(b.type)),
+      (a, b) => SurpriseCopy.priorityIndex(
+        a.type,
+      ).compareTo(SurpriseCopy.priorityIndex(b.type)),
     );
     return candidates.first;
   }
@@ -139,7 +141,8 @@ class SurpriseEngine {
     final timeline = timelineEngine.build(entries: entries, beliefText: belief);
     if (timeline.points.length < 2) return;
 
-    final prior = compareBaseline?.beliefStrengthPercent ??
+    final prior =
+        compareBaseline?.beliefStrengthPercent ??
         snapshotBaseline?.confidence ??
         timeline.points.first.strengthPercent;
     final current = timeline.currentPercent;
@@ -149,11 +152,9 @@ class SurpriseEngine {
     final drop = prior - current;
     if (drop >= ArchiveWasWrongEngine.minConfidenceDrop) return;
 
-    final evidence = archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    final evidence = archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
     if (evidence.length < 2) return;
 
     final headline = delta < 0
@@ -237,10 +238,10 @@ class SurpriseEngine {
 
     final displayHeadline =
         discovery.summary.trim().isNotEmpty &&
-                (type == SurpriseType.unexpectedThemeRise ||
-                    type == SurpriseType.themeDisappearance)
-            ? discovery.summary
-            : headline;
+            (type == SurpriseType.unexpectedThemeRise ||
+                type == SurpriseType.themeDisappearance)
+        ? discovery.summary
+        : headline;
 
     return ArchiveSurprise(
       id: 'surprise:${type.name}:${discovery.id}',

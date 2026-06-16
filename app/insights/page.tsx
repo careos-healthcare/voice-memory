@@ -10,11 +10,13 @@ import { HabitLoopCard } from "@/components/HabitLoopCard";
 import { ShareMemoryCardButton } from "@/components/memory/ShareMemoryCardButton";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
+import { BlindSpotReviewCta } from "@/components/blind-spots/BlindSpotReviewCta";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { Card, CardContent } from "@/components/ui/card";
 import { buildReturnThreads } from "@/lib/continuity/return-threads";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
+import { BELIEF_DOMINANCE_ARCHIVE_CHANGE } from "@/lib/product/belief-dominance-copy";
 import { APP_SUBTITLE } from "@/lib/product-copy";
 import type { ReturnThreadsReport } from "@/types/return-thread";
 
@@ -37,14 +39,14 @@ export default function InsightsPage() {
         <PrimaryMain className="mt-2">
         <AnimatedReveal className="mt-2">
           <p className="text-xs uppercase tracking-[0.2em] text-violet-200">
-            {APP_SUBTITLE}
+            {BELIEF_DOMINANCE_ARCHIVE_CHANGE}
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            What keeps returning
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">
+            Threads in your archive
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Unfinished conversations in your own words — what came back, what changed,
-            and what is still open.
+            {APP_SUBTITLE} — what came back, what changed, and what is still open. Current
+            belief lives on Archive.
           </p>
         </AnimatedReveal>
 
@@ -57,6 +59,8 @@ export default function InsightsPage() {
             compact
           />
         </div>
+
+        <BlindSpotReviewCta className="mt-8" />
 
         <div className="mt-8 space-y-10">
           <HabitLoopCard />

@@ -67,18 +67,14 @@ String? _patternTitle(
   return null;
 }
 
-List<KeyMoment> _relatedMoments(
-  List<KeyMoment> all,
-  String patternTitle,
-) {
+List<KeyMoment> _relatedMoments(List<KeyMoment> all, String patternTitle) {
   final lower = patternTitle.trim().toLowerCase();
   final matched = all.where((m) {
     final title = (m.patternTitle ?? '').trim().toLowerCase();
     if (title.isNotEmpty) return title == lower;
     return m.resultHint != null &&
         _conservativeResultHints.contains(m.resultHint);
-  }).toList()
-    ..sort((a, b) => b.date.compareTo(a.date));
+  }).toList()..sort((a, b) => b.date.compareTo(a.date));
   return matched;
 }
 

@@ -8,10 +8,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Enoughness score summary after a prove_enough recording.
 class EnoughnessScoreCard extends StatelessWidget {
-  const EnoughnessScoreCard({
-    super.key,
-    required this.model,
-  });
+  const EnoughnessScoreCard({super.key, required this.model});
 
   final ProveEnoughPostRecordModel model;
 
@@ -33,24 +30,25 @@ class EnoughnessScoreCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             model.enoughnessLabel,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           if (!model.transcriptWeak) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               '${model.enoughnessScore}',
-              style: ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
-                fontSize: 36,
-                color: AppColors.accentPrimary,
-              ),
+              style: ArchiveMobileTypography.responsiveSectionTitle(
+                context,
+              ).copyWith(fontSize: 36, color: AppColors.accentPrimary),
             ),
           ],
           const SizedBox(height: AppSpacing.sm),
           _RowLabel(
             label: 'Pressure',
-            value: model.transcriptWeak ? 'Not clear' : model.pressureLevel.label,
+            value: model.transcriptWeak
+                ? 'Not clear'
+                : model.pressureLevel.label,
           ),
           const SizedBox(height: AppSpacing.xs),
           _RowLabel(
@@ -79,16 +77,13 @@ class _RowLabel extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Text(
-            label,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
+          child: Text(label, style: ArchiveMobileTypography.cardLabel(context)),
         ),
         Text(
           value,
-          style: ArchiveMobileTypography.body(context).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: ArchiveMobileTypography.body(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );

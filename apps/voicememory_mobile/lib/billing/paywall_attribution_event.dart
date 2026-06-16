@@ -38,11 +38,11 @@ class PaywallAttributionEvent {
   final String? sourceRoute;
 
   Map<String, dynamic> toJson() => {
-        'type': type.id,
-        'source': source.id,
-        'at': at.toIso8601String(),
-        if (sourceRoute != null) 'sourceRoute': sourceRoute,
-      };
+    'type': type.id,
+    'source': source.id,
+    'at': at.toIso8601String(),
+    if (sourceRoute != null) 'sourceRoute': sourceRoute,
+  };
 
   static PaywallAttributionEvent? fromJson(Map<String, dynamic> json) {
     final type = PaywallAttributionEventType.fromId(json['type'] as String?);

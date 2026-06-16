@@ -3,12 +3,7 @@ import '../../storage/mobile_prefs_store.dart';
 import '../activation/activation_tracker.dart';
 
 /// How the user returned for another recording moment.
-enum ReturnSourceKind {
-  reminder,
-  widgetOrObjective,
-  manual,
-  unknown,
-}
+enum ReturnSourceKind { reminder, widgetOrObjective, manual, unknown }
 
 extension ReturnSourceKindIds on ReturnSourceKind {
   String get id => name;
@@ -59,7 +54,9 @@ class ReturnReasonCaptureStore {
   }) async {
     final raw = await _prefs.readMap(_historyKey);
     final list = raw?['items'];
-    final items = list is List ? List<Map<String, dynamic>>.from(list) : <Map<String, dynamic>>[];
+    final items = list is List
+        ? List<Map<String, dynamic>>.from(list)
+        : <Map<String, dynamic>>[];
     items.add({
       'source': source.id,
       'activeJourney': activeJourneyAtReturn,

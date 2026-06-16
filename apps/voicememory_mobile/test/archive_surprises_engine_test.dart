@@ -191,7 +191,10 @@ void main() {
     );
     for (final o in view.observations) {
       expect(o.observation.toLowerCase(), isNot(contains('you focus on')));
-      expect(o.observation.toLowerCase(), isNot(contains('forming from reflections')));
+      expect(
+        o.observation.toLowerCase(),
+        isNot(contains('forming from reflections')),
+      );
     }
   });
 }

@@ -22,11 +22,7 @@ void main() {
     await _resetServices();
   });
 
-  Future<void> pumpAtSize(
-    WidgetTester tester,
-    Size size,
-    Widget child,
-  ) async {
+  Future<void> pumpAtSize(WidgetTester tester, Size size, Widget child) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -43,13 +39,18 @@ void main() {
       Size(820, 1180),
       Size(1280, 800),
     ]) {
-      testWidgets('renders without overflow at ${size.width.toInt()}w', (tester) async {
+      testWidgets('renders without overflow at ${size.width.toInt()}w', (
+        tester,
+      ) async {
         await pumpAtSize(
           tester,
           size,
           const PatternsEmptyView(fillViewport: false),
         );
-        expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsOneWidget);
+        expect(
+          find.text(ConsumerUiCopy.patternsEmptyPageTitle),
+          findsOneWidget,
+        );
       });
     }
   });
@@ -60,11 +61,13 @@ void main() {
       Size(820, 1180),
       Size(1280, 800),
     ]) {
-      testWidgets('fallback renders without overflow at ${size.width.toInt()}w',
-          (tester) async {
-        await pumpAtSize(tester, size, const PaywallScreen());
-        expect(find.text('ArchiveMe Pro'), findsOneWidget);
-      });
+      testWidgets(
+        'fallback renders without overflow at ${size.width.toInt()}w',
+        (tester) async {
+          await pumpAtSize(tester, size, const PaywallScreen());
+          expect(find.text('ArchiveMe Pro'), findsOneWidget);
+        },
+      );
     }
   });
 
@@ -86,8 +89,9 @@ void main() {
       Size(820, 1180),
       Size(1280, 800),
     ]) {
-      testWidgets('renders without overflow at ${size.width.toInt()}w',
-          (tester) async {
+      testWidgets('renders without overflow at ${size.width.toInt()}w', (
+        tester,
+      ) async {
         await pumpAtSize(tester, size, const SettingsScreen());
         expect(find.text(ConsumerUiCopy.settings), findsOneWidget);
       });

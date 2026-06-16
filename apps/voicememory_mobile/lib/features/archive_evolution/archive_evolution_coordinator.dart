@@ -83,9 +83,7 @@ class ArchiveEvolutionCoordinator {
           );
 
     final lastActivity = entries.isNotEmpty
-        ? entries
-            .map((e) => e.createdAt)
-            .reduce((a, b) => a.isAfter(b) ? a : b)
+        ? entries.map((e) => e.createdAt).reduce((a, b) => a.isAfter(b) ? a : b)
         : engagement.lastArchiveUpdateAt;
 
     if (detected == null) {
@@ -116,12 +114,18 @@ class ArchiveEvolutionCoordinator {
     return detected;
   }
 
-  Future<void> markOpened(ArchiveEvolution evolution, {MobilePrefsStore? prefs}) async {
+  Future<void> markOpened(
+    ArchiveEvolution evolution, {
+    MobilePrefsStore? prefs,
+  }) async {
     await ArchiveEvolutionAnalytics.opened(evolution);
     await ArchiveEvolutionAnalytics.completed(evolution);
   }
 
-  Future<void> markIgnored(ArchiveEvolution evolution, {MobilePrefsStore? prefs}) async {
+  Future<void> markIgnored(
+    ArchiveEvolution evolution, {
+    MobilePrefsStore? prefs,
+  }) async {
     final store = ArchiveEvolutionStore(prefs ?? AppServices.instance.prefs);
     await store.dismiss(evolution);
     await ArchiveEvolutionAnalytics.ignored(evolution);

@@ -38,8 +38,9 @@ class PressurePersonalEvidenceSummaryCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   PressurePersonalEvidenceSummary.headline,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -48,9 +49,9 @@ class PressurePersonalEvidenceSummaryCard extends StatelessWidget {
           if (summary.reasonLine != null)
             Text(
               summary.reasonLine!,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                color: AppColors.textPrimary,
-              ),
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
             ),
           if (summary.evidenceTerms.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
@@ -72,8 +73,9 @@ class PressurePersonalEvidenceSummaryCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   '${summary.entryCount} pressure moments so far',
-                  style: ArchiveMobileTypography.responsiveHelper(context)
-                      .copyWith(color: AppColors.textSecondary),
+                  style: ArchiveMobileTypography.responsiveHelper(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ),
             ],
@@ -93,10 +95,9 @@ class PressurePersonalEvidenceSummaryCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w500,
-        ),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
       ),
     );
   }
@@ -112,10 +113,9 @@ class PressurePersonalEvidenceSummaryCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
       ),
     );
   }

@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/referral/invite_funnel_metrics.dart';
+import '../../services/activation_funnel_analytics.dart';
+import '../../features/memory/memory_control_model.dart';
+import '../../features/memory/memory_control_store.dart';
 import '../../features/pressure_retention/thread_return_evidence_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../memory/memory_card_visibility_controls.dart';
+import '../../features/memory/wrong_thread_feedback.dart';
+import 'value_accuracy_feedback_row.dart';
 
 /// Compact thread continuity card: what returned, how often, and the exact
 /// recordings behind it. Renders nothing without real repeated evidence.
@@ -16,6 +24,33 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!evidence.hasEvidence) return const SizedBox.shrink();
+    // "Not related" suppresses this suggested connection for the session.
+    if (MemoryControlStore.isSuppressed(MemoryCardType.threadReturn) ||
+        WrongThreadFeedback.isSessionSuppressed(MemoryCardType.threadReturn)) {
+      return const SizedBox.shrink();
+    }
+
+    final governance = MemoryCardVisibilityGate.evaluateGovernance(
+      cardType: MemoryCardType.threadReturn,
+      memoryUsed: true,
+      entryCount: evidence.occurrenceCount,
+    );
+    final reliability = governance?.reliability;
+    final blockClaim = MemoryCardVisibilityGate.blocksStrongClaim(
+      cardType: MemoryCardType.threadReturn,
+      memoryUsed: true,
+      entryCount: evidence.occurrenceCount,
+      governance: governance,
+      reliability: reliability,
+    );
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.threadReturnEvidenceSeen,
+      hasConnectedThread: true,
+      entryCount: evidence.occurrenceCount,
+      oncePerSession: true,
+    );
+    // Invited funnel mirror — additive, attribution-gated.
+    InviteFunnelMetrics.valueMomentSeen('thread_return');
 
     return Container(
       key: const Key('thread_return_evidence_card'),
@@ -38,58 +73,123 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   evidence.headline,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            evidence.summaryLine,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
+          if (blockClaim)
+            MemoryCardVisibilityControls(
+              cardType: MemoryCardType.threadReturn,
+              memoryUsed: true,
+              entryCount: evidence.occurrenceCount,
+              reliability: reliability,
+              governance: governance,
+              showCrossThreadGate: true,
             ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: [
-              _statusChip(context),
-              _pill(context, evidence.confidenceLabel),
-              for (final term in evidence.sourceTerms) _termChip(context, term),
+          if (!blockClaim) ...[
+            if (evidence.namedLine.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                evidence.namedLine,
+                key: const Key('thread_return_named_line'),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
+              ),
             ],
-          ),
-          if (evidence.evidenceSnippets.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              evidence.summaryLine,
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                _statusChip(context),
+                _pill(context, evidence.confidenceLabel),
+                for (final term in evidence.sourceTerms)
+                  _termChip(context, term),
+              ],
+            ),
+            if (evidence.evidenceSnippets.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                ThreadReturnEvidence.evidenceHeading,
+                style: ArchiveMobileTypography.responsiveHelper(context)
+                    .copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              for (final snippet in evidence.evidenceSnippets)
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  child: Text(
+                    '\u201C$snippet\u201D',
+                    style: ArchiveMobileTypography.responsiveHelper(
+                      context,
+                    ).copyWith(color: AppColors.textPrimary),
+                  ),
+                ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             Text(
-              ThreadReturnEvidence.evidenceHeading,
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
+              ThreadReturnEvidence.basedOnLine,
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
-            for (final snippet in evidence.evidenceSnippets)
-              Padding(
-                padding: const EdgeInsets.only(top: AppSpacing.xs),
-                child: Text(
-                  '\u201C$snippet\u201D',
-                  style: ArchiveMobileTypography.responsiveHelper(context)
-                      .copyWith(color: AppColors.textPrimary),
+            if (evidence.followUpCtaLabel.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: FilledButton(
+                  key: const Key('thread_return_follow_up_cta'),
+                  onPressed: () => _openRecordWithPrompt(context),
+                  child: Text(
+                    evidence.followUpCtaLabel,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
+            ],
           ],
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            ThreadReturnEvidence.basedOnLine,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
+          if (!blockClaim)
+            MemoryCardVisibilityControls(
+              cardType: MemoryCardType.threadReturn,
+              memoryUsed: true,
+              entryCount: evidence.occurrenceCount,
+              reliability: reliability,
+              governance: governance,
             ),
+          ValueAccuracyFeedbackRow(
+            cardType: 'thread_return_evidence',
+            entryCount: evidence.occurrenceCount,
+            hasConnectedThread: true,
           ),
         ],
       ),
     );
+  }
+
+  /// Hands the follow-up prompt to the Record screen using the existing
+  /// `?prompt=` deep-link pattern — the prompt arrives pre-selected and the
+  /// user starts recording when ready.
+  void _openRecordWithPrompt(BuildContext context) {
+    final prompt = evidence.followUpPrompt.trim();
+    if (prompt.isEmpty) {
+      context.go('/record');
+      return;
+    }
+    context.go('/record?prompt=${Uri.encodeComponent(prompt)}');
   }
 
   Widget _statusChip(BuildContext context) {
@@ -103,10 +203,9 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
       ),
       child: Text(
         evidence.statusLabel,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -121,10 +220,9 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -139,10 +237,9 @@ class ThreadReturnEvidenceCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w500,
-        ),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
       ),
     );
   }

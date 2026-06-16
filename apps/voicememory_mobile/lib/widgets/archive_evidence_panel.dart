@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../design/user_facing_date.dart';
 import '../features/retention/retention_analytics.dart';
 import '../models/journal_entry.dart';
+import '../security/user_content_safety.dart';
 import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
 
@@ -62,7 +63,9 @@ class _ArchiveEvidenceExpandableState extends State<ArchiveEvidenceExpandable> {
           onPressed: () {
             setState(() => _expanded = !_expanded);
             if (_expanded) {
-              RetentionAnalytics.evidenceOpened(context: widget.analyticsContext);
+              RetentionAnalytics.evidenceOpened(
+                context: widget.analyticsContext,
+              );
             }
           },
           style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
@@ -94,16 +97,18 @@ class _ArchiveEvidencePanelBody extends StatelessWidget {
     final t = e.transcript.trim();
     if (t.isEmpty) {
       final obs = e.reflection.concreteObservation.trim();
-      if (obs.isNotEmpty) return '“$obs”';
+      if (obs.isNotEmpty) {
+        return '“${UserContentSafety.safeSnippet(obs, maxChars: 140)}”';
+      }
       return '(No transcript)';
     }
-    final line = t.length > 140 ? '${t.substring(0, 140)}…' : t;
-    return '“$line”';
+    return '“${UserContentSafety.safeSnippet(t, maxChars: 140)}”';
   }
 
   @override
   Widget build(BuildContext context) {
-    final sorted = [...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final sorted = [...entries]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return Semantics(
       label: 'Evidence, ${sorted.length} entries',
@@ -142,7 +147,9 @@ class _ArchiveEvidencePanelBody extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         _excerpt(e),
-                        style: VoiceMemoryTypography.bodyStyle().copyWith(fontSize: 14),
+                        style: VoiceMemoryTypography.bodyStyle().copyWith(
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -158,11 +165,7 @@ class _ArchiveEvidencePanelBody extends StatelessWidget {
 /// Relative label for instant belief evidence bullets.
 String archiveEvidenceRelativeLabel(DateTime entryDate, {DateTime? now}) {
   final clock = now ?? DateTime.now();
-  final entryDay = DateTime(
-    entryDate.year,
-    entryDate.month,
-    entryDate.day,
-  );
+  final entryDay = DateTime(entryDate.year, entryDate.month, entryDate.day);
   final today = DateTime(clock.year, clock.month, clock.day);
   final days = today.difference(entryDay).inDays;
   if (days <= 0) return 'Entry from today';

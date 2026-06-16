@@ -11,9 +11,11 @@ import 'package:voicememory_mobile/features/pressure_retention/one_small_recordi
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/widgets/record/consumer_record_prompts_section.dart';
 import 'package:voicememory_mobile/widgets/record/one_small_recording_card.dart';
 
 import 'support/memory_pressure_stores.dart';
@@ -41,34 +43,35 @@ PressureCheckInRecord _record({
 
 /// Three work-context entries → a guided thread plan exists.
 List<PressureCheckInRecord> _workThread3() => [
-      _record(id: 'a', daysAgo: 7, contextIds: const ['work']),
-      _record(
-        id: 'b',
-        daysAgo: 3,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(
-        id: 'c',
-        daysAgo: 0,
-        contextIds: const ['work'],
-        fear: 'I kept checking messages after I wanted to stop.',
-      ),
-    ];
+  _record(id: 'a', daysAgo: 7, contextIds: const ['work']),
+  _record(
+    id: 'b',
+    daysAgo: 3,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(
+    id: 'c',
+    daysAgo: 0,
+    contextIds: const ['work'],
+    fear: 'I kept checking messages after I wanted to stop.',
+  ),
+];
 
 /// One single entry → daily suggestions exist, but no thread plan.
 List<PressureCheckInRecord> _singleRecord() => [
-      _record(id: 'solo', daysAgo: 0, fear: 'Falling behind on everything'),
-    ];
+  _record(id: 'solo', daysAgo: 0, fear: 'Falling behind on everything'),
+];
 
 String _allCopy(OneSmallRecording recording) => [
-      recording.title,
-      recording.basedOnLine,
-      recording.prompt,
-      recording.supportingLine,
-      ...recording.sourceTerms,
-      OneSmallRecording.recordCtaLabel,
-    ].join(' ');
+  recording.title,
+  recording.basedOnLine,
+  recording.prompt,
+  recording.supportingLine,
+  ...recording.sourceTerms,
+  OneSmallRecording.recordCtaLabel,
+  OneSmallRecording.restCanWaitLine,
+].join(' ');
 
 void main() {
   const engine = OneSmallRecordingEngine();
@@ -83,10 +86,15 @@ void main() {
       final plan = const GuidedThreadPlanEngine().build(
         _workThread3(),
         now: _base,
+        entryCount: 3,
       );
       expect(plan.hasPlan, isTrue);
 
-      final recording = engine.build(_workThread3(), now: _base);
+      final recording = engine.build(
+        _workThread3(),
+        now: _base,
+        entryCount: 3,
+      );
       expect(recording.hasRecording, isTrue);
       expect(recording.prompt, plan.nextPrompt);
       expect(recording.prompt, 'What happened with the work thread today?');
@@ -95,21 +103,28 @@ void main() {
 
     test('falls back to the daily suggestion primary when no plan exists', () {
       final records = _singleRecord();
-      final plan = const GuidedThreadPlanEngine().build(records, now: _base);
+      final plan = const GuidedThreadPlanEngine().build(
+        records,
+        now: _base,
+        entryCount: 1,
+      );
       expect(plan.hasPlan, isFalse);
 
       final suggestions = const DailyReturnSuggestionEngine().build(records);
       expect(suggestions.hasSuggestions, isTrue);
 
-      final recording = engine.build(records, now: _base);
+      final recording = engine.build(
+        records,
+        now: _base,
+        entryCount: 1,
+      );
       expect(recording.hasRecording, isTrue);
       expect(recording.prompt, suggestions.recommendedSuggestion!.prompt);
     });
 
-    test('does not fabricate evidence — terms and ids map to real records',
-        () {
+    test('does not fabricate evidence — terms and ids map to real records', () {
       final records = _workThread3();
-      final recording = engine.build(records, now: _base);
+      final recording = engine.build(records, now: _base, entryCount: 3);
       final realIds = records.map((r) => r.entryId).toSet();
       for (final id in recording.entryIds) {
         expect(realIds, contains(id));
@@ -123,19 +138,19 @@ void main() {
     });
 
     test('default copy is the calm product language', () {
-      final recording = engine.build(_workThread3(), now: _base);
-      expect(recording.title, 'Today\u2019s one small recording');
+      final recording = engine.build(_workThread3(), now: _base, entryCount: 3);
+      expect(recording.title, 'One small recording');
       expect(recording.basedOnLine, 'Based on your thread plan');
       expect(
         recording.supportingLine,
-        'You do not need to solve everything today.',
+        'Just capture what happened. You do not need to solve it.',
       );
     });
 
     test('no banned wording in any variant', () {
       final scenarios = [
-        engine.build(_workThread3(), now: _base),
-        engine.build(_singleRecord(), now: _base),
+        engine.build(_workThread3(), now: _base, entryCount: 3),
+        engine.build(_singleRecord(), now: _base, entryCount: 1),
       ];
       for (final recording in scenarios) {
         final copy = _allCopy(recording).toLowerCase();
@@ -144,24 +159,38 @@ void main() {
           'homework',
           'must',
           'should',
-          'unresolved problem',
+          'streak',
+          'unfinished',
+          'unresolved',
+          'fix',
+          'problem',
           'failure',
           'lazy',
           'weak',
           'diagnos',
           'definitely',
-          'fix yourself',
+          'healed',
+          'processed',
+          'regulated',
+          'anxious',
+          'trauma',
+          'cure',
+          'resolved',
         ]) {
-          expect(copy, isNot(contains(banned)),
-              reason: 'copy must not contain "$banned"');
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'copy must not contain "$banned"',
+          );
         }
       }
     });
 
     test('no VoiceMemory in consumer copy', () {
       for (final records in [_workThread3(), _singleRecord()]) {
+        final count = records.length >= 3 ? 3 : 1;
         expect(
-          _allCopy(engine.build(records, now: _base)),
+          _allCopy(engine.build(records, now: _base, entryCount: count)),
           isNot(contains('VoiceMemory')),
         );
       }
@@ -169,9 +198,10 @@ void main() {
   });
 
   group('One small recording card', () {
-    testWidgets('renders title, based-on line, prompt, and supporting line',
-        (tester) async {
-      final recording = engine.build(_workThread3(), now: _base);
+    testWidgets('renders title, based-on line, prompt, and supporting line', (
+      tester,
+    ) async {
+      final recording = engine.build(_workThread3(), now: _base, entryCount: 3);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -186,19 +216,21 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Today\u2019s one small recording'), findsOneWidget);
+      expect(find.text('One small recording'), findsOneWidget);
       expect(find.text('Based on your thread plan'), findsOneWidget);
       expect(find.text(recording.prompt), findsOneWidget);
       expect(
-        find.text('You do not need to solve everything today.'),
+        find.text('Just capture what happened. You do not need to solve it.'),
         findsOneWidget,
       );
       expect(find.text('Record this'), findsOneWidget);
+      // The primary-action line lives inside the card — one clear start.
+      expect(find.text('Start here. The rest can wait.'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
     testWidgets('tapping Record this hands off the prompt', (tester) async {
-      final recording = engine.build(_workThread3(), now: _base);
+      final recording = engine.build(_workThread3(), now: _base, entryCount: 3);
       String? handedOff;
       await tester.pumpWidget(
         MaterialApp(
@@ -214,9 +246,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(
-        find.byKey(const Key('one_small_recording_record_cta')),
-      );
+      await tester.tap(find.byKey(const Key('one_small_recording_record_cta')));
       await tester.pump();
       expect(handedOff, 'What happened with the work thread today?');
     });
@@ -254,9 +284,38 @@ void main() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
+    Future<void> seedArchiveEntries(
+      WidgetTester tester, {
+      int count = 3,
+    }) async {
+      await tester.runAsync(() async {
+        for (var i = 0; i < count; i++) {
+          await AppServices.instance.journalStore.save(
+            JournalEntry(
+              id: 'e$i',
+              createdAt: DateTime(2026, 6, 1 + i, 12),
+              transcript:
+                  'Saved moment $i with enough words to count as evidence '
+                  'for archive context on the record screen.',
+              durationSeconds: 30,
+              reflection: Reflection(
+                mood: 'neutral',
+                emotionalIntensity: 2,
+                recurringThemes: const ['work'],
+                exactLanguagePattern: '',
+                concreteObservation: 'You mentioned pressure in this moment.',
+                repeatedSignal: '',
+              ),
+            ),
+          );
+        }
+      });
+    }
+
     Future<void> pumpRecordScreen(
       WidgetTester tester, {
       MemoryPressureCheckInStore? store,
+      bool waitForOneSmallRecordingCard = false,
     }) async {
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -273,44 +332,37 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-    }
-
-    Future<void> seedReflection(WidgetTester tester) async {
       await tester.runAsync(() async {
-        // A saved reflection puts the screen past first-run so the prompt
-        // area (and the one-small-recording card) renders.
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
-            ),
-          ),
-        );
+        await Future<void>.delayed(const Duration(milliseconds: 400));
       });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        if (waitForOneSmallRecordingCard &&
+            find
+                .byKey(const Key('one_small_recording_card'))
+                .evaluate()
+                .isNotEmpty) {
+          return;
+        }
+      }
     }
 
-    testWidgets('shows the card above daily suggestions and prompt chips',
-        (tester) async {
-      await seedReflection(tester);
+    testWidgets('shows the card above daily suggestions and prompt chips', (
+      tester,
+    ) async {
+      await seedArchiveEntries(tester);
       await pumpRecordScreen(
         tester,
         store: MemoryPressureCheckInStore(_workThread3()),
+        waitForOneSmallRecordingCard: true,
       );
 
       final cardFinder = find.byKey(const Key('one_small_recording_card'));
       expect(cardFinder, findsOneWidget);
-      expect(find.text('Today\u2019s one small recording'), findsOneWidget);
+      expect(find.text('One small recording'), findsOneWidget);
+      final expectedPrompt =
+          engine.build(_workThread3(), entryCount: 3).prompt;
+      expect(find.text(expectedPrompt), findsOneWidget);
 
       // Daily suggestions stay present, below the one-small-recording card.
       final suggestionsHeading = find.text('Worth checking today');
@@ -319,37 +371,48 @@ void main() {
         tester.getTopLeft(cardFinder).dy,
         lessThan(tester.getTopLeft(suggestionsHeading).dy),
       );
+
+      // Generic prompts still exist, below the card and visually stepped
+      // back — one clear primary action, not many equal choices.
+      final genericSection = find.byType(ConsumerRecordPromptsSection);
+      expect(genericSection, findsOneWidget);
+      expect(
+        tester.getTopLeft(cardFinder).dy,
+        lessThan(tester.getTopLeft(genericSection).dy),
+      );
+      expect(
+        find.byKey(const Key('generic_prompts_deemphasized')),
+        findsOneWidget,
+      );
+      expect(find.text('Start here. The rest can wait.'), findsOneWidget);
     });
 
-    testWidgets('tapping Record this selects the prompt on the screen',
-        (tester) async {
-      await seedReflection(tester);
+    testWidgets('one small recording card hides duplicate CTA when main record CTA is shown', (
+      tester,
+    ) async {
+      await seedArchiveEntries(tester);
       await pumpRecordScreen(
         tester,
         store: MemoryPressureCheckInStore(_workThread3()),
+        waitForOneSmallRecordingCard: true,
       );
 
-      // The screen builds with the real clock, so derive the expected prompt
-      // the same way instead of assuming a thread status.
-      final prompt = engine.build(_workThread3()).prompt;
+      final prompt = engine.build(_workThread3(), entryCount: 3).prompt;
       expect(prompt, isNotEmpty);
-      // Before the tap the prompt only exists inside the card.
       expect(find.text(prompt), findsOneWidget);
-
-      final cta = find.byKey(const Key('one_small_recording_record_cta'));
-      await tester.ensureVisible(cta);
-      await tester.pump();
-      await tester.tap(cta);
-      await tester.pump();
-
-      // Selected prompt now also renders in the "Try saying" area.
-      expect(find.text(prompt), findsNWidgets(2));
+      expect(find.byKey(const Key('one_small_recording_record_cta')), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
-    testWidgets('no card without plan or suggestion evidence',
-        (tester) async {
+    testWidgets('no card without plan or suggestion evidence', (tester) async {
       await pumpRecordScreen(tester);
       expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
+      // Without a primary starter the generic prompts keep full emphasis.
+      expect(
+        find.byKey(const Key('generic_prompts_deemphasized')),
+        findsNothing,
+      );
+      expect(find.text('Start here. The rest can wait.'), findsNothing);
       expect(tester.takeException(), isNull);
     });
   });

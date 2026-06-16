@@ -123,12 +123,12 @@ class _ArchiveProgressIdentityCardState
             ),
             _HeroMetric(
               '${id.beliefChanges} belief changes',
-              increased:
-                  prev != null && id.beliefChanges > prev.beliefChanges,
+              increased: prev != null && id.beliefChanges > prev.beliefChanges,
             ),
             _HeroMetric(
               '${id.activeLifeChapters} active life chapters',
-              increased: prev != null &&
+              increased:
+                  prev != null &&
                   id.activeLifeChapters > prev.activeLifeChapters,
             ),
             const SizedBox(height: 12),
@@ -151,7 +151,9 @@ class _ArchiveProgressIdentityCardState
               onPressed: () => context.push('/weekly-story'),
               style: TextButton.styleFrom(
                 foregroundColor: VoiceMemoryColors.onPrimary,
-                backgroundColor: VoiceMemoryColors.onPrimary.withValues(alpha: 0.16),
+                backgroundColor: VoiceMemoryColors.onPrimary.withValues(
+                  alpha: 0.16,
+                ),
                 minimumSize: const Size(48, 48),
               ),
               child: const Text('View Growth'),

@@ -24,19 +24,13 @@ class ArchiveIntelligenceProofView {
     final changes = stats.changeCount;
 
     if (themes > 0) {
-      bullets.add(
-        '• $themes recurring theme${themes == 1 ? '' : 's'}',
-      );
+      bullets.add('• $themes recurring theme${themes == 1 ? '' : 's'}');
     }
     if (theories > 0) {
-      bullets.add(
-        '• $theories active theor${theories == 1 ? 'y' : 'ies'}',
-      );
+      bullets.add('• $theories active theor${theories == 1 ? 'y' : 'ies'}');
     }
     if (changes > 0) {
-      bullets.add(
-        '• $changes change${changes == 1 ? '' : 's'} over time',
-      );
+      bullets.add('• $changes change${changes == 1 ? '' : 's'} over time');
     }
 
     return ArchiveIntelligenceProofView(
@@ -48,7 +42,6 @@ class ArchiveIntelligenceProofView {
     );
   }
 
-  String get bodyText => useFallback
-      ? ArchiveIntelligenceProofCopy.fallback
-      : bullets.join('\n');
+  String get bodyText =>
+      useFallback ? ArchiveIntelligenceProofCopy.fallback : bullets.join('\n');
 }

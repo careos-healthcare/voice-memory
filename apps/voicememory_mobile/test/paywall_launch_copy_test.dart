@@ -4,50 +4,47 @@ import 'package:voicememory_mobile/billing/value_moment_paywall.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
-  test('paywall headline sells testing the loop', () {
+  test('paywall headline sells archive continuity', () {
     expect(
       ConsumerUiCopy.paywallHeadline,
-      'Keep testing the loop ArchiveMe found.',
+      'Keep your archive useful over time.',
     );
     expect(
       ArchivePaywallVariantConfig.headline(ArchivePaywallVariant.b),
       ConsumerUiCopy.paywallHeadline,
     );
-    expect(ValueMomentPaywallLogic.copyHeadline, ConsumerUiCopy.paywallHeadline);
+    expect(
+      ValueMomentPaywallLogic.copyHeadline,
+      ConsumerUiCopy.paywallHeadline,
+    );
   });
 
-  test('paywall subhead sells tracking the loop across moments', () {
+  test('paywall subhead sells deeper history over time', () {
     expect(
       ConsumerUiCopy.paywallSubhead,
-      contains('track the same loop across more moments'),
+      contains('deeper history and saved evidence'),
     );
   });
 
-  test('paywall benefits include launch bullets', () {
+  test('paywall benefits include continuity bullets', () {
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('Track the loop across more moments'),
+      contains('See more of what keeps returning'),
     );
     expect(
       ConsumerUiCopy.paywallBullets,
-      contains('See what confirms or challenges it'),
+      contains('Keep deeper history and saved evidence'),
     );
     expect(
       ConsumerUiCopy.paywallBullets,
       contains('Review what changed over time'),
     );
     expect(ConsumerUiCopy.paywallBullets, contains('Archive timeline'));
-    expect(
-      ArchivePaywallCopy.keyValueBullets,
-      ConsumerUiCopy.paywallBullets,
-    );
+    expect(ArchivePaywallCopy.keyValueBullets, ConsumerUiCopy.paywallBullets);
   });
 
   test('paywall CTAs match launch copy', () {
-    expect(
-      ConsumerUiCopy.paywallPrimaryCta,
-      'Continue with ArchiveMe Pro',
-    );
+    expect(ConsumerUiCopy.paywallPrimaryCta, 'Continue with ArchiveMe Pro');
     expect(ConsumerUiCopy.paywallSecondaryCta, 'Not now');
     expect(ValueMomentPaywallLogic.ctaLabel, ConsumerUiCopy.paywallPrimaryCta);
     expect(

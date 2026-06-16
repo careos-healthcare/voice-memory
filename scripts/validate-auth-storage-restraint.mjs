@@ -142,7 +142,7 @@ if (!accountClient.includes("mapAuthErrorToUserMessage")) {
   process.exit(1);
 }
 
-if (!sendAuthCode.includes("Your VoiceMemory sign-in code")) {
+if (!sendAuthCode.includes("Your ArchiveMe sign-in code")) {
   console.error("Auth storage validation failed — missing auth email subject.");
   process.exit(1);
 }

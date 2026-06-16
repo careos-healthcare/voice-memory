@@ -11,7 +11,7 @@ import {
 } from "@/lib/tester-onboarding-copy";
 
 export const metadata: Metadata = {
-  title: "Welcome — VoiceMemory",
+  title: "Welcome — ArchiveMe",
   description: "A calm welcome for early testers. Private reflections, optional backup, no pressure.",
 };
 

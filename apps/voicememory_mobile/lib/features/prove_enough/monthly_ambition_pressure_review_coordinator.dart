@@ -7,7 +7,7 @@ import 'monthly_ambition_pressure_review_store.dart';
 import 'prove_enough_contradiction_store.dart';
 
 /// Loads monthly prove_enough review data and access rules.
-abstract final class MonthlyAmbitionPressureReviewCoordinator {
+abstract class MonthlyAmbitionPressureReviewCoordinator {
   MonthlyAmbitionPressureReviewCoordinator._();
 
   static const _engine = MonthlyAmbitionPressureReviewEngine();
@@ -18,7 +18,8 @@ abstract final class MonthlyAmbitionPressureReviewCoordinator {
     }
 
     final entries = await AppServices.instance.journalStore.loadAll();
-    final contradictions = await ProveEnoughContradictionStore.instance().loadAll();
+    final contradictions = await ProveEnoughContradictionStore.instance()
+        .loadAll();
     final loop = await LoopModeCoordinator.loadActive();
     if (loop?.isProveEnough != true) {
       return _engine.build(entries: entries, now: now);
@@ -31,7 +32,9 @@ abstract final class MonthlyAmbitionPressureReviewCoordinator {
     );
   }
 
-  static Future<bool> canViewFullReview(PremiumEntitlements? entitlements) async {
+  static Future<bool> canViewFullReview(
+    PremiumEntitlements? entitlements,
+  ) async {
     if (entitlements?.isPro == true) return true;
     if (!AppServices.isInitialized) return true;
     return !(await MonthlyAmbitionPressureReviewStore.instance()
@@ -42,8 +45,8 @@ abstract final class MonthlyAmbitionPressureReviewCoordinator {
     PremiumEntitlements? entitlements,
   ) async {
     if (entitlements?.isPro == true || !AppServices.isInitialized) return;
-    final consumed =
-        await MonthlyAmbitionPressureReviewStore.instance().freeReviewConsumed();
+    final consumed = await MonthlyAmbitionPressureReviewStore.instance()
+        .freeReviewConsumed();
     if (!consumed) {
       await MonthlyAmbitionPressureReviewStore.instance().markFreeReviewUsed();
     }

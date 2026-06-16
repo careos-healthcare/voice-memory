@@ -16,8 +16,15 @@ const int kArchiveRangeReviewKeyMomentCap = 10;
   DateTime? customEnd,
 }) {
   final today = DateTime(now.year, now.month, now.day);
-  final endOfToday =
-      DateTime(today.year, today.month, today.day, 23, 59, 59, 999);
+  final endOfToday = DateTime(
+    today.year,
+    today.month,
+    today.day,
+    23,
+    59,
+    59,
+    999,
+  );
 
   switch (preset) {
     case ArchiveReviewRangePreset.thisWeek:
@@ -54,12 +61,12 @@ const int kArchiveRangeReviewKeyMomentCap = 10;
 }
 
 String presetTitle(ArchiveReviewRangePreset preset) => switch (preset) {
-      ArchiveReviewRangePreset.thisWeek => 'This week',
-      ArchiveReviewRangePreset.lastWeek => 'Last week',
-      ArchiveReviewRangePreset.thisMonth => 'This month',
-      ArchiveReviewRangePreset.last30Days => 'Last 30 days',
-      ArchiveReviewRangePreset.custom => 'Custom range',
-    };
+  ArchiveReviewRangePreset.thisWeek => 'This week',
+  ArchiveReviewRangePreset.lastWeek => 'Last week',
+  ArchiveReviewRangePreset.thisMonth => 'This month',
+  ArchiveReviewRangePreset.last30Days => 'Last 30 days',
+  ArchiveReviewRangePreset.custom => 'Custom range',
+};
 
 /// Builds a period review from saved moments in the chosen date range.
 ArchiveRangeReview buildArchiveRangeReview({
@@ -79,9 +86,7 @@ ArchiveRangeReview buildArchiveRangeReview({
     customEnd: customEnd,
   );
 
-  final filtered = moments
-      .where((m) => _inRange(m.date, start, end))
-      .toList()
+  final filtered = moments.where((m) => _inRange(m.date, start, end)).toList()
     ..sort((a, b) => b.date.compareTo(a.date));
 
   final momentCount = filtered.length;
@@ -97,7 +102,10 @@ ArchiveRangeReview buildArchiveRangeReview({
       type: ArchiveRangeReviewType.notEnoughYet,
       momentCount: momentCount,
       patternCount: patternCount,
-      keyMomentIds: filtered.map((m) => m.id).take(kArchiveRangeReviewKeyMomentCap).toList(),
+      keyMomentIds: filtered
+          .map((m) => m.id)
+          .take(kArchiveRangeReviewKeyMomentCap)
+          .toList(),
     );
   }
 
@@ -116,12 +124,15 @@ ArchiveRangeReview buildArchiveRangeReview({
   );
 
   final repeatedLine = _repeatedLine(repeatedCount, topPattern);
-  final lighterLine =
-      lighterCount >= 2 ? 'It felt lighter in $lighterCount moments.' : null;
-  final heavierLine =
-      heavierCount >= 2 ? 'It felt heavier in $heavierCount moments.' : null;
-  final changedLine =
-      changedCount >= 2 ? 'Something changed in $changedCount moments.' : null;
+  final lighterLine = lighterCount >= 2
+      ? 'It felt lighter in $lighterCount moments.'
+      : null;
+  final heavierLine = heavierCount >= 2
+      ? 'It felt heavier in $heavierCount moments.'
+      : null;
+  final changedLine = changedCount >= 2
+      ? 'Something changed in $changedCount moments.'
+      : null;
   final helpedLine = _helpedLine(filtered);
 
   return ArchiveRangeReview(
@@ -139,8 +150,10 @@ ArchiveRangeReview buildArchiveRangeReview({
     changedLine: changedLine,
     helpedLine: helpedLine,
     nextCheck: _nextCheck(map: map, memory: memory, timeline: timeline),
-    keyMomentIds:
-        filtered.map((m) => m.id).take(kArchiveRangeReviewKeyMomentCap).toList(),
+    keyMomentIds: filtered
+        .map((m) => m.id)
+        .take(kArchiveRangeReviewKeyMomentCap)
+        .toList(),
   );
 }
 
@@ -148,8 +161,7 @@ String _reviewId(
   ArchiveReviewRangePreset preset,
   DateTime start,
   DateTime end,
-) =>
-    'arr_${preset.id}_${start.toIso8601String()}_${end.toIso8601String()}';
+) => 'arr_${preset.id}_${start.toIso8601String()}_${end.toIso8601String()}';
 
 bool _inRange(DateTime date, DateTime start, DateTime end) {
   final d = DateTime(date.year, date.month, date.day);
@@ -181,14 +193,11 @@ bool _isChanged(KeyMoment m) =>
 bool _isRepeated(KeyMoment m) =>
     m.resultHint == 'same' || m.resultHint == 'showed_up_again';
 
-int _countLighter(List<KeyMoment> moments) =>
-    moments.where(_isLighter).length;
+int _countLighter(List<KeyMoment> moments) => moments.where(_isLighter).length;
 
-int _countHeavier(List<KeyMoment> moments) =>
-    moments.where(_isHeavier).length;
+int _countHeavier(List<KeyMoment> moments) => moments.where(_isHeavier).length;
 
-int _countChanged(List<KeyMoment> moments) =>
-    moments.where(_isChanged).length;
+int _countChanged(List<KeyMoment> moments) => moments.where(_isChanged).length;
 
 int _countRepeated(List<KeyMoment> moments) =>
     moments.where(_isRepeated).length;
@@ -245,8 +254,9 @@ String? _repeatedLine(int repeatedCount, (String, int)? topPattern) {
 }
 
 String? _helpedLine(List<KeyMoment> moments) {
-  final helpedMoments =
-      moments.where((m) => m.hasTag(MomentTag.helped)).toList();
+  final helpedMoments = moments
+      .where((m) => m.hasTag(MomentTag.helped))
+      .toList();
   if (helpedMoments.isEmpty) return null;
   for (final m in helpedMoments) {
     final summary = m.shortSummary.trim();

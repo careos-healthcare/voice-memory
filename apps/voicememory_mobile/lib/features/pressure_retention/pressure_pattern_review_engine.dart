@@ -59,8 +59,10 @@ class PressurePatternReviewEngine {
     final first = ordered.first;
     if (first.choseToStop) return null;
 
-    final laterStops =
-        ordered.skip(1).where((record) => record.choseToStop).length;
+    final laterStops = ordered
+        .skip(1)
+        .where((record) => record.choseToStop)
+        .length;
     if (laterStops == 0) return null;
 
     final times = laterStops == 1 ? 'once' : '$laterStops times';

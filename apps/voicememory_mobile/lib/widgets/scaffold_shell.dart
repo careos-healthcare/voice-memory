@@ -23,10 +23,7 @@ class ScaffoldShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: actions,
-      ),
+      appBar: AppBar(title: Text(title), actions: actions),
       drawer: const _AppDrawer(),
       body: SafeArea(
         child: Column(

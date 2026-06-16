@@ -8,6 +8,7 @@ class StartHereSaveReceipt {
     this.title = defaultTitle,
     this.explanation = defaultExplanation,
     this.connectedTerms = const [],
+    this.returnCueLine = defaultReturnCueLine,
     this.freeValueLine = defaultFreeValueLine,
     this.proContinuationLine = defaultProContinuationLine,
     this.proPreviewBullets = defaultProPreviewBullets,
@@ -19,6 +20,12 @@ class StartHereSaveReceipt {
   static const String defaultTitle = 'Saved to your archive';
   static const String defaultExplanation =
       'This connects to what your archive has already noticed.';
+
+  /// Why tomorrow is worth a return visit — deliberately cautious ("can
+  /// check", "whether") so it never promises a pattern will be found.
+  static const String defaultReturnCueLine =
+      'Come back tomorrow and your archive can check whether this thread '
+      'appears again.';
 
   /// What free users keep — stated first, so Pro never reads as a threat to
   /// the recording the user just saved.
@@ -35,7 +42,7 @@ class StartHereSaveReceipt {
     'Ask what keeps repeating',
   ];
 
-  static const String defaultProCtaLabel = 'See what Pro unlocks';
+  static const String defaultProCtaLabel = 'See Pro';
   static const String defaultDismissLabel = 'Not now';
 
   final String title;
@@ -44,6 +51,9 @@ class StartHereSaveReceipt {
   /// Up to three personal, phrase-like labels this recording connects to,
   /// e.g. "work pressure" or "stopping felt unsafe". May be empty.
   final List<String> connectedTerms;
+
+  /// Next-day return cue, shown after the terms and before the Pro incentive.
+  final String returnCueLine;
 
   /// Shown before [proContinuationLine].
   final String freeValueLine;

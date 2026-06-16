@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/loop_mode/loop_mode_coordinator.dart';
+import '../features/loop_mode/loop_mode_model.dart';
 import '../onboarding/onboarding_pages.dart';
 import '../onboarding/onboarding_visuals.dart';
 import '../product/consumer_ui_copy.dart';
 import '../features/retention/retention_metrics_tracker.dart';
 import '../router/onboarding_gate.dart';
+import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
@@ -36,8 +39,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       await RetentionMetricsTracker.track(
         RetentionMetricsTracker.onboardingCompleted,
       );
+      await LoopModeCoordinator.activate(LoopModeIds.proveEnough);
+      await AppServices.instance.prefs.setOnboardingCompleted(true);
+      onboardingGate.markComplete();
       if (!mounted) return;
-      context.go('/onboarding-intent');
+      context.go('/record');
     } finally {
       if (mounted) setState(() => _completing = false);
     }
@@ -83,12 +89,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           color: AppColors.accentPrimary,
                         ),
                       ),
-                      const Spacer(),
-                      if (!_isLast)
-                        TextButton(
-                          onPressed: _completing ? null : _complete,
-                          child: const Text('Skip'),
-                        ),
                     ],
                   ),
                 ),
@@ -108,7 +108,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
                   child: Row(
                     children: [
                       for (var i = 0; i < OnboardingPages.pageCount; i++)
@@ -121,8 +123,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(2),
                               color: i <= _index
-                                  ? AppColors.accentPrimary
-                                      .withValues(alpha: 0.9)
+                                  ? AppColors.accentPrimary.withValues(
+                                      alpha: 0.9,
+                                    )
                                   : AppColors.borderSubtle,
                             ),
                           ),

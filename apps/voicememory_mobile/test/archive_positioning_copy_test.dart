@@ -59,15 +59,12 @@ const _insightCardActions = <String, List<String>>{
   'lib/widgets/patterns/weekly_pattern_recap_card.dart': [
     'recordNextMomentCta',
   ],
-  'lib/widgets/patterns/monthly_pattern_review_card.dart': [
-    'Use next month',
-  ],
+  'lib/widgets/patterns/monthly_pattern_review_card.dart': ['Use next month'],
 };
 
 void main() {
   test('competitive positioning constants are defined', () {
-    final source =
-        File('lib/product/consumer_ui_copy.dart').readAsStringSync();
+    final source = File('lib/product/consumer_ui_copy.dart').readAsStringSync();
     for (final name in _positioningConstants) {
       expect(source, contains(name), reason: 'Missing $name');
     }
@@ -77,11 +74,16 @@ void main() {
   });
 
   test('onboarding uses archive memory framing', () {
-    final pages = File('lib/onboarding/onboarding_pages.dart').readAsStringSync();
+    final pages = File(
+      'lib/onboarding/onboarding_pages.dart',
+    ).readAsStringSync();
     expect(pages, contains('onboardingPositioningHeadline'));
     expect(pages, contains('onboardingPositioningBody'));
     expect(pages, isNot(contains('Rosebud')));
-    expect(pages, isNot(contains(RegExp(r'\bintelligence\b', caseSensitive: false))));
+    expect(
+      pages,
+      isNot(contains(RegExp(r'\bintelligence\b', caseSensitive: false))),
+    );
   });
 
   test('patterns early state uses record-moments framing', () {
@@ -89,11 +91,15 @@ void main() {
       ConsumerUiCopy.patternsEarlyStateBody,
       contains('Record short moments'),
     );
-    final emptyView =
-        File('lib/widgets/patterns/patterns_empty_view.dart').readAsStringSync();
+    final emptyView = File(
+      'lib/widgets/patterns/patterns_empty_view.dart',
+    ).readAsStringSync();
     expect(
       emptyView,
-      anyOf(contains('patternsEarlyStateBody'), contains('patternsEmptyPageTitle')),
+      anyOf(
+        contains('patternsEarlyStateBody'),
+        contains('patternsEmptyPageTitle'),
+      ),
     );
   });
 

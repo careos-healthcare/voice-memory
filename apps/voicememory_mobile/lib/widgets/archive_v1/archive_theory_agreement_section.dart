@@ -12,10 +12,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Agree / Unsure / Disagree on the current theory — metadata only.
 class ArchiveTheoryAgreementSection extends StatefulWidget {
-  const ArchiveTheoryAgreementSection({
-    super.key,
-    required this.theory,
-  });
+  const ArchiveTheoryAgreementSection({super.key, required this.theory});
 
   final ArchiveCurrentTheory theory;
 
@@ -31,8 +28,7 @@ class _ArchiveTheoryAgreementSectionState
   bool _loading = true;
   bool _saving = false;
 
-  ArchiveAgreementService get _service =>
-      AppServices.instance.archiveAgreement;
+  ArchiveAgreementService get _service => AppServices.instance.archiveAgreement;
 
   @override
   void initState() {

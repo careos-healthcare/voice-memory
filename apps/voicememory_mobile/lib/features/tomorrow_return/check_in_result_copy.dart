@@ -1,5 +1,5 @@
 /// Plain-language result copy for completed tomorrow check-ins.
-abstract final class CheckInResultCopy {
+abstract class CheckInResultCopy {
   CheckInResultCopy._();
 
   static String resultHeadline(String? selectedOptionId) {
@@ -159,10 +159,8 @@ abstract final class CheckInResultCopy {
   static const Map<String, String> optionExamples = {
     'showed_up_again':
         "It showed up again: 'I said yes before asking for help.'",
-    'lighter':
-        "It felt lighter: 'I noticed it, but paused before answering.'",
-    'heavier':
-        "It felt heavier: 'I carried it all day and felt drained.'",
+    'lighter': "It felt lighter: 'I noticed it, but paused before answering.'",
+    'heavier': "It felt heavier: 'I carried it all day and felt drained.'",
     'not_today': "Not today: 'The situation did not come up.'",
   };
 }

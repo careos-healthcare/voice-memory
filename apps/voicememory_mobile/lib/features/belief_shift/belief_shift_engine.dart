@@ -82,7 +82,10 @@ List<ArchivedStatement> _statementsForTopic(
     ..sort((a, b) => a.at.compareTo(b.at));
 }
 
-BeliefShiftReport? _gradualTopicShift(String topic, List<ArchivedStatement> chain) {
+BeliefShiftReport? _gradualTopicShift(
+  String topic,
+  List<ArchivedStatement> chain,
+) {
   final distinct = _distinctByEntry(chain);
   if (distinct.length < BeliefShiftEngine.minTimelineSteps) return null;
 
@@ -98,11 +101,13 @@ BeliefShiftReport? _gradualTopicShift(String topic, List<ArchivedStatement> chai
   if (!first.isNegative || !last.isPositive) return null;
 
   final between = distinct
-      .where((s) =>
-          s.at.isAfter(first.at) &&
-          s.at.isBefore(last.at) &&
-          s.entryId != first.entryId &&
-          s.entryId != last.entryId)
+      .where(
+        (s) =>
+            s.at.isAfter(first.at) &&
+            s.at.isBefore(last.at) &&
+            s.entryId != first.entryId &&
+            s.entryId != last.entryId,
+      )
       .toList();
 
   ArchivedStatement? middle;
@@ -135,7 +140,10 @@ BeliefShiftReport? _gradualTopicShift(String topic, List<ArchivedStatement> chai
   );
 }
 
-BeliefShiftReport? _repeatedLanguageShift(String topic, List<ArchivedStatement> chain) {
+BeliefShiftReport? _repeatedLanguageShift(
+  String topic,
+  List<ArchivedStatement> chain,
+) {
   final distinct = _distinctByEntry(chain);
   if (distinct.length < 3) return null;
 
@@ -243,14 +251,12 @@ BeliefShiftReport? _fromContradiction(
   ContradictionReport ctr,
   List<ArchivedStatement> statements,
 ) {
-  final earlier = statements
-      .where((s) => s.entryId == ctr.originalEntryId)
-      .toList()
-    ..sort((a, b) => a.at.compareTo(b.at));
-  final later = statements
-      .where((s) => s.entryId == ctr.conflictingEntryId)
-      .toList()
-    ..sort((a, b) => a.at.compareTo(b.at));
+  final earlier =
+      statements.where((s) => s.entryId == ctr.originalEntryId).toList()
+        ..sort((a, b) => a.at.compareTo(b.at));
+  final later =
+      statements.where((s) => s.entryId == ctr.conflictingEntryId).toList()
+        ..sort((a, b) => a.at.compareTo(b.at));
   if (earlier.isEmpty || later.isEmpty) return null;
 
   final first = earlier.first;
@@ -260,12 +266,14 @@ BeliefShiftReport? _fromContradiction(
       : first.primaryTopic() ?? 'belief';
 
   final between = statements
-      .where((s) =>
-          s.at.isAfter(first.at) &&
-          s.at.isBefore(last.at) &&
-          (s.themes.contains(topic) ||
-              s.keywords.contains(topic) ||
-              s.sharesTopicWith(first)))
+      .where(
+        (s) =>
+            s.at.isAfter(first.at) &&
+            s.at.isBefore(last.at) &&
+            (s.themes.contains(topic) ||
+                s.keywords.contains(topic) ||
+                s.sharesTopicWith(first)),
+      )
       .toList();
 
   final middles = _distinctByEntry(between)

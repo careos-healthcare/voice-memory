@@ -79,10 +79,7 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
     if (!mounted) return;
     setState(() {
       _entries = entries;
-      _timeline = buildBeliefChangeTimeline(
-        snapshot: snapshot,
-        feed: feed,
-      );
+      _timeline = buildBeliefChangeTimeline(snapshot: snapshot, feed: feed);
       _loading = false;
     });
   }

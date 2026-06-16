@@ -27,8 +27,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   @override
   void initState() {
     super.initState();
-    final entries =
-        peekJournalEntriesSync(AppServices.instance.journalStore);
+    final entries = peekJournalEntriesSync(AppServices.instance.journalStore);
     if (isIntentionalEmptyArchive(entries)) {
       _rows = const [];
       _loading = false;
@@ -147,44 +146,44 @@ class _TimelineScreenState extends State<TimelineScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _rows.isEmpty
-              ? RefreshIndicator(
-                  onRefresh: _load,
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: const [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: IntentionalEmptyArchiveView(fillViewport: false),
-                      ),
-                    ],
+          ? RefreshIndicator(
+              onRefresh: _load,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: const [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: IntentionalEmptyArchiveView(fillViewport: false),
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      for (final row in _rows) _sliverForRow(context, row),
-                      const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
-                    ],
-                  ),
-                ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _load,
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  for (final row in _rows) _sliverForRow(context, row),
+                  const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+                ],
+              ),
+            ),
     );
   }
 
   Widget _sliverForRow(BuildContext context, TimelineRow row) {
     return switch (row) {
       TimelineYearRow(:final year) => SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-            child: Text(
-              '$year',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+          child: Text(
+            '$year',
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
+      ),
       TimelineMonthRow(:final year, :final month, :final recordingCount) =>
         SliverPersistentHeader(
           pinned: true,
@@ -195,23 +194,20 @@ class _TimelineScreenState extends State<TimelineScreen> {
           ),
         ),
       TimelineEntryRow(:final entry) => SliverToBoxAdapter(
-          child: _EntryPreviewTile(
-            dateLine: formatUserFacingDate(entry.createdAt),
-            title: timelineEntryTitle(entry),
-            syncBadge: timelineSyncBadgeLabel(entry.syncStatus),
-            metaLine: '${entry.durationSeconds}s',
-            onTap: () => context.push('/entry/${entry.id}'),
-          ),
+        child: _EntryPreviewTile(
+          dateLine: formatUserFacingDate(entry.createdAt),
+          title: timelineEntryTitle(entry),
+          syncBadge: timelineSyncBadgeLabel(entry.syncStatus),
+          metaLine: '${entry.durationSeconds}s',
+          onTap: () => context.push('/entry/${entry.id}'),
         ),
+      ),
     };
   }
 }
 
 class _StickyMonthHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _StickyMonthHeaderDelegate({
-    required this.label,
-    this.headerKey,
-  });
+  _StickyMonthHeaderDelegate({required this.label, this.headerKey});
 
   final String label;
   final GlobalKey? headerKey;

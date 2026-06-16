@@ -8,11 +8,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Compact chip showing how clear a pattern memory is.
 class MemoryQualityChip extends StatefulWidget {
-  const MemoryQualityChip({
-    super.key,
-    required this.quality,
-    this.onTap,
-  });
+  const MemoryQualityChip({super.key, required this.quality, this.onTap});
 
   final MemoryQuality quality;
   final VoidCallback? onTap;

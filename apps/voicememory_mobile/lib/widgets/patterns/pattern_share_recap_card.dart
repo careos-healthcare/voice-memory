@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../features/activation/activation_tracker.dart';
 import '../../features/pattern_memory/pattern_share_recap_model.dart';
 import '../../features/pattern_memory/pattern_share_service.dart';
+import '../../features/share/archive_share_actions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_typography.dart';
@@ -35,22 +36,23 @@ class _PatternShareRecapCardState extends State<PatternShareRecapCard> {
 
   void _snack(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _copy() async {
-    await PatternShareService.copyToClipboard(widget.recap);
-    _snack('Recap copied.');
+    final ok = await PatternShareService.copyToClipboard(widget.recap);
+    _snack(ok ? ArchiveShareActions.copyConfirmation : 'Could not copy.');
   }
 
   Future<void> _share() async {
-    final shared = await PatternShareService.shareText(widget.recap);
-    // When native share is unavailable the service copies instead, so surface
-    // the copy confirmation rather than leaving the tap silent.
+    final shared = await PatternShareService.shareText(
+      widget.recap,
+      sharePositionOrigin: ArchiveShareActions.sharePositionOrigin(context),
+    );
     if (!shared) {
-      _snack('Recap copied.');
+      _snack(ArchiveShareActions.shareFallbackMessage);
     }
   }
 
@@ -71,7 +73,9 @@ class _PatternShareRecapCardState extends State<PatternShareRecapCard> {
         children: [
           Text(
             PatternShareRecapCard.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

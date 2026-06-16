@@ -16,18 +16,18 @@ class PremiumEntitlements {
   bool get isPro => tier == BillingTier.pro;
 
   factory PremiumEntitlements.free() => const PremiumEntitlements(
-        tier: BillingTier.free,
-        entitlementIds: [],
-        billingConnected: false,
-        source: 'local_placeholder',
-      );
+    tier: BillingTier.free,
+    entitlementIds: [],
+    billingConnected: false,
+    source: 'local_placeholder',
+  );
 
   Map<String, dynamic> toJson() => {
-        'tier': tier == BillingTier.pro ? 'pro' : 'free',
-        'entitlements': entitlementIds,
-        'billingConnected': billingConnected,
-        'source': source,
-      };
+    'tier': tier == BillingTier.pro ? 'pro' : 'free',
+    'entitlements': entitlementIds,
+    'billingConnected': billingConnected,
+    'source': source,
+  };
 
   factory PremiumEntitlements.fromJson(Map<String, dynamic> json) {
     final tierRaw = json['tier'] as String? ?? 'free';

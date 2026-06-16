@@ -24,8 +24,10 @@ void main() {
 
   test('perspective labels exist in English and translate', () {
     expect(localized('anotherPerspective', 'en'), 'Another perspective');
-    expect(localized('showAnotherPerspective', 'en'),
-        'Show another perspective');
+    expect(
+      localized('showAnotherPerspective', 'en'),
+      'Show another perspective',
+    );
     expect(localized('useThisCheck', 'en'), 'Use this check');
     expect(localized('showAnother', 'en'), 'Show another');
 
@@ -40,8 +42,10 @@ void main() {
     expect(localized('aKinderAngle', 'en'), 'A kinder angle');
     expect(localized('whyThisHelps', 'en'), 'Why this helps');
     expect(localized('showAnotherAngle', 'en'), 'Show another angle');
-    expect(localized('kinderCaution', 'en'),
-        'Use what fits. Leave what does not.');
+    expect(
+      localized('kinderCaution', 'en'),
+      'Use what fits. Leave what does not.',
+    );
 
     expect(localized('aKinderAngle', 'es'), isNot('A kinder angle'));
     expect(localized('aKinderAngle', 'fr'), isNotEmpty);
@@ -52,10 +56,14 @@ void main() {
   test('quick help labels exist in English and translate', () {
     expect(localized('needHelp', 'en'), 'Need help?');
     expect(localized('needHelpNow', 'en'), 'Need help now?');
-    expect(localized('quickHelpSubtitle', 'en'),
-        'Pick what you need. ArchiveMe will give one next step.');
-    expect(localized('quickHelpWhatToRecord', 'en'),
-        'I do not know what to record');
+    expect(
+      localized('quickHelpSubtitle', 'en'),
+      'Pick what you need. ArchiveMe will give one next step.',
+    );
+    expect(
+      localized('quickHelpWhatToRecord', 'en'),
+      'I do not know what to record',
+    );
     expect(localized('backToOptions', 'en'), 'Back to options');
 
     expect(localized('needHelp', 'es'), isNot('Need help?'));
@@ -94,47 +102,73 @@ void main() {
   });
 
   test('localized result headline keeps English copy for en', () {
-    expect(localizedResultHeadline('showed_up_again', 'en'),
-        'It showed up again.');
-    expect(localizedResultHeadline('not_today', 'en'), 'Something changed today.');
-    expect(localizedResultHeadline('none_fit', 'en'), 'None of those fit today.');
+    expect(
+      localizedResultHeadline('showed_up_again', 'en'),
+      'It showed up again.',
+    );
+    expect(
+      localizedResultHeadline('not_today', 'en'),
+      'Something changed today.',
+    );
+    expect(
+      localizedResultHeadline('none_fit', 'en'),
+      'None of those fit today.',
+    );
   });
 
   test('localized result headline translates for other languages', () {
-    expect(localizedResultHeadline('lighter', 'es'),
-        localized('feltLighter', 'es'));
-    expect(localizedResultHeadline('lighter', 'es'),
-        isNot('It felt lighter today.'));
+    expect(
+      localizedResultHeadline('lighter', 'es'),
+      localized('feltLighter', 'es'),
+    );
+    expect(
+      localizedResultHeadline('lighter', 'es'),
+      isNot('It felt lighter today.'),
+    );
     expect(localizedResultHeadline('showed_up_again', 'fr'), isNotEmpty);
     expect(localizedResultHeadline('heavier', 'hi'), isNotEmpty);
     expect(localizedResultHeadline('not_today', 'gu'), isNotEmpty);
   });
 
   test('localized check-in question keeps English templates for en', () {
-    expect(localizedCheckInQuestion('lighter', 'en'),
-        'What helped make it lighter?');
+    expect(
+      localizedCheckInQuestion('lighter', 'en'),
+      'What helped make it lighter?',
+    );
     expect(localizedCheckInQuestion('heavier', 'en'), 'What made it heavier?');
   });
 
   test('localized check-in question translates for other languages', () {
-    expect(localizedCheckInQuestion('lighter', 'es'),
-        localized('result.lighter.nextCheck', 'es'));
-    expect(localizedCheckInQuestion('lighter', 'es'),
-        isNot('What helped make it lighter?'));
-    expect(localizedCheckInQuestion('not_today', 'fr'),
-        localized('result.changed.nextCheck', 'fr'));
+    expect(
+      localizedCheckInQuestion('lighter', 'es'),
+      localized('result.lighter.nextCheck', 'es'),
+    );
+    expect(
+      localizedCheckInQuestion('lighter', 'es'),
+      isNot('What helped make it lighter?'),
+    );
+    expect(
+      localizedCheckInQuestion('not_today', 'fr'),
+      localized('result.changed.nextCheck', 'fr'),
+    );
   });
 
   test('localized option label keeps the fallback for en', () {
-    expect(localizedOptionLabel('lighter', 'It felt lighter', 'en'),
-        'It felt lighter');
+    expect(
+      localizedOptionLabel('lighter', 'It felt lighter', 'en'),
+      'It felt lighter',
+    );
   });
 
   test('localized option label translates for other languages', () {
-    expect(localizedOptionLabel('lighter', 'It felt lighter', 'es'),
-        localized('option.lighter', 'es'));
-    expect(localizedOptionLabel('showed_up_again', 'It showed up again', 'fr'),
-        isNotEmpty);
+    expect(
+      localizedOptionLabel('lighter', 'It felt lighter', 'es'),
+      localized('option.lighter', 'es'),
+    );
+    expect(
+      localizedOptionLabel('showed_up_again', 'It showed up again', 'fr'),
+      isNotEmpty,
+    );
   });
 
   test('original-text toggle labels exist and translate', () {

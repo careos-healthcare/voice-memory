@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class ArchiveReasonToReturnMobile extends StatelessWidget {
-  const ArchiveReasonToReturnMobile({
-    super.key,
-    required this.line,
-  });
+  const ArchiveReasonToReturnMobile({super.key, required this.line});
 
   final String line;
 

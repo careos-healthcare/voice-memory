@@ -1,19 +1,14 @@
 /// GPT-5 synthesis V2 — narrative layer on deterministic archive engines.
 
-enum ArchiveSynthesisType {
-  monthly,
-  milestone,
-  deepDive,
-  historian,
-}
+enum ArchiveSynthesisType { monthly, milestone, deepDive, historian }
 
 extension ArchiveSynthesisTypeApi on ArchiveSynthesisType {
   String get apiValue => switch (this) {
-        ArchiveSynthesisType.monthly => 'monthly',
-        ArchiveSynthesisType.milestone => 'milestone',
-        ArchiveSynthesisType.deepDive => 'deep_dive',
-        ArchiveSynthesisType.historian => 'historian',
-      };
+    ArchiveSynthesisType.monthly => 'monthly',
+    ArchiveSynthesisType.milestone => 'milestone',
+    ArchiveSynthesisType.deepDive => 'deep_dive',
+    ArchiveSynthesisType.historian => 'historian',
+  };
 }
 
 class ArchiveSynthesisEvidenceRef {
@@ -28,10 +23,10 @@ class ArchiveSynthesisEvidenceRef {
   final String? role;
 
   Map<String, dynamic> toJson() => {
-        'entryId': entryId,
-        if (excerpt != null) 'excerpt': excerpt,
-        if (role != null) 'role': role,
-      };
+    'entryId': entryId,
+    if (excerpt != null) 'excerpt': excerpt,
+    if (role != null) 'role': role,
+  };
 
   static ArchiveSynthesisEvidenceRef? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -131,25 +126,26 @@ class ArchiveMonthlyReview {
       evidenceAgainst.isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'reviewVersion': 2,
-        'monthKey': monthKey,
-        'archiveHash': archiveHash,
-        'eligibleCount': eligibleCount,
-        'generatedAt': generatedAt.toUtc().toIso8601String(),
-        'model': model,
-        'whatChanged': whatChanged.map(conclusionToJson).toList(),
-        'emergingTheories': emergingTheories.map(conclusionToJson).toList(),
-        'fadingTheories': fadingTheories.map(conclusionToJson).toList(),
-        'surprises': surprises.map(conclusionToJson).toList(),
-        if (biggestSurprise != null)
-          'biggestSurprise': conclusionToJson(biggestSurprise!),
-        if (strongestContradiction != null)
-          'strongestContradiction': conclusionToJson(strongestContradiction!),
-        'evidenceFor': evidenceFor.map(conclusionToJson).toList(),
-        'evidenceAgainst': evidenceAgainst.map(conclusionToJson).toList(),
-      };
+    'reviewVersion': 2,
+    'monthKey': monthKey,
+    'archiveHash': archiveHash,
+    'eligibleCount': eligibleCount,
+    'generatedAt': generatedAt.toUtc().toIso8601String(),
+    'model': model,
+    'whatChanged': whatChanged.map(conclusionToJson).toList(),
+    'emergingTheories': emergingTheories.map(conclusionToJson).toList(),
+    'fadingTheories': fadingTheories.map(conclusionToJson).toList(),
+    'surprises': surprises.map(conclusionToJson).toList(),
+    if (biggestSurprise != null)
+      'biggestSurprise': conclusionToJson(biggestSurprise!),
+    if (strongestContradiction != null)
+      'strongestContradiction': conclusionToJson(strongestContradiction!),
+    'evidenceFor': evidenceFor.map(conclusionToJson).toList(),
+    'evidenceAgainst': evidenceAgainst.map(conclusionToJson).toList(),
+  };
 
-  static Map<String, dynamic> conclusionToJson(ArchiveSynthesisConclusion c) => {
+  static Map<String, dynamic> conclusionToJson(ArchiveSynthesisConclusion c) =>
+      {
         'id': c.id,
         'statement': c.statement,
         'confidencePercent': c.confidencePercent,
@@ -169,9 +165,11 @@ class ArchiveMonthlyReview {
       if (raw is! List) return const [];
       return raw
           .whereType<Map>()
-          .map((e) => ArchiveSynthesisConclusion.fromJson(
-                Map<String, dynamic>.from(e),
-              ))
+          .map(
+            (e) => ArchiveSynthesisConclusion.fromJson(
+              Map<String, dynamic>.from(e),
+            ),
+          )
           .whereType<ArchiveSynthesisConclusion>()
           .toList();
     }
@@ -229,20 +227,22 @@ class ArchiveMilestoneReview {
   final String uncertaintyNote;
 
   Map<String, dynamic> toJson() => {
-        'reviewVersion': 2,
-        'milestoneThreshold': milestoneThreshold,
-        'eligibleCount': eligibleCount,
-        'archiveHash': archiveHash,
-        'generatedAt': generatedAt.toUtc().toIso8601String(),
-        'model': model,
-        'headline': headline,
-        'narrative': narrative,
-        'primaryTheorySummary':
-            ArchiveMonthlyReview.conclusionToJson(primaryTheorySummary),
-        'changeHighlights':
-            changeHighlights.map(ArchiveMonthlyReview.conclusionToJson).toList(),
-        'uncertaintyNote': uncertaintyNote,
-      };
+    'reviewVersion': 2,
+    'milestoneThreshold': milestoneThreshold,
+    'eligibleCount': eligibleCount,
+    'archiveHash': archiveHash,
+    'generatedAt': generatedAt.toUtc().toIso8601String(),
+    'model': model,
+    'headline': headline,
+    'narrative': narrative,
+    'primaryTheorySummary': ArchiveMonthlyReview.conclusionToJson(
+      primaryTheorySummary,
+    ),
+    'changeHighlights': changeHighlights
+        .map(ArchiveMonthlyReview.conclusionToJson)
+        .toList(),
+    'uncertaintyNote': uncertaintyNote,
+  };
 
   static ArchiveMilestoneReview? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;

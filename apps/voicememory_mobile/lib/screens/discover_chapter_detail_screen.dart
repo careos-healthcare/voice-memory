@@ -6,6 +6,7 @@ import '../features/discover/chapter_engine.dart';
 import '../features/discover/discover_analytics.dart';
 import '../features/discover/discover_models.dart';
 import '../models/journal_entry.dart';
+import '../security/user_content_safety.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import '../features/archive_explanations/explanation_models.dart';
@@ -70,68 +71,72 @@ class _DiscoverChapterDetailScreenState
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : chapter == null
-              ? const Center(
-                  child: Text(
-                    'Chapter not found.',
-                    style: TextStyle(color: AppTheme.muted),
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+          ? const Center(
+              child: Text(
+                'Chapter not found.',
+                style: TextStyle(color: AppTheme.muted),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+              children: [
+                Text(
+                  '${formatUserFacingDate(chapter.startDate)} – ${formatUserFacingDate(chapter.endDate)}',
+                  style: const TextStyle(color: AppTheme.muted, fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${formatUserFacingDate(chapter.startDate)} – ${formatUserFacingDate(chapter.endDate)}',
-                      style: const TextStyle(color: AppTheme.muted, fontSize: 13),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            chapter.summary,
-                            style: const TextStyle(fontSize: 15, height: 1.45),
-                          ),
-                        ),
-                        ArchiveWhyButton(
-                          ref: ArchiveInsightRef.chapter(widget.chapterId),
-                          compact: true,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '${chapter.entryCount} entries in this chapter',
-                      semanticsLabel:
-                          '${chapter.entryCount} entries in this chapter',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.muted,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        chapter.summary,
+                        style: const TextStyle(fontSize: 15, height: 1.45),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    for (final e in _entries)
-                      Card(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        child: ListTile(
-                          minVerticalPadding: 12,
-                          title: Text(
-                            formatUserFacingDate(e.createdAt),
-                            style: const TextStyle(fontSize: 12, color: AppTheme.muted),
-                          ),
-                          subtitle: Text(
-                            e.transcript.trim().length > 160
-                                ? '${e.transcript.trim().substring(0, 160)}…'
-                                : e.transcript.trim(),
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          onTap: () => context.push('/entry/${e.id}'),
-                        ),
-                      ),
+                    ArchiveWhyButton(
+                      ref: ArchiveInsightRef.chapter(widget.chapterId),
+                      compact: true,
+                    ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                Text(
+                  '${chapter.entryCount} entries in this chapter',
+                  semanticsLabel:
+                      '${chapter.entryCount} entries in this chapter',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.muted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                for (final e in _entries)
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: ListTile(
+                      minVerticalPadding: 12,
+                      title: Text(
+                        formatUserFacingDate(e.createdAt),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.muted,
+                        ),
+                      ),
+                      subtitle: Text(
+                        UserContentSafety.safeSnippet(
+                          e.transcript.trim(),
+                          maxChars: 160,
+                        ),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onTap: () => context.push('/entry/${e.id}'),
+                    ),
+                  ),
+              ],
+            ),
     );
   }
 }

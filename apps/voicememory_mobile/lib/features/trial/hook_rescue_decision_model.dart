@@ -13,22 +13,14 @@ extension HookRescueActionIds on HookRescueAction {
 }
 
 /// Confidence in the recommended fix, based on how much trial data exists.
-enum HookRescueConfidence {
-  low,
-  medium,
-  high,
-}
+enum HookRescueConfidence { low, medium, high }
 
 extension HookRescueConfidenceIds on HookRescueConfidence {
   String get id => name;
 }
 
 /// How hard to push a given fix, based on how strong the diagnosis signal is.
-enum HookRescueIntensity {
-  normal,
-  elevated,
-  aggressive,
-}
+enum HookRescueIntensity { normal, elevated, aggressive }
 
 extension HookRescueIntensityIds on HookRescueIntensity {
   String get id => name;

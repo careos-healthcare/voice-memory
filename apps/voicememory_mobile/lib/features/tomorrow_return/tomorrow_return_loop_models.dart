@@ -40,13 +40,13 @@ class TomorrowReturnLoop {
   }
 
   Map<String, dynamic> toJson() => {
-        'noticedToday': noticedToday,
-        'comeBackTomorrow': comeBackTomorrow,
-        'watchForNextTime': watchForNextTime,
-        'generatedAt': generatedAt.toUtc().toIso8601String(),
-        if (watchForChips.isNotEmpty) 'watchForChips': watchForChips,
-        if (tomorrowPrompt.trim().isNotEmpty) 'tomorrowPrompt': tomorrowPrompt,
-      };
+    'noticedToday': noticedToday,
+    'comeBackTomorrow': comeBackTomorrow,
+    'watchForNextTime': watchForNextTime,
+    'generatedAt': generatedAt.toUtc().toIso8601String(),
+    if (watchForChips.isNotEmpty) 'watchForChips': watchForChips,
+    if (tomorrowPrompt.trim().isNotEmpty) 'tomorrowPrompt': tomorrowPrompt,
+  };
 
   static TomorrowReturnLoop? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -62,9 +62,9 @@ class TomorrowReturnLoop {
     final chipsRaw = json['watchForChips'];
     final chips = chipsRaw is List
         ? chipsRaw
-            .map((e) => e.toString().trim())
-            .where((c) => c.isNotEmpty)
-            .toList()
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : const <String>[];
     final prompt = json['tomorrowPrompt']?.toString().trim() ?? '';
 

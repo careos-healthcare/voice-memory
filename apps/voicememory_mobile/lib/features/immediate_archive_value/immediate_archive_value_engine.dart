@@ -11,7 +11,6 @@ bool isImmediateArchiveValueMode(int reflectionCount) =>
     reflectionCount > 0 && reflectionCount < fullArchiveMinReflections;
 
 // ——— Models ———
-
 class ImmediateArchiveInsight {
   const ImmediateArchiveInsight({
     this.primaryTheme,
@@ -33,10 +32,7 @@ class ImmediateArchiveInsight {
 }
 
 class ComparisonInsight {
-  const ComparisonInsight({
-    required this.headline,
-    required this.lines,
-  });
+  const ComparisonInsight({required this.headline, required this.lines});
 
   final String headline;
   final List<String> lines;
@@ -81,7 +77,8 @@ ImmediateArchiveInsight buildFirstRecordingInsight(List<JournalEntry> entries) {
   if (working.isEmpty) return const ImmediateArchiveInsight();
 
   final focus = working.last;
-  final themeId = _primaryThemeIdForEntry(focus) ?? _primaryThemeIdAcross(working);
+  final themeId =
+      _primaryThemeIdForEntry(focus) ?? _primaryThemeIdAcross(working);
   final themeName = themeId == null
       ? null
       : ThemeTrackerService.displayNames[themeId] ?? _titleCase(themeId);
@@ -104,10 +101,12 @@ ComparisonInsight buildSecondRecordingComparison(List<JournalEntry> entries) {
   final second = working.last;
   final lines = <String>[];
 
-  final sharedThemes = ThemeTrackerService.themesForEntry(first)
-      .intersection(ThemeTrackerService.themesForEntry(second));
+  final sharedThemes = ThemeTrackerService.themesForEntry(
+    first,
+  ).intersection(ThemeTrackerService.themesForEntry(second));
   if (sharedThemes.isNotEmpty) {
-    final name = ThemeTrackerService.displayNames[sharedThemes.first] ??
+    final name =
+        ThemeTrackerService.displayNames[sharedThemes.first] ??
         _titleCase(sharedThemes.first);
     lines.add('$name appeared in both recordings.');
     lines.add('$name was present in both recordings.');
@@ -150,10 +149,12 @@ PatternInsight buildThirdRecordingPattern(List<JournalEntry> entries) {
         .where((e) => ThemeTrackerService.themesForEntry(e).contains(themeId))
         .length;
     if (hits == n) {
-      final name = ThemeTrackerService.displayNames[themeId] ?? _titleCase(themeId);
+      final name =
+          ThemeTrackerService.displayNames[themeId] ?? _titleCase(themeId);
       lines.add('$name has appeared in all $n recordings.');
     } else if (hits >= 2 && hits >= (n * 0.66).ceil()) {
-      final name = ThemeTrackerService.displayNames[themeId] ?? _titleCase(themeId);
+      final name =
+          ThemeTrackerService.displayNames[themeId] ?? _titleCase(themeId);
       lines.add('$name appears repeatedly.');
     }
   }
@@ -164,16 +165,14 @@ PatternInsight buildThirdRecordingPattern(List<JournalEntry> entries) {
     }
   }
 
-  final approvalHits =
-      working.where((e) => ThemeTrackerService.themesForEntry(e).contains('approval')).length;
+  final approvalHits = working
+      .where((e) => ThemeTrackerService.themesForEntry(e).contains('approval'))
+      .length;
   if (approvalHits >= 2 && !lines.any((l) => l.contains('Approval'))) {
     lines.add('Approval appears repeatedly.');
   }
 
-  return PatternInsight(
-    headline: 'Early pattern',
-    lines: lines,
-  );
+  return PatternInsight(headline: 'Early pattern', lines: lines);
 }
 
 ArchiveMomentumInsight buildArchiveMomentum(List<JournalEntry> entries) {
@@ -215,7 +214,10 @@ String? _primaryThemeIdForEntry(JournalEntry entry) {
   final matched = ThemeTrackerService.themesForEntry(entry).toList();
   if (matched.isEmpty) return null;
   matched.sort(
-    (a, b) => _themeConfidenceScore(b, entry).compareTo(_themeConfidenceScore(a, entry)),
+    (a, b) => _themeConfidenceScore(
+      b,
+      entry,
+    ).compareTo(_themeConfidenceScore(a, entry)),
   );
   return matched.first;
 }
@@ -317,7 +319,13 @@ String? _firstObservation(JournalEntry entry, String? themeId) {
 
 bool _uncertaintyMentioned(JournalEntry entry) {
   final blob = _entryBlob(entry).toLowerCase();
-  return _hasAny(blob, ['uncertain', 'uncertainty', 'unsure', 'not sure', 'doubt']);
+  return _hasAny(blob, [
+    'uncertain',
+    'uncertainty',
+    'unsure',
+    'not sure',
+    'doubt',
+  ]);
 }
 
 bool _uncertaintyMentionedInAll(List<JournalEntry> entries) =>
@@ -356,7 +364,8 @@ List<String> _splitSentences(String text) {
       .toList();
 }
 
-int _wordCount(String text) => text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+int _wordCount(String text) =>
+    text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
 
 String _trimToWordRange(String text, int min, int max) {
   final words = text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
@@ -373,14 +382,7 @@ String? _normalizePhrase(String? raw) {
 
 bool _isFillerPhrase(String text) {
   final lower = text.toLowerCase();
-  const filler = [
-    'you know',
-    'i mean',
-    'kind of',
-    'sort of',
-    'um ',
-    'uh ',
-  ];
+  const filler = ['you know', 'i mean', 'kind of', 'sort of', 'um ', 'uh '];
   return filler.any(lower.contains) && _wordCount(text) < 8;
 }
 

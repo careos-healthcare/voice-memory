@@ -8,7 +8,8 @@ import 'package:voicememory_mobile/features/signal_review/signal_review_coordina
 import 'package:voicememory_mobile/features/signal_review/signal_review_engine.dart';
 import 'package:voicememory_mobile/features/signal_review/signal_review_model.dart';
 import 'package:voicememory_mobile/features/signal_review/signal_review_store.dart';
-import 'package:voicememory_mobile/models/entitlement.dart' show BillingTier, PremiumEntitlements;
+import 'package:voicememory_mobile/models/entitlement.dart'
+    show BillingTier, PremiumEntitlements;
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
@@ -66,7 +67,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -127,7 +131,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -145,7 +152,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I said yes again even though I was already stretched thin.'),
+        entry(
+          'e0',
+          'I said yes again even though I was already stretched thin.',
+        ),
         entry('e1', 'Another yes while already full from earlier commitments.'),
         entry('e2', 'Said yes before checking whether I had capacity left.'),
       ],
@@ -167,7 +177,9 @@ void main() {
     final review = _capacityReview();
     await store.saveActive(review);
 
-    final confirmed = await SignalReviewCoordinator.confirm(reviewId: review.id);
+    final confirmed = await SignalReviewCoordinator.confirm(
+      reviewId: review.id,
+    );
     expect(confirmed!.reviewStatus, SignalReviewStatus.confirmed);
 
     final loop = await LoopModeCoordinator.loadActive();
@@ -190,7 +202,9 @@ void main() {
     final store = SignalReviewStore.instance();
     await store.saveActive(_capacityReview());
 
-    final watching = await SignalReviewCoordinator.keepWatching(reviewId: 'sr1');
+    final watching = await SignalReviewCoordinator.keepWatching(
+      reviewId: 'sr1',
+    );
     expect(watching!.reviewStatus, SignalReviewStatus.watching);
     expect(
       LoopModeCopy.capacityNextPrompts,

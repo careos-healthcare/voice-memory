@@ -25,14 +25,22 @@ export const WEDGE_RESURFACING = {
     `This returned after ${days} day${days === 1 ? "" : "s"}.`,
 } as const;
 
-export const APP_EYEBROW = "Private voice reflections";
-export const APP_TAGLINE = RECOGNITION_COPY.appTagline;
-export const APP_LEAD = RECOGNITION_COPY.appLead;
-export const APP_SUPPORT =
-  "Record on this device. Sign in only if you want encrypted backup.";
-export const APP_HONESTY =
-  "Local-first. Not therapy, not a diagnosis, and not a score or streak.";
-export const APP_DEVICE_LINE = "Speak for about a minute. Your words stay on this device.";
+import { VOICEMEMORY_ARCHIVE_POSITIONING } from "@/lib/product/archive-positioning";
+import {
+  HOMEPAGE_ARCHIVE_DIFFERENTIATION,
+  HOMEPAGE_CHATGPT,
+  PRODUCT_DEMO_STORY,
+  PRODUCT_HERO,
+} from "@/lib/product/product-clarity-copy";
+
+export { VOICEMEMORY_ARCHIVE_POSITIONING } from "@/lib/product/archive-positioning";
+
+export const APP_EYEBROW = PRODUCT_HERO.eyebrow;
+export const APP_TAGLINE = PRODUCT_HERO.promise;
+export const APP_LEAD = PRODUCT_HERO.archiveLead;
+export const APP_SUPPORT = PRODUCT_HERO.support;
+export const APP_HONESTY = PRODUCT_HERO.honesty;
+export const APP_DEVICE_LINE = PRODUCT_HERO.deviceLine;
 
 /** Homepage hero — understandable in ~5 seconds. */
 export const HOMEPAGE_CLARITY = {
@@ -40,10 +48,22 @@ export const HOMEPAGE_CLARITY = {
   stepRemember: RECOGNITION_COPY.homepageRemember,
   stepReturn: RECOGNITION_COPY.homepageReturn,
   ctaLine: RECOGNITION_COPY.homepageCta,
-  exampleLabel: "Example",
-  example:
-    "Three weeks apart, you mentioned waiting for the same phone call.",
+  exampleLabel: PRODUCT_DEMO_STORY.label,
+  example: PRODUCT_DEMO_STORY.body,
+  archiveDifferentiation: HOMEPAGE_ARCHIVE_DIFFERENTIATION,
+  /** @deprecated Use archiveDifferentiation */
+  chatgpt: HOMEPAGE_CHATGPT,
+  lead: PRODUCT_HERO.archiveLead,
+  /** @deprecated Use lead */
+  objection: PRODUCT_HERO.archiveLead,
 } as const;
+
+export {
+  HOMEPAGE_ARCHIVE_DIFFERENTIATION,
+  HOMEPAGE_CHATGPT,
+  PRODUCT_DEMO_STORY,
+  PRODUCT_HERO,
+};
 
 export const APP_SUBTITLE = RECOGNITION_COPY.appSubtitle;
 export const APP_DESCRIPTION_SHORT =
@@ -81,14 +101,16 @@ export const ONBOARDING_HOME = {
   deviceLine: APP_DEVICE_LINE,
 } as const;
 
+/** @deprecated UI uses ARCHIVE_ONBOARDING_SCREENS — stubs for legacy imports only. */
 export const ONBOARDING_ACTIVATION = {
-  lead: "Record a short reflection. It stays on this device.",
-  quietEarly: "The first day is often quiet. That is normal.",
+  lead: "Your archive keeps track of what keeps repeating.",
+  evolvingView: "",
+  quietEarly: "",
   whyReturn: ONBOARDING_WHY_RETURN,
-  stepRecord: "Say it once. It stays here.",
-  stepReturn: WEDGE_RESURFACING.wordsCameBack,
-  stepBackup: "Sign in only if you want a copy on another device.",
-  finish: "Go at your pace.",
+  stepRecord: "Every reflection becomes evidence.",
+  stepReturn: "Those beliefs strengthen, weaken, or disappear.",
+  stepBackup: "",
+  finish: "Record your first reflection.",
 } as const;
 
 export const ONBOARDING_WELCOME = {

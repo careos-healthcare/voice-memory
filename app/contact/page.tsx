@@ -9,8 +9,8 @@ import {
 } from "@/lib/trust-copy";
 
 export const metadata: Metadata = {
-  title: "Contact — VoiceMemory",
-  description: "Contact VoiceMemory for privacy, safety, and product questions.",
+  title: "Contact — ArchiveMe",
+  description: "Contact ArchiveMe for privacy, safety, and product questions.",
 };
 
 export default function ContactPage() {

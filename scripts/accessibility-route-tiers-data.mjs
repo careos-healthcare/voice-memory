@@ -28,6 +28,7 @@ export const TIER_B = [
   "/seasons",
   "/bookmarks",
   "/open-loops",
+  "/blind-spots",
   "/export/print",
 ];
 
@@ -62,6 +63,7 @@ export const TIER_B_PAGE_FILES = [
   "app/seasons/page.tsx",
   "app/bookmarks/page.tsx",
   "app/open-loops/page.tsx",
+  "app/blind-spots/page.tsx",
   "app/export/print/page.tsx",
 ];
 

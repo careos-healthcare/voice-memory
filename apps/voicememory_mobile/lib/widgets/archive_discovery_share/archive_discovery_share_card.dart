@@ -27,13 +27,13 @@ class ArchiveDiscoveryShareCard extends StatelessWidget {
   final ArchiveDiscoveryShareCardModel card;
   final GlobalKey? exportKey;
   final ArchiveDiscoverySharePalette? palette;
+
   /// When set (e.g. export width), card uses a fixed width for crisp PNGs.
   final double? fixedWidth;
 
   @override
   Widget build(BuildContext context) {
-    final colors =
-        palette ?? ArchiveDiscoverySharePalette.fromContext(context);
+    final colors = palette ?? ArchiveDiscoverySharePalette.fromContext(context);
     final width = fixedWidth ?? double.infinity;
     final key = exportKey ?? GlobalKey();
 
@@ -130,8 +130,9 @@ class ArchiveDiscoveryShareCard extends StatelessWidget {
     required GlobalKey boundaryKey,
     required String filename,
   }) async {
-    final boundary = boundaryKey.currentContext?.findRenderObject()
-        as RenderRepaintBoundary?;
+    final boundary =
+        boundaryKey.currentContext?.findRenderObject()
+            as RenderRepaintBoundary?;
     if (boundary == null) {
       throw StateError('Share card not ready to render');
     }
@@ -155,10 +156,9 @@ class ArchiveDiscoveryShareCard extends StatelessWidget {
       boundaryKey: boundaryKey,
       filename: card.pngFilename,
     );
-    await Share.shareXFiles(
-      [XFile(file.path, mimeType: 'image/png')],
-      text: ArchiveDiscoveryShareCopy.shareSheetText,
-    );
+    await Share.shareXFiles([
+      XFile(file.path, mimeType: 'image/png'),
+    ], text: ArchiveDiscoveryShareCopy.shareSheetText);
     await ArchiveDiscoveryShareAnalytics.discoveryShared(
       cardType: card.type,
       cardId: card.id,
@@ -178,9 +178,7 @@ class ArchiveDiscoveryShareCard extends StatelessWidget {
       boundaryKey: boundaryKey,
       filename: card.pngFilename,
     );
-    await Share.shareXFiles(
-      [XFile(file.path, mimeType: 'image/png')],
-    );
+    await Share.shareXFiles([XFile(file.path, mimeType: 'image/png')]);
     await ArchiveDiscoveryShareAnalytics.discoveryShared(
       cardType: card.type,
       cardId: card.id,
@@ -193,10 +191,7 @@ class ArchiveDiscoveryShareCard extends StatelessWidget {
 
 /// Type label chip for the share discoveries list.
 class ArchiveDiscoveryShareCardTypeLabel extends StatelessWidget {
-  const ArchiveDiscoveryShareCardTypeLabel({
-    super.key,
-    required this.type,
-  });
+  const ArchiveDiscoveryShareCardTypeLabel({super.key, required this.type});
 
   final ArchiveDiscoveryShareCardType type;
 

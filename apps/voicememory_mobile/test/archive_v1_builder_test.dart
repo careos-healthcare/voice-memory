@@ -25,7 +25,10 @@ JournalEntry _entry({
       mood: 'thoughtful',
       emotionalIntensity: 3,
       recurringThemes: themes,
-      exactLanguagePattern: transcript.substring(0, transcript.length.clamp(0, 40)),
+      exactLanguagePattern: transcript.substring(
+        0,
+        transcript.length.clamp(0, 40),
+      ),
       concreteObservation: transcript.length >= 16 ? transcript : '',
       repeatedSignal: themes.isNotEmpty ? themes.first : '',
     ),
@@ -40,7 +43,8 @@ void main() {
         3,
         (i) => _entry(
           id: 'e$i',
-          transcript: 'Relationships matter most to me and my health is important today.',
+          transcript:
+              'Relationships matter most to me and my health is important today.',
         ),
       );
       final gaps = const ArchiveThemeGapEngine().build(entries);
@@ -76,9 +80,7 @@ void main() {
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
       final evolution = BeliefEvolutionService.fromPrefs(prefs);
 
-      final entries = [
-        _entry(id: 'a', transcript: 'short'),
-      ];
+      final entries = [_entry(id: 'a', transcript: 'short')];
       final view = await const ArchiveV1Builder().build(
         entries: entries,
         evolutionService: evolution,
@@ -114,7 +116,8 @@ void main() {
       expect(view.theory!.evidenceCount, view.belief!.evidenceCount);
       expect(
         view.theory!.isConfident,
-        view.theory!.confidencePercent >= ArchiveTheoryEngine.confidentThreshold,
+        view.theory!.confidencePercent >=
+            ArchiveTheoryEngine.confidentThreshold,
       );
       expect(view.lifecycle.current, isNotNull);
       expect(view.lifecycle.current!.firstSeen, isNotNull);

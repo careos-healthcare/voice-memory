@@ -22,8 +22,10 @@ void main() {
         resultNextCheckUsed: 2,
       ),
     );
-    expect(diagnosis.weakestRetentionBucket,
-        RetentionWeakestBucket.didNotReturn);
+    expect(
+      diagnosis.weakestRetentionBucket,
+      RetentionWeakestBucket.didNotReturn,
+    );
     expect(diagnosis.nextDayReturnRate, 0.2);
   });
 
@@ -37,8 +39,10 @@ void main() {
         resultNextCheckUsed: 2,
       ),
     );
-    expect(diagnosis.weakestRetentionBucket,
-        RetentionWeakestBucket.didNotChooseNextCheck);
+    expect(
+      diagnosis.weakestRetentionBucket,
+      RetentionWeakestBucket.didNotChooseNextCheck,
+    );
     expect(diagnosis.nextCheckChoiceRate, 0.2);
   });
 

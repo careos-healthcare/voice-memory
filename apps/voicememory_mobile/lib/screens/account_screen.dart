@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/account_auth.dart';
 import '../config/app_config.dart';
@@ -10,6 +9,7 @@ import '../product/consumer_ui_copy.dart';
 import '../config/screenshot_mode.dart';
 import '../config/screenshot_sample_data.dart';
 import '../services/app_services.dart';
+import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -78,9 +78,7 @@ class _AccountScreenState extends State<AccountScreen> {
     final syncEnabled = AppConfig.isBackendConfigured;
     final syncSubtitle = !syncEnabled
         ? ConsumerUiCopy.syncNotAvailableTestFlight
-        : (_syncLabel.isEmpty
-            ? ConsumerUiCopy.syncOnDeviceOnly
-            : _syncLabel);
+        : (_syncLabel.isEmpty ? ConsumerUiCopy.syncOnDeviceOnly : _syncLabel);
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
       body: SafeArea(
@@ -89,102 +87,96 @@ class _AccountScreenState extends State<AccountScreen> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-            Text(
-              ConsumerUiCopy.accountTitle,
-              style: ArchiveMobileTypography.responsivePageTitle(context),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _sectionTile(
-              title: ConsumerUiCopy.syncStatus,
-              subtitle: syncSubtitle,
-              onTap: syncEnabled && !_busy ? _sync : null,
-              trailing: syncEnabled
-                  ? TextButton(
-                      onPressed: _busy ? null : _sync,
-                      child: const Text('Sync now'),
-                    )
-                  : null,
-            ),
-            _sectionTile(
-              title: ConsumerUiCopy.subscription,
-              subtitle: _sessionLabel,
-              onTap: () => context.push('/subscription'),
-            ),
-            _sectionTile(
-              title: ConsumerUiCopy.privacy,
-              onTap: () => launchUrl(
-                Uri.parse(AppConfig.privacyUrl),
-                mode: LaunchMode.externalApplication,
-              ),
-              trailing: const Icon(Icons.open_in_new, size: 18),
-            ),
-            _sectionTile(
-              title: ConsumerUiCopy.exportData,
-              onTap: () => context.push('/export'),
-            ),
-            _sectionTile(
-              title: ConsumerUiCopy.deleteAccount,
-              onTap: () => context.push('/delete-account'),
-              destructive: true,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            OutlinedButton(
-              onPressed: () => context.push('/settings'),
-              child: Text(ConsumerUiCopy.settings),
-            ),
-            if (_status.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
               Text(
-                _status,
-                style: ArchiveMobileTypography.responsiveBody(context),
+                ConsumerUiCopy.accountTitle,
+                style: ArchiveMobileTypography.responsivePageTitle(context),
               ),
-            ],
-            if (_showSignIn) ...[
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                AccountAuthCopy.createBody,
-                style: ArchiveMobileTypography.responsiveHelper(context),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              FilledButton(
-                key: const Key('account_create_cta'),
-                onPressed: _busy ? null : () => _openAuth('/account/create'),
-                child: const Text(AccountAuthCopy.createCta),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              OutlinedButton(
-                key: const Key('account_sign_in_cta'),
-                onPressed: _busy ? null : () => _openAuth('/account/sign-in'),
-                child: const Text(AccountAuthCopy.signInCta),
-              ),
-            ] else ...[
               const SizedBox(height: AppSpacing.md),
-              TextButton(
-                key: const Key('account_sign_out_cta'),
-                onPressed: _busy
-                    ? null
-                    : () async {
-                        await AppServices.instance.auth.signOut();
-                        await _refresh();
-                      },
-                child: const Text(AccountAuthCopy.signOut),
+              const AccountPrivacyControlsSection(),
+              const SizedBox(height: AppSpacing.md),
+              _sectionTile(
+                title: ConsumerUiCopy.syncStatus,
+                subtitle: syncSubtitle,
+                onTap: syncEnabled && !_busy ? _sync : null,
+                trailing: syncEnabled
+                    ? TextButton(
+                        onPressed: _busy ? null : _sync,
+                        child: const Text('Sync now'),
+                      )
+                    : null,
               ),
+              _sectionTile(
+                title: ConsumerUiCopy.subscription,
+                subtitle: _sessionLabel,
+                onTap: () => context.push('/subscription'),
+              ),
+              _sectionTile(
+                title: ConsumerUiCopy.privacy,
+                onTap: () => context.push('/privacy'),
+              ),
+              _sectionTile(
+                title: ConsumerUiCopy.deleteAccount,
+                onTap: () => context.push('/delete-account'),
+                destructive: true,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              OutlinedButton(
+                onPressed: () => context.push('/settings'),
+                child: Text(ConsumerUiCopy.settings),
+              ),
+              if (_status.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  _status,
+                  style: ArchiveMobileTypography.responsiveBody(context),
+                ),
+              ],
+              if (_showSignIn) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  AccountAuthCopy.createBody,
+                  style: ArchiveMobileTypography.responsiveHelper(context),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                FilledButton(
+                  key: const Key('account_create_cta'),
+                  onPressed: _busy ? null : () => _openAuth('/account/create'),
+                  child: const Text(AccountAuthCopy.createCta),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                OutlinedButton(
+                  key: const Key('account_sign_in_cta'),
+                  onPressed: _busy ? null : () => _openAuth('/account/sign-in'),
+                  child: const Text(AccountAuthCopy.signInCta),
+                ),
+              ] else ...[
+                const SizedBox(height: AppSpacing.md),
+                TextButton(
+                  key: const Key('account_sign_out_cta'),
+                  onPressed: _busy
+                      ? null
+                      : () async {
+                          await AppServices.instance.auth.signOut();
+                          await _refresh();
+                        },
+                  child: const Text(AccountAuthCopy.signOut),
+                ),
+                Text(
+                  AccountAuthCopy.signOutKeepsArchive,
+                  textAlign: TextAlign.center,
+                  style: ArchiveMobileTypography.responsiveHelper(context),
+                ),
+              ],
+              if (ScreenshotMode.enabled) ...[
+                AccountArchiveStatsCard(
+                  stats: ScreenshotSampleData.beliefsSnapshot.stats,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
               Text(
-                AccountAuthCopy.signOutKeepsArchive,
-                textAlign: TextAlign.center,
+                ConsumerUiCopy.accountPrivacyNote,
                 style: ArchiveMobileTypography.responsiveHelper(context),
               ),
-            ],
-            if (ScreenshotMode.enabled) ...[
-              AccountArchiveStatsCard(
-                stats: ScreenshotSampleData.beliefsSnapshot.stats,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-            ],
-            Text(
-              ConsumerUiCopy.accountPrivacyNote,
-              style: ArchiveMobileTypography.responsiveHelper(context),
-            ),
             ],
           ),
         ),

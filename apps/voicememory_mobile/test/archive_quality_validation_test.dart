@@ -30,7 +30,9 @@ void main() {
 
     for (final persona in ArchiveQualityPersona.values) {
       for (final size in [50, 100, 200]) {
-        final dir = await Directory.systemTemp.createTemp('aq_${persona.name}_$size');
+        final dir = await Directory.systemTemp.createTemp(
+          'aq_${persona.name}_$size',
+        );
         final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
         final evolution = BeliefEvolutionService.fromPrefs(prefs);
         final entries = buildPersonaArchive(persona, count: size);
@@ -108,7 +110,8 @@ void main() {
     expect(
       relevance['relevanceRate'] as double,
       greaterThan(0.85),
-      reason: 'Topical counter-evidence relevance must exceed 85% '
+      reason:
+          'Topical counter-evidence relevance must exceed 85% '
           '(was ${relevance['relevant']}/${relevance['total']})',
     );
 
@@ -116,19 +119,30 @@ void main() {
     for (final s in scenarios) {
       final m = s['metrics'] as Map<String, dynamic>;
       if (m['theoryMatchesPrimary'] != true) {
-        primaryFailures.add('${s['persona']}@${s['reflectionCount']}: hero≠analyst');
+        primaryFailures.add(
+          '${s['persona']}@${s['reflectionCount']}: hero≠analyst',
+        );
       }
       if (m['theoryZeroEvidenceHero'] == true) {
-        primaryFailures.add('${s['persona']}@${s['reflectionCount']}: 0-ev hero');
+        primaryFailures.add(
+          '${s['persona']}@${s['reflectionCount']}: 0-ev hero',
+        );
       }
       if (m['relationshipWorkHero'] == true) {
-        primaryFailures.add('${s['persona']}@${s['reflectionCount']}: work hero');
+        primaryFailures.add(
+          '${s['persona']}@${s['reflectionCount']}: work hero',
+        );
       }
       if (m['unifiedSurfaceMismatch'] == true) {
-        primaryFailures.add('${s['persona']}@${s['reflectionCount']}: surface mismatch');
+        primaryFailures.add(
+          '${s['persona']}@${s['reflectionCount']}: surface mismatch',
+        );
       }
-      if (m['heroEqualsTopRankedTheory'] != true && s['theory']?['present'] == true) {
-        primaryFailures.add('${s['persona']}@${s['reflectionCount']}: hero≠top ranked');
+      if (m['heroEqualsTopRankedTheory'] != true &&
+          s['theory']?['present'] == true) {
+        primaryFailures.add(
+          '${s['persona']}@${s['reflectionCount']}: hero≠top ranked',
+        );
       }
     }
     expect(
@@ -154,7 +168,8 @@ void main() {
     expect(
       pollutionFailures,
       isEmpty,
-      reason: 'Trait pollution in visible UI rows:\n${pollutionFailures.join('\n')}',
+      reason:
+          'Trait pollution in visible UI rows:\n${pollutionFailures.join('\n')}',
     );
   });
 }
@@ -321,12 +336,7 @@ Map<String, dynamic> _serializeLifecycle(BeliefLifecycleView lifecycle) {
             'status': current.status.name,
             'eventCount': current.events.length,
             'events': current.events
-                .map(
-                  (e) => {
-                    'phase': e.phase.name,
-                    'summary': e.summary,
-                  },
-                )
+                .map((e) => {'phase': e.phase.name, 'summary': e.summary})
                 .take(5)
                 .toList(),
           },
@@ -408,10 +418,12 @@ Map<String, dynamic>? _serializeDeepDive(ArchiveDeepDiveView? dive) {
     'patternThemeCount': dive.patterns.relatedThemes.length,
     'patternContradictionCount': dive.patterns.connectedContradictions.length,
     'counterForCount': dive.counterEvidence.forExcerpts.length,
-    'counterAgainstCount': dive.counterEvidence.againstExcerpts.length +
+    'counterAgainstCount':
+        dive.counterEvidence.againstExcerpts.length +
         dive.counterEvidence.againstSummaries.length,
     'inquiryCount': dive.inquiryQuestions.length,
-    'timelineEventCount': dive.timeline.keyRecordings.length +
+    'timelineEventCount':
+        dive.timeline.keyRecordings.length +
         dive.timeline.evolutionEvents.length,
   };
 }
@@ -461,12 +473,7 @@ Map<String, dynamic> _serializeAnalyst(ArchiveAnalystReport report) {
         )
         .toList(),
     'blindSpots': report.blindSpots
-        .map(
-          (b) => {
-            'headline': b.headline,
-            'observation': b.observation,
-          },
-        )
+        .map((b) => {'headline': b.headline, 'observation': b.observation})
         .toList(),
     'competingBeliefs': report.competingBeliefs
         .map(
@@ -540,13 +547,18 @@ Map<String, dynamic> _metrics(
 
   final weakConfidence = analyst.currentBeliefs
       .where((b) => b.confidencePercent >= 75 && b.evidenceCount < 5)
-      .map((b) => '${b.statement} (${b.confidencePercent}% / ${b.evidenceCount} ev)')
+      .map(
+        (b) =>
+            '${b.statement} (${b.confidencePercent}% / ${b.evidenceCount} ev)',
+      )
       .toList();
 
   final visiblePollution = _visibleTraitPollution(analyst);
-  final zeroConfidenceListed = visiblePollution['zeroConfidence'] as List<String>;
+  final zeroConfidenceListed =
+      visiblePollution['zeroConfidence'] as List<String>;
   final zeroEvidenceListed = visiblePollution['zeroEvidence'] as List<String>;
-  final traitTemplatesListed = visiblePollution['traitTemplates'] as List<String>;
+  final traitTemplatesListed =
+      visiblePollution['traitTemplates'] as List<String>;
 
   final highCounterLowSupport = analyst.currentBeliefs
       .where((b) => b.counterEvidenceCount > b.evidenceCount)
@@ -573,26 +585,30 @@ Map<String, dynamic> _metrics(
 
   final rankingPrimary = v1.theoryRanking?.primaryStatement?.trim();
 
-  final theoryMatchesPrimary = theory != null &&
+  final theoryMatchesPrimary =
+      theory != null &&
       primaryStatement != null &&
       theory.statement.trim() == primaryStatement.trim();
 
-  final heroEqualsTopRanked = theory != null &&
+  final heroEqualsTopRanked =
+      theory != null &&
       rankingPrimary != null &&
       theory.statement.trim() == rankingPrimary;
 
-  final theoryZeroEvidenceHero =
-      theory != null && theory.evidenceCount < 3;
+  final theoryZeroEvidenceHero = theory != null && theory.evidenceCount < 3;
 
-  final relationshipWorkHero = personaName == 'relationshipFocused' &&
+  final relationshipWorkHero =
+      personaName == 'relationshipFocused' &&
       theory != null &&
-      theory.statement.toLowerCase().contains('work delivery pressure dominates');
-  final lifecycleMatches = lifecycle.current?.statement.trim() ==
-      theory?.statement.trim();
-  final diveMatches =
-      dive?.beliefStatement.trim() == theory?.statement.trim();
+      theory.statement.toLowerCase().contains(
+        'work delivery pressure dominates',
+      );
+  final lifecycleMatches =
+      lifecycle.current?.statement.trim() == theory?.statement.trim();
+  final diveMatches = dive?.beliefStatement.trim() == theory?.statement.trim();
   final packMatches = packTheoryStatement?.trim() == theory?.statement.trim();
-  final unifiedSurfaceMismatch = theory != null &&
+  final unifiedSurfaceMismatch =
+      theory != null &&
       (!theoryMatchesPrimary ||
           rankingPrimary != theory.statement.trim() ||
           lifecycleMatches == false ||
@@ -600,12 +616,11 @@ Map<String, dynamic> _metrics(
           packMatches == false);
 
   final dominantAlsoFading = analyst.fadingBeliefs.any(
-    (f) =>
-        analyst.currentBeliefs.any(
-          (c) =>
-              c.isPrimary &&
-              c.statement.trim().toLowerCase() == f.statement.trim().toLowerCase(),
-        ),
+    (f) => analyst.currentBeliefs.any(
+      (c) =>
+          c.isPrimary &&
+          c.statement.trim().toLowerCase() == f.statement.trim().toLowerCase(),
+    ),
   );
 
   return {
@@ -624,9 +639,11 @@ Map<String, dynamic> _metrics(
     'fadingCount': analyst.fadingBeliefs.length,
     'competingEchoesPrimary':
         analyst.competingBeliefs.length > 1 &&
-            analyst.competingBeliefs
-                .skip(1)
-                .every((c) => c.statement == analyst.competingBeliefs.first.statement),
+        analyst.competingBeliefs
+            .skip(1)
+            .every(
+              (c) => c.statement == analyst.competingBeliefs.first.statement,
+            ),
     'theoryPresent': theory != null,
     'theoryShowsCounterCount': (theory?.counterEvidenceCount ?? 0) > 0,
     'theoryLowConfidenceHonest': theory != null && !theory.isConfident,
@@ -641,7 +658,8 @@ Map<String, dynamic> _metrics(
     'synthesisMatchesTheory': packMatches,
     'lifecycleHasContent': lifecycle.hasContent,
     'lifecycleRetiredCount': lifecycle.retired.length,
-    'lifecycleHasWeakeningOrDeath': lifecycle.retired.any(
+    'lifecycleHasWeakeningOrDeath':
+        lifecycle.retired.any(
           (r) =>
               r.status == BeliefLifecycleStatus.weakening ||
               r.status == BeliefLifecycleStatus.dormant ||

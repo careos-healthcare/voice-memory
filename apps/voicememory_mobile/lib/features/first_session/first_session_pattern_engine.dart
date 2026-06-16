@@ -25,7 +25,8 @@ class FirstSessionPatternEngine {
     'dont',
   ];
 
-  static const Map<FirstSessionPatternCategory, Set<String>> _primaryIntensityKeywords = {
+  static const Map<FirstSessionPatternCategory, Set<String>>
+  _primaryIntensityKeywords = {
     FirstSessionPatternCategory.responsibility: {
       'guilt',
       'guilty',
@@ -217,14 +218,16 @@ class FirstSessionPatternEngine {
     final secondScore = second?.score ?? 0;
     final weakOnly = top.weakOnly && top.score < _minStrongScore;
     final lowConfidence = top.score < _minStrongScore || weakOnly;
-    final closeScores = !lowConfidence &&
+    final closeScores =
+        !lowConfidence &&
         second != null &&
         top.score > 0 &&
         ((top.score - secondScore) < _closeScoreGap ||
             (secondScore / top.score) > 0.55);
 
     final positiveLean = _positiveLean(blob);
-    final strongNegative = top.score >= _minStrongScore &&
+    final strongNegative =
+        top.score >= _minStrongScore &&
         top.categoryId != FirstSessionPatternCategory.fallback.id;
 
     _CategoryScore selected;
@@ -245,7 +248,9 @@ class FirstSessionPatternEngine {
       selected: selected,
       ranked: ranked,
       closeScores: closeScores || lowConfidence,
-      lowConfidence: lowConfidence || selected.categoryId == FirstSessionPatternCategory.fallback.id,
+      lowConfidence:
+          lowConfidence ||
+          selected.categoryId == FirstSessionPatternCategory.fallback.id,
       negativePenaltyApplied: negativePenaltyApplied,
       positiveLean: positiveLean,
       competingScores: _normalizedScores(ranked),
@@ -264,7 +269,10 @@ class FirstSessionPatternEngine {
     for (final phrase in def.phrases) {
       final occurrences = _findTermOccurrences(blob, phrase);
       if (occurrences.isEmpty) continue;
-      final occ = occurrences.firstWhere((o) => !o.negated, orElse: () => occurrences.first);
+      final occ = occurrences.firstWhere(
+        (o) => !o.negated,
+        orElse: () => occurrences.first,
+      );
       if (occ.negated) {
         negationHits++;
         continue;
@@ -277,7 +285,10 @@ class FirstSessionPatternEngine {
     for (final word in def.keywords) {
       final occurrences = _findTermOccurrences(blob, word);
       if (occurrences.isEmpty) continue;
-      final occ = occurrences.firstWhere((o) => !o.negated, orElse: () => occurrences.first);
+      final occ = occurrences.firstWhere(
+        (o) => !o.negated,
+        orElse: () => occurrences.first,
+      );
       if (occ.negated) {
         negationHits++;
         continue;
@@ -290,8 +301,9 @@ class FirstSessionPatternEngine {
     }
 
     if (cat == FirstSessionPatternCategory.relationship) {
-      final hasTension = _relationshipTensionRequired
-          .any((t) => _findTermOccurrences(blob, t).any((o) => !o.negated));
+      final hasTension = _relationshipTensionRequired.any(
+        (t) => _findTermOccurrences(blob, t).any((o) => !o.negated),
+      );
       if (!hasTension) {
         if (phraseHits == 0 && keywordHits <= 2) {
           score = 0;
@@ -302,8 +314,13 @@ class FirstSessionPatternEngine {
     }
 
     if (cat == FirstSessionPatternCategory.burnout) {
-      final hasStrong = ['exhausted', 'drained', 'burnout', 'burnt out', 'no energy']
-          .any((t) => _findTermOccurrences(blob, t).any((o) => !o.negated));
+      final hasStrong = [
+        'exhausted',
+        'drained',
+        'burnout',
+        'burnt out',
+        'no energy',
+      ].any((t) => _findTermOccurrences(blob, t).any((o) => !o.negated));
       if (!hasStrong && hits.containsKey('tired')) {
         score = (score * 0.3).round();
       }
@@ -323,7 +340,8 @@ class FirstSessionPatternEngine {
     }
 
     final primary = _primaryIntensityKeywords[cat] ?? const {};
-    final hasIntensity = phraseHits > 0 ||
+    final hasIntensity =
+        phraseHits > 0 ||
         keywordHits >= 2 ||
         (keywordHits >= 1 && _hasEmotionalHit(hits)) ||
         hits.keys.any(primary.contains);
@@ -353,8 +371,12 @@ class FirstSessionPatternEngine {
     required _ScoreResult scoreResult,
     bool forceEarly = false,
   }) {
-    final category = firstSessionPatternCategoryFromIdOrFallback(pick.categoryId);
-    final def = _definitions[category] ?? _definitions[FirstSessionPatternCategory.fallback]!;
+    final category = firstSessionPatternCategoryFromIdOrFallback(
+      pick.categoryId,
+    );
+    final def =
+        _definitions[category] ??
+        _definitions[FirstSessionPatternCategory.fallback]!;
     final topScore = pick.score;
     final secondScore = ranked.length > 1 ? ranked[1].score : 0;
     final gap = topScore - secondScore;
@@ -391,7 +413,8 @@ class FirstSessionPatternEngine {
       label = FirstSessionConfidenceLabel.early;
     }
 
-    final isAmbiguous = ranked.length > 1 &&
+    final isAmbiguous =
+        ranked.length > 1 &&
         (closeScores ||
             (topScore >= _minStrongScore &&
                 secondScore >= _minStrongScore &&
@@ -399,7 +422,9 @@ class FirstSessionPatternEngine {
     final alternatives = <FirstSessionPatternAlternative>[];
     void addAlternative(_CategoryScore other) {
       if (other.categoryId == pick.categoryId) return;
-      final otherCat = firstSessionPatternCategoryFromIdOrFallback(other.categoryId);
+      final otherCat = firstSessionPatternCategoryFromIdOrFallback(
+        other.categoryId,
+      );
       final otherDef = _definitions[otherCat]!;
       alternatives.add(
         FirstSessionPatternAlternative(
@@ -420,7 +445,8 @@ class FirstSessionPatternEngine {
     }
 
     if (isAmbiguous || lowConfidence) {
-      for (final other in ranked.where((r) => r.categoryId != pick.categoryId).take(2)) {
+      for (final other
+          in ranked.where((r) => r.categoryId != pick.categoryId).take(2)) {
         addAlternative(other);
       }
     }
@@ -458,7 +484,8 @@ class FirstSessionPatternEngine {
       confidenceScore: confidenceScore,
       matchedPhrases: pick.matchedPhrases.take(3).toList(),
       alternativePatterns: alternatives,
-      userCanCorrect: isAmbiguous ||
+      userCanCorrect:
+          isAmbiguous ||
           alternatives.isNotEmpty ||
           confidenceScore < 0.72 ||
           lowConfidence,
@@ -544,7 +571,8 @@ class FirstSessionPatternEngine {
 
     final preTop = ranked.first;
     final preSecond = ranked.length > 1 ? ranked[1] : null;
-    final decisiveLead = preSecond != null &&
+    final decisiveLead =
+        preSecond != null &&
         preTop.score >= _minStrongScore &&
         (preTop.score - preSecond.score) >= _closeScoreGap;
 
@@ -683,7 +711,8 @@ class FirstSessionPatternEngine {
     FirstSessionPatternCategory.burnout,
   ];
 
-  static final Map<FirstSessionPatternCategory, _PatternDefinition> _definitions = {
+  static final Map<FirstSessionPatternCategory, _PatternDefinition>
+  _definitions = {
     FirstSessionPatternCategory.responsibility: _PatternDefinition(
       title: 'Taking responsibility before asking for help',
       whyNoticed:
@@ -777,10 +806,7 @@ class FirstSessionPatternEngine {
           'You mentioned doubting yourself or feeling behind compared with others.',
       watchForText: 'whether you feel you need to prove yourself again',
       chips: const ['not enough', 'proving myself', 'feeling judged'],
-      phrases: const [
-        'not good enough',
-        'doubt myself',
-      ],
+      phrases: const ['not good enough', 'doubt myself'],
       keywords: const [
         'prove',
         'proving',
@@ -826,10 +852,7 @@ class FirstSessionPatternEngine {
           'You mentioned feeling tired, drained, or too flat to keep going.',
       watchForText: 'whether tiredness changes what you say yes to',
       chips: const ['no energy', 'too much', 'feeling heavy'],
-      phrases: const [
-        'burnt out',
-        'no energy',
-      ],
+      phrases: const ['burnt out', 'no energy'],
       keywords: const [
         'tired',
         'exhausted',
@@ -895,26 +918,25 @@ class _CategoryScore {
   final int negationHits;
 
   static _CategoryScore empty(String categoryId) => _CategoryScore(
-        categoryId: categoryId,
-        score: 0,
-        matchedPhrases: const [],
-        weakOnly: true,
-        negationHits: 0,
-      );
+    categoryId: categoryId,
+    score: 0,
+    matchedPhrases: const [],
+    weakOnly: true,
+    negationHits: 0,
+  );
 
   static _CategoryScore fromDef(
     String categoryId, {
     required int score,
     required List<String> matchedPhrases,
     required bool weakOnly,
-  }) =>
-      _CategoryScore(
-        categoryId: categoryId,
-        score: score,
-        matchedPhrases: matchedPhrases,
-        weakOnly: weakOnly,
-        negationHits: 0,
-      );
+  }) => _CategoryScore(
+    categoryId: categoryId,
+    score: score,
+    matchedPhrases: matchedPhrases,
+    weakOnly: weakOnly,
+    negationHits: 0,
+  );
 }
 
 class _TermOccurrence {

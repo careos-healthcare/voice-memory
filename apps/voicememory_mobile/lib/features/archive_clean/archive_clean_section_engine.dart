@@ -18,15 +18,11 @@ List<ArchiveCleanSection> buildArchiveCleanSections({
   final clock = now ?? DateTime.now();
   final weekAgo = clock.subtract(const Duration(days: 7));
 
-  final todayCount =
-      keyMoments.where((m) => _isSameDay(m.date, clock)).length;
-  final weekCount =
-      keyMoments.where((m) => m.date.isAfter(weekAgo)).length;
-  final olderCount =
-      keyMoments.where((m) => !m.date.isAfter(weekAgo)).length;
+  final todayCount = keyMoments.where((m) => _isSameDay(m.date, clock)).length;
+  final weekCount = keyMoments.where((m) => m.date.isAfter(weekAgo)).length;
+  final olderCount = keyMoments.where((m) => !m.date.isAfter(weekAgo)).length;
 
-  final hasPattern =
-      memory != null || summary != null || timeline != null;
+  final hasPattern = memory != null || summary != null || timeline != null;
   final patternSubtitle = _patternSubtitle(memory, summary, timeline);
 
   final sections = <ArchiveCleanSection>[];
@@ -126,9 +122,8 @@ String _patternSubtitle(
   ArchiveMemorySummary? summary,
   ArchiveEvolutionTimeline? timeline,
 ) {
-  final title = memory?.patternTitle ??
-      timeline?.patternTitle ??
-      summary?.patternTitle;
+  final title =
+      memory?.patternTitle ?? timeline?.patternTitle ?? summary?.patternTitle;
   if (title != null && title.trim().isNotEmpty) {
     return title.trim();
   }

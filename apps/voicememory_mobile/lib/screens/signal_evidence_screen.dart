@@ -117,10 +117,7 @@ class _SignalEvidenceScreenState extends State<SignalEvidenceScreen> {
             style: ArchiveMobileTypography.archiveSurfaceTitle(context),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            signal.title,
-            style: ArchiveMobileTypography.listTitle(context),
-          ),
+          Text(signal.title, style: ArchiveMobileTypography.listTitle(context)),
           SizedBox(height: gap),
           if (_activeLoop?.isProveEnough == true) ...[
             const LoopTriggerMapSection(),
@@ -142,7 +139,9 @@ class _SignalEvidenceScreenState extends State<SignalEvidenceScreen> {
                 children: [
                   Text(
                     ConsumerUiCopy.signalEvidenceNeedsMore,
-                    style: ArchiveMobileTypography.responsiveSectionTitle(context),
+                    style: ArchiveMobileTypography.responsiveSectionTitle(
+                      context,
+                    ),
                   ),
                   SizedBox(height: gap),
                   Text(
@@ -155,7 +154,9 @@ class _SignalEvidenceScreenState extends State<SignalEvidenceScreen> {
                       context,
                       prompt: trail.nextEvidencePrompt,
                     ),
-                    child: Text(ConsumerUiCopy.postSaveInsightRecordNextEvidence),
+                    child: Text(
+                      ConsumerUiCopy.postSaveInsightRecordNextEvidence,
+                    ),
                   ),
                 ],
               ),
@@ -177,14 +178,14 @@ class _SignalEvidenceScreenState extends State<SignalEvidenceScreen> {
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.sm),
-            ...trail.contradictingItems.map((item) => _EvidenceTile(item: item)),
+            ...trail.contradictingItems.map(
+              (item) => _EvidenceTile(item: item),
+            ),
             SizedBox(height: gap),
           ],
           for (final item in trail.items.where(
             (i) => i.relation == SignalEvidenceRelation.unclear,
-          )) ...[
-            _EvidenceTile(item: item),
-          ],
+          )) ...[_EvidenceTile(item: item)],
           if (trail.clarityPrompt.trim().isNotEmpty) ...[
             _infoSection(
               context,
@@ -266,15 +267,19 @@ class _EvidenceTile extends StatelessWidget {
                 Text(date, style: ArchiveMobileTypography.cardLabel(context)),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: relationColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     item.relation.label,
-                    style: ArchiveMobileTypography.cardLabel(context)
-                        .copyWith(color: relationColor),
+                    style: ArchiveMobileTypography.cardLabel(
+                      context,
+                    ).copyWith(color: relationColor),
                   ),
                 ),
               ],

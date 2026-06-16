@@ -21,6 +21,13 @@ CREATE TABLE IF NOT EXISTS api_minute_usage (
   PRIMARY KEY (subject_key, endpoint, minute_key)
 );
 
+CREATE TABLE IF NOT EXISTS openai_daily_spend (
+  subject_key text NOT NULL,
+  day_key text NOT NULL,
+  spend_micro_usd bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (subject_key, day_key)
+);
+
 CREATE TABLE IF NOT EXISTS billing_entitlements (
   user_id text PRIMARY KEY,
   stripe_customer_id text,

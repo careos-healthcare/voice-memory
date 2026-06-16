@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+
+import '../../features/share/archive_share_actions.dart';
 
 /// Pro-only "share pressure report" action.
 ///
-/// Reuses the existing share_plus pattern used elsewhere in the app. The
-/// [onShare] hook keeps it testable without invoking platform share sheets.
+/// Reuses [ArchiveShareActions] for iPad-safe native share with copy fallback.
 class PressureReportShareButton extends StatelessWidget {
   const PressureReportShareButton({
     super.key,
@@ -21,16 +21,26 @@ class PressureReportShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = ArchiveShareActions.isShareable(reportText);
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
         key: const Key('pressure_report_share_button'),
-        onPressed: () => (onShare ?? _defaultShare)(reportText),
+        onPressed: enabled
+            ? () async {
+                if (onShare != null) {
+                  await onShare!(reportText);
+                  return;
+                }
+                await ArchiveShareActions.shareShareText(
+                  context,
+                  text: reportText,
+                );
+              }
+            : null,
         icon: const Icon(Icons.ios_share_outlined),
         label: const Text(label),
       ),
     );
   }
-
-  Future<void> _defaultShare(String text) => Share.share(text);
 }

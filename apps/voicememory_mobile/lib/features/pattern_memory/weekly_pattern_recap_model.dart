@@ -51,20 +51,20 @@ class WeeklyPatternRecap {
   final bool shouldShow;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'memoryId': memoryId,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'weekStart': weekStart.toUtc().toIso8601String(),
-        'weekEnd': weekEnd.toUtc().toIso8601String(),
-        'type': type.id,
-        'patternTitle': patternTitle,
-        'headline': headline,
-        'body': body,
-        if (usefulLine != null) 'usefulLine': usefulLine,
-        if (nextQuestion != null) 'nextQuestion': nextQuestion,
-        'checkInCount': checkInCount,
-        'shouldShow': shouldShow,
-      };
+    'id': id,
+    'memoryId': memoryId,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'weekStart': weekStart.toUtc().toIso8601String(),
+    'weekEnd': weekEnd.toUtc().toIso8601String(),
+    'type': type.id,
+    'patternTitle': patternTitle,
+    'headline': headline,
+    'body': body,
+    if (usefulLine != null) 'usefulLine': usefulLine,
+    if (nextQuestion != null) 'nextQuestion': nextQuestion,
+    'checkInCount': checkInCount,
+    'shouldShow': shouldShow,
+  };
 
   static WeeklyPatternRecap? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

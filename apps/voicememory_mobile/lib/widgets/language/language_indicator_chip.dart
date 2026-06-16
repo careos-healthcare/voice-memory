@@ -52,8 +52,7 @@ class LanguageIndicatorChip extends StatelessWidget {
             onTap: () => _openSheet(context),
             borderRadius: BorderRadius.circular(999),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: AppColors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(999),

@@ -63,7 +63,8 @@ class WeeklyPatternRecapEngine {
     if (memory.heavierCount >= 2 && memory.heavierCount > memory.lighterCount) {
       return WeeklyPatternRecapType.heavier;
     }
-    if (memory.lighterCount >= 2 && memory.lighterCount >= memory.heavierCount) {
+    if (memory.lighterCount >= 2 &&
+        memory.lighterCount >= memory.heavierCount) {
       return WeeklyPatternRecapType.lighter;
     }
     if (memory.changedCount >= 2 ||
@@ -90,7 +91,8 @@ class WeeklyPatternRecapEngine {
       case WeeklyPatternRecapType.lighter:
         return _RecapSpec(
           headline: 'This pattern felt lighter this week.',
-          body: 'You checked it $count times and it felt lighter '
+          body:
+              'You checked it $count times and it felt lighter '
               'more than heavier.',
           usefulLine: _first(memory.helpedMoments, 'What helped: '),
           nextQuestion: 'What helped make it lighter?',
@@ -106,7 +108,10 @@ class WeeklyPatternRecapEngine {
         return _RecapSpec(
           headline: 'This pattern kept showing up this week.',
           body: 'You checked it $count times and caught it more than once.',
-          usefulLine: _first(memory.commonBeforeMoments, 'It often starts around: '),
+          usefulLine: _first(
+            memory.commonBeforeMoments,
+            'It often starts around: ',
+          ),
           nextQuestion: 'What happens right before it starts?',
         );
       case WeeklyPatternRecapType.notEnoughYet:
@@ -129,7 +134,9 @@ class WeeklyPatternRecapEngine {
 
   DateTime _startOfWeek(DateTime date) {
     final dateOnly = DateTime(date.year, date.month, date.day);
-    return dateOnly.subtract(Duration(days: dateOnly.weekday - DateTime.monday));
+    return dateOnly.subtract(
+      Duration(days: dateOnly.weekday - DateTime.monday),
+    );
   }
 
   String _id(String memoryId, DateTime weekStart, WeeklyPatternRecapType type) {

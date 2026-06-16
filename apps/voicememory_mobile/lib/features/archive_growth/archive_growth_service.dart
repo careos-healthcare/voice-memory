@@ -25,9 +25,8 @@ class ArchiveGrowthSnapshot {
 
 /// Loads growth-loop views from journal + existing V1 engines.
 class ArchiveGrowthService {
-  ArchiveGrowthService({
-    required ArchiveJourneyStore journeyStore,
-  }) : _journeyStore = journeyStore;
+  ArchiveGrowthService({required ArchiveJourneyStore journeyStore})
+    : _journeyStore = journeyStore;
 
   final ArchiveJourneyStore _journeyStore;
 
@@ -43,7 +42,10 @@ class ArchiveGrowthService {
     }
     final completed = await ArchiveJourneyStore(s.prefs).readCompleted();
     return ArchiveGrowthSnapshot(
-      confidence: ArchiveConfidenceEngine.build(entries: entries, archiveV1: v1),
+      confidence: ArchiveConfidenceEngine.build(
+        entries: entries,
+        archiveV1: v1,
+      ),
       journey: ArchiveJourneyEngine.build(
         entries: entries,
         archiveV1: v1,

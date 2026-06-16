@@ -18,11 +18,7 @@ import '../theme/voicememory_typography.dart';
 /// Ask my Archive — local, guided search over saved moments. Not a chatbot:
 /// every question resolves to a known, constrained intent.
 class AskArchiveScreen extends StatefulWidget {
-  const AskArchiveScreen({
-    super.key,
-    this.loader,
-    this.entitlementReader,
-  });
+  const AskArchiveScreen({super.key, this.loader, this.entitlementReader});
 
   /// Loads the moments to search. Defaults to the local store; injectable so
   /// widget tests never block on real file I/O.
@@ -289,7 +285,9 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             result.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           if (result.body.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
@@ -372,8 +370,18 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
       return 'Yesterday';
     }
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }

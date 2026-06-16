@@ -6,22 +6,19 @@ import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
 import 'package:voicememory_mobile/screens/archive_range_review_screen.dart';
 
 KeyMoment _moment(String id, DateTime date, {String? resultHint}) => KeyMoment(
-      id: id,
-      date: date,
-      title: 'Moment $id',
-      originalText: 'text',
-      shortSummary: 'Summary for $id',
-      patternTitle: 'Work pressure',
-      resultHint: resultHint ?? 'same',
-    );
+  id: id,
+  date: date,
+  title: 'Moment $id',
+  originalText: 'text',
+  shortSummary: 'Summary for $id',
+  patternTitle: 'Work pressure',
+  resultHint: resultHint ?? 'same',
+);
 
 List<KeyMoment> _sixMoments() => List.generate(
-      6,
-      (i) => _moment(
-        'm$i',
-        DateTime(2026, 6, 6).subtract(Duration(days: i)),
-      ),
-    );
+  6,
+  (i) => _moment('m$i', DateTime(2026, 6, 6).subtract(Duration(days: i))),
+);
 
 void main() {
   testWidgets('screen renders key moments', (tester) async {

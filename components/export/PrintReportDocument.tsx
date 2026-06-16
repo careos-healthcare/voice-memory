@@ -17,7 +17,7 @@ export function PrintReportDocument({ report }: PrintReportDocumentProps) {
     <article className="print-report mx-auto max-w-[48rem] px-8 py-10 text-[11pt] leading-relaxed text-zinc-900">
       <header className="border-b border-zinc-300 pb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-700">
-          VoiceMemory
+          ArchiveMe
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
           Reflection report
@@ -132,7 +132,7 @@ export function PrintReportDocument({ report }: PrintReportDocumentProps) {
       </section>
 
       <footer className="mt-10 border-t border-zinc-300 pt-4 text-xs text-zinc-500">
-        VoiceMemory · Private export · {report.totalEntries} total entries in selected range
+        ArchiveMe · Private export · {report.totalEntries} total entries in selected range
       </footer>
     </article>
   );

@@ -7,6 +7,7 @@ import { Archive, Download, FileUp, RefreshCw, Trash2 } from "lucide-react";
 import { ArchiveImportPreviewPanel } from "@/components/archive/ArchiveImportPreviewPanel";
 import { ArchiveOwnershipPanel } from "@/components/archive/ArchiveOwnershipPanel";
 import { ArchiveSectionCard } from "@/components/archive/ArchiveSectionCard";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { EmotionalProofLine } from "@/components/social-proof/EmotionalProofLine";
@@ -32,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import type { ArchiveImportPreview, ArchiveRestoreMode } from "@/types/archive-permanence";
 
 export function ArchivePageClient() {
+  const { requestAuth } = useAuthPrompt();
   const { status, restoreNow } = useAccount();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [ready, setReady] = useState(false);
@@ -65,6 +67,7 @@ export function ArchivePageClient() {
   };
 
   const handleExportAll = async () => {
+    const run = async () => {
     setBusy(true);
     try {
       const archive = await buildFullArchivePackage(true);
@@ -82,6 +85,11 @@ export function ArchivePageClient() {
     } finally {
       setBusy(false);
     }
+    };
+    if (!requestAuth("export", () => void run())) {
+      return;
+    }
+    await run();
   };
 
   const handleFileSelect = async (file: File | null) => {
@@ -209,7 +217,14 @@ export function ArchivePageClient() {
             {entryCount} reflection{entryCount === 1 ? "" : "s"} on this device
           </p>
 
-          <ArchiveOwnershipPanel />
+          <details className="rounded-xl border border-white/10 bg-black/20">
+            <summary className="cursor-pointer px-4 py-3 text-sm text-zinc-500 marker:content-none [&::-webkit-details-marker]:hidden">
+              Ownership progress (detail)
+            </summary>
+            <div className="border-t border-white/5 px-4 py-4">
+              <ArchiveOwnershipPanel />
+            </div>
+          </details>
 
           <ArchiveSectionCard
             title="Keep your reflections for years"

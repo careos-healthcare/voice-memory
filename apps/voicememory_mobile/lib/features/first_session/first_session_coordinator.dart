@@ -21,7 +21,7 @@ import 'first_session_pattern_model.dart';
 import 'pattern_correction_learning_coordinator.dart';
 
 /// First-session detection and accepting tomorrow's watch-for + thread.
-abstract final class FirstSessionCoordinator {
+abstract class FirstSessionCoordinator {
   FirstSessionCoordinator._();
 
   static const _engine = FirstSessionPatternEngine();
@@ -146,18 +146,19 @@ abstract final class FirstSessionCoordinator {
     DateTime? now,
   }) async {
     final clock = now ?? DateTime.now();
-    final prompt = watchPrompt ??
+    final prompt =
+        watchPrompt ??
         _watchForPromptEngine.build(pattern: pattern, now: clock);
     final override = checkInQuestionOverride?.trim();
     final nextQuestion = override != null && override.isNotEmpty
         ? override
         : (prompt.checkInQuestion.isNotEmpty
-            ? prompt.checkInQuestion
-            : _threadEngine.nextPromptFor(
-                status: ActivePatternThreadStatus.active,
-                watchForText: prompt.shortPrompt,
-                needsOneMoreMoment: false,
-              ));
+              ? prompt.checkInQuestion
+              : _threadEngine.nextPromptFor(
+                  status: ActivePatternThreadStatus.active,
+                  watchForText: prompt.shortPrompt,
+                  needsOneMoreMoment: false,
+                ));
     final thread = ActivePatternThread(
       id: 'thread_${clock.microsecondsSinceEpoch}',
       title: pattern.title,

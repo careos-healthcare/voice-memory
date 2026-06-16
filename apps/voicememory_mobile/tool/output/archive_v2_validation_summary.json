@@ -1,0 +1,351 @@
+{
+  "scenarioCount": 15,
+  "theoryTrustRate": 1.0,
+  "lifecycleImpactRate": 0.6,
+  "changeFeedValueRate": 1.0,
+  "scenariosWithSurprise": 6,
+  "grades": [
+    {
+      "persona": "founder",
+      "size": 50,
+      "eligible": 50,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "obvious",
+      "lifecycleNote": "empty or single-statement only",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "3 change rows",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": false,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "primary belief also in fading"
+      ]
+    },
+    {
+      "persona": "founder",
+      "size": 100,
+      "eligible": 100,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": []
+    },
+    {
+      "persona": "founder",
+      "size": 200,
+      "eligible": 151,
+      "theoryGrade": "obvious",
+      "theoryNote": "restates dominant observation (44%)",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "interesting",
+      "deepDiveNote": "counter evidence present",
+      "analystGrade": "interesting",
+      "analystNote": "debate with user counter-quote",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": []
+    },
+    {
+      "persona": "burnedOutEmployee",
+      "size": 50,
+      "eligible": 50,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "phased events on active belief",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "obvious",
+      "analystNote": "thin or generic",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "primary belief also in fading",
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "burnedOutEmployee",
+      "size": 100,
+      "eligible": 100,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "surprising",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [
+        "Change feed: belief weakened since last review"
+      ],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "burnedOutEmployee",
+      "size": 200,
+      "eligible": 114,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "surprising",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [
+        "Change feed: belief weakened since last review"
+      ],
+      "issues": [
+        "off-topic counter-evidence",
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "anxiousOverthinker",
+      "size": 50,
+      "eligible": 50,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "obvious",
+      "lifecycleNote": "empty or single-statement only",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": false,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "anxiousOverthinker",
+      "size": 100,
+      "eligible": 100,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "obvious",
+      "lifecycleNote": "empty or single-statement only",
+      "changeFeedGrade": "surprising",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": false,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [
+        "Change feed: belief weakened since last review"
+      ],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "anxiousOverthinker",
+      "size": 200,
+      "eligible": 146,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "interesting",
+      "deepDiveNote": "counter evidence present",
+      "analystGrade": "interesting",
+      "analystNote": "debate with user counter-quote",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "relationshipFocused",
+      "size": 50,
+      "eligible": 50,
+      "theoryGrade": "obvious",
+      "theoryNote": "restates dominant observation (47%)",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "surprising",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "obvious",
+      "analystNote": "thin or generic",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [
+        "Change feed: belief weakened since last review"
+      ],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "relationshipFocused",
+      "size": 100,
+      "eligible": 100,
+      "theoryGrade": "obvious",
+      "theoryNote": "restates dominant observation (49%)",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "surprising",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "obvious",
+      "analystNote": "thin or generic",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [
+        "Change feed: belief weakened since last review"
+      ],
+      "issues": [
+        "primary belief also in fading",
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "relationshipFocused",
+      "size": 200,
+      "eligible": 185,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "interesting",
+      "lifecycleNote": "retired/weakening beliefs with timeline events",
+      "changeFeedGrade": "surprising",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "surprising",
+      "deepDiveNote": "then/now shift with counter excerpts",
+      "analystGrade": "interesting",
+      "analystNote": "debate with user counter-quote",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": true,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [
+        "Change feed: belief weakened since last review",
+        "Deep Dive: distinct then→now with counters"
+      ],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "fitnessFocused",
+      "size": 50,
+      "eligible": 50,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "obvious",
+      "lifecycleNote": "empty or single-statement only",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": false,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "fitnessFocused",
+      "size": 100,
+      "eligible": 100,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "obvious",
+      "lifecycleNote": "empty or single-statement only",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": false,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    },
+    {
+      "persona": "fitnessFocused",
+      "size": 200,
+      "eligible": 114,
+      "theoryGrade": "interesting",
+      "theoryNote": "confident with quoted strengthen lines",
+      "lifecycleGrade": "obvious",
+      "lifecycleNote": "empty or single-statement only",
+      "changeFeedGrade": "interesting",
+      "changeFeedNote": "belief confidence delta since review",
+      "deepDiveGrade": "obvious",
+      "deepDiveNote": "summary only",
+      "analystGrade": "interesting",
+      "analystNote": "meaningfully different competing hypotheses",
+      "theoryMoreTrustworthy": true,
+      "lifecycleEmotionalImpact": false,
+      "changeFeedAddsValue": true,
+      "surpriseMoments": [],
+      "issues": [
+        "seeded contradictions not in analyst"
+      ]
+    }
+  ]
+}

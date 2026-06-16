@@ -1,0 +1,18 @@
+{
+  "success": false,
+  "platform": null,
+  "device": null,
+  "tester": null,
+  "timestamp": null,
+  "steps": {
+    "install": false,
+    "record": false,
+    "archive": false,
+    "pay": false,
+    "purchase": false,
+    "close_app": false,
+    "reopen": false,
+    "restore": false
+  },
+  "note": "All steps must be true on a physical device before setting success true"
+}

@@ -23,10 +23,7 @@ import 'archive_v1_contradictions_section.dart';
 
 /// Archive V1 stack — belief moat layout.
 class ArchiveV1Body extends StatelessWidget {
-  const ArchiveV1Body({
-    super.key,
-    required this.view,
-  });
+  const ArchiveV1Body({super.key, required this.view});
 
   final ArchiveV1View view;
 
@@ -48,7 +45,9 @@ class ArchiveV1Body extends StatelessWidget {
           theory: theory,
           onShowMeWhy: () {
             if (!ArchiveDeepDiveGate.canOpenDeepDive(view)) return;
-            First25UserMetrics.trackDeepDiveOpened(surface: 'archive_theory_cta');
+            First25UserMetrics.trackDeepDiveOpened(
+              surface: 'archive_theory_cta',
+            );
             context.push('/archive-deep-dive', extra: view);
           },
           onWhyAmISeeingThis: () {

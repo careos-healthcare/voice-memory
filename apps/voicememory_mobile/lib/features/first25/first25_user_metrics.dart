@@ -2,7 +2,7 @@ import '../../services/product_analytics.dart';
 import 'first25_recording_retention.dart';
 
 /// First 25 users — product funnel events (Firebase Analytics).
-abstract final class First25UserMetrics {
+abstract class First25UserMetrics {
   First25UserMetrics._();
 
   // Activation
@@ -81,7 +81,9 @@ abstract final class First25UserMetrics {
   }
 
   static Future<void> trackPaywallDismissed({required String surface}) {
-    return ProductAnalytics.trackStrings(paywallDismissed, {'surface': surface});
+    return ProductAnalytics.trackStrings(paywallDismissed, {
+      'surface': surface,
+    });
   }
 
   static Future<void> trackPaywallStarted({

@@ -28,10 +28,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: ReturnDayJourneyCard(
-            journey: _journey(),
-            recordedToday: false,
-          ),
+          body: ReturnDayJourneyCard(journey: _journey(), recordedToday: false),
         ),
       ),
     );
@@ -40,11 +37,15 @@ void main() {
     expect(find.text(ConsumerUiCopy.returnDayJourneyTitle), findsOneWidget);
     expect(find.text(ConsumerUiCopy.returnDayJourneyRecordCta), findsOneWidget);
     expect(find.text(ConsumerUiCopy.returnDayJourneyViewCta), findsOneWidget);
-    expect(find.textContaining('Saying yes before checking capacity'),
-        findsOneWidget);
+    expect(
+      find.textContaining('Saying yes before checking capacity'),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('return-day recorded-today state shows saved copy', (tester) async {
+  testWidgets('return-day recorded-today state shows saved copy', (
+    tester,
+  ) async {
     var viewed = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -59,7 +60,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(ConsumerUiCopy.returnDayEvidenceSavedTitle), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.returnDayEvidenceSavedTitle),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.returnDayEvidenceSavedCta), findsOneWidget);
     expect(find.text(ConsumerUiCopy.returnDayJourneyRecordCta), findsNothing);
 
@@ -73,10 +77,8 @@ void main() {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => ReturnDayJourneyCard(
-            journey: _journey(),
-            recordedToday: false,
-          ),
+          builder: (context, state) =>
+              ReturnDayJourneyCard(journey: _journey(), recordedToday: false),
         ),
         GoRoute(
           path: '/signal-journey',

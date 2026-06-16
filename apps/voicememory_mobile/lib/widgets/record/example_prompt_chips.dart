@@ -30,9 +30,9 @@ class _ExamplePromptChipsState extends State<ExamplePromptChips> {
   bool _shownLogged = false;
 
   bool get _showPrompts => ExamplePromptVisibility.shouldShowExamplePrompts(
-        recordingCount: widget.recordingCount,
-        firstArchiveMilestoneCompleted: widget.firstArchiveMilestoneCompleted,
-      );
+    recordingCount: widget.recordingCount,
+    firstArchiveMilestoneCompleted: widget.firstArchiveMilestoneCompleted,
+  );
 
   @override
   void didUpdateWidget(ExamplePromptChips oldWidget) {
@@ -70,9 +70,9 @@ class _ExamplePromptChipsState extends State<ExamplePromptChips> {
         child: Text(
           ExamplePromptCatalog.continueBuildingArchive,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: VoiceMemoryColors.textSecondary,
-                height: 1.45,
-              ),
+            color: VoiceMemoryColors.textSecondary,
+            height: 1.45,
+          ),
         ),
       );
     }
@@ -89,9 +89,9 @@ class _ExamplePromptChipsState extends State<ExamplePromptChips> {
         Text(
           ExamplePromptCatalog.sectionTitle,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: VoiceMemoryColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
+            color: VoiceMemoryColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 10),
         Semantics(
@@ -152,10 +152,10 @@ class _ExamplePromptChip extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: VoiceMemoryColors.textPrimary,
-                    height: 1.35,
-                    fontSize: 13,
-                  ),
+                color: VoiceMemoryColors.textPrimary,
+                height: 1.35,
+                fontSize: 13,
+              ),
             ),
           ),
         ),

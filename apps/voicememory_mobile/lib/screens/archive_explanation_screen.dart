@@ -72,8 +72,8 @@ class _ArchiveExplanationScreenState extends State<ArchiveExplanationScreen> {
     final entries = await AppServices.instance.journal.loadAll();
     final state = buildArchiveStateObjectV3(entries: entries);
     final decodedId = decodeArchiveExplanationRouteId(widget.routeId);
-    final ref = widget.routeArgs?.ref ??
-        ArchiveInsightRef.parseRouteId(decodedId);
+    final ref =
+        widget.routeArgs?.ref ?? ArchiveInsightRef.parseRouteId(decodedId);
     if (ref == null) {
       if (mounted) setState(() => _loading = false);
       return;
@@ -121,18 +121,17 @@ class _ArchiveExplanationScreenState extends State<ArchiveExplanationScreen> {
   }
 
   Color _accentFor(ArchiveInsightKind kind) => switch (kind) {
-        ArchiveInsightKind.belief ||
-        ArchiveInsightKind.beliefChange ||
-        ArchiveInsightKind.askArchive =>
-          VoiceMemoryColors.beliefIndigo,
-        ArchiveInsightKind.theme => VoiceMemoryColors.themeLavender,
-        ArchiveInsightKind.blindSpot => VoiceMemoryColors.blindSpotAmber,
-        ArchiveInsightKind.contradiction => VoiceMemoryColors.contradictionRose,
-        ArchiveInsightKind.chapter => VoiceMemoryColors.chapterBlue,
-        ArchiveInsightKind.weeklyStory => VoiceMemoryColors.discoveryGold,
-        ArchiveInsightKind.surprise => VoiceMemoryColors.discoveryGold,
-        ArchiveInsightKind.challenge => VoiceMemoryColors.discoveryGold,
-      };
+    ArchiveInsightKind.belief ||
+    ArchiveInsightKind.beliefChange ||
+    ArchiveInsightKind.askArchive => VoiceMemoryColors.beliefIndigo,
+    ArchiveInsightKind.theme => VoiceMemoryColors.themeLavender,
+    ArchiveInsightKind.blindSpot => VoiceMemoryColors.blindSpotAmber,
+    ArchiveInsightKind.contradiction => VoiceMemoryColors.contradictionRose,
+    ArchiveInsightKind.chapter => VoiceMemoryColors.chapterBlue,
+    ArchiveInsightKind.weeklyStory => VoiceMemoryColors.discoveryGold,
+    ArchiveInsightKind.surprise => VoiceMemoryColors.discoveryGold,
+    ArchiveInsightKind.challenge => VoiceMemoryColors.discoveryGold,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -142,44 +141,42 @@ class _ArchiveExplanationScreenState extends State<ArchiveExplanationScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _interpretation == null
-              ? Center(
-                  child: Padding(
-                    padding: ArchiveMobileSpacing.pagePadding,
-                    child: Text(
-                      'Not enough archive evidence to explain this insight yet.',
-                      textAlign: TextAlign.center,
-                      style: VoiceMemoryTypography.bodyStyle(
-                        color: VoiceMemoryColors.textSecondary,
-                      ),
-                    ),
+          ? Center(
+              child: Padding(
+                padding: ArchiveMobileSpacing.pagePadding,
+                child: Text(
+                  'Not enough archive evidence to explain this insight yet.',
+                  textAlign: TextAlign.center,
+                  style: VoiceMemoryTypography.bodyStyle(
+                    color: VoiceMemoryColors.textSecondary,
                   ),
-                )
-              : ArchiveInterpretationBody(
-                  interpretation: _interpretation!,
-                  accent: _accentFor(_interpretation!.kind),
-                  onOpenEntry: (id) => context.push('/entry/$id'),
-                  onOpenTheme: (key) {
-                    ArchiveExplanationAnalytics.relatedThemeOpened(
-                      themeKey: key,
-                    );
-                    openArchiveExplanation(
-                      context,
-                      ref: ArchiveInsightRef.theme(key),
-                    );
-                  },
-                  onOpenContradiction: (id) {
-                    ArchiveExplanationAnalytics.contradictionOpened();
-                    final ref = _contradictionRefFromId(id);
-                    if (ref != null) {
-                      openArchiveExplanation(context, ref: ref);
-                    }
-                  },
-                  onOpenBlindSpot: (id) => openArchiveExplanation(
-                    context,
-                    ref: ArchiveInsightRef.blindSpot(id),
-                  ),
-                  onRecordToExplore: () => context.go('/record'),
                 ),
+              ),
+            )
+          : ArchiveInterpretationBody(
+              interpretation: _interpretation!,
+              accent: _accentFor(_interpretation!.kind),
+              onOpenEntry: (id) => context.push('/entry/$id'),
+              onOpenTheme: (key) {
+                ArchiveExplanationAnalytics.relatedThemeOpened(themeKey: key);
+                openArchiveExplanation(
+                  context,
+                  ref: ArchiveInsightRef.theme(key),
+                );
+              },
+              onOpenContradiction: (id) {
+                ArchiveExplanationAnalytics.contradictionOpened();
+                final ref = _contradictionRefFromId(id);
+                if (ref != null) {
+                  openArchiveExplanation(context, ref: ref);
+                }
+              },
+              onOpenBlindSpot: (id) => openArchiveExplanation(
+                context,
+                ref: ArchiveInsightRef.blindSpot(id),
+              ),
+              onRecordToExplore: () => context.go('/record'),
+            ),
     );
   }
 }

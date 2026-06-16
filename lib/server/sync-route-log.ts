@@ -47,7 +47,7 @@ export function createSyncRouteLog(route: SyncApiRoute, method: string): {
     requestId,
     log(patch) {
       context = { ...context, ...patch };
-      console.info("[VoiceMemory sync]", JSON.stringify(context));
+      console.info("[ArchiveMe sync]", JSON.stringify(context));
     },
   };
 }

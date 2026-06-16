@@ -9,10 +9,7 @@ import 'pattern_card.dart';
 
 /// Progressive archive value for recordings 1–4.
 class ImmediateArchiveValueSections extends StatelessWidget {
-  const ImmediateArchiveValueSections({
-    super.key,
-    required this.entries,
-  });
+  const ImmediateArchiveValueSections({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 

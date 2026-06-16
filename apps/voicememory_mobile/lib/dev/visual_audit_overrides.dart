@@ -2,11 +2,14 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 
+import '../audio/recording_service.dart';
 import '../screens/record_screen.dart';
 
 /// Compile-time flag: `flutter test --dart-define=VISUAL_AUDIT=true`
-const bool visualAuditFromEnvironment =
-    bool.fromEnvironment('VISUAL_AUDIT', defaultValue: false);
+const bool visualAuditFromEnvironment = bool.fromEnvironment(
+  'VISUAL_AUDIT',
+  defaultValue: false,
+);
 
 /// Dev-only UI presentation overrides for integration visual audits.
 /// Inert unless [active] is true (never in release without the define).
@@ -39,6 +42,9 @@ class RecordAuditPresentation {
     this.localSaveTitle,
     this.syncNote,
     this.stageLabel,
+    this.degradedVoicePostSave = false,
+    this.micPhase,
+    this.userDeniedThisSession,
   });
 
   final RecordUiState ui;
@@ -46,4 +52,7 @@ class RecordAuditPresentation {
   final String? localSaveTitle;
   final String? syncNote;
   final String? stageLabel;
+  final bool degradedVoicePostSave;
+  final RecordingPhase? micPhase;
+  final bool? userDeniedThisSession;
 }

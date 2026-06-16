@@ -6,12 +6,35 @@ import 'package:go_router/go_router.dart';
 
 import '../audio/recording_service.dart';
 import '../services/app_services.dart';
+import '../services/capture_pipeline_service.dart';
+import '../services/record_pipeline_log.dart';
 import '../services/capture_save_messages.dart';
 import '../design/archive_mobile_typography.dart';
 import '../theme/app_colors.dart';
 import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
-import '../services/capture_pipeline_service.dart';
+import '../features/timeline/timeline_entry_display.dart';
+import '../features/voice_capture/voice_capture_copy.dart';
+import '../features/voice_capture/voice_capture_post_save.dart';
+import '../features/voice_capture/voice_capture_quality.dart';
+import '../features/voice_capture/microphone_permission_copy.dart';
+import '../features/voice_capture/microphone_permission_environment.dart';
+import '../features/voice_capture/microphone_permission_state.dart';
+import '../features/memory/memory_scope_store.dart';
+import '../features/memory/curated_memory_marker.dart';
+import '../features/memory/keep_exact_details.dart';
+import '../features/memory/treat_as_new.dart';
+import '../widgets/memory/entry_options_section.dart';
+import '../widgets/memory/not_about_me_receipt.dart';
+import '../widgets/memory/do_not_surface_receipt.dart';
+import '../widgets/memory/sensitive_surfacing_receipt.dart';
+import '../features/memory/entry_aboutness.dart';
+import '../features/memory/memory_surfacing_mode.dart';
+import '../widgets/memory/clean_slate_prompt_section.dart';
+import '../features/memory/clean_slate_prompt_store.dart';
+import '../widgets/memory/keep_exact_details_control.dart';
+import '../widgets/memory/curated_memory_receipt.dart';
+import '../widgets/memory/treat_as_new_control.dart';
 import '../features/archive_movement/archive_movement.dart';
 import '../features/archive_prompt/archive_prompt_engine.dart';
 import '../product/belief_product_copy.dart';
@@ -21,6 +44,7 @@ import '../config/trial_mode.dart';
 import '../features/trial/hook_rescue_decision_engine.dart';
 import '../features/trial/hook_rescue_decision_model.dart';
 import '../features/trial/trial_summary_engine.dart';
+import '../config/creator_demo_mode.dart';
 import '../config/screenshot_mode.dart';
 import '../config/screenshot_sample_data.dart';
 import '../features/tomorrow_return/return_comparison_coordinator.dart';
@@ -50,6 +74,7 @@ import '../features/activation/return_day_friction_coordinator.dart';
 import '../features/activation/first_three_journey_coordinator.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/activation/first_three_journey_model.dart';
+import '../features/activation/first_three_session_gates.dart';
 import '../features/first_session/first_session_coordinator.dart';
 import '../features/first_session/first_session_pattern_model.dart';
 import '../features/tomorrow_return/active_pattern_thread_coordinator.dart';
@@ -126,6 +151,9 @@ import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
+import '../features/record/daily_mirror_engine.dart';
+import '../features/record/daily_mirror_model.dart';
+import '../features/record/record_empty_archive_gates.dart';
 import '../features/acquisition/audience_wedge_model.dart';
 import '../features/acquisition/audience_wedge_store.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
@@ -149,7 +177,6 @@ import '../widgets/record/first_recording_handoff_card.dart';
 import '../widgets/retention/reminder_pre_prompt_sheet.dart';
 import '../widgets/signal/return_day_journey_card.dart';
 import '../widgets/trial/trial_first_moment_card.dart';
-import '../widgets/processing_background_card.dart';
 import '../dev/visual_audit_overrides.dart';
 import '../features/archive_state_object/archive_state_object.dart';
 import '../models/journal_entry.dart';
@@ -165,7 +192,14 @@ import '../services/activation_funnel_analytics.dart';
 import '../services/product_analytics.dart';
 import '../features/pressure_retention/pressure_return_trigger_store.dart';
 import '../widgets/capture_entry_actions.dart';
+import '../widgets/record/entry_direction_starters.dart';
 import '../billing/purchase_intent_return_cue.dart';
+import '../features/referral/invite_attribution.dart';
+import '../features/referral/invite_funnel_metrics.dart';
+import '../features/referral/invited_day_two_return.dart';
+import '../features/referral/invited_user_welcome.dart';
+import '../widgets/referral/invited_day_two_return_card.dart';
+import '../widgets/referral/invited_user_welcome_card.dart';
 import '../features/first_session/day_seven_continuity_loop.dart';
 import '../features/first_session/day_two_reminder.dart';
 import '../features/first_session/day_two_return_preview.dart';
@@ -213,24 +247,57 @@ import '../widgets/billing/value_moment_pro_bridge.dart';
 import '../widgets/pressure_retention/archive_proof_counter_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/record/done_for_today_receipt_card.dart';
+import '../widgets/record/post_save_recorded_summary_card.dart';
+import '../widgets/record/post_save_listening_card.dart';
 import '../widgets/record/evidence_context_tag_card.dart';
 import '../widgets/record/low_effort_check_in_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
+import '../widgets/record/daily_mirror_record_card.dart';
+import '../widgets/record/microphone_permission_blocked_panel.dart';
+import '../widgets/record/record_screen_close_button.dart';
+import '../widgets/record/record_first_run_privacy_reassurance.dart';
+import '../features/onboarding/record_return_pro_state.dart';
+import '../features/onboarding/record_return_pro_store.dart';
+import '../features/memory/memory_scope.dart';
+import '../features/memory/memory_scope_policy.dart';
+import '../features/retention/repeat_recording_nudge_state.dart';
+import '../features/retention/repeat_recording_nudge_store.dart';
+import '../features/aha/aha_moment_candidate.dart';
+import '../features/aha/aha_moment_engine.dart';
+import '../features/aha/aha_moment_store.dart';
+import '../widgets/aha/first_aha_moment_card.dart';
+import '../features/trust/archive_trust_receipt.dart';
+import '../widgets/trust/archive_private_receipt_card.dart';
+import '../widgets/trust/pro_value_clarity_card.dart';
+import '../widgets/share/aha_proof_share_card.dart';
+import '../features/trust/aha_proof_share_eligibility.dart';
+import '../widgets/retention/day2_return_reason_card.dart';
+import '../widgets/retention/second_entry_nudge_card.dart';
+import '../widgets/retention/tiny_record_again_cta.dart';
+import '../widgets/onboarding/change_starts_card.dart';
+import '../widgets/onboarding/first_save_evidence_card.dart';
+import '../widgets/onboarding/pro_archive_continuity_card.dart';
+import '../widgets/onboarding/record_once_intro_card.dart';
+import '../widgets/onboarding/tomorrow_return_cue_card.dart';
 import '../record/example_prompt_visibility.dart';
 import '../record/record_screen_framing_copy.dart';
+
+import '../features/voice_capture/record_microphone_permission_ui.dart';
+import '../features/voice_capture/record_cta_policy.dart';
+
+export '../features/voice_capture/record_microphone_permission_ui.dart'
+    show RecordUiState;
 
 void _recordLog(String message) {
   debugPrint('RECORD: $message');
 }
 
-enum RecordUiState {
-  idle,
-  permissionBlocked,
-  ready,
-  recording,
-  processing,
-  done,
-  error,
+void _recordPermissionUiLog(String message) {
+  debugPrint('${RecordMicrophonePermissionUi.logPrefix} $message');
+}
+
+void _recordCtaLog(String message) {
+  debugPrint('${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message');
 }
 
 class RecordScreen extends StatefulWidget {
@@ -242,6 +309,7 @@ class RecordScreen extends StatefulWidget {
     this.suggestionAttributionStore,
     this.entitlementReader,
     this.purchaseIntentStore,
+    this.inviteAttributionStore,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -262,6 +330,9 @@ class RecordScreen extends StatefulWidget {
   /// Injectable for tests; defaults to the live prefs-backed store.
   final PurchaseIntentStore? purchaseIntentStore;
 
+  /// Injectable for tests; defaults to the live prefs-backed store.
+  final InviteAttributionStore? inviteAttributionStore;
+
   @override
   State<RecordScreen> createState() => _RecordScreenState();
 }
@@ -269,12 +340,19 @@ class RecordScreen extends StatefulWidget {
 class _RecordScreenState extends State<RecordScreen> {
   RecordUiState _ui = RecordUiState.idle;
   RecordingPhase _mic = RecordingPhase.idle;
+  MicrophonePermissionState _micPermissionState =
+      MicrophonePermissionState.unknown;
+  bool _micPermissionUserDenied = false;
+  bool _ignoreStaleMicRefreshAfterGrant = false;
+  final GlobalKey _permissionPanelKey = GlobalKey();
   int _seconds = 0;
   String? _error;
   String? _localSaveTitle;
   String? _syncNote;
   ArchiveMovementUpdate? _archiveMovement;
-  int _reflectionCount = 0;
+  int _journalEntryCount = 0;
+  bool _journalEntryCountLoaded = false;
+  List<JournalEntry> _journalEntries = const [];
   DateTime? _lastReflectionAt;
 
   /// Saved entry dates for the 2-day activation path; falls back to
@@ -289,6 +367,9 @@ class _RecordScreenState extends State<RecordScreen> {
   LoopMode? _activeLoop;
   String? _postSaveFollowUp;
   bool _showPostSaveLoop = false;
+  bool _lastCaptureAnalysisSucceeded = true;
+  bool _lastCaptureLowQualityTranscript = false;
+  bool _lastCaptureLikelySilentInput = false;
   List<JournalEntry> _entriesAfterSave = [];
   ArchiveStateObjectV3? _archiveStateAfterSave;
   InstantReflectionResponse? _instantReflectionResponse;
@@ -346,8 +427,14 @@ class _RecordScreenState extends State<RecordScreen> {
   SignalReview? _signalReview;
   bool _journeyCompletionDismissed = false;
   PendingPurchaseIntent? _purchaseIntentCue;
+  String? _invitedWelcomeSource;
+
+  /// First-touch invite attribution source, when one exists — used by the
+  /// invited Day 2 return copy. Stable id only, never referrer identity.
+  String? _inviteSource;
   bool _hasWeeklyReviewForContinuity = false;
   bool _hasConnectedThreadForContinuity = false;
+  AhaMomentCandidate? _ahaCandidate;
 
   /// Active UI language for post-save cards. Defaults to English; updated from
   /// reflection detection (or the screenshot override) and the language chip.
@@ -363,6 +450,7 @@ class _RecordScreenState extends State<RecordScreen> {
   @override
   void initState() {
     super.initState();
+    CleanSlatePromptStore.noteSessionStart();
     final s = AppServices.instance;
     _recording = s.recording;
     _pipeline = s.pipeline;
@@ -370,12 +458,35 @@ class _RecordScreenState extends State<RecordScreen> {
       if (mounted) setState(() => _seconds = s);
     });
     _refreshMic();
-    _loadReflectionCount();
-    _loadFirstThreeJourney();
+    unawaited(
+      _loadJournalEntryCount().then((_) async {
+        if (_journalEntryCount >= 2) {
+          unawaited(_loadFirstThreeJourney());
+          unawaited(_loadActivePatternThread());
+          unawaited(_loadSignalArchive());
+        }
+        if (_journalEntryCount >= 3) {
+          await _loadPersonalReturnPrompts();
+        }
+      }),
+    );
+    _loadRecordReturnProState();
     _loadFirstLoop();
     _loadReturnTriggerAccepted();
-    _loadPersonalReturnPrompts();
     unawaited(_loadPurchaseIntentCue());
+    unawaited(_loadInvitedWelcome());
+    // Persisted memory scope drives the "Memory for this entry" control
+    // and every save below; refresh the UI once loaded.
+    if (AppServices.isInitialized) {
+      unawaited(
+        MemoryScopeStore.instance().ensureLoaded().then((_) {
+          if (mounted) setState(() {});
+        }),
+      );
+    }
+    // Invited funnel mirror: silent unless a first-touch invite
+    // attribution exists. Once per session.
+    InviteFunnelMetrics.appOpened();
     final seed = widget.initialPrompt?.trim();
     if (seed != null && seed.isNotEmpty) {
       _selectedPromptLine = seed;
@@ -386,23 +497,24 @@ class _RecordScreenState extends State<RecordScreen> {
         _applyScreenshotRecordPreview();
       });
     } else {
-      unawaited(_loadReturnDayState().then((_) async {
-        final payload = CheckInReminderService.consumeTapPayload();
-        if (payload != null &&
-            (payload.startsWith('next_evidence') || payload.contains('reminder'))) {
-          await ReturnReasonCaptureCoordinator.markOpenedFromReminder();
-        }
-        // The day-2 gentle reminder was tapped to open the app.
-        if (payload == DayTwoReminder.reminderId) {
-          ActivationFunnelAnalytics.track(
-            ActivationFunnelAnalytics.day2ReminderOpened,
-            oncePerSession: true,
-          );
-        }
-        await _applyAcquisitionIntentPrompt();
-      }));
-      _loadActivePatternThread();
-      unawaited(_loadSignalArchive());
+      unawaited(
+        _loadReturnDayState().then((_) async {
+          final payload = CheckInReminderService.consumeTapPayload();
+          if (payload != null &&
+              (payload.startsWith('next_evidence') ||
+                  payload.contains('reminder'))) {
+            await ReturnReasonCaptureCoordinator.markOpenedFromReminder();
+          }
+          // The day-2 gentle reminder was tapped to open the app.
+          if (payload == DayTwoReminder.reminderId) {
+            ActivationFunnelAnalytics.track(
+              ActivationFunnelAnalytics.day2ReminderOpened,
+              oncePerSession: true,
+            );
+          }
+          await _applyAcquisitionIntentPrompt();
+        }),
+      );
       if (TrialMode.enabled) {
         unawaited(ActivationTracker.trackTrialAppOpened());
         _loadHookRescueDecision();
@@ -470,9 +582,9 @@ class _RecordScreenState extends State<RecordScreen> {
   Future<void> _copyShareRecap(PatternShareRecap recap) async {
     await PatternShareService.copyToClipboard(recap);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Recap copied.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Recap copied.')));
   }
 
   Future<void> _useWeeklyRecapNext(WeeklyPatternRecap recap) async {
@@ -531,7 +643,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _dueCheckInToday = ScreenshotSampleData.tomorrowCheckInDueSample;
         _activeCheckInForTomorrow = null;
         _showPostSaveLoop = false;
@@ -542,7 +654,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 0;
+        _journalEntryCount = 0;
         _dueCheckInToday = null;
         _activeCheckInForTomorrow = null;
         _showPostSaveLoop = false;
@@ -553,7 +665,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _retentionNextCheckJustChosen = true;
         _activeCheckInForTomorrow =
             ScreenshotSampleData.tomorrowCheckInSetForTomorrowSample;
@@ -566,7 +678,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.done;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 1;
+        _journalEntryCount = 1;
         _showPostSaveLoop = true;
         _isFirstSessionPostSave = true;
         _firstSessionPattern = ScreenshotSampleData.firstSessionPatternSample;
@@ -579,7 +691,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _dueCheckInToday = null;
         _activeCheckInForTomorrow =
             ScreenshotSampleData.tomorrowCheckInSetForTomorrowSample;
@@ -591,7 +703,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _dueCheckInToday = null;
         _activeCheckInForTomorrow =
             ScreenshotSampleData.tomorrowCheckInSetForTomorrowSample;
@@ -603,7 +715,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _dueCheckInToday = ScreenshotSampleData.tomorrowCheckInDueSample;
         _showPostSaveLoop = false;
       });
@@ -613,7 +725,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _completedCheckInToday =
             ScreenshotSampleData.tomorrowCheckInCompletedSample;
         _dueCheckInToday = null;
@@ -626,7 +738,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _retentionNextCheckJustChosen = true;
         _activeCheckInForTomorrow =
             ScreenshotSampleData.tomorrowCheckInSetForTomorrowSample;
@@ -639,7 +751,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 0;
+        _journalEntryCount = 0;
         _dueCheckInToday = null;
         _showPostSaveLoop = false;
         _firstThreeJourney = null;
@@ -652,7 +764,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 3;
+        _journalEntryCount = 3;
         _dueCheckInToday = ScreenshotSampleData.tomorrowCheckInDueSample;
         _pendingWatchForToday = null;
         _activePatternThread = null;
@@ -679,7 +791,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 0;
+        _journalEntryCount = 0;
         _dueCheckInToday = null;
         _showPostSaveLoop = false;
         _firstThreeJourney = null;
@@ -690,7 +802,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 0;
+        _journalEntryCount = 0;
         _dueCheckInToday = null;
         _showPostSaveLoop = false;
         _firstThreeJourney = null;
@@ -741,7 +853,7 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = 0;
+        _journalEntryCount = 0;
         _showPostSaveLoop = false;
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -749,7 +861,7 @@ class _RecordScreenState extends State<RecordScreen> {
         showQuickHelpSheet(
           context,
           languageCode: _languageCode,
-          onStartRecording: _start,
+          onStartRecording: () => _onRecordPressed(source: 'main'),
           initialIntent: QuickHelpIntent.whatToRecord,
         );
       });
@@ -760,9 +872,10 @@ class _RecordScreenState extends State<RecordScreen> {
       setState(() {
         _ui = RecordUiState.ready;
         _mic = RecordingPhase.ready;
-        _reflectionCount = journeyCount;
-        _firstThreeJourney =
-            ScreenshotSampleData.firstThreeJourneyForCount(journeyCount);
+        _journalEntryCount = journeyCount;
+        _firstThreeJourney = ScreenshotSampleData.firstThreeJourneyForCount(
+          journeyCount,
+        );
         _showPostSaveLoop = false;
         _pendingWatchForToday = journeyCount >= 2
             ? ScreenshotSampleData.watchForPendingForToday(DateTime.now())
@@ -831,9 +944,10 @@ class _RecordScreenState extends State<RecordScreen> {
         _returnComparison = ScreenshotSampleData.returnComparisonSample;
         _returnStreak = ScreenshotSampleData.returnStreakSample;
         _completedWatchForToday = ScreenshotSampleData.watchForCompletedSample;
-        _suggestedWatchForTomorrow = ScreenshotSampleData.watchForPendingForToday(
-          DateTime.now().add(const Duration(days: 1)),
-        );
+        _suggestedWatchForTomorrow =
+            ScreenshotSampleData.watchForPendingForToday(
+              DateTime.now().add(const Duration(days: 1)),
+            );
         _pendingWatchForToday = null;
         _activePatternThread = ScreenshotSampleData.activePatternThreadSample;
       });
@@ -890,7 +1004,9 @@ class _RecordScreenState extends State<RecordScreen> {
     if (due != null) {
       // Seeing yesterday's question is the first return-day step.
       await ReturnDayFrictionCoordinator.markDueShown(due.id);
-      dueAnchor = await RoutineAnchorStore.instance().loadForDate(due.targetDate);
+      dueAnchor = await RoutineAnchorStore.instance().loadForDate(
+        due.targetDate,
+      );
     }
     ArchiveFeedbackType? feedbackHint;
     try {
@@ -923,17 +1039,19 @@ class _RecordScreenState extends State<RecordScreen> {
     await RoutineAnchorStore.instance().saveForDate(targetDate, anchor);
   }
 
-  Future<void> _loadReflectionCount() async {
+  Future<void> _loadJournalEntryCount() async {
     final all = await AppServices.instance.journal.loadAll();
     if (!mounted) return;
     setState(() {
-      _reflectionCount = all.length;
-      _lastReflectionAt =
-          all.isEmpty ? null : all.last.createdAt;
+      _journalEntryCount = all.length;
+      _journalEntryCountLoaded = true;
+      _journalEntries = all;
+      _lastReflectionAt = all.isEmpty ? null : all.last.createdAt;
       _entryDates = all.map((e) => e.createdAt).toList();
       _firstArchiveMilestoneCompleted =
           ExamplePromptVisibility.hasCompletedFirstArchiveMilestone(all);
     });
+    _logRecordEmptyGate('journal_loaded');
   }
 
   bool _returnTriggerAccepted = false;
@@ -971,6 +1089,16 @@ class _RecordScreenState extends State<RecordScreen> {
   /// Post-save Pro bridge — only after a real value moment, never blocking.
   ValueMomentBridge? _valueMomentBridge;
 
+  /// Record → Return → Pro loop: true only while the very first save's
+  /// post-save view is showing.
+  bool _recordReturnProJustSaved = false;
+
+  /// Loop persisted progress (return cue, Pro bridge, change-start seen).
+  RecordReturnProState? _recordReturnProState;
+
+  /// Pro users never see the commercial-loop Pro bridge.
+  bool _recordReturnProIsPro = false;
+
   /// The post-save Pro nudge shows at most once per app session.
   static bool _suggestionProNudgeShownThisSession = false;
 
@@ -981,14 +1109,17 @@ class _RecordScreenState extends State<RecordScreen> {
 
   SuggestionAttributionStore? get _suggestionAttribution =>
       widget.suggestionAttributionStore ??
-      (AppServices.isInitialized ? SuggestionAttributionStore.instance() : null);
+      (AppServices.isInitialized
+          ? SuggestionAttributionStore.instance()
+          : null);
 
   void _onDailySuggestionTapped(
     DailyReturnSuggestion suggestion,
     bool isPrimary,
   ) {
-    final source =
-        isPrimary ? PaywallSource.startHereToday : PaywallSource.dailySuggestion;
+    final source = isPrimary
+        ? PaywallSource.startHereToday
+        : PaywallSource.dailySuggestion;
     _pendingSuggestionSource = source;
     _pendingTappedSuggestion = suggestion;
     final store = _suggestionAttribution;
@@ -1013,9 +1144,7 @@ class _RecordScreenState extends State<RecordScreen> {
 
     final store = _suggestionAttribution;
     if (store != null) {
-      unawaited(
-        store.record(SuggestionAttributionEventType.savedFor(source)),
-      );
+      unawaited(store.record(SuggestionAttributionEventType.savedFor(source)));
     }
 
     final receipt = const StartHereSaveReceiptEngine().build(
@@ -1055,24 +1184,46 @@ class _RecordScreenState extends State<RecordScreen> {
   /// user's own pressure entries when there is evidence; otherwise the
   /// section keeps generic prompts and no suggestion card is shown.
   Future<void> _loadPersonalReturnPrompts() async {
+    if (!_journalEntryCountReady || _journalEntryCount < 3) return;
     if (widget.pressureCheckInStore == null && !AppServices.isInitialized) {
       return;
     }
-    final store = widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+    final store =
+        widget.pressureCheckInStore ?? PressureCheckInStore.instance();
     final records = await store.loadAll();
+    final savedEntryCount = _journalEntryCount;
     if (!mounted) return;
     setState(() {
-      _personalReturnPrompts = const PersonalReturnPromptEngine().build(records);
-      _dailyReturnSuggestions =
-          const DailyReturnSuggestionEngine().build(records);
-      _oneSmallRecording = const OneSmallRecordingEngine().build(records);
+      _personalReturnPrompts = const PersonalReturnPromptEngine().build(
+        records,
+      );
+      _dailyReturnSuggestions = const DailyReturnSuggestionEngine().build(
+        records,
+      );
+      _oneSmallRecording = const OneSmallRecordingEngine().build(
+        records,
+        entryCount: savedEntryCount,
+      );
       // Day 7 continuity inputs — both from existing engines, never new
       // claims. The loop itself is built at render time with the current
       // entry count.
-      _hasWeeklyReviewForContinuity =
-          const WeeklyThreadReviewEngine().build(records).hasReview;
-      _hasConnectedThreadForContinuity =
-          const ThreadReturnEvidenceEngine().build(records).hasEvidence;
+      _hasWeeklyReviewForContinuity = const WeeklyThreadReviewEngine()
+          .build(records)
+          .hasReview;
+      _hasConnectedThreadForContinuity = const ThreadReturnEvidenceEngine()
+          .build(records)
+          .hasEvidence;
+    });
+    await AhaMomentStore.ensureLoaded();
+    if (!mounted) return;
+    setState(() {
+      _ahaCandidate = const AhaMomentEngine().evaluate(
+        records: records,
+        entryCount: savedEntryCount,
+        hasStrongerMemoryCardVisible: false,
+        source: 'record',
+        trackAnalytics: false,
+      );
     });
     if (_dailyReturnSuggestions.hasSuggestions &&
         !_dailySuggestionsSeenTracked) {
@@ -1083,6 +1234,96 @@ class _RecordScreenState extends State<RecordScreen> {
           store.record(SuggestionAttributionEventType.dailySuggestionsSeen),
         );
       }
+    }
+  }
+
+  /// Return cue is on screen — first save only, until answered once.
+  bool get _recordReturnCueVisible =>
+      _recordReturnProJustSaved &&
+      _recordReturnProState != null &&
+      !_recordReturnProState!.returnCueResolved;
+
+  Future<void> _loadRecordReturnProState() async {
+    if (!AppServices.isInitialized) return;
+    final state = await RecordReturnProStore.instance().load();
+    final isPro =
+        await (widget.entitlementReader ??
+                ArchiveEntitlementReader.forAccessCheck())
+            .isPro;
+    if (!mounted) return;
+    setState(() {
+      _recordReturnProState = state;
+      _recordReturnProIsPro = isPro;
+    });
+  }
+
+  bool get _hasRealChangeInsight => RecordReturnProGates.hasRealChangeInsight(
+    hasReturnComparison: _returnComparison != null,
+    hasTomorrowReturnLoopContent: _tomorrowReturnLoop?.hasContent ?? false,
+    hasThreadReturnEvidence: _hasConnectedThreadForContinuity,
+  );
+
+  /// "Remind me tomorrow" — permission only after this explicit tap.
+  Future<void> _acceptRecordReturnReminder() async {
+    final outcome = await DayTwoReminderCoordinator().accept();
+    await RecordReturnProStore.instance().markReturnCueResolved(
+      RecordReturnProReturnCueMethod.reminder,
+    );
+    if (!mounted) return;
+    setState(() {
+      _recordReturnProState = _recordReturnProState?.copyWith(
+        returnCueResolved: true,
+        returnCueMethod: RecordReturnProReturnCueMethod.reminder,
+      );
+      _offerDayTwoReminder = false;
+    });
+    final line = outcome == DayTwoReminderOutcome.scheduled
+        ? DayTwoReminder.scheduledLine
+        : DayTwoReminder.unavailableLine;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(line)));
+  }
+
+  /// Local return cue only — no notifications.
+  Future<void> _acceptRecordReturnLocalCue() async {
+    await RecordReturnProStore.instance().markReturnCueResolved(
+      RecordReturnProReturnCueMethod.localCue,
+    );
+    if (!mounted) return;
+    setState(() {
+      _recordReturnProState = _recordReturnProState?.copyWith(
+        returnCueResolved: true,
+        returnCueMethod: RecordReturnProReturnCueMethod.localCue,
+      );
+    });
+  }
+
+  Future<void> _markChangeStartSeen() async {
+    await RecordReturnProStore.instance().markChangeStartSeen();
+    if (!mounted) return;
+    setState(() {
+      _recordReturnProState = _recordReturnProState?.copyWith(
+        changeStartSeen: true,
+      );
+    });
+  }
+
+  /// Resolves the commercial-loop Pro bridge once.
+  Future<void> _resolveRecordReturnProBridge({required bool seePro}) async {
+    await RecordReturnProStore.instance().markProBridgeResolved();
+    if (!mounted) return;
+    setState(() {
+      _recordReturnProState = _recordReturnProState?.copyWith(
+        proBridgeResolved: true,
+      );
+    });
+    if (seePro) {
+      context.push(
+        '/subscription',
+        extra: PaywallRouteArgs(
+          source: PaywallSource.valueMoment,
+          sourceRoute: '/record',
+        ),
+      );
     }
   }
 
@@ -1100,28 +1341,42 @@ class _RecordScreenState extends State<RecordScreen> {
     final isPro = await reader.isPro;
     // Day 2 gentle reminder: offered once, only right after the very first
     // successful save — value exists before anything is asked.
-    final offerDayTwoReminder = await DayTwoReminderCoordinator()
-        .shouldOffer(entryCount: _reflectionCount);
+    final offerDayTwoReminder = await DayTwoReminderCoordinator().shouldOffer(
+      entryCount: _journalEntryCount,
+    );
+    // First 60 Seconds: load the persisted return-cue / Pro-bridge answers
+    // so neither card ever re-asks after being resolved.
+    final recordReturnProState = await RecordReturnProStore.instance().load();
     if (!mounted) return;
     setState(() {
       _offerDayTwoReminder = offerDayTwoReminder;
-      _doneForTodayReceipt =
-          const DoneForTodayReceiptEngine().build(saved: true, records: records);
+      _recordReturnProState = recordReturnProState;
+      _recordReturnProIsPro = isPro;
+      _doneForTodayReceipt = const DoneForTodayReceiptEngine().build(
+        saved: true,
+        records: records,
+      );
       // Same evidence, one more honest count: the save that just happened.
-      _archiveProofCounter = const ArchiveProofCounterEngine()
-          .build(records, savedToday: true);
+      _archiveProofCounter = const ArchiveProofCounterEngine().build(
+        records,
+        savedToday: true,
+      );
       // Anonymous share card built from the same counts — never user text.
-      _shareableProof = const ShareableArchiveProofEngine()
-          .build(records, savedToday: true);
+      _shareableProof = const ShareableArchiveProofEngine().build(
+        records,
+        savedToday: true,
+      );
       // Pro bridge only after a real value moment — and the save is already
       // done, so it can never block recording or saving.
-      _valueMomentBridge =
-          const ValueMomentPaywallTrigger().build(records, isPro: isPro);
+      _valueMomentBridge = const ValueMomentPaywallTrigger().build(
+        records,
+        isPro: isPro,
+      );
       // Optional, skippable context tag — only reachable after a real save.
       _showEvidenceContextTag = _entriesAfterSave.isNotEmpty;
       // Tomorrow's-check preview — safe labels only, never user text.
       _dayTwoReturnPreview = const DayTwoReturnPreviewEngine().build(
-        entryCount: _reflectionCount,
+        entryCount: _journalEntryCount,
         contextTagIds: [for (final r in records) ...r.contextIds],
         entryDates: [for (final r in records) r.createdAt],
       );
@@ -1153,15 +1408,17 @@ class _RecordScreenState extends State<RecordScreen> {
     final store =
         widget.pressureCheckInStore ?? PressureCheckInStore.instance();
     await store.addContextTag(
-      entryId: _entriesAfterSave.last.id,
+      entryId: _lastSavedEntry!.id,
       contextId: tag.id,
+      // A fresh-entry save keeps its optional tag out of connection claims.
+      treatAsNew: TreatAsNew.lastSaveWasFresh,
     );
     // The just-saved tag can make tomorrow's-check preview more specific.
     final records = await store.loadAll();
     if (!mounted) return;
     setState(() {
       _dayTwoReturnPreview = const DayTwoReturnPreviewEngine().build(
-        entryCount: _reflectionCount,
+        entryCount: _journalEntryCount,
         contextTagIds: [for (final r in records) ...r.contextIds],
         entryDates: [for (final r in records) r.createdAt],
       );
@@ -1169,6 +1426,7 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _loadFirstThreeJourney() async {
+    if (!_journalEntryCountReady || _journalEntryCount < 2) return;
     final model = await FirstThreeJourneyCoordinator.load();
     if (!mounted) return;
     setState(() => _firstThreeJourney = model);
@@ -1198,6 +1456,24 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() => _purchaseIntentCue = intent);
   }
 
+  /// Invited User Welcome: a locally persisted first-touch invite
+  /// attribution tailors the pre-first-save welcome. Loaded once at init;
+  /// the render gate also requires a still-empty archive.
+  Future<void> _loadInvitedWelcome() async {
+    if (widget.inviteAttributionStore == null && !AppServices.isInitialized) {
+      return;
+    }
+    final store = widget.inviteAttributionStore ?? InviteAttributionStore();
+    final attribution = await store.firstTouch();
+    if (attribution == null || !mounted) return;
+    // Any invited surface (welcome, Day 2 return copy) can use the source.
+    setState(() => _inviteSource = attribution.source);
+    if (!InvitedUserWelcome.shouldShow(entryCount: _journalEntryCount)) return;
+    InvitedUserWelcome.shownThisSession = true;
+    InvitedUserWelcome.sessionSource = attribution.source;
+    setState(() => _invitedWelcomeSource = attribution.source);
+  }
+
   Future<void> _loadFirstLoop() async {
     // Opening the Record tab is the first step of the compressed loop.
     final state = ScreenshotMode.enabled
@@ -1209,28 +1485,30 @@ class _RecordScreenState extends State<RecordScreen> {
 
   bool get _showAdvancedRetentionPostSave {
     if (_isFirstSessionPostSave) return false;
-    final count =
-        _entriesAfterSave.isNotEmpty ? _entriesAfterSave.length : _reflectionCount;
+    final count = _entriesAfterSave.isNotEmpty
+        ? _entriesAfterSave.length
+        : _journalEntryCount;
     return count >= 3;
   }
 
   void _onStartHereSelected(String prompt) {
     setState(() => _selectedPromptLine = prompt);
     if (_ui == RecordUiState.ready && _mic == RecordingPhase.ready) {
-      _start();
+      unawaited(_onRecordPressed(source: 'moment'));
     }
   }
 
   ArchivePromptSet _promptSet() {
-    final hasBelief = _reflectionCount >= 5;
+    final hasBelief = _journalEntryCount >= 5;
     final movement = _archiveMovement;
     return buildArchivePrompts(
       hasBelief: hasBelief,
-      strengthening: movement?.kind == ArchiveMovementKind.confidenceChanged &&
+      strengthening:
+          movement?.kind == ArchiveMovementKind.confidenceChanged &&
           (movement?.headline.toLowerCase().contains('stronger') ?? false),
       weakening: movement?.headline.toLowerCase().contains('weaken') ?? false,
       hasRecentChange: movement != null,
-      hasOpenQuestion: hasBelief && _reflectionCount < 8,
+      hasOpenQuestion: hasBelief && _journalEntryCount < 8,
       missingAreaLabel: movement?.kind == ArchiveMovementKind.newLifeArea
           ? 'that area'
           : null,
@@ -1239,20 +1517,160 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   RecordUiState _uiForMicPhase(RecordingPhase cap) {
-    if (cap == RecordingPhase.ready) return RecordUiState.ready;
-    if (cap == RecordingPhase.permissionDenied ||
-        cap == RecordingPhase.permissionPermanentlyDenied) {
-      return RecordUiState.permissionBlocked;
-    }
-    return RecordUiState.idle;
+    return RecordMicrophonePermissionUi.uiForMicPhase(
+      phase: cap,
+      userDeniedThisSession: _micPermissionUserDenied,
+    );
   }
 
-  Future<void> _refreshMic() async {
-    final cap = await _recording.checkMicrophone();
+  Future<void> _openMicSettings() async {
+    _ignoreStaleMicRefreshAfterGrant = false;
+    await openMicrophoneSettings();
+    await _refreshMic();
+  }
+
+  Future<void> _typeInsteadFromPermission() async {
+    await navigateToTypeInsteadCapture(
+      context,
+      prompt: _selectedPromptLine,
+      onSaved: _finishSuccessfulCapture,
+    );
+  }
+
+  Future<void> _openTypedFallbackForLastVoiceEntry() async {
+    if (_entriesAfterSave.isEmpty) return;
+    final entryId = _lastSavedEntry!.id;
+    final result = await context.push<CapturePipelineResult>(
+      '/quick-capture',
+      extra: {'entryId': entryId},
+    );
+    if (result == null || !mounted) return;
+    await _finishSuccessfulCapture(result);
+  }
+
+  JournalEntry? get _lastSavedEntry =>
+      _entriesAfterSave.isNotEmpty ? _entriesAfterSave.first : null;
+
+  bool get _lastSavedEntryIsDegraded =>
+      _auditDegradedVoicePostSave ||
+      VoiceCapturePostSave.showTypedFallbackPrimary(_lastSavedEntry);
+
+  bool get _auditDegradedVoicePostSave {
+    if (!VisualAuditOverrides.active) return false;
+    return VisualAuditOverrides.peekRecordPresentation()?.degradedVoicePostSave ==
+        true;
+  }
+
+  RecordCtaPolicyResolution _recordCtaPolicy(
+    RecordUiState ui, {
+    RecordingPhase? micPhase,
+    MicrophonePermissionState? micPermissionState,
+    bool? userDeniedThisSession,
+  }) {
+    final phase = micPhase ?? _mic;
+    final userDenied = userDeniedThisSession ?? _micPermissionUserDenied;
+    return RecordCtaPolicy.resolve(
+      ui: ui,
+      entryCount: _journalEntryCount,
+      entryCountLoaded: _journalEntryCountLoaded,
+      showPostSaveLoop: _showPostSaveLoop,
+      isDegradedVoiceSave: _lastSavedEntryIsDegraded,
+      lastSavedEntry: _lastSavedEntry,
+      micPhase: phase,
+      micPermissionState: micPermissionState ?? _micPermissionState,
+      userDeniedThisSession: userDenied,
+    );
+  }
+
+  String? _lastCtaPolicyLogLine;
+
+  void _maybeLogRecordCtaPolicy(RecordCtaPolicyResolution resolution) {
+    if (!kDebugMode) return;
+    final secondary = resolution.secondaryLabels.isEmpty
+        ? 'none'
+        : resolution.secondaryLabels.join(',');
+    final action = resolution.action?.logLabel ?? 'none';
+    final line =
+        'state=${resolution.state.logLabel} '
+        'mic=${resolution.micPermissionState.name} '
+        'primary=${resolution.primaryLabel ?? 'none'} '
+        'action=$action '
+        'secondary=$secondary';
+    if (_lastCtaPolicyLogLine == line) return;
+    _lastCtaPolicyLogLine = line;
+    RecordCtaPolicy.log(resolution);
+  }
+
+  MicrophonePermissionState _micPermissionUiState() {
+    if (_micPermissionState == MicrophonePermissionState.granted ||
+        _micPermissionState ==
+            MicrophonePermissionState.grantedWithPermissionHandlerMismatch) {
+      return _micPermissionState;
+    }
+    return switch (RecordMicrophonePermissionUi.blockedPanelKind(
+      micPhase: _mic,
+      userDeniedThisSession: _micPermissionUserDenied,
+    )) {
+      MicrophoneBlockedPanelKind.openSettings =>
+        MicrophonePermissionState.deniedOpenSettings,
+      MicrophoneBlockedPanelKind.allowMicrophone =>
+        MicrophonePermissionState.deniedCanAskAgain,
+      MicrophoneBlockedPanelKind.none =>
+        MicrophonePermissionState.deniedCanAskAgain,
+    };
+  }
+
+  void _logMicRefreshApply(RecordMicRefreshApplyResult applied) {
+    if (applied.initialDeniedCanAskAgain) {
+      _recordPermissionUiLog(
+        'initial deniedCanAskAgain treated_as=requestable',
+      );
+    }
+    if (applied.userDeniedBlocked) {
+      _recordPermissionUiLog('user_denied=true show_blocked=true');
+    }
+    if (applied.permanentDenied) {
+      _recordPermissionUiLog('permanent_denied=true show_open_settings=true');
+    }
+  }
+
+  Future<void> _refreshMic({bool fromUserRequest = false}) async {
+    final resolution = await _recording.evaluateMicrophonePermission();
+    final cap = resolution.phase;
     if (!mounted) return;
+
+    if (MicrophonePermissionResolver.isRecordable(resolution.state)) {
+      setState(() {
+        _mic = RecordingPhase.ready;
+        _micPermissionState = resolution.state;
+        _micPermissionUserDenied = false;
+        _ui = RecordUiState.ready;
+        if (resolution.state == MicrophonePermissionState.granted) {
+          _ignoreStaleMicRefreshAfterGrant = true;
+        }
+      });
+      _recordLog('state ui=$_ui mic=$cap recordable=${resolution.state.name} (refresh)');
+      _maybeAutostartWithPrompt();
+      return;
+    }
+
+    final applied = RecordMicrophonePermissionUi.applyMicRefresh(
+      phase: cap,
+      userDeniedThisSession: _micPermissionUserDenied,
+      currentUi: _ui,
+      ignoreAfterGrant: _ignoreStaleMicRefreshAfterGrant,
+      fromUserRequest: fromUserRequest,
+    );
+    if (applied.ignored) {
+      _recordPermissionUiLog('stale refresh ignored after granted=true');
+      return;
+    }
+    _logMicRefreshApply(applied);
     setState(() {
-      _mic = cap;
-      _ui = _uiForMicPhase(cap);
+      _mic = applied.mic!;
+      _micPermissionState = resolution.state;
+      _micPermissionUserDenied = applied.userDenied!;
+      _ui = applied.ui!;
     });
     _recordLog('state ui=$_ui mic=$cap (refresh)');
     _maybeAutostartWithPrompt();
@@ -1264,40 +1682,187 @@ class _RecordScreenState extends State<RecordScreen> {
     if (_selectedPromptLine == null || _selectedPromptLine!.isEmpty) return;
     if (_ui != RecordUiState.ready || _mic != RecordingPhase.ready) return;
     _autostartWithPromptAttempted = true;
-    _start();
+    unawaited(_onRecordPressed(source: 'main'));
+  }
+
+  bool _shouldHideCompetingRecordCtas(RecordUiState ui) =>
+      RecordMicrophonePermissionUi.shouldHideCompetingRecordCtas(
+        ui: ui,
+        micPhase: _mic,
+        userDeniedThisSession: _micPermissionUserDenied,
+      );
+
+  bool _shouldHideCardRecordButtons(RecordUiState ui) {
+    if (_shouldHideCompetingRecordCtas(ui)) return true;
+    return RecordCtaPolicy.shouldHideCardRecordCtas(_recordCtaPolicy(ui));
+  }
+
+  bool _shouldPromoteMicCaptureActions(RecordCtaPolicyResolution policy) {
+    return policy.showMainBottomCta &&
+        policy.action != null &&
+        policy.action != RecordCtaAction.startRecording;
+  }
+
+  Widget _buildCaptureEntryActions({
+    required BuildContext context,
+    required String? selectedPrompt,
+    required RecordCtaPolicyResolution policy,
+  }) {
+    return CaptureEntryActions(
+      onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+      recordButtonKey: const Key('capture_entry_record_cta'),
+      typeCapturePrompt: selectedPrompt,
+      onTextThoughtSaved: _finishSuccessfulCapture,
+      onLogPressureMoment: () => context.push('/pressure-check-in'),
+      recordButtonLabel: policy.primaryLabel,
+      underRecordHelper: null,
+    );
+  }
+
+  void _trackRecordCtaPressed() {
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.recordCtaTapped,
+      entryCount: _journalEntryCount,
+    );
+    InviteFunnelMetrics.recordCtaTapped(entryCount: _journalEntryCount);
+    if (_journalEntryCount == 0 && _dueCheckInToday == null) {
+      ActivationTracker.trackActivationFirstRecordCtaTapped();
+    }
+    _recordLog('button pressed');
+  }
+
+  RecordCtaPolicyResolution _recordCtaPolicyForSession() {
+    if (VisualAuditOverrides.active) {
+      final audit = VisualAuditOverrides.peekRecordPresentation();
+      if (audit != null) {
+        return _recordCtaPolicy(
+          audit.ui,
+          micPhase: audit.micPhase ?? _mic,
+          userDeniedThisSession:
+              audit.userDeniedThisSession ?? _micPermissionUserDenied,
+        );
+      }
+    }
+    return _recordCtaPolicy(_ui);
+  }
+
+  Future<void> _onRecordPressed({required String source}) async {
+    _recordCtaLog('tapped source=$source');
+    final policy = _recordCtaPolicyForSession();
+    final action =
+        policy.action ??
+        RecordMicrophonePermissionUi.recordCtaAction(
+          micPhase: _mic,
+          userDeniedThisSession: _micPermissionUserDenied,
+        );
+    switch (action) {
+      case RecordCtaAction.startRecording:
+        _recordCtaLog('start_recording=true');
+        _trackRecordCtaPressed();
+        setState(() {
+          _error = null;
+          _localSaveTitle = null;
+          _syncNote = null;
+          _seconds = 0;
+          _showPostSaveLoop = false;
+          _postSaveFollowUp = null;
+          EntryAboutnessSession.clearSaveReceipt();
+          MemorySurfacingSession.clearSaveReceipts();
+          PreserveOriginalSession.clearSaveReceipt();
+        });
+        await _beginRecording();
+      case RecordCtaAction.requestPermission:
+        _trackRecordCtaPressed();
+        await _requestPermissionAndRecord();
+      case RecordCtaAction.routeToBlockedPanel:
+        final stateLabel = RecordMicrophonePermissionUi.micBlockedStateLabel(
+          micPhase: _mic,
+          userDeniedThisSession: _micPermissionUserDenied,
+        );
+        _recordCtaLog('blocked_by_permission state=$stateLabel');
+        if (policy.micPermissionState ==
+                MicrophonePermissionState.deniedOpenSettings ||
+            _mic == RecordingPhase.permissionPermanentlyDenied) {
+          await _openMicSettings();
+        } else {
+          await _routeToPermissionPanel();
+        }
+    }
+  }
+
+  Future<void> _routeToPermissionPanel() async {
+    if (_ui != RecordUiState.permissionBlocked) {
+      setState(() {
+        _ignoreStaleMicRefreshAfterGrant = false;
+        _ui = RecordUiState.permissionBlocked;
+        if (_mic == RecordingPhase.permissionPermanentlyDenied) {
+          _micPermissionUserDenied = true;
+        }
+        _error = null;
+      });
+    }
+    _recordCtaLog('routed_to_permission_panel=true');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final panelContext = _permissionPanelKey.currentContext;
+      if (panelContext != null) {
+        Scrollable.ensureVisible(
+          panelContext,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: 0.1,
+        );
+      }
+    });
   }
 
   Future<void> _requestMic() async {
     _recordLog('button pressed (allow microphone)');
+    final existing = await _recording.evaluateMicrophonePermission();
+    if (existing.isRecordable) {
+      if (!mounted) return;
+      setState(() {
+        _mic = RecordingPhase.ready;
+        _micPermissionState = existing.state;
+        _micPermissionUserDenied = false;
+        _ui = RecordUiState.ready;
+      });
+      _recordPermissionUiLog(
+        'recorder_verified=${existing.state.name} start_recording=true',
+      );
+      await _beginRecording();
+      return;
+    }
     if (TrialMode.enabled) {
       await ActivationTracker.trackTrialMicPermissionRequested();
     }
-    final cap = await _recording.requestMicrophone();
+    _recordPermissionUiLog('request started');
+    setState(() => _ui = RecordUiState.requestingPermission);
+    await _recording.requestMicrophone();
     if (!mounted) return;
-    if (TrialMode.enabled && cap != RecordingPhase.ready) {
+    await _refreshMic(fromUserRequest: true);
+    if (!mounted) return;
+    if (_mic == RecordingPhase.ready) {
+      _recordPermissionUiLog('request result=granted start_recording=true');
+      await _beginRecording();
+      return;
+    }
+    if (TrialMode.enabled) {
       await ActivationTracker.trackTrialMicPermissionDenied();
     }
-    setState(() {
-      _mic = cap;
-      _ui = _uiForMicPhase(cap);
-      if (cap != RecordingPhase.ready) {
-        _error = cap == RecordingPhase.permissionPermanentlyDenied
-            ? 'Microphone blocked in system settings. Open Settings to allow access.'
-            : 'Microphone permission was not granted.';
-      }
-    });
-    _recordLog('state ui=$_ui mic=$cap (after request)');
+    if (_mic == RecordingPhase.permissionPermanentlyDenied) {
+      _recordPermissionUiLog('permanent_denied=true show_open_settings=true');
+    } else {
+      _recordPermissionUiLog('user_denied=true show_blocked=true');
+    }
+    _recordPermissionUiLog('request result=denied show_blocked=true');
+    if (_ui != RecordUiState.permissionBlocked) {
+      setState(() => _ui = RecordUiState.permissionBlocked);
+    }
+    await _routeToPermissionPanel();
   }
 
-  Future<void> _start() async {
-    ActivationFunnelAnalytics.track(
-      ActivationFunnelAnalytics.recordCtaTapped,
-      entryCount: _reflectionCount,
-    );
-    if (_reflectionCount == 0 && _dueCheckInToday == null) {
-      ActivationTracker.trackActivationFirstRecordCtaTapped();
-    }
-    _recordLog('button pressed');
+  Future<void> _requestPermissionAndRecord() async {
     setState(() {
       _error = null;
       _localSaveTitle = null;
@@ -1305,7 +1870,12 @@ class _RecordScreenState extends State<RecordScreen> {
       _seconds = 0;
       _showPostSaveLoop = false;
       _postSaveFollowUp = null;
+      EntryAboutnessSession.clearSaveReceipt();
+      MemorySurfacingSession.clearSaveReceipts();
+      PreserveOriginalSession.clearSaveReceipt();
+      _ui = RecordUiState.requestingPermission;
     });
+    _recordPermissionUiLog('request started');
 
     if (TrialMode.enabled) {
       await ActivationTracker.trackTrialMicPermissionRequested();
@@ -1313,32 +1883,57 @@ class _RecordScreenState extends State<RecordScreen> {
     var cap = await _recording.checkMicrophone();
     _recordLog('permission result $cap');
     if (cap != RecordingPhase.ready) {
-      cap = await _recording.requestMicrophone();
-      _recordLog('permission result $cap (after request)');
-      if (!mounted) return;
-      if (cap != RecordingPhase.ready) {
-        if (TrialMode.enabled) {
-          await ActivationTracker.trackTrialMicPermissionDenied();
-        }
+      final resolution = await _recording.evaluateMicrophonePermission();
+      if (resolution.isRecordable) {
+        cap = RecordingPhase.ready;
+        if (!mounted) return;
         setState(() {
-          _mic = cap;
-          _ui = RecordUiState.permissionBlocked;
-          _error = cap == RecordingPhase.permissionPermanentlyDenied
-              ? 'Microphone blocked in system settings. Open Settings to allow access.'
-              : 'Microphone access is required to record.';
+          _mic = RecordingPhase.ready;
+          _micPermissionState = resolution.state;
+          _micPermissionUserDenied = false;
+          _ui = RecordUiState.ready;
         });
-        _recordLog('start failed — permission not granted');
-        return;
+      } else if (!await MicrophonePermissionEnvironment.shouldSkipPermissionRequest(
+        status: resolution.permissionHandlerStatus,
+        hasRecorder: resolution.hasRecorder,
+      )) {
+        await _recording.requestMicrophone();
+        _recordLog('permission result after request');
+      } else {
+        cap = await _recording.checkMicrophone();
+        _recordLog('permission result after skip-request $cap');
       }
-      setState(() {
-        _mic = cap;
-        _ui = RecordUiState.ready;
-      });
     }
+    if (!mounted) return;
+    await _refreshMic(fromUserRequest: true);
+    if (!mounted) return;
+    if (_mic == RecordingPhase.ready) {
+      _recordCtaLog('start_recording=true');
+      _recordPermissionUiLog('request result=granted start_recording=true');
+      await _beginRecording();
+      return;
+    }
+    if (TrialMode.enabled) {
+      await ActivationTracker.trackTrialMicPermissionDenied();
+    }
+    if (_mic == RecordingPhase.permissionPermanentlyDenied) {
+      _recordPermissionUiLog('permanent_denied=true show_open_settings=true');
+    } else {
+      _recordPermissionUiLog('user_denied=true show_blocked=true');
+    }
+    _recordPermissionUiLog('request result=denied show_blocked=true');
+    _recordLog('start failed — permission not granted');
+    RecordPipelineLog.microphonePermissionBlocked(blocked: true);
+    if (_ui != RecordUiState.permissionBlocked) {
+      setState(() => _ui = RecordUiState.permissionBlocked);
+    }
+    await _routeToPermissionPanel();
+  }
 
+  Future<void> _beginRecording() async {
     _recordLog('start requested');
     try {
-      await _recording.startRecording();
+      await _recording.startRecording(permissionVerified: true);
       if (!mounted) return;
       setState(() {
         _ui = RecordUiState.recording;
@@ -1359,6 +1954,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _recordLog('start success');
       _recordLog('state ui=$_ui (recording)');
     } on RecordingException catch (e) {
+      _ignoreStaleMicRefreshAfterGrant = false;
       _recordLog('start failed ${e.message}');
       if (!mounted) return;
       setState(() {
@@ -1366,6 +1962,7 @@ class _RecordScreenState extends State<RecordScreen> {
         _error = e.message;
       });
     } catch (e, st) {
+      _ignoreStaleMicRefreshAfterGrant = false;
       _recordLog('start failed $e');
       if (kDebugMode) {
         debugPrint('$st');
@@ -1373,7 +1970,8 @@ class _RecordScreenState extends State<RecordScreen> {
       if (!mounted) return;
       setState(() {
         _ui = RecordUiState.error;
-        _error = 'Could not start recording. Check microphone permission and try again.';
+        _error =
+            'Could not start recording. Check microphone permission and try again.';
       });
     }
   }
@@ -1388,6 +1986,7 @@ class _RecordScreenState extends State<RecordScreen> {
     });
     try {
       final result = await _recording.stopRecording();
+      _lastCaptureLikelySilentInput = result.likelySilentInput;
       setState(() => _stageLabel = 'Attesting device…');
       final pipelineResult = await _pipeline.run(
         audioFile: result.file,
@@ -1409,6 +2008,16 @@ class _RecordScreenState extends State<RecordScreen> {
       if (!mounted) return;
       await _finishSuccessfulCapture(pipelineResult);
     } on CapturePipelineFailure catch (e) {
+      if (e.message == VoiceCaptureCopy.notEnoughAudio) {
+        setState(() {
+          _ui = RecordUiState.ready;
+          _error = e.message;
+          _localSaveTitle = null;
+          _syncNote = null;
+          _stageLabel = '';
+        });
+        return;
+      }
       setState(() {
         _ui = RecordUiState.error;
         _error = e.message;
@@ -1430,30 +2039,36 @@ class _RecordScreenState extends State<RecordScreen> {
     }
   }
 
-  Future<void> _finishSuccessfulCapture(CapturePipelineResult pipelineResult) async {
+  Future<void> _finishSuccessfulCapture(
+    CapturePipelineResult pipelineResult,
+  ) async {
     final all = await AppServices.instance.journal.loadAll();
     final movement = ArchiveMovementEngine.build(
       all,
-      newEntryId: all.isNotEmpty ? all.last.id : null,
+      newEntryId: pipelineResult.entry.id,
     );
     final cloudOk = pipelineResult.syncSucceeded;
+    final savedEntry = pipelineResult.entry;
+    final hasSavedTranscript =
+        VoiceCaptureQuality.hasUsableSpokenText(savedEntry);
     final state = buildArchiveStateObjectV3(entries: all);
-    final priorEntries = all.length > 1 ? all.sublist(1) : const <JournalEntry>[];
+    final priorEntries = all.length > 1
+        ? all.sublist(1)
+        : const <JournalEntry>[];
     final instantResponse = const InstantReflectionResponseEngine().respond(
       entry: pipelineResult.entry,
       priorEntries: priorEntries,
     );
 
     final prefs = AppServices.instance.prefs;
-    final discoveryFuture = const DailyDiscoveryEngine().detectImmediateDiscovery(
-      store: DailyDiscoveryStore(prefs),
-      entries: all,
-      state: state,
-    );
-    final evolutionFuture = const ArchiveEvolutionCoordinator().detectAfterRecording(
-      entries: all,
-      state: state,
-    );
+    final discoveryFuture = const DailyDiscoveryEngine()
+        .detectImmediateDiscovery(
+          store: DailyDiscoveryStore(prefs),
+          entries: all,
+          state: state,
+        );
+    final evolutionFuture = const ArchiveEvolutionCoordinator()
+        .detectAfterRecording(entries: all, state: state);
     final completedCheckIn = await TomorrowCheckInCoordinator.completeAfterSave(
       entries: all,
     );
@@ -1472,14 +2087,18 @@ class _RecordScreenState extends State<RecordScreen> {
     final weeklyRecap = completedCheckIn != null
         ? await PatternMemoryCoordinator.loadLatestWeeklyRecap()
         : null;
-    final canShareRecap = completedCheckIn != null &&
+    final canShareRecap =
+        completedCheckIn != null &&
         (weeklyRecap != null ||
             patternProgress != null ||
             (patternMemory != null && patternMemory.checkInCount >= 2));
-    final shareRecap =
-        canShareRecap ? await PatternMemoryCoordinator.buildShareRecap() : null;
+    final shareRecap = canShareRecap
+        ? await PatternMemoryCoordinator.buildShareRecap()
+        : null;
 
-    final latestReflectionText = all.isNotEmpty ? all.last.transcript : '';
+    final latestReflectionText = resolveEntryDisplayText(savedEntry).text.isNotEmpty
+        ? resolveEntryDisplayText(savedEntry).text
+        : savedEntry.transcript;
     // Detect reflection language so post-save cards can speak the same
     // language. Screenshot mode forces a language for marketing captures.
     final detected = ScreenshotMode.language != null
@@ -1487,21 +2106,23 @@ class _RecordScreenState extends State<RecordScreen> {
         : detectReflectionLanguage(latestReflectionText);
     final languageCode = detected.uiLanguageCode;
     unawaited(
-      ReflectionLanguageStore(AppServices.instance.prefs).recordDetection(
-        detected,
-        originalText: latestReflectionText,
-      ),
+      ReflectionLanguageStore(
+        AppServices.instance.prefs,
+      ).recordDetection(detected, originalText: latestReflectionText),
     );
     final inputQuality = assessReflectionQuality(latestReflectionText);
     unawaited(
-      InputQualityStore(AppServices.instance.prefs)
-          .recordAssessment(inputQuality),
+      InputQualityStore(
+        AppServices.instance.prefs,
+      ).recordAssessment(inputQuality),
     );
 
     if (!mounted) return;
     setState(() {
       _ui = RecordUiState.done;
       _entriesAfterSave = all;
+      // First 60 Seconds: the very first entry just landed.
+      _recordReturnProJustSaved = all.length == 1;
       _archiveStateAfterSave = state;
       _inputQuality = inputQuality;
       _inputQualityText = latestReflectionText;
@@ -1533,22 +2154,39 @@ class _RecordScreenState extends State<RecordScreen> {
       _dueCheckInToday = completedCheckIn != null ? null : _dueCheckInToday;
       _trackInstantReflectionSurfaced(instantResponse);
       _error = null;
-      _localSaveTitle = cloudOk
-          ? null
-          : CaptureSaveMessages.savedPrivatelyOnDevice;
-      _syncNote = cloudOk
-          ? null
-          : ConsumerCopyGuard.userFacingSyncNote(pipelineResult.syncNote) ??
-              CaptureSaveMessages.addAnotherMomentTomorrow;
-      _stageLabel = cloudOk
-          ? 'Saved'
-          : CaptureSaveMessages.savedPrivatelyOnDevice;
+      if (VoiceCaptureQuality.isDegradedVoiceCapture(savedEntry)) {
+        _localSaveTitle = null;
+        _syncNote = null;
+        _stageLabel = VoiceCaptureCopy.savedPrivatelySuccess;
+      } else if (!cloudOk && hasSavedTranscript && !pipelineResult.analysisSucceeded) {
+        _localSaveTitle = VoiceCaptureCopy.recordingSavedTitle;
+        _syncNote = VoiceCaptureCopy.analysisUnavailableNote;
+        _stageLabel = VoiceCaptureCopy.recordingSavedTitle;
+      } else {
+        _localSaveTitle = cloudOk
+            ? null
+            : CaptureSaveMessages.savedPrivatelyOnDevice;
+        _syncNote = cloudOk
+            ? null
+            : ConsumerCopyGuard.userFacingSyncNote(pipelineResult.syncNote) ??
+                  CaptureSaveMessages.addAnotherMomentTomorrow;
+        _stageLabel = cloudOk
+            ? 'Saved'
+            : CaptureSaveMessages.savedPrivatelyOnDevice;
+      }
+      if (pipelineResult.attachedTypedTextToVoiceEntry) {
+        RecordPipelineLog.typedFallbackInsightShown();
+      }
       _archiveMovement = movement;
-      _reflectionCount = all.length;
+      _journalEntryCount = all.length;
+      _journalEntryCountLoaded = true;
+      _journalEntries = all;
       _entryDates = all.map((e) => e.createdAt).toList();
       _firstArchiveMilestoneCompleted =
           ExamplePromptVisibility.hasCompletedFirstArchiveMilestone(all);
       _showPostSaveLoop = cloudOk;
+      _lastCaptureAnalysisSucceeded = pipelineResult.analysisSucceeded;
+      _lastCaptureLowQualityTranscript = pipelineResult.lowQualityTranscript;
       _postSaveFollowUp = null;
     });
 
@@ -1572,10 +2210,11 @@ class _RecordScreenState extends State<RecordScreen> {
 
     final discovery = await discoveryFuture;
     final evolution = await evolutionFuture;
-    final returnLoop = await TomorrowReturnLoopCoordinator.persistAfterRecording(
-      all,
-      immediateDiscovery: discovery,
-    );
+    final returnLoop =
+        await TomorrowReturnLoopCoordinator.persistAfterRecording(
+          all,
+          immediateDiscovery: discovery,
+        );
 
     final eligibleCount = all
         .where(
@@ -1620,8 +2259,8 @@ class _RecordScreenState extends State<RecordScreen> {
       );
       firstLoopAfterSave =
           await FirstLoopActivationCoordinator.markFirstPatternShown(
-        firstPattern.title,
-      );
+            firstPattern.title,
+          );
     }
 
     ReturnComparison? comparison;
@@ -1640,12 +2279,10 @@ class _RecordScreenState extends State<RecordScreen> {
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
       );
-      secondComparison =
-          const SecondSessionSignalEngine().build(all);
+      secondComparison = const SecondSessionSignalEngine().build(all);
     }
     if (all.length >= 2) {
-      patternHypothesis =
-          await const PatternHypothesisEngine().build(all);
+      patternHypothesis = await const PatternHypothesisEngine().build(all);
     }
 
     final postSaveFeedback = await SignalFeedbackStore.instance().loadAll();
@@ -1744,17 +2381,130 @@ class _RecordScreenState extends State<RecordScreen> {
       _inputQuality!.shouldAskForSharpening &&
       !_inputQualityResolved;
 
+  bool get _applyEmptyArchiveGates => !ScreenshotMode.enabled;
+
+  bool get _journalEntryCountReady =>
+      _journalEntryCountLoaded || ScreenshotMode.enabled;
+
+  void _logRecordEmptyGate([String reason = 'build']) {
+    if (kDebugMode) {
+      debugPrint(
+        'record_empty_gate entryCount=$_journalEntryCount '
+        'loaded=$_journalEntryCountLoaded reason=$reason',
+      );
+    }
+  }
+
+  bool get _canShowArchiveProgressCards =>
+      RecordEmptyArchiveGates.allowArchiveProgressUi(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      ) ||
+      !_applyEmptyArchiveGates;
+
+  DailyMirrorResult get _dailyMirror {
+    if (!_journalEntryCountReady) return DailyMirrorResult.empty;
+    return const DailyMirrorEngine().build(_journalEntries);
+  }
+
+  bool get _showDailyMirrorCard =>
+      _applyEmptyArchiveGates &&
+      RecordEmptyArchiveGates.showDailyMirrorCard(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _isPostSaveSurface =>
+      _ui == RecordUiState.done || _showPostSaveLoop;
+
+  bool get _showFirstRunPrivacyReassurance {
+    if (CreatorDemoMode.isActive) return false;
+    if (ScreenshotMode.enabled) {
+      return ScreenshotMode.recordCleanFirstRunPreview &&
+          _journalEntryCount == 0 &&
+          !_isPostSaveSurface;
+    }
+    return RecordEmptyArchiveGates.showFirstRunPrivacyReassurance(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isPostSave: _isPostSaveSurface,
+    );
+  }
+
+  bool get _showReadyToRecordStatus =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showReadyToRecordStatus(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showArchiveContextPrompts =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showArchiveContextPrompts(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showFirstThreeJourneyOnRecord =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showFirstThreeJourneyCard(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showRetentionJourneyCards =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showRetentionJourneyCards(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showTwoDayActivationCard =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showTwoDayActivationCard(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showLegacyEmptyOnboarding =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showLegacyEmptyOnboarding(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showCurrentObjectiveOnRecord =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showCurrentObjectiveCard(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showBottomRetentionCards =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showBottomRetentionCards(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
+  bool get _showAhaMomentCards =>
+      !_applyEmptyArchiveGates ||
+      RecordEmptyArchiveGates.showAhaMomentCards(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+
   RecordStackDecision _recordStackDecision(RecordUiState ui) {
     final hasDueCheck =
         _dueCheckInToday != null &&
-            (ui == RecordUiState.ready || ui == RecordUiState.recording);
+        (ui == RecordUiState.ready || ui == RecordUiState.recording);
     final hasSavedReflection =
         ui == RecordUiState.done && _entriesAfterSave.isNotEmpty;
     final hasCompletedResult =
         _completedCheckInToday != null && !_returnDayJustClosed;
-    final hasResultNextCheck =
-        hasCompletedResult && !_showInputQualityCoach;
-    final hasArchiveProof = _patternMemory != null ||
+    final hasResultNextCheck = hasCompletedResult && !_showInputQualityCoach;
+    final hasArchiveProof =
+        _patternMemory != null ||
         _patternProgress != null ||
         _patternNextAction != null ||
         _habitProof != null ||
@@ -1762,7 +2512,9 @@ class _RecordScreenState extends State<RecordScreen> {
         _shareRecap != null;
     final readyNotPostSave =
         ui == RecordUiState.ready || ui == RecordUiState.recording;
-    final retentionState = _buildRetentionState(readyNotPostSave: readyNotPostSave);
+    final retentionState = _buildRetentionState(
+      readyNotPostSave: readyNotPostSave,
+    );
     final hasRetentionCard = _shouldShowRetentionOnRecord(
       retentionState,
       readyNotPostSave: readyNotPostSave,
@@ -1772,14 +2524,16 @@ class _RecordScreenState extends State<RecordScreen> {
 
     final returnDay = const ReturnDayJourneyEngine().evaluate(
       journey: _signalJourney,
-      reflectionCount: _reflectionCount,
+      reflectionCount: _journalEntryCount,
       now: DateTime.now(),
       lastReflectionAt: _lastReflectionAt,
     );
 
     return decideRecordStack(
       hasDueCheck: hasDueCheck,
-      isFirstRun: _reflectionCount == 0,
+      isFirstRun: _journalEntryCountReady && _journalEntryCount == 0,
+      reflectionCount: _journalEntryCount,
+      entryCountLoaded: _journalEntryCountReady,
       isTrialMode: TrialMode.enabled,
       isRecording: ui == RecordUiState.recording,
       hasSavedReflection: hasSavedReflection,
@@ -1794,26 +2548,32 @@ class _RecordScreenState extends State<RecordScreen> {
           retentionState.type == RetentionStateType.noCheckSet,
       suppressRetentionForPostSaveNextCheck:
           retentionState.type == RetentionStateType.loopClosed &&
-              hasResultNextCheck,
-      showReturnDayJourney: returnDay.showCard && readyNotPostSave && !hasDueCheck,
+          hasResultNextCheck,
+      showReturnDayJourney:
+          returnDay.showCard && readyNotPostSave && !hasDueCheck,
     );
   }
 
   CurrentObjective _buildCurrentObjective({required bool readyNotPostSave}) {
-    final retentionState = _buildRetentionState(readyNotPostSave: readyNotPostSave);
-    final loopClosed = _completedCheckInToday != null &&
+    final retentionState = _buildRetentionState(
+      readyNotPostSave: readyNotPostSave,
+    );
+    final loopClosed =
+        _completedCheckInToday != null &&
         !_returnDayJustClosed &&
         _activeCheckInForTomorrow == null &&
         _dueCheckInToday == null;
     return buildCurrentObjective(
       retentionState: retentionState,
       activeCheckIn: _dueCheckInToday ?? _activeCheckInForTomorrow,
-      hasAnyMoment: _reflectionCount > 0,
+      hasAnyMoment: _journalEntryCount > 0,
       hasClosedLoopToday: loopClosed && readyNotPostSave,
       hasNextCheckChosen: _retentionNextCheckJustChosen,
-      latestNextCheck: _activeCheckInForTomorrow?.question ??
+      latestNextCheck:
+          _activeCheckInForTomorrow?.question ??
           _completedCheckInToday?.tomorrowsBetterQuestion,
-      latestPatternTitle: _activeCheckInForTomorrow?.patternTitle ??
+      latestPatternTitle:
+          _activeCheckInForTomorrow?.patternTitle ??
           _completedCheckInToday?.patternTitle,
     );
   }
@@ -1824,7 +2584,7 @@ class _RecordScreenState extends State<RecordScreen> {
       case CurrentObjectiveType.recordAnyMoment:
       case CurrentObjectiveType.answerTodayCheck:
       case CurrentObjectiveType.chooseNextCheck:
-        _start();
+        unawaited(_onRecordPressed(source: 'moment'));
       case CurrentObjectiveType.doneForToday:
         setState(() => _retentionDismissed = true);
     }
@@ -1842,7 +2602,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (ScreenshotMode.objectiveFirstMomentPreview) {
         return CurrentObjectiveCard(
           objective: ScreenshotSampleData.objectiveFirstMomentSample,
-          onPrimaryTap: _start,
+          onPrimaryTap: () => unawaited(_onRecordPressed(source: 'moment')),
           persistSnapshot: false,
         );
       }
@@ -1856,13 +2616,14 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     if (!stack.showCurrentObjectiveCard) return null;
     final objective = _buildCurrentObjective(
-      readyNotPostSave: _ui == RecordUiState.ready ||
-          _ui == RecordUiState.recording,
+      readyNotPostSave:
+          _ui == RecordUiState.ready || _ui == RecordUiState.recording,
     );
     return CurrentObjectiveCard(
       objective: objective,
       onPrimaryTap: () => _onCurrentObjectivePrimary(objective),
       persistSnapshot: !ScreenshotMode.enabled,
+      showRecordCta: !_shouldHideCardRecordButtons(_ui),
     );
   }
 
@@ -1871,7 +2632,8 @@ class _RecordScreenState extends State<RecordScreen> {
     final missed = _missedCheckInForDiagnosis == null
         ? _recentMissedCheckIn
         : null;
-    final loopClosed = _completedCheckInToday != null &&
+    final loopClosed =
+        _completedCheckInToday != null &&
         !_returnDayJustClosed &&
         _activeCheckInForTomorrow == null &&
         _dueCheckInToday == null;
@@ -1881,11 +2643,14 @@ class _RecordScreenState extends State<RecordScreen> {
       missedCheckIn: missed,
       hasClosedLoopToday: loopClosed && readyNotPostSave,
       hasChosenNextCheck: _retentionNextCheckJustChosen,
-      latestNextCheck: _activeCheckInForTomorrow?.question ??
+      latestNextCheck:
+          _activeCheckInForTomorrow?.question ??
           _completedCheckInToday?.tomorrowsBetterQuestion,
-      latestPatternTitle: _activeCheckInForTomorrow?.patternTitle ??
+      latestPatternTitle:
+          _activeCheckInForTomorrow?.patternTitle ??
           _completedCheckInToday?.patternTitle,
-      compact: _retentionNextCheckJustChosen ||
+      compact:
+          _retentionNextCheckJustChosen ||
           (_activeCheckInForTomorrow != null && _dueCheckInToday == null),
     );
   }
@@ -1921,7 +2686,7 @@ class _RecordScreenState extends State<RecordScreen> {
     switch (state.type) {
       case RetentionStateType.noCheckSet:
       case RetentionStateType.checkMissed:
-        _start();
+        unawaited(_onRecordPressed(source: 'moment'));
       case RetentionStateType.checkDueToday:
       case RetentionStateType.checkSetForTomorrow:
         break;
@@ -1935,7 +2700,8 @@ class _RecordScreenState extends State<RecordScreen> {
   Widget? _retentionCardWidget(RecordStackDecision stack) {
     if (!stack.showRetentionStateCard) return null;
     final state = _buildRetentionState(
-      readyNotPostSave: _ui == RecordUiState.ready ||
+      readyNotPostSave:
+          _ui == RecordUiState.ready ||
           _ui == RecordUiState.recording ||
           _retentionNextCheckJustChosen,
     );
@@ -1981,8 +2747,9 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() => _languageCode = code);
     if (AppServices.isInitialized) {
       unawaited(
-        ReflectionLanguageStore(AppServices.instance.prefs)
-            .recordOverride(code),
+        ReflectionLanguageStore(
+          AppServices.instance.prefs,
+        ).recordOverride(code),
       );
     }
   }
@@ -2041,6 +2808,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _doneForTodayReceipt = null;
       _dayTwoReturnPreview = null;
       _offerDayTwoReminder = false;
+      _recordReturnProJustSaved = false;
       _archiveProofCounter = null;
       _shareableProof = null;
       _valueMomentBridge = null;
@@ -2065,15 +2833,13 @@ class _RecordScreenState extends State<RecordScreen> {
       _nextEvidencePrompt = nextEvidencePrompt?.trim().isNotEmpty == true
           ? nextEvidencePrompt!.trim()
           : null;
-      _ui = _mic == RecordingPhase.ready
-          ? RecordUiState.ready
-          : RecordUiState.permissionBlocked;
+      _ui = _uiForMicPhase(_mic);
     });
   }
 
   Future<void> _applyAcquisitionIntentPrompt() async {
     if (widget.initialPrompt?.trim().isNotEmpty == true) return;
-    if (_reflectionCount > 0) return;
+    if (_journalEntryCount > 0) return;
     final store = AudienceWedgeStore.instance();
     final wedge = await store.load();
     final loop = await LoopModeCoordinator.loadActive();
@@ -2120,7 +2886,7 @@ class _RecordScreenState extends State<RecordScreen> {
   List<String> _postSaveSignals() {
     if (_entriesAfterSave.isEmpty) return const [];
     return ArchiveBeliefsPresenter.potentialSignalsFromEntry(
-      _entriesAfterSave.last,
+      _lastSavedEntry!,
     );
   }
 
@@ -2146,6 +2912,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _doneForTodayReceipt = null;
       _dayTwoReturnPreview = null;
       _offerDayTwoReminder = false;
+      _recordReturnProJustSaved = false;
       _archiveProofCounter = null;
       _shareableProof = null;
       _valueMomentBridge = null;
@@ -2154,28 +2921,9 @@ class _RecordScreenState extends State<RecordScreen> {
       _localSaveTitle = null;
       _syncNote = null;
       _archiveMovement = null;
-      _ui = _mic == RecordingPhase.ready
-          ? RecordUiState.ready
-          : RecordUiState.permissionBlocked;
+      _ui = _uiForMicPhase(_mic);
     });
     context.go('/archive-belief');
-  }
-
-  double get _pipelineProgress {
-    switch (_pipelineStage) {
-      case PipelineStage.attesting:
-        return 0.2;
-      case PipelineStage.transcribing:
-        return 0.45;
-      case PipelineStage.analyzing:
-        return 0.7;
-      case PipelineStage.saving:
-        return 0.9;
-      case PipelineStage.done:
-        return 1.0;
-      case null:
-        return 0.1;
-    }
   }
 
   bool _compactLayout(RecordUiState ui) =>
@@ -2184,6 +2932,8 @@ class _RecordScreenState extends State<RecordScreen> {
   @override
   Widget build(BuildContext context) {
     var ui = _ui;
+    var policyMic = _mic;
+    var policyUserDenied = _micPermissionUserDenied;
     var error = _error;
     var localSaveTitle = _localSaveTitle;
     var syncNote = ConsumerCopyGuard.userFacingSyncNote(_syncNote);
@@ -2192,6 +2942,10 @@ class _RecordScreenState extends State<RecordScreen> {
       final audit = VisualAuditOverrides.peekRecordPresentation();
       if (audit != null) {
         ui = audit.ui;
+        if (audit.micPhase != null) policyMic = audit.micPhase!;
+        if (audit.userDeniedThisSession != null) {
+          policyUserDenied = audit.userDeniedThisSession!;
+        }
         error = audit.error;
         localSaveTitle = audit.localSaveTitle;
         syncNote = ConsumerCopyGuard.userFacingSyncNote(audit.syncNote);
@@ -2199,8 +2953,14 @@ class _RecordScreenState extends State<RecordScreen> {
       }
     }
 
-    final canRecord = ui == RecordUiState.ready || ui == RecordUiState.recording;
-    final showFraming = ui == RecordUiState.ready || ui == RecordUiState.idle;
+    final canRecord =
+        (ui == RecordUiState.ready || ui == RecordUiState.recording) &&
+        !RecordMicrophonePermissionUi.shouldHideBlockedPanelDuringRequest(ui);
+    final showFraming =
+        ui == RecordUiState.ready ||
+        ui == RecordUiState.idle ||
+        ui == RecordUiState.requestingPermission ||
+        ui == RecordUiState.permissionBlocked;
     final compact = _compactLayout(ui);
     final stack = _recordStackDecision(ui);
     if (stack.showFirstRecordingHandoff && !_firstRecordCardTracked) {
@@ -2209,976 +2969,1284 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     final suppressPostResultNextCheckCompetitors =
         stack.suppressDuplicateUseTomorrowCtas;
+    final suppressNoisyFirstSaveCards =
+        FirstThreeSessionGates.suppressNoisyPostSaveCards(
+          justSavedFirst: _recordReturnProJustSaved,
+          entryCount: _journalEntryCount,
+        );
 
+    _logRecordEmptyGate('build');
+    _maybeLogRecordCtaPolicy(
+      _recordCtaPolicy(
+        ui,
+        micPhase: policyMic,
+        userDeniedThisSession: policyUserDenied,
+      ),
+    );
+
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final showCloseButton = RecordScreenCloseButton.shouldShow(context);
     return ColoredBox(
       color: AppColors.backgroundPrimary,
       child: SafeArea(
         top: true,
         bottom: false,
-        child: Padding(
-      padding: EdgeInsets.fromLTRB(24, 8, 24, compact ? 12 : 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (showFraming && stack.showFramingTitle) ...[
-                    Text(
-                      RecordScreenFramingCopy.title,
-                      style: ArchiveMobileTypography.recordPageTitle(context),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      RecordScreenFramingCopy.guidance,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: VoiceMemoryColors.textSecondary,
-                            fontSize: ArchiveMobileTypography.responsiveBody(context).fontSize,
-                          ),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  if (_missedCheckInForDiagnosis != null &&
-                      ui == RecordUiState.ready) ...[
-                    MissedCheckInReasonPrompt(
-                      checkIn: _missedCheckInForDiagnosis!,
-                      onAnswered: () =>
-                          setState(() => _missedCheckInForDiagnosis = null),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  if (stack.showCurrentObjectiveCard ||
-                      (ScreenshotMode.enabled &&
-                          ScreenshotMode.objective != null)) ...[
-                    _currentObjectiveWidget(stack)!,
-                    const SizedBox(height: 16),
-                  ],
-                  if (stack.showRetentionStateCard) ...[
-                    _retentionCardWidget(stack)!,
-                    const SizedBox(height: 16),
-                  ],
-                  if (stack.showDueCheckCard) ...[
-                    Builder(builder: (context) {
-                      final guided = _hookRescue
-                              ?.includes(HookRescueAction.guidedCheckIn) ??
-                          false;
-                      return TomorrowCheckInDueCard(
-                        checkIn: _dueCheckInToday!,
-                        plannedAnchor: _dueRoutineAnchor,
-                        guided: guided,
-                        // Fast path by default; only the gated guided flow opts
-                        // out so confused users still get the step-by-step card.
-                        oneTapMode: !guided,
-                        onRecord: _start,
-                        onSelectOption: (option) async {
-                          final checkInId = _dueCheckInToday!.id;
-                          final updated =
-                              await TomorrowCheckInCoordinator.selectOption(
-                            checkInId: checkInId,
-                            optionId: option.id,
-                          );
-                          await ReturnDayFrictionCoordinator
-                              .markAnswerSelected(checkInId, option.id);
-                          if (!mounted) return;
-                          setState(() {
-                            _dueCheckInToday = updated;
-                          });
-                        },
-                      );
-                    }),
-                    const SizedBox(height: 16),
-                  ],
-                  if (stack.showReturnDayJourneyCard &&
-                      _signalJourney != null &&
-                      ui == RecordUiState.ready) ...[
-                    ReturnDayJourneyCard(
-                      journey: _signalJourney!,
-                      recordedToday: const ReturnDayJourneyEngine()
-                              .evaluate(
-                                journey: _signalJourney,
-                                reflectionCount: _reflectionCount,
-                                now: DateTime.now(),
-                                lastReflectionAt: _lastReflectionAt,
-                              )
-                              .recordedToday,
-                      onViewChanged: () => context.push('/signal-journey'),
-                    ),
-                    const SizedBox(height: 12),
-                  ] else if (stack.showFirstRecordingHandoff &&
-                      _activeLoop != null) ...[
-                    LoopModeFirstHandoffCard(
-                      loop: _activeLoop!,
-                      onStartRecording: _start,
-                    ),
-                    const SizedBox(height: 12),
-                  ] else if (stack.showFirstRecordingHandoff) ...[
-                    FirstRecordingHandoffCard(
-                      onStartRecording: _start,
-                      wedgePrompt: _selectedPromptLine,
-                    ),
-                    const SizedBox(height: 12),
-                  ] else if (_activeLoop != null &&
-                      _reflectionCount > 0 &&
-                      _postSavePattern == null &&
-                      !stack.showReturnDayJourneyCard) ...[
-                    LoopModeProgressCard(
-                      loop: _activeLoop!,
-                      onRecordNext: _start,
-                    ),
-                    const SizedBox(height: 12),
-                  ] else if (stack.showArchiveMemoryDemo) ...[
-                    ArchiveMemoryDemoCard(onRecord: _start),
-                    const SizedBox(height: 12),
-                  ],
-                  if (stack.showFirstLoopStartCard) ...[
-                    FirstLoopStartCard(onRecord: _start),
-                    const SizedBox(height: 12),
-                  ],
-                  if (stack.showTrialFirstMomentCard) ...[
-                    TrialFirstMomentCard(onStartRecording: _start),
-                    const SizedBox(height: 12),
-                  ],
-                  if (ui == RecordUiState.recording) ...[
-                    _RecordingStatusCard(seconds: _seconds, stageLabel: stageLabel),
-                    if (_selectedPromptLine != null) ...[
-                      const SizedBox(height: 12),
+        child: Stack(
+          children: [
+            LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              key: const Key('record_screen_scroll'),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(
+                24,
+                8,
+                24,
+                (compact ? 12 : 16) + bottomInset,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (kDebugMode)
+                      SizedBox(
+                        key: ValueKey(
+                          'record_empty_gate_${_journalEntryCount}_'
+                          '$_journalEntryCountLoaded',
+                        ),
+                        width: 0,
+                        height: 0,
+                      ),
+                    if (showFraming && stack.showFramingTitle) ...[
                       Text(
-                        _selectedPromptLine!,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: VoiceMemoryColors.textSecondary,
-                          height: 1.5,
-                        ),
+                        RecordScreenFramingCopy.title,
+                        style: ArchiveMobileTypography.recordPageTitle(context),
                       ),
-                    ],
-                  ] else ...[
-                    Semantics(
-                      label: 'Recording status',
-                      child: Text(
-                        stageLabel.isEmpty
-                            ? _statusTextFor(ui, localSaveTitle)
-                            : stageLabel,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    if (ui == RecordUiState.processing) ...[
-                      const SizedBox(height: 12),
-                      ProcessingBackgroundCard(
-                        stageLabel: stageLabel,
-                        progress: _pipelineProgress,
-                      ),
-                    ],
-                    if (_selectedPromptLine != null &&
-                        (ui == RecordUiState.ready || ui == RecordUiState.recording)) ...[
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       Text(
-                        ConsumerUiCopy.trySayingLabel,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                        RecordScreenFramingCopy.guidance,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: VoiceMemoryColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _selectedPromptLine!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: VoiceMemoryColors.textSecondary,
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                    if (ui == RecordUiState.ready &&
-                        _nextEvidencePrompt != null) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFFBF5),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.borderSubtle,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              ConsumerUiCopy.postSaveInsightRecordThisNext,
-                              style: ArchiveMobileTypography.cardLabel(context),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              _nextEvidencePrompt!,
-                              style: ArchiveMobileTypography.explanationBody(
-                                context,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (ui == RecordUiState.ready &&
-                        stack.showActivePatternThread &&
-                        _activePatternThread != null) ...[
-                      const SizedBox(height: 12),
-                      ActivePatternThreadPromptCard(
-                        thread: _activePatternThread!,
-                        onAddMoment: _start,
-                        onPause: () async {
-                          await ActivePatternThreadCoordinator.pauseThread();
-                          if (!mounted) return;
-                          setState(() => _activePatternThread = null);
-                        },
-                      ),
-                    ],
-                    if (ui == RecordUiState.ready &&
-                        stack.showFirstThreeJourney &&
-                        _firstThreeJourney != null &&
-                        _firstThreeJourney!.showOnRecord) ...[
-                      const SizedBox(height: 12),
-                      FirstThreeJourneyCard(model: _firstThreeJourney!),
-                    ],
-                    if (ui == RecordUiState.ready &&
-                        _postSavePattern == null &&
-                        !stack.showReturnDayJourneyCard &&
-                        _signalJourney != null &&
-                        _signalJourney!.isActive) ...[
-                      const SizedBox(height: 12),
-                      SignalJourneyCard(
-                        journey: _signalJourney!,
-                        activeLoop: _activeLoop,
-                        compact: true,
-                      ),
-                    ] else if (ui == RecordUiState.ready &&
-                        _postSavePattern == null &&
-                        _signalJourney != null &&
-                        _signalJourney!.showCompletion &&
-                        !_journeyCompletionDismissed &&
-                        _signalReview != null &&
-                        _signalReview!.isShowable) ...[
-                      const SizedBox(height: 12),
-                      SignalReviewCard(
-                        review: _signalReview!,
-                        onConfirm: () async {
-                          await SignalReviewCoordinator.confirm(
-                            reviewId: _signalReview!.id,
-                          );
-                          if (!mounted) return;
-                          setState(() => _journeyCompletionDismissed = true);
-                          unawaited(_loadSignalArchive());
-                        },
-                        onCorrect: () {
-                          SignalReviewNavigation.openFullReview(context);
-                        },
-                        onKeepWatching: () async {
-                          await SignalReviewCoordinator.keepWatching(
-                            reviewId: _signalReview!.id,
-                          );
-                          final journey = await SignalJourneyCoordinator.loadActive();
-                          if (journey != null) {
-                            unawaited(
-                              NextEvidenceReminderService.schedule(
-                                journeyId: journey.id,
-                                prompt: _signalReview!.nextEvidencePrompt,
-                              ),
-                            );
-                          }
-                          if (!mounted) return;
-                          setState(() => _journeyCompletionDismissed = true);
-                          unawaited(_loadSignalArchive());
-                          SignalReviewNavigation.recordNextEvidence(
+                          fontSize: ArchiveMobileTypography.responsiveBody(
                             context,
-                            prompt: _signalReview!.nextEvidencePrompt,
+                          ).fontSize,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (ui == RecordUiState.ready) ...[
+                      Builder(
+                        builder: (context) {
+                          final readyPolicy = _recordCtaPolicy(
+                            ui,
+                            micPhase: policyMic,
+                            userDeniedThisSession: policyUserDenied,
+                          );
+                          if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
+                            return const SizedBox.shrink();
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _buildCaptureEntryActions(
+                                context: context,
+                                selectedPrompt: _selectedPromptLine,
+                                policy: readyPolicy,
+                              ),
+                              const SizedBox(height: 12),
+                            ],
                           );
                         },
                       ),
-                    ] else if (ui == RecordUiState.ready &&
-                        _postSavePattern == null &&
-                        _signalJourney != null &&
-                        _signalJourney!.showCompletion &&
-                        !_journeyCompletionDismissed) ...[
-                      const SizedBox(height: 12),
-                      SignalJourneyCompletionCard(
-                        journey: _signalJourney!,
-                        onKeepWatching: () async {
-                          await SignalJourneyCoordinator.acknowledgeCompletion();
-                          if (!mounted) return;
-                          setState(() => _journeyCompletionDismissed = true);
-                          unawaited(_loadSignalArchive());
-                        },
-                        onViewPattern: () => context.go('/archive-belief'),
-                      ),
-                    ] else if (ui == RecordUiState.ready &&
-                        _postSavePattern == null &&
-                        _signalArchiveSnapshot?.hasActiveSignal == true) ...[
-                      const SizedBox(height: 12),
-                      ArchiveWatchingCard(
-                        snapshot: _signalArchiveSnapshot!,
-                        compact: true,
-                      ),
                     ],
-                    if (ui == RecordUiState.ready &&
-                        stack.showPendingWatchFor &&
-                        _pendingWatchForToday != null) ...[
-                      const SizedBox(height: 12),
-                      TodaysWatchForCard(
-                        pending: _pendingWatchForToday!,
-                        onRecord: _start,
-                        onSkip: () async {
-                          await WatchForCoordinator.skipPendingForToday();
-                          if (!mounted) return;
-                          setState(() => _pendingWatchForToday = null);
-                        },
+                    if (ui == RecordUiState.ready && _showDailyMirrorCard) ...[
+                      DailyMirrorRecordCard(
+                        mirror: _dailyMirror,
+                        onPrimaryCta: () => unawaited(_onRecordPressed(source: 'moment')),
+                        showRecordCta: !_shouldHideCardRecordButtons(ui),
                       ),
-                    ],
-                    if (ui == RecordUiState.ready && stack.showStarterPrompts) ...[
-                      if (_oneSmallRecording.hasRecording) ...[
-                        const SizedBox(height: 12),
-                        OneSmallRecordingCard(
-                          recording: _oneSmallRecording,
-                          onRecordThis: (p) {
-                            ActivationTracker
-                                .trackActivationStarterPromptSelected();
-                            setState(() => _selectedPromptLine = p);
-                          },
-                        ),
-                        // Secondary one-tap fallback: contributes a real
-                        // entry on days a full recording feels like too much.
+                      if (_showFirstRunPrivacyReassurance) ...[
                         const SizedBox(height: 8),
-                        LowEffortCheckInCard(
-                          onSelect: _saveLowEffortCheckIn,
+                        const RecordFirstRunPrivacyReassurance(),
+                      ],
+                      const SizedBox(height: 12),
+                    ],
+                    if (_missedCheckInForDiagnosis != null &&
+                        ui == RecordUiState.ready &&
+                        _showBottomRetentionCards) ...[
+                      MissedCheckInReasonPrompt(
+                        checkIn: _missedCheckInForDiagnosis!,
+                        onAnswered: () =>
+                            setState(() => _missedCheckInForDiagnosis = null),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if ((_showCurrentObjectiveOnRecord &&
+                            stack.showCurrentObjectiveCard &&
+                            !_shouldHideCompetingRecordCtas(ui)) ||
+                        (ScreenshotMode.enabled &&
+                            ScreenshotMode.objective != null)) ...[
+                      _currentObjectiveWidget(stack)!,
+                      const SizedBox(height: 16),
+                    ],
+                    if (stack.showRetentionStateCard &&
+                        _canShowArchiveProgressCards) ...[
+                      _retentionCardWidget(stack)!,
+                      const SizedBox(height: 16),
+                    ],
+                    if (stack.showDueCheckCard &&
+                        _journalEntryCountReady &&
+                        _journalEntryCount >= 1) ...[
+                      Builder(
+                        builder: (context) {
+                          final guided =
+                              _hookRescue?.includes(
+                                HookRescueAction.guidedCheckIn,
+                              ) ??
+                              false;
+                          return TomorrowCheckInDueCard(
+                            checkIn: _dueCheckInToday!,
+                            plannedAnchor: _dueRoutineAnchor,
+                            guided: guided,
+                            // Fast path by default; only the gated guided flow opts
+                            // out so confused users still get the step-by-step card.
+                            oneTapMode: !guided,
+                            onRecord: () => unawaited(_onRecordPressed(source: 'moment')),
+                            onSelectOption: (option) async {
+                              final checkInId = _dueCheckInToday!.id;
+                              final updated =
+                                  await TomorrowCheckInCoordinator.selectOption(
+                                    checkInId: checkInId,
+                                    optionId: option.id,
+                                  );
+                              await ReturnDayFrictionCoordinator.markAnswerSelected(
+                                checkInId,
+                                option.id,
+                              );
+                              if (!mounted) return;
+                              setState(() {
+                                _dueCheckInToday = updated;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (stack.showReturnDayJourneyCard &&
+                        _canShowArchiveProgressCards &&
+                        _signalJourney != null &&
+                        ui == RecordUiState.ready) ...[
+                      ReturnDayJourneyCard(
+                        journey: _signalJourney!,
+                        recordedToday: const ReturnDayJourneyEngine()
+                            .evaluate(
+                              journey: _signalJourney,
+                              reflectionCount: _journalEntryCount,
+                              now: DateTime.now(),
+                              lastReflectionAt: _lastReflectionAt,
+                            )
+                            .recordedToday,
+                        onViewChanged: () => context.push('/signal-journey'),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                        stack.showFirstRecordingHandoff &&
+                        _activeLoop != null) ...[
+                      LoopModeFirstHandoffCard(
+                        loop: _activeLoop!,
+                        onStartRecording: () => _onRecordPressed(source: 'main'),
+                        showRecordCta: !_shouldHideCardRecordButtons(ui),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                        stack.showFirstRecordingHandoff) ...[
+                      FirstRecordingHandoffCard(
+                        onStartRecording: () => _onRecordPressed(source: 'main'),
+                        wedgePrompt: _selectedPromptLine,
+                        showRecordCta: !_shouldHideCardRecordButtons(ui),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                        _activeLoop != null &&
+                        _canShowArchiveProgressCards &&
+                        _postSavePattern == null &&
+                        !stack.showReturnDayJourneyCard) ...[
+                      LoopModeProgressCard(
+                        loop: _activeLoop!,
+                        onRecordNext: () => unawaited(_onRecordPressed(source: 'loop')),
+                        showRecordCta: !_shouldHideCardRecordButtons(ui),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                        stack.showArchiveMemoryDemo) ...[
+                      ArchiveMemoryDemoCard(
+                        onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (stack.showFirstLoopStartCard &&
+                        !_shouldHideCompetingRecordCtas(ui)) ...[
+                      FirstLoopStartCard(
+                        onRecord: () => unawaited(_onRecordPressed(source: 'loop')),
+                        showRecordCta: !_shouldHideCardRecordButtons(ui),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (stack.showTrialFirstMomentCard &&
+                        !_shouldHideCompetingRecordCtas(ui)) ...[
+                      TrialFirstMomentCard(
+                        onStartRecording: () =>
+                            unawaited(_onRecordPressed(source: 'main')),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (RecordMicrophonePermissionUi.shouldRenderBlockedPanel(
+                      ui: ui,
+                      micPhase: _mic,
+                      userDeniedThisSession: _micPermissionUserDenied,
+                    )) ...[
+                      KeyedSubtree(
+                        key: _permissionPanelKey,
+                        child: MicrophonePermissionBlockedPanel(
+                          state: _micPermissionUiState(),
+                          onAllowMicrophone: _requestMic,
+                          onOpenSettings: _openMicSettings,
+                          onTypeInstead: _typeInsteadFromPermission,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (ui == RecordUiState.recording) ...[
+                      _RecordingStatusCard(
+                        seconds: _seconds,
+                        stageLabel: stageLabel,
+                      ),
+                      if (_selectedPromptLine != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          _selectedPromptLine!,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: VoiceMemoryColors.textSecondary,
+                            height: 1.5,
+                          ),
                         ),
                       ],
-                      if (_dailyReturnSuggestions.hasSuggestions) ...[
+                    ] else ...[
+                      if (ui == RecordUiState.ready &&
+                          _showReadyToRecordStatus) ...[
+                        Semantics(
+                          label: 'Recording status',
+                          child: Text(
+                            stageLabel.isEmpty
+                                ? _statusTextFor(ui, localSaveTitle)
+                                : stageLabel,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                      ],
+                      if (ui == RecordUiState.processing) ...[
                         const SizedBox(height: 12),
-                        DailyReturnSuggestionsCard(
-                          suggestionSet: _dailyReturnSuggestions,
+                        PostSaveListeningCard(stageLabel: stageLabel),
+                      ],
+                      if (_selectedPromptLine != null &&
+                          _showBottomRetentionCards &&
+                          (ui == RecordUiState.ready ||
+                              ui == RecordUiState.recording)) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          ConsumerUiCopy.trySayingLabel,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: VoiceMemoryColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _selectedPromptLine!,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: VoiceMemoryColors.textSecondary,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                      if (ui == RecordUiState.ready &&
+                          _showArchiveContextPrompts &&
+                          _nextEvidencePrompt != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFFBF5),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.borderSubtle),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ConsumerUiCopy.postSaveInsightRecordThisNext,
+                                style: ArchiveMobileTypography.cardLabel(
+                                  context,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                _nextEvidencePrompt!,
+                                style: ArchiveMobileTypography.explanationBody(
+                                  context,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          stack.showActivePatternThread &&
+                          _activePatternThread != null) ...[
+                        const SizedBox(height: 12),
+                        ActivePatternThreadPromptCard(
+                          thread: _activePatternThread!,
+                          onAddMoment: () => unawaited(_onRecordPressed(source: 'moment')),
+                          onPause: () async {
+                            await ActivePatternThreadCoordinator.pauseThread();
+                            if (!mounted) return;
+                            setState(() => _activePatternThread = null);
+                          },
+                        ),
+                      ],
+                      if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          stack.showFirstThreeJourney &&
+                          _firstThreeJourney != null &&
+                          _firstThreeJourney!.showOnRecord &&
+                          _showFirstThreeJourneyOnRecord) ...[
+                        const SizedBox(height: 12),
+                        FirstThreeJourneyCard(model: _firstThreeJourney!),
+                      ],
+                      if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          _postSavePattern == null &&
+                          !stack.showReturnDayJourneyCard &&
+                          _showRetentionJourneyCards &&
+                          _signalJourney != null &&
+                          _signalJourney!.isActive) ...[
+                        const SizedBox(height: 12),
+                        SignalJourneyCard(
+                          journey: _signalJourney!,
+                          activeLoop: _activeLoop,
+                          compact: true,
+                        ),
+                      ] else if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          _postSavePattern == null &&
+                          _showRetentionJourneyCards &&
+                          _signalJourney != null &&
+                          _signalJourney!.showCompletion &&
+                          !_journeyCompletionDismissed &&
+                          _signalReview != null &&
+                          _signalReview!.isShowable) ...[
+                        const SizedBox(height: 12),
+                        SignalReviewCard(
+                          review: _signalReview!,
+                          onConfirm: () async {
+                            await SignalReviewCoordinator.confirm(
+                              reviewId: _signalReview!.id,
+                            );
+                            if (!mounted) return;
+                            setState(() => _journeyCompletionDismissed = true);
+                            unawaited(_loadSignalArchive());
+                          },
+                          onCorrect: () {
+                            SignalReviewNavigation.openFullReview(context);
+                          },
+                          onKeepWatching: () async {
+                            await SignalReviewCoordinator.keepWatching(
+                              reviewId: _signalReview!.id,
+                            );
+                            final journey =
+                                await SignalJourneyCoordinator.loadActive();
+                            if (journey != null) {
+                              unawaited(
+                                NextEvidenceReminderService.schedule(
+                                  journeyId: journey.id,
+                                  prompt: _signalReview!.nextEvidencePrompt,
+                                ),
+                              );
+                            }
+                            if (!mounted) return;
+                            setState(() => _journeyCompletionDismissed = true);
+                            unawaited(_loadSignalArchive());
+                            SignalReviewNavigation.recordNextEvidence(
+                              context,
+                              prompt: _signalReview!.nextEvidencePrompt,
+                            );
+                          },
+                        ),
+                      ] else if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          _postSavePattern == null &&
+                          _showRetentionJourneyCards &&
+                          _signalJourney != null &&
+                          _signalJourney!.showCompletion &&
+                          !_journeyCompletionDismissed) ...[
+                        const SizedBox(height: 12),
+                        SignalJourneyCompletionCard(
+                          journey: _signalJourney!,
+                          onKeepWatching: () async {
+                            await SignalJourneyCoordinator.acknowledgeCompletion();
+                            if (!mounted) return;
+                            setState(() => _journeyCompletionDismissed = true);
+                            unawaited(_loadSignalArchive());
+                          },
+                          onViewPattern: () => context.go('/archive-belief'),
+                        ),
+                      ] else if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          _postSavePattern == null &&
+                          _showRetentionJourneyCards &&
+                          _signalArchiveSnapshot?.hasActiveSignal == true) ...[
+                        const SizedBox(height: 12),
+                        ArchiveWatchingCard(
+                          snapshot: _signalArchiveSnapshot!,
+                          compact: true,
+                        ),
+                      ],
+                      if (ui == RecordUiState.ready &&
+                          _canShowArchiveProgressCards &&
+                          stack.showPendingWatchFor &&
+                          _pendingWatchForToday != null) ...[
+                        const SizedBox(height: 12),
+                        TodaysWatchForCard(
+                          pending: _pendingWatchForToday!,
+                          onRecord: () => unawaited(_onRecordPressed(source: 'moment')),
+                          onSkip: () async {
+                            await WatchForCoordinator.skipPendingForToday();
+                            if (!mounted) return;
+                            setState(() => _pendingWatchForToday = null);
+                          },
+                        ),
+                      ],
+                      if (ui == RecordUiState.ready &&
+                          stack.showStarterPrompts &&
+                          _showArchiveContextPrompts) ...[
+                        if (_oneSmallRecording.hasRecording) ...[
+                          const SizedBox(height: 12),
+                          OneSmallRecordingCard(
+                            recording: _oneSmallRecording,
+                            showRecordCta: !_shouldHideCardRecordButtons(ui),
+                            ctaLabel:
+                                _recordCtaPolicy(
+                                  ui,
+                                  micPhase: policyMic,
+                                  userDeniedThisSession: policyUserDenied,
+                                ).primaryLabel ??
+                                OneSmallRecording.recordCtaLabel,
+                            onRecordThis: (p) {
+                              ActivationTracker.trackActivationStarterPromptSelected();
+                              setState(() => _selectedPromptLine = p);
+                              unawaited(
+                                _onRecordPressed(source: 'one_small_recording'),
+                              );
+                            },
+                          ),
+                          // Secondary one-tap fallback: contributes a real
+                          // entry on days a full recording feels like too much.
+                          const SizedBox(height: 8),
+                          LowEffortCheckInCard(onSelect: _saveLowEffortCheckIn),
+                        ],
+                        if (_dailyReturnSuggestions.hasSuggestions) ...[
+                          const SizedBox(height: 12),
+                          DailyReturnSuggestionsCard(
+                            suggestionSet: _dailyReturnSuggestions,
+                            selectedPrompt: _selectedPromptLine,
+                            onSuggestionTap: _onDailySuggestionTapped,
+                            onSelectPrompt: (p) {
+                              ActivationTracker.trackActivationStarterPromptSelected();
+                              setState(() => _selectedPromptLine = p);
+                            },
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        ConsumerRecordPromptsSection(
                           selectedPrompt: _selectedPromptLine,
-                          onSuggestionTap: _onDailySuggestionTapped,
+                          personalPrompts: _personalReturnPrompts,
+                          // One clear primary action when a one-small-recording
+                          // exists — generic prompts stay, but step back.
+                          deemphasized: _oneSmallRecording.hasRecording,
                           onSelectPrompt: (p) {
-                            ActivationTracker
-                                .trackActivationStarterPromptSelected();
+                            ActivationTracker.trackActivationStarterPromptSelected();
+                            // Generic prompt picked — the next save is no
+                            // longer suggestion-sourced, so no receipt.
+                            _pendingSuggestionSource = null;
+                            _pendingTappedSuggestion = null;
                             setState(() => _selectedPromptLine = p);
                           },
                         ),
-                      ],
-                      const SizedBox(height: 12),
-                      ConsumerRecordPromptsSection(
-                        selectedPrompt: _selectedPromptLine,
-                        personalPrompts: _personalReturnPrompts,
-                        // One clear primary action when a one-small-recording
-                        // exists — generic prompts stay, but step back.
-                        deemphasized: _oneSmallRecording.hasRecording,
-                        onSelectPrompt: (p) {
-                          ActivationTracker
-                              .trackActivationStarterPromptSelected();
-                          // Generic prompt picked — the next save is no
-                          // longer suggestion-sourced, so no receipt.
-                          _pendingSuggestionSource = null;
-                          _pendingTappedSuggestion = null;
-                          setState(() => _selectedPromptLine = p);
-                        },
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Say it plainly. ArchiveMe looks for patterns, '
-                        'not judgment.',
-                        style: VoiceMemoryTypography.metadataStyle(
-                          color: AppColors.textSecondary,
-                        ).copyWith(fontSize: 12, height: 1.4),
-                      ),
-                      const SizedBox(height: 6),
-                      QuickHelpButton(
-                        languageCode: _languageCode,
-                        patternTitle: _activePatternThread?.title,
-                        onStartRecording: _start,
-                      ),
-                    ],
-                    if (_ui == RecordUiState.done &&
-                        _entriesAfterSave.isNotEmpty) ...[
-                      const SizedBox(height: 16),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: VoiceMemoryColors.captureSuccess,
-                            size: 22,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              BeliefProductCopy.reflectionSavedTitle,
-                              style: VoiceMemoryTypography.cardTitleStyle(
-                                color: VoiceMemoryColors.captureSuccess,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (_languageCode != 'en') ...[
-                        const SizedBox(height: 12),
-                        LanguageIndicatorChip(
+                        const SizedBox(height: 6),
+                        Text(
+                          'Say it plainly. ArchiveMe looks for patterns, '
+                          'not judgment.',
+                          style: VoiceMemoryTypography.metadataStyle(
+                            color: AppColors.textSecondary,
+                          ).copyWith(fontSize: 12, height: 1.4),
+                        ),
+                        const SizedBox(height: 6),
+                        QuickHelpButton(
                           languageCode: _languageCode,
-                          detectedCode: _detectedLanguageCode,
-                          onSelected: _onLanguageSelected,
+                          patternTitle: _activePatternThread?.title,
+                          onStartRecording: () => _onRecordPressed(source: 'main'),
                         ),
                       ],
-                      if (_saveReceipt != null) ...[
-                        const SizedBox(height: 16),
-                        StartHereSaveReceiptCard(
-                          receipt: _saveReceipt!,
-                          onDismiss: () =>
-                              setState(() => _saveReceipt = null),
-                        ),
-                      ] else if (_suggestionProNudgeSource != null) ...[
-                        const SizedBox(height: 16),
-                        _SuggestionProNudgeCard(
-                          onUnlock: () {
-                            final source = _suggestionProNudgeSource!;
-                            setState(
-                              () => _suggestionProNudgeSource = null,
-                            );
-                            context.push(
-                              '/subscription',
-                              extra: PaywallRouteArgs(
-                                source: source,
-                                sourceRoute: '/record',
-                              ),
-                            );
-                          },
-                          onDismiss: () => setState(
-                            () => _suggestionProNudgeSource = null,
-                          ),
-                        ),
-                      ],
-                      if (_doneForTodayReceipt != null &&
-                          _doneForTodayReceipt!.hasReceipt) ...[
-                        const SizedBox(height: 16),
-                        DoneForTodayReceiptCard(
-                          receipt: _doneForTodayReceipt!,
-                        ),
-                        // 2-day path day-1 closure: only after the very
-                        // first save, alongside (never instead of) the
-                        // Done for today receipt.
-                        Builder(builder: (context) {
-                          final path = const TwoDayActivationEngine()
-                              .buildPostSave(entryCount: _reflectionCount);
-                          if (!path.show) return const SizedBox.shrink();
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: TwoDayActivationCard(path: path),
-                          );
-                        }),
-                        // One optional day-2 reminder offer — first save
-                        // only, below (never instead of) the receipt.
-                        if (_offerDayTwoReminder)
-                          const Padding(
-                            padding: EdgeInsets.only(top: 16),
-                            child: DayTwoReminderCard(),
-                          ),
-                        // Tomorrow's-check preview — passive, no CTA,
-                        // safe labels only.
-                        if (_dayTwoReturnPreview != null &&
-                            _dayTwoReturnPreview!.show)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: DayTwoReturnPreviewCard(
-                              preview: _dayTwoReturnPreview!,
-                              entryCount: _reflectionCount,
-                            ),
-                          ),
-                      ],
-                      if (_archiveProofCounter != null &&
-                          _archiveProofCounter!.hasProof) ...[
-                        const SizedBox(height: 16),
-                        ArchiveProofCounterCard(
-                          counter: _archiveProofCounter!,
-                        ),
-                      ],
-                      if (_shareableProof != null &&
-                          _shareableProof!.hasProof) ...[
-                        const SizedBox(height: 16),
-                        ShareableArchiveProofCard(proof: _shareableProof!),
-                      ],
-                      if (_valueMomentBridge != null &&
-                          _valueMomentBridge!.show) ...[
-                        const SizedBox(height: 16),
-                        ValueMomentProBridge(
-                          bridge: _valueMomentBridge!,
-                          onSeePro: () {
-                            setState(() => _valueMomentBridge = null);
-                            context.push(
-                              '/subscription',
-                              extra: PaywallRouteArgs(
-                                source: PaywallSource.valueMoment,
-                                sourceRoute: '/record',
-                              ),
-                            );
-                          },
-                          onDismiss: () => setState(() {
-                            ValueMomentPaywallTrigger.dismissedThisSession =
-                                true;
-                            _valueMomentBridge = null;
-                          }),
-                        ),
-                      ],
-                      if (_showEvidenceContextTag) ...[
-                        const SizedBox(height: 16),
-                        EvidenceContextTagCard(
-                          onSaveTag: _saveEvidenceContextTag,
-                          onSkip: () => setState(
-                            () => _showEvidenceContextTag = false,
-                          ),
-                        ),
-                      ],
-                      if (stack.showInputQualityCoach) ...[
-                        const SizedBox(height: 16),
-                        InputQualityCoachCard(
-                          result: _inputQuality!,
-                          originalText: _inputQualityText,
-                          onAddSentence: _onInputQualityAddSentence,
-                          onUseAnyway: _onInputQualityUseAnyway,
-                          languageCode: _languageCode,
-                        ),
-                      ],
-                      if (!stack.showInputQualityCoach &&
-                          stack.showCompletedResult &&
-                          _returnDayJustClosed) ...[
-                        const SizedBox(height: 16),
-                        ReturnDayClosedCard(
-                          resultHeadline: _completedCheckInToday!.resultHeadline,
-                          usefulLine: _completedCheckInToday!.whatThisMeans,
-                          nextCheck:
-                              _completedCheckInToday!.tomorrowsBetterQuestion,
-                          onDone: () =>
-                              setState(() => _returnDayJustClosed = false),
-                          onRecordAnother: _keepRecording,
-                        ),
-                        // First session never reaches here; only surface a fresh
-                        // progress moment so the payoff stays one card deep.
-                        if (stack.showArchiveProofCards &&
-                            _patternProgress != null) ...[
-                          const SizedBox(height: 16),
-                          PatternProgressAfterSaveCard(
-                            progress: _patternProgress!,
-                          ),
-                        ],
-                      ] else if (!stack.showInputQualityCoach &&
-                          stack.showCompletedResult) ...[
-                        const SizedBox(height: 16),
-                        CheckInCompletedCard(
-                          checkIn: _completedCheckInToday!,
-                          weakInput: _weakInput,
-                          languageCode: _languageCode,
-                          betterResultIntensity:
-                              ScreenshotMode.screenshotBetterResult
-                                  ? ScreenshotMode.screenshotBetterResultIntensity
-                                  : ScreenshotMode.completedCheckInPreview
-                                      ? HookRescueIntensity.elevated
-                                      : _hookRescue?.intensityFor(
-                                              HookRescueAction.betterResult) ??
-                                          HookRescueIntensity.normal,
-                          notUsefulReason: _hookRescueNotUsefulReason,
-                          nextCheckSlot: stack.showResultNextCheck
-                              ? ResultNextCheckCard(
-                            checkIn: _completedCheckInToday!,
-                            notUsefulReason: _hookRescueNotUsefulReason,
-                            feedbackHint: _feedbackHint,
-                            showFeedback: stack.showFeedback,
-                            routineAnchorPicker: stack.showRoutineAnchor
-                                ? () => RoutineAnchorChooser.show(context)
-                                : null,
-                            onRoutineAnchorChosen: stack.showRoutineAnchor
-                                ? (anchor) => RoutineAnchorStore.instance()
-                                    .saveForDate(_tomorrowDateKey, anchor)
-                                : null,
-                            onCreateCheckIn: (question) async {
-                              await TomorrowCheckInCoordinator.createForTomorrow(
-                                patternTitle:
-                                    _completedCheckInToday!.patternTitle,
-                                specificPrompt: _completedCheckInToday!.prompt,
-                                checkInQuestion: question,
-                              );
-                              final anchor = await RoutineAnchorStore
-                                  .instance()
-                                  .loadForDate(_tomorrowDateKey);
-                              final active =
-                                  await TomorrowCheckInCoordinator.loadActive();
-                              if (active != null) {
-                                await RetentionReminderCoordinator
-                                    .maybeScheduleAfterNextCheckChosen(
-                                  active,
-                                  hasRoutineAnchor: anchor != null,
-                                );
-                              }
-                              if (!mounted) return;
-                              setState(() {
-                                _retentionNextCheckJustChosen = true;
-                                _retentionDismissed = false;
-                                _activeCheckInForTomorrow = active;
-                              });
-                            },
-                          )
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        if (shouldShowKinderAngle(
-                          _inputQualityText,
-                          resultHint:
-                              _completedCheckInToday!.selectedOptionId ?? 'same',
-                        ))
-                          KinderAngleCard(
-                            reflectionText: _inputQualityText,
-                            resultHint:
-                                _completedCheckInToday!.selectedOptionId ??
-                                    'same',
-                            patternTitle: _completedCheckInToday!.patternTitle,
-                            specificPrompt: _completedCheckInToday!.prompt,
-                            languageCode: _languageCode,
-                            compact: true,
-                          )
-                        else
-                          PerspectiveShiftCard(
-                            reflectionText: _inputQualityText,
-                            resultHint:
-                                _completedCheckInToday!.selectedOptionId ??
-                                    'same',
-                            checkInQuestion: _completedCheckInToday!.question,
-                            patternTitle: _completedCheckInToday!.patternTitle,
-                            specificPrompt: _completedCheckInToday!.prompt,
-                            languageCode: _languageCode,
-                            compact: true,
-                          ),
-                        if (stack.showArchiveProofCards &&
-                            _patternMemory != null) ...[
-                          const SizedBox(height: 16),
-                          PatternMemoryAfterSaveCard(
-                            memory: _patternMemory!,
-                            onUseNext: _patternNextAction == null &&
-                                    !suppressPostResultNextCheckCompetitors
-                                ? () => _usePatternMemoryNext(_patternMemory!)
-                                : null,
-                          ),
-                        ],
-                        if (stack.showArchiveProofCards &&
-                            _patternProgress != null) ...[
-                          const SizedBox(height: 16),
-                          PatternProgressAfterSaveCard(
-                            progress: _patternProgress!,
-                          ),
-                        ],
-                        if (stack.showArchiveProofCards &&
-                            _patternNextAction != null &&
-                            !suppressPostResultNextCheckCompetitors) ...[
-                          const SizedBox(height: 16),
-                          PatternNextActionCard(
-                            action: _patternNextAction!,
-                            onUse: () =>
-                                _usePatternNextAction(_patternNextAction!),
-                          ),
-                        ],
-                        if (stack.showArchiveProofCards &&
-                            _habitProof != null &&
-                            !suppressPostResultNextCheckCompetitors) ...[
-                          const SizedBox(height: 16),
-                          HabitProofCard(
-                            proof: _habitProof!,
-                            onKeepGoing: () =>
-                                _keepHabitProofGoing(_habitProof!),
-                          ),
-                        ],
-                        if (stack.showArchiveProofCards &&
-                            _weeklyRecap != null) ...[
-                          const SizedBox(height: 16),
-                          WeeklyPatternRecapCard(
-                            recap: _weeklyRecap!,
-                            onUseNext: suppressPostResultNextCheckCompetitors
-                                ? null
-                                : () => _useWeeklyRecapNext(_weeklyRecap!),
-                          ),
-                        ],
-                        if (stack.showArchiveProofCards &&
-                            _shareRecap != null) ...[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: TextButton.icon(
-                              onPressed: () => _copyShareRecap(_shareRecap!),
-                              icon: const Icon(Icons.copy_rounded, size: 18),
-                              label: const Text('Copy recap'),
-                            ),
-                          ),
-                        ],
-                      ],
-                      if (!stack.showInputQualityCoach &&
-                          _tomorrowReturnLoop != null &&
-                          !_returnDayJustClosed) ...[
-                        if (_secondSessionComparison?.hasEnoughData == true) ...[
-                          const SizedBox(height: 12),
-                          SecondSessionComparisonCard(
-                            comparison: _secondSessionComparison!,
-                            onGoDeeper: () {
-                              final prompt =
-                                  _secondSessionComparison!.whatToTestNext;
-                              if (prompt == null || prompt.isEmpty) return;
-                              unawaited(_onSecondSessionEvidence(prompt));
-                            },
-                            onRecordNextEvidence: () {
-                              final prompt =
-                                  _secondSessionComparison!.whatToTestNext;
-                              if (prompt == null || prompt.isEmpty) return;
-                              unawaited(_onSecondSessionEvidence(prompt));
-                            },
-                            onNotTheSame: () =>
-                                setState(() => _secondSessionComparison = null),
-                          ),
-                        ],
-                        if (!_patternHypothesisDismissed &&
-                            _patternHypothesis?.hasEnoughData == true) ...[
-                          const SizedBox(height: 12),
-                          PatternHypothesisCard(
-                            hypothesis: _patternHypothesis!,
-                            onFeelsRight: () async {
-                              final selected =
-                                  await SelectedSignalCoordinator.loadCurrent();
-                              if (selected != null) {
-                                await SignalFeedbackCoordinator.track(
-                                  action: PostSaveSignalAction.accepted,
-                                  signalId: selected.id,
-                                  signalTitle: selected.title,
-                                  categoryId: selected.categoryId,
-                                );
-                              }
-                              if (!mounted) return;
-                              setState(() => _patternHypothesisDismissed = true);
-                            },
-                            onNotMe: () async {
-                              final selected =
-                                  await SelectedSignalCoordinator.loadCurrent();
-                              if (selected != null) {
-                                await SignalFeedbackCoordinator.track(
-                                  action: PostSaveSignalAction.rejected,
-                                  signalId: selected.id,
-                                  signalTitle: selected.title,
-                                  categoryId: selected.categoryId,
-                                );
-                              }
-                              if (!mounted) return;
-                              setState(() => _patternHypothesisDismissed = true);
-                            },
-                            onRecordNext: () => _keepRecording(
-                              nextEvidencePrompt: _patternHypothesis!.watchNext,
-                            ),
-                            onViewArchive: () => context.go('/archive-belief'),
-                          ),
-                        ],
-                        if (_postSavePattern != null) ...[
-                          const SizedBox(height: 12),
-                          PostSaveInsightChoiceCard(
-                            pattern: _postSavePattern!,
-                            entry: _entriesAfterSave.isNotEmpty
-                                ? _entriesAfterSave.last
-                                : null,
-                            priorEntries: _entriesAfterSave.length > 1
-                                ? _entriesAfterSave
-                                    .sublist(0, _entriesAfterSave.length - 1)
-                                : const [],
-                            feedback: _postSaveInsightFeedback,
-                            selectedSignal: _postSaveSelectedSignal,
-                            audienceWedge: _audienceWedge,
-                            activeLoop: _activeLoop,
-                            reflectionCount: _entriesAfterSave.length.clamp(1, 3),
-                            categoryRepeated:
-                                _secondSessionComparison?.possibleRepeat == true,
-                            entryId: _entriesAfterSave.isNotEmpty
-                                ? _entriesAfterSave.last.id
-                                : null,
-                            onSaveSignal: (pattern) async {
-                              if (_isFirstSessionPostSave) {
-                                final thread =
-                                    await FirstSessionCoordinator.acceptForTomorrow(
-                                  pattern,
-                                  reflectionText: _entriesAfterSave.isNotEmpty
-                                      ? _entriesAfterSave.last.transcript
-                                      : '',
-                                  sourceReflectionId: _entriesAfterSave.isNotEmpty
-                                      ? _entriesAfterSave.last.id
-                                      : null,
-                                );
-                                if (!mounted) return;
-                                if (TrialMode.enabled) {
-                                  _watchForAcceptPending = false;
-                                  await ActivationTracker
-                                      .clearWatchForAcceptPending();
-                                }
-                                setState(() => _activePatternThread = thread);
-                              }
-                            },
-                            onUsePrompt: _saveNextEvidencePrompt,
-                            onRecordNext: _keepRecording,
-                            onRecordNextEvidence: (prompt) =>
-                                _keepRecording(nextEvidencePrompt: prompt),
-                            onViewPatterns: () =>
-                                context.go('/archive-belief'),
-                          ),
-                        ] else if (_isFirstSessionPostSave) ...[
-                          const SizedBox(height: 12),
-                          FirstReflectionResultCard(
-                            onRecordAnother: _keepRecording,
-                            onViewPatterns: () => context.go('/archive-belief'),
-                          ),
-                        ] else ...[
-                        if (_activePatternThread != null &&
-                            _completedWatchForToday != null) ...[
-                          const SizedBox(height: 12),
-                          ActivePatternThreadCard(
-                            thread: _activePatternThread!,
-                            compact: true,
-                          ),
-                        ],
-                        if (_completedWatchForToday != null) ...[
-                          const SizedBox(height: 12),
-                          WatchForResultCard(
-                            completed: _completedWatchForToday!,
-                            headline: ScreenshotMode.enabled
-                                ? ScreenshotSampleData.watchForCompletedHeadline
-                                : null,
-                            body: ScreenshotMode.enabled
-                                ? ScreenshotSampleData.watchForCompletedBody
-                                : null,
-                          ),
-                        ],
-                        if (_postSavePattern == null) ...[
-                          const SizedBox(height: 12),
-                          PotentialSignalsCard(
-                            signals: _postSaveSignals(),
-                            noticedToday: _tomorrowReturnLoop!.noticedToday,
-                            showPatternHint: _postSaveShowsPossiblePattern(),
-                          ),
-                        ],
-                        if (_firstThreeJourney != null &&
-                            !_firstThreeJourney!.completed) ...[
-                          const SizedBox(height: 12),
-                          FirstThreeJourneyCard(
-                            model: _firstThreeJourney!,
-                            compact: true,
-                          ),
-                        ],
-                        if (_showAdvancedRetentionPostSave) ...[
-                          if (_returnComparison != null) ...[
-                            const SizedBox(height: 12),
-                            ReturnComparisonCard(comparison: _returnComparison!),
-                          ],
-                          if (_returnStreak != null &&
-                              _returnStreak!.currentStreakDays >= 2) ...[
-                            const SizedBox(height: 12),
-                            ReturnStreakCard(
-                              streak: _returnStreak!,
-                              showCta: false,
-                            ),
-                          ],
-                        ],
-                        const SizedBox(height: 12),
-                        TomorrowReturnCard(loop: _tomorrowReturnLoop!),
-                        if (_suggestedWatchForTomorrow != null) ...[
-                          const SizedBox(height: 12),
-                          WatchForTomorrowCard(
-                            suggestion: _suggestedWatchForTomorrow!,
-                            onChooseAnother: () {
-                              setState(() {
-                                _watchForAlternativeIndex =
-                                    (_watchForAlternativeIndex + 1) % 3;
-                                _suggestedWatchForTomorrow =
-                                    WatchForCoordinator
-                                        .buildSuggestedWatchForAfterSave(
-                                  entries: _entriesAfterSave,
-                                  loop: _tomorrowReturnLoop,
-                                  signals: _postSaveSignals(),
-                                  alternativeIndex: _watchForAlternativeIndex,
-                                );
-                              });
-                            },
-                          ),
-                        ],
-                        if (_showAdvancedRetentionPostSave) ...[
-                          const SizedBox(height: 16),
-                          TomorrowCommitmentCard(loop: _tomorrowReturnLoop!),
-                        ],
-                        ],
-                      ],
-                    ],
-                    if (_localSaveTitle != null) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: VoiceMemoryColors.captureSuccess,
-                            size: 22,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
+                      if (_ui == RecordUiState.done &&
+                          _entriesAfterSave.isNotEmpty) ...[
+                        if (!suppressNoisyFirstSaveCards) ...[
+                          if (!VoiceCaptureQuality.isDegradedVoiceCapture(
+                            _lastSavedEntry!,
+                          )) ...[
+                            const SizedBox(height: 16),
+                            Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  localSaveTitle!,
-                                  style: VoiceMemoryTypography.cardTitleStyle(
-                                    color: VoiceMemoryColors.captureSuccess,
-                                  ),
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  color: VoiceMemoryColors.captureSuccess,
+                                  size: 22,
                                 ),
-                                if (syncNote != null) ...[
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    syncNote,
-                                    style: const TextStyle(
-                                      color: VoiceMemoryColors.textSecondary,
-                                      height: 1.45,
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    BeliefProductCopy.reflectionSavedTitle,
+                                    style: VoiceMemoryTypography.cardTitleStyle(
+                                      color: VoiceMemoryColors.captureSuccess,
                                     ),
                                   ),
-                                ],
+                                ),
                               ],
+                            ),
+                            const SizedBox(height: 16),
+                          ] else ...[
+                            const SizedBox(height: 16),
+                          ],
+                          PostSaveRecordedSummaryCard(
+                            entry: _lastSavedEntry!,
+                            allEntries: _entriesAfterSave,
+                            degradedBodyCopy: _lastCaptureLowQualityTranscript
+                                ? VoiceCaptureCopy.lowQualityTranscriptIssue
+                                : null,
+                            showSilentInputWarning: _lastCaptureLikelySilentInput,
+                            showAnalysisPendingNote:
+                                !_lastCaptureAnalysisSucceeded &&
+                                VoiceCaptureQuality.hasUsableSpokenText(
+                                  _lastSavedEntry!,
+                                ),
+                            mirror: const DailyMirrorEngine().build(
+                              _entriesAfterSave,
                             ),
                           ),
                         ],
-                      ),
-                    ],
-                    if (error != null) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        error,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                        if (_languageCode != 'en') ...[
+                          const SizedBox(height: 12),
+                          LanguageIndicatorChip(
+                            languageCode: _languageCode,
+                            detectedCode: _detectedLanguageCode,
+                            onSelected: _onLanguageSelected,
+                          ),
+                        ],
+                        // Record → Return → Pro: evidence, return cue,
+                        // Pro bridge — after the save succeeded, never blocking.
+                        if (_recordReturnProJustSaved) ...[
+                          const SizedBox(height: 16),
+                          FirstSaveEvidenceCard(
+                            onViewArchive: () => context.go('/archive-belief'),
+                            onRecordAnother: () => unawaited(_onRecordPressed(source: 'main')),
+                          ),
+                          if (_recordReturnCueVisible) ...[
+                            const SizedBox(height: 16),
+                            TomorrowReturnCueCard(
+                              reminderAvailable: _offerDayTwoReminder,
+                              onLocalCue: _acceptRecordReturnLocalCue,
+                              onRemind: _acceptRecordReturnReminder,
+                            ),
+                          ],
+                          if (_recordReturnProState != null &&
+                              RecordReturnProGates.showProBridge(
+                                entryCount: _journalEntryCount,
+                                resolved:
+                                    _recordReturnProState!.proBridgeResolved,
+                                isPro: _recordReturnProIsPro,
+                              )) ...[
+                            const SizedBox(height: 16),
+                            ProValueClarityCard(
+                              entryCount: _journalEntryCount,
+                              source: 'record',
+                              onSeePro: () =>
+                                  _resolveRecordReturnProBridge(seePro: true),
+                              onNotNow: () =>
+                                  _resolveRecordReturnProBridge(seePro: false),
+                            ),
+                          ],
+                        ],
+                        if (_saveReceipt != null &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          StartHereSaveReceiptCard(
+                            receipt: _saveReceipt!,
+                            onDismiss: () =>
+                                setState(() => _saveReceipt = null),
+                          ),
+                        ] else if (_suggestionProNudgeSource != null &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          _SuggestionProNudgeCard(
+                            onUnlock: () {
+                              final source = _suggestionProNudgeSource!;
+                              setState(() => _suggestionProNudgeSource = null);
+                              context.push(
+                                '/subscription',
+                                extra: PaywallRouteArgs(
+                                  source: source,
+                                  sourceRoute: '/record',
+                                ),
+                              );
+                            },
+                            onDismiss: () => setState(
+                              () => _suggestionProNudgeSource = null,
+                            ),
+                          ),
+                        ],
+                        if (_doneForTodayReceipt != null &&
+                            _doneForTodayReceipt!.hasReceipt &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          DoneForTodayReceiptCard(
+                            receipt: _doneForTodayReceipt!,
+                          ),
+                          // 2-day path day-1 closure: only after the very
+                          // first save, alongside (never instead of) the
+                          // Done for today receipt.
+                          Builder(
+                            builder: (context) {
+                              final path = const TwoDayActivationEngine()
+                                  .buildPostSave(entryCount: _journalEntryCount);
+                              if (!path.show) return const SizedBox.shrink();
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 16),
+                                child: TwoDayActivationCard(path: path),
+                              );
+                            },
+                          ),
+                          // One optional day-2 reminder offer — first save
+                          // only, below (never instead of) the receipt. The
+                          // First 60 return cue carries the same single
+                          // reminder offer, so the two never show together.
+                          if (_offerDayTwoReminder && !_recordReturnCueVisible)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: DayTwoReminderCard(),
+                            ),
+                          // Tomorrow's-check preview — passive, no CTA,
+                          // safe labels only.
+                          if (_dayTwoReturnPreview != null &&
+                              _dayTwoReturnPreview!.show)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: DayTwoReturnPreviewCard(
+                                preview: _dayTwoReturnPreview!,
+                                entryCount: _journalEntryCount,
+                              ),
+                            ),
+                        ],
+                        if (_archiveProofCounter != null &&
+                            _archiveProofCounter!.hasProof &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          ArchiveProofCounterCard(
+                            counter: _archiveProofCounter!,
+                          ),
+                        ],
+                        if (_shareableProof != null &&
+                            _shareableProof!.hasProof &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          ShareableArchiveProofCard(proof: _shareableProof!),
+                        ],
+                        if (_valueMomentBridge != null &&
+                            _valueMomentBridge!.show &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          ValueMomentProBridge(
+                            bridge: _valueMomentBridge!,
+                            onSeePro: () {
+                              setState(() => _valueMomentBridge = null);
+                              context.push(
+                                '/subscription',
+                                extra: PaywallRouteArgs(
+                                  source: PaywallSource.valueMoment,
+                                  sourceRoute: '/record',
+                                ),
+                              );
+                            },
+                            onDismiss: () => setState(() {
+                              ValueMomentPaywallTrigger.dismissedThisSession =
+                                  true;
+                              _valueMomentBridge = null;
+                            }),
+                          ),
+                        ],
+                        if (_showEvidenceContextTag &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          EvidenceContextTagCard(
+                            onSaveTag: _saveEvidenceContextTag,
+                            onSkip: () =>
+                                setState(() => _showEvidenceContextTag = false),
+                          ),
+                        ],
+                        if (stack.showInputQualityCoach) ...[
+                          const SizedBox(height: 16),
+                          InputQualityCoachCard(
+                            result: _inputQuality!,
+                            originalText: _inputQualityText,
+                            onAddSentence: _onInputQualityAddSentence,
+                            onUseAnyway: _onInputQualityUseAnyway,
+                            languageCode: _languageCode,
+                          ),
+                        ],
+                        if (!stack.showInputQualityCoach &&
+                            stack.showCompletedResult &&
+                            _returnDayJustClosed &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          ReturnDayClosedCard(
+                            resultHeadline:
+                                _completedCheckInToday!.resultHeadline,
+                            usefulLine: _completedCheckInToday!.whatThisMeans,
+                            nextCheck:
+                                _completedCheckInToday!.tomorrowsBetterQuestion,
+                            onDone: () =>
+                                setState(() => _returnDayJustClosed = false),
+                            onRecordAnother: _keepRecording,
+                          ),
+                          // First session never reaches here; only surface a fresh
+                          // progress moment so the payoff stays one card deep.
+                          if (stack.showArchiveProofCards &&
+                              _patternProgress != null) ...[
+                            const SizedBox(height: 16),
+                            PatternProgressAfterSaveCard(
+                              progress: _patternProgress!,
+                            ),
+                          ],
+                        ] else if (!stack.showInputQualityCoach &&
+                            stack.showCompletedResult &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          const SizedBox(height: 16),
+                          CheckInCompletedCard(
+                            checkIn: _completedCheckInToday!,
+                            weakInput: _weakInput,
+                            languageCode: _languageCode,
+                            betterResultIntensity:
+                                ScreenshotMode.screenshotBetterResult
+                                ? ScreenshotMode.screenshotBetterResultIntensity
+                                : ScreenshotMode.completedCheckInPreview
+                                ? HookRescueIntensity.elevated
+                                : _hookRescue?.intensityFor(
+                                        HookRescueAction.betterResult,
+                                      ) ??
+                                      HookRescueIntensity.normal,
+                            notUsefulReason: _hookRescueNotUsefulReason,
+                            nextCheckSlot: stack.showResultNextCheck
+                                ? ResultNextCheckCard(
+                                    checkIn: _completedCheckInToday!,
+                                    notUsefulReason: _hookRescueNotUsefulReason,
+                                    feedbackHint: _feedbackHint,
+                                    showFeedback: stack.showFeedback,
+                                    routineAnchorPicker: stack.showRoutineAnchor
+                                        ? () =>
+                                              RoutineAnchorChooser.show(context)
+                                        : null,
+                                    onRoutineAnchorChosen:
+                                        stack.showRoutineAnchor
+                                        ? (anchor) =>
+                                              RoutineAnchorStore.instance()
+                                                  .saveForDate(
+                                                    _tomorrowDateKey,
+                                                    anchor,
+                                                  )
+                                        : null,
+                                    onCreateCheckIn: (question) async {
+                                      await TomorrowCheckInCoordinator.createForTomorrow(
+                                        patternTitle: _completedCheckInToday!
+                                            .patternTitle,
+                                        specificPrompt:
+                                            _completedCheckInToday!.prompt,
+                                        checkInQuestion: question,
+                                      );
+                                      final anchor =
+                                          await RoutineAnchorStore.instance()
+                                              .loadForDate(_tomorrowDateKey);
+                                      final active =
+                                          await TomorrowCheckInCoordinator.loadActive();
+                                      if (active != null) {
+                                        await RetentionReminderCoordinator.maybeScheduleAfterNextCheckChosen(
+                                          active,
+                                          hasRoutineAnchor: anchor != null,
+                                        );
+                                      }
+                                      if (!mounted) return;
+                                      setState(() {
+                                        _retentionNextCheckJustChosen = true;
+                                        _retentionDismissed = false;
+                                        _activeCheckInForTomorrow = active;
+                                      });
+                                    },
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(height: 16),
+                          if (shouldShowKinderAngle(
+                            _inputQualityText,
+                            resultHint:
+                                _completedCheckInToday!.selectedOptionId ??
+                                'same',
+                          ))
+                            KinderAngleCard(
+                              reflectionText: _inputQualityText,
+                              resultHint:
+                                  _completedCheckInToday!.selectedOptionId ??
+                                  'same',
+                              patternTitle:
+                                  _completedCheckInToday!.patternTitle,
+                              specificPrompt: _completedCheckInToday!.prompt,
+                              languageCode: _languageCode,
+                              compact: true,
+                            )
+                          else
+                            PerspectiveShiftCard(
+                              reflectionText: _inputQualityText,
+                              resultHint:
+                                  _completedCheckInToday!.selectedOptionId ??
+                                  'same',
+                              checkInQuestion: _completedCheckInToday!.question,
+                              patternTitle:
+                                  _completedCheckInToday!.patternTitle,
+                              specificPrompt: _completedCheckInToday!.prompt,
+                              languageCode: _languageCode,
+                              compact: true,
+                            ),
+                          if (stack.showArchiveProofCards &&
+                              _patternMemory != null) ...[
+                            const SizedBox(height: 16),
+                            PatternMemoryAfterSaveCard(
+                              memory: _patternMemory!,
+                              onUseNext:
+                                  _patternNextAction == null &&
+                                      !suppressPostResultNextCheckCompetitors
+                                  ? () => _usePatternMemoryNext(_patternMemory!)
+                                  : null,
+                            ),
+                          ],
+                          if (stack.showArchiveProofCards &&
+                              _patternProgress != null) ...[
+                            const SizedBox(height: 16),
+                            PatternProgressAfterSaveCard(
+                              progress: _patternProgress!,
+                            ),
+                          ],
+                          if (stack.showArchiveProofCards &&
+                              _patternNextAction != null &&
+                              !suppressPostResultNextCheckCompetitors) ...[
+                            const SizedBox(height: 16),
+                            PatternNextActionCard(
+                              action: _patternNextAction!,
+                              onUse: () =>
+                                  _usePatternNextAction(_patternNextAction!),
+                            ),
+                          ],
+                          if (stack.showArchiveProofCards &&
+                              _habitProof != null &&
+                              !suppressPostResultNextCheckCompetitors) ...[
+                            const SizedBox(height: 16),
+                            HabitProofCard(
+                              proof: _habitProof!,
+                              onKeepGoing: () =>
+                                  _keepHabitProofGoing(_habitProof!),
+                            ),
+                          ],
+                          if (stack.showArchiveProofCards &&
+                              _weeklyRecap != null) ...[
+                            const SizedBox(height: 16),
+                            WeeklyPatternRecapCard(
+                              recap: _weeklyRecap!,
+                              onUseNext: suppressPostResultNextCheckCompetitors
+                                  ? null
+                                  : () => _useWeeklyRecapNext(_weeklyRecap!),
+                            ),
+                          ],
+                          if (stack.showArchiveProofCards &&
+                              _shareRecap != null) ...[
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton.icon(
+                                onPressed: () => _copyShareRecap(_shareRecap!),
+                                icon: const Icon(Icons.copy_rounded, size: 18),
+                                label: const Text('Copy recap'),
+                              ),
+                            ),
+                          ],
+                        ],
+                        if (!stack.showInputQualityCoach &&
+                            _tomorrowReturnLoop != null &&
+                            !_returnDayJustClosed &&
+                            !suppressNoisyFirstSaveCards) ...[
+                          if (_secondSessionComparison?.hasEnoughData ==
+                              true) ...[
+                            const SizedBox(height: 12),
+                            SecondSessionComparisonCard(
+                              comparison: _secondSessionComparison!,
+                              onGoDeeper: () {
+                                final prompt =
+                                    _secondSessionComparison!.whatToTestNext;
+                                if (prompt == null || prompt.isEmpty) return;
+                                unawaited(_onSecondSessionEvidence(prompt));
+                              },
+                              onRecordNextEvidence: () {
+                                final prompt =
+                                    _secondSessionComparison!.whatToTestNext;
+                                if (prompt == null || prompt.isEmpty) return;
+                                unawaited(_onSecondSessionEvidence(prompt));
+                              },
+                              onNotTheSame: () => setState(
+                                () => _secondSessionComparison = null,
+                              ),
+                            ),
+                          ],
+                          if (!_patternHypothesisDismissed &&
+                              _patternHypothesis?.hasEnoughData == true) ...[
+                            const SizedBox(height: 12),
+                            PatternHypothesisCard(
+                              hypothesis: _patternHypothesis!,
+                              onFeelsRight: () async {
+                                final selected =
+                                    await SelectedSignalCoordinator.loadCurrent();
+                                if (selected != null) {
+                                  await SignalFeedbackCoordinator.track(
+                                    action: PostSaveSignalAction.accepted,
+                                    signalId: selected.id,
+                                    signalTitle: selected.title,
+                                    categoryId: selected.categoryId,
+                                  );
+                                }
+                                if (!mounted) return;
+                                setState(
+                                  () => _patternHypothesisDismissed = true,
+                                );
+                              },
+                              onNotMe: () async {
+                                final selected =
+                                    await SelectedSignalCoordinator.loadCurrent();
+                                if (selected != null) {
+                                  await SignalFeedbackCoordinator.track(
+                                    action: PostSaveSignalAction.rejected,
+                                    signalId: selected.id,
+                                    signalTitle: selected.title,
+                                    categoryId: selected.categoryId,
+                                  );
+                                }
+                                if (!mounted) return;
+                                setState(
+                                  () => _patternHypothesisDismissed = true,
+                                );
+                              },
+                              onRecordNext: () => _keepRecording(
+                                nextEvidencePrompt:
+                                    _patternHypothesis!.watchNext,
+                              ),
+                              onViewArchive: () =>
+                                  context.go('/archive-belief'),
+                            ),
+                          ],
+                          if (_postSavePattern != null) ...[
+                            const SizedBox(height: 12),
+                            PostSaveInsightChoiceCard(
+                              pattern: _postSavePattern!,
+                              entry: _lastSavedEntry,
+                              priorEntries: _entriesAfterSave.length > 1
+                                  ? _entriesAfterSave.sublist(1)
+                                  : const [],
+                              feedback: _postSaveInsightFeedback,
+                              selectedSignal: _postSaveSelectedSignal,
+                              audienceWedge: _audienceWedge,
+                              activeLoop: _activeLoop,
+                              reflectionCount: _entriesAfterSave.length.clamp(
+                                1,
+                                3,
+                              ),
+                              categoryRepeated:
+                                  _secondSessionComparison?.possibleRepeat ==
+                                  true,
+                              entryId: _lastSavedEntry?.id,
+                              onSaveSignal: (pattern) async {
+                                if (_isFirstSessionPostSave) {
+                                  final thread =
+                                      await FirstSessionCoordinator.acceptForTomorrow(
+                                        pattern,
+                                        reflectionText:
+                                            _lastSavedEntry?.transcript ?? '',
+                                        sourceReflectionId: _lastSavedEntry?.id,
+                                      );
+                                  if (!mounted) return;
+                                  if (TrialMode.enabled) {
+                                    _watchForAcceptPending = false;
+                                    await ActivationTracker.clearWatchForAcceptPending();
+                                  }
+                                  setState(() => _activePatternThread = thread);
+                                }
+                              },
+                              onUsePrompt: _saveNextEvidencePrompt,
+                              onRecordNext: _keepRecording,
+                              onRecordNextEvidence: (prompt) =>
+                                  _keepRecording(nextEvidencePrompt: prompt),
+                              onViewPatterns: () =>
+                                  context.go('/archive-belief'),
+                            ),
+                          ] else if (_isFirstSessionPostSave) ...[
+                            const SizedBox(height: 12),
+                            FirstReflectionResultCard(
+                              onRecordAnother: _keepRecording,
+                              onViewPatterns: () =>
+                                  context.go('/archive-belief'),
+                            ),
+                          ] else ...[
+                            if (_activePatternThread != null &&
+                                _completedWatchForToday != null) ...[
+                              const SizedBox(height: 12),
+                              ActivePatternThreadCard(
+                                thread: _activePatternThread!,
+                                compact: true,
+                              ),
+                            ],
+                            if (_completedWatchForToday != null) ...[
+                              const SizedBox(height: 12),
+                              WatchForResultCard(
+                                completed: _completedWatchForToday!,
+                                headline: ScreenshotMode.enabled
+                                    ? ScreenshotSampleData
+                                          .watchForCompletedHeadline
+                                    : null,
+                                body: ScreenshotMode.enabled
+                                    ? ScreenshotSampleData.watchForCompletedBody
+                                    : null,
+                              ),
+                            ],
+                            if (_postSavePattern == null) ...[
+                              const SizedBox(height: 12),
+                              PotentialSignalsCard(
+                                signals: _postSaveSignals(),
+                                noticedToday: _tomorrowReturnLoop!.noticedToday,
+                                showPatternHint:
+                                    _postSaveShowsPossiblePattern(),
+                              ),
+                            ],
+                            if (_firstThreeJourney != null &&
+                                !_firstThreeJourney!.completed &&
+                                _showFirstThreeJourneyOnRecord) ...[
+                              const SizedBox(height: 12),
+                              FirstThreeJourneyCard(
+                                model: _firstThreeJourney!,
+                                compact: true,
+                              ),
+                            ],
+                            if (_showAdvancedRetentionPostSave) ...[
+                              if (_returnComparison != null) ...[
+                                const SizedBox(height: 12),
+                                ReturnComparisonCard(
+                                  comparison: _returnComparison!,
+                                ),
+                              ],
+                              if (_returnStreak != null &&
+                                  _returnStreak!.currentStreakDays >= 2) ...[
+                                const SizedBox(height: 12),
+                                ReturnStreakCard(
+                                  streak: _returnStreak!,
+                                  showCta: false,
+                                ),
+                              ],
+                            ],
+                            const SizedBox(height: 12),
+                            TomorrowReturnCard(loop: _tomorrowReturnLoop!),
+                            if (_suggestedWatchForTomorrow != null) ...[
+                              const SizedBox(height: 12),
+                              WatchForTomorrowCard(
+                                suggestion: _suggestedWatchForTomorrow!,
+                                onChooseAnother: () {
+                                  setState(() {
+                                    _watchForAlternativeIndex =
+                                        (_watchForAlternativeIndex + 1) % 3;
+                                    _suggestedWatchForTomorrow =
+                                        WatchForCoordinator.buildSuggestedWatchForAfterSave(
+                                          entries: _entriesAfterSave,
+                                          loop: _tomorrowReturnLoop,
+                                          signals: _postSaveSignals(),
+                                          alternativeIndex:
+                                              _watchForAlternativeIndex,
+                                        );
+                                  });
+                                },
+                              ),
+                            ],
+                            if (_showAdvancedRetentionPostSave) ...[
+                              const SizedBox(height: 16),
+                              TomorrowCommitmentCard(
+                                loop: _tomorrowReturnLoop!,
+                              ),
+                            ],
+                          ],
+                        ],
+                      ],
+                      if (_localSaveTitle != null && !_lastSavedEntryIsDegraded) ...[
+                        const SizedBox(height: 12),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.check_circle_outline,
+                              color: VoiceMemoryColors.captureSuccess,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    localSaveTitle!,
+                                    style: VoiceMemoryTypography.cardTitleStyle(
+                                      color: VoiceMemoryColors.captureSuccess,
+                                    ),
+                                  ),
+                                  if (syncNote != null) ...[
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      syncNote,
+                                      style: const TextStyle(
+                                        color: VoiceMemoryColors.textSecondary,
+                                        height: 1.45,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                      ],
+                      if (error != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          error,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ],
                     ],
+                    const SizedBox(height: 8),
+                    ..._buildBottomActions(
+                      context,
+                      ui: ui,
+                      canRecord: canRecord,
+                      localSaveTitle: localSaveTitle,
+                      selectedPrompt: _selectedPromptLine,
+                      suppressDuplicateRecordCtas:
+                          stack.suppressDuplicateRecordCtas,
+                      policyMicPhase: policyMic,
+                      policyUserDenied: policyUserDenied,
+                    ),
                   ],
-                ],
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          ..._buildBottomActions(
-            context,
-            ui: ui,
-            canRecord: canRecord,
-            localSaveTitle: localSaveTitle,
-            selectedPrompt: _selectedPromptLine,
-            suppressDuplicateRecordCtas: stack.suppressDuplicateRecordCtas,
-          ),
-        ],
-      ),
+            );
+          },
+        ),
+            if (showCloseButton)
+              const Align(
+                alignment: Alignment.topRight,
+                child: RecordScreenCloseButton(),
+              ),
+          ],
         ),
       ),
     );
+  }
+
+  void _resetPostSaveToReady() {
+    setState(() {
+      _error = null;
+      _localSaveTitle = null;
+      _syncNote = null;
+      _showPostSaveLoop = false;
+      _instantReflectionResponse = null;
+      _immediateDiscovery = null;
+      _immediateDiscoveryLoading = false;
+      _ui = _uiForMicPhase(_mic);
+    });
+  }
+
+  List<Widget> _buildPolicyPrimarySecondaryButtons(
+    RecordCtaPolicyResolution policy, {
+    VoidCallback? onPrimary,
+    Key? primaryKey,
+  }) {
+    final widgets = <Widget>[];
+    final primary = policy.primaryLabel;
+    if (primary == null || !policy.showMainBottomCta) return widgets;
+
+    widgets.add(
+      SizedBox(
+        height: 48,
+        width: double.infinity,
+        child: FilledButton(
+          key: primaryKey,
+          onPressed: onPrimary ?? _resetPostSaveToReady,
+          child: Text(primary),
+        ),
+      ),
+    );
+
+    for (final (index, label) in policy.secondaryLabels.indexed) {
+      widgets.add(const SizedBox(height: 8));
+      widgets.add(
+        SizedBox(
+          height: 48,
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {
+              if (label == ConsumerUiCopy.doneCta) {
+                _resetPostSaveToReady();
+                return;
+              }
+              if (label == VoiceCaptureCopy.recordAgainCta ||
+                  label == ConsumerUiCopy.recordAnotherCta) {
+                _resetPostSaveToReady();
+                return;
+              }
+              _resetPostSaveToReady();
+            },
+            child: Text(label),
+          ),
+        ),
+      );
+    }
+    return widgets;
   }
 
   List<Widget> _buildBottomActions(
@@ -3188,113 +4256,230 @@ class _RecordScreenState extends State<RecordScreen> {
     required String? localSaveTitle,
     String? selectedPrompt,
     required bool suppressDuplicateRecordCtas,
+    RecordingPhase? policyMicPhase,
+    bool? policyUserDenied,
   }) {
+    RecordCtaPolicyResolution policyForUi() => _recordCtaPolicy(
+      ui,
+      micPhase: policyMicPhase,
+      userDeniedThisSession: policyUserDenied,
+    );
     final actions = <Widget>[];
 
     if (ui == RecordUiState.permissionBlocked) {
-      actions.addAll([
-        const Text(
-          'Microphone access is required to record.',
-          style: TextStyle(color: VoiceMemoryColors.textSecondary),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: _requestMic,
-            child: const Text('Allow microphone'),
-          ),
-        ),
-      ]);
+      return actions;
     }
     if (ui == RecordUiState.ready) {
-      // First-session explainer: brand-new users (no entries / no pressure
-      // check-ins yet) get a clear, emotionally framed starting point.
-      if (FirstSessionExplanationCard.shouldShow(_reflectionCount)) {
+      if (_showBottomRetentionCards) {
+        // Invited User Welcome: replaces (never joins) the generic
+        // first-session explainer for invited installs, so the pre-first-save
+        // screen never gets more crowded. Only before the first save.
+        final showInvitedWelcome =
+            _invitedWelcomeSource != null && _journalEntryCount == 0;
+        if (showInvitedWelcome) {
+          actions.add(
+            InvitedUserWelcomeCard(
+              source: _invitedWelcomeSource!,
+              onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+              onDismiss: () => setState(() => _invitedWelcomeSource = null),
+            ),
+          );
+        }
+        // Record once intro: zero saved entries only — one supporting line
+        // and one record CTA. Leads the stack but never blocks recording.
+        if (_showLegacyEmptyOnboarding &&
+            !showInvitedWelcome &&
+            RecordOnceIntroCard.shouldShow(_journalEntryCount)) {
+          actions.add(
+            RecordOnceIntroCard(
+              onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+            ),
+          );
+        }
+        // First-session explainer: brand-new users (no entries / no pressure
+        // check-ins yet) get a clear, emotionally framed starting point.
+        if (_showLegacyEmptyOnboarding &&
+            !showInvitedWelcome &&
+            FirstSessionExplanationCard.shouldShow(_journalEntryCount)) {
+          actions.add(
+            FirstSessionExplanationCard(
+              onLogPressure: () => context.push('/pressure-check-in'),
+              onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+            ),
+          );
+        }
+        // First Save Rescue: a 10-second, deletable test recording for users
+        // with an empty archive. One CTA into the existing recording flow —
+        // sits alongside (never instead of) the explainer above.
+        if (_showLegacyEmptyOnboarding &&
+            FirstSaveRescueCard.shouldShow(_journalEntryCount)) {
+          actions.add(
+            FirstSaveRescueCard(
+              onStart: () => unawaited(_onRecordPressed(source: 'main')),
+            ),
+          );
+        }
+        // First Recording Sample: one tiny editable starter sentence for an
+        // empty archive. The CTA seeds the existing recording flow (the line
+        // shows as the "Try saying" helper) — never a new flow, never a list.
+        if (_showLegacyEmptyOnboarding &&
+            FirstRecordingSampleCard.shouldShow(_journalEntryCount)) {
+          actions.add(
+            FirstRecordingSampleCard(
+              onUseStarter: () =>
+                  _onStartHereSelected(FirstRecordingSample.sample),
+            ),
+          );
+        }
+        if (RepeatRecordingNudgeGates.showSecondEntryNudge(
+          entryCount: _journalEntryCount,
+          justSaved: _recordReturnProJustSaved,
+          hiddenThisSession: RepeatRecordingNudgeSession.secondEntryHidden,
+        )) {
+          actions.add(
+            SecondEntryNudgeCard(
+              source: 'record',
+              onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+              onDismiss: () => setState(() {}),
+            ),
+          );
+        }
+        if (_showAhaMomentCards &&
+            AhaMomentGates.shouldShow(
+              candidate: _ahaCandidate,
+              entryCount: _journalEntryCount,
+            )) {
+          actions.add(
+            FirstAhaMomentCard(
+              candidate: _ahaCandidate!,
+              source: 'record',
+              onChanged: () => setState(() {}),
+            ),
+          );
+        }
+        if (_showAhaMomentCards && AhaProofShareEligibility.shouldShow) {
+          actions.add(
+            AhaProofShareCard(
+              entryCount: _journalEntryCount,
+              source: 'record',
+              onDismiss: () => setState(() {}),
+            ),
+          );
+        }
+        // Calm 2-day path: the plan before the first save, the return moment
+        // on day 2, nothing once the loop is running. Passive — never blocks
+        // recording.
+        final twoDayPath = const TwoDayActivationEngine().build(
+          entryCount: _journalEntryCount,
+          entryDates: _entryDates,
+        );
+        if (twoDayPath.show && _showTwoDayActivationCard) {
+          // Invited Day 2 return copy: the second visit matches the reason the
+          // user was invited. Replaces (never joins) the generic Day 2 card so
+          // the return moment never gets more crowded.
+          if (InvitedDayTwoReturn.shouldShow(
+            inviteSource: _inviteSource,
+            stage: twoDayPath.stage,
+          )) {
+            actions.add(
+              InvitedDayTwoReturnCard(
+                source: _inviteSource!,
+                entryCount: _journalEntryCount,
+                onCheck: () => unawaited(_onRecordPressed(source: 'main')),
+              ),
+            );
+          } else if (twoDayPath.stage == TwoDayActivationStage.dayTwoReturn &&
+              RepeatRecordingNudgeGates.showDay2ReturnReason(
+                entryCount: _journalEntryCount,
+                twoDayPath: twoDayPath,
+                hasRealChangeInsight: _hasRealChangeInsight,
+                hiddenThisSession: RepeatRecordingNudgeSession.day2Hidden,
+              )) {
+            actions.add(
+              Day2ReturnReasonCard(
+                source: 'record',
+                onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+                memoryOff: MemoryScopePolicy.scope == MemoryScope.off,
+                onDismiss: () => setState(() {}),
+              ),
+            );
+          } else if (twoDayPath.stage != TwoDayActivationStage.dayTwoReturn) {
+            actions.add(TwoDayActivationCard(path: twoDayPath));
+          }
+        }
+        // Change can begin: two or more entries, no real insight yet, and
+        // the generic card has not been seen — passive, never blocks recording.
+        if (_recordReturnProState != null &&
+            RecordReturnProGates.showChangeCanBegin(
+              entryCount: _journalEntryCount,
+              changeStartSeen: _recordReturnProState!.changeStartSeen,
+              hasRealChangeInsight: _hasRealChangeInsight,
+            )) {
+          actions.add(
+            ChangeStartsCard(
+              entryCount: _journalEntryCount,
+              onViewArchive: () => context.go('/archive-belief'),
+              onSearchArchive: () => context.go('/archive-belief'),
+              onSeen: () => unawaited(_markChangeStartSeen()),
+            ),
+          );
+        }
+        // Day 7 continuity: after the Day 2 return (2+ entries), a calm note
+        // on where the archive is — passive until the existing weekly review
+        // is genuinely ready, then a single CTA into it. Never blocks
+        // recording.
+        final continuityLoop = const DaySevenContinuityEngine().build(
+          entryCount: _journalEntryCount,
+          hasWeeklyReview: _hasWeeklyReviewForContinuity,
+        );
+        if (continuityLoop.show) {
+          actions.add(
+            DaySevenContinuityCard(
+              loop: continuityLoop,
+              entryCount: _journalEntryCount,
+              hasConnectedThread: _hasConnectedThreadForContinuity,
+              onViewWeeklyReview: () => context.push('/pressure-insights'),
+            ),
+          );
+        }
+        // Compact return-trigger reminder for users who accepted it; never
+        // shown alongside the first-session card.
+        if (PressureReturnTriggerReminder.shouldShow(
+          accepted: _returnTriggerAccepted,
+          entryCount: _journalEntryCount,
+        )) {
+          actions.add(
+            PressureReturnTriggerReminder(
+              onLogPressure: () => context.push('/pressure-check-in'),
+            ),
+          );
+        }
         actions.add(
-          FirstSessionExplanationCard(
-            onLogPressure: () => context.push('/pressure-check-in'),
-            onRecord: _start,
+          EntryDirectionStarters(
+            selectedPrompt: _selectedPromptLine,
+            onSelect: (prompt) {
+              ActivationTracker.trackActivationStarterPromptSelected();
+              setState(() => _selectedPromptLine = prompt);
+            },
+          ),
+        );
+        actions.add(const SizedBox(height: 8));
+      }
+      final readyPolicy = policyForUi();
+      if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
+        actions.add(
+          _buildCaptureEntryActions(
+            context: context,
+            selectedPrompt: selectedPrompt,
+            policy: readyPolicy,
           ),
         );
       }
-      // First Save Rescue: a 10-second, deletable test recording for users
-      // with an empty archive. One CTA into the existing recording flow —
-      // sits alongside (never instead of) the explainer above.
-      if (FirstSaveRescueCard.shouldShow(_reflectionCount)) {
-        actions.add(FirstSaveRescueCard(onStart: _start));
+      if (_journalEntryCountReady && _journalEntryCount > 0) {
+        actions.add(CleanSlatePromptSection(entryCount: _journalEntryCount));
+        actions.add(EntryOptionsSection(entryCount: _journalEntryCount));
       }
-      // First Recording Sample: one tiny editable starter sentence for an
-      // empty archive. The CTA seeds the existing recording flow (the line
-      // shows as the "Try saying" helper) — never a new flow, never a list.
-      if (FirstRecordingSampleCard.shouldShow(_reflectionCount)) {
-        actions.add(
-          FirstRecordingSampleCard(
-            onUseStarter: () =>
-                _onStartHereSelected(FirstRecordingSample.sample),
-          ),
-        );
-      }
-      // Calm 2-day path: the plan before the first save, the return moment
-      // on day 2, nothing once the loop is running. Passive — never blocks
-      // recording.
-      final twoDayPath = const TwoDayActivationEngine().build(
-        entryCount: _reflectionCount,
-        entryDates: _entryDates,
-      );
-      if (twoDayPath.show) {
-        actions.add(TwoDayActivationCard(path: twoDayPath));
-      }
-      // Day 7 continuity: after the Day 2 return (2+ entries), a calm note
-      // on where the archive is — passive until the existing weekly review
-      // is genuinely ready, then a single CTA into it. Never blocks
-      // recording.
-      final continuityLoop = const DaySevenContinuityEngine().build(
-        entryCount: _reflectionCount,
-        hasWeeklyReview: _hasWeeklyReviewForContinuity,
-      );
-      if (continuityLoop.show) {
-        actions.add(
-          DaySevenContinuityCard(
-            loop: continuityLoop,
-            entryCount: _reflectionCount,
-            hasConnectedThread: _hasConnectedThreadForContinuity,
-            onViewWeeklyReview: () => context.push('/pressure-insights'),
-          ),
-        );
-      }
-      // Compact return-trigger reminder for users who accepted it; never
-      // shown alongside the first-session card.
-      if (PressureReturnTriggerReminder.shouldShow(
-        accepted: _returnTriggerAccepted,
-        entryCount: _reflectionCount,
-      )) {
-        actions.add(
-          PressureReturnTriggerReminder(
-            onLogPressure: () => context.push('/pressure-check-in'),
-          ),
-        );
-      }
-      actions.add(
-        CaptureEntryActions(
-          onRecord: _start,
-          typeCapturePrompt: selectedPrompt,
-          onLogPressureMoment: () => context.push('/pressure-check-in'),
-          recordButtonLabel: suppressDuplicateRecordCtas
-              ? ConsumerUiCopy.startRecording
-              : (_reflectionCount == 0
-                  ? ConsumerUiCopy.recordOneMomentCta
-                  : ConsumerUiCopy.startRecording),
-          // First-save confidence: tiny helper, only before the first save.
-          underRecordHelper: _reflectionCount == 0
-              ? FirstSaveRescueCard.oneSentenceLine
-              : null,
-        ),
-      );
-      // Purchase Intent Return Cue: below the record actions so free use is
-      // never blocked. Dismissible; routes to the existing paywall.
-      if (_purchaseIntentCue != null) {
+      if (_purchaseIntentCue != null && _showBottomRetentionCards) {
         actions.add(
           Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -3306,7 +4491,8 @@ class _RecordScreenState extends State<RecordScreen> {
                 context.push(
                   '/subscription',
                   extra: PaywallRouteArgs(
-                    source: PaywallSource.fromId(intent.source) ??
+                    source:
+                        PaywallSource.fromId(intent.source) ??
                         PaywallSource.generalPro,
                     sourceRoute: '/record',
                   ),
@@ -3326,8 +4512,78 @@ class _RecordScreenState extends State<RecordScreen> {
           child: FilledButton.icon(
             onPressed: _stopAndProcess,
             icon: const Icon(Icons.stop),
-            label: const Text('Stop and save'),
+            label: Text(policyForUi().primaryLabel ?? ConsumerUiCopy.stopRecordingCta),
           ),
+        ),
+      );
+      // Still changeable while recording — the choice applies at save.
+      if (_journalEntryCountReady && _journalEntryCount > 0) {
+        actions.add(CleanSlatePromptSection(entryCount: _journalEntryCount));
+        actions.add(EntryOptionsSection(entryCount: _journalEntryCount));
+      }
+    }
+    // Fresh-entry receipt: only when the save carried "Treat this as new".
+    if (ui == RecordUiState.done && TreatAsNew.lastSaveWasFresh) {
+      actions.add(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: FreshEntrySavedReceipt(),
+        ),
+      );
+    }
+    if (ui == RecordUiState.done &&
+        EntryAboutnessSession.lastSaveWasNonPersonal) {
+      actions.add(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: NotAboutMeReceipt(),
+        ),
+      );
+    }
+    if (ui == RecordUiState.done &&
+        MemorySurfacingSession.lastSaveWasDoNotSurface) {
+      actions.add(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: DoNotSurfaceReceipt(),
+        ),
+      );
+    }
+    if (ui == RecordUiState.done &&
+        MemorySurfacingSession.lastSaveWasSensitive) {
+      actions.add(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: SensitiveSurfacingReceipt(),
+        ),
+      );
+    }
+    // Exact-evidence receipt: only when the save carried "Keep exact details".
+    if (ui == RecordUiState.done && KeepExactDetails.lastSaveKeptExact) {
+      actions.add(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: ExactDetailsSavedReceipt(),
+        ),
+      );
+    }
+    if (ui == RecordUiState.done &&
+        PreserveOriginalSession.lastSavePreservedOriginal) {
+      actions.add(
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: CuratedMemoryReceipt(),
+        ),
+      );
+    }
+    if (ui == RecordUiState.done &&
+        ArchiveTrustReceipt.shouldShow(entryCount: _journalEntryCount) &&
+        !_lastSavedEntryIsDegraded) {
+      actions.add(
+        ArchivePrivateReceiptCard(
+          entryCount: _journalEntryCount,
+          source: 'record',
+          onDismiss: () => setState(() {}),
         ),
       );
     }
@@ -3364,60 +4620,22 @@ class _RecordScreenState extends State<RecordScreen> {
       ]);
     }
     if (ui == RecordUiState.done && !_showPostSaveLoop) {
-      actions.addAll([
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: FilledButton(
-            onPressed: () => context.go('/archive-belief'),
-            child: const Text('View patterns'),
+      final policy = policyForUi();
+      if (policy.state == RecordCtaPolicyState.postSaveDegraded) {
+        actions.addAll(
+          _buildPolicyPrimarySecondaryButtons(
+            policy,
+            primaryKey: const Key('post_save_type_what_you_said'),
+            onPrimary: () => unawaited(_openTypedFallbackForLastVoiceEntry()),
           ),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {
-              setState(() {
-                _error = null;
-                _localSaveTitle = null;
-                _syncNote = null;
-                _showPostSaveLoop = false;
-                _instantReflectionResponse = null;
-                _immediateDiscovery = null;
-                _immediateDiscoveryLoading = false;
-                _ui = _mic == RecordingPhase.ready
-                    ? RecordUiState.ready
-                    : RecordUiState.permissionBlocked;
-              });
-            },
-            child: const Text('Done'),
-          ),
-        ),
-      ]);
+        );
+      } else if (policy.state == RecordCtaPolicyState.postSaveSuccess) {
+        actions.addAll(_buildPolicyPrimarySecondaryButtons(policy));
+      }
     }
-    if (ui == RecordUiState.error ||
-        (ui == RecordUiState.done && !_showPostSaveLoop)) {
-      actions.add(
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {
-              setState(() {
-                _error = null;
-                _localSaveTitle = null;
-                _syncNote = null;
-                _showPostSaveLoop = false;
-                _ui = _mic == RecordingPhase.ready
-                    ? RecordUiState.ready
-                    : RecordUiState.permissionBlocked;
-              });
-            },
-            child: const Text('Record another'),
-          ),
-        ),
+    if (ui == RecordUiState.error) {
+      actions.addAll(
+        _buildPolicyPrimarySecondaryButtons(policyForUi()),
       );
     }
     if (!canRecord && ui == RecordUiState.idle) {
@@ -3438,7 +4656,9 @@ class _RecordScreenState extends State<RecordScreen> {
   String _statusTextFor(RecordUiState ui, String? localSaveTitle) {
     switch (ui) {
       case RecordUiState.permissionBlocked:
-        return 'Microphone blocked';
+        return MicrophonePermissionCopy.statusBlocked;
+      case RecordUiState.requestingPermission:
+        return 'Allowing microphone access';
       case RecordUiState.ready:
         return 'Ready to record';
       case RecordUiState.recording:
@@ -3514,10 +4734,7 @@ class _SuggestionProNudgeCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              TextButton(
-                onPressed: onDismiss,
-                child: const Text('Not now'),
-              ),
+              TextButton(onPressed: onDismiss, child: const Text('Not now')),
             ],
           ),
         ],
@@ -3527,10 +4744,7 @@ class _SuggestionProNudgeCard extends StatelessWidget {
 }
 
 class _RecordingStatusCard extends StatelessWidget {
-  const _RecordingStatusCard({
-    required this.seconds,
-    required this.stageLabel,
-  });
+  const _RecordingStatusCard({required this.seconds, required this.stageLabel});
 
   final int seconds;
   final String stageLabel;
@@ -3563,11 +4777,7 @@ class _RecordingStatusCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.mic,
-              size: 44,
-              color: VoiceMemoryColors.primaryIndigo,
-            ),
+            Icon(Icons.mic, size: 44, color: VoiceMemoryColors.primaryIndigo),
             const SizedBox(height: 14),
             const IndigoCaptureWaveform(),
             const SizedBox(height: 12),
@@ -3588,7 +4798,11 @@ class _RecordingStatusCard extends StatelessWidget {
             const Text(
               'Tap Stop and save when you are finished.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: VoiceMemoryColors.textSecondary, height: 1.4),
+              style: TextStyle(
+                fontSize: 12,
+                color: VoiceMemoryColors.textSecondary,
+                height: 1.4,
+              ),
             ),
           ],
         ),

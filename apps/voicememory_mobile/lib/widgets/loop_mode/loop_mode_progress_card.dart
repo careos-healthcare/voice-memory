@@ -16,11 +16,13 @@ class LoopModeProgressCard extends StatelessWidget {
     required this.loop,
     required this.onRecordNext,
     this.compact = false,
+    this.showRecordCta = true,
   });
 
   final LoopMode loop;
   final VoidCallback onRecordNext;
   final bool compact;
+  final bool showRecordCta;
 
   static const _engine = LoopModeEngine();
 
@@ -42,7 +44,9 @@ class LoopModeProgressCard extends StatelessWidget {
         children: [
           Text(
             loop.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -61,14 +65,14 @@ class LoopModeProgressCard extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            onPressed: onRecordNext,
-            child: Text(
-              LoopModeCopy.progressRecordCtaForLoop(loop.id),
+          if (showRecordCta) ...[
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(
+              onPressed: onRecordNext,
+              child: Text(LoopModeCopy.progressRecordCtaForLoop(loop.id)),
             ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.xs),
+          ],
           OutlinedButton(
             onPressed: () => context.push('/loop-mode'),
             child: const Text(LoopModeCopy.progressViewLoopCta),

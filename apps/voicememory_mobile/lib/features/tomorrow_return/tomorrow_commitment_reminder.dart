@@ -1,7 +1,7 @@
 import 'tomorrow_commitment_model.dart';
 
 /// Optional local reminder hook — safe no-op when push is not configured.
-abstract final class TomorrowCommitmentReminder {
+abstract class TomorrowCommitmentReminder {
   TomorrowCommitmentReminder._();
 
   static Future<void> scheduleIfAvailable(TomorrowCommitment commitment) async {

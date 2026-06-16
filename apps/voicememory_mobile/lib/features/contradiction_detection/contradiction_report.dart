@@ -23,16 +23,16 @@ class ContradictionReport {
   List<String> get recordingIds => [originalEntryId, conflictingEntryId];
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'originalStatement': originalStatement,
-        'conflictingStatement': conflictingStatement,
-        'confidenceScore': confidenceScore,
-        'originalEntryId': originalEntryId,
-        'conflictingEntryId': conflictingEntryId,
-        'kind': kind.name,
-        'sharedThemes': sharedThemes,
-        'recordingIds': recordingIds,
-      };
+    'id': id,
+    'originalStatement': originalStatement,
+    'conflictingStatement': conflictingStatement,
+    'confidenceScore': confidenceScore,
+    'originalEntryId': originalEntryId,
+    'conflictingEntryId': conflictingEntryId,
+    'kind': kind.name,
+    'sharedThemes': sharedThemes,
+    'recordingIds': recordingIds,
+  };
 
   static ContradictionReport? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -43,7 +43,8 @@ class ContradictionReport {
       id: json['id']?.toString() ?? '',
       originalStatement: orig,
       conflictingStatement: conflict,
-      confidenceScore: (json['confidenceScore'] as num?)?.toInt().clamp(0, 100) ?? 0,
+      confidenceScore:
+          (json['confidenceScore'] as num?)?.toInt().clamp(0, 100) ?? 0,
       originalEntryId: json['originalEntryId']?.toString() ?? '',
       conflictingEntryId: json['conflictingEntryId']?.toString() ?? '',
       kind: ContradictionKind.fromName(json['kind']?.toString()),
@@ -74,11 +75,11 @@ enum ContradictionKind {
   }
 
   String get label => switch (this) {
-        ContradictionKind.opposingStatements => 'Opposing statements',
-        ContradictionKind.reversedTheme => 'Reversed theme',
-        ContradictionKind.changedLanguage => 'Changed language',
-        ContradictionKind.gradualShift => 'Gradual shift',
-      };
+    ContradictionKind.opposingStatements => 'Opposing statements',
+    ContradictionKind.reversedTheme => 'Reversed theme',
+    ContradictionKind.changedLanguage => 'Changed language',
+    ContradictionKind.gradualShift => 'Gradual shift',
+  };
 }
 
 class ContradictionDetectionResult {

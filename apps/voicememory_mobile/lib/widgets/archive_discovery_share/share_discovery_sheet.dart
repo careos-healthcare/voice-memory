@@ -23,10 +23,8 @@ Future<void> showArchiveDiscoveryShareSheet(
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: true,
-    builder: (ctx) => _ArchiveDiscoveryShareSheetBody(
-      card: card,
-      surface: surface,
-    ),
+    builder: (ctx) =>
+        _ArchiveDiscoveryShareSheetBody(card: card, surface: surface),
   );
 }
 
@@ -61,9 +59,9 @@ class _ArchiveDiscoveryShareSheetBodyState
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not share: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not share: $e')));
     } finally {
       if (mounted) setState(() => _sharing = false);
     }
@@ -82,9 +80,9 @@ class _ArchiveDiscoveryShareSheetBodyState
         children: [
           Text(
             ArchiveDiscoveryShareCopy.sheetTitle,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           const Text(

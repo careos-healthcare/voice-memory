@@ -74,13 +74,15 @@ class FirstSessionPatternCard extends StatefulWidget {
     String? sourceReflectionId,
     String? selectedVariantId,
     String? checkInQuestionOverride,
-  })? onAccept;
+  })?
+  onAccept;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
   static const Color _warmBorder = Color(0xFFF5E6D3);
 
   @override
-  State<FirstSessionPatternCard> createState() => _FirstSessionPatternCardState();
+  State<FirstSessionPatternCard> createState() =>
+      _FirstSessionPatternCardState();
 }
 
 class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
@@ -110,8 +112,9 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
   bool get _earlyRead => widget.weakInput || _selected.isLowConfidence;
 
   /// English keeps the existing constant; other languages use localized copy.
-  String _t(String key, String enValue) =>
-      widget.languageCode == 'en' ? enValue : localized(key, widget.languageCode);
+  String _t(String key, String enValue) => widget.languageCode == 'en'
+      ? enValue
+      : localized(key, widget.languageCode);
 
   /// Localized category title for non-English; English keeps the engine title.
   String get _displayTitle =>
@@ -159,7 +162,8 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
       );
 
   CompellingCheckQuestion get _selectedCompellingCheck {
-    final label = _selectedSharpnessLabel ??
+    final label =
+        _selectedSharpnessLabel ??
         defaultCompellingSharpnessLabel(
           feedback: widget.feedbackHint,
           preferDirect: widget.sharperIntensity != HookRescueIntensity.normal,
@@ -201,9 +205,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
       reflectionText: widget.reflectionText,
     );
     unawaited(
-      ActivationTracker.trackWatchForPromptShown(
-        strength: prompt.strength.id,
-      ),
+      ActivationTracker.trackWatchForPromptShown(strength: prompt.strength.id),
     );
   }
 
@@ -244,7 +246,11 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
       children: [
         Row(
           children: [
-            Icon(Icons.check_circle_outline, color: AppColors.success, size: 22),
+            Icon(
+              Icons.check_circle_outline,
+              color: AppColors.success,
+              size: 22,
+            ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
@@ -281,10 +287,10 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
   }
 
   WatchForPrompt get _tomorrowPrompt => _watchForPromptEngine.build(
-        pattern: _selected,
-        reflectionText: widget.reflectionText,
-        intensity: widget.sharperIntensity,
-      );
+    pattern: _selected,
+    reflectionText: widget.reflectionText,
+    intensity: widget.sharperIntensity,
+  );
 
   void _onVariantSelected(String variantId, String categoryId) {
     if (_selectedVariantId == variantId) return;
@@ -315,7 +321,9 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
     );
 
     // aggressive: show the sharper question first.
-    final variants = List<WatchForQuestionVariant>.of(tomorrow.questionVariants);
+    final variants = List<WatchForQuestionVariant>.of(
+      tomorrow.questionVariants,
+    );
     if (_aggressive) {
       variants.sort((a, b) {
         if (a.id == WatchForQuestionVariantId.sharper) return -1;
@@ -360,7 +368,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                 onSelected: _saving
                     ? null
                     : (_) =>
-                        _onVariantSelected(variant.id, _selected.categoryId),
+                          _onVariantSelected(variant.id, _selected.categoryId),
                 backgroundColor: Colors.white,
                 selectedColor: AppColors.accentPrimary.withValues(alpha: 0.15),
                 side: BorderSide(
@@ -368,15 +376,17 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                       ? AppColors.accentPrimary
                       : const Color(0xFFF5E6D3),
                 ),
-                labelStyle: VoiceMemoryTypography.bodyStyle(
-                  color: variant.id == effectiveId
-                      ? AppColors.accentPrimary
-                      : AppColors.textSecondary,
-                ).copyWith(
-                  fontSize: 13,
-                  fontWeight:
-                      variant.id == effectiveId ? FontWeight.w600 : null,
-                ),
+                labelStyle:
+                    VoiceMemoryTypography.bodyStyle(
+                      color: variant.id == effectiveId
+                          ? AppColors.accentPrimary
+                          : AppColors.textSecondary,
+                    ).copyWith(
+                      fontSize: 13,
+                      fontWeight: variant.id == effectiveId
+                          ? FontWeight.w600
+                          : null,
+                    ),
               ),
           ],
         ),
@@ -438,8 +448,10 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            _t('firstPatternEarlyReadHint',
-                ConsumerUiCopy.firstPatternEarlyReadHint),
+            _t(
+              'firstPatternEarlyReadHint',
+              ConsumerUiCopy.firstPatternEarlyReadHint,
+            ),
             style: VoiceMemoryTypography.bodyStyle(
               color: AppColors.textSecondary,
             ).copyWith(fontSize: 13, height: 1.4),
@@ -487,8 +499,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
           check: _selectedCompellingCheck,
           options: _showSharpenChooser ? _compellingOptions : null,
           selectedSharpnessLabel: _selectedSharpnessLabel,
-          onSharpnessSelected:
-              _saving ? null : _onCompellingSharpnessSelected,
+          onSharpnessSelected: _saving ? null : _onCompellingSharpnessSelected,
         ),
         if (!_showSharpenChooser) ...[
           const SizedBox(height: AppSpacing.sm),
@@ -496,9 +507,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
             alignment: Alignment.centerLeft,
             child: TextButton(
               onPressed: _saving ? null : _onMakeItSharper,
-              child: Text(
-                _t('makeItSharper', ConsumerUiCopy.makeItSharperCta),
-              ),
+              child: Text(_t('makeItSharper', ConsumerUiCopy.makeItSharperCta)),
             ),
           ),
         ],
@@ -512,7 +521,9 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                   (c) => Chip(
                     label: Text(c),
                     backgroundColor: AppColors.backgroundSecondary,
-                    side: BorderSide(color: FirstSessionPatternCard._warmBorder),
+                    side: BorderSide(
+                      color: FirstSessionPatternCard._warmBorder,
+                    ),
                     labelStyle: VoiceMemoryTypography.bodyStyle(
                       color: AppColors.textSecondary,
                     ).copyWith(fontSize: 13),
@@ -529,8 +540,10 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
             child: FilledButton(
               onPressed: _saving ? null : widget.onAddAnotherMoment,
               child: Text(
-                _t('addAnotherMoment',
-                    ConsumerUiCopy.firstPatternAddAnotherMomentCta),
+                _t(
+                  'addAnotherMoment',
+                  ConsumerUiCopy.firstPatternAddAnotherMomentCta,
+                ),
               ),
             ),
           ),
@@ -546,8 +559,12 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(_t('useThisTomorrow',
-                      ConsumerUiCopy.firstSessionUseTomorrowCta)),
+                  : Text(
+                      _t(
+                        'useThisTomorrow',
+                        ConsumerUiCopy.firstSessionUseTomorrowCta,
+                      ),
+                    ),
             ),
           ),
         ] else
@@ -562,8 +579,12 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(_t('useThisTomorrow',
-                      ConsumerUiCopy.firstSessionUseTomorrowCta)),
+                  : Text(
+                      _t(
+                        'useThisTomorrow',
+                        ConsumerUiCopy.firstSessionUseTomorrowCta,
+                      ),
+                    ),
             ),
           ),
         if (_showCorrectionLearned) ...[
@@ -580,14 +601,17 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
           Align(
             alignment: Alignment.center,
             child: TextButton(
-              onPressed: _saving ? null : () => unawaited(_openCorrectionPicker()),
+              onPressed: _saving
+                  ? null
+                  : () => unawaited(_openCorrectionPicker()),
               child: Text(
                 ambiguous
                     ? ConsumerUiCopy.firstSessionChooseCloserCta
                     : ConsumerUiCopy.firstSessionNotQuiteCta,
                 style: TextStyle(
                   // "Not me" feedback nudges the correction CTA to stand out.
-                  fontWeight: (ambiguous ||
+                  fontWeight:
+                      (ambiguous ||
                           widget.feedbackHint == ArchiveFeedbackType.notMe)
                       ? FontWeight.w700
                       : FontWeight.w500,
@@ -742,10 +766,10 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
           : _selected.sourceTextPreview;
       final learning =
           await PatternCorrectionLearningCoordinator.recordFirstSessionCorrection(
-        originalPattern: _original,
-        correctedPattern: _selected,
-        reflectionText: reflection,
-      );
+            originalPattern: _original,
+            correctedPattern: _selected,
+            reflectionText: reflection,
+          );
       if (!mounted) return;
       setState(() {
         _lastCorrectionLearningId = learning.id;
@@ -785,8 +809,7 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
     ActivationTracker.trackCompellingCheckAccepted();
     final acceptedVariantId =
         _selectedVariantId ?? _tomorrowPrompt.selectedVariantId;
-    if (_sharper &&
-        acceptedVariantId == WatchForQuestionVariantId.sharper) {
+    if (_sharper && acceptedVariantId == WatchForQuestionVariantId.sharper) {
       ActivationTracker.trackSharperQuestionAccepted();
       if (_aggressive) {
         ActivationTracker.trackSharperQuestionAggressiveAccepted();
@@ -796,22 +819,23 @@ class _FirstSessionPatternCardState extends State<FirstSessionPatternCard> {
       final reflection = widget.reflectionText.trim().isNotEmpty
           ? widget.reflectionText
           : _selected.sourceTextPreview;
-      final accept = widget.onAccept ??
-          (pattern, {
+      final accept =
+          widget.onAccept ??
+          (
+            pattern, {
             correctionLearningId,
             reflectionText,
             sourceReflectionId,
             selectedVariantId,
             checkInQuestionOverride,
-          }) =>
-              FirstSessionCoordinator.acceptForTomorrow(
-                pattern,
-                correctionLearningId: correctionLearningId,
-                reflectionText: reflectionText ?? '',
-                sourceReflectionId: sourceReflectionId,
-                selectedVariantId: selectedVariantId,
-                checkInQuestionOverride: checkInQuestionOverride,
-              );
+          }) => FirstSessionCoordinator.acceptForTomorrow(
+            pattern,
+            correctionLearningId: correctionLearningId,
+            reflectionText: reflectionText ?? '',
+            sourceReflectionId: sourceReflectionId,
+            selectedVariantId: selectedVariantId,
+            checkInQuestionOverride: checkInQuestionOverride,
+          );
       await accept(
         _selected,
         correctionLearningId: _lastCorrectionLearningId,

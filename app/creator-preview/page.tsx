@@ -76,7 +76,7 @@ export default function CreatorPreviewPage() {
           {done ? (
             <div className="space-y-6">
               <p className="text-[15px] leading-[1.75] text-zinc-300/95">
-                That is the feeling VoiceMemory is built around — temporal, reflective, and private.
+                That is the feeling ArchiveMe is built around — temporal, reflective, and private.
               </p>
               <div className="max-w-sm">
                 <QuietShareCardPreview card={PREVIEW_CARD} />

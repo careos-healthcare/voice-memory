@@ -7,6 +7,7 @@ export const REQUIRED_TABLES = [
   "sessions",
   "sync_blobs",
   "api_usage",
+  "openai_daily_spend",
   "api_minute_usage",
   "billing_entitlements",
   "capture_attestations",

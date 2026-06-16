@@ -87,7 +87,9 @@ void main() {
 
     expect(hypothesis.evidenceSoFar, isNotEmpty);
     expect(
-      hypothesis.evidenceSoFar.any((e) => e.toLowerCase().contains('mentioned')),
+      hypothesis.evidenceSoFar.any(
+        (e) => e.toLowerCase().contains('mentioned'),
+      ),
       isTrue,
     );
   });
@@ -121,8 +123,14 @@ void main() {
       ),
     ]);
 
-    expect(ConsumerUiCopy.patternHypothesisTitle.toLowerCase(), contains('hypothesis'));
+    expect(
+      ConsumerUiCopy.patternHypothesisTitle.toLowerCase(),
+      contains('hypothesis'),
+    );
     expect(ConsumerUiCopy.patternHypothesisLead.toLowerCase(), contains('may'));
-    expect(hypothesis.wouldProveWrong.toLowerCase(), isNot(contains('diagnosis')));
+    expect(
+      hypothesis.wouldProveWrong.toLowerCase(),
+      isNot(contains('diagnosis')),
+    );
   });
 }

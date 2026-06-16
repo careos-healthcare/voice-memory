@@ -63,8 +63,13 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.save(_moment('a', DateTime(2026, 6, 1),
-        text: 'The worry came back when things got quiet.'));
+    await store.save(
+      _moment(
+        'a',
+        DateTime(2026, 6, 1),
+        text: 'The worry came back when things got quiet.',
+      ),
+    );
     await store.save(_moment('b', DateTime(2026, 6, 2), text: 'A calm day.'));
 
     final hits = await store.search('worry');

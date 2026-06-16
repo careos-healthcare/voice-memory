@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+import { APP_LOGO_INITIALS } from "@/lib/product/brand-copy";
+
 export const size = { width: 512, height: 512 };
 export const contentType = "image/png";
 
@@ -29,7 +31,7 @@ export default function Icon() {
             border: "4px solid rgba(167, 139, 250, 0.6)",
           }}
         >
-          <span style={{ fontSize: 120, color: "#e9d5ff" }}>VM</span>
+          <span style={{ fontSize: 120, color: "#e9d5ff" }}>{APP_LOGO_INITIALS}</span>
         </div>
       </div>
     ),

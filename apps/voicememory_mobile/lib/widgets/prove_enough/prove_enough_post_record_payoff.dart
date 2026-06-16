@@ -57,7 +57,8 @@ class ProveEnoughPostRecordPayoff extends StatefulWidget {
       _ProveEnoughPostRecordPayoffState();
 }
 
-class _ProveEnoughPostRecordPayoffState extends State<ProveEnoughPostRecordPayoff> {
+class _ProveEnoughPostRecordPayoffState
+    extends State<ProveEnoughPostRecordPayoff> {
   static const _engine = ProveEnoughPostRecordEngine();
   static const _interpretationEngine = InterpretationQualityEngine();
 

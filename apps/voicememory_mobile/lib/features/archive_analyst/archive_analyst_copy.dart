@@ -1,5 +1,5 @@
 /// Historian-tone copy for Archive Analyst.
-abstract final class ArchiveAnalystCopy {
+abstract class ArchiveAnalystCopy {
   ArchiveAnalystCopy._();
 
   static const String screenTitle = 'Archive Analyst';

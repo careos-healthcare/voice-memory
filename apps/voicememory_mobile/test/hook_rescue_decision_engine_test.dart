@@ -15,11 +15,11 @@ Future<void> _reset(String stamp) async {
 }
 
 HookDiagnosisEvent _missed(String reason, String id) => HookDiagnosisEvent(
-      id: id,
-      createdAt: DateTime(2026, 5, 26),
-      type: HookDiagnosisEventType.checkInMissedReason,
-      reason: reason,
-    );
+  id: id,
+  createdAt: DateTime(2026, 5, 26),
+  type: HookDiagnosisEventType.checkInMissedReason,
+  reason: reason,
+);
 
 HookDiagnosisEvent _questionRated(String rating, String id) =>
     HookDiagnosisEvent(
@@ -30,11 +30,11 @@ HookDiagnosisEvent _questionRated(String rating, String id) =>
     );
 
 HookDiagnosisEvent _resultRated(String rating, String id) => HookDiagnosisEvent(
-      id: id,
-      createdAt: DateTime(2026, 5, 26),
-      type: HookDiagnosisEventType.checkInResultRated,
-      rating: rating,
-    );
+  id: id,
+  createdAt: DateTime(2026, 5, 26),
+  type: HookDiagnosisEventType.checkInResultRated,
+  rating: rating,
+);
 
 HookDiagnosisEvent _notUsefulReason(String reason, String id) =>
     HookDiagnosisEvent(
@@ -87,8 +87,7 @@ void main() {
     final decision = engine.decide(summary);
 
     expect(decision.primaryAction, HookRescueAction.betterResult);
-    expect(decision.reason,
-        'People return but do not find the result useful.');
+    expect(decision.reason, 'People return but do not find the result useful.');
   });
 
   test('did not care high → sharperQuestion primary', () async {
@@ -131,7 +130,10 @@ void main() {
 
     expect(decision.primaryAction, HookRescueAction.reminder);
     expect(decision.includes(HookRescueAction.reminder), isTrue);
-    expect(decision.reason, 'People care about the question but do not return.');
+    expect(
+      decision.reason,
+      'People care about the question but do not return.',
+    );
   });
 
   test('low first save → betterFirstRecord action', () async {
@@ -283,8 +285,12 @@ void main() {
       ),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
-    await hook.append(_notUsefulReason(HookDiagnosisNotUsefulReason.tooVague, 'n1'));
-    await hook.append(_notUsefulReason(HookDiagnosisNotUsefulReason.tooVague, 'n2'));
+    await hook.append(
+      _notUsefulReason(HookDiagnosisNotUsefulReason.tooVague, 'n1'),
+    );
+    await hook.append(
+      _notUsefulReason(HookDiagnosisNotUsefulReason.tooVague, 'n2'),
+    );
 
     final summary = await const TrialSummaryEngine().build();
     final decision = engine.decide(summary);

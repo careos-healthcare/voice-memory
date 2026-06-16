@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const DEVICE_ID = "550e8400-e29b-41d4-a716-446655440000";
+const DEVICE_ID = crypto.randomUUID();
 
 test.describe("Production hardening", () => {
   test("health endpoint returns checks without secrets", async ({ request }) => {

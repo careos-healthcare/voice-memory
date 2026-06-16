@@ -19,16 +19,14 @@ Reflection _reflection({
   );
 }
 
-JournalEntry _entry({
-  required String transcript,
-  Reflection? reflection,
-}) {
+JournalEntry _entry({required String transcript, Reflection? reflection}) {
   return JournalEntry(
     id: '1',
     createdAt: DateTime.utc(2026, 5, 1),
     transcript: transcript,
     durationSeconds: 30,
-    reflection: reflection ??
+    reflection:
+        reflection ??
         _reflection(
           pattern: 'I am not sure this career path is right for me anymore.',
           themes: const ['career'],

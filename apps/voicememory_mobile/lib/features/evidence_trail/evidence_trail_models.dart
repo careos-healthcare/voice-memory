@@ -1,15 +1,8 @@
 /// Evidence Trail V1 — bottom-sheet payload (no AI).
-enum EvidenceSourceRole {
-  supporting,
-  contradicting,
-  related,
-}
+enum EvidenceSourceRole { supporting, contradicting, related }
 
 class EvidenceConfidenceFactor {
-  const EvidenceConfidenceFactor({
-    required this.label,
-    required this.value,
-  });
+  const EvidenceConfidenceFactor({required this.label, required this.value});
 
   final String label;
   final String value;

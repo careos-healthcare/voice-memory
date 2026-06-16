@@ -66,7 +66,11 @@ class ArchiveDetailDrawer extends StatelessWidget {
             item.label,
             style: const TextStyle(color: AppTheme.foreground, fontSize: 15),
           ),
-          trailing: const Icon(Icons.chevron_right, color: AppTheme.muted, size: 20),
+          trailing: const Icon(
+            Icons.chevron_right,
+            color: AppTheme.muted,
+            size: 20,
+          ),
           onTap: () {
             Navigator.of(context).pop();
             context.push(item.route);
@@ -93,10 +97,7 @@ class ArchiveDetailDrawer extends StatelessWidget {
     }
 
     return SafeArea(
-      child: ListView(
-        padding: _padding,
-        children: children,
-      ),
+      child: ListView(padding: _padding, children: children),
     );
   }
 }

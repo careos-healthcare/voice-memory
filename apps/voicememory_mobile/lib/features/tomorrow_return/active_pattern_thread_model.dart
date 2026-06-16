@@ -1,11 +1,6 @@
 import 'watch_for_model.dart';
 
-enum ActivePatternThreadStatus {
-  active,
-  easing,
-  changing,
-  paused,
-}
+enum ActivePatternThreadStatus { active, easing, changing, paused }
 
 /// A named pattern thread the user continues day to day.
 class ActivePatternThread {
@@ -74,8 +69,9 @@ class ActivePatternThread {
       status: status ?? this.status,
       daysActive: daysActive ?? this.daysActive,
       lastResult: lastResult ?? this.lastResult,
-      lastResultDate:
-          clearLastResultDate ? null : (lastResultDate ?? this.lastResultDate),
+      lastResultDate: clearLastResultDate
+          ? null
+          : (lastResultDate ?? this.lastResultDate),
       recentMoments: recentMoments ?? this.recentMoments,
       recentResults: recentResults ?? this.recentResults,
       nextPrompt: nextPrompt ?? this.nextPrompt,
@@ -83,21 +79,21 @@ class ActivePatternThread {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-        'watchForText': watchForText,
-        'chips': chips,
-        'status': status.name,
-        'daysActive': daysActive,
-        'lastResult': lastResult.name,
-        if (lastResultDate != null)
-          'lastResultDate': lastResultDate!.toUtc().toIso8601String(),
-        'recentMoments': recentMoments,
-        'recentResults': recentResults.map((r) => r.name).toList(),
-        'nextPrompt': nextPrompt,
-      };
+    'id': id,
+    'title': title,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    'watchForText': watchForText,
+    'chips': chips,
+    'status': status.name,
+    'daysActive': daysActive,
+    'lastResult': lastResult.name,
+    if (lastResultDate != null)
+      'lastResultDate': lastResultDate!.toUtc().toIso8601String(),
+    'recentMoments': recentMoments,
+    'recentResults': recentResults.map((r) => r.name).toList(),
+    'nextPrompt': nextPrompt,
+  };
 
   static ActivePatternThread? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -111,20 +107,26 @@ class ActivePatternThread {
 
     final chipsRaw = json['chips'];
     final chips = chipsRaw is List
-        ? chipsRaw.map((e) => e.toString().trim()).where((c) => c.isNotEmpty).toList()
+        ? chipsRaw
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
 
     final momentsRaw = json['recentMoments'];
     final moments = momentsRaw is List
-        ? momentsRaw.map((e) => e.toString().trim()).where((m) => m.isNotEmpty).toList()
+        ? momentsRaw
+              .map((e) => e.toString().trim())
+              .where((m) => m.isNotEmpty)
+              .toList()
         : <String>[];
 
     final resultsRaw = json['recentResults'];
     final results = resultsRaw is List
         ? resultsRaw
-            .map((e) => _parseResult(e.toString()))
-            .where((r) => r != WatchForResult.none)
-            .toList()
+              .map((e) => _parseResult(e.toString()))
+              .where((r) => r != WatchForResult.none)
+              .toList()
         : <WatchForResult>[];
 
     DateTime? lastResultDate;

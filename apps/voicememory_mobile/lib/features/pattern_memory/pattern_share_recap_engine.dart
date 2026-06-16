@@ -17,7 +17,8 @@ class PatternShareRecapEngine {
     PatternNextAction? action,
     WeeklyPatternRecap? weekly,
   }) {
-    final createdAt = weekly?.createdAt ??
+    final createdAt =
+        weekly?.createdAt ??
         progress?.createdAt ??
         action?.createdAt ??
         memory?.updatedAt ??
@@ -76,7 +77,8 @@ class PatternShareRecapEngine {
   }
 
   PatternShareRecap _memory(PatternMemory memory, DateTime createdAt) {
-    final hasNext = memory.nextBestQuestion != null &&
+    final hasNext =
+        memory.nextBestQuestion != null &&
         memory.nextBestQuestion!.trim().isNotEmpty;
     final lines = <String>[
       'Showed up again: ${memory.showedAgainCount}',
@@ -113,8 +115,10 @@ class PatternShareRecapEngine {
     required String? nextQuestion,
     required DateTime createdAt,
   }) {
-    final cleanLines =
-        lines.map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+    final cleanLines = lines
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .toList();
     return PatternShareRecap(
       id: 'share_${type.id}_${createdAt.microsecondsSinceEpoch}',
       createdAt: createdAt,

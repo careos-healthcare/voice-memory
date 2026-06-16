@@ -102,14 +102,16 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                       ? AppLockCopy.setupConfirmTitle
                       : AppLockCopy.setupTitle,
                   key: const Key('setup_pin_title'),
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   AppLockCopy.setupBody,
-                  style: ArchiveMobileTypography.responsiveHelper(context)
-                      .copyWith(color: AppColors.textSecondary),
+                  style: ArchiveMobileTypography.responsiveHelper(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TextField(
@@ -133,8 +135,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                   Text(
                     AppLockCopy.setupMismatch,
                     key: const Key('setup_pin_mismatch'),
-                    style: ArchiveMobileTypography.responsiveHelper(context)
-                        .copyWith(color: AppColors.error),
+                    style: ArchiveMobileTypography.responsiveHelper(
+                      context,
+                    ).copyWith(color: AppColors.error),
                   ),
                 ],
                 const SizedBox(height: AppSpacing.md),
@@ -151,8 +154,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                 Text(
                   AppLockCopy.setupPrivacyLine,
                   textAlign: TextAlign.center,
-                  style: ArchiveMobileTypography.responsiveHelper(context)
-                      .copyWith(color: AppColors.textSecondary),
+                  style: ArchiveMobileTypography.responsiveHelper(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),

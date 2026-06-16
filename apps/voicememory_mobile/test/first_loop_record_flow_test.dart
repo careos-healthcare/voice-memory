@@ -46,8 +46,11 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
 void _expectNoBannedWords(WidgetTester tester) {
   final visible = _visibleText(tester).join(' \n ');
   for (final word in _bannedVisible) {
-    expect(_containsBanned(visible, word), isFalse,
-        reason: 'visible copy must not contain "$word": $visible');
+    expect(
+      _containsBanned(visible, word),
+      isFalse,
+      reason: 'visible copy must not contain "$word": $visible',
+    );
   }
 }
 
@@ -70,42 +73,47 @@ void main() {
     expect(stack.suppressDuplicateRecordCtas, isTrue);
   });
 
-  testWidgets('ArchiveMemoryDemoCard shows Day 1/3/7 and positioning line',
-      (tester) async {
+  testWidgets('ArchiveMemoryDemoCard shows Day 1/3/7 and positioning line', (
+    tester,
+  ) async {
     var tapped = false;
-    await _pump(
-      tester,
-      ArchiveMemoryDemoCard(onRecord: () => tapped = true),
-    );
+    await _pump(tester, ArchiveMemoryDemoCard(onRecord: () => tapped = true));
 
     expect(find.text(ConsumerUiCopy.archiveMemoryDemoTitle), findsOneWidget);
     expect(find.textContaining('Day 1:'), findsOneWidget);
     expect(find.textContaining('Day 3:'), findsOneWidget);
     expect(find.textContaining('Day 7:'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.firstRecordPositioningLine), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.firstRecordPositioningLine),
+      findsOneWidget,
+    );
     _expectNoBannedWords(tester);
 
     await tester.tap(find.text(ConsumerUiCopy.archiveMemoryDemoCta));
     expect(tapped, isTrue);
   });
 
-  testWidgets('FirstLoopStartCard shows framing and fires onRecord',
-      (tester) async {
+  testWidgets('FirstLoopStartCard shows framing and fires onRecord', (
+    tester,
+  ) async {
     var tapped = false;
     await _pump(tester, FirstLoopStartCard(onRecord: () => tapped = true));
 
     expect(find.text('Start with one moment'), findsOneWidget);
     expect(find.text('Record one moment'), findsOneWidget);
-    expect(find.text('I said yes before checking what I needed.'),
-        findsOneWidget);
+    expect(
+      find.text('I said yes before checking what I needed.'),
+      findsOneWidget,
+    );
     _expectNoBannedWords(tester);
 
     await tester.tap(find.text('Record one moment'));
     expect(tapped, isTrue);
   });
 
-  testWidgets('FirstLoopReadyCard shows tomorrow question and CTAs',
-      (tester) async {
+  testWidgets('FirstLoopReadyCard shows tomorrow question and CTAs', (
+    tester,
+  ) async {
     var done = false;
     var another = false;
     await _pump(
@@ -128,8 +136,9 @@ void main() {
     expect(another, isTrue);
   });
 
-  testWidgets('Patterns no-reflection state shows Record one moment',
-      (tester) async {
+  testWidgets('Patterns no-reflection state shows Record one moment', (
+    tester,
+  ) async {
     await _pump(
       tester,
       FirstLoopStateCard(
@@ -143,14 +152,17 @@ void main() {
       findsNothing,
     );
     expect(
-      find.text('Record one moment. ArchiveMe will start finding what repeats.'),
+      find.text(
+        'Record one moment. ArchiveMe will start finding what repeats.',
+      ),
       findsOneWidget,
     );
     _expectNoBannedWords(tester);
   });
 
-  testWidgets('Patterns loop-ready state shows tomorrow check question',
-      (tester) async {
+  testWidgets('Patterns loop-ready state shows tomorrow check question', (
+    tester,
+  ) async {
     await _pump(
       tester,
       FirstLoopStateCard(
@@ -165,8 +177,9 @@ void main() {
     _expectNoBannedWords(tester);
   });
 
-  testWidgets('Patterns choose-check state shows choose tomorrow check',
-      (tester) async {
+  testWidgets('Patterns choose-check state shows choose tomorrow check', (
+    tester,
+  ) async {
     await _pump(
       tester,
       FirstLoopStateCard(

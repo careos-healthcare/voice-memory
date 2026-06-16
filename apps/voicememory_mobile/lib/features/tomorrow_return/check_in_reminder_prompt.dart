@@ -7,7 +7,7 @@ import 'tomorrow_check_in_model.dart';
 /// Soft-ask flow for tomorrow check-in reminders.
 ///
 /// Shown only after the user has chosen tomorrow's check, never on launch.
-abstract final class CheckInReminderPrompt {
+abstract class CheckInReminderPrompt {
   CheckInReminderPrompt._();
 
   /// Asks the user if they want a reminder, then schedules one if they agree

@@ -20,14 +20,14 @@ class NarrativeSummary {
       hasMinimumArchiveEvidence && summary.trim().isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': 1,
-        'summary': summary,
-        'supportingBeliefs': supportingBeliefs,
-        'supportingThemes': supportingThemes,
-        'supportingRecordingIds': supportingRecordingIds,
-        'hasMinimumArchiveEvidence': hasMinimumArchiveEvidence,
-        'evidenceReflectionCount': evidenceReflectionCount,
-      };
+    'schemaVersion': 1,
+    'summary': summary,
+    'supportingBeliefs': supportingBeliefs,
+    'supportingThemes': supportingThemes,
+    'supportingRecordingIds': supportingRecordingIds,
+    'hasMinimumArchiveEvidence': hasMinimumArchiveEvidence,
+    'evidenceReflectionCount': evidenceReflectionCount,
+  };
 
   static NarrativeSummary empty({int evidenceCount = 0}) {
     return NarrativeSummary(

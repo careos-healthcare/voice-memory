@@ -14,8 +14,9 @@ void main() {
       updatedAt: DateTime.utc(2026, 6, 6, 12, 0),
     );
 
-    final restored =
-        CurrentObjectiveWidgetSnapshot.tryFromJson(original.toJson());
+    final restored = CurrentObjectiveWidgetSnapshot.tryFromJson(
+      original.toJson(),
+    );
 
     expect(restored, isNotNull);
     expect(restored!.title, original.title);
@@ -34,9 +35,7 @@ void main() {
 
   test('tryFromJson returns null when required fields missing', () {
     expect(
-      CurrentObjectiveWidgetSnapshot.tryFromJson({
-        'title': 'Only title',
-      }),
+      CurrentObjectiveWidgetSnapshot.tryFromJson({'title': 'Only title'}),
       isNull,
     );
   });

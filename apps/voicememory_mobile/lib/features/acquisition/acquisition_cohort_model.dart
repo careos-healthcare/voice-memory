@@ -129,25 +129,24 @@ class AcquisitionCohort {
   bool get usesFastPath => cohortId.usesFastPath;
 
   Map<String, dynamic> toJson() => {
-        'cohortId': cohortId.id,
-        'source': source,
-        if (selectedLoopId != null) 'selectedLoopId': selectedLoopId,
-        'promiseShown': promiseShown,
-        'assignedAt': assignedAt.toUtc().toIso8601String(),
-        'onboardingCompleted': onboardingCompleted,
-        'firstMomentRecorded': firstMomentRecorded,
-        'secondMomentRecorded': secondMomentRecorded,
-        'thirdMomentRecorded': thirdMomentRecorded,
-        'firstReadAccepted': firstReadAccepted,
-        'firstReadRejected': firstReadRejected,
-        if (firstInsightSpecificityRating != null)
-          'firstInsightSpecificityRating':
-              firstInsightSpecificityRating!.id,
-        'loopReviewReached': loopReviewReached,
-        'loopReviewConfirmed': loopReviewConfirmed,
-        'paywallTeaserShown': paywallTeaserShown,
-        'paywallTeaserTapped': paywallTeaserTapped,
-      };
+    'cohortId': cohortId.id,
+    'source': source,
+    if (selectedLoopId != null) 'selectedLoopId': selectedLoopId,
+    'promiseShown': promiseShown,
+    'assignedAt': assignedAt.toUtc().toIso8601String(),
+    'onboardingCompleted': onboardingCompleted,
+    'firstMomentRecorded': firstMomentRecorded,
+    'secondMomentRecorded': secondMomentRecorded,
+    'thirdMomentRecorded': thirdMomentRecorded,
+    'firstReadAccepted': firstReadAccepted,
+    'firstReadRejected': firstReadRejected,
+    if (firstInsightSpecificityRating != null)
+      'firstInsightSpecificityRating': firstInsightSpecificityRating!.id,
+    'loopReviewReached': loopReviewReached,
+    'loopReviewConfirmed': loopReviewConfirmed,
+    'paywallTeaserShown': paywallTeaserShown,
+    'paywallTeaserTapped': paywallTeaserTapped,
+  };
 
   static AcquisitionCohort? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

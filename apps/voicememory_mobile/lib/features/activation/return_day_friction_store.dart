@@ -40,8 +40,9 @@ class ReturnDayFrictionStore {
       final next = change(state.copyWith(checkInId: checkInId));
       // Stage only moves forward within the same check-in; after a reset the
       // floor is notDue (index 0), so this collapses to the target stage.
-      final targetIndex =
-          atLeast.index > state.stage.index ? atLeast.index : state.stage.index;
+      final targetIndex = atLeast.index > state.stage.index
+          ? atLeast.index
+          : state.stage.index;
       return next
           .copyWith(stage: ReturnDayFrictionStage.values[targetIndex])
           .toJson();
@@ -49,7 +50,10 @@ class ReturnDayFrictionStore {
     return ReturnDayFrictionState.fromJson(raw);
   }
 
-  Future<ReturnDayFrictionState> markDueShown(String checkInId, {DateTime? at}) {
+  Future<ReturnDayFrictionState> markDueShown(
+    String checkInId, {
+    DateTime? at,
+  }) {
     final now = at ?? DateTime.now();
     return _mutate(
       checkInId,

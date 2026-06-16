@@ -25,13 +25,19 @@ void main() {
 
   Future<void> _pump(WidgetTester tester, Widget child) {
     return tester.pumpWidget(
-      MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))),
+      MaterialApp(
+        home: Scaffold(body: SingleChildScrollView(child: child)),
+      ),
     );
   }
 
-  testWidgets('same result shows a repeat takeaway before rating',
-      (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('showed_up_again')));
+  testWidgets('same result shows a repeat takeaway before rating', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      CheckInCompletedCard(checkIn: _completed('showed_up_again')),
+    );
 
     expect(find.text('You closed the loop.'), findsOneWidget);
     expect(find.text('It showed up again.'), findsOneWidget);
@@ -39,7 +45,10 @@ void main() {
     expect(find.text('What changed'), findsOneWidget);
     expect(find.text('Why this is useful'), findsOneWidget);
     expect(find.text('This was a repeat, not a one-off.'), findsOneWidget);
-    expect(find.text('The same pattern showed up again today.'), findsOneWidget);
+    expect(
+      find.text('The same pattern showed up again today.'),
+      findsOneWidget,
+    );
     expect(
       find.text('Repeats are useful because they show where to look next.'),
       findsOneWidget,
@@ -47,8 +56,9 @@ void main() {
     expect(find.text(ConsumerUiCopy.makeResultMoreUsefulCta), findsOneWidget);
   });
 
-  testWidgets('lighter result shows a helped takeaway with next check',
-      (tester) async {
+  testWidgets('lighter result shows a helped takeaway with next check', (
+    tester,
+  ) async {
     await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
 
     expect(find.text('It felt lighter today.'), findsOneWidget);
@@ -77,17 +87,18 @@ void main() {
     expect(find.text('What was different today?'), findsOneWidget);
   });
 
-  testWidgets('weak input shows an Early read with a concrete next check',
-      (tester) async {
+  testWidgets('weak input shows an Early read with a concrete next check', (
+    tester,
+  ) async {
     await _pump(
       tester,
-      CheckInCompletedCard(
-        checkIn: _completed('lighter'),
-        weakInput: true,
-      ),
+      CheckInCompletedCard(checkIn: _completed('lighter'), weakInput: true),
     );
 
-    expect(find.text(ConsumerUiCopy.inputQualityEarlyReadLabel), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.inputQualityEarlyReadLabel),
+      findsOneWidget,
+    );
     expect(
       find.textContaining('Add one clearer moment to make this more useful.'),
       findsOneWidget,
@@ -98,14 +109,14 @@ void main() {
   testWidgets('result card can show Spanish labels', (tester) async {
     await _pump(
       tester,
-      CheckInCompletedCard(
-        checkIn: _completed('lighter'),
-        languageCode: 'es',
-      ),
+      CheckInCompletedCard(checkIn: _completed('lighter'), languageCode: 'es'),
     );
 
     expect(find.text(localized('usefulTakeaway', 'es')), findsOneWidget);
-    expect(find.text(localized('result.lighter.headline', 'es')), findsOneWidget);
+    expect(
+      find.text(localized('result.lighter.headline', 'es')),
+      findsOneWidget,
+    );
     expect(find.text(localized('makeThisMoreUseful', 'es')), findsOneWidget);
     // The result headline and loop-closed title are localized too.
     expect(find.text(localized('feltLighter', 'es')), findsOneWidget);
@@ -115,8 +126,9 @@ void main() {
     expect(find.text('It felt lighter today.'), findsNothing);
   });
 
-  testWidgets('Show original reveals the preserved original text on tap',
-      (tester) async {
+  testWidgets('Show original reveals the preserved original text on tap', (
+    tester,
+  ) async {
     await _pump(
       tester,
       CheckInCompletedCard(
@@ -147,39 +159,45 @@ void main() {
     expect(find.text(localized('showOriginal', 'en')), findsNothing);
   });
 
-  testWidgets('useful takeaway appears above the usefulness rating',
-      (tester) async {
+  testWidgets('useful takeaway appears above the usefulness rating', (
+    tester,
+  ) async {
     await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
 
-    final takeawayY =
-        tester.getTopLeft(find.text(ConsumerUiCopy.usefulTakeawayTitle)).dy;
+    final takeawayY = tester
+        .getTopLeft(find.text(ConsumerUiCopy.usefulTakeawayTitle))
+        .dy;
     final ratingY = tester
         .getTopLeft(find.text(ConsumerUiCopy.checkInResultUsefulPrompt))
         .dy;
     expect(takeawayY, lessThan(ratingY));
   });
 
-  testWidgets('Make this more useful opens the sheet and refines the takeaway',
-      (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+  testWidgets(
+    'Make this more useful opens the sheet and refines the takeaway',
+    (tester) async {
+      await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
 
-    expect(find.text('Something made this lighter.'), findsOneWidget);
+      expect(find.text('Something made this lighter.'), findsOneWidget);
 
-    await tester.tap(find.text(ConsumerUiCopy.makeResultMoreUsefulCta));
-    await tester.pumpAndSettle();
-    expect(
-      find.text(ConsumerUiCopy.makeResultMoreUsefulSheetTitle),
-      findsOneWidget,
-    );
+      await tester.tap(find.text(ConsumerUiCopy.makeResultMoreUsefulCta));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(ConsumerUiCopy.makeResultMoreUsefulSheetTitle),
+        findsOneWidget,
+      );
 
-    await tester.tap(find.text(ConsumerUiCopy.makeResultMoreUsefulMoreSpecific));
-    await tester.pumpAndSettle();
+      await tester.tap(
+        find.text(ConsumerUiCopy.makeResultMoreUsefulMoreSpecific),
+      );
+      await tester.pumpAndSettle();
 
-    // The takeaway is rebuilt as the concrete variant.
-    expect(find.text('Make this more concrete.'), findsOneWidget);
-    expect(find.text('What exact moment did this show up?'), findsOneWidget);
-    expect(find.text('Something made this lighter.'), findsNothing);
-  });
+      // The takeaway is rebuilt as the concrete variant.
+      expect(find.text('Make this more concrete.'), findsOneWidget);
+      expect(find.text('What exact moment did this show up?'), findsOneWidget);
+      expect(find.text('Something made this lighter.'), findsNothing);
+    },
+  );
 
   testWidgets('rating appears after the next-check slot', (tester) async {
     await _pump(
@@ -193,16 +211,18 @@ void main() {
     expect(find.byKey(const Key('next-check-slot')), findsOneWidget);
     expect(find.text(ConsumerUiCopy.checkInResultUsefulPrompt), findsOneWidget);
 
-    final slotY =
-        tester.getTopLeft(find.byKey(const Key('next-check-slot'))).dy;
+    final slotY = tester
+        .getTopLeft(find.byKey(const Key('next-check-slot')))
+        .dy;
     final ratingY = tester
         .getTopLeft(find.text(ConsumerUiCopy.checkInResultUsefulPrompt))
         .dy;
     expect(slotY, lessThan(ratingY));
   });
 
-  testWidgets('go deeper button shows for an obvious result and expands',
-      (tester) async {
+  testWidgets('go deeper button shows for an obvious result and expands', (
+    tester,
+  ) async {
     await _pump(
       tester,
       CheckInCompletedCard(checkIn: _completed('showed_up_again')),
@@ -233,7 +253,9 @@ void main() {
     expect(find.text('Today was different.'), findsOneWidget);
   });
 
-  testWidgets('patterns completed card shows a compact takeaway', (tester) async {
+  testWidgets('patterns completed card shows a compact takeaway', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -252,13 +274,12 @@ void main() {
     expect(find.text('Record another moment'), findsOneWidget);
   });
 
-  testWidgets('tapping Not really shows what was wrong and reason options',
-      (tester) async {
+  testWidgets('tapping Not really shows what was wrong and reason options', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: CheckInResultRatingPrompt(checkInId: 't1'),
-        ),
+        home: Scaffold(body: CheckInResultRatingPrompt(checkInId: 't1')),
       ),
     );
 
@@ -275,28 +296,30 @@ void main() {
     expect(find.text('Confusing'), findsOneWidget);
   });
 
-  testWidgets('shows one feedback row at a time: rating then correction chips',
-      (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+  testWidgets(
+    'shows one feedback row at a time: rating then correction chips',
+    (tester) async {
+      await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
 
-    // Quick usefulness rating is the only feedback row first — no duplicate.
-    expect(find.text('Was this useful?'), findsOneWidget);
-    expect(find.text('Too generic'), findsNothing);
+      // Quick usefulness rating is the only feedback row first — no duplicate.
+      expect(find.text('Was this useful?'), findsOneWidget);
+      expect(find.text('Too generic'), findsNothing);
 
-    await tester.ensureVisible(find.text('Sort of'));
-    await tester.tap(find.text('Sort of'));
-    await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Sort of'));
+      await tester.tap(find.text('Sort of'));
+      await tester.pumpAndSettle();
 
-    // Now the sharper correction chips replace the rating row.
-    expect(find.text('Too generic'), findsOneWidget);
-    expect(find.text('More specific'), findsOneWidget);
+      // Now the sharper correction chips replace the rating row.
+      expect(find.text('Too generic'), findsOneWidget);
+      expect(find.text('More specific'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Too generic'));
-    await tester.tap(find.text('Too generic'));
-    await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Too generic'));
+      await tester.tap(find.text('Too generic'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Got it.'), findsOneWidget);
-  });
+      expect(find.text('Got it.'), findsOneWidget);
+    },
+  );
 
   test('post-save policy shows completed result before archive proof', () {
     final d = decideRecordStack(

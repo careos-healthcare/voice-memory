@@ -66,7 +66,9 @@ class _WeeklyRecapCardState extends State<WeeklyPatternRecapCard> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             recap.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -79,18 +81,28 @@ class _WeeklyRecapCardState extends State<WeeklyPatternRecapCard> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               recap.usefulLine!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
-              ).copyWith(fontSize: 13, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textSecondary,
+                  ).copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           if (hasNext) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               recap.nextQuestion!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
             const SizedBox(height: AppSpacing.md),
             SizedBox(

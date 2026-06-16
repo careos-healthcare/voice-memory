@@ -9,7 +9,7 @@ import 'pattern_profile_engine.dart';
 import 'pattern_profile_model.dart';
 
 /// Loads saved pattern data and builds a [PatternProfile]. Always fails softly.
-abstract final class PatternProfileCoordinator {
+abstract class PatternProfileCoordinator {
   PatternProfileCoordinator._();
 
   static Future<PatternProfile?> load() async {

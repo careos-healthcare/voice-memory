@@ -41,11 +41,14 @@ class BlindSpotInsightEngine {
     var positiveMentions = 0;
 
     for (final e in entries) {
-      final blob =
-          '${e.transcript} ${e.reflection.concreteObservation}'.toLowerCase();
+      final blob = '${e.transcript} ${e.reflection.concreteObservation}'
+          .toLowerCase();
       if (!blob.contains(topic)) continue;
       mentions.add(e);
-      if (InsightTextSignals.containsAny(blob, InsightTextSignals.positiveMarkers)) {
+      if (InsightTextSignals.containsAny(
+        blob,
+        InsightTextSignals.positiveMarkers,
+      )) {
         positiveMentions++;
       }
     }
@@ -92,15 +95,20 @@ class BlindSpotInsightEngine {
     final satisfactionHits = <JournalEntry>[];
 
     for (final e in entries) {
-      final lower =
-          '${e.transcript} ${e.reflection.concreteObservation}'.toLowerCase();
+      final lower = '${e.transcript} ${e.reflection.concreteObservation}'
+          .toLowerCase();
       if (lower.contains('achiev') ||
           lower.contains('prove') ||
           lower.contains('succeed')) {
         achievementHits.add(e);
       }
-      if (InsightTextSignals.containsAny(lower, InsightTextSignals.positiveMarkers) &&
-          (lower.contains('satisf') || lower.contains('enough') || lower.contains('content'))) {
+      if (InsightTextSignals.containsAny(
+            lower,
+            InsightTextSignals.positiveMarkers,
+          ) &&
+          (lower.contains('satisf') ||
+              lower.contains('enough') ||
+              lower.contains('content'))) {
         satisfactionHits.add(e);
       }
     }
@@ -146,13 +154,13 @@ class BlindSpotInsightEngine {
   ];
 
   String _topicLabel(String topic) => switch (topic) {
-        'work' => 'Work',
-        'relationship' => 'Relationships',
-        'family' => 'Family',
-        'money' => 'Money',
-        'health' => 'Health',
-        _ => topic,
-      };
+    'work' => 'Work',
+    'relationship' => 'Relationships',
+    'family' => 'Family',
+    'money' => 'Money',
+    'health' => 'Health',
+    _ => topic,
+  };
 }
 
 extension _FirstOrNull<E> on List<E> {

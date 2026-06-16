@@ -132,23 +132,14 @@ List<ArchiveSearchResult> _momentsAbout(
     return _freeText(query, sorted, null);
   }
 
-  return sorted
-      .where((m) => _matchesTerm(m, term))
-      .map(_fromMoment)
-      .toList();
+  return sorted.where((m) => _matchesTerm(m, term)).map(_fromMoment).toList();
 }
 
 List<ArchiveSearchResult> _feltLighter(List<KeyMoment> sorted) =>
-    sorted
-        .where((m) => m.resultHint == 'lighter')
-        .map(_fromMoment)
-        .toList();
+    sorted.where((m) => m.resultHint == 'lighter').map(_fromMoment).toList();
 
 List<ArchiveSearchResult> _feltHeavier(List<KeyMoment> sorted) =>
-    sorted
-        .where((m) => m.resultHint == 'heavier')
-        .map(_fromMoment)
-        .toList();
+    sorted.where((m) => m.resultHint == 'heavier').map(_fromMoment).toList();
 
 List<ArchiveSearchResult> _changed(
   ArchiveSearchQuery query,
@@ -213,56 +204,65 @@ bool _matchesTerm(KeyMoment m, String term) {
 }
 
 String _momentHaystack(KeyMoment m) => [
-      m.originalText,
-      m.shortSummary,
-      m.title,
-      m.patternTitle ?? '',
-      m.resultHint ?? '',
-      m.tags.join(' '),
-      m.dayKey,
-    ].join(' ').toLowerCase();
+  m.originalText,
+  m.shortSummary,
+  m.title,
+  m.patternTitle ?? '',
+  m.resultHint ?? '',
+  m.tags.join(' '),
+  m.dayKey,
+].join(' ').toLowerCase();
 
 String _patternMapHaystack(PatternMap map) => [
-      map.patternTitle,
-      map.usuallyStartsBefore ?? '',
-      map.oftenFeelsLike ?? '',
-      map.getsLighterWhen ?? '',
-      map.getsHeavierWhen ?? '',
-      map.nextCheck ?? '',
-      map.confidenceLabel,
-    ].join(' ').toLowerCase();
+  map.patternTitle,
+  map.usuallyStartsBefore ?? '',
+  map.oftenFeelsLike ?? '',
+  map.getsLighterWhen ?? '',
+  map.getsHeavierWhen ?? '',
+  map.nextCheck ?? '',
+  map.confidenceLabel,
+].join(' ').toLowerCase();
 
 ArchiveSearchResult _fromMoment(KeyMoment m) => ArchiveSearchResult(
-      id: 'moment-${m.id}',
-      title: m.title,
-      body: m.shortSummary.isNotEmpty ? m.shortSummary : m.originalText,
-      date: m.date,
-      momentId: m.id,
-      patternTitle: m.patternTitle,
-      resultHint: m.resultHint,
-      tags: m.tags,
-      nextCheck: m.nextCheck,
-    );
+  id: 'moment-${m.id}',
+  title: m.title,
+  body: m.shortSummary.isNotEmpty ? m.shortSummary : m.originalText,
+  date: m.date,
+  momentId: m.id,
+  patternTitle: m.patternTitle,
+  resultHint: m.resultHint,
+  tags: m.tags,
+  nextCheck: m.nextCheck,
+);
 
 ArchiveSearchResult _fromTimelineEvent(
   ArchiveEvolutionEvent event, {
   String? resultHint,
-}) =>
-    ArchiveSearchResult(
-      id: 'timeline-${event.id}',
-      title: event.title,
-      body: event.body,
-      date: event.date,
-      momentId: event.momentId,
-      patternTitle: event.patternTitle,
-      resultHint: resultHint,
-      nextCheck: event.nextCheck,
-    );
+}) => ArchiveSearchResult(
+  id: 'timeline-${event.id}',
+  title: event.title,
+  body: event.body,
+  date: event.date,
+  momentId: event.momentId,
+  patternTitle: event.patternTitle,
+  resultHint: resultHint,
+  nextCheck: event.nextCheck,
+);
 
 String _dayLabel(DateTime date) {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${months[date.month - 1]} ${date.day}';
 }
@@ -278,13 +278,12 @@ class ArchiveSearchEngine {
     PatternMap? patternMap,
     ArchiveEvolutionTimeline? timeline,
     DateTime? now,
-  }) =>
-      searchArchive(
-        query: query,
-        moments: moments,
-        memory: memory,
-        patternMap: patternMap,
-        timeline: timeline,
-        now: now,
-      );
+  }) => searchArchive(
+    query: query,
+    moments: moments,
+    memory: memory,
+    patternMap: patternMap,
+    timeline: timeline,
+    now: now,
+  );
 }

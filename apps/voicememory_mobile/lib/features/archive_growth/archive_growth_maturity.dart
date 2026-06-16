@@ -1,11 +1,5 @@
 /// Recording-count maturity levels (Growth Loop V1).
-enum ArchiveGrowthLevel {
-  seed,
-  growing,
-  established,
-  insightful,
-  historian,
-}
+enum ArchiveGrowthLevel { seed, growing, established, insightful, historian }
 
 class ArchiveGrowthMaturity {
   const ArchiveGrowthMaturity({

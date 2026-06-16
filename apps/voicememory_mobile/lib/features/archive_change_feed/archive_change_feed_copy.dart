@@ -1,5 +1,5 @@
 /// User-facing Archive Change Feed strings.
-abstract final class ArchiveChangeFeedCopy {
+abstract class ArchiveChangeFeedCopy {
   ArchiveChangeFeedCopy._();
 
   static const String sectionTitle = 'What Changed Since Last Review';

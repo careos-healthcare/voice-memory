@@ -45,22 +45,22 @@ class Reflection {
   }
 
   Map<String, dynamic> toJson() => {
-        'mood': mood,
-        'emotionalIntensity': emotionalIntensity,
-        'recurringThemes': recurringThemes,
-        'hiddenConcern': '',
-        'positiveSignal': '',
-        'recommendation': '',
-        'exactLanguagePattern': exactLanguagePattern,
-        'concreteObservation': concreteObservation,
-        'repeatedSignal': repeatedSignal,
-        if (tensionOrContradiction != null)
-          'tensionOrContradiction': tensionOrContradiction,
-        if (avoidedOrVagueArea != null) 'avoidedOrVagueArea': avoidedOrVagueArea,
-        if (nextSmallAction != null) 'nextSmallAction': nextSmallAction,
-        if (patternObservations.isNotEmpty)
-          'patternObservations': patternObservations,
-      };
+    'mood': mood,
+    'emotionalIntensity': emotionalIntensity,
+    'recurringThemes': recurringThemes,
+    'hiddenConcern': '',
+    'positiveSignal': '',
+    'recommendation': '',
+    'exactLanguagePattern': exactLanguagePattern,
+    'concreteObservation': concreteObservation,
+    'repeatedSignal': repeatedSignal,
+    if (tensionOrContradiction != null)
+      'tensionOrContradiction': tensionOrContradiction,
+    if (avoidedOrVagueArea != null) 'avoidedOrVagueArea': avoidedOrVagueArea,
+    if (nextSmallAction != null) 'nextSmallAction': nextSmallAction,
+    if (patternObservations.isNotEmpty)
+      'patternObservations': patternObservations,
+  };
 
   static String? _optionalString(dynamic value) {
     if (value is! String) return null;

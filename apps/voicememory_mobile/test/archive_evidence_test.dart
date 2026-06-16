@@ -30,8 +30,10 @@ JournalEntry _entry({
 
 void main() {
   test('minimum evidence uses pattern review target', () {
-    expect(archiveMinEvidenceReflections,
-        AppConfig.patternReviewReflectionTarget);
+    expect(
+      archiveMinEvidenceReflections,
+      AppConfig.patternReviewReflectionTarget,
+    );
   });
 
   test('short transcripts do not count as evidence', () {
@@ -49,7 +51,9 @@ void main() {
       (i) => _entry(
         id: '$i',
         transcript: 'This is a long enough transcript about work stress $i.',
-        observation: i == 4 ? 'I keep avoiding hard conversations at work.' : '',
+        observation: i == 4
+            ? 'I keep avoiding hard conversations at work.'
+            : '',
       ),
     );
     final state = buildArchiveStateObjectV3(entries: entries);

@@ -18,9 +18,9 @@ class ArchiveSynthesisService {
     required ArchiveSynthesisStore store,
     required ApiClient api,
     required DeviceIdStore deviceIds,
-  })  : _store = store,
-        _api = api,
-        _deviceIds = deviceIds;
+  }) : _store = store,
+       _api = api,
+       _deviceIds = deviceIds;
 
   final ArchiveSynthesisStore _store;
   final ApiClient _api;
@@ -61,10 +61,7 @@ class ArchiveSynthesisService {
 
     final cached = await _store.readMonthly(cacheKey: cacheKey);
     if (cached != null) {
-      return ArchiveSynthesisLoadResult.ready(
-        review: cached,
-        fromCache: true,
-      );
+      return ArchiveSynthesisLoadResult.ready(review: cached, fromCache: true);
     }
 
     final shouldFetch = ArchiveSynthesisTrigger.shouldRequestSynthesis(
@@ -212,7 +209,8 @@ class ArchiveSynthesisService {
       return ArchiveHistorianLoadResult.ready(report: cached, fromCache: true);
     }
 
-    final historianDue = meta.lastHistorianMonthKey != monthKey ||
+    final historianDue =
+        meta.lastHistorianMonthKey != monthKey ||
         meta.lastArchiveHash != archiveHash;
 
     if (!historianDue) {
@@ -336,34 +334,34 @@ class ArchiveSynthesisLoadResult {
   });
 
   const ArchiveSynthesisLoadResult.disabled()
-      : this._(status: ArchiveSynthesisStatus.disabled);
+    : this._(status: ArchiveSynthesisStatus.disabled);
 
   const ArchiveSynthesisLoadResult.notDue()
-      : this._(status: ArchiveSynthesisStatus.notDue);
+    : this._(status: ArchiveSynthesisStatus.notDue);
 
   const ArchiveSynthesisLoadResult.belowThreshold(int count)
-      : this._(
-          status: ArchiveSynthesisStatus.belowThreshold,
-          eligibleCount: count,
-        );
+    : this._(
+        status: ArchiveSynthesisStatus.belowThreshold,
+        eligibleCount: count,
+      );
 
   const ArchiveSynthesisLoadResult.backendUnavailable()
-      : this._(status: ArchiveSynthesisStatus.backendUnavailable);
+    : this._(status: ArchiveSynthesisStatus.backendUnavailable);
 
   const ArchiveSynthesisLoadResult.fetchFailed()
-      : this._(status: ArchiveSynthesisStatus.fetchFailed);
+    : this._(status: ArchiveSynthesisStatus.fetchFailed);
 
   const ArchiveSynthesisLoadResult.requiresPro()
-      : this._(status: ArchiveSynthesisStatus.requiresPro);
+    : this._(status: ArchiveSynthesisStatus.requiresPro);
 
   const ArchiveSynthesisLoadResult.ready({
     required ArchiveMonthlyReview review,
     required bool fromCache,
   }) : this._(
-          status: ArchiveSynthesisStatus.ready,
-          review: review,
-          fromCache: fromCache,
-        );
+         status: ArchiveSynthesisStatus.ready,
+         review: review,
+         fromCache: fromCache,
+       );
 
   final ArchiveSynthesisStatus status;
   final ArchiveMonthlyReview? review;
@@ -393,28 +391,28 @@ class ArchiveHistorianLoadResult {
   });
 
   const ArchiveHistorianLoadResult.disabled()
-      : this._(status: ArchiveHistorianStatus.disabled);
+    : this._(status: ArchiveHistorianStatus.disabled);
   const ArchiveHistorianLoadResult.notDue()
-      : this._(status: ArchiveHistorianStatus.notDue);
+    : this._(status: ArchiveHistorianStatus.notDue);
   const ArchiveHistorianLoadResult.belowThreshold(int count)
-      : this._(
-          status: ArchiveHistorianStatus.belowThreshold,
-          eligibleCount: count,
-        );
+    : this._(
+        status: ArchiveHistorianStatus.belowThreshold,
+        eligibleCount: count,
+      );
   const ArchiveHistorianLoadResult.backendUnavailable()
-      : this._(status: ArchiveHistorianStatus.backendUnavailable);
+    : this._(status: ArchiveHistorianStatus.backendUnavailable);
   const ArchiveHistorianLoadResult.fetchFailed()
-      : this._(status: ArchiveHistorianStatus.fetchFailed);
+    : this._(status: ArchiveHistorianStatus.fetchFailed);
   const ArchiveHistorianLoadResult.requiresPro()
-      : this._(status: ArchiveHistorianStatus.requiresPro);
+    : this._(status: ArchiveHistorianStatus.requiresPro);
   const ArchiveHistorianLoadResult.ready({
     required ArchiveHistorianReport report,
     required bool fromCache,
   }) : this._(
-          status: ArchiveHistorianStatus.ready,
-          report: report,
-          fromCache: fromCache,
-        );
+         status: ArchiveHistorianStatus.ready,
+         report: report,
+         fromCache: fromCache,
+       );
 
   final ArchiveHistorianStatus status;
   final ArchiveHistorianReport? report;
@@ -443,23 +441,23 @@ class ArchiveDeepDiveNarrativeLoadResult {
   });
 
   const ArchiveDeepDiveNarrativeLoadResult.disabled()
-      : this._(status: ArchiveDeepDiveNarrativeStatus.disabled);
+    : this._(status: ArchiveDeepDiveNarrativeStatus.disabled);
   const ArchiveDeepDiveNarrativeLoadResult.belowThreshold(int count)
-      : this._(status: ArchiveDeepDiveNarrativeStatus.belowThreshold);
+    : this._(status: ArchiveDeepDiveNarrativeStatus.belowThreshold);
   const ArchiveDeepDiveNarrativeLoadResult.backendUnavailable()
-      : this._(status: ArchiveDeepDiveNarrativeStatus.backendUnavailable);
+    : this._(status: ArchiveDeepDiveNarrativeStatus.backendUnavailable);
   const ArchiveDeepDiveNarrativeLoadResult.fetchFailed()
-      : this._(status: ArchiveDeepDiveNarrativeStatus.fetchFailed);
+    : this._(status: ArchiveDeepDiveNarrativeStatus.fetchFailed);
   const ArchiveDeepDiveNarrativeLoadResult.requiresPro()
-      : this._(status: ArchiveDeepDiveNarrativeStatus.requiresPro);
+    : this._(status: ArchiveDeepDiveNarrativeStatus.requiresPro);
   const ArchiveDeepDiveNarrativeLoadResult.ready({
     required ArchiveDeepDiveNarrative narrative,
     required bool fromCache,
   }) : this._(
-          status: ArchiveDeepDiveNarrativeStatus.ready,
-          narrative: narrative,
-          fromCache: fromCache,
-        );
+         status: ArchiveDeepDiveNarrativeStatus.ready,
+         narrative: narrative,
+         fromCache: fromCache,
+       );
 
   final ArchiveDeepDiveNarrativeStatus status;
   final ArchiveDeepDiveNarrative? narrative;

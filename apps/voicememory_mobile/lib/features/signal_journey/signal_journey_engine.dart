@@ -48,8 +48,10 @@ class SignalJourneyEngine {
   }
 
   String watchingLine(SignalJourney journey) {
-    return ConsumerUiCopy.signalJourneyWatchingTemplate
-        .replaceAll('{title}', journey.signalTitle);
+    return ConsumerUiCopy.signalJourneyWatchingTemplate.replaceAll(
+      '{title}',
+      journey.signalTitle,
+    );
   }
 
   String recordMoreLine(SignalJourney journey) {
@@ -77,16 +79,15 @@ class SignalJourneyEngine {
     return ConsumerUiCopy.signalJourneyCompletionWatchDefault;
   }
 
-  bool matchesSignal(SignalJourney journey, {
+  bool matchesSignal(
+    SignalJourney journey, {
     required String signalId,
     String? readId,
     String? categoryId,
     String? signalTitle,
   }) {
     if (journey.signalId == signalId) return true;
-    if (readId != null &&
-        journey.readId != null &&
-        journey.readId == readId) {
+    if (readId != null && journey.readId != null && journey.readId == readId) {
       return true;
     }
     if (categoryId != null &&

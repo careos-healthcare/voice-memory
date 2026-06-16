@@ -33,25 +33,25 @@ class ArchiveReputationCardMobile extends StatelessWidget {
             Text(
               'ARCHIVE REPUTATION',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppTheme.muted,
-                    letterSpacing: 1.2,
-                  ),
+                color: AppTheme.muted,
+                letterSpacing: 1.2,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               'My archive has earned the right to believe this.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.muted,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppTheme.muted),
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Text(
                   'Level',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.muted,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelSmall?.copyWith(color: AppTheme.muted),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -59,8 +59,8 @@ class ArchiveReputationCardMobile extends StatelessWidget {
                     ArchiveReputationEngine.levelLabel(view.level),
                     textAlign: TextAlign.end,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -75,7 +75,9 @@ class ArchiveReputationCardMobile extends StatelessWidget {
                   height: 10,
                   decoration: BoxDecoration(
                     color: index < filled
-                        ? VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.65)
+                        ? VoiceMemoryColors.primaryIndigo.withValues(
+                            alpha: 0.65,
+                          )
                         : VoiceMemoryColors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -85,24 +87,36 @@ class ArchiveReputationCardMobile extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               view.summary,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 6),
             Text(
               "The archive's confidence in this belief depends on the evidence available.",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.muted,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppTheme.muted),
             ),
             if (!compact) ...[
               const SizedBox(height: 12),
-              _metricRow(context, 'Supporting reflections', view.supportingReflections),
+              _metricRow(
+                context,
+                'Supporting reflections',
+                view.supportingReflections,
+              ),
               _metricRow(context, 'Life areas', view.lifeAreas),
               _metricRow(context, 'Days tracked', view.daysTracked),
-              _metricRow(context, 'Contradictions survived', view.contradictionsSurvived),
-              _metricRow(context, 'Belief revisions', view.beliefChangesObserved),
+              _metricRow(
+                context,
+                'Contradictions survived',
+                view.contradictionsSurvived,
+              ),
+              _metricRow(
+                context,
+                'Belief revisions',
+                view.beliefChangesObserved,
+              ),
               _metricRow(context, 'Accuracy signals', view.accuracySignals),
             ],
           ],

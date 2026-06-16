@@ -63,7 +63,10 @@ class _LowEffortPromptsState extends State<LowEffortPrompts> {
             ),
             TextButton(
               onPressed: () => setState(() => _expanded = false),
-              child: const Text('Hide', style: TextStyle(color: AppTheme.muted)),
+              child: const Text(
+                'Hide',
+                style: TextStyle(color: AppTheme.muted),
+              ),
             ),
           ],
         ),

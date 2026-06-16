@@ -8,11 +8,10 @@ import 'archive_compression_model.dart';
 import 'archive_compression_store.dart';
 
 /// Loads similar-moment groups and persists keep / split / hide decisions.
-abstract final class ArchiveCompressionCoordinator {
+abstract class ArchiveCompressionCoordinator {
   ArchiveCompressionCoordinator._();
 
-  static ArchiveCompressionStore _store() =>
-      ArchiveCompressionStore.instance();
+  static ArchiveCompressionStore _store() => ArchiveCompressionStore.instance();
 
   static Future<List<ArchiveMomentGroup>> loadGroups() async {
     if (ScreenshotMode.archiveCompressionPreview) {

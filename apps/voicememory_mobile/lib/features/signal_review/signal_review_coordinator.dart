@@ -22,7 +22,7 @@ import 'signal_review_model.dart';
 import 'signal_review_store.dart';
 
 /// Orchestrates signal review creation and user actions.
-abstract final class SignalReviewCoordinator {
+abstract class SignalReviewCoordinator {
   SignalReviewCoordinator._();
 
   static const _engine = SignalReviewEngine();
@@ -162,10 +162,7 @@ abstract final class SignalReviewCoordinator {
         rotation: (journey?.supportingCount ?? 0) + 1,
       );
       await LoopModeStore.instance().save(
-        activeLoop.copyWith(
-          activePrompt: prompt,
-          updatedAt: DateTime.now(),
-        ),
+        activeLoop.copyWith(activePrompt: prompt, updatedAt: DateTime.now()),
       );
     }
 
@@ -211,7 +208,8 @@ abstract final class SignalReviewCoordinator {
   }
 
   static String keepWatchingBannerFor(SignalReview review) {
-    if (review.isLoopSpecificReview) return LoopModeCopy.reviewKeepWatchingSaved;
+    if (review.isLoopSpecificReview)
+      return LoopModeCopy.reviewKeepWatchingSaved;
     return '';
   }
 

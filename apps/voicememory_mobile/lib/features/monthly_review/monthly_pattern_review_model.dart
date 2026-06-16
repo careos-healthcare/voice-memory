@@ -47,16 +47,16 @@ class MonthlyPatternReview {
   static bool _has(String? v) => (v ?? '').trim().isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'monthLabel': monthLabel,
-        'momentCount': momentCount,
-        'checkInCount': checkInCount,
-        if (keptRepeating != null) 'keptRepeating': keptRepeating,
-        if (gotLighter != null) 'gotLighter': gotLighter,
-        if (gotHeavier != null) 'gotHeavier': gotHeavier,
-        if (helped != null) 'helped': helped,
-        if (nextCheck != null) 'nextCheck': nextCheck,
-        'confidenceLabel': confidenceLabel,
-      };
+    'monthLabel': monthLabel,
+    'momentCount': momentCount,
+    'checkInCount': checkInCount,
+    if (keptRepeating != null) 'keptRepeating': keptRepeating,
+    if (gotLighter != null) 'gotLighter': gotLighter,
+    if (gotHeavier != null) 'gotHeavier': gotHeavier,
+    if (helped != null) 'helped': helped,
+    if (nextCheck != null) 'nextCheck': nextCheck,
+    'confidenceLabel': confidenceLabel,
+  };
 
   static MonthlyPatternReview? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

@@ -36,10 +36,10 @@ class DiscoverThemeEngine {
       final trend = before == 0
           ? ThemeTrendDirection.up
           : freq > before
-              ? ThemeTrendDirection.up
-              : freq < before
-                  ? ThemeTrendDirection.down
-                  : ThemeTrendDirection.flat;
+          ? ThemeTrendDirection.up
+          : freq < before
+          ? ThemeTrendDirection.down
+          : ThemeTrendDirection.flat;
       insights.add(
         DiscoverThemeInsight(
           name: _displayNames[key] ?? _titleCase(key),
@@ -60,7 +60,10 @@ class DiscoverThemeEngine {
     return raw[0].toUpperCase() + raw.substring(1);
   }
 
-  static List<String> _entryIdsForTheme(List<JournalEntry> entries, String key) {
+  static List<String> _entryIdsForTheme(
+    List<JournalEntry> entries,
+    String key,
+  ) {
     final ids = <String>[];
     for (final e in entries) {
       final themes = e.reflection.recurringThemes

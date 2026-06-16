@@ -27,17 +27,11 @@ void main() {
         ),
       );
 
-      expect(
-        find.text(ArchiveIntelligenceProofCopy.headline),
-        findsOneWidget,
-      );
+      expect(find.text(ArchiveIntelligenceProofCopy.headline), findsOneWidget);
       expect(find.textContaining('4 recurring themes'), findsOneWidget);
       expect(find.textContaining('1 active theory'), findsOneWidget);
       expect(find.textContaining('3 changes over time'), findsOneWidget);
-      expect(
-        find.text(ArchiveIntelligenceProofCopy.fallback),
-        findsNothing,
-      );
+      expect(find.text(ArchiveIntelligenceProofCopy.fallback), findsNothing);
     });
 
     testWidgets('shows fallback when counts are zero', (tester) async {
@@ -61,14 +55,8 @@ void main() {
         ),
       );
 
-      expect(
-        find.text(ArchiveIntelligenceProofCopy.fallback),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ArchiveIntelligenceProofCopy.headline),
-        findsNothing,
-      );
+      expect(find.text(ArchiveIntelligenceProofCopy.fallback), findsOneWidget);
+      expect(find.text(ArchiveIntelligenceProofCopy.headline), findsNothing);
     });
   });
 }

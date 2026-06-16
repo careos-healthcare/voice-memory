@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/acquisition/acquisition_intent_model.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_intent_store.dart';
 import 'package:voicememory_mobile/features/acquisition/audience_wedge_model.dart';
 import 'package:voicememory_mobile/features/acquisition/audience_wedge_store.dart';
 import 'package:voicememory_mobile/features/quality/first_insight_specificity_store.dart';
@@ -139,7 +138,13 @@ void main() {
   });
 
   test('micro feedback row copy avoids banned terms', () {
-    const banned = ['therapy', 'coach', 'diagnosis', 'AI friend', 'VoiceMemory'];
+    const banned = [
+      'therapy',
+      'coach',
+      'diagnosis',
+      'AI friend',
+      'VoiceMemory',
+    ];
     for (final s in [
       ConsumerUiCopy.readMicroFeedbackQuestion,
       ConsumerUiCopy.readMicroFeedbackUseful,
@@ -151,14 +156,13 @@ void main() {
     }
   });
 
-  testWidgets('micro feedback row renders question and buttons', (tester) async {
+  testWidgets('micro feedback row renders question and buttons', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: ReadMicroFeedbackRow(
-            onUseful: () {},
-            onNotQuite: () {},
-          ),
+          body: ReadMicroFeedbackRow(onUseful: () {}, onNotQuite: () {}),
         ),
       ),
     );
@@ -269,16 +273,17 @@ void main() {
         find.text(ConsumerUiCopy.acquisitionIntentQuestion),
         findsOneWidget,
       );
-      expect(find.text('Saying yes when I have no capacity'), findsOneWidget);
+      expect(
+        find.text(AudienceWedge.sayingYesNoCapacity.label),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.acquisitionIntentSkip), findsOneWidget);
     });
 
     test('wedge selection stored and adjusts first prompt', () async {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
-      await AudienceWedgeStore.instance().save(
-        AudienceWedge.sayingYesCapacity,
-      );
+      await AudienceWedgeStore.instance().save(AudienceWedge.sayingYesCapacity);
       final prompt = await AudienceWedgeStore.instance().firstRecordingPrompt();
       expect(prompt, AudienceWedge.sayingYesCapacity.firstPrompt);
       expect(prompt, isNot(contains('I want freedom')));
@@ -374,10 +379,7 @@ void main() {
 
     test('acquisition mismatch without first moment', () {
       final result = engine.diagnose(
-        _input(
-          first: false,
-          intent: AcquisitionIntent.workPressure,
-        ),
+        _input(first: false, intent: AcquisitionIntent.workPressure),
       );
       expect(result.bottleneck, RetentionBottleneckV2.acquisitionMismatch);
     });
@@ -416,7 +418,8 @@ void main() {
           onboardingIntent: null,
           journeyEvidenceCount: 1,
           reviewConfirmed: false,
-          firstInsightSpecificityRating: FirstInsightSpecificityRating.tooGeneric,
+          firstInsightSpecificityRating:
+              FirstInsightSpecificityRating.tooGeneric,
         ),
       );
       expect(result.bottleneck, RetentionBottleneckV2.insightTooGeneric);

@@ -15,11 +15,15 @@ class OneSmallRecording {
   /// Keeps the card focused — a hint of where it came from, nothing more.
   static const int maxTerms = 3;
 
-  static const String defaultTitle = 'Today\u2019s one small recording';
+  static const String defaultTitle = 'One small recording';
   static const String defaultBasedOnLine = 'Based on your thread plan';
   static const String defaultSupportingLine =
-      'You do not need to solve everything today.';
+      'Just capture what happened. You do not need to solve it.';
   static const String recordCtaLabel = 'Record this';
+
+  /// Shown under the primary action so one clear starting point wins over
+  /// many equal choices.
+  static const String restCanWaitLine = 'Start here. The rest can wait.';
 
   /// False when the archive holds no plan or suggestion evidence.
   final bool hasRecording;

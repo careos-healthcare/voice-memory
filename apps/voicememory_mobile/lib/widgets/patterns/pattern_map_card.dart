@@ -66,7 +66,9 @@ class PatternMapCard extends StatelessWidget {
           ],
           Text(
             map.patternTitle,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: 2),
           if (quality.shouldShow)
@@ -131,13 +133,12 @@ class PatternMapCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             value,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
-            ).copyWith(
-              fontSize: emphasize ? 16 : 15,
-              fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
-              height: 1.4,
-            ),
+            style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+                .copyWith(
+                  fontSize: emphasize ? 16 : 15,
+                  fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
+                  height: 1.4,
+                ),
           ),
         ],
       ),
@@ -154,8 +155,18 @@ class PatternMapCard extends StatelessWidget {
       return 'yesterday';
     }
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }

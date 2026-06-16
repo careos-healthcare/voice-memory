@@ -17,10 +17,7 @@ import 'archive_intelligence_upgrade_card.dart';
 
 /// Archive Monthly Review — Pro GPT synthesis (deterministic archive unchanged).
 class ArchiveMonthlyReviewSection extends StatefulWidget {
-  const ArchiveMonthlyReviewSection({
-    super.key,
-    required this.view,
-  });
+  const ArchiveMonthlyReviewSection({super.key, required this.view});
 
   final ArchiveV1View view;
 
@@ -59,7 +56,9 @@ class _ArchiveMonthlyReviewSectionState
     if (!ArchiveSynthesisProGate.canAccessArchiveIntelligence(entitlements)) {
       if (!mounted) return;
       setState(() {
-        _showUpgrade = ArchiveSynthesisProGate.shouldShowUpgradeTeaser(widget.view);
+        _showUpgrade = ArchiveSynthesisProGate.shouldShowUpgradeTeaser(
+          widget.view,
+        );
         _result = null;
         _loading = false;
       });
@@ -134,10 +133,7 @@ class _ArchiveMonthlyReviewSectionState
               if (result.fromCache)
                 Text(
                   ArchiveSynthesisCopy.cachedBadge,
-                  style: const TextStyle(
-                    color: AppTheme.muted,
-                    fontSize: 11,
-                  ),
+                  style: const TextStyle(color: AppTheme.muted, fontSize: 11),
                 ),
             ],
           ),
@@ -176,17 +172,13 @@ class _ArchiveMonthlyReviewSectionState
               review,
             ),
           if (review.biggestSurprise != null)
-            _section(
-              ArchiveSynthesisCopy.biggestSurpriseTitle,
-              [review.biggestSurprise!],
-              review,
-            ),
+            _section(ArchiveSynthesisCopy.biggestSurpriseTitle, [
+              review.biggestSurprise!,
+            ], review),
           if (review.strongestContradiction != null)
-            _section(
-              ArchiveSynthesisCopy.strongestContradictionTitle,
-              [review.strongestContradiction!],
-              review,
-            ),
+            _section(ArchiveSynthesisCopy.strongestContradictionTitle, [
+              review.strongestContradiction!,
+            ], review),
           if (review.evidenceFor.isNotEmpty)
             _section(
               ArchiveSynthesisCopy.evidenceForTitle,
@@ -214,10 +206,7 @@ class _ArchiveMonthlyReviewSectionState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: VoiceMemoryTypography.sectionLabelStyle(),
-          ),
+          Text(title, style: VoiceMemoryTypography.sectionLabelStyle()),
           const SizedBox(height: 8),
           ...items.map((item) => _conclusionTile(item, review: review)),
         ],

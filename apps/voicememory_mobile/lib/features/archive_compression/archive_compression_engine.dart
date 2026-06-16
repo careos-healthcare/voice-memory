@@ -145,11 +145,9 @@ ArchiveMomentGroup _buildGroup({
       tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
     }
   }
-  final tags = tagCounts.entries
-      .where((e) => e.value >= 2)
-      .map((e) => e.key)
-      .toList()
-    ..sort();
+  final tags =
+      tagCounts.entries.where((e) => e.value >= 2).map((e) => e.key).toList()
+        ..sort();
 
   final title = patternTitle?.trim().isNotEmpty == true
       ? patternTitle!.trim()
@@ -170,7 +168,10 @@ ArchiveMomentGroup _buildGroup({
   );
 }
 
-String _groupId({required String? patternTitle, required List<String> momentIds}) {
+String _groupId({
+  required String? patternTitle,
+  required List<String> momentIds,
+}) {
   if (patternTitle != null && patternTitle.trim().isNotEmpty) {
     return 'grp_pattern_${patternTitle.trim().hashCode}';
   }

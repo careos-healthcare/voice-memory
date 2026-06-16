@@ -43,16 +43,13 @@ const _statusLabels = {
 const _statusLines = {
   ArchiveLivingStatusMobile.learning:
       'Your archive is still gathering a working belief.',
-  ArchiveLivingStatusMobile.investigating:
-      'New evidence is still arriving.',
-  ArchiveLivingStatusMobile.strengthening:
-      'This belief is gaining support.',
+  ArchiveLivingStatusMobile.investigating: 'New evidence is still arriving.',
+  ArchiveLivingStatusMobile.strengthening: 'This belief is gaining support.',
   ArchiveLivingStatusMobile.uncertain:
       'The archive is weighing conflicting evidence.',
   ArchiveLivingStatusMobile.revising:
       'The archive is reconsidering one belief.',
-  ArchiveLivingStatusMobile.stable:
-      'This belief has remained consistent.',
+  ArchiveLivingStatusMobile.stable: 'This belief has remained consistent.',
 };
 
 ArchiveLivingStatusMobile deriveMobileArchiveLivingStatus({

@@ -73,7 +73,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
           ),
           const SizedBox(height: 16),
           if (entries.isEmpty)
-            const Text('No reflections yet. Record your first on the Record tab.')
+            const Text(
+              'No reflections yet. Record your first on the Record tab.',
+            )
           else
             ...entries.take(12).map((e) {
               final badge = timelineSyncBadgeLabel(e.syncStatus);
@@ -94,7 +96,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
                     ],
                   ],
                 ),
-                subtitle: Text(e.createdAt.toLocal().toString().split('.').first),
+                subtitle: Text(
+                  e.createdAt.toLocal().toString().split('.').first,
+                ),
                 onTap: () => context.push('/entry/${e.id}'),
               );
             }),

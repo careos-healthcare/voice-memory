@@ -35,8 +35,9 @@ class _MissedCheckInReasonPromptState extends State<MissedCheckInReasonPrompt> {
       checkInId: widget.checkIn.id,
       reason: reason,
     );
-    await HookDiagnosisStore.instance()
-        .markMissedReasonPromptShown(widget.checkIn.id);
+    await HookDiagnosisStore.instance().markMissedReasonPromptShown(
+      widget.checkIn.id,
+    );
     widget.onAnswered?.call();
   }
 
@@ -67,7 +68,10 @@ class _MissedCheckInReasonPromptState extends State<MissedCheckInReasonPrompt> {
             runSpacing: 8,
             children: [
               _chip('I forgot', HookDiagnosisMissedReason.forgot),
-              _chip('I did not care enough', HookDiagnosisMissedReason.didNotCare),
+              _chip(
+                'I did not care enough',
+                HookDiagnosisMissedReason.didNotCare,
+              ),
               _chip('It was confusing', HookDiagnosisMissedReason.confusing),
               _chip('Other', HookDiagnosisMissedReason.other),
             ],

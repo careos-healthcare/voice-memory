@@ -125,24 +125,19 @@ class _ProveEnoughEvidenceTrailScreenState
           if (!trail.hasPreview && !trail.hasExtendedContent)
             Text(
               'Save a few proving moments to build your evidence trail.',
-              style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             )
           else ...[
             _section(
               context,
               title: ProveEnoughEvidenceTrail.confirmedSectionTitle,
-              moments: _isPro
-                  ? trail.supportingMoments
-                  : trail.previewMoments,
+              moments: _isPro ? trail.supportingMoments : trail.previewMoments,
             ),
             if (!_isPro && trail.hasExtendedContent) ...[
               const SizedBox(height: AppSpacing.md),
-              _LockedTrailCard(
-                onSeePro: _openPro,
-                billingReady: _billingReady,
-              ),
+              _LockedTrailCard(onSeePro: _openPro, billingReady: _billingReady),
             ],
             if (_isPro) ...[
               _gatedSection(
@@ -275,10 +270,7 @@ class _MomentTile extends StatelessWidget {
 }
 
 class _LockedTrailCard extends StatelessWidget {
-  const _LockedTrailCard({
-    required this.onSeePro,
-    required this.billingReady,
-  });
+  const _LockedTrailCard({required this.onSeePro, required this.billingReady});
 
   final VoidCallback onSeePro;
   final bool billingReady;
@@ -289,9 +281,7 @@ class _LockedTrailCard extends StatelessWidget {
       key: const Key('prove_enough_trail_locked_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.accentLight,
-      ),
+      decoration: VoiceMemoryCards.standard(background: AppColors.accentLight),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

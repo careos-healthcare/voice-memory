@@ -8,10 +8,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Choice vs pressure breakdown for a prove_enough moment.
 class ChoiceVsPressureCard extends StatelessWidget {
-  const ChoiceVsPressureCard({
-    super.key,
-    required this.model,
-  });
+  const ChoiceVsPressureCard({super.key, required this.model});
 
   final ProveEnoughPostRecordModel model;
 
@@ -66,10 +63,7 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          title,
-          style: ArchiveMobileTypography.cardLabel(context),
-        ),
+        Text(title, style: ArchiveMobileTypography.cardLabel(context)),
         const SizedBox(height: AppSpacing.xs),
         ...items.map(
           (item) => Padding(

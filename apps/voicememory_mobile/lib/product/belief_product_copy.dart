@@ -1,14 +1,13 @@
 import 'consumer_ui_copy.dart';
 
 /// Product copy aliases — user-facing strings live in [ConsumerUiCopy].
-abstract final class BeliefProductCopy {
+abstract class BeliefProductCopy {
   BeliefProductCopy._();
 
   static const String northStarTagline =
       'See what keeps repeating in your life.';
 
-  static const String archiveHeroHeading =
-      ConsumerUiCopy.patternsHeroHeading;
+  static const String archiveHeroHeading = ConsumerUiCopy.patternsHeroHeading;
   static const String archiveChangingHeading =
       ConsumerUiCopy.patternsShiftingHeading;
   static const String archiveEvolutionHeading =
@@ -31,8 +30,10 @@ abstract final class BeliefProductCopy {
 
   static const String emptyTitle = ConsumerUiCopy.patternsEmptyPageTitle;
   static const String emptyBody = ConsumerUiCopy.patternsEarlyStateBody;
-  static const List<String> emptyExamples = ConsumerUiCopy.patternsScreenshotExamples;
-  static const String recordFirstReflectionCta = ConsumerUiCopy.patternsEmptyCta;
+  static const List<String> emptyExamples =
+      ConsumerUiCopy.patternsScreenshotExamples;
+  static const String recordFirstReflectionCta =
+      ConsumerUiCopy.patternsEmptyCta;
 
   static const String questionOfTheDay =
       'What has been occupying your mind recently?';
@@ -43,7 +44,8 @@ abstract final class BeliefProductCopy {
     'What are you avoiding?',
     'What shifted in you this week?',
   ];
-  static const String reflectionSavedTitle = ConsumerUiCopy.reflectionSavedTitle;
+  static const String reflectionSavedTitle =
+      ConsumerUiCopy.reflectionSavedTitle;
   static const String potentialSignalsTitle =
       ConsumerUiCopy.possiblePatternForming;
   static const String postSavePossibleBelief =
@@ -52,7 +54,8 @@ abstract final class BeliefProductCopy {
   static const String postSaveBasedOn = ConsumerUiCopy.postSaveBasedOn;
   static const String postSaveRecordAnother =
       ConsumerUiCopy.postSaveRecordAnother;
-  static const String potentialSignalsNote = ConsumerUiCopy.earlyObservationsNote;
+  static const String potentialSignalsNote =
+      ConsumerUiCopy.earlyObservationsNote;
 
   static const String beliefsTabLabel = ConsumerUiCopy.patternsTabLabel;
   static const String beliefsScreenTitle = ConsumerUiCopy.allPatternsTitle;

@@ -6,24 +6,25 @@ import 'package:voicememory_mobile/widgets/patterns/pattern_progress_card.dart';
 PatternProgressMoment _progress({
   PatternProgressType type = PatternProgressType.gettingLighter,
   String? helpedLine = 'What helped: paused before answering',
-}) =>
-    PatternProgressMoment(
-      id: 'pp_pm1_3',
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      type: type,
-      headline: 'This pattern may be getting lighter.',
-      body: 'You have checked it 3 times. '
-          'Lately, it has felt lighter more than heavier.',
-      helpedLine: helpedLine,
-      nextLine: 'Next, watch what helps before it gets heavy.',
-      checkInCount: 3,
-      shouldShow: true,
-    );
+}) => PatternProgressMoment(
+  id: 'pp_pm1_3',
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  type: type,
+  headline: 'This pattern may be getting lighter.',
+  body:
+      'You have checked it 3 times. '
+      'Lately, it has felt lighter more than heavier.',
+  helpedLine: helpedLine,
+  nextLine: 'Next, watch what helps before it gets heavy.',
+  checkInCount: 3,
+  shouldShow: true,
+);
 
 void main() {
-  testWidgets('renders Pattern progress with headline, body and next line',
-      (tester) async {
+  testWidgets('renders Pattern progress with headline, body and next line', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

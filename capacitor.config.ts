@@ -14,7 +14,7 @@ const isLocalDev =
 
 const config: CapacitorConfig = {
   appId: "com.voicememory.app",
-  appName: "VoiceMemory",
+  appName: "ArchiveMe",
   webDir: "mobile/web",
   server: {
     url: serverUrl,
@@ -23,7 +23,7 @@ const config: CapacitorConfig = {
   },
   ios: {
     contentInset: "automatic",
-    scheme: "VoiceMemory",
+    scheme: "voicememory",
   },
   android: {
     allowMixedContent: isLocalDev,

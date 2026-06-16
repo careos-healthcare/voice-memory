@@ -30,10 +30,7 @@ void main() {
   });
 
   test('isIntentionalEmptyArchive true when no eligible evidence', () {
-    final short = List.generate(
-      3,
-      (i) => _entry('$i', 'too short'),
-    );
+    final short = List.generate(3, (i) => _entry('$i', 'too short'));
     expect(ArchiveEvidenceGuard.eligibleReflectionCount(short), 0);
     expect(isIntentionalEmptyArchive(short), isTrue);
   });

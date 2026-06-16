@@ -20,8 +20,9 @@ void main() {
     expect(find.text('Language: Spanish'), findsOneWidget);
   });
 
-  testWidgets('tapping the chip opens the language override sheet',
-      (tester) async {
+  testWidgets('tapping the chip opens the language override sheet', (
+    tester,
+  ) async {
     String? selected;
     await tester.pumpWidget(
       MaterialApp(

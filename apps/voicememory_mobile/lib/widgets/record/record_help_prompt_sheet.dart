@@ -23,18 +23,13 @@ Future<void> showRecordHelpPromptSheet({
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (ctx) => _RecordHelpPromptSheet(
-      selected: selected,
-      onSelect: onSelect,
-    ),
+    builder: (ctx) =>
+        _RecordHelpPromptSheet(selected: selected, onSelect: onSelect),
   );
 }
 
 class _RecordHelpPromptSheet extends StatelessWidget {
-  const _RecordHelpPromptSheet({
-    required this.onSelect,
-    this.selected,
-  });
+  const _RecordHelpPromptSheet({required this.onSelect, this.selected});
 
   final ValueChanged<String> onSelect;
   final String? selected;
@@ -86,10 +81,10 @@ class _RecordHelpPromptSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      for (final prompt in ConsumerUiCopy.recordHelpSheetPrompts)
+                      for (final prompt
+                          in ConsumerUiCopy.recordHelpSheetPrompts)
                         Padding(
-                          padding:
-                              const EdgeInsets.only(bottom: AppSpacing.sm),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                           child: _SheetPromptCard(
                             prompt: prompt,
                             selected: selected == prompt,
@@ -146,10 +141,7 @@ class _SheetPromptCard extends StatelessWidget {
                 width: selected ? 1.5 : 1,
               ),
             ),
-            child: Text(
-              prompt,
-              style: VoiceMemoryTypography.bodyStyle(),
-            ),
+            child: Text(prompt, style: VoiceMemoryTypography.bodyStyle()),
           ),
         ),
       ),

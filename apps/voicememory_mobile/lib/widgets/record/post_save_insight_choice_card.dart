@@ -122,8 +122,8 @@ class _PostSaveInsightChoiceCardState extends State<PostSaveInsightChoiceCard> {
     _phase = _bundle.needsClearerMoment
         ? _PostSaveInsightPhase.allSignals
         : (_bundle.abPair != null
-            ? _PostSaveInsightPhase.abChoice
-            : _PostSaveInsightPhase.allSignals);
+              ? _PostSaveInsightPhase.abChoice
+              : _PostSaveInsightPhase.allSignals);
     _readShownAt = DateTime.now();
     if (_bundle.loopUnsupported && widget.activeLoop != null) {
       unawaited(LoopModeCoordinator.markUnsupportedRecording());
@@ -255,7 +255,9 @@ class _PostSaveInsightChoiceCardState extends State<PostSaveInsightChoiceCard> {
 
   void _setPromptFor(PostSaveInsightSignal signal) {
     final prompts = _promptsFor(signal);
-    _currentPrompt = prompts.isNotEmpty ? prompts.first : signal.recordNextQuestion;
+    _currentPrompt = prompts.isNotEmpty
+        ? prompts.first
+        : signal.recordNextQuestion;
   }
 
   Future<void> _persistSelection(PostSaveInsightSignal signal) async {
@@ -324,9 +326,7 @@ class _PostSaveInsightChoiceCardState extends State<PostSaveInsightChoiceCard> {
       if (widget.activeLoop != null) {
         unawaited(LoopModeCoordinator.markReadAccepted());
       }
-      unawaited(
-        _recordInterpretation(signal, ReadUserAction.accepted),
-      );
+      unawaited(_recordInterpretation(signal, ReadUserAction.accepted));
     } catch (_) {
       if (mounted) setState(() => _busy = false);
     }
@@ -509,103 +509,102 @@ class _PostSaveInsightChoiceCardState extends State<PostSaveInsightChoiceCard> {
           const SizedBox(height: AppSpacing.sm),
           if (_bundle.needsClearerMoment || _tooGenericFollowUp) ...[
             PostSaveClearerMomentBanner(
-              title: _tooGenericFollowUp
-                  ? null
-                  : _bundle.clearerMomentTitle,
+              title: _tooGenericFollowUp ? null : _bundle.clearerMomentTitle,
               prompt: _tooGenericFollowUp
                   ? ConsumerUiCopy.firstInsightTooGenericPrompt
                   : (_bundle.clearerMomentPrompt ??
-                      ConsumerUiCopy.firstInsightTooGenericPrompt),
+                        ConsumerUiCopy.firstInsightTooGenericPrompt),
               onRecordNext: widget.onRecordNext,
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
           switch (_phase) {
             _PostSaveInsightPhase.abChoice => _AbChoiceView(
-                pair: _bundle.abPair!,
-                activeLoop: widget.activeLoop,
-                isFirstInsight: widget.reflectionCount <= 1,
-                titleSeed: widget.entryId?.hashCode ?? widget.reflectionCount,
-                busy: _busy,
-                onSelectA: () => _selectAb(
-                  _bundle.abPair!.optionA,
-                  PostSaveSignalAction.abChoiceA,
-                ),
-                onSelectB: () => _selectAb(
-                  _bundle.abPair!.optionB,
-                  PostSaveSignalAction.abChoiceB,
-                ),
-                onNeither: _abNeither,
+              pair: _bundle.abPair!,
+              activeLoop: widget.activeLoop,
+              isFirstInsight: widget.reflectionCount <= 1,
+              titleSeed: widget.entryId?.hashCode ?? widget.reflectionCount,
+              busy: _busy,
+              onSelectA: () => _selectAb(
+                _bundle.abPair!.optionA,
+                PostSaveSignalAction.abChoiceA,
               ),
+              onSelectB: () => _selectAb(
+                _bundle.abPair!.optionB,
+                PostSaveSignalAction.abChoiceB,
+              ),
+              onNeither: _abNeither,
+            ),
             _PostSaveInsightPhase.allSignals => _ChoiceView(
-                bundle: _bundle,
-                isFirstInsight: widget.reflectionCount <= 1,
-                titleSeed: widget.entryId?.hashCode ?? widget.reflectionCount,
-                onFeelsTrue: _save,
-                onNotQuite: _showAlternative,
-                onGoDeeper: _openDeeper,
-                busy: _busy,
-              ),
+              bundle: _bundle,
+              isFirstInsight: widget.reflectionCount <= 1,
+              titleSeed: widget.entryId?.hashCode ?? widget.reflectionCount,
+              onFeelsTrue: _save,
+              onNotQuite: _showAlternative,
+              onGoDeeper: _openDeeper,
+              busy: _busy,
+            ),
             _PostSaveInsightPhase.deeper => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _GoDeeperView(
-                    signal: _selected!,
-                    busy: _busy,
-                    onSave: () => _save(_selected!),
-                    onAnotherAngle: () => _showAlternative(_selected!),
-                    onRecordNext: () => _recordNextEvidence(_selected),
-                    onBack: () => setState(
-                      () => _phase = _selected != null &&
-                              _phase == _PostSaveInsightPhase.deeper &&
-                              _bundle.abPair != null
-                          ? _PostSaveInsightPhase.savedWithPrompt
-                          : _PostSaveInsightPhase.allSignals,
-                    ),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _GoDeeperView(
+                  signal: _selected!,
+                  busy: _busy,
+                  onSave: () => _save(_selected!),
+                  onAnotherAngle: () => _showAlternative(_selected!),
+                  onRecordNext: () => _recordNextEvidence(_selected),
+                  onBack: () => setState(
+                    () => _phase =
+                        _selected != null &&
+                            _phase == _PostSaveInsightPhase.deeper &&
+                            _bundle.abPair != null
+                        ? _PostSaveInsightPhase.savedWithPrompt
+                        : _PostSaveInsightPhase.allSignals,
                   ),
-                  if (_sharpnessWidget() != null) _sharpnessWidget()!,
-                ],
-              ),
+                ),
+                if (_sharpnessWidget() != null) _sharpnessWidget()!,
+              ],
+            ),
             _PostSaveInsightPhase.alternative => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _AlternativeView(
-                    signal: _selected!,
-                    busy: _busy,
-                    onFeelsTrue: () => _save(_selected!),
-                    onAnotherAngle: () => _showAlternative(_selected!),
-                    onGoDeeper: () =>
-                        setState(() => _phase = _PostSaveInsightPhase.deeper),
-                    onBack: () => setState(
-                      () => _phase = _bundle.abPair != null
-                          ? _PostSaveInsightPhase.abChoice
-                          : _PostSaveInsightPhase.allSignals,
-                    ),
-                    onRecordNext: () => _recordNextEvidence(_selected),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _AlternativeView(
+                  signal: _selected!,
+                  busy: _busy,
+                  onFeelsTrue: () => _save(_selected!),
+                  onAnotherAngle: () => _showAlternative(_selected!),
+                  onGoDeeper: () =>
+                      setState(() => _phase = _PostSaveInsightPhase.deeper),
+                  onBack: () => setState(
+                    () => _phase = _bundle.abPair != null
+                        ? _PostSaveInsightPhase.abChoice
+                        : _PostSaveInsightPhase.allSignals,
                   ),
-                  if (_sharpnessWidget() != null) _sharpnessWidget()!,
-                ],
-              ),
+                  onRecordNext: () => _recordNextEvidence(_selected),
+                ),
+                if (_sharpnessWidget() != null) _sharpnessWidget()!,
+              ],
+            ),
             _PostSaveInsightPhase.savedWithPrompt => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _SavedWithPromptView(
-                    signal: _selected!,
-                    prompt: _currentPrompt ?? _selected!.recordNextQuestion,
-                    promptSaved: _promptSaved,
-                    onGoDeeper: () => _openDeeper(_selected!),
-                    onUsePrompt: _usePrompt,
-                    onChooseAnother: _cyclePrompt,
-                    onRecordNext: () => _recordNextEvidence(_selected),
-                    onViewPatterns: widget.onViewPatterns,
-                    onViewSignalDetail: () =>
-                        SignalArchiveNavigation.openSignalDetail(context),
-                    onViewEvidenceTrail: () =>
-                        SignalArchiveNavigation.openEvidenceTrail(context),
-                  ),
-                  if (_sharpnessWidget() != null) _sharpnessWidget()!,
-                ],
-              ),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SavedWithPromptView(
+                  signal: _selected!,
+                  prompt: _currentPrompt ?? _selected!.recordNextQuestion,
+                  promptSaved: _promptSaved,
+                  onGoDeeper: () => _openDeeper(_selected!),
+                  onUsePrompt: _usePrompt,
+                  onChooseAnother: _cyclePrompt,
+                  onRecordNext: () => _recordNextEvidence(_selected),
+                  onViewPatterns: widget.onViewPatterns,
+                  onViewSignalDetail: () =>
+                      SignalArchiveNavigation.openSignalDetail(context),
+                  onViewEvidenceTrail: () =>
+                      SignalArchiveNavigation.openEvidenceTrail(context),
+                ),
+                if (_sharpnessWidget() != null) _sharpnessWidget()!,
+              ],
+            ),
           },
           if (_showProveEnoughPayoff) ...[
             const SizedBox(height: AppSpacing.sm),
@@ -641,8 +640,10 @@ class _MomentsProgress extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          ConsumerUiCopy.postSaveInsightMomentsProgress
-              .replaceAll('{count}', clamped.toString()),
+          ConsumerUiCopy.postSaveInsightMomentsProgress.replaceAll(
+            '{count}',
+            clamped.toString(),
+          ),
           style: ArchiveMobileTypography.cardLabel(context),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -697,8 +698,8 @@ class _AbChoiceView extends StatelessWidget {
     final title = loopActive
         ? loopEngine.postSaveTitle(activeLoop!)
         : (isFirstInsight
-            ? ConsumerUiCopy.firstInsightChoiceTitleFor(titleSeed)
-            : ConsumerUiCopy.postSaveInsightAbChoiceTitle);
+              ? ConsumerUiCopy.firstInsightChoiceTitleFor(titleSeed)
+              : ConsumerUiCopy.postSaveInsightAbChoiceTitle);
     final subtitle = loopActive
         ? loopEngine.postSaveSubtitle(activeLoop!)
         : (isFirstInsight ? ConsumerUiCopy.firstInsightDisclaimer : null);
@@ -725,11 +726,7 @@ class _AbChoiceView extends StatelessWidget {
           style: ArchiveMobileTypography.cardLabel(context),
         ),
         SizedBox(height: gap),
-        _AbOptionCard(
-          label: 'A',
-          signal: pair.optionA,
-          accent: true,
-        ),
+        _AbOptionCard(label: 'A', signal: pair.optionA, accent: true),
         SizedBox(height: gap),
         _AbOptionCard(label: 'B', signal: pair.optionB),
         SizedBox(height: gap),
@@ -845,8 +842,10 @@ class _StrengthSection extends StatelessWidget {
             children: [
               for (final chip in signal.evidenceChips)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.accentPrimary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
@@ -904,17 +903,14 @@ class _ChoiceView extends StatelessWidget {
           style: ArchiveMobileTypography.responsivePageTitle(context),
         ),
         SizedBox(height: gap),
-        Text(
-          lead,
-          style: ArchiveMobileTypography.explanationBody(context),
-        ),
+        Text(lead, style: ArchiveMobileTypography.explanationBody(context)),
         if (isFirstInsight) ...[
           SizedBox(height: gap),
           Text(
             ConsumerUiCopy.firstInsightDisclaimer,
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              fontStyle: FontStyle.italic,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(fontStyle: FontStyle.italic),
           ),
         ],
         SizedBox(height: gap),
@@ -981,10 +977,7 @@ class _SignalCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
           ],
-          Text(
-            signal.title,
-            style: ArchiveMobileTypography.listTitle(context),
-          ),
+          Text(signal.title, style: ArchiveMobileTypography.listTitle(context)),
           const SizedBox(height: AppSpacing.sm),
           _StrengthSection(signal: signal),
           if (signal.evidenceLine != null || signal.evidenceUsed != null) ...[
@@ -1003,8 +996,7 @@ class _SignalCard extends StatelessWidget {
               style: ArchiveMobileTypography.explanationBody(context),
             ),
           ],
-          if (isFirstInsight &&
-              signal.wouldConfirm.trim().isNotEmpty) ...[
+          if (isFirstInsight && signal.wouldConfirm.trim().isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               ConsumerUiCopy.firstInsightWouldConfirm,
@@ -1016,8 +1008,7 @@ class _SignalCard extends StatelessWidget {
               style: ArchiveMobileTypography.explanationBody(context),
             ),
           ],
-          if (isFirstInsight &&
-              signal.wouldContradict.trim().isNotEmpty) ...[
+          if (isFirstInsight && signal.wouldContradict.trim().isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               ConsumerUiCopy.firstInsightWouldContradict,

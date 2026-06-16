@@ -30,7 +30,7 @@ const REMOVED_SAMPLE = [
 ];
 
 const lines = [
-  "# VoiceMemory — debug surface inventory",
+  "# ArchiveMe — debug surface inventory",
   "",
   `**Generated:** ${new Date().toISOString()}`,
   "",

@@ -64,9 +64,14 @@ void main() {
     const engine = ArchiveChallengeEngine();
     final challenge = engine.detectChallenge(entries: entries);
     expect(challenge, isNotNull);
-    expect(challenge!.confidence, greaterThanOrEqualTo(ArchiveChallengeEngine.minConfidence));
-    expect(challenge.evidenceEntryIds.length,
-        greaterThanOrEqualTo(ArchiveChallengeEngine.minEvidenceCount));
+    expect(
+      challenge!.confidence,
+      greaterThanOrEqualTo(ArchiveChallengeEngine.minConfidence),
+    );
+    expect(
+      challenge.evidenceEntryIds.length,
+      greaterThanOrEqualTo(ArchiveChallengeEngine.minEvidenceCount),
+    );
     expect(challenge.headline.toLowerCase(), contains('uncertainty'));
   });
 
@@ -109,10 +114,16 @@ void main() {
     ];
 
     const engine = ArchiveChallengeEngine();
-    final first = await engine.loadActiveChallenge(store: store, entries: entries);
+    final first = await engine.loadActiveChallenge(
+      store: store,
+      entries: entries,
+    );
     expect(first, isNotNull);
 
-    final again = await engine.loadActiveChallenge(store: store, entries: entries);
+    final again = await engine.loadActiveChallenge(
+      store: store,
+      entries: entries,
+    );
     expect(again?.id, first?.id);
   });
 }

@@ -1,10 +1,7 @@
 import '../insight_evidence.dart';
 
 class ContradictionEvidence {
-  const ContradictionEvidence({
-    required this.role,
-    required this.lines,
-  });
+  const ContradictionEvidence({required this.role, required this.lines});
 
   /// e.g. stated_desire | stated_action | pattern
   final String role;

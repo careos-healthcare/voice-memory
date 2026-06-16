@@ -12,6 +12,5 @@ class NativePushService {
 
   Future<Map<String, dynamic>> sendBackendTestPush({
     required String targetRoute,
-  }) =>
-      fcm.sendBackendTestPush(targetRoute: targetRoute);
+  }) => fcm.sendBackendTestPush(targetRoute: targetRoute);
 }

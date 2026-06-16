@@ -11,10 +11,7 @@ import '../archive_discovery_share/share_discovery_button.dart';
 
 /// Belief lifecycle — first/last seen, status, retired beliefs.
 class BeliefLifecycleSection extends StatelessWidget {
-  const BeliefLifecycleSection({
-    super.key,
-    required this.lifecycle,
-  });
+  const BeliefLifecycleSection({super.key, required this.lifecycle});
 
   final BeliefLifecycleView lifecycle;
 
@@ -45,10 +42,7 @@ class BeliefLifecycleSection extends StatelessWidget {
 }
 
 class _LifecycleCard extends StatelessWidget {
-  const _LifecycleCard({
-    required this.entry,
-    required this.isCurrent,
-  });
+  const _LifecycleCard({required this.entry, required this.isCurrent});
 
   final BeliefLifecycleEntry entry;
   final bool isCurrent;

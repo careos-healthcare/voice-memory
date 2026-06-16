@@ -39,7 +39,9 @@ Future<void> showEvidenceTrailSheet(
               openArchiveExplanation(
                 context,
                 ref: ref,
-                askCitedEntryIds: payload.sources.map((s) => s.entryId).toList(),
+                askCitedEntryIds: payload.sources
+                    .map((s) => s.entryId)
+                    .toList(),
               );
             }
           : null,
@@ -58,8 +60,7 @@ Future<void> openEvidenceTrailForInsight(
   List<String>? askCitedEntryIds,
 }) async {
   final loaded = entries ?? await AppServices.instance.journal.loadAll();
-  final resolvedState =
-      state ?? buildArchiveStateObjectV3(entries: loaded);
+  final resolvedState = state ?? buildArchiveStateObjectV3(entries: loaded);
   final payload = buildEvidenceTrailForInsight(
     ref: ref,
     entries: loaded,

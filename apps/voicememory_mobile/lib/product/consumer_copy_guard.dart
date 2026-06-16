@@ -1,5 +1,5 @@
 /// Filters system/cloud boilerplate from user-visible copy.
-abstract final class ConsumerCopyGuard {
+abstract class ConsumerCopyGuard {
   ConsumerCopyGuard._();
 
   static const _blockedObservationFragments = [
@@ -21,7 +21,7 @@ abstract final class ConsumerCopyGuard {
     if (lower.isEmpty) return true;
     if (lower == 'saved privately on this device.' ||
         lower == 'saved privately on this device') {
-      return false;
+      return true;
     }
     for (final fragment in _blockedObservationFragments) {
       if (lower.contains(fragment)) return true;
@@ -54,7 +54,12 @@ abstract final class ConsumerCopyGuard {
   static List<String> userFacingChips(Iterable<String> chips) {
     return chips
         .map((c) => c.trim())
-        .where((c) => c.isNotEmpty && !isSystemObservation(c) && !isForbiddenCloudCopy(c))
+        .where(
+          (c) =>
+              c.isNotEmpty &&
+              !isSystemObservation(c) &&
+              !isForbiddenCloudCopy(c),
+        )
         .toList();
   }
 }

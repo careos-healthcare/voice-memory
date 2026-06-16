@@ -51,8 +51,8 @@ class _MonthlyAmbitionPressureReviewSectionState
     }
     final canViewFull =
         await MonthlyAmbitionPressureReviewCoordinator.canViewFullReview(
-      entitlements,
-    );
+          entitlements,
+        );
 
     if (!mounted) return;
     setState(() {

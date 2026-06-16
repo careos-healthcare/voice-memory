@@ -18,18 +18,20 @@ class WatchForPromptEngine {
     HookRescueIntensity? intensity,
     ArchiveFeedbackSummary? feedbackSummary,
   }) {
-    final level = intensity ??
-        (sharper
-            ? HookRescueIntensity.aggressive
-            : HookRescueIntensity.normal);
+    final level =
+        intensity ??
+        (sharper ? HookRescueIntensity.aggressive : HookRescueIntensity.normal);
     final clock = now ?? DateTime.now();
     final category = pattern.category;
-    final template = _templates[category] ?? _templates[FirstSessionPatternCategory.fallback]!;
+    final template =
+        _templates[category] ??
+        _templates[FirstSessionPatternCategory.fallback]!;
     final chips = _chipsFor(pattern, template);
     final strength = _strengthFor(pattern);
 
     // Fallback and lighter stay gentle; we never sharpen them.
-    final isEmotional = category != FirstSessionPatternCategory.fallback &&
+    final isEmotional =
+        category != FirstSessionPatternCategory.fallback &&
         category != FirstSessionPatternCategory.lighter;
 
     // Three tiers of question intensity:
@@ -37,12 +39,14 @@ class WatchForPromptEngine {
     //  - elevated -> "sharper" variant copy
     //  - aggressive -> "very sharp" variant copy (most direct)
     final verySharp = level == HookRescueIntensity.aggressive && isEmotional;
-    final variants =
-        verySharp ? _applyVerySharp(category, template.variants) : template.variants;
+    final variants = verySharp
+        ? _applyVerySharp(category, template.variants)
+        : template.variants;
 
     // elevated/aggressive default to the sharper variant for emotional
     // categories; everything else keeps the category default.
-    final strongActive = isEmotional &&
+    final strongActive =
+        isEmotional &&
         (level == HookRescueIntensity.elevated ||
             level == HookRescueIntensity.aggressive);
     final selectedVariantId = strongActive
@@ -68,7 +72,9 @@ class WatchForPromptEngine {
     // to replace the live question even if it matches the default id.
     final needsSwap =
         selectedVariantId != template.defaultVariantId || strongActive;
-    final base = needsSwap ? prompt.withSelectedVariant(selectedVariantId) : prompt;
+    final base = needsSwap
+        ? prompt.withSelectedVariant(selectedVariantId)
+        : prompt;
     return _applyFeedbackSummary(base, feedbackSummary);
   }
 
@@ -124,7 +130,7 @@ class WatchForPromptEngine {
   /// Most direct ("very sharp") question per emotional category, used at the
   /// aggressive tier. Kept concrete and emotionally specific, never medical.
   static const Map<FirstSessionPatternCategory, (String, String)>
-      _verySharpQuestions = {
+  _verySharpQuestions = {
     FirstSessionPatternCategory.responsibility: (
       'Did you say yes before checking what you needed?',
       'Tomorrow, notice if you say yes before checking what you need.',
@@ -210,8 +216,7 @@ class WatchForPromptEngine {
         pattern.isLowConfidence) {
       return WatchForPromptStrength.low;
     }
-    if (pattern.confidenceScore >= 0.55 &&
-        !pattern.isAmbiguousMatch) {
+    if (pattern.confidenceScore >= 0.55 && !pattern.isAmbiguousMatch) {
       return WatchForPromptStrength.high;
     }
     return WatchForPromptStrength.medium;
@@ -248,20 +253,15 @@ class WatchForPromptEngine {
   }
 
   static final Map<FirstSessionPatternCategory, _WatchForPromptTemplate>
-      _templates = {
+  _templates = {
     FirstSessionPatternCategory.responsibility: _WatchForPromptTemplate(
-      shortPrompt:
-          'Notice if you take responsibility before asking for help.',
+      shortPrompt: 'Notice if you take responsibility before asking for help.',
       specificPrompt:
           'Tomorrow, notice if you say yes or carry something before checking what you need.',
       situationHint: 'especially when someone expects something from you',
       emotionalHint: 'when pressure or guilt shows up first',
       checkInQuestion: 'Did you ask for help, or carry it alone?',
-      defaultChips: [
-        'saying yes fast',
-        'carrying it alone',
-        'asking late',
-      ],
+      defaultChips: ['saying yes fast', 'carrying it alone', 'asking late'],
       defaultVariantId: WatchForQuestionVariantId.practical,
       variants: _variants(
         gentleQuestion: 'Did this pattern show up again?',
@@ -306,7 +306,8 @@ class WatchForPromptEngine {
         sharperQuestion: 'Did that conversation stay with you?',
         sharperPrompt: 'Tomorrow, notice if that conversation stays with you.',
         practicalQuestion: 'Did you clear it up, or carry it?',
-        practicalPrompt: 'Tomorrow, notice whether you clear it up or carry it.',
+        practicalPrompt:
+            'Tomorrow, notice whether you clear it up or carry it.',
       ),
     ),
     FirstSessionPatternCategory.selfDoubt: _WatchForPromptTemplate(
@@ -360,7 +361,8 @@ class WatchForPromptEngine {
         gentleQuestion: 'Did tiredness shape your day?',
         gentlePrompt: 'Tomorrow, notice if tiredness shapes your day.',
         sharperQuestion: 'Did you push through when you needed rest?',
-        sharperPrompt: 'Tomorrow, notice if you push through when you need rest.',
+        sharperPrompt:
+            'Tomorrow, notice if you push through when you need rest.',
         practicalQuestion: 'Did you protect your energy before saying yes?',
         practicalPrompt:
             'Tomorrow, notice if you protect your energy before saying yes.',

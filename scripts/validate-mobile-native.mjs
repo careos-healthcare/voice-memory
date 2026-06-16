@@ -56,7 +56,7 @@ mustExist("components/mobile/NativeBootstrap.tsx");
 mustExist("scripts/validate-mobile-native.mjs");
 
 mustInclude("capacitor.config.ts", 'appId: "com.voicememory.app"', "app id");
-mustInclude("capacitor.config.ts", 'appName: "VoiceMemory"', "app name");
+mustInclude("capacitor.config.ts", 'appName: "ArchiveMe"', "app name");
 
 mustInclude("ios/App/App/Info.plist", "NSMicrophoneUsageDescription", "iOS mic permission");
 mustInclude("ios/App/App/Info.plist", "NSPhotoLibraryUsageDescription", "iOS photo permission");

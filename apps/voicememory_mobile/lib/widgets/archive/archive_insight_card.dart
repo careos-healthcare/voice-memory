@@ -10,11 +10,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// What / Why / Evidence for a single [ArchiveInsight].
 class ArchiveInsightCard extends StatelessWidget {
-  const ArchiveInsightCard({
-    super.key,
-    required this.insight,
-    this.onTap,
-  });
+  const ArchiveInsightCard({super.key, required this.insight, this.onTap});
 
   final ArchiveInsight insight;
   final VoidCallback? onTap;
@@ -31,10 +27,7 @@ class ArchiveInsightCard extends StatelessWidget {
       children: [
         _label(ConsumerUiCopy.labelWhat),
         const SizedBox(height: 4),
-        Text(
-          insight.what,
-          style: VoiceMemoryTypography.cardTitleStyle(),
-        ),
+        Text(insight.what, style: VoiceMemoryTypography.cardTitleStyle()),
         const SizedBox(height: AppSpacing.md),
         _label(BeliefProductCopy.labelWhy),
         const SizedBox(height: 4),
@@ -94,11 +87,11 @@ class ArchiveInsightCard extends StatelessWidget {
   }
 
   Widget _label(String text) => Text(
-        text,
-        style: VoiceMemoryTypography.metadataStyle(
-          color: AppColors.accentPrimary,
-        ).copyWith(fontWeight: FontWeight.w600),
-      );
+    text,
+    style: VoiceMemoryTypography.metadataStyle(
+      color: AppColors.accentPrimary,
+    ).copyWith(fontWeight: FontWeight.w600),
+  );
 }
 
 extension _FirstOrNullInsight<E> on Iterable<E> {

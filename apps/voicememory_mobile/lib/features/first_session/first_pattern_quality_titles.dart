@@ -1,5 +1,5 @@
 /// Canonical first-session pattern titles from [FirstSessionPatternEngine].
-abstract final class FirstPatternQualityTitles {
+abstract class FirstPatternQualityTitles {
   FirstPatternQualityTitles._();
 
   static const responsibility = 'Taking responsibility before asking for help';

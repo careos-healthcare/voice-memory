@@ -7,10 +7,7 @@ import 'start_here_recording_section.dart';
 
 /// Loads journal state and renders [StartHereRecordingSection] on empty surfaces.
 class StartHereLoader extends StatefulWidget {
-  const StartHereLoader({
-    super.key,
-    required this.surface,
-  });
+  const StartHereLoader({super.key, required this.surface});
 
   final String surface;
 

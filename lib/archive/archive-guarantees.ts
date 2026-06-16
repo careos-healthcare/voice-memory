@@ -5,7 +5,7 @@ import type {
   ArchiveGuaranteeReport,
   ArchivePermanenceManifest,
 } from "@/types/archive-permanence-layer";
-import type { VoiceMemoryArchivePackage } from "@/types/archive-permanence";
+import type { ArchiveMeArchivePackage } from "@/types/archive-permanence";
 import { buildFutureContinuityReport } from "@/lib/archive/future-continuity";
 
 export const ARCHIVE_SCHEMA_VERSION = 1;
@@ -34,7 +34,7 @@ function callbackFingerprint(entries: JournalEntry[]): string {
 
 /** Build portable archive manifest with integrity hashes. */
 export function buildArchivePermanenceManifest(
-  pkg: Pick<VoiceMemoryArchivePackage, "entries" | "exportedAt" | "audio">,
+  pkg: Pick<ArchiveMeArchivePackage, "entries" | "exportedAt" | "audio">,
 ): ArchivePermanenceManifest {
   const entryCount = pkg.entries.length;
   const audioReferenceCount = pkg.audio?.length ?? pkg.entries.filter((e) => e.audioId).length;
@@ -59,7 +59,7 @@ export function buildArchivePermanenceManifest(
   };
 }
 
-function restorationIssues(pkg: VoiceMemoryArchivePackage): ArchiveGuaranteeReport["issues"] {
+function restorationIssues(pkg: ArchiveMeArchivePackage): ArchiveGuaranteeReport["issues"] {
   const issues: ArchiveGuaranteeReport["issues"] = [];
   const integrityIssues = inspectArchivePackageIntegrity(pkg);
 
@@ -91,13 +91,13 @@ function restorationIssues(pkg: VoiceMemoryArchivePackage): ArchiveGuaranteeRepo
   return issues;
 }
 
-export function checkRestorationCompatibility(pkg: VoiceMemoryArchivePackage): boolean {
+export function checkRestorationCompatibility(pkg: ArchiveMeArchivePackage): boolean {
   const issues = restorationIssues(pkg);
   return !issues.some((i) => i.level === "error");
 }
 
 export function buildArchiveGuaranteeReport(
-  pkg?: VoiceMemoryArchivePackage,
+  pkg?: ArchiveMeArchivePackage,
 ): ArchiveGuaranteeReport {
   const archive =
     pkg ??
@@ -120,7 +120,7 @@ export function buildArchiveGuaranteeReport(
         fullDetail: false,
       },
       memoryReviewLabels: [],
-    } satisfies VoiceMemoryArchivePackage);
+    } satisfies ArchiveMeArchivePackage);
 
   const manifest = buildArchivePermanenceManifest(archive);
   const issues = restorationIssues(archive);
@@ -149,8 +149,8 @@ export function buildArchiveGuaranteeReport(
 }
 
 export function attachPermanenceManifest(
-  pkg: VoiceMemoryArchivePackage,
-): VoiceMemoryArchivePackage & { permanenceManifest: ArchivePermanenceManifest } {
+  pkg: ArchiveMeArchivePackage,
+): ArchiveMeArchivePackage & { permanenceManifest: ArchivePermanenceManifest } {
   return {
     ...pkg,
     permanenceManifest: buildArchivePermanenceManifest(pkg),
@@ -158,7 +158,7 @@ export function attachPermanenceManifest(
 }
 
 export function verifyManifestIntegrity(
-  pkg: VoiceMemoryArchivePackage & { permanenceManifest?: ArchivePermanenceManifest },
+  pkg: ArchiveMeArchivePackage & { permanenceManifest?: ArchivePermanenceManifest },
 ): boolean {
   if (!pkg.permanenceManifest) return false;
   const rebuilt = buildArchivePermanenceManifest(pkg);

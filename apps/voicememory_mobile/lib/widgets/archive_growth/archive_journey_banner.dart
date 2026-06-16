@@ -8,10 +8,7 @@ import '../../theme/voicememory_colors.dart';
 
 /// Prominent archive journey progress on archive home.
 class ArchiveJourneyBanner extends StatelessWidget {
-  const ArchiveJourneyBanner({
-    super.key,
-    required this.journey,
-  });
+  const ArchiveJourneyBanner({super.key, required this.journey});
 
   final ArchiveJourneyView journey;
 
@@ -58,7 +55,11 @@ class ArchiveJourneyBanner extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right, size: 20, color: AppTheme.muted),
+                  const Icon(
+                    Icons.chevron_right,
+                    size: 20,
+                    color: AppTheme.muted,
+                  ),
                 ],
               ),
               const SizedBox(height: 8),

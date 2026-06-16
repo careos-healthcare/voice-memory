@@ -91,7 +91,9 @@ class _ContradictionCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    WarmArchiveCopy.confidenceStrengthLine(report.confidenceScore),
+                    WarmArchiveCopy.confidenceStrengthLine(
+                      report.confidenceScore,
+                    ),
                     style: const TextStyle(fontSize: 11, color: AppTheme.muted),
                   ),
                   ArchiveWhyButton(
@@ -118,7 +120,11 @@ class _ContradictionCard extends StatelessWidget {
               const SizedBox(height: 12),
               const Text(
                 'Earlier',
-                style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                style: TextStyle(
+                  fontSize: 10,
+                  letterSpacing: 0.6,
+                  color: AppTheme.muted,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
@@ -130,7 +136,11 @@ class _ContradictionCard extends StatelessWidget {
               const SizedBox(height: 10),
               const Text(
                 'Later',
-                style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                style: TextStyle(
+                  fontSize: 10,
+                  letterSpacing: 0.6,
+                  color: AppTheme.muted,
+                ),
               ),
               const SizedBox(height: 4),
               Text(

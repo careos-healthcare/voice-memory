@@ -27,29 +27,33 @@ class NativePushPlatformState {
   final String timestamp;
 
   Map<String, dynamic> toJson() => {
-        'permission_granted': permissionGranted,
-        'notification_received': notificationReceived,
-        'notification_opened': notificationOpened,
-        'archive_destination_verified': archiveDestinationVerified,
-        'discover_destination_verified': discoverDestinationVerified,
-        'record_destination_verified': recordDestinationVerified,
-        'timestamp': timestamp,
-      };
+    'permission_granted': permissionGranted,
+    'notification_received': notificationReceived,
+    'notification_opened': notificationOpened,
+    'archive_destination_verified': archiveDestinationVerified,
+    'discover_destination_verified': discoverDestinationVerified,
+    'record_destination_verified': recordDestinationVerified,
+    'timestamp': timestamp,
+  };
 
   factory NativePushPlatformState.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const NativePushPlatformState();
     final legacy = json['destinations_verified'];
-    final legacyRoutes =
-        legacy is List ? legacy.map((e) => e.toString()).toList() : <String>[];
+    final legacyRoutes = legacy is List
+        ? legacy.map((e) => e.toString()).toList()
+        : <String>[];
     return NativePushPlatformState(
       permissionGranted: json['permission_granted'] == true,
       notificationReceived: json['notification_received'] == true,
       notificationOpened: json['notification_opened'] == true,
-      archiveDestinationVerified: json['archive_destination_verified'] == true ||
+      archiveDestinationVerified:
+          json['archive_destination_verified'] == true ||
           legacyRoutes.contains('/archive-belief'),
-      discoverDestinationVerified: json['discover_destination_verified'] == true ||
+      discoverDestinationVerified:
+          json['discover_destination_verified'] == true ||
           legacyRoutes.contains('/discover'),
-      recordDestinationVerified: json['record_destination_verified'] == true ||
+      recordDestinationVerified:
+          json['record_destination_verified'] == true ||
           legacyRoutes.contains('/record'),
       timestamp: json['timestamp']?.toString() ?? '',
     );
@@ -74,9 +78,7 @@ class NativePushVerificationStore {
     final raw = await readRaw();
     final block = raw[platform];
     if (block is! Map) return const NativePushPlatformState();
-    return NativePushPlatformState.fromJson(
-      Map<String, dynamic>.from(block),
-    );
+    return NativePushPlatformState.fromJson(Map<String, dynamic>.from(block));
   }
 
   Future<void> patchPlatform(
@@ -93,7 +95,8 @@ class NativePushVerificationStore {
     final current = await platformState(platform);
     final next = NativePushPlatformState(
       permissionGranted: permissionGranted ?? current.permissionGranted,
-      notificationReceived: notificationReceived ?? current.notificationReceived,
+      notificationReceived:
+          notificationReceived ?? current.notificationReceived,
       notificationOpened: notificationOpened ?? current.notificationOpened,
       archiveDestinationVerified:
           archiveDestinationVerified ?? current.archiveDestinationVerified,
@@ -115,8 +118,8 @@ class NativePushVerificationStore {
     final ts = DateTime.now().toUtc().toIso8601String();
     await patchPlatform(
       platform,
-      archiveDestinationVerified: current.archiveDestinationVerified ||
-          route == '/archive-belief',
+      archiveDestinationVerified:
+          current.archiveDestinationVerified || route == '/archive-belief',
       discoverDestinationVerified:
           current.discoverDestinationVerified || route == '/discover',
       recordDestinationVerified:
@@ -147,10 +150,7 @@ class NativePushVerificationStore {
       await DeviceInfoPlugin().androidInfo;
     }
 
-    final doc = {
-      'ios': ios.toJson(),
-      'android': android.toJson(),
-    };
+    final doc = {'ios': ios.toJson(), 'android': android.toJson()};
     return const JsonEncoder.withIndent('  ').convert(doc);
   }
 }

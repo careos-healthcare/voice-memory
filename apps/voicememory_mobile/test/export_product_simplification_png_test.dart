@@ -41,7 +41,11 @@ void main() {
           home: MediaQuery(
             data: const MediaQueryData(size: size),
             child: RepaintBoundary(
-              child: SizedBox(width: size.width, height: size.height, child: s.$2),
+              child: SizedBox(
+                width: size.width,
+                height: size.height,
+                child: s.$2,
+              ),
             ),
           ),
         ),
@@ -54,7 +58,9 @@ void main() {
       );
       final image = await boundary.toImage(pixelRatio: 2);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-      await File('$outDir/${s.$1}.png').writeAsBytes(bytes!.buffer.asUint8List());
+      await File(
+        '$outDir/${s.$1}.png',
+      ).writeAsBytes(bytes!.buffer.asUint8List());
     }
 
     // ignore: avoid_print

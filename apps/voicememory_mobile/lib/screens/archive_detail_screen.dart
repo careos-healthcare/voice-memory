@@ -25,7 +25,8 @@ class ArchiveDetailScreen extends StatelessWidget {
     return ArchiveMobilePageTemplate(
       eyebrow: 'Archive detail',
       title: 'Archive detail',
-      lead: 'Secondary tools — belief and changes stay on Archive and Changes tabs.',
+      lead:
+          'Secondary tools — belief and changes stay on Archive and Changes tabs.',
       mainContent: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -39,7 +40,10 @@ class ArchiveDetailScreen extends StatelessWidget {
       ),
       actionArea: TextButton(
         onPressed: () => context.go('/archive-belief'),
-        child: const Text('Back to Archive', style: TextStyle(color: AppTheme.muted)),
+        child: const Text(
+          'Back to Archive',
+          style: TextStyle(color: AppTheme.muted),
+        ),
       ),
     );
   }

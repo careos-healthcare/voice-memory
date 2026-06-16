@@ -55,7 +55,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(PressureLoopVisibilityCard.emptyBody), findsOneWidget);
-      expect(find.text(PressureLoopVisibilityCard.guiltFreeLine), findsOneWidget);
+      expect(
+        find.text(PressureLoopVisibilityCard.guiltFreeLine),
+        findsOneWidget,
+      );
     });
 
     testWidgets('card calculates weekly count', (tester) async {
@@ -109,7 +112,10 @@ void main() {
         PressureLoopVisibilityCard(visibility: visibility),
       );
 
-      expect(find.text(PressureLoopVisibilityCard.guiltFreeLine), findsOneWidget);
+      expect(
+        find.text(PressureLoopVisibilityCard.guiltFreeLine),
+        findsOneWidget,
+      );
       expect(find.textContaining('missed'), findsNothing);
       expect(find.textContaining('failed'), findsNothing);
       expect(find.textContaining('broke'), findsNothing);
@@ -154,14 +160,11 @@ void main() {
       expect(find.byKey(const Key('ask_the_archive_answer')), findsOneWidget);
     });
 
-    testWidgets('repeated pressure evidence produces a short answer',
-        (tester) async {
+    testWidgets('repeated pressure evidence produces a short answer', (
+      tester,
+    ) async {
       final records = [
-        _record(
-          id: 'a',
-          createdAt: now,
-          contextIds: const ['work'],
-        ),
+        _record(id: 'a', createdAt: now, contextIds: const ['work']),
         _record(
           id: 'b',
           createdAt: now.subtract(const Duration(days: 1)),
@@ -217,16 +220,9 @@ void main() {
     });
 
     test('recap with one entry does not overclaim', () {
-      final recap = engine.build(
-        [
-          _record(
-            id: 'a',
-            createdAt: now,
-            contextIds: const ['work'],
-          ),
-        ],
-        now: now,
-      );
+      final recap = engine.build([
+        _record(id: 'a', createdAt: now, contextIds: const ['work']),
+      ], now: now);
       expect(recap.hasData, isTrue);
       expect(recap.count, 1);
       expect(recap.sentence, contains('One pressure moment'));
@@ -235,48 +231,39 @@ void main() {
     });
 
     test('recap with multiple entries surfaces the common context', () {
-      final recap = engine.build(
-        [
-          _record(id: 'a', createdAt: now, contextIds: const ['work']),
-          _record(
-            id: 'b',
-            createdAt: now.subtract(const Duration(days: 1)),
-            contextIds: const ['work'],
-          ),
-          _record(
-            id: 'c',
-            createdAt: now.subtract(const Duration(days: 2)),
-            contextIds: const ['personal'],
-          ),
-        ],
-        now: now,
-      );
+      final recap = engine.build([
+        _record(id: 'a', createdAt: now, contextIds: const ['work']),
+        _record(
+          id: 'b',
+          createdAt: now.subtract(const Duration(days: 1)),
+          contextIds: const ['work'],
+        ),
+        _record(
+          id: 'c',
+          createdAt: now.subtract(const Duration(days: 2)),
+          contextIds: const ['personal'],
+        ),
+      ], now: now);
       expect(recap.count, 3);
       expect(recap.mostCommonContextLabel, 'Work');
       expect(recap.sentence.toLowerCase(), contains('around work'));
     });
 
     test('chose-to-stop count is computed', () {
-      final recap = engine.build(
-        [
-          _record(id: 'a', createdAt: now, choseToStop: true),
-          _record(
-            id: 'b',
-            createdAt: now.subtract(const Duration(days: 1)),
-            choseToStop: true,
-          ),
-          _record(id: 'c', createdAt: now.subtract(const Duration(days: 2))),
-        ],
-        now: now,
-      );
+      final recap = engine.build([
+        _record(id: 'a', createdAt: now, choseToStop: true),
+        _record(
+          id: 'b',
+          createdAt: now.subtract(const Duration(days: 1)),
+          choseToStop: true,
+        ),
+        _record(id: 'c', createdAt: now.subtract(const Duration(days: 2))),
+      ], now: now);
       expect(recap.choseToStopCount, 2);
     });
 
     test('no overclaiming when data is weak', () {
-      final recap = engine.build(
-        [_record(id: 'a', createdAt: now)],
-        now: now,
-      );
+      final recap = engine.build([_record(id: 'a', createdAt: now)], now: now);
       expect(recap.sentence.toLowerCase(), isNot(contains('most')));
     });
   });

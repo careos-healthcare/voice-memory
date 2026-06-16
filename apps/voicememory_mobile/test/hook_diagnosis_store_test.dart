@@ -58,9 +58,14 @@ void main() {
       reason: HookDiagnosisNotUsefulReason.tooVague,
     );
     await Future<void>.delayed(const Duration(milliseconds: 50));
-    final events = await HookDiagnosisStore(AppServices.instance.prefs).loadAll();
+    final events = await HookDiagnosisStore(
+      AppServices.instance.prefs,
+    ).loadAll();
     expect(events, hasLength(1));
-    expect(events.first.type, HookDiagnosisEventType.checkInResultNotUsefulReason);
+    expect(
+      events.first.type,
+      HookDiagnosisEventType.checkInResultNotUsefulReason,
+    );
     expect(events.first.reason, HookDiagnosisNotUsefulReason.tooVague);
   });
 

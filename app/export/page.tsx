@@ -10,7 +10,13 @@ import {
   Printer,
 } from "lucide-react";
 
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
+import { ArchiveAssetCard } from "@/components/archive/ArchiveAssetCard";
+import { ArchiveExportPreview } from "@/components/archive/ArchiveExportPreview";
+import { ArchiveWorthStatement } from "@/components/archive/ArchiveWorthStatement";
+import { EffortCompoundsPanel } from "@/components/archive/EffortCompoundsPanel";
+import { EvidenceLocker } from "@/components/archive/EvidenceLocker";
 import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -32,6 +38,7 @@ import {
 } from "@/lib/memory-export";
 
 export default function ExportPage() {
+  const { requestAuth } = useAuthPrompt();
   const [entryCount, setEntryCount] = useState(0);
   const [storedCount, setStoredCount] = useState(0);
   const [lockedCount, setLockedCount] = useState(0);
@@ -53,36 +60,48 @@ export default function ExportPage() {
     maybeTrackPostPremiumBehavior("export");
   };
 
+  const runExport = (fn: () => void) => {
+    requestAuth("export", fn);
+  };
+
   const exportAllJson = () => {
-    const bundle = buildExportJsonBundle();
-    downloadJsonFile(`voicememory-all-${slugExportDate()}.json`, bundle);
-    trackExport();
+    runExport(() => {
+      const bundle = buildExportJsonBundle();
+      downloadJsonFile(`voicememory-all-${slugExportDate()}.json`, bundle);
+      trackExport();
+    });
   };
 
   const exportRangeJson = () => {
-    const bundle = buildExportJsonBundle(dateFrom, dateTo);
-    downloadJsonFile(
-      `voicememory-${dateFrom || "start"}-${dateTo || "end"}-${slugExportDate()}.json`,
-      bundle,
-    );
-    trackExport();
+    runExport(() => {
+      const bundle = buildExportJsonBundle(dateFrom, dateTo);
+      downloadJsonFile(
+        `voicememory-${dateFrom || "start"}-${dateTo || "end"}-${slugExportDate()}.json`,
+        bundle,
+      );
+      trackExport();
+    });
   };
 
   const exportWeeklyText = () => {
     if (exportLocked) return;
-    downloadTextFile(`voicememory-weekly-${slugExportDate()}.txt`, buildWeeklySummaryText());
-    trackExport();
+    runExport(() => {
+      downloadTextFile(`voicememory-weekly-${slugExportDate()}.txt`, buildWeeklySummaryText());
+      trackExport();
+    });
   };
 
   const printReport = () => {
     if (exportLocked) return;
-    const report = buildPrintableReport({
-      dateFrom,
-      dateTo,
-      maxExcerpts: 12,
+    runExport(() => {
+      const report = buildPrintableReport({
+        dateFrom,
+        dateTo,
+        maxExcerpts: 12,
+      });
+      openPrintableReport(report);
+      trackExport();
     });
-    openPrintableReport(report);
-    trackExport();
   };
 
   return (
@@ -93,14 +112,14 @@ export default function ExportPage() {
         <PrimaryMain className="mt-2">
         <AnimatedReveal className="mt-2">
           <p className="text-xs uppercase tracking-[0.2em] text-violet-200">
-            Export memory
+            Export archive
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-            Take your memory with you
+            Take your evidence trail with you
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Download or print your private memory layer from this device. No account,
-            no cloud upload.
+            Download reflections, beliefs, timeline points, and top evidence quotes from
+            this device. No account required for JSON; encrypted backup is separate.
           </p>
           <p className="mt-2 text-xs text-muted">
             {exportLocked
@@ -112,6 +131,10 @@ export default function ExportPage() {
 
         <ArchiveProtectionLine surface="export" />
 
+        <ArchiveWorthStatement compact showCtas className="mt-4" />
+        <ArchiveExportPreview className="mt-4" />
+        <EvidenceLocker compact className="mt-4" />
+
         <UpgradeCta
           source="export"
           feature="export_reports"
@@ -120,10 +143,12 @@ export default function ExportPage() {
         />
 
         <TrustNotice className="mt-6">
-          Exports include transcripts and reflections. Store files where you trust. VoiceMemory
+          Exports include transcripts and reflections. Store files where you trust. ArchiveMe
           does not upload exports to any server.
         </TrustNotice>
         <PrivacyNotice className="mt-3" />
+        <ArchiveAssetCard surface="export" showExportLink className="mt-4" />
+        <EffortCompoundsPanel surface="export" className="mt-4" />
 
         <Card className="mt-6">
           <CardHeader className="pb-2">
@@ -163,7 +188,7 @@ export default function ExportPage() {
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
                 <FileJson className="h-4 w-4 text-violet-300" />
-                <CardTitle className="text-base">JSON export</CardTitle>
+                <CardTitle className="text-base">Archive JSON export</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-3 sm:flex-row">

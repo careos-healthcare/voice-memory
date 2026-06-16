@@ -100,15 +100,15 @@ class ArchiveFeedback {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type.id,
-        'targetType': targetType.id,
-        'createdAt': createdAt.toIso8601String(),
-        if (targetId != null) 'targetId': targetId,
-        if (patternTitle != null) 'patternTitle': patternTitle,
-        if (resultHint != null) 'resultHint': resultHint,
-        if (languageCode != null) 'languageCode': languageCode,
-      };
+    'id': id,
+    'type': type.id,
+    'targetType': targetType.id,
+    'createdAt': createdAt.toIso8601String(),
+    if (targetId != null) 'targetId': targetId,
+    if (patternTitle != null) 'patternTitle': patternTitle,
+    if (resultHint != null) 'resultHint': resultHint,
+    if (languageCode != null) 'languageCode': languageCode,
+  };
 
   static ArchiveFeedback? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

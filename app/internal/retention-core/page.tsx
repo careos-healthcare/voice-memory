@@ -64,6 +64,12 @@ export default function RetentionCoreDebugPage() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 text-sm">
+          <Link
+            href="/internal/retention-discovery"
+            className="text-violet-300 hover:text-violet-200"
+          >
+            Retention discovery →
+          </Link>
           <Link href="/internal/first-magic-moment" className="text-violet-300 hover:text-violet-200">
             First magic moment →
           </Link>

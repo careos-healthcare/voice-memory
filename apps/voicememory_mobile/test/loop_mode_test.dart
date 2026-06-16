@@ -87,10 +87,7 @@ void main() {
         activeLoop: loop,
       );
       expect(result.reads, isNotEmpty);
-      expect(
-        result.reads.first.title.toLowerCase(),
-        contains('prove'),
-      );
+      expect(result.reads.first.title.toLowerCase(), contains('prove'));
     });
 
     test('unrelated text does not force prove_enough', () {
@@ -103,7 +100,10 @@ void main() {
         activeLoop: loop,
       );
       expect(result.loopUnsupported, isTrue);
-      expect(result.clearerMomentTitle, LoopModeCopy.proveEnoughUnsupportedTitle);
+      expect(
+        result.clearerMomentTitle,
+        LoopModeCopy.proveEnoughUnsupportedTitle,
+      );
     });
 
     test('capacity text ranks capacity read first', () {
@@ -136,10 +136,13 @@ void main() {
     });
 
     test('progress status transitions', () {
-      final loop = engine.activate(LoopModeIds.capacityYes).copyWith(
-        completedRecordingCount: 0,
+      final loop = engine
+          .activate(LoopModeIds.capacityYes)
+          .copyWith(completedRecordingCount: 0);
+      expect(
+        engine.progressStatus(loop),
+        LoopProgressStatus.lookingForFirstEvidence,
       );
-      expect(engine.progressStatus(loop), LoopProgressStatus.lookingForFirstEvidence);
       expect(
         engine.progressStatus(loop.copyWith(completedRecordingCount: 2)),
         LoopProgressStatus.gettingClearer,
@@ -216,10 +219,14 @@ void main() {
   });
 
   testWidgets('onboarding loop copy avoids banned terms', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(home: OnboardingLoopScreen()),
-    );
-    const banned = ['therapy', 'coach', 'diagnosis', 'AI friend', 'VoiceMemory'];
+    await tester.pumpWidget(const MaterialApp(home: OnboardingLoopScreen()));
+    const banned = [
+      'therapy',
+      'coach',
+      'diagnosis',
+      'AI friend',
+      'VoiceMemory',
+    ];
     for (final s in [
       LoopModeCopy.onboardingTitle,
       LoopModeCopy.capacityHandoffTitle,
@@ -237,10 +244,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: LoopModeFirstHandoffCard(
-            loop: loop,
-            onStartRecording: () {},
-          ),
+          body: LoopModeFirstHandoffCard(loop: loop, onStartRecording: () {}),
         ),
       ),
     );
@@ -255,10 +259,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: LoopModeFirstHandoffCard(
-            loop: loop,
-            onStartRecording: () {},
-          ),
+          body: LoopModeFirstHandoffCard(loop: loop, onStartRecording: () {}),
         ),
       ),
     );
@@ -284,8 +285,10 @@ void main() {
     const engine = LoopModeEngine();
     final loop = engine.activate(LoopModeIds.proveEnough);
     expect(engine.journeyTitle(loop), LoopModeCopy.proveEnoughJourneyTitle);
-    expect(engine.journeyProgressLabel(loop, journey(supporting: 2)),
-        LoopModeCopy.proveEnoughProgress(2));
+    expect(
+      engine.journeyProgressLabel(loop, journey(supporting: 2)),
+      LoopModeCopy.proveEnoughProgress(2),
+    );
     expect(
       LoopModeCopy.proveEnoughNextPrompts,
       contains(engine.nextPrompt(loop)),

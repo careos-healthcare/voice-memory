@@ -1,9 +1,5 @@
 /// How a journal moment relates to a saved signal.
-enum SignalEvidenceRelation {
-  supports,
-  mightContradict,
-  unclear,
-}
+enum SignalEvidenceRelation { supports, mightContradict, unclear }
 
 extension SignalEvidenceRelationLabels on SignalEvidenceRelation {
   String get label {

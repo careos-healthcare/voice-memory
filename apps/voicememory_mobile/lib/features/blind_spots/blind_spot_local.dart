@@ -40,10 +40,9 @@ class BlindSpotLocalEngine {
   static const minReflections = AppConfig.patternReviewReflectionTarget;
 
   static BlindSpotLocalReview? buildReview(List<JournalEntry> entries) {
-    final eligible = entries
-        .where((e) => e.transcript.trim().length > 20)
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final eligible =
+        entries.where((e) => e.transcript.trim().length > 20).toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     if (eligible.length < minReflections) return null;
 
     final themes = <String, int>{};

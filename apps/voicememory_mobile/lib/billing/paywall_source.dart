@@ -8,6 +8,7 @@ enum PaywallSource {
   askArchive(id: 'ask_archive'),
   dailySuggestion(id: 'daily_suggestion'),
   startHereToday(id: 'start_here_today'),
+  valueMoment(id: 'value_moment'),
   generalPro(id: 'general_pro');
 
   const PaywallSource({required this.id});
@@ -38,12 +39,13 @@ class PaywallSourceCopy {
   final List<String> bullets;
   final String cta;
 
-  static const unlockProCta = 'Unlock ArchiveMe Pro';
+  static const unlockProCta = ConsumerUiCopy.paywallPrimaryCta;
 
   /// Pressure pattern history + full review share the pressure pitch.
   static const pressure = PaywallSourceCopy(
-    headline: 'Unlock your full pressure pattern',
-    subheadline: 'See where this keeps repeating, what it may be costing you, '
+    headline: 'See more of your pressure pattern',
+    subheadline:
+        'See where this keeps repeating, what it may be costing you, '
         'and what changed over time.',
     bullets: [
       'Full pressure pattern history',
@@ -57,46 +59,56 @@ class PaywallSourceCopy {
 
   static const askArchive = PaywallSourceCopy(
     headline: 'Ask your archive what keeps repeating',
-    subheadline: 'ArchiveMe uses your saved moments to show patterns with '
+    subheadline:
+        'ArchiveMe uses your saved moments to show patterns with '
         'evidence, not generic advice.',
     bullets: [
       'Ask where this pressure repeats',
       'See the evidence behind the answer',
       'Track how the pattern changes',
-      'Unlock full pressure reviews',
+      'Full pressure reviews over time',
     ],
     cta: unlockProCta,
   );
 
   /// Daily Return Suggestions + Start here today share the thread pitch:
   /// buyers say "threads connected" is why Pro makes sense, so the headline
-  /// makes that the main promise — a continuation of the value the user just
-  /// experienced, not a generic Pro list.
+  /// makes that the main promise — continuity over time, never "advanced AI"
+  /// and never a generic Pro list. Free keeps today's save; Pro connects it.
   static const dailySuggestions = PaywallSourceCopy(
     headline: 'Keep the thread connected',
-    subheadline: 'ArchiveMe uses what you record to connect today\u2019s '
-        'pressure with what shows up again later.',
+    subheadline:
+        'Free keeps today\u2019s save. Pro connects what returns, '
+        'fades, and changes over time.',
     bullets: [
-      'Track when this pattern returns',
-      'See how the evidence changes',
-      'Ask your archive what keeps repeating',
+      'See when a thread returns',
+      'Notice when a pattern starts fading',
+      'Track belief-like phrases that show up again',
+      'Open the exact evidence behind each insight',
     ],
-    cta: 'Unlock Pro',
+    cta: unlockProCta,
   );
 
   static const generalPro = PaywallSourceCopy(
-    headline: 'Unlock ArchiveMe Pro',
-    subheadline: 'Turn saved moments into patterns, reviews, and evidence you '
-        'can come back to.',
+    headline: 'Keep your archive useful over time',
+    subheadline:
+        'Unlock deeper history, saved evidence, and what keeps returning.',
     bullets: ConsumerUiCopy.paywallFallbackBullets,
     cta: ConsumerUiCopy.paywallPrimaryCta,
   );
 
   /// True for the daily-suggestion surfaces (Start here today / Daily
-  /// Suggestion) that share the daily-prompt pitch.
+  /// Suggestion) that share the daily-prompt pitch. Suggestion-to-Pro funnel
+  /// attribution keys off these two only.
   static bool isSuggestionSource(PaywallSource? source) =>
       source == PaywallSource.startHereToday ||
       source == PaywallSource.dailySuggestion;
+
+  /// True for every source that gets the full continuity treatment (thread
+  /// preview, proof checks, continuity confidence copy): the suggestion
+  /// surfaces plus the value-moment Pro bridge.
+  static bool isContinuitySource(PaywallSource? source) =>
+      isSuggestionSource(source) || source == PaywallSource.valueMoment;
 
   static PaywallSourceCopy forSource(PaywallSource source) {
     switch (source) {
@@ -107,6 +119,8 @@ class PaywallSourceCopy {
         return askArchive;
       case PaywallSource.dailySuggestion:
       case PaywallSource.startHereToday:
+      // The value-moment bridge sells the same continuity promise.
+      case PaywallSource.valueMoment:
         return dailySuggestions;
       case PaywallSource.generalPro:
         return generalPro;
@@ -115,57 +129,144 @@ class PaywallSourceCopy {
 }
 
 /// One row of the "What Pro continues" preview.
-class PaywallProThreadPreviewRow {
-  const PaywallProThreadPreviewRow({required this.title, required this.body});
+/// Annual-value framing shown near the plan cards for suggestion sources.
+/// Speaks to "didn't want another subscription" by framing Pro as a long-term
+/// archive — no scarcity, no pressure.
+class PaywallAnnualValueCopy {
+  static const String longTermLine =
+      'This works best as a long-term archive, not a one-off feature.';
 
-  final String title;
-  final String body;
+  /// Plan-card helper lines for suggestion-sourced paywalls.
+  static const String yearlyHelper =
+      'Best if you want your archive to build over time.';
+  static const String monthlyHelper = 'Try it month to month.';
+
+  static bool showFor(PaywallSource? source) =>
+      PaywallSourceCopy.isContinuitySource(source);
 }
 
-/// Compact paywall preview of what Pro continues — only shown to users who
-/// arrived from a suggestion surface, so it always refers to a thread they
-/// just experienced. Never implies free users lose anything.
-class PaywallProThreadPreview {
-  static const String heading = 'What Pro continues';
+/// "Proof you can look for" — concrete checks the user can run themselves to
+/// judge whether Pro is helping. Speaks to "still not enough proof it would
+/// help" with observable signals instead of claims.
+class PaywallProofPreview {
+  static const String heading = 'Proof you can look for';
 
-  static const List<PaywallProThreadPreviewRow> rows = [
-    PaywallProThreadPreviewRow(
-      title: 'This thread',
-      body: 'Keep today\u2019s save connected to future recordings.',
-    ),
-    PaywallProThreadPreviewRow(
-      title: 'Pattern returns',
-      body: 'See when the same pressure shows up again.',
-    ),
-    PaywallProThreadPreviewRow(
-      title: 'Evidence changes',
-      body: 'Notice if the story is getting stronger or fading.',
-    ),
+  static const List<String> rows = [
+    'Do prompts get sharper after a few saves?',
+    'Does the same thread return tomorrow?',
+    'Does your archive show what changed?',
   ];
 
   static bool showFor(PaywallSource? source) =>
-      PaywallSourceCopy.isSuggestionSource(source);
+      PaywallSourceCopy.isContinuitySource(source);
+}
+
+/// Above-fold clarity block — the paid promise in plain words, shown
+/// directly under the headline before plan cards or any CTA. One block for
+/// every source, so value-moment copy is centralized rather than repeated.
+abstract class PaywallAboveFoldClarity {
+  PaywallAboveFoldClarity._();
+
+  static const String title = 'What Pro continues';
+
+  static const List<String> lines = [
+    'What returned',
+    'What faded',
+    'What changed',
+    'The exact evidence behind it',
+  ];
+
+  /// Free reassurance shown with the block — never lockout framing.
+  static const String freeReassuranceLine =
+      'Free keeps today\u2019s save. Pro keeps the thread connected over '
+      'time.';
+}
+
+/// Plan-selection confidence near the plan selector — reduces hesitation at
+/// the monthly-vs-yearly choice. Both plans are framed as fine choices;
+/// there is no pressure toward yearly and no savings claim, because the
+/// paywall does not calculate real savings from product pricing.
+abstract class PaywallPlanSelectionConfidence {
+  PaywallPlanSelectionConfidence._();
+
+  static const String title = 'Choose how you want to continue';
+
+  static const String monthlyHelper = 'Monthly keeps it flexible.';
+  static const String yearlyHelper =
+      'Yearly is for people who want ArchiveMe to keep connecting patterns '
+      'over time.';
+
+  /// Selected-plan reassurance — always visible with the helper.
+  static const String manageLine =
+      'You can manage or cancel this anytime through the App Store.';
+
+  /// Stable plan ids, safe to log. Never user text.
+  static const String monthlyPlanId = 'monthly';
+  static const String yearlyPlanId = 'yearly';
+
+  static String helperForPlanId(String planId) =>
+      planId == yearlyPlanId ? yearlyHelper : monthlyHelper;
+}
+
+/// Price confidence near the plans and purchase CTA — reduces hesitation at
+/// the App Store sheet by saying plainly who handles the money. The trial
+/// handling line only ever renders when a real free trial was detected on a
+/// loaded product.
+abstract class PaywallPriceConfidenceCopy {
+  PaywallPriceConfidenceCopy._();
+
+  /// Shown immediately below the plan cards.
+  static const String manageLine =
+      'You can manage this anytime in the App Store.';
+
+  /// Trial handling — only when a zero-price introductory offer is actually
+  /// configured on a loaded App Store product.
+  static const String trialHandlingLine =
+      'Trial details are handled by the App Store before you confirm.';
+
+  /// Final line directly before the purchase CTA.
+  static const String confirmLine =
+      'The App Store will confirm before anything is charged.';
+
+  static List<String> planLines({required bool hasFreeTrial}) => [
+    manageLine,
+    if (hasFreeTrial) trialHandlingLine,
+  ];
 }
 
 /// Calm trust copy near the purchase CTA. Reassuring, never defensive — and
 /// never implying free users lose their saved recordings.
 class PaywallConfidenceCopy {
-  /// Default lines for the generic paywall and non-suggestion sources.
+  /// Final purchase reassurance — always visible immediately above the
+  /// purchase CTA. Short and safety-first: what stays free, what Pro adds,
+  /// how to leave.
   static const List<String> generic = [
-    'Your archive is yours.',
-    'Today\u2019s saves stay even if you don\u2019t upgrade.',
-    'Cancel anytime through the App Store.',
-    'Pro unlocks deeper continuity, not access to your basic saves.',
+    'Your saves stay free.',
+    'Pro only adds continuity over time.',
+    'Manage or cancel anytime in the App Store.',
   ];
 
-  /// Shorter continuity-focused lines for users arriving from a suggestion —
-  /// the same framing the post-save receipt already used.
-  static const List<String> suggestion = [
-    'Today\u2019s save stays in your archive.',
-    'Pro keeps the thread connected across future recordings.',
-    'Cancel anytime through the App Store.',
-  ];
+  /// Subscription reassurance — explicitly leaves the decision with the user.
+  static const String suggestionReassurance =
+      'Upgrade only if you want the archive to keep building over time.';
+
+  /// Suggestion and value-moment sources get the same reassurance plus the
+  /// explicit no-pressure line. Free users are never locked out of their
+  /// own saves.
+  static const List<String> suggestion = [...generic, suggestionReassurance];
+
+  /// Shown only when a zero-price introductory offer is actually configured
+  /// on a loaded App Store product — never as a generic promise.
+  static const String trialLine =
+      'Try Pro free, then continue only if it feels useful.';
 
   static List<String> forSource(PaywallSource? source) =>
-      PaywallSourceCopy.isSuggestionSource(source) ? suggestion : generic;
+      PaywallSourceCopy.isContinuitySource(source) ? suggestion : generic;
+
+  /// Confidence lines plus the trial line when a free trial was safely
+  /// detected on the live products.
+  static List<String> linesFor(
+    PaywallSource? source, {
+    required bool hasFreeTrial,
+  }) => [...forSource(source), if (hasFreeTrial) trialLine];
 }

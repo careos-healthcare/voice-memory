@@ -49,8 +49,9 @@ void main() {
     );
   });
 
-  testWidgets('sheet does not overflow in a short, constrained height',
-      (tester) async {
+  testWidgets('sheet does not overflow in a short, constrained height', (
+    tester,
+  ) async {
     // Deliberately short viewport to reproduce the previous overflow.
     await _pumpHost(tester, surface: const Size(320, 480), onSelect: (_) {});
 
@@ -62,8 +63,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping a prompt closes the sheet and reports the selection',
-      (tester) async {
+  testWidgets('tapping a prompt closes the sheet and reports the selection', (
+    tester,
+  ) async {
     String? selected;
     await _pumpHost(
       tester,
@@ -82,8 +84,9 @@ void main() {
     expect(find.text(ConsumerUiCopy.recordHelpSheetTitle), findsNothing);
   });
 
-  testWidgets('already-selected prompt renders in a selected state',
-      (tester) async {
+  testWidgets('already-selected prompt renders in a selected state', (
+    tester,
+  ) async {
     final preselected = ConsumerUiCopy.recordHelpSheetPrompts.first;
     await _pumpHost(
       tester,
@@ -98,10 +101,7 @@ void main() {
     // The selected card uses the accent surface; unselected cards do not.
     final selectedMaterial = tester.widget<Material>(
       find
-          .ancestor(
-            of: find.text(preselected),
-            matching: find.byType(Material),
-          )
+          .ancestor(of: find.text(preselected), matching: find.byType(Material))
           .first,
     );
     expect(selectedMaterial.color, AppColors.accentLight);
@@ -109,10 +109,7 @@ void main() {
     final otherPrompt = ConsumerUiCopy.recordHelpSheetPrompts[1];
     final otherMaterial = tester.widget<Material>(
       find
-          .ancestor(
-            of: find.text(otherPrompt),
-            matching: find.byType(Material),
-          )
+          .ancestor(of: find.text(otherPrompt), matching: find.byType(Material))
           .first,
     );
     expect(otherMaterial.color, AppColors.surfaceAlt);

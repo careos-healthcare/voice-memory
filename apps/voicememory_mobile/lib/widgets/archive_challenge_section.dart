@@ -16,17 +16,14 @@ import '../theme/voicememory_typography.dart';
 
 /// Discover — one active archive challenge below daily discovery.
 class ArchiveChallengeSection extends StatefulWidget {
-  const ArchiveChallengeSection({
-    super.key,
-    required this.entries,
-    this.state,
-  });
+  const ArchiveChallengeSection({super.key, required this.entries, this.state});
 
   final List<JournalEntry> entries;
   final ArchiveStateObjectV3? state;
 
   @override
-  State<ArchiveChallengeSection> createState() => _ArchiveChallengeSectionState();
+  State<ArchiveChallengeSection> createState() =>
+      _ArchiveChallengeSectionState();
 }
 
 class _ArchiveChallengeSectionState extends State<ArchiveChallengeSection> {
@@ -118,9 +115,10 @@ class _ArchiveChallengeSectionState extends State<ArchiveChallengeSection> {
               TextButton(
                 onPressed: () {
                   ArchiveExplanationAnalytics.challengeViewed(refId: c.id);
-                  ProductAnalytics.trackStrings('archive_challenge_why_opened', {
-                    'id': c.id,
-                  });
+                  ProductAnalytics.trackStrings(
+                    'archive_challenge_why_opened',
+                    {'id': c.id},
+                  );
                   openArchiveExplanation(
                     context,
                     ref: c.insightRef,

@@ -41,9 +41,9 @@ class PressureInsightsEmptyState extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.md),
           FilledButton.icon(

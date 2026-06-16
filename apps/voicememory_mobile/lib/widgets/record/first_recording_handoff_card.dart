@@ -12,10 +12,12 @@ class FirstRecordingHandoffCard extends StatelessWidget {
     super.key,
     required this.onStartRecording,
     this.wedgePrompt,
+    this.showRecordCta = true,
   });
 
   final VoidCallback onStartRecording;
   final String? wedgePrompt;
+  final bool showRecordCta;
 
   @override
   Widget build(BuildContext context) {
@@ -73,20 +75,22 @@ class FirstRecordingHandoffCard extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: AppSpacing.md),
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: FilledButton(
-              onPressed: () {
-                RetentionMetricsTracker.track(
-                  RetentionMetricsTracker.firstRecordCtaTapped,
-                );
-                onStartRecording();
-              },
-              child: const Text(ConsumerUiCopy.firstRecordingHandoffCta),
+          if (showRecordCta) ...[
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: FilledButton(
+                onPressed: () {
+                  RetentionMetricsTracker.track(
+                    RetentionMetricsTracker.firstRecordCtaTapped,
+                  );
+                  onStartRecording();
+                },
+                child: const Text(ConsumerUiCopy.firstRecordingHandoffCta),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

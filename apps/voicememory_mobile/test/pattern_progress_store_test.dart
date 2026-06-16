@@ -17,19 +17,18 @@ PatternProgressMoment _moment({
   String id = 'pp_pm1_3',
   String memoryId = 'pm1',
   int checkInCount = 3,
-}) =>
-    PatternProgressMoment(
-      id: id,
-      memoryId: memoryId,
-      createdAt: DateTime(2026, 6, 4),
-      type: PatternProgressType.stillRepeating,
-      headline: 'This pattern is still showing up.',
-      body: 'You have caught it $checkInCount times.',
-      beforeLine: 'It often starts around: before saying yes',
-      nextLine: 'Next, watch what happens right before it starts.',
-      checkInCount: checkInCount,
-      shouldShow: true,
-    );
+}) => PatternProgressMoment(
+  id: id,
+  memoryId: memoryId,
+  createdAt: DateTime(2026, 6, 4),
+  type: PatternProgressType.stillRepeating,
+  headline: 'This pattern is still showing up.',
+  body: 'You have caught it $checkInCount times.',
+  beforeLine: 'It often starts around: before saying yes',
+  nextLine: 'Next, watch what happens right before it starts.',
+  checkInCount: checkInCount,
+  shouldShow: true,
+);
 
 void main() {
   test('saveLatest and loadLatest round-trip', () async {

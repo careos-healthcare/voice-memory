@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 
+import { ArchiveProductWayfinding } from "@/components/archive/ArchiveProductWayfinding";
 import { AnticipatoryEmptyState } from "@/components/memory/AnticipatoryEmptyState";
 import { FirstReturnMoment } from "@/components/continuity/FirstReturnMoment";
 import { JournalArchiveRow } from "@/components/journal/JournalArchiveRow";
@@ -34,6 +35,7 @@ export default function JournalPage() {
         <SiteHeader />
 
         <PrimaryMain className="mt-4">
+        <ArchiveProductWayfinding variant="journal" className="mb-4" />
         <div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <MotionPageTitle title="Journal" className="mt-0" />

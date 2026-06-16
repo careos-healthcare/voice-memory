@@ -2,7 +2,7 @@ import '../signal_journey/signal_journey_coordinator.dart';
 import 'return_reason_capture_store.dart';
 
 /// Records how users return for additional evidence moments.
-abstract final class ReturnReasonCaptureCoordinator {
+abstract class ReturnReasonCaptureCoordinator {
   ReturnReasonCaptureCoordinator._();
 
   static Future<void> onReflectionSaved({
@@ -15,7 +15,10 @@ abstract final class ReturnReasonCaptureCoordinator {
     final journey = await SignalJourneyCoordinator.loadActive();
     var hours = 0;
     if (lastReflectionAt != null) {
-      hours = DateTime.now().difference(lastReflectionAt).inHours.clamp(0, 9999);
+      hours = DateTime.now()
+          .difference(lastReflectionAt)
+          .inHours
+          .clamp(0, 9999);
     }
     await ReturnReasonCaptureStore.instance().recordReturn(
       source: source,

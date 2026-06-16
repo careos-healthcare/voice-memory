@@ -20,7 +20,8 @@ class QuestionTheArchiveMobile extends StatefulWidget {
   final ArchiveStateObjectV3 state;
 
   @override
-  State<QuestionTheArchiveMobile> createState() => _QuestionTheArchiveMobileState();
+  State<QuestionTheArchiveMobile> createState() =>
+      _QuestionTheArchiveMobileState();
 }
 
 class _QuestionTheArchiveMobileState extends State<QuestionTheArchiveMobile> {
@@ -78,10 +79,7 @@ class _QuestionTheArchiveMobileState extends State<QuestionTheArchiveMobile> {
 }
 
 class _AnswerCard extends StatelessWidget {
-  const _AnswerCard({
-    required this.questionId,
-    this.answer,
-  });
+  const _AnswerCard({required this.questionId, this.answer});
 
   final ArchiveQuestionId questionId;
   final ArchiveQuestionAnswer? answer;

@@ -48,8 +48,9 @@ class _PatternProfileCardState extends State<PatternProfileCard> {
               children: [
                 Text(
                   'Pattern profile',
-                  style: VoiceMemoryTypography.cardTitleStyle()
-                      .copyWith(fontSize: 15),
+                  style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -61,10 +62,7 @@ class _PatternProfileCardState extends State<PatternProfileCard> {
               ],
             ),
           ),
-          TextButton(
-            onPressed: _open,
-            child: const Text('Open profile'),
-          ),
+          TextButton(onPressed: _open, child: const Text('Open profile')),
         ],
       ),
     );

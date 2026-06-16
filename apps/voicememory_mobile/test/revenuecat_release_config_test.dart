@@ -27,11 +27,11 @@ void main() {
   test('paywall shows safe message when billing not configured', () {
     expect(
       ConsumerUiCopy.paywallBillingNotConfigured,
-      contains('TestFlight build yet'),
+      contains('Purchases are not available right now'),
     );
     expect(
       ConsumerUiCopy.paywallSetupUnavailableBody,
-      'Purchases are not available in this TestFlight build yet.',
+      'Purchases are not available right now.',
     );
   });
 

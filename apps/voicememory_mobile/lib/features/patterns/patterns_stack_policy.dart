@@ -105,8 +105,7 @@ PatternsStackDecision decidePatternsStack({
     suppressSeparateFindMomentCard: suppressNav,
     suppressSeparatePatternMapCard: suppressNav || suppressFromProfile,
     suppressSeparateTimelineCard: suppressNav || suppressFromProfile,
-    suppressLowerPriorityCtas:
-        hasArchiveMemory && hasNextCheck,
+    suppressLowerPriorityCtas: hasArchiveMemory && hasNextCheck,
     showCurrentObjectiveCard: !hasDueCheckStatusCard,
   );
 }

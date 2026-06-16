@@ -41,7 +41,10 @@ class ArchiveValueBanner extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(snapshot.valueCopy, style: VoiceMemoryTypography.cardTitleStyle()),
+          Text(
+            snapshot.valueCopy,
+            style: VoiceMemoryTypography.cardTitleStyle(),
+          ),
           const SizedBox(height: 6),
           Text(
             '${snapshot.reflectionCount.clamp(0, ArchiveValueProgress.target)}/${ArchiveValueProgress.target} reflections toward pattern review · ${snapshot.progressPercent}%',

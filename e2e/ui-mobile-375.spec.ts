@@ -25,7 +25,7 @@ const PRIMARY_ROUTES: Array<{
     skipNav: true,
     primaryCta: (page) =>
       page.locator("#recorder [data-primary-cta='recorder'], #recorder button").first(),
-    critical: /record|reflection|VoiceMemory/i,
+    critical: /record|reflection|ArchiveMe/i,
   },
   {
     path: "/record",

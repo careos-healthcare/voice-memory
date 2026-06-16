@@ -7,7 +7,7 @@ import '../trial/trial_summary_engine.dart';
 import '../trial/trial_summary_model.dart';
 
 /// Schedules a reminder after the user locks in tomorrow's check from retention.
-abstract final class RetentionReminderCoordinator {
+abstract class RetentionReminderCoordinator {
   RetentionReminderCoordinator._();
 
   static Future<void> maybeScheduleAfterNextCheckChosen(
@@ -19,8 +19,9 @@ abstract final class RetentionReminderCoordinator {
       final ready = summary.reminderReadiness == ReminderReadiness.ready;
       if (!ready && !hasRoutineAnchor) return;
 
-      final outcome =
-          await CheckInReminderService.maybeScheduleForCheckIn(checkIn);
+      final outcome = await CheckInReminderService.maybeScheduleForCheckIn(
+        checkIn,
+      );
       if (outcome == ReminderScheduleOutcome.scheduled) {
         unawaited(ActivationTracker.trackReminderScheduledFromRetention());
       }

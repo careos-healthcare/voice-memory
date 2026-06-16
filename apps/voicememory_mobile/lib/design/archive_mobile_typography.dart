@@ -5,7 +5,7 @@ import '../theme/voicememory_typography.dart';
 import 'archive_responsive_layout.dart';
 
 /// Shared consumer-facing type scale — use instead of raw metadata styles for explanations.
-abstract final class ArchiveMobileTypography {
+abstract class ArchiveMobileTypography {
   ArchiveMobileTypography._();
 
   static const double minBodySize = 16;
@@ -58,13 +58,12 @@ abstract final class ArchiveMobileTypography {
       );
 
   /// Section labels inside cards (replaces metadata for headings).
-  static TextStyle cardLabel(BuildContext context, {Color? color}) =>
-      TextStyle(
-        fontSize: _wide(context) ? minLabelSizeWide : minLabelSize,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-        color: color ?? VoiceMemoryColors.primaryIndigo,
-      );
+  static TextStyle cardLabel(BuildContext context, {Color? color}) => TextStyle(
+    fontSize: _wide(context) ? minLabelSizeWide : minLabelSize,
+    fontWeight: FontWeight.w600,
+    height: 1.35,
+    color: color ?? VoiceMemoryColors.primaryIndigo,
+  );
 
   static TextStyle responsiveHelper(BuildContext context, {Color? color}) =>
       VoiceMemoryTypography.metadataStyle(
@@ -75,21 +74,23 @@ abstract final class ArchiveMobileTypography {
       );
 
   static TextStyle responsiveCta(BuildContext context) => TextStyle(
-        fontSize: minCtaSize,
-        fontWeight: FontWeight.w600,
-        color: VoiceMemoryColors.onPrimary,
-      );
+    fontSize: minCtaSize,
+    fontWeight: FontWeight.w600,
+    color: VoiceMemoryColors.onPrimary,
+  );
 
   static TextStyle listTitle(BuildContext context) => TextStyle(
-        fontSize: _wide(context) ? 17 : 16,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-        color: VoiceMemoryColors.textPrimary,
-      );
+    fontSize: _wide(context) ? 17 : 16,
+    fontWeight: FontWeight.w600,
+    height: 1.35,
+    color: VoiceMemoryColors.textPrimary,
+  );
 
-  static TextStyle listSubtitle(BuildContext context) => responsiveBody(context);
+  static TextStyle listSubtitle(BuildContext context) =>
+      responsiveBody(context);
 
-  static TextStyle pageTitle(BuildContext context) => archiveSurfaceTitle(context);
+  static TextStyle pageTitle(BuildContext context) =>
+      archiveSurfaceTitle(context);
 
   /// Primary archive surface titles — 28–34pt hierarchy.
   static TextStyle archiveSurfaceTitle(BuildContext context) =>

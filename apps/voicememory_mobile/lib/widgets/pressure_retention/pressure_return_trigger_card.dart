@@ -54,8 +54,9 @@ class PressureReturnTriggerCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -63,16 +64,16 @@ class PressureReturnTriggerCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             PressureReturnTrigger.triggerCopy,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             PressureReturnTrigger.supportCopy,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           if (isPro) ...[
             const SizedBox(height: AppSpacing.xs),

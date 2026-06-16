@@ -79,8 +79,7 @@ void main() {
 
   List<({String event, Map<String, Object> properties})> eventsNamed(
     String name,
-  ) =>
-      captured.where((e) => e.event == name).toList();
+  ) => captured.where((e) => e.event == name).toList();
 
   setUp(() {
     captured = [];
@@ -98,7 +97,9 @@ void main() {
 
   Future<void> pumpAuth(WidgetTester tester, AccountAuthIntent intent) async {
     await tester.pumpWidget(
-      MaterialApp(home: AccountAuthScreen(intent: intent, service: auth)),
+      MaterialApp(
+        home: AccountAuthScreen(intent: intent, service: auth),
+      ),
     );
     await tester.pump();
   }
@@ -124,13 +125,17 @@ void main() {
         'person@example',
         'person example@x.com',
       ]) {
-        expect(AccountAuth.isValidEmail(bad), isFalse,
-            reason: '"$bad" must fail');
+        expect(
+          AccountAuth.isValidEmail(bad),
+          isFalse,
+          reason: '"$bad" must fail',
+        );
       }
     });
 
-    testWidgets('create account rejects an invalid email before the provider',
-        (tester) async {
+    testWidgets('create account rejects an invalid email before the provider', (
+      tester,
+    ) async {
       await pumpAuth(tester, AccountAuthIntent.createAccount);
       await enterEmailAndSubmit(tester, 'not-an-email');
 
@@ -167,39 +172,43 @@ void main() {
   });
 
   group('Create account flow', () {
-    testWidgets('valid email calls the provider and advances to the code step',
-        (tester) async {
-      await pumpAuth(tester, AccountAuthIntent.createAccount);
-      expect(find.text(AccountAuthCopy.createTitle), findsOneWidget);
-      expect(find.text(AccountAuthCopy.createBody), findsOneWidget);
-      expect(find.text(AccountAuthCopy.privacyLine), findsOneWidget);
-      expect(
-        find.text(AccountAuthCopy.continueWithoutAccount),
-        findsOneWidget,
-      );
+    testWidgets(
+      'valid email calls the provider and advances to the code step',
+      (tester) async {
+        await pumpAuth(tester, AccountAuthIntent.createAccount);
+        expect(find.text(AccountAuthCopy.createTitle), findsOneWidget);
+        expect(find.text(AccountAuthCopy.createBody), findsOneWidget);
+        expect(find.text(AccountAuthCopy.privacyLine), findsOneWidget);
+        expect(
+          find.text(AccountAuthCopy.continueWithoutAccount),
+          findsOneWidget,
+        );
 
-      await enterEmailAndSubmit(tester, _testEmail);
+        await enterEmailAndSubmit(tester, _testEmail);
 
-      expect(api.sendCodeCalls, [_testEmail]);
-      expect(find.text(AccountAuthCopy.codeTitle), findsOneWidget);
-      final started =
-          eventsNamed(ActivationFunnelAnalytics.accountSignupStarted);
-      expect(started, hasLength(1));
-      expect(started.single.properties, {'method': 'email_code'});
+        expect(api.sendCodeCalls, [_testEmail]);
+        expect(find.text(AccountAuthCopy.codeTitle), findsOneWidget);
+        final started = eventsNamed(
+          ActivationFunnelAnalytics.accountSignupStarted,
+        );
+        expect(started, hasLength(1));
+        expect(started.single.properties, {'method': 'email_code'});
 
-      await tester.enterText(
-        find.byKey(const Key('account_auth_code_field')),
-        '123456',
-      );
-      await tester.tap(find.byKey(const Key('account_auth_verify_cta')));
-      await tester.pump();
+        await tester.enterText(
+          find.byKey(const Key('account_auth_code_field')),
+          '123456',
+        );
+        await tester.tap(find.byKey(const Key('account_auth_verify_cta')));
+        await tester.pump();
 
-      expect(api.verifyCalls, ['$_testEmail|123456']);
-      final completed =
-          eventsNamed(ActivationFunnelAnalytics.accountSignupCompleted);
-      expect(completed, hasLength(1));
-      expect(completed.single.properties, {'method': 'email_code'});
-    });
+        expect(api.verifyCalls, ['$_testEmail|123456']);
+        final completed = eventsNamed(
+          ActivationFunnelAnalytics.accountSignupCompleted,
+        );
+        expect(completed, hasLength(1));
+        expect(completed.single.properties, {'method': 'email_code'});
+      },
+    );
   });
 
   group('Sign in flow', () {
@@ -228,8 +237,9 @@ void main() {
       );
     });
 
-    testWidgets('resend code calls the provider again (recovery path)',
-        (tester) async {
+    testWidgets('resend code calls the provider again (recovery path)', (
+      tester,
+    ) async {
       await pumpAuth(tester, AccountAuthIntent.signIn);
       await enterEmailAndSubmit(tester, _testEmail);
       expect(api.sendCodeCalls, hasLength(1));
@@ -241,11 +251,13 @@ void main() {
       expect(find.text(AccountAuthCopy.codeSent), findsOneWidget);
     });
 
-    testWidgets('provider errors show calm copy with a stable id only',
-        (tester) async {
-      api.sendCodeError =
-          ApiException('Too many requests. Please wait a moment.',
-              statusCode: 429);
+    testWidgets('provider errors show calm copy with a stable id only', (
+      tester,
+    ) async {
+      api.sendCodeError = ApiException(
+        'Too many requests. Please wait a moment.',
+        statusCode: 429,
+      );
       await pumpAuth(tester, AccountAuthIntent.signIn);
       await enterEmailAndSubmit(tester, _testEmail);
 
@@ -294,25 +306,28 @@ void main() {
   });
 
   group('Sign out', () {
-    test('ends the session, clears the cookie, and tracks the safe event',
-        () async {
-      await auth.verifyAuthCode(email: _testEmail, code: '123456');
-      expect(auth.currentSession, isNotNull);
+    test(
+      'ends the session, clears the cookie, and tracks the safe event',
+      () async {
+        await auth.verifyAuthCode(email: _testEmail, code: '123456');
+        expect(auth.currentSession, isNotNull);
 
-      await auth.signOut();
+        await auth.signOut();
 
-      expect(auth.currentSession, isNull);
-      expect(api.signOutCalls, 1);
-      expect(secure.values.containsKey('auth_cookie'), isFalse);
-      final events = eventsNamed(ActivationFunnelAnalytics.accountSignout);
-      expect(events, hasLength(1));
-      expect(events.single.properties, {'method': 'email_code'});
-    });
+        expect(auth.currentSession, isNull);
+        expect(api.signOutCalls, 1);
+        expect(secure.values.containsKey('auth_cookie'), isFalse);
+        final events = eventsNamed(ActivationFunnelAnalytics.accountSignout);
+        expect(events, hasLength(1));
+        expect(events.single.properties, {'method': 'email_code'});
+      },
+    );
 
     test('the local archive is not deleted on sign out', () async {
       final stamp = DateTime.now().microsecondsSinceEpoch;
-      final store =
-          await JournalStore.open('/tmp/vm_account_auth_journal_$stamp.json');
+      final store = await JournalStore.open(
+        '/tmp/vm_account_auth_journal_$stamp.json',
+      );
       await store.save(
         JournalEntry.fromJson({
           'id': 'entry-1',
@@ -374,13 +389,17 @@ void main() {
         // No sync overclaims while sync is not the promise here.
         'cloud sync',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'account copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'account copy must not contain "$banned"',
+        );
       }
     });
 
-    testWidgets('no email, code, or password ever reaches analytics',
-        (tester) async {
+    testWidgets('no email, code, or password ever reaches analytics', (
+      tester,
+    ) async {
       // Full create flow + an error + sign out.
       await pumpAuth(tester, AccountAuthIntent.createAccount);
       await enterEmailAndSubmit(tester, _testEmail);
@@ -399,8 +418,8 @@ void main() {
           isEmpty,
           reason: '${e.event} carries a non-whitelisted key',
         );
-        final flat =
-            '${e.event} ${e.properties.values.join(' ')}'.toLowerCase();
+        final flat = '${e.event} ${e.properties.values.join(' ')}'
+            .toLowerCase();
         expect(flat, isNot(contains('@')));
         expect(flat, isNot(contains('password')));
         expect(flat, isNot(contains('person')));

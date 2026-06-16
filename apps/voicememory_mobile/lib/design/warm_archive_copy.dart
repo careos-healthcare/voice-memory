@@ -3,7 +3,7 @@ import '../features/living_archive/living_archive_copy.dart';
 import '../features/living_archive/living_archive_models.dart';
 
 /// Reflective, human-facing pattern language — not analytics tone.
-abstract final class WarmArchiveCopy {
+abstract class WarmArchiveCopy {
   WarmArchiveCopy._();
 
   static const String contradictionConcept = "Something doesn't quite fit";
@@ -14,7 +14,8 @@ abstract final class WarmArchiveCopy {
   static const String archiveChangedMindSectionTitle =
       'ARCHIVEME CHANGED ITS READ';
 
-  static const String beliefSectionTitle = 'A STORY YOU MAY BE TELLING YOURSELF';
+  static const String beliefSectionTitle =
+      'A STORY YOU MAY BE TELLING YOURSELF';
   static const String beliefChangesSectionTitle = 'STORIES THAT SHIFTED';
   static const String themesSectionTitle = 'SOMETHING YOU RETURN TO';
   static const String contradictionsSectionTitle =
@@ -24,8 +25,7 @@ abstract final class WarmArchiveCopy {
   static const String contradictionsLead =
       'Two reflections pull in different directions — worth sitting with, not fixing.';
 
-  static const String beliefUnderReviewSectionTitle =
-      'A STORY UNDER REVIEW';
+  static const String beliefUnderReviewSectionTitle = 'A STORY UNDER REVIEW';
 
   /// User-facing confidence movement (no percent deltas).
   static String confidenceShiftPhrase({
@@ -75,7 +75,10 @@ abstract final class WarmArchiveCopy {
     required int currentPercent,
   }) {
     if (priorPercent == currentPercent) {
-      return confidenceShiftPhrase(prior: priorPercent, current: currentPercent);
+      return confidenceShiftPhrase(
+        prior: priorPercent,
+        current: currentPercent,
+      );
     }
     if (currentPercent > priorPercent) {
       return 'ArchiveMe leans toward this more than it did $priorLabel.';
@@ -140,7 +143,10 @@ abstract final class WarmArchiveCopy {
     if (lower.startsWith('approval')) return 'approval';
     if (lower.startsWith('work')) return 'work';
     final cleaned = label
-        .replaceAll(RegExp(r'\s*(mentions|references)\s*', caseSensitive: false), '')
+        .replaceAll(
+          RegExp(r'\s*(mentions|references)\s*', caseSensitive: false),
+          '',
+        )
         .trim();
     if (cleaned.isEmpty) return 'this';
     return cleaned[0].toLowerCase() + cleaned.substring(1);

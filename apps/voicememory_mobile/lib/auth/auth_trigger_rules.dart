@@ -25,7 +25,8 @@ class AuthTriggerCopy {
 const authTriggerCopy = <AuthTriggerReason, AuthTriggerCopy>{
   AuthTriggerReason.protectArchive: AuthTriggerCopy(
     title: 'Protect this archive',
-    lead: 'Sign in with email to encrypt a backup of what you built on this device.',
+    lead:
+        'Sign in with email to encrypt a backup of what you built on this device.',
     cta: 'Protect with email',
   ),
   AuthTriggerReason.syncArchive: AuthTriggerCopy(

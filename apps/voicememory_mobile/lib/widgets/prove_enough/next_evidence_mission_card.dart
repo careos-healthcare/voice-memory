@@ -52,10 +52,7 @@ class NextEvidenceMissionCard extends StatelessWidget {
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            mission.mission,
-            style: ArchiveMobileTypography.body(context),
-          ),
+          Text(mission.mission, style: ArchiveMobileTypography.body(context)),
           const SizedBox(height: AppSpacing.md),
           FilledButton(
             key: const Key('next_evidence_mission_record_cta'),

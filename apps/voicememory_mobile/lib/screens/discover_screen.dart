@@ -52,7 +52,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     if (isIntentionalEmptyArchive(entries)) {
       setState(() {
         _entries = entries;
-        _feed = DiscoverLocalEngine.build(entries: entries, baselineThemes: null);
+        _feed = DiscoverLocalEngine.build(
+          entries: entries,
+          baselineThemes: null,
+        );
       });
       return;
     }
@@ -60,13 +63,17 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     final baseline = baselineRaw?.map(
       (k, v) => MapEntry(k, (v as num).toInt()),
     );
-    final themeBaseline = ThemeTrackerService.canonicalBaselineFromStored(baseline);
+    final themeBaseline = ThemeTrackerService.canonicalBaselineFromStored(
+      baseline,
+    );
     var feed = DiscoverLocalEngine.build(
       entries: entries,
       baselineThemes: baseline,
     );
     if (!feed.hasBaseline && entries.isNotEmpty) {
-      await s.prefs.setDiscoverBaseline(DiscoverLocalEngine.baselineFromEntries(entries));
+      await s.prefs.setDiscoverBaseline(
+        DiscoverLocalEngine.baselineFromEntries(entries),
+      );
       feed = DiscoverLocalEngine.build(
         entries: entries,
         baselineThemes: DiscoverLocalEngine.baselineFromEntries(entries),
@@ -74,7 +81,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     }
     await s.paywall.markFirstDiscoverSeen();
     final ent = await s.billing.loadEntitlements();
-    final showPaywall = await s.paywall.shouldShowPostDiscover(entitlements: ent);
+    final showPaywall = await s.paywall.shouldShowPostDiscover(
+      entitlements: ent,
+    );
     final gate = await s.paywall.shouldGateContinuity(entitlements: ent);
     if (mounted) {
       setState(() {
@@ -139,15 +148,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ),
             const SizedBox(height: 16),
           ],
-          TopThemesSection(
-            entries: _entries,
-            baselineCounts: _themeBaseline,
-          ),
+          TopThemesSection(entries: _entries, baselineCounts: _themeBaseline),
           const SizedBox(height: 16),
-          EarlyArchiveInsightSection(
-            entries: _entries,
-            surface: 'discover',
-          ),
+          EarlyArchiveInsightSection(entries: _entries, surface: 'discover'),
           const SizedBox(height: 20),
           if (feed == null)
             const Center(child: CircularProgressIndicator())

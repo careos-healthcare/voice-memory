@@ -42,7 +42,9 @@ class PatternMemoryAfterSaveCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           _row('Checked ${memory.checkInCount} times'),
@@ -60,9 +62,14 @@ class PatternMemoryAfterSaveCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               nextQuestion,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
             if (onUseNext != null) ...[
               const SizedBox(height: AppSpacing.md),

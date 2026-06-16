@@ -25,18 +25,18 @@ void main() {
     Map<dynamic, dynamic>? captured;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('archive_me/current_objective_widget'),
-      (call) async {
-        if (call.method == 'isCurrentObjectiveWidgetAvailable') {
-          return true;
-        }
-        if (call.method == 'updateCurrentObjectiveWidget') {
-          captured = call.arguments as Map<dynamic, dynamic>?;
-          return null;
-        }
-        return null;
-      },
-    );
+          const MethodChannel('archive_me/current_objective_widget'),
+          (call) async {
+            if (call.method == 'isCurrentObjectiveWidgetAvailable') {
+              return true;
+            }
+            if (call.method == 'updateCurrentObjectiveWidget') {
+              captured = call.arguments as Map<dynamic, dynamic>?;
+              return null;
+            }
+            return null;
+          },
+        );
 
     final bridge = MethodChannelCurrentObjectiveWidgetBridge();
     expect(await bridge.isAvailable(), isTrue);
@@ -49,27 +49,27 @@ void main() {
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('archive_me/current_objective_widget'),
-      null,
-    );
+          const MethodChannel('archive_me/current_objective_widget'),
+          null,
+        );
   });
 
   test('MethodChannel bridge clear invokes native clear', () async {
     var clearCalled = false;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('archive_me/current_objective_widget'),
-      (call) async {
-        if (call.method == 'clearCurrentObjectiveWidget') {
-          clearCalled = true;
-          return null;
-        }
-        if (call.method == 'isCurrentObjectiveWidgetAvailable') {
-          return true;
-        }
-        return null;
-      },
-    );
+          const MethodChannel('archive_me/current_objective_widget'),
+          (call) async {
+            if (call.method == 'clearCurrentObjectiveWidget') {
+              clearCalled = true;
+              return null;
+            }
+            if (call.method == 'isCurrentObjectiveWidgetAvailable') {
+              return true;
+            }
+            return null;
+          },
+        );
 
     final bridge = MethodChannelCurrentObjectiveWidgetBridge();
     await bridge.clear();
@@ -77,30 +77,30 @@ void main() {
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('archive_me/current_objective_widget'),
-      null,
-    );
+          const MethodChannel('archive_me/current_objective_widget'),
+          null,
+        );
   });
 
   test('MethodChannel bridge returns pending route from handler', () async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('archive_me/current_objective_widget'),
-      (call) async {
-        if (call.method == 'consumePendingWidgetRoute') {
-          return '/record';
-        }
-        return null;
-      },
-    );
+          const MethodChannel('archive_me/current_objective_widget'),
+          (call) async {
+            if (call.method == 'consumePendingWidgetRoute') {
+              return '/record';
+            }
+            return null;
+          },
+        );
 
     final bridge = MethodChannelCurrentObjectiveWidgetBridge();
     expect(await bridge.consumePendingWidgetRoute(), '/record');
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('archive_me/current_objective_widget'),
-      null,
-    );
+          const MethodChannel('archive_me/current_objective_widget'),
+          null,
+        );
   });
 }

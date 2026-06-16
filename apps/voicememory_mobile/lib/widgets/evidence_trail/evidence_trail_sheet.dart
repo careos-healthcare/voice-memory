@@ -108,9 +108,8 @@ class EvidenceTrailSheet extends StatelessWidget {
                                 flex: 3,
                                 child: Text(
                                   f.value,
-                                  style: VoiceMemoryTypography.bodyStyle().copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: VoiceMemoryTypography.bodyStyle()
+                                      .copyWith(fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ],
@@ -171,17 +170,11 @@ class EvidenceTrailSheet extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _metric(
-              'Evidence count',
-              '${payload.evidenceCount}',
-            ),
+            child: _metric('Evidence count', '${payload.evidenceCount}'),
           ),
           if (payload.confidencePercent != null)
             Expanded(
-              child: _metric(
-                'Confidence',
-                '${payload.confidencePercent}%',
-              ),
+              child: _metric('Confidence', '${payload.confidencePercent}%'),
             ),
         ],
       ),

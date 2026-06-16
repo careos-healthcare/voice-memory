@@ -6,8 +6,9 @@ import '../config/app_config.dart';
 
 /// Optional override from `flutter test --dart-define=SCREENSHOT_OUTPUT_DIR=...`
 /// (e.g. macOS host run targeting `~/Desktop/uploads`).
-const String screenshotOutputDirFromEnvironment =
-    String.fromEnvironment('SCREENSHOT_OUTPUT_DIR');
+const String screenshotOutputDirFromEnvironment = String.fromEnvironment(
+  'SCREENSHOT_OUTPUT_DIR',
+);
 
 /// Dev-only route list for automated screenshot capture (not used in production).
 class ScreenshotRouteTarget {
@@ -67,15 +68,13 @@ String? androidScreenshotAdbPullPath() {
 }
 
 /// All major app routes for screenshot automation.
-List<ScreenshotRouteTarget> screenshotRegistry({bool includeDebugRoutes = true}) {
+List<ScreenshotRouteTarget> screenshotRegistry({
+  bool includeDebugRoutes = true,
+}) {
   final debug = includeDebugRoutes && AppConfig.debugToolsEnabled;
 
   return [
-    const ScreenshotRouteTarget(
-      order: 1,
-      route: '/record',
-      fileBase: 'record',
-    ),
+    const ScreenshotRouteTarget(order: 1, route: '/record', fileBase: 'record'),
     const ScreenshotRouteTarget(
       order: 2,
       route: '/archive-belief',
@@ -88,11 +87,7 @@ List<ScreenshotRouteTarget> screenshotRegistry({bool includeDebugRoutes = true})
       fileBase: 'timeline',
       scrollable: true,
     ),
-    const ScreenshotRouteTarget(
-      order: 4,
-      route: '/search',
-      fileBase: 'search',
-    ),
+    const ScreenshotRouteTarget(order: 4, route: '/search', fileBase: 'search'),
     const ScreenshotRouteTarget(
       order: 5,
       route: '/discover-yourself',
@@ -111,11 +106,7 @@ List<ScreenshotRouteTarget> screenshotRegistry({bool includeDebugRoutes = true})
       fileBase: 'pricing',
       scrollable: true,
     ),
-    const ScreenshotRouteTarget(
-      order: 8,
-      route: '/export',
-      fileBase: 'export',
-    ),
+    const ScreenshotRouteTarget(order: 8, route: '/export', fileBase: 'export'),
     const ScreenshotRouteTarget(
       order: 9,
       route: '/archive-identity',

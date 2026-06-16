@@ -23,9 +23,9 @@ class ReadMicroFeedbackRow extends StatelessWidget {
         Text(
           ConsumerUiCopy.readMicroFeedbackQuestion,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 16,
-                color: AppColors.textSecondary,
-              ),
+            fontSize: 16,
+            color: AppColors.textSecondary,
+          ),
         ),
         const SizedBox(height: AppSpacing.sm),
         Row(

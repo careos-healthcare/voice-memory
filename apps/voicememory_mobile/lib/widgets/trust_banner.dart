@@ -16,7 +16,9 @@ class TrustBanner extends StatelessWidget {
       color: AppTheme.surface,
       child: Text(
         'Development build — local journal first',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.muted),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: AppTheme.muted),
       ),
     );
   }

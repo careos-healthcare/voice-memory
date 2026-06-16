@@ -60,10 +60,7 @@ UsefulResultTakeaway buildUsefulResultTakeaway({
 
   final base = _baseForHint(_normalizeHint(resultHint));
   final whyUseful = _withWeak(
-    _withReason(
-      _withThin(base.whyUseful, thinReflection),
-      notUsefulReason,
-    ),
+    _withReason(_withThin(base.whyUseful, thinReflection), notUsefulReason),
     inputQualityWeak,
   );
 

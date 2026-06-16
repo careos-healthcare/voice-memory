@@ -43,7 +43,9 @@ class ArchiveRangeReviewCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             review.title,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
@@ -64,9 +66,14 @@ class ArchiveRangeReviewCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               review.mainLine,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           if (!review.hasEnoughData) ...[
@@ -101,9 +108,14 @@ class ArchiveRangeReviewCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               review.nextCheck!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 14, fontWeight: FontWeight.w500, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 1.4,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),
@@ -133,9 +145,9 @@ class ArchiveRangeReviewCard extends StatelessWidget {
   }
 
   Widget _line(String text) => Text(
-        text,
-        style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
-        ).copyWith(fontSize: 13, height: 1.4),
-      );
+    text,
+    style: VoiceMemoryTypography.bodyStyle(
+      color: AppColors.textSecondary,
+    ).copyWith(fontSize: 13, height: 1.4),
+  );
 }

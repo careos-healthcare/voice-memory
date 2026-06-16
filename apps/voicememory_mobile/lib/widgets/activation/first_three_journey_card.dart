@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../product/consumer_ui_copy.dart';
+import '../../features/activation/first_three_session_copy.dart';
 import '../../features/activation/first_three_journey_model.dart';
+import '../../widgets/activation/first_three_session_journey_indicator.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_colors.dart';
@@ -46,16 +48,22 @@ class FirstThreeJourneyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            model.progressLabel,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-              color: VoiceMemoryColors.textSecondary,
-            ),
+          FirstThreeSessionJourneyIndicator(
+            activeStepIndex: model.journeyStepIndex,
+            compact: compact,
           ),
           SizedBox(height: compact ? AppSpacing.xs : AppSpacing.sm),
+          if (!compact)
+            Text(
+              model.progressLabel,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.4,
+                color: VoiceMemoryColors.textSecondary,
+              ),
+            ),
+          if (!compact) SizedBox(height: AppSpacing.sm),
           _stepIndicator(),
           SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
           Text(
@@ -92,9 +100,7 @@ class FirstThreeJourneyCard extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.accentPrimary,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  vertical: compact ? 10 : 14,
-                ),
+                padding: EdgeInsets.symmetric(vertical: compact ? 10 : 14),
               ),
               child: Text(model.nextAction),
             ),

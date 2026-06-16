@@ -6,7 +6,10 @@ void main() {
     expect(ArchiveProFeatureMap.isFree(ArchiveFeature.recordMoment), isTrue);
     expect(ArchiveProFeatureMap.isFree(ArchiveFeature.firstPattern), isTrue);
     expect(ArchiveProFeatureMap.isFree(ArchiveFeature.tomorrowCheck), isTrue);
-    expect(ArchiveProFeatureMap.isFree(ArchiveFeature.returnComparison), isTrue);
+    expect(
+      ArchiveProFeatureMap.isFree(ArchiveFeature.returnComparison),
+      isTrue,
+    );
     expect(ArchiveProFeatureMap.isFree(ArchiveFeature.usefulTakeaway), isTrue);
     expect(ArchiveProFeatureMap.isFree(ArchiveFeature.routineAnchor), isTrue);
     expect(

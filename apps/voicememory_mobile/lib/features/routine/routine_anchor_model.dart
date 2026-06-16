@@ -58,9 +58,9 @@ class RoutineAnchor {
   }
 
   Map<String, dynamic> toJson() => {
-        'type': type.id,
-        if (customLabel != null) 'customLabel': customLabel,
-      };
+    'type': type.id,
+    if (customLabel != null) 'customLabel': customLabel,
+  };
 
   static RoutineAnchor? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

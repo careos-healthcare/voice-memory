@@ -57,8 +57,9 @@ JournalEntry _e({
           : transcript,
       concreteObservation: observation,
       repeatedSignal: themes.isNotEmpty ? themes.first : '',
-      tensionOrContradiction:
-          tensionOrContradiction.isEmpty ? null : tensionOrContradiction,
+      tensionOrContradiction: tensionOrContradiction.isEmpty
+          ? null
+          : tensionOrContradiction,
     ),
     syncStatus: SyncStatus.localOnly,
   );
@@ -221,7 +222,8 @@ List<JournalEntry> _burnedOutEntries() {
     'I dread opening Slack on Monday morning and my chest tightens before standup.',
     'I dread opening Slack on Monday and standup fills me with dread.',
     themes: const ['career', 'health'],
-    tensionOrContradiction: 'I said I love the team but Mondays feel unbearable.',
+    tensionOrContradiction:
+        'I said I love the team but Mondays feel unbearable.',
   );
 
   // Help others (blind spot trigger)
@@ -490,7 +492,8 @@ List<JournalEntry> _fitnessEntries() {
     'I beat myself up when I miss a workout and I feel like I lost discipline entirely.',
     'I beat myself up when I miss a workout and feel undisciplined.',
     themes: const ['health', 'approval'],
-    tensionOrContradiction: 'I say rest is fine but I punish myself for missing sessions.',
+    tensionOrContradiction:
+        'I say rest is fine but I punish myself for missing sessions.',
   );
 
   for (var k = 0; k < 10; k++) {

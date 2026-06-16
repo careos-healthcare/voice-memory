@@ -9,7 +9,7 @@ import { saveReminderPreferences } from "@/lib/reminder-preferences";
 import { getAllEntries } from "@/lib/storage";
 import type {
   ArchiveRestoreOptions,
-  VoiceMemoryArchivePackage,
+  ArchiveMeArchivePackage,
 } from "@/types/archive-permanence";
 
 function base64ToBlob(base64: string, mimeType: string): Blob {
@@ -19,7 +19,7 @@ function base64ToBlob(base64: string, mimeType: string): Blob {
   return new Blob([bytes], { type: mimeType });
 }
 
-function applySettings(archive: VoiceMemoryArchivePackage): void {
+function applySettings(archive: ArchiveMeArchivePackage): void {
   saveReminderPreferences(archive.settings.reminders);
   setReflectionGoal(archive.settings.reflectionGoal);
   setListeningModeEnabled(archive.settings.listeningMode);
@@ -33,7 +33,7 @@ function applySettings(archive: VoiceMemoryArchivePackage): void {
   }
 }
 
-async function restoreAudio(archive: VoiceMemoryArchivePackage): Promise<number> {
+async function restoreAudio(archive: ArchiveMeArchivePackage): Promise<number> {
   if (!archive.audio?.length) return 0;
 
   let restored = 0;
@@ -45,7 +45,7 @@ async function restoreAudio(archive: VoiceMemoryArchivePackage): Promise<number>
   return restored;
 }
 
-async function restorePhotos(archive: VoiceMemoryArchivePackage): Promise<number> {
+async function restorePhotos(archive: ArchiveMeArchivePackage): Promise<number> {
   if (!archive.photos?.length) return 0;
 
   let restored = 0;
@@ -59,18 +59,18 @@ async function restorePhotos(archive: VoiceMemoryArchivePackage): Promise<number
   return restored;
 }
 
-function writeEntries(entries: VoiceMemoryArchivePackage["entries"]): void {
+function writeEntries(entries: ArchiveMeArchivePackage["entries"]): void {
   const sorted = [...entries].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
   localStorage.setItem("voicememory_entries", JSON.stringify(sorted));
 }
 
-function writeBookmarks(bookmarks: VoiceMemoryArchivePackage["bookmarks"]): void {
+function writeBookmarks(bookmarks: ArchiveMeArchivePackage["bookmarks"]): void {
   localStorage.setItem("voicememory_reflection_bookmarks", JSON.stringify(bookmarks));
 }
 
-function mergeEntries(archive: VoiceMemoryArchivePackage): number {
+function mergeEntries(archive: ArchiveMeArchivePackage): number {
   const byId = new Map(getAllEntries().map((entry) => [entry.id, entry]));
   for (const entry of archive.entries) {
     byId.set(entry.id, entry);
@@ -79,7 +79,7 @@ function mergeEntries(archive: VoiceMemoryArchivePackage): number {
   return archive.entries.length;
 }
 
-function mergeBookmarks(archive: VoiceMemoryArchivePackage): void {
+function mergeBookmarks(archive: ArchiveMeArchivePackage): void {
   const byEntry = new Map(getAllBookmarks().map((bookmark) => [bookmark.entryId, bookmark]));
   for (const bookmark of archive.bookmarks) {
     byEntry.set(bookmark.entryId, bookmark);
@@ -89,7 +89,7 @@ function mergeBookmarks(archive: VoiceMemoryArchivePackage): void {
 
 /** Restore archive with merge or replace — preview should be shown first. */
 export async function restoreArchivePackage(
-  archive: VoiceMemoryArchivePackage,
+  archive: ArchiveMeArchivePackage,
   options: ArchiveRestoreOptions,
 ): Promise<{ entries: number; audio: number; photos: number }> {
   if (options.mode === "replace") {

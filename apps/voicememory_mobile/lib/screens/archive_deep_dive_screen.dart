@@ -25,10 +25,7 @@ import '../widgets/pushed_screen_shell.dart';
 
 /// Evidence-backed belief exploration — local engines only.
 class ArchiveDeepDiveScreen extends StatefulWidget {
-  const ArchiveDeepDiveScreen({
-    super.key,
-    required this.v1,
-  });
+  const ArchiveDeepDiveScreen({super.key, required this.v1});
 
   final ArchiveV1View v1;
 
@@ -71,16 +68,17 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
         });
         return;
       }
-      final result = await ArchiveSynthesisService(
-        store: ArchiveSynthesisStore(s.prefs),
-        api: s.api,
-        deviceIds: s.deviceIds,
-      ).loadDeepDiveNarrative(
-        view: widget.v1,
-        dive: dive,
-        entitlements: entitlements,
-        userId: s.auth.currentSession?.userId,
-      );
+      final result =
+          await ArchiveSynthesisService(
+            store: ArchiveSynthesisStore(s.prefs),
+            api: s.api,
+            deviceIds: s.deviceIds,
+          ).loadDeepDiveNarrative(
+            view: widget.v1,
+            dive: dive,
+            entitlements: entitlements,
+            userId: s.auth.currentSession?.userId,
+          );
       if (!mounted) return;
       if (result.showSection) {
         setState(() {
@@ -192,14 +190,13 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
           ],
           if (_showNarrativeUpgrade) ...[
             const SizedBox(height: 20),
-            ArchiveIntelligenceUpgradeCard(
-              view: widget.v1,
-              compact: true,
-            ),
+            ArchiveIntelligenceUpgradeCard(view: widget.v1, compact: true),
           ],
           if (_narrative != null) ...[
             const SizedBox(height: 20),
-            _sectionLabel(ArchiveSynthesisCopy.deepDiveNarrativeTitle.toUpperCase()),
+            _sectionLabel(
+              ArchiveSynthesisCopy.deepDiveNarrativeTitle.toUpperCase(),
+            ),
             const SizedBox(height: 8),
             Text(
               _narrative!.narrativeExplanation,
@@ -227,7 +224,9 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
                 ),
             ],
             const SizedBox(height: 8),
-            _sectionLabel(ArchiveSynthesisCopy.deepDiveEvolutionTitle.toUpperCase()),
+            _sectionLabel(
+              ArchiveSynthesisCopy.deepDiveEvolutionTitle.toUpperCase(),
+            ),
             const SizedBox(height: 6),
             Text(
               _narrative!.beliefEvolutionSummary.statement,
@@ -236,7 +235,11 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
             const SizedBox(height: 8),
             Text(
               ArchiveSynthesisCopy.synthesisDisclaimer,
-              style: const TextStyle(color: AppTheme.muted, fontSize: 11, height: 1.35),
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 11,
+                height: 1.35,
+              ),
             ),
           ],
           const SizedBox(height: 24),
@@ -295,7 +298,10 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
           _sectionLabel(ArchiveDeepDiveCopy.patternExplorerTitle.toUpperCase()),
           const SizedBox(height: 12),
           if (dive.patterns.relatedThemes.isNotEmpty) ...[
-            const Text('Related themes', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Related themes',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 6),
             for (final t in dive.patterns.relatedThemes)
               Text('· $t', style: const TextStyle(color: AppTheme.muted)),
@@ -303,8 +309,7 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
           ],
           for (final c in dive.patterns.connectedContradictions)
             _connectedCard(c),
-          for (final b in dive.patterns.connectedBlindSpots)
-            _connectedCard(b),
+          for (final b in dive.patterns.connectedBlindSpots) _connectedCard(b),
           const SizedBox(height: 24),
           _sectionLabel(ArchiveDeepDiveCopy.inquiryTitle.toUpperCase()),
           const SizedBox(height: 12),
@@ -403,7 +408,10 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
-          Text(snap.excerpt, style: const TextStyle(color: AppTheme.muted, height: 1.4)),
+          Text(
+            snap.excerpt,
+            style: const TextStyle(color: AppTheme.muted, height: 1.4),
+          ),
           if (snap.entryId != null) ...[
             const SizedBox(height: 8),
             TextButton(
@@ -422,7 +430,10 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(e.dateLabel, style: const TextStyle(fontSize: 11, color: AppTheme.muted)),
+          Text(
+            e.dateLabel,
+            style: const TextStyle(fontSize: 11, color: AppTheme.muted),
+          ),
           const SizedBox(height: 4),
           Text('"${e.quote}"', style: const TextStyle(height: 1.4)),
           TextButton(
@@ -452,9 +463,15 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
             style: const TextStyle(fontSize: 11, color: AppTheme.muted),
           ),
           const SizedBox(height: 4),
-          Text(insight.headline, style: const TextStyle(fontWeight: FontWeight.w600)),
+          Text(
+            insight.headline,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
-          Text(insight.detail, style: const TextStyle(height: 1.4, fontSize: 13)),
+          Text(
+            insight.detail,
+            style: const TextStyle(height: 1.4, fontSize: 13),
+          ),
         ],
       ),
     );
@@ -466,15 +483,25 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.circle, size: 8, color: VoiceMemoryColors.primaryIndigo),
+          const Icon(
+            Icons.circle,
+            size: 8,
+            color: VoiceMemoryColors.primaryIndigo,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(event.label, style: const TextStyle(fontWeight: FontWeight.w600)),
+                Text(
+                  event.label,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 4),
-                Text(event.subtitle, style: const TextStyle(color: AppTheme.muted, height: 1.4)),
+                Text(
+                  event.subtitle,
+                  style: const TextStyle(color: AppTheme.muted, height: 1.4),
+                ),
                 if (event.entryId != null)
                   TextButton(
                     onPressed: () => context.push('/entry/${event.entryId}'),

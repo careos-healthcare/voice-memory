@@ -54,10 +54,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: EvidenceTrailSheet(
-              payload: payload,
-              surface: 'test',
-            ),
+            body: EvidenceTrailSheet(payload: payload, surface: 'test'),
           ),
         ),
       );
@@ -73,9 +70,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: WhyAmISeeingThisButton(onPressed: () {}),
-          ),
+          home: Scaffold(body: WhyAmISeeingThisButton(onPressed: () {})),
         ),
       );
       expect(find.text(kWhyAmISeeingThisLabel), findsOneWidget);

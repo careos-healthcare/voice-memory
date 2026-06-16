@@ -54,8 +54,9 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('shows urgency label and check question when present',
-      (tester) async {
+  testWidgets('shows urgency label and check question when present', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

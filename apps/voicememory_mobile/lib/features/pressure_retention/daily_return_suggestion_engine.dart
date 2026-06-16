@@ -45,18 +45,53 @@ class DailyReturnSuggestionEngine {
       const DailyReturnSuggestion(
         id: 'todays_pressure',
         title: "Today's pressure",
-        prompt: 'What did the pressure make you do today, '
+        prompt:
+            'What did the pressure make you do today, '
             'even something small?',
         reason: 'One honest sentence is enough.',
       ),
     ];
 
     final suggestions = _dedupe(candidates).take(maxSuggestions).toList();
+    final recommended = _recommend(suggestions);
     return DailyReturnSuggestionSet(
       suggestions: suggestions,
       personalized: true,
       label: DailyReturnSuggestionSet.heading,
+      recommendedId: recommended.id,
+      recommendationReason: _recommendationReason(recommended),
     );
+  }
+
+  /// One best starting point, so the user never has to weigh four equal
+  /// options: latest entry's option, then anything carrying the user's own
+  /// words, then repeated terms/contexts. The filler only wins when it is
+  /// all there is.
+  DailyReturnSuggestion _recommend(List<DailyReturnSuggestion> suggestions) {
+    for (final s in suggestions) {
+      if (s.id.startsWith('recent_option_')) return s;
+    }
+    for (final s in suggestions) {
+      if (s.evidenceSnippet != null) return s;
+    }
+    for (final s in suggestions) {
+      if (s.id.startsWith('term_') || s.id.startsWith('context_')) return s;
+    }
+    return suggestions.first;
+  }
+
+  String _recommendationReason(DailyReturnSuggestion recommended) {
+    if (recommended.id.startsWith('recent_option_')) {
+      return 'This showed up most recently.';
+    }
+    if (recommended.evidenceSnippet != null) {
+      return 'This uses your own words from a recent entry.';
+    }
+    if (recommended.id.startsWith('term_') ||
+        recommended.id.startsWith('context_')) {
+      return 'This has repeated across recent entries.';
+    }
+    return 'One honest sentence is enough.';
   }
 
   List<DailyReturnSuggestion> _recentOptionSuggestion(
@@ -91,7 +126,8 @@ class DailyReturnSuggestionEngine {
       DailyReturnSuggestion(
         id: 'term_${terms.first}',
         title: 'What ${terms.first} pressure made you do',
-        prompt: 'What did ${terms.first} pressure make you '
+        prompt:
+            'What did ${terms.first} pressure make you '
             'rush or hide today?',
         reason: 'You mentioned this before.',
         sourceTerms: [terms.first],
@@ -186,8 +222,7 @@ class DailyReturnSuggestionEngine {
     String contextLabel,
   ) {
     for (final record in newestFirst) {
-      final labels =
-          record.contexts.map((c) => c.label.toLowerCase()).toList();
+      final labels = record.contexts.map((c) => c.label.toLowerCase()).toList();
       if (!labels.contains(contextLabel)) continue;
       final note = record.fear ?? record.stopCostNote;
       if (note != null && note.trim().isNotEmpty) return note;

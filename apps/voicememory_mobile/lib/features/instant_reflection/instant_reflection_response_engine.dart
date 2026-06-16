@@ -84,10 +84,7 @@ class InstantReflectionResponseEngine {
 
     candidates.sort((a, b) => a.priority.compareTo(b.priority));
     final top = candidates.first;
-    return InstantReflectionResponse(
-      bodyLine: top.line,
-      signal: top.signal,
-    );
+    return InstantReflectionResponse(bodyLine: top.line, signal: top.signal);
   }
 
   static bool _hasUncertainty(String blob) {

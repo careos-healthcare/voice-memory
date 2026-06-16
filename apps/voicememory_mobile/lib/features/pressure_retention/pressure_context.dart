@@ -10,7 +10,13 @@ enum PressureContext {
     id: 'after_praise_criticism',
     label: 'After praise/criticism',
   ),
-  deadline(id: 'deadline', label: 'Deadline');
+  deadline(id: 'deadline', label: 'Deadline'),
+  family(id: 'family', label: 'Family'),
+  money(id: 'money', label: 'Money'),
+  health(id: 'health', label: 'Health'),
+  stopping(id: 'stopping', label: 'Stopping'),
+  people(id: 'people', label: 'People'),
+  energy(id: 'energy', label: 'Energy');
 
   const PressureContext({required this.id, required this.label});
 

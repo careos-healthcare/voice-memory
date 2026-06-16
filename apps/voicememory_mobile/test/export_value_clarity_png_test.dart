@@ -76,7 +76,10 @@ void main() {
               children: [
                 Text(
                   BeliefProductCopy.changesScreenTitle,
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 BeliefChangeStories(
@@ -126,8 +129,9 @@ void main() {
       if (bytes == null) {
         fail('PNG export failed for ${s.$1}');
       }
-      await File('${outDir}/${s.$1}.png')
-          .writeAsBytes(bytes.buffer.asUint8List());
+      await File(
+        '${outDir}/${s.$1}.png',
+      ).writeAsBytes(bytes.buffer.asUint8List());
     }
 
     // ignore: avoid_print

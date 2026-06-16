@@ -35,7 +35,7 @@ export function resetReflectionGoalToDefault(): void {
   clearReflectionGoal();
 }
 
-/** Remove all local VoiceMemory data on this device (entries, audio, prefs, drafts). */
+/** Remove all local ArchiveMe data on this device (entries, audio, prefs, drafts). */
 export async function runFullLocalReset(): Promise<number> {
   const count = await deleteAllEntriesAndAudio();
   clearAllBookmarks();

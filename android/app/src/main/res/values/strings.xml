@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">VoiceMemory</string>
-    <string name="title_activity_main">VoiceMemory</string>
+    <string name="app_name">ArchiveMe</string>
+    <string name="title_activity_main">ArchiveMe</string>
     <string name="package_name">com.voicememory.app</string>
     <string name="custom_url_scheme">com.voicememory.app</string>
 </resources>

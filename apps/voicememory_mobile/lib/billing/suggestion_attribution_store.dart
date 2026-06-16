@@ -50,8 +50,10 @@ class SuggestionAttributionStore {
     if (raw is! List) return const [];
     return raw
         .whereType<Map>()
-        .map((e) =>
-            SuggestionAttributionEvent.fromJson(Map<String, dynamic>.from(e)))
+        .map(
+          (e) =>
+              SuggestionAttributionEvent.fromJson(Map<String, dynamic>.from(e)),
+        )
         .whereType<SuggestionAttributionEvent>()
         .toList();
   }
@@ -59,8 +61,7 @@ class SuggestionAttributionStore {
   /// Events of one funnel stage, oldest first.
   Future<List<SuggestionAttributionEvent>> eventsOfType(
     SuggestionAttributionEventType type,
-  ) async =>
-      (await events()).where((e) => e.type == type).toList();
+  ) async => (await events()).where((e) => e.type == type).toList();
 }
 
 /// Decides whether the post-save Pro nudge may show after a recording that
@@ -71,6 +72,5 @@ class SuggestionProTrigger {
     required bool isPro,
     required int entryCount,
     required bool alreadyShownThisSession,
-  }) =>
-      !isPro && entryCount >= 3 && !alreadyShownThisSession;
+  }) => !isPro && entryCount >= 3 && !alreadyShownThisSession;
 }

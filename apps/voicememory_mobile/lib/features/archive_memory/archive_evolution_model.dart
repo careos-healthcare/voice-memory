@@ -65,15 +65,15 @@ class ArchiveEvolutionEvent {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'date': date.toUtc().toIso8601String(),
-        'type': type.id,
-        'title': title,
-        'body': body,
-        if (patternTitle != null) 'patternTitle': patternTitle,
-        if (nextCheck != null) 'nextCheck': nextCheck,
-        if (momentId != null) 'momentId': momentId,
-      };
+    'id': id,
+    'date': date.toUtc().toIso8601String(),
+    'type': type.id,
+    'title': title,
+    'body': body,
+    if (patternTitle != null) 'patternTitle': patternTitle,
+    if (nextCheck != null) 'nextCheck': nextCheck,
+    if (momentId != null) 'momentId': momentId,
+  };
 
   static ArchiveEvolutionEvent? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -135,15 +135,15 @@ class ArchiveEvolutionTimeline {
   }
 
   Map<String, dynamic> toJson() => {
-        'patternTitle': patternTitle,
-        'events': events.map((e) => e.toJson()).toList(),
-        'eventCount': eventCount,
-        if (firstSeenDate != null)
-          'firstSeenDate': firstSeenDate!.toUtc().toIso8601String(),
-        if (lastSeenDate != null)
-          'lastSeenDate': lastSeenDate!.toUtc().toIso8601String(),
-        if (nextCheck != null) 'nextCheck': nextCheck,
-      };
+    'patternTitle': patternTitle,
+    'events': events.map((e) => e.toJson()).toList(),
+    'eventCount': eventCount,
+    if (firstSeenDate != null)
+      'firstSeenDate': firstSeenDate!.toUtc().toIso8601String(),
+    if (lastSeenDate != null)
+      'lastSeenDate': lastSeenDate!.toUtc().toIso8601String(),
+    if (nextCheck != null) 'nextCheck': nextCheck,
+  };
 
   static ArchiveEvolutionTimeline? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -166,8 +166,7 @@ class ArchiveEvolutionTimeline {
       eventCount: map['eventCount'] is int
           ? map['eventCount'] as int
           : (map['eventCount'] as num?)?.toInt() ?? events.length,
-      firstSeenDate:
-          DateTime.tryParse(map['firstSeenDate'] as String? ?? ''),
+      firstSeenDate: DateTime.tryParse(map['firstSeenDate'] as String? ?? ''),
       lastSeenDate: DateTime.tryParse(map['lastSeenDate'] as String? ?? ''),
       nextCheck: map['nextCheck'] as String?,
     );

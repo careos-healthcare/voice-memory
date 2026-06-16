@@ -4,10 +4,7 @@ import '../features/living_archive/living_archive_mobile.dart';
 import '../theme/app_theme.dart';
 
 class ArchiveStatusCardMobile extends StatelessWidget {
-  const ArchiveStatusCardMobile({
-    super.key,
-    required this.status,
-  });
+  const ArchiveStatusCardMobile({super.key, required this.status});
 
   final ArchiveStatusMobileView status;
 

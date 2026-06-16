@@ -16,13 +16,13 @@ void main() {
   });
 
   Reflection sampleReflection() => const Reflection(
-        mood: 'calm',
-        emotionalIntensity: 4,
-        recurringThemes: ['family'],
-        exactLanguagePattern: 'I need quiet',
-        concreteObservation: 'You asked for quiet time.',
-        repeatedSignal: 'Quiet mentioned twice.',
-      );
+    mood: 'calm',
+    emotionalIntensity: 4,
+    recurringThemes: ['family'],
+    exactLanguagePattern: 'I need quiet',
+    concreteObservation: 'You asked for quiet time.',
+    repeatedSignal: 'Quiet mentioned twice.',
+  );
 
   JournalEntry sample({required String id, DateTime? createdAt}) {
     return JournalEntry(
@@ -39,9 +39,7 @@ void main() {
     expect(await store.loadAll(), isEmpty);
 
     await store.save(sample(id: 'a'));
-    await store.save(
-      sample(id: 'b', createdAt: DateTime.utc(2026, 1, 3)),
-    );
+    await store.save(sample(id: 'b', createdAt: DateTime.utc(2026, 1, 3)));
 
     final list = await store.loadAll();
     expect(list.length, 2);

@@ -23,7 +23,7 @@ export function buildEncryptedAudioBackupPlan(): AudioBackupPlan {
   return {
     items,
     note:
-      "Audio is encrypted on this device before upload. VoiceMemory servers never receive raw recordings.",
+      "Audio is encrypted on this device before upload. ArchiveMe servers never receive raw recordings.",
   };
 }
 

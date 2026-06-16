@@ -537,7 +537,7 @@ function main() {
   const secretHitsAfter = scanSecretsInOutput();
 
   const readme = [
-    "Voice Memory — TextEdit Project Export",
+    "ArchiveMe — TextEdit Project Export",
     "========================================",
     "",
     `Generated: ${new Date().toISOString()}`,

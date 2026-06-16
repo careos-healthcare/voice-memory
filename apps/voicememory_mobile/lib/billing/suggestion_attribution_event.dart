@@ -28,14 +28,14 @@ enum SuggestionAttributionEventType {
   /// Tap event for a suggestion surface.
   static SuggestionAttributionEventType tappedFor(PaywallSource source) =>
       source == PaywallSource.startHereToday
-          ? startHereTapped
-          : dailySuggestionTapped;
+      ? startHereTapped
+      : dailySuggestionTapped;
 
   /// Recording-saved event for a suggestion surface.
   static SuggestionAttributionEventType savedFor(PaywallSource source) =>
       source == PaywallSource.startHereToday
-          ? startHereRecordingSaved
-          : dailySuggestionRecordingSaved;
+      ? startHereRecordingSaved
+      : dailySuggestionRecordingSaved;
 }
 
 /// One locally recorded suggestion funnel event. Local-only — never sent to a
@@ -54,10 +54,10 @@ class SuggestionAttributionEvent {
   final String? suggestionId;
 
   Map<String, dynamic> toJson() => {
-        'type': type.id,
-        'at': at.toIso8601String(),
-        if (suggestionId != null) 'suggestionId': suggestionId,
-      };
+    'type': type.id,
+    'at': at.toIso8601String(),
+    if (suggestionId != null) 'suggestionId': suggestionId,
+  };
 
   static SuggestionAttributionEvent? fromJson(Map<String, dynamic> json) {
     final type = SuggestionAttributionEventType.fromId(json['type'] as String?);

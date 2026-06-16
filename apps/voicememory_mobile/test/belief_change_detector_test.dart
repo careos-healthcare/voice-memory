@@ -51,10 +51,7 @@ void main() {
     ];
 
     const detector = BeliefChangeDetector();
-    final alerts = detector.detect(
-      entries: entries,
-      state: null,
-    );
+    final alerts = detector.detect(entries: entries, state: null);
 
     expect(alerts, isNotEmpty);
     final decrease = alerts.where(
@@ -65,11 +62,11 @@ void main() {
     expect(decrease, isNotEmpty);
     final top = decrease.first;
     expect(top.evidenceEntryIds.length, greaterThanOrEqualTo(3));
+    expect(top.headline, anyOf(contains('less'), contains('fading')));
     expect(
-      top.headline,
-      anyOf(contains('less'), contains('fading')),
+      top.magnitude,
+      greaterThanOrEqualTo(BeliefChangeDetector.minMagnitude),
     );
-    expect(top.magnitude, greaterThanOrEqualTo(BeliefChangeDetector.minMagnitude));
   });
 
   test('detects emerging belief with rising confidence', () {

@@ -7,8 +7,9 @@ import 'package:voicememory_mobile/widgets/record/tomorrow_return_card.dart';
 
 void main() {
   group('ArchiveMobileTypography minimums', () {
-    testWidgets('phone body and explanation styles meet readable minimum',
-        (tester) async {
+    testWidgets('phone body and explanation styles meet readable minimum', (
+      tester,
+    ) async {
       late BuildContext context;
       await tester.pumpWidget(
         MaterialApp(
@@ -35,50 +36,59 @@ void main() {
       );
     });
 
-    testWidgets('wide layouts scale type without shrinking below phone minimums',
-        (tester) async {
-      late double phoneTitle;
-      late double wideTitle;
-      late double wideBody;
+    testWidgets(
+      'wide layouts scale type without shrinking below phone minimums',
+      (tester) async {
+        late double phoneTitle;
+        late double wideTitle;
+        late double wideBody;
 
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1.0;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) {
-              phoneTitle =
-                  ArchiveMobileTypography.responsivePageTitle(context).fontSize!;
-              return const SizedBox();
-            },
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1.0;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) {
+                phoneTitle = ArchiveMobileTypography.responsivePageTitle(
+                  context,
+                ).fontSize!;
+                return const SizedBox();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      tester.view.physicalSize = const Size(1024, 800);
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) {
-              wideTitle =
-                  ArchiveMobileTypography.responsivePageTitle(context).fontSize!;
-              wideBody =
-                  ArchiveMobileTypography.responsiveBody(context).fontSize!;
-              return const SizedBox();
-            },
+        tester.view.physicalSize = const Size(1024, 800);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) {
+                wideTitle = ArchiveMobileTypography.responsivePageTitle(
+                  context,
+                ).fontSize!;
+                wideBody = ArchiveMobileTypography.responsiveBody(
+                  context,
+                ).fontSize!;
+                return const SizedBox();
+              },
+            ),
           ),
-        ),
-      );
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+        );
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      expect(wideBody, greaterThanOrEqualTo(ArchiveMobileTypography.minBodySize));
-      expect(wideTitle, greaterThan(phoneTitle));
-    });
+        expect(
+          wideBody,
+          greaterThanOrEqualTo(ArchiveMobileTypography.minBodySize),
+        );
+        expect(wideTitle, greaterThan(phoneTitle));
+      },
+    );
   });
 
-  testWidgets('TomorrowReturnCard uses explanation body for primary copy',
-      (tester) async {
+  testWidgets('TomorrowReturnCard uses explanation body for primary copy', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 

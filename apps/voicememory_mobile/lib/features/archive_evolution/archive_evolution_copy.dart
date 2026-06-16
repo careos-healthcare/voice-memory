@@ -1,7 +1,7 @@
 import 'archive_evolution_models.dart';
 
 /// Section headlines and example bodies for evolution events.
-abstract final class ArchiveEvolutionCopy {
+abstract class ArchiveEvolutionCopy {
   ArchiveEvolutionCopy._();
 
   static const String archiveQuestion = 'WHAT HAS MY ARCHIVE LEARNED?';

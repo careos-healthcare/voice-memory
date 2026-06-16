@@ -16,9 +16,10 @@ class PatternCorrectionLearningStore {
     if (raw is! List) return [];
     return raw
         .whereType<Map>()
-        .map((e) => PatternCorrectionLearning.fromJson(
-              Map<String, dynamic>.from(e),
-            ))
+        .map(
+          (e) =>
+              PatternCorrectionLearning.fromJson(Map<String, dynamic>.from(e)),
+        )
         .whereType<PatternCorrectionLearning>()
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -27,9 +28,7 @@ class PatternCorrectionLearningStore {
   Future<void> saveLearning(PatternCorrectionLearning learning) async {
     final items = await readAll();
     items.insert(0, learning);
-    final capped = items.length > maxItems
-        ? items.sublist(0, maxItems)
-        : items;
+    final capped = items.length > maxItems ? items.sublist(0, maxItems) : items;
     await _write(capped);
   }
 

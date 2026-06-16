@@ -62,9 +62,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ArchiveGrowthCard(confidence: confidence),
-          ),
+          home: Scaffold(body: ArchiveGrowthCard(confidence: confidence)),
         ),
       );
 
@@ -74,7 +72,10 @@ void main() {
       expect(find.text('Growing'), findsOneWidget);
       expect(find.text('18 recordings'), findsOneWidget);
       expect(find.text('${confidence.score}%'), findsOneWidget);
-      expect(find.byKey(const Key('archive_growth_confidence')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_growth_confidence')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('archive_growth_evidence')), findsOneWidget);
       expect(find.byKey(const Key('archive_growth_maturity')), findsOneWidget);
     });

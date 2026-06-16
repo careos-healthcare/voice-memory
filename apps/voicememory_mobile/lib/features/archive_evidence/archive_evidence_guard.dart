@@ -2,7 +2,7 @@ import '../../config/app_config.dart';
 import '../../models/journal_entry.dart';
 
 /// Production safeguard — insights only surface when real reflections meet thresholds.
-abstract final class ArchiveEvidenceGuard {
+abstract class ArchiveEvidenceGuard {
   ArchiveEvidenceGuard._();
 
   /// Minimum eligible reflections (usable transcript length) before beliefs,

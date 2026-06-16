@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS auth_codes (
 
 CREATE INDEX IF NOT EXISTS auth_codes_expires_at_idx ON auth_codes (expires_at);
 
+ALTER TABLE auth_codes ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0;
+
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash text PRIMARY KEY,
   user_id text NOT NULL,

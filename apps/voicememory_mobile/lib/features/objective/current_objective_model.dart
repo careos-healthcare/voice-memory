@@ -34,16 +34,16 @@ class CurrentObjective {
   String get typeId => type.name;
 
   Map<String, dynamic> toJson() => {
-        'type': typeId,
-        'title': title,
-        'body': body,
-        if (checkQuestion != null) 'checkQuestion': checkQuestion,
-        if (patternTitle != null) 'patternTitle': patternTitle,
-        'primaryCtaLabel': primaryCtaLabel,
-        if (secondaryCtaLabel != null) 'secondaryCtaLabel': secondaryCtaLabel,
-        'route': route,
-        if (targetDate != null) 'targetDate': targetDate,
-      };
+    'type': typeId,
+    'title': title,
+    'body': body,
+    if (checkQuestion != null) 'checkQuestion': checkQuestion,
+    if (patternTitle != null) 'patternTitle': patternTitle,
+    'primaryCtaLabel': primaryCtaLabel,
+    if (secondaryCtaLabel != null) 'secondaryCtaLabel': secondaryCtaLabel,
+    'route': route,
+    if (targetDate != null) 'targetDate': targetDate,
+  };
 
   factory CurrentObjective.fromJson(Map<String, dynamic> json) {
     return CurrentObjective(
@@ -69,18 +69,17 @@ class CurrentObjective {
     String? secondaryCtaLabel,
     String? route,
     String? targetDate,
-  }) =>
-      CurrentObjective(
-        type: type ?? this.type,
-        title: title ?? this.title,
-        body: body ?? this.body,
-        checkQuestion: checkQuestion ?? this.checkQuestion,
-        patternTitle: patternTitle ?? this.patternTitle,
-        primaryCtaLabel: primaryCtaLabel ?? this.primaryCtaLabel,
-        secondaryCtaLabel: secondaryCtaLabel ?? this.secondaryCtaLabel,
-        route: route ?? this.route,
-        targetDate: targetDate ?? this.targetDate,
-      );
+  }) => CurrentObjective(
+    type: type ?? this.type,
+    title: title ?? this.title,
+    body: body ?? this.body,
+    checkQuestion: checkQuestion ?? this.checkQuestion,
+    patternTitle: patternTitle ?? this.patternTitle,
+    primaryCtaLabel: primaryCtaLabel ?? this.primaryCtaLabel,
+    secondaryCtaLabel: secondaryCtaLabel ?? this.secondaryCtaLabel,
+    route: route ?? this.route,
+    targetDate: targetDate ?? this.targetDate,
+  );
 
   static CurrentObjectiveType _typeFromId(String raw) {
     for (final type in CurrentObjectiveType.values) {

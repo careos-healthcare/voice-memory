@@ -86,6 +86,9 @@ const ALLOWED_LINK_PREFIXES = [
   "/seasons",
   "/bookmarks",
   "/open-loops",
+  "/blind-spots",
+  "/theories",
+  "/discover",
   "/threads",
   "/reminders",
   "/pricing",
@@ -412,16 +415,58 @@ function checkDenseCardSections(content, filePath, violations) {
   }
 }
 
-const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
+/** Product surfaces for discovery-loop integration audit (see validate-discovery-loop.mjs). */
+const DISCOVERY_LOOP_SCAN = [
+  "app/discover",
+  "app/theories",
+  "app/blind-spots",
+  "app/memory",
+  "components/discover",
+  "components/theories",
+  "components/blind-spots",
+  "components/internal/TheoryDiscoveryPanel.tsx",
+  "components/internal/TheoryVolatilityPanel.tsx",
+  "components/internal/SelfRecognitionIngredientsPanel.tsx",
+  "lib/discover",
+  "lib/theories",
+  "lib/insights",
+  "lib/blind-spots/mini-wow.ts",
+  "lib/blind-spots/mini-wow-copy.ts",
+  "types/theory.ts",
+  "types/mini-wow.ts",
+  "types/self-recognition-ingredients.ts",
+  "types/evidence-feed.ts",
+];
+
+const discoveryLoopScope = process.env.RESTRAINT_SCOPE === "discovery-loop";
+
+function collectScanFiles() {
+  if (discoveryLoopScope) {
+    const files = [];
+    for (const rel of DISCOVERY_LOOP_SCAN) {
+      const full = path.join(ROOT, rel);
+      if (!fs.existsSync(full)) continue;
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) walk(full, files);
+      else if (EXT.has(path.extname(full))) files.push(full);
+    }
+    return files;
+  }
+  return SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
+}
+
+const files = collectScanFiles();
 const violations = [];
 
 for (const file of files) {
   const content = fs.readFileSync(file, "utf8");
   checkBannedPhrases(content, file, violations);
   checkChartDashboardWording(content, file, violations);
-  checkSiteHeaderNav(content, file, violations);
-  checkPageNavLinks(content, file, violations);
-  checkDenseCardSections(content, file, violations);
+  if (!discoveryLoopScope) {
+    checkSiteHeaderNav(content, file, violations);
+    checkPageNavLinks(content, file, violations);
+    checkDenseCardSections(content, file, violations);
+  }
 }
 
 if (violations.length > 0) {
@@ -463,4 +508,5 @@ for (const alternatives of productCopyRequired) {
   }
 }
 
-console.log(`validate:restraint passed (${files.length} files scanned)`);
+const scopeLabel = discoveryLoopScope ? "discovery-loop surfaces" : "full product";
+console.log(`validate:restraint passed (${files.length} files scanned, ${scopeLabel})`);

@@ -54,18 +54,17 @@ PressureCheckInRecord _checkIn({
 
 /// A connected work thread that genuinely produces a weekly review.
 List<PressureCheckInRecord> _reviewReadyRecords() => [
-      _checkIn(id: 'a', daysAgo: 6),
-      _checkIn(id: 'b', daysAgo: 3, fear: 'The deadline slipping'),
-      _checkIn(id: 'c', daysAgo: 0, fear: 'Late emails piling up'),
-    ];
+  _checkIn(id: 'a', daysAgo: 6),
+  _checkIn(id: 'b', daysAgo: 3, fear: 'The deadline slipping'),
+  _checkIn(id: 'c', daysAgo: 0, fear: 'Late emails piling up'),
+];
 
 void main() {
   late List<({String event, Map<String, Object> properties})> captured;
 
   List<({String event, Map<String, Object> properties})> eventsNamed(
     String name,
-  ) =>
-      captured.where((e) => e.event == name).toList();
+  ) => captured.where((e) => e.event == name).toList();
 
   setUp(() {
     captured = [];
@@ -89,10 +88,7 @@ void main() {
       final loop = _engine.build(entryCount: 1, hasWeeklyReview: false);
       expect(loop.show, isFalse);
       // Even a weekly review never surfaces continuity copy at 0–1 entries.
-      expect(
-        _engine.build(entryCount: 1, hasWeeklyReview: true).show,
-        isFalse,
-      );
+      expect(_engine.build(entryCount: 1, hasWeeklyReview: true).show, isFalse);
     });
 
     test('appears at 2 entries — the Day 2 return moment', () {
@@ -106,8 +102,11 @@ void main() {
     test('building stage covers 3–6 entries', () {
       for (final count in [3, 4, 5, 6]) {
         final loop = _engine.build(entryCount: count, hasWeeklyReview: false);
-        expect(loop.stage, DaySevenContinuityStage.buildingArchive,
-            reason: 'entryCount=$count');
+        expect(
+          loop.stage,
+          DaySevenContinuityStage.buildingArchive,
+          reason: 'entryCount=$count',
+        );
         expect(loop.stageId, 'building_archive');
         expect(loop.hasCta, isFalse);
       }
@@ -126,8 +125,11 @@ void main() {
     test('weekly review takes precedence at any count from 2 up', () {
       for (final count in [2, 4, 7, 20]) {
         final loop = _engine.build(entryCount: count, hasWeeklyReview: true);
-        expect(loop.stage, DaySevenContinuityStage.weeklyReviewReady,
-            reason: 'entryCount=$count');
+        expect(
+          loop.stage,
+          DaySevenContinuityStage.weeklyReviewReady,
+          reason: 'entryCount=$count',
+        );
         expect(loop.stageId, 'weekly_review_ready');
         expect(loop.hasCta, isTrue);
       }
@@ -201,8 +203,11 @@ void main() {
         'treatment',
         'voicememory',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'continuity copy must not contain "$banned"');
+        expect(
+          copy,
+          isNot(contains(banned)),
+          reason: 'continuity copy must not contain "$banned"',
+        );
       }
     });
   });
@@ -231,8 +236,9 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('passive while building — no CTA, no buttons at all',
-        (tester) async {
+    testWidgets('passive while building — no CTA, no buttons at all', (
+      tester,
+    ) async {
       final loop = _engine.build(entryCount: 2, hasWeeklyReview: false);
       await pumpCard(tester, loop, entryCount: 2);
       expect(find.text(loop.title), findsOneWidget);
@@ -247,16 +253,18 @@ void main() {
       );
     });
 
-    testWidgets('CTA appears only when the weekly review exists',
-        (tester) async {
+    testWidgets('CTA appears only when the weekly review exists', (
+      tester,
+    ) async {
       final loop = _engine.build(entryCount: 4, hasWeeklyReview: true);
       await pumpCard(tester, loop, entryCount: 4, hasConnectedThread: true);
       expect(find.byKey(const Key('day_seven_continuity_cta')), findsOneWidget);
       expect(find.text('View weekly review'), findsOneWidget);
     });
 
-    testWidgets('seen fires once per session with safe properties only',
-        (tester) async {
+    testWidgets('seen fires once per session with safe properties only', (
+      tester,
+    ) async {
       final loop = _engine.build(entryCount: 2, hasWeeklyReview: false);
       await pumpCard(tester, loop, entryCount: 2);
       await pumpCard(tester, loop, entryCount: 2); // Rebuild — no repeat.
@@ -270,8 +278,7 @@ void main() {
       });
     });
 
-    testWidgets('CTA tap logs the event and opens the review',
-        (tester) async {
+    testWidgets('CTA tap logs the event and opens the review', (tester) async {
       var opened = 0;
       final loop = _engine.build(entryCount: 5, hasWeeklyReview: true);
       await pumpCard(
@@ -295,8 +302,7 @@ void main() {
       });
     });
 
-    testWidgets('no private content in any continuity payload',
-        (tester) async {
+    testWidgets('no private content in any continuity payload', (tester) async {
       final loop = _engine.build(entryCount: 4, hasWeeklyReview: true);
       await pumpCard(tester, loop, entryCount: 4);
       await tester.tap(find.byKey(const Key('day_seven_continuity_cta')));
@@ -305,12 +311,12 @@ void main() {
       for (final e in captured) {
         expect(
           e.properties.keys.toSet().difference(
-                ActivationFunnelAnalytics.allowedPropertyKeys,
-              ),
+            ActivationFunnelAnalytics.allowedPropertyKeys,
+          ),
           isEmpty,
         );
-        final flat =
-            '${e.event} ${e.properties.values.join(' ')}'.toLowerCase();
+        final flat = '${e.event} ${e.properties.values.join(' ')}'
+            .toLowerCase();
         expect(flat, isNot(contains('deadline')));
         expect(flat, isNot(contains('voicememory')));
       }
@@ -346,8 +352,9 @@ void main() {
             path: '/',
             builder: (context, state) => Scaffold(
               body: RecordScreen(
-                pressureCheckInStore:
-                    MemoryPressureCheckInStore(List.of(checkIns)),
+                pressureCheckInStore: MemoryPressureCheckInStore(
+                  List.of(checkIns),
+                ),
                 suggestionAttributionStore: MemorySuggestionAttributionStore(),
                 entitlementReader: FakeArchiveEntitlementReader(pro: false),
               ),
@@ -370,31 +377,28 @@ void main() {
     Future<void> seedEntries(int count) async {
       for (var i = 0; i < count; i++) {
         await AppServices.instance.journalStore.save(
-          _entry('seed_$i',
-              createdAt: DateTime.now().subtract(Duration(days: count - i))),
+          _entry(
+            'seed_$i',
+            createdAt: DateTime.now().subtract(Duration(days: count - i)),
+          ),
         );
       }
     }
 
     testWidgets('no card at 0 entries', (tester) async {
       await pumpRecordScreen(tester);
-      expect(
-        find.byKey(const Key('day_seven_continuity_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
     });
 
     testWidgets('no card after the first save only', (tester) async {
       await tester.runAsync(() => seedEntries(1));
       await pumpRecordScreen(tester);
-      expect(
-        find.byKey(const Key('day_seven_continuity_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
     });
 
-    testWidgets('early-thread card appears at 2 entries, without a CTA',
-        (tester) async {
+    testWidgets('early-thread card appears at 2 entries, without a CTA', (
+      tester,
+    ) async {
       await tester.runAsync(() => seedEntries(2));
       await pumpRecordScreen(tester);
       expect(
@@ -408,8 +412,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('review-ready card routes to the existing weekly review',
-        (tester) async {
+    testWidgets('review-ready card routes to the existing weekly review', (
+      tester,
+    ) async {
       await tester.runAsync(() => seedEntries(3));
       await pumpRecordScreen(tester, checkIns: _reviewReadyRecords());
 
@@ -423,21 +428,17 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('INSIGHTS_MARKER'), findsOneWidget);
       expect(
-        eventsNamed(
-          ActivationFunnelAnalytics.day7ContinuityWeeklyReviewTapped,
-        ),
+        eventsNamed(ActivationFunnelAnalytics.day7ContinuityWeeklyReviewTapped),
         hasLength(1),
       );
     });
 
-    testWidgets('hides at 7+ entries when no weekly review exists',
-        (tester) async {
+    testWidgets('hides at 7+ entries when no weekly review exists', (
+      tester,
+    ) async {
       await tester.runAsync(() => seedEntries(8));
       await pumpRecordScreen(tester);
-      expect(
-        find.byKey(const Key('day_seven_continuity_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
   });

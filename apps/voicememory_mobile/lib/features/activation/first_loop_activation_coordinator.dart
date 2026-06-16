@@ -7,7 +7,7 @@ import 'first_loop_activation_store.dart';
 
 /// Drives the compressed first loop: record one moment -> see first pattern ->
 /// choose tomorrow's check. Wraps the store and reports funnel metrics.
-abstract final class FirstLoopActivationCoordinator {
+abstract class FirstLoopActivationCoordinator {
   FirstLoopActivationCoordinator._();
 
   static FirstLoopActivationStore _store() =>
@@ -77,8 +77,7 @@ abstract final class FirstLoopActivationCoordinator {
     if (!AppServices.isInitialized) return FirstLoopActivationState.empty;
     final before = await _store().load();
     final after = await _store().markTomorrowCheckChosen(question);
-    if (_reached(
-        before, after, FirstLoopActivationStage.tomorrowCheckChosen)) {
+    if (_reached(before, after, FirstLoopActivationStage.tomorrowCheckChosen)) {
       ActivationTracker.trackFirstLoopTomorrowCheckChosen();
     }
     return after;
@@ -95,8 +94,7 @@ abstract final class FirstLoopActivationCoordinator {
     // Record the chosen-check transition too, so funnel counts stay coherent
     // even when a user goes straight from pattern shown to loop ready.
     final after = await _store().markLoopReady(patternTitle, tomorrowQuestion);
-    if (_reached(
-        before, after, FirstLoopActivationStage.tomorrowCheckChosen)) {
+    if (_reached(before, after, FirstLoopActivationStage.tomorrowCheckChosen)) {
       ActivationTracker.trackFirstLoopTomorrowCheckChosen();
     }
     if (_reached(before, after, FirstLoopActivationStage.loopReady)) {
@@ -110,7 +108,6 @@ abstract final class FirstLoopActivationCoordinator {
     FirstLoopActivationState after,
     FirstLoopActivationStage stage,
   ) {
-    return before.stage.index < stage.index &&
-        after.stage.index >= stage.index;
+    return before.stage.index < stage.index && after.stage.index >= stage.index;
   }
 }

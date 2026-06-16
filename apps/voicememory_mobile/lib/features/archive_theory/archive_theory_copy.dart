@@ -1,5 +1,5 @@
 /// User-facing Archive Theory strings (historian tone, no coaching).
-abstract final class ArchiveTheoryCopy {
+abstract class ArchiveTheoryCopy {
   ArchiveTheoryCopy._();
 
   static const String heroTitle = "The Archive's Current Theory";

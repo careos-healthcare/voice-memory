@@ -19,7 +19,9 @@ class DiscoveryStreakStore {
     final days = await readDiscoveryDays();
     days.add(dayKey(day));
     final sorted = days.toList()..sort();
-    final trimmed = sorted.length > 120 ? sorted.sublist(sorted.length - 120) : sorted;
+    final trimmed = sorted.length > 120
+        ? sorted.sublist(sorted.length - 120)
+        : sorted;
     await _prefs.writeJsonMap(_daysKey, {'days': trimmed});
   }
 

@@ -3,7 +3,7 @@ import 'prove_enough_evidence_trail_coordinator.dart';
 import 'prove_enough_pattern_report_model.dart';
 
 /// Loads saved prove_enough data for pattern report export.
-abstract final class ProveEnoughPatternReportCoordinator {
+abstract class ProveEnoughPatternReportCoordinator {
   ProveEnoughPatternReportCoordinator._();
 
   static Future<ProveEnoughPatternReport> load({DateTime? now}) async {
@@ -18,8 +18,7 @@ abstract final class ProveEnoughPatternReportCoordinator {
       ...trail.contradictionMoments,
       ...trail.restGuiltMoments,
       ...trail.choiceMoments,
-    ].map((moment) => moment.createdAt).toList()
-      ..sort();
+    ].map((moment) => moment.createdAt).toList()..sort();
 
     return ProveEnoughPatternReport(
       generatedAt: generatedAt,

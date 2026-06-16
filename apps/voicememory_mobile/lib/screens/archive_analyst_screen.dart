@@ -60,8 +60,9 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
 
     final report = _report!;
     if (!report.hasReport) {
-      final remaining =
-          ArchiveAnalystGate.reflectionsUntilLevel1(report.eligibleReflectionCount);
+      final remaining = ArchiveAnalystGate.reflectionsUntilLevel1(
+        report.eligibleReflectionCount,
+      );
       return PushedScreenShell(
         title: ArchiveAnalystCopy.screenTitle,
         body: Padding(
@@ -101,7 +102,11 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
           children: [
             Text(
               ArchiveAnalystCopy.historianLead,
-              style: const TextStyle(color: AppTheme.muted, height: 1.45, fontSize: 14),
+              style: const TextStyle(
+                color: AppTheme.muted,
+                height: 1.45,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -138,7 +143,11 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
             _sectionHeader(ArchiveAnalystCopy.competingTitle),
             Text(
               ArchiveAnalystCopy.competingLead,
-              style: const TextStyle(color: AppTheme.muted, fontSize: 13, height: 1.4),
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 13,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 12),
             ...report.competingBeliefs.map(_competingRow),
@@ -146,7 +155,11 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
             _sectionHeader(ArchiveAnalystCopy.debateTitle),
             Text(
               ArchiveAnalystCopy.debateLead,
-              style: const TextStyle(color: AppTheme.muted, fontSize: 13, height: 1.4),
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 13,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 12),
             ...report.debates.map(_debateCard),
@@ -177,7 +190,9 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
           Text('${s.eligibleReflectionCount} eligible reflections'),
           Text('Span: ${s.dateSpanLabel}'),
           Text('${s.uniqueBeliefCandidates} belief candidates weighed'),
-          Text('${s.contradictionCount} contradictions · ${s.blindSpotCount} blind spots'),
+          Text(
+            '${s.contradictionCount} contradictions · ${s.blindSpotCount} blind spots',
+          ),
         ],
       ),
     );
@@ -221,7 +236,10 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('"${t.statement}"', style: const TextStyle(fontWeight: FontWeight.w500)),
+            Text(
+              '"${t.statement}"',
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
             const SizedBox(height: 6),
             Text(t.trendLabel, style: const TextStyle(color: AppTheme.muted)),
             Text('Confidence: ${t.confidencePercent}%'),
@@ -267,22 +285,32 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('"${d.beliefStatement}"', style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text(
+              '"${d.beliefStatement}"',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
             Text('Confidence: ${d.confidencePercent}%'),
             const SizedBox(height: 12),
-            Text(ArchiveAnalystCopy.evidenceFor,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+            Text(
+              ArchiveAnalystCopy.evidenceFor,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+            ),
             Text('${d.evidenceForCount} recordings'),
             ...d.supportingExcerpts.map(_excerpt),
             const SizedBox(height: 12),
-            Text(ArchiveAnalystCopy.evidenceAgainst,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+            Text(
+              ArchiveAnalystCopy.evidenceAgainst,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+            ),
             Text('${d.evidenceAgainstCount} items'),
             ...d.counterExcerpts.map(_excerpt),
             for (final n in d.timelineNotes)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: Text(n, style: const TextStyle(fontSize: 12, color: AppTheme.muted)),
+                child: Text(
+                  n,
+                  style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+                ),
               ),
           ],
         ),
@@ -296,8 +324,14 @@ class _ArchiveAnalystScreenState extends State<ArchiveAnalystScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(e.dateLabel, style: const TextStyle(fontSize: 11, color: AppTheme.muted)),
-          Text('"${e.quote}"', style: const TextStyle(fontSize: 13, height: 1.35)),
+          Text(
+            e.dateLabel,
+            style: const TextStyle(fontSize: 11, color: AppTheme.muted),
+          ),
+          Text(
+            '"${e.quote}"',
+            style: const TextStyle(fontSize: 13, height: 1.35),
+          ),
           TextButton(
             onPressed: () => context.push('/entry/${e.entryId}'),
             child: const Text('View recording'),

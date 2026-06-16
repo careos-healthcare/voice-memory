@@ -14,19 +14,18 @@ Future<ArchiveMemorySummaryStore> _store(String stamp) async {
 }
 
 ArchiveMemorySummary _summary({String id = 'm1'}) => ArchiveMemorySummary(
-      id: id,
-      patternTitle: 'Taking responsibility before asking for help',
-      primaryMemoryLine:
-          'You often take responsibility before asking for help.',
-      startsBeforeLine: 'It often starts before: saying yes.',
-      helpedLine: 'It has felt lighter when: pausing before answering.',
-      basedOnMomentCount: 8,
-      basedOnWeekCount: 3,
-      firstSeenDate: DateTime(2026, 5, 4),
-      lastSeenDate: DateTime(2026, 5, 25),
-      clarityLabel: 'Clear pattern',
-      nextCheck: 'Did you ask for help before saying yes?',
-    );
+  id: id,
+  patternTitle: 'Taking responsibility before asking for help',
+  primaryMemoryLine: 'You often take responsibility before asking for help.',
+  startsBeforeLine: 'It often starts before: saying yes.',
+  helpedLine: 'It has felt lighter when: pausing before answering.',
+  basedOnMomentCount: 8,
+  basedOnWeekCount: 3,
+  firstSeenDate: DateTime(2026, 5, 4),
+  lastSeenDate: DateTime(2026, 5, 25),
+  clarityLabel: 'Clear pattern',
+  nextCheck: 'Did you ask for help before saying yes?',
+);
 
 void main() {
   test('loadLatest is null before anything is saved', () async {
@@ -44,11 +43,15 @@ void main() {
 
     expect(loaded, isNotNull);
     expect(loaded!.id, 'm1');
-    expect(loaded.primaryMemoryLine,
-        'You often take responsibility before asking for help.');
+    expect(
+      loaded.primaryMemoryLine,
+      'You often take responsibility before asking for help.',
+    );
     expect(loaded.startsBeforeLine, 'It often starts before: saying yes.');
-    expect(loaded.helpedLine,
-        'It has felt lighter when: pausing before answering.');
+    expect(
+      loaded.helpedLine,
+      'It has felt lighter when: pausing before answering.',
+    );
     expect(loaded.basedOnMomentCount, 8);
     expect(loaded.basedOnWeekCount, 3);
     expect(loaded.clarityLabel, 'Clear pattern');

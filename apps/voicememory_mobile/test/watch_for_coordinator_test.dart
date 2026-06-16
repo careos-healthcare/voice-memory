@@ -48,7 +48,9 @@ void main() {
       entries: [_entry('I keep taking responsibility before asking for help')],
       now: DateTime(2026, 5, 25),
     );
-    final accepted = await WatchForCoordinator.acceptSuggestedWatchFor(suggested);
+    final accepted = await WatchForCoordinator.acceptSuggestedWatchFor(
+      suggested,
+    );
     final store = WatchForStore(AppServices.instance.prefs);
     final pending = await store.readPending();
     expect(pending?.id, accepted.id);
@@ -140,11 +142,11 @@ void main() {
     );
 
     expect(completed?.comparisonHint, ReturnCaptureComparisonHints.lighter);
+    expect(WatchForCoordinator.headlineFor(completed!), contains('lighter'));
     expect(
-      WatchForCoordinator.headlineFor(completed!),
-      contains('lighter'),
+      await ReturnCaptureStore(AppServices.instance.prefs).loadLatest(),
+      isNull,
     );
-    expect(await ReturnCaptureStore(AppServices.instance.prefs).loadLatest(), isNull);
   });
 
   test('completes pending after next-day save', () async {
@@ -206,8 +208,9 @@ void main() {
     );
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
-    final events =
-        await ActivationEventsStore(AppServices.instance.prefs).read();
+    final events = await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(events.tomorrowQuestionVariantShown, 1);
     expect(events.tomorrowQuestionVariantSelected, 1);
   });

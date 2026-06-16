@@ -46,7 +46,7 @@ export async function runEmailLiveCheck(): Promise<ProofReport> {
       const result = await resend.emails.send({
         from: process.env.EMAIL_FROM!,
         to: proofTo,
-        subject: "VoiceMemory email proof",
+        subject: "ArchiveMe email proof",
         text: "Proof send from validate:email-live — safe to ignore.",
       });
       if (result.error) {

@@ -25,8 +25,9 @@ class ActivePatternThreadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final badge = ActivePatternThreadCoordinator.statusBadgeLabel(thread);
-    final lastChecked =
-        ActivePatternThreadCoordinator.lastCheckedSummary(thread);
+    final lastChecked = ActivePatternThreadCoordinator.lastCheckedSummary(
+      thread,
+    );
     final chips = thread.chips.take(3).toList();
 
     return Container(

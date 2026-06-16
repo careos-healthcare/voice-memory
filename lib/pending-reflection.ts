@@ -1,6 +1,6 @@
 import { captureAuthHeaders, ensureCaptureAttested } from "@/lib/client/capture-attest";
+import { buildPriorEvidenceRefs } from "@/lib/evidence/prior-evidence-client";
 import { normalizeReflection } from "@/lib/reflection";
-import { formatEntryDate } from "@/lib/utils";
 import { getAllEntries, getEntry, saveEntry } from "@/lib/storage";
 import type { JournalEntry, Reflection } from "@/types/journal";
 
@@ -48,14 +48,11 @@ export async function generateReflectionForEntry(
     return entry;
   }
 
-  const priorContext = getAllEntries()
-    .filter((e) => e.id !== entryId && !isReflectionPending(e))
-    .slice(0, 5)
-    .map((e) => ({
-      date: formatEntryDate(e.createdAt),
-      excerpt: e.transcript.slice(0, 300),
-      themes: e.reflection.recurringThemes,
-    }));
+  // Prompt Context Contract: entry references only, no raw text.
+  const priorEvidence = buildPriorEvidenceRefs(
+    getAllEntries().filter((e) => !isReflectionPending(e)),
+    entryId,
+  );
 
   const attested = await ensureCaptureAttested();
   if (!attested) {
@@ -69,7 +66,7 @@ export async function generateReflectionForEntry(
       "Content-Type": "application/json",
       ...captureAuthHeaders(),
     },
-    body: JSON.stringify({ transcript: entry.transcript, priorContext }),
+    body: JSON.stringify({ transcript: entry.transcript, priorEvidence }),
   });
 
   const analyzeData = (await analyzeResponse.json()) as {

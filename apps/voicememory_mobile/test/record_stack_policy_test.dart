@@ -25,10 +25,11 @@ void main() {
   });
 
   group('first run', () {
-    test('shows one dominant first recording handoff CTA', () {
+    test('uses clean empty state without first recording handoff', () {
       final d = decideRecordStack(
         hasDueCheck: false,
         isFirstRun: true,
+        reflectionCount: 0,
         isTrialMode: false,
         isRecording: false,
         hasSavedReflection: false,
@@ -39,11 +40,11 @@ void main() {
         hasArchiveProof: false,
       );
       expect(d.primaryState, RecordPrimaryState.firstRun);
-      expect(d.showFirstRecordingHandoff, isTrue);
-      expect(d.showArchiveMemoryDemo, isFalse);
-      expect(d.showTrialFirstMomentCard, isFalse);
+      expect(d.showFirstRecordingHandoff, isFalse);
+      expect(d.showFramingTitle, isTrue);
+      expect(d.showFirstThreeJourney, isFalse);
       expect(d.showStarterPrompts, isFalse);
-      expect(d.suppressDuplicateRecordCtas, isTrue);
+      expect(d.suppressDuplicateRecordCtas, isFalse);
     });
 
     test('trial mode shows trial first moment card', () {
@@ -109,10 +110,11 @@ void main() {
   });
 
   group('current objective card', () {
-    test('first recording handoff suppresses objective', () {
-      final d = decideRecordStack(
+    test('first run hides objective until comparison seed', () {
+      final empty = decideRecordStack(
         hasDueCheck: false,
         isFirstRun: true,
+        reflectionCount: 0,
         isTrialMode: false,
         isRecording: false,
         hasSavedReflection: false,
@@ -122,8 +124,114 @@ void main() {
         hasRoutineAnchorOffer: false,
         hasArchiveProof: false,
       );
-      expect(d.showFirstRecordingHandoff, isTrue);
-      expect(d.showCurrentObjectiveCard, isFalse);
+      expect(empty.showFirstRecordingHandoff, isFalse);
+      expect(empty.showCurrentObjectiveCard, isTrue);
+
+      final one = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        reflectionCount: 1,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: false,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: false,
+        hasResultNextCheck: false,
+        hasRoutineAnchorOffer: false,
+        hasArchiveProof: false,
+      );
+      expect(one.showCurrentObjectiveCard, isTrue);
+
+      final two = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        reflectionCount: 2,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: false,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: false,
+        hasResultNextCheck: false,
+        hasRoutineAnchorOffer: false,
+        hasArchiveProof: false,
+      );
+      expect(two.showCurrentObjectiveCard, isTrue);
+    });
+  });
+
+  group('entry count gates', () {
+    test('progress cards stay hidden until entry count loads', () {
+      final loading = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        reflectionCount: 0,
+        entryCountLoaded: false,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: false,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: false,
+        hasResultNextCheck: false,
+        hasRoutineAnchorOffer: false,
+        hasArchiveProof: false,
+      );
+      expect(loading.showFirstThreeJourney, isFalse);
+      expect(loading.showStarterPrompts, isFalse);
+      expect(loading.showCurrentObjectiveCard, isFalse);
+      expect(loading.showActivePatternThread, isFalse);
+    });
+
+    test('first-three journey only at two entries', () {
+      final two = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        reflectionCount: 2,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: false,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: false,
+        hasResultNextCheck: false,
+        hasRoutineAnchorOffer: false,
+        hasArchiveProof: false,
+      );
+      expect(two.showFirstThreeJourney, isTrue);
+      expect(two.showStarterPrompts, isFalse);
+
+      final three = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        reflectionCount: 3,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: false,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: false,
+        hasResultNextCheck: false,
+        hasRoutineAnchorOffer: false,
+        hasArchiveProof: false,
+      );
+      expect(three.showFirstThreeJourney, isFalse);
+      expect(three.showStarterPrompts, isTrue);
+    });
+
+    test('two loaded entries enable first-three journey card', () {
+      final two = decideRecordStack(
+        hasDueCheck: false,
+        isFirstRun: false,
+        reflectionCount: 2,
+        entryCountLoaded: true,
+        isTrialMode: false,
+        isRecording: false,
+        hasSavedReflection: false,
+        inputQualityNeedsCoach: false,
+        hasCompletedResult: false,
+        hasResultNextCheck: false,
+        hasRoutineAnchorOffer: false,
+        hasArchiveProof: false,
+      );
+      expect(two.showFirstThreeJourney, isTrue);
+      expect(two.showStarterPrompts, isFalse);
     });
   });
 }

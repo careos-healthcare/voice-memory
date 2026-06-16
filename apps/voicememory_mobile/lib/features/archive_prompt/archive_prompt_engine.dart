@@ -62,12 +62,14 @@ ArchivePromptSet buildArchivePrompts({
   void push(String type, String text, int priority) {
     if (text.trim().isEmpty) return;
     if (out.any((p) => p.text == text)) return;
-    out.add(ArchivePrompt(
-      id: 'ap-${out.length}',
-      type: type,
-      text: text,
-      priority: priority,
-    ));
+    out.add(
+      ArchivePrompt(
+        id: 'ap-${out.length}',
+        type: type,
+        text: text,
+        priority: priority,
+      ),
+    );
   }
 
   if (hasRecentChange) {

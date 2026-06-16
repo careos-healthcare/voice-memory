@@ -117,31 +117,30 @@ class _ArchiveSurpriseCardState extends State<ArchiveSurpriseCard> {
           const SizedBox(height: 10),
           Text(
             surprise.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(height: 1.35),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              height: 1.35,
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 4,
             runSpacing: 4,
             children: [
-              TextButton(
-                onPressed: _openWhy,
-                child: const Text('Why?'),
-              ),
+              TextButton(onPressed: _openWhy, child: const Text('Why?')),
               if (_evidenceEntries.isNotEmpty)
                 TextButton(
-                  onPressed: () => setState(() => _evidenceOpen = !_evidenceOpen),
-                  child: Text(_evidenceOpen ? 'Hide Evidence' : 'Show Evidence'),
+                  onPressed: () =>
+                      setState(() => _evidenceOpen = !_evidenceOpen),
+                  child: Text(
+                    _evidenceOpen ? 'Hide Evidence' : 'Show Evidence',
+                  ),
                 ),
               if (surprise.supportsTimeline)
                 TextButton(
                   onPressed: _openTimeline,
                   child: const Text('Timeline'),
                 ),
-              TextButton(
-                onPressed: _share,
-                child: const Text('Share'),
-              ),
+              TextButton(onPressed: _share, child: const Text('Share')),
             ],
           ),
           if (_evidenceOpen && _evidenceEntries.isNotEmpty) ...[

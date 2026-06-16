@@ -39,34 +39,36 @@ class DailyDiscovery {
   final ArchiveInsightRef insightRef;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type.name,
-        'title': title,
-        'summary': summary,
-        'whyItMatters': whyItMatters,
-        'evidenceIds': evidenceIds,
-        'confidence': confidence,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'insightRefId': insightRef.id,
-        'insightKind': insightRef.kind.name,
-        'themeKey': insightRef.themeKey,
-        'chapterId': insightRef.chapterId,
-        'entryIdA': insightRef.entryIdA,
-        'entryIdB': insightRef.entryIdB,
-        'surpriseIndex': insightRef.surpriseIndex,
-        'challengeIndex': insightRef.challengeIndex,
-        'askPrompt': insightRef.askPrompt,
-      };
+    'id': id,
+    'type': type.name,
+    'title': title,
+    'summary': summary,
+    'whyItMatters': whyItMatters,
+    'evidenceIds': evidenceIds,
+    'confidence': confidence,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'insightRefId': insightRef.id,
+    'insightKind': insightRef.kind.name,
+    'themeKey': insightRef.themeKey,
+    'chapterId': insightRef.chapterId,
+    'entryIdA': insightRef.entryIdA,
+    'entryIdB': insightRef.entryIdB,
+    'surpriseIndex': insightRef.surpriseIndex,
+    'challengeIndex': insightRef.challengeIndex,
+    'askPrompt': insightRef.askPrompt,
+  };
 
   static DailyDiscovery? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     final id = json['id']?.toString() ?? '';
     if (id.isEmpty) return null;
-    final type = DailyDiscoveryType.values.asNameMap()[json['type']?.toString()];
+    final type = DailyDiscoveryType.values
+        .asNameMap()[json['type']?.toString()];
     if (type == null) return null;
     final ref = _insightRefFromJson(json);
     if (ref == null) return null;
-    final evidence = (json['evidenceIds'] as List<dynamic>?)
+    final evidence =
+        (json['evidenceIds'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??
@@ -81,7 +83,8 @@ class DailyDiscovery {
       whyItMatters: json['whyItMatters']?.toString() ?? '',
       evidenceIds: evidence,
       confidence: (json['confidence'] as num?)?.toDouble() ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
           DateTime.now(),
       insightRef: ref,
     );
@@ -132,15 +135,15 @@ class DailyDiscoveryBaseline {
   final int beliefStrengthPercent;
 
   Map<String, dynamic> toJson() => {
-        'lastEntryId': lastEntryId,
-        'entryCount': entryCount,
-        'belief': belief,
-        'themeCounts': themeCounts,
-        'contradictionIds': contradictionIds,
-        'latestChapterId': latestChapterId,
-        'avgEmotionalIntensity': avgEmotionalIntensity,
-        'beliefStrengthPercent': beliefStrengthPercent,
-      };
+    'lastEntryId': lastEntryId,
+    'entryCount': entryCount,
+    'belief': belief,
+    'themeCounts': themeCounts,
+    'contradictionIds': contradictionIds,
+    'latestChapterId': latestChapterId,
+    'avgEmotionalIntensity': avgEmotionalIntensity,
+    'beliefStrengthPercent': beliefStrengthPercent,
+  };
 
   static DailyDiscoveryBaseline? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -149,16 +152,19 @@ class DailyDiscoveryBaseline {
       lastEntryId: lastId,
       entryCount: (json['entryCount'] as num?)?.toInt() ?? 0,
       belief: json['belief']?.toString(),
-      themeCounts: (json['themeCounts'] as Map?)?.map(
+      themeCounts:
+          (json['themeCounts'] as Map?)?.map(
             (k, v) => MapEntry(k.toString(), (v as num).toInt()),
           ) ??
           {},
-      contradictionIds: (json['contradictionIds'] as List<dynamic>?)
+      contradictionIds:
+          (json['contradictionIds'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           const [],
       latestChapterId: json['latestChapterId']?.toString(),
-      avgEmotionalIntensity: (json['avgEmotionalIntensity'] as num?)?.toDouble(),
+      avgEmotionalIntensity: (json['avgEmotionalIntensity'] as num?)
+          ?.toDouble(),
       beliefStrengthPercent:
           (json['beliefStrengthPercent'] as num?)?.toInt() ?? 0,
     );

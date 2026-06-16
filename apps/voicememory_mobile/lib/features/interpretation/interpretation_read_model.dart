@@ -1,9 +1,5 @@
 /// How specific a read is — based on concrete behaviour + context in text.
-enum InterpretationSpecificityLevel {
-  low,
-  medium,
-  high,
-}
+enum InterpretationSpecificityLevel { low, medium, high }
 
 /// Where a read came from.
 enum InterpretationSource {
@@ -14,11 +10,7 @@ enum InterpretationSource {
 }
 
 /// Safety flags for unsupported or vague input.
-enum InterpretationSafetyFlag {
-  tooVague,
-  tooSensitive,
-  unsupported,
-}
+enum InterpretationSafetyFlag { tooVague, tooSensitive, unsupported }
 
 /// One evidence-grounded possible read on a moment.
 class InterpretationRead {

@@ -55,7 +55,7 @@ export function UpgradeCta({
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-violet-200">
               <Sparkles className="h-3.5 w-3.5" />
-              VoiceMemory Pro
+              ArchiveMe Pro
             </p>
             <p className="mt-1 text-base font-medium text-white">{headline}</p>
             <p className="mt-2 text-sm leading-relaxed text-zinc-300">

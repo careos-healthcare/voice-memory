@@ -55,7 +55,10 @@ void main() {
     );
     expect(recap.type, PrivateRecapType.keyMoment);
     expect(recap.title, 'Something felt heavier');
-    expect(recap.usefulMoments, contains('I carried it alone after the meeting.'));
+    expect(
+      recap.usefulMoments,
+      contains('I carried it alone after the meeting.'),
+    );
     expect(recap.usefulMoments, contains('This felt heavier.'));
     expect(recap.nextCheck, 'What made it heavier?');
     expect(recap.plainText, contains('Jun 4, 2026'));
@@ -94,7 +97,10 @@ void main() {
     final recap = PrivateRecapEngine.fromMonthlyReview(review);
     expect(recap.type, PrivateRecapType.monthly);
     expect(recap.title, 'June');
-    expect(recap.usefulMoments, contains('This kept repeating: Taking on too much'));
+    expect(
+      recap.usefulMoments,
+      contains('This kept repeating: Taking on too much'),
+    );
     expect(recap.usefulMoments, contains('This helped: I asked for help'));
     expect(recap.nextCheck, 'What happens right before it starts?');
   });
@@ -125,26 +131,23 @@ void main() {
   });
 
   test('fromSelectedMoments lists moments oldest first with a count', () {
-    final recap = PrivateRecapEngine.fromSelectedMoments(
-      [
-        KeyMoment(
-          id: 'b',
-          date: DateTime(2026, 6, 5),
-          title: 'Later',
-          originalText: 'second',
-          shortSummary: 'second',
-        ),
-        KeyMoment(
-          id: 'a',
-          date: DateTime(2026, 6, 1),
-          title: 'Earlier',
-          originalText: 'first',
-          shortSummary: 'first',
-          nextCheck: 'What was different?',
-        ),
-      ],
-      label: 'This week',
-    );
+    final recap = PrivateRecapEngine.fromSelectedMoments([
+      KeyMoment(
+        id: 'b',
+        date: DateTime(2026, 6, 5),
+        title: 'Later',
+        originalText: 'second',
+        shortSummary: 'second',
+      ),
+      KeyMoment(
+        id: 'a',
+        date: DateTime(2026, 6, 1),
+        title: 'Earlier',
+        originalText: 'first',
+        shortSummary: 'first',
+        nextCheck: 'What was different?',
+      ),
+    ], label: 'This week');
     expect(recap.type, PrivateRecapType.selectedRange);
     expect(recap.title, 'This week');
     expect(recap.dateRange, 'Jun 1, 2026 – Jun 5, 2026');

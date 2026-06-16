@@ -6,10 +6,7 @@ import '../theme/voicememory_typography.dart';
 
 /// Immediate post-save archive voice — before deeper discovery analysis.
 class InstantReflectionResponseCard extends StatelessWidget {
-  const InstantReflectionResponseCard({
-    super.key,
-    required this.response,
-  });
+  const InstantReflectionResponseCard({super.key, required this.response});
 
   final InstantReflectionResponse response;
 

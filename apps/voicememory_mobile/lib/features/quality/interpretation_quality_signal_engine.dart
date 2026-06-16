@@ -50,7 +50,8 @@ class InterpretationQualitySignalEngine {
     }
     if (action == ReadUserAction.rejected ||
         action == ReadUserAction.alternativeChosen) {
-      final rejectedAll = sessionSignals.isNotEmpty &&
+      final rejectedAll =
+          sessionSignals.isNotEmpty &&
           sessionSignals.every(
             (s) =>
                 s.userAction == ReadUserAction.rejected ||

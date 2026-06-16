@@ -132,7 +132,9 @@ class _WatchRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.accentPrimary.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: AppColors.accentPrimary.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +142,10 @@ class _WatchRow extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(row.title, style: ArchiveMobileTypography.listTitle(context)),
+                child: Text(
+                  row.title,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
               ),
               if (row.strengthLabel.isNotEmpty)
                 Text(

@@ -1,13 +1,13 @@
 import { unzipSync } from "fflate";
 
 import { parseArchiveJson } from "@/lib/archive/validate-import";
-import type { VoiceMemoryArchivePackage } from "@/types/archive-permanence";
+import type { ArchiveMeArchivePackage } from "@/types/archive-permanence";
 
 function bytesToText(bytes: Uint8Array): string {
   return new TextDecoder().decode(bytes);
 }
 
-export function unzipArchivePackage(buffer: ArrayBuffer): VoiceMemoryArchivePackage | null {
+export function unzipArchivePackage(buffer: ArrayBuffer): ArchiveMeArchivePackage | null {
   try {
     const files = unzipSync(new Uint8Array(buffer));
     const archiveBytes = files["archive.json"];

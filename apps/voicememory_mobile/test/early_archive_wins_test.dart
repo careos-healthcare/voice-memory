@@ -52,10 +52,7 @@ void main() {
       final entries = List.generate(5, (i) => _careerEntry('e${i + 1}'));
       final insight = buildEarlyArchiveWins(entries).insight!;
       expect(insight.kind, EarlyArchiveInsightKind.patternMayBeForming);
-      expect(
-        insight.message,
-        'A pattern may be forming around: Career',
-      );
+      expect(insight.message, 'A pattern may be forming around: Career');
     });
 
     test('uses tentative language in supporting analytics kind', () {
@@ -78,17 +75,17 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: EarlyArchiveInsightCard(
-              insight: insight,
-              surface: 'test',
-            ),
+            body: EarlyArchiveInsightCard(insight: insight, surface: 'test'),
           ),
         ),
       );
       await tester.pump();
 
       expect(find.textContaining('mentioned'), findsOneWidget);
-      expect(find.bySemanticsLabel(RegExp('Early archive insight')), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(RegExp('Early archive insight')),
+        findsOneWidget,
+      );
 
       await tester.tap(find.textContaining('mentioned'));
       await tester.pump();

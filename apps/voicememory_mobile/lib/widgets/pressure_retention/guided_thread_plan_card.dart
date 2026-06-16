@@ -40,8 +40,9 @@ class GuidedThreadPlanCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   plan.title,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -49,9 +50,9 @@ class GuidedThreadPlanCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             plan.basedOnLine,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           _sectionHeading(context, GuidedThreadPlan.alreadyCoveredHeading),
@@ -62,8 +63,9 @@ class GuidedThreadPlanCard extends StatelessWidget {
               padding: const EdgeInsets.only(top: AppSpacing.xs, left: 24),
               child: Text(
                 '\u201C$snippet\u201D',
-                style: ArchiveMobileTypography.responsiveHelper(context)
-                    .copyWith(color: AppColors.textSecondary),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
               ),
             ),
           const SizedBox(height: AppSpacing.sm),
@@ -84,18 +86,18 @@ class GuidedThreadPlanCard extends StatelessWidget {
               ),
               child: Text(
                 plan.nextPrompt,
-                style: ArchiveMobileTypography.body(context).copyWith(
-                  color: AppColors.textPrimary,
-                ),
+                style: ArchiveMobileTypography.body(
+                  context,
+                ).copyWith(color: AppColors.textPrimary),
               ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             plan.encouragementLine,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
           SizedBox(
@@ -118,10 +120,9 @@ class GuidedThreadPlanCard extends StatelessWidget {
   Widget _sectionHeading(BuildContext context, String heading) {
     return Text(
       heading,
-      style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-        color: AppColors.textSecondary,
-        fontWeight: FontWeight.w600,
-      ),
+      style: ArchiveMobileTypography.responsiveHelper(
+        context,
+      ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
     );
   }
 
@@ -136,8 +137,9 @@ class GuidedThreadPlanCard extends StatelessWidget {
           Expanded(
             child: Text(
               line,
-              style: ArchiveMobileTypography.responsiveHelper(context)
-                  .copyWith(color: AppColors.textPrimary),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
             ),
           ),
         ],

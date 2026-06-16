@@ -101,7 +101,8 @@ class MobilePrefsStore {
     await _update((data) => data[key] = value);
   }
 
-  Future<String?> get lastSyncAt async => (await _read())['lastSyncAt'] as String?;
+  Future<String?> get lastSyncAt async =>
+      (await _read())['lastSyncAt'] as String?;
 
   Future<void> setLastSyncAt(DateTime? at) async {
     await _update((data) => data['lastSyncAt'] = at?.toIso8601String());

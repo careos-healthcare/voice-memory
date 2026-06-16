@@ -81,8 +81,9 @@ class StartHereSaveReceiptEngine {
   String? _optionPhrase(String suggestionId) {
     const prefix = 'recent_option_';
     if (!suggestionId.startsWith(prefix)) return null;
-    final option =
-        PressureCheckInOption.fromId(suggestionId.substring(prefix.length));
+    final option = PressureCheckInOption.fromId(
+      suggestionId.substring(prefix.length),
+    );
     switch (option) {
       case PressureCheckInOption.couldNotStop:
         return 'stopping felt unsafe';

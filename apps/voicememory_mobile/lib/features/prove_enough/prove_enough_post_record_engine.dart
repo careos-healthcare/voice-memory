@@ -66,15 +66,22 @@ class ProveEnoughPostRecordEngine {
     required LoopMode activeLoop,
   }) {
     final normalized = _normalize(transcript);
-    final wordCount = normalized.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+    final wordCount = normalized
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .length;
 
     final pressureHits = _matchIndicators(normalized, _pressureIndicators);
     final choiceHits = _matchIndicators(normalized, _choiceIndicators);
     final restHits = _matchIndicators(normalized, _restGuiltIndicators);
     final stopCostHits = _matchIndicators(normalized, _stopCostTags);
 
-    final evidencePhrases = _collectEvidencePhrases(interpretationReads, normalized);
-    final transcriptWeak = wordCount < 12 ||
+    final evidencePhrases = _collectEvidencePhrases(
+      interpretationReads,
+      normalized,
+    );
+    final transcriptWeak =
+        wordCount < 12 ||
         (pressureHits.isEmpty && choiceHits.isEmpty && restHits.isEmpty);
 
     final pressureLevel = transcriptWeak
@@ -162,7 +169,10 @@ class ProveEnoughPostRecordEngine {
     return hits;
   }
 
-  static List<String> _phraseSnippets(String transcript, List<_IndicatorHit> hits) {
+  static List<String> _phraseSnippets(
+    String transcript,
+    List<_IndicatorHit> hits,
+  ) {
     if (hits.isEmpty) return const [];
     final seen = <String>{};
     final snippets = <String>[];
@@ -190,7 +200,8 @@ class ProveEnoughPostRecordEngine {
     final from = (wordIndex - 2).clamp(0, words.length);
     final to = (wordIndex + 4).clamp(0, words.length);
     final snippet = words.sublist(from, to).join(' ').trim();
-    if (snippet.isEmpty) return transcript.substring(0, transcript.length.clamp(0, 80));
+    if (snippet.isEmpty)
+      return transcript.substring(0, transcript.length.clamp(0, 80));
     return snippet.length > 90 ? '${snippet.substring(0, 87)}…' : snippet;
   }
 

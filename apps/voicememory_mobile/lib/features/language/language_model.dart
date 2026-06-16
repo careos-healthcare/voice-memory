@@ -91,8 +91,7 @@ class DetectedLanguage {
 
   /// The language code used to render UI: supported codes pass through,
   /// everything else falls back to English.
-  String get uiLanguageCode =>
-      isSupported ? code : kFallbackLanguageCode;
+  String get uiLanguageCode => isSupported ? code : kFallbackLanguageCode;
 
   DetectedLanguage copyWith({
     String? code,

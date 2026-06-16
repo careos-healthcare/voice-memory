@@ -1,7 +1,7 @@
 import '../product/consumer_ui_copy.dart';
 
 /// Consumer onboarding copy and structured page data.
-abstract final class OnboardingPages {
+abstract class OnboardingPages {
   OnboardingPages._();
 
   static const int pageCount = 4;
@@ -13,29 +13,22 @@ abstract final class OnboardingPages {
       visual: OnboardingVisualKind.patternNetwork,
     ),
     OnboardingPageData(
-      title: ConsumerUiCopy.onboardingPage2Title,
-      body: ConsumerUiCopy.onboardingPage2Body,
-      visual: OnboardingVisualKind.insightPreview,
-      insightBullets: [
-        'What you kept doing',
-        'What stopping felt like it would cost',
-        'What felt not enough afterward',
-      ],
+      title: ConsumerUiCopy.onboardingStep1Title,
+      body: ConsumerUiCopy.onboardingStep1Body,
+      visual: OnboardingVisualKind.stepBadge,
+      stepNumber: 1,
     ),
     OnboardingPageData(
-      title: ConsumerUiCopy.onboardingPage3Title,
-      body: ConsumerUiCopy.onboardingPage3Body,
-      visual: OnboardingVisualKind.evidenceChips,
-      evidenceExamples: [
-        'Proving loop started',
-        'Moment 1 saved',
-        'Moment 2 tests the read',
-      ],
+      title: ConsumerUiCopy.onboardingStep2Title,
+      body: ConsumerUiCopy.onboardingStep2Body,
+      visual: OnboardingVisualKind.stepBadge,
+      stepNumber: 2,
     ),
     OnboardingPageData(
-      title: ConsumerUiCopy.onboardingPage4Title,
-      body: ConsumerUiCopy.onboardingPage4Body,
-      visual: OnboardingVisualKind.checkPreview,
+      title: ConsumerUiCopy.onboardingStep3Title,
+      body: ConsumerUiCopy.onboardingStep3Body,
+      visual: OnboardingVisualKind.stepBadge,
+      stepNumber: 3,
     ),
   ];
 }
@@ -47,6 +40,7 @@ enum OnboardingVisualKind {
   beliefShift,
   insightPreview,
   checkPreview,
+  stepBadge,
 }
 
 class OnboardingPageData {
@@ -59,6 +53,7 @@ class OnboardingPageData {
     this.oldBelief,
     this.newBelief,
     this.insightBullets = const [],
+    this.stepNumber,
   });
 
   final String title;
@@ -69,4 +64,5 @@ class OnboardingPageData {
   final String? oldBelief;
   final String? newBelief;
   final List<String> insightBullets;
+  final int? stepNumber;
 }

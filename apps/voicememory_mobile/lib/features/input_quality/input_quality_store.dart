@@ -113,14 +113,14 @@ class InputQualityState {
   }
 
   Map<String, dynamic> toMap() => {
-        if (lastQualityLevel != null) 'lastQualityLevel': lastQualityLevel!.name,
-        'lastScore': lastScore,
-        'lastIssues': lastIssues.map((i) => i.name).toList(),
-        'acceptedWeakInputCount': acceptedWeakInputCount,
-        'sharpenedInputCount': sharpenedInputCount,
-        'scoreSum': scoreSum,
-        'assessmentCount': assessmentCount,
-      };
+    if (lastQualityLevel != null) 'lastQualityLevel': lastQualityLevel!.name,
+    'lastScore': lastScore,
+    'lastIssues': lastIssues.map((i) => i.name).toList(),
+    'acceptedWeakInputCount': acceptedWeakInputCount,
+    'sharpenedInputCount': sharpenedInputCount,
+    'scoreSum': scoreSum,
+    'assessmentCount': assessmentCount,
+  };
 
   factory InputQualityState.fromMap(Map<String, dynamic> map) {
     return InputQualityState(

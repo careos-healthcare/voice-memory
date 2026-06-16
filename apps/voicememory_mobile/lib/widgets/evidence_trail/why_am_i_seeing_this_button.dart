@@ -39,10 +39,7 @@ class WhyAmISeeingThisButton extends StatelessWidget {
           color: onDark
               ? VoiceMemoryColors.onPrimary
               : VoiceMemoryColors.primaryIndigo,
-        ).copyWith(
-          fontWeight: FontWeight.w600,
-          fontSize: compact ? 12 : 14,
-        ),
+        ).copyWith(fontWeight: FontWeight.w600, fontSize: compact ? 12 : 14),
         textAlign: TextAlign.start,
       ),
     );

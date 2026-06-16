@@ -8,9 +8,14 @@ import '../../theme/voicememory_typography.dart';
 /// First-run framing shown before any moment is saved: get the user to record
 /// one moment so the loop can start.
 class FirstLoopStartCard extends StatelessWidget {
-  const FirstLoopStartCard({super.key, required this.onRecord});
+  const FirstLoopStartCard({
+    super.key,
+    required this.onRecord,
+    this.showRecordCta = true,
+  });
 
   final VoidCallback onRecord;
+  final bool showRecordCta;
 
   static const String title = 'Start with one moment';
   static const String body = 'Say what happened today. One sentence is enough.';
@@ -91,15 +96,14 @@ class FirstLoopStartCard extends StatelessWidget {
               color: AppColors.textSecondary,
             ).copyWith(fontSize: 13, height: 1.4),
           ),
-          const SizedBox(height: AppSpacing.md),
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: FilledButton(
-              onPressed: onRecord,
-              child: const Text(cta),
+          if (showRecordCta) ...[
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: FilledButton(onPressed: onRecord, child: const Text(cta)),
             ),
-          ),
+          ],
         ],
       ),
     );

@@ -34,8 +34,9 @@ void main() {
 
   group('strong input is recognised', () {
     test('"said yes before checking what I needed" is strong', () {
-      final r =
-          assessReflectionQuality('I said yes before checking what I needed.');
+      final r = assessReflectionQuality(
+        'I said yes before checking what I needed.',
+      );
       expect(r.level, InputQualityLevel.strong);
       expect(r.score, greaterThanOrEqualTo(0.75));
       expect(r.shouldAskForSharpening, isFalse);

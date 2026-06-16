@@ -46,8 +46,18 @@ class _KeyMomentDetailScreenState extends State<KeyMomentDetailScreen> {
       return 'Yesterday';
     }
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -101,8 +111,9 @@ class _KeyMomentDetailScreenState extends State<KeyMomentDetailScreen> {
               const SizedBox(height: AppSpacing.xs),
               Text(
                 moment.title,
-                style:
-                    VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 22),
+                style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                  fontSize: 22,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
               Container(
@@ -130,8 +141,7 @@ class _KeyMomentDetailScreenState extends State<KeyMomentDetailScreen> {
               ],
               if (moment.nextCheck != null) ...[
                 const SizedBox(height: AppSpacing.md),
-                _labelledLine('Next check', moment.nextCheck!,
-                    emphasize: true),
+                _labelledLine('Next check', moment.nextCheck!, emphasize: true),
                 const SizedBox(height: AppSpacing.lg),
                 if (_done)
                   _confirmation()
@@ -195,13 +205,12 @@ class _KeyMomentDetailScreenState extends State<KeyMomentDetailScreen> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           body,
-          style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
-          ).copyWith(
-            fontSize: emphasize ? 16 : 15,
-            fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
-            height: 1.4,
-          ),
+          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+              .copyWith(
+                fontSize: emphasize ? 16 : 15,
+                fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
+                height: 1.4,
+              ),
         ),
       ],
     );

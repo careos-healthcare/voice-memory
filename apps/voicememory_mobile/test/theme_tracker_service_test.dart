@@ -65,7 +65,9 @@ void main() {
     expect(approval.trend, ThemeTrend.up);
     expect(approval.trendGlyph, '↑');
 
-    final confidence = result.topThemes.firstWhere((t) => t.name == 'Confidence');
+    final confidence = result.topThemes.firstWhere(
+      (t) => t.name == 'Confidence',
+    );
     expect(confidence.frequency, greaterThanOrEqualTo(1));
   });
 

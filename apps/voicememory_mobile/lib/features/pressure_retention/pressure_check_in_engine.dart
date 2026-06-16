@@ -103,10 +103,7 @@ class PressureCheckInEngine {
 }
 
 class PressureCheckInBuildResult {
-  const PressureCheckInBuildResult({
-    required this.entry,
-    required this.record,
-  });
+  const PressureCheckInBuildResult({required this.entry, required this.record});
 
   final JournalEntry entry;
   final PressureCheckInRecord record;

@@ -142,7 +142,11 @@ class _ChapterCard extends StatelessWidget {
                 const SizedBox(height: 14),
                 const Text(
                   'Evidence',
-                  style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                  style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 0.6,
+                    color: AppTheme.muted,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 for (final q in chapter.importantQuotes)
@@ -170,7 +174,9 @@ class _ChapterCard extends StatelessWidget {
                   for (final id in chapter.evidenceIds)
                     OutlinedButton(
                       onPressed: () => context.push('/entry/$id'),
-                      child: Text('Recording ${chapter.evidenceIds.indexOf(id) + 1}'),
+                      child: Text(
+                        'Recording ${chapter.evidenceIds.indexOf(id) + 1}',
+                      ),
                     ),
                 ],
               ),
@@ -185,9 +191,23 @@ class _ChapterCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 10,
+            letterSpacing: 0.6,
+            color: AppTheme.muted,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: AppTheme.muted, height: 1.4, fontSize: 13)),
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppTheme.muted,
+            height: 1.4,
+            fontSize: 13,
+          ),
+        ),
       ],
     );
   }

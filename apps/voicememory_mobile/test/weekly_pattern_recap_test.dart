@@ -22,9 +22,7 @@ void main() {
     const engine = WeeklyPatternRecapEngine();
     expect(engine.build(comparisons: [_cmp(), _cmp()]), isNull);
 
-    final recap = engine.build(
-      comparisons: [_cmp(), _cmp(), _cmp()],
-    );
+    final recap = engine.build(comparisons: [_cmp(), _cmp(), _cmp()]);
     expect(recap, isNotNull);
     expect(recap!.title, ConsumerUiCopy.weeklyRecapTitle);
     expect(recap.body, isNotEmpty);

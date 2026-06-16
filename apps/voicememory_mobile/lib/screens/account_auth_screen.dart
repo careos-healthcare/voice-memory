@@ -199,8 +199,9 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           AccountAuthCopy.createBody,
-          style: ArchiveMobileTypography.responsiveHelper(context)
-              .copyWith(color: AppColors.textSecondary),
+          style: ArchiveMobileTypography.responsiveHelper(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
       ],
       const SizedBox(height: AppSpacing.md),
@@ -228,8 +229,7 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
       const SizedBox(height: AppSpacing.xs),
       TextButton(
         key: const Key('account_auth_skip'),
-        onPressed:
-            _busy ? null : () => Navigator.of(context).maybePop(false),
+        onPressed: _busy ? null : () => Navigator.of(context).maybePop(false),
         child: const Text(AccountAuthCopy.continueWithoutAccount),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -247,8 +247,9 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
       const SizedBox(height: AppSpacing.xs),
       Text(
         AccountAuthCopy.codeBody,
-        style: ArchiveMobileTypography.responsiveHelper(context)
-            .copyWith(color: AppColors.textSecondary),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textSecondary),
       ),
       const SizedBox(height: AppSpacing.md),
       TextField(
@@ -299,8 +300,9 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
       AccountAuthCopy.privacyLine,
       key: const Key('account_auth_privacy_line'),
       textAlign: TextAlign.center,
-      style: ArchiveMobileTypography.responsiveHelper(context)
-          .copyWith(color: AppColors.textSecondary),
+      style: ArchiveMobileTypography.responsiveHelper(
+        context,
+      ).copyWith(color: AppColors.textSecondary),
     );
   }
 }

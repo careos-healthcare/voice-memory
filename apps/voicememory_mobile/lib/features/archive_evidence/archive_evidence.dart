@@ -8,7 +8,8 @@ int get archiveMinEvidenceReflections =>
     ArchiveEvidenceGuard.minimumEvidenceCount;
 
 /// Matches [EvidenceLockerCompact] — transcripts shorter than this are not evidence.
-int get archiveMinTranscriptChars => ArchiveEvidenceGuard.minimumTranscriptChars;
+int get archiveMinTranscriptChars =>
+    ArchiveEvidenceGuard.minimumTranscriptChars;
 
 List<JournalEntry> archiveEligibleEvidenceEntries(List<JournalEntry> entries) =>
     ArchiveEvidenceGuard.eligibleEntries(entries);

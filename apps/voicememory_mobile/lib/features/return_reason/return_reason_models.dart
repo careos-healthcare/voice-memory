@@ -24,37 +24,41 @@ class ReturnReasonState {
       primaryMessage != null && primaryMessage!.trim().isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'pendingQuestions': pendingQuestions,
-        'unresolvedPatterns': unresolvedPatterns,
-        'emergingBeliefs': emergingBeliefs,
-        'generatedAt': generatedAt.toUtc().toIso8601String(),
-        'primaryMessage': primaryMessage,
-        'kind': kind,
-        'beliefFocus': beliefFocus,
-        'recordingsNeeded': recordingsNeeded,
-      };
+    'pendingQuestions': pendingQuestions,
+    'unresolvedPatterns': unresolvedPatterns,
+    'emergingBeliefs': emergingBeliefs,
+    'generatedAt': generatedAt.toUtc().toIso8601String(),
+    'primaryMessage': primaryMessage,
+    'kind': kind,
+    'beliefFocus': beliefFocus,
+    'recordingsNeeded': recordingsNeeded,
+  };
 
   static ReturnReasonState? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
     final message = json['primaryMessage']?.toString().trim();
     if (message == null || message.isEmpty) return null;
     return ReturnReasonState(
-      pendingQuestions: (json['pendingQuestions'] as List<dynamic>?)
+      pendingQuestions:
+          (json['pendingQuestions'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .where((s) => s.isNotEmpty)
               .toList() ??
           const [],
-      unresolvedPatterns: (json['unresolvedPatterns'] as List<dynamic>?)
+      unresolvedPatterns:
+          (json['unresolvedPatterns'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .where((s) => s.isNotEmpty)
               .toList() ??
           const [],
-      emergingBeliefs: (json['emergingBeliefs'] as List<dynamic>?)
+      emergingBeliefs:
+          (json['emergingBeliefs'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .where((s) => s.isNotEmpty)
               .toList() ??
           const [],
-      generatedAt: DateTime.tryParse(json['generatedAt']?.toString() ?? '') ??
+      generatedAt:
+          DateTime.tryParse(json['generatedAt']?.toString() ?? '') ??
           DateTime.now(),
       primaryMessage: message,
       kind: json['kind']?.toString(),

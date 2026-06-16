@@ -12,7 +12,7 @@ import 'tomorrow_return_loop_models.dart';
 import 'tomorrow_return_loop_store.dart';
 
 /// Generates and persists the return loop after recording; loads it on Patterns.
-abstract final class TomorrowReturnLoopCoordinator {
+abstract class TomorrowReturnLoopCoordinator {
   TomorrowReturnLoopCoordinator._();
 
   static Future<TomorrowReturnLoop?> buildFromEntries(

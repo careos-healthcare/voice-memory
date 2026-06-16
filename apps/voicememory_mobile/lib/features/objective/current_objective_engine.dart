@@ -17,7 +17,8 @@ CurrentObjective buildCurrentObjective({
   final clock = now ?? DateTime.now();
   final today = tomorrowCheckInDateKey(clock);
 
-  final dueToday = activeCheckIn != null &&
+  final dueToday =
+      activeCheckIn != null &&
       !activeCheckIn.isCompleted &&
       activeCheckIn.targetDate == today;
   final dueFromRetention =
@@ -31,8 +32,7 @@ CurrentObjective buildCurrentObjective({
       title: 'Today\u2019s check',
       body: 'Answer the check you chose yesterday.',
       checkQuestion: activeCheckIn?.question ?? retentionState?.checkQuestion,
-      patternTitle:
-          activeCheckIn?.patternTitle ?? retentionState?.patternTitle,
+      patternTitle: activeCheckIn?.patternTitle ?? retentionState?.patternTitle,
       primaryCtaLabel: 'Answer check',
       route: recordRoute,
       targetDate: activeCheckIn?.targetDate ?? retentionState?.targetDate,

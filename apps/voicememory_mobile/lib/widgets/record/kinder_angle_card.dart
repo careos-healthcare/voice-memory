@@ -64,14 +64,14 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
   String _t(String key) => localized(key, widget.languageCode);
 
   KinderAngle get _angle => buildKinderAngle(
-        reflectionText: widget.reflectionText,
-        patternTitle: widget.patternTitle,
-        resultHint: widget.resultHint,
-        languageCode: widget.languageCode,
-        triggerOverride: _broaderAngle
-            ? KinderAngleTrigger.genericHardMoment
-            : widget.trigger,
-      );
+    reflectionText: widget.reflectionText,
+    patternTitle: widget.patternTitle,
+    resultHint: widget.resultHint,
+    languageCode: widget.languageCode,
+    triggerOverride: _broaderAngle
+        ? KinderAngleTrigger.genericHardMoment
+        : widget.trigger,
+  );
 
   @override
   void initState() {
@@ -226,7 +226,11 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
     );
   }
 
-  Widget _labelledLine(String label, String body, {bool emphasizeBody = false}) {
+  Widget _labelledLine(
+    String label,
+    String body, {
+    bool emphasizeBody = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -239,13 +243,12 @@ class _KinderAngleCardState extends State<KinderAngleCard> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           body,
-          style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
-          ).copyWith(
-            fontSize: emphasizeBody ? 15 : 14,
-            fontWeight: emphasizeBody ? FontWeight.w600 : FontWeight.w400,
-            height: 1.4,
-          ),
+          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+              .copyWith(
+                fontSize: emphasizeBody ? 15 : 14,
+                fontWeight: emphasizeBody ? FontWeight.w600 : FontWeight.w400,
+                height: 1.4,
+              ),
         ),
       ],
     );

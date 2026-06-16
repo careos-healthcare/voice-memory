@@ -195,7 +195,8 @@ class BeliefLifecycleEngine {
       );
     }
 
-    if (timeline.trend == BeliefTimelineTrend.strengthening && lastSeen != null) {
+    if (timeline.trend == BeliefTimelineTrend.strengthening &&
+        lastSeen != null) {
       events.add(
         BeliefLifecycleEvent(
           phase: BeliefLifecyclePhase.strengthening,
@@ -303,14 +304,13 @@ class BeliefLifecycleEngine {
     List<JournalEntry> eligible,
   ) {
     if (mentions.isEmpty || eligible.isEmpty) return 0;
-    final sorted = [...eligible]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...eligible]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final cutoffIndex = (sorted.length * 0.75).floor();
     final recentCutoff = sorted.length <= 1
         ? sorted.last.createdAt
         : sorted[cutoffIndex.clamp(0, sorted.length - 1)].createdAt;
-    return mentions
-        .where((e) => !e.createdAt.isBefore(recentCutoff))
-        .length;
+    return mentions.where((e) => !e.createdAt.isBefore(recentCutoff)).length;
   }
 
   int _overlapScore(String transcript, Set<String> keywords) {

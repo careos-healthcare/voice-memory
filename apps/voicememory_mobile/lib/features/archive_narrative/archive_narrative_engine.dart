@@ -30,7 +30,10 @@ class ArchiveNarrativeEngine {
       return NarrativeSummary.empty(evidenceCount: evidenceCount);
     }
 
-    final belief = currentBelief?.trim() ?? archiveBeliefFromReflections(entries)?.trim() ?? '';
+    final belief =
+        currentBelief?.trim() ??
+        archiveBeliefFromReflections(entries)?.trim() ??
+        '';
     final themes = const ThemeTrackerService().track(
       entries: entries,
       baselineCounts: themeBaseline,
@@ -45,7 +48,10 @@ class ArchiveNarrativeEngine {
       currentBelief: belief,
     );
     const contradictions = ContradictionDetectionService();
-    final tension = contradictions.detect(entries: entries, currentBelief: belief);
+    final tension = contradictions.detect(
+      entries: entries,
+      currentBelief: belief,
+    );
 
     final recordingIds = <String>{};
     final supportingBeliefs = <String>[];
@@ -128,7 +134,8 @@ class ArchiveNarrativeEngine {
 
     if (belief.isNotEmpty && supportingBeliefs.length < 3) {
       final beliefLine = _beliefLine(belief, eligible);
-      if (beliefLine != null && !supportingBeliefs.contains(beliefLine.belief)) {
+      if (beliefLine != null &&
+          !supportingBeliefs.contains(beliefLine.belief)) {
         supportingBeliefs.add(beliefLine.belief);
         recordingIds.add(beliefLine.entryId);
       }
@@ -150,7 +157,9 @@ class ArchiveNarrativeEngine {
     for (final b in supportingBeliefs) {
       final key = b.trim().toLowerCase();
       if (key.length < 12 || !seenBeliefs.add(key)) continue;
-      dedupedBeliefs.add(b.length <= 160 ? b : '${b.substring(0, 160).trim()}…');
+      dedupedBeliefs.add(
+        b.length <= 160 ? b : '${b.substring(0, 160).trim()}…',
+      );
       if (dedupedBeliefs.length >= 5) break;
     }
 
@@ -179,7 +188,9 @@ class _NarrativeEvidence {
   final List<String> themes;
 }
 
-_NarrativeEvidence? _beliefEvolutionNarrative(BeliefEvolutionTimeline? timeline) {
+_NarrativeEvidence? _beliefEvolutionNarrative(
+  BeliefEvolutionTimeline? timeline,
+) {
   if (timeline == null || !timeline.hasEvolution) return null;
   final first = timeline.firstBelief;
   final current = timeline.currentBelief;
@@ -191,12 +202,14 @@ _NarrativeEvidence? _beliefEvolutionNarrative(BeliefEvolutionTimeline? timeline)
     entryIds.addAll(block.version.supportingEntryIds);
     for (final line in block.evidence) {
       entryIds.add(line.entryId);
-      if (beliefs.length < 4 && line.quote.length >= 12) beliefs.add(line.quote);
+      if (beliefs.length < 4 && line.quote.length >= 12)
+        beliefs.add(line.quote);
     }
   }
 
   return _NarrativeEvidence(
-    sentence: 'Recorded belief evolution moves from "${_shorten(first.beliefText)}" '
+    sentence:
+        'Recorded belief evolution moves from "${_shorten(first.beliefText)}" '
         'to "${_shorten(current.beliefText)}".',
     entryIds: entryIds.toList(),
     beliefs: beliefs,
@@ -204,7 +217,9 @@ _NarrativeEvidence? _beliefEvolutionNarrative(BeliefEvolutionTimeline? timeline)
   );
 }
 
-_NarrativeEvidence? _approvalToConfidenceNarrative(List<JournalEntry> eligible) {
+_NarrativeEvidence? _approvalToConfidenceNarrative(
+  List<JournalEntry> eligible,
+) {
   if (eligible.length < 4) return null;
 
   final midpoint = eligible[eligible.length ~/ 2].createdAt;
@@ -226,7 +241,8 @@ _NarrativeEvidence? _approvalToConfidenceNarrative(List<JournalEntry> eligible) 
   }
 
   return _NarrativeEvidence(
-    sentence: 'Over the last ${_monthsBetween(eligible.first.createdAt, eligible.last.createdAt)} '
+    sentence:
+        'Over the last ${_monthsBetween(eligible.first.createdAt, eligible.last.createdAt)} '
         'months your archive shows a gradual shift from seeking approval to trusting '
         'your own judgement.',
     entryIds: [
@@ -260,7 +276,11 @@ _NarrativeEvidence? _topThemeGrowthNarrative(
     return _NarrativeEvidence(
       sentence: 'The strongest recurring theme has been $label.',
       entryIds: matches.map((e) => e.id).take(4).toList(),
-      beliefs: matches.take(2).map(_quoteForEntry).where((q) => q.length >= 12).toList(),
+      beliefs: matches
+          .take(2)
+          .map(_quoteForEntry)
+          .where((q) => q.length >= 12)
+          .toList(),
       themes: [theme.name],
     );
   }
@@ -282,7 +302,10 @@ _NarrativeEvidence? _topThemeGrowthNarrative(
       : null;
 }
 
-List<JournalEntry> _entriesWithTheme(List<JournalEntry> entries, String themeId) {
+List<JournalEntry> _entriesWithTheme(
+  List<JournalEntry> entries,
+  String themeId,
+) {
   return entries
       .where((e) => ThemeTrackerService.themesForEntry(e).contains(themeId))
       .toList();
@@ -290,9 +313,14 @@ List<JournalEntry> _entriesWithTheme(List<JournalEntry> entries, String themeId)
 
 String? _spanLabel(List<JournalEntry> eligible) {
   if (eligible.length < 2) return null;
-  final months = _monthsBetween(eligible.first.createdAt, eligible.last.createdAt);
+  final months = _monthsBetween(
+    eligible.first.createdAt,
+    eligible.last.createdAt,
+  );
   if (months >= 1) return '$months months';
-  final days = eligible.last.createdAt.difference(eligible.first.createdAt).inDays;
+  final days = eligible.last.createdAt
+      .difference(eligible.first.createdAt)
+      .inDays;
   if (days >= 14) return '$days days';
   return 'recent weeks';
 }
@@ -308,7 +336,8 @@ String _quoteForEntry(JournalEntry entry) {
     return exact.length <= 140 ? exact : '${exact.substring(0, 140).trim()}…';
   }
   final obs = entry.reflection.concreteObservation.trim();
-  if (obs.length >= 12) return obs.length <= 140 ? obs : '${obs.substring(0, 140).trim()}…';
+  if (obs.length >= 12)
+    return obs.length <= 140 ? obs : '${obs.substring(0, 140).trim()}…';
   final line = entry.transcript.trim().split('\n').first.trim();
   return line.length <= 140 ? line : '${line.substring(0, 140).trim()}…';
 }

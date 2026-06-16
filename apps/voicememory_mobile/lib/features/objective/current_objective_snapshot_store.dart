@@ -22,11 +22,11 @@ class CurrentObjectiveSnapshot {
   final String route;
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'body': body,
-        if (checkQuestion != null) 'checkQuestion': checkQuestion,
-        'route': route,
-      };
+    'title': title,
+    'body': body,
+    if (checkQuestion != null) 'checkQuestion': checkQuestion,
+    'route': route,
+  };
 
   factory CurrentObjectiveSnapshot.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
@@ -72,7 +72,9 @@ class CurrentObjectiveSnapshotStore {
       ).toJson(),
     );
     await saveWidgetSnapshot(buildWidgetSnapshot(objective));
-    unawaited(CurrentObjectiveWidgetRefreshService.instance().refreshFromSnapshot());
+    unawaited(
+      CurrentObjectiveWidgetRefreshService.instance().refreshFromSnapshot(),
+    );
   }
 
   Future<CurrentObjectiveSnapshot?> loadSnapshot() async {
@@ -88,7 +90,9 @@ class CurrentObjectiveSnapshotStore {
   }
 
   /// Saves the widget-safe snapshot contract.
-  Future<void> saveWidgetSnapshot(CurrentObjectiveWidgetSnapshot snapshot) async {
+  Future<void> saveWidgetSnapshot(
+    CurrentObjectiveWidgetSnapshot snapshot,
+  ) async {
     await _prefs.writeMap(widgetSnapshotKey, snapshot.toJson());
   }
 

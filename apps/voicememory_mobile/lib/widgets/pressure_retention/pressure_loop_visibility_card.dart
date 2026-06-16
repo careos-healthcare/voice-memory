@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/pressure_retention/pressure_evidence_confidence.dart';
+import '../../features/pressure_retention/pressure_insights_copy.dart';
 import '../../features/pressure_retention/pressure_loop_visibility_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -19,6 +20,7 @@ class PressureLoopVisibilityCard extends StatelessWidget {
     required this.visibility,
     this.locked = false,
     this.confidence,
+    this.entryCount = PressureInsightsCopy.minEntriesForLoopLanguage,
   });
 
   final PressureLoopVisibility visibility;
@@ -29,7 +31,11 @@ class PressureLoopVisibilityCard extends StatelessWidget {
   /// Pro-only evidence confidence; shown only when provided and unlocked.
   final PressureEvidenceConfidence? confidence;
 
-  static const title = 'Your pressure loop, this week';
+  /// Logged pressure moments — softer titles below
+  /// [PressureInsightsCopy.minEntriesForLoopLanguage].
+  final int entryCount;
+
+  static const title = PressureInsightsCopy.visibilityCardTitleStrong;
   static const emptyBody =
       'No pressure moments logged yet. Noticing one is enough to start.';
   static const guiltFreeLine = 'No streak guilt — noticing once still counts.';
@@ -41,18 +47,22 @@ class PressureLoopVisibilityCard extends StatelessWidget {
     if (!visibility.hasData) {
       lines.add(_line(context, emptyBody));
     } else {
-      lines.add(_line(
-        context,
-        'You noticed pressure '
-        '${_times(visibility.noticedThisWeek)} this week.',
-      ));
+      lines.add(
+        _line(
+          context,
+          'You noticed pressure '
+          '${_times(visibility.noticedThisWeek)} this week.',
+        ),
+      );
       lines.add(const SizedBox(height: AppSpacing.xs));
-      lines.add(_line(
-        context,
-        visibility.choseToStopCount > 0
-            ? 'You chose to stop ${_times(visibility.choseToStopCount)}.'
-            : "You haven't logged a stop yet — and that's okay.",
-      ));
+      lines.add(
+        _line(
+          context,
+          visibility.choseToStopCount > 0
+              ? 'You chose to stop ${_times(visibility.choseToStopCount)}.'
+              : "You haven't logged a stop yet — and that's okay.",
+        ),
+      );
       // Strongest pressure + streak are part of the full (Pro) view only.
       if (!locked) {
         final strongest = visibility.strongestPhrase;
@@ -62,12 +72,14 @@ class PressureLoopVisibilityCard extends StatelessWidget {
         }
         if (visibility.streakDays > 0) {
           lines.add(const SizedBox(height: AppSpacing.xs));
-          lines.add(_line(
-            context,
-            'Noticed-the-loop streak: '
-            '${visibility.streakDays} '
-            'day${visibility.streakDays == 1 ? '' : 's'}.',
-          ));
+          lines.add(
+            _line(
+              context,
+              'Noticed-the-loop streak: '
+              '${visibility.streakDays} '
+              'day${visibility.streakDays == 1 ? '' : 's'}.',
+            ),
+          );
         }
       }
     }
@@ -83,7 +95,7 @@ class PressureLoopVisibilityCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            title,
+            PressureInsightsCopy.visibilityCardTitle(entryCount),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           if (!locked && confidence != null) ...[
@@ -109,11 +121,11 @@ class PressureLoopVisibilityCard extends StatelessWidget {
   }
 
   Widget _line(BuildContext context, String text) => Text(
-        text,
-        style: ArchiveMobileTypography.body(context).copyWith(
-          color: AppColors.textPrimary,
-        ),
-      );
+    text,
+    style: ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary),
+  );
 
   static String _times(int count) => '$count time${count == 1 ? '' : 's'}';
 }

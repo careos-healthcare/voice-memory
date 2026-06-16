@@ -1,9 +1,4 @@
-enum FirstThreeJourneyStep {
-  one,
-  two,
-  three,
-  complete,
-}
+enum FirstThreeJourneyStep { one, two, three, complete }
 
 /// Activation state for the first three reflections journey.
 class FirstThreeJourneyModel {
@@ -15,6 +10,7 @@ class FirstThreeJourneyModel {
     required this.progressLabel,
     required this.nextAction,
     required this.completed,
+    this.journeyStepIndex = 0,
   });
 
   final int reflectionCount;
@@ -24,6 +20,7 @@ class FirstThreeJourneyModel {
   final String progressLabel;
   final String nextAction;
   final bool completed;
+  final int journeyStepIndex;
 
   int get completedSteps {
     if (reflectionCount >= 3) return 3;

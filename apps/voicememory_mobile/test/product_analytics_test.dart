@@ -5,10 +5,9 @@ void main() {
   setUp(() => ProductAnalytics.resetForTest());
 
   test('trackStrings does not throw without Firebase', () async {
-    await ProductAnalytics.trackStrings(
-      'archive_why_opened',
-      {'kind': 'belief'},
-    );
+    await ProductAnalytics.trackStrings('archive_why_opened', {
+      'kind': 'belief',
+    });
   });
 
   test('sanitize event name strips invalid characters', () async {

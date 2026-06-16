@@ -53,8 +53,9 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
   static const Color _warmBorder = Color(0xFFF5E6D3);
 
-  late final List<PerspectiveShiftType> _cycle =
-      perspectiveCycle(widget.resultHint);
+  late final List<PerspectiveShiftType> _cycle = perspectiveCycle(
+    widget.resultHint,
+  );
   int _index = 0;
   bool _busy = false;
   bool _done = false;
@@ -62,12 +63,12 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
   String _t(String key) => localized(key, widget.languageCode);
 
   PerspectiveShift get _shift => buildPerspectiveShift(
-        reflectionText: widget.reflectionText,
-        resultHint: widget.resultHint,
-        checkInQuestion: widget.checkInQuestion,
-        patternTitle: widget.patternTitle,
-        preferredType: _cycle[_index % _cycle.length],
-      );
+    reflectionText: widget.reflectionText,
+    resultHint: widget.resultHint,
+    checkInQuestion: widget.checkInQuestion,
+    patternTitle: widget.patternTitle,
+    preferredType: _cycle[_index % _cycle.length],
+  );
 
   @override
   void initState() {
@@ -123,7 +124,9 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: widget.compact ? _compactChildren(shift) : _fullChildren(shift),
+        children: widget.compact
+            ? _compactChildren(shift)
+            : _fullChildren(shift),
       ),
     );
   }
@@ -237,7 +240,11 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
     );
   }
 
-  Widget _labelledLine(String label, String body, {bool emphasizeBody = false}) {
+  Widget _labelledLine(
+    String label,
+    String body, {
+    bool emphasizeBody = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -250,13 +257,12 @@ class _PerspectiveShiftCardState extends State<PerspectiveShiftCard> {
         const SizedBox(height: AppSpacing.xs),
         Text(
           body,
-          style: VoiceMemoryTypography.bodyStyle(
-            color: AppColors.textPrimary,
-          ).copyWith(
-            fontSize: emphasizeBody ? 15 : 14,
-            fontWeight: emphasizeBody ? FontWeight.w600 : FontWeight.w400,
-            height: 1.4,
-          ),
+          style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+              .copyWith(
+                fontSize: emphasizeBody ? 15 : 14,
+                fontWeight: emphasizeBody ? FontWeight.w600 : FontWeight.w400,
+                height: 1.4,
+              ),
         ),
       ],
     );

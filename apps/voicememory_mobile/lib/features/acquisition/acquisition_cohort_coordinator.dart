@@ -9,7 +9,7 @@ import 'acquisition_cohort_model.dart';
 import 'acquisition_cohort_store.dart';
 
 /// Assigns acquisition cohorts from deep links and tracks wedge funnel milestones.
-abstract final class AcquisitionCohortCoordinator {
+abstract class AcquisitionCohortCoordinator {
   AcquisitionCohortCoordinator._();
 
   static AcquisitionCohortStore _store() => AcquisitionCohortStore.instance();
@@ -114,7 +114,9 @@ abstract final class AcquisitionCohortCoordinator {
     );
   }
 
-  static Future<void> markStartScreenViewed(AcquisitionCohortId cohortId) async {
+  static Future<void> markStartScreenViewed(
+    AcquisitionCohortId cohortId,
+  ) async {
     final current = await load();
     if (current == null) {
       await assign(cohortId: cohortId, source: 'start_screen');

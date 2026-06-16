@@ -10,26 +10,23 @@ KeyMoment _moment({
   String? resultHint,
   String? nextCheck,
   String summary = 'A saved moment',
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: 'Moment from today',
-      originalText: summary,
-      shortSummary: summary,
-      patternTitle: patternTitle,
-      resultHint: resultHint,
-      nextCheck: nextCheck,
-      source: KeyMomentSource.checkIn,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: 'Moment from today',
+  originalText: summary,
+  shortSummary: summary,
+  patternTitle: patternTitle,
+  resultHint: resultHint,
+  nextCheck: nextCheck,
+  source: KeyMomentSource.checkIn,
+);
 
 void main() {
   test('returns null with not enough data', () {
     expect(
       buildArchiveEvolutionTimeline(
-        keyMoments: [
-          _moment(id: 'a', date: DateTime(2026, 5, 1)),
-        ],
+        keyMoments: [_moment(id: 'a', date: DateTime(2026, 5, 1))],
       ),
       isNull,
     );
@@ -68,13 +65,14 @@ void main() {
     final timeline = buildArchiveEvolutionTimeline(
       keyMoments: [
         _moment(id: 'a', date: DateTime(2026, 5, 1)),
-        _moment(id: 'b', date: DateTime(2026, 5, 2), resultHint: 'showed_up_again'),
+        _moment(
+          id: 'b',
+          date: DateTime(2026, 5, 2),
+          resultHint: 'showed_up_again',
+        ),
       ],
     );
-    expect(
-      timeline!.events.last.type,
-      ArchiveEvolutionEventType.showedAgain,
-    );
+    expect(timeline!.events.last.type, ArchiveEvolutionEventType.showedAgain);
   });
 
   test('maps nextCheck without result hint to checkChosen', () {
@@ -88,10 +86,7 @@ void main() {
         ),
       ],
     );
-    expect(
-      timeline!.events.last.type,
-      ArchiveEvolutionEventType.checkChosen,
-    );
+    expect(timeline!.events.last.type, ArchiveEvolutionEventType.checkChosen);
     expect(timeline.events.last.body, 'What happened right before?');
   });
 
@@ -104,7 +99,10 @@ void main() {
       ],
     );
     final dates = timeline!.events.map((e) => e.date).toList();
-    expect(dates, orderedEquals(dates.toList()..sort((a, b) => a.compareTo(b))));
+    expect(
+      dates,
+      orderedEquals(dates.toList()..sort((a, b) => a.compareTo(b))),
+    );
   });
 
   test('limits displayed events to 20 but keeps total eventCount', () {

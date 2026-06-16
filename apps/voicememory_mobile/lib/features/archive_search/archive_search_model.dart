@@ -26,7 +26,8 @@ class ArchiveSearchQuery {
   /// Optional topic term (e.g. work, family) for [ArchiveSearchIntent.momentsAbout].
   final String? normalizedTerm;
 
-  factory ArchiveSearchQuery.fromText(String text) => parseArchiveSearchQuery(text);
+  factory ArchiveSearchQuery.fromText(String text) =>
+      parseArchiveSearchQuery(text);
 }
 
 /// One matching row in Ask my Archive results.

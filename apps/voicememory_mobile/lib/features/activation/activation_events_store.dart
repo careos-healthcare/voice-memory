@@ -39,10 +39,12 @@ class ActivationEventsStore {
       final counts = _counts(current);
       return counts
           .copyWith(
-            memoryQualityShown:
-                tapped ? counts.memoryQualityShown : counts.memoryQualityShown + 1,
-            memoryQualityTapped:
-                tapped ? counts.memoryQualityTapped + 1 : counts.memoryQualityTapped,
+            memoryQualityShown: tapped
+                ? counts.memoryQualityShown
+                : counts.memoryQualityShown + 1,
+            memoryQualityTapped: tapped
+                ? counts.memoryQualityTapped + 1
+                : counts.memoryQualityTapped,
             latestMemoryQualityLevel: level,
           )
           .toMap();
@@ -930,9 +932,7 @@ class ActivationEventCounts {
           reminderPermissionGranted: reminderPermissionGranted + 1,
         );
       case 'reminderPermissionDenied':
-        return copyWith(
-          reminderPermissionDenied: reminderPermissionDenied + 1,
-        );
+        return copyWith(reminderPermissionDenied: reminderPermissionDenied + 1);
       case 'reminderCancelled':
         return copyWith(reminderCancelled: reminderCancelled + 1);
       case 'patternMemoryCreated':
@@ -948,9 +948,7 @@ class ActivationEventCounts {
           patternProgressMomentCreated: patternProgressMomentCreated + 1,
         );
       case 'patternProgressCardShown':
-        return copyWith(
-          patternProgressCardShown: patternProgressCardShown + 1,
-        );
+        return copyWith(patternProgressCardShown: patternProgressCardShown + 1);
       case 'patternProgressNextQuestionUsed':
         return copyWith(
           patternProgressNextQuestionUsed: patternProgressNextQuestionUsed + 1,
@@ -969,12 +967,14 @@ class ActivationEventCounts {
         return copyWith(habitProofCtaTapped: habitProofCtaTapped + 1);
       case 'weeklyPatternRecapCreated':
         return copyWith(
-            weeklyPatternRecapCreated: weeklyPatternRecapCreated + 1);
+          weeklyPatternRecapCreated: weeklyPatternRecapCreated + 1,
+        );
       case 'weeklyPatternRecapShown':
         return copyWith(weeklyPatternRecapShown: weeklyPatternRecapShown + 1);
       case 'weeklyPatternRecapCtaTapped':
         return copyWith(
-            weeklyPatternRecapCtaTapped: weeklyPatternRecapCtaTapped + 1);
+          weeklyPatternRecapCtaTapped: weeklyPatternRecapCtaTapped + 1,
+        );
       case 'patternShareCardShown':
         return copyWith(patternShareCardShown: patternShareCardShown + 1);
       case 'patternShareCopied':
@@ -987,14 +987,16 @@ class ActivationEventCounts {
         return copyWith(firstLoopRecordOpened: firstLoopRecordOpened + 1);
       case 'firstLoopRecordingStarted':
         return copyWith(
-            firstLoopRecordingStarted: firstLoopRecordingStarted + 1);
+          firstLoopRecordingStarted: firstLoopRecordingStarted + 1,
+        );
       case 'firstLoopMomentSaved':
         return copyWith(firstLoopMomentSaved: firstLoopMomentSaved + 1);
       case 'firstLoopPatternShown':
         return copyWith(firstLoopPatternShown: firstLoopPatternShown + 1);
       case 'firstLoopTomorrowCheckChosen':
         return copyWith(
-            firstLoopTomorrowCheckChosen: firstLoopTomorrowCheckChosen + 1);
+          firstLoopTomorrowCheckChosen: firstLoopTomorrowCheckChosen + 1,
+        );
       case 'firstLoopReady':
         return copyWith(firstLoopReady: firstLoopReady + 1);
       case 'returnDayDueShown':
@@ -1003,14 +1005,16 @@ class ActivationEventCounts {
         return copyWith(returnDayAnswerSelected: returnDayAnswerSelected + 1);
       case 'returnDayRecordingStarted':
         return copyWith(
-            returnDayRecordingStarted: returnDayRecordingStarted + 1);
+          returnDayRecordingStarted: returnDayRecordingStarted + 1,
+        );
       case 'returnDayMomentSaved':
         return copyWith(returnDayMomentSaved: returnDayMomentSaved + 1);
       case 'returnDayLoopClosed':
         return copyWith(returnDayLoopClosed: returnDayLoopClosed + 1);
       case 'returnDayAbandonedAfterAnswer':
         return copyWith(
-            returnDayAbandonedAfterAnswer: returnDayAbandonedAfterAnswer + 1);
+          returnDayAbandonedAfterAnswer: returnDayAbandonedAfterAnswer + 1,
+        );
       case 'resultNextCheckShown':
         return copyWith(resultNextCheckShown: resultNextCheckShown + 1);
       case 'resultNextCheckUsed':
@@ -1019,26 +1023,31 @@ class ActivationEventCounts {
         return copyWith(resultNextCheckChanged: resultNextCheckChanged + 1);
       case 'resultNextCheckUsedFromPatterns':
         return copyWith(
-            resultNextCheckUsedFromPatterns:
-                resultNextCheckUsedFromPatterns + 1);
+          resultNextCheckUsedFromPatterns: resultNextCheckUsedFromPatterns + 1,
+        );
       case 'usefulResultTakeawayShown':
         return copyWith(
-            usefulResultTakeawayShown: usefulResultTakeawayShown + 1);
+          usefulResultTakeawayShown: usefulResultTakeawayShown + 1,
+        );
       case 'makeResultMoreUsefulTapped':
         return copyWith(
-            makeResultMoreUsefulTapped: makeResultMoreUsefulTapped + 1);
+          makeResultMoreUsefulTapped: makeResultMoreUsefulTapped + 1,
+        );
       case 'makeResultMoreUsefulReasonSelected':
         return copyWith(
-            makeResultMoreUsefulReasonSelected:
-                makeResultMoreUsefulReasonSelected + 1);
+          makeResultMoreUsefulReasonSelected:
+              makeResultMoreUsefulReasonSelected + 1,
+        );
       case 'usefulResultNextCheckUsed':
         return copyWith(
-            usefulResultNextCheckUsed: usefulResultNextCheckUsed + 1);
+          usefulResultNextCheckUsed: usefulResultNextCheckUsed + 1,
+        );
       case 'inputQualityCoachShown':
         return copyWith(inputQualityCoachShown: inputQualityCoachShown + 1);
       case 'inputQualitySentenceAdded':
         return copyWith(
-            inputQualitySentenceAdded: inputQualitySentenceAdded + 1);
+          inputQualitySentenceAdded: inputQualitySentenceAdded + 1,
+        );
       case 'inputQualityUsedAnyway':
         return copyWith(inputQualityUsedAnyway: inputQualityUsedAnyway + 1);
       case 'acceptedWeakInputCount':
@@ -1053,12 +1062,14 @@ class ActivationEventCounts {
         return copyWith(perspectiveShiftUsed: perspectiveShiftUsed + 1);
       case 'perspectiveShiftShownFromPatterns':
         return copyWith(
-            perspectiveShiftShownFromPatterns:
-                perspectiveShiftShownFromPatterns + 1);
+          perspectiveShiftShownFromPatterns:
+              perspectiveShiftShownFromPatterns + 1,
+        );
       case 'perspectiveShiftUsedFromPatterns':
         return copyWith(
-            perspectiveShiftUsedFromPatterns:
-                perspectiveShiftUsedFromPatterns + 1);
+          perspectiveShiftUsedFromPatterns:
+              perspectiveShiftUsedFromPatterns + 1,
+        );
       case 'kinderAngleShown':
         return copyWith(kinderAngleShown: kinderAngleShown + 1);
       case 'kinderAngleUsed':
@@ -1067,17 +1078,20 @@ class ActivationEventCounts {
         return copyWith(kinderAngleChanged: kinderAngleChanged + 1);
       case 'kinderAngleShownFromPatterns':
         return copyWith(
-            kinderAngleShownFromPatterns: kinderAngleShownFromPatterns + 1);
+          kinderAngleShownFromPatterns: kinderAngleShownFromPatterns + 1,
+        );
       case 'kinderAngleUsedFromPatterns':
         return copyWith(
-            kinderAngleUsedFromPatterns: kinderAngleUsedFromPatterns + 1);
+          kinderAngleUsedFromPatterns: kinderAngleUsedFromPatterns + 1,
+        );
       case 'quickHelpOpened':
         return copyWith(quickHelpOpened: quickHelpOpened + 1);
       case 'quickHelpIntentSelected':
         return copyWith(quickHelpIntentSelected: quickHelpIntentSelected + 1);
       case 'quickHelpPrimaryActionTapped':
         return copyWith(
-            quickHelpPrimaryActionTapped: quickHelpPrimaryActionTapped + 1);
+          quickHelpPrimaryActionTapped: quickHelpPrimaryActionTapped + 1,
+        );
       case 'quickHelpCheckUsed':
         return copyWith(quickHelpCheckUsed: quickHelpCheckUsed + 1);
       case 'keyMomentCreated':
@@ -1128,8 +1142,7 @@ class ActivationEventCounts {
       case 'patternMapOpened':
         return copyWith(patternMapOpened: patternMapOpened + 1);
       case 'patternMapUseCheckTapped':
-        return copyWith(
-            patternMapUseCheckTapped: patternMapUseCheckTapped + 1);
+        return copyWith(patternMapUseCheckTapped: patternMapUseCheckTapped + 1);
       case 'archiveFeedbackShown':
         return copyWith(archiveFeedbackShown: archiveFeedbackShown + 1);
       case 'archiveFeedbackSelected':
@@ -1138,15 +1151,18 @@ class ActivationEventCounts {
         return copyWith(archiveFeedbackUseful: archiveFeedbackUseful + 1);
       case 'archiveFeedbackTooGeneric':
         return copyWith(
-            archiveFeedbackTooGeneric: archiveFeedbackTooGeneric + 1);
+          archiveFeedbackTooGeneric: archiveFeedbackTooGeneric + 1,
+        );
       case 'archiveFeedbackNotMe':
         return copyWith(archiveFeedbackNotMe: archiveFeedbackNotMe + 1);
       case 'archiveFeedbackAlreadyKnew':
         return copyWith(
-            archiveFeedbackAlreadyKnew: archiveFeedbackAlreadyKnew + 1);
+          archiveFeedbackAlreadyKnew: archiveFeedbackAlreadyKnew + 1,
+        );
       case 'archiveFeedbackMoreSpecific':
         return copyWith(
-            archiveFeedbackMoreSpecific: archiveFeedbackMoreSpecific + 1);
+          archiveFeedbackMoreSpecific: archiveFeedbackMoreSpecific + 1,
+        );
       case 'archiveCompressionShown':
         return copyWith(archiveCompressionShown: archiveCompressionShown + 1);
       case 'archiveCompressionOpened':
@@ -1185,7 +1201,8 @@ class ActivationEventCounts {
         return copyWith(archiveRangeReviewOpened: archiveRangeReviewOpened + 1);
       case 'archiveRangeReviewUseCheckTapped':
         return copyWith(
-          archiveRangeReviewUseCheckTapped: archiveRangeReviewUseCheckTapped + 1,
+          archiveRangeReviewUseCheckTapped:
+              archiveRangeReviewUseCheckTapped + 1,
         );
       case 'archiveRangeReviewPresetChanged':
         return copyWith(
@@ -1198,9 +1215,7 @@ class ActivationEventCounts {
       case 'retentionCheckSetShown':
         return copyWith(retentionCheckSetShown: retentionCheckSetShown + 1);
       case 'retentionLoopClosedShown':
-        return copyWith(
-          retentionLoopClosedShown: retentionLoopClosedShown + 1,
-        );
+        return copyWith(retentionLoopClosedShown: retentionLoopClosedShown + 1);
       case 'retentionPrimaryCtaTapped':
         return copyWith(
           retentionPrimaryCtaTapped: retentionPrimaryCtaTapped + 1,
@@ -1265,9 +1280,7 @@ class ActivationEventCounts {
           proValuePreviewUnlockTapped: proValuePreviewUnlockTapped + 1,
         );
       case 'proValuePreviewDismissed':
-        return copyWith(
-          proValuePreviewDismissed: proValuePreviewDismissed + 1,
-        );
+        return copyWith(proValuePreviewDismissed: proValuePreviewDismissed + 1);
       case 'objectiveWidgetRefreshAttempted':
         return copyWith(
           objectiveWidgetRefreshAttempted: objectiveWidgetRefreshAttempted + 1,
@@ -1284,46 +1297,57 @@ class ActivationEventCounts {
         return copyWith(objectiveWidgetCleared: objectiveWidgetCleared + 1);
       case 'archiveMemorySummaryShown':
         return copyWith(
-            archiveMemorySummaryShown: archiveMemorySummaryShown + 1);
+          archiveMemorySummaryShown: archiveMemorySummaryShown + 1,
+        );
       case 'archiveMemoryOpenPatternMapTapped':
         return copyWith(
-            archiveMemoryOpenPatternMapTapped:
-                archiveMemoryOpenPatternMapTapped + 1);
+          archiveMemoryOpenPatternMapTapped:
+              archiveMemoryOpenPatternMapTapped + 1,
+        );
       case 'archiveMemoryFindMomentsTapped':
         return copyWith(
-            archiveMemoryFindMomentsTapped: archiveMemoryFindMomentsTapped + 1);
+          archiveMemoryFindMomentsTapped: archiveMemoryFindMomentsTapped + 1,
+        );
       case 'archiveMemoryUseCheckTapped':
         return copyWith(
-            archiveMemoryUseCheckTapped: archiveMemoryUseCheckTapped + 1);
+          archiveMemoryUseCheckTapped: archiveMemoryUseCheckTapped + 1,
+        );
       case 'archiveTimelineShown':
         return copyWith(archiveTimelineShown: archiveTimelineShown + 1);
       case 'archiveTimelineOpened':
         return copyWith(archiveTimelineOpened: archiveTimelineOpened + 1);
       case 'archiveTimelineUseCheckTapped':
         return copyWith(
-            archiveTimelineUseCheckTapped: archiveTimelineUseCheckTapped + 1);
+          archiveTimelineUseCheckTapped: archiveTimelineUseCheckTapped + 1,
+        );
       case 'archiveMemoryDemoShown':
         return copyWith(archiveMemoryDemoShown: archiveMemoryDemoShown + 1);
       case 'archiveMemoryDemoCtaTapped':
         return copyWith(
-            archiveMemoryDemoCtaTapped: archiveMemoryDemoCtaTapped + 1);
+          archiveMemoryDemoCtaTapped: archiveMemoryDemoCtaTapped + 1,
+        );
       case 'archiveMemoryPreviewShown':
         return copyWith(
-            archiveMemoryPreviewShown: archiveMemoryPreviewShown + 1);
+          archiveMemoryPreviewShown: archiveMemoryPreviewShown + 1,
+        );
       case 'archiveMemoryPreviewCtaTapped':
         return copyWith(
-            archiveMemoryPreviewCtaTapped: archiveMemoryPreviewCtaTapped + 1);
+          archiveMemoryPreviewCtaTapped: archiveMemoryPreviewCtaTapped + 1,
+        );
       case 'positioningComprehensionAsked':
         return copyWith(
-            positioningComprehensionAsked: positioningComprehensionAsked + 1);
+          positioningComprehensionAsked: positioningComprehensionAsked + 1,
+        );
       case 'positioningComprehensionAnswered':
         return copyWith(
-            positioningComprehensionAnswered:
-                positioningComprehensionAnswered + 1);
+          positioningComprehensionAnswered:
+              positioningComprehensionAnswered + 1,
+        );
       case 'positioningUnderstoodArchiveMemory':
         return copyWith(
-            positioningUnderstoodArchiveMemory:
-                positioningUnderstoodArchiveMemory + 1);
+          positioningUnderstoodArchiveMemory:
+              positioningUnderstoodArchiveMemory + 1,
+        );
       case 'positioningJournal':
         return copyWith(positioningJournal: positioningJournal + 1);
       case 'positioningChat':
@@ -1332,62 +1356,78 @@ class ActivationEventCounts {
         return copyWith(positioningNotSure: positioningNotSure + 1);
       case 'activationFirstRecordCardShown':
         return copyWith(
-            activationFirstRecordCardShown: activationFirstRecordCardShown + 1);
+          activationFirstRecordCardShown: activationFirstRecordCardShown + 1,
+        );
       case 'activationFirstRecordCtaTapped':
         return copyWith(
-            activationFirstRecordCtaTapped: activationFirstRecordCtaTapped + 1);
+          activationFirstRecordCtaTapped: activationFirstRecordCtaTapped + 1,
+        );
       case 'activationStarterPromptSelected':
         return copyWith(
-            activationStarterPromptSelected:
-                activationStarterPromptSelected + 1);
+          activationStarterPromptSelected: activationStarterPromptSelected + 1,
+        );
       case 'activationFirstSaveCompleted':
         return copyWith(
-            activationFirstSaveCompleted: activationFirstSaveCompleted + 1);
+          activationFirstSaveCompleted: activationFirstSaveCompleted + 1,
+        );
       case 'activationTomorrowCheckShown':
         return copyWith(
-            activationTomorrowCheckShown: activationTomorrowCheckShown + 1);
+          activationTomorrowCheckShown: activationTomorrowCheckShown + 1,
+        );
       case 'activationTomorrowCheckUsed':
         return copyWith(
-            activationTomorrowCheckUsed: activationTomorrowCheckUsed + 1);
+          activationTomorrowCheckUsed: activationTomorrowCheckUsed + 1,
+        );
       case 'activationTomorrowCheckSharpened':
         return copyWith(
-            activationTomorrowCheckSharpened:
-                activationTomorrowCheckSharpened + 1);
+          activationTomorrowCheckSharpened:
+              activationTomorrowCheckSharpened + 1,
+        );
       case 'activationTomorrowCheckIgnored':
         return copyWith(
-            activationTomorrowCheckIgnored: activationTomorrowCheckIgnored + 1);
+          activationTomorrowCheckIgnored: activationTomorrowCheckIgnored + 1,
+        );
       case 'activationUsefulTakeawayShown':
         return copyWith(
-            activationUsefulTakeawayShown: activationUsefulTakeawayShown + 1);
+          activationUsefulTakeawayShown: activationUsefulTakeawayShown + 1,
+        );
       case 'activationMakeUsefulTapped':
         return copyWith(
-            activationMakeUsefulTapped: activationMakeUsefulTapped + 1);
+          activationMakeUsefulTapped: activationMakeUsefulTapped + 1,
+        );
       case 'activationMakeUsefulReasonSelected':
         return copyWith(
-            activationMakeUsefulReasonSelected:
-                activationMakeUsefulReasonSelected + 1);
+          activationMakeUsefulReasonSelected:
+              activationMakeUsefulReasonSelected + 1,
+        );
       case 'activationResultRatedUseful':
         return copyWith(
-            activationResultRatedUseful: activationResultRatedUseful + 1);
+          activationResultRatedUseful: activationResultRatedUseful + 1,
+        );
       case 'activationResultRatedSortOf':
         return copyWith(
-            activationResultRatedSortOf: activationResultRatedSortOf + 1);
+          activationResultRatedSortOf: activationResultRatedSortOf + 1,
+        );
       case 'activationResultRatedNotUseful':
         return copyWith(
-            activationResultRatedNotUseful: activationResultRatedNotUseful + 1);
+          activationResultRatedNotUseful: activationResultRatedNotUseful + 1,
+        );
       case 'activationNextCheckShown':
         return copyWith(activationNextCheckShown: activationNextCheckShown + 1);
       case 'activationNextCheckUsed':
         return copyWith(activationNextCheckUsed: activationNextCheckUsed + 1);
       case 'activationNextCheckChanged':
         return copyWith(
-            activationNextCheckChanged: activationNextCheckChanged + 1);
+          activationNextCheckChanged: activationNextCheckChanged + 1,
+        );
       case 'activationRoutineAnchorOffered':
         return copyWith(
-            activationRoutineAnchorOffered: activationRoutineAnchorOffered + 1);
+          activationRoutineAnchorOffered: activationRoutineAnchorOffered + 1,
+        );
       case 'activationRoutineAnchorSet':
         return copyWith(
-            activationRoutineAnchorSet: activationRoutineAnchorSet + 1);
+          activationRoutineAnchorSet: activationRoutineAnchorSet + 1,
+        );
       default:
         return this;
     }
@@ -1628,8 +1668,9 @@ class ActivationEventCounts {
     int? activationRoutineAnchorSet,
   }) {
     return ActivationEventCounts(
-      participantId:
-          clearParticipantId ? null : (participantId ?? this.participantId),
+      participantId: clearParticipantId
+          ? null
+          : (participantId ?? this.participantId),
       firstReflectionSaved: firstReflectionSaved ?? this.firstReflectionSaved,
       firstPatternShown: firstPatternShown ?? this.firstPatternShown,
       firstPatternAccepted: firstPatternAccepted ?? this.firstPatternAccepted,
@@ -1638,7 +1679,8 @@ class ActivationEventCounts {
       watchForPromptShown: watchForPromptShown ?? this.watchForPromptShown,
       watchForPromptAccepted:
           watchForPromptAccepted ?? this.watchForPromptAccepted,
-      returnCaptureQuickAnswerSelected: returnCaptureQuickAnswerSelected ??
+      returnCaptureQuickAnswerSelected:
+          returnCaptureQuickAnswerSelected ??
           this.returnCaptureQuickAnswerSelected,
       returnedNextDay: returnedNextDay ?? this.returnedNextDay,
       secondReflectionSaved:
@@ -1649,10 +1691,9 @@ class ActivationEventCounts {
       usefulnessNotReally: usefulnessNotReally ?? this.usefulnessNotReally,
       thirdReflectionSaved: thirdReflectionSaved ?? this.thirdReflectionSaved,
       trialAppOpened: trialAppOpened ?? this.trialAppOpened,
-      trialRecordCtaTapped:
-          trialRecordCtaTapped ?? this.trialRecordCtaTapped,
-      trialMicPermissionRequested: trialMicPermissionRequested ??
-          this.trialMicPermissionRequested,
+      trialRecordCtaTapped: trialRecordCtaTapped ?? this.trialRecordCtaTapped,
+      trialMicPermissionRequested:
+          trialMicPermissionRequested ?? this.trialMicPermissionRequested,
       trialMicPermissionDenied:
           trialMicPermissionDenied ?? this.trialMicPermissionDenied,
       trialRecordingStarted:
@@ -1661,16 +1702,18 @@ class ActivationEventCounts {
           trialRecordingCancelled ?? this.trialRecordingCancelled,
       trialSaveStarted: trialSaveStarted ?? this.trialSaveStarted,
       trialSaveCompleted: trialSaveCompleted ?? this.trialSaveCompleted,
-      trialClosedBeforeWatchForAccepted: trialClosedBeforeWatchForAccepted ??
+      trialClosedBeforeWatchForAccepted:
+          trialClosedBeforeWatchForAccepted ??
           this.trialClosedBeforeWatchForAccepted,
       trialExportCopied: trialExportCopied ?? this.trialExportCopied,
       tomorrowCheckInCreated:
           tomorrowCheckInCreated ?? this.tomorrowCheckInCreated,
       tomorrowCheckInDueShown:
           tomorrowCheckInDueShown ?? this.tomorrowCheckInDueShown,
-      tomorrowCheckInOptionSelected: tomorrowCheckInOptionSelected ??
-          this.tomorrowCheckInOptionSelected,
-      tomorrowCheckInRecordingStarted: tomorrowCheckInRecordingStarted ??
+      tomorrowCheckInOptionSelected:
+          tomorrowCheckInOptionSelected ?? this.tomorrowCheckInOptionSelected,
+      tomorrowCheckInRecordingStarted:
+          tomorrowCheckInRecordingStarted ??
           this.tomorrowCheckInRecordingStarted,
       tomorrowCheckInCompleted:
           tomorrowCheckInCompleted ?? this.tomorrowCheckInCompleted,
@@ -1684,7 +1727,8 @@ class ActivationEventCounts {
           checkInMomentRecorded ?? this.checkInMomentRecorded,
       tomorrowQuestionVariantShown:
           tomorrowQuestionVariantShown ?? this.tomorrowQuestionVariantShown,
-      tomorrowQuestionVariantSelected: tomorrowQuestionVariantSelected ??
+      tomorrowQuestionVariantSelected:
+          tomorrowQuestionVariantSelected ??
           this.tomorrowQuestionVariantSelected,
       reminderScheduled: reminderScheduled ?? this.reminderScheduled,
       reminderTapped: reminderTapped ?? this.reminderTapped,
@@ -1704,7 +1748,8 @@ class ActivationEventCounts {
           sharperQuestionElevatedShown ?? this.sharperQuestionElevatedShown,
       sharperQuestionAggressiveShown:
           sharperQuestionAggressiveShown ?? this.sharperQuestionAggressiveShown,
-      sharperQuestionAggressiveAccepted: sharperQuestionAggressiveAccepted ??
+      sharperQuestionAggressiveAccepted:
+          sharperQuestionAggressiveAccepted ??
           this.sharperQuestionAggressiveAccepted,
       betterResultElevatedShown:
           betterResultElevatedShown ?? this.betterResultElevatedShown,
@@ -1728,7 +1773,8 @@ class ActivationEventCounts {
           patternProgressMomentCreated ?? this.patternProgressMomentCreated,
       patternProgressCardShown:
           patternProgressCardShown ?? this.patternProgressCardShown,
-      patternProgressNextQuestionUsed: patternProgressNextQuestionUsed ??
+      patternProgressNextQuestionUsed:
+          patternProgressNextQuestionUsed ??
           this.patternProgressNextQuestionUsed,
       patternNextActionCreated:
           patternNextActionCreated ?? this.patternNextActionCreated,
@@ -1767,19 +1813,21 @@ class ActivationEventCounts {
           returnDayRecordingStarted ?? this.returnDayRecordingStarted,
       returnDayMomentSaved: returnDayMomentSaved ?? this.returnDayMomentSaved,
       returnDayLoopClosed: returnDayLoopClosed ?? this.returnDayLoopClosed,
-      returnDayAbandonedAfterAnswer: returnDayAbandonedAfterAnswer ??
-          this.returnDayAbandonedAfterAnswer,
+      returnDayAbandonedAfterAnswer:
+          returnDayAbandonedAfterAnswer ?? this.returnDayAbandonedAfterAnswer,
       resultNextCheckShown: resultNextCheckShown ?? this.resultNextCheckShown,
       resultNextCheckUsed: resultNextCheckUsed ?? this.resultNextCheckUsed,
       resultNextCheckChanged:
           resultNextCheckChanged ?? this.resultNextCheckChanged,
-      resultNextCheckUsedFromPatterns: resultNextCheckUsedFromPatterns ??
+      resultNextCheckUsedFromPatterns:
+          resultNextCheckUsedFromPatterns ??
           this.resultNextCheckUsedFromPatterns,
       usefulResultTakeawayShown:
           usefulResultTakeawayShown ?? this.usefulResultTakeawayShown,
       makeResultMoreUsefulTapped:
           makeResultMoreUsefulTapped ?? this.makeResultMoreUsefulTapped,
-      makeResultMoreUsefulReasonSelected: makeResultMoreUsefulReasonSelected ??
+      makeResultMoreUsefulReasonSelected:
+          makeResultMoreUsefulReasonSelected ??
           this.makeResultMoreUsefulReasonSelected,
       usefulResultNextCheckUsed:
           usefulResultNextCheckUsed ?? this.usefulResultNextCheckUsed,
@@ -1797,9 +1845,11 @@ class ActivationEventCounts {
       perspectiveShiftChanged:
           perspectiveShiftChanged ?? this.perspectiveShiftChanged,
       perspectiveShiftUsed: perspectiveShiftUsed ?? this.perspectiveShiftUsed,
-      perspectiveShiftShownFromPatterns: perspectiveShiftShownFromPatterns ??
+      perspectiveShiftShownFromPatterns:
+          perspectiveShiftShownFromPatterns ??
           this.perspectiveShiftShownFromPatterns,
-      perspectiveShiftUsedFromPatterns: perspectiveShiftUsedFromPatterns ??
+      perspectiveShiftUsedFromPatterns:
+          perspectiveShiftUsedFromPatterns ??
           this.perspectiveShiftUsedFromPatterns,
       kinderAngleShown: kinderAngleShown ?? this.kinderAngleShown,
       kinderAngleUsed: kinderAngleUsed ?? this.kinderAngleUsed,
@@ -1820,26 +1870,26 @@ class ActivationEventCounts {
       keyMomentUseCheckTapped:
           keyMomentUseCheckTapped ?? this.keyMomentUseCheckTapped,
       askArchiveOpened: askArchiveOpened ?? this.askArchiveOpened,
-      askArchiveSearchUsed:
-          askArchiveSearchUsed ?? this.askArchiveSearchUsed,
-      askArchiveSuggestedChipTapped: askArchiveSuggestedChipTapped ??
-          this.askArchiveSuggestedChipTapped,
+      askArchiveSearchUsed: askArchiveSearchUsed ?? this.askArchiveSearchUsed,
+      askArchiveSuggestedChipTapped:
+          askArchiveSuggestedChipTapped ?? this.askArchiveSuggestedChipTapped,
       askArchiveResultOpened:
           askArchiveResultOpened ?? this.askArchiveResultOpened,
       askArchiveUseCheckTapped:
           askArchiveUseCheckTapped ?? this.askArchiveUseCheckTapped,
       archiveCleanViewShown:
           archiveCleanViewShown ?? this.archiveCleanViewShown,
-      archiveCleanSectionTapped: archiveCleanSectionTapped ??
-          this.archiveCleanSectionTapped,
+      archiveCleanSectionTapped:
+          archiveCleanSectionTapped ?? this.archiveCleanSectionTapped,
       patternProfileShown: patternProfileShown ?? this.patternProfileShown,
-      patternProfileOpened:
-          patternProfileOpened ?? this.patternProfileOpened,
-      patternProfileUseCheckTapped: patternProfileUseCheckTapped ??
-          this.patternProfileUseCheckTapped,
-      patternProfileFindMomentsTapped: patternProfileFindMomentsTapped ??
+      patternProfileOpened: patternProfileOpened ?? this.patternProfileOpened,
+      patternProfileUseCheckTapped:
+          patternProfileUseCheckTapped ?? this.patternProfileUseCheckTapped,
+      patternProfileFindMomentsTapped:
+          patternProfileFindMomentsTapped ??
           this.patternProfileFindMomentsTapped,
-      patternProfileOpenTimelineTapped: patternProfileOpenTimelineTapped ??
+      patternProfileOpenTimelineTapped:
+          patternProfileOpenTimelineTapped ??
           this.patternProfileOpenTimelineTapped,
       patternMapShown: patternMapShown ?? this.patternMapShown,
       patternMapOpened: patternMapOpened ?? this.patternMapOpened,
@@ -1886,9 +1936,11 @@ class ActivationEventCounts {
           archiveRangeReviewShown ?? this.archiveRangeReviewShown,
       archiveRangeReviewOpened:
           archiveRangeReviewOpened ?? this.archiveRangeReviewOpened,
-      archiveRangeReviewUseCheckTapped: archiveRangeReviewUseCheckTapped ??
+      archiveRangeReviewUseCheckTapped:
+          archiveRangeReviewUseCheckTapped ??
           this.archiveRangeReviewUseCheckTapped,
-      archiveRangeReviewPresetChanged: archiveRangeReviewPresetChanged ??
+      archiveRangeReviewPresetChanged:
+          archiveRangeReviewPresetChanged ??
           this.archiveRangeReviewPresetChanged,
       retentionStateShown: retentionStateShown ?? this.retentionStateShown,
       retentionDueShown: retentionDueShown ?? this.retentionDueShown,
@@ -1903,21 +1955,23 @@ class ActivationEventCounts {
       retentionNextCheckReady:
           retentionNextCheckReady ?? this.retentionNextCheckReady,
       retentionMissedCheck: retentionMissedCheck ?? this.retentionMissedCheck,
-      reminderScheduledFromRetention: reminderScheduledFromRetention ??
-          this.reminderScheduledFromRetention,
+      reminderScheduledFromRetention:
+          reminderScheduledFromRetention ?? this.reminderScheduledFromRetention,
       compellingCheckShown: compellingCheckShown ?? this.compellingCheckShown,
       compellingCheckSelected:
           compellingCheckSelected ?? this.compellingCheckSelected,
-      compellingCheckMostSpecificSelected: compellingCheckMostSpecificSelected ??
+      compellingCheckMostSpecificSelected:
+          compellingCheckMostSpecificSelected ??
           this.compellingCheckMostSpecificSelected,
       compellingCheckAccepted:
           compellingCheckAccepted ?? this.compellingCheckAccepted,
-      realReminderPermissionRequested: realReminderPermissionRequested ??
+      realReminderPermissionRequested:
+          realReminderPermissionRequested ??
           this.realReminderPermissionRequested,
-      realReminderPermissionGranted: realReminderPermissionGranted ??
-          this.realReminderPermissionGranted,
-      realReminderPermissionDenied: realReminderPermissionDenied ??
-          this.realReminderPermissionDenied,
+      realReminderPermissionGranted:
+          realReminderPermissionGranted ?? this.realReminderPermissionGranted,
+      realReminderPermissionDenied:
+          realReminderPermissionDenied ?? this.realReminderPermissionDenied,
       realReminderScheduled:
           realReminderScheduled ?? this.realReminderScheduled,
       realReminderCancelled:
@@ -1927,338 +1981,341 @@ class ActivationEventCounts {
       realReminderTapped: realReminderTapped ?? this.realReminderTapped,
       currentObjectiveShown:
           currentObjectiveShown ?? this.currentObjectiveShown,
-      currentObjectivePrimaryTapped: currentObjectivePrimaryTapped ??
-          this.currentObjectivePrimaryTapped,
-      currentObjectiveSecondaryTapped: currentObjectiveSecondaryTapped ??
+      currentObjectivePrimaryTapped:
+          currentObjectivePrimaryTapped ?? this.currentObjectivePrimaryTapped,
+      currentObjectiveSecondaryTapped:
+          currentObjectiveSecondaryTapped ??
           this.currentObjectiveSecondaryTapped,
-      latestCurrentObjectiveType: latestCurrentObjectiveType ??
-          this.latestCurrentObjectiveType,
+      latestCurrentObjectiveType:
+          latestCurrentObjectiveType ?? this.latestCurrentObjectiveType,
       proValuePreviewShown: proValuePreviewShown ?? this.proValuePreviewShown,
-      proValuePreviewUnlockTapped: proValuePreviewUnlockTapped ??
-          this.proValuePreviewUnlockTapped,
+      proValuePreviewUnlockTapped:
+          proValuePreviewUnlockTapped ?? this.proValuePreviewUnlockTapped,
       proValuePreviewDismissed:
           proValuePreviewDismissed ?? this.proValuePreviewDismissed,
-      latestProValuePreviewType: latestProValuePreviewType ??
-          this.latestProValuePreviewType,
-      objectiveWidgetRefreshAttempted: objectiveWidgetRefreshAttempted ??
+      latestProValuePreviewType:
+          latestProValuePreviewType ?? this.latestProValuePreviewType,
+      objectiveWidgetRefreshAttempted:
+          objectiveWidgetRefreshAttempted ??
           this.objectiveWidgetRefreshAttempted,
-      objectiveWidgetRefreshSucceeded: objectiveWidgetRefreshSucceeded ??
+      objectiveWidgetRefreshSucceeded:
+          objectiveWidgetRefreshSucceeded ??
           this.objectiveWidgetRefreshSucceeded,
-      objectiveWidgetRefreshFailed: objectiveWidgetRefreshFailed ??
-          this.objectiveWidgetRefreshFailed,
+      objectiveWidgetRefreshFailed:
+          objectiveWidgetRefreshFailed ?? this.objectiveWidgetRefreshFailed,
       objectiveWidgetCleared:
           objectiveWidgetCleared ?? this.objectiveWidgetCleared,
       archiveMemorySummaryShown:
           archiveMemorySummaryShown ?? this.archiveMemorySummaryShown,
-      archiveMemoryOpenPatternMapTapped: archiveMemoryOpenPatternMapTapped ??
+      archiveMemoryOpenPatternMapTapped:
+          archiveMemoryOpenPatternMapTapped ??
           this.archiveMemoryOpenPatternMapTapped,
       archiveMemoryFindMomentsTapped:
           archiveMemoryFindMomentsTapped ?? this.archiveMemoryFindMomentsTapped,
       archiveMemoryUseCheckTapped:
           archiveMemoryUseCheckTapped ?? this.archiveMemoryUseCheckTapped,
-      archiveTimelineShown:
-          archiveTimelineShown ?? this.archiveTimelineShown,
+      archiveTimelineShown: archiveTimelineShown ?? this.archiveTimelineShown,
       archiveTimelineOpened:
           archiveTimelineOpened ?? this.archiveTimelineOpened,
-      archiveTimelineUseCheckTapped: archiveTimelineUseCheckTapped ??
-          this.archiveTimelineUseCheckTapped,
+      archiveTimelineUseCheckTapped:
+          archiveTimelineUseCheckTapped ?? this.archiveTimelineUseCheckTapped,
       archiveMemoryDemoShown:
           archiveMemoryDemoShown ?? this.archiveMemoryDemoShown,
       archiveMemoryDemoCtaTapped:
           archiveMemoryDemoCtaTapped ?? this.archiveMemoryDemoCtaTapped,
       archiveMemoryPreviewShown:
           archiveMemoryPreviewShown ?? this.archiveMemoryPreviewShown,
-      archiveMemoryPreviewCtaTapped: archiveMemoryPreviewCtaTapped ??
-          this.archiveMemoryPreviewCtaTapped,
+      archiveMemoryPreviewCtaTapped:
+          archiveMemoryPreviewCtaTapped ?? this.archiveMemoryPreviewCtaTapped,
       positioningComprehensionAsked:
           positioningComprehensionAsked ?? this.positioningComprehensionAsked,
-      positioningComprehensionAnswered: positioningComprehensionAnswered ??
+      positioningComprehensionAnswered:
+          positioningComprehensionAnswered ??
           this.positioningComprehensionAnswered,
       positioningUnderstoodArchiveMemory:
           positioningUnderstoodArchiveMemory ??
-              this.positioningUnderstoodArchiveMemory,
+          this.positioningUnderstoodArchiveMemory,
       positioningJournal: positioningJournal ?? this.positioningJournal,
       positioningChat: positioningChat ?? this.positioningChat,
       positioningNotSure: positioningNotSure ?? this.positioningNotSure,
-      activationFirstRecordCardShown: activationFirstRecordCardShown ??
-          this.activationFirstRecordCardShown,
-      activationFirstRecordCtaTapped: activationFirstRecordCtaTapped ??
-          this.activationFirstRecordCtaTapped,
-      activationStarterPromptSelected: activationStarterPromptSelected ??
+      activationFirstRecordCardShown:
+          activationFirstRecordCardShown ?? this.activationFirstRecordCardShown,
+      activationFirstRecordCtaTapped:
+          activationFirstRecordCtaTapped ?? this.activationFirstRecordCtaTapped,
+      activationStarterPromptSelected:
+          activationStarterPromptSelected ??
           this.activationStarterPromptSelected,
-      activationFirstSaveCompleted: activationFirstSaveCompleted ??
-          this.activationFirstSaveCompleted,
-      activationTomorrowCheckShown: activationTomorrowCheckShown ??
-          this.activationTomorrowCheckShown,
-      activationTomorrowCheckUsed: activationTomorrowCheckUsed ??
-          this.activationTomorrowCheckUsed,
-      activationTomorrowCheckSharpened: activationTomorrowCheckSharpened ??
+      activationFirstSaveCompleted:
+          activationFirstSaveCompleted ?? this.activationFirstSaveCompleted,
+      activationTomorrowCheckShown:
+          activationTomorrowCheckShown ?? this.activationTomorrowCheckShown,
+      activationTomorrowCheckUsed:
+          activationTomorrowCheckUsed ?? this.activationTomorrowCheckUsed,
+      activationTomorrowCheckSharpened:
+          activationTomorrowCheckSharpened ??
           this.activationTomorrowCheckSharpened,
-      activationTomorrowCheckIgnored: activationTomorrowCheckIgnored ??
-          this.activationTomorrowCheckIgnored,
-      activationUsefulTakeawayShown: activationUsefulTakeawayShown ??
-          this.activationUsefulTakeawayShown,
-      activationMakeUsefulTapped: activationMakeUsefulTapped ??
-          this.activationMakeUsefulTapped,
-      activationMakeUsefulReasonSelected: activationMakeUsefulReasonSelected ??
+      activationTomorrowCheckIgnored:
+          activationTomorrowCheckIgnored ?? this.activationTomorrowCheckIgnored,
+      activationUsefulTakeawayShown:
+          activationUsefulTakeawayShown ?? this.activationUsefulTakeawayShown,
+      activationMakeUsefulTapped:
+          activationMakeUsefulTapped ?? this.activationMakeUsefulTapped,
+      activationMakeUsefulReasonSelected:
+          activationMakeUsefulReasonSelected ??
           this.activationMakeUsefulReasonSelected,
-      activationResultRatedUseful: activationResultRatedUseful ??
-          this.activationResultRatedUseful,
-      activationResultRatedSortOf: activationResultRatedSortOf ??
-          this.activationResultRatedSortOf,
-      activationResultRatedNotUseful: activationResultRatedNotUseful ??
-          this.activationResultRatedNotUseful,
+      activationResultRatedUseful:
+          activationResultRatedUseful ?? this.activationResultRatedUseful,
+      activationResultRatedSortOf:
+          activationResultRatedSortOf ?? this.activationResultRatedSortOf,
+      activationResultRatedNotUseful:
+          activationResultRatedNotUseful ?? this.activationResultRatedNotUseful,
       activationNextCheckShown:
           activationNextCheckShown ?? this.activationNextCheckShown,
       activationNextCheckUsed:
           activationNextCheckUsed ?? this.activationNextCheckUsed,
       activationNextCheckChanged:
           activationNextCheckChanged ?? this.activationNextCheckChanged,
-      activationRoutineAnchorOffered: activationRoutineAnchorOffered ??
-          this.activationRoutineAnchorOffered,
+      activationRoutineAnchorOffered:
+          activationRoutineAnchorOffered ?? this.activationRoutineAnchorOffered,
       activationRoutineAnchorSet:
           activationRoutineAnchorSet ?? this.activationRoutineAnchorSet,
     );
   }
 
   Map<String, dynamic> toMap() => {
-        if (participantId != null && participantId!.isNotEmpty)
-          'participantId': participantId,
-        'firstReflectionSaved': firstReflectionSaved,
-        'firstPatternShown': firstPatternShown,
-        'firstPatternAccepted': firstPatternAccepted,
-        'firstPatternCorrected': firstPatternCorrected,
-        'watchForPromptShown': watchForPromptShown,
-        'watchForPromptAccepted': watchForPromptAccepted,
-        'returnCaptureQuickAnswerSelected': returnCaptureQuickAnswerSelected,
-        'returnedNextDay': returnedNextDay,
-        'secondReflectionSaved': secondReflectionSaved,
-        'comparisonViewed': comparisonViewed,
-        'usefulnessYes': usefulnessYes,
-        'usefulnessSortOf': usefulnessSortOf,
-        'usefulnessNotReally': usefulnessNotReally,
-        'thirdReflectionSaved': thirdReflectionSaved,
-        'trialAppOpened': trialAppOpened,
-        'trialRecordCtaTapped': trialRecordCtaTapped,
-        'trialMicPermissionRequested': trialMicPermissionRequested,
-        'trialMicPermissionDenied': trialMicPermissionDenied,
-        'trialRecordingStarted': trialRecordingStarted,
-        'trialRecordingCancelled': trialRecordingCancelled,
-        'trialSaveStarted': trialSaveStarted,
-        'trialSaveCompleted': trialSaveCompleted,
-        'trialClosedBeforeWatchForAccepted':
-            trialClosedBeforeWatchForAccepted,
-        'trialExportCopied': trialExportCopied,
-        'tomorrowCheckInCreated': tomorrowCheckInCreated,
-        'tomorrowCheckInDueShown': tomorrowCheckInDueShown,
-        'tomorrowCheckInOptionSelected': tomorrowCheckInOptionSelected,
-        'tomorrowCheckInRecordingStarted': tomorrowCheckInRecordingStarted,
-        'tomorrowCheckInCompleted': tomorrowCheckInCompleted,
-        'tomorrowCheckInMissed': tomorrowCheckInMissed,
-        'checkInClarityCardShown': checkInClarityCardShown,
-        'checkInExamplesOpened': checkInExamplesOpened,
-        'checkInMomentRecorded': checkInMomentRecorded,
-        'tomorrowQuestionVariantShown': tomorrowQuestionVariantShown,
-        'tomorrowQuestionVariantSelected': tomorrowQuestionVariantSelected,
-        'reminderScheduled': reminderScheduled,
-        'reminderTapped': reminderTapped,
-        'reminderNotAvailable': reminderNotAvailable,
-        'guidedCheckInShown': guidedCheckInShown,
-        'guidedCheckInStepCompleted': guidedCheckInStepCompleted,
-        'sharperQuestionShown': sharperQuestionShown,
-        'sharperQuestionAccepted': sharperQuestionAccepted,
-        'betterResultShown': betterResultShown,
-        'betterFirstRecordPromptShown': betterFirstRecordPromptShown,
-        'betterFirstRecordPromptTapped': betterFirstRecordPromptTapped,
-        'sharperQuestionElevatedShown': sharperQuestionElevatedShown,
-        'sharperQuestionAggressiveShown': sharperQuestionAggressiveShown,
-        'sharperQuestionAggressiveAccepted': sharperQuestionAggressiveAccepted,
-        'betterResultElevatedShown': betterResultElevatedShown,
-        'betterResultAggressiveShown': betterResultAggressiveShown,
-        'checkInGoDeeperShown': checkInGoDeeperShown,
-        'checkInGoDeeperTapped': checkInGoDeeperTapped,
-        'reminderPermissionRequested': reminderPermissionRequested,
-        'reminderPermissionGranted': reminderPermissionGranted,
-        'reminderPermissionDenied': reminderPermissionDenied,
-        'reminderCancelled': reminderCancelled,
-        'patternMemoryCreated': patternMemoryCreated,
-        'patternMemoryUpdated': patternMemoryUpdated,
-        'patternMemoryNextQuestionUsed': patternMemoryNextQuestionUsed,
-        'patternProgressMomentCreated': patternProgressMomentCreated,
-        'patternProgressCardShown': patternProgressCardShown,
-        'patternProgressNextQuestionUsed': patternProgressNextQuestionUsed,
-        'patternNextActionCreated': patternNextActionCreated,
-        'patternNextActionShown': patternNextActionShown,
-        'patternNextActionUsed': patternNextActionUsed,
-        'habitProofCreated': habitProofCreated,
-        'habitProofShown': habitProofShown,
-        'habitProofCtaTapped': habitProofCtaTapped,
-        'weeklyPatternRecapCreated': weeklyPatternRecapCreated,
-        'weeklyPatternRecapShown': weeklyPatternRecapShown,
-        'weeklyPatternRecapCtaTapped': weeklyPatternRecapCtaTapped,
-        'patternShareCardShown': patternShareCardShown,
-        'patternShareCopied': patternShareCopied,
-        'patternShareOpened': patternShareOpened,
-        'patternShareFailed': patternShareFailed,
-        'firstLoopRecordOpened': firstLoopRecordOpened,
-        'firstLoopRecordingStarted': firstLoopRecordingStarted,
-        'firstLoopMomentSaved': firstLoopMomentSaved,
-        'firstLoopPatternShown': firstLoopPatternShown,
-        'firstLoopTomorrowCheckChosen': firstLoopTomorrowCheckChosen,
-        'firstLoopReady': firstLoopReady,
-        'returnDayDueShown': returnDayDueShown,
-        'returnDayAnswerSelected': returnDayAnswerSelected,
-        'returnDayRecordingStarted': returnDayRecordingStarted,
-        'returnDayMomentSaved': returnDayMomentSaved,
-        'returnDayLoopClosed': returnDayLoopClosed,
-        'returnDayAbandonedAfterAnswer': returnDayAbandonedAfterAnswer,
-        'resultNextCheckShown': resultNextCheckShown,
-        'resultNextCheckUsed': resultNextCheckUsed,
-        'resultNextCheckChanged': resultNextCheckChanged,
-        'resultNextCheckUsedFromPatterns': resultNextCheckUsedFromPatterns,
-        'usefulResultTakeawayShown': usefulResultTakeawayShown,
-        'makeResultMoreUsefulTapped': makeResultMoreUsefulTapped,
-        'makeResultMoreUsefulReasonSelected':
-            makeResultMoreUsefulReasonSelected,
-        'usefulResultNextCheckUsed': usefulResultNextCheckUsed,
-        'inputQualityCoachShown': inputQualityCoachShown,
-        'inputQualitySentenceAdded': inputQualitySentenceAdded,
-        'inputQualityUsedAnyway': inputQualityUsedAnyway,
-        'acceptedWeakInputCount': acceptedWeakInputCount,
-        'sharpenedInputCount': sharpenedInputCount,
-        'perspectiveShiftShown': perspectiveShiftShown,
-        'perspectiveShiftChanged': perspectiveShiftChanged,
-        'perspectiveShiftUsed': perspectiveShiftUsed,
-        'perspectiveShiftShownFromPatterns': perspectiveShiftShownFromPatterns,
-        'perspectiveShiftUsedFromPatterns': perspectiveShiftUsedFromPatterns,
-        'kinderAngleShown': kinderAngleShown,
-        'kinderAngleUsed': kinderAngleUsed,
-        'kinderAngleChanged': kinderAngleChanged,
-        'kinderAngleShownFromPatterns': kinderAngleShownFromPatterns,
-        'kinderAngleUsedFromPatterns': kinderAngleUsedFromPatterns,
-        'quickHelpOpened': quickHelpOpened,
-        'quickHelpIntentSelected': quickHelpIntentSelected,
-        'quickHelpPrimaryActionTapped': quickHelpPrimaryActionTapped,
-        'quickHelpCheckUsed': quickHelpCheckUsed,
-        'keyMomentCreated': keyMomentCreated,
-        'keyMomentOpened': keyMomentOpened,
-        'keyMomentSearchUsed': keyMomentSearchUsed,
-        'keyMomentUseCheckTapped': keyMomentUseCheckTapped,
-        'askArchiveOpened': askArchiveOpened,
-        'askArchiveSearchUsed': askArchiveSearchUsed,
-        'askArchiveSuggestedChipTapped': askArchiveSuggestedChipTapped,
-        'askArchiveResultOpened': askArchiveResultOpened,
-        'askArchiveUseCheckTapped': askArchiveUseCheckTapped,
-        'archiveCleanViewShown': archiveCleanViewShown,
-        'archiveCleanSectionTapped': archiveCleanSectionTapped,
-        'patternProfileShown': patternProfileShown,
-        'patternProfileOpened': patternProfileOpened,
-        'patternProfileUseCheckTapped': patternProfileUseCheckTapped,
-        'patternProfileFindMomentsTapped': patternProfileFindMomentsTapped,
-        'patternProfileOpenTimelineTapped': patternProfileOpenTimelineTapped,
-        'patternMapShown': patternMapShown,
-        'patternMapOpened': patternMapOpened,
-        'patternMapUseCheckTapped': patternMapUseCheckTapped,
-        'archiveFeedbackShown': archiveFeedbackShown,
-        'archiveFeedbackSelected': archiveFeedbackSelected,
-        'archiveFeedbackUseful': archiveFeedbackUseful,
-        'archiveFeedbackTooGeneric': archiveFeedbackTooGeneric,
-        'archiveFeedbackNotMe': archiveFeedbackNotMe,
-        'archiveFeedbackAlreadyKnew': archiveFeedbackAlreadyKnew,
-        'archiveFeedbackMoreSpecific': archiveFeedbackMoreSpecific,
-        'archiveCompressionShown': archiveCompressionShown,
-        'archiveCompressionOpened': archiveCompressionOpened,
-        'archiveCompressionKept': archiveCompressionKept,
-        'archiveCompressionSplit': archiveCompressionSplit,
-        'archiveCompressionHidden': archiveCompressionHidden,
-        'memoryQualityShown': memoryQualityShown,
-        'memoryQualityTapped': memoryQualityTapped,
-        if (latestMemoryQualityLevel != null)
-          'latestMemoryQualityLevel': latestMemoryQualityLevel,
-        'paywallShown': paywallShown,
-        'paywallTriggerShown': paywallTriggerShown,
-        'annualPlanShown': annualPlanShown,
-        'monthlyPlanShown': monthlyPlanShown,
-        'annualPlanSelected': annualPlanSelected,
-        'monthlyPlanSelected': monthlyPlanSelected,
-        'paywallContinueTapped': paywallContinueTapped,
-        'paywallDismissed': paywallDismissed,
-        'restoreTapped': restoreTapped,
-        'archiveRangeReviewShown': archiveRangeReviewShown,
-        'archiveRangeReviewOpened': archiveRangeReviewOpened,
-        'archiveRangeReviewUseCheckTapped': archiveRangeReviewUseCheckTapped,
-        'archiveRangeReviewPresetChanged': archiveRangeReviewPresetChanged,
-        'retentionStateShown': retentionStateShown,
-        'retentionDueShown': retentionDueShown,
-        'retentionCheckSetShown': retentionCheckSetShown,
-        'retentionLoopClosedShown': retentionLoopClosedShown,
-        'retentionPrimaryCtaTapped': retentionPrimaryCtaTapped,
-        'retentionSecondaryCtaTapped': retentionSecondaryCtaTapped,
-        'retentionNextCheckReady': retentionNextCheckReady,
-        'retentionMissedCheck': retentionMissedCheck,
-        'reminderScheduledFromRetention': reminderScheduledFromRetention,
-        'compellingCheckShown': compellingCheckShown,
-        'compellingCheckSelected': compellingCheckSelected,
-        'compellingCheckMostSpecificSelected': compellingCheckMostSpecificSelected,
-        'compellingCheckAccepted': compellingCheckAccepted,
-        'realReminderPermissionRequested': realReminderPermissionRequested,
-        'realReminderPermissionGranted': realReminderPermissionGranted,
-        'realReminderPermissionDenied': realReminderPermissionDenied,
-        'realReminderScheduled': realReminderScheduled,
-        'realReminderCancelled': realReminderCancelled,
-        'realReminderUnavailable': realReminderUnavailable,
-        'realReminderTapped': realReminderTapped,
-        'currentObjectiveShown': currentObjectiveShown,
-        'currentObjectivePrimaryTapped': currentObjectivePrimaryTapped,
-        'currentObjectiveSecondaryTapped': currentObjectiveSecondaryTapped,
-        'latestCurrentObjectiveType': latestCurrentObjectiveType,
-        'proValuePreviewShown': proValuePreviewShown,
-        'proValuePreviewUnlockTapped': proValuePreviewUnlockTapped,
-        'proValuePreviewDismissed': proValuePreviewDismissed,
-        'latestProValuePreviewType': latestProValuePreviewType,
-        'objectiveWidgetRefreshAttempted': objectiveWidgetRefreshAttempted,
-        'objectiveWidgetRefreshSucceeded': objectiveWidgetRefreshSucceeded,
-        'objectiveWidgetRefreshFailed': objectiveWidgetRefreshFailed,
-        'objectiveWidgetCleared': objectiveWidgetCleared,
-        'archiveMemorySummaryShown': archiveMemorySummaryShown,
-        'archiveMemoryOpenPatternMapTapped': archiveMemoryOpenPatternMapTapped,
-        'archiveMemoryFindMomentsTapped': archiveMemoryFindMomentsTapped,
-        'archiveMemoryUseCheckTapped': archiveMemoryUseCheckTapped,
-        'archiveTimelineShown': archiveTimelineShown,
-        'archiveTimelineOpened': archiveTimelineOpened,
-        'archiveTimelineUseCheckTapped': archiveTimelineUseCheckTapped,
-        'archiveMemoryDemoShown': archiveMemoryDemoShown,
-        'archiveMemoryDemoCtaTapped': archiveMemoryDemoCtaTapped,
-        'archiveMemoryPreviewShown': archiveMemoryPreviewShown,
-        'archiveMemoryPreviewCtaTapped': archiveMemoryPreviewCtaTapped,
-        'positioningComprehensionAsked': positioningComprehensionAsked,
-        'positioningComprehensionAnswered': positioningComprehensionAnswered,
-        'positioningUnderstoodArchiveMemory':
-            positioningUnderstoodArchiveMemory,
-        'positioningJournal': positioningJournal,
-        'positioningChat': positioningChat,
-        'positioningNotSure': positioningNotSure,
-        'activationFirstRecordCardShown': activationFirstRecordCardShown,
-        'activationFirstRecordCtaTapped': activationFirstRecordCtaTapped,
-        'activationStarterPromptSelected': activationStarterPromptSelected,
-        'activationFirstSaveCompleted': activationFirstSaveCompleted,
-        'activationTomorrowCheckShown': activationTomorrowCheckShown,
-        'activationTomorrowCheckUsed': activationTomorrowCheckUsed,
-        'activationTomorrowCheckSharpened': activationTomorrowCheckSharpened,
-        'activationTomorrowCheckIgnored': activationTomorrowCheckIgnored,
-        'activationUsefulTakeawayShown': activationUsefulTakeawayShown,
-        'activationMakeUsefulTapped': activationMakeUsefulTapped,
-        'activationMakeUsefulReasonSelected':
-            activationMakeUsefulReasonSelected,
-        'activationResultRatedUseful': activationResultRatedUseful,
-        'activationResultRatedSortOf': activationResultRatedSortOf,
-        'activationResultRatedNotUseful': activationResultRatedNotUseful,
-        'activationNextCheckShown': activationNextCheckShown,
-        'activationNextCheckUsed': activationNextCheckUsed,
-        'activationNextCheckChanged': activationNextCheckChanged,
-        'activationRoutineAnchorOffered': activationRoutineAnchorOffered,
-        'activationRoutineAnchorSet': activationRoutineAnchorSet,
-      };
+    if (participantId != null && participantId!.isNotEmpty)
+      'participantId': participantId,
+    'firstReflectionSaved': firstReflectionSaved,
+    'firstPatternShown': firstPatternShown,
+    'firstPatternAccepted': firstPatternAccepted,
+    'firstPatternCorrected': firstPatternCorrected,
+    'watchForPromptShown': watchForPromptShown,
+    'watchForPromptAccepted': watchForPromptAccepted,
+    'returnCaptureQuickAnswerSelected': returnCaptureQuickAnswerSelected,
+    'returnedNextDay': returnedNextDay,
+    'secondReflectionSaved': secondReflectionSaved,
+    'comparisonViewed': comparisonViewed,
+    'usefulnessYes': usefulnessYes,
+    'usefulnessSortOf': usefulnessSortOf,
+    'usefulnessNotReally': usefulnessNotReally,
+    'thirdReflectionSaved': thirdReflectionSaved,
+    'trialAppOpened': trialAppOpened,
+    'trialRecordCtaTapped': trialRecordCtaTapped,
+    'trialMicPermissionRequested': trialMicPermissionRequested,
+    'trialMicPermissionDenied': trialMicPermissionDenied,
+    'trialRecordingStarted': trialRecordingStarted,
+    'trialRecordingCancelled': trialRecordingCancelled,
+    'trialSaveStarted': trialSaveStarted,
+    'trialSaveCompleted': trialSaveCompleted,
+    'trialClosedBeforeWatchForAccepted': trialClosedBeforeWatchForAccepted,
+    'trialExportCopied': trialExportCopied,
+    'tomorrowCheckInCreated': tomorrowCheckInCreated,
+    'tomorrowCheckInDueShown': tomorrowCheckInDueShown,
+    'tomorrowCheckInOptionSelected': tomorrowCheckInOptionSelected,
+    'tomorrowCheckInRecordingStarted': tomorrowCheckInRecordingStarted,
+    'tomorrowCheckInCompleted': tomorrowCheckInCompleted,
+    'tomorrowCheckInMissed': tomorrowCheckInMissed,
+    'checkInClarityCardShown': checkInClarityCardShown,
+    'checkInExamplesOpened': checkInExamplesOpened,
+    'checkInMomentRecorded': checkInMomentRecorded,
+    'tomorrowQuestionVariantShown': tomorrowQuestionVariantShown,
+    'tomorrowQuestionVariantSelected': tomorrowQuestionVariantSelected,
+    'reminderScheduled': reminderScheduled,
+    'reminderTapped': reminderTapped,
+    'reminderNotAvailable': reminderNotAvailable,
+    'guidedCheckInShown': guidedCheckInShown,
+    'guidedCheckInStepCompleted': guidedCheckInStepCompleted,
+    'sharperQuestionShown': sharperQuestionShown,
+    'sharperQuestionAccepted': sharperQuestionAccepted,
+    'betterResultShown': betterResultShown,
+    'betterFirstRecordPromptShown': betterFirstRecordPromptShown,
+    'betterFirstRecordPromptTapped': betterFirstRecordPromptTapped,
+    'sharperQuestionElevatedShown': sharperQuestionElevatedShown,
+    'sharperQuestionAggressiveShown': sharperQuestionAggressiveShown,
+    'sharperQuestionAggressiveAccepted': sharperQuestionAggressiveAccepted,
+    'betterResultElevatedShown': betterResultElevatedShown,
+    'betterResultAggressiveShown': betterResultAggressiveShown,
+    'checkInGoDeeperShown': checkInGoDeeperShown,
+    'checkInGoDeeperTapped': checkInGoDeeperTapped,
+    'reminderPermissionRequested': reminderPermissionRequested,
+    'reminderPermissionGranted': reminderPermissionGranted,
+    'reminderPermissionDenied': reminderPermissionDenied,
+    'reminderCancelled': reminderCancelled,
+    'patternMemoryCreated': patternMemoryCreated,
+    'patternMemoryUpdated': patternMemoryUpdated,
+    'patternMemoryNextQuestionUsed': patternMemoryNextQuestionUsed,
+    'patternProgressMomentCreated': patternProgressMomentCreated,
+    'patternProgressCardShown': patternProgressCardShown,
+    'patternProgressNextQuestionUsed': patternProgressNextQuestionUsed,
+    'patternNextActionCreated': patternNextActionCreated,
+    'patternNextActionShown': patternNextActionShown,
+    'patternNextActionUsed': patternNextActionUsed,
+    'habitProofCreated': habitProofCreated,
+    'habitProofShown': habitProofShown,
+    'habitProofCtaTapped': habitProofCtaTapped,
+    'weeklyPatternRecapCreated': weeklyPatternRecapCreated,
+    'weeklyPatternRecapShown': weeklyPatternRecapShown,
+    'weeklyPatternRecapCtaTapped': weeklyPatternRecapCtaTapped,
+    'patternShareCardShown': patternShareCardShown,
+    'patternShareCopied': patternShareCopied,
+    'patternShareOpened': patternShareOpened,
+    'patternShareFailed': patternShareFailed,
+    'firstLoopRecordOpened': firstLoopRecordOpened,
+    'firstLoopRecordingStarted': firstLoopRecordingStarted,
+    'firstLoopMomentSaved': firstLoopMomentSaved,
+    'firstLoopPatternShown': firstLoopPatternShown,
+    'firstLoopTomorrowCheckChosen': firstLoopTomorrowCheckChosen,
+    'firstLoopReady': firstLoopReady,
+    'returnDayDueShown': returnDayDueShown,
+    'returnDayAnswerSelected': returnDayAnswerSelected,
+    'returnDayRecordingStarted': returnDayRecordingStarted,
+    'returnDayMomentSaved': returnDayMomentSaved,
+    'returnDayLoopClosed': returnDayLoopClosed,
+    'returnDayAbandonedAfterAnswer': returnDayAbandonedAfterAnswer,
+    'resultNextCheckShown': resultNextCheckShown,
+    'resultNextCheckUsed': resultNextCheckUsed,
+    'resultNextCheckChanged': resultNextCheckChanged,
+    'resultNextCheckUsedFromPatterns': resultNextCheckUsedFromPatterns,
+    'usefulResultTakeawayShown': usefulResultTakeawayShown,
+    'makeResultMoreUsefulTapped': makeResultMoreUsefulTapped,
+    'makeResultMoreUsefulReasonSelected': makeResultMoreUsefulReasonSelected,
+    'usefulResultNextCheckUsed': usefulResultNextCheckUsed,
+    'inputQualityCoachShown': inputQualityCoachShown,
+    'inputQualitySentenceAdded': inputQualitySentenceAdded,
+    'inputQualityUsedAnyway': inputQualityUsedAnyway,
+    'acceptedWeakInputCount': acceptedWeakInputCount,
+    'sharpenedInputCount': sharpenedInputCount,
+    'perspectiveShiftShown': perspectiveShiftShown,
+    'perspectiveShiftChanged': perspectiveShiftChanged,
+    'perspectiveShiftUsed': perspectiveShiftUsed,
+    'perspectiveShiftShownFromPatterns': perspectiveShiftShownFromPatterns,
+    'perspectiveShiftUsedFromPatterns': perspectiveShiftUsedFromPatterns,
+    'kinderAngleShown': kinderAngleShown,
+    'kinderAngleUsed': kinderAngleUsed,
+    'kinderAngleChanged': kinderAngleChanged,
+    'kinderAngleShownFromPatterns': kinderAngleShownFromPatterns,
+    'kinderAngleUsedFromPatterns': kinderAngleUsedFromPatterns,
+    'quickHelpOpened': quickHelpOpened,
+    'quickHelpIntentSelected': quickHelpIntentSelected,
+    'quickHelpPrimaryActionTapped': quickHelpPrimaryActionTapped,
+    'quickHelpCheckUsed': quickHelpCheckUsed,
+    'keyMomentCreated': keyMomentCreated,
+    'keyMomentOpened': keyMomentOpened,
+    'keyMomentSearchUsed': keyMomentSearchUsed,
+    'keyMomentUseCheckTapped': keyMomentUseCheckTapped,
+    'askArchiveOpened': askArchiveOpened,
+    'askArchiveSearchUsed': askArchiveSearchUsed,
+    'askArchiveSuggestedChipTapped': askArchiveSuggestedChipTapped,
+    'askArchiveResultOpened': askArchiveResultOpened,
+    'askArchiveUseCheckTapped': askArchiveUseCheckTapped,
+    'archiveCleanViewShown': archiveCleanViewShown,
+    'archiveCleanSectionTapped': archiveCleanSectionTapped,
+    'patternProfileShown': patternProfileShown,
+    'patternProfileOpened': patternProfileOpened,
+    'patternProfileUseCheckTapped': patternProfileUseCheckTapped,
+    'patternProfileFindMomentsTapped': patternProfileFindMomentsTapped,
+    'patternProfileOpenTimelineTapped': patternProfileOpenTimelineTapped,
+    'patternMapShown': patternMapShown,
+    'patternMapOpened': patternMapOpened,
+    'patternMapUseCheckTapped': patternMapUseCheckTapped,
+    'archiveFeedbackShown': archiveFeedbackShown,
+    'archiveFeedbackSelected': archiveFeedbackSelected,
+    'archiveFeedbackUseful': archiveFeedbackUseful,
+    'archiveFeedbackTooGeneric': archiveFeedbackTooGeneric,
+    'archiveFeedbackNotMe': archiveFeedbackNotMe,
+    'archiveFeedbackAlreadyKnew': archiveFeedbackAlreadyKnew,
+    'archiveFeedbackMoreSpecific': archiveFeedbackMoreSpecific,
+    'archiveCompressionShown': archiveCompressionShown,
+    'archiveCompressionOpened': archiveCompressionOpened,
+    'archiveCompressionKept': archiveCompressionKept,
+    'archiveCompressionSplit': archiveCompressionSplit,
+    'archiveCompressionHidden': archiveCompressionHidden,
+    'memoryQualityShown': memoryQualityShown,
+    'memoryQualityTapped': memoryQualityTapped,
+    if (latestMemoryQualityLevel != null)
+      'latestMemoryQualityLevel': latestMemoryQualityLevel,
+    'paywallShown': paywallShown,
+    'paywallTriggerShown': paywallTriggerShown,
+    'annualPlanShown': annualPlanShown,
+    'monthlyPlanShown': monthlyPlanShown,
+    'annualPlanSelected': annualPlanSelected,
+    'monthlyPlanSelected': monthlyPlanSelected,
+    'paywallContinueTapped': paywallContinueTapped,
+    'paywallDismissed': paywallDismissed,
+    'restoreTapped': restoreTapped,
+    'archiveRangeReviewShown': archiveRangeReviewShown,
+    'archiveRangeReviewOpened': archiveRangeReviewOpened,
+    'archiveRangeReviewUseCheckTapped': archiveRangeReviewUseCheckTapped,
+    'archiveRangeReviewPresetChanged': archiveRangeReviewPresetChanged,
+    'retentionStateShown': retentionStateShown,
+    'retentionDueShown': retentionDueShown,
+    'retentionCheckSetShown': retentionCheckSetShown,
+    'retentionLoopClosedShown': retentionLoopClosedShown,
+    'retentionPrimaryCtaTapped': retentionPrimaryCtaTapped,
+    'retentionSecondaryCtaTapped': retentionSecondaryCtaTapped,
+    'retentionNextCheckReady': retentionNextCheckReady,
+    'retentionMissedCheck': retentionMissedCheck,
+    'reminderScheduledFromRetention': reminderScheduledFromRetention,
+    'compellingCheckShown': compellingCheckShown,
+    'compellingCheckSelected': compellingCheckSelected,
+    'compellingCheckMostSpecificSelected': compellingCheckMostSpecificSelected,
+    'compellingCheckAccepted': compellingCheckAccepted,
+    'realReminderPermissionRequested': realReminderPermissionRequested,
+    'realReminderPermissionGranted': realReminderPermissionGranted,
+    'realReminderPermissionDenied': realReminderPermissionDenied,
+    'realReminderScheduled': realReminderScheduled,
+    'realReminderCancelled': realReminderCancelled,
+    'realReminderUnavailable': realReminderUnavailable,
+    'realReminderTapped': realReminderTapped,
+    'currentObjectiveShown': currentObjectiveShown,
+    'currentObjectivePrimaryTapped': currentObjectivePrimaryTapped,
+    'currentObjectiveSecondaryTapped': currentObjectiveSecondaryTapped,
+    'latestCurrentObjectiveType': latestCurrentObjectiveType,
+    'proValuePreviewShown': proValuePreviewShown,
+    'proValuePreviewUnlockTapped': proValuePreviewUnlockTapped,
+    'proValuePreviewDismissed': proValuePreviewDismissed,
+    'latestProValuePreviewType': latestProValuePreviewType,
+    'objectiveWidgetRefreshAttempted': objectiveWidgetRefreshAttempted,
+    'objectiveWidgetRefreshSucceeded': objectiveWidgetRefreshSucceeded,
+    'objectiveWidgetRefreshFailed': objectiveWidgetRefreshFailed,
+    'objectiveWidgetCleared': objectiveWidgetCleared,
+    'archiveMemorySummaryShown': archiveMemorySummaryShown,
+    'archiveMemoryOpenPatternMapTapped': archiveMemoryOpenPatternMapTapped,
+    'archiveMemoryFindMomentsTapped': archiveMemoryFindMomentsTapped,
+    'archiveMemoryUseCheckTapped': archiveMemoryUseCheckTapped,
+    'archiveTimelineShown': archiveTimelineShown,
+    'archiveTimelineOpened': archiveTimelineOpened,
+    'archiveTimelineUseCheckTapped': archiveTimelineUseCheckTapped,
+    'archiveMemoryDemoShown': archiveMemoryDemoShown,
+    'archiveMemoryDemoCtaTapped': archiveMemoryDemoCtaTapped,
+    'archiveMemoryPreviewShown': archiveMemoryPreviewShown,
+    'archiveMemoryPreviewCtaTapped': archiveMemoryPreviewCtaTapped,
+    'positioningComprehensionAsked': positioningComprehensionAsked,
+    'positioningComprehensionAnswered': positioningComprehensionAnswered,
+    'positioningUnderstoodArchiveMemory': positioningUnderstoodArchiveMemory,
+    'positioningJournal': positioningJournal,
+    'positioningChat': positioningChat,
+    'positioningNotSure': positioningNotSure,
+    'activationFirstRecordCardShown': activationFirstRecordCardShown,
+    'activationFirstRecordCtaTapped': activationFirstRecordCtaTapped,
+    'activationStarterPromptSelected': activationStarterPromptSelected,
+    'activationFirstSaveCompleted': activationFirstSaveCompleted,
+    'activationTomorrowCheckShown': activationTomorrowCheckShown,
+    'activationTomorrowCheckUsed': activationTomorrowCheckUsed,
+    'activationTomorrowCheckSharpened': activationTomorrowCheckSharpened,
+    'activationTomorrowCheckIgnored': activationTomorrowCheckIgnored,
+    'activationUsefulTakeawayShown': activationUsefulTakeawayShown,
+    'activationMakeUsefulTapped': activationMakeUsefulTapped,
+    'activationMakeUsefulReasonSelected': activationMakeUsefulReasonSelected,
+    'activationResultRatedUseful': activationResultRatedUseful,
+    'activationResultRatedSortOf': activationResultRatedSortOf,
+    'activationResultRatedNotUseful': activationResultRatedNotUseful,
+    'activationNextCheckShown': activationNextCheckShown,
+    'activationNextCheckUsed': activationNextCheckUsed,
+    'activationNextCheckChanged': activationNextCheckChanged,
+    'activationRoutineAnchorOffered': activationRoutineAnchorOffered,
+    'activationRoutineAnchorSet': activationRoutineAnchorSet,
+  };
 
   factory ActivationEventCounts.fromMap(Map<String, dynamic> map) {
     int n(String key) => (map[key] as num?)?.toInt() ?? 0;
@@ -2357,8 +2414,9 @@ class ActivationEventCounts {
       resultNextCheckUsedFromPatterns: n('resultNextCheckUsedFromPatterns'),
       usefulResultTakeawayShown: n('usefulResultTakeawayShown'),
       makeResultMoreUsefulTapped: n('makeResultMoreUsefulTapped'),
-      makeResultMoreUsefulReasonSelected:
-          n('makeResultMoreUsefulReasonSelected'),
+      makeResultMoreUsefulReasonSelected: n(
+        'makeResultMoreUsefulReasonSelected',
+      ),
       usefulResultNextCheckUsed: n('usefulResultNextCheckUsed'),
       inputQualityCoachShown: n('inputQualityCoachShown'),
       inputQualitySentenceAdded: n('inputQualitySentenceAdded'),
@@ -2437,7 +2495,9 @@ class ActivationEventCounts {
       reminderScheduledFromRetention: n('reminderScheduledFromRetention'),
       compellingCheckShown: n('compellingCheckShown'),
       compellingCheckSelected: n('compellingCheckSelected'),
-      compellingCheckMostSpecificSelected: n('compellingCheckMostSpecificSelected'),
+      compellingCheckMostSpecificSelected: n(
+        'compellingCheckMostSpecificSelected',
+      ),
       compellingCheckAccepted: n('compellingCheckAccepted'),
       realReminderPermissionRequested: n('realReminderPermissionRequested'),
       realReminderPermissionGranted: n('realReminderPermissionGranted'),
@@ -2471,8 +2531,9 @@ class ActivationEventCounts {
       archiveMemoryPreviewCtaTapped: n('archiveMemoryPreviewCtaTapped'),
       positioningComprehensionAsked: n('positioningComprehensionAsked'),
       positioningComprehensionAnswered: n('positioningComprehensionAnswered'),
-      positioningUnderstoodArchiveMemory:
-          n('positioningUnderstoodArchiveMemory'),
+      positioningUnderstoodArchiveMemory: n(
+        'positioningUnderstoodArchiveMemory',
+      ),
       positioningJournal: n('positioningJournal'),
       positioningChat: n('positioningChat'),
       positioningNotSure: n('positioningNotSure'),
@@ -2486,8 +2547,9 @@ class ActivationEventCounts {
       activationTomorrowCheckIgnored: n('activationTomorrowCheckIgnored'),
       activationUsefulTakeawayShown: n('activationUsefulTakeawayShown'),
       activationMakeUsefulTapped: n('activationMakeUsefulTapped'),
-      activationMakeUsefulReasonSelected:
-          n('activationMakeUsefulReasonSelected'),
+      activationMakeUsefulReasonSelected: n(
+        'activationMakeUsefulReasonSelected',
+      ),
       activationResultRatedUseful: n('activationResultRatedUseful'),
       activationResultRatedSortOf: n('activationResultRatedSortOf'),
       activationResultRatedNotUseful: n('activationResultRatedNotUseful'),

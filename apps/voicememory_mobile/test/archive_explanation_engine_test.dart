@@ -196,8 +196,9 @@ void main() {
       ),
     ];
 
-    final surprises =
-        const ArchiveExplanationEngine().buildUnexpectedInsights(entries);
+    final surprises = const ArchiveExplanationEngine().buildUnexpectedInsights(
+      entries,
+    );
     expect(surprises, isNotEmpty);
     expect(surprises.first.evidenceEntryIds, isNotEmpty);
   });
@@ -229,8 +230,9 @@ void main() {
       ),
     ];
 
-    final challenges =
-        const ArchiveExplanationEngine().buildChallengeInsights(entries);
+    final challenges = const ArchiveExplanationEngine().buildChallengeInsights(
+      entries,
+    );
     expect(challenges, isNotEmpty);
     expect(challenges.first.evidenceEntryIds.length, greaterThanOrEqualTo(1));
   });
@@ -246,15 +248,14 @@ void main() {
       ),
     );
 
-    final feed = const ArchiveExplanationEngine().buildNoticedFeed(entries: entries);
+    final feed = const ArchiveExplanationEngine().buildNoticedFeed(
+      entries: entries,
+    );
     expect(feed.length, lessThanOrEqualTo(3));
   });
 
   test('parseRouteId round-trips insight refs', () {
-    final ref = ArchiveInsightRef.contradiction(
-      entryIdA: 'e1',
-      entryIdB: 'e2',
-    );
+    final ref = ArchiveInsightRef.contradiction(entryIdA: 'e1', entryIdB: 'e2');
     final parsed = ArchiveInsightRef.parseRouteId(ref.id);
     expect(parsed?.entryIdA, 'e1');
     expect(parsed?.entryIdB, 'e2');

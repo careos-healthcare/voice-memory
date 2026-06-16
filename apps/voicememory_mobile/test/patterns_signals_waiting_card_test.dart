@@ -18,7 +18,9 @@ SelectedSignalRecord _record() {
 }
 
 void main() {
-  testWidgets('selected signal appears on Patterns waiting card', (tester) async {
+  testWidgets('selected signal appears on Patterns waiting card', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -36,8 +38,14 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Carrying too much responsibility'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.patternsWatchingSignalTitle), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.patternsWatchingSignalBody), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.patternsWatchingSignalTitle),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.patternsWatchingSignalBody),
+      findsOneWidget,
+    );
   });
 
   testWidgets('next prompt and progress appear', (tester) async {

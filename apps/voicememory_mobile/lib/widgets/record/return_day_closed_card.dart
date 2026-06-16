@@ -45,8 +45,11 @@ class ReturnDayClosedCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.check_circle_outline,
-                  color: AppColors.success, size: 22),
+              Icon(
+                Icons.check_circle_outline,
+                color: AppColors.success,
+                size: 22,
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
@@ -63,9 +66,14 @@ class ReturnDayClosedCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               resultHeadline,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 16, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           if (usefulLine.isNotEmpty) ...[
@@ -88,19 +96,21 @@ class ReturnDayClosedCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               nextCheck,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
             height: 44,
-            child: FilledButton(
-              onPressed: onDone,
-              child: const Text(doneCta),
-            ),
+            child: FilledButton(onPressed: onDone, child: const Text(doneCta)),
           ),
           if (onRecordAnother != null) ...[
             const SizedBox(height: 4),

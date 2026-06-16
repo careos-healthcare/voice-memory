@@ -57,7 +57,11 @@ void main() {
           '/archive-belief',
           reason: path,
         );
-        expect(ReleaseConfig.developerRouteAccessible(path), isFalse, reason: path);
+        expect(
+          ReleaseConfig.developerRouteAccessible(path),
+          isFalse,
+          reason: path,
+        );
       }
     });
 

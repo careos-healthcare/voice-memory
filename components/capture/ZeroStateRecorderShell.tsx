@@ -21,6 +21,11 @@ import {
   markMicVisible,
   startVulnerabilitySession,
 } from "@/lib/capture/vulnerability-timing";
+import {
+  RECORD_SCREEN_HEADLINE,
+  RECORD_SCREEN_SECONDARY,
+  RECORD_SCREEN_SUBTEXT,
+} from "@/lib/archive/archive-record-copy";
 import { markReflexRecorderMounted } from "@/lib/reflex/reflex-observation";
 import type { ClarityRecordContext } from "@/lib/clarity/clarity-record";
 import type { RecordReturnContext } from "@/types/record-return";
@@ -77,8 +82,19 @@ export function ZeroStateRecorderShell({
     return () => setRecorderSurfaceActive(false);
   }, [captureContext]);
 
+  const showRecordFraming = route === "record" && phase === "ready";
+
   return (
     <div className="mobile-recorder-dominant flex w-full max-w-lg flex-col items-center justify-center gap-6 py-6">
+      {showRecordFraming ? (
+        <header className="max-w-sm text-center" data-testid="record-screen-framing">
+          <h2 className="text-xl font-medium tracking-tight text-zinc-100 sm:text-2xl">
+            {RECORD_SCREEN_HEADLINE}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-400">{RECORD_SCREEN_SUBTEXT}</p>
+          <p className="mt-1 text-xs leading-relaxed text-zinc-600">{RECORD_SCREEN_SECONDARY}</p>
+        </header>
+      ) : null}
       <RecordCaptureChrome
         phase={phase}
         showFirstTimeHint={firstTime && phase === "ready"}

@@ -24,7 +24,9 @@ class ArchiveInterpretationStore {
     required String kind,
   }) async {
     final prior = await _prefs.readJsonMap(_stateKey) ?? {};
-    prior['lastInterpretationViewed'] = DateTime.now().toUtc().toIso8601String();
+    prior['lastInterpretationViewed'] = DateTime.now()
+        .toUtc()
+        .toIso8601String();
     prior['lastInterpretationInsightId'] = insightId;
     prior['lastInterpretationKind'] = kind;
     await _prefs.writeJsonMap(_stateKey, prior);
@@ -33,8 +35,9 @@ class ArchiveInterpretationStore {
   Future<void> markFollowupQuestionSeen(String question) async {
     final prior = await _prefs.readJsonMap(_stateKey) ?? {};
     prior['lastFollowupQuestionSeen'] = question;
-    prior['lastFollowupQuestionSeenAt'] =
-        DateTime.now().toUtc().toIso8601String();
+    prior['lastFollowupQuestionSeenAt'] = DateTime.now()
+        .toUtc()
+        .toIso8601String();
     await _prefs.writeJsonMap(_stateKey, prior);
   }
 }

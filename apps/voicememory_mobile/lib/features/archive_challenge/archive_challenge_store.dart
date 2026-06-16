@@ -23,8 +23,7 @@ class ArchiveChallengeStore {
     await _prefs.writeJsonMap(_activeKey, challenge.toJson());
   }
 
-  Future<String?> readDismissedId() async =>
-      _prefs.readString(_dismissedIdKey);
+  Future<String?> readDismissedId() async => _prefs.readString(_dismissedIdKey);
 
   Future<void> dismiss(String challengeId) async {
     await _prefs.writeString(_dismissedIdKey, challengeId);

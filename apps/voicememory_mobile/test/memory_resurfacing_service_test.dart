@@ -86,12 +86,7 @@ void main() {
     expect(stats.openedCount, 1);
 
     final cards = await service.selectCards(
-      entries: [
-        _oldEntry(
-          id: 'a',
-          createdAt: DateTime(2025, 1, 1),
-        ),
-      ],
+      entries: [_oldEntry(id: 'a', createdAt: DateTime(2025, 1, 1))],
       limit: 5,
       now: DateTime(2026, 5, 1),
     );
@@ -101,9 +96,6 @@ void main() {
   test('resurfacingHeadline uses months for sub-year age', () {
     final now = DateTime(2026, 6, 1);
     final created = DateTime(2025, 11, 1);
-    expect(
-      resurfacingHeadline(created, now),
-      'You said this 7 months ago.',
-    );
+    expect(resurfacingHeadline(created, now), 'You said this 7 months ago.');
   });
 }

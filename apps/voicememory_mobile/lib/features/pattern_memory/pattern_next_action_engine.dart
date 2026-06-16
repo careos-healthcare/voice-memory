@@ -53,7 +53,8 @@ class PatternNextActionEngine {
       case PatternNextActionType.repeatCheck:
         return const _ActionSpec(
           title: 'Check what happens before it starts',
-          body: 'You have caught this pattern more than once. '
+          body:
+              'You have caught this pattern more than once. '
               'Tomorrow, look at the moment right before it shows up.',
           question: 'What happens right before it shows up?',
           cta: _useCheckCta,
@@ -61,7 +62,8 @@ class PatternNextActionEngine {
       case PatternNextActionType.lookForHelped:
         return const _ActionSpec(
           title: 'Look for what helped',
-          body: 'This pattern may be getting lighter. '
+          body:
+              'This pattern may be getting lighter. '
               'Tomorrow, check what helped make it easier.',
           question: 'What helped make it lighter?',
           cta: _useCheckCta,
@@ -69,7 +71,8 @@ class PatternNextActionEngine {
       case PatternNextActionType.lookForHeavier:
         return const _ActionSpec(
           title: 'Look for what made it heavier',
-          body: 'This pattern may need more attention. '
+          body:
+              'This pattern may need more attention. '
               'Tomorrow, check what made it heavier.',
           question: 'What made it heavier?',
           cta: _useCheckCta,
@@ -77,7 +80,8 @@ class PatternNextActionEngine {
       case PatternNextActionType.recordDifferentMoment:
         return const _ActionSpec(
           title: 'Notice what changed',
-          body: 'Today was not just a repeat. '
+          body:
+              'Today was not just a repeat. '
               'Tomorrow, check what is different.',
           question: 'What was different today?',
           cta: _useCheckCta,

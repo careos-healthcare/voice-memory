@@ -33,21 +33,21 @@ class SelectedSignalRecord {
   final String? readId;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'categoryId': categoryId,
-        'strengthLabel': strengthLabel,
-        'nextPrompt': nextPrompt,
-        'savedAt': savedAt.toIso8601String(),
-        if (entryId != null) 'entryId': entryId,
-        if (whySuggested != null) 'whySuggested': whySuggested,
-        'evidenceChips': evidenceChips,
-        if (mightMean != null) 'mightMean': mightMean,
-        if (wouldConfirm != null) 'wouldConfirm': wouldConfirm,
-        if (wouldContradict != null) 'wouldContradict': wouldContradict,
-        if (evidenceUsed != null) 'evidenceUsed': evidenceUsed,
-        if (readId != null) 'readId': readId,
-      };
+    'id': id,
+    'title': title,
+    'categoryId': categoryId,
+    'strengthLabel': strengthLabel,
+    'nextPrompt': nextPrompt,
+    'savedAt': savedAt.toIso8601String(),
+    if (entryId != null) 'entryId': entryId,
+    if (whySuggested != null) 'whySuggested': whySuggested,
+    'evidenceChips': evidenceChips,
+    if (mightMean != null) 'mightMean': mightMean,
+    if (wouldConfirm != null) 'wouldConfirm': wouldConfirm,
+    if (wouldContradict != null) 'wouldContradict': wouldContradict,
+    if (evidenceUsed != null) 'evidenceUsed': evidenceUsed,
+    if (readId != null) 'readId': readId,
+  };
 
   static SelectedSignalRecord? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

@@ -71,22 +71,10 @@ void main() {
     });
 
     test('fromId resolves supported cohort ids', () {
-      expect(
-        AcquisitionCohortId.capacityYesDirect.id,
-        'capacity_yes_direct',
-      );
-      expect(
-        AcquisitionCohortId.proveEnoughDirect.id,
-        'prove_enough_direct',
-      );
-      expect(
-        AcquisitionCohortId.genericArchive.id,
-        'generic_archive',
-      );
-      expect(
-        AcquisitionCohortIdIds.fromId('unknown_route'),
-        isNull,
-      );
+      expect(AcquisitionCohortId.capacityYesDirect.id, 'capacity_yes_direct');
+      expect(AcquisitionCohortId.proveEnoughDirect.id, 'prove_enough_direct');
+      expect(AcquisitionCohortId.genericArchive.id, 'generic_archive');
+      expect(AcquisitionCohortIdIds.fromId('unknown_route'), isNull);
     });
   });
 
@@ -140,9 +128,7 @@ void main() {
 
   group('loop start screen copy', () {
     testWidgets('capacity start screen copy', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(home: LoopStartScreen.capacity()),
-      );
+      await tester.pumpWidget(MaterialApp(home: LoopStartScreen.capacity()));
       await tester.pumpAndSettle();
 
       expect(find.text(AcquisitionStartCopy.capacityTitle), findsOneWidget);
@@ -151,9 +137,7 @@ void main() {
     });
 
     testWidgets('prove start screen copy', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(home: LoopStartScreen.proveEnough()),
-      );
+      await tester.pumpWidget(MaterialApp(home: LoopStartScreen.proveEnough()));
       await tester.pumpAndSettle();
 
       expect(find.text(AcquisitionStartCopy.proveTitle), findsOneWidget);
@@ -161,9 +145,7 @@ void main() {
     });
 
     testWidgets('generic fallback copy', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(home: LoopStartScreen.generic()),
-      );
+      await tester.pumpWidget(MaterialApp(home: LoopStartScreen.generic()));
       await tester.pumpAndSettle();
 
       expect(find.text(AcquisitionStartCopy.genericTitle), findsOneWidget);
@@ -204,8 +186,9 @@ void main() {
         AcquisitionCohortId.capacityYesDirect,
       );
 
-      final redirect =
-          await AcquisitionCohortCoordinator.fastPathRedirect('/onboarding');
+      final redirect = await AcquisitionCohortCoordinator.fastPathRedirect(
+        '/onboarding',
+      );
       expect(redirect, '/start/capacity-yes');
     });
 
@@ -213,8 +196,9 @@ void main() {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
 
-      final redirect =
-          await AcquisitionCohortCoordinator.fastPathRedirect('/onboarding');
+      final redirect = await AcquisitionCohortCoordinator.fastPathRedirect(
+        '/onboarding',
+      );
       expect(redirect, isNull);
     });
 
@@ -227,8 +211,9 @@ void main() {
       );
       await AcquisitionCohortCoordinator.markStartCtaTapped();
 
-      final redirect =
-          await AcquisitionCohortCoordinator.fastPathRedirect('/record');
+      final redirect = await AcquisitionCohortCoordinator.fastPathRedirect(
+        '/record',
+      );
       expect(redirect, isNull);
     });
   });

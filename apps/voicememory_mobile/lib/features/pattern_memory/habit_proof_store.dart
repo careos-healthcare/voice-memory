@@ -26,11 +26,11 @@ class HabitProofStore {
     final list = raw['items'];
     if (list is! List) return const [];
     final moments = list
-        .map((e) => HabitProofMoment.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => HabitProofMoment.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<HabitProofMoment>()
         .toList();
     return moments.take(limit).toList();

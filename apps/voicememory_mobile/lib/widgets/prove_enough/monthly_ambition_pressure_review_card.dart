@@ -53,9 +53,9 @@ class MonthlyAmbitionPressureReviewCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             review.direction.copy,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.md),
           OutlinedButton(
@@ -88,9 +88,7 @@ class _ProPreviewCard extends StatelessWidget {
       key: const Key('monthly_ambition_pressure_review_pro_preview'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.accentLight,
-      ),
+      decoration: VoiceMemoryCards.standard(background: AppColors.accentLight),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -101,9 +99,9 @@ class _ProPreviewCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             MonthlyAmbitionPressureReview.proPreviewBody,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.md),
           FilledButton(

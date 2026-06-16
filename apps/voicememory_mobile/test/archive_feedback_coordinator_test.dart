@@ -16,26 +16,32 @@ Future<ArchiveFeedbackStore> _store(String stamp) async {
 }
 
 void main() {
-  test('loadSummary returns empty when AppServices is not initialized',
-      () async {
-    final summary = await ArchiveFeedbackCoordinator.loadSummary();
-    expect(summary, ArchiveFeedbackSummary.empty);
-  });
+  test(
+    'loadSummary returns empty when AppServices is not initialized',
+    () async {
+      final summary = await ArchiveFeedbackCoordinator.loadSummary();
+      expect(summary, ArchiveFeedbackSummary.empty);
+    },
+  );
 
-  test('latestDominantIssue returns null when AppServices is not initialized',
-      () async {
-    final issue = await ArchiveFeedbackCoordinator.latestDominantIssue();
-    expect(issue, isNull);
-  });
+  test(
+    'latestDominantIssue returns null when AppServices is not initialized',
+    () async {
+      final issue = await ArchiveFeedbackCoordinator.latestDominantIssue();
+      expect(issue, isNull);
+    },
+  );
 
-  test('saveFeedback does not throw when AppServices is not initialized',
-      () async {
-    await ArchiveFeedbackCoordinator.saveFeedback(
-      type: ArchiveFeedbackType.useful,
-      targetType: ArchiveFeedbackTargetType.archiveMemory,
-      targetId: 'mem1',
-    );
-  });
+  test(
+    'saveFeedback does not throw when AppServices is not initialized',
+    () async {
+      await ArchiveFeedbackCoordinator.saveFeedback(
+        type: ArchiveFeedbackType.useful,
+        targetType: ArchiveFeedbackTargetType.archiveMemory,
+        targetId: 'mem1',
+      );
+    },
+  );
 
   test('trackFeedbackShown does not throw', () {
     ArchiveFeedbackCoordinator.trackFeedbackShown();

@@ -1,6 +1,6 @@
-# VoiceMemory
+# ArchiveMe
 
-**VoiceMemory — understand your day in 60 seconds.**
+**ArchiveMe — understand your day in 60 seconds.**
 
 A private, local-first voice journal that turns daily recordings into clarity.
 

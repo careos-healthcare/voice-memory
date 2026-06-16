@@ -7,7 +7,7 @@ import 'insight_evidence.dart';
 import 'predictions/prediction_models.dart';
 
 /// Maps engine outputs into unified [ArchiveInsight] cards.
-abstract final class ArchiveInsightMapper {
+abstract class ArchiveInsightMapper {
   ArchiveInsightMapper._();
 
   static ArchiveInsight fromBeliefBundle(BeliefEvidenceBundle bundle) {
@@ -59,8 +59,8 @@ abstract final class ArchiveInsightMapper {
       createdAt: e.record.lastSeen,
       whyItMatters: e.record.confidenceHistory.isNotEmpty
           ? 'Mentions in your reflections grew from '
-              '${e.record.confidenceHistory.first.evidenceCount} '
-              'to ${e.record.confidenceHistory.last.evidenceCount}.'
+                '${e.record.confidenceHistory.first.evidenceCount} '
+                'to ${e.record.confidenceHistory.last.evidenceCount}.'
           : null,
     );
   }

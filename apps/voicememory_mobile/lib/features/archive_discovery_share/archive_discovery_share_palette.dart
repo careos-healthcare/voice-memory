@@ -55,7 +55,5 @@ class ArchiveDiscoverySharePalette {
   }
 
   factory ArchiveDiscoverySharePalette.fromContext(BuildContext context) =>
-      ArchiveDiscoverySharePalette.fromBrightness(
-        Theme.of(context).brightness,
-      );
+      ArchiveDiscoverySharePalette.fromBrightness(Theme.of(context).brightness);
 }

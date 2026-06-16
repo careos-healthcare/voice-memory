@@ -35,7 +35,7 @@ import '../product/consumer_ui_copy.dart';
 import 'screenshot_mode.dart';
 
 /// Polished sample content for marketing screenshots — never used in production.
-abstract final class ScreenshotSampleData {
+abstract class ScreenshotSampleData {
   ScreenshotSampleData._();
 
   static const heroStatement =
@@ -46,40 +46,38 @@ abstract final class ScreenshotSampleData {
       'and guilt when you slow down.';
 
   static const evidenceQuote1 = 'I keep saying I have to handle it.';
-  static const evidenceQuote2 =
-      'I avoid asking for help until I am exhausted.';
+  static const evidenceQuote2 = 'I avoid asking for help until I am exhausted.';
   static const evidenceQuote3 = 'I feel guilty when I slow down.';
 
   static ArchiveBeliefCardModel get heroBelief => ArchiveBeliefCardModel(
-        id: 'screenshot-hero',
-        statement: heroStatement,
-        confidencePercent: 78,
-        evidenceSummary: 'Based on 12 reflections.',
-        whyExplanation: heroWhy,
-        section: ArchiveBeliefSection.current,
-        timeline: const [
-          BeliefEvidenceQuote(periodLabel: 'Recent', quote: evidenceQuote1),
-          BeliefEvidenceQuote(periodLabel: 'Earlier', quote: evidenceQuote2),
-          BeliefEvidenceQuote(periodLabel: 'Earlier', quote: evidenceQuote3),
-        ],
-        conclusion:
-            'This pattern shows up when work, family, and rest collide.',
-      );
+    id: 'screenshot-hero',
+    statement: heroStatement,
+    confidencePercent: 78,
+    evidenceSummary: 'Based on 12 reflections.',
+    whyExplanation: heroWhy,
+    section: ArchiveBeliefSection.current,
+    timeline: const [
+      BeliefEvidenceQuote(periodLabel: 'Recent', quote: evidenceQuote1),
+      BeliefEvidenceQuote(periodLabel: 'Earlier', quote: evidenceQuote2),
+      BeliefEvidenceQuote(periodLabel: 'Earlier', quote: evidenceQuote3),
+    ],
+    conclusion: 'This pattern shows up when work, family, and rest collide.',
+  );
 
   static ArchiveBeliefsSnapshot get beliefsSnapshot => ArchiveBeliefsSnapshot(
-        homeBeliefs: [heroBelief],
-        current: [heroBelief],
-        emerging: const [],
-        changing: const [],
-        hiddenPatterns: const [],
-        stats: const ArchiveBeliefStats(
-          beliefsIdentified: 4,
-          strongestBelief: heroStatement,
-          archiveAgeDays: 21,
-          reflectionsAnalysed: 12,
-          evidencePoints: 12,
-        ),
-      );
+    homeBeliefs: [heroBelief],
+    current: [heroBelief],
+    emerging: const [],
+    changing: const [],
+    hiddenPatterns: const [],
+    stats: const ArchiveBeliefStats(
+      beliefsIdentified: 4,
+      strongestBelief: heroStatement,
+      archiveAgeDays: 21,
+      reflectionsAnalysed: 12,
+      evidencePoints: 12,
+    ),
+  );
 
   static const returnLoopTodayNoticed =
       'You keep taking responsibility before asking for help.';
@@ -105,25 +103,24 @@ abstract final class ScreenshotSampleData {
   static const firstSessionWhyNoticed =
       'You mentioned pressure, responsibility, and saying yes before checking what you need.';
 
-  static FirstSessionPattern get firstSessionPatternSample =>
-      FirstSessionPattern(
-        id: 'screenshot-first-pattern',
-        createdAt: DateTime(2026, 5, 25, 10),
-        title: 'Taking responsibility before asking for help',
-        whyNoticed: firstSessionWhyNoticed,
-        watchForText: watchForPendingText,
-        chips: activePatternThreadChips,
-        confidenceLabel: FirstSessionConfidenceLabel.early,
-        sourceTextPreview:
-            'I said yes too quickly again and felt responsible before asking for help.',
-        matchReason:
-            'Your words pointed toward pressure and guilt in this moment.',
-        confidenceScore: 0.62,
-        matchedPhrases: const ['pressure', 'saying yes', 'guilt'],
-        alternativePatterns: const [],
-        userCanCorrect: true,
-        categoryId: 'responsibility',
-      );
+  static FirstSessionPattern
+  get firstSessionPatternSample => FirstSessionPattern(
+    id: 'screenshot-first-pattern',
+    createdAt: DateTime(2026, 5, 25, 10),
+    title: 'Taking responsibility before asking for help',
+    whyNoticed: firstSessionWhyNoticed,
+    watchForText: watchForPendingText,
+    chips: activePatternThreadChips,
+    confidenceLabel: FirstSessionConfidenceLabel.early,
+    sourceTextPreview:
+        'I said yes too quickly again and felt responsible before asking for help.',
+    matchReason: 'Your words pointed toward pressure and guilt in this moment.',
+    confidenceScore: 0.62,
+    matchedPhrases: const ['pressure', 'saying yes', 'guilt'],
+    alternativePatterns: const [],
+    userCanCorrect: true,
+    categoryId: 'responsibility',
+  );
 
   static WatchForItem watchForPendingForToday(DateTime previewDay) {
     final target = TomorrowCommitment.dateOnly(previewDay);
@@ -135,8 +132,7 @@ abstract final class ScreenshotSampleData {
       chips: returnLoopWatchChips,
       status: WatchForStatus.pending,
       result: WatchForResult.none,
-      shortPrompt:
-          'Notice if you take responsibility before asking for help.',
+      shortPrompt: 'Notice if you take responsibility before asking for help.',
       specificPrompt: watchForSpecificPrompt,
       situationHint: 'especially when someone expects something from you',
       checkInQuestion: 'Did you ask for help, or carry it alone?',
@@ -145,7 +141,8 @@ abstract final class ScreenshotSampleData {
   }
 
   static String get watchForCompletedHeadline {
-    final hint = ScreenshotMode.returnCaptureSelection?.comparisonHint ??
+    final hint =
+        ScreenshotMode.returnCaptureSelection?.comparisonHint ??
         ReturnCaptureComparisonHints.same;
     switch (hint) {
       case ReturnCaptureComparisonHints.lighter:
@@ -160,10 +157,10 @@ abstract final class ScreenshotSampleData {
   }
 
   static String get watchForCompletedBody {
-    final hint = ScreenshotMode.returnCaptureSelection?.comparisonHint ??
+    final hint =
+        ScreenshotMode.returnCaptureSelection?.comparisonHint ??
         ReturnCaptureComparisonHints.same;
-    const watch =
-        'taking responsibility before asking for help';
+    const watch = 'taking responsibility before asking for help';
     switch (hint) {
       case ReturnCaptureComparisonHints.lighter:
         return 'Yesterday you were watching for $watch. Today you marked it as lighter.';
@@ -182,62 +179,59 @@ abstract final class ScreenshotSampleData {
     'asking late',
   ];
 
-  static ActivePatternThread get activePatternThreadSample => ActivePatternThread(
-        id: 'screenshot-active-thread',
-        title: 'Taking responsibility before asking for help',
-        createdAt: DateTime(2026, 5, 22, 9),
-        updatedAt: DateTime(2026, 5, 25, 10, 15),
-        watchForText: watchForPendingText,
-        chips: activePatternThreadChips,
-        status: ActivePatternThreadStatus.active,
-        daysActive: 3,
-        lastResult: WatchForResult.showedAgain,
-        lastResultDate: DateTime(2026, 5, 25, 10, 15),
-        recentMoments: const [
-          'Said yes too quickly before asking for help.',
-        ],
-        recentResults: const [
-          WatchForResult.showedAgain,
-          WatchForResult.showedAgain,
-        ],
-        nextPrompt:
-            'Today, notice whether you take responsibility before asking for help.',
-      );
+  static ActivePatternThread
+  get activePatternThreadSample => ActivePatternThread(
+    id: 'screenshot-active-thread',
+    title: 'Taking responsibility before asking for help',
+    createdAt: DateTime(2026, 5, 22, 9),
+    updatedAt: DateTime(2026, 5, 25, 10, 15),
+    watchForText: watchForPendingText,
+    chips: activePatternThreadChips,
+    status: ActivePatternThreadStatus.active,
+    daysActive: 3,
+    lastResult: WatchForResult.showedAgain,
+    lastResultDate: DateTime(2026, 5, 25, 10, 15),
+    recentMoments: const ['Said yes too quickly before asking for help.'],
+    recentResults: const [
+      WatchForResult.showedAgain,
+      WatchForResult.showedAgain,
+    ],
+    nextPrompt:
+        'Today, notice whether you take responsibility before asking for help.',
+  );
 
   static PatternMemory get patternMemorySample => PatternMemory(
-        id: 'screenshot-pattern-memory',
-        patternTitle: 'Taking responsibility before asking for help',
-        createdAt: DateTime(2026, 5, 22, 9),
-        updatedAt: DateTime(2026, 5, 25, 10, 15),
-        checkInCount: 4,
-        showedAgainCount: 2,
-        lighterCount: 1,
-        heavierCount: 1,
-        changedCount: 0,
-        lastResult: PatternMemoryResultHint.same,
-        commonBeforeMoments: const [
-          'when someone expected something',
-          'before saying yes',
-        ],
-        helpedMoments: const [
-          'paused before answering',
-        ],
-        harderMoments: const [],
-        nextBestQuestion: 'What happens right before it shows up?',
-        status: PatternMemoryStatus.active,
-      );
+    id: 'screenshot-pattern-memory',
+    patternTitle: 'Taking responsibility before asking for help',
+    createdAt: DateTime(2026, 5, 22, 9),
+    updatedAt: DateTime(2026, 5, 25, 10, 15),
+    checkInCount: 4,
+    showedAgainCount: 2,
+    lighterCount: 1,
+    heavierCount: 1,
+    changedCount: 0,
+    lastResult: PatternMemoryResultHint.same,
+    commonBeforeMoments: const [
+      'when someone expected something',
+      'before saying yes',
+    ],
+    helpedMoments: const ['paused before answering'],
+    harderMoments: const [],
+    nextBestQuestion: 'What happens right before it shows up?',
+    status: PatternMemoryStatus.active,
+  );
 
   static PatternMap get patternMapSample => PatternMap(
-        patternTitle: 'Taking responsibility before asking for help',
-        seenCount: 8,
-        lastSeenDate: DateTime(2026, 5, 25, 10, 15),
-        usuallyStartsBefore: 'before saying yes',
-        oftenFeelsLike: 'heavier',
-        getsLighterWhen: 'pausing before answering',
-        getsHeavierWhen: 'taking it on alone',
-        nextCheck: 'What happens right before it shows up?',
-        confidenceLabel: 'Based on 8 check-ins',
-      );
+    patternTitle: 'Taking responsibility before asking for help',
+    seenCount: 8,
+    lastSeenDate: DateTime(2026, 5, 25, 10, 15),
+    usuallyStartsBefore: 'before saying yes',
+    oftenFeelsLike: 'heavier',
+    getsLighterWhen: 'pausing before answering',
+    getsHeavierWhen: 'taking it on alone',
+    nextCheck: 'What happens right before it shows up?',
+    confidenceLabel: 'Based on 8 check-ins',
+  );
 
   static ArchiveMemorySummary get archiveMemorySummarySample =>
       ArchiveMemorySummary(
@@ -256,14 +250,14 @@ abstract final class ScreenshotSampleData {
       );
 
   static MemoryQuality get memoryQualitySample => const MemoryQuality(
-        level: MemoryQualityLevel.clearPattern,
-        label: 'Clear pattern',
-        helperText: 'This pattern is clear enough to check tomorrow.',
-        momentCount: 8,
-        checkInCount: 8,
-        weekCount: 3,
-        hasChangedRecently: false,
-      );
+    level: MemoryQualityLevel.clearPattern,
+    label: 'Clear pattern',
+    helperText: 'This pattern is clear enough to check tomorrow.',
+    momentCount: 8,
+    checkInCount: 8,
+    weekCount: 3,
+    hasChangedRecently: false,
+  );
 
   static ArchiveEvolutionTimeline get archiveEvolutionTimelineSample =>
       ArchiveEvolutionTimeline(
@@ -319,7 +313,8 @@ abstract final class ScreenshotSampleData {
         createdAt: DateTime(2026, 5, 25, 10, 15),
         type: PatternProgressType.stillRepeating,
         headline: 'This pattern is still showing up.',
-        body: 'You have caught it 4 times. '
+        body:
+            'You have caught it 4 times. '
             'The useful part is that you are noticing the moment.',
         beforeLine: 'It often starts around: before saying yes',
         nextLine: 'Next, watch what happens right before it starts.',
@@ -328,32 +323,34 @@ abstract final class ScreenshotSampleData {
       );
 
   static PatternNextAction get patternNextActionSample => PatternNextAction(
-        id: 'na_screenshot-pattern-memory_4_repeatCheck',
-        memoryId: 'screenshot-pattern-memory',
-        createdAt: DateTime(2026, 5, 25, 10, 15),
-        type: PatternNextActionType.repeatCheck,
-        title: 'Check what happens before it starts',
-        body: 'You have caught this pattern more than once. '
-            'Tomorrow, look at the moment right before it shows up.',
-        question: 'What happens right before it shows up?',
-        ctaLabel: 'Use this check',
-        sourceProgressType: 'stillRepeating',
-        sourceStatus: 'active',
-      );
+    id: 'na_screenshot-pattern-memory_4_repeatCheck',
+    memoryId: 'screenshot-pattern-memory',
+    createdAt: DateTime(2026, 5, 25, 10, 15),
+    type: PatternNextActionType.repeatCheck,
+    title: 'Check what happens before it starts',
+    body:
+        'You have caught this pattern more than once. '
+        'Tomorrow, look at the moment right before it shows up.',
+    question: 'What happens right before it shows up?',
+    ctaLabel: 'Use this check',
+    sourceProgressType: 'stillRepeating',
+    sourceStatus: 'active',
+  );
 
   static HabitProofMoment get habitProofSample => HabitProofMoment(
-        id: 'hp_screenshot-pattern-memory_4_progressFound',
-        memoryId: 'screenshot-pattern-memory',
-        createdAt: DateTime(2026, 5, 25, 10, 15),
-        type: HabitProofType.progressFound,
-        headline: 'Now there is something to compare.',
-        body: 'You can see whether this pattern is repeating, '
-            'getting lighter, getting heavier, or changing.',
-        proofLine: 'This pattern is still showing up.',
-        nextLine: 'What happens right before it shows up?',
-        checkInCount: 4,
-        shouldShow: true,
-      );
+    id: 'hp_screenshot-pattern-memory_4_progressFound',
+    memoryId: 'screenshot-pattern-memory',
+    createdAt: DateTime(2026, 5, 25, 10, 15),
+    type: HabitProofType.progressFound,
+    headline: 'Now there is something to compare.',
+    body:
+        'You can see whether this pattern is repeating, '
+        'getting lighter, getting heavier, or changing.',
+    proofLine: 'This pattern is still showing up.',
+    nextLine: 'What happens right before it shows up?',
+    checkInCount: 4,
+    shouldShow: true,
+  );
 
   static wkrecap.WeeklyPatternRecap get weeklyPatternRecapSample =>
       wkrecap.WeeklyPatternRecap(
@@ -485,9 +482,11 @@ abstract final class ScreenshotSampleData {
   }
 
   static WatchForItem get watchForCompletedSample {
-    final hint = ScreenshotMode.returnCaptureSelection?.comparisonHint ??
+    final hint =
+        ScreenshotMode.returnCaptureSelection?.comparisonHint ??
         ReturnCaptureComparisonHints.same;
-    final result = hint == ReturnCaptureComparisonHints.lighter ||
+    final result =
+        hint == ReturnCaptureComparisonHints.lighter ||
             hint == ReturnCaptureComparisonHints.changed
         ? WatchForResult.changedShape
         : WatchForResult.showedAgain;
@@ -501,8 +500,7 @@ abstract final class ScreenshotSampleData {
       result: result,
       completedAt: DateTime(2026, 5, 25, 10, 15),
       specificPrompt: watchForSpecificPrompt,
-      shortPrompt:
-          'Notice if you take responsibility before asking for help.',
+      shortPrompt: 'Notice if you take responsibility before asking for help.',
       comparisonHint: hint,
     );
   }
@@ -545,66 +543,61 @@ abstract final class ScreenshotSampleData {
   }
 
   static ChangeSummary get changeSummarySample => ChangeSummary(
-        title: ConsumerUiCopy.changeSummaryTitleSteady,
-        summary:
-            'Taking responsibility too quickly showed up again today. '
-            'It looks steady, not resolved yet.',
-        status: ChangeSummaryStatus.steady,
-        chips: const [
-          'showed up again',
-          'same pressure',
-          'watch tomorrow',
-        ],
-        createdAt: DateTime(2026, 5, 25, 11),
-      );
+    title: ConsumerUiCopy.changeSummaryTitleSteady,
+    summary:
+        'Taking responsibility too quickly showed up again today. '
+        'It looks steady, not resolved yet.',
+    status: ChangeSummaryStatus.steady,
+    chips: const ['showed up again', 'same pressure', 'watch tomorrow'],
+    createdAt: DateTime(2026, 5, 25, 11),
+  );
 
   static WeeklyPatternRecap get weeklyRecapSample => WeeklyPatternRecap(
-        title: ConsumerUiCopy.weeklyRecapTitle,
-        body:
-            'Responsibility showed up more than once this week, especially around '
-            'saying yes too quickly.',
-        chips: const [
-          'showed up again',
-          'saying yes too fast',
-          'feeling responsible',
-        ],
-      );
+    title: ConsumerUiCopy.weeklyRecapTitle,
+    body:
+        'Responsibility showed up more than once this week, especially around '
+        'saying yes too quickly.',
+    chips: const [
+      'showed up again',
+      'saying yes too fast',
+      'feeling responsible',
+    ],
+  );
 
   static ReturnComparison get returnComparisonSample => ReturnComparison(
-        yesterdayWatchFor:
-            'taking responsibility before asking for help',
-        todayReflectionSummary:
-            'Saying yes too quickly again before asking for help.',
-        comparisonStatus: ReturnComparisonStatus.repeated,
-        headline: ConsumerUiCopy.returnComparisonHeadlineRepeated,
-        body:
-            'Yesterday you were watching for taking responsibility before asking for help. '
-            "Today's reflection mentioned saying yes too quickly again.",
-        chips: returnComparisonSampleChips,
-        createdAt: DateTime(2026, 5, 25, 10, 30),
-      );
+    yesterdayWatchFor: 'taking responsibility before asking for help',
+    todayReflectionSummary:
+        'Saying yes too quickly again before asking for help.',
+    comparisonStatus: ReturnComparisonStatus.repeated,
+    headline: ConsumerUiCopy.returnComparisonHeadlineRepeated,
+    body:
+        'Yesterday you were watching for taking responsibility before asking for help. '
+        "Today's reflection mentioned saying yes too quickly again.",
+    chips: returnComparisonSampleChips,
+    createdAt: DateTime(2026, 5, 25, 10, 30),
+  );
 
   static TomorrowReturnLoop get tomorrowReturnLoop => TomorrowReturnLoop(
-        noticedToday: returnLoopTodayNoticed,
-        comeBackTomorrow:
-            'After another reflection tomorrow, ArchiveMe can compare '
-            'today with what you add next.',
-        watchForNextTime:
-            'Whether responsibility shows up before you ask for help.',
-        generatedAt: DateTime(2026, 5, 12, 18, 30),
-        watchForChips: returnLoopWatchChips,
-        tomorrowPrompt: returnLoopTomorrowPrompt,
-      );
+    noticedToday: returnLoopTodayNoticed,
+    comeBackTomorrow:
+        'After another reflection tomorrow, ArchiveMe can compare '
+        'today with what you add next.',
+    watchForNextTime:
+        'Whether responsibility shows up before you ask for help.',
+    generatedAt: DateTime(2026, 5, 12, 18, 30),
+    watchForChips: returnLoopWatchChips,
+    tomorrowPrompt: returnLoopTomorrowPrompt,
+  );
 
   static List<BeliefChangeTimelineItem> get changingStories => [
-        BeliefChangeTimelineItem(
-          kind: BeliefChangeKind.shifting,
-          statement: 'Carrying everything alone',
-          detail:
-              'You are starting to notice the cost of carrying everything alone.',
-          sortOrder: 0,
-        ),
-      ];
+    BeliefChangeTimelineItem(
+      kind: BeliefChangeKind.shifting,
+      statement: 'Carrying everything alone',
+      detail:
+          'You are starting to notice the cost of carrying everything alone.',
+      sortOrder: 0,
+    ),
+  ];
 
   static ArchiveInsightsSnapshot get insightsSnapshot {
     final blindSpot = ArchiveInsight(
@@ -622,7 +615,8 @@ abstract final class ScreenshotSampleData {
         ),
       ],
       createdAt: DateTime(2025, 5, 11),
-      archiveConclusion: 'Support language is scarce across recent reflections.',
+      archiveConclusion:
+          'Support language is scarce across recent reflections.',
     );
 
     final strongest = ArchiveInsight(
@@ -694,8 +688,8 @@ abstract final class ScreenshotSampleData {
   }
 
   /// Sharpened tomorrow check for compelling-check screenshots.
-  static const CompellingCheckQuestion compellingCheckSample =
-      CompellingCheckQuestion(
+  static const CompellingCheckQuestion
+  compellingCheckSample = CompellingCheckQuestion(
     type: CompellingCheckType.beforeMoment,
     question: 'Did you say yes before checking what you needed?',
     whyThisCheck:
@@ -735,65 +729,65 @@ abstract final class ScreenshotSampleData {
   /// A loop closed today, used to preview the "Next useful check" card.
   /// Three sample days for the Key Moments timeline screenshot.
   static List<KeyMoment> get keyMomentsSample => [
-        KeyMoment(
-          id: 'screenshot-moment-today',
-          date: DateTime(2026, 5, 26, 9, 12),
-          title: 'A pattern showed up again',
-          originalText:
-              'I said yes before checking what I needed, and it felt heavier '
-              'after.',
-          shortSummary: 'I said yes before checking what I needed.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'heavier',
-          nextCheck: 'What happened right before you said yes?',
-          tags: const ['pressure', 'heavier'],
-          source: KeyMomentSource.checkIn,
-        ),
-        KeyMoment(
-          id: 'screenshot-moment-yesterday',
-          date: DateTime(2026, 5, 25, 18, 30),
-          title: 'Something felt lighter',
-          originalText:
-              'It felt lighter after I paused before replying to the message.',
-          shortSummary: 'It felt lighter after I paused before replying.',
-          patternTitle: 'Pausing before replying',
-          resultHint: 'lighter',
-          nextCheck: 'What helped make it lighter?',
-          tags: const ['relationship', 'lighter', 'helped'],
-          source: KeyMomentSource.checkIn,
-        ),
-        KeyMoment(
-          id: 'screenshot-moment-week',
-          date: DateTime(2026, 5, 22, 8, 5),
-          title: 'Something changed',
-          originalText:
-              'I waited before answering and the worry did not take over '
-              'this time.',
-          shortSummary: 'I waited before answering this time.',
-          patternTitle: 'Waiting before answering',
-          resultHint: 'changed',
-          nextCheck: 'What was different today?',
-          tags: const ['worry', 'changed'],
-          source: KeyMomentSource.reflection,
-        ),
-      ];
+    KeyMoment(
+      id: 'screenshot-moment-today',
+      date: DateTime(2026, 5, 26, 9, 12),
+      title: 'A pattern showed up again',
+      originalText:
+          'I said yes before checking what I needed, and it felt heavier '
+          'after.',
+      shortSummary: 'I said yes before checking what I needed.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'heavier',
+      nextCheck: 'What happened right before you said yes?',
+      tags: const ['pressure', 'heavier'],
+      source: KeyMomentSource.checkIn,
+    ),
+    KeyMoment(
+      id: 'screenshot-moment-yesterday',
+      date: DateTime(2026, 5, 25, 18, 30),
+      title: 'Something felt lighter',
+      originalText:
+          'It felt lighter after I paused before replying to the message.',
+      shortSummary: 'It felt lighter after I paused before replying.',
+      patternTitle: 'Pausing before replying',
+      resultHint: 'lighter',
+      nextCheck: 'What helped make it lighter?',
+      tags: const ['relationship', 'lighter', 'helped'],
+      source: KeyMomentSource.checkIn,
+    ),
+    KeyMoment(
+      id: 'screenshot-moment-week',
+      date: DateTime(2026, 5, 22, 8, 5),
+      title: 'Something changed',
+      originalText:
+          'I waited before answering and the worry did not take over '
+          'this time.',
+      shortSummary: 'I waited before answering this time.',
+      patternTitle: 'Waiting before answering',
+      resultHint: 'changed',
+      nextCheck: 'What was different today?',
+      tags: const ['worry', 'changed'],
+      source: KeyMomentSource.reflection,
+    ),
+  ];
 
   /// Key moments spanning today, this week, and older for archive clean view.
   static List<KeyMoment> get archiveCleanKeyMomentsSample => [
-        ...keyMomentsSample,
-        KeyMoment(
-          id: 'screenshot-moment-older',
-          date: DateTime(2026, 5, 10, 10, 0),
-          title: 'An earlier moment',
-          originalText:
-              'The pressure showed up before a busy week and I noticed it.',
-          shortSummary: 'Pressure showed up before a busy week.',
-          patternTitle: 'Pressure before busy weeks',
-          resultHint: 'same',
-          tags: const ['pressure', 'work'],
-          source: KeyMomentSource.reflection,
-        ),
-      ];
+    ...keyMomentsSample,
+    KeyMoment(
+      id: 'screenshot-moment-older',
+      date: DateTime(2026, 5, 10, 10, 0),
+      title: 'An earlier moment',
+      originalText:
+          'The pressure showed up before a busy week and I noticed it.',
+      shortSummary: 'Pressure showed up before a busy week.',
+      patternTitle: 'Pressure before busy weeks',
+      resultHint: 'same',
+      tags: const ['pressure', 'work'],
+      source: KeyMomentSource.reflection,
+    ),
+  ];
 
   /// Fixed preview day for archive clean screenshots.
   static DateTime get archiveCleanPreviewDay => DateTime(2026, 5, 26, 12);
@@ -803,71 +797,71 @@ abstract final class ScreenshotSampleData {
 
   /// Six moments this week for archive range review screenshots.
   static List<KeyMoment> get archiveReviewMomentsSample => [
-        KeyMoment(
-          id: 'review-m1',
-          date: DateTime(2026, 6, 6, 9),
-          title: 'Said yes again',
-          originalText: 'I said yes before checking what I needed.',
-          shortSummary: 'Said yes before checking what I needed.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'showed_up_again',
-          tags: const ['pressure'],
-          source: KeyMomentSource.checkIn,
-        ),
-        KeyMoment(
-          id: 'review-m2',
-          date: DateTime(2026, 6, 5, 18),
-          title: 'Felt lighter after pausing',
-          originalText: 'It felt lighter after I paused before replying.',
-          shortSummary: 'It felt lighter after I paused before replying.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'lighter',
-          tags: const ['lighter', 'helped'],
-          source: KeyMomentSource.checkIn,
-        ),
-        KeyMoment(
-          id: 'review-m3',
-          date: DateTime(2026, 6, 4, 12),
-          title: 'Showed up again',
-          originalText: 'The same pressure showed up before I agreed.',
-          shortSummary: 'The same pressure showed up before I agreed.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'same',
-          source: KeyMomentSource.reflection,
-        ),
-        KeyMoment(
-          id: 'review-m4',
-          date: DateTime(2026, 6, 3, 8),
-          title: 'Lighter after a walk',
-          originalText: 'It felt lighter after a short walk.',
-          shortSummary: 'It felt lighter after a short walk.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'lighter',
-          tags: const ['lighter'],
-          source: KeyMomentSource.reflection,
-        ),
-        KeyMoment(
-          id: 'review-m5',
-          date: DateTime(2026, 6, 2, 19),
-          title: 'Same pattern',
-          originalText: 'I took it on again without checking first.',
-          shortSummary: 'I took it on again without checking first.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'showed_up_again',
-          source: KeyMomentSource.reflection,
-        ),
-        KeyMoment(
-          id: 'review-m6',
-          date: DateTime(2026, 6, 1, 10),
-          title: 'Another lighter moment',
-          originalText: 'It felt lighter when I asked for more time.',
-          shortSummary: 'It felt lighter when I asked for more time.',
-          patternTitle: 'Taking on too much before checking in',
-          resultHint: 'lighter',
-          tags: const ['lighter', 'helped'],
-          source: KeyMomentSource.reflection,
-        ),
-      ];
+    KeyMoment(
+      id: 'review-m1',
+      date: DateTime(2026, 6, 6, 9),
+      title: 'Said yes again',
+      originalText: 'I said yes before checking what I needed.',
+      shortSummary: 'Said yes before checking what I needed.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'showed_up_again',
+      tags: const ['pressure'],
+      source: KeyMomentSource.checkIn,
+    ),
+    KeyMoment(
+      id: 'review-m2',
+      date: DateTime(2026, 6, 5, 18),
+      title: 'Felt lighter after pausing',
+      originalText: 'It felt lighter after I paused before replying.',
+      shortSummary: 'It felt lighter after I paused before replying.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'lighter',
+      tags: const ['lighter', 'helped'],
+      source: KeyMomentSource.checkIn,
+    ),
+    KeyMoment(
+      id: 'review-m3',
+      date: DateTime(2026, 6, 4, 12),
+      title: 'Showed up again',
+      originalText: 'The same pressure showed up before I agreed.',
+      shortSummary: 'The same pressure showed up before I agreed.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'same',
+      source: KeyMomentSource.reflection,
+    ),
+    KeyMoment(
+      id: 'review-m4',
+      date: DateTime(2026, 6, 3, 8),
+      title: 'Lighter after a walk',
+      originalText: 'It felt lighter after a short walk.',
+      shortSummary: 'It felt lighter after a short walk.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'lighter',
+      tags: const ['lighter'],
+      source: KeyMomentSource.reflection,
+    ),
+    KeyMoment(
+      id: 'review-m5',
+      date: DateTime(2026, 6, 2, 19),
+      title: 'Same pattern',
+      originalText: 'I took it on again without checking first.',
+      shortSummary: 'I took it on again without checking first.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'showed_up_again',
+      source: KeyMomentSource.reflection,
+    ),
+    KeyMoment(
+      id: 'review-m6',
+      date: DateTime(2026, 6, 1, 10),
+      title: 'Another lighter moment',
+      originalText: 'It felt lighter when I asked for more time.',
+      shortSummary: 'It felt lighter when I asked for more time.',
+      patternTitle: 'Taking on too much before checking in',
+      resultHint: 'lighter',
+      tags: const ['lighter', 'helped'],
+      source: KeyMomentSource.reflection,
+    ),
+  ];
 
   /// A hard, self-blaming reflection used for the kinder-angle screenshot.
   static const String selfBlameReflection =
@@ -875,17 +869,17 @@ abstract final class ScreenshotSampleData {
       'It felt like my fault.';
 
   static TomorrowCheckIn get tomorrowCheckInCompletedSample => TomorrowCheckIn(
-        id: 'screenshot-check-in-completed',
-        createdAt: DateTime(2026, 5, 25, 18),
-        targetDate: tomorrowCheckInDateKey(DateTime(2026, 5, 26, 9)),
-        patternTitle: 'Taking responsibility before asking for help',
-        prompt: 'Tomorrow, check whether this pattern shows up again.',
-        question: 'Did you ask for help, or carry it alone?',
-        options: kDefaultTomorrowCheckInOptions,
-        selectedOptionId: 'showed_up_again',
-        completedAt: DateTime(2026, 5, 26, 9, 12),
-        sourceWatchForId: 'screenshot-watch-pending',
-      );
+    id: 'screenshot-check-in-completed',
+    createdAt: DateTime(2026, 5, 25, 18),
+    targetDate: tomorrowCheckInDateKey(DateTime(2026, 5, 26, 9)),
+    patternTitle: 'Taking responsibility before asking for help',
+    prompt: 'Tomorrow, check whether this pattern shows up again.',
+    question: 'Did you ask for help, or carry it alone?',
+    options: kDefaultTomorrowCheckInOptions,
+    selectedOptionId: 'showed_up_again',
+    completedAt: DateTime(2026, 5, 26, 9, 12),
+    sourceWatchForId: 'screenshot-watch-pending',
+  );
 
   static FirstThreeJourneyModel firstThreeJourneyForCount(int count) {
     return const FirstThreeJourneyEngine().build(
@@ -897,62 +891,62 @@ abstract final class ScreenshotSampleData {
 
   /// Five similar moments across two weeks for archive compression screenshots.
   static List<KeyMoment> get archiveCompressionMomentsSample => [
-        KeyMoment(
-          id: 'compression-m1',
-          date: DateTime(2026, 5, 12, 9, 0),
-          title: 'Said yes before checking in',
-          originalText: 'I said yes before checking what I needed at work.',
-          shortSummary: 'Said yes before checking what I needed.',
-          patternTitle: 'Taking responsibility before asking for help',
-          resultHint: 'heavier',
-          tags: const ['pressure', 'work'],
-          source: KeyMomentSource.reflection,
-        ),
-        KeyMoment(
-          id: 'compression-m2',
-          date: DateTime(2026, 5, 15, 14, 30),
-          title: 'Carried it alone again',
-          originalText: 'I carried it alone again instead of asking for help.',
-          shortSummary: 'Carried it alone again.',
-          patternTitle: 'Taking responsibility before asking for help',
-          resultHint: 'same',
-          tags: const ['pressure', 'work'],
-          source: KeyMomentSource.checkIn,
-        ),
-        KeyMoment(
-          id: 'compression-m3',
-          date: DateTime(2026, 5, 18, 8, 15),
-          title: 'Paused before replying',
-          originalText: 'It felt lighter after I paused before replying.',
-          shortSummary: 'Paused before replying and it felt lighter.',
-          patternTitle: 'Taking responsibility before asking for help',
-          resultHint: 'lighter',
-          tags: const ['pressure', 'work', 'helped'],
-          source: KeyMomentSource.reflection,
-        ),
-        KeyMoment(
-          id: 'compression-m4',
-          date: DateTime(2026, 5, 22, 17, 0),
-          title: 'Pressure before a message',
-          originalText: 'The pressure showed up before I opened the message.',
-          shortSummary: 'Pressure showed up before a message.',
-          patternTitle: 'Taking responsibility before asking for help',
-          resultHint: 'heavier',
-          tags: const ['pressure', 'work'],
-          source: KeyMomentSource.reflection,
-        ),
-        KeyMoment(
-          id: 'compression-m5',
-          date: DateTime(2026, 5, 26, 9, 12),
-          title: 'Pattern showed up again',
-          originalText: 'I said yes before checking what I needed again today.',
-          shortSummary: 'Said yes before checking what I needed.',
-          patternTitle: 'Taking responsibility before asking for help',
-          resultHint: 'same',
-          tags: const ['pressure', 'work', 'helped'],
-          source: KeyMomentSource.checkIn,
-        ),
-      ];
+    KeyMoment(
+      id: 'compression-m1',
+      date: DateTime(2026, 5, 12, 9, 0),
+      title: 'Said yes before checking in',
+      originalText: 'I said yes before checking what I needed at work.',
+      shortSummary: 'Said yes before checking what I needed.',
+      patternTitle: 'Taking responsibility before asking for help',
+      resultHint: 'heavier',
+      tags: const ['pressure', 'work'],
+      source: KeyMomentSource.reflection,
+    ),
+    KeyMoment(
+      id: 'compression-m2',
+      date: DateTime(2026, 5, 15, 14, 30),
+      title: 'Carried it alone again',
+      originalText: 'I carried it alone again instead of asking for help.',
+      shortSummary: 'Carried it alone again.',
+      patternTitle: 'Taking responsibility before asking for help',
+      resultHint: 'same',
+      tags: const ['pressure', 'work'],
+      source: KeyMomentSource.checkIn,
+    ),
+    KeyMoment(
+      id: 'compression-m3',
+      date: DateTime(2026, 5, 18, 8, 15),
+      title: 'Paused before replying',
+      originalText: 'It felt lighter after I paused before replying.',
+      shortSummary: 'Paused before replying and it felt lighter.',
+      patternTitle: 'Taking responsibility before asking for help',
+      resultHint: 'lighter',
+      tags: const ['pressure', 'work', 'helped'],
+      source: KeyMomentSource.reflection,
+    ),
+    KeyMoment(
+      id: 'compression-m4',
+      date: DateTime(2026, 5, 22, 17, 0),
+      title: 'Pressure before a message',
+      originalText: 'The pressure showed up before I opened the message.',
+      shortSummary: 'Pressure showed up before a message.',
+      patternTitle: 'Taking responsibility before asking for help',
+      resultHint: 'heavier',
+      tags: const ['pressure', 'work'],
+      source: KeyMomentSource.reflection,
+    ),
+    KeyMoment(
+      id: 'compression-m5',
+      date: DateTime(2026, 5, 26, 9, 12),
+      title: 'Pattern showed up again',
+      originalText: 'I said yes before checking what I needed again today.',
+      shortSummary: 'Said yes before checking what I needed.',
+      patternTitle: 'Taking responsibility before asking for help',
+      resultHint: 'same',
+      tags: const ['pressure', 'work', 'helped'],
+      source: KeyMomentSource.checkIn,
+    ),
+  ];
 
   static ArchiveMomentGroup get archiveCompressionGroupSample =>
       ArchiveMomentGroup(

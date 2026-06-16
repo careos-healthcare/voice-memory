@@ -26,9 +26,7 @@ class WeeklyPatternRecapCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.flat(
-        background: const Color(0xFFFFFBF5),
-      ),
+      decoration: VoiceMemoryCards.flat(background: const Color(0xFFFFFBF5)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -65,8 +63,9 @@ class WeeklyPatternRecapCard extends StatelessWidget {
                     ),
                     child: Text(
                       chip,
-                      style: VoiceMemoryTypography.bodyStyle()
-                          .copyWith(fontSize: 13),
+                      style: VoiceMemoryTypography.bodyStyle().copyWith(
+                        fontSize: 13,
+                      ),
                     ),
                   ),
               ],

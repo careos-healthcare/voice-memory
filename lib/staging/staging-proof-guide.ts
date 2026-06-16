@@ -9,7 +9,7 @@ import {
 export function printStagingProofGuide(): void {
   const lines = [
     "",
-    "=== VoiceMemory staging:proof-guide ===",
+    "=== ArchiveMe staging:proof-guide ===",
     "",
     "Run on the STAGING DEPLOY HOST with secrets in the host env (never in git).",
     `Sign-off directory: ${SPP20_DIR}`,

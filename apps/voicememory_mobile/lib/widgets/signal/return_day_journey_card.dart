@@ -46,8 +46,10 @@ class _ReturnDayJourneyCardState extends State<ReturnDayJourneyCard> {
   }
 
   Widget _continueCard(BuildContext context) {
-    final body = ConsumerUiCopy.returnDayJourneyBodyTemplate
-        .replaceAll('{title}', widget.journey.signalTitle);
+    final body = ConsumerUiCopy.returnDayJourneyBodyTemplate.replaceAll(
+      '{title}',
+      widget.journey.signalTitle,
+    );
 
     return Container(
       width: double.infinity,
@@ -124,7 +126,8 @@ class _ReturnDayJourneyCardState extends State<ReturnDayJourneyCard> {
           ),
           const SizedBox(height: AppSpacing.md),
           FilledButton(
-            onPressed: widget.onViewChanged ??
+            onPressed:
+                widget.onViewChanged ??
                 () => SignalJourneyNavigation.openJourneyDetail(context),
             child: const Text(ConsumerUiCopy.returnDayEvidenceSavedCta),
           ),

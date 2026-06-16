@@ -2,6 +2,8 @@ import "server-only";
 
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
+import { createSecureVerificationCode } from "@/lib/auth/auth-code-policy";
+
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 
 function authSecret(): string {
@@ -25,8 +27,9 @@ export function hashVerificationCode(code: string): string {
   return createHash("sha256").update(`${code}:${authSecret()}`).digest("hex");
 }
 
+/** 6 digits from a CSPRNG — sign-in codes must never use a weak PRNG. */
 export function createVerificationCode(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
+  return createSecureVerificationCode();
 }
 
 export function createUserId(): string {

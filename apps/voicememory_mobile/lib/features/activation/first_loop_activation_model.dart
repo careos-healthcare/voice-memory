@@ -127,23 +127,23 @@ class FirstLoopActivationState {
   }
 
   Map<String, dynamic> toJson() => {
-        'stage': stage.id,
-        if (openedAt != null) 'openedAt': openedAt!.toUtc().toIso8601String(),
-        if (firstRecordingStartedAt != null)
-          'firstRecordingStartedAt':
-              firstRecordingStartedAt!.toUtc().toIso8601String(),
-        if (firstMomentSavedAt != null)
-          'firstMomentSavedAt': firstMomentSavedAt!.toUtc().toIso8601String(),
-        if (firstPatternShownAt != null)
-          'firstPatternShownAt': firstPatternShownAt!.toUtc().toIso8601String(),
-        if (tomorrowCheckChosenAt != null)
-          'tomorrowCheckChosenAt':
-              tomorrowCheckChosenAt!.toUtc().toIso8601String(),
-        if (completedAt != null)
-          'completedAt': completedAt!.toUtc().toIso8601String(),
-        if (firstPatternTitle != null) 'firstPatternTitle': firstPatternTitle,
-        if (tomorrowQuestion != null) 'tomorrowQuestion': tomorrowQuestion,
-      };
+    'stage': stage.id,
+    if (openedAt != null) 'openedAt': openedAt!.toUtc().toIso8601String(),
+    if (firstRecordingStartedAt != null)
+      'firstRecordingStartedAt': firstRecordingStartedAt!
+          .toUtc()
+          .toIso8601String(),
+    if (firstMomentSavedAt != null)
+      'firstMomentSavedAt': firstMomentSavedAt!.toUtc().toIso8601String(),
+    if (firstPatternShownAt != null)
+      'firstPatternShownAt': firstPatternShownAt!.toUtc().toIso8601String(),
+    if (tomorrowCheckChosenAt != null)
+      'tomorrowCheckChosenAt': tomorrowCheckChosenAt!.toUtc().toIso8601String(),
+    if (completedAt != null)
+      'completedAt': completedAt!.toUtc().toIso8601String(),
+    if (firstPatternTitle != null) 'firstPatternTitle': firstPatternTitle,
+    if (tomorrowQuestion != null) 'tomorrowQuestion': tomorrowQuestion,
+  };
 
   static FirstLoopActivationState fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return empty;

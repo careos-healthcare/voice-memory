@@ -67,7 +67,7 @@ export function renderQuietShareCardCanvas(card: QuietShareCard): HTMLCanvasElem
   ctx.font = "400 10px system-ui, -apple-system, sans-serif";
   ctx.fillStyle = FOOTER_COLOR;
   ctx.textAlign = "center";
-  ctx.fillText("VoiceMemory", WIDTH / 2, HEIGHT - 36);
+  ctx.fillText("ArchiveMe", WIDTH / 2, HEIGHT - 36);
 
   return canvas;
 }
@@ -91,7 +91,7 @@ export function downloadQuietShareCardPng(card: QuietShareCard): Promise<void> {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `voicememory-${card.id.slice(0, 12)}.png`;
+    anchor.download = `archiveme-${card.id.slice(0, 12)}.png`;
     anchor.click();
     URL.revokeObjectURL(url);
   });
@@ -102,6 +102,6 @@ export function buildQuietShareCardPlainText(card: QuietShareCard): string {
   if (card.beforeLabel && card.nowLabel) {
     parts.unshift(`${card.beforeLabel} · ${card.nowLabel}`);
   }
-  parts.push("", "VoiceMemory");
+  parts.push("", "ArchiveMe");
   return parts.join("\n");
 }

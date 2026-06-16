@@ -1,10 +1,4 @@
-enum SyncStatus {
-  localOnly,
-  pendingUpload,
-  synced,
-  conflict,
-  error,
-}
+enum SyncStatus { localOnly, pendingUpload, synced, conflict, error }
 
 extension SyncStatusLabel on SyncStatus {
   String get label {

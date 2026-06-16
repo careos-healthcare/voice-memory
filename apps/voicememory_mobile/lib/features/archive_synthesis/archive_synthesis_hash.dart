@@ -25,5 +25,4 @@ String synthesisCacheKey({
   required String userId,
   required String monthKey,
   required String archiveHash,
-}) =>
-    '$userId|$monthKey|$archiveHash';
+}) => '$userId|$monthKey|$archiveHash';

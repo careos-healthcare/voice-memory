@@ -54,9 +54,7 @@ class BeliefChangeStories extends StatelessWidget {
     if (items.isEmpty) {
       return Text(
         BeliefProductCopy.changesEmptyLead,
-        style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
-        ),
+        style: VoiceMemoryTypography.bodyStyle(color: AppColors.textSecondary),
       );
     }
 
@@ -65,7 +63,9 @@ class BeliefChangeStories extends StatelessWidget {
       children: [
         for (var i = 0; i < items.length; i++)
           Padding(
-            padding: EdgeInsets.only(bottom: i < items.length - 1 ? AppSpacing.md : 0),
+            padding: EdgeInsets.only(
+              bottom: i < items.length - 1 ? AppSpacing.md : 0,
+            ),
             child: _StoryCard(item: items[i]),
           ),
       ],

@@ -58,8 +58,9 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
   void _maybeLogFollowupViewed() {
     if (_loggedFollowupView) return;
     _loggedFollowupView = true;
-    ArchiveInterpretationStore(AppServices.instance.prefs)
-        .markFollowupQuestionSeen(i.followUpQuestion);
+    ArchiveInterpretationStore(
+      AppServices.instance.prefs,
+    ).markFollowupQuestionSeen(i.followUpQuestion);
     ArchiveExplanationV2Analytics.followupQuestionViewed(
       insightId: i.insightId,
       kind: i.kind.name,
@@ -74,11 +75,11 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
   }
 
   static String _trendLabel(BeliefTimelineTrend t) => switch (t) {
-        BeliefTimelineTrend.strengthening => 'May be strengthening',
-        BeliefTimelineTrend.weakening => 'May be weakening',
-        BeliefTimelineTrend.stable => 'May appear steady',
-        BeliefTimelineTrend.unknown => 'Still forming',
-      };
+    BeliefTimelineTrend.strengthening => 'May be strengthening',
+    BeliefTimelineTrend.weakening => 'May be weakening',
+    BeliefTimelineTrend.stable => 'May appear steady',
+    BeliefTimelineTrend.unknown => 'Still forming',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +132,8 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
           ...supporting.map(
             (ref) => _EvidenceTile(ref: ref, onTap: widget.onOpenEntry),
           ),
-          if (!_showAllSupporting && i.supportingEvidence.length > supporting.length)
+          if (!_showAllSupporting &&
+              i.supportingEvidence.length > supporting.length)
             TextButton(
               onPressed: () => setState(() => _showAllSupporting = true),
               child: const Text('Show all supporting entries'),
@@ -206,8 +208,13 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
             const SizedBox(height: 12),
           ],
           if (i.relatedBlindSpots.isNotEmpty) ...[
-            Text('Contradictions', style: VoiceMemoryTypography.metadataStyle()),
-            ...i.relatedBlindSpots.take(3).map(
+            Text(
+              'Contradictions',
+              style: VoiceMemoryTypography.metadataStyle(),
+            ),
+            ...i.relatedBlindSpots
+                .take(3)
+                .map(
                   (s) => ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(s.headline),
@@ -217,7 +224,9 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
           ],
           if (i.relatedContradictions.isNotEmpty) ...[
             Text('Tensions', style: VoiceMemoryTypography.metadataStyle()),
-            ...i.relatedContradictions.take(3).map(
+            ...i.relatedContradictions
+                .take(3)
+                .map(
                   (c) => ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(c.summary),
@@ -344,14 +353,18 @@ class _DeeperPanel extends StatelessWidget {
             ...contradicting.map(
               (ref) => _EvidenceTile(ref: ref, onTap: onOpenEntry),
             ),
-            if (!showAllContradicting && totalContradicting > contradicting.length)
+            if (!showAllContradicting &&
+                totalContradicting > contradicting.length)
               TextButton(
                 onPressed: onShowAllContradicting,
                 child: const Text('Show all contradicting entries'),
               ),
           ],
           const SizedBox(height: 20),
-          _SectionHeader("WHAT WOULD CHANGE THE ARCHIVE'S MIND", accent: accent),
+          _SectionHeader(
+            "WHAT WOULD CHANGE THE ARCHIVE'S MIND",
+            accent: accent,
+          ),
           const SizedBox(height: 8),
           if (i.mindChange.strongerIf.isNotEmpty) ...[
             Text('Stronger if:', style: VoiceMemoryTypography.metadataStyle()),

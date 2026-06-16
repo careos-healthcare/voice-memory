@@ -59,11 +59,7 @@ class ArchiveWasWrongInsight {
   final String shiftLabel;
 }
 
-enum BeliefConfidenceTrend {
-  rising,
-  falling,
-  stable,
-}
+enum BeliefConfidenceTrend { rising, falling, stable }
 
 class BeliefUnderReview {
   const BeliefUnderReview({
@@ -149,6 +145,5 @@ class LivingArchiveView {
 
   /// Secondary items hidden behind View More on Archive open.
   bool get hasCollapsedContent =>
-      (whatChangedToday?.hasContent ?? false) ||
-      mostImportant != null;
+      (whatChangedToday?.hasContent ?? false) || mostImportant != null;
 }

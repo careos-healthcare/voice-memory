@@ -20,7 +20,7 @@ if command -v jq >/dev/null 2>&1; then
   if echo "$ENV_JSON" | jq -e '.emailFromUsesResendSandbox == true' >/dev/null 2>&1; then
     echo "FAIL: EMAIL_FROM still uses Resend sandbox (onboarding@resend.dev)."
     echo "Verify a domain at https://resend.com/domains then set:"
-    echo "  VoiceMemory <noreply@YOUR_VERIFIED_DOMAIN>"
+    echo "  ArchiveMe <noreply@YOUR_VERIFIED_DOMAIN>"
     exit 1
   fi
   if echo "$ENV_JSON" | jq -e '.productionEmailReady == true' >/dev/null 2>&1; then

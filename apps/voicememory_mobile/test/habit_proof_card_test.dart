@@ -6,24 +6,27 @@ import 'package:voicememory_mobile/widgets/patterns/habit_proof_card.dart'
 import 'package:voicememory_mobile/widgets/record/habit_proof_card.dart'
     as record;
 
-HabitProofMoment _proof({String? nextLine = 'What happens right before it shows up?'}) =>
-    HabitProofMoment(
-      id: 'hp_pm1_3_progressFound',
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      type: HabitProofType.progressFound,
-      headline: 'Now there is something to compare.',
-      body: 'You can see whether this pattern is repeating, '
-          'getting lighter, getting heavier, or changing.',
-      proofLine: 'This pattern is still showing up.',
-      nextLine: nextLine,
-      checkInCount: 3,
-      shouldShow: true,
-    );
+HabitProofMoment _proof({
+  String? nextLine = 'What happens right before it shows up?',
+}) => HabitProofMoment(
+  id: 'hp_pm1_3_progressFound',
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  type: HabitProofType.progressFound,
+  headline: 'Now there is something to compare.',
+  body:
+      'You can see whether this pattern is repeating, '
+      'getting lighter, getting heavier, or changing.',
+  proofLine: 'This pattern is still showing up.',
+  nextLine: nextLine,
+  checkInCount: 3,
+  shouldShow: true,
+);
 
 void main() {
-  testWidgets('record card shows "Why this is useful" with proof details',
-      (tester) async {
+  testWidgets('record card shows "Why this is useful" with proof details', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -59,8 +62,9 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('patterns card shows "Why keep checking?" and uses next line',
-      (tester) async {
+  testWidgets('patterns card shows "Why keep checking?" and uses next line', (
+    tester,
+  ) async {
     var tapped = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -83,8 +87,9 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('patterns card hides CTA when there is no next line',
-      (tester) async {
+  testWidgets('patterns card hides CTA when there is no next line', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

@@ -1,5 +1,5 @@
 /// Comparison hints from quick answers on return day.
-abstract final class ReturnCaptureComparisonHints {
+abstract class ReturnCaptureComparisonHints {
   ReturnCaptureComparisonHints._();
 
   static const same = 'same';
@@ -8,11 +8,7 @@ abstract final class ReturnCaptureComparisonHints {
   static const changed = 'changed';
 }
 
-enum ReturnCaptureQuality {
-  low,
-  medium,
-  high,
-}
+enum ReturnCaptureQuality { low, medium, high }
 
 extension ReturnCaptureQualityIds on ReturnCaptureQuality {
   String get id => name;
@@ -97,11 +93,11 @@ class ReturnCaptureSelection {
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() => {
-        'watchForId': watchForId,
-        'selectedQuickAnswerId': selectedQuickAnswerId,
-        'comparisonHint': comparisonHint,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'watchForId': watchForId,
+    'selectedQuickAnswerId': selectedQuickAnswerId,
+    'comparisonHint': comparisonHint,
+    'createdAt': createdAt.toIso8601String(),
+  };
 
   static ReturnCaptureSelection? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;

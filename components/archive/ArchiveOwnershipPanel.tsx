@@ -6,6 +6,8 @@ import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArchiveHistorySummary } from "@/components/archive/ArchiveHistorySummary";
+import { ArchiveMilestones } from "@/components/archive/ArchiveMilestones";
 import {
   buildArchiveOwnershipReport,
   buildArchivePageOwnershipLines,
@@ -35,6 +37,8 @@ export function ArchiveOwnershipPanel() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm leading-[1.75] text-zinc-500">
+        <ArchiveMilestones className="text-zinc-400" />
+        <ArchiveHistorySummary className="border-t border-white/5 pt-3 text-zinc-400" />
         {lines.primary ? <p>{lines.primary}</p> : null}
         {lines.secondary ? <p>{lines.secondary}</p> : null}
         {lines.reassurance ? <p className="text-zinc-600">{lines.reassurance}</p> : null}

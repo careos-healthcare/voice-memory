@@ -19,7 +19,7 @@ import 'retention_metrics_tracker.dart';
 import 'return_reason_capture_store.dart';
 
 /// Builds retention diagnosis snapshot for trial/debug surfaces.
-abstract final class RetentionDiagnosisV2Coordinator {
+abstract class RetentionDiagnosisV2Coordinator {
   RetentionDiagnosisV2Coordinator._();
 
   static Future<RetentionDiagnosisSnapshot> build() async {
@@ -38,7 +38,8 @@ abstract final class RetentionDiagnosisV2Coordinator {
     final loop = await LoopModeCoordinator.loadActive();
     const loopEngine = LoopModeEngine();
     final specificity = await FirstInsightSpecificityStore.latest();
-    final firstPromptUsed = await FirstInsightSpecificityStore.firstPromptUsed();
+    final firstPromptUsed =
+        await FirstInsightSpecificityStore.firstPromptUsed();
     final journey = await SignalJourneyCoordinator.loadActive();
     final confirmedReviews =
         await SignalReviewCoordinator.confirmedReviewCount();
@@ -51,7 +52,9 @@ abstract final class RetentionDiagnosisV2Coordinator {
     final entries = await AppServices.instance.journal.loadAll();
     final lastText = entries.isNotEmpty ? entries.last.transcript : '';
     final entrySupportsWedge =
-        wedge != null && wedge != AudienceWedge.notSureYet && wedge.textSupports(lastText);
+        wedge != null &&
+        wedge != AudienceWedge.notSureYet &&
+        wedge.textSupports(lastText);
 
     var wedgeMatched = false;
     if (specificity == FirstInsightSpecificityRating.yesSpecific) {
@@ -68,15 +71,18 @@ abstract final class RetentionDiagnosisV2Coordinator {
       thirdMomentRecorded: activationEvents.thirdReflectionSaved > 0,
       interpretationSignals: interpretationSignals,
       reminderPrePromptShown:
-          (await metrics.count(RetentionMetricsTracker.reminderPrePromptShown)) >
-              0,
+          (await metrics.count(
+            RetentionMetricsTracker.reminderPrePromptShown,
+          )) >
+          0,
       reminderPrePromptAccepted:
           (await metrics.count(RetentionMetricsTracker.reminderAllowedTapped)) >
-              0,
-      reminderPrePromptDismissed:
-          await metrics.count(RetentionMetricsTracker.reminderPrePromptDismissed),
-      reminderReturnCount:
-          await ReturnReasonCaptureStore.instance().reminderReturnCount(),
+          0,
+      reminderPrePromptDismissed: await metrics.count(
+        RetentionMetricsTracker.reminderPrePromptDismissed,
+      ),
+      reminderReturnCount: await ReturnReasonCaptureStore.instance()
+          .reminderReturnCount(),
       onboardingIntent: intent,
       journeyEvidenceCount: journey?.evidenceCount ?? 0,
       reviewConfirmed: confirmedReviews > 0,
@@ -88,29 +94,25 @@ abstract final class RetentionDiagnosisV2Coordinator {
       entryTextSupportsWedge: entrySupportsWedge,
       loopModeSelected: loop?.id,
       loopFirstPromptUsed: loop?.firstPromptUsed ?? false,
-      loopMatchedFirstRecording: loop != null &&
+      loopMatchedFirstRecording:
+          loop != null &&
           lastReadId != null &&
           loopEngine.readMatchesLoop(loop, lastReadId),
       loopReadAccepted: loop?.readAccepted ?? false,
       loopUnsupportedRecording: loop?.unsupportedRecording ?? false,
-      loopReadRejected: (await metrics.count(
-            RetentionMetricsTracker.loopReadRejected,
-          )) >
-          0,
+      loopReadRejected:
+          (await metrics.count(RetentionMetricsTracker.loopReadRejected)) > 0,
       loopCompleted: loop?.completed ?? false,
-      loopReviewViewed: (await metrics.count(
-            RetentionMetricsTracker.loopReviewViewed,
-          )) >
+      loopReviewViewed:
+          (await metrics.count(RetentionMetricsTracker.loopReviewViewed)) > 0,
+      loopReviewConfirmed:
+          (await metrics.count(RetentionMetricsTracker.loopReviewConfirmed)) >
           0,
-      loopReviewConfirmed: (await metrics.count(
-            RetentionMetricsTracker.loopReviewConfirmed,
-          )) >
+      loopReviewCorrected:
+          (await metrics.count(RetentionMetricsTracker.loopReviewCorrected)) >
           0,
-      loopReviewCorrected: (await metrics.count(
-            RetentionMetricsTracker.loopReviewCorrected,
-          )) >
-          0,
-      loopPaywallTeaserTapped: (await metrics.count(
+      loopPaywallTeaserTapped:
+          (await metrics.count(
             RetentionMetricsTracker.loopPaywallTeaserTapped,
           )) >
           0,
@@ -128,10 +130,12 @@ abstract final class RetentionDiagnosisV2Coordinator {
       onboardingIntentSelectedCount: await metrics.count(
         RetentionMetricsTracker.onboardingIntentSelected,
       ),
-      readUsefulTappedCount:
-          await metrics.count(RetentionMetricsTracker.readUsefulTapped),
-      readNotQuiteTappedCount:
-          await metrics.count(RetentionMetricsTracker.readNotQuiteTapped),
+      readUsefulTappedCount: await metrics.count(
+        RetentionMetricsTracker.readUsefulTapped,
+      ),
+      readNotQuiteTappedCount: await metrics.count(
+        RetentionMetricsTracker.readNotQuiteTapped,
+      ),
       interpretationStrongCount: await InterpretationQualityStore.strongCount(),
       interpretationWeakCount: await InterpretationQualityStore.weakCount(),
       reminderTimingOfferedCount: await metrics.count(
@@ -161,48 +165,51 @@ abstract final class RetentionDiagnosisV2Coordinator {
       firstPromptUsed: firstPromptUsed,
       loopModeSelected: loop?.id,
       loopFirstPromptUsed: loop?.firstPromptUsed ?? false,
-      loopMatchedFirstRecording: loop != null &&
+      loopMatchedFirstRecording:
+          loop != null &&
           lastReadId != null &&
           loopEngine.readMatchesLoop(loop, lastReadId),
       loopReadAccepted: loop?.readAccepted ?? false,
       loopUnsupportedRecording: loop?.unsupportedRecording ?? false,
       loopCompleted: loop?.completed ?? false,
-      loopReviewViewed: (await metrics.count(
-            RetentionMetricsTracker.loopReviewViewed,
-          )) >
+      loopReviewViewed:
+          (await metrics.count(RetentionMetricsTracker.loopReviewViewed)) > 0,
+      loopReviewConfirmed:
+          (await metrics.count(RetentionMetricsTracker.loopReviewConfirmed)) >
           0,
-      loopReviewConfirmed: (await metrics.count(
-            RetentionMetricsTracker.loopReviewConfirmed,
-          )) >
+      loopReviewCorrected:
+          (await metrics.count(RetentionMetricsTracker.loopReviewCorrected)) >
           0,
-      loopReviewCorrected: (await metrics.count(
-            RetentionMetricsTracker.loopReviewCorrected,
-          )) >
-          0,
-      loopReviewKeptWatching: (await metrics.count(
+      loopReviewKeptWatching:
+          (await metrics.count(
             RetentionMetricsTracker.loopReviewKeptWatching,
           )) >
           0,
-      loopPaywallTeaserShown: (await metrics.count(
+      loopPaywallTeaserShown:
+          (await metrics.count(
             RetentionMetricsTracker.loopPaywallTeaserShown,
           )) >
           0,
-      loopPaywallTeaserTapped: (await metrics.count(
+      loopPaywallTeaserTapped:
+          (await metrics.count(
             RetentionMetricsTracker.loopPaywallTeaserTapped,
           )) >
           0,
       proveEnoughSelected: loop?.id == LoopModeIds.proveEnough,
-      proveEnoughFirstPromptUsed: loop?.id == LoopModeIds.proveEnough &&
+      proveEnoughFirstPromptUsed:
+          loop?.id == LoopModeIds.proveEnough &&
           (loop?.firstPromptUsed ?? false),
-      proveEnoughMatchedFirstRecording: loop?.id == LoopModeIds.proveEnough &&
+      proveEnoughMatchedFirstRecording:
+          loop?.id == LoopModeIds.proveEnough &&
           lastReadId != null &&
           loopEngine.readMatchesLoop(loop!, lastReadId),
-      proveEnoughReadAccepted: loop?.id == LoopModeIds.proveEnough &&
-          (loop?.readAccepted ?? false),
-      proveEnoughUnsupportedRecording: loop?.id == LoopModeIds.proveEnough &&
+      proveEnoughReadAccepted:
+          loop?.id == LoopModeIds.proveEnough && (loop?.readAccepted ?? false),
+      proveEnoughUnsupportedRecording:
+          loop?.id == LoopModeIds.proveEnough &&
           (loop?.unsupportedRecording ?? false),
-      proveEnoughCompleted: loop?.id == LoopModeIds.proveEnough &&
-          (loop?.completed ?? false),
+      proveEnoughCompleted:
+          loop?.id == LoopModeIds.proveEnough && (loop?.completed ?? false),
       acquisitionCohortId: syncedCohort?.cohortId ?? cohort?.cohortId,
       acquisitionCohortPromiseShown: syncedCohort?.promiseShown ?? '',
       acquisitionCohortFirstMomentRecorded:
@@ -211,8 +218,7 @@ abstract final class RetentionDiagnosisV2Coordinator {
           syncedCohort?.secondMomentRecorded ?? false,
       acquisitionCohortThirdMomentRecorded:
           syncedCohort?.thirdMomentRecorded ?? false,
-      acquisitionCohortReviewReached:
-          syncedCohort?.loopReviewReached ?? false,
+      acquisitionCohortReviewReached: syncedCohort?.loopReviewReached ?? false,
       acquisitionCohortReviewConfirmed:
           syncedCohort?.loopReviewConfirmed ?? false,
       acquisitionCohortPaywallTeaserTapped:

@@ -2,7 +2,7 @@ import { strToU8, zipSync } from "fflate";
 
 import { buildArchiveMarkdown } from "@/lib/archive/markdown-export";
 import { slugExportDate } from "@/lib/memory-export";
-import type { VoiceMemoryArchivePackage } from "@/types/archive-permanence";
+import type { ArchiveMeArchivePackage } from "@/types/archive-permanence";
 
 import { downloadBlob } from "@/lib/archive/full-export";
 
@@ -14,7 +14,7 @@ function base64ToBytes(value: string): Uint8Array {
 }
 
 /** Download ZIP with JSON, Markdown, and audio files. */
-export function downloadArchiveZipPackage(archive: VoiceMemoryArchivePackage): void {
+export function downloadArchiveZipPackage(archive: ArchiveMeArchivePackage): void {
   const markdown = buildArchiveMarkdown(archive);
   const files: Record<string, Uint8Array> = {
     "manifest.json": strToU8(
@@ -36,14 +36,14 @@ export function downloadArchiveZipPackage(archive: VoiceMemoryArchivePackage): v
     "reflections.md": strToU8(markdown),
     "README.txt": strToU8(
       [
-        "VoiceMemory Archive Package",
+        "ArchiveMe Archive Package",
         "",
         "archive.json — full structured archive",
         "reflections.md — readable export",
         "audio/ — recordings where available",
         "photos/ — memory anchor images where available",
         "",
-        "Import this package from /archive in VoiceMemory.",
+        "Import this package from /archive in ArchiveMe.",
       ].join("\n"),
     ),
   };
@@ -62,7 +62,7 @@ export function downloadArchiveZipPackage(archive: VoiceMemoryArchivePackage): v
 
   const zipped = zipSync(files, { level: 6 });
   downloadBlob(
-    `voicememory-archive-${slugExportDate()}.zip`,
+    `archiveme-archive-${slugExportDate()}.zip`,
     new Blob([zipped], { type: "application/zip" }),
   );
 }

@@ -103,7 +103,7 @@ for (const line of bannedList.split("\n")) {
 }
 
 const copy = fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8");
-if (copy.includes("VoiceMemory brings back")) {
+if (copy.includes("ArchiveMe brings back")) {
   failures.push("product-copy must not use abstract brings-back framing");
 }
 if (!copy.includes("You said this before") && !copy.includes("RECOGNITION_COPY.wedge")) {

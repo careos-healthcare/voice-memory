@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../api/api_error_message.dart';
+import '../security/private_data_service.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -26,17 +27,24 @@ class _ExportScreenState extends State<ExportScreen> {
       _message = null;
     });
     try {
-      final json = await AppServices.instance.journalStore.exportJson();
+      final payload = await PrivateDataService(
+        journalStore: AppServices.instance.journalStore,
+      ).buildSanitizedExport();
+      final json = payload.toJson();
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/archiveme_export.json');
       await file.writeAsString(json);
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        subject: 'ArchiveMe journal export',
-      );
-      setState(() => _message = 'Export ready (${json.length} bytes).');
+      await Share.shareXFiles([
+        XFile(file.path),
+      ], subject: 'ArchiveMe journal export');
+      setState(() => _message = 'Export ready (${payload.entries.length} entries).');
     } catch (e) {
-      setState(() => _message = userFacingErrorMessage(e, fallback: 'Export failed. Try again.'));
+      setState(
+        () => _message = userFacingErrorMessage(
+          e,
+          fallback: 'Export failed. Try again.',
+        ),
+      );
     } finally {
       setState(() => _busy = false);
     }
@@ -52,7 +60,8 @@ class _ExportScreenState extends State<ExportScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Exports all locally saved journal entries as JSON. '
+              'Exports your locally saved reflections as JSON. '
+              'Internal sync paths and audio file locations are not included. '
               'Sign in and sync first if you want a server-backed export.',
               style: TextStyle(color: AppTheme.muted, height: 1.4),
             ),

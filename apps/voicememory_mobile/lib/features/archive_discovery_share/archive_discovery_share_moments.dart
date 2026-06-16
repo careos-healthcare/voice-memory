@@ -8,7 +8,7 @@ import 'archive_discovery_share_card_model.dart';
 import 'archive_discovery_share_types.dart';
 
 /// In-context share cards from existing archive data — no new AI.
-abstract final class ArchiveDiscoveryShareMoments {
+abstract class ArchiveDiscoveryShareMoments {
   ArchiveDiscoveryShareMoments._();
 
   static ArchiveDiscoveryShareCardModel? fromContradiction(
@@ -21,8 +21,7 @@ abstract final class ArchiveDiscoveryShareMoments {
     return ArchiveDiscoveryShareCardModel(
       id: 'contradiction-${contradiction.id}',
       type: ArchiveDiscoveryShareCardType.contradiction,
-      insight:
-          '${_clip(you, 72)} — but recordings also show ${_clip(but, 72)}',
+      insight: '${_clip(you, 72)} — but recordings also show ${_clip(but, 72)}',
       evidenceRecordingCount: count > 0 ? count : 1,
     );
   }
@@ -83,16 +82,15 @@ abstract final class ArchiveDiscoveryShareMoments {
   ) {
     if (!isLifecycleShareable(entry)) return null;
 
-    final latestEvent =
-        entry.events.isNotEmpty ? entry.events.last : null;
+    final latestEvent = entry.events.isNotEmpty ? entry.events.last : null;
     final statement = entry.statement.trim();
     if (statement.isEmpty && latestEvent == null) return null;
 
     final insight = latestEvent != null && latestEvent.summary.trim().isNotEmpty
         ? _clip(latestEvent.summary, 160)
         : entry.isNoLongerDetected
-            ? 'A belief is no longer showing up in recent recordings: ${_clip(statement, 100)}'
-            : 'Belief lifecycle update (${BeliefLifecycleCopy.statusLabelFor(entry.status)}): ${_clip(statement, 100)}';
+        ? 'A belief is no longer showing up in recent recordings: ${_clip(statement, 100)}'
+        : 'Belief lifecycle update (${BeliefLifecycleCopy.statusLabelFor(entry.status)}): ${_clip(statement, 100)}';
 
     return ArchiveDiscoveryShareCardModel(
       id: 'lifecycle-${statement.hashCode}',

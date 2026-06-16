@@ -95,10 +95,7 @@ void main() {
         find.text(ConsumerUiCopy.acquisitionIntentQuestion),
         findsOneWidget,
       );
-      expect(
-        find.text('Saying yes when I have no capacity'),
-        findsOneWidget,
-      );
+      expect(find.text('Saying yes when I have no capacity'), findsOneWidget);
       expect(find.text('Not sure yet'), findsOneWidget);
     });
 
@@ -106,23 +103,20 @@ void main() {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
       await AudienceWedgeStore.instance().save(AudienceWedge.proveEnough);
-      expect(await AudienceWedgeStore.instance().load(), AudienceWedge.proveEnough);
+      expect(
+        await AudienceWedgeStore.instance().load(),
+        AudienceWedge.proveEnough,
+      );
       expect(await AudienceWedgeStore.instance().selectedAt(), isNotNull);
     });
 
     test('first prompt changes by wedge', () async {
-      expect(
-        AudienceWedge.sayingYesCapacity.firstPrompt,
-        contains('say yes'),
-      );
+      expect(AudienceWedge.sayingYesCapacity.firstPrompt, contains('say yes'));
       expect(
         AudienceWedge.proveEnough.firstPrompt,
         contains('pressure to do more'),
       );
-      expect(
-        AudienceWedge.notSureYet.firstPrompt,
-        contains('what felt heavy'),
-      );
+      expect(AudienceWedge.notSureYet.firstPrompt, contains('what felt heavy'));
     });
 
     test('legacy intent maps to wedge', () async {
@@ -175,7 +169,10 @@ void main() {
         audienceWedge: AudienceWedge.sayingYesCapacity,
       );
       expect(result.reads.first.title.toLowerCase(), contains('prove'));
-      expect(result.reads.first.title.toLowerCase(), isNot(contains('saying yes before')));
+      expect(
+        result.reads.first.title.toLowerCase(),
+        isNot(contains('saying yes before')),
+      );
     });
   });
 
@@ -204,7 +201,13 @@ void main() {
           ),
         ),
       );
-      const banned = ['therapy', 'coach', 'diagnosis', 'AI friend', 'VoiceMemory'];
+      const banned = [
+        'therapy',
+        'coach',
+        'diagnosis',
+        'AI friend',
+        'VoiceMemory',
+      ];
       for (final s in [
         ConsumerUiCopy.firstInsightSharpnessQuestion,
         ConsumerUiCopy.firstInsightSharpnessYes,
@@ -246,7 +249,9 @@ void main() {
       await tester.ensureVisible(
         find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
       );
-      await tester.tap(find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric));
+      await tester.tap(
+        find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       expect(
@@ -283,7 +288,9 @@ void main() {
       await tester.ensureVisible(
         find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
       );
-      await tester.tap(find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle));
+      await tester.tap(
+        find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       expect(
@@ -298,28 +305,21 @@ void main() {
 
     test('audience not activated', () {
       final result = engine.diagnose(
-        _diagInput(
-          first: false,
-          wedge: AudienceWedge.proveEnough,
-        ),
+        _diagInput(first: false, wedge: AudienceWedge.proveEnough),
       );
       expect(result.bottleneck, RetentionBottleneckV2.audienceNotActivated);
     });
 
     test('insight too generic', () {
       final result = engine.diagnose(
-        _diagInput(
-          rating: FirstInsightSpecificityRating.tooGeneric,
-        ),
+        _diagInput(rating: FirstInsightSpecificityRating.tooGeneric),
       );
       expect(result.bottleneck, RetentionBottleneckV2.insightTooGeneric);
     });
 
     test('wrong angle', () {
       final result = engine.diagnose(
-        _diagInput(
-          rating: FirstInsightSpecificityRating.wrongAngle,
-        ),
+        _diagInput(rating: FirstInsightSpecificityRating.wrongAngle),
       );
       expect(result.bottleneck, RetentionBottleneckV2.wrongAngle);
     });
@@ -336,9 +336,18 @@ void main() {
     });
   });
 
-  test('paywall copy aligned to wedge concept', () {
-    expect(ConsumerUiCopy.paywallHeadline, contains('loop'));
-    expect(ConsumerUiCopy.paywallBullets.first, contains('loop'));
-    expect(ConsumerUiCopy.paywallHeadline, isNot(contains('pattern memory growing')));
+  test('paywall copy aligned to continuity concept', () {
+    expect(
+      ConsumerUiCopy.paywallHeadline,
+      contains('archive useful'),
+    );
+    expect(
+      ConsumerUiCopy.paywallBullets.first,
+      contains('keeps returning'),
+    );
+    expect(
+      ConsumerUiCopy.paywallHeadline,
+      isNot(contains('pattern memory growing')),
+    );
   });
 }

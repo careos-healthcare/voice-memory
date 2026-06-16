@@ -2,7 +2,7 @@ import '../../models/journal_entry.dart';
 import '../../services/app_services.dart';
 
 /// Persists cohort anchor + one-time D1/D3/D7 recording milestones.
-abstract final class First25RecordingRetention {
+abstract class First25RecordingRetention {
   First25RecordingRetention._();
 
   static const String _prefsKey = 'first25RecordingRetention';
@@ -22,9 +22,7 @@ abstract final class First25RecordingRetention {
       final anchorRaw = state['firstRecordingAt'] as String?;
       final fired = _readFiredDays(state);
 
-      final anchor = anchorRaw != null
-          ? DateTime.tryParse(anchorRaw)
-          : null;
+      final anchor = anchorRaw != null ? DateTime.tryParse(anchorRaw) : null;
       if (anchor == null) {
         await prefs.writeMap(_prefsKey, {
           'firstRecordingAt': createdAt.toUtc().toIso8601String(),

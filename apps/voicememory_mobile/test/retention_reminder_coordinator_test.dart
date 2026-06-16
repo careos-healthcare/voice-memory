@@ -15,14 +15,14 @@ Future<void> _reset(String stamp) async {
 }
 
 TomorrowCheckIn _checkIn() => TomorrowCheckIn(
-      id: 'tci-ret',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'What happens right before it shows up?',
-      options: kDefaultTomorrowCheckInOptions,
-    );
+  id: 'tci-ret',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'What happens right before it shows up?',
+  options: kDefaultTomorrowCheckInOptions,
+);
 
 class _FakeBackend implements CheckInReminderBackend {
   int scheduleCalls = 0;
@@ -63,18 +63,22 @@ Future<void> _makeReady() async {
     ),
   );
   final hook = HookDiagnosisStore(prefs);
-  await hook.append(HookDiagnosisEvent(
-    id: 'q1',
-    createdAt: DateTime(2026, 5, 26),
-    type: HookDiagnosisEventType.checkInQuestionRated,
-    rating: HookDiagnosisRating.yes,
-  ));
-  await hook.append(HookDiagnosisEvent(
-    id: 'q2',
-    createdAt: DateTime(2026, 5, 26),
-    type: HookDiagnosisEventType.checkInQuestionRated,
-    rating: HookDiagnosisRating.sortOf,
-  ));
+  await hook.append(
+    HookDiagnosisEvent(
+      id: 'q1',
+      createdAt: DateTime(2026, 5, 26),
+      type: HookDiagnosisEventType.checkInQuestionRated,
+      rating: HookDiagnosisRating.yes,
+    ),
+  );
+  await hook.append(
+    HookDiagnosisEvent(
+      id: 'q2',
+      createdAt: DateTime(2026, 5, 26),
+      type: HookDiagnosisEventType.checkInQuestionRated,
+      rating: HookDiagnosisRating.sortOf,
+    ),
+  );
 }
 
 void main() {

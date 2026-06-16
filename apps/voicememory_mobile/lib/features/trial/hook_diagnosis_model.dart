@@ -1,5 +1,5 @@
 /// Hook diagnosis event types.
-abstract final class HookDiagnosisEventType {
+abstract class HookDiagnosisEventType {
   HookDiagnosisEventType._();
 
   static const checkInQuestionRated = 'checkInQuestionRated';
@@ -10,7 +10,7 @@ abstract final class HookDiagnosisEventType {
 }
 
 /// Why a completed check-in result felt not useful.
-abstract final class HookDiagnosisNotUsefulReason {
+abstract class HookDiagnosisNotUsefulReason {
   HookDiagnosisNotUsefulReason._();
 
   static const tooVague = 'too_vague';
@@ -20,7 +20,7 @@ abstract final class HookDiagnosisNotUsefulReason {
 }
 
 /// Question / result ratings.
-abstract final class HookDiagnosisRating {
+abstract class HookDiagnosisRating {
   HookDiagnosisRating._();
 
   static const yes = 'yes';
@@ -29,7 +29,7 @@ abstract final class HookDiagnosisRating {
 }
 
 /// Missed check-in reasons.
-abstract final class HookDiagnosisMissedReason {
+abstract class HookDiagnosisMissedReason {
   HookDiagnosisMissedReason._();
 
   static const forgot = 'forgot';
@@ -39,7 +39,7 @@ abstract final class HookDiagnosisMissedReason {
 }
 
 /// Likely failure labels for facilitator export.
-abstract final class HookLikelyFailure {
+abstract class HookLikelyFailure {
   HookLikelyFailure._();
 
   static const notEnoughData = 'notEnoughData';
@@ -70,14 +70,14 @@ class HookDiagnosisEvent {
   final Map<String, String> metadata;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'type': type,
-        if (checkInId != null) 'checkInId': checkInId,
-        if (reason != null) 'reason': reason,
-        if (rating != null) 'rating': rating,
-        if (metadata.isNotEmpty) 'metadata': metadata,
-      };
+    'id': id,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'type': type,
+    if (checkInId != null) 'checkInId': checkInId,
+    if (reason != null) 'reason': reason,
+    if (rating != null) 'rating': rating,
+    if (metadata.isNotEmpty) 'metadata': metadata,
+  };
 
   static HookDiagnosisEvent? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -198,17 +198,21 @@ String computeLikelyFailure(HookDiagnosisSummary summary) {
   final questionDenom = summary.questionRatedTotal;
   final questionPositiveRate = questionDenom == 0
       ? 0.0
-      : (summary.checkInQuestionRatedUseful + summary.checkInQuestionRatedSortOf) /
-          questionDenom;
+      : (summary.checkInQuestionRatedUseful +
+                summary.checkInQuestionRatedSortOf) /
+            questionDenom;
 
-  if (summary.checkInCompletionRate >= 0.4 && questionDenom > 0 && questionPositiveRate >= 0.5) {
+  if (summary.checkInCompletionRate >= 0.4 &&
+      questionDenom > 0 &&
+      questionPositiveRate >= 0.5) {
     return HookLikelyFailure.working;
   }
 
   final notCompellingScore =
       summary.checkInQuestionRatedNotUseful + summary.didNotCareCount;
   if (notCompellingScore >= 2 ||
-      (summary.checkInQuestionRatedNotUseful >= 1 && summary.didNotCareCount >= 1)) {
+      (summary.checkInQuestionRatedNotUseful >= 1 &&
+          summary.didNotCareCount >= 1)) {
     return HookLikelyFailure.questionNotCompelling;
   }
 
@@ -242,10 +246,12 @@ double? computeClarityIssueRate({
   required Map<String, int> notUsefulReasonCounts,
 }) {
   if (checkInsDueShown == 0) return null;
-  final vague = notUsefulReasonCounts[HookDiagnosisNotUsefulReason.tooVague] ?? 0;
+  final vague =
+      notUsefulReasonCounts[HookDiagnosisNotUsefulReason.tooVague] ?? 0;
   final confusingReason =
       notUsefulReasonCounts[HookDiagnosisNotUsefulReason.confusing] ?? 0;
-  final signals = confusingCount + examplesOpenedCount + vague + confusingReason;
+  final signals =
+      confusingCount + examplesOpenedCount + vague + confusingReason;
   return (signals / checkInsDueShown).clamp(0.0, 1.0);
 }
 

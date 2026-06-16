@@ -77,8 +77,8 @@ class _PatternMapScreenState extends State<PatternMapScreen> {
     final momentCount = widget.momentCountLoader != null
         ? await widget.momentCountLoader!()
         : (ScreenshotMode.enabled
-            ? ScreenshotSampleData.keyMomentsSample.length
-            : (await KeyMomentStore.instance().loadAll()).length);
+              ? ScreenshotSampleData.keyMomentsSample.length
+              : (await KeyMomentStore.instance().loadAll()).length);
     final trigger = map != null
         ? await PaywallAccess.check(
             feature: ArchiveFeature.patternMap,
@@ -155,56 +155,55 @@ class _PatternMapScreenState extends State<PatternMapScreen> {
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : _map == null
-                ? _emptyState()
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'A simple view of one pattern over time.',
-                          style: VoiceMemoryTypography.bodyStyle(
-                            color: AppColors.textSecondary,
-                          ).copyWith(fontSize: 14, height: 1.4),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        PatternMapCard(
-                          map: _map!,
-                          showTitle: false,
-                          onUseCheck:
-                              _memoryGated || _checkSet ? null : _useCheck,
-                        ),
-                        if (_memoryGated && _gateTrigger != null && !_previewDismissed) ...[
-                          const SizedBox(height: AppSpacing.md),
-                          ProValuePreviewCard(
-                            preview: buildProValuePreview(_gateTrigger!),
-                            onUnlock: _openUnlockPaywall,
-                            onDismiss: () => setState(() => _previewDismissed = true),
-                          ),
-                        ],
-                        if (!_memoryGated && _checkSet) ...[
-                          const SizedBox(height: AppSpacing.md),
-                          _confirmation(),
-                        ],
-                        if (!_memoryGated) ...[
-                          const SizedBox(height: AppSpacing.lg),
-                          Text(
-                            'Keep a private copy',
-                            style: VoiceMemoryTypography.bodyStyle(
-                              color: AppColors.textSecondary,
-                            ).copyWith(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          PrivateRecapActions(
-                            recap: PrivateRecapEngine.fromPatternMap(_map!),
-                          ),
-                        ],
-                      ],
+            ? _emptyState()
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'A simple view of one pattern over time.',
+                      style: VoiceMemoryTypography.bodyStyle(
+                        color: AppColors.textSecondary,
+                      ).copyWith(fontSize: 14, height: 1.4),
                     ),
-                  ),
+                    const SizedBox(height: AppSpacing.md),
+                    PatternMapCard(
+                      map: _map!,
+                      showTitle: false,
+                      onUseCheck: _memoryGated || _checkSet ? null : _useCheck,
+                    ),
+                    if (_memoryGated &&
+                        _gateTrigger != null &&
+                        !_previewDismissed) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      ProValuePreviewCard(
+                        preview: buildProValuePreview(_gateTrigger!),
+                        onUnlock: _openUnlockPaywall,
+                        onDismiss: () =>
+                            setState(() => _previewDismissed = true),
+                      ),
+                    ],
+                    if (!_memoryGated && _checkSet) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      _confirmation(),
+                    ],
+                    if (!_memoryGated) ...[
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
+                        'Keep a private copy',
+                        style: VoiceMemoryTypography.bodyStyle(
+                          color: AppColors.textSecondary,
+                        ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      PrivateRecapActions(
+                        recap: PrivateRecapEngine.fromPatternMap(_map!),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
       ),
     );
   }

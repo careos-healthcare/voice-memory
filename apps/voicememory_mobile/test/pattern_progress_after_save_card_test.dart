@@ -4,22 +4,24 @@ import 'package:voicememory_mobile/features/pattern_memory/pattern_progress_mode
 import 'package:voicememory_mobile/widgets/record/pattern_progress_after_save_card.dart';
 
 PatternProgressMoment _progress() => PatternProgressMoment(
-      id: 'pp_pm1_4',
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      type: PatternProgressType.stillRepeating,
-      headline: 'This pattern is still showing up.',
-      body: 'You have caught it 4 times. '
-          'The useful part is that you are noticing the moment.',
-      beforeLine: 'It often starts around: before saying yes',
-      nextLine: 'Next, watch what happens right before it starts.',
-      checkInCount: 4,
-      shouldShow: true,
-    );
+  id: 'pp_pm1_4',
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  type: PatternProgressType.stillRepeating,
+  headline: 'This pattern is still showing up.',
+  body:
+      'You have caught it 4 times. '
+      'The useful part is that you are noticing the moment.',
+  beforeLine: 'It often starts around: before saying yes',
+  nextLine: 'Next, watch what happens right before it starts.',
+  checkInCount: 4,
+  shouldShow: true,
+);
 
 void main() {
-  testWidgets('renders What changed with headline, body and next line',
-      (tester) async {
+  testWidgets('renders What changed with headline, body and next line', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

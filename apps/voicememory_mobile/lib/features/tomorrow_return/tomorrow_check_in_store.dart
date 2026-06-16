@@ -38,7 +38,10 @@ class TomorrowCheckInStore {
     return updated;
   }
 
-  Future<TomorrowCheckIn?> markCompleted(String checkInId, {DateTime? now}) async {
+  Future<TomorrowCheckIn?> markCompleted(
+    String checkInId, {
+    DateTime? now,
+  }) async {
     final active = await loadActive();
     if (active == null || active.id != checkInId) return null;
     final clock = now ?? DateTime.now();
@@ -69,11 +72,11 @@ class TomorrowCheckInStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => TomorrowCheckIn.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => TomorrowCheckIn.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<TomorrowCheckIn>()
         .take(limit)
         .toList();
@@ -92,7 +95,9 @@ class TomorrowCheckInStore {
     return null;
   }
 
-  Future<TomorrowCheckIn?> loadRecentlyCompleted({Duration within = const Duration(days: 2)}) async {
+  Future<TomorrowCheckIn?> loadRecentlyCompleted({
+    Duration within = const Duration(days: 2),
+  }) async {
     final history = await loadHistory(limit: 5);
     final cutoff = DateTime.now().subtract(within);
     for (final item in history) {

@@ -159,8 +159,8 @@ class _SignalDetailScreenState extends State<SignalDetailScreen> {
             signal.evidenceUsed?.trim().isNotEmpty == true
                 ? signal.evidenceUsed!
                 : (signal.evidenceChips.isNotEmpty
-                    ? signal.evidenceChips.join(' · ')
-                    : ConsumerUiCopy.postSaveInsightEvidenceFromMoment),
+                      ? signal.evidenceChips.join(' · ')
+                      : ConsumerUiCopy.postSaveInsightEvidenceFromMoment),
           ),
           _section(
             context,
@@ -170,7 +170,8 @@ class _SignalDetailScreenState extends State<SignalDetailScreen> {
           _section(
             context,
             ConsumerUiCopy.signalDetailWouldProveWrong,
-            signal.wouldContradict ?? ConsumerUiCopy.patternHypothesisProveWrong,
+            signal.wouldContradict ??
+                ConsumerUiCopy.patternHypothesisProveWrong,
           ),
           _section(
             context,
@@ -192,7 +193,9 @@ class _SignalDetailScreenState extends State<SignalDetailScreen> {
               },
               onCorrect: () => SignalReviewNavigation.openFullReview(context),
               onKeepWatching: () async {
-                await SignalReviewCoordinator.keepWatching(reviewId: _review!.id);
+                await SignalReviewCoordinator.keepWatching(
+                  reviewId: _review!.id,
+                );
                 if (!mounted) return;
                 await _load();
               },
@@ -262,16 +265,14 @@ class _SignalDetailScreenState extends State<SignalDetailScreen> {
           onPressed: _busy
               ? null
               : () => SignalArchiveNavigation.recordNextEvidence(
-                    context,
-                    prompt: signal.nextPrompt,
-                  ),
+                  context,
+                  prompt: signal.nextPrompt,
+                ),
           child: Text(ConsumerUiCopy.postSaveInsightRecordNextEvidence),
         ),
         SizedBox(height: gap),
         OutlinedButton(
-          onPressed: _busy
-              ? null
-              : () => context.go('/record'),
+          onPressed: _busy ? null : () => context.go('/record'),
           child: Text(ConsumerUiCopy.postSaveInsightAnotherAngle),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -371,7 +372,10 @@ class _FeedbackState extends StatelessWidget {
             children: labels.map((label) {
               final selected = label == active;
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: selected
                       ? AppColors.accentPrimary.withValues(alpha: 0.12)
@@ -385,9 +389,12 @@ class _FeedbackState extends StatelessWidget {
                 ),
                 child: Text(
                   label,
-                  style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(context)
+                      .copyWith(
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
                 ),
               );
             }).toList(),

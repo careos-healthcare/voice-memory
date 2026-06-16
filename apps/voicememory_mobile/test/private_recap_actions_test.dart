@@ -33,8 +33,9 @@ Future<void> _pump(
 }
 
 void main() {
-  testWidgets('shows Copy, Share, and Save when saving is allowed',
-      (tester) async {
+  testWidgets('shows Copy, Share, and Save when saving is allowed', (
+    tester,
+  ) async {
     await _pump(tester, allowSave: true);
     expect(find.text('Copy'), findsOneWidget);
     expect(find.text('Share'), findsOneWidget);
@@ -48,10 +49,14 @@ void main() {
 
   testWidgets('Copy fires the handler and confirms', (tester) async {
     PrivateRecap? copied;
-    await _pump(tester, allowSave: false, onCopy: (r) async {
-      copied = r;
-      return true;
-    });
+    await _pump(
+      tester,
+      allowSave: false,
+      onCopy: (r) async {
+        copied = r;
+        return true;
+      },
+    );
 
     await tester.tap(find.text('Copy'));
     await tester.pump();
@@ -60,8 +65,9 @@ void main() {
     expect(find.text('Copied your recap.'), findsOneWidget);
   });
 
-  testWidgets('Share fallback to copy shows the copied confirmation',
-      (tester) async {
+  testWidgets('Share fallback to copy shows the copied confirmation', (
+    tester,
+  ) async {
     await _pump(tester, allowSave: false, onShare: (_) async => false);
 
     await tester.tap(find.text('Share'));

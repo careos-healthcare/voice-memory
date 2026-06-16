@@ -22,9 +22,11 @@ class ReturnComparisonStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => ReturnComparison.fromJson(
-              e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => ReturnComparison.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<ReturnComparison>()
         .toList();
   }

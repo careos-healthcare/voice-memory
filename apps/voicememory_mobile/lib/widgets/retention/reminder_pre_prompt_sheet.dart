@@ -36,10 +36,8 @@ Future<void> maybeOfferReminderPrePrompt(
     context: context,
     backgroundColor: AppColors.backgroundPrimary,
     isScrollControlled: true,
-    builder: (ctx) => _ReminderPrePromptSheet(
-      routineAnchor: routineAnchor,
-      prompt: prompt,
-    ),
+    builder: (ctx) =>
+        _ReminderPrePromptSheet(routineAnchor: routineAnchor, prompt: prompt),
   );
   if (choice == null || !context.mounted) return;
 
@@ -94,9 +92,7 @@ Future<void> maybeOfferReminderPrePrompt(
 
   if (outcome == ReminderScheduleOutcome.notAvailable && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(ConsumerUiCopy.reminderNotAvailableInBuild),
-      ),
+      const SnackBar(content: Text(ConsumerUiCopy.reminderNotAvailableInBuild)),
     );
   }
 }
@@ -115,7 +111,8 @@ class _ReminderPrePromptSheet extends StatefulWidget {
   final String? prompt;
 
   @override
-  State<_ReminderPrePromptSheet> createState() => _ReminderPrePromptSheetState();
+  State<_ReminderPrePromptSheet> createState() =>
+      _ReminderPrePromptSheetState();
 }
 
 class _ReminderPrePromptSheetState extends State<_ReminderPrePromptSheet> {
@@ -157,18 +154,15 @@ class _ReminderPrePromptSheetState extends State<_ReminderPrePromptSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              _title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text(_title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.md),
             Text(
               _body,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
-                    height: 1.45,
-                    color: AppColors.textSecondary,
-                  ),
+                fontSize: 16,
+                height: 1.45,
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             if (!_pickTiming) ...[

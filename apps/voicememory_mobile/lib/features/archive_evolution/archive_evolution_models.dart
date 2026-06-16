@@ -34,34 +34,36 @@ class ArchiveEvolution {
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'kind': kind.name,
-        'sectionHeadline': sectionHeadline,
-        'headline': headline,
-        'summary': summary,
-        'confidence': confidence,
-        'evidenceIds': evidenceIds,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'insightRefId': insightRef.id,
-        'insightKind': insightRef.kind.name,
-        'themeKey': insightRef.themeKey,
-        'chapterId': insightRef.chapterId,
-        'entryIdA': insightRef.entryIdA,
-        'entryIdB': insightRef.entryIdB,
-        'surpriseIndex': insightRef.surpriseIndex,
-        'challengeIndex': insightRef.challengeIndex,
-        'askPrompt': insightRef.askPrompt,
-      };
+    'id': id,
+    'kind': kind.name,
+    'sectionHeadline': sectionHeadline,
+    'headline': headline,
+    'summary': summary,
+    'confidence': confidence,
+    'evidenceIds': evidenceIds,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'insightRefId': insightRef.id,
+    'insightKind': insightRef.kind.name,
+    'themeKey': insightRef.themeKey,
+    'chapterId': insightRef.chapterId,
+    'entryIdA': insightRef.entryIdA,
+    'entryIdB': insightRef.entryIdB,
+    'surpriseIndex': insightRef.surpriseIndex,
+    'challengeIndex': insightRef.challengeIndex,
+    'askPrompt': insightRef.askPrompt,
+  };
 
   static ArchiveEvolution? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     final id = json['id']?.toString() ?? '';
     if (id.isEmpty) return null;
-    final kind = ArchiveEvolutionKind.values.asNameMap()[json['kind']?.toString()];
+    final kind = ArchiveEvolutionKind.values
+        .asNameMap()[json['kind']?.toString()];
     if (kind == null) return null;
     final ref = _insightRefFromJson(json);
     if (ref == null) return null;
-    final evidence = (json['evidenceIds'] as List<dynamic>?)
+    final evidence =
+        (json['evidenceIds'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??
@@ -77,7 +79,8 @@ class ArchiveEvolution {
       confidence: (json['confidence'] as num?)?.round() ?? 60,
       evidenceIds: evidence,
       insightRef: ref,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
           DateTime.now(),
     );
   }
@@ -113,10 +116,10 @@ class PendingEvolutionNotification {
   final bool delivered;
 
   Map<String, dynamic> toJson() => {
-        'evolution': evolution.toJson(),
-        'recordedAt': recordedAt.toUtc().toIso8601String(),
-        'delivered': delivered,
-      };
+    'evolution': evolution.toJson(),
+    'recordedAt': recordedAt.toUtc().toIso8601String(),
+    'delivered': delivered,
+  };
 
   static PendingEvolutionNotification? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -124,14 +127,15 @@ class PendingEvolutionNotification {
       json['evolution'] is Map<String, dynamic>
           ? json['evolution'] as Map<String, dynamic>
           : json['evolution'] is Map
-              ? Map<String, dynamic>.from(json['evolution'] as Map)
-              : null,
+          ? Map<String, dynamic>.from(json['evolution'] as Map)
+          : null,
     );
     if (evo == null) return null;
     return PendingEvolutionNotification(
       evolution: evo,
       recordedAt:
-          DateTime.tryParse(json['recordedAt']?.toString() ?? '') ?? DateTime.now(),
+          DateTime.tryParse(json['recordedAt']?.toString() ?? '') ??
+          DateTime.now(),
       delivered: json['delivered'] == true,
     );
   }

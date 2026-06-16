@@ -28,7 +28,8 @@ class _UpdatesScreenState extends State<UpdatesScreen> {
         items.add({
           'id': 'local-1',
           'title': 'Archive growing',
-          'body': 'You may have enough reflections for ArchiveMe to compare themes.',
+          'body':
+              'You may have enough reflections for ArchiveMe to compare themes.',
           'read': false,
           'at': DateTime.now().toIso8601String(),
         });
@@ -59,7 +60,10 @@ class _UpdatesScreenState extends State<UpdatesScreen> {
           ),
           if (unread > 0) ...[
             const SizedBox(height: 12),
-            Text('$unread unread', style: TextStyle(color: Colors.deepPurple.shade200)),
+            Text(
+              '$unread unread',
+              style: TextStyle(color: Colors.deepPurple.shade200),
+            ),
           ],
           const SizedBox(height: 16),
           if (_items.isEmpty)

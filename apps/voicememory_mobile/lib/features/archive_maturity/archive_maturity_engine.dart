@@ -137,10 +137,12 @@ class ArchiveMaturityEngine {
 
     int timelineDays = 0;
     if (eligible.isNotEmpty) {
-      timelineDays = eligible.last.createdAt
-          .difference(eligible.first.createdAt)
-          .inDays
-          .abs() + 1;
+      timelineDays =
+          eligible.last.createdAt
+              .difference(eligible.first.createdAt)
+              .inDays
+              .abs() +
+          1;
     }
 
     final reputationScore = (reflectionCount * 8 + timelineDays).clamp(0, 100);

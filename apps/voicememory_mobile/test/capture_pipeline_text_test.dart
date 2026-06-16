@@ -3,6 +3,7 @@ import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_gu
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
+
 void main() {
   test('text capture entry without audio counts as archive evidence', () {
     const transcript =
@@ -24,10 +25,7 @@ void main() {
     );
 
     expect(entry.localAudioPath, isNull);
-    expect(
-      ArchiveEvidenceGuard.eligibleReflectionCount([entry]),
-      1,
-    );
+    expect(ArchiveEvidenceGuard.eligibleReflectionCount([entry]), 1);
   });
 
   test('short typed capture is stored but not archive evidence', () {

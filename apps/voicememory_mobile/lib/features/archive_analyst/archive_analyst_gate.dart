@@ -2,7 +2,7 @@ import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence.dart';
 
 /// When the Archive Analyst report may be generated.
-abstract final class ArchiveAnalystGate {
+abstract class ArchiveAnalystGate {
   ArchiveAnalystGate._();
 
   static const int level1Threshold = 50;
@@ -32,46 +32,41 @@ abstract final class ArchiveAnalystGate {
       (level1Threshold - eligibleReflectionCount).clamp(0, level1Threshold);
 }
 
-enum ArchiveAnalystLevel {
-  insufficient,
-  level1,
-  level2,
-  level3,
-}
+enum ArchiveAnalystLevel { insufficient, level1, level2, level3 }
 
 extension ArchiveAnalystLevelLabels on ArchiveAnalystLevel {
   String get reportTitle => switch (this) {
-        ArchiveAnalystLevel.insufficient => 'Archive Analyst',
-        ArchiveAnalystLevel.level1 => 'Analyst Report · Level 1',
-        ArchiveAnalystLevel.level2 => 'Analyst Report · Level 2',
-        ArchiveAnalystLevel.level3 => 'Analyst Report · Level 3',
-      };
+    ArchiveAnalystLevel.insufficient => 'Archive Analyst',
+    ArchiveAnalystLevel.level1 => 'Analyst Report · Level 1',
+    ArchiveAnalystLevel.level2 => 'Analyst Report · Level 2',
+    ArchiveAnalystLevel.level3 => 'Analyst Report · Level 3',
+  };
 
   int get maxCurrentBeliefs => switch (this) {
-        ArchiveAnalystLevel.insufficient => 0,
-        ArchiveAnalystLevel.level1 => 4,
-        ArchiveAnalystLevel.level2 => 6,
-        ArchiveAnalystLevel.level3 => 8,
-      };
+    ArchiveAnalystLevel.insufficient => 0,
+    ArchiveAnalystLevel.level1 => 4,
+    ArchiveAnalystLevel.level2 => 6,
+    ArchiveAnalystLevel.level3 => 8,
+  };
 
   int get maxEmergingOrFading => switch (this) {
-        ArchiveAnalystLevel.insufficient => 0,
-        ArchiveAnalystLevel.level1 => 2,
-        ArchiveAnalystLevel.level2 => 4,
-        ArchiveAnalystLevel.level3 => 6,
-      };
+    ArchiveAnalystLevel.insufficient => 0,
+    ArchiveAnalystLevel.level1 => 2,
+    ArchiveAnalystLevel.level2 => 4,
+    ArchiveAnalystLevel.level3 => 6,
+  };
 
   int get maxCompeting => switch (this) {
-        ArchiveAnalystLevel.insufficient => 0,
-        ArchiveAnalystLevel.level1 => 3,
-        ArchiveAnalystLevel.level2 => 4,
-        ArchiveAnalystLevel.level3 => 5,
-      };
+    ArchiveAnalystLevel.insufficient => 0,
+    ArchiveAnalystLevel.level1 => 3,
+    ArchiveAnalystLevel.level2 => 4,
+    ArchiveAnalystLevel.level3 => 5,
+  };
 
   int get maxDebates => switch (this) {
-        ArchiveAnalystLevel.insufficient => 0,
-        ArchiveAnalystLevel.level1 => 1,
-        ArchiveAnalystLevel.level2 => 2,
-        ArchiveAnalystLevel.level3 => 3,
-      };
+    ArchiveAnalystLevel.insufficient => 0,
+    ArchiveAnalystLevel.level1 => 1,
+    ArchiveAnalystLevel.level2 => 2,
+    ArchiveAnalystLevel.level3 => 3,
+  };
 }

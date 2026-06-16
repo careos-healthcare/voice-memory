@@ -21,7 +21,7 @@ void main() {
         theme: AppTheme.light(),
         home: Scaffold(
           body: SingleChildScrollView(
-            child:             InputQualityCoachCard(
+            child: InputQualityCoachCard(
               result: assessReflectionQuality(originalText),
               originalText: originalText,
               onAddSentence: onAddSentence,
@@ -65,7 +65,10 @@ void main() {
       languageCode: 'es',
     );
 
-    expect(find.text(localized('inputQualityCoachTitle', 'es')), findsOneWidget);
+    expect(
+      find.text(localized('inputQualityCoachTitle', 'es')),
+      findsOneWidget,
+    );
     expect(find.text(localized('addOneSentence', 'es')), findsOneWidget);
     expect(find.text(localized('useItAnyway', 'es')), findsOneWidget);
     // English copy must not leak through when Spanish is active.

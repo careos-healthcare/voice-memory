@@ -21,18 +21,17 @@ class BeliefVersionRecord {
   final int schemaVersion;
 
   int get year =>
-      DateTime.tryParse(recordedAt)?.toLocal().year ??
-      DateTime.now().year;
+      DateTime.tryParse(recordedAt)?.toLocal().year ?? DateTime.now().year;
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': schemaVersion,
-        'id': id,
-        'beliefText': beliefText,
-        'confidence': confidence,
-        'recordedAt': recordedAt,
-        'supportingEntryIds': supportingEntryIds,
-        if (serverId != null) 'serverId': serverId,
-      };
+    'schemaVersion': schemaVersion,
+    'id': id,
+    'beliefText': beliefText,
+    'confidence': confidence,
+    'recordedAt': recordedAt,
+    'supportingEntryIds': supportingEntryIds,
+    if (serverId != null) 'serverId': serverId,
+  };
 
   static BeliefVersionRecord? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -46,10 +45,13 @@ class BeliefVersionRecord {
       id: json['id']?.toString() ?? '',
       beliefText: text,
       confidence: (json['confidence'] as num?)?.toInt().clamp(0, 100) ?? 0,
-      recordedAt: json['recordedAt']?.toString() ?? DateTime.now().toUtc().toIso8601String(),
+      recordedAt:
+          json['recordedAt']?.toString() ??
+          DateTime.now().toUtc().toIso8601String(),
       supportingEntryIds: ids,
       serverId: json['serverId']?.toString(),
-      schemaVersion: (json['schemaVersion'] as num?)?.toInt() ?? currentSchemaVersion,
+      schemaVersion:
+          (json['schemaVersion'] as num?)?.toInt() ?? currentSchemaVersion,
     );
   }
 
@@ -88,14 +90,15 @@ class BeliefEvolutionState {
   bool get hasEvolution => versions.length >= 2;
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': schemaVersion,
-        'versions': versions.map((v) => v.toJson()).toList(),
-        if (firstBelief != null) 'firstBelief': firstBelief!.toJson(),
-        if (currentBelief != null) 'currentBelief': currentBelief!.toJson(),
-        if (lastSyncedAt != null) 'lastSyncedAt': lastSyncedAt,
-      };
+    'schemaVersion': schemaVersion,
+    'versions': versions.map((v) => v.toJson()).toList(),
+    if (firstBelief != null) 'firstBelief': firstBelief!.toJson(),
+    if (currentBelief != null) 'currentBelief': currentBelief!.toJson(),
+    if (lastSyncedAt != null) 'lastSyncedAt': lastSyncedAt,
+  };
 
-  static BeliefEvolutionState empty() => const BeliefEvolutionState(versions: []);
+  static BeliefEvolutionState empty() =>
+      const BeliefEvolutionState(versions: []);
 
   static BeliefEvolutionState fromJson(Map<String, dynamic>? json) {
     if (json == null) return BeliefEvolutionState.empty();
@@ -110,9 +113,7 @@ class BeliefEvolutionState {
         if (v != null) versions.add(v);
       }
     }
-    versions.sort(
-      (a, b) => a.recordedAt.compareTo(b.recordedAt),
-    );
+    versions.sort((a, b) => a.recordedAt.compareTo(b.recordedAt));
 
     BeliefVersionRecord? first = BeliefVersionRecord.fromJson(
       json['firstBelief'] as Map<String, dynamic>?,
@@ -129,7 +130,8 @@ class BeliefEvolutionState {
       currentBelief: current,
       lastSyncedAt: json['lastSyncedAt']?.toString(),
       schemaVersion:
-          (json['schemaVersion'] as num?)?.toInt() ?? BeliefVersionRecord.currentSchemaVersion,
+          (json['schemaVersion'] as num?)?.toInt() ??
+          BeliefVersionRecord.currentSchemaVersion,
     );
   }
 
@@ -142,8 +144,10 @@ class BeliefEvolutionState {
     final nextVersions = versions ?? this.versions;
     return BeliefEvolutionState(
       versions: nextVersions,
-      firstBelief: firstBelief ?? (nextVersions.isNotEmpty ? nextVersions.first : null),
-      currentBelief: currentBelief ?? (nextVersions.isNotEmpty ? nextVersions.last : null),
+      firstBelief:
+          firstBelief ?? (nextVersions.isNotEmpty ? nextVersions.first : null),
+      currentBelief:
+          currentBelief ?? (nextVersions.isNotEmpty ? nextVersions.last : null),
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
       schemaVersion: schemaVersion,
     );
@@ -164,10 +168,7 @@ class BeliefEvidenceLine {
 
 /// One version leg: belief → supporting evidence recordings.
 class BeliefEvolutionBlock {
-  const BeliefEvolutionBlock({
-    required this.version,
-    required this.evidence,
-  });
+  const BeliefEvolutionBlock({required this.version, required this.evidence});
 
   final BeliefVersionRecord version;
   final List<BeliefEvidenceLine> evidence;

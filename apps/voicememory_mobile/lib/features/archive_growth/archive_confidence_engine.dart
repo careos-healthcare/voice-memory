@@ -16,7 +16,7 @@ class ArchiveConfidenceView {
 }
 
 /// Trust-oriented archive confidence (0–100) — not gamified.
-abstract final class ArchiveConfidenceEngine {
+abstract class ArchiveConfidenceEngine {
   ArchiveConfidenceEngine._();
 
   static ArchiveConfidenceView build({
@@ -37,9 +37,10 @@ abstract final class ArchiveConfidenceEngine {
         ? (contradictions.clamp(0, 4) * 2.5).clamp(0, 10)
         : 0;
 
-    final score = (recordingSignal + theorySignal + evidenceSignal + contradictionSignal)
-        .round()
-        .clamp(0, 100);
+    final score =
+        (recordingSignal + theorySignal + evidenceSignal + contradictionSignal)
+            .round()
+            .clamp(0, 100);
 
     final explanation = _explanation(
       recordingCount: count,

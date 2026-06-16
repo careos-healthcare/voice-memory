@@ -26,11 +26,11 @@ class PatternNextActionStore {
     final list = raw['items'];
     if (list is! List) return const [];
     final actions = list
-        .map((e) => PatternNextAction.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => PatternNextAction.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<PatternNextAction>()
         .toList();
     return actions.take(limit).toList();

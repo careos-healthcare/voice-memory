@@ -80,7 +80,9 @@ class ArchiveChangeFeedSection extends StatelessWidget {
           if (feed.beliefsWeakened.isNotEmpty)
             _subsection(
               ArchiveChangeFeedCopy.beliefsWeakenedTitle,
-              feed.beliefsWeakened.map((row) => _beliefTile(context, row)).toList(),
+              feed.beliefsWeakened
+                  .map((row) => _beliefTile(context, row))
+                  .toList(),
             ),
           if (feed.contradictionsAppeared.isNotEmpty)
             _subsection(
@@ -99,12 +101,16 @@ class ArchiveChangeFeedSection extends StatelessWidget {
           if (feed.themesIncreasing.isNotEmpty)
             _subsection(
               ArchiveChangeFeedCopy.themesIncreasingTitle,
-              feed.themesIncreasing.map((row) => _themeTile(context, row)).toList(),
+              feed.themesIncreasing
+                  .map((row) => _themeTile(context, row))
+                  .toList(),
             ),
           if (feed.themesDecreasing.isNotEmpty)
             _subsection(
               ArchiveChangeFeedCopy.themesDecreasingTitle,
-              feed.themesDecreasing.map((row) => _themeTile(context, row)).toList(),
+              feed.themesDecreasing
+                  .map((row) => _themeTile(context, row))
+                  .toList(),
             ),
         ],
       ),
@@ -209,16 +215,16 @@ class ArchiveChangeFeedSection extends StatelessWidget {
     );
   }
 
-  Widget _contradictionTile(BuildContext context, ArchiveChangeContradictionRow row) {
+  Widget _contradictionTile(
+    BuildContext context,
+    ArchiveChangeContradictionRow row,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            row.youSay,
-            style: const TextStyle(fontSize: 13, height: 1.4),
-          ),
+          Text(row.youSay, style: const TextStyle(fontSize: 13, height: 1.4)),
           Text(
             'vs ${row.but}',
             style: const TextStyle(
@@ -270,10 +276,7 @@ class ArchiveChangeFeedSection extends StatelessWidget {
         children: [
           Text(
             row.label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -339,7 +342,9 @@ class _MentionTrendChart extends StatelessWidget {
                     ? 4.0
                     : (series[i] / max * 36).clamp(6.0, 36.0).toDouble(),
                 decoration: BoxDecoration(
-                  color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.75),
+                  color: VoiceMemoryColors.primaryIndigo.withValues(
+                    alpha: 0.75,
+                  ),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),

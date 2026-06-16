@@ -82,9 +82,7 @@ Future<_MemoryAttributionStore> _pumpPaywall(
   return store;
 }
 
-Future<SuggestionAttributionStore> _openSuggestionFileStore(
-  String name,
-) async {
+Future<SuggestionAttributionStore> _openSuggestionFileStore(String name) async {
   final path = 'test/tmp/attribution/suggestion_$name.json';
   final file = File(path);
   if (await file.exists()) await file.delete();
@@ -157,38 +155,42 @@ void main() {
         source: PaywallSource.pressureReview,
       );
 
-      final completed = await store
-          .eventsOfType(PaywallAttributionEventType.purchaseCompleted);
+      final completed = await store.eventsOfType(
+        PaywallAttributionEventType.purchaseCompleted,
+      );
       expect(completed, hasLength(1));
       expect(completed.single.source, PaywallSource.pressureReview);
     });
 
-    test('restore_started and restore_completed record correct source',
-        () async {
-      final store = await _openFileStore('restore');
-      await store.record(
-        PaywallAttributionEventType.restoreStarted,
-        source: PaywallSource.askArchive,
-      );
-      await store.record(
-        PaywallAttributionEventType.restoreCompleted,
-        source: PaywallSource.askArchive,
-      );
+    test(
+      'restore_started and restore_completed record correct source',
+      () async {
+        final store = await _openFileStore('restore');
+        await store.record(
+          PaywallAttributionEventType.restoreStarted,
+          source: PaywallSource.askArchive,
+        );
+        await store.record(
+          PaywallAttributionEventType.restoreCompleted,
+          source: PaywallSource.askArchive,
+        );
 
-      final events = await store.events();
-      expect(events, hasLength(2));
-      expect(events[0].type, PaywallAttributionEventType.restoreStarted);
-      expect(events[1].type, PaywallAttributionEventType.restoreCompleted);
-      expect(events.map((e) => e.source).toSet(), {PaywallSource.askArchive});
-    });
+        final events = await store.events();
+        expect(events, hasLength(2));
+        expect(events[0].type, PaywallAttributionEventType.restoreStarted);
+        expect(events[1].type, PaywallAttributionEventType.restoreCompleted);
+        expect(events.map((e) => e.source).toSet(), {PaywallSource.askArchive});
+      },
+    );
 
     test('events persist across store reopen, oldest first', () async {
       final path = 'test/tmp/attribution/reopen.json';
       final file = File(path);
       if (await file.exists()) await file.delete();
 
-      final store =
-          PaywallAttributionStore.forPrefs(await MobilePrefsStore.open(path));
+      final store = PaywallAttributionStore.forPrefs(
+        await MobilePrefsStore.open(path),
+      );
       await store.record(
         PaywallAttributionEventType.paywallSeen,
         source: PaywallSource.generalPro,
@@ -200,8 +202,9 @@ void main() {
         now: DateTime(2026, 6, 9, 11),
       );
 
-      final reopened =
-          PaywallAttributionStore.forPrefs(await MobilePrefsStore.open(path));
+      final reopened = PaywallAttributionStore.forPrefs(
+        await MobilePrefsStore.open(path),
+      );
       final events = await reopened.events();
       expect(events, hasLength(2));
       expect(events[0].type, PaywallAttributionEventType.paywallSeen);
@@ -220,13 +223,17 @@ void main() {
       final events = await store.events();
       expect(events, hasLength(PaywallAttributionStore.maxEvents));
       // Oldest entries were dropped.
-      expect(events.first.at, DateTime(2026, 1, 1).add(const Duration(minutes: 5)));
+      expect(
+        events.first.at,
+        DateTime(2026, 1, 1).add(const Duration(minutes: 5)),
+      );
     });
   });
 
   group('Paywall screen attribution', () {
-    testWidgets('paywall_seen records the source it was opened from',
-        (tester) async {
+    testWidgets('paywall_seen records the source it was opened from', (
+      tester,
+    ) async {
       final store = await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(
@@ -243,8 +250,9 @@ void main() {
       expect(seen.single.sourceRoute, '/pressure-insights');
     });
 
-    testWidgets('paywall_seen falls back to generalPro without a source',
-        (tester) async {
+    testWidgets('paywall_seen falls back to generalPro without a source', (
+      tester,
+    ) async {
       final store = await _pumpPaywall(tester);
 
       final seen = store.recorded
@@ -254,8 +262,9 @@ void main() {
       expect(seen.single.source, PaywallSource.generalPro);
     });
 
-    testWidgets('restore tap records restore_started with the right source',
-        (tester) async {
+    testWidgets('restore tap records restore_started with the right source', (
+      tester,
+    ) async {
       final store = await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(source: PaywallSource.askArchive),
@@ -275,8 +284,9 @@ void main() {
       expect(started.single.source, PaywallSource.askArchive);
     });
 
-    testWidgets('no VoiceMemory consumer copy on attributed paywall',
-        (tester) async {
+    testWidgets('no VoiceMemory consumer copy on attributed paywall', (
+      tester,
+    ) async {
       await _pumpPaywall(
         tester,
         args: const PaywallRouteArgs(
@@ -426,45 +436,50 @@ void main() {
   });
 
   group('Suggestion-to-Pro paywall funnel', () {
-    testWidgets('start-here sourced paywall records suggestion_to_paywall_seen',
-        (tester) async {
-      final suggestionStore = MemorySuggestionAttributionStore();
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(
-          source: PaywallSource.startHereToday,
-          sourceRoute: '/record',
-        ),
-        suggestionStore: suggestionStore,
-      );
+    testWidgets(
+      'start-here sourced paywall records suggestion_to_paywall_seen',
+      (tester) async {
+        final suggestionStore = MemorySuggestionAttributionStore();
+        await _pumpPaywall(
+          tester,
+          args: const PaywallRouteArgs(
+            source: PaywallSource.startHereToday,
+            sourceRoute: '/record',
+          ),
+          suggestionStore: suggestionStore,
+        );
 
-      final seen = suggestionStore.recorded
-          .where(
-            (e) =>
-                e.type == SuggestionAttributionEventType.suggestionToPaywallSeen,
-          )
-          .toList();
-      expect(seen, hasLength(1));
-    });
+        final seen = suggestionStore.recorded
+            .where(
+              (e) =>
+                  e.type ==
+                  SuggestionAttributionEventType.suggestionToPaywallSeen,
+            )
+            .toList();
+        expect(seen, hasLength(1));
+      },
+    );
 
     testWidgets(
-        'daily suggestion sourced paywall records suggestion_to_paywall_seen',
-        (tester) async {
-      final suggestionStore = MemorySuggestionAttributionStore();
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
-        suggestionStore: suggestionStore,
-      );
+      'daily suggestion sourced paywall records suggestion_to_paywall_seen',
+      (tester) async {
+        final suggestionStore = MemorySuggestionAttributionStore();
+        await _pumpPaywall(
+          tester,
+          args: const PaywallRouteArgs(source: PaywallSource.dailySuggestion),
+          suggestionStore: suggestionStore,
+        );
 
-      expect(
-        suggestionStore.recorded.map((e) => e.type),
-        contains(SuggestionAttributionEventType.suggestionToPaywallSeen),
-      );
-    });
+        expect(
+          suggestionStore.recorded.map((e) => e.type),
+          contains(SuggestionAttributionEventType.suggestionToPaywallSeen),
+        );
+      },
+    );
 
-    testWidgets('non-suggestion sources record no suggestion funnel events',
-        (tester) async {
+    testWidgets('non-suggestion sources record no suggestion funnel events', (
+      tester,
+    ) async {
       final suggestionStore = MemorySuggestionAttributionStore();
       await _pumpPaywall(
         tester,

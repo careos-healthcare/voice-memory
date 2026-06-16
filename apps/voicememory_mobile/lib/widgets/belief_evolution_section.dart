@@ -99,7 +99,11 @@ class _BeliefEvolutionSectionState extends State<BeliefEvolutionSection> {
             timeline.hasEvolution
                 ? 'From “${_truncate(first.beliefText)}” to “${_truncate(current.beliefText)}”.'
                 : 'Tracking your working belief and supporting recordings.',
-            style: const TextStyle(color: AppTheme.muted, fontSize: 12, height: 1.4),
+            style: const TextStyle(
+              color: AppTheme.muted,
+              fontSize: 12,
+              height: 1.4,
+            ),
           ),
         const SizedBox(height: 16),
         BeliefEvolutionTimelineWidget(timeline: timeline),

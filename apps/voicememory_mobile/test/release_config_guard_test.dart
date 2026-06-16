@@ -40,10 +40,7 @@ void main() {
   });
 
   test('production navigation hides debug routes from nav', () {
-    expect(
-      ProductionNavigation.isNavRouteVisible('/trial-control'),
-      isFalse,
-    );
+    expect(ProductionNavigation.isNavRouteVisible('/trial-control'), isFalse);
     expect(
       ProductionNavigation.isNavRouteVisible('/revenuecat-verify'),
       isFalse,
@@ -58,11 +55,14 @@ void main() {
     }
   });
 
-  test('production navigation redirects trial debug routes when trial hides dev', () {
-    if (!TrialMode.hideDeveloperSurfaces) return;
-    expect(
-      ProductionNavigation.redirectAwayFromIncomplete('/trial-control'),
-      '/record',
-    );
-  });
+  test(
+    'production navigation redirects trial debug routes when trial hides dev',
+    () {
+      if (!TrialMode.hideDeveloperSurfaces) return;
+      expect(
+        ProductionNavigation.redirectAwayFromIncomplete('/trial-control'),
+        '/record',
+      );
+    },
+  );
 }

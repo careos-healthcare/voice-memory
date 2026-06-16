@@ -34,11 +34,11 @@ class ArchiveAnalystConfidenceEngine {
     final volume = (supportingCount * 2).clamp(0, 40);
     final consistency = (consistencyRatio * 25).round().clamp(0, 25);
     final recency = (recencyRatio * 20).round().clamp(0, 20);
-    final contradictionPenalty =
-        (maxContradictionScore ~/ 4).clamp(0, 25);
+    final contradictionPenalty = (maxContradictionScore ~/ 4).clamp(0, 25);
     final counterPenalty = (counterCount * 2).clamp(0, 20);
 
-    var raw = volume + consistency + recency - contradictionPenalty - counterPenalty;
+    var raw =
+        volume + consistency + recency - contradictionPenalty - counterPenalty;
     if (supportingCount < 3) {
       raw = (raw * 0.6).round();
     }
@@ -64,7 +64,8 @@ class ArchiveAnalystConfidenceEngine {
       );
     }
 
-    final sorted = [...eligible]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...eligible]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final cutoffIndex = (sorted.length * 0.75).floor();
     final recentCutoff = sorted.length <= 1
         ? sorted.last.createdAt
@@ -101,11 +102,11 @@ class ArchiveAnalystConfidenceEngine {
     );
     final counter = cap.capped;
 
-    final recencyRatio =
-        supporting.isEmpty ? 0.0 : recentHits / supporting.length;
+    final recencyRatio = supporting.isEmpty
+        ? 0.0
+        : recentHits / supporting.length;
     final total = supporting.length + counter.length;
-    final consistencyRatio =
-        total == 0 ? 0.0 : supporting.length / total;
+    final consistencyRatio = total == 0 ? 0.0 : supporting.length / total;
 
     return BeliefEvidenceSplit(
       supportingIds: supporting.map((e) => e.id).toList(),

@@ -60,21 +60,19 @@ class MonthlyAmbitionPressureReviewEngine {
       direction: direction,
     );
 
-    final latestEntry = currentEntries.isEmpty
-        ? null
-        : currentEntries.last;
+    final latestEntry = currentEntries.isEmpty ? null : currentEntries.last;
     final nextMission = latestEntry == null
         ? _missionEngine.defaultMission(now: timestamp).mission
         : _missionEngine
-            .fromPostRecord(
-              postRecord: _postEngine.analyze(
-                entryId: latestEntry.id,
-                transcript: latestEntry.transcript,
-                interpretationReads: const [],
-                activeLoop: activeLoop,
-              ),
-            )
-            .mission;
+              .fromPostRecord(
+                postRecord: _postEngine.analyze(
+                  entryId: latestEntry.id,
+                  transcript: latestEntry.transcript,
+                  interpretationReads: const [],
+                  activeLoop: activeLoop,
+                ),
+              )
+              .mission;
 
     return MonthlyAmbitionPressureReview(
       monthLabel: monthLabel,
@@ -206,7 +204,8 @@ class MonthlyAmbitionPressureReviewEngine {
       return AmbitionPressureDirection.unclear;
     }
 
-    final hasConfirmation = current.pressureCount > 0 || current.restGuiltCount > 0;
+    final hasConfirmation =
+        current.pressureCount > 0 || current.restGuiltCount > 0;
     final hasChallenge =
         current.choiceCount > 0 || current.contradictionCount > 0;
 
@@ -215,8 +214,7 @@ class MonthlyAmbitionPressureReviewEngine {
     }
 
     if (prior.totalProvingMoments >= minMomentsForDirection) {
-      final pressureRatioUp =
-          current.pressureRatio > prior.pressureRatio + 0.1;
+      final pressureRatioUp = current.pressureRatio > prior.pressureRatio + 0.1;
       final restGuiltUp = current.restGuiltCount > prior.restGuiltCount;
       final contradictionDown =
           current.contradictionCount < prior.contradictionCount;

@@ -3,7 +3,7 @@ import 'first25_recording_retention.dart';
 import 'first25_user_metrics.dart';
 
 /// Journal save hook — activation + retention without coupling [JournalStore] to services.
-abstract final class First25JournalHooks {
+abstract class First25JournalHooks {
   First25JournalHooks._();
 
   static Future<void> onJournalSave({

@@ -1,6 +1,6 @@
 # ASO & acquisition positioning
 
-VoiceMemory is a **private voice journal** people use to **hear themselves again** — not a coach, therapist, or productivity tool.
+ArchiveMe is a **private voice journal** people use to **hear themselves again** — not a coach, therapist, or productivity tool.
 
 ## Core acquisition language
 

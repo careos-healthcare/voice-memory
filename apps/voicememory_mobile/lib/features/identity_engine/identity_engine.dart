@@ -40,13 +40,13 @@ class IdentityEngine {
       if (trait != null) traits.add(trait);
     }
 
-    final belief = currentBelief?.trim() ??
+    final belief =
+        currentBelief?.trim() ??
         archiveBeliefFromReflections(entries)?.trim() ??
         '';
     if (belief.isNotEmpty) {
       final beliefTrait = _beliefBackedTrait(belief, eligible, byId);
-      if (beliefTrait != null &&
-          !traits.any((t) => t.id == beliefTrait.id)) {
+      if (beliefTrait != null && !traits.any((t) => t.id == beliefTrait.id)) {
         traits.add(beliefTrait);
       }
     }
@@ -58,9 +58,7 @@ class IdentityEngine {
     if (contradictions.reports.isNotEmpty) {
       final top = contradictions.reports.first;
       if (top.confidenceScore >= 65) {
-        traits.add(
-          _contradictionTrait(top, eligible),
-        );
+        traits.add(_contradictionTrait(top, eligible));
       }
     }
 
@@ -101,8 +99,9 @@ class IdentityEngine {
 
     // Emerging traits that are already top current are not duplicated.
     final currentIds = current.map((t) => t.id).toSet();
-    final emergingOnly =
-        emerging.where((t) => !currentIds.contains(t.id)).toList();
+    final emergingOnly = emerging
+        .where((t) => !currentIds.contains(t.id))
+        .toList();
 
     return IdentityProfile(
       currentTraits: current,
@@ -121,7 +120,8 @@ IdentityTrait? _traitFromTheme(
 ) {
   if (theme.frequency < IdentityEngine.minTraitEvidenceCount) return null;
 
-  final themeId = ThemeTrackerService.displayNames.entries
+  final themeId =
+      ThemeTrackerService.displayNames.entries
           .where((e) => e.value == theme.name)
           .map((e) => e.key)
           .firstOrNull ??
@@ -176,13 +176,13 @@ List<JournalEntry> _entriesForTheme(
 
   return byId.values.where((entry) {
     final blob = _entryBlob(entry);
-    if (entry.reflection.recurringThemes
-        .any((t) => t.trim().toLowerCase() == themeId)) {
+    if (entry.reflection.recurringThemes.any(
+      (t) => t.trim().toLowerCase() == themeId,
+    )) {
       return true;
     }
     return keywords.any(blob.contains);
-  }).toList()
-    ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+  }).toList()..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 }
 
 List<String> _themeKeywordList(String themeId) {
@@ -203,19 +203,19 @@ IdentityTrait? _beliefBackedTrait(
   List<JournalEntry> eligible,
   Map<String, JournalEntry> byId,
 ) {
-  final supporting = eligible
-      .where((e) {
-        final obs = e.reflection.concreteObservation.trim();
-        return obs.length >= 16 &&
-            (obs == belief || belief.contains(obs) || obs.contains(belief));
-      })
-      .toList();
+  final supporting = eligible.where((e) {
+    final obs = e.reflection.concreteObservation.trim();
+    return obs.length >= 16 &&
+        (obs == belief || belief.contains(obs) || obs.contains(belief));
+  }).toList();
 
   final entries = supporting.length >= IdentityEngine.minTraitEvidenceCount
       ? supporting
       : (eligible.length >= IdentityEngine.minTraitEvidenceCount
-          ? eligible.sublist(eligible.length - IdentityEngine.minTraitEvidenceCount)
-          : <JournalEntry>[]);
+            ? eligible.sublist(
+                eligible.length - IdentityEngine.minTraitEvidenceCount,
+              )
+            : <JournalEntry>[]);
 
   if (entries.length < IdentityEngine.minTraitEvidenceCount) return null;
 

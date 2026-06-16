@@ -75,10 +75,7 @@ const _feelingActionCues = <String>{
   'noticed',
 };
 
-const _feelingActionPhrases = <String>{
-  'said yes',
-  'said no',
-};
+const _feelingActionPhrases = <String>{'said yes', 'said no'};
 
 /// Pure mood labels with no event attached.
 const _moodWords = <String>{
@@ -104,42 +101,69 @@ const _moodWords = <String>{
 };
 
 /// Markers of a broad day summary rather than one moment.
-const _summaryMarkers = <String>{
-  'today',
-  'day',
-  'work',
-  'everything',
-  'usual',
-};
+const _summaryMarkers = <String>{'today', 'day', 'work', 'everything', 'usual'};
 
 const _unclearRefWords = <String>{'it', 'this', 'stuff'};
 const _unclearRefPhrases = <String>{'that thing'};
 
 const _stopwords = <String>{
-  'the', 'a', 'an', 'was', 'is', 'were', 'are', 'be', 'been', 'am',
-  'i', 'my', 'me', 'we', 'to', 'of', 'and', 'so', 'very', 'really',
-  'just', 'it', 'this', 'that', 'as', 'in', 'on', 'at', 'had', 'have',
+  'the',
+  'a',
+  'an',
+  'was',
+  'is',
+  'were',
+  'are',
+  'be',
+  'been',
+  'am',
+  'i',
+  'my',
+  'me',
+  'we',
+  'to',
+  'of',
+  'and',
+  'so',
+  'very',
+  'really',
+  'just',
+  'it',
+  'this',
+  'that',
+  'as',
+  'in',
+  'on',
+  'at',
+  'had',
+  'have',
 };
 
 /// Assesses how useful a reflection is and how to coach it toward one moment.
 InputQualityResult assessReflectionQuality(String text) {
   final lower = text.toLowerCase().trim();
   final words = _words(lower);
-  final meaningful =
-      words.where((w) => w.length >= 2 && !_stopwords.contains(w)).toList();
+  final meaningful = words
+      .where((w) => w.length >= 2 && !_stopwords.contains(w))
+      .toList();
   final meaningfulCount = meaningful.length;
 
   final hasMoment = _hasAny(lower, words, _momentCues, _momentPhrases);
-  final hasFeelingOrAction =
-      _hasAny(lower, words, _feelingActionCues, _feelingActionPhrases);
-  final hasVagueSummary = words.any(_vagueSummaryWords.contains) ||
+  final hasFeelingOrAction = _hasAny(
+    lower,
+    words,
+    _feelingActionCues,
+    _feelingActionPhrases,
+  );
+  final hasVagueSummary =
+      words.any(_vagueSummaryWords.contains) ||
       _vagueSummaryPhrases.any(lower.contains);
   final hasMood = words.any(_moodWords.contains);
   final hasSummaryMarker = words.any(_summaryMarkers.contains);
   final hasUnclearRef =
       (words.any(_unclearRefWords.contains) ||
-              _unclearRefPhrases.any(lower.contains)) &&
-          meaningfulCount < 8;
+          _unclearRefPhrases.any(lower.contains)) &&
+      meaningfulCount < 8;
 
   final issues = <InputQualityIssue>[];
   if (meaningfulCount < 6) issues.add(InputQualityIssue.tooShort);
@@ -239,10 +263,7 @@ String _exampleRewrite(String lower) {
 }
 
 List<String> _words(String lower) {
-  return lower
-      .split(RegExp(r'[^a-z0-9]+'))
-      .where((w) => w.isNotEmpty)
-      .toList();
+  return lower.split(RegExp(r'[^a-z0-9]+')).where((w) => w.isNotEmpty).toList();
 }
 
 bool _hasAny(

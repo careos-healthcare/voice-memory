@@ -16,8 +16,9 @@ void main() {
 
     for (final persona in ArchiveQualityPersona.values) {
       for (final size in [50, 100, 200]) {
-        final dir = await Directory.systemTemp
-            .createTemp('primary_${persona.name}_$size');
+        final dir = await Directory.systemTemp.createTemp(
+          'primary_${persona.name}_$size',
+        );
         final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
         final evolution = BeliefEvolutionService.fromPrefs(prefs);
         final entries = buildPersonaArchive(persona, count: size);
@@ -73,7 +74,9 @@ void main() {
         if (persona == ArchiveQualityPersona.relationshipFocused) {
           final lower = theoryStmt.toLowerCase();
           if (!lower.contains('partner') && !lower.contains('relationship')) {
-            failures.add('$label: relationship hero not relationship-themed: $theoryStmt');
+            failures.add(
+              '$label: relationship hero not relationship-themed: $theoryStmt',
+            );
           }
           if (lower.contains('work delivery pressure dominates')) {
             failures.add('$label: work-delivery hero on relationship persona');

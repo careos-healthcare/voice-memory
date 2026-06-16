@@ -32,21 +32,21 @@ PressureCheckInRecord _record({
 /// Four entries with repeated evidence: "deadline" written twice, work x3,
 /// evening x2, dominant option `could_not_stop` x3.
 List<PressureCheckInRecord> _richRecords() => [
-      _record(
-        id: 'a',
-        daysAgo: 3,
-        contextIds: const ['work', 'evening'],
-        fear: 'Missing the deadline',
-      ),
-      _record(
-        id: 'b',
-        daysAgo: 2,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
-      _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
-    ];
+  _record(
+    id: 'a',
+    daysAgo: 3,
+    contextIds: const ['work', 'evening'],
+    fear: 'Missing the deadline',
+  ),
+  _record(
+    id: 'b',
+    daysAgo: 2,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
+  _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
+];
 
 const _certaintyPhrases = [
   'i know',
@@ -106,10 +106,7 @@ void main() {
       ]);
       expect(set.personalized, isTrue);
       expect(set.prompts.length, inInclusiveRange(3, 4));
-      expect(
-        set.prompts,
-        contains('Where did stopping feel unsafe today?'),
-      );
+      expect(set.prompts, contains('Where did stopping feel unsafe today?'));
       expect(
         set.prompts,
         contains('What did evening pressure make you overdo today?'),
@@ -152,7 +149,9 @@ void main() {
 
     test('every prompt uses an edge frame, never "still showing up"', () {
       final variants = [
-        engine.build([_record(id: 'a', contextIds: const ['evening'])]),
+        engine.build([
+          _record(id: 'a', contextIds: const ['evening']),
+        ]),
         engine.build([
           _record(id: 'a', daysAgo: 1, optionId: 'could_not_stop'),
           _record(id: 'b', daysAgo: 0, optionId: 'guilty_resting'),
@@ -161,24 +160,36 @@ void main() {
       ];
       for (final set in variants) {
         for (final prompt in set.prompts) {
-          expect(prompt, matches(_edgeQuestion),
-              reason: 'prompt should use a self-recognition edge frame: '
-                  '"$prompt"');
-          expect(prompt.toLowerCase(), isNot(contains('still showing up')),
-              reason: 'no soft "is it still showing up" wording: "$prompt"');
+          expect(
+            prompt,
+            matches(_edgeQuestion),
+            reason:
+                'prompt should use a self-recognition edge frame: '
+                '"$prompt"',
+          );
+          expect(
+            prompt.toLowerCase(),
+            isNot(contains('still showing up')),
+            reason: 'no soft "is it still showing up" wording: "$prompt"',
+          );
         }
       }
     });
 
     test('prompts stay under 115 characters', () {
       final variants = [
-        engine.build([_record(id: 'a', contextIds: const ['evening'])]),
+        engine.build([
+          _record(id: 'a', contextIds: const ['evening']),
+        ]),
         engine.build(_richRecords()),
       ];
       for (final set in variants) {
         for (final prompt in set.prompts) {
-          expect(prompt.length, lessThan(115),
-              reason: 'prompt too long: "$prompt"');
+          expect(
+            prompt.length,
+            lessThan(115),
+            reason: 'prompt too long: "$prompt"',
+          );
         }
       }
     });
@@ -202,12 +213,13 @@ void main() {
       expect(set.prompts.join(' '), isNot(contains('archive to notice')));
     });
 
-    test(
-        'prompts avoid certainty, diagnostic, and shame language '
+    test('prompts avoid certainty, diagnostic, and shame language '
         'in every variant', () {
       final variants = [
         engine.build(const []),
-        engine.build([_record(id: 'a', contextIds: const ['work'])]),
+        engine.build([
+          _record(id: 'a', contextIds: const ['work']),
+        ]),
         engine.build([
           _record(id: 'a', daysAgo: 1, optionId: 'could_not_stop'),
           _record(id: 'b', daysAgo: 0, optionId: 'guilty_resting'),
@@ -229,8 +241,11 @@ void main() {
           ..._diagnosticWords,
           ..._shameWords,
         ]) {
-          expect(copy, isNot(contains(phrase)),
-              reason: 'prompt copy must not contain "$phrase"');
+          expect(
+            copy,
+            isNot(contains(phrase)),
+            reason: 'prompt copy must not contain "$phrase"',
+          );
         }
       }
     });
@@ -260,16 +275,14 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('shows "Based on what you\'ve recorded" when personalized',
-        (tester) async {
+    testWidgets('shows "Based on what you\'ve recorded" when personalized', (
+      tester,
+    ) async {
       final set = engine.build(_richRecords());
       await pumpSection(tester, personalPrompts: set);
 
       expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsOneWidget);
-      expect(
-        find.byKey(const Key('personal_prompts_label')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('personal_prompts_label')), findsOneWidget);
       expect(
         find.text(PersonalReturnPromptSet.personalizedLabel),
         findsOneWidget,
@@ -284,8 +297,9 @@ void main() {
       );
     });
 
-    testWidgets('falls back to generic prompts without evidence',
-        (tester) async {
+    testWidgets('falls back to generic prompts without evidence', (
+      tester,
+    ) async {
       await pumpSection(tester, personalPrompts: engine.build(const []));
 
       expect(find.byKey(const Key('personal_prompts_label')), findsNothing);
@@ -294,8 +308,9 @@ void main() {
       }
     });
 
-    testWidgets('falls back to generic prompts when no set is provided',
-        (tester) async {
+    testWidgets('falls back to generic prompts when no set is provided', (
+      tester,
+    ) async {
       await pumpSection(tester);
       expect(find.byKey(const Key('personal_prompts_label')), findsNothing);
       for (final prompt in ConsumerUiCopy.recordStarterPrompts) {
@@ -340,8 +355,9 @@ void main() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
-    testWidgets('record screen builds cleanly with no evidence and no label',
-        (tester) async {
+    testWidgets('record screen builds cleanly with no evidence and no label', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 

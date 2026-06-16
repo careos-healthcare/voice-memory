@@ -23,13 +23,13 @@ Project: **voice-memory** → Settings → Environment Variables
 Set **EMAIL_FROM** (Production, Preview, Development):
 
 ```text
-VoiceMemory <noreply@YOUR_VERIFIED_DOMAIN>
+ArchiveMe <noreply@YOUR_VERIFIED_DOMAIN>
 ```
 
 Example:
 
 ```text
-VoiceMemory <noreply@voicememory.app>
+ArchiveMe <noreply@voicememory.app>
 ```
 
 Rules:
@@ -41,9 +41,9 @@ Rules:
 CLI (no stray quotes):
 
 ```bash
-printf '%s' 'VoiceMemory <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM production -y
-printf '%s' 'VoiceMemory <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM preview -y
-printf '%s' 'VoiceMemory <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM development -y
+printf '%s' 'ArchiveMe <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM production -y
+printf '%s' 'ArchiveMe <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM preview -y
+printf '%s' 'ArchiveMe <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM development -y
 ```
 
 Replace the domain with yours. Wait 1–2 minutes (redeploy only if sends still use the old sender).
@@ -96,7 +96,7 @@ Then: `/account` → sign in → **Back up now** → confirm sync (see [POST_DEP
 | `AUTH_RESEND_NOT_CONFIGURED` | Missing `RESEND_API_KEY` or `EMAIL_FROM` in Production |
 | Env probe all `true` but send fails | Wrong `EMAIL_FROM` value or literal quotes in Vercel value — re-set via CLI above |
 
-Vercel logs: filter `[VoiceMemory auth]` for `resendResponseId`, `resendErrorMessage`, `errorCode`.
+Vercel logs: filter `[ArchiveMe auth]` for `resendResponseId`, `resendErrorMessage`, `errorCode`.
 
 ## 6. Resend API key note
 

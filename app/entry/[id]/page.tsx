@@ -48,6 +48,15 @@ import {
   buildRecordReturnFromFollowup,
   storeRecordReturnContext,
 } from "@/lib/reflection/record-return";
+import { ActivationTheoryPreview } from "@/components/product/ActivationTheoryPreview";
+import { FirstBlindSpotSimulator } from "@/components/product/FirstBlindSpotSimulator";
+import { ImmediateEngagementPanel } from "@/components/archive/ImmediateEngagementPanel";
+import { SessionMovementSummary } from "@/components/archive/SessionMovementSummary";
+import { WhyMoreEvidenceMatters } from "@/components/archive/WhyMoreEvidenceMatters";
+import { buildImmediateEngagement } from "@/lib/archive/immediate-engagement";
+import { ArchiveValueBanner } from "@/components/product/ArchiveValueBanner";
+import { PatternActivationProgress } from "@/components/product/PatternActivationProgress";
+import { MiniWowPanel } from "@/components/blind-spots/MiniWowPanel";
 import { consumeAfterSaveContinuityLine } from "@/lib/reflection/after-save-continuity";
 import { consumeClarityAfterSaveLine } from "@/lib/clarity/clarity-record";
 import { buildClarityResurfacingNote } from "@/lib/clarity/clarity-resurfacing";
@@ -209,6 +218,11 @@ export default function EntryPage() {
     if (!heavyReady || !entry) return [];
     return getMemoryEligibleEntries();
   }, [heavyReady, entry?.id, entry?.createdAt]);
+  const immediateEngagement = useMemo(() => {
+    if (!entry || !freshQuiet) return null;
+    const entries = allEntries.length > 0 ? allEntries : [entry];
+    return buildImmediateEngagement(entries, { newEntryId: entry.id });
+  }, [entry, allEntries, freshQuiet]);
   const pending = entry ? isReflectionPending(entry) : false;
 
   useEffect(() => {
@@ -922,6 +936,32 @@ export default function EntryPage() {
               />
             ) : freshQuiet ? (
               <>
+                <ArchiveValueBanner entriesOverride={allEntries} compact className="mb-3" />
+                <SessionMovementSummary
+                  entriesOverride={allEntries}
+                  newEntryId={entry.id}
+                  surface="entry"
+                  className="mb-3"
+                />
+                {immediateEngagement ? (
+                  <ImmediateEngagementPanel
+                    engagement={immediateEngagement}
+                    className="mb-3"
+                  />
+                ) : null}
+                <WhyMoreEvidenceMatters entriesOverride={allEntries} className="mb-3" />
+                <PatternActivationProgress className="mb-3" />
+                <ActivationTheoryPreview
+                  entriesOverride={allEntries}
+                  className="mb-3"
+                  compact
+                />
+                <FirstBlindSpotSimulator
+                  entriesOverride={allEntries}
+                  className="mb-3"
+                  compact
+                />
+                <MiniWowPanel entriesOverride={allEntries} className="mb-4" />
                 {postSaveContinuity ? (
                   <p className="text-sm leading-[1.75] text-zinc-400/95">
                     {postSaveContinuity.text}

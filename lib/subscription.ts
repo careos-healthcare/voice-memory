@@ -23,7 +23,9 @@ export type UpgradeClickSource =
   | "insights"
   | "homepage"
   | "pilot"
-  | "open_loops";
+  | "open_loops"
+  | "blind_spots"
+  | "discover";
 
 export interface UpgradeClickEvent {
   source: UpgradeClickSource;

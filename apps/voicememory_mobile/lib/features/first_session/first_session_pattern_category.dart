@@ -12,15 +12,15 @@ enum FirstSessionPatternCategory {
 
 extension FirstSessionPatternCategoryIds on FirstSessionPatternCategory {
   String get id => switch (this) {
-        FirstSessionPatternCategory.responsibility => 'responsibility',
-        FirstSessionPatternCategory.worry => 'worry',
-        FirstSessionPatternCategory.relationship => 'relationship',
-        FirstSessionPatternCategory.selfDoubt => 'selfDoubt',
-        FirstSessionPatternCategory.avoidance => 'avoidance',
-        FirstSessionPatternCategory.burnout => 'burnout',
-        FirstSessionPatternCategory.fallback => 'fallback',
-        FirstSessionPatternCategory.lighter => 'lighter',
-      };
+    FirstSessionPatternCategory.responsibility => 'responsibility',
+    FirstSessionPatternCategory.worry => 'worry',
+    FirstSessionPatternCategory.relationship => 'relationship',
+    FirstSessionPatternCategory.selfDoubt => 'selfDoubt',
+    FirstSessionPatternCategory.avoidance => 'avoidance',
+    FirstSessionPatternCategory.burnout => 'burnout',
+    FirstSessionPatternCategory.fallback => 'fallback',
+    FirstSessionPatternCategory.lighter => 'lighter',
+  };
 }
 
 FirstSessionPatternCategory? firstSessionPatternCategoryFromId(String? raw) {

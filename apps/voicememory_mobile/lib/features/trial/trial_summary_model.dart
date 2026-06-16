@@ -11,11 +11,7 @@ import 'hook_diagnosis_model.dart';
 import 'hook_rescue_decision_engine.dart';
 import 'hook_rescue_decision_model.dart';
 
-enum TrialSummaryVerdict {
-  promising,
-  weak,
-  unclear,
-}
+enum TrialSummaryVerdict { promising, weak, unclear }
 
 enum TrialFrictionVerdict {
   clean,
@@ -34,11 +30,7 @@ extension TrialSummaryVerdictIds on TrialSummaryVerdict {
 }
 
 /// Whether tomorrow check-in reminders are worth building yet.
-enum ReminderReadiness {
-  notReady,
-  maybe,
-  ready,
-}
+enum ReminderReadiness { notReady, maybe, ready }
 
 extension ReminderReadinessIds on ReminderReadiness {
   String get id => name;
@@ -87,15 +79,18 @@ ReminderReadinessDecision computeReminderReadiness({
   final usefulRate = d.usefulQuestionRate;
 
   final missedReturns = (created - dueShown).clamp(0, created);
-  final candidateCount =
-      missedReturns > d.forgotCount ? missedReturns : d.forgotCount;
+  final candidateCount = missedReturns > d.forgotCount
+      ? missedReturns
+      : d.forgotCount;
 
   // A negative reason is "dominant" when it shows up and is at least as strong
   // as the positive question signal.
-  final confusingDominant = d.confusingCount >= 1 && d.confusingCount >= positive;
+  final confusingDominant =
+      d.confusingCount >= 1 && d.confusingCount >= positive;
   final didNotCareDominant =
       d.didNotCareCount >= 1 && d.didNotCareCount >= positive;
-  final resultNotUsefulHigh = d.resultNotUsefulCount >= 1 &&
+  final resultNotUsefulHigh =
+      d.resultNotUsefulCount >= 1 &&
       (d.resultUsefulCount + d.resultSortOfCount) == 0;
 
   if (created == 0) {
@@ -115,7 +110,8 @@ ReminderReadinessDecision computeReminderReadiness({
   if (didNotCareDominant) {
     return ReminderReadinessDecision(
       readiness: ReminderReadiness.notReady,
-      reason: 'Do not add reminders yet. People did not care about the question.',
+      reason:
+          'Do not add reminders yet. People did not care about the question.',
       candidateCount: candidateCount,
     );
   }
@@ -652,9 +648,9 @@ class TrialSummaryModel {
 
   double? get positioningArchiveMemoryRate =>
       positioningComprehensionAnsweredCount == 0
-          ? null
-          : positioningUnderstoodArchiveMemoryCount /
-              positioningComprehensionAnsweredCount;
+      ? null
+      : positioningUnderstoodArchiveMemoryCount /
+            positioningComprehensionAnsweredCount;
 
   final int activationFullLoopCompletedCount;
   final String activationWeakestBucket;
@@ -668,12 +664,7 @@ class TrialSummaryModel {
   /// The most common correction so far, or `none` when no negative type has at
   /// least two taps. Kept as a plain id for the facilitator export.
   String get archiveFeedbackDominantIssue {
-    const order = [
-      'tooGeneric',
-      'notMe',
-      'alreadyKnew',
-      'moreSpecific',
-    ];
+    const order = ['tooGeneric', 'notMe', 'alreadyKnew', 'moreSpecific'];
     final counts = {
       'tooGeneric': archiveFeedbackTooGenericCount,
       'notMe': archiveFeedbackNotMeCount,
@@ -693,10 +684,10 @@ class TrialSummaryModel {
   }
 
   ReminderReadinessDecision get _reminderDecision => computeReminderReadiness(
-        checkInCreatedCount: checkInCreatedCount,
-        checkInDueShownCount: checkInDueShownCount,
-        hookDiagnosis: hookDiagnosis,
-      );
+    checkInCreatedCount: checkInCreatedCount,
+    checkInDueShownCount: checkInDueShownCount,
+    hookDiagnosis: hookDiagnosis,
+  );
 
   /// Check-ins that were created but did not lead to a return (reminder pool).
   int get reminderCandidateCount => _reminderDecision.candidateCount;
@@ -709,8 +700,7 @@ class TrialSummaryModel {
       const HookRescueDecisionEngine().decide(this);
 
   /// The single best next fix for the tomorrow check-in hook.
-  HookRescueAction get hookRescuePrimaryAction =>
-      _rescueDecision.primaryAction;
+  HookRescueAction get hookRescuePrimaryAction => _rescueDecision.primaryAction;
 
   List<HookRescueAction> get hookRescueSecondaryActions =>
       _rescueDecision.secondaryActions;
@@ -740,298 +730,291 @@ class TrialSummaryModel {
   }
 
   Map<String, dynamic> toJson() => {
-        if (participantId != null) 'participantId': participantId,
-        'generatedAt': generatedAt.toUtc().toIso8601String(),
-        'firstReflectionSaved': firstReflectionSaved,
-        'firstPatternShown': firstPatternShown,
-        'firstPatternAccepted': firstPatternAccepted,
-        'firstPatternCorrected': firstPatternCorrected,
-        'watchForPromptShown': watchForPromptShown,
-        'watchForPromptAccepted': watchForPromptAccepted,
-        'returnCaptureQuickAnswerSelected': returnCaptureQuickAnswerSelected,
-        'returnedNextDay': returnedNextDay,
-        'secondReflectionSaved': secondReflectionSaved,
-        'comparisonViewed': comparisonViewed,
-        'usefulnessYes': usefulnessYes,
-        'usefulnessSortOf': usefulnessSortOf,
-        'usefulnessNotReally': usefulnessNotReally,
-        'thirdReflectionSaved': thirdReflectionSaved,
-        'appOpenedCount': appOpenedCount,
-        'recordCtaTappedCount': recordCtaTappedCount,
-        'recordingStartedCount': recordingStartedCount,
-        'recordingSavedCount': recordingSavedCount,
-        'micDeniedCount': micDeniedCount,
-        'saveCompletedCount': saveCompletedCount,
-        'closedBeforeWatchForAcceptedCount':
-            closedBeforeWatchForAcceptedCount,
-        'trialFrictionVerdict': trialFrictionVerdict.id,
-        'checkInCreatedCount': checkInCreatedCount,
-        'checkInDueShownCount': checkInDueShownCount,
-        'checkInOptionSelectedCount': checkInOptionSelectedCount,
-        'checkInCompletedCount': checkInCompletedCount,
-        if (checkInCompletionRate != null)
-          'checkInCompletionRate': checkInCompletionRate,
-        if (correctionRate != null) 'correctionRate': correctionRate,
-        if (watchForAcceptRate != null) 'watchForAcceptRate': watchForAcceptRate,
-        if (day2ReturnRate != null) 'day2ReturnRate': day2ReturnRate,
-        if (usefulRate != null) 'usefulRate': usefulRate,
-        'verdict': verdict.id,
-        'reminderCandidateCount': reminderCandidateCount,
-        'reminderReadiness': reminderReadiness.id,
-        'reminderReadinessReason': reminderReadinessReason,
-        'hookRescuePrimaryAction': hookRescuePrimaryAction.id,
-        'hookRescueSecondaryActions':
-            hookRescueSecondaryActions.map((a) => a.id).toList(),
-        'hookRescueReason': hookRescueReason,
-        'hookRescueConfidence': hookRescueConfidence.id,
-        'sharperQuestionIntensity': sharperQuestionIntensity.id,
-        'betterResultIntensity': betterResultIntensity.id,
-        'reminderImplementationStatus': reminderImplementationStatus.id,
-        'reminderScheduledCount': reminderScheduledCount,
-        'reminderDeniedCount': reminderDeniedCount,
-        'reminderPermissionRequestedCount': reminderPermissionRequestedCount,
-        'reminderPermissionGrantedCount': reminderPermissionGrantedCount,
-        'reminderPermissionDeniedCount': reminderPermissionDeniedCount,
-        'reminderCancelledCount': reminderCancelledCount,
-        'reminderTappedCount': reminderTappedCount,
-        'reminderEnabled': reminderEnabled,
-        'patternMemoryCreatedCount': patternMemoryCreatedCount,
-        'patternMemoryUpdatedCount': patternMemoryUpdatedCount,
-        'patternMemoryCheckInCount': patternMemoryCheckInCount,
-        'activePatternMemoryStatus': activePatternMemoryStatus?.id,
-        'patternProgressMomentCreatedCount': patternProgressMomentCreatedCount,
-        'patternProgressCardShownCount': patternProgressCardShownCount,
-        'latestPatternProgressType': latestPatternProgressType?.id,
-        'patternNextActionCreatedCount': patternNextActionCreatedCount,
-        'patternNextActionUsedCount': patternNextActionUsedCount,
-        'latestPatternNextActionType': latestPatternNextActionType?.id,
-        'habitProofCreatedCount': habitProofCreatedCount,
-        'habitProofShownCount': habitProofShownCount,
-        'habitProofCtaTappedCount': habitProofCtaTappedCount,
-        'latestHabitProofType': latestHabitProofType?.id,
-        'weeklyPatternRecapCreatedCount': weeklyPatternRecapCreatedCount,
-        'weeklyPatternRecapShownCount': weeklyPatternRecapShownCount,
-        'weeklyPatternRecapCtaTappedCount': weeklyPatternRecapCtaTappedCount,
-        'latestWeeklyPatternRecapType': latestWeeklyPatternRecapType?.id,
-        'patternShareCardShownCount': patternShareCardShownCount,
-        'patternShareCopiedCount': patternShareCopiedCount,
-        'patternShareOpenedCount': patternShareOpenedCount,
-        'patternShareFailedCount': patternShareFailedCount,
-        'firstLoopStage': firstLoopStage.id,
-        'firstLoopCompleted': firstLoopCompleted,
-        if (secondsToFirstSave != null)
-          'secondsToFirstSave': secondsToFirstSave,
-        if (secondsToLoopReady != null)
-          'secondsToLoopReady': secondsToLoopReady,
-        'firstLoopDropoffPoint': firstLoopDropoffPoint.id,
-        'returnDayDueShownCount': returnDayDueShownCount,
-        'returnDayAnswerSelectedCount': returnDayAnswerSelectedCount,
-        'returnDayLoopClosedCount': returnDayLoopClosedCount,
-        if (latestSecondsToAnswer != null)
-          'latestSecondsToAnswer': latestSecondsToAnswer,
-        if (latestSecondsToLoopClosed != null)
-          'latestSecondsToLoopClosed': latestSecondsToLoopClosed,
-        if (returnDayCompletionRate != null)
-          'returnDayCompletionRate': returnDayCompletionRate,
-        'returnDayDropoffPoint': returnDayDropoffPoint.id,
-        'sharperQuestionGeneratedCount': sharperQuestionGeneratedCount,
-        'verySharpQuestionGeneratedCount': verySharpQuestionGeneratedCount,
-        'sharperQuestionAcceptedCount': sharperQuestionAcceptedCount,
-        'verySharpQuestionAcceptedCount': verySharpQuestionAcceptedCount,
-        'betterResultShownCount': betterResultShownCount,
-        'aggressiveBetterResultShownCount': aggressiveBetterResultShownCount,
-        'checkInGoDeeperShownCount': checkInGoDeeperShownCount,
-        'checkInGoDeeperTappedCount': checkInGoDeeperTappedCount,
-        'resultNextCheckShownCount': resultNextCheckShownCount,
-        'resultNextCheckUsedCount': resultNextCheckUsedCount,
-        'resultNextCheckChangedCount': resultNextCheckChangedCount,
-        'resultNextCheckUsedFromPatternsCount':
-            resultNextCheckUsedFromPatternsCount,
-        'usefulResultTakeawayShownCount': usefulResultTakeawayShownCount,
-        'makeResultMoreUsefulTappedCount': makeResultMoreUsefulTappedCount,
-        'makeResultMoreUsefulReasonSelectedCount':
-            makeResultMoreUsefulReasonSelectedCount,
-        'usefulResultNextCheckUsedCount': usefulResultNextCheckUsedCount,
-        'inputQualityCoachShownCount': inputQualityCoachShownCount,
-        'inputQualitySentenceAddedCount': inputQualitySentenceAddedCount,
-        'inputQualityUsedAnywayCount': inputQualityUsedAnywayCount,
-        'acceptedWeakInputCount': acceptedWeakInputCount,
-        'sharpenedInputCount': sharpenedInputCount,
-        if (latestInputQualityLevel != null)
-          'latestInputQualityLevel': latestInputQualityLevel,
-        if (averageInputQualityScore != null)
-          'averageInputQualityScore': averageInputQualityScore,
-        'perspectiveShiftShownCount': perspectiveShiftShownCount,
-        'perspectiveShiftChangedCount': perspectiveShiftChangedCount,
-        'perspectiveShiftUsedCount': perspectiveShiftUsedCount,
-        'perspectiveShiftShownFromPatternsCount':
-            perspectiveShiftShownFromPatternsCount,
-        'perspectiveShiftUsedFromPatternsCount':
-            perspectiveShiftUsedFromPatternsCount,
-        'kinderAngleShownCount': kinderAngleShownCount,
-        'kinderAngleUsedCount': kinderAngleUsedCount,
-        'kinderAngleChangedCount': kinderAngleChangedCount,
-        'kinderAngleShownFromPatternsCount': kinderAngleShownFromPatternsCount,
-        'kinderAngleUsedFromPatternsCount': kinderAngleUsedFromPatternsCount,
-        'quickHelpOpenedCount': quickHelpOpenedCount,
-        'quickHelpIntentSelectedCount': quickHelpIntentSelectedCount,
-        'quickHelpPrimaryActionTappedCount': quickHelpPrimaryActionTappedCount,
-        'quickHelpCheckUsedCount': quickHelpCheckUsedCount,
-        'keyMomentCreatedCount': keyMomentCreatedCount,
-        'keyMomentOpenedCount': keyMomentOpenedCount,
-        'keyMomentSearchUsedCount': keyMomentSearchUsedCount,
-        'keyMomentUseCheckTappedCount': keyMomentUseCheckTappedCount,
-        'askArchiveOpenedCount': askArchiveOpenedCount,
-        'askArchiveSearchUsedCount': askArchiveSearchUsedCount,
-        'askArchiveSuggestedChipTappedCount': askArchiveSuggestedChipTappedCount,
-        'askArchiveResultOpenedCount': askArchiveResultOpenedCount,
-        'askArchiveUseCheckTappedCount': askArchiveUseCheckTappedCount,
-        'archiveCleanViewShownCount': archiveCleanViewShownCount,
-        'archiveCleanSectionTappedCount': archiveCleanSectionTappedCount,
-        'patternProfileShownCount': patternProfileShownCount,
-        'patternProfileOpenedCount': patternProfileOpenedCount,
-        'patternProfileUseCheckTappedCount': patternProfileUseCheckTappedCount,
-        'patternProfileFindMomentsTappedCount':
-            patternProfileFindMomentsTappedCount,
-        'patternProfileOpenTimelineTappedCount':
-            patternProfileOpenTimelineTappedCount,
-        'patternMapShownCount': patternMapShownCount,
-        'patternMapOpenedCount': patternMapOpenedCount,
-        'patternMapUseCheckTappedCount': patternMapUseCheckTappedCount,
-        'archiveFeedbackShownCount': archiveFeedbackShownCount,
-        'archiveFeedbackSelectedCount': archiveFeedbackSelectedCount,
-        'archiveFeedbackUsefulCount': archiveFeedbackUsefulCount,
-        'archiveFeedbackTooGenericCount': archiveFeedbackTooGenericCount,
-        'archiveFeedbackNotMeCount': archiveFeedbackNotMeCount,
-        'archiveFeedbackAlreadyKnewCount': archiveFeedbackAlreadyKnewCount,
-        'archiveFeedbackMoreSpecificCount': archiveFeedbackMoreSpecificCount,
-        'archiveFeedbackDominantIssue': archiveFeedbackDominantIssue,
-        'archiveCompressionShownCount': archiveCompressionShownCount,
-        'archiveCompressionOpenedCount': archiveCompressionOpenedCount,
-        'archiveCompressionKeptCount': archiveCompressionKeptCount,
-        'archiveCompressionSplitCount': archiveCompressionSplitCount,
-        'archiveCompressionHiddenCount': archiveCompressionHiddenCount,
-        'memoryQualityShownCount': memoryQualityShownCount,
-        'memoryQualityTappedCount': memoryQualityTappedCount,
-        if (latestMemoryQualityLevel != null)
-          'latestMemoryQualityLevel': latestMemoryQualityLevel,
-        'paywallShownCount': paywallShownCount,
-        'paywallTriggerShownCount': paywallTriggerShownCount,
-        'annualPlanShownCount': annualPlanShownCount,
-        'monthlyPlanShownCount': monthlyPlanShownCount,
-        'annualPlanSelectedCount': annualPlanSelectedCount,
-        'monthlyPlanSelectedCount': monthlyPlanSelectedCount,
-        'paywallContinueTappedCount': paywallContinueTappedCount,
-        'paywallDismissedCount': paywallDismissedCount,
-        'restoreTappedCount': restoreTappedCount,
-        'archiveRangeReviewShownCount': archiveRangeReviewShownCount,
-        'archiveRangeReviewOpenedCount': archiveRangeReviewOpenedCount,
-        'archiveRangeReviewUseCheckTappedCount':
-            archiveRangeReviewUseCheckTappedCount,
-        'archiveRangeReviewPresetChangedCount':
-            archiveRangeReviewPresetChangedCount,
-        'retentionStateShownCount': retentionStateShownCount,
-        'retentionDueShownCount': retentionDueShownCount,
-        'retentionCheckSetShownCount': retentionCheckSetShownCount,
-        'retentionLoopClosedShownCount': retentionLoopClosedShownCount,
-        'retentionPrimaryCtaTappedCount': retentionPrimaryCtaTappedCount,
-        'retentionNextCheckReadyCount': retentionNextCheckReadyCount,
-        'retentionMissedCheckCount': retentionMissedCheckCount,
-        'reminderScheduledFromRetentionCount':
-            reminderScheduledFromRetentionCount,
-        'compellingCheckShownCount': compellingCheckShownCount,
-        'compellingCheckSelectedCount': compellingCheckSelectedCount,
-        'compellingCheckMostSpecificSelectedCount':
-            compellingCheckMostSpecificSelectedCount,
-        'compellingCheckAcceptedCount': compellingCheckAcceptedCount,
-        'realReminderPermissionRequestedCount':
-            realReminderPermissionRequestedCount,
-        'realReminderPermissionGrantedCount':
-            realReminderPermissionGrantedCount,
-        'realReminderPermissionDeniedCount':
-            realReminderPermissionDeniedCount,
-        'realReminderScheduledCount': realReminderScheduledCount,
-        'realReminderCancelledCount': realReminderCancelledCount,
-        'realReminderUnavailableCount': realReminderUnavailableCount,
-        'currentObjectiveShownCount': currentObjectiveShownCount,
-        'currentObjectivePrimaryTappedCount': currentObjectivePrimaryTappedCount,
-        'currentObjectiveSecondaryTappedCount':
-            currentObjectiveSecondaryTappedCount,
-        'latestCurrentObjectiveType': latestCurrentObjectiveType,
-        'proValuePreviewShownCount': proValuePreviewShownCount,
-        'proValuePreviewUnlockTappedCount': proValuePreviewUnlockTappedCount,
-        'proValuePreviewDismissedCount': proValuePreviewDismissedCount,
-        'latestProValuePreviewType': latestProValuePreviewType,
-        'objectiveWidgetRefreshAttemptedCount':
-            objectiveWidgetRefreshAttemptedCount,
-        'objectiveWidgetRefreshSucceededCount':
-            objectiveWidgetRefreshSucceededCount,
-        'objectiveWidgetRefreshFailedCount': objectiveWidgetRefreshFailedCount,
-        'objectiveWidgetClearedCount': objectiveWidgetClearedCount,
-        'archiveMemorySummaryShownCount': archiveMemorySummaryShownCount,
-        'archiveMemoryOpenPatternMapTappedCount':
-            archiveMemoryOpenPatternMapTappedCount,
-        'archiveMemoryFindMomentsTappedCount':
-            archiveMemoryFindMomentsTappedCount,
-        'archiveMemoryUseCheckTappedCount': archiveMemoryUseCheckTappedCount,
-        'archiveTimelineShownCount': archiveTimelineShownCount,
-        'archiveTimelineOpenedCount': archiveTimelineOpenedCount,
-        'archiveTimelineUseCheckTappedCount':
-            archiveTimelineUseCheckTappedCount,
-        'positioningComprehensionAskedCount': positioningComprehensionAskedCount,
-        'positioningComprehensionAnsweredCount':
-            positioningComprehensionAnsweredCount,
-        'positioningUnderstoodArchiveMemoryCount':
-            positioningUnderstoodArchiveMemoryCount,
-        'positioningJournalCount': positioningJournalCount,
-        'positioningChatCount': positioningChatCount,
-        'positioningNotSureCount': positioningNotSureCount,
-        'positioningComprehensionPass': positioningComprehensionPass,
-        if (positioningArchiveMemoryRate != null)
-          'positioningArchiveMemoryRate': positioningArchiveMemoryRate,
-        'activationFullLoopCompletedCount': activationFullLoopCompletedCount,
-        'activationWeakestBucket': activationWeakestBucket,
-        'activationSavedFirstMoment': activationSavedFirstMoment,
-        'activationChoseTomorrowCheck': activationChoseTomorrowCheck,
-        'activationReturnedNextDay': activationReturnedNextDay,
-        'activationClosedLoop': activationClosedLoop,
-        'activationRatedUsefulOrSortOf': activationRatedUsefulOrSortOf,
-        'activationChoseNextCheck': activationChoseNextCheck,
-        'hookDiagnosis': {
-          'likelyFailure': hookDiagnosis.likelyFailure,
-          'checkInCompletionRate': hookDiagnosis.checkInCompletionRate,
-          'checkInQuestionRatedUseful': hookDiagnosis.checkInQuestionRatedUseful,
-          'checkInQuestionRatedSortOf': hookDiagnosis.checkInQuestionRatedSortOf,
-          'checkInQuestionRatedNotUseful':
-              hookDiagnosis.checkInQuestionRatedNotUseful,
-          'resultUsefulCount': hookDiagnosis.resultUsefulCount,
-          'resultSortOfCount': hookDiagnosis.resultSortOfCount,
-          'resultNotUsefulCount': hookDiagnosis.resultNotUsefulCount,
-          'forgotCount': hookDiagnosis.forgotCount,
-          'didNotCareCount': hookDiagnosis.didNotCareCount,
-          'confusingCount': hookDiagnosis.confusingCount,
-          'didNotReturnReasonCounts': hookDiagnosis.didNotReturnReasonCounts,
-          'examplesOpenedCount': hookDiagnosis.examplesOpenedCount,
-          'checkInClarityCardShownCount':
-              hookDiagnosis.checkInClarityCardShownCount,
-          'checkInMomentRecordedCount': hookDiagnosis.checkInMomentRecordedCount,
-          'notUsefulReasonCounts': hookDiagnosis.notUsefulReasonCounts,
-          if (hookDiagnosis.clarityIssueRate != null)
-            'clarityIssueRate': hookDiagnosis.clarityIssueRate,
-        },
-        if (retentionDiagnosisSnapshot != null)
-          'retentionDiagnosisSnapshot': retentionDiagnosisSnapshot!.toJson(),
-        if (acquisitionCohort != null)
-          'acquisitionCohort': acquisitionCohort!.toJson(),
-        'capacityInviteCopiedCount': capacityInviteCopiedCount,
-        'proveInviteCopiedCount': proveInviteCopiedCount,
-        'genericInviteCopiedCount': genericInviteCopiedCount,
-        'proveDefaultShownCount': proveDefaultShownCount,
-        'proveDefaultStartedCount': proveDefaultStartedCount,
-        'proveFirstMomentRecordedCount': proveFirstMomentRecordedCount,
-        'proveReadAcceptedCount': proveReadAcceptedCount,
-        'proveSecondMomentRecordedCount': proveSecondMomentRecordedCount,
-        'proveReviewConfirmedCount': proveReviewConfirmedCount,
-        'provePaywallTeaserTappedCount': provePaywallTeaserTappedCount,
-      };
+    if (participantId != null) 'participantId': participantId,
+    'generatedAt': generatedAt.toUtc().toIso8601String(),
+    'firstReflectionSaved': firstReflectionSaved,
+    'firstPatternShown': firstPatternShown,
+    'firstPatternAccepted': firstPatternAccepted,
+    'firstPatternCorrected': firstPatternCorrected,
+    'watchForPromptShown': watchForPromptShown,
+    'watchForPromptAccepted': watchForPromptAccepted,
+    'returnCaptureQuickAnswerSelected': returnCaptureQuickAnswerSelected,
+    'returnedNextDay': returnedNextDay,
+    'secondReflectionSaved': secondReflectionSaved,
+    'comparisonViewed': comparisonViewed,
+    'usefulnessYes': usefulnessYes,
+    'usefulnessSortOf': usefulnessSortOf,
+    'usefulnessNotReally': usefulnessNotReally,
+    'thirdReflectionSaved': thirdReflectionSaved,
+    'appOpenedCount': appOpenedCount,
+    'recordCtaTappedCount': recordCtaTappedCount,
+    'recordingStartedCount': recordingStartedCount,
+    'recordingSavedCount': recordingSavedCount,
+    'micDeniedCount': micDeniedCount,
+    'saveCompletedCount': saveCompletedCount,
+    'closedBeforeWatchForAcceptedCount': closedBeforeWatchForAcceptedCount,
+    'trialFrictionVerdict': trialFrictionVerdict.id,
+    'checkInCreatedCount': checkInCreatedCount,
+    'checkInDueShownCount': checkInDueShownCount,
+    'checkInOptionSelectedCount': checkInOptionSelectedCount,
+    'checkInCompletedCount': checkInCompletedCount,
+    if (checkInCompletionRate != null)
+      'checkInCompletionRate': checkInCompletionRate,
+    if (correctionRate != null) 'correctionRate': correctionRate,
+    if (watchForAcceptRate != null) 'watchForAcceptRate': watchForAcceptRate,
+    if (day2ReturnRate != null) 'day2ReturnRate': day2ReturnRate,
+    if (usefulRate != null) 'usefulRate': usefulRate,
+    'verdict': verdict.id,
+    'reminderCandidateCount': reminderCandidateCount,
+    'reminderReadiness': reminderReadiness.id,
+    'reminderReadinessReason': reminderReadinessReason,
+    'hookRescuePrimaryAction': hookRescuePrimaryAction.id,
+    'hookRescueSecondaryActions': hookRescueSecondaryActions
+        .map((a) => a.id)
+        .toList(),
+    'hookRescueReason': hookRescueReason,
+    'hookRescueConfidence': hookRescueConfidence.id,
+    'sharperQuestionIntensity': sharperQuestionIntensity.id,
+    'betterResultIntensity': betterResultIntensity.id,
+    'reminderImplementationStatus': reminderImplementationStatus.id,
+    'reminderScheduledCount': reminderScheduledCount,
+    'reminderDeniedCount': reminderDeniedCount,
+    'reminderPermissionRequestedCount': reminderPermissionRequestedCount,
+    'reminderPermissionGrantedCount': reminderPermissionGrantedCount,
+    'reminderPermissionDeniedCount': reminderPermissionDeniedCount,
+    'reminderCancelledCount': reminderCancelledCount,
+    'reminderTappedCount': reminderTappedCount,
+    'reminderEnabled': reminderEnabled,
+    'patternMemoryCreatedCount': patternMemoryCreatedCount,
+    'patternMemoryUpdatedCount': patternMemoryUpdatedCount,
+    'patternMemoryCheckInCount': patternMemoryCheckInCount,
+    'activePatternMemoryStatus': activePatternMemoryStatus?.id,
+    'patternProgressMomentCreatedCount': patternProgressMomentCreatedCount,
+    'patternProgressCardShownCount': patternProgressCardShownCount,
+    'latestPatternProgressType': latestPatternProgressType?.id,
+    'patternNextActionCreatedCount': patternNextActionCreatedCount,
+    'patternNextActionUsedCount': patternNextActionUsedCount,
+    'latestPatternNextActionType': latestPatternNextActionType?.id,
+    'habitProofCreatedCount': habitProofCreatedCount,
+    'habitProofShownCount': habitProofShownCount,
+    'habitProofCtaTappedCount': habitProofCtaTappedCount,
+    'latestHabitProofType': latestHabitProofType?.id,
+    'weeklyPatternRecapCreatedCount': weeklyPatternRecapCreatedCount,
+    'weeklyPatternRecapShownCount': weeklyPatternRecapShownCount,
+    'weeklyPatternRecapCtaTappedCount': weeklyPatternRecapCtaTappedCount,
+    'latestWeeklyPatternRecapType': latestWeeklyPatternRecapType?.id,
+    'patternShareCardShownCount': patternShareCardShownCount,
+    'patternShareCopiedCount': patternShareCopiedCount,
+    'patternShareOpenedCount': patternShareOpenedCount,
+    'patternShareFailedCount': patternShareFailedCount,
+    'firstLoopStage': firstLoopStage.id,
+    'firstLoopCompleted': firstLoopCompleted,
+    if (secondsToFirstSave != null) 'secondsToFirstSave': secondsToFirstSave,
+    if (secondsToLoopReady != null) 'secondsToLoopReady': secondsToLoopReady,
+    'firstLoopDropoffPoint': firstLoopDropoffPoint.id,
+    'returnDayDueShownCount': returnDayDueShownCount,
+    'returnDayAnswerSelectedCount': returnDayAnswerSelectedCount,
+    'returnDayLoopClosedCount': returnDayLoopClosedCount,
+    if (latestSecondsToAnswer != null)
+      'latestSecondsToAnswer': latestSecondsToAnswer,
+    if (latestSecondsToLoopClosed != null)
+      'latestSecondsToLoopClosed': latestSecondsToLoopClosed,
+    if (returnDayCompletionRate != null)
+      'returnDayCompletionRate': returnDayCompletionRate,
+    'returnDayDropoffPoint': returnDayDropoffPoint.id,
+    'sharperQuestionGeneratedCount': sharperQuestionGeneratedCount,
+    'verySharpQuestionGeneratedCount': verySharpQuestionGeneratedCount,
+    'sharperQuestionAcceptedCount': sharperQuestionAcceptedCount,
+    'verySharpQuestionAcceptedCount': verySharpQuestionAcceptedCount,
+    'betterResultShownCount': betterResultShownCount,
+    'aggressiveBetterResultShownCount': aggressiveBetterResultShownCount,
+    'checkInGoDeeperShownCount': checkInGoDeeperShownCount,
+    'checkInGoDeeperTappedCount': checkInGoDeeperTappedCount,
+    'resultNextCheckShownCount': resultNextCheckShownCount,
+    'resultNextCheckUsedCount': resultNextCheckUsedCount,
+    'resultNextCheckChangedCount': resultNextCheckChangedCount,
+    'resultNextCheckUsedFromPatternsCount':
+        resultNextCheckUsedFromPatternsCount,
+    'usefulResultTakeawayShownCount': usefulResultTakeawayShownCount,
+    'makeResultMoreUsefulTappedCount': makeResultMoreUsefulTappedCount,
+    'makeResultMoreUsefulReasonSelectedCount':
+        makeResultMoreUsefulReasonSelectedCount,
+    'usefulResultNextCheckUsedCount': usefulResultNextCheckUsedCount,
+    'inputQualityCoachShownCount': inputQualityCoachShownCount,
+    'inputQualitySentenceAddedCount': inputQualitySentenceAddedCount,
+    'inputQualityUsedAnywayCount': inputQualityUsedAnywayCount,
+    'acceptedWeakInputCount': acceptedWeakInputCount,
+    'sharpenedInputCount': sharpenedInputCount,
+    if (latestInputQualityLevel != null)
+      'latestInputQualityLevel': latestInputQualityLevel,
+    if (averageInputQualityScore != null)
+      'averageInputQualityScore': averageInputQualityScore,
+    'perspectiveShiftShownCount': perspectiveShiftShownCount,
+    'perspectiveShiftChangedCount': perspectiveShiftChangedCount,
+    'perspectiveShiftUsedCount': perspectiveShiftUsedCount,
+    'perspectiveShiftShownFromPatternsCount':
+        perspectiveShiftShownFromPatternsCount,
+    'perspectiveShiftUsedFromPatternsCount':
+        perspectiveShiftUsedFromPatternsCount,
+    'kinderAngleShownCount': kinderAngleShownCount,
+    'kinderAngleUsedCount': kinderAngleUsedCount,
+    'kinderAngleChangedCount': kinderAngleChangedCount,
+    'kinderAngleShownFromPatternsCount': kinderAngleShownFromPatternsCount,
+    'kinderAngleUsedFromPatternsCount': kinderAngleUsedFromPatternsCount,
+    'quickHelpOpenedCount': quickHelpOpenedCount,
+    'quickHelpIntentSelectedCount': quickHelpIntentSelectedCount,
+    'quickHelpPrimaryActionTappedCount': quickHelpPrimaryActionTappedCount,
+    'quickHelpCheckUsedCount': quickHelpCheckUsedCount,
+    'keyMomentCreatedCount': keyMomentCreatedCount,
+    'keyMomentOpenedCount': keyMomentOpenedCount,
+    'keyMomentSearchUsedCount': keyMomentSearchUsedCount,
+    'keyMomentUseCheckTappedCount': keyMomentUseCheckTappedCount,
+    'askArchiveOpenedCount': askArchiveOpenedCount,
+    'askArchiveSearchUsedCount': askArchiveSearchUsedCount,
+    'askArchiveSuggestedChipTappedCount': askArchiveSuggestedChipTappedCount,
+    'askArchiveResultOpenedCount': askArchiveResultOpenedCount,
+    'askArchiveUseCheckTappedCount': askArchiveUseCheckTappedCount,
+    'archiveCleanViewShownCount': archiveCleanViewShownCount,
+    'archiveCleanSectionTappedCount': archiveCleanSectionTappedCount,
+    'patternProfileShownCount': patternProfileShownCount,
+    'patternProfileOpenedCount': patternProfileOpenedCount,
+    'patternProfileUseCheckTappedCount': patternProfileUseCheckTappedCount,
+    'patternProfileFindMomentsTappedCount':
+        patternProfileFindMomentsTappedCount,
+    'patternProfileOpenTimelineTappedCount':
+        patternProfileOpenTimelineTappedCount,
+    'patternMapShownCount': patternMapShownCount,
+    'patternMapOpenedCount': patternMapOpenedCount,
+    'patternMapUseCheckTappedCount': patternMapUseCheckTappedCount,
+    'archiveFeedbackShownCount': archiveFeedbackShownCount,
+    'archiveFeedbackSelectedCount': archiveFeedbackSelectedCount,
+    'archiveFeedbackUsefulCount': archiveFeedbackUsefulCount,
+    'archiveFeedbackTooGenericCount': archiveFeedbackTooGenericCount,
+    'archiveFeedbackNotMeCount': archiveFeedbackNotMeCount,
+    'archiveFeedbackAlreadyKnewCount': archiveFeedbackAlreadyKnewCount,
+    'archiveFeedbackMoreSpecificCount': archiveFeedbackMoreSpecificCount,
+    'archiveFeedbackDominantIssue': archiveFeedbackDominantIssue,
+    'archiveCompressionShownCount': archiveCompressionShownCount,
+    'archiveCompressionOpenedCount': archiveCompressionOpenedCount,
+    'archiveCompressionKeptCount': archiveCompressionKeptCount,
+    'archiveCompressionSplitCount': archiveCompressionSplitCount,
+    'archiveCompressionHiddenCount': archiveCompressionHiddenCount,
+    'memoryQualityShownCount': memoryQualityShownCount,
+    'memoryQualityTappedCount': memoryQualityTappedCount,
+    if (latestMemoryQualityLevel != null)
+      'latestMemoryQualityLevel': latestMemoryQualityLevel,
+    'paywallShownCount': paywallShownCount,
+    'paywallTriggerShownCount': paywallTriggerShownCount,
+    'annualPlanShownCount': annualPlanShownCount,
+    'monthlyPlanShownCount': monthlyPlanShownCount,
+    'annualPlanSelectedCount': annualPlanSelectedCount,
+    'monthlyPlanSelectedCount': monthlyPlanSelectedCount,
+    'paywallContinueTappedCount': paywallContinueTappedCount,
+    'paywallDismissedCount': paywallDismissedCount,
+    'restoreTappedCount': restoreTappedCount,
+    'archiveRangeReviewShownCount': archiveRangeReviewShownCount,
+    'archiveRangeReviewOpenedCount': archiveRangeReviewOpenedCount,
+    'archiveRangeReviewUseCheckTappedCount':
+        archiveRangeReviewUseCheckTappedCount,
+    'archiveRangeReviewPresetChangedCount':
+        archiveRangeReviewPresetChangedCount,
+    'retentionStateShownCount': retentionStateShownCount,
+    'retentionDueShownCount': retentionDueShownCount,
+    'retentionCheckSetShownCount': retentionCheckSetShownCount,
+    'retentionLoopClosedShownCount': retentionLoopClosedShownCount,
+    'retentionPrimaryCtaTappedCount': retentionPrimaryCtaTappedCount,
+    'retentionNextCheckReadyCount': retentionNextCheckReadyCount,
+    'retentionMissedCheckCount': retentionMissedCheckCount,
+    'reminderScheduledFromRetentionCount': reminderScheduledFromRetentionCount,
+    'compellingCheckShownCount': compellingCheckShownCount,
+    'compellingCheckSelectedCount': compellingCheckSelectedCount,
+    'compellingCheckMostSpecificSelectedCount':
+        compellingCheckMostSpecificSelectedCount,
+    'compellingCheckAcceptedCount': compellingCheckAcceptedCount,
+    'realReminderPermissionRequestedCount':
+        realReminderPermissionRequestedCount,
+    'realReminderPermissionGrantedCount': realReminderPermissionGrantedCount,
+    'realReminderPermissionDeniedCount': realReminderPermissionDeniedCount,
+    'realReminderScheduledCount': realReminderScheduledCount,
+    'realReminderCancelledCount': realReminderCancelledCount,
+    'realReminderUnavailableCount': realReminderUnavailableCount,
+    'currentObjectiveShownCount': currentObjectiveShownCount,
+    'currentObjectivePrimaryTappedCount': currentObjectivePrimaryTappedCount,
+    'currentObjectiveSecondaryTappedCount':
+        currentObjectiveSecondaryTappedCount,
+    'latestCurrentObjectiveType': latestCurrentObjectiveType,
+    'proValuePreviewShownCount': proValuePreviewShownCount,
+    'proValuePreviewUnlockTappedCount': proValuePreviewUnlockTappedCount,
+    'proValuePreviewDismissedCount': proValuePreviewDismissedCount,
+    'latestProValuePreviewType': latestProValuePreviewType,
+    'objectiveWidgetRefreshAttemptedCount':
+        objectiveWidgetRefreshAttemptedCount,
+    'objectiveWidgetRefreshSucceededCount':
+        objectiveWidgetRefreshSucceededCount,
+    'objectiveWidgetRefreshFailedCount': objectiveWidgetRefreshFailedCount,
+    'objectiveWidgetClearedCount': objectiveWidgetClearedCount,
+    'archiveMemorySummaryShownCount': archiveMemorySummaryShownCount,
+    'archiveMemoryOpenPatternMapTappedCount':
+        archiveMemoryOpenPatternMapTappedCount,
+    'archiveMemoryFindMomentsTappedCount': archiveMemoryFindMomentsTappedCount,
+    'archiveMemoryUseCheckTappedCount': archiveMemoryUseCheckTappedCount,
+    'archiveTimelineShownCount': archiveTimelineShownCount,
+    'archiveTimelineOpenedCount': archiveTimelineOpenedCount,
+    'archiveTimelineUseCheckTappedCount': archiveTimelineUseCheckTappedCount,
+    'positioningComprehensionAskedCount': positioningComprehensionAskedCount,
+    'positioningComprehensionAnsweredCount':
+        positioningComprehensionAnsweredCount,
+    'positioningUnderstoodArchiveMemoryCount':
+        positioningUnderstoodArchiveMemoryCount,
+    'positioningJournalCount': positioningJournalCount,
+    'positioningChatCount': positioningChatCount,
+    'positioningNotSureCount': positioningNotSureCount,
+    'positioningComprehensionPass': positioningComprehensionPass,
+    if (positioningArchiveMemoryRate != null)
+      'positioningArchiveMemoryRate': positioningArchiveMemoryRate,
+    'activationFullLoopCompletedCount': activationFullLoopCompletedCount,
+    'activationWeakestBucket': activationWeakestBucket,
+    'activationSavedFirstMoment': activationSavedFirstMoment,
+    'activationChoseTomorrowCheck': activationChoseTomorrowCheck,
+    'activationReturnedNextDay': activationReturnedNextDay,
+    'activationClosedLoop': activationClosedLoop,
+    'activationRatedUsefulOrSortOf': activationRatedUsefulOrSortOf,
+    'activationChoseNextCheck': activationChoseNextCheck,
+    'hookDiagnosis': {
+      'likelyFailure': hookDiagnosis.likelyFailure,
+      'checkInCompletionRate': hookDiagnosis.checkInCompletionRate,
+      'checkInQuestionRatedUseful': hookDiagnosis.checkInQuestionRatedUseful,
+      'checkInQuestionRatedSortOf': hookDiagnosis.checkInQuestionRatedSortOf,
+      'checkInQuestionRatedNotUseful':
+          hookDiagnosis.checkInQuestionRatedNotUseful,
+      'resultUsefulCount': hookDiagnosis.resultUsefulCount,
+      'resultSortOfCount': hookDiagnosis.resultSortOfCount,
+      'resultNotUsefulCount': hookDiagnosis.resultNotUsefulCount,
+      'forgotCount': hookDiagnosis.forgotCount,
+      'didNotCareCount': hookDiagnosis.didNotCareCount,
+      'confusingCount': hookDiagnosis.confusingCount,
+      'didNotReturnReasonCounts': hookDiagnosis.didNotReturnReasonCounts,
+      'examplesOpenedCount': hookDiagnosis.examplesOpenedCount,
+      'checkInClarityCardShownCount':
+          hookDiagnosis.checkInClarityCardShownCount,
+      'checkInMomentRecordedCount': hookDiagnosis.checkInMomentRecordedCount,
+      'notUsefulReasonCounts': hookDiagnosis.notUsefulReasonCounts,
+      if (hookDiagnosis.clarityIssueRate != null)
+        'clarityIssueRate': hookDiagnosis.clarityIssueRate,
+    },
+    if (retentionDiagnosisSnapshot != null)
+      'retentionDiagnosisSnapshot': retentionDiagnosisSnapshot!.toJson(),
+    if (acquisitionCohort != null)
+      'acquisitionCohort': acquisitionCohort!.toJson(),
+    'capacityInviteCopiedCount': capacityInviteCopiedCount,
+    'proveInviteCopiedCount': proveInviteCopiedCount,
+    'genericInviteCopiedCount': genericInviteCopiedCount,
+    'proveDefaultShownCount': proveDefaultShownCount,
+    'proveDefaultStartedCount': proveDefaultStartedCount,
+    'proveFirstMomentRecordedCount': proveFirstMomentRecordedCount,
+    'proveReadAcceptedCount': proveReadAcceptedCount,
+    'proveSecondMomentRecordedCount': proveSecondMomentRecordedCount,
+    'proveReviewConfirmedCount': proveReviewConfirmedCount,
+    'provePaywallTeaserTappedCount': provePaywallTeaserTappedCount,
+  };
 }

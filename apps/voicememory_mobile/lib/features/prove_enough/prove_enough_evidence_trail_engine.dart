@@ -118,8 +118,8 @@ class ProveEnoughEvidenceTrailEngine {
     final triggerMap = _triggerEngine.build(eligible);
     final triggerSummary = triggerMap.hasEnoughData
         ? triggerMap.rankedRows
-            .map((row) => '${row.category.label} (${row.count})')
-            .join('\n')
+              .map((row) => '${row.category.label} (${row.count})')
+              .join('\n')
         : '';
 
     return ProveEnoughEvidenceTrail(

@@ -127,8 +127,8 @@ class _ArchiveEvolutionTimelineScreenState
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _timeline == null
-              ? _emptyState()
-              : _content(_timeline!),
+          ? _emptyState()
+          : _content(_timeline!),
     );
   }
 
@@ -137,9 +137,7 @@ class _ArchiveEvolutionTimelineScreenState
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Text(
         'Record a few moments and ArchiveMe will build this.',
-        style: VoiceMemoryTypography.bodyStyle(
-          color: AppColors.textSecondary,
-        ),
+        style: VoiceMemoryTypography.bodyStyle(color: AppColors.textSecondary),
       ),
     );
   }
@@ -155,7 +153,8 @@ class _ArchiveEvolutionTimelineScreenState
           timeline.patternTitle,
           style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 20),
         ),
-        if (timeline.firstSeenDate != null || timeline.lastSeenDate != null) ...[
+        if (timeline.firstSeenDate != null ||
+            timeline.lastSeenDate != null) ...[
           const SizedBox(height: AppSpacing.xs),
           Text(
             _rangeLabel(timeline),
@@ -196,7 +195,9 @@ class _ArchiveEvolutionTimelineScreenState
             width: double.infinity,
             height: 48,
             child: FilledButton(
-              onPressed: _checkSet ? null : () => _useCheck(timeline.nextCheck!),
+              onPressed: _checkSet
+                  ? null
+                  : () => _useCheck(timeline.nextCheck!),
               child: Text(
                 _checkSet
                     ? ConsumerUiCopy.resultNextCheckConfirmation
@@ -235,10 +236,7 @@ class _ArchiveEvolutionTimelineScreenState
               ),
               if (!isLast)
                 Expanded(
-                  child: Container(
-                    width: 2,
-                    color: const Color(0xFFF5E6D3),
-                  ),
+                  child: Container(width: 2, color: const Color(0xFFF5E6D3)),
                 ),
             ],
           ),
@@ -288,8 +286,18 @@ class _ArchiveEvolutionTimelineScreenState
       return 'yesterday';
     }
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }

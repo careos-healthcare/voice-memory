@@ -67,10 +67,7 @@ void main() {
     expect(profile.hasMinimumArchiveEvidence, isTrue);
     expect(profile.hasTraits, isTrue);
     expect(allTraits.any((t) => t.evidenceCount >= 2), isTrue);
-    expect(
-      allTraits.every((t) => t.supportingRecordingIds.isNotEmpty),
-      isTrue,
-    );
+    expect(allTraits.every((t) => t.supportingRecordingIds.isNotEmpty), isTrue);
     expect(
       allTraits.any((t) => t.title.toLowerCase().contains('approval')),
       isTrue,

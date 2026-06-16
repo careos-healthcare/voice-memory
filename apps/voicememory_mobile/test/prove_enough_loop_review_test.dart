@@ -7,7 +7,8 @@ import 'package:voicememory_mobile/features/signal_review/signal_review_coordina
 import 'package:voicememory_mobile/features/signal_review/signal_review_engine.dart';
 import 'package:voicememory_mobile/features/signal_review/signal_review_model.dart';
 import 'package:voicememory_mobile/features/signal_review/signal_review_store.dart';
-import 'package:voicememory_mobile/models/entitlement.dart' show BillingTier, PremiumEntitlements;
+import 'package:voicememory_mobile/models/entitlement.dart'
+    show BillingTier, PremiumEntitlements;
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/screens/signal_review_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -62,8 +63,14 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I kept working late because stopping made me feel behind.'),
-        entry('e1', 'Did more to prove I was doing enough even though I was tired.'),
+        entry(
+          'e0',
+          'I kept working late because stopping made me feel behind.',
+        ),
+        entry(
+          'e1',
+          'Did more to prove I was doing enough even though I was tired.',
+        ),
         entry('e2', 'Pushed through more work because rest felt unsafe.'),
       ],
       activeLoop: loop,
@@ -79,7 +86,10 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I was tired and kept going under pressure to be productive.'),
+        entry(
+          'e0',
+          'I was tired and kept going under pressure to be productive.',
+        ),
         entry('e1', 'Felt behind and guilty about rest so I did more work.'),
         entry('e2', 'Never felt done even after a long day of output.'),
       ],
@@ -96,7 +106,10 @@ void main() {
       journey: journey(),
       entries: [
         entry('e0', 'I felt behind and needed to be impressive at work.'),
-        entry('e1', 'Kept going because stopping felt unsafe and unproductive.'),
+        entry(
+          'e1',
+          'Kept going because stopping felt unsafe and unproductive.',
+        ),
         entry('e2', 'Pressure to prove enough made me override rest.'),
       ],
       activeLoop: loop,
@@ -110,8 +123,14 @@ void main() {
     final review = engine.build(
       journey: journey(),
       entries: [
-        entry('e0', 'I kept working late because stopping made me feel behind.'),
-        entry('e1', 'Did more to prove I was doing enough even though I was tired.'),
+        entry(
+          'e0',
+          'I kept working late because stopping made me feel behind.',
+        ),
+        entry(
+          'e1',
+          'Did more to prove I was doing enough even though I was tired.',
+        ),
         entry('e2', 'Pushed through more work because rest felt unsafe.'),
       ],
       activeLoop: loop,
@@ -138,7 +157,10 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text(LoopModeCopy.paywallHeadlineForLoop(LoopModeIds.proveEnough)), findsOneWidget);
+    expect(
+      find.text(LoopModeCopy.paywallHeadlineForLoop(LoopModeIds.proveEnough)),
+      findsOneWidget,
+    );
     expect(find.textContaining('proving-enough loop'), findsOneWidget);
     expect(find.textContaining('proving-enough moments'), findsOneWidget);
   });

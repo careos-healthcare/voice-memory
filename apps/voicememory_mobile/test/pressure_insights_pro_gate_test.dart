@@ -34,7 +34,9 @@ Future<void> _pumpCard(WidgetTester tester, Widget child) async {
   await tester.binding.setSurfaceSize(const Size(390, 1800));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))),
+    MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: child)),
+    ),
   );
   await tester.pump();
 }
@@ -61,14 +63,15 @@ void main() {
   final now = DateTime(2026, 6, 8, 12);
 
   List<PressureCheckInRecord> sampleRecords() => [
-        _record(id: 'a', createdAt: now),
-        _record(id: 'b', createdAt: now.subtract(const Duration(days: 1))),
-        _record(id: 'c', createdAt: now.subtract(const Duration(days: 2))),
-      ];
+    _record(id: 'a', createdAt: now),
+    _record(id: 'b', createdAt: now.subtract(const Duration(days: 1))),
+    _record(id: 'c', createdAt: now.subtract(const Duration(days: 2))),
+  ];
 
   group('Free user pressure insights', () {
-    testWidgets('sees the preview with basic loop + limited recap',
-        (tester) async {
+    testWidgets('sees the preview with basic loop + limited recap', (
+      tester,
+    ) async {
       await _pumpScreen(tester, pro: false, records: sampleRecords());
 
       expect(
@@ -80,7 +83,10 @@ void main() {
         findsOneWidget,
       );
       // Limited recap preview copy is shown to free users.
-      expect(find.text(PressureWeeklyRecapCard.previewMoreCopy), findsOneWidget);
+      expect(
+        find.text(PressureWeeklyRecapCard.previewMoreCopy),
+        findsOneWidget,
+      );
       // No Pro-only confidence label or share button leaks into the free view.
       expect(find.byKey(const Key('pressure_confidence_label')), findsNothing);
       expect(
@@ -106,8 +112,9 @@ void main() {
   });
 
   group('Ask the Archive lock behavior', () {
-    testWidgets('locked questions trigger upgrade and never answer',
-        (tester) async {
+    testWidgets('locked questions trigger upgrade and never answer', (
+      tester,
+    ) async {
       var unlocks = 0;
       await _pumpCard(
         tester,
@@ -127,19 +134,20 @@ void main() {
   });
 
   group('Pro user pressure insights', () {
-    testWidgets('Ask the Archive is unlocked and answers questions',
-        (tester) async {
+    testWidgets('Ask the Archive is unlocked and answers questions', (
+      tester,
+    ) async {
       await _pumpScreen(tester, pro: true, records: sampleRecords());
 
       expect(find.text(AskTheArchiveCard.subtitle), findsOneWidget);
 
+      // The pattern reveal card adds height; scroll the question into view.
+      await tester.ensureVisible(find.text('Where does this repeat?'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Where does this repeat?'));
       await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('ask_the_archive_answer')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('ask_the_archive_answer')), findsOneWidget);
     });
 
     testWidgets('sees the full weekly recap, no upgrade CTA', (tester) async {
@@ -153,7 +161,10 @@ void main() {
     testWidgets('sees confidence label and shareable report', (tester) async {
       await _pumpScreen(tester, pro: true, records: sampleRecords());
 
-      expect(find.byKey(const Key('pressure_confidence_label')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pressure_confidence_label')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('pressure_report_share_button')),
         findsOneWidget,

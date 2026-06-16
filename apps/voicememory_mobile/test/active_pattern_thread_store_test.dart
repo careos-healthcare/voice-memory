@@ -7,18 +7,18 @@ import 'package:voicememory_mobile/features/tomorrow_return/watch_for_model.dart
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 ActivePatternThread _thread(String id) => ActivePatternThread(
-      id: id,
-      title: 'Taking responsibility before asking for help',
-      createdAt: DateTime(2026, 5, 25),
-      updatedAt: DateTime(2026, 5, 25),
-      watchForText: 'whether you take responsibility before asking for help',
-      chips: const ['feeling responsible'],
-      status: ActivePatternThreadStatus.active,
-      daysActive: 2,
-      lastResult: WatchForResult.showedAgain,
-      lastResultDate: DateTime(2026, 5, 25),
-      nextPrompt: 'Today, notice whether this shows up again.',
-    );
+  id: id,
+  title: 'Taking responsibility before asking for help',
+  createdAt: DateTime(2026, 5, 25),
+  updatedAt: DateTime(2026, 5, 25),
+  watchForText: 'whether you take responsibility before asking for help',
+  chips: const ['feeling responsible'],
+  status: ActivePatternThreadStatus.active,
+  daysActive: 2,
+  lastResult: WatchForResult.showedAgain,
+  lastResultDate: DateTime(2026, 5, 25),
+  nextPrompt: 'Today, notice whether this shows up again.',
+);
 
 void main() {
   test('current thread persists and history caps at 10', () async {

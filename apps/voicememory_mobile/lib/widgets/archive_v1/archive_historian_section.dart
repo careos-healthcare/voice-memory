@@ -16,10 +16,7 @@ import 'archive_intelligence_upgrade_card.dart';
 
 /// Archive Historian — Pro GPT synthesis only.
 class ArchiveHistorianSection extends StatefulWidget {
-  const ArchiveHistorianSection({
-    super.key,
-    required this.view,
-  });
+  const ArchiveHistorianSection({super.key, required this.view});
 
   final ArchiveV1View view;
 
@@ -51,7 +48,9 @@ class _ArchiveHistorianSectionState extends State<ArchiveHistorianSection> {
     if (!ArchiveSynthesisProGate.canAccessArchiveIntelligence(entitlements)) {
       if (!mounted) return;
       setState(() {
-        _showUpgrade = ArchiveSynthesisProGate.shouldShowUpgradeTeaser(widget.view);
+        _showUpgrade = ArchiveSynthesisProGate.shouldShowUpgradeTeaser(
+          widget.view,
+        );
         _result = null;
         _loading = false;
       });
@@ -104,14 +103,15 @@ class _ArchiveHistorianSectionState extends State<ArchiveHistorianSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            report.title,
-            style: VoiceMemoryTypography.sectionTitleStyle(),
-          ),
+          Text(report.title, style: VoiceMemoryTypography.sectionTitleStyle()),
           const SizedBox(height: 6),
           Text(
             ArchiveSynthesisCopy.synthesisDisclaimer,
-            style: const TextStyle(color: AppTheme.muted, fontSize: 12, height: 1.4),
+            style: const TextStyle(
+              color: AppTheme.muted,
+              fontSize: 12,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 12),
           ...report.timeline.map(_timelineTile),

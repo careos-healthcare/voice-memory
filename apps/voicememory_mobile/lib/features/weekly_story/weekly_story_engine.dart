@@ -24,12 +24,10 @@ class WeeklyStoryEngine {
     final weekStart = weekEnd.subtract(const Duration(days: 6));
     final priorStart = weekStart.subtract(const Duration(days: 7));
 
-    final thisWeek = entries
-        .where((e) {
-          final t = e.createdAt;
-          return !t.isBefore(weekStart) && !t.isAfter(weekEnd);
-        })
-        .toList();
+    final thisWeek = entries.where((e) {
+      final t = e.createdAt;
+      return !t.isBefore(weekStart) && !t.isAfter(weekEnd);
+    }).toList();
     final priorWeek = entries.where((e) {
       final t = e.createdAt;
       return !t.isBefore(priorStart) && t.isBefore(weekStart);
@@ -60,17 +58,26 @@ class WeeklyStoryEngine {
       final cur = e.value;
       final prev = priorCounts[e.key] ?? 0;
       if (cur > prev && cur >= 2) {
-        growing.add(WeeklyThemeLine(label: label, count: cur, priorCount: prev));
+        growing.add(
+          WeeklyThemeLine(label: label, count: cur, priorCount: prev),
+        );
       } else if (prev > cur && prev >= 2) {
-        declining.add(WeeklyThemeLine(label: label, count: cur, priorCount: prev));
+        declining.add(
+          WeeklyThemeLine(label: label, count: cur, priorCount: prev),
+        );
       }
     }
-    growing.sort((a, b) => (b.count - b.priorCount).compareTo(a.count - a.priorCount));
-    declining.sort((a, b) => (b.priorCount - b.count).compareTo(a.priorCount - a.count));
+    growing.sort(
+      (a, b) => (b.count - b.priorCount).compareTo(a.count - a.priorCount),
+    );
+    declining.sort(
+      (a, b) => (b.priorCount - b.count).compareTo(a.priorCount - a.count),
+    );
 
     String? belief;
     if (archiveHasMinimumEvidence(entries)) {
-      belief = state?.belief?.trim() ??
+      belief =
+          state?.belief?.trim() ??
           archiveBeliefFromReflections(entries)?.trim();
       if (belief != null && belief.isEmpty) belief = null;
     }
@@ -117,6 +124,7 @@ class WeeklyStoryEngine {
       'money': 'Money',
       'purpose': 'Purpose',
     };
-    return map[key] ?? (key.isEmpty ? key : key[0].toUpperCase() + key.substring(1));
+    return map[key] ??
+        (key.isEmpty ? key : key[0].toUpperCase() + key.substring(1));
   }
 }

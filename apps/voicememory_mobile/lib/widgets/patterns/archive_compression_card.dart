@@ -91,7 +91,9 @@ class _ArchiveCompressionCardState extends State<ArchiveCompressionCard> {
         children: [
           Text(
             'Clean up your archive',
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: 2),
           Text(

@@ -6,10 +6,7 @@ import 'archive_insight_card_shell.dart';
 
 /// Recording #2 — cross-recording comparison.
 class ComparisonCard extends StatelessWidget {
-  const ComparisonCard({
-    super.key,
-    required this.entries,
-  });
+  const ComparisonCard({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 

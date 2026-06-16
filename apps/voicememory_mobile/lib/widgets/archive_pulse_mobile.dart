@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class ArchivePulseMobile extends StatelessWidget {
-  const ArchivePulseMobile({
-    super.key,
-    required this.line,
-  });
+  const ArchivePulseMobile({super.key, required this.line});
 
   final String line;
 

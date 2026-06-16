@@ -4,7 +4,10 @@ import 'package:voicememory_mobile/features/archive_memory/archive_evolution_mod
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_evolution_timeline_card.dart';
 
-ArchiveEvolutionTimeline _timeline({int eventCount = 6, bool withNextCheck = false}) {
+ArchiveEvolutionTimeline _timeline({
+  int eventCount = 6,
+  bool withNextCheck = false,
+}) {
   final events = List.generate(
     eventCount,
     (i) => ArchiveEvolutionEvent(

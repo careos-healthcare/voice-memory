@@ -6,14 +6,29 @@ import { Cloud, LogOut, RefreshCw, Shield } from "lucide-react";
 
 import { SyncStatus } from "@/components/system/SyncStatus";
 import { PrivacyTrustPanel } from "@/components/trust/PrivacyTrustPanel";
+import { AccountSecondaryNav } from "@/components/account/AccountSecondaryNav";
+import { ArchiveHistorySummary } from "@/components/archive/ArchiveHistorySummary";
+import { ArchiveMilestones } from "@/components/archive/ArchiveMilestones";
+import { ArchiveAssetCard } from "@/components/archive/ArchiveAssetCard";
+import { ArchiveWorthStatement } from "@/components/archive/ArchiveWorthStatement";
 import { ArchiveProtectionLine } from "@/components/monetization/ArchiveProtectionLine";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 import { useAccount } from "@/components/providers/AccountProvider";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArchiveActionArea } from "@/components/layout/ArchiveActionArea";
+import { ArchivePageBlueprint } from "@/components/layout/ArchivePageBlueprint";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
+import { ArchiveIdentityBar } from "@/components/archive/ArchiveIdentityBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MotionPageTitle } from "@/components/motion/MotionPage";
+import { ARCHIVE_SPACE } from "@/lib/design/archive-spacing";
+import {
+  ARCHIVE_COPY_RESTRAINT,
+  ARCHIVE_SURFACE_EYEBROWS,
+} from "@/lib/design/archive-copy-restraint";
+import { ARCHIVE_TYPO } from "@/lib/design/archive-typography";
+import { ACCOUNT_BACKUP, PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import {
   isDebugEventSyncAllowed,
   setDebugEventSyncAllowed,
@@ -32,7 +47,6 @@ import {
 } from "@/lib/sync/account-status-copy";
 import { useClientHydrated } from "@/lib/hooks/use-client-hydrated";
 import { ENCRYPTED_SYNC_COPY, SYNC_FAILURE_COPY } from "@/lib/sync/copy";
-import { ACCOUNT_BACKUP, PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import {
   DELETE_ACCOUNT_CONFIRM_PHRASE,
   DELETE_ACCOUNT_LEAD,
@@ -96,6 +110,7 @@ function sendCodeStateFromAuthCode(code: string | undefined): SendCodeUiState {
 
 export default function AccountPage() {
   const hydrated = useClientHydrated();
+  const { requestAuth } = useAuthPrompt();
   const { status, sendCode, verifyCode, signOut, syncNow, previewRestore, applyRestore } =
     useAccount();
   const [email, setEmail] = useState("");
@@ -206,7 +221,7 @@ export default function AccountPage() {
     }
   };
 
-  const handleSync = async () => {
+  const runSync = async () => {
     setBusy(true);
     try {
       const ok = await syncNow();
@@ -224,6 +239,14 @@ export default function AccountPage() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const handleSync = () => {
+    if (!status.session) {
+      requestAuth("sync_archive", () => void runSync());
+      return;
+    }
+    void runSync();
   };
 
   const handleRestore = async () => {
@@ -267,13 +290,22 @@ export default function AccountPage() {
       <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <SiteHeader />
         <PrimaryMain>
-        <MotionPageTitle title="Account" />
-
-        <div className="mt-16 space-y-8">
-          <p className="text-sm leading-relaxed text-zinc-400">{PRIVATE_BY_DEFAULT_LINE}</p>
-          <p className="text-sm leading-relaxed text-zinc-500">{PRODUCT_WEDGE_LINE}</p>
-          <ArchiveProtectionLine surface="account" />
-
+          <ArchivePageBlueprint
+            surface="account"
+            identity={{
+              eyebrow: ARCHIVE_SURFACE_EYEBROWS.account,
+              title: ARCHIVE_COPY_RESTRAINT.account.headline,
+              lead: ARCHIVE_COPY_RESTRAINT.account.support,
+            }}
+            currentArchiveState={
+              <>
+                <ArchiveIdentityBar className={ARCHIVE_SPACE.sm} />
+                <p className={ARCHIVE_TYPO.body}>{PRODUCT_WEDGE_LINE}</p>
+                <ArchiveProtectionLine surface="account" />
+              </>
+            }
+            mainContent={
+              <>
           <Card className="border-white/[0.06] bg-zinc-900/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base font-normal text-zinc-200">
@@ -330,6 +362,16 @@ export default function AccountPage() {
                 </div>
               ) : null}
 
+              {hydrated && status.session ? (
+                <div
+                  className="space-y-3 border-t border-white/5 pt-4 text-sm leading-relaxed text-zinc-500"
+                  data-testid="account-archive-ownership-v2"
+                >
+                  <ArchiveMilestones />
+                  <ArchiveHistorySummary />
+                </div>
+              ) : null}
+
               {ownershipLines.length > 0 ? (
                 <div className="space-y-2 border-t border-white/5 pt-4 text-sm leading-relaxed text-zinc-500">
                   {ownershipLines.map((line) => (
@@ -339,19 +381,9 @@ export default function AccountPage() {
               ) : null}
 
               {status.session ? (
-                <div className="flex flex-wrap gap-3 pt-2">
-                  <Button disabled={busy || status.state === "syncing"} onClick={() => void handleSync()}>
-                    <RefreshCw className="h-4 w-4" />
-                    Back up now
-                  </Button>
-                  <Button variant="secondary" disabled={busy} onClick={() => void handleRestore()}>
-                    Restore backup
-                  </Button>
-                  <Button variant="ghost" disabled={busy} onClick={() => void handleSignOut()}>
-                    <LogOut className="h-4 w-4" />
-                    Sign out
-                  </Button>
-                </div>
+                <p className={ARCHIVE_TYPO.caption}>
+                  Primary backup and restore actions are at the end of this page.
+                </p>
               ) : (
                 <div className="space-y-4 border-t border-white/5 pt-4">
                   <p className="text-zinc-500">{ACCOUNT_BACKUP.signInPrompt}</p>
@@ -409,13 +441,26 @@ export default function AccountPage() {
                   onChange={(event) => handleDebugToggle(event.target.checked)}
                   className="mt-1"
                 />
-                <span>Include retention and debug events in encrypted backup (off by default).</span>
+                <span>Include optional usage events in encrypted backup (off by default).</span>
               </label>
             </CardContent>
           </Card>
+              </>
+            }
+            supportingContent={
+              <>
+                <details className="rounded-xl border border-white/10 bg-black/20">
+                  <summary className="cursor-pointer px-4 py-3 text-sm text-zinc-400 marker:content-none [&::-webkit-details-marker]:hidden">
+                    Supporting context
+                  </summary>
+                  <div className="space-y-3 border-t border-white/5 px-4 py-4">
+                    <ArchiveAssetCard surface="account" showExportLink />
+                    <ArchiveWorthStatement compact />
+                  </div>
+                </details>
 
           <section className="rounded-2xl border border-white/[0.06] bg-zinc-900/40 p-5">
-            <h2 className="text-base font-normal text-zinc-200">Delete account</h2>
+            <h2 className={ARCHIVE_TYPO.cardTitle}>Delete account</h2>
             <p className="mt-2 text-sm leading-relaxed text-zinc-500">{DELETE_ACCOUNT_LEAD}</p>
             {status.session ? (
               <div className="mt-4 space-y-3">
@@ -455,9 +500,11 @@ export default function AccountPage() {
             </Link>
           </section>
 
-          {message ? <p className="text-sm text-zinc-400">{message}</p> : null}
+          <AccountSecondaryNav className={ARCHIVE_SPACE.md} />
 
-          <p className="text-sm text-zinc-600">
+          {message ? <p className={ARCHIVE_TYPO.body}>{message}</p> : null}
+
+          <p className={ARCHIVE_TYPO.caption}>
             <Link href="/settings" className="underline underline-offset-4 hover:text-zinc-400">
               Settings
             </Link>
@@ -466,10 +513,36 @@ export default function AccountPage() {
               Privacy
             </Link>
           </p>
-        </div>
+              </>
+            }
+            actionArea={
+              status.session ? (
+                <ArchiveActionArea
+                  primary={{
+                    label: "Back up now",
+                    onClick: () => handleSync(),
+                    disabled: busy || status.state === "syncing",
+                    testId: "account-primary-backup",
+                  }}
+                  secondary={{
+                    label: "Restore backup",
+                    onClick: () => void handleRestore(),
+                    disabled: busy,
+                  }}
+                />
+              ) : (
+                <ArchiveActionArea
+                  secondary={{
+                    label: ACCOUNT_BACKUP.signInPrompt,
+                    onClick: () => requestAuth("sync_archive", () => void runSync()),
+                  }}
+                />
+              )
+            }
+          />
         </PrimaryMain>
 
-        <SiteFooter className="mt-16" />
+        <SiteFooter className={ARCHIVE_SPACE.xl} />
       </div>
     </div>
   );

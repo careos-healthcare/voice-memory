@@ -35,10 +35,15 @@ void main() {
         monthKey: '2026-05',
         milestonesReached: {50, 100, 200},
       );
-      rows.add({'persona': name, 'reflectionCount': entries.length, ..._score(v1, pack)});
+      rows.add({
+        'persona': name,
+        'reflectionCount': entries.length,
+        ..._score(v1, pack),
+      });
     }
 
-    final avgImprovement = rows
+    final avgImprovement =
+        rows
             .map((r) => r['gptEnhancementDelta'] as num)
             .reduce((a, b) => a + b) /
         rows.length;
@@ -54,9 +59,9 @@ void main() {
 
     final dir = Directory('tool/output');
     if (!dir.existsSync()) dir.createSync(recursive: true);
-    File('tool/output/gpt5_expansion_validation.json').writeAsStringSync(
-      const JsonEncoder.withIndent('  ').convert(out),
-    );
+    File(
+      'tool/output/gpt5_expansion_validation.json',
+    ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(out));
 
     expect(avgImprovement, greaterThanOrEqualTo(20));
     for (final r in rows) {
@@ -70,7 +75,8 @@ Map<String, dynamic> _score(dynamic v1, Map<String, dynamic> pack) {
   final contradictions = v1.contradictions.length;
   final surprises = v1.surprises.observations.length;
   final changeFeed = v1.changeFeed;
-  final hasChange = changeFeed.beliefsStrengthened.isNotEmpty ||
+  final hasChange =
+      changeFeed.beliefsStrengthened.isNotEmpty ||
       changeFeed.beliefsWeakened.isNotEmpty ||
       changeFeed.contradictionsAppeared.isNotEmpty;
 
@@ -90,7 +96,8 @@ Map<String, dynamic> _score(dynamic v1, Map<String, dynamic> pack) {
   var shareDet = 30;
   if (theory != null && theory.statement.length > 40) shareDet += 12;
 
-  final packRich = pack['primaryTheory'] != null &&
+  final packRich =
+      pack['primaryTheory'] != null &&
       (pack['evidenceTrails']?['forExcerpts'] as List?)?.isNotEmpty == true;
 
   const boost = {'trust': 12, 'surprise': 18, 'pay': 14, 'share': 16};

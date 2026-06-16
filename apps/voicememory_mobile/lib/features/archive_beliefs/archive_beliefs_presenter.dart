@@ -27,10 +27,13 @@ class ArchiveBeliefsPresenter {
 
     final lifecycle = archiveV1?.lifecycle;
     if (lifecycle?.current != null) {
-      cards.add(_fromLifecycle(lifecycle!.current!, ArchiveBeliefSection.current));
+      cards.add(
+        _fromLifecycle(lifecycle!.current!, ArchiveBeliefSection.current),
+      );
     }
     for (final r in lifecycle?.retired ?? const []) {
-      final section = r.status == BeliefLifecycleStatus.weakening ||
+      final section =
+          r.status == BeliefLifecycleStatus.weakening ||
               r.status == BeliefLifecycleStatus.dormant
           ? ArchiveBeliefSection.changing
           : ArchiveBeliefSection.emerging;
@@ -38,8 +41,7 @@ class ArchiveBeliefsPresenter {
     }
 
     final belief = archiveV1?.belief;
-    if (belief != null &&
-        !cards.any((c) => c.statement == belief.statement)) {
+    if (belief != null && !cards.any((c) => c.statement == belief.statement)) {
       cards.add(
         ArchiveBeliefCardModel(
           id: _idFor(belief.statement),
@@ -51,8 +53,7 @@ class ArchiveBeliefsPresenter {
               'Named from recurring themes across your reflections.',
           section: ArchiveBeliefSection.current,
           timeline: _timelineFromEntries(belief.supportingEntries),
-          conclusion:
-              'This pattern appears consistently in what you record.',
+          conclusion: 'This pattern appears consistently in what you record.',
         ),
       );
     }
@@ -125,8 +126,7 @@ class ArchiveBeliefsPresenter {
           'ArchiveMe ranked this from recurring themes in your reflections.',
       section: section,
       timeline: _timelineFromEntries(t.supportingEntries),
-      conclusion:
-          'This pattern has enough reflections to show up clearly.',
+      conclusion: 'This pattern has enough reflections to show up clearly.',
     );
   }
 
@@ -207,7 +207,9 @@ class ArchiveBeliefsPresenter {
     }
   }
 
-  static List<ArchiveBeliefCardModel> _dedupe(List<ArchiveBeliefCardModel> cards) {
+  static List<ArchiveBeliefCardModel> _dedupe(
+    List<ArchiveBeliefCardModel> cards,
+  ) {
     final seen = <String>{};
     final out = <ArchiveBeliefCardModel>[];
     for (final c in cards) {
@@ -221,17 +223,12 @@ class ArchiveBeliefsPresenter {
     List<JournalEntry> entries,
     List<ArchiveBeliefCardModel> beliefs,
   ) {
-    final dates = entries
-        .map((e) => e.createdAt)
-        .whereType<DateTime>()
-        .toList()
+    final dates = entries.map((e) => e.createdAt).whereType<DateTime>().toList()
       ..sort();
     final ageDays = dates.isEmpty
         ? 0
         : DateTime.now().difference(dates.first).inDays.clamp(0, 9999);
-    final strongest = beliefs.isEmpty
-        ? null
-        : beliefs.first.statement;
+    final strongest = beliefs.isEmpty ? null : beliefs.first.statement;
     var evidence = 0;
     for (final b in beliefs) {
       final m = RegExp(r'(\d+)').firstMatch(b.evidenceSummary);
@@ -256,10 +253,10 @@ class ArchiveBeliefsPresenter {
       final text = r.concreteObservation.trim().isNotEmpty
           ? r.concreteObservation
           : (r.repeatedSignal.trim().isNotEmpty
-              ? r.repeatedSignal
-              : (e.transcript.trim().isNotEmpty
-                  ? e.transcript
-                  : 'Reflection captured.'));
+                ? r.repeatedSignal
+                : (e.transcript.trim().isNotEmpty
+                      ? e.transcript
+                      : 'Reflection captured.'));
       final quote = text.length > 120 ? '${text.substring(0, 117)}…' : text;
       return BeliefEvidenceQuote(
         periodLabel: _monthYear(e.createdAt),
@@ -283,8 +280,18 @@ class ArchiveBeliefsPresenter {
   static String _monthYear(DateTime? dt) {
     if (dt == null) return 'Recent';
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[dt.month - 1];
   }

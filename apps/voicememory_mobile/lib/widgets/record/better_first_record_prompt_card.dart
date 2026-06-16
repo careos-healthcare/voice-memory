@@ -7,10 +7,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Gated first-record helper shown when people struggle to save the first moment.
 class BetterFirstRecordPromptCard extends StatefulWidget {
-  const BetterFirstRecordPromptCard({
-    super.key,
-    required this.onRecord,
-  });
+  const BetterFirstRecordPromptCard({super.key, required this.onRecord});
 
   final VoidCallback onRecord;
 

@@ -6,9 +6,7 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/signal_review_screen.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_review_card.dart';
 
-SignalReview _review({
-  SignalReviewStatus status = SignalReviewStatus.ready,
-}) {
+SignalReview _review({SignalReviewStatus status = SignalReviewStatus.ready}) {
   return SignalReview(
     id: 'sr1',
     journeyId: 'j1',
@@ -22,8 +20,7 @@ SignalReview _review({
       'I said yes again even though I was already stretched thin.',
       'Another yes while already full from earlier commitments.',
     ],
-    possibleContradictions:
-        'Moments where you pause before answering.',
+    possibleContradictions: 'Moments where you pause before answering.',
     whatToWatchNext: 'When did you last say yes while already stretched?',
     nextEvidencePrompt: 'When did you last say yes while already stretched?',
     createdAt: DateTime(2026, 6, 3),
@@ -62,7 +59,9 @@ void main() {
     expect(find.text(ConsumerUiCopy.signalReviewWhatRepeated), findsOneWidget);
     expect(find.text(ConsumerUiCopy.signalReviewFeelsRight), findsOneWidget);
 
-    await tester.ensureVisible(find.text(ConsumerUiCopy.signalReviewFeelsRight));
+    await tester.ensureVisible(
+      find.text(ConsumerUiCopy.signalReviewFeelsRight),
+    );
     await tester.tap(find.text(ConsumerUiCopy.signalReviewFeelsRight));
     expect(confirmed, isTrue);
   });
@@ -74,8 +73,13 @@ void main() {
     );
 
     expect(find.text(ConsumerUiCopy.signalReviewWhatRepeated), findsOneWidget);
-    await tester.ensureVisible(find.text(ConsumerUiCopy.signalReviewConfirmPattern));
-    expect(find.text(ConsumerUiCopy.signalReviewConfirmPattern), findsOneWidget);
+    await tester.ensureVisible(
+      find.text(ConsumerUiCopy.signalReviewConfirmPattern),
+    );
+    expect(
+      find.text(ConsumerUiCopy.signalReviewConfirmPattern),
+      findsOneWidget,
+    );
   });
 
   testWidgets('empty review screen state', (tester) async {
@@ -118,7 +122,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SignalReviewScreen), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.signalReviewConfirmPattern), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.signalReviewConfirmPattern),
+      findsOneWidget,
+    );
   });
 
   testWidgets('weak evidence card shows needs more copy', (tester) async {
@@ -140,6 +147,9 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text(ConsumerUiCopy.signalReviewNeedsMoreEvidence), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.signalReviewNeedsMoreEvidence),
+      findsOneWidget,
+    );
   });
 }

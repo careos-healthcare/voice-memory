@@ -83,27 +83,27 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
     await _refresh();
     if (!mounted) return;
     setState(() => _resetting = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Reset for new participant')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Reset for new participant')));
   }
 
   Future<void> _assignCohort(AcquisitionCohortId cohortId) async {
     await AcquisitionCohortCoordinator.assignForTrial(cohortId);
     await _refresh();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Cohort set: ${cohortId.id}')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Cohort set: ${cohortId.id}')));
   }
 
   Future<void> _clearCohort() async {
     await AcquisitionCohortCoordinator.clear();
     await _refresh();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Acquisition cohort cleared')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Acquisition cohort cleared')));
   }
 
   Future<void> _copyInvite(TestFlightInviteVariant variant) async {
@@ -119,18 +119,18 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
     }
     await _refresh();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${variant.id} invite copied')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('${variant.id} invite copied')));
   }
 
   Future<void> _copy(String text, String label) async {
     await Clipboard.setData(ClipboardData(text: text));
     await ActivationTracker.trackTrialExportCopied();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$label copied')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$label copied')));
   }
 
   @override
@@ -284,21 +284,18 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
               runSpacing: 8,
               children: [
                 OutlinedButton(
-                  onPressed: () => _assignCohort(
-                    AcquisitionCohortId.capacityYesDirect,
-                  ),
+                  onPressed: () =>
+                      _assignCohort(AcquisitionCohortId.capacityYesDirect),
                   child: const Text('capacity_yes_direct'),
                 ),
                 OutlinedButton(
-                  onPressed: () => _assignCohort(
-                    AcquisitionCohortId.proveEnoughDirect,
-                  ),
+                  onPressed: () =>
+                      _assignCohort(AcquisitionCohortId.proveEnoughDirect),
                   child: const Text('prove_enough_direct'),
                 ),
                 OutlinedButton(
-                  onPressed: () => _assignCohort(
-                    AcquisitionCohortId.genericArchive,
-                  ),
+                  onPressed: () =>
+                      _assignCohort(AcquisitionCohortId.genericArchive),
                   child: const Text('generic_archive'),
                 ),
                 OutlinedButton(
@@ -320,21 +317,17 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
               runSpacing: 8,
               children: [
                 OutlinedButton(
-                  onPressed: () => _copyInvite(
-                    TestFlightInviteVariant.capacityYes,
-                  ),
+                  onPressed: () =>
+                      _copyInvite(TestFlightInviteVariant.capacityYes),
                   child: const Text('Copy capacity invite'),
                 ),
                 OutlinedButton(
-                  onPressed: () => _copyInvite(
-                    TestFlightInviteVariant.proveEnough,
-                  ),
+                  onPressed: () =>
+                      _copyInvite(TestFlightInviteVariant.proveEnough),
                   child: const Text('Copy proving-enough invite'),
                 ),
                 OutlinedButton(
-                  onPressed: () => _copyInvite(
-                    TestFlightInviteVariant.generic,
-                  ),
+                  onPressed: () => _copyInvite(TestFlightInviteVariant.generic),
                   child: const Text('Copy generic invite'),
                 ),
               ],
@@ -431,10 +424,7 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
             const SizedBox(height: 8),
             ..._patternNextActionRows(summary),
             const SizedBox(height: 16),
-            Text(
-              'Habit proof',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('Habit proof', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             ..._habitProofRows(summary),
             const SizedBox(height: 16),
@@ -459,17 +449,11 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
             const SizedBox(height: 8),
             ..._activationLoopRows(summary),
             const SizedBox(height: 16),
-            Text(
-              'First loop',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('First loop', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             ..._firstLoopRows(summary),
             const SizedBox(height: 16),
-            Text(
-              'Return day',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('Return day', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             ..._returnDayRows(summary),
             const SizedBox(height: 16),
@@ -646,73 +630,124 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
     return [
       _row('Sharper question', s.sharperQuestionIntensity.id),
       _row('Better result', s.betterResultIntensity.id),
-      _row('Sharper shown / accepted',
-          '${s.sharperQuestionGeneratedCount} / ${s.sharperQuestionAcceptedCount}'),
-      _row('Very sharp shown / accepted',
-          '${s.verySharpQuestionGeneratedCount} / ${s.verySharpQuestionAcceptedCount}'),
-      _row('Better result shown / aggressive',
-          '${s.betterResultShownCount} / ${s.aggressiveBetterResultShownCount}'),
-      _row('Go deeper shown / opened',
-          '${s.checkInGoDeeperShownCount} / ${s.checkInGoDeeperTappedCount}'),
-      _row('Next check shown / used',
-          '${s.resultNextCheckShownCount} / ${s.resultNextCheckUsedCount}'),
-      _row('Next check changed / from patterns',
-          '${s.resultNextCheckChangedCount} / ${s.resultNextCheckUsedFromPatternsCount}'),
+      _row(
+        'Sharper shown / accepted',
+        '${s.sharperQuestionGeneratedCount} / ${s.sharperQuestionAcceptedCount}',
+      ),
+      _row(
+        'Very sharp shown / accepted',
+        '${s.verySharpQuestionGeneratedCount} / ${s.verySharpQuestionAcceptedCount}',
+      ),
+      _row(
+        'Better result shown / aggressive',
+        '${s.betterResultShownCount} / ${s.aggressiveBetterResultShownCount}',
+      ),
+      _row(
+        'Go deeper shown / opened',
+        '${s.checkInGoDeeperShownCount} / ${s.checkInGoDeeperTappedCount}',
+      ),
+      _row(
+        'Next check shown / used',
+        '${s.resultNextCheckShownCount} / ${s.resultNextCheckUsedCount}',
+      ),
+      _row(
+        'Next check changed / from patterns',
+        '${s.resultNextCheckChangedCount} / ${s.resultNextCheckUsedFromPatternsCount}',
+      ),
       _row('Useful takeaway shown', '${s.usefulResultTakeawayShownCount}'),
-      _row('Make more useful tapped / reason',
-          '${s.makeResultMoreUsefulTappedCount} / ${s.makeResultMoreUsefulReasonSelectedCount}'),
+      _row(
+        'Make more useful tapped / reason',
+        '${s.makeResultMoreUsefulTappedCount} / ${s.makeResultMoreUsefulReasonSelectedCount}',
+      ),
       _row('Useful next check used', '${s.usefulResultNextCheckUsedCount}'),
       _row('Input quality coach shown', '${s.inputQualityCoachShownCount}'),
-      _row('Sentence added / used anyway',
-          '${s.inputQualitySentenceAddedCount} / ${s.inputQualityUsedAnywayCount}'),
-      _row('Accepted weak / sharpened',
-          '${s.acceptedWeakInputCount} / ${s.sharpenedInputCount}'),
-      _row('Latest input level',
-          s.latestInputQualityLevel ?? 'none'),
-      _row('Avg input score',
-          s.averageInputQualityScore?.toStringAsFixed(2) ?? 'n/a'),
-      _row('Perspective shown / used',
-          '${s.perspectiveShiftShownCount} / ${s.perspectiveShiftUsedCount}'),
+      _row(
+        'Sentence added / used anyway',
+        '${s.inputQualitySentenceAddedCount} / ${s.inputQualityUsedAnywayCount}',
+      ),
+      _row(
+        'Accepted weak / sharpened',
+        '${s.acceptedWeakInputCount} / ${s.sharpenedInputCount}',
+      ),
+      _row('Latest input level', s.latestInputQualityLevel ?? 'none'),
+      _row(
+        'Avg input score',
+        s.averageInputQualityScore?.toStringAsFixed(2) ?? 'n/a',
+      ),
+      _row(
+        'Perspective shown / used',
+        '${s.perspectiveShiftShownCount} / ${s.perspectiveShiftUsedCount}',
+      ),
       _row('Perspective changed', '${s.perspectiveShiftChangedCount}'),
-      _row('Perspective patterns shown / used',
-          '${s.perspectiveShiftShownFromPatternsCount} / ${s.perspectiveShiftUsedFromPatternsCount}'),
-      _row('Kinder angle shown / used',
-          '${s.kinderAngleShownCount} / ${s.kinderAngleUsedCount}'),
+      _row(
+        'Perspective patterns shown / used',
+        '${s.perspectiveShiftShownFromPatternsCount} / ${s.perspectiveShiftUsedFromPatternsCount}',
+      ),
+      _row(
+        'Kinder angle shown / used',
+        '${s.kinderAngleShownCount} / ${s.kinderAngleUsedCount}',
+      ),
       _row('Kinder angle changed', '${s.kinderAngleChangedCount}'),
-      _row('Kinder angle patterns shown / used',
-          '${s.kinderAngleShownFromPatternsCount} / ${s.kinderAngleUsedFromPatternsCount}'),
-      _row('Quick help opened / intent',
-          '${s.quickHelpOpenedCount} / ${s.quickHelpIntentSelectedCount}'),
-      _row('Quick help action / check used',
-          '${s.quickHelpPrimaryActionTappedCount} / ${s.quickHelpCheckUsedCount}'),
-      _row('Key moments created / opened',
-          '${s.keyMomentCreatedCount} / ${s.keyMomentOpenedCount}'),
-      _row('Key moments search / use check',
-          '${s.keyMomentSearchUsedCount} / ${s.keyMomentUseCheckTappedCount}'),
-      _row('Ask archive opened / search',
-          '${s.askArchiveOpenedCount} / ${s.askArchiveSearchUsedCount}'),
-      _row('Ask archive chip / result opened',
-          '${s.askArchiveSuggestedChipTappedCount} / ${s.askArchiveResultOpenedCount}'),
+      _row(
+        'Kinder angle patterns shown / used',
+        '${s.kinderAngleShownFromPatternsCount} / ${s.kinderAngleUsedFromPatternsCount}',
+      ),
+      _row(
+        'Quick help opened / intent',
+        '${s.quickHelpOpenedCount} / ${s.quickHelpIntentSelectedCount}',
+      ),
+      _row(
+        'Quick help action / check used',
+        '${s.quickHelpPrimaryActionTappedCount} / ${s.quickHelpCheckUsedCount}',
+      ),
+      _row(
+        'Key moments created / opened',
+        '${s.keyMomentCreatedCount} / ${s.keyMomentOpenedCount}',
+      ),
+      _row(
+        'Key moments search / use check',
+        '${s.keyMomentSearchUsedCount} / ${s.keyMomentUseCheckTappedCount}',
+      ),
+      _row(
+        'Ask archive opened / search',
+        '${s.askArchiveOpenedCount} / ${s.askArchiveSearchUsedCount}',
+      ),
+      _row(
+        'Ask archive chip / result opened',
+        '${s.askArchiveSuggestedChipTappedCount} / ${s.askArchiveResultOpenedCount}',
+      ),
       _row('Ask archive use check', '${s.askArchiveUseCheckTappedCount}'),
-      _row('Archive clean shown / tapped',
-          '${s.archiveCleanViewShownCount} / ${s.archiveCleanSectionTappedCount}'),
-      _row('Pattern profile shown / opened',
-          '${s.patternProfileShownCount} / ${s.patternProfileOpenedCount}'),
-      _row('Pattern profile use check / find moments',
-          '${s.patternProfileUseCheckTappedCount} / ${s.patternProfileFindMomentsTappedCount}'),
-      _row('Pattern profile open timeline',
-          '${s.patternProfileOpenTimelineTappedCount}'),
-      _row('Pattern map shown / opened',
-          '${s.patternMapShownCount} / ${s.patternMapOpenedCount}'),
-      _row('Pattern map use check',
-          '${s.patternMapUseCheckTappedCount}'),
+      _row(
+        'Archive clean shown / tapped',
+        '${s.archiveCleanViewShownCount} / ${s.archiveCleanSectionTappedCount}',
+      ),
+      _row(
+        'Pattern profile shown / opened',
+        '${s.patternProfileShownCount} / ${s.patternProfileOpenedCount}',
+      ),
+      _row(
+        'Pattern profile use check / find moments',
+        '${s.patternProfileUseCheckTappedCount} / ${s.patternProfileFindMomentsTappedCount}',
+      ),
+      _row(
+        'Pattern profile open timeline',
+        '${s.patternProfileOpenTimelineTappedCount}',
+      ),
+      _row(
+        'Pattern map shown / opened',
+        '${s.patternMapShownCount} / ${s.patternMapOpenedCount}',
+      ),
+      _row('Pattern map use check', '${s.patternMapUseCheckTappedCount}'),
       _row('Archive memory shown', '${s.archiveMemorySummaryShownCount}'),
-      _row('Archive memory map / moments',
-          '${s.archiveMemoryOpenPatternMapTappedCount} / ${s.archiveMemoryFindMomentsTappedCount}'),
-      _row('Archive memory use check',
-          '${s.archiveMemoryUseCheckTappedCount}'),
-      _row('Timeline shown / opened',
-          '${s.archiveTimelineShownCount} / ${s.archiveTimelineOpenedCount}'),
+      _row(
+        'Archive memory map / moments',
+        '${s.archiveMemoryOpenPatternMapTappedCount} / ${s.archiveMemoryFindMomentsTappedCount}',
+      ),
+      _row('Archive memory use check', '${s.archiveMemoryUseCheckTappedCount}'),
+      _row(
+        'Timeline shown / opened',
+        '${s.archiveTimelineShownCount} / ${s.archiveTimelineOpenedCount}',
+      ),
       _row('Timeline use check', '${s.archiveTimelineUseCheckTappedCount}'),
       _row('Reminder', reminderLabel(s.reminderImplementationStatus)),
       _row('Reminder scheduled', '${s.reminderScheduledCount}'),
@@ -780,7 +815,10 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
     return [
       _row('Cohort', c.cohortId.label),
       _row('Source', c.source.isNotEmpty ? c.source : '—'),
-      _row('Loop promise shown', c.promiseShown.isNotEmpty ? c.promiseShown : '—'),
+      _row(
+        'Loop promise shown',
+        c.promiseShown.isNotEmpty ? c.promiseShown : '—',
+      ),
       _row('First moment recorded', c.firstMomentRecorded ? 'yes' : 'no'),
       _row('Second moment recorded', c.secondMomentRecorded ? 'yes' : 'no'),
       _row('Third moment recorded', c.thirdMomentRecorded ? 'yes' : 'no'),
@@ -817,19 +855,37 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
       _row('Loop review viewed', d.loopReviewViewed ? 'yes' : 'no'),
       _row('Loop review confirmed', d.loopReviewConfirmed ? 'yes' : 'no'),
       _row('Loop review corrected', d.loopReviewCorrected ? 'yes' : 'no'),
-      _row('Loop review kept watching', d.loopReviewKeptWatching ? 'yes' : 'no'),
-      _row('Loop paywall teaser shown', d.loopPaywallTeaserShown ? 'yes' : 'no'),
-      _row('Loop paywall teaser tapped', d.loopPaywallTeaserTapped ? 'yes' : 'no'),
-      _row('Prove enough selected', d.proveEnoughSelected ? 'yes' : 'no'),
-      _row('Prove enough first prompt', d.proveEnoughFirstPromptUsed ? 'yes' : 'no'),
-      _row('Prove enough matched recording', d.proveEnoughMatchedFirstRecording ? 'yes' : 'no'),
-      _row('Prove enough read accepted', d.proveEnoughReadAccepted ? 'yes' : 'no'),
-      _row('Prove enough unsupported', d.proveEnoughUnsupportedRecording ? 'yes' : 'no'),
-      _row('Prove enough completed', d.proveEnoughCompleted ? 'yes' : 'no'),
       _row(
-        'Acquisition cohort',
-        d.acquisitionCohortId?.label ?? 'none',
+        'Loop review kept watching',
+        d.loopReviewKeptWatching ? 'yes' : 'no',
       ),
+      _row(
+        'Loop paywall teaser shown',
+        d.loopPaywallTeaserShown ? 'yes' : 'no',
+      ),
+      _row(
+        'Loop paywall teaser tapped',
+        d.loopPaywallTeaserTapped ? 'yes' : 'no',
+      ),
+      _row('Prove enough selected', d.proveEnoughSelected ? 'yes' : 'no'),
+      _row(
+        'Prove enough first prompt',
+        d.proveEnoughFirstPromptUsed ? 'yes' : 'no',
+      ),
+      _row(
+        'Prove enough matched recording',
+        d.proveEnoughMatchedFirstRecording ? 'yes' : 'no',
+      ),
+      _row(
+        'Prove enough read accepted',
+        d.proveEnoughReadAccepted ? 'yes' : 'no',
+      ),
+      _row(
+        'Prove enough unsupported',
+        d.proveEnoughUnsupportedRecording ? 'yes' : 'no',
+      ),
+      _row('Prove enough completed', d.proveEnoughCompleted ? 'yes' : 'no'),
+      _row('Acquisition cohort', d.acquisitionCohortId?.label ?? 'none'),
       _row('Cohort diagnosis', d.retentionBottleneckSummary),
     ];
   }
@@ -925,14 +981,18 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
     return [
       _row('Asked', '${s.positioningComprehensionAskedCount}'),
       _row('Answered', '${s.positioningComprehensionAnsweredCount}'),
-      _row('Understood archive memory',
-          '${s.positioningUnderstoodArchiveMemoryCount}'),
+      _row(
+        'Understood archive memory',
+        '${s.positioningUnderstoodArchiveMemoryCount}',
+      ),
       _row('Journal', '${s.positioningJournalCount}'),
       _row('Chat', '${s.positioningChatCount}'),
       _row('Not sure', '${s.positioningNotSureCount}'),
       _row('Rate', rateLabel),
-      _row('Pass (≥3/5 archive memory)',
-          s.positioningComprehensionPass ? 'yes' : 'no'),
+      _row(
+        'Pass (≥3/5 archive memory)',
+        s.positioningComprehensionPass ? 'yes' : 'no',
+      ),
     ];
   }
 
@@ -1017,8 +1077,10 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
       _row('Answer selected', '${s.returnDayAnswerSelectedCount}'),
       _row('Loop closed', '${s.returnDayLoopClosedCount}'),
       _row('Latest seconds to answer', '${s.latestSecondsToAnswer ?? '—'}'),
-      _row('Latest seconds to loop closed',
-          '${s.latestSecondsToLoopClosed ?? '—'}'),
+      _row(
+        'Latest seconds to loop closed',
+        '${s.latestSecondsToLoopClosed ?? '—'}',
+      ),
       _row(
         'Completion rate',
         s.returnDayCompletionRate == null
@@ -1055,7 +1117,10 @@ class _TrialControlScreenState extends State<TrialControlScreen> {
         children: [
           Expanded(
             flex: 2,
-            child: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+            child: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
           Expanded(child: Text(value)),
         ],

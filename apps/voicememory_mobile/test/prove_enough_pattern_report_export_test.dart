@@ -51,10 +51,7 @@ ProveEnoughEvidenceTrail _sampleTrail() {
 
   return engine.build(
     entries: entries,
-    journey: journey(
-      supporting: 5,
-      contradicting: const ['e5'],
-    ),
+    journey: journey(supporting: 5, contradicting: const ['e5']),
     review: SignalReview(
       id: 'sr1',
       journeyId: 'j1',
@@ -200,7 +197,9 @@ void main() {
 
   group('ProveEnoughPatternReportService', () {
     test('Pro user markdown generation succeeds', () {
-      final markdown = ProveEnoughPatternReportService.markdownFor(_sampleReport());
+      final markdown = ProveEnoughPatternReportService.markdownFor(
+        _sampleReport(),
+      );
       expect(markdown, contains(ProveEnoughPatternReport.reportTitle));
       expect(markdown, contains('ArchiveMe'));
     });
@@ -332,7 +331,9 @@ void main() {
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('monthly review screen shows export button for Pro', (tester) async {
+    testWidgets('monthly review screen shows export button for Pro', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 1600));
       await tester.pumpWidget(
         MaterialApp(

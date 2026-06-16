@@ -35,40 +35,49 @@ class BeliefEvolutionInsightEngine {
 
     if (discoverFeed != null && discoverFeed.hasBaseline) {
       for (final item in discoverFeed.strengthened) {
-        insights.add(_fromFeedItem(
-          id: 'evo-strong-${item.title}',
-          statement: _titleCase(item.title),
-          direction: BeliefEvolutionDirection.strengthening,
-          summary: 'This pattern is getting stronger.',
-          detail: item.detail,
-          entries: eligible,
-        ));
+        insights.add(
+          _fromFeedItem(
+            id: 'evo-strong-${item.title}',
+            statement: _titleCase(item.title),
+            direction: BeliefEvolutionDirection.strengthening,
+            summary: 'This pattern is getting stronger.',
+            detail: item.detail,
+            entries: eligible,
+          ),
+        );
       }
       for (final item in discoverFeed.weakened) {
-        insights.add(_fromFeedItem(
-          id: 'evo-weak-${item.title}',
-          statement: _titleCase(item.title),
-          direction: BeliefEvolutionDirection.weakening,
-          summary: 'This pattern is starting to fade.',
-          detail: item.detail,
-          entries: eligible,
-        ));
+        insights.add(
+          _fromFeedItem(
+            id: 'evo-weak-${item.title}',
+            statement: _titleCase(item.title),
+            direction: BeliefEvolutionDirection.weakening,
+            summary: 'This pattern is starting to fade.',
+            detail: item.detail,
+            entries: eligible,
+          ),
+        );
       }
       for (final item in discoverFeed.newItems) {
-        insights.add(_fromFeedItem(
-          id: 'evo-new-${item.title}',
-          statement: _titleCase(item.title),
-          direction: BeliefEvolutionDirection.emerging,
-          summary: 'A new pattern is forming.',
-          detail: item.detail,
-          entries: eligible,
-        ));
+        insights.add(
+          _fromFeedItem(
+            id: 'evo-new-${item.title}',
+            statement: _titleCase(item.title),
+            direction: BeliefEvolutionDirection.emerging,
+            summary: 'A new pattern is forming.',
+            detail: item.detail,
+            entries: eligible,
+          ),
+        );
       }
     }
 
     insights.sort((a, b) => b.confidence.compareTo(a.confidence));
     final seen = <String>{};
-    return insights.where((i) => seen.add(i.statement.toLowerCase())).take(8).toList();
+    return insights
+        .where((i) => seen.add(i.statement.toLowerCase()))
+        .take(8)
+        .toList();
   }
 
   Map<String, _ThemeSeries> _themeMentionSeries(
@@ -91,6 +100,7 @@ class BeliefEvolutionInsightEngine {
         }
       }
     }
+
     count(first, true);
     count(second, false);
     return map;
@@ -107,7 +117,8 @@ class BeliefEvolutionInsightEngine {
     BeliefEvolutionDirection? direction;
     if (series.firstHalf == 0 && series.secondHalf >= minSupportingReferences) {
       direction = BeliefEvolutionDirection.emerging;
-    } else if (series.secondHalf == 0 && series.firstHalf >= minSupportingReferences) {
+    } else if (series.secondHalf == 0 &&
+        series.firstHalf >= minSupportingReferences) {
       direction = BeliefEvolutionDirection.disappearing;
     } else if (series.secondHalf >= series.firstHalf + 2 &&
         series.secondHalf > series.firstHalf) {
@@ -119,12 +130,14 @@ class BeliefEvolutionInsightEngine {
       return null;
     }
 
-    final statement = 'Themes around $theme keep showing up in your reflections.';
+    final statement =
+        'Themes around $theme keep showing up in your reflections.';
     final evidence = _evidenceForTheme(theme, eligible);
     if (evidence.length < minSupportingReferences) return null;
 
     final summary = switch (direction) {
-      BeliefEvolutionDirection.strengthening => 'This pattern is getting stronger.',
+      BeliefEvolutionDirection.strengthening =>
+        'This pattern is getting stronger.',
       BeliefEvolutionDirection.weakening => 'This pattern is starting to fade.',
       BeliefEvolutionDirection.emerging => 'A new pattern is forming.',
       BeliefEvolutionDirection.disappearing =>
@@ -172,7 +185,8 @@ class BeliefEvolutionInsightEngine {
   ) {
     final lines = <InsightEvidenceLine>[];
     for (final e in entries) {
-      final blob = '${e.transcript} ${e.reflection.concreteObservation}'.toLowerCase();
+      final blob = '${e.transcript} ${e.reflection.concreteObservation}'
+          .toLowerCase();
       if (!blob.contains(theme) &&
           !e.reflection.recurringThemes
               .map((t) => t.toLowerCase())
@@ -180,11 +194,13 @@ class BeliefEvolutionInsightEngine {
         continue;
       }
       final quote = archiveStatementTexts(e).firstOrNull ?? e.transcript;
-      lines.add(InsightEvidenceLine(
-        entryId: e.id,
-        quote: quote,
-        recordedAt: e.createdAt,
-      ));
+      lines.add(
+        InsightEvidenceLine(
+          entryId: e.id,
+          quote: quote,
+          recordedAt: e.createdAt,
+        ),
+      );
       if (lines.length >= 6) break;
     }
     return lines;

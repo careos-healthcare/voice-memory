@@ -1,5 +1,5 @@
 /// Archive Discovery Share Cards — screenshot-safe layout copy.
-abstract final class ArchiveDiscoveryShareCopy {
+abstract class ArchiveDiscoveryShareCopy {
   ArchiveDiscoveryShareCopy._();
 
   static const String introLine = 'My archive noticed:';

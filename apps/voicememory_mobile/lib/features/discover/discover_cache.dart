@@ -15,7 +15,8 @@ class DiscoverYourselfCache {
 
   static String fingerprint(List<JournalEntry> entries) {
     if (entries.isEmpty) return 'empty';
-    final sorted = [...entries]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...entries]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final last = sorted.last;
     return '${entries.length}:${last.id}:${last.createdAt.millisecondsSinceEpoch}';
   }

@@ -72,8 +72,9 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
     }
   }
 
-  String _t(String key, String enValue) =>
-      widget.languageCode == 'en' ? enValue : localized(key, widget.languageCode);
+  String _t(String key, String enValue) => widget.languageCode == 'en'
+      ? enValue
+      : localized(key, widget.languageCode);
 
   String _optionLabel(TomorrowCheckInOption option) =>
       localizedOptionLabel(option.id, option.label, widget.languageCode);
@@ -108,11 +109,12 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
     if (_saving) return;
     setState(() => _saving = true);
     try {
-      final select = widget.onSelectOption ??
+      final select =
+          widget.onSelectOption ??
           (o) => TomorrowCheckInCoordinator.selectOption(
-                checkInId: widget.checkIn.id,
-                optionId: o.id,
-              );
+            checkInId: widget.checkIn.id,
+            optionId: o.id,
+          );
       await select(option);
       if (!mounted) return;
       setState(() {
@@ -272,8 +274,7 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
       const SizedBox(height: AppSpacing.sm),
       if (!_guidedSecondaryRevealed)
         TextButton(
-          onPressed: () =>
-              setState(() => _guidedSecondaryRevealed = true),
+          onPressed: () => setState(() => _guidedSecondaryRevealed = true),
           child: const Text(ConsumerUiCopy.guidedCheckInOtherAnswers),
         )
       else
@@ -322,127 +323,152 @@ class _TomorrowCheckInDueCardState extends State<TomorrowCheckInDueCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Text(
-            ConsumerUiCopy.tomorrowCheckInDueTitle,
-            style: VoiceMemoryTypography.metadataStyle(
-              color: AppColors.accentPrimary,
-            ).copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            ConsumerUiCopy.tomorrowCheckInDueSubtitle,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
-            ).copyWith(fontSize: 14, height: 1.4),
-          ),
-          if (widget.plannedAnchor != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                Icon(Icons.schedule, size: 16, color: AppColors.accentPrimary),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  'Planned for: ${widget.plannedAnchor!.displayLabel}',
-                  style: VoiceMemoryTypography.bodyStyle(
-                    color: AppColors.accentPrimary,
-                  ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          ],
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            _t('yesterdayChose',
-                ConsumerUiCopy.tomorrowCheckInYesterdayChosenLabel),
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textSecondary,
-            ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            widget.checkIn.question,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
-            ).copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          ...(widget.guided
-              ? _guidedAnswerSection(options)
-              : widget.oneTapMode
-                  ? _oneTapAnswerSection(options)
-                  : _standardAnswerSection(options)),
-          if (selected != null && widget.oneTapMode) ...[
-            const SizedBox(height: AppSpacing.md),
             Text(
-              ConsumerUiCopy.tomorrowCheckInOneTapRecordPrompt,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 16, fontWeight: FontWeight.w600, height: 1.4),
+              ConsumerUiCopy.tomorrowCheckInDueTitle,
+              style: VoiceMemoryTypography.metadataStyle(
+                color: AppColors.accentPrimary,
+              ).copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              ConsumerUiCopy.tomorrowCheckInOneTapRecordHelper,
+              ConsumerUiCopy.tomorrowCheckInDueSubtitle,
               style: VoiceMemoryTypography.bodyStyle(
                 color: AppColors.textSecondary,
-              ).copyWith(fontSize: 13, height: 1.4),
+              ).copyWith(fontSize: 14, height: 1.4),
             ),
-            const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: FilledButton(
-                onPressed: _onRecord,
-                child: Text(_t('recordOneMoment',
-                    ConsumerUiCopy.tomorrowCheckInOneTapRecordCta)),
+            if (widget.plannedAnchor != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  Icon(
+                    Icons.schedule,
+                    size: 16,
+                    color: AppColors.accentPrimary,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'Planned for: ${widget.plannedAnchor!.displayLabel}',
+                    style: VoiceMemoryTypography.bodyStyle(
+                      color: AppColors.accentPrimary,
+                    ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                ],
               ),
-            ),
-          ] else if (selected != null) ...[
+            ],
             const SizedBox(height: AppSpacing.md),
             Text(
-              ConsumerUiCopy.tomorrowCheckInMomentCompareLine,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 14, height: 1.45),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.85),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _warmBorder),
+              _t(
+                'yesterdayChose',
+                ConsumerUiCopy.tomorrowCheckInYesterdayChosenLabel,
               ),
-              child: Text(
-                _followUp(selected),
+              style: VoiceMemoryTypography.bodyStyle(
+                color: AppColors.textSecondary,
+              ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              widget.checkIn.question,
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ...(widget.guided
+                ? _guidedAnswerSection(options)
+                : widget.oneTapMode
+                ? _oneTapAnswerSection(options)
+                : _standardAnswerSection(options)),
+            if (selected != null && widget.oneTapMode) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                ConsumerUiCopy.tomorrowCheckInOneTapRecordPrompt,
+                style:
+                    VoiceMemoryTypography.bodyStyle(
+                      color: AppColors.textPrimary,
+                    ).copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                ConsumerUiCopy.tomorrowCheckInOneTapRecordHelper,
                 style: VoiceMemoryTypography.bodyStyle(
                   color: AppColors.textSecondary,
-                ).copyWith(fontSize: 14, height: 1.45, fontWeight: FontWeight.w600),
+                ).copyWith(fontSize: 13, height: 1.4),
               ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              ConsumerUiCopy.tomorrowCheckInShortHelper,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
-              ).copyWith(fontSize: 12, height: 1.4),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton(
-                onPressed: _onRecord,
-                child: Text(_t('recordOneMoment',
-                    ConsumerUiCopy.tomorrowCheckInRecordCta)),
+              const SizedBox(height: AppSpacing.md),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton(
+                  onPressed: _onRecord,
+                  child: Text(
+                    _t(
+                      'recordOneMoment',
+                      ConsumerUiCopy.tomorrowCheckInOneTapRecordCta,
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ] else if (selected != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                ConsumerUiCopy.tomorrowCheckInMomentCompareLine,
+                style: VoiceMemoryTypography.bodyStyle(
+                  color: AppColors.textPrimary,
+                ).copyWith(fontSize: 14, height: 1.45),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _warmBorder),
+                ),
+                child: Text(
+                  _followUp(selected),
+                  style:
+                      VoiceMemoryTypography.bodyStyle(
+                        color: AppColors.textSecondary,
+                      ).copyWith(
+                        fontSize: 14,
+                        height: 1.45,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                ConsumerUiCopy.tomorrowCheckInShortHelper,
+                style: VoiceMemoryTypography.bodyStyle(
+                  color: AppColors.textSecondary,
+                ).copyWith(fontSize: 12, height: 1.4),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: FilledButton(
+                  onPressed: _onRecord,
+                  child: Text(
+                    _t(
+                      'recordOneMoment',
+                      ConsumerUiCopy.tomorrowCheckInRecordCta,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
-        ],
         ),
       ),
     );
@@ -487,13 +513,15 @@ class _OneTapAnswerButton extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: VoiceMemoryTypography.bodyStyle(
-                color:
-                    selected ? AppColors.accentPrimary : AppColors.textPrimary,
-              ).copyWith(
-                fontSize: 16,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-              ),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: selected
+                        ? AppColors.accentPrimary
+                        : AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 16,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                  ),
             ),
           ),
         ),
@@ -503,11 +531,7 @@ class _OneTapAnswerButton extends StatelessWidget {
 }
 
 class _OptionChip extends StatelessWidget {
-  const _OptionChip({
-    required this.label,
-    required this.selected,
-    this.onTap,
-  });
+  const _OptionChip({required this.label, required this.selected, this.onTap});
 
   final String label;
   final bool selected;

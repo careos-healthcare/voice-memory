@@ -18,7 +18,7 @@ class MakeResultMoreUsefulOption {
 
 /// Lets the user say what would make the result more useful, then refines the
 /// takeaway. Each option maps to a not-useful reason the takeaway engine uses.
-abstract final class MakeResultMoreUsefulSheet {
+abstract class MakeResultMoreUsefulSheet {
   MakeResultMoreUsefulSheet._();
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
@@ -61,8 +61,9 @@ abstract final class MakeResultMoreUsefulSheet {
             children: [
               Text(
                 ConsumerUiCopy.makeResultMoreUsefulSheetTitle,
-                style:
-                    VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+                style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               for (final option in options)
@@ -74,8 +75,7 @@ abstract final class MakeResultMoreUsefulSheet {
                       color: AppColors.textPrimary,
                     ).copyWith(fontSize: 15, height: 1.4),
                   ),
-                  onTap: () =>
-                      Navigator.of(sheetContext).pop(option.reason),
+                  onTap: () => Navigator.of(sheetContext).pop(option.reason),
                 ),
             ],
           ),

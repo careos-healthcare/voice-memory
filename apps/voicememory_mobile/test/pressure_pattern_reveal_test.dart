@@ -61,7 +61,9 @@ Future<void> _pumpCard(WidgetTester tester, Widget child) async {
   await tester.binding.setSurfaceSize(const Size(390, 2000));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))),
+    MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: child)),
+    ),
   );
   await tester.pump();
 }
@@ -91,10 +93,7 @@ void main() {
 
   group('Pattern reveal engine', () {
     test('no reveal before 3 entries', () {
-      final reveal = engine.build([
-        _record(id: 'a'),
-        _record(id: 'b'),
-      ]);
+      final reveal = engine.build([_record(id: 'a'), _record(id: 'b')]);
       expect(reveal.hasPattern, isFalse);
       expect(reveal.headline, PressurePatternReveal.insufficientCopy);
     });
@@ -176,8 +175,9 @@ void main() {
       _record(id: 'c', contextIds: const ['work']),
     ]);
 
-    testWidgets('free user sees locked full pattern history row',
-        (tester) async {
+    testWidgets('free user sees locked full pattern history row', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         PressurePatternRevealCard(
@@ -191,8 +191,14 @@ void main() {
         find.byKey(const Key('pressure_pattern_locked_history')),
         findsOneWidget,
       );
-      expect(find.text(PressurePatternRevealCard.lockedRowLabel), findsOneWidget);
-      expect(find.byKey(const Key('pressure_pattern_pro_detail')), findsNothing);
+      expect(
+        find.text(PressurePatternRevealCard.lockedRowLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('pressure_pattern_pro_detail')),
+        findsNothing,
+      );
     });
 
     testWidgets('pro user sees full pattern detail', (tester) async {
@@ -249,7 +255,10 @@ void main() {
     testWidgets('no reveal before 3 entries on screen', (tester) async {
       await _pumpInsights(
         tester,
-        records: [_record(id: 'a'), _record(id: 'b')],
+        records: [
+          _record(id: 'a'),
+          _record(id: 'b'),
+        ],
       );
       expect(
         find.byKey(const Key('pressure_pattern_reveal_card')),
@@ -257,8 +266,9 @@ void main() {
       );
     });
 
-    testWidgets('reveal appears at 3 entries and CTA stores accepted state',
-        (tester) async {
+    testWidgets('reveal appears at 3 entries and CTA stores accepted state', (
+      tester,
+    ) async {
       // Synchronous construction — no real file IO inside the widget zone.
       final store = _MemoryExperimentStore(
         MobilePrefsStore(file: File('test/tmp/pressure_pattern/unused.json')),
@@ -266,7 +276,11 @@ void main() {
 
       await _pumpInsights(
         tester,
-        records: [_record(id: 'a'), _record(id: 'b'), _record(id: 'c')],
+        records: [
+          _record(id: 'a'),
+          _record(id: 'b'),
+          _record(id: 'c'),
+        ],
         experimentStore: store,
       );
 
@@ -275,6 +289,9 @@ void main() {
         findsOneWidget,
       );
 
+      await tester.ensureVisible(
+        find.byKey(const Key('pressure_pattern_try_interruption')),
+      );
       await tester.tap(
         find.byKey(const Key('pressure_pattern_try_interruption')),
       );
@@ -284,6 +301,9 @@ void main() {
         findsOneWidget,
       );
 
+      await tester.ensureVisible(
+        find.byKey(const Key('pressure_micro_experiment_accept')),
+      );
       await tester.tap(
         find.byKey(const Key('pressure_micro_experiment_accept')),
       );
@@ -298,8 +318,9 @@ void main() {
   });
 
   group('No VoiceMemory consumer copy', () {
-    testWidgets('pattern + micro-experiment cards never show VoiceMemory',
-        (tester) async {
+    testWidgets('pattern + micro-experiment cards never show VoiceMemory', (
+      tester,
+    ) async {
       final reveal = engine.build([
         _record(id: 'a', contextIds: const ['work']),
         _record(id: 'b', contextIds: const ['work']),

@@ -56,10 +56,9 @@ class _DayTwoReminderCardState extends State<DayTwoReminderCard> {
       );
     }
 
-    final helperStyle =
-        ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('day_two_reminder_card'),
@@ -70,44 +69,43 @@ class _DayTwoReminderCardState extends State<DayTwoReminderCard> {
       ),
       child: switch (_state) {
         _CardState.scheduled => Text(
-            DayTwoReminder.scheduledLine,
-            key: const Key('day_two_reminder_scheduled'),
-            style: helperStyle,
-          ),
+          DayTwoReminder.scheduledLine,
+          key: const Key('day_two_reminder_scheduled'),
+          style: helperStyle,
+        ),
         _CardState.unavailable => Text(
-            DayTwoReminder.unavailableLine,
-            key: const Key('day_two_reminder_unavailable'),
-            style: helperStyle,
-          ),
+          DayTwoReminder.unavailableLine,
+          key: const Key('day_two_reminder_unavailable'),
+          style: helperStyle,
+        ),
         _ => Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                DayTwoReminder.promptTitle,
-                style:
-                    ArchiveMobileTypography.responsiveSectionTitle(context),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                DayTwoReminder.promptBody,
-                style: ArchiveMobileTypography.body(context).copyWith(
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              FilledButton(
-                key: const Key('day_two_reminder_accept'),
-                onPressed: _state == _CardState.working ? null : _accept,
-                child: const Text(DayTwoReminder.acceptLabel),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              TextButton(
-                key: const Key('day_two_reminder_decline'),
-                onPressed: _state == _CardState.working ? null : _decline,
-                child: const Text(DayTwoReminder.declineLabel),
-              ),
-            ],
-          ),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              DayTwoReminder.promptTitle,
+              style: ArchiveMobileTypography.responsiveSectionTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              DayTwoReminder.promptBody,
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            FilledButton(
+              key: const Key('day_two_reminder_accept'),
+              onPressed: _state == _CardState.working ? null : _accept,
+              child: const Text(DayTwoReminder.acceptLabel),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            TextButton(
+              key: const Key('day_two_reminder_decline'),
+              onPressed: _state == _CardState.working ? null : _decline,
+              child: const Text(DayTwoReminder.declineLabel),
+            ),
+          ],
+        ),
       },
     );
   }

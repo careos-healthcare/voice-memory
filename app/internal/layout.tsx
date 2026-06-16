@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { FounderInternalNav } from "@/components/internal/FounderInternalNav";
 import { assertInternalPageAccess } from "@/lib/server/internal-page-guard";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default async function InternalLayout({
   await assertInternalPageAccess();
   return (
     <div data-internal-surface="true" className="min-h-screen bg-zinc-950 text-zinc-100">
+      <FounderInternalNav />
       {children}
     </div>
   );

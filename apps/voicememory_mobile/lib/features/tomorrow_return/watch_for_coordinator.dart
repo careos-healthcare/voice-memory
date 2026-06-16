@@ -12,13 +12,12 @@ import 'watch_for_model.dart';
 import 'watch_for_store.dart';
 
 /// Orchestrates watch-for suggestions, acceptance, and next-day completion.
-abstract final class WatchForCoordinator {
+abstract class WatchForCoordinator {
   WatchForCoordinator._();
 
   static const _engine = WatchForEngine();
 
-  static WatchForStore _store() =>
-      WatchForStore(AppServices.instance.prefs);
+  static WatchForStore _store() => WatchForStore(AppServices.instance.prefs);
 
   static Future<WatchForItem?> loadPendingForToday({DateTime? now}) async {
     final clock = now ?? DateTime.now();
@@ -47,8 +46,9 @@ abstract final class WatchForCoordinator {
     final clock = now ?? DateTime.now();
     final latest = entries.isEmpty
         ? null
-        : ([...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt)))
-            .first;
+        : ([
+            ...entries,
+          ]..sort((a, b) => b.createdAt.compareTo(a.createdAt))).first;
     return _engine.buildSuggested(
       now: clock,
       loop: loop,
@@ -95,11 +95,13 @@ abstract final class WatchForCoordinator {
     final pending = await store.readPending();
     if (pending == null || !pending.isDueOn(clock)) return null;
 
-    final latest = ([...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt)))
-        .first;
+    final latest = ([
+      ...entries,
+    ]..sort((a, b) => b.createdAt.compareTo(a.createdAt))).first;
     final captureStore = ReturnCaptureStore.instance();
     final selection = await captureStore.loadLatest();
-    final comparisonHint = selection != null && selection.watchForId == pending.id
+    final comparisonHint =
+        selection != null && selection.watchForId == pending.id
         ? selection.comparisonHint
         : null;
     final result = _engine.compareReflection(
@@ -136,9 +138,9 @@ abstract final class WatchForCoordinator {
   }
 
   static String headlineFor(WatchForItem completed) => _engine.resultHeadline(
-        completed.result,
-        comparisonHint: completed.comparisonHint,
-      );
+    completed.result,
+    comparisonHint: completed.comparisonHint,
+  );
 
   /// Body copy when only [WatchForItem.comparisonHint] is available (no entry).
   static String bodyForCompletedItem(WatchForItem completed) {
@@ -155,19 +157,19 @@ abstract final class WatchForCoordinator {
   }
 
   static JournalEntry _blankEntry() => JournalEntry(
-        id: 'watch_for_body_placeholder',
-        createdAt: DateTime(2000),
-        transcript: '',
-        durationSeconds: 0,
-        reflection: Reflection(
-          mood: '',
-          emotionalIntensity: 1,
-          recurringThemes: const [],
-          exactLanguagePattern: '',
-          concreteObservation: '',
-          repeatedSignal: '',
-        ),
-      );
+    id: 'watch_for_body_placeholder',
+    createdAt: DateTime(2000),
+    transcript: '',
+    durationSeconds: 0,
+    reflection: Reflection(
+      mood: '',
+      emotionalIntensity: 1,
+      recurringThemes: const [],
+      exactLanguagePattern: '',
+      concreteObservation: '',
+      repeatedSignal: '',
+    ),
+  );
 
   static String bodyFor({
     required WatchForItem completed,

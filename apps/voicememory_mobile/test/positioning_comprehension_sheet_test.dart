@@ -19,7 +19,9 @@ Future<void> _openSheet(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('comprehension sheet records archive memory choice', (tester) async {
+  testWidgets('comprehension sheet records archive memory choice', (
+    tester,
+  ) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     final store = PositioningComprehensionStore(AppServices.instance.prefs);
@@ -38,10 +40,7 @@ void main() {
     );
     await _openSheet(tester);
 
-    expect(
-      find.text(PositioningComprehensionCopy.question),
-      findsOneWidget,
-    );
+    expect(find.text(PositioningComprehensionCopy.question), findsOneWidget);
     await tester.tap(
       find.text(PositioningComprehensionCopy.archiveMemoryLabel),
     );

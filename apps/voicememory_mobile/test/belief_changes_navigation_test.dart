@@ -8,7 +8,9 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/consumer/consumer_screen_back_header.dart';
 
 void main() {
-  testWidgets('BeliefChangesScreen shows back control and title', (tester) async {
+  testWidgets('BeliefChangesScreen shows back control and title', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -39,9 +41,8 @@ void main() {
       routes: [
         GoRoute(
           path: '/archive-belief',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('patterns-home')),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Center(child: Text('patterns-home'))),
         ),
         GoRoute(
           path: '/belief-changes',
@@ -53,10 +54,7 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: AppTheme.light(),
-        routerConfig: router,
-      ),
+      MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
     );
     await tester.pump();
 

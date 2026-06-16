@@ -6,7 +6,7 @@ import 'return_streak_model.dart';
 import 'return_streak_store.dart';
 import 'tomorrow_commitment_model.dart';
 
-abstract final class ReturnStreakCoordinator {
+abstract class ReturnStreakCoordinator {
   ReturnStreakCoordinator._();
 
   static ReturnStreakStore _store() =>

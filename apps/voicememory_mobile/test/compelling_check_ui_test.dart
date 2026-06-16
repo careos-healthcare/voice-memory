@@ -13,7 +13,9 @@ import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_mo
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
-  testWidgets('compelling preview shows question, why, and example', (tester) async {
+  testWidgets('compelling preview shows question, why, and example', (
+    tester,
+  ) async {
     const check = CompellingCheckQuestion(
       type: CompellingCheckType.beforeMoment,
       question: 'Did you say yes before checking what you needed?',
@@ -26,10 +28,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: CompellingCheckPreview(
-            check: check,
-            trackShown: false,
-          ),
+          body: CompellingCheckPreview(check: check, trackShown: false),
         ),
       ),
     );
@@ -40,32 +39,43 @@ void main() {
     expect(find.text(CompellingCheckSharpness.direct), findsOneWidget);
   });
 
-  testWidgets('first-session card defaults to Most specific when feedback is moreSpecific',
-      (tester) async {
-    await tester.binding.setSurfaceSize(const Size(400, 1200));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets(
+    'first-session card defaults to Most specific when feedback is moreSpecific',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: FirstSessionPatternCard(
-              pattern: ScreenshotSampleData.firstSessionPatternSample,
-              feedbackHint: ArchiveFeedbackType.moreSpecific,
-              onAccept: (_, {correctionLearningId, reflectionText, sourceReflectionId, selectedVariantId, checkInQuestionOverride}) async {},
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: FirstSessionPatternCard(
+                pattern: ScreenshotSampleData.firstSessionPatternSample,
+                feedbackHint: ArchiveFeedbackType.moreSpecific,
+                onAccept:
+                    (
+                      _, {
+                      correctionLearningId,
+                      reflectionText,
+                      sourceReflectionId,
+                      selectedVariantId,
+                      checkInQuestionOverride,
+                    }) async {},
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pump();
+      );
+      await tester.pump();
 
-    expect(find.text('What exact moment did this show up?'), findsOneWidget);
-    expect(find.text(CompellingCheckSharpness.mostSpecific), findsOneWidget);
-  });
+      expect(find.text('What exact moment did this show up?'), findsOneWidget);
+      expect(find.text(CompellingCheckSharpness.mostSpecific), findsOneWidget);
+    },
+  );
 
-  testWidgets('result card chooser updates preview when Direct is selected',
-      (tester) async {
+  testWidgets('result card chooser updates preview when Direct is selected', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -99,7 +109,9 @@ void main() {
     );
   });
 
-  testWidgets('result card use tomorrow passes selected question', (tester) async {
+  testWidgets('result card use tomorrow passes selected question', (
+    tester,
+  ) async {
     String? created;
     await tester.pumpWidget(
       MaterialApp(
@@ -138,8 +150,9 @@ void main() {
     );
     ActivationTracker.trackCompellingCheckAccepted();
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    final events =
-        await ActivationEventsStore(AppServices.instance.prefs).read();
+    final events = await ActivationEventsStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(events.compellingCheckAccepted, 1);
   });
 }

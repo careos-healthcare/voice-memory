@@ -2,19 +2,19 @@ import 'first_pattern_quality_sample.dart';
 import 'first_pattern_quality_titles.dart';
 
 /// Messy, realistic reflections for harder first-pattern QA.
-abstract final class FirstPatternQualityMessySamples {
+abstract class FirstPatternQualityMessySamples {
   FirstPatternQualityMessySamples._();
 
   static const int count = 62;
 
   static List<FirstPatternQualitySample> get all => [
-        ...vague,
-        ...multiTopic,
-        ...negation,
-        ...positiveNeutral,
-        ...distinction,
-        ...diaryLike,
-      ];
+    ...vague,
+    ...multiTopic,
+    ...negation,
+    ...positiveNeutral,
+    ...distinction,
+    ...diaryLike,
+  ];
 
   static final List<FirstPatternQualitySample> vague = [
     _v('vague-1', 'rough day', ['vague'], notes: 'Too little signal'),
@@ -24,7 +24,12 @@ abstract final class FirstPatternQualityMessySamples {
     _v('vague-5', 'same as usual', ['vague', 'neutral']),
     _v('vague-6', 'meh', ['vague']),
     _v('vague-7', 'idk kinda weird', ['vague']),
-    _v('vague-8', 'just tired I guess', ['vague'], acceptableExtra: [FirstPatternQualityTitles.burnout]),
+    _v(
+      'vague-8',
+      'just tired I guess',
+      ['vague'],
+      acceptableExtra: [FirstPatternQualityTitles.burnout],
+    ),
     _v('vague-9', 'long day', ['vague']),
     _v('vague-10', 'not sure what to say', ['vague']),
   ];
@@ -166,9 +171,15 @@ abstract final class FirstPatternQualityMessySamples {
 
   static final List<FirstPatternQualitySample> positiveNeutral = [
     _p('pos-1', 'Had coffee and walked outside', ['positive', 'neutral']),
-    _p('pos-2', 'Felt calm after lunch, peaceful afternoon', ['positive', 'neutral']),
+    _p('pos-2', 'Felt calm after lunch, peaceful afternoon', [
+      'positive',
+      'neutral',
+    ]),
     _p('pos-3', 'Saw a friend and laughed, felt good', ['positive', 'neutral']),
-    _p('pos-4', 'Proud I rested and enjoyed the evening', ['positive', 'neutral']),
+    _p('pos-4', 'Proud I rested and enjoyed the evening', [
+      'positive',
+      'neutral',
+    ]),
     _p('pos-5', 'Relieved the call went okay', ['positive', 'neutral']),
     _p('pos-6', 'Okay day, nothing heavy', ['positive', 'neutral', 'vague']),
     _p('pos-7', 'Grateful for a quiet morning', ['positive', 'neutral']),
@@ -422,25 +433,24 @@ abstract final class FirstPatternQualityMessySamples {
     List<String> tags, {
     String? notes,
     List<String>? acceptableExtra,
-  }) =>
-      FirstPatternQualitySample(
-        id: id,
-        reflectionText: text,
-        expectedCategory: 'vague',
-        acceptableTitles: [
-          ...FirstPatternQualityTitles.fallbackTitles,
-          if (acceptableExtra != null) ...acceptableExtra,
-        ],
-        unacceptableTitles: [
-          FirstPatternQualityTitles.responsibility,
-          FirstPatternQualityTitles.worry,
-          FirstPatternQualityTitles.relationship,
-          FirstPatternQualityTitles.selfDoubt,
-          FirstPatternQualityTitles.avoidance,
-        ],
-        notes: notes,
-        qaTags: tags,
-      );
+  }) => FirstPatternQualitySample(
+    id: id,
+    reflectionText: text,
+    expectedCategory: 'vague',
+    acceptableTitles: [
+      ...FirstPatternQualityTitles.fallbackTitles,
+      if (acceptableExtra != null) ...acceptableExtra,
+    ],
+    unacceptableTitles: [
+      FirstPatternQualityTitles.responsibility,
+      FirstPatternQualityTitles.worry,
+      FirstPatternQualityTitles.relationship,
+      FirstPatternQualityTitles.selfDoubt,
+      FirstPatternQualityTitles.avoidance,
+    ],
+    notes: notes,
+    qaTags: tags,
+  );
 
   static FirstPatternQualitySample _m(
     String id,
@@ -448,52 +458,49 @@ abstract final class FirstPatternQualityMessySamples {
     List<String> tags, {
     required List<String> acceptable,
     List<String>? unacceptable,
-  }) =>
-      FirstPatternQualitySample(
-        id: id,
-        reflectionText: text,
-        expectedCategory: 'ambiguous',
-        acceptableTitles: acceptable,
-        unacceptableTitles: unacceptable ?? const [],
-        qaTags: tags,
-      );
+  }) => FirstPatternQualitySample(
+    id: id,
+    reflectionText: text,
+    expectedCategory: 'ambiguous',
+    acceptableTitles: acceptable,
+    unacceptableTitles: unacceptable ?? const [],
+    qaTags: tags,
+  );
 
   static FirstPatternQualitySample _n(
     String id,
     String text, {
     required List<String> unacceptable,
     required List<String> acceptable,
-  }) =>
-      FirstPatternQualitySample(
-        id: id,
-        reflectionText: text,
-        expectedCategory: 'negation',
-        acceptableTitles: acceptable,
-        unacceptableTitles: unacceptable,
-        qaTags: const ['negation'],
-      );
+  }) => FirstPatternQualitySample(
+    id: id,
+    reflectionText: text,
+    expectedCategory: 'negation',
+    acceptableTitles: acceptable,
+    unacceptableTitles: unacceptable,
+    qaTags: const ['negation'],
+  );
 
   static FirstPatternQualitySample _p(
     String id,
     String text,
     List<String> tags,
-  ) =>
-      FirstPatternQualitySample(
-        id: id,
-        reflectionText: text,
-        expectedCategory: 'positive',
-        acceptableTitles: [
-          FirstPatternQualityTitles.lighter,
-          ...FirstPatternQualityTitles.fallbackTitles,
-        ],
-        unacceptableTitles: [
-          FirstPatternQualityTitles.responsibility,
-          FirstPatternQualityTitles.worry,
-          FirstPatternQualityTitles.selfDoubt,
-          FirstPatternQualityTitles.avoidance,
-        ],
-        qaTags: tags,
-      );
+  ) => FirstPatternQualitySample(
+    id: id,
+    reflectionText: text,
+    expectedCategory: 'positive',
+    acceptableTitles: [
+      FirstPatternQualityTitles.lighter,
+      ...FirstPatternQualityTitles.fallbackTitles,
+    ],
+    unacceptableTitles: [
+      FirstPatternQualityTitles.responsibility,
+      FirstPatternQualityTitles.worry,
+      FirstPatternQualityTitles.selfDoubt,
+      FirstPatternQualityTitles.avoidance,
+    ],
+    qaTags: tags,
+  );
 
   static FirstPatternQualitySample _d(
     String id,
@@ -502,15 +509,13 @@ abstract final class FirstPatternQualityMessySamples {
     List<String>? acceptable,
     List<String>? unacceptable,
     String? notes,
-  }) =>
-      FirstPatternQualitySample(
-        id: id,
-        reflectionText: text,
-        expectedCategory: 'distinction',
-        acceptableTitles:
-            acceptable ?? FirstPatternQualityTitles.fallbackTitles,
-        unacceptableTitles: unacceptable ?? const [],
-        notes: notes,
-        qaTags: tags,
-      );
+  }) => FirstPatternQualitySample(
+    id: id,
+    reflectionText: text,
+    expectedCategory: 'distinction',
+    acceptableTitles: acceptable ?? FirstPatternQualityTitles.fallbackTitles,
+    unacceptableTitles: unacceptable ?? const [],
+    notes: notes,
+    qaTags: tags,
+  );
 }

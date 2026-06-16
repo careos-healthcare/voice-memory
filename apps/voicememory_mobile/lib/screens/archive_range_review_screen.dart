@@ -47,7 +47,8 @@ class ArchiveRangeReviewScreen extends StatefulWidget {
     required DateTime now,
     ArchiveReviewRangePreset preset,
     PatternMap? map,
-  })? reviewBuilder;
+  })?
+  reviewBuilder;
   final Future<void> Function(String nextCheck)? onUseCheck;
   final ArchiveEntitlementReader? entitlementReader;
   final bool? firstLoopClosed;
@@ -93,19 +94,21 @@ class _ArchiveRangeReviewScreenState extends State<ArchiveRangeReviewScreen> {
     final moments = widget.momentsLoader != null
         ? await widget.momentsLoader!()
         : (ScreenshotMode.archiveReviewPreview
-            ? ScreenshotSampleData.archiveReviewMomentsSample
-            : await KeyMomentStore.instance().loadAll());
+              ? ScreenshotSampleData.archiveReviewMomentsSample
+              : await KeyMomentStore.instance().loadAll());
 
     final memory = ScreenshotMode.archiveReviewPreview
         ? ScreenshotSampleData.patternMemorySample
         : (widget.momentsLoader != null
-            ? null
-            : await PatternMemoryStore(AppServices.instance.prefs).loadActive());
+              ? null
+              : await PatternMemoryStore(
+                  AppServices.instance.prefs,
+                ).loadActive());
     final timeline = ScreenshotMode.archiveReviewPreview
         ? ScreenshotSampleData.archiveEvolutionTimelineSample
         : (widget.momentsLoader != null
-            ? null
-            : await ArchiveEvolutionStore.instance().loadLatest());
+              ? null
+              : await ArchiveEvolutionStore.instance().loadLatest());
     final map = memory != null
         ? buildPatternMap(memory: memory, moments: moments)
         : null;
@@ -113,7 +116,8 @@ class _ArchiveRangeReviewScreenState extends State<ArchiveRangeReviewScreen> {
     final isPro = await _entitlementReader.isPro;
     final loopClosed =
         widget.firstLoopClosed ?? await PaywallAccess.isFirstLoopClosed();
-    final gatedPreset = _preset == ArchiveReviewRangePreset.thisMonth ||
+    final gatedPreset =
+        _preset == ArchiveReviewRangePreset.thisMonth ||
         _preset == ArchiveReviewRangePreset.last30Days;
     final trigger = gatedPreset && !isPro && loopClosed
         ? await PaywallAccess.check(
@@ -197,8 +201,9 @@ class _ArchiveRangeReviewScreenState extends State<ArchiveRangeReviewScreen> {
   }
 
   Future<void> _defaultUseCheck(String nextCheck) async {
-    final memory =
-        await PatternMemoryStore(AppServices.instance.prefs).loadActive();
+    final memory = await PatternMemoryStore(
+      AppServices.instance.prefs,
+    ).loadActive();
     await TomorrowCheckInCoordinator.createForTomorrow(
       patternTitle: memory?.patternTitle ?? '',
       specificPrompt: '',
@@ -218,9 +223,7 @@ class _ArchiveRangeReviewScreenState extends State<ArchiveRangeReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Archive review'),
-      ),
+      appBar: AppBar(title: const Text('Archive review')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
@@ -234,11 +237,14 @@ class _ArchiveRangeReviewScreenState extends State<ArchiveRangeReviewScreen> {
                 if (_review != null)
                   ArchiveRangeReviewCard(
                     review: _review!,
-                    onUseCheck: _review!.hasNextCheck && !_checkSet && !_memoryGated
+                    onUseCheck:
+                        _review!.hasNextCheck && !_checkSet && !_memoryGated
                         ? _useCheck
                         : null,
                   ),
-                if (_memoryGated && _gateTrigger != null && !_previewDismissed) ...[
+                if (_memoryGated &&
+                    _gateTrigger != null &&
+                    !_previewDismissed) ...[
                   const SizedBox(height: AppSpacing.md),
                   ProValuePreviewCard(
                     preview: buildProValuePreview(_gateTrigger!),

@@ -3,7 +3,7 @@ import '../features/archive_value/archive_value_progress.dart';
 import '../models/journal_entry.dart';
 
 /// When to show first-recording conversation starters vs. the continue message.
-abstract final class ExamplePromptVisibility {
+abstract class ExamplePromptVisibility {
   ExamplePromptVisibility._();
 
   static const int hideAfterRecordingCount =

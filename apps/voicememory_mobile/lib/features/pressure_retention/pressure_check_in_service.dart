@@ -1,6 +1,10 @@
 import '../../models/journal_entry.dart';
 import '../../services/app_services.dart';
 import '../../storage/journal_store.dart';
+import '../memory/keep_exact_details.dart';
+import '../memory/memory_scope.dart';
+import '../memory/memory_scope_policy.dart';
+import '../memory/treat_as_new.dart';
 import 'pressure_check_in_engine.dart';
 import 'pressure_check_in_option.dart';
 import 'pressure_check_in_record.dart';
@@ -24,9 +28,9 @@ class PressureCheckInService {
   static const first25Source = 'pressure_check_in';
 
   static PressureCheckInService instance() => PressureCheckInService(
-        journalStore: AppServices.instance.journalStore,
-        store: PressureCheckInStore.instance(),
-      );
+    journalStore: AppServices.instance.journalStore,
+    store: PressureCheckInStore.instance(),
+  );
 
   Future<PressureCheckInSaveResult> save({
     required PressureCheckInOption option,
@@ -50,8 +54,31 @@ class PressureCheckInService {
       choseToStop: choseToStop,
     );
 
+    // Snapshot the per-save memory choices before the journal save
+    // consumes them, so the structured record carries the same metadata
+    // as the entry it belongs to.
+    final fresh =
+        MemoryScopePolicy.scope == MemoryScope.off ||
+        TreatAsNew.selectedForNextSave;
+    final approved = !fresh && MemoryScopePolicy.connectApprovedForNextSave;
+    final keepExact = KeepExactDetails.selectedForNextSave;
     await journalStore.save(built.entry, first25Source: first25Source);
-    await store.save(built.record);
+    final record = (fresh || approved || keepExact)
+        ? PressureCheckInRecord(
+            entryId: built.record.entryId,
+            createdAt: built.record.createdAt,
+            optionId: built.record.optionId,
+            contextIds: built.record.contextIds,
+            fear: built.record.fear,
+            stopCostNote: built.record.stopCostNote,
+            choseToStop: built.record.choseToStop,
+            transcript: built.record.transcript,
+            treatAsNew: fresh,
+            connectionApproved: approved,
+            keepExactDetails: keepExact,
+          )
+        : built.record;
+    await store.save(record);
 
     // First-win detection: was this the user's very first pressure moment?
     final all = await store.loadAll();
@@ -59,7 +86,7 @@ class PressureCheckInService {
 
     return PressureCheckInSaveResult(
       entry: built.entry,
-      record: built.record,
+      record: record,
       isFirst: isFirst,
     );
   }

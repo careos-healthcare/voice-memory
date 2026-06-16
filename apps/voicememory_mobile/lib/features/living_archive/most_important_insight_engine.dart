@@ -79,14 +79,15 @@ class MostImportantInsightEngine {
     final delta = current - prior;
     if (delta.abs() < LivingArchiveCopy.minConfidenceChangePercent) return;
 
-    final evidence = archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    final evidence = archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
     if (evidence.length < 2) return;
 
-    final headline = WarmArchiveCopy.confidenceShiftPhrase(prior: prior, current: current);
+    final headline = WarmArchiveCopy.confidenceShiftPhrase(
+      prior: prior,
+      current: current,
+    );
     final summary = belief.length > 72 ? '${belief.substring(0, 72)}…' : belief;
 
     out.add(
@@ -118,8 +119,7 @@ class MostImportantInsightEngine {
     final ref = ArchiveInsightRef.beliefChange(0);
     final headline = switch (top.type) {
       BeliefChangeAlertType.confidenceDecrease ||
-      BeliefChangeAlertType.disappearingBelief =>
-        'This belief is weakening.',
+      BeliefChangeAlertType.disappearingBelief => 'This belief is weakening.',
       BeliefChangeAlertType.confidenceIncrease =>
         'This belief is strengthening.',
       BeliefChangeAlertType.newBeliefEmerging =>
@@ -150,10 +150,12 @@ class MostImportantInsightEngine {
     return MostImportantInsight(
       headline: w.headline,
       summary: w.summary.replaceAll('\n', ' ').trim(),
-      why: 'Recent recordings outweigh what the archive assumed from earlier evidence.',
+      why:
+          'Recent recordings outweigh what the archive assumed from earlier evidence.',
       confidence: w.confidence.toDouble(),
       evidenceIds: w.evidenceIds,
-      openedRoute: '/archive-explanation/${Uri.encodeComponent(w.insightRef.id)}',
+      openedRoute:
+          '/archive-explanation/${Uri.encodeComponent(w.insightRef.id)}',
       priority: MostImportantInsightPriority.archiveWasWrong,
       createdAt: DateTime.now(),
       insightRef: w.insightRef,
@@ -168,7 +170,8 @@ class MostImportantInsightEngine {
       why: d.whyItMatters,
       confidence: d.confidence,
       evidenceIds: d.evidenceIds,
-      openedRoute: '/archive-explanation/${Uri.encodeComponent(d.insightRef.id)}',
+      openedRoute:
+          '/archive-explanation/${Uri.encodeComponent(d.insightRef.id)}',
       priority: MostImportantInsightPriority.dailyDiscovery,
       createdAt: d.createdAt,
       insightRef: d.insightRef,
@@ -182,7 +185,8 @@ class MostImportantInsightEngine {
       why: challenge.body,
       confidence: challenge.confidence.toDouble(),
       evidenceIds: challenge.evidenceEntryIds,
-      openedRoute: '/archive-explanation/${Uri.encodeComponent(challenge.insightRef.id)}',
+      openedRoute:
+          '/archive-explanation/${Uri.encodeComponent(challenge.insightRef.id)}',
       priority: MostImportantInsightPriority.challenge,
       createdAt: DateTime.now(),
       insightRef: challenge.insightRef,
@@ -194,7 +198,9 @@ class MostImportantInsightEngine {
     return MostImportantInsight(
       headline: 'Your archive is still uncertain.',
       summary: card.bodyLines.join(' '),
-      why: card.state.primaryMessage ?? 'More recordings may resolve open patterns.',
+      why:
+          card.state.primaryMessage ??
+          'More recordings may resolve open patterns.',
       confidence: 62,
       evidenceIds: const [],
       openedRoute: '/archive-explanation/${Uri.encodeComponent('belief')}',

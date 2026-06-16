@@ -37,8 +37,9 @@ void main() {
   test('first save marks firstMomentSaved with timestamps', () async {
     final store = await _store(_stamp());
     await store.markOpenedRecord(at: DateTime(2026, 6, 4, 9, 0, 0));
-    final state =
-        await store.markFirstMomentSaved(at: DateTime(2026, 6, 4, 9, 0, 30));
+    final state = await store.markFirstMomentSaved(
+      at: DateTime(2026, 6, 4, 9, 0, 30),
+    );
     expect(state.stage, FirstLoopActivationStage.firstMomentSaved);
     expect(state.secondsToFirstSave, 30);
   });

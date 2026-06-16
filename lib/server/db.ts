@@ -44,6 +44,12 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   request_count integer NOT NULL DEFAULT 0,
   PRIMARY KEY (subject_key, endpoint, minute_key)
 )`,
+  `CREATE TABLE IF NOT EXISTS openai_daily_spend (
+  subject_key text NOT NULL,
+  day_key text NOT NULL,
+  spend_micro_usd bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (subject_key, day_key)
+)`,
   `CREATE TABLE IF NOT EXISTS billing_entitlements (
   user_id text PRIMARY KEY,
   stripe_customer_id text,
@@ -101,6 +107,17 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
 )`,
   `ALTER TABLE api_usage ADD COLUMN IF NOT EXISTS atmosphere_count integer NOT NULL DEFAULT 0`,
   `ALTER TABLE api_usage ADD COLUMN IF NOT EXISTS attest_count integer NOT NULL DEFAULT 0`,
+  `ALTER TABLE auth_codes ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0`,
+  `CREATE TABLE IF NOT EXISTS mobile_push_devices (
+  user_id text NOT NULL,
+  device_id text PRIMARY KEY,
+  platform text NOT NULL,
+  fcm_token text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+)`,
+  `CREATE INDEX IF NOT EXISTS mobile_push_devices_user_id_idx ON mobile_push_devices (user_id)`,
+  `CREATE INDEX IF NOT EXISTS mobile_push_devices_updated_at_idx ON mobile_push_devices (updated_at DESC)`,
 ] as const;
 
 let lastConnectionError: string | null = null;
@@ -108,7 +125,7 @@ let lastConnectionError: string | null = null;
 function logDbError(scope: string, error: unknown, extra: Record<string, unknown> = {}): void {
   const err = error instanceof Error ? error : new Error(String(error));
   console.error(
-    "[VoiceMemory auth]",
+    "[ArchiveMe auth]",
     JSON.stringify({
       route: scope,
       message: err.message,

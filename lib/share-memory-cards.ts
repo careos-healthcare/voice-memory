@@ -21,7 +21,7 @@ export type ShareMemoryCardKind =
 export const SHARE_CARD_DISCLAIMER =
   "This is a private reflection, not a diagnosis.";
 
-const CARD_PREFIX = "VoiceMemory noticed:";
+const CARD_PREFIX = "ArchiveMe noticed:";
 
 export interface ShareCardOptions {
   includeTranscript?: boolean;

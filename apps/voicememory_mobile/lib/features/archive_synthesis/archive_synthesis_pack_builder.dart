@@ -1,4 +1,5 @@
 import '../../models/journal_entry.dart';
+import '../../security/user_content_safety.dart';
 import '../archive_deep_dive/archive_deep_dive_models.dart';
 import '../archive_evidence/archive_evidence.dart';
 import '../archive_change_feed/archive_change_feed_models.dart';
@@ -9,7 +10,7 @@ import '../archive_theory/theory_ranking_models.dart';
 import 'archive_synthesis_hash.dart';
 
 /// Builds deterministic input pack from Archive V1 engines (no LLM).
-abstract final class ArchiveSynthesisPackBuilder {
+abstract class ArchiveSynthesisPackBuilder {
   ArchiveSynthesisPackBuilder._();
 
   static const int packVersion = 2;
@@ -30,7 +31,9 @@ abstract final class ArchiveSynthesisPackBuilder {
       'packVersion': packVersion,
       'monthKey': monthKey,
       'eligibleCount': eligible.length,
-      'primaryTheory': _theoryRef(ranking?.primaryTheory ?? _theoryAsRanked(theory)),
+      'primaryTheory': _theoryRef(
+        ranking?.primaryTheory ?? _theoryAsRanked(theory),
+      ),
       'secondaryTheories': (ranking?.secondaryTheories ?? const [])
           .map(_theoryRef)
           .whereType<Map<String, dynamic>>()
@@ -266,10 +269,8 @@ abstract final class ArchiveSynthesisPackBuilder {
   }
 
   static Map<String, String> _excerpt(JournalEntry entry) {
-    final text = entry.transcript.trim();
-    final quote = text.length <= maxExcerptChars
-        ? text
-        : '${text.substring(0, maxExcerptChars).trim()}…';
+    final text = UserContentSafety.redactSecrets(entry.transcript.trim());
+    final quote = UserContentSafety.safeSnippet(text, maxChars: maxExcerptChars);
     return {'entryId': entry.id, 'quote': quote};
   }
 
@@ -289,12 +290,20 @@ abstract final class ArchiveSynthesisPackBuilder {
       'mood': r.mood,
       'emotionalIntensity': r.emotionalIntensity,
       'recurringThemes': r.recurringThemes,
-      'concreteObservation': _truncate(r.concreteObservation, 400),
-      'repeatedSignal': _truncate(r.repeatedSignal, 200),
+      'concreteObservation': _truncate(
+        UserContentSafety.redactSecrets(r.concreteObservation),
+        400,
+      ),
+      'repeatedSignal': _truncate(
+        UserContentSafety.redactSecrets(r.repeatedSignal),
+        200,
+      ),
       if (r.tensionOrContradiction != null &&
           r.tensionOrContradiction!.isNotEmpty)
-        'tensionOrContradiction':
-            _truncate(r.tensionOrContradiction!, 200),
+        'tensionOrContradiction': _truncate(
+          UserContentSafety.redactSecrets(r.tensionOrContradiction!),
+          200,
+        ),
     };
   }
 
@@ -306,8 +315,8 @@ abstract final class ArchiveSynthesisPackBuilder {
   }
 
   static String _truncate(String text, int max) {
-    final t = text.trim();
+    final t = UserContentSafety.sanitizePlainText(text);
     if (t.length <= max) return t;
-    return '${t.substring(0, max).trim()}…';
+    return UserContentSafety.safeSnippet(t, maxChars: max);
   }
 }

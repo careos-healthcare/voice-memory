@@ -76,22 +76,22 @@ class ArchiveMemorySummary {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'patternTitle': patternTitle,
-        'primaryMemoryLine': primaryMemoryLine,
-        if (startsBeforeLine != null) 'startsBeforeLine': startsBeforeLine,
-        if (helpedLine != null) 'helpedLine': helpedLine,
-        if (heavierLine != null) 'heavierLine': heavierLine,
-        if (changedLine != null) 'changedLine': changedLine,
-        'basedOnMomentCount': basedOnMomentCount,
-        'basedOnWeekCount': basedOnWeekCount,
-        if (firstSeenDate != null)
-          'firstSeenDate': firstSeenDate!.toUtc().toIso8601String(),
-        if (lastSeenDate != null)
-          'lastSeenDate': lastSeenDate!.toUtc().toIso8601String(),
-        'clarityLabel': clarityLabel,
-        if (nextCheck != null) 'nextCheck': nextCheck,
-      };
+    'id': id,
+    'patternTitle': patternTitle,
+    'primaryMemoryLine': primaryMemoryLine,
+    if (startsBeforeLine != null) 'startsBeforeLine': startsBeforeLine,
+    if (helpedLine != null) 'helpedLine': helpedLine,
+    if (heavierLine != null) 'heavierLine': heavierLine,
+    if (changedLine != null) 'changedLine': changedLine,
+    'basedOnMomentCount': basedOnMomentCount,
+    'basedOnWeekCount': basedOnWeekCount,
+    if (firstSeenDate != null)
+      'firstSeenDate': firstSeenDate!.toUtc().toIso8601String(),
+    if (lastSeenDate != null)
+      'lastSeenDate': lastSeenDate!.toUtc().toIso8601String(),
+    'clarityLabel': clarityLabel,
+    if (nextCheck != null) 'nextCheck': nextCheck,
+  };
 
   static ArchiveMemorySummary? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

@@ -91,9 +91,12 @@ class LoopTriggerMapModel {
   final int analyzedEntryCount;
   final bool hasEnoughData;
 
-  List<LoopTriggerMapRow> get rankedRows => rows
-      .where((row) =>
-          row.category != LoopTriggerCategory.unclear && row.count > 0)
-      .toList()
-    ..sort((a, b) => b.count.compareTo(a.count));
+  List<LoopTriggerMapRow> get rankedRows =>
+      rows
+          .where(
+            (row) =>
+                row.category != LoopTriggerCategory.unclear && row.count > 0,
+          )
+          .toList()
+        ..sort((a, b) => b.count.compareTo(a.count));
 }

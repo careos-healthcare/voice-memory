@@ -8,6 +8,7 @@ import {
   analyzeWeeklyIntelligence,
   buildLocalWeeklySummary,
 } from "@/lib/weekly-intelligence";
+import { buildArchiveExportAttachment } from "@/lib/archive/archive-export-attachment";
 import { EXPORT_TRUST_FOOTER } from "@/lib/product-copy";
 import { getCachedWeeklySummary } from "@/lib/weekly-summary-cache";
 import type { JournalEntry } from "@/types/journal";
@@ -19,6 +20,8 @@ export interface ExportJsonBundle {
   dateRange: { from: string | null; to: string | null };
   entryCount: number;
   entries: JournalEntry[];
+  /** Beliefs, timeline, evidence locker, markers — not a new analysis pass. */
+  archiveAttachment?: ReturnType<typeof buildArchiveExportAttachment>;
 }
 
 export interface PrintableMoodPoint {
@@ -107,6 +110,8 @@ export function buildExportJsonBundle(
     },
     entryCount: entries.length,
     entries,
+    archiveAttachment:
+      entries.length > 0 ? buildArchiveExportAttachment(entries) : undefined,
   };
 }
 
@@ -137,7 +142,7 @@ export function buildWeeklySummaryText(): string {
   const summary = cached ?? buildLocalWeeklySummary(report);
 
   const lines = [
-    "VoiceMemory — Weekly Summary",
+    "ArchiveMe — Weekly Summary",
     `Generated: ${formatDateLabel(new Date().toISOString())}`,
     `Week: ${report.weekRangeLabel}`,
     "",
@@ -160,7 +165,7 @@ export function buildInsightsSummaryText(): string {
   const insights = analyzeJournalEntries();
 
   const lines = [
-    "VoiceMemory — Memory timeline summary",
+    "ArchiveMe — Memory timeline summary",
     `Generated: ${formatDateLabel(new Date().toISOString())}`,
     `Total entries: ${insights.totalEntries}`,
     "",

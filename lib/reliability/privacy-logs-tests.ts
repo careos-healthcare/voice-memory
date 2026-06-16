@@ -16,7 +16,7 @@ export function runPrivacyLogsTests(): { failures: string[] } {
       ok: true,
       route: "/api/test",
     });
-    const json = captured.replace(/^\[VoiceMemory\]\s*/, "").trim();
+    const json = captured.replace(/^\[ArchiveMe\]\s*/, "").trim();
     const payload = JSON.parse(json) as Record<string, unknown>;
     for (const key of ["transcript", "journal_body"]) {
       if (key in payload) {

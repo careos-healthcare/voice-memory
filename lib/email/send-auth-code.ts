@@ -5,7 +5,7 @@ import { Resend } from "resend";
 import { readAuthEmailEnvStatus } from "@/lib/server/env-check";
 import type { AuthErrorCode } from "@/types/auth-errors";
 
-const SUBJECT = "Your VoiceMemory sign-in code";
+const SUBJECT = "Your ArchiveMe sign-in code";
 
 export class AuthEmailError extends Error {
   code: AuthErrorCode;
@@ -47,7 +47,7 @@ function isProduction(): boolean {
 }
 
 function buildEmailBody(code: string): string {
-  return `Your VoiceMemory sign-in code is:
+  return `Your ArchiveMe sign-in code is:
 
 ${code}
 

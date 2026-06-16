@@ -110,8 +110,7 @@ bool _hasChangedRecently({
   PatternProgressMoment? progress,
   ArchiveEvolutionTimeline? timeline,
 }) {
-  if (summary?.changedLine != null &&
-      summary!.changedLine!.trim().isNotEmpty) {
+  if (summary?.changedLine != null && summary!.changedLine!.trim().isNotEmpty) {
     return true;
   }
   if (progress?.type == PatternProgressType.changing) return true;

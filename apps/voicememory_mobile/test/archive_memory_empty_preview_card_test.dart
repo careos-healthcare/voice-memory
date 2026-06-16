@@ -9,9 +9,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
-        home: Scaffold(
-          body: ArchiveMemoryEmptyPreviewCard(onRecord: () {}),
-        ),
+        home: Scaffold(body: ArchiveMemoryEmptyPreviewCard(onRecord: () {})),
       ),
     );
     expect(find.text(ConsumerUiCopy.archiveMemoryPreviewTitle), findsOneWidget);

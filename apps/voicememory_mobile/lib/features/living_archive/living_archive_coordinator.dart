@@ -66,12 +66,13 @@ class LivingArchiveCoordinator {
       state: state,
     );
 
-    final evolution = await const ArchiveEvolutionCoordinator().resolveForArchive(
-      entries: entries,
-      state: state,
-      snapshotBaseline: snapshotBaseline,
-      prefs: store,
-    );
+    final evolution = await const ArchiveEvolutionCoordinator()
+        .resolveForArchive(
+          entries: entries,
+          state: state,
+          snapshotBaseline: snapshotBaseline,
+          prefs: store,
+        );
 
     final evolutionState = await ArchiveEvolutionStore(store).read();
     final lastEntryAt = entries.isNotEmpty
@@ -107,7 +108,8 @@ class LivingArchiveCoordinator {
       await _recordStreakForInsight(store);
     }
 
-    final hasMore = (whatChangedToday?.hasContent ?? false) ||
+    final hasMore =
+        (whatChangedToday?.hasContent ?? false) ||
         mostImportant != null ||
         (daily != null && evolution == null) ||
         (challenge != null && evolution == null);
@@ -124,9 +126,7 @@ class LivingArchiveCoordinator {
     );
   }
 
-  static Future<void> _recordStreakForInsight(
-    MobilePrefsStore prefs,
-  ) async {
+  static Future<void> _recordStreakForInsight(MobilePrefsStore prefs) async {
     final store = DiscoveryStreakStore(prefs);
     await store.recordDiscoveryDay(DateTime.now());
   }

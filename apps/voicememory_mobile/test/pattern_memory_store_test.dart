@@ -44,11 +44,14 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.applyUpdate(_update(PatternMemoryResultHint.same, day: 1),
-        patternTitle: _title);
+    await store.applyUpdate(
+      _update(PatternMemoryResultHint.same, day: 1),
+      patternTitle: _title,
+    );
     final memory = await store.applyUpdate(
-        _update(PatternMemoryResultHint.same, day: 2),
-        patternTitle: _title);
+      _update(PatternMemoryResultHint.same, day: 2),
+      patternTitle: _title,
+    );
 
     expect(memory.checkInCount, 2);
     expect(memory.showedAgainCount, 2);
@@ -59,11 +62,14 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.applyUpdate(_update(PatternMemoryResultHint.same, day: 1),
-        patternTitle: _title);
+    await store.applyUpdate(
+      _update(PatternMemoryResultHint.same, day: 1),
+      patternTitle: _title,
+    );
     final next = await store.applyUpdate(
-        _update(PatternMemoryResultHint.lighter, day: 2),
-        patternTitle: 'A different pattern');
+      _update(PatternMemoryResultHint.lighter, day: 2),
+      patternTitle: 'A different pattern',
+    );
 
     expect(next.patternTitle, 'A different pattern');
     expect(next.checkInCount, 1);
@@ -77,12 +83,14 @@ void main() {
     final store = await _store(stamp);
 
     for (var i = 0; i < 25; i++) {
-      await store.appendToHistory(PatternMemory(
-        id: 'pm_$i',
-        patternTitle: 'Pattern $i',
-        createdAt: DateTime(2026, 6, 1),
-        updatedAt: DateTime(2026, 6, 1),
-      ));
+      await store.appendToHistory(
+        PatternMemory(
+          id: 'pm_$i',
+          patternTitle: 'Pattern $i',
+          createdAt: DateTime(2026, 6, 1),
+          updatedAt: DateTime(2026, 6, 1),
+        ),
+      );
     }
     final history = await store.loadHistory(limit: 100);
     expect(history.length, 20);
@@ -92,13 +100,18 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.applyUpdate(_update(PatternMemoryResultHint.same, day: 1),
-        patternTitle: _title);
-    await store.applyUpdate(_update(PatternMemoryResultHint.same, day: 2),
-        patternTitle: _title);
+    await store.applyUpdate(
+      _update(PatternMemoryResultHint.same, day: 1),
+      patternTitle: _title,
+    );
+    await store.applyUpdate(
+      _update(PatternMemoryResultHint.same, day: 2),
+      patternTitle: _title,
+    );
     final memory = await store.applyUpdate(
-        _update(PatternMemoryResultHint.same, day: 3),
-        patternTitle: _title);
+      _update(PatternMemoryResultHint.same, day: 3),
+      patternTitle: _title,
+    );
 
     expect(memory.checkInCount, 3);
     expect(memory.showedAgainCount, 3);
@@ -108,8 +121,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     final store = await _store(stamp);
 
-    await store.applyUpdate(_update(PatternMemoryResultHint.same),
-        patternTitle: _title);
+    await store.applyUpdate(
+      _update(PatternMemoryResultHint.same),
+      patternTitle: _title,
+    );
     await store.clear();
 
     expect(await store.loadActive(), isNull);

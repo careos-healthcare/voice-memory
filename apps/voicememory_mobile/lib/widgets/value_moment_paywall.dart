@@ -119,11 +119,14 @@ class _ValueMomentPaywallCardState extends State<ValueMomentPaywallCard> {
           const SizedBox(height: 8),
           Text(
             ValueMomentPaywallLogic.copyPatternMemory,
-            style: const TextStyle(color: AppTheme.muted, fontSize: 12, height: 1.4),
+            style: const TextStyle(
+              color: AppTheme.muted,
+              fontSize: 12,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 12),
-          for (final bullet in ConsumerUiCopy.paywallBullets)
-            Text('· $bullet'),
+          for (final bullet in ConsumerUiCopy.paywallBullets) Text('· $bullet'),
           const SizedBox(height: 12),
           FilledButton(
             onPressed: _openSubscription,

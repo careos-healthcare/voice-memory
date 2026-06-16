@@ -62,8 +62,8 @@ JournalEntry _entryWithText(String text) {
 }
 
 JournalEntry _responsibilityEntry() => _entryWithText(
-      'I said yes too quickly and felt responsible before asking for help',
-    );
+  'I said yes too quickly and felt responsible before asking for help',
+);
 
 Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
@@ -73,27 +73,38 @@ Future<void> _reset(String stamp) async {
 }
 
 void main() {
-  test('tapping Use this tomorrow stores watch-for and creates active thread',
-      () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
-    final pattern = const FirstSessionPatternEngine().build(_responsibilityEntry());
-    await FirstSessionCoordinator.acceptForTomorrow(pattern);
+  test(
+    'tapping Use this tomorrow stores watch-for and creates active thread',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+      final pattern = const FirstSessionPatternEngine().build(
+        _responsibilityEntry(),
+      );
+      await FirstSessionCoordinator.acceptForTomorrow(pattern);
 
-    final watchStore = WatchForStore(AppServices.instance.prefs);
-    final threadStore = ActivePatternThreadStore(AppServices.instance.prefs);
-    final expectedWatchFor =
-        const WatchForPromptEngine().build(pattern: pattern);
+      final watchStore = WatchForStore(AppServices.instance.prefs);
+      final threadStore = ActivePatternThreadStore(AppServices.instance.prefs);
+      final expectedWatchFor = const WatchForPromptEngine().build(
+        pattern: pattern,
+      );
 
-    expect((await watchStore.readPending())?.text, expectedWatchFor.specificPrompt);
-    expect((await threadStore.readCurrent())?.title, pattern.title);
-    final checkIn = await TomorrowCheckInStore(AppServices.instance.prefs)
-        .loadActive();
-    expect(checkIn?.patternTitle, pattern.title);
-    expect(checkIn?.question, isNotEmpty);
-  });
+      expect(
+        (await watchStore.readPending())?.text,
+        expectedWatchFor.specificPrompt,
+      );
+      expect((await threadStore.readCurrent())?.title, pattern.title);
+      final checkIn = await TomorrowCheckInStore(
+        AppServices.instance.prefs,
+      ).loadActive();
+      expect(checkIn?.patternTitle, pattern.title);
+      expect(checkIn?.question, isNotEmpty);
+    },
+  );
 
-  testWidgets('first-session card renders without banned words', (tester) async {
+  testWidgets('first-session card renders without banned words', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -115,7 +126,10 @@ void main() {
       findsOneWidget,
     );
     expect(find.text(pattern.title), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.firstSessionUseTomorrowCta), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.firstSessionUseTomorrowCta),
+      findsOneWidget,
+    );
     expect(find.textContaining('ArchiveMe noticed'), findsOneWidget);
 
     final visible = find
@@ -133,8 +147,9 @@ void main() {
     }
   });
 
-  testWidgets('Show original reveals the preserved reflection text',
-      (tester) async {
+  testWidgets('Show original reveals the preserved reflection text', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -164,8 +179,9 @@ void main() {
     expect(find.text(original), findsOneWidget);
   });
 
-  testWidgets('first-session card shows one feedback row and confirms a tap',
-      (tester) async {
+  testWidgets('first-session card shows one feedback row and confirms a tap', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 1600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -191,8 +207,9 @@ void main() {
     expect(find.text('Got it.'), findsOneWidget);
   });
 
-  testWidgets('weak input shows Early read and offers another moment',
-      (tester) async {
+  testWidgets('weak input shows Early read and offers another moment', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -218,73 +235,74 @@ void main() {
       find.text(ConsumerUiCopy.inputQualityEarlyReadLabel),
       findsOneWidget,
     );
-    expect(
-      find.text(ConsumerUiCopy.firstPatternEarlyReadHint),
-      findsOneWidget,
-    );
+    expect(find.text(ConsumerUiCopy.firstPatternEarlyReadHint), findsOneWidget);
 
     await tester.tap(find.text(ConsumerUiCopy.firstPatternAddAnotherMomentCta));
     await tester.pump();
     expect(addAnother, isTrue);
   });
 
-  testWidgets('choosing compelling sharpness passes override question to accept',
-      (tester) async {
-    await tester.binding.setSurfaceSize(const Size(400, 1400));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets(
+    'choosing compelling sharpness passes override question to accept',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    String? capturedQuestion = 'unset';
-    final pattern = ScreenshotSampleData.firstSessionPatternSample;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light(),
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: FirstSessionPatternCard(
-              pattern: pattern,
-              onAccept: (
-                p, {
-                correctionLearningId,
-                reflectionText,
-                sourceReflectionId,
-                selectedVariantId,
-                checkInQuestionOverride,
-              }) async {
-                capturedQuestion = checkInQuestionOverride;
-              },
+      String? capturedQuestion = 'unset';
+      final pattern = ScreenshotSampleData.firstSessionPatternSample;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: FirstSessionPatternCard(
+                pattern: pattern,
+                onAccept:
+                    (
+                      p, {
+                      correctionLearningId,
+                      reflectionText,
+                      sourceReflectionId,
+                      selectedVariantId,
+                      checkInQuestionOverride,
+                    }) async {
+                      capturedQuestion = checkInQuestionOverride;
+                    },
+              ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pump();
+      );
+      await tester.pump();
 
-    expect(
-      find.text(ConsumerUiCopy.firstSessionWatchTomorrowSection),
-      findsOneWidget,
-    );
+      expect(
+        find.text(ConsumerUiCopy.firstSessionWatchTomorrowSection),
+        findsOneWidget,
+      );
 
-    await tester.tap(find.text(ConsumerUiCopy.makeItSharperCta));
-    await tester.pump();
+      await tester.tap(find.text(ConsumerUiCopy.makeItSharperCta));
+      await tester.pump();
 
-    expect(
-      find.text(ConsumerUiCopy.chooseTomorrowQuestionLabel),
-      findsOneWidget,
-    );
+      expect(
+        find.text(ConsumerUiCopy.chooseTomorrowQuestionLabel),
+        findsOneWidget,
+      );
 
-    await tester.tap(find.text('Direct'));
-    await tester.pump();
-    await tester.tap(find.text(ConsumerUiCopy.firstSessionUseTomorrowCta));
-    await tester.pump();
-    await tester.pump();
+      await tester.tap(find.text('Direct'));
+      await tester.pump();
+      await tester.tap(find.text(ConsumerUiCopy.firstSessionUseTomorrowCta));
+      await tester.pump();
+      await tester.pump();
 
-    expect(capturedQuestion, isNotNull);
-    expect(capturedQuestion, isNot('unset'));
-    expect(capturedQuestion!.trim(), isNotEmpty);
-  });
+      expect(capturedQuestion, isNotNull);
+      expect(capturedQuestion, isNot('unset'));
+      expect(capturedQuestion!.trim(), isNotEmpty);
+    },
+  );
 
-  testWidgets('aggressive sharper defaults to Direct compelling check',
-      (tester) async {
+  testWidgets('aggressive sharper defaults to Direct compelling check', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -298,16 +316,17 @@ void main() {
             child: FirstSessionPatternCard(
               pattern: pattern,
               sharperIntensity: HookRescueIntensity.aggressive,
-              onAccept: (
-                p, {
-                correctionLearningId,
-                reflectionText,
-                sourceReflectionId,
-                selectedVariantId,
-                checkInQuestionOverride,
-              }) async {
-                capturedQuestion = checkInQuestionOverride;
-              },
+              onAccept:
+                  (
+                    p, {
+                    correctionLearningId,
+                    reflectionText,
+                    sourceReflectionId,
+                    selectedVariantId,
+                    checkInQuestionOverride,
+                  }) async {
+                    capturedQuestion = checkInQuestionOverride;
+                  },
             ),
           ),
         ),
@@ -382,14 +401,19 @@ void main() {
   test('isFirstSession true for low count and no history', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
-    expect(await FirstSessionCoordinator.isFirstSession(reflectionCount: 1), isTrue);
+    expect(
+      await FirstSessionCoordinator.isFirstSession(reflectionCount: 1),
+      isTrue,
+    );
   });
 
   test('correction is stored locally', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    final pattern = const FirstSessionPatternEngine().build(_responsibilityEntry());
+    final pattern = const FirstSessionPatternEngine().build(
+      _responsibilityEntry(),
+    );
     final alt = pattern.withAlternative(
       const FirstSessionPatternEngine().fallbackAlternative(),
     );
@@ -404,61 +428,70 @@ void main() {
     expect(await store.correctionCount(), 1);
   });
 
-  test('correction learning stores and accept uses corrected watch-for', () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+  test(
+    'correction learning stores and accept uses corrected watch-for',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
 
-    final engine = const FirstSessionPatternEngine();
-    final original = engine.build(_responsibilityEntry());
-    final corrected = original.withAlternative(
-      FirstSessionPatternAlternative(
-        title: 'The same worry returning',
-        whyNoticed: 'worry',
-        watchForText: 'whether the same worry shows up again',
-        chips: const ['same worry'],
-        confidenceScore: 0.4,
-        categoryId: 'worry',
-      ),
-    );
+      final engine = const FirstSessionPatternEngine();
+      final original = engine.build(_responsibilityEntry());
+      final corrected = original.withAlternative(
+        FirstSessionPatternAlternative(
+          title: 'The same worry returning',
+          whyNoticed: 'worry',
+          watchForText: 'whether the same worry shows up again',
+          chips: const ['same worry'],
+          confidenceScore: 0.4,
+          categoryId: 'worry',
+        ),
+      );
 
-    final learning =
-        await PatternCorrectionLearningCoordinator.recordFirstSessionCorrection(
-      originalPattern: original,
-      correctedPattern: corrected,
-      reflectionText: _responsibilityEntry().transcript,
-    );
+      final learning =
+          await PatternCorrectionLearningCoordinator.recordFirstSessionCorrection(
+            originalPattern: original,
+            correctedPattern: corrected,
+            reflectionText: _responsibilityEntry().transcript,
+          );
 
-    await FirstSessionCoordinator.acceptForTomorrow(
-      corrected,
-      correctionLearningId: learning.id,
-      reflectionText: _responsibilityEntry().transcript,
-    );
+      await FirstSessionCoordinator.acceptForTomorrow(
+        corrected,
+        correctionLearningId: learning.id,
+        reflectionText: _responsibilityEntry().transcript,
+      );
 
-    final watchStore = WatchForStore(AppServices.instance.prefs);
-    final pending = await watchStore.readPending();
-    final expected = const WatchForPromptEngine().build(pattern: corrected);
-    expect(pending?.text, expected.specificPrompt);
-    expect(pending?.checkInQuestion, expected.checkInQuestion);
-    expect(pending?.hasRichPrompt, isTrue);
+      final watchStore = WatchForStore(AppServices.instance.prefs);
+      final pending = await watchStore.readPending();
+      final expected = const WatchForPromptEngine().build(pattern: corrected);
+      expect(pending?.text, expected.specificPrompt);
+      expect(pending?.checkInQuestion, expected.checkInQuestion);
+      expect(pending?.hasRichPrompt, isTrue);
 
-    final learned = PatternCorrectionLearningStore(AppServices.instance.prefs);
-    final item = (await learned.readAll()).first;
-    expect(item.usedForNextPrompt, isTrue);
-    expect(item.correctedTitle, 'The same worry returning');
-  });
+      final learned = PatternCorrectionLearningStore(
+        AppServices.instance.prefs,
+      );
+      final item = (await learned.readAll()).first;
+      expect(item.usedForNextPrompt, isTrue);
+      expect(item.correctedTitle, 'The same worry returning');
+    },
+  );
 
   test('checkInQuestionOverride changes stored check-in question', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    final pattern = const FirstSessionPatternEngine().build(_responsibilityEntry());
+    final pattern = const FirstSessionPatternEngine().build(
+      _responsibilityEntry(),
+    );
     await FirstSessionCoordinator.acceptForTomorrow(
       pattern,
-      checkInQuestionOverride: 'Did you say yes before checking what you needed?',
+      checkInQuestionOverride:
+          'Did you say yes before checking what you needed?',
     );
 
-    final checkIn =
-        await TomorrowCheckInStore(AppServices.instance.prefs).loadActive();
+    final checkIn = await TomorrowCheckInStore(
+      AppServices.instance.prefs,
+    ).loadActive();
     expect(
       checkIn?.question,
       'Did you say yes before checking what you needed?',
@@ -469,13 +502,17 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    final pattern = const FirstSessionPatternEngine().build(_responsibilityEntry());
+    final pattern = const FirstSessionPatternEngine().build(
+      _responsibilityEntry(),
+    );
     await FirstSessionCoordinator.acceptForTomorrow(
       pattern,
       selectedVariantId: 'sharper',
     );
 
-    final pending = await WatchForStore(AppServices.instance.prefs).readPending();
+    final pending = await WatchForStore(
+      AppServices.instance.prefs,
+    ).readPending();
     expect(
       pending?.specificPrompt,
       'Tomorrow, notice if you carry something before asking for help.',
@@ -487,13 +524,17 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    final pattern = const FirstSessionPatternEngine().build(_responsibilityEntry());
+    final pattern = const FirstSessionPatternEngine().build(
+      _responsibilityEntry(),
+    );
     await FirstSessionCoordinator.acceptForTomorrow(
       pattern,
       reflectionText: _responsibilityEntry().transcript,
     );
 
-    final pending = await WatchForStore(AppServices.instance.prefs).readPending();
+    final pending = await WatchForStore(
+      AppServices.instance.prefs,
+    ).readPending();
     expect(pending?.specificPrompt, contains('Tomorrow, notice'));
     expect(pending?.shortPrompt, contains('Notice if'));
     expect((pending?.situationHint ?? '').isNotEmpty, isTrue);

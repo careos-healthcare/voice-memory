@@ -40,15 +40,14 @@ class PaywallTriggerContext {
     String? previewTitle,
     String? previewBody,
     String? ctaLabel,
-  }) =>
-      PaywallTriggerContext(
-        trigger: trigger ?? this.trigger,
-        sourceRoute: sourceRoute ?? this.sourceRoute,
-        momentCount: momentCount ?? this.momentCount,
-        checkInCount: checkInCount ?? this.checkInCount,
-        weekCount: weekCount ?? this.weekCount,
-        previewTitle: previewTitle ?? this.previewTitle,
-        previewBody: previewBody ?? this.previewBody,
-        ctaLabel: ctaLabel ?? this.ctaLabel,
-      );
+  }) => PaywallTriggerContext(
+    trigger: trigger ?? this.trigger,
+    sourceRoute: sourceRoute ?? this.sourceRoute,
+    momentCount: momentCount ?? this.momentCount,
+    checkInCount: checkInCount ?? this.checkInCount,
+    weekCount: weekCount ?? this.weekCount,
+    previewTitle: previewTitle ?? this.previewTitle,
+    previewBody: previewBody ?? this.previewBody,
+    ctaLabel: ctaLabel ?? this.ctaLabel,
+  );
 }

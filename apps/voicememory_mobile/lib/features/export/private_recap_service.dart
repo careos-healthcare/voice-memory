@@ -1,22 +1,26 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../share/archive_share_text.dart';
 import 'private_recap_model.dart';
 
 /// Copies, shares, or saves a [PrivateRecap] as plain text the user can keep.
 ///
 /// Everything is private and local: there is no upload, no account, no public
 /// surface.
-abstract final class PrivateRecapService {
+abstract class PrivateRecapService {
   PrivateRecapService._();
 
   /// Copies the recap's plain text to the clipboard.
   static Future<bool> copyToClipboard(PrivateRecap recap) async {
+    final text = ArchiveShareText.normalize(recap.plainText);
+    if (!ArchiveShareText.isShareable(text)) return false;
     try {
-      await Clipboard.setData(ClipboardData(text: recap.plainText));
+      await Clipboard.setData(ClipboardData(text: text));
       return true;
     } catch (_) {
       return false;
@@ -28,9 +32,18 @@ abstract final class PrivateRecapService {
   /// Returns true when the native sheet was invoked. When native share is
   /// unavailable (e.g. some desktops/tests) it falls back to copying the recap
   /// and returns false so callers can confirm the copy instead.
-  static Future<bool> shareText(PrivateRecap recap) async {
+  static Future<bool> shareText(
+    PrivateRecap recap, {
+    Rect? sharePositionOrigin,
+  }) async {
+    final text = ArchiveShareText.normalize(recap.plainText);
+    if (!ArchiveShareText.isShareable(text)) return false;
     try {
-      await Share.share(recap.plainText);
+      await Share.share(
+        text,
+        sharePositionOrigin:
+            sharePositionOrigin ?? const Rect.fromLTWH(0, 0, 1, 1),
+      );
       return true;
     } catch (_) {
       await copyToClipboard(recap);

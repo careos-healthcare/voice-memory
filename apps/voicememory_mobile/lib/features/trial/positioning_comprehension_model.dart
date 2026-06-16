@@ -1,10 +1,5 @@
 /// Trial-only answer to “What did ArchiveMe feel most like?”
-enum PositioningComprehensionAnswer {
-  archiveMemory,
-  journal,
-  chat,
-  notSure,
-}
+enum PositioningComprehensionAnswer { archiveMemory, journal, chat, notSure }
 
 extension PositioningComprehensionAnswerIds on PositioningComprehensionAnswer {
   String get id => name;
@@ -21,7 +16,7 @@ PositioningComprehensionAnswer? positioningComprehensionAnswerFromId(
 }
 
 /// Labels shown only in trial/developer comprehension survey.
-abstract final class PositioningComprehensionCopy {
+abstract class PositioningComprehensionCopy {
   PositioningComprehensionCopy._();
 
   static const String question = 'What did ArchiveMe feel most like?';
@@ -52,17 +47,18 @@ class PositioningComprehensionResponse {
   final String? followUp;
 
   Map<String, dynamic> toJson() => {
-        'answer': answer.id,
-        'recordedAt': recordedAt.toUtc().toIso8601String(),
-        if (followUp != null && followUp!.trim().isNotEmpty)
-          'followUp': followUp!.trim(),
-      };
+    'answer': answer.id,
+    'recordedAt': recordedAt.toUtc().toIso8601String(),
+    if (followUp != null && followUp!.trim().isNotEmpty)
+      'followUp': followUp!.trim(),
+  };
 
   static PositioningComprehensionResponse? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
-    final answer = positioningComprehensionAnswerFromId(map['answer'] as String?);
-    final recordedAt =
-        DateTime.tryParse(map['recordedAt'] as String? ?? '');
+    final answer = positioningComprehensionAnswerFromId(
+      map['answer'] as String?,
+    );
+    final recordedAt = DateTime.tryParse(map['recordedAt'] as String? ?? '');
     if (answer == null || recordedAt == null) return null;
     return PositioningComprehensionResponse(
       answer: answer,
@@ -90,8 +86,7 @@ class PositioningComprehensionSummary {
   final int notSureCount;
 
   /// Pass when at least 3 of 5 trial users chose archive memory framing.
-  bool get pass =>
-      answeredCount >= 5 && archiveMemoryCount >= 3;
+  bool get pass => answeredCount >= 5 && archiveMemoryCount >= 3;
 
   double? get archiveMemoryRate =>
       answeredCount == 0 ? null : archiveMemoryCount / answeredCount;

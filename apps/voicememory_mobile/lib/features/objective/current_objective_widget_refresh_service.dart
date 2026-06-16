@@ -13,9 +13,9 @@ class CurrentObjectiveWidgetRefreshService {
     required CurrentObjectiveSnapshotStore snapshotStore,
     required CurrentObjectiveWidgetBridge bridge,
     ObjectiveWidgetPendingRouteStore? pendingRouteStore,
-  })  : _snapshotStore = snapshotStore,
-        _bridge = bridge,
-        _pendingRouteStore = pendingRouteStore;
+  }) : _snapshotStore = snapshotStore,
+       _bridge = bridge,
+       _pendingRouteStore = pendingRouteStore;
 
   final CurrentObjectiveSnapshotStore _snapshotStore;
   final CurrentObjectiveWidgetBridge _bridge;
@@ -29,8 +29,7 @@ class CurrentObjectiveWidgetRefreshService {
     ObjectiveWidgetPendingRouteStore? pendingRouteStore,
   }) {
     return _instance ??= CurrentObjectiveWidgetRefreshService(
-      snapshotStore:
-          snapshotStore ?? CurrentObjectiveSnapshotStore.instance(),
+      snapshotStore: snapshotStore ?? CurrentObjectiveSnapshotStore.instance(),
       bridge: bridge ?? MethodChannelCurrentObjectiveWidgetBridge(),
       pendingRouteStore: pendingRouteStore,
     );

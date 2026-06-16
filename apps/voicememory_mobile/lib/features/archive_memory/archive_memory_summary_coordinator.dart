@@ -10,7 +10,7 @@ import 'archive_memory_summary_store.dart';
 /// Builds and persists the latest "What ArchiveMe remembers" summary from
 /// everything the archive already stores. Always fails softly so it can never
 /// block the Patterns tab from loading.
-abstract final class ArchiveMemorySummaryCoordinator {
+abstract class ArchiveMemorySummaryCoordinator {
   ArchiveMemorySummaryCoordinator._();
 
   static ArchiveMemorySummaryStore _store() =>

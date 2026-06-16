@@ -23,16 +23,20 @@ MonthlyPatternReview? buildMonthlyPatternReview({
   DateTime? now,
 }) {
   final clock = now ?? DateTime.now();
-  final monthMoments = moments
-      .where((m) => m.date.year == clock.year && m.date.month == clock.month)
-      .toList()
-    ..sort((a, b) => b.date.compareTo(a.date));
+  final monthMoments =
+      moments
+          .where(
+            (m) => m.date.year == clock.year && m.date.month == clock.month,
+          )
+          .toList()
+        ..sort((a, b) => b.date.compareTo(a.date));
 
   final repeatedPatterns = patternMemories
       .where((m) => m.checkInCount >= _repeatedThreshold)
       .toList();
 
-  final enough = monthMoments.length >= kMonthlyReviewMinMoments ||
+  final enough =
+      monthMoments.length >= kMonthlyReviewMinMoments ||
       completedCheckInCount >= kMonthlyReviewMinCheckIns ||
       repeatedPatterns.length >= kMonthlyReviewMinRepeatedPatterns;
   if (!enough) return null;
@@ -111,19 +115,13 @@ String? _gotHeavier(
   return _firstFromMemories(memories, (m) => m.harderMoments);
 }
 
-String? _helped(
-  List<KeyMoment> monthMoments,
-  List<PatternMemory> memories,
-) {
+String? _helped(List<KeyMoment> monthMoments, List<PatternMemory> memories) {
   final fromMoment = _firstSummary(monthMoments, tag: MomentTag.helped);
   if (fromMoment != null) return fromMoment;
   return _firstFromMemories(memories, (m) => m.helpedMoments);
 }
 
-String? _nextCheck(
-  List<KeyMoment> monthMoments,
-  List<PatternMemory> memories,
-) {
+String? _nextCheck(List<KeyMoment> monthMoments, List<PatternMemory> memories) {
   for (final m in memories) {
     final q = (m.nextBestQuestion ?? '').trim();
     if (q.isNotEmpty) return q;
@@ -139,11 +137,7 @@ String? _nextCheck(
   return null;
 }
 
-String? _firstSummary(
-  List<KeyMoment> moments, {
-  String? hint,
-  MomentTag? tag,
-}) {
+String? _firstSummary(List<KeyMoment> moments, {String? hint, MomentTag? tag}) {
   for (final m in moments) {
     if (m.shortSummary.trim().isEmpty) continue;
     if (hint != null && m.resultHint == hint) return m.shortSummary.trim();
@@ -178,8 +172,18 @@ String _confidence(int momentCount, int checkInCount) {
 
 String _monthName(int month) {
   const names = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   if (month < 1 || month > 12) return 'This month';
   return names[month - 1];

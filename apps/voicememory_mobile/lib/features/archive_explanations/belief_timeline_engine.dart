@@ -75,8 +75,9 @@ class BeliefTimelineEngine {
         : points.sublist(0, 1);
     final recentAvg =
         recent.map((p) => p.strengthPercent).reduce((a, b) => a + b) /
-            recent.length;
-    final earlyAvg = early.map((p) => p.strengthPercent).reduce((a, b) => a + b) /
+        recent.length;
+    final earlyAvg =
+        early.map((p) => p.strengthPercent).reduce((a, b) => a + b) /
         early.length;
     if (recentAvg > earlyAvg + 12) return BeliefTimelineTrend.strengthening;
     if (recentAvg < earlyAvg - 12) return BeliefTimelineTrend.weakening;

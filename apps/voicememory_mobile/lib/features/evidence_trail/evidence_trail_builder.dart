@@ -34,14 +34,18 @@ EvidenceTrailPayload? buildEvidenceTrailForArchiveV1(ArchiveV1View view) {
   if (theory == null && belief == null) return null;
 
   final supporting = belief?.supportingEntries ?? view.eligibleEntries;
-  final sources = _sourcesFromEntries(supporting, role: EvidenceSourceRole.supporting);
+  final sources = _sourcesFromEntries(
+    supporting,
+    role: EvidenceSourceRole.supporting,
+  );
 
   return EvidenceTrailPayload(
     title: theory?.statement ?? belief?.statement ?? 'Archive theory',
     whySummary:
         'This conclusion is drawn from ${theory?.evidenceCount ?? belief?.evidenceCount ?? sources.length} '
         'supporting recordings in your archive.',
-    evidenceCount: theory?.evidenceCount ?? belief?.evidenceCount ?? sources.length,
+    evidenceCount:
+        theory?.evidenceCount ?? belief?.evidenceCount ?? sources.length,
     confidencePercent: theory?.confidencePercent ?? belief?.confidencePercent,
     confidenceFactors: [
       if (theory != null) ...[
@@ -155,7 +159,10 @@ EvidenceTrailPayload? buildEvidenceTrailForV1Contradiction({
   ];
   final sources = matched.isNotEmpty
       ? _sourcesFromEntries(matched, role: EvidenceSourceRole.related)
-      : _sourcesFromEntries(_recentEligible(entries, 4), role: EvidenceSourceRole.related);
+      : _sourcesFromEntries(
+          _recentEligible(entries, 4),
+          role: EvidenceSourceRole.related,
+        );
 
   return EvidenceTrailPayload(
     title: 'Contradiction',
@@ -226,7 +233,8 @@ List<EvidenceTrailSource> _sourcesFromEntries(
   List<JournalEntry> entries, {
   EvidenceSourceRole role = EvidenceSourceRole.supporting,
 }) {
-  final sorted = [...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  final sorted = [...entries]
+    ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   return [
     for (final e in sorted.take(12))
       EvidenceTrailSource(

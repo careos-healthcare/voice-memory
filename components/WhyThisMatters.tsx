@@ -36,7 +36,7 @@ export function WhyThisMatters({
           Remembering over time
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          VoiceMemory holds your words — not labels from a clinician.
+          ArchiveMe holds your words — not labels from a clinician.
         </p>
       </div>
       {topics.map((topic) => (

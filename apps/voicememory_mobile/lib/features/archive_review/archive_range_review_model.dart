@@ -82,7 +82,8 @@ class ArchiveRangeReview {
 
   String get dateRangeLabel => _formatDateRange(startDate, endDate);
 
-  String get mainLine => switch (type) {
+  String get mainLine =>
+      switch (type) {
         ArchiveRangeReviewType.repeated => repeatedLine,
         ArchiveRangeReviewType.lighter => lighterLine,
         ArchiveRangeReviewType.heavier => heavierLine,
@@ -128,22 +129,22 @@ class ArchiveRangeReview {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'preset': preset.id,
-        'startDate': startDate.toIso8601String(),
-        'endDate': endDate.toIso8601String(),
-        'title': title,
-        'type': type.id,
-        'momentCount': momentCount,
-        'patternCount': patternCount,
-        if (repeatedLine != null) 'repeatedLine': repeatedLine,
-        if (lighterLine != null) 'lighterLine': lighterLine,
-        if (heavierLine != null) 'heavierLine': heavierLine,
-        if (changedLine != null) 'changedLine': changedLine,
-        if (helpedLine != null) 'helpedLine': helpedLine,
-        if (nextCheck != null) 'nextCheck': nextCheck,
-        'keyMomentIds': keyMomentIds,
-      };
+    'id': id,
+    'preset': preset.id,
+    'startDate': startDate.toIso8601String(),
+    'endDate': endDate.toIso8601String(),
+    'title': title,
+    'type': type.id,
+    'momentCount': momentCount,
+    'patternCount': patternCount,
+    if (repeatedLine != null) 'repeatedLine': repeatedLine,
+    if (lighterLine != null) 'lighterLine': lighterLine,
+    if (heavierLine != null) 'heavierLine': heavierLine,
+    if (changedLine != null) 'changedLine': changedLine,
+    if (helpedLine != null) 'helpedLine': helpedLine,
+    if (nextCheck != null) 'nextCheck': nextCheck,
+    'keyMomentIds': keyMomentIds,
+  };
 
   static ArchiveRangeReview? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -199,8 +200,18 @@ String _shortDate(DateTime d) => '${_monthName(d.month)} ${d.day}, ${d.year}';
 
 String _monthName(int month) {
   const names = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   if (month < 1 || month > 12) return '';
   return names[month - 1];

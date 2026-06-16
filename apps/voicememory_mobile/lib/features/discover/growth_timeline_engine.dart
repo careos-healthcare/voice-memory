@@ -45,10 +45,14 @@ class DiscoverGrowthTimelineEngine {
       final mood = e.reflection.mood.trim().toLowerCase();
       if (mood.isNotEmpty) moods[mood] = (moods[mood] ?? 0) + 1;
       final t = e.transcript.toLowerCase();
-      if (t.contains('uncertain') || t.contains("don't know") || t.contains('unsure')) {
+      if (t.contains('uncertain') ||
+          t.contains("don't know") ||
+          t.contains('unsure')) {
         uncertain++;
       }
-      if (t.contains('confident') || t.contains('clear') || t.contains('excited')) {
+      if (t.contains('confident') ||
+          t.contains('clear') ||
+          t.contains('excited')) {
         positive++;
       }
     }

@@ -23,8 +23,7 @@ class ReturnCaptureEngine {
     return ReturnCaptureModel(
       watchForId: pending.id,
       promptText: prompt,
-      checkInQuestion:
-          checkIn != null && checkIn.isNotEmpty ? checkIn : null,
+      checkInQuestion: checkIn != null && checkIn.isNotEmpty ? checkIn : null,
       situationHint: pending.situationHint?.trim().isNotEmpty == true
           ? pending.situationHint
           : null,

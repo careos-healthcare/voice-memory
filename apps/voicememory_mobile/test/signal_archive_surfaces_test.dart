@@ -115,7 +115,9 @@ void main() {
     expect(find.text('Record tab'), findsOneWidget);
   });
 
-  testWidgets('mark not me button is available on signal detail', (tester) async {
+  testWidgets('mark not me button is available on signal detail', (
+    tester,
+  ) async {
     final snapshot = _snapshot(signal: _sampleSignal());
 
     await tester.pumpWidget(
@@ -166,10 +168,7 @@ void main() {
 
   testWidgets('corrections card shows rejected and selected', (tester) async {
     const engine = SignalCorrectionsEngine();
-    final view = engine.build(
-      feedback: const [],
-      currentSignal: null,
-    );
+    final view = engine.build(feedback: const [], currentSignal: null);
     expect(view.hasCorrections, isFalse);
 
     await tester.pumpWidget(
@@ -193,7 +192,9 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(body: SignalCorrectionsCard(corrections: withCorrections)),
+        home: Scaffold(
+          body: SignalCorrectionsCard(corrections: withCorrections),
+        ),
       ),
     );
     expect(find.text(ConsumerUiCopy.signalCorrectionsTitle), findsOneWidget);
@@ -215,10 +216,7 @@ void main() {
   });
 
   test('consumer copy avoids VoiceMemory branding', () {
-    expect(
-      ConsumerUiCopy.archiveHomeTitle,
-      isNot(contains('VoiceMemory')),
-    );
+    expect(ConsumerUiCopy.archiveHomeTitle, isNot(contains('VoiceMemory')));
   });
 
   test('not me feedback persists via coordinator', () async {

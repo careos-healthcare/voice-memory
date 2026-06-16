@@ -42,7 +42,13 @@ class ArchiveSurprisesEngine {
   ];
 
   static const _importanceKeywords = <String, List<String>>{
-    'relationships': ['relationship', 'partner', 'marriage', 'family', 'friend'],
+    'relationships': [
+      'relationship',
+      'partner',
+      'marriage',
+      'family',
+      'friend',
+    ],
     'health': ['health', 'sleep', 'exercise', 'body', 'energy'],
     'career': ['career', 'work', 'job', 'manager', 'promotion'],
     'money': ['money', 'finance', 'financial', 'salary', 'runway'],
@@ -138,16 +144,15 @@ class ArchiveSurprisesEngine {
       }
     }
 
-    final ranked = byTheme.entries
-        .where((e) => e.value.isNotEmpty)
-        .toList()
+    final ranked = byTheme.entries.where((e) => e.value.isNotEmpty).toList()
       ..sort((a, b) => b.value.length.compareTo(a.value.length));
 
     if (ranked.isEmpty) return;
     final dominant = ranked.first;
     final dominantCount = dominant.value.length;
     final dominantPct = _percent(dominantCount, total);
-    if (dominantPct < minDominantPercent || dominantCount < minDominantMentions) {
+    if (dominantPct < minDominantPercent ||
+        dominantCount < minDominantMentions) {
       return;
     }
 
@@ -257,9 +262,7 @@ class ArchiveSurprisesEngine {
     final totalHits = weeks.fold<int>(0, (s, w) => s + w.value.length);
     if (weeks.length < minLoopWeeks || totalHits < minLoopHits) return;
 
-    final ids = _uniqueIds(
-      weeks.expand((w) => w.value).take(8).toList(),
-    );
+    final ids = _uniqueIds(weeks.expand((w) => w.value).take(8).toList());
     if (ids.length < minEvidenceIds) return;
 
     out.add(
@@ -290,7 +293,8 @@ class ArchiveSurprisesEngine {
 
       for (final e in eligible) {
         final t = e.transcript.toLowerCase();
-        final mentionsTheme = keywords.any(t.contains) ||
+        final mentionsTheme =
+            keywords.any(t.contains) ||
             ThemeTrackerService.themesForEntry(e).contains(themeId);
         final claimsImportance =
             _importancePhrases.any(t.contains) && mentionsTheme;
@@ -317,10 +321,7 @@ class ArchiveSurprisesEngine {
         mentionCount: mentionHits.length,
       );
 
-      final ids = _uniqueIds([
-        ...importanceHits,
-        ...mentionHits,
-      ]);
+      final ids = _uniqueIds([...importanceHits, ...mentionHits]);
       if (ids.length < minEvidenceIds) continue;
 
       out.add(
@@ -339,12 +340,14 @@ class ArchiveSurprisesEngine {
   bool _mentionsDecisionLoop(String transcript) {
     final lower = transcript.toLowerCase();
     if (_loopPhrases.any(lower.contains)) return true;
-    final decisionHits =
-        _decisionKeywords.where(lower.contains).length;
+    final decisionHits = _decisionKeywords.where(lower.contains).length;
     return decisionHits >= 2;
   }
 
-  List<_MonthBucket> _monthlyBuckets(String themeId, List<JournalEntry> eligible) {
+  List<_MonthBucket> _monthlyBuckets(
+    String themeId,
+    List<JournalEntry> eligible,
+  ) {
     final buckets = <String, _MonthBucket>{};
     for (final e in eligible) {
       if (!ThemeTrackerService.themesForEntry(e).contains(themeId)) continue;

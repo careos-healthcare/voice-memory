@@ -18,6 +18,7 @@ class CurrentObjectiveCard extends StatefulWidget {
     this.onSecondaryTap,
     this.compact = false,
     this.persistSnapshot = true,
+    this.showRecordCta = true,
   });
 
   final CurrentObjective objective;
@@ -25,6 +26,7 @@ class CurrentObjectiveCard extends StatefulWidget {
   final VoidCallback? onSecondaryTap;
   final bool compact;
   final bool persistSnapshot;
+  final bool showRecordCta;
 
   @override
   State<CurrentObjectiveCard> createState() => _CurrentObjectiveCardState();
@@ -99,8 +101,9 @@ class _CurrentObjectiveCardState extends State<CurrentObjectiveCard> {
         children: [
           Text(
             o.title,
-            style: VoiceMemoryTypography.cardTitleStyle()
-                .copyWith(fontSize: titleSize),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: titleSize,
+            ),
           ),
           SizedBox(height: compact ? 4 : AppSpacing.sm),
           Text(
@@ -109,20 +112,22 @@ class _CurrentObjectiveCardState extends State<CurrentObjectiveCard> {
               color: AppColors.textSecondary,
             ).copyWith(fontSize: bodySize, height: 1.45),
           ),
-          if (o.checkQuestion != null && o.checkQuestion!.trim().isNotEmpty) ...[
+          if (o.checkQuestion != null &&
+              o.checkQuestion!.trim().isNotEmpty) ...[
             SizedBox(height: compact ? AppSpacing.xs : AppSpacing.sm),
             Text(
               o.checkQuestion!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(
-                fontSize: compact ? 14 : 15,
-                fontWeight: FontWeight.w600,
-                height: 1.4,
-              ),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: compact ? 14 : 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
-          if (widget.onPrimaryTap != null) ...[
+          if (widget.showRecordCta && widget.onPrimaryTap != null) ...[
             SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
             SizedBox(
               width: double.infinity,

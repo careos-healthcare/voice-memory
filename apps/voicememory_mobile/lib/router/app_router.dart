@@ -16,7 +16,14 @@ import '../screens/archive_explanation_screen.dart';
 import '../features/archive_explanations/archive_explanation_navigation.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/export_screen.dart';
+import '../screens/collection_detail_screen.dart';
+import '../screens/archive_pack_detail_screen.dart';
+import '../screens/action_items_screen.dart';
+import '../screens/fact_ledger_screen.dart';
+import '../screens/archive_packs_screen.dart';
+import '../screens/collections_screen.dart';
 import '../screens/journal_screen.dart';
+import '../screens/pinned_evidence_screen.dart';
 import '../screens/key_moments_screen.dart';
 import '../screens/key_moment_detail_screen.dart';
 import '../screens/archive_compression_screen.dart';
@@ -72,6 +79,7 @@ import '../screens/native_push_verification_screen.dart';
 import '../screens/revenuecat_verification_screen.dart';
 import '../screens/offline_sync_verification_screen.dart';
 import '../screens/about_screen.dart';
+import '../screens/privacy_screen.dart';
 import '../screens/developer_diagnostics_screen.dart';
 import '../screens/first_pattern_quality_screen.dart';
 import '../screens/trial_control_screen.dart';
@@ -98,8 +106,8 @@ final GoRouter appRouter = GoRouter(
 
     if (!_widgetLaunchRouteConsumed) {
       _widgetLaunchRouteConsumed = true;
-      final pending =
-          await ObjectiveWidgetPendingRouteStore.instance().loadPendingRoute();
+      final pending = await ObjectiveWidgetPendingRouteStore.instance()
+          .loadPendingRoute();
       if (pending != null && pending.isNotEmpty && path != pending) {
         await ObjectiveWidgetPendingRouteStore.instance().clear();
         return pending;
@@ -109,8 +117,9 @@ final GoRouter appRouter = GoRouter(
     final guarded = DeveloperRouteGuard.redirectFor(path);
     if (guarded != null) return guarded;
 
-    final incompleteRedirect =
-        ProductionNavigation.redirectAwayFromIncomplete(path);
+    final incompleteRedirect = ProductionNavigation.redirectAwayFromIncomplete(
+      path,
+    );
     if (incompleteRedirect != null) return incompleteRedirect;
 
     if (path == '/start') {
@@ -121,8 +130,9 @@ final GoRouter appRouter = GoRouter(
       return InviteAttributionLink.resolveInviteRedirect(state.uri);
     }
 
-    final cohortFastPath =
-        await AcquisitionCohortCoordinator.fastPathRedirect(path);
+    final cohortFastPath = await AcquisitionCohortCoordinator.fastPathRedirect(
+      path,
+    );
     if (cohortFastPath != null) return cohortFastPath;
 
     const onboardingPaths = {
@@ -149,6 +159,7 @@ final GoRouter appRouter = GoRouter(
         path != '/account' &&
         path != '/settings' &&
         path != '/about' &&
+        path != '/privacy' &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -160,10 +171,7 @@ final GoRouter appRouter = GoRouter(
     return null;
   },
   routes: [
-    GoRoute(
-      path: '/',
-      redirect: (context, state) => '/record',
-    ),
+    GoRoute(path: '/', redirect: (context, state) => '/record'),
     GoRoute(
       path: '/onboarding',
       parentNavigatorKey: _rootNavigatorKey,
@@ -208,9 +216,8 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/start/generic',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LoopStartScreen(
-        cohortId: AcquisitionCohortId.genericArchive,
-      ),
+      builder: (context, state) =>
+          const LoopStartScreen(cohortId: AcquisitionCohortId.genericArchive),
     ),
     GoRoute(
       path: '/loop-mode',
@@ -237,8 +244,7 @@ final GoRouter appRouter = GoRouter(
               path: '/record',
               builder: (context, state) {
                 final prompt = state.uri.queryParameters['prompt'];
-                final autostart =
-                    state.uri.queryParameters['autostart'] == '1';
+                final autostart = state.uri.queryParameters['autostart'] == '1';
                 return RecordScreen(
                   initialPrompt: prompt,
                   autostartWithPrompt: autostart,
@@ -277,21 +283,16 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/account/create',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const AccountAuthScreen(
-        intent: AccountAuthIntent.createAccount,
-      ),
+      builder: (context, state) =>
+          const AccountAuthScreen(intent: AccountAuthIntent.createAccount),
     ),
     GoRoute(
       path: '/account/sign-in',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const AccountAuthScreen(
-        intent: AccountAuthIntent.signIn,
-      ),
+      builder: (context, state) =>
+          const AccountAuthScreen(intent: AccountAuthIntent.signIn),
     ),
-    GoRoute(
-      path: '/discover',
-      redirect: (context, state) => '/archive-belief',
-    ),
+    GoRoute(path: '/discover', redirect: (context, state) => '/archive-belief'),
     GoRoute(
       path: '/archive-debug',
       redirect: (context, state) => DeveloperSettingsGate.isUnlocked
@@ -308,18 +309,12 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const BeliefChangesScreen(),
     ),
-    GoRoute(
-      path: '/timeline',
-      redirect: (context, state) => '/archive-belief',
-    ),
+    GoRoute(path: '/timeline', redirect: (context, state) => '/archive-belief'),
     GoRoute(
       path: '/discover-changes',
       redirect: (context, state) => '/archive-belief',
     ),
-    GoRoute(
-      path: '/search',
-      redirect: (context, state) => '/archive-belief',
-    ),
+    GoRoute(path: '/search', redirect: (context, state) => '/archive-belief'),
     // Legacy aliases — global redirect handles locked developer paths.
     GoRoute(
       path: '/weekly-story',
@@ -437,17 +432,26 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/archive-tool/:tool',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => ArchiveToolScreen(
-        tool: state.pathParameters['tool'] ?? '',
-      ),
+      builder: (context, state) =>
+          ArchiveToolScreen(tool: state.pathParameters['tool'] ?? ''),
     ),
     GoRoute(
       path: '/quick-capture',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
         final extra = state.extra;
-        final initialText = extra is String ? extra : null;
-        return QuickTextCaptureScreen(initialText: initialText);
+        String? initialText;
+        String? entryId;
+        if (extra is String) {
+          initialText = extra;
+        } else if (extra is Map) {
+          initialText = extra['initialText'] as String?;
+          entryId = extra['entryId'] as String?;
+        }
+        return QuickTextCaptureScreen(
+          initialText: initialText,
+          entryId: entryId,
+        );
       },
     ),
     GoRoute(
@@ -464,6 +468,44 @@ final GoRouter appRouter = GoRouter(
       path: '/journal',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const JournalScreen(),
+    ),
+    GoRoute(
+      path: '/pinned-evidence',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PinnedEvidenceScreen(),
+    ),
+    GoRoute(
+      path: '/archive-packs',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ArchivePacksScreen(),
+    ),
+    GoRoute(
+      path: '/archive-packs/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) =>
+          ArchivePackDetailScreen(packId: state.pathParameters['id'] ?? ''),
+    ),
+    GoRoute(
+      path: '/details',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const FactLedgerScreen(),
+    ),
+    GoRoute(
+      path: '/action-items',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ActionItemsScreen(),
+    ),
+    GoRoute(
+      path: '/collections',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const CollectionsScreen(),
+    ),
+    GoRoute(
+      path: '/collections/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => CollectionDetailScreen(
+        collectionId: state.pathParameters['id'] ?? '',
+      ),
     ),
     GoRoute(
       path: '/moments',
@@ -524,9 +566,8 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/entry/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => EntryDetailScreen(
-        entryId: state.pathParameters['id'] ?? '',
-      ),
+      builder: (context, state) =>
+          EntryDetailScreen(entryId: state.pathParameters['id'] ?? ''),
     ),
     GoRoute(
       path: '/pricing',
@@ -607,6 +648,11 @@ final GoRouter appRouter = GoRouter(
       path: '/about',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      path: '/privacy',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PrivacyScreen(),
     ),
     GoRoute(
       path: '/developer-diagnostics',

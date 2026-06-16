@@ -24,7 +24,10 @@ JournalEntry _entry({
       mood: 'thoughtful',
       emotionalIntensity: 3,
       recurringThemes: themes,
-      exactLanguagePattern: transcript.substring(0, transcript.length.clamp(0, 40)),
+      exactLanguagePattern: transcript.substring(
+        0,
+        transcript.length.clamp(0, 40),
+      ),
       concreteObservation: transcript.length >= 16 ? transcript : '',
       repeatedSignal: themes.isNotEmpty ? themes.first : '',
     ),
@@ -87,10 +90,7 @@ void main() {
       expect(dive.why.excerptLines, isNotEmpty);
       expect(dive.counterEvidence.forExcerpts, isNotEmpty);
       expect(dive.inquiryQuestions, isNotEmpty);
-      expect(
-        dive.inquiryQuestions.any((q) => q.id == 'if_false'),
-        isTrue,
-      );
+      expect(dive.inquiryQuestions.any((q) => q.id == 'if_false'), isTrue);
       expect(dive.history.thenSnapshot.excerpt, isNotEmpty);
       expect(dive.history.nowSnapshot.excerpt, isNotEmpty);
       expect(dive.timeline.firstMention, isNotNull);

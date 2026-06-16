@@ -62,8 +62,7 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
   }
 
   void _seedFromLocalJournal() {
-    final entries =
-        peekJournalEntriesSync(AppServices.instance.journalStore);
+    final entries = peekJournalEntriesSync(AppServices.instance.journalStore);
     if (!isIntentionalEmptyArchive(entries)) return;
     _applyIntentionalEmptyState(entries);
   }
@@ -81,8 +80,10 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
     _snapshot = snapshot;
     _intentionalEmpty = true;
     _loadingInsights = false;
-    _progressIdentity = const ArchiveProgressIdentityBuilder()
-        .build(entries, currentBelief: state?.belief);
+    _progressIdentity = const ArchiveProgressIdentityBuilder().build(
+      entries,
+      currentBelief: state?.belief,
+    );
   }
 
   Future<void> _load({bool invalidateCache = false}) async {
@@ -113,15 +114,22 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
 
     if (!mounted) return;
     if (snapshot.themes.isNotEmpty) {
-      _themeBaseline = {for (final t in snapshot.themes) t.themeKey: t.frequency};
+      _themeBaseline = {
+        for (final t in snapshot.themes) t.themeKey: t.frequency,
+      };
     }
 
-    final identity = const ArchiveProgressIdentityBuilder()
-        .build(entries, currentBelief: state?.belief);
-    final notice = await ArchiveDiscoveryService(AppServices.instance.prefs)
-        .loadActiveNotice(entries: entries, state: state);
-    final weekly =
-        const WeeklyStoryEngine().build(entries: entries, state: state);
+    final identity = const ArchiveProgressIdentityBuilder().build(
+      entries,
+      currentBelief: state?.belief,
+    );
+    final notice = await ArchiveDiscoveryService(
+      AppServices.instance.prefs,
+    ).loadActiveNotice(entries: entries, state: state);
+    final weekly = const WeeklyStoryEngine().build(
+      entries: entries,
+      state: state,
+    );
 
     if (!mounted) return;
     setState(() {
@@ -235,10 +243,7 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
                     ),
                   ],
                   if (_entries.isNotEmpty) ...[
-                    ArchiveChallengeSection(
-                      entries: _entries,
-                      state: _state,
-                    ),
+                    ArchiveChallengeSection(entries: _entries, state: _state),
                   ],
                   if (_progressIdentity != null) ...[
                     const SizedBox(height: ArchiveMobileSpacing.lg),
@@ -256,10 +261,7 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
                   ],
                   if (_entries.isNotEmpty) ...[
                     const SizedBox(height: ArchiveMobileSpacing.lg),
-                    YourArchiveNoticedSection(
-                      entries: _entries,
-                      state: _state,
-                    ),
+                    YourArchiveNoticedSection(entries: _entries, state: _state),
                   ],
                   if (_entries.isNotEmpty) ...[
                     const SizedBox(height: ArchiveMobileSpacing.lg),
@@ -268,7 +270,8 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
                       surface: 'discover_yourself',
                     ),
                   ],
-                  if (_entries.isNotEmpty && mode.emptyStateMessage.isNotEmpty) ...[
+                  if (_entries.isNotEmpty &&
+                      mode.emptyStateMessage.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     _EmptyBanner(message: mode.emptyStateMessage),
                   ],
@@ -292,26 +295,30 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
                     const SizedBox(height: ArchiveMobileSpacing.lg),
                     _ThemesSection(themes: snapshot.themes, entries: _entries),
                   ],
-                  if (snapshot.showFullSections && snapshot.contradictions.isNotEmpty) ...[
+                  if (snapshot.showFullSections &&
+                      snapshot.contradictions.isNotEmpty) ...[
                     const SizedBox(height: ArchiveMobileSpacing.lg),
                     _ContradictionsSection(
                       items: snapshot.contradictions,
                       entries: _entries,
                     ),
                   ],
-                  if (snapshot.showFullSections && snapshot.blindSpots.isNotEmpty) ...[
+                  if (snapshot.showFullSections &&
+                      snapshot.blindSpots.isNotEmpty) ...[
                     const SizedBox(height: ArchiveMobileSpacing.lg),
                     _BlindSpotsSection(
                       spots: snapshot.blindSpots,
                       entries: _entries,
                     ),
                   ],
-                  if (snapshot.showFullSections && snapshot.chapters.isNotEmpty) ...[
+                  if (snapshot.showFullSections &&
+                      snapshot.chapters.isNotEmpty) ...[
                     const SizedBox(height: ArchiveMobileSpacing.lg),
                     _ChaptersSection(
                       chapters: snapshot.chapters,
                       entries: _entries,
-                      onOpen: (id) => context.push('/discover-yourself/chapter/$id'),
+                      onOpen: (id) =>
+                          context.push('/discover-yourself/chapter/$id'),
                     ),
                   ],
                   if (_weeklyStory != null) ...[
@@ -340,11 +347,7 @@ class _DiscoverYourselfScreenState extends State<DiscoverYourselfScreen> {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(
-    this.label, {
-    this.tooltip,
-    this.kind,
-  });
+  const _SectionTitle(this.label, {this.tooltip, this.kind});
 
   final String label;
   final String? tooltip;
@@ -395,11 +398,7 @@ class _EmptyBanner extends StatelessWidget {
 }
 
 class _BeliefSection extends StatelessWidget {
-  const _BeliefSection({
-    required this.card,
-    required this.entries,
-    this.state,
-  });
+  const _BeliefSection({required this.card, required this.entries, this.state});
 
   final DiscoverBeliefCard card;
   final List<JournalEntry> entries;
@@ -440,22 +439,22 @@ class _BeliefSection extends StatelessWidget {
                   ),
                 ],
               ),
-                const SizedBox(height: 12),
-                Text(
-                  WarmArchiveCopy.confidenceStrengthLine(card.confidencePercent),
-                  semanticsLabel: WarmArchiveCopy.confidenceStrengthSemantics(
-                    card.confidencePercent,
-                  ),
+              const SizedBox(height: 12),
+              Text(
+                WarmArchiveCopy.confidenceStrengthLine(card.confidencePercent),
+                semanticsLabel: WarmArchiveCopy.confidenceStrengthSemantics(
+                  card.confidencePercent,
                 ),
-                Text('Evidence: ${card.evidenceCount} entries'),
-                if (card.firstObserved != null)
-                  Text(
-                    'First observed: ${formatUserFacingMonthYear(card.firstObserved!)}',
-                  ),
-                if (card.lastReinforced != null)
-                  Text(
-                    'Last reinforced: ${formatUserFacingMonthYear(card.lastReinforced!)}',
-                  ),
+              ),
+              Text('Evidence: ${card.evidenceCount} entries'),
+              if (card.firstObserved != null)
+                Text(
+                  'First observed: ${formatUserFacingMonthYear(card.firstObserved!)}',
+                ),
+              if (card.lastReinforced != null)
+                Text(
+                  'Last reinforced: ${formatUserFacingMonthYear(card.lastReinforced!)}',
+                ),
               ArchiveEvidenceExpandable(
                 entries: card.supportingEntries,
                 analyticsContext: 'belief',
@@ -618,12 +617,18 @@ class _ThemesSection extends StatelessWidget {
                       Expanded(
                         child: Text(
                           t.name,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                       Text(
                         '${t.frequency} · ${WarmArchiveCopy.themeTrendBrief(t.trend)}',
-                        style: const TextStyle(color: AppTheme.muted, fontSize: 12),
+                        style: const TextStyle(
+                          color: AppTheme.muted,
+                          fontSize: 12,
+                        ),
                       ),
                       ArchiveWhyButton(
                         ref: ArchiveInsightRef.theme(t.themeKey),
@@ -649,10 +654,7 @@ class _ThemesSection extends StatelessWidget {
 }
 
 class _ContradictionsSection extends StatelessWidget {
-  const _ContradictionsSection({
-    required this.items,
-    required this.entries,
-  });
+  const _ContradictionsSection({required this.items, required this.entries});
 
   final List<DiscoverContradictionInsight> items;
   final List<JournalEntry> entries;
@@ -685,12 +687,18 @@ class _ContradictionsSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('“${c.statementA}”', style: const TextStyle(fontSize: 15)),
+                  Text(
+                    '“${c.statementA}”',
+                    style: const TextStyle(fontSize: 15),
+                  ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 6),
                     child: Text('vs', style: TextStyle(color: AppTheme.muted)),
                   ),
-                  Text('“${c.statementB}”', style: const TextStyle(fontSize: 15)),
+                  Text(
+                    '“${c.statementB}”',
+                    style: const TextStyle(fontSize: 15),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     '${formatUserFacingDate(c.dateA)} · ${formatUserFacingDate(c.dateB)}',
@@ -732,10 +740,7 @@ class _ContradictionsSection extends StatelessWidget {
 }
 
 class _BlindSpotsSection extends StatelessWidget {
-  const _BlindSpotsSection({
-    required this.spots,
-    required this.entries,
-  });
+  const _BlindSpotsSection({required this.spots, required this.entries});
 
   final List<DiscoverBlindSpotCard> spots;
   final List<JournalEntry> entries;

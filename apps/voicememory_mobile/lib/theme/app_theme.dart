@@ -18,25 +18,26 @@ class AppTheme {
   static const Color accent = AppColors.borderSubtle;
 
   static ThemeData light() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.accentPrimary,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: AppColors.accentPrimary,
-      onPrimary: AppColors.onAccent,
-      primaryContainer: AppColors.accentLight,
-      onPrimaryContainer: AppColors.textPrimary,
-      secondary: AppColors.accentSecondary,
-      onSecondary: AppColors.onAccent,
-      secondaryContainer: Color(0xFFCCFBF1),
-      onSecondaryContainer: AppColors.textPrimary,
-      surface: AppColors.backgroundSecondary,
-      onSurface: AppColors.textPrimary,
-      surfaceContainerHighest: AppColors.surfaceAlt,
-      outline: AppColors.borderSubtle,
-      error: AppColors.error,
-      onError: AppColors.onAccent,
-    );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.accentPrimary,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: AppColors.accentPrimary,
+          onPrimary: AppColors.onAccent,
+          primaryContainer: AppColors.accentLight,
+          onPrimaryContainer: AppColors.textPrimary,
+          secondary: AppColors.accentSecondary,
+          onSecondary: AppColors.onAccent,
+          secondaryContainer: Color(0xFFCCFBF1),
+          onSecondaryContainer: AppColors.textPrimary,
+          surface: AppColors.backgroundSecondary,
+          onSurface: AppColors.textPrimary,
+          surfaceContainerHighest: AppColors.surfaceAlt,
+          outline: AppColors.borderSubtle,
+          error: AppColors.error,
+          onError: AppColors.onAccent,
+        );
 
     final base = ThemeData(
       useMaterial3: true,
@@ -136,9 +137,7 @@ class AppTheme {
           color: AppColors.accentPrimary,
         ),
         side: const BorderSide(color: AppColors.borderSubtle),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.borderSubtle,

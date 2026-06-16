@@ -108,7 +108,11 @@ class ArchiveInsightBullet extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: const TextStyle(color: AppTheme.muted, height: 1.45, fontSize: 14),
+        style: const TextStyle(
+          color: AppTheme.muted,
+          height: 1.45,
+          fontSize: 14,
+        ),
       ),
     );
   }

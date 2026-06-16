@@ -89,9 +89,18 @@ void main() {
   testWidgets('starts with A/B read choice', (tester) async {
     await _pumpCard(tester);
 
-    expect(find.text(ConsumerUiCopy.postSaveInsightAbChoiceTitle), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserB), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightAbChoiceTitle),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserB),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.postSaveInsightAbNeither), findsOneWidget);
     expect(find.text(ConsumerUiCopy.postSaveInsightWhySuggested), findsWidgets);
     expect(find.textContaining('VoiceMemory'), findsNothing);
@@ -99,7 +108,10 @@ void main() {
 
   testWidgets('sharpness check hidden until meaningful action', (tester) async {
     await _pumpCard(tester);
-    expect(find.text(ConsumerUiCopy.firstInsightSharpnessQuestion), findsNothing);
+    expect(
+      find.text(ConsumerUiCopy.firstInsightSharpnessQuestion),
+      findsNothing,
+    );
   });
 
   testWidgets('first insight shows wedge-specific title', (tester) async {
@@ -108,20 +120,33 @@ void main() {
     expect(find.text(ConsumerUiCopy.firstInsightDisclaimer), findsOneWidget);
   });
 
-  testWidgets('A selection shows evidence ack and next prompt card', (tester) async {
+  testWidgets('A selection shows evidence ack and next prompt card', (
+    tester,
+  ) async {
     await _pumpCard(tester);
     await _selectA(tester);
 
-    expect(find.text(ConsumerUiCopy.firstInsightSharpnessQuestion), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.postSaveInsightUseAsEvidence), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.postSaveInsightRecordThisNext), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.firstInsightSharpnessQuestion),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightUseAsEvidence),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightRecordThisNext),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.postSaveInsightGoDeeper), findsOneWidget);
   });
 
   testWidgets('Neither opens alternative angles', (tester) async {
     await _pumpCard(tester);
 
-    await tester.ensureVisible(find.text(ConsumerUiCopy.postSaveInsightAbNeither));
+    await tester.ensureVisible(
+      find.text(ConsumerUiCopy.postSaveInsightAbNeither),
+    );
     await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbNeither));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -130,7 +155,10 @@ void main() {
       find.text(ConsumerUiCopy.postSaveInsightAlternativeTitle),
       findsOneWidget,
     );
-    expect(find.text(ConsumerUiCopy.postSaveInsightRecordNextEvidence), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightRecordNextEvidence),
+      findsOneWidget,
+    );
   });
 
   testWidgets('choose another prompt cycles alternatives', (tester) async {
@@ -144,7 +172,9 @@ void main() {
     expect(promptFinder, findsWidgets);
     final first = (tester.widget<Text>(promptFinder.at(1)).data)!;
 
-    await tester.tap(find.text(ConsumerUiCopy.postSaveInsightChooseAnotherPrompt));
+    await tester.tap(
+      find.text(ConsumerUiCopy.postSaveInsightChooseAnotherPrompt),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
@@ -167,10 +197,15 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(savedPrompt, isNotNull);
-    expect(find.text(ConsumerUiCopy.postSaveInsightNextPromptSaved), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightNextPromptSaved),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('go deeper shows confirm and contradict sections', (tester) async {
+  testWidgets('go deeper shows confirm and contradict sections', (
+    tester,
+  ) async {
     await _pumpCard(tester);
     await _selectA(tester);
 
@@ -179,7 +214,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text(ConsumerUiCopy.postSaveInsightMightMean), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.postSaveInsightWouldConfirm), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.postSaveInsightWouldConfirm),
+      findsOneWidget,
+    );
     expect(
       find.text(ConsumerUiCopy.postSaveInsightWouldContradict),
       findsOneWidget,

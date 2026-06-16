@@ -37,9 +37,9 @@ export function logAuthEvent(
     ...payload,
   });
   if (level === "error") {
-    console.error("[VoiceMemory auth]", line);
+    console.error("[ArchiveMe auth]", line);
   } else {
-    console.info("[VoiceMemory auth]", line);
+    console.info("[ArchiveMe auth]", line);
   }
 }
 

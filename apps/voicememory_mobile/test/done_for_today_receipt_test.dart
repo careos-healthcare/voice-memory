@@ -40,30 +40,33 @@ PressureCheckInRecord _record({
 
 /// Three work-context entries → a thread term ("work") exists.
 List<PressureCheckInRecord> _workThread3() => [
-      _record(id: 'a', daysAgo: 7, contextIds: const ['work']),
-      _record(
-        id: 'b',
-        daysAgo: 3,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(
-        id: 'c',
-        daysAgo: 0,
-        contextIds: const ['work'],
-        fear: 'I kept checking messages after I wanted to stop.',
-      ),
-    ];
+  _record(id: 'a', daysAgo: 7, contextIds: const ['work']),
+  _record(
+    id: 'b',
+    daysAgo: 3,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(
+    id: 'c',
+    daysAgo: 0,
+    contextIds: const ['work'],
+    fear: 'I kept checking messages after I wanted to stop.',
+  ),
+];
 
 String _allCopy(DoneForTodayReceipt receipt) => [
-      receipt.title,
-      receipt.completionLine,
-      receipt.archiveLine,
-      receipt.tomorrowLine,
-      receipt.restLine,
-      ...receipt.sourceTerms,
-      DoneForTodayReceipt.viewThreadPlanLabel,
-    ].join(' ');
+  receipt.title,
+  receipt.completionLine,
+  receipt.archiveLine,
+  receipt.tomorrowLine,
+  receipt.restLine,
+  receipt.tomorrowCueTitle,
+  receipt.tomorrowCueLine,
+  ...receipt.sourceTerms,
+  DoneForTodayReceipt.viewThreadPlanLabel,
+  DoneForTodayReceipt.tomorrowCueAutonomyLine,
+].join(' ');
 
 void main() {
   const engine = DoneForTodayReceiptEngine();
@@ -83,7 +86,7 @@ void main() {
     test('receipt exists after a successful save', () {
       final receipt = engine.build(saved: true, now: _base);
       expect(receipt.hasReceipt, isTrue);
-      expect(receipt.completionLine, 'Today\u2019s recording is saved.');
+      expect(receipt.completionLine, 'That is enough for today.');
     });
 
     test('uses the thread term when one exists', () {
@@ -92,32 +95,35 @@ void main() {
         records: _workThread3(),
         now: _base,
       );
-      expect(receipt.archiveLine, 'You added evidence to the work thread.');
+      expect(receipt.archiveLine, 'You added words to the work thread.');
       expect(
         receipt.tomorrowLine,
-        contains('ArchiveMe can check whether this returned, faded, or changed'),
+        'Tomorrow ArchiveMe can check whether this returned, faded, '
+        'or changed.',
       );
       expect(receipt.sourceTerms, contains('work'));
     });
 
-    test('falls back to generic archive language without a thread term', () {
+    test('falls back to the generic affect label without a thread term', () {
       final receipt = engine.build(saved: true, now: _base);
-      expect(receipt.archiveLine, 'You added one more piece to your archive.');
+      expect(
+        receipt.archiveLine,
+        'You added words to something that was repeating.',
+      );
       expect(
         receipt.tomorrowLine,
-        contains(
-          'ArchiveMe can connect this with future recordings if it shows up again',
-        ),
+        'Tomorrow ArchiveMe can check whether this shows up again.',
       );
       expect(receipt.sourceTerms, isEmpty);
     });
 
-    test('includes "Done for today" and the rest line in every variant', () {
+    test('includes "Done for today", enough-for-today, and the rest line', () {
       for (final receipt in [
         engine.build(saved: true, records: _workThread3(), now: _base),
         engine.build(saved: true, now: _base),
       ]) {
         expect(receipt.title, 'Done for today');
+        expect(receipt.completionLine, 'That is enough for today.');
         expect(
           receipt.restLine,
           'You do not need to keep working on this now.',
@@ -125,14 +131,15 @@ void main() {
       }
     });
 
-    test('return reason is cautious — an invitation, never an obligation', () {
+    test('return reason is concrete and cautious — never an obligation', () {
       for (final receipt in [
         engine.build(saved: true, records: _workThread3(), now: _base),
         engine.build(saved: true, now: _base),
       ]) {
+        // Concrete: tomorrow + what ArchiveMe can actually check.
         expect(
           receipt.tomorrowLine,
-          contains('Come back tomorrow if you want to see what changed'),
+          startsWith('Tomorrow ArchiveMe can check'),
         );
         final copy = _allCopy(receipt).toLowerCase();
         expect(copy, isNot(contains('you must')));
@@ -166,17 +173,29 @@ void main() {
           'homework',
           'must',
           'should',
-          'fix',
+          'streak',
+          'unfinished',
           'unresolved',
+          'fix',
           'problem',
           'failure',
           'lazy',
           'weak',
           'diagnos',
           'definitely',
+          'healed',
+          'processed',
+          'regulated',
+          'anxious',
+          'trauma',
+          'cure',
+          'resolved',
         ]) {
-          expect(copy, isNot(contains(banned)),
-              reason: 'copy must not contain "$banned"');
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'copy must not contain "$banned"',
+          );
         }
       }
     });
@@ -191,9 +210,120 @@ void main() {
     });
   });
 
+  group('Concrete tomorrow cue', () {
+    DoneForTodayReceipt buildFor(List<PressureCheckInRecord> records) =>
+        engine.build(saved: true, records: records, now: _base);
+
+    test('returned thread gets the thread-specific cue', () {
+      final receipt = buildFor(_workThread3());
+      expect(receipt.tomorrowCueTitle, 'Tomorrow, check one thing');
+      expect(
+        receipt.tomorrowCueLine,
+        'See whether the work thread returned, faded, or changed.',
+      );
+    });
+
+    test('building thread cue stays cautious', () {
+      final receipt = buildFor([
+        _record(id: 'b0', daysAgo: 8, contextIds: const ['work']),
+        _record(id: 'b1', daysAgo: 3, contextIds: const ['work']),
+        _record(id: 'b2', daysAgo: 2, contextIds: const ['work']),
+        _record(id: 'b3', daysAgo: 1, contextIds: const ['work']),
+      ]);
+      expect(
+        receipt.tomorrowCueLine,
+        'See whether the work thread shows up again.',
+      );
+    });
+
+    test('fading thread cue stays cautious', () {
+      final receipt = buildFor([
+        _record(id: 'f0', daysAgo: 8, contextIds: const ['work']),
+        _record(id: 'f1', daysAgo: 7, contextIds: const ['work']),
+        _record(id: 'f2', daysAgo: 6, contextIds: const ['work']),
+        _record(id: 'f3', daysAgo: 1, contextIds: const ['work']),
+      ]);
+      expect(
+        receipt.tomorrowCueLine,
+        'See whether the work thread stays quieter.',
+      );
+    });
+
+    test('early signal cue makes no thread claim yet', () {
+      final receipt = buildFor([
+        _record(id: 'e0', daysAgo: 5, contextIds: const ['work']),
+        _record(id: 'e1', daysAgo: 0, contextIds: const ['work']),
+      ]);
+      expect(
+        receipt.tomorrowCueLine,
+        'See whether this becomes a thread or fades out.',
+      );
+    });
+
+    test('generic fallback cue without any thread or term', () {
+      final receipt = engine.build(saved: true, now: _base);
+      expect(receipt.tomorrowCueLine, 'See whether this shows up again.');
+      expect(receipt.tomorrowCueTitle, 'Tomorrow, check one thing');
+    });
+
+    test('cue is one sentence in every variant', () {
+      final cues = [
+        buildFor(_workThread3()).tomorrowCueLine,
+        buildFor([
+          _record(id: 'e0', daysAgo: 5, contextIds: const ['work']),
+          _record(id: 'e1', daysAgo: 0, contextIds: const ['work']),
+        ]).tomorrowCueLine,
+        engine.build(saved: true, now: _base).tomorrowCueLine,
+      ];
+      for (final cue in cues) {
+        expect(cue, endsWith('.'));
+        expect(
+          '.'.allMatches(cue).length,
+          1,
+          reason: 'cue must be one sentence: "$cue"',
+        );
+        expect(cue, isNot(contains('!')));
+        expect(cue, isNot(contains('?')));
+      }
+    });
+
+    test('autonomy line is the calm default', () {
+      expect(
+        DoneForTodayReceipt.tomorrowCueAutonomyLine,
+        'Only if it still feels worth checking.',
+      );
+    });
+
+    test('no daily-obligation, streak, or guilt language', () {
+      for (final receipt in [
+        buildFor(_workThread3()),
+        engine.build(saved: true, now: _base),
+      ]) {
+        final copy = _allCopy(receipt).toLowerCase();
+        for (final banned in const [
+          'come back every day',
+          'every day',
+          'daily',
+          'streak',
+          'missed',
+          'falling behind',
+          'guilt',
+          'don\u2019t break',
+        ]) {
+          expect(
+            copy,
+            isNot(contains(banned)),
+            reason: 'cue copy must not contain "$banned"',
+          );
+        }
+      }
+    });
+  });
+
   group('Done for today card', () {
-    testWidgets('renders title and all four lines for a thread receipt',
-        (tester) async {
+    testWidgets('renders title and all four lines for a thread receipt', (
+      tester,
+    ) async {
       final receipt = engine.build(
         saved: true,
         records: _workThread3(),
@@ -211,14 +341,12 @@ void main() {
       await tester.pump();
 
       expect(find.text('Done for today'), findsOneWidget);
-      expect(find.text('Today\u2019s recording is saved.'), findsOneWidget);
-      expect(
-        find.text('You added evidence to the work thread.'),
-        findsOneWidget,
-      );
+      expect(find.text('That is enough for today.'), findsOneWidget);
+      expect(find.text('You added words to the work thread.'), findsOneWidget);
       expect(
         find.textContaining(
-          'ArchiveMe can check whether this returned, faded, or changed',
+          'Tomorrow ArchiveMe can check whether this returned, faded, '
+          'or changed',
         ),
         findsOneWidget,
       );
@@ -226,11 +354,25 @@ void main() {
         find.text('You do not need to keep working on this now.'),
         findsOneWidget,
       );
+      expect(
+        find.byKey(const Key('done_for_today_tomorrow_cue_title')),
+        findsOneWidget,
+      );
+      expect(find.text('Tomorrow, check one thing'), findsOneWidget);
+      expect(
+        find.text('See whether the work thread returned, faded, or changed.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Only if it still feels worth checking.'),
+        findsOneWidget,
+      );
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('renders the generic variant without a thread term',
-        (tester) async {
+    testWidgets('renders the generic variant without a thread term', (
+      tester,
+    ) async {
       final receipt = engine.build(saved: true, now: _base);
       await tester.pumpWidget(
         MaterialApp(
@@ -244,7 +386,18 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('You added one more piece to your archive.'),
+        find.text('You added words to something that was repeating.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Tomorrow ArchiveMe can check whether this shows up again.'),
+        findsOneWidget,
+      );
+      // The generic cue still gives one concrete thing to check.
+      expect(find.text('Tomorrow, check one thing'), findsOneWidget);
+      expect(find.text('See whether this shows up again.'), findsOneWidget);
+      expect(
+        find.text('Only if it still feels worth checking.'),
         findsOneWidget,
       );
       // No thread → no thread plan CTA either.
@@ -254,8 +407,9 @@ void main() {
       );
     });
 
-    testWidgets('adds no new prompt choices and no Pro requirement',
-        (tester) async {
+    testWidgets('adds no new prompt choices and no Pro requirement', (
+      tester,
+    ) async {
       final receipt = engine.build(
         saved: true,
         records: _workThread3(),
@@ -281,8 +435,9 @@ void main() {
       expect(find.textContaining('Unlock'), findsNothing);
     });
 
-    testWidgets('View thread plan opens the existing insights route',
-        (tester) async {
+    testWidgets('View thread plan opens the existing insights route', (
+      tester,
+    ) async {
       final receipt = engine.build(
         saved: true,
         records: _workThread3(),
@@ -321,9 +476,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: DoneForTodayReceiptCard(
-              receipt: DoneForTodayReceipt.none(),
-            ),
+            body: DoneForTodayReceiptCard(receipt: DoneForTodayReceipt.none()),
           ),
         ),
       );
@@ -335,8 +488,9 @@ void main() {
     });
 
     testWidgets('coexists with the Start Here save receipt', (tester) async {
-      final suggestions =
-          const DailyReturnSuggestionEngine().build(_workThread3());
+      final suggestions = const DailyReturnSuggestionEngine().build(
+        _workThread3(),
+      );
       final startHere = const StartHereSaveReceiptEngine().build(
         source: PaywallSource.startHereToday,
         suggestion: suggestions.recommendedSuggestion,

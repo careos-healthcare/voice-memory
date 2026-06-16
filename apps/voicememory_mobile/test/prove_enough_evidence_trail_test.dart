@@ -152,14 +152,14 @@ void main() {
     test('evidence excerpts are not invented', () {
       const transcript =
           'I kept working late because stopping made me feel behind and not enough.';
-      final trail = engine.build(
-        entries: [entry('e1', transcript)],
-      );
+      final trail = engine.build(entries: [entry('e1', transcript)]);
 
       expect(trail.supportingMoments, hasLength(1));
       expect(
         transcript.toLowerCase(),
-        contains(trail.supportingMoments.first.excerpt.toLowerCase().split(' ').first),
+        contains(
+          trail.supportingMoments.first.excerpt.toLowerCase().split(' ').first,
+        ),
       );
     });
   });
@@ -180,10 +180,19 @@ void main() {
       await _pumpFrames(tester);
 
       expect(find.text(ProveEnoughEvidenceTrail.screenTitle), findsOneWidget);
-      expect(find.text(ProveEnoughEvidenceTrail.confirmedSectionTitle), findsOneWidget);
-      expect(find.byKey(const Key('prove_enough_trail_locked_card')), findsOneWidget);
+      expect(
+        find.text(ProveEnoughEvidenceTrail.confirmedSectionTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('prove_enough_trail_locked_card')),
+        findsOneWidget,
+      );
       expect(find.text(ProveEnoughEvidenceTrail.lockedTitle), findsOneWidget);
-      expect(find.text(ProveEnoughEvidenceTrail.challengedSectionTitle), findsNothing);
+      expect(
+        find.text(ProveEnoughEvidenceTrail.challengedSectionTitle),
+        findsNothing,
+      );
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
@@ -262,7 +271,10 @@ void main() {
         expect(find.text(title), findsOneWidget);
       }
 
-      expect(find.byKey(const Key('prove_enough_trail_locked_card')), findsNothing);
+      expect(
+        find.byKey(const Key('prove_enough_trail_locked_card')),
+        findsNothing,
+      );
     });
 
     testWidgets('CTA routes to paywall', (tester) async {

@@ -34,13 +34,14 @@ class PatternHypothesisCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: ArchiveResponsiveLayout.cardInsets(context),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.accentPrimary.withValues(alpha: 0.06),
-      ).copyWith(
-        border: Border.all(
-          color: AppColors.accentPrimary.withValues(alpha: 0.3),
-        ),
-      ),
+      decoration:
+          VoiceMemoryCards.standard(
+            background: AppColors.accentPrimary.withValues(alpha: 0.06),
+          ).copyWith(
+            border: Border.all(
+              color: AppColors.accentPrimary.withValues(alpha: 0.3),
+            ),
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

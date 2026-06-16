@@ -29,8 +29,10 @@ class PatternsSignalsWaitingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gap = ArchiveResponsiveLayout.gap(context);
-    final progress = ConsumerUiCopy.postSaveInsightMomentsProgress
-        .replaceAll('{count}', reflectionCount.clamp(0, 3).toString());
+    final progress = ConsumerUiCopy.postSaveInsightMomentsProgress.replaceAll(
+      '{count}',
+      reflectionCount.clamp(0, 3).toString(),
+    );
 
     return Container(
       width: double.infinity,
@@ -123,8 +125,10 @@ class _SignalRow extends StatelessWidget {
               ),
               if (record.strengthLabel.isNotEmpty)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(6),

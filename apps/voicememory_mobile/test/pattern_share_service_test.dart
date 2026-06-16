@@ -4,22 +4,23 @@ import 'package:voicememory_mobile/features/pattern_memory/pattern_share_recap_m
 import 'package:voicememory_mobile/features/pattern_memory/pattern_share_service.dart';
 
 PatternShareRecap _recap() => PatternShareRecap(
-      id: 'share_weekly_1',
-      createdAt: DateTime(2026, 6, 4),
-      type: PatternShareRecapType.weekly,
-      title: 'This week\u2019s pattern',
-      body: 'This pattern kept showing up this week.',
-      lines: const [
-        'You checked it 4 times and caught it more than once.',
-        'Next check: What happens right before it starts?',
-      ],
-      nextQuestion: 'What happens right before it starts?',
-      plainText: 'This week\u2019s pattern\n\n'
-          'This pattern kept showing up this week.\n\n'
-          '- You checked it 4 times and caught it more than once.\n'
-          '- Next check: What happens right before it starts?\n\n'
-          'Made with ArchiveMe',
-    );
+  id: 'share_weekly_1',
+  createdAt: DateTime(2026, 6, 4),
+  type: PatternShareRecapType.weekly,
+  title: 'This week\u2019s pattern',
+  body: 'This pattern kept showing up this week.',
+  lines: const [
+    'You checked it 4 times and caught it more than once.',
+    'Next check: What happens right before it starts?',
+  ],
+  nextQuestion: 'What happens right before it starts?',
+  plainText:
+      'This week\u2019s pattern\n\n'
+      'This pattern kept showing up this week.\n\n'
+      '- You checked it 4 times and caught it more than once.\n'
+      '- Next check: What happens right before it starts?\n\n'
+      'Made with ArchiveMe',
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +31,9 @@ void main() {
 
   setUp(() {
     clipboardText = null;
-    messenger.setMockMethodCallHandler(SystemChannels.platform,
-        (MethodCall call) async {
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (
+      MethodCall call,
+    ) async {
       if (call.method == 'Clipboard.setData') {
         clipboardText = (call.arguments as Map)['text'] as String?;
         return null;

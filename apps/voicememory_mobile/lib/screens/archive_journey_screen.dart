@@ -86,8 +86,8 @@ class _ArchiveJourneyScreenState extends State<ArchiveJourneyScreen> {
                   done
                       ? Icons.check_circle_outline
                       : locked
-                          ? Icons.lock_outline
-                          : Icons.radio_button_unchecked,
+                      ? Icons.lock_outline
+                      : Icons.radio_button_unchecked,
                   size: 20,
                   color: done ? VoiceMemoryColors.success : AppTheme.muted,
                 ),

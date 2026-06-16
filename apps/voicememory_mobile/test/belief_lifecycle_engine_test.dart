@@ -131,77 +131,79 @@ void main() {
         BeliefLifecycleStatus.weakening,
       ),
     );
-    expect(old.events.any((e) => e.phase == BeliefLifecyclePhase.firstAppearance),
-        isTrue);
-  });
-
-  test('retired I am not ready shows no longer detected with last seen', () async {
-    final dir = await Directory.systemTemp.createTemp('belief_lc_ready_');
-    final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
-    final evolution = BeliefEvolutionService.fromPrefs(prefs);
-
-    final lastAt = DateTime.utc(2026, 3, 14);
-    final entries = [
-      _entry(
-        id: 'old1',
-        at: DateTime.utc(2026, 1, 5),
-        transcript: "I'm not ready to have that conversation yet.",
-        observation: "I'm not ready",
-      ),
-      _entry(
-        id: 'old2',
-        at: lastAt,
-        transcript: "I'm not ready — I keep postponing it.",
-        observation: "I'm not ready",
-      ),
-      for (var i = 0; i < 8; i++)
-        _entry(
-          id: 'new$i',
-          at: DateTime.utc(2026, 4, 1 + i),
-          transcript:
-              'I finally spoke up clearly at work and felt steady afterward.',
-          observation: 'I finally spoke up clearly at work.',
-        ),
-    ];
-
-    final evo = await evolution.refreshFromEntries(
-      entries: entries,
-      legacySnapshot: ArchiveStateSnapshot(
-        belief: "I'm not ready",
-        confidence: 50,
-        reputation: 'developing',
-        evidenceCount: 2,
-        lifeAreas: const [],
-        timestamp: '2026-01-01T00:00:00.000Z',
-      ),
-    );
-
-    final view = engine.build(
-      entries: entries,
-      activeStatement: 'I finally spoke up clearly at work.',
-      evolution: evo,
-    );
-
-    final retired = view.retired.where(
-      (r) => r.statement.toLowerCase().contains('not ready'),
-    );
-    expect(retired, isNotEmpty);
-    final gone = retired.first;
-    expect(gone.status, BeliefLifecycleStatus.noLongerDetected);
-    expect(gone.lastSeen, lastAt);
-    expect(formatUserFacingDate(lastAt), '14 March 2026');
     expect(
-      gone.events.any((e) => e.phase == BeliefLifecyclePhase.death),
+      old.events.any((e) => e.phase == BeliefLifecyclePhase.firstAppearance),
       isTrue,
     );
   });
 
+  test(
+    'retired I am not ready shows no longer detected with last seen',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('belief_lc_ready_');
+      final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+      final evolution = BeliefEvolutionService.fromPrefs(prefs);
+
+      final lastAt = DateTime.utc(2026, 3, 14);
+      final entries = [
+        _entry(
+          id: 'old1',
+          at: DateTime.utc(2026, 1, 5),
+          transcript: "I'm not ready to have that conversation yet.",
+          observation: "I'm not ready",
+        ),
+        _entry(
+          id: 'old2',
+          at: lastAt,
+          transcript: "I'm not ready — I keep postponing it.",
+          observation: "I'm not ready",
+        ),
+        for (var i = 0; i < 8; i++)
+          _entry(
+            id: 'new$i',
+            at: DateTime.utc(2026, 4, 1 + i),
+            transcript:
+                'I finally spoke up clearly at work and felt steady afterward.',
+            observation: 'I finally spoke up clearly at work.',
+          ),
+      ];
+
+      final evo = await evolution.refreshFromEntries(
+        entries: entries,
+        legacySnapshot: ArchiveStateSnapshot(
+          belief: "I'm not ready",
+          confidence: 50,
+          reputation: 'developing',
+          evidenceCount: 2,
+          lifeAreas: const [],
+          timestamp: '2026-01-01T00:00:00.000Z',
+        ),
+      );
+
+      final view = engine.build(
+        entries: entries,
+        activeStatement: 'I finally spoke up clearly at work.',
+        evolution: evo,
+      );
+
+      final retired = view.retired.where(
+        (r) => r.statement.toLowerCase().contains('not ready'),
+      );
+      expect(retired, isNotEmpty);
+      final gone = retired.first;
+      expect(gone.status, BeliefLifecycleStatus.noLongerDetected);
+      expect(gone.lastSeen, lastAt);
+      expect(formatUserFacingDate(lastAt), '14 March 2026');
+      expect(
+        gone.events.any((e) => e.phase == BeliefLifecyclePhase.death),
+        isTrue,
+      );
+    },
+  );
+
   test('status labels cover all enums', () {
     for (final s in BeliefLifecycleStatus.values) {
-      expect(
-        BeliefLifecycleCopy.statusLabelFor(s),
-        isNotEmpty,
-      );
+      expect(BeliefLifecycleCopy.statusLabelFor(s), isNotEmpty);
     }
   });
 }

@@ -3,7 +3,7 @@ import { getPrimaryObservation } from "@/lib/observation-language";
 import { formatEntryDate } from "@/lib/utils";
 import type { ReflectionBookmark } from "@/types/reflection-bookmark";
 import type { JournalEntry } from "@/types/journal";
-import type { VoiceMemoryArchivePackage } from "@/types/archive-permanence";
+import type { ArchiveMeArchivePackage } from "@/types/archive-permanence";
 
 function bookmarkLabel(type: ReflectionBookmark["type"]): string {
   switch (type) {
@@ -17,9 +17,9 @@ function bookmarkLabel(type: ReflectionBookmark["type"]): string {
 }
 
 /** Readable Markdown export for long-term keeping outside the app. */
-export function buildArchiveMarkdown(archive: VoiceMemoryArchivePackage): string {
+export function buildArchiveMarkdown(archive: ArchiveMeArchivePackage): string {
   const lines: string[] = [
-    "# VoiceMemory Archive",
+    "# ArchiveMe Archive",
     "",
     `Exported: ${formatEntryDate(archive.exportedAt)}`,
     `Reflections: ${archive.entries.length}`,

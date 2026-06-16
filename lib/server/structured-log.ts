@@ -21,7 +21,7 @@ export function logServerEvent(
     event,
     ...sanitizeFields(fields),
   };
-  console.info("[VoiceMemory]", JSON.stringify(payload));
+  console.info("[ArchiveMe]", JSON.stringify(payload));
 }
 
 function sanitizeFields(

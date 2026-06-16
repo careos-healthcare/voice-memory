@@ -8,7 +8,7 @@ import 'archive_evolution_store.dart';
 
 /// Builds and persists the latest pattern evolution timeline. Always fails
 /// softly so it never blocks the Patterns tab from loading.
-abstract final class ArchiveEvolutionCoordinator {
+abstract class ArchiveEvolutionCoordinator {
   ArchiveEvolutionCoordinator._();
 
   static ArchiveEvolutionStore _store() => ArchiveEvolutionStore.instance();

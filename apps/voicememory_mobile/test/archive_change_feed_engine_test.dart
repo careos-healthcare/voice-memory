@@ -70,7 +70,8 @@ void main() {
         _entry(
           id: 'mid$i',
           at: DateTime.utc(2026, 2, 5 + (i % 20)),
-          transcript: 'Work anxiety keeps showing up in every standup and email.',
+          transcript:
+              'Work anxiety keeps showing up in every standup and email.',
           themes: const ['career'],
         ),
       for (var i = 0; i < 6; i++)
@@ -94,7 +95,10 @@ void main() {
         .toList();
     expect(career, isNotEmpty);
     expect(career.first.mentionSeries.length, greaterThanOrEqualTo(2));
-    expect(career.first.mentionsNow, greaterThan(career.first.mentionsAtReview));
+    expect(
+      career.first.mentionsNow,
+      greaterThan(career.first.mentionsAtReview),
+    );
   });
 
   test('confidence concerns theme can decrease', () {

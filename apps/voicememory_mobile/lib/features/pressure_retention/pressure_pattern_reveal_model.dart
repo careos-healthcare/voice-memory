@@ -62,8 +62,8 @@ class PressurePatternReveal {
   final List<String> costs;
 
   factory PressurePatternReveal.insufficient() => const PressurePatternReveal(
-        hasPattern: false,
-        headline: insufficientCopy,
-        confidence: PressureEvidenceConfidence.needsMoreEvidence,
-      );
+    hasPattern: false,
+    headline: insufficientCopy,
+    confidence: PressureEvidenceConfidence.needsMoreEvidence,
+  );
 }

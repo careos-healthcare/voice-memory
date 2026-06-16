@@ -18,16 +18,18 @@ class FcmService {
       required String deviceId,
       required String platform,
       required String fcmToken,
-    }) registerToken,
+    })
+    registerToken,
     required Future<Map<String, dynamic>> Function({
       required String deviceId,
       required String targetRoute,
-    }) sendTestPush,
-  })  : _store = store,
-        _getDeviceId = getDeviceId,
-        _registerToken = registerToken,
-        _sendTestPush = sendTestPush,
-        deepLink = PushDeepLinkHandler(store);
+    })
+    sendTestPush,
+  }) : _store = store,
+       _getDeviceId = getDeviceId,
+       _registerToken = registerToken,
+       _sendTestPush = sendTestPush,
+       deepLink = PushDeepLinkHandler(store);
 
   final NativePushVerificationStore _store;
   final Future<String> Function() _getDeviceId;
@@ -36,11 +38,13 @@ class FcmService {
     required String deviceId,
     required String platform,
     required String fcmToken,
-  }) _registerToken;
+  })
+  _registerToken;
   final Future<Map<String, dynamic>> Function({
     required String deviceId,
     required String targetRoute,
-  }) _sendTestPush;
+  })
+  _sendTestPush;
 
   /// Assigned only after [FirebaseBootstrap.tryInitialize] succeeds.
   FirebaseMessaging? _messaging;
@@ -105,7 +109,7 @@ class FcmService {
       );
       final granted =
           settings.authorizationStatus == AuthorizationStatus.authorized ||
-              settings.authorizationStatus == AuthorizationStatus.provisional;
+          settings.authorizationStatus == AuthorizationStatus.provisional;
       await _store.patchPlatform(_platform, permissionGranted: granted);
 
       _fcmToken = await messaging.getToken();
@@ -160,7 +164,7 @@ class FcmService {
       final settings = await messaging.requestPermission();
       final granted =
           settings.authorizationStatus == AuthorizationStatus.authorized ||
-              settings.authorizationStatus == AuthorizationStatus.provisional;
+          settings.authorizationStatus == AuthorizationStatus.provisional;
       await _store.patchPlatform(_platform, permissionGranted: granted);
       if (granted && _fcmToken == null) {
         _fcmToken = await messaging.getToken();
@@ -179,7 +183,10 @@ class FcmService {
     required String targetRoute,
   }) async {
     final deviceId = await _getDeviceId();
-    final result = await _sendTestPush(deviceId: deviceId, targetRoute: targetRoute);
+    final result = await _sendTestPush(
+      deviceId: deviceId,
+      targetRoute: targetRoute,
+    );
     _lastPushRoute = targetRoute;
     return result;
   }

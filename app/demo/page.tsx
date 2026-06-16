@@ -56,7 +56,7 @@ export default function DemoPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-violet-300/80">First-user testing</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Demo mode</h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            Explore VoiceMemory with realistic sample reflections — entities, weekly
+            Explore ArchiveMe with realistic sample reflections — entities, weekly
             resurfacing, and search examples. Your real data is backed
             up before entering and restored when you exit.
           </p>

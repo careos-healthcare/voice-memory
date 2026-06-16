@@ -6,7 +6,7 @@ import '../tomorrow_return/check_in_reminder_service.dart';
 import 'retention_metrics_tracker.dart';
 
 /// Schedules a local reminder for the next evidence moment — no transcript.
-abstract final class NextEvidenceReminderService {
+abstract class NextEvidenceReminderService {
   NextEvidenceReminderService._();
 
   static const _idPrefix = 'next_evidence_';
@@ -16,9 +16,13 @@ abstract final class NextEvidenceReminderService {
     if (trimmed.isEmpty) {
       return ConsumerUiCopy.nextEvidenceReminderBodyDefault;
     }
-    final short = trimmed.length > 72 ? '${trimmed.substring(0, 71)}…' : trimmed;
-    return ConsumerUiCopy.nextEvidenceReminderBodyWithPrompt
-        .replaceAll('{prompt}', short);
+    final short = trimmed.length > 72
+        ? '${trimmed.substring(0, 71)}…'
+        : trimmed;
+    return ConsumerUiCopy.nextEvidenceReminderBodyWithPrompt.replaceAll(
+      '{prompt}',
+      short,
+    );
   }
 
   static Future<ReminderScheduleOutcome> schedule({
@@ -50,13 +54,13 @@ abstract final class NextEvidenceReminderService {
     final title = loop?.isCapacityYes == true
         ? LoopModeCopy.capacityReminderNotificationTitle
         : loop?.isProveEnough == true
-            ? LoopModeCopy.proveEnoughReminderNotificationTitle
-            : ConsumerUiCopy.nextEvidenceReminderTitle;
+        ? LoopModeCopy.proveEnoughReminderNotificationTitle
+        : ConsumerUiCopy.nextEvidenceReminderTitle;
     final body = loop?.isCapacityYes == true
         ? LoopModeCopy.capacityReminderNotificationBody
         : loop?.isProveEnough == true
-            ? LoopModeCopy.proveEnoughReminderNotificationBody
-            : bodyFor(prompt: prompt);
+        ? LoopModeCopy.proveEnoughReminderNotificationBody
+        : bodyFor(prompt: prompt);
     await CheckInReminderService.backend.schedule(
       checkInId: '$_idPrefix$journeyId',
       title: title,

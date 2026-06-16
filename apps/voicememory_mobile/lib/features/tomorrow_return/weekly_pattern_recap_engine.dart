@@ -54,7 +54,10 @@ class WeeklyPatternRecapEngine {
     return sorted.map((e) => e.key).toList();
   }
 
-  String _dominantTheme(List<ReturnComparison> comparisons, List<String> chips) {
+  String _dominantTheme(
+    List<ReturnComparison> comparisons,
+    List<String> chips,
+  ) {
     if (chips.isNotEmpty) return chips.first;
     for (final c in comparisons) {
       final watch = c.yesterdayWatchFor.trim();

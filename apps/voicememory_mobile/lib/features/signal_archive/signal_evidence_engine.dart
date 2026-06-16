@@ -26,7 +26,11 @@ class SignalEvidenceEngine {
     final items = <SignalEvidenceItem>[];
     final seen = <String>{};
 
-    void addItem(JournalEntry entry, SignalEvidenceRelation relation, String tag) {
+    void addItem(
+      JournalEntry entry,
+      SignalEvidenceRelation relation,
+      String tag,
+    ) {
       if (seen.contains(entry.id)) return;
       seen.add(entry.id);
       final excerpt = _safeExcerpt(entry);
@@ -91,8 +95,9 @@ class SignalEvidenceEngine {
     }
 
     if (signal.categoryId.isNotEmpty &&
-        _categoryHints(signal.categoryId)
-            .any((hint) => text.contains(hint.toLowerCase()))) {
+        _categoryHints(
+          signal.categoryId,
+        ).any((hint) => text.contains(hint.toLowerCase()))) {
       return SignalEvidenceRelation.unclear;
     }
 
@@ -101,8 +106,7 @@ class SignalEvidenceEngine {
 
   bool _matchesSupport(String text, SelectedSignalRecord signal) {
     for (final chip in signal.evidenceChips) {
-      if (chip.trim().length >= 3 &&
-          text.contains(chip.trim().toLowerCase())) {
+      if (chip.trim().length >= 3 && text.contains(chip.trim().toLowerCase())) {
         return true;
       }
     }

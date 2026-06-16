@@ -61,10 +61,7 @@ void main() {
       eligible: entries,
     );
     expect(split.supporting.length, greaterThanOrEqualTo(2));
-    expect(
-      split.counter.map((e) => e.id),
-      isNot(contains('x')),
-    );
+    expect(split.counter.map((e) => e.id), isNot(contains('x')));
   });
 
   test('includes topical opposing sentiment on same theme', () {
@@ -125,7 +122,10 @@ void main() {
       eligible: entries,
     );
     expect(split.supporting.length, greaterThanOrEqualTo(2));
-    expect(split.counter.length, lessThanOrEqualTo(split.supporting.length * 2));
+    expect(
+      split.counter.length,
+      lessThanOrEqualTo(split.supporting.length * 2),
+    );
     expect(split.rawCounterCount, greaterThan(split.counter.length));
     expect(split.counterExceedsSupportTwice, isTrue);
   });
@@ -142,7 +142,8 @@ void main() {
     );
     expect(
       topical.isRelevantCounterQuote(
-        beliefText: 'I avoid difficult conversations with my cofounder when stakes feel personal',
+        beliefText:
+            'I avoid difficult conversations with my cofounder when stakes feel personal',
         counterQuote:
             'I trust my gut on product bets and move fast when customers pull us.',
       ),
@@ -201,7 +202,8 @@ void main() {
       ),
     ];
     final raw = topical.pickRaw(
-      beliefText: 'I avoid bringing up needs with my partner until resentment builds',
+      beliefText:
+          'I avoid bringing up needs with my partner until resentment builds',
       eligible: entries,
       supporting: const [],
     );

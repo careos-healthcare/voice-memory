@@ -10,9 +10,7 @@ void main() {
   });
 
   Future<void> pumpSettings(WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(home: SettingsScreen()),
-    );
+    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
   }
@@ -23,7 +21,7 @@ void main() {
 
     await pumpSettings(tester);
 
-    expect(find.text('Privacy policy'), findsOneWidget);
+    expect(find.text('Privacy'), findsOneWidget);
     expect(find.text('Restore purchases'), findsOneWidget);
     await tester.drag(find.byType(ListView), const Offset(0, -400));
     await tester.pump();
@@ -39,7 +37,13 @@ void main() {
 
     await pumpSettings(tester);
 
-    await tester.drag(find.byType(ListView), const Offset(0, -400));
+    // The Memory section made the list taller — scroll until the
+    // developer tile at the bottom is visible.
+    await tester.dragUntilVisible(
+      find.text('Developer diagnostics'),
+      find.byType(ListView),
+      const Offset(0, -300),
+    );
     await tester.pump();
     expect(find.text('Developer diagnostics'), findsOneWidget);
     expect(find.text('RevenueCat verification'), findsNothing);

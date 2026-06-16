@@ -31,7 +31,7 @@ export interface ArchiveAudioFile {
 }
 
 /** Portable full archive — export, import, and restore. */
-export interface VoiceMemoryArchivePackage {
+export interface ArchiveMeArchivePackage {
   format: "voicememory-archive";
   version: 1;
   exportedAt: string;
@@ -61,7 +61,7 @@ export interface ArchiveImportPreview {
   dateRange: { from: string | null; to: string | null };
   localOverlapCount: number;
   issues: ArchiveValidationIssue[];
-  package: VoiceMemoryArchivePackage | null;
+  package: ArchiveMeArchivePackage | null;
 }
 
 export type ArchiveRestoreMode = "replace" | "merge";

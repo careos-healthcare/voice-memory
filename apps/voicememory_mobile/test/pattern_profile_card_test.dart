@@ -9,9 +9,8 @@ void main() {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const Scaffold(
-            body: PatternProfileCard(),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: PatternProfileCard()),
         ),
         GoRoute(
           path: '/pattern-profile',
@@ -28,14 +27,15 @@ void main() {
     expect(find.text('Open profile'), findsOneWidget);
   });
 
-  testWidgets('Open profile navigates to pattern profile route', (tester) async {
+  testWidgets('Open profile navigates to pattern profile route', (
+    tester,
+  ) async {
     final router = GoRouter(
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const Scaffold(
-            body: PatternProfileCard(),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: PatternProfileCard()),
         ),
         GoRoute(
           path: '/pattern-profile',

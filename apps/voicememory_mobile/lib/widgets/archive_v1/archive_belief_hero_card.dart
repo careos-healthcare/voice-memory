@@ -37,7 +37,9 @@ class ArchiveBeliefHeroCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.22),
+                  color: VoiceMemoryColors.primaryIndigo.withValues(
+                    alpha: 0.22,
+                  ),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -55,20 +57,21 @@ class ArchiveBeliefHeroCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   '"${belief.statement}"',
-                  style: VoiceMemoryTypography.bodyStyle(
-                    color: VoiceMemoryColors.onPrimary,
-                  ).copyWith(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    height: 1.4,
-                  ),
+                  style:
+                      VoiceMemoryTypography.bodyStyle(
+                        color: VoiceMemoryColors.onPrimary,
+                      ).copyWith(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        height: 1.4,
+                      ),
                 ),
                 const SizedBox(height: 14),
                 _meta('Confidence', '${belief.confidencePercent}%'),
                 _meta(
                   'Evidence',
                   '${belief.evidenceCount} '
-                  '${belief.evidenceCount == 1 ? 'recording' : 'recordings'}',
+                      '${belief.evidenceCount == 1 ? 'recording' : 'recordings'}',
                 ),
                 _meta(
                   'Updated',
@@ -77,13 +80,14 @@ class ArchiveBeliefHeroCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   ArchiveV1Copy.showMeWhyCta,
-                  style: VoiceMemoryTypography.bodyStyle(
-                    color: VoiceMemoryColors.onPrimary,
-                  ).copyWith(
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                    decorationColor: VoiceMemoryColors.onPrimary,
-                  ),
+                  style:
+                      VoiceMemoryTypography.bodyStyle(
+                        color: VoiceMemoryColors.onPrimary,
+                      ).copyWith(
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                        decorationColor: VoiceMemoryColors.onPrimary,
+                      ),
                 ),
                 if (onOpenEvidenceTrail != null) ...[
                   const SizedBox(height: 6),
@@ -91,13 +95,16 @@ class ArchiveBeliefHeroCard extends StatelessWidget {
                     onTap: onOpenEvidenceTrail,
                     child: Text(
                       ArchiveV1Copy.evidenceTrailCta,
-                      style: VoiceMemoryTypography.secondaryStyle(
-                        color: VoiceMemoryColors.onPrimary.withValues(alpha: 0.85),
-                      ).copyWith(
-                        decoration: TextDecoration.underline,
-                        decorationColor:
-                            VoiceMemoryColors.onPrimary.withValues(alpha: 0.85),
-                      ),
+                      style:
+                          VoiceMemoryTypography.secondaryStyle(
+                            color: VoiceMemoryColors.onPrimary.withValues(
+                              alpha: 0.85,
+                            ),
+                          ).copyWith(
+                            decoration: TextDecoration.underline,
+                            decorationColor: VoiceMemoryColors.onPrimary
+                                .withValues(alpha: 0.85),
+                          ),
                     ),
                   ),
                 ],

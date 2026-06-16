@@ -21,7 +21,7 @@ class PressureProUpgradeCard extends StatelessWidget {
   final String body;
   final VoidCallback onUnlock;
 
-  static const ctaLabel = 'Unlock ArchiveMe Pro';
+  static const ctaLabel = 'See Pro';
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class PressureProUpgradeCard extends StatelessWidget {
           Row(
             children: [
               const Icon(
-                Icons.lock_outline,
+                Icons.auto_stories_outlined,
                 size: 18,
                 color: AppColors.accentPrimary,
               ),
@@ -45,8 +45,9 @@ class PressureProUpgradeCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -54,15 +55,12 @@ class PressureProUpgradeCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            onPressed: onUnlock,
-            child: const Text(ctaLabel),
-          ),
+          FilledButton(onPressed: onUnlock, child: const Text(ctaLabel)),
         ],
       ),
     );

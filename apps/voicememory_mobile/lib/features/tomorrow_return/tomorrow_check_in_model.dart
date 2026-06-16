@@ -17,11 +17,11 @@ class TomorrowCheckInOption {
   final String comparisonHint;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'label': label,
-        'followUpPrompt': followUpPrompt,
-        'comparisonHint': comparisonHint,
-      };
+    'id': id,
+    'label': label,
+    'followUpPrompt': followUpPrompt,
+    'comparisonHint': comparisonHint,
+  };
 
   static TomorrowCheckInOption? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
@@ -112,8 +112,7 @@ class TomorrowCheckIn {
   String get resultHeadline =>
       CheckInResultCopy.resultHeadline(selectedOptionId);
 
-  String get whatThisMeans =>
-      CheckInResultCopy.whatThisMeans(selectedOptionId);
+  String get whatThisMeans => CheckInResultCopy.whatThisMeans(selectedOptionId);
 
   String get tomorrowsBetterQuestion =>
       CheckInResultCopy.tomorrowsBetterQuestion(selectedOptionId);
@@ -132,28 +131,27 @@ class TomorrowCheckIn {
       question: question,
       options: options,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
-      completedAt:
-          clearCompletedAt ? null : (completedAt ?? this.completedAt),
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
       sourceWatchForId: sourceWatchForId,
       sourcePatternThreadId: sourcePatternThreadId,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'targetDate': targetDate,
-        'patternTitle': patternTitle,
-        'prompt': prompt,
-        'question': question,
-        'options': options.map((o) => o.toJson()).toList(),
-        if (selectedOptionId != null) 'selectedOptionId': selectedOptionId,
-        if (completedAt != null)
-          'completedAt': completedAt!.toUtc().toIso8601String(),
-        if (sourceWatchForId != null) 'sourceWatchForId': sourceWatchForId,
-        if (sourcePatternThreadId != null)
-          'sourcePatternThreadId': sourcePatternThreadId,
-      };
+    'id': id,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'targetDate': targetDate,
+    'patternTitle': patternTitle,
+    'prompt': prompt,
+    'question': question,
+    'options': options.map((o) => o.toJson()).toList(),
+    if (selectedOptionId != null) 'selectedOptionId': selectedOptionId,
+    if (completedAt != null)
+      'completedAt': completedAt!.toUtc().toIso8601String(),
+    if (sourceWatchForId != null) 'sourceWatchForId': sourceWatchForId,
+    if (sourcePatternThreadId != null)
+      'sourcePatternThreadId': sourcePatternThreadId,
+  };
 
   static TomorrowCheckIn? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

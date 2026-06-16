@@ -11,50 +11,50 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/pattern_profile_screen.dart';
 
 PatternProfile _profile() => PatternProfile(
+  patternTitle: 'Pressure before yes',
+  clarityLabel: 'Clear pattern',
+  archiveMemorySummary: const ArchiveMemorySummary(
+    id: 's1',
+    patternTitle: 'Pressure before yes',
+    primaryMemoryLine: 'You often say yes before checking in.',
+    basedOnMomentCount: 4,
+    basedOnWeekCount: 2,
+    clarityLabel: 'Clear pattern',
+    nextCheck: 'What happened right before you said yes?',
+  ),
+  patternMap: const PatternMap(
+    patternTitle: 'Pressure before yes',
+    seenCount: 4,
+    confidenceLabel: 'Clear pattern',
+    oftenFeelsLike: 'heavier',
+    getsLighterWhen: 'Pausing before replying',
+    nextCheck: 'Map check',
+  ),
+  archiveEvolutionTimeline: ArchiveEvolutionTimeline(
+    patternTitle: 'Pressure before yes',
+    events: [
+      ArchiveEvolutionEvent(
+        id: 'e1',
+        date: DateTime(2026, 6, 1),
+        type: ArchiveEvolutionEventType.showedAgain,
+        title: 'Showed up again',
+        body: 'It showed up before a work message.',
+      ),
+    ],
+    eventCount: 1,
+  ),
+  keyMoments: [
+    KeyMoment(
+      id: 'm1',
+      date: DateTime(2026, 6, 2),
+      title: 'A heavier moment',
+      originalText: 'text',
+      shortSummary: 'text',
       patternTitle: 'Pressure before yes',
-      clarityLabel: 'Clear pattern',
-      archiveMemorySummary: const ArchiveMemorySummary(
-        id: 's1',
-        patternTitle: 'Pressure before yes',
-        primaryMemoryLine: 'You often say yes before checking in.',
-        basedOnMomentCount: 4,
-        basedOnWeekCount: 2,
-        clarityLabel: 'Clear pattern',
-        nextCheck: 'What happened right before you said yes?',
-      ),
-      patternMap: const PatternMap(
-        patternTitle: 'Pressure before yes',
-        seenCount: 4,
-        confidenceLabel: 'Clear pattern',
-        oftenFeelsLike: 'heavier',
-        getsLighterWhen: 'Pausing before replying',
-        nextCheck: 'Map check',
-      ),
-      archiveEvolutionTimeline: ArchiveEvolutionTimeline(
-        patternTitle: 'Pressure before yes',
-        events: [
-          ArchiveEvolutionEvent(
-            id: 'e1',
-            date: DateTime(2026, 6, 1),
-            type: ArchiveEvolutionEventType.showedAgain,
-            title: 'Showed up again',
-            body: 'It showed up before a work message.',
-          ),
-        ],
-        eventCount: 1,
-      ),
-      keyMoments: [
-        KeyMoment(
-          id: 'm1',
-          date: DateTime(2026, 6, 2),
-          title: 'A heavier moment',
-          originalText: 'text',
-          shortSummary: 'text',
-          patternTitle: 'Pressure before yes',
-        ),
-      ],
-      nextCheck: 'What happened right before you said yes?',
-    );
+    ),
+  ],
+  nextCheck: 'What happened right before you said yes?',
+);
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -79,7 +79,8 @@ Future<void> _pump(
       ),
       GoRoute(
         path: '/moments',
-        builder: (context, state) => const Scaffold(body: Text('Moments screen')),
+        builder: (context, state) =>
+            const Scaffold(body: Text('Moments screen')),
       ),
     ],
   );
@@ -116,8 +117,9 @@ void main() {
     expect(find.text('Find related moments'), findsOneWidget);
   });
 
-  testWidgets('shows quality chip without duplicate clarity label',
-      (tester) async {
+  testWidgets('shows quality chip without duplicate clarity label', (
+    tester,
+  ) async {
     await _pump(
       tester,
       profile: _profile(),
@@ -140,9 +142,7 @@ void main() {
     await _pump(tester, profile: null);
 
     expect(
-      find.text(
-        'Record a few moments and ArchiveMe will build this pattern.',
-      ),
+      find.text('Record a few moments and ArchiveMe will build this pattern.'),
       findsOneWidget,
     );
   });
@@ -163,10 +163,7 @@ void main() {
 
     expect(usedCheck, 'What happened right before you said yes?');
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(
-      find.text(ConsumerUiCopy.resultNextCheckConfirmation),
-      findsWidgets,
-    );
+    expect(find.text(ConsumerUiCopy.resultNextCheckConfirmation), findsWidgets);
   });
 
   testWidgets('Find related moments navigates', (tester) async {

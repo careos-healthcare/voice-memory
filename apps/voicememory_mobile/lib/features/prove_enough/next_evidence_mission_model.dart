@@ -23,11 +23,11 @@ class NextEvidenceMissionModel {
   final DateTime? updatedAt;
 
   Map<String, dynamic> toJson() => {
-        'mission': mission,
-        'kind': kind.id,
-        if (sourceEntryId != null) 'sourceEntryId': sourceEntryId,
-        if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
-      };
+    'mission': mission,
+    'kind': kind.id,
+    if (sourceEntryId != null) 'sourceEntryId': sourceEntryId,
+    if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+  };
 
   static NextEvidenceMissionModel? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

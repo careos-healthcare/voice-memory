@@ -1,9 +1,5 @@
 /// How specific tomorrow's watch-for prompt is.
-enum WatchForPromptStrength {
-  low,
-  medium,
-  high,
-}
+enum WatchForPromptStrength { low, medium, high }
 
 extension WatchForPromptStrengthIds on WatchForPromptStrength {
   String get id => name;
@@ -18,7 +14,7 @@ WatchForPromptStrength? watchForPromptStrengthFromId(String? raw) {
 }
 
 /// Tone ids for tomorrow's check-in question variants.
-abstract final class WatchForQuestionVariantId {
+abstract class WatchForQuestionVariantId {
   WatchForQuestionVariantId._();
 
   static const gentle = 'gentle';

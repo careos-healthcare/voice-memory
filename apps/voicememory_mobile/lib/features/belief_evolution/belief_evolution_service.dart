@@ -62,7 +62,9 @@ class BeliefEvolutionService {
         beliefText: currentText,
         confidence: confidence,
         recordedAt: recordedAt,
-        supportingEntryIds: supporting.isNotEmpty ? supporting : _recentEntryIds(eligible, 3),
+        supportingEntryIds: supporting.isNotEmpty
+            ? supporting
+            : _recentEntryIds(eligible, 3),
       );
       state = state.copyWith(versions: [...state.versions, next]);
     } else {
@@ -233,8 +235,18 @@ String _quoteForEntry(JournalEntry entry) {
 String _dateLabel(DateTime at) {
   final local = at.toLocal();
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${months[local.month - 1]} ${local.day}, ${local.year}';
 }

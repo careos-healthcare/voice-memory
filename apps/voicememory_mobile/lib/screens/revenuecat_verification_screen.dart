@@ -21,7 +21,8 @@ class RevenueCatVerificationScreen extends StatefulWidget {
       _RevenueCatVerificationScreenState();
 }
 
-class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScreen> {
+class _RevenueCatVerificationScreenState
+    extends State<RevenueCatVerificationScreen> {
   final RevenueCatPurchaseJourney _journey = RevenueCatPurchaseJourney();
   final RevenueCatService _rc = RevenueCatService.instance;
 
@@ -42,7 +43,9 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
     setState(() => _busy = true);
     _journey.sdkInitialized = _rc.isConfigured;
     final offerings = await _rc.fetchOfferings();
-    final ent = await AppServices.instance.billing.loadEntitlements(forceRefresh: true);
+    final ent = await AppServices.instance.billing.loadEntitlements(
+      forceRefresh: true,
+    );
     final userId = await _rc.getAppUserId();
     _journey.appUserId = userId;
 
@@ -64,7 +67,8 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
             ? 'SDK ready — complete purchase then restore on this device'
             : 'SDK not configured — set REVENUECAT_* API keys at build time';
         if (d.lastRevenueCatError != null) {
-          _message = '${_message!}\nlastRevenueCatError: ${d.lastRevenueCatError}';
+          _message =
+              '${_message!}\nlastRevenueCatError: ${d.lastRevenueCatError}';
         }
       });
     }
@@ -93,7 +97,10 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
             : 'Purchase finished but Pro not active — check RevenueCat dashboard';
       });
     } catch (e) {
-      setState(() => _message = userFacingErrorMessage(e, fallback: 'Purchase failed.'));
+      setState(
+        () =>
+            _message = userFacingErrorMessage(e, fallback: 'Purchase failed.'),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -111,7 +118,9 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
             : 'Restore finished — no active subscription';
       });
     } catch (e) {
-      setState(() => _message = userFacingErrorMessage(e, fallback: 'Restore failed.'));
+      setState(
+        () => _message = userFacingErrorMessage(e, fallback: 'Restore failed.'),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -144,9 +153,9 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
     final productIds = d.productIdentifiers.isNotEmpty
         ? d.productIdentifiers
         : (_offerings?.current?.availablePackages
-                .map((p) => p.storeProduct.identifier)
-                .toList() ??
-            []);
+                  .map((p) => p.storeProduct.identifier)
+                  .toList() ??
+              []);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -162,23 +171,17 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
             style: TextStyle(color: AppTheme.muted, height: 1.45),
           ),
           const SizedBox(height: 20),
-          _debugSection(
-            'SDK initialized',
-            _rc.isConfigured ? 'yes' : 'no',
-          ),
+          _debugSection('SDK initialized', _rc.isConfigured ? 'yes' : 'no'),
           _debugSection('apiKeyMissing', '${d.apiKeyMissing}'),
-          _debugSection(
-            'Offerings loaded',
-            d.offeringsLoaded ? 'yes' : 'no',
-          ),
+          _debugSection('Offerings loaded', d.offeringsLoaded ? 'yes' : 'no'),
           _debugSection('offeringCount', '${d.offeringCount}'),
           _debugSection('packageCount', '${d.packageCount}'),
-          _debugSection(
-            'requestedOfferingId',
-            d.requestedOfferingId ?? '—',
-          ),
+          _debugSection('requestedOfferingId', d.requestedOfferingId ?? '—'),
           _debugSection('currentOfferingId', d.currentOfferingId ?? '—'),
-          _debugSection('Product IDs', productIds.isEmpty ? '—' : productIds.join(', ')),
+          _debugSection(
+            'Product IDs',
+            productIds.isEmpty ? '—' : productIds.join(', '),
+          ),
           _debugSection('lastRevenueCatError', d.lastRevenueCatError ?? '—'),
           _debugSection(
             'Entitlement state',
@@ -191,7 +194,10 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
           _debugSection('App user ID', _appUserId ?? '—'),
           const SizedBox(height: 8),
           _debugSection('purchase_completed', '${_journey.purchaseCompleted}'),
-          _debugSection('entitlement_received', '${_journey.entitlementReceived}'),
+          _debugSection(
+            'entitlement_received',
+            '${_journey.entitlementReceived}',
+          ),
           _debugSection('restore_completed', '${_journey.restoreCompleted}'),
           if (_message != null) ...[
             const SizedBox(height: 12),
@@ -205,7 +211,10 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
           _button('Export evidence JSON', _export),
           if (_exportJson != null) ...[
             const SizedBox(height: 16),
-            const Text('Preview', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Preview',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
             SelectableText(
               _exportJson!,
@@ -225,10 +234,16 @@ class _RevenueCatVerificationScreenState extends State<RevenueCatVerificationScr
         children: [
           SizedBox(
             width: 140,
-            child: Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.muted)),
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+            ),
           ),
           Expanded(
-            child: Text(value, style: const TextStyle(fontSize: 13, color: AppTheme.foreground)),
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13, color: AppTheme.foreground),
+            ),
           ),
         ],
       ),

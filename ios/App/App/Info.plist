@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>VoiceMemory</string>
+        <string>ArchiveMe</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -48,11 +48,11 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>VoiceMemory needs the microphone to record private voice reflections.</string>
+	<string>ArchiveMe needs the microphone to record private voice reflections.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>VoiceMemory can attach a photo from your camera to a reflection when you choose to.</string>
+	<string>ArchiveMe can attach a photo from your camera to a reflection when you choose to.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>VoiceMemory can attach a photo from your library to a reflection when you choose to.</string>
+	<string>ArchiveMe can attach a photo from your library to a reflection when you choose to.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

@@ -7,10 +7,7 @@ import 'archive_insight_card_shell.dart';
 
 /// Recording #4 — progress toward working belief.
 class ArchiveMomentumSection extends StatelessWidget {
-  const ArchiveMomentumSection({
-    super.key,
-    required this.entries,
-  });
+  const ArchiveMomentumSection({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 
@@ -24,7 +21,10 @@ class ArchiveMomentumSection extends StatelessWidget {
         ArchiveInsightCardShell(
           sectionTitle: 'Archive momentum',
           children: [
-            ArchiveInsightField(label: 'Progress', value: momentum.progressLabel),
+            ArchiveInsightField(
+              label: 'Progress',
+              value: momentum.progressLabel,
+            ),
             ArchiveInsightField(
               label: 'Archive confidence',
               value: momentum.confidenceLabel,

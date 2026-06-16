@@ -3,11 +3,7 @@ import '../archive_evidence/archive_evidence.dart';
 import '../archive_v1/archive_v1_models.dart';
 import 'archive_growth_copy.dart';
 
-enum ArchiveJourneyStepId {
-  day1,
-  day3,
-  day7,
-}
+enum ArchiveJourneyStepId { day1, day3, day7 }
 
 class ArchiveJourneyStep {
   const ArchiveJourneyStep({
@@ -42,7 +38,7 @@ class ArchiveJourneyView {
 }
 
 /// First wow moments — deterministic, no new AI.
-abstract final class ArchiveJourneyEngine {
+abstract class ArchiveJourneyEngine {
   ArchiveJourneyEngine._();
 
   static ArchiveJourneyView build({
@@ -118,7 +114,8 @@ abstract final class ArchiveJourneyEngine {
 
   static int _daysSinceFirst(List<JournalEntry> eligible) {
     if (eligible.isEmpty) return 0;
-    final sorted = [...eligible]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...eligible]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final first = sorted.first.createdAt;
     final days = DateTime.now().difference(first).inDays;
     return days < 0 ? 0 : days;

@@ -19,11 +19,11 @@ enum BeliefShiftKind {
   }
 
   String get label => switch (this) {
-        BeliefShiftKind.gradualBeliefChange => 'Gradual belief change',
-        BeliefShiftKind.repeatedLanguageChange => 'Repeated language change',
-        BeliefShiftKind.confidenceChange => 'Confidence change',
-        BeliefShiftKind.themeMigration => 'Theme migration',
-      };
+    BeliefShiftKind.gradualBeliefChange => 'Gradual belief change',
+    BeliefShiftKind.repeatedLanguageChange => 'Repeated language change',
+    BeliefShiftKind.confidenceChange => 'Confidence change',
+    BeliefShiftKind.themeMigration => 'Theme migration',
+  };
 }
 
 /// One leg in an evidence-backed belief evolution chain.
@@ -39,10 +39,10 @@ class BeliefShiftTimelineStep {
   final DateTime? recordedAt;
 
   Map<String, dynamic> toJson() => {
-        'beliefText': beliefText,
-        'entryId': entryId,
-        if (recordedAt != null) 'recordedAt': recordedAt!.toUtc().toIso8601String(),
-      };
+    'beliefText': beliefText,
+    'entryId': entryId,
+    if (recordedAt != null) 'recordedAt': recordedAt!.toUtc().toIso8601String(),
+  };
 
   static BeliefShiftTimelineStep? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -82,15 +82,15 @@ class BeliefShiftReport {
   bool get hasEvidenceChain => evolutionTimeline.length >= 2;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'originalBelief': originalBelief,
-        'newBelief': newBelief,
-        'confidence': confidence,
-        'evolutionTimeline': evolutionTimeline.map((s) => s.toJson()).toList(),
-        'evidenceIds': evidenceIds,
-        'kind': kind.name,
-        'sharedTopics': sharedTopics,
-      };
+    'id': id,
+    'originalBelief': originalBelief,
+    'newBelief': newBelief,
+    'confidence': confidence,
+    'evolutionTimeline': evolutionTimeline.map((s) => s.toJson()).toList(),
+    'evidenceIds': evidenceIds,
+    'kind': kind.name,
+    'sharedTopics': sharedTopics,
+  };
 
   static BeliefShiftReport? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -103,7 +103,9 @@ class BeliefShiftReport {
         final step = BeliefShiftTimelineStep.fromJson(item);
         if (step != null) timeline.add(step);
       } else if (item is Map) {
-        final step = BeliefShiftTimelineStep.fromJson(Map<String, dynamic>.from(item));
+        final step = BeliefShiftTimelineStep.fromJson(
+          Map<String, dynamic>.from(item),
+        );
         if (step != null) timeline.add(step);
       }
     }

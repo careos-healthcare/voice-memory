@@ -79,7 +79,13 @@ class PostSaveInsightEngine {
     }
 
     var signals = result.reads
-        .map((read) => _signalFromRead(read, pattern, isPrimary: read == result.reads.first))
+        .map(
+          (read) => _signalFromRead(
+            read,
+            pattern,
+            isPrimary: read == result.reads.first,
+          ),
+        )
         .toList();
 
     if (activeLoop != null &&
@@ -117,7 +123,9 @@ class PostSaveInsightEngine {
       );
       for (final alt in legacy.signals) {
         if (signals.length >= 3) break;
-        if (signals.any((s) => s.readId == alt.readId || s.title == alt.title)) {
+        if (signals.any(
+          (s) => s.readId == alt.readId || s.title == alt.title,
+        )) {
           continue;
         }
         signals.add(alt);
@@ -255,8 +263,7 @@ class PostSaveInsightEngine {
       mightMean: 'This may be another way to read the same moment.',
       wouldConfirm: 'This angle keeps showing up in similar moments.',
       wouldContradict: 'This angle does not fit your next moments.',
-      recordNextQuestion:
-          'What would confirm or contradict this read?',
+      recordNextQuestion: 'What would confirm or contradict this read?',
       categoryId: alt.categoryId,
       strengthLabel: 'Early signal',
       whySuggested: alt.whyNoticed,

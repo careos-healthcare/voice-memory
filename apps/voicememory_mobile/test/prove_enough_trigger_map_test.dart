@@ -189,8 +189,14 @@ void main() {
 
     test('not-enough-data state when triggers are unclear', () {
       final model = engine.build([
-        _entry(id: 'e1', transcript: 'It was a normal day with nothing specific happening.'),
-        _entry(id: 'e2', transcript: 'I worked for a while and then went to bed.'),
+        _entry(
+          id: 'e1',
+          transcript: 'It was a normal day with nothing specific happening.',
+        ),
+        _entry(
+          id: 'e2',
+          transcript: 'I worked for a while and then went to bed.',
+        ),
       ]);
 
       expect(model.analyzedEntryCount, 2);
@@ -211,10 +217,15 @@ void main() {
       ]);
 
       for (final row in model.rankedRows) {
-        expect(transcript.toLowerCase().contains(row.lastEvidencePhrase.toLowerCase()) ||
-            row.lastEvidencePhrase.toLowerCase().contains('everyone else') ||
-            row.lastEvidencePhrase.toLowerCase().contains('behind') ||
-            row.lastEvidencePhrase.toLowerCase().contains('compared'), isTrue);
+        expect(
+          transcript.toLowerCase().contains(
+                row.lastEvidencePhrase.toLowerCase(),
+              ) ||
+              row.lastEvidencePhrase.toLowerCase().contains('everyone else') ||
+              row.lastEvidencePhrase.toLowerCase().contains('behind') ||
+              row.lastEvidencePhrase.toLowerCase().contains('compared'),
+          isTrue,
+        );
       }
     });
 
@@ -249,19 +260,14 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: LoopTriggerMapCard(model: model),
-          ),
+          home: Scaffold(body: LoopTriggerMapCard(model: model)),
         ),
       );
       await _pumpFrames(tester);
 
       expect(find.byKey(const Key('loop_trigger_map_card')), findsOneWidget);
       expect(find.text('Loop trigger map'), findsOneWidget);
-      expect(
-        find.text(LoopTriggerMapModel.notEnoughDataCopy),
-        findsOneWidget,
-      );
+      expect(find.text(LoopTriggerMapModel.notEnoughDataCopy), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
@@ -285,9 +291,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: LoopTriggerMapCard(model: model),
-          ),
+          home: Scaffold(body: LoopTriggerMapCard(model: model)),
         ),
       );
       await _pumpFrames(tester);

@@ -32,10 +32,9 @@ class NoOpCurrentObjectiveWidgetBridge implements CurrentObjectiveWidgetBridge {
 /// Method channel bridge — fails softly when native code is unavailable.
 class MethodChannelCurrentObjectiveWidgetBridge
     implements CurrentObjectiveWidgetBridge {
-  MethodChannelCurrentObjectiveWidgetBridge({
-    MethodChannel? channel,
-  }) : _channel = channel ??
-            const MethodChannel('archive_me/current_objective_widget');
+  MethodChannelCurrentObjectiveWidgetBridge({MethodChannel? channel})
+    : _channel =
+          channel ?? const MethodChannel('archive_me/current_objective_widget');
 
   final MethodChannel _channel;
 

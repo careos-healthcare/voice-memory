@@ -29,10 +29,7 @@ void main() {
     );
     expect(
       summary.status,
-      anyOf(
-        ChangeSummaryStatus.steady,
-        ChangeSummaryStatus.stronger,
-      ),
+      anyOf(ChangeSummaryStatus.steady, ChangeSummaryStatus.stronger),
     );
     expect(summary.title, isNotEmpty);
     expect(summary.chips, isNotEmpty);

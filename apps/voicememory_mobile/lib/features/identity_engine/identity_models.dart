@@ -27,17 +27,17 @@ class IdentityTrait {
   String get trendLabel => '${trend.glyph} ${trend.displayLabel}';
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': 1,
-        'id': id,
-        'title': title,
-        'confidence': confidence,
-        'evidenceCount': evidenceCount,
-        'supportingRecordingIds': supportingRecordingIds,
-        'supportingQuotes': supportingQuotes,
-        'trend': trend.name,
-        if (firstSeen != null) 'firstSeen': firstSeen!.toUtc().toIso8601String(),
-        if (lastSeen != null) 'lastSeen': lastSeen!.toUtc().toIso8601String(),
-      };
+    'schemaVersion': 1,
+    'id': id,
+    'title': title,
+    'confidence': confidence,
+    'evidenceCount': evidenceCount,
+    'supportingRecordingIds': supportingRecordingIds,
+    'supportingQuotes': supportingQuotes,
+    'trend': trend.name,
+    if (firstSeen != null) 'firstSeen': firstSeen!.toUtc().toIso8601String(),
+    if (lastSeen != null) 'lastSeen': lastSeen!.toUtc().toIso8601String(),
+  };
 
   static IdentityTrait? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -85,14 +85,14 @@ class IdentityProfile {
       decliningTraits.isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': 1,
-        'lastUpdated': lastUpdated.toUtc().toIso8601String(),
-        'hasMinimumArchiveEvidence': hasMinimumArchiveEvidence,
-        'evidenceReflectionCount': evidenceReflectionCount,
-        'currentTraits': currentTraits.map((t) => t.toJson()).toList(),
-        'emergingTraits': emergingTraits.map((t) => t.toJson()).toList(),
-        'decliningTraits': decliningTraits.map((t) => t.toJson()).toList(),
-      };
+    'schemaVersion': 1,
+    'lastUpdated': lastUpdated.toUtc().toIso8601String(),
+    'hasMinimumArchiveEvidence': hasMinimumArchiveEvidence,
+    'evidenceReflectionCount': evidenceReflectionCount,
+    'currentTraits': currentTraits.map((t) => t.toJson()).toList(),
+    'emergingTraits': emergingTraits.map((t) => t.toJson()).toList(),
+    'decliningTraits': decliningTraits.map((t) => t.toJson()).toList(),
+  };
 
   static IdentityProfile empty({int evidenceCount = 0}) {
     return IdentityProfile(
@@ -110,9 +110,13 @@ class IdentityProfile {
     List<IdentityTrait> parseList(dynamic raw) {
       if (raw is! List) return const [];
       return raw
-          .map((e) => IdentityTrait.fromJson(
-                e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
-              ))
+          .map(
+            (e) => IdentityTrait.fromJson(
+              e is Map<String, dynamic>
+                  ? e
+                  : Map<String, dynamic>.from(e as Map),
+            ),
+          )
           .whereType<IdentityTrait>()
           .toList();
     }
@@ -121,10 +125,12 @@ class IdentityProfile {
       currentTraits: parseList(json['currentTraits']),
       emergingTraits: parseList(json['emergingTraits']),
       decliningTraits: parseList(json['decliningTraits']),
-      lastUpdated: DateTime.tryParse(json['lastUpdated']?.toString() ?? '') ??
+      lastUpdated:
+          DateTime.tryParse(json['lastUpdated']?.toString() ?? '') ??
           DateTime.now().toUtc(),
       hasMinimumArchiveEvidence: json['hasMinimumArchiveEvidence'] == true,
-      evidenceReflectionCount: (json['evidenceReflectionCount'] as num?)?.toInt() ?? 0,
+      evidenceReflectionCount:
+          (json['evidenceReflectionCount'] as num?)?.toInt() ?? 0,
     );
   }
 }

@@ -74,8 +74,8 @@ class _MonthlyAmbitionPressureReviewScreenState
     }
     final canViewFull =
         await MonthlyAmbitionPressureReviewCoordinator.canViewFullReview(
-      entitlements,
-    );
+          entitlements,
+        );
     if (canViewFull && entitlements?.isPro != true) {
       await MonthlyAmbitionPressureReviewCoordinator.consumeFreeReviewIfNeeded(
         entitlements,
@@ -186,13 +186,37 @@ class _MonthlyAmbitionPressureReviewScreenState
           style: ArchiveMobileTypography.cardLabel(context),
         ),
         const SizedBox(height: AppSpacing.lg),
-        _section(context, MonthlyAmbitionPressureReview.whatRepeatedTitle, review.whatRepeated),
-        _section(context, MonthlyAmbitionPressureReview.whatCostTitle, review.whatSeemedToCostYou),
-        _section(context, MonthlyAmbitionPressureReview.choiceVsPressureTitle, review.choiceVsPressureSummary),
-        _section(context, MonthlyAmbitionPressureReview.restGuiltTitle, review.restGuiltSummary),
-        _section(context, MonthlyAmbitionPressureReview.triggerMapTitle, review.triggerMapSummary),
+        _section(
+          context,
+          MonthlyAmbitionPressureReview.whatRepeatedTitle,
+          review.whatRepeated,
+        ),
+        _section(
+          context,
+          MonthlyAmbitionPressureReview.whatCostTitle,
+          review.whatSeemedToCostYou,
+        ),
+        _section(
+          context,
+          MonthlyAmbitionPressureReview.choiceVsPressureTitle,
+          review.choiceVsPressureSummary,
+        ),
+        _section(
+          context,
+          MonthlyAmbitionPressureReview.restGuiltTitle,
+          review.restGuiltSummary,
+        ),
+        _section(
+          context,
+          MonthlyAmbitionPressureReview.triggerMapTitle,
+          review.triggerMapSummary,
+        ),
         _directionSection(context, review),
-        _section(context, MonthlyAmbitionPressureReview.nextMissionTitle, review.nextMonthMission),
+        _section(
+          context,
+          MonthlyAmbitionPressureReview.nextMissionTitle,
+          review.nextMonthMission,
+        ),
         const SizedBox(height: AppSpacing.lg),
         ProveEnoughPatternReportExportButton(
           isPro: _isPro,
@@ -245,17 +269,17 @@ class _MonthlyAmbitionPressureReviewScreenState
             const SizedBox(height: AppSpacing.xs),
             Text(
               review.direction.copy,
-              style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
             if (review.whatChanged.trim().isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
                 review.whatChanged,
-                style: ArchiveMobileTypography.body(context).copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: ArchiveMobileTypography.body(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
               ),
             ],
             if (review.directionEvidence.isNotEmpty) ...[

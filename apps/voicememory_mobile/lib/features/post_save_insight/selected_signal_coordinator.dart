@@ -2,7 +2,7 @@ import '../../services/app_services.dart';
 import 'selected_signal_model.dart';
 import 'selected_signal_store.dart';
 
-abstract final class SelectedSignalCoordinator {
+abstract class SelectedSignalCoordinator {
   SelectedSignalCoordinator._();
 
   static SelectedSignalStore _store() => SelectedSignalStore.instance();

@@ -92,7 +92,8 @@ class SignalJourneyCard extends StatelessWidget {
           if (!compact) ...[
             const SizedBox(height: AppSpacing.xs),
             OutlinedButton(
-              onPressed: onViewJourney ??
+              onPressed:
+                  onViewJourney ??
                   () => SignalJourneyNavigation.openJourneyDetail(context),
               child: Text(ConsumerUiCopy.signalJourneyViewJourney),
             ),
@@ -101,7 +102,8 @@ class SignalJourneyCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                onPressed: onViewJourney ??
+                onPressed:
+                    onViewJourney ??
                     () => SignalJourneyNavigation.openJourneyDetail(context),
                 child: Text(ConsumerUiCopy.signalJourneyViewJourney),
               ),
@@ -115,10 +117,7 @@ class SignalJourneyCard extends StatelessWidget {
 
 /// Patterns tab variant for confirmed journeys.
 class SignalJourneyConfirmedCard extends StatelessWidget {
-  const SignalJourneyConfirmedCard({
-    super.key,
-    required this.journey,
-  });
+  const SignalJourneyConfirmedCard({super.key, required this.journey});
 
   final SignalJourney journey;
 

@@ -26,13 +26,14 @@ class PostSaveClearerMomentBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: ArchiveResponsiveLayout.cardInsets(context),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.accentPrimary.withValues(alpha: 0.06),
-      ).copyWith(
-        border: Border.all(
-          color: AppColors.accentPrimary.withValues(alpha: 0.25),
-        ),
-      ),
+      decoration:
+          VoiceMemoryCards.standard(
+            background: AppColors.accentPrimary.withValues(alpha: 0.06),
+          ).copyWith(
+            border: Border.all(
+              color: AppColors.accentPrimary.withValues(alpha: 0.25),
+            ),
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -42,20 +43,14 @@ class PostSaveClearerMomentBanner extends StatelessWidget {
           ),
           SizedBox(height: gap / 2),
           if (lead != null && lead!.isNotEmpty)
-            Text(
-              lead!,
-              style: ArchiveMobileTypography.explanationBody(context),
-            )
+            Text(lead!, style: ArchiveMobileTypography.explanationBody(context))
           else
             Text(
               ConsumerUiCopy.postSaveInsightNeedsClearerLead,
               style: ArchiveMobileTypography.explanationBody(context),
             ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            prompt,
-            style: ArchiveMobileTypography.explanationBody(context),
-          ),
+          Text(prompt, style: ArchiveMobileTypography.explanationBody(context)),
           SizedBox(height: gap),
           FilledButton(
             onPressed: onRecordNext,

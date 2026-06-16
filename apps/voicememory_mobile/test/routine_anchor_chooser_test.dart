@@ -7,9 +7,7 @@ void main() {
   testWidgets('shows the prompt and all anchor options', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: RoutineAnchorChooser(onSelected: (_) {}),
-        ),
+        home: Scaffold(body: RoutineAnchorChooser(onSelected: (_) {})),
       ),
     );
 
@@ -22,8 +20,9 @@ void main() {
     expect(find.text('Custom'), findsOneWidget);
   });
 
-  testWidgets('tapping an option fires onSelected with that anchor',
-      (tester) async {
+  testWidgets('tapping an option fires onSelected with that anchor', (
+    tester,
+  ) async {
     RoutineAnchor? picked;
     await tester.pumpWidget(
       MaterialApp(
@@ -41,8 +40,9 @@ void main() {
     expect(picked!.displayLabel, 'Evening');
   });
 
-  testWidgets('Custom reveals a field and returns the entered label',
-      (tester) async {
+  testWidgets('Custom reveals a field and returns the entered label', (
+    tester,
+  ) async {
     RoutineAnchor? picked;
     await tester.pumpWidget(
       MaterialApp(

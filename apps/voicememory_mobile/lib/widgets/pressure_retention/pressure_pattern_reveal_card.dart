@@ -51,9 +51,9 @@ class PressurePatternRevealCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             reveal.headline,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           if (reveal.hasPattern) ...[
             const SizedBox(height: AppSpacing.md),
@@ -82,17 +82,12 @@ class PressurePatternRevealCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          costsTitle,
-          style: ArchiveMobileTypography.cardLabel(context),
-        ),
+        Text(costsTitle, style: ArchiveMobileTypography.cardLabel(context)),
         const SizedBox(height: AppSpacing.xs),
         Wrap(
           spacing: AppSpacing.xs,
           runSpacing: AppSpacing.xs,
-          children: [
-            for (final cost in reveal.costs) _costChip(context, cost),
-          ],
+          children: [for (final cost in reveal.costs) _costChip(context, cost)],
         ),
       ],
     );
@@ -108,9 +103,9 @@ class PressurePatternRevealCard extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          color: AppColors.textSecondary,
-        ),
+        style: ArchiveMobileTypography.responsiveHelper(
+          context,
+        ).copyWith(color: AppColors.textSecondary),
       ),
     );
   }
@@ -125,15 +120,21 @@ class PressurePatternRevealCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (reveal.strongestTrigger != null)
-            _detailRow(context, 'Strongest repeated trigger',
-                reveal.strongestTrigger!),
+            _detailRow(
+              context,
+              'Strongest repeated trigger',
+              reveal.strongestTrigger!,
+            ),
           if (reveal.likelyCost != null) ...[
             const SizedBox(height: AppSpacing.xs),
             _detailRow(context, 'Likely cost', reveal.likelyCost!),
           ],
           const SizedBox(height: AppSpacing.xs),
-          _detailRow(context, 'Suggested experiment',
-              reveal.suggestedExperiment),
+          _detailRow(
+            context,
+            'Suggested experiment',
+            reveal.suggestedExperiment,
+          ),
           const SizedBox(height: AppSpacing.xs),
           _detailRow(context, 'Confidence', reveal.confidence.label),
         ],
@@ -149,9 +150,9 @@ class PressurePatternRevealCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: ArchiveMobileTypography.body(context).copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: ArchiveMobileTypography.body(
+            context,
+          ).copyWith(color: AppColors.textPrimary),
         ),
       ],
     );

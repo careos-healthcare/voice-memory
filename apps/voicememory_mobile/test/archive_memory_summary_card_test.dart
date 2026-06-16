@@ -44,8 +44,9 @@ Future<void> _pump(
 }
 
 void main() {
-  testWidgets('renders the title, clarity, and remembered lines',
-      (tester) async {
+  testWidgets('renders the title, clarity, and remembered lines', (
+    tester,
+  ) async {
     await _pump(tester, _summary());
     expect(find.text('What ArchiveMe remembers'), findsOneWidget);
     expect(find.text('Clear pattern'), findsOneWidget);
@@ -54,8 +55,10 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('It often starts before: saying yes.'), findsOneWidget);
-    expect(find.textContaining('Based on 8 moments across 3 weeks.'),
-        findsOneWidget);
+    expect(
+      find.textContaining('Based on 8 moments across 3 weeks.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('renders memory quality chip in clarity area', (tester) async {
@@ -81,8 +84,9 @@ void main() {
     expect(found, isTrue);
   });
 
-  testWidgets('Use this check callback fires with the next check',
-      (tester) async {
+  testWidgets('Use this check callback fires with the next check', (
+    tester,
+  ) async {
     String? used;
     await _pump(tester, _summary(), onUseCheck: (q) => used = q);
     await tester.tap(find.text('Use this check'));
@@ -103,7 +107,9 @@ void main() {
     expect(find.text('More specific'), findsOneWidget);
   });
 
-  testWidgets('hides feedback chips when showFeedback is false', (tester) async {
+  testWidgets('hides feedback chips when showFeedback is false', (
+    tester,
+  ) async {
     await _pump(tester, _summary(), showFeedback: false);
     expect(find.text('Was this useful?'), findsNothing);
   });

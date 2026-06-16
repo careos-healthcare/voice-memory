@@ -96,7 +96,8 @@ class ArchiveChangeFeedEngine {
       reviewedAt: reviewedAt,
     );
 
-    final hasChanges = beliefs.strengthened.isNotEmpty ||
+    final hasChanges =
+        beliefs.strengthened.isNotEmpty ||
         beliefs.weakened.isNotEmpty ||
         contradictions.appeared.isNotEmpty ||
         contradictions.resolved.isNotEmpty ||
@@ -277,8 +278,7 @@ class ArchiveChangeFeedEngine {
       final label = ThemeTrackerService.displayNames[id] ?? id;
       final seriesAtReview = _monthlyMentionSeries(id, before, maxMonths: 3);
       final series = _monthlyMentionSeries(id, all, maxMonths: 3);
-      final mentionsAtReview =
-          seriesAtReview.isEmpty ? 0 : seriesAtReview.last;
+      final mentionsAtReview = seriesAtReview.isEmpty ? 0 : seriesAtReview.last;
       final mentionsNow = series.isEmpty ? 0 : series.last;
       final newSince = _themeMentionCount(id, afterOnly);
 
@@ -308,8 +308,12 @@ class ArchiveChangeFeedEngine {
       }
     }
 
-    increasing.sort((a, b) => b.newMentionsSinceReview.compareTo(a.newMentionsSinceReview));
-    decreasing.sort((a, b) => a.newMentionsSinceReview.compareTo(b.newMentionsSinceReview));
+    increasing.sort(
+      (a, b) => b.newMentionsSinceReview.compareTo(a.newMentionsSinceReview),
+    );
+    decreasing.sort(
+      (a, b) => a.newMentionsSinceReview.compareTo(b.newMentionsSinceReview),
+    );
 
     return _ThemeChanges(
       increasing: increasing.take(4).toList(),
@@ -339,7 +343,9 @@ class ArchiveChangeFeedEngine {
     }
     if (buckets.isEmpty) return const [];
     final keys = buckets.keys.toList()..sort();
-    final tail = keys.length <= maxMonths ? keys : keys.sublist(keys.length - maxMonths);
+    final tail = keys.length <= maxMonths
+        ? keys
+        : keys.sublist(keys.length - maxMonths);
     return tail.map((k) => buckets[k]!).toList();
   }
 
@@ -364,30 +370,21 @@ class ArchiveChangeFeedEngine {
 }
 
 class _BeliefChanges {
-  const _BeliefChanges({
-    required this.strengthened,
-    required this.weakened,
-  });
+  const _BeliefChanges({required this.strengthened, required this.weakened});
 
   final List<ArchiveChangeBeliefRow> strengthened;
   final List<ArchiveChangeBeliefRow> weakened;
 }
 
 class _ContradictionChanges {
-  const _ContradictionChanges({
-    required this.appeared,
-    required this.resolved,
-  });
+  const _ContradictionChanges({required this.appeared, required this.resolved});
 
   final List<ArchiveChangeContradictionRow> appeared;
   final List<ArchiveChangeContradictionRow> resolved;
 }
 
 class _ThemeChanges {
-  const _ThemeChanges({
-    required this.increasing,
-    required this.decreasing,
-  });
+  const _ThemeChanges({required this.increasing, required this.decreasing});
 
   final List<ArchiveChangeThemeRow> increasing;
   final List<ArchiveChangeThemeRow> decreasing;

@@ -46,45 +46,51 @@ void main() {
       );
     });
 
-    test('archive navigation suppresses separate Ask Archive and Find Moment cards', () {
-      final d = decidePatternsStack(
-        hasActiveCheckIn: false,
-        hasArchiveMemory: true,
-        hasNextCheck: false,
-        hasArchiveCleanView: true,
-        hasPatternProfile: false,
-        hasRangeReview: false,
-        hasArchiveCompression: false,
-        hasTimeline: false,
-        hasProgress: false,
-        hasRecap: false,
-        hasShare: false,
-        hasAnyMoment: true,
-      );
-      expect(d.suppressSeparateAskArchiveCard, isTrue);
-      expect(d.suppressSeparateFindMomentCard, isTrue);
-      expect(d.suppressSeparatePatternMapCard, isTrue);
-    });
+    test(
+      'archive navigation suppresses separate Ask Archive and Find Moment cards',
+      () {
+        final d = decidePatternsStack(
+          hasActiveCheckIn: false,
+          hasArchiveMemory: true,
+          hasNextCheck: false,
+          hasArchiveCleanView: true,
+          hasPatternProfile: false,
+          hasRangeReview: false,
+          hasArchiveCompression: false,
+          hasTimeline: false,
+          hasProgress: false,
+          hasRecap: false,
+          hasShare: false,
+          hasAnyMoment: true,
+        );
+        expect(d.suppressSeparateAskArchiveCard, isTrue);
+        expect(d.suppressSeparateFindMomentCard, isTrue);
+        expect(d.suppressSeparatePatternMapCard, isTrue);
+      },
+    );
 
-    test('Pattern Profile suppresses duplicate Pattern Map and Timeline entry CTAs', () {
-      final d = decidePatternsStack(
-        hasActiveCheckIn: false,
-        hasArchiveMemory: true,
-        hasNextCheck: true,
-        hasArchiveCleanView: true,
-        hasPatternProfile: true,
-        hasRangeReview: false,
-        hasArchiveCompression: false,
-        hasTimeline: true,
-        hasProgress: false,
-        hasRecap: false,
-        hasShare: false,
-        hasAnyMoment: true,
-      );
-      expect(d.suppressSeparatePatternMapCard, isTrue);
-      expect(d.suppressSeparateTimelineCard, isTrue);
-      expect(d.includes(PatternsSectionType.timeline), isFalse);
-    });
+    test(
+      'Pattern Profile suppresses duplicate Pattern Map and Timeline entry CTAs',
+      () {
+        final d = decidePatternsStack(
+          hasActiveCheckIn: false,
+          hasArchiveMemory: true,
+          hasNextCheck: true,
+          hasArchiveCleanView: true,
+          hasPatternProfile: true,
+          hasRangeReview: false,
+          hasArchiveCompression: false,
+          hasTimeline: true,
+          hasProgress: false,
+          hasRecap: false,
+          hasShare: false,
+          hasAnyMoment: true,
+        );
+        expect(d.suppressSeparatePatternMapCard, isTrue);
+        expect(d.suppressSeparateTimelineCard, isTrue);
+        expect(d.includes(PatternsSectionType.timeline), isFalse);
+      },
+    );
 
     test('empty state only when no moments and no archive memory', () {
       final empty = decidePatternsStack(
@@ -120,23 +126,26 @@ void main() {
       expect(withMemory.includes(PatternsSectionType.emptyState), isFalse);
     });
 
-    test('suppresses lower-priority Use this check when memory has next check', () {
-      final d = decidePatternsStack(
-        hasActiveCheckIn: false,
-        hasArchiveMemory: true,
-        hasNextCheck: true,
-        hasArchiveCleanView: false,
-        hasPatternProfile: false,
-        hasRangeReview: false,
-        hasArchiveCompression: false,
-        hasTimeline: true,
-        hasProgress: false,
-        hasRecap: false,
-        hasShare: false,
-        hasAnyMoment: true,
-      );
-      expect(d.suppressLowerPriorityCtas, isTrue);
-    });
+    test(
+      'suppresses lower-priority Use this check when memory has next check',
+      () {
+        final d = decidePatternsStack(
+          hasActiveCheckIn: false,
+          hasArchiveMemory: true,
+          hasNextCheck: true,
+          hasArchiveCleanView: false,
+          hasPatternProfile: false,
+          hasRangeReview: false,
+          hasArchiveCompression: false,
+          hasTimeline: true,
+          hasProgress: false,
+          hasRecap: false,
+          hasShare: false,
+          hasAnyMoment: true,
+        );
+        expect(d.suppressLowerPriorityCtas, isTrue);
+      },
+    );
 
     test('standalone next check section when no archive memory', () {
       final d = decidePatternsStack(

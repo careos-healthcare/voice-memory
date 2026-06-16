@@ -9,7 +9,7 @@ import 'loop_mode_model.dart';
 import 'loop_mode_store.dart';
 
 /// Orchestrates Loop Mode activation and progress tracking.
-abstract final class LoopModeCoordinator {
+abstract class LoopModeCoordinator {
   LoopModeCoordinator._();
 
   static const _engine = LoopModeEngine();
@@ -34,10 +34,7 @@ abstract final class LoopModeCoordinator {
     final mode = await loadActive();
     if (mode == null) return;
     await LoopModeStore.instance().save(
-      mode.copyWith(
-        firstPromptUsed: true,
-        updatedAt: DateTime.now(),
-      ),
+      mode.copyWith(firstPromptUsed: true, updatedAt: DateTime.now()),
     );
     ActivationTracker.trackLoopFirstPromptUsed();
   }
@@ -47,10 +44,7 @@ abstract final class LoopModeCoordinator {
     if (mode == null) return;
     final count = mode.completedRecordingCount + 1;
     await LoopModeStore.instance().save(
-      mode.copyWith(
-        completedRecordingCount: count,
-        updatedAt: DateTime.now(),
-      ),
+      mode.copyWith(completedRecordingCount: count, updatedAt: DateTime.now()),
     );
     if (count == 1) {
       ActivationTracker.trackLoopFirstRecordingSaved();
@@ -61,10 +55,7 @@ abstract final class LoopModeCoordinator {
     final mode = await loadActive();
     if (mode == null) return;
     await LoopModeStore.instance().save(
-      mode.copyWith(
-        readAccepted: true,
-        updatedAt: DateTime.now(),
-      ),
+      mode.copyWith(readAccepted: true, updatedAt: DateTime.now()),
     );
     ActivationTracker.trackLoopReadAccepted();
     unawaited(AcquisitionCohortCoordinator.markFirstReadAccepted());
@@ -77,10 +68,7 @@ abstract final class LoopModeCoordinator {
     final mode = await loadActive();
     if (mode == null) return;
     await LoopModeStore.instance().save(
-      mode.copyWith(
-        unsupportedRecording: true,
-        updatedAt: DateTime.now(),
-      ),
+      mode.copyWith(unsupportedRecording: true, updatedAt: DateTime.now()),
     );
     ActivationTracker.trackLoopUnsupportedRecording();
   }
@@ -96,10 +84,7 @@ abstract final class LoopModeCoordinator {
     final mode = await loadActive();
     if (mode == null) return;
     await LoopModeStore.instance().save(
-      mode.copyWith(
-        completed: true,
-        updatedAt: DateTime.now(),
-      ),
+      mode.copyWith(completed: true, updatedAt: DateTime.now()),
     );
     ActivationTracker.trackLoopCompleted();
   }

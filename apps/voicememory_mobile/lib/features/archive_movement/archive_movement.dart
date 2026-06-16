@@ -46,9 +46,7 @@ class ArchiveMovementEngine {
   }
 
   static List<JournalEntry> _eligible(List<JournalEntry> entries) {
-    return entries
-        .where((e) => e.transcript.trim().isNotEmpty)
-        .toList();
+    return entries.where((e) => e.transcript.trim().isNotEmpty).toList();
   }
 
   static ArchiveMovementUpdate build(
@@ -59,8 +57,8 @@ class ArchiveMovementEngine {
     final before = newEntryId != null
         ? after.where((e) => e.id != newEntryId).toList()
         : after.length > 1
-            ? after.sublist(0, after.length - 1)
-            : <JournalEntry>[];
+        ? after.sublist(0, after.length - 1)
+        : <JournalEntry>[];
 
     final snapBefore = ArchiveValueProgress.build(before);
     final snapAfter = ArchiveValueProgress.build(after);

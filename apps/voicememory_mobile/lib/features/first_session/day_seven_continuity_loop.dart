@@ -26,8 +26,9 @@ class DaySevenContinuityLoop {
     this.ctaLabel = '',
   });
 
-  static const DaySevenContinuityLoop none =
-      DaySevenContinuityLoop(stage: DaySevenContinuityStage.none);
+  static const DaySevenContinuityLoop none = DaySevenContinuityLoop(
+    stage: DaySevenContinuityStage.none,
+  );
 
   final DaySevenContinuityStage stage;
   final String title;
@@ -45,11 +46,11 @@ class DaySevenContinuityLoop {
 
   /// Stable stage id, safe to log. Never user text.
   String get stageId => switch (stage) {
-        DaySevenContinuityStage.none => 'none',
-        DaySevenContinuityStage.earlyThread => 'early_thread',
-        DaySevenContinuityStage.buildingArchive => 'building_archive',
-        DaySevenContinuityStage.weeklyReviewReady => 'weekly_review_ready',
-      };
+    DaySevenContinuityStage.none => 'none',
+    DaySevenContinuityStage.earlyThread => 'early_thread',
+    DaySevenContinuityStage.buildingArchive => 'building_archive',
+    DaySevenContinuityStage.weeklyReviewReady => 'weekly_review_ready',
+  };
 }
 
 /// Pure, deterministic builder — no IO, no AI, no new archive claims. The

@@ -26,7 +26,8 @@ class ActivePatternThreadEngine {
     if (phrase.startsWith('the same ')) {
       var rest = phrase.substring(9).trim();
       if (rest.endsWith('shows up again')) {
-        rest = '${rest.substring(0, rest.length - 'shows up again'.length).trim()} returning';
+        rest =
+            '${rest.substring(0, rest.length - 'shows up again'.length).trim()} returning';
       }
       if (rest.isNotEmpty) {
         return 'The same $rest';
@@ -41,7 +42,9 @@ class ActivePatternThreadEngine {
     return phrase[0].toUpperCase() + phrase.substring(1);
   }
 
-  ActivePatternThreadStatus statusFromRecentResults(List<WatchForResult> recent) {
+  ActivePatternThreadStatus statusFromRecentResults(
+    List<WatchForResult> recent,
+  ) {
     if (recent.isEmpty) return ActivePatternThreadStatus.active;
     final last = recent.first;
     if (last == WatchForResult.changedShape) {

@@ -71,7 +71,9 @@ class ArchiveEvolutionCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             evolution.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(height: 1.35),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              height: 1.35,
+            ),
           ),
           if (evolution.summary.trim().isNotEmpty) ...[
             const SizedBox(height: 8),

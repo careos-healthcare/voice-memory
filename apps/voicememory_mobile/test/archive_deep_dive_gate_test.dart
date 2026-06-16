@@ -27,10 +27,7 @@ JournalEntry _entry(String id, String transcript) {
   );
 }
 
-ArchiveV1View _view({
-  required bool hasMin,
-  ArchiveV1Belief? belief,
-}) {
+ArchiveV1View _view({required bool hasMin, ArchiveV1Belief? belief}) {
   return ArchiveV1View(
     hasMinimumEvidence: hasMin,
     belief: belief,
@@ -53,10 +50,7 @@ ArchiveV1View _view({
 
 void main() {
   test('canOpenDeepDive false without minimum evidence', () {
-    expect(
-      ArchiveDeepDiveGate.canOpenDeepDive(_view(hasMin: false)),
-      isFalse,
-    );
+    expect(ArchiveDeepDiveGate.canOpenDeepDive(_view(hasMin: false)), isFalse);
   });
 
   test('canOpenDeepDive false without belief', () {
@@ -82,9 +76,7 @@ void main() {
       supportingEntries: entries,
     );
     expect(
-      ArchiveDeepDiveGate.canOpenDeepDive(
-        _view(hasMin: true, belief: belief),
-      ),
+      ArchiveDeepDiveGate.canOpenDeepDive(_view(hasMin: true, belief: belief)),
       isTrue,
     );
   });

@@ -8,7 +8,7 @@ import 'return_day_friction_store.dart';
 /// Drives the return-day flow: open app -> see yesterday's question -> tap
 /// answer -> record one short moment -> loop closed. Wraps the store and
 /// reports funnel metrics so the team can see where returning users stall.
-abstract final class ReturnDayFrictionCoordinator {
+abstract class ReturnDayFrictionCoordinator {
   ReturnDayFrictionCoordinator._();
 
   static ReturnDayFrictionStore _store() =>
@@ -78,9 +78,7 @@ abstract final class ReturnDayFrictionCoordinator {
   }
 
   /// Final step: the return-day loop is closed. This is the payoff endpoint.
-  static Future<ReturnDayFrictionState> markLoopClosed(
-    String checkInId,
-  ) async {
+  static Future<ReturnDayFrictionState> markLoopClosed(String checkInId) async {
     if (!AppServices.isInitialized) return ReturnDayFrictionState.empty;
     final before = await _store().load();
     final after = await _store().markLoopClosed(checkInId);
@@ -100,7 +98,7 @@ abstract final class ReturnDayFrictionCoordinator {
     final state = await _store().load();
     final answeredButNotRecorded =
         state.stage == ReturnDayFrictionStage.answerSelected ||
-            state.stage == ReturnDayFrictionStage.recordingStarted;
+        state.stage == ReturnDayFrictionStage.recordingStarted;
     if (answeredButNotRecorded) {
       ActivationTracker.trackReturnDayAbandonedAfterAnswer();
     }
@@ -113,11 +111,12 @@ abstract final class ReturnDayFrictionCoordinator {
   ) {
     // A new check-in resets the funnel, so a different id always counts as a
     // fresh crossing of the stage boundary.
-    final crossedWithinSame = before.checkInId == after.checkInId &&
+    final crossedWithinSame =
+        before.checkInId == after.checkInId &&
         before.stage.index < stage.index &&
         after.stage.index >= stage.index;
-    final freshCheckIn = before.checkInId != after.checkInId &&
-        after.stage.index >= stage.index;
+    final freshCheckIn =
+        before.checkInId != after.checkInId && after.stage.index >= stage.index;
     return crossedWithinSame || freshCheckIn;
   }
 }

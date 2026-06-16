@@ -9,10 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Corrections the user made — trust surface, not shame.
 class SignalCorrectionsCard extends StatelessWidget {
-  const SignalCorrectionsCard({
-    super.key,
-    required this.corrections,
-  });
+  const SignalCorrectionsCard({super.key, required this.corrections});
 
   final SignalCorrectionView corrections;
 
@@ -51,7 +48,8 @@ class SignalCorrectionsCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
-          if (corrections.selectedAlternativeTitle?.trim().isNotEmpty == true) ...[
+          if (corrections.selectedAlternativeTitle?.trim().isNotEmpty ==
+              true) ...[
             Text(
               ConsumerUiCopy.signalCorrectionsSelected,
               style: ArchiveMobileTypography.cardLabel(context),

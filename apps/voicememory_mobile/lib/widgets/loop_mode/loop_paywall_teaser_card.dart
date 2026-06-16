@@ -76,9 +76,7 @@ class _LoopPaywallTeaserCardState extends State<LoopPaywallTeaserCard> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: AppColors.accentLight,
-      ),
+      decoration: VoiceMemoryCards.standard(background: AppColors.accentLight),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -92,8 +90,9 @@ class _LoopPaywallTeaserCardState extends State<LoopPaywallTeaserCard> {
             style: ArchiveMobileTypography.explanationBody(context),
           ),
           const SizedBox(height: AppSpacing.sm),
-          for (final bullet
-              in LoopModeCopy.paywallBulletsForLoop(widget.loopModeId))
+          for (final bullet in LoopModeCopy.paywallBulletsForLoop(
+            widget.loopModeId,
+          ))
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xs),
               child: Text(

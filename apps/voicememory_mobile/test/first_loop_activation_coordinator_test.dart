@@ -46,8 +46,9 @@ void main() {
   test('first pattern shown marks firstPatternShown', () async {
     await _reset(_stamp());
     await FirstLoopActivationCoordinator.markFirstMomentSaved();
-    final state =
-        await FirstLoopActivationCoordinator.markFirstPatternShown('saying yes');
+    final state = await FirstLoopActivationCoordinator.markFirstPatternShown(
+      'saying yes',
+    );
     expect(state.stage, FirstLoopActivationStage.firstPatternShown);
     expect(state.firstPatternTitle, 'saying yes');
     final events = await _events();

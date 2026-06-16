@@ -163,7 +163,10 @@ void main() {
         ],
       );
 
-      expect(entries.length, greaterThanOrEqualTo(InsightQualityRules.minEvidenceCount));
+      expect(
+        entries.length,
+        greaterThanOrEqualTo(InsightQualityRules.minEvidenceCount),
+      );
 
       for (final insight in snap.allInsights) {
         expect(

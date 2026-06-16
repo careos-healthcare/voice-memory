@@ -30,10 +30,9 @@ class PressureConfidenceLabel extends StatelessWidget {
           Flexible(
             child: Text(
               confidence.label,
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: color, fontWeight: FontWeight.w600),
             ),
           ),
         ],

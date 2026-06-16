@@ -146,7 +146,8 @@ class ReturnReasonEngine {
       );
     }
 
-    if (pendingQuestions.isNotEmpty && state?.health == ArchiveHealthV3.uncertain) {
+    if (pendingQuestions.isNotEmpty &&
+        state?.health == ArchiveHealthV3.uncertain) {
       return ReturnReasonCard(
         kind: ReturnReasonKind.uncertainPatterns,
         leadLine: 'Keep recording.',
@@ -309,7 +310,8 @@ class ReturnReasonEngine {
       'money': 'Money',
       'purpose': 'Purpose',
     };
-    return labels[key] ?? (key.isEmpty ? key : '${key[0].toUpperCase()}${key.substring(1)}');
+    return labels[key] ??
+        (key.isEmpty ? key : '${key[0].toUpperCase()}${key.substring(1)}');
   }
 
   static String _clip(String text) {

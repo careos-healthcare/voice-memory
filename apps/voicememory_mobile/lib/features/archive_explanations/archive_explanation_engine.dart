@@ -36,56 +36,60 @@ class ArchiveExplanationEngine {
   }) {
     if (entries.isEmpty) return null;
 
-    final snapshot = discoverEngine.build(entries: entries, state: state, useCache: true);
+    final snapshot = discoverEngine.build(
+      entries: entries,
+      state: state,
+      useCache: true,
+    );
 
     return switch (ref.kind) {
       ArchiveInsightKind.belief => _beliefExplanation(entries, state, snapshot),
       ArchiveInsightKind.beliefChange => _beliefChangeExplanation(
-          ref.index ?? 0,
-          entries,
-          state,
-          snapshot,
-        ),
+        ref.index ?? 0,
+        entries,
+        state,
+        snapshot,
+      ),
       ArchiveInsightKind.theme => _themeExplanation(
-          ref.themeKey ?? '',
-          entries,
-          state,
-          snapshot,
-        ),
+        ref.themeKey ?? '',
+        entries,
+        state,
+        snapshot,
+      ),
       ArchiveInsightKind.contradiction => _contradictionExplanation(
-          ref.entryIdA ?? '',
-          ref.entryIdB ?? '',
-          entries,
-          state,
-        ),
+        ref.entryIdA ?? '',
+        ref.entryIdB ?? '',
+        entries,
+        state,
+      ),
       ArchiveInsightKind.blindSpot => _blindSpotExplanation(
-          ref.blindSpotId ?? '',
-          entries,
-          state,
-          snapshot,
-        ),
+        ref.blindSpotId ?? '',
+        entries,
+        state,
+        snapshot,
+      ),
       ArchiveInsightKind.chapter => _chapterExplanation(
-          ref.chapterId ?? '',
-          entries,
-        ),
+        ref.chapterId ?? '',
+        entries,
+      ),
       ArchiveInsightKind.weeklyStory => _weeklyStoryExplanation(entries, state),
       ArchiveInsightKind.askArchive => _askExplanation(
-          ref.id,
-          entries,
-          state,
-          askCitedIds ?? const [],
-          resolvedPrompt: askPromptAnswer ?? ref.askPrompt,
-        ),
+        ref.id,
+        entries,
+        state,
+        askCitedIds ?? const [],
+        resolvedPrompt: askPromptAnswer ?? ref.askPrompt,
+      ),
       ArchiveInsightKind.surprise => _surpriseExplanation(
-          ref.surpriseIndex ?? 0,
-          entries,
-          state,
-        ),
+        ref.surpriseIndex ?? 0,
+        entries,
+        state,
+      ),
       ArchiveInsightKind.challenge => _challengeExplanation(
-          ref.challengeIndex ?? 0,
-          entries,
-          state,
-        ),
+        ref.challengeIndex ?? 0,
+        entries,
+        state,
+      ),
     };
   }
 
@@ -199,7 +203,8 @@ class ArchiveExplanationEngine {
     ArchiveStateObjectV3? state,
     DiscoverYourselfSnapshot snapshot,
   ) {
-    final card = snapshot.belief ??
+    final card =
+        snapshot.belief ??
         const DiscoverBeliefEngine().build(entries: entries, state: state);
     if (card == null) return null;
 
@@ -223,7 +228,8 @@ class ArchiveExplanationEngine {
       title: 'Current belief',
       beliefStatement: belief,
       explanation: _whyBeliefBody(belief, card.evidenceCount),
-      whySummary: state?.evidenceSummary ??
+      whySummary:
+          state?.evidenceSummary ??
           'This belief is inferred from recurring language in your recordings.',
       supportingEvidence: supporting,
       contradictingEvidence: contradicting,
@@ -412,7 +418,8 @@ class ArchiveExplanationEngine {
     }
 
     return ArchiveExplanation(
-      insightId: 'contradiction:${report.originalEntryId}|${report.conflictingEntryId}',
+      insightId:
+          'contradiction:${report.originalEntryId}|${report.conflictingEntryId}',
       kind: ArchiveInsightKind.contradiction,
       title: 'Contradiction',
       explanation:
@@ -467,11 +474,7 @@ class ArchiveExplanationEngine {
       supportingEvidence: _refsFromEntries(supportEntries),
       contradictingEvidence: const [],
       relatedThemes: crossReferenceEngine
-          .build(
-            entries: entries,
-            state: state,
-            focusEntryIds: spot.entryIds,
-          )
+          .build(entries: entries, state: state, focusEntryIds: spot.entryIds)
           .relatedThemes,
       relatedBeliefs: const [],
       relatedBlindSpots: [
@@ -535,7 +538,10 @@ class ArchiveExplanationEngine {
     List<JournalEntry> entries,
     ArchiveStateObjectV3? state,
   ) {
-    final story = const WeeklyStoryEngine().build(entries: entries, state: state);
+    final story = const WeeklyStoryEngine().build(
+      entries: entries,
+      state: state,
+    );
     if (story == null) return null;
 
     return ArchiveExplanation(
@@ -561,12 +567,7 @@ class ArchiveExplanationEngine {
           )
           .toList(),
       relatedBeliefs: story.primaryBelief != null
-          ? [
-              RelatedBelief(
-                statement: story.primaryBelief!,
-                relevanceScore: 80,
-              ),
-            ]
+          ? [RelatedBelief(statement: story.primaryBelief!, relevanceScore: 80)]
           : const [],
       relatedBlindSpots: const [],
       relatedContradictions: const [],
@@ -583,7 +584,8 @@ class ArchiveExplanationEngine {
     List<String> citedIds, {
     String? resolvedPrompt,
   }) {
-    final prompt = resolvedPrompt ??
+    final prompt =
+        resolvedPrompt ??
         (promptOrId.startsWith('ask:') ? null : promptOrId) ??
         'What changed most?';
     final answer = discoverEngine.answerArchiveQuestion(
@@ -607,8 +609,12 @@ class ArchiveExplanationEngine {
       whySummary: 'Answer assembled from cited archive entries only.',
       supportingEvidence: supporting,
       contradictingEvidence: const [],
-      relatedThemes: crossReferenceEngine.build(entries: entries, state: state).relatedThemes,
-      relatedBeliefs: crossReferenceEngine.build(entries: entries, state: state).relatedBeliefs,
+      relatedThemes: crossReferenceEngine
+          .build(entries: entries, state: state)
+          .relatedThemes,
+      relatedBeliefs: crossReferenceEngine
+          .build(entries: entries, state: state)
+          .relatedBeliefs,
       relatedBlindSpots: const [],
       relatedContradictions: const [],
       timeline: BeliefTimeline.empty,
@@ -637,7 +643,9 @@ class ArchiveExplanationEngine {
           if (byId[id] != null) _refFromEntry(byId[id]!),
       ],
       contradictingEvidence: const [],
-      relatedThemes: crossReferenceEngine.build(entries: entries, state: state).relatedThemes,
+      relatedThemes: crossReferenceEngine
+          .build(entries: entries, state: state)
+          .relatedThemes,
       relatedBeliefs: const [],
       relatedBlindSpots: const [],
       relatedContradictions: const [],
@@ -661,16 +669,23 @@ class ArchiveExplanationEngine {
       kind: ArchiveInsightKind.challenge,
       title: c.headline,
       explanation: c.body,
-      whySummary: 'The archive compares how you describe yourself with what you record.',
+      whySummary:
+          'The archive compares how you describe yourself with what you record.',
       supportingEvidence: [
         for (final id in c.evidenceEntryIds)
           if (byId[id] != null) _refFromEntry(byId[id]!),
       ],
       contradictingEvidence: const [],
-      relatedThemes: crossReferenceEngine.build(entries: entries, state: state).relatedThemes,
+      relatedThemes: crossReferenceEngine
+          .build(entries: entries, state: state)
+          .relatedThemes,
       relatedBeliefs: const [],
-      relatedBlindSpots: crossReferenceEngine.build(entries: entries, state: state).relatedBlindSpots,
-      relatedContradictions: crossReferenceEngine.build(entries: entries, state: state).relatedContradictions,
+      relatedBlindSpots: crossReferenceEngine
+          .build(entries: entries, state: state)
+          .relatedBlindSpots,
+      relatedContradictions: crossReferenceEngine
+          .build(entries: entries, state: state)
+          .relatedContradictions,
       timeline: BeliefTimeline.empty,
       confidence: c.confidence.toDouble(),
       hasDeeperContent: true,
@@ -737,7 +752,9 @@ class ArchiveExplanationEngine {
       }
       if (t.contains('work') || t.contains('job') || t.contains('career')) {
         workIds.add(e.id);
-        if (t.contains('stress') || t.contains('worry') || t.contains('anxious')) {
+        if (t.contains('stress') ||
+            t.contains('worry') ||
+            t.contains('anxious')) {
           workConcern++;
         }
       }
@@ -805,7 +822,9 @@ class ArchiveExplanationEngine {
 
     for (final e in eligible) {
       final t = e.transcript.toLowerCase();
-      if (t.contains('no time') || t.contains('not enough time') || t.contains('too busy')) {
+      if (t.contains('no time') ||
+          t.contains('not enough time') ||
+          t.contains('too busy')) {
         timeBlame++;
       }
       if (t.contains('decide') ||
@@ -880,7 +899,8 @@ class ArchiveExplanationEngine {
 
     for (final e in eligible) {
       final t = e.transcript.toLowerCase();
-      final difficult = t.contains('difficult') ||
+      final difficult =
+          t.contains('difficult') ||
           t.contains('hurt') ||
           t.contains('conflict') ||
           t.contains('argument');

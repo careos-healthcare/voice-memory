@@ -122,8 +122,8 @@ class ArchiveDiscoveryService {
     ArchiveStateObjectV3? state,
   ) {
     final now = entries.last.createdAt;
-    final belief = state?.belief?.trim() ??
-        archiveBeliefFromReflections(entries)?.trim();
+    final belief =
+        state?.belief?.trim() ?? archiveBeliefFromReflections(entries)?.trim();
 
     final contradictions = const ContradictionDetectionService().detect(
       entries: entries,
@@ -141,8 +141,10 @@ class ArchiveDiscoveryService {
       );
     }
 
-    final shifts = const BeliefShiftEngine()
-        .detect(entries: entries, currentBelief: belief);
+    final shifts = const BeliefShiftEngine().detect(
+      entries: entries,
+      currentBelief: belief,
+    );
     if (shifts.reports.isNotEmpty) {
       final top = shifts.reports.first;
       return ArchiveDiscoveryNotice(
@@ -156,8 +158,9 @@ class ArchiveDiscoveryService {
     }
 
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-    final thisWeek =
-        entries.where((e) => e.createdAt.isAfter(weekAgo)).toList();
+    final thisWeek = entries
+        .where((e) => e.createdAt.isAfter(weekAgo))
+        .toList();
     final prior = entries.where((e) => !e.createdAt.isAfter(weekAgo)).toList();
     if (thisWeek.length >= 2) {
       final current = DiscoverLocalThemeCounts.count(thisWeek);
@@ -176,8 +179,7 @@ class ArchiveDiscoveryService {
         return ArchiveDiscoveryNotice(
           id: 'theme:$topTheme:$topDelta',
           headline: 'Something worth noticing',
-          detail:
-              'You mentioned $label ${current[topTheme]} times this week.',
+          detail: 'You mentioned $label ${current[topTheme]} times this week.',
           detectedAt: now,
           kind: ArchiveDiscoveryKind.themeIncreased,
         );

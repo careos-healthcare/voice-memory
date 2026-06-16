@@ -17,20 +17,21 @@ Future<void> _reset(String stamp) async {
 }
 
 TomorrowCheckIn _completed() => TomorrowCheckIn(
-      id: 't1',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'Did this pattern show up again?',
-      options: kDefaultTomorrowCheckInOptions,
-      selectedOptionId: 'showed_up_again',
-      completedAt: DateTime(2026, 5, 26),
-    );
+  id: 't1',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'Did this pattern show up again?',
+  options: kDefaultTomorrowCheckInOptions,
+  selectedOptionId: 'showed_up_again',
+  completedAt: DateTime(2026, 5, 26),
+);
 
 void main() {
-  testWidgets('rating appears after useful takeaway and next-check CTA',
-      (tester) async {
+  testWidgets('rating appears after useful takeaway and next-check CTA', (
+    tester,
+  ) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await tester.pumpWidget(
@@ -53,8 +54,10 @@ void main() {
     expect(find.text('What changed'), findsOneWidget);
     expect(find.text('Why this is useful'), findsOneWidget);
     expect(find.text(ConsumerUiCopy.resultNextCheckTitle), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta),
-        findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.resultNextCheckUseTomorrowCta),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.makeResultMoreUsefulCta), findsOneWidget);
     expect(find.text(ConsumerUiCopy.checkInResultUsefulPrompt), findsOneWidget);
   });
@@ -66,16 +69,16 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
-            child: CheckInCompletedCard(
-              checkIn: _completed(),
-              weakInput: true,
-            ),
+            child: CheckInCompletedCard(checkIn: _completed(), weakInput: true),
           ),
         ),
       ),
     );
 
-    expect(find.text(ConsumerUiCopy.inputQualityEarlyReadLabel), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.inputQualityEarlyReadLabel),
+      findsOneWidget,
+    );
     expect(
       find.textContaining('Add one clearer moment to make this more useful.'),
       findsOneWidget,

@@ -6,7 +6,7 @@ import '../../features/trial/positioning_comprehension_store.dart';
 import '../../theme/app_spacing.dart';
 
 /// Trial-only survey: did the user understand ArchiveMe as pattern memory?
-abstract final class PositioningComprehensionSheet {
+abstract class PositioningComprehensionSheet {
   PositioningComprehensionSheet._();
 
   static Future<void> showIfEligible(BuildContext context) async {
@@ -90,15 +90,14 @@ class _PositioningComprehensionSheetBodyState
                 onPressed: _saving
                     ? null
                     : () => setState(() {
-                          _selected = answer;
-                          _showFollowUp = true;
-                        }),
+                        _selected = answer;
+                        _showFollowUp = true;
+                      }),
                 style: OutlinedButton.styleFrom(
                   backgroundColor: _selected == answer
-                      ? Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withValues(alpha: 0.35)
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.35)
                       : null,
                   alignment: Alignment.centerLeft,
                 ),

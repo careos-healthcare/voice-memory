@@ -107,10 +107,9 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     final prefs = AppServices.instance.prefs;
-    await prefs.writeMap(
-      CurrentObjectiveSnapshotStore.widgetSnapshotKey,
-      {'title': 'Only title'},
-    );
+    await prefs.writeMap(CurrentObjectiveSnapshotStore.widgetSnapshotKey, {
+      'title': 'Only title',
+    });
 
     final store = CurrentObjectiveSnapshotStore(prefs);
     expect(await store.loadWidgetSnapshot(), isNull);

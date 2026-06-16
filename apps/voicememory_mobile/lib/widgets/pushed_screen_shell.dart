@@ -14,6 +14,7 @@ class PushedScreenShell extends StatelessWidget {
     this.fallbackRoute = '/archive-belief',
     this.actions,
     this.backgroundColor = AppTheme.background,
+    this.onBack,
   });
 
   final String title;
@@ -24,7 +25,16 @@ class PushedScreenShell extends StatelessWidget {
   final List<Widget>? actions;
   final Color backgroundColor;
 
+  /// Replaces the default back navigation when set (e.g. so a screen can run
+  /// a lightweight exit step before leaving).
+  final VoidCallback? onBack;
+
   void _goBack(BuildContext context) {
+    final override = onBack;
+    if (override != null) {
+      override();
+      return;
+    }
     if (context.canPop()) {
       context.pop();
     } else {

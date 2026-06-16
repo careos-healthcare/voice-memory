@@ -5,11 +5,12 @@ import 'package:path_provider/path_provider.dart';
 import '../config/app_config.dart';
 
 /// Output root: `~/Desktop/upload1` on host (override via dart-define).
-const String visualAuditOutputFromEnvironment =
-    String.fromEnvironment('VISUAL_AUDIT_OUTPUT_DIR');
+const String visualAuditOutputFromEnvironment = String.fromEnvironment(
+  'VISUAL_AUDIT_OUTPUT_DIR',
+);
 
 /// Subfolders under the audit root.
-abstract final class VisualAuditFolders {
+abstract class VisualAuditFolders {
   static const screens = 'screens';
   static const record = 'record';
   static const archive = 'archive';
@@ -79,13 +80,21 @@ class VisualAuditRouteSpec {
 }
 
 /// Bottom navigation destinations (shell tabs).
-const List<({String route, String label, String folder})> visualAuditBottomNavTabs =
-    [
+const List<({String route, String label, String folder})>
+visualAuditBottomNavTabs = [
   (route: '/record', label: 'Record', folder: VisualAuditFolders.record),
-  (route: '/archive-belief', label: 'Archive', folder: VisualAuditFolders.archive),
+  (
+    route: '/archive-belief',
+    label: 'Archive',
+    folder: VisualAuditFolders.archive,
+  ),
   (route: '/timeline', label: 'Timeline', folder: VisualAuditFolders.timeline),
   (route: '/search', label: 'Search', folder: VisualAuditFolders.search),
-  (route: '/discover-yourself', label: 'Discover', folder: VisualAuditFolders.changes),
+  (
+    route: '/discover-yourself',
+    label: 'Discover',
+    folder: VisualAuditFolders.changes,
+  ),
   (route: '/account', label: 'Account', folder: VisualAuditFolders.account),
 ];
 
@@ -116,7 +125,10 @@ const List<String> visualAuditErrorSurfaceKeywords = [
 List<VisualAuditRouteSpec> visualAuditRoutes({bool includeDebug = true}) {
   final debug = includeDebug && AppConfig.debugToolsEnabled;
   return [
-    const VisualAuditRouteSpec(path: '/record', folder: VisualAuditFolders.record),
+    const VisualAuditRouteSpec(
+      path: '/record',
+      folder: VisualAuditFolders.record,
+    ),
     const VisualAuditRouteSpec(
       path: '/archive-belief',
       folder: VisualAuditFolders.archive,
@@ -127,7 +139,10 @@ List<VisualAuditRouteSpec> visualAuditRoutes({bool includeDebug = true}) {
       folder: VisualAuditFolders.timeline,
       scrollable: true,
     ),
-    const VisualAuditRouteSpec(path: '/search', folder: VisualAuditFolders.search),
+    const VisualAuditRouteSpec(
+      path: '/search',
+      folder: VisualAuditFolders.search,
+    ),
     const VisualAuditRouteSpec(
       path: '/discover-yourself',
       folder: VisualAuditFolders.changes,
@@ -143,7 +158,10 @@ List<VisualAuditRouteSpec> visualAuditRoutes({bool includeDebug = true}) {
       folder: VisualAuditFolders.pricing,
       scrollable: true,
     ),
-    const VisualAuditRouteSpec(path: '/export', folder: VisualAuditFolders.export),
+    const VisualAuditRouteSpec(
+      path: '/export',
+      folder: VisualAuditFolders.export,
+    ),
     const VisualAuditRouteSpec(
       path: '/archive-identity',
       folder: VisualAuditFolders.archive,

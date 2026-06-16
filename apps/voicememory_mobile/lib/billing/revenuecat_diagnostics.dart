@@ -13,12 +13,12 @@ class RevenueCatDiagnostics {
   });
 
   factory RevenueCatDiagnostics.initial() => const RevenueCatDiagnostics(
-        revenueCatConfigured: false,
-        apiKeyMissing: true,
-        offeringsLoaded: false,
-        offeringCount: 0,
-        packageCount: 0,
-      );
+    revenueCatConfigured: false,
+    apiKeyMissing: true,
+    offeringsLoaded: false,
+    offeringCount: 0,
+    packageCount: 0,
+  );
 
   final bool revenueCatConfigured;
   final bool apiKeyMissing;
@@ -51,20 +51,21 @@ class RevenueCatDiagnostics {
       requestedOfferingId: requestedOfferingId ?? this.requestedOfferingId,
       currentOfferingId: currentOfferingId ?? this.currentOfferingId,
       productIdentifiers: productIdentifiers ?? this.productIdentifiers,
-      lastRevenueCatError:
-          clearError ? null : (lastRevenueCatError ?? this.lastRevenueCatError),
+      lastRevenueCatError: clearError
+          ? null
+          : (lastRevenueCatError ?? this.lastRevenueCatError),
     );
   }
 
   Map<String, Object?> toJson() => {
-        'revenueCatConfigured': revenueCatConfigured,
-        'apiKeyMissing': apiKeyMissing,
-        'offeringsLoaded': offeringsLoaded,
-        'offeringCount': offeringCount,
-        'packageCount': packageCount,
-        'requestedOfferingId': requestedOfferingId,
-        'currentOfferingId': currentOfferingId,
-        'productIdentifiers': productIdentifiers,
-        'lastRevenueCatError': lastRevenueCatError,
-      };
+    'revenueCatConfigured': revenueCatConfigured,
+    'apiKeyMissing': apiKeyMissing,
+    'offeringsLoaded': offeringsLoaded,
+    'offeringCount': offeringCount,
+    'packageCount': packageCount,
+    'requestedOfferingId': requestedOfferingId,
+    'currentOfferingId': currentOfferingId,
+    'productIdentifiers': productIdentifiers,
+    'lastRevenueCatError': lastRevenueCatError,
+  };
 }

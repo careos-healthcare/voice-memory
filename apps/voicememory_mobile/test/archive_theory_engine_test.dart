@@ -37,7 +37,8 @@ void main() {
     expect(
       engine.build(
         entries: entries,
-        statement: 'Your archive is still gathering evidence from your recordings.',
+        statement:
+            'Your archive is still gathering evidence from your recordings.',
       ),
       isNull,
     );

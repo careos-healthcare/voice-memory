@@ -42,7 +42,8 @@ class PatternMemoryEngine {
         ? patternTitle.trim()
         : (previous?.patternTitle ?? '');
 
-    final base = previous ??
+    final base =
+        previous ??
         PatternMemory(
           id: 'pm_${update.createdAt.microsecondsSinceEpoch}',
           patternTitle: title,

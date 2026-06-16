@@ -83,9 +83,10 @@ class TopicalCounterEvidence {
     final tension = entry.reflection.tensionOrContradiction?.trim() ?? '';
     if (tension.length >= 12) score += 25;
     score += hits * 10;
-    score += ThemeTrackerService.themesForEntry(entry)
-        .intersection(_themesFromText(beliefText))
-        .length *
+    score +=
+        ThemeTrackerService.themesForEntry(
+          entry,
+        ).intersection(_themesFromText(beliefText)).length *
         5;
     return score;
   }
@@ -155,8 +156,7 @@ class TopicalCounterEvidence {
         ? rawCount.clamp(0, 8)
         : (supportingCount * 2).clamp(1, 9999);
     final capped = rawCounters.take(maxAllowed).toList();
-    final exceedsTwice =
-        supportingCount > 0 && rawCount > supportingCount * 2;
+    final exceedsTwice = supportingCount > 0 && rawCount > supportingCount * 2;
 
     return TopicalCounterCap(
       capped: capped,
@@ -205,7 +205,8 @@ class TopicalCounterEvidence {
 
     if (_isSameDirectionPileOn(beliefText, transcript)) return false;
 
-    if (tension.length >= 12 && _isTopicallyScoped(
+    if (tension.length >= 12 &&
+        _isTopicallyScoped(
           entry: entry,
           beliefThemes: _themesFromText(beliefText),
           clusterThemes: _themesFromText(beliefText),
@@ -260,9 +261,8 @@ class TopicalCounterEvidence {
       'does not mean i failed',
     ];
 
-    final bNeg = negative.any(b.contains) ||
-        b.contains('avoid') ||
-        b.contains('resent');
+    final bNeg =
+        negative.any(b.contains) || b.contains('avoid') || b.contains('resent');
     final tNeg = negative.any(t.contains);
     final tPos = positive.any(t.contains);
 
@@ -280,10 +280,12 @@ class TopicalCounterEvidence {
   bool _hasSoftContrast(String transcript, String beliefText) {
     final t = transcript.toLowerCase();
     final b = beliefText.toLowerCase();
-    if (b.contains('avoid') && (t.contains('direct') || t.contains('brought up'))) {
+    if (b.contains('avoid') &&
+        (t.contains('direct') || t.contains('brought up'))) {
       return true;
     }
-    if (b.contains('exhaust') && (t.contains('love') || t.contains('energized'))) {
+    if (b.contains('exhaust') &&
+        (t.contains('love') || t.contains('energized'))) {
       return true;
     }
     if (b.contains('partner') &&
@@ -360,7 +362,9 @@ class TopicalCounterEvidence {
       return true;
     }
 
-    if ((b.contains('runway') || b.contains('postpone') || b.contains('hiring')) &&
+    if ((b.contains('runway') ||
+            b.contains('postpone') ||
+            b.contains('hiring')) &&
         (t.contains('hire') && t.contains('now')) &&
         !b.contains('postpone')) {
       return true;

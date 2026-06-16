@@ -19,8 +19,9 @@ void main() {
   });
 
   test('Spanish word set detects es', () {
-    final result =
-        detectReflectionLanguage('Hoy estoy cansado porque trabajo mucho.');
+    final result = detectReflectionLanguage(
+      'Hoy estoy cansado porque trabajo mucho.',
+    );
     expect(result.code, 'es');
     expect(result.isSupported, isTrue);
     expect(result.confidence, greaterThanOrEqualTo(0.5));

@@ -21,17 +21,27 @@ const copy = fs.readFileSync(copyPath, "utf8");
 const recognition = fs.readFileSync(recognitionPath, "utf8");
 const copySources = `${copy}\n${recognition}`;
 
+const clarityCopyPath = path.join(ROOT, "lib/product/product-clarity-copy.ts");
+const clarityCopy = fs.existsSync(clarityCopyPath)
+  ? fs.readFileSync(clarityCopyPath, "utf8")
+  : "";
+
 const required = [
   "HOMEPAGE_CLARITY",
-  "Speak aloud",
-  "Your words stay here",
-  "What repeats can come back",
-  "Say it in your voice",
-  "Three weeks apart, you mentioned waiting for the same phone call",
+  "See the patterns you keep missing.",
+  "ChatGPT answers today. ArchiveMe shows what keeps repeating across your life.",
+  "HomepageChatGptComparison",
+  "ProductDemoStory",
+  "PatternActivationProgress",
+  "criticism means you're failing",
 ];
 
 for (const token of required) {
-  if (!page.includes(token) && !copySources.includes(token)) {
+  if (
+    !page.includes(token) &&
+    !copySources.includes(token) &&
+    !clarityCopy.includes(token)
+  ) {
     console.error(`Homepage clarity validation failed — missing ${token}`);
     process.exit(1);
   }

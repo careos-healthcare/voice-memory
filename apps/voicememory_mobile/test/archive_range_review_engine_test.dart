@@ -10,17 +10,16 @@ KeyMoment _moment(
   String? resultHint,
   String? patternTitle,
   List<String> tags = const [],
-}) =>
-    KeyMoment(
-      id: id,
-      date: date,
-      title: 'Moment $id',
-      originalText: 'Original $id',
-      shortSummary: 'Summary $id',
-      resultHint: resultHint,
-      patternTitle: patternTitle,
-      tags: tags,
-    );
+}) => KeyMoment(
+  id: id,
+  date: date,
+  title: 'Moment $id',
+  originalText: 'Original $id',
+  shortSummary: 'Summary $id',
+  resultHint: resultHint,
+  patternTitle: patternTitle,
+  tags: tags,
+);
 
 void main() {
   final now = DateTime(2026, 6, 6, 12);
@@ -97,9 +96,24 @@ void main() {
   test('heavier priority beats lighter', () {
     final review = buildArchiveRangeReview(
       moments: [
-        _moment('1', DateTime(2026, 6, 6), resultHint: 'heavier', patternTitle: 'P'),
-        _moment('2', DateTime(2026, 6, 5), resultHint: 'heavier', patternTitle: 'P'),
-        _moment('3', DateTime(2026, 6, 4), resultHint: 'lighter', patternTitle: 'P'),
+        _moment(
+          '1',
+          DateTime(2026, 6, 6),
+          resultHint: 'heavier',
+          patternTitle: 'P',
+        ),
+        _moment(
+          '2',
+          DateTime(2026, 6, 5),
+          resultHint: 'heavier',
+          patternTitle: 'P',
+        ),
+        _moment(
+          '3',
+          DateTime(2026, 6, 4),
+          resultHint: 'lighter',
+          patternTitle: 'P',
+        ),
       ],
       now: now,
     );
@@ -110,9 +124,24 @@ void main() {
   test('lighter priority works', () {
     final review = buildArchiveRangeReview(
       moments: [
-        _moment('1', DateTime(2026, 6, 6), resultHint: 'lighter', patternTitle: 'P'),
-        _moment('2', DateTime(2026, 6, 5), resultHint: 'lighter', patternTitle: 'P'),
-        _moment('3', DateTime(2026, 6, 4), resultHint: 'same', patternTitle: 'P'),
+        _moment(
+          '1',
+          DateTime(2026, 6, 6),
+          resultHint: 'lighter',
+          patternTitle: 'P',
+        ),
+        _moment(
+          '2',
+          DateTime(2026, 6, 5),
+          resultHint: 'lighter',
+          patternTitle: 'P',
+        ),
+        _moment(
+          '3',
+          DateTime(2026, 6, 4),
+          resultHint: 'same',
+          patternTitle: 'P',
+        ),
       ],
       now: now,
     );
@@ -123,9 +152,24 @@ void main() {
   test('changed priority works', () {
     final review = buildArchiveRangeReview(
       moments: [
-        _moment('1', DateTime(2026, 6, 6), resultHint: 'changed', patternTitle: 'P'),
-        _moment('2', DateTime(2026, 6, 5), resultHint: 'not_today', patternTitle: 'P'),
-        _moment('3', DateTime(2026, 6, 4), resultHint: 'same', patternTitle: 'P'),
+        _moment(
+          '1',
+          DateTime(2026, 6, 6),
+          resultHint: 'changed',
+          patternTitle: 'P',
+        ),
+        _moment(
+          '2',
+          DateTime(2026, 6, 5),
+          resultHint: 'not_today',
+          patternTitle: 'P',
+        ),
+        _moment(
+          '3',
+          DateTime(2026, 6, 4),
+          resultHint: 'same',
+          patternTitle: 'P',
+        ),
       ],
       now: now,
     );
@@ -136,8 +180,18 @@ void main() {
   test('repeated fallback works', () {
     final review = buildArchiveRangeReview(
       moments: [
-        _moment('1', DateTime(2026, 6, 6), resultHint: 'same', patternTitle: 'Work pressure'),
-        _moment('2', DateTime(2026, 6, 5), resultHint: 'showed_up_again', patternTitle: 'Work pressure'),
+        _moment(
+          '1',
+          DateTime(2026, 6, 6),
+          resultHint: 'same',
+          patternTitle: 'Work pressure',
+        ),
+        _moment(
+          '2',
+          DateTime(2026, 6, 5),
+          resultHint: 'showed_up_again',
+          patternTitle: 'Work pressure',
+        ),
         _moment('3', DateTime(2026, 6, 4), patternTitle: 'Work pressure'),
       ],
       now: now,

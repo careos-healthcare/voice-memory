@@ -5,14 +5,14 @@ import 'package:voicememory_mobile/features/retention/retention_state_model.dart
 import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_model.dart';
 
 TomorrowCheckIn _dueCheck() => TomorrowCheckIn(
-      id: 't1',
-      createdAt: DateTime(2026, 5, 25),
-      targetDate: '2026-05-26',
-      patternTitle: 'Pattern',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: 'What happens right before it shows up?',
-      options: kDefaultTomorrowCheckInOptions,
-    );
+  id: 't1',
+  createdAt: DateTime(2026, 5, 25),
+  targetDate: '2026-05-26',
+  patternTitle: 'Pattern',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: 'What happens right before it shows up?',
+  options: kDefaultTomorrowCheckInOptions,
+);
 
 void main() {
   test('due check today maps to answerTodayCheck', () {

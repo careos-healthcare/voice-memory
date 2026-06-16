@@ -7,6 +7,12 @@ export {
   ONBOARDING_WELCOME,
 } from "@/lib/product-copy";
 
+export {
+  ARCHIVE_ONBOARDING_SCREENS,
+  ARCHIVE_ONBOARDING_RECORD_CTA,
+  ARCHIVE_ONBOARDING_SCREEN_COUNT,
+} from "@/lib/onboarding/archive-onboarding-copy";
+
 export const ONBOARDING_RECORDER = {
   idle: "Tap to speak. Up to about a minute.",
   processing: "Saving your words on this device…",

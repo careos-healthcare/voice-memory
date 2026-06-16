@@ -1,6 +1,6 @@
 # Emotional AI A+ Eval Report (Proxy)
 
-**Generated:** 2026-05-28T18:33:16.099Z
+**Generated:** 2026-05-29T13:29:26.588Z
 
 > Field validation after launch is still required. This is a seeded adversarial proxy only.
 

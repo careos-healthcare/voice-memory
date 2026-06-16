@@ -19,16 +19,17 @@ class EvidenceSourceCard extends StatelessWidget {
   final String analyticsSurface;
 
   String get _roleLabel => switch (source.role) {
-        EvidenceSourceRole.supporting => 'Supporting',
-        EvidenceSourceRole.contradicting => 'Counter-evidence',
-        EvidenceSourceRole.related => 'Related',
-      };
+    EvidenceSourceRole.supporting => 'Supporting',
+    EvidenceSourceRole.contradicting => 'Counter-evidence',
+    EvidenceSourceRole.related => 'Related',
+  };
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Recording from ${formatUserFacingDate(source.recordedAt)}. $_roleLabel. ${source.excerpt}',
+      label:
+          'Recording from ${formatUserFacingDate(source.recordedAt)}. $_roleLabel. ${source.excerpt}',
       child: Material(
         color: VoiceMemoryColors.surface,
         elevation: 0,
@@ -80,10 +81,7 @@ class EvidenceSourceCard extends StatelessWidget {
                   'Open recording',
                   style: VoiceMemoryTypography.bodyStyle(
                     color: VoiceMemoryColors.primaryIndigo,
-                  ).copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],
             ),

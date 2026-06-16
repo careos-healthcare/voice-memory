@@ -8,10 +8,7 @@ import '../../theme/voicememory_colors.dart';
 import '../../theme/voicememory_typography.dart';
 
 class ArchiveV1BlindSpotsSection extends StatelessWidget {
-  const ArchiveV1BlindSpotsSection({
-    super.key,
-    required this.blindSpots,
-  });
+  const ArchiveV1BlindSpotsSection({super.key, required this.blindSpots});
 
   final List<ArchiveV1BlindSpot> blindSpots;
 
@@ -42,10 +39,7 @@ class ArchiveV1BlindSpotsSection extends StatelessWidget {
 }
 
 class _BlindSpotCard extends StatelessWidget {
-  const _BlindSpotCard({
-    required this.spot,
-    required this.onOpenEntry,
-  });
+  const _BlindSpotCard({required this.spot, required this.onOpenEntry});
 
   final ArchiveV1BlindSpot spot;
   final void Function(String entryId) onOpenEntry;

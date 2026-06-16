@@ -67,7 +67,8 @@ CompellingCheckQuestion buildCompellingCheck({
     return CompellingCheckQuestion(
       type: CompellingCheckType.repeatMoment,
       question: trimmed,
-      whyThisCheck: 'This is useful because it makes tomorrow\u2019s check specific.',
+      whyThisCheck:
+          'This is useful because it makes tomorrow\u2019s check specific.',
       exampleAnswer: 'It started before I answered.',
       sharpnessLabel: CompellingCheckSharpness.practical,
       source: 'baseQuestion',
@@ -87,19 +88,20 @@ Map<String, CompellingCheckQuestion> buildCompellingCheckOptions({
   bool preferDirect = false,
 }) {
   return {
-    CompellingCheckSharpness.gentle: buildCompellingCheck(
-      baseQuestion: baseQuestion,
-      patternTitle: patternTitle,
-      resultHint: 'same',
-      feedbackSummary: feedbackSummary,
-      feedback: feedback,
-      sharpnessLabel: CompellingCheckSharpness.gentle,
-    ).copyWith(
-      question: 'Did this pattern show up again?',
-      whyThisCheck: 'A gentle check keeps tomorrow easy to answer.',
-      exampleAnswer: 'It showed up in an ordinary moment.',
-      sharpnessLabel: CompellingCheckSharpness.gentle,
-    ),
+    CompellingCheckSharpness.gentle:
+        buildCompellingCheck(
+          baseQuestion: baseQuestion,
+          patternTitle: patternTitle,
+          resultHint: 'same',
+          feedbackSummary: feedbackSummary,
+          feedback: feedback,
+          sharpnessLabel: CompellingCheckSharpness.gentle,
+        ).copyWith(
+          question: 'Did this pattern show up again?',
+          whyThisCheck: 'A gentle check keeps tomorrow easy to answer.',
+          exampleAnswer: 'It showed up in an ordinary moment.',
+          sharpnessLabel: CompellingCheckSharpness.gentle,
+        ),
     CompellingCheckSharpness.direct: buildCompellingCheck(
       baseQuestion: baseQuestion,
       patternTitle: patternTitle,
@@ -137,59 +139,58 @@ String defaultCompellingSharpnessLabel({
 }
 
 CompellingCheckQuestion _exactMoment() => const CompellingCheckQuestion(
-      type: CompellingCheckType.exactMoment,
-      question: 'What exact moment did this show up?',
-      whyThisCheck:
-          'A useful check should point to one moment, not the whole day.',
-      exampleAnswer: 'It showed up before I replied.',
-      sharpnessLabel: CompellingCheckSharpness.mostSpecific,
-    );
+  type: CompellingCheckType.exactMoment,
+  question: 'What exact moment did this show up?',
+  whyThisCheck: 'A useful check should point to one moment, not the whole day.',
+  exampleAnswer: 'It showed up before I replied.',
+  sharpnessLabel: CompellingCheckSharpness.mostSpecific,
+);
 
 CompellingCheckQuestion _helpedMoment() => const CompellingCheckQuestion(
-      type: CompellingCheckType.helpedMoment,
-      question: 'What helped make it lighter?',
-      whyThisCheck: 'If it felt lighter, the useful part is noticing what helped.',
-      exampleAnswer: 'It felt lighter after I paused.',
-      sharpnessLabel: CompellingCheckSharpness.practical,
-    );
+  type: CompellingCheckType.helpedMoment,
+  question: 'What helped make it lighter?',
+  whyThisCheck: 'If it felt lighter, the useful part is noticing what helped.',
+  exampleAnswer: 'It felt lighter after I paused.',
+  sharpnessLabel: CompellingCheckSharpness.practical,
+);
 
 CompellingCheckQuestion _heavierMoment() => const CompellingCheckQuestion(
-      type: CompellingCheckType.heavierMoment,
-      question: 'What made it heavier?',
-      whyThisCheck:
-          'If it felt heavier, the useful part is noticing what added pressure.',
-      exampleAnswer: 'It felt heavier after I took it on alone.',
-      sharpnessLabel: CompellingCheckSharpness.direct,
-    );
+  type: CompellingCheckType.heavierMoment,
+  question: 'What made it heavier?',
+  whyThisCheck:
+      'If it felt heavier, the useful part is noticing what added pressure.',
+  exampleAnswer: 'It felt heavier after I took it on alone.',
+  sharpnessLabel: CompellingCheckSharpness.direct,
+);
 
 CompellingCheckQuestion _changedMoment() => const CompellingCheckQuestion(
-      type: CompellingCheckType.changedMoment,
-      question: 'What was different today?',
-      whyThisCheck: 'If it changed, that can show what moves the pattern.',
-      exampleAnswer: 'It changed when I waited before answering.',
-      sharpnessLabel: CompellingCheckSharpness.practical,
-    );
+  type: CompellingCheckType.changedMoment,
+  question: 'What was different today?',
+  whyThisCheck: 'If it changed, that can show what moves the pattern.',
+  exampleAnswer: 'It changed when I waited before answering.',
+  sharpnessLabel: CompellingCheckSharpness.practical,
+);
 
 CompellingCheckQuestion _beforeMoment({
   required String question,
   required String why,
   required String example,
-}) =>
-    CompellingCheckQuestion(
-      type: CompellingCheckType.beforeMoment,
-      question: question,
-      whyThisCheck: why,
-      exampleAnswer: example,
-      sharpnessLabel: CompellingCheckSharpness.direct,
-    );
+}) => CompellingCheckQuestion(
+  type: CompellingCheckType.beforeMoment,
+  question: question,
+  whyThisCheck: why,
+  exampleAnswer: example,
+  sharpnessLabel: CompellingCheckSharpness.direct,
+);
 
 CompellingCheckQuestion _repeatFallback() => const CompellingCheckQuestion(
-      type: CompellingCheckType.repeatMoment,
-      question: 'What happens right before it shows up?',
-      whyThisCheck: 'This is useful because it makes tomorrow\u2019s check specific.',
-      exampleAnswer: 'It started before I answered.',
-      sharpnessLabel: CompellingCheckSharpness.practical,
-    );
+  type: CompellingCheckType.repeatMoment,
+  question: 'What happens right before it shows up?',
+  whyThisCheck:
+      'This is useful because it makes tomorrow\u2019s check specific.',
+  exampleAnswer: 'It started before I answered.',
+  sharpnessLabel: CompellingCheckSharpness.practical,
+);
 
 CompellingCheckQuestion _directFallback(String baseQuestion) {
   final trimmed = baseQuestion.trim();
@@ -205,7 +206,8 @@ CompellingCheckQuestion _directFallback(String baseQuestion) {
   }
   return _beforeMoment(
     question: 'What happens right before it shows up?',
-    why: 'This is useful because it catches the moment before the pattern starts.',
+    why:
+        'This is useful because it catches the moment before the pattern starts.',
     example: 'It started before I answered.',
   );
 }
@@ -254,13 +256,12 @@ extension CompellingCheckQuestionCopy on CompellingCheckQuestion {
     String? exampleAnswer,
     String? sharpnessLabel,
     String? source,
-  }) =>
-      CompellingCheckQuestion(
-        type: type ?? this.type,
-        question: question ?? this.question,
-        whyThisCheck: whyThisCheck ?? this.whyThisCheck,
-        exampleAnswer: exampleAnswer ?? this.exampleAnswer,
-        sharpnessLabel: sharpnessLabel ?? this.sharpnessLabel,
-        source: source ?? this.source,
-      );
+  }) => CompellingCheckQuestion(
+    type: type ?? this.type,
+    question: question ?? this.question,
+    whyThisCheck: whyThisCheck ?? this.whyThisCheck,
+    exampleAnswer: exampleAnswer ?? this.exampleAnswer,
+    sharpnessLabel: sharpnessLabel ?? this.sharpnessLabel,
+    source: source ?? this.source,
+  );
 }

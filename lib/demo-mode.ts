@@ -328,7 +328,7 @@ function collectSnapshot(): Record<string, string> {
   return snapshot;
 }
 
-function clearVoiceMemoryKeys(): void {
+function clearArchiveMeKeys(): void {
   if (!isBrowser()) return;
   const keys: string[] = [];
   for (let i = 0; i < localStorage.length; i += 1) {
@@ -348,7 +348,7 @@ function clearVoiceMemoryKeys(): void {
 }
 
 function restoreSnapshot(snapshot: Record<string, string>): void {
-  clearVoiceMemoryKeys();
+  clearArchiveMeKeys();
   for (const [key, value] of Object.entries(snapshot)) {
     localStorage.setItem(key, value);
   }
@@ -361,7 +361,7 @@ export function enterDemoMode(): void {
   const backup = collectSnapshot();
   localStorage.setItem(DEMO_BACKUP_KEY, JSON.stringify(backup));
 
-  clearVoiceMemoryKeys();
+  clearArchiveMeKeys();
 
   const entries = buildDemoEntries();
   localStorage.setItem("voicememory_entries", JSON.stringify(entries));
@@ -390,10 +390,10 @@ export function exitDemoMode(): boolean {
       const snapshot = JSON.parse(raw) as Record<string, string>;
       restoreSnapshot(snapshot);
     } catch {
-      clearVoiceMemoryKeys();
+      clearArchiveMeKeys();
     }
   } else {
-    clearVoiceMemoryKeys();
+    clearArchiveMeKeys();
   }
 
   trackLaunchEvent(LAUNCH_EVENTS.demoModeExited);

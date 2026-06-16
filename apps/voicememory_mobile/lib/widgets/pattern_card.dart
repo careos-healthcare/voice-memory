@@ -7,10 +7,7 @@ import 'archive_insight_card_shell.dart';
 
 /// Recording #3+ — early recurring patterns (shown from 3 recordings).
 class PatternCard extends StatelessWidget {
-  const PatternCard({
-    super.key,
-    required this.entries,
-  });
+  const PatternCard({super.key, required this.entries});
 
   final List<JournalEntry> entries;
 

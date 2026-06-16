@@ -90,8 +90,9 @@ void main() {
     );
     expect(saved.watchForChips, isNotEmpty);
 
-    final read = await TomorrowCommitmentStore(AppServices.instance.prefs)
-        .read();
+    final read = await TomorrowCommitmentStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(read?.promptText, saved.promptText);
   });
 
@@ -113,8 +114,9 @@ void main() {
       now: DateTime(2026, 7, 1, 9),
     );
 
-    final read = await TomorrowCommitmentStore(AppServices.instance.prefs)
-        .read();
+    final read = await TomorrowCommitmentStore(
+      AppServices.instance.prefs,
+    ).read();
     expect(read?.completedAt, isNotNull);
     expect(
       read!.displayState(DateTime(2026, 7, 1, 12)),
@@ -127,10 +129,7 @@ void main() {
     final c = ScreenshotSampleData.tomorrowCommitmentForPreview(now);
     expect(c.promptText, ScreenshotSampleData.commitmentSamplePrompt);
     expect(c.watchForChips, ScreenshotSampleData.returnLoopWatchChips);
-    expect(
-      c.displayState(now),
-      TomorrowCommitmentDisplayState.awaitingReturn,
-    );
+    expect(c.displayState(now), TomorrowCommitmentDisplayState.awaitingReturn);
   });
 
   testWidgets('commitment card renders without banned words', (tester) async {
@@ -163,7 +162,9 @@ void main() {
     }
   });
 
-  testWidgets('tapping Remind me tomorrow shows confirmed state', (tester) async {
+  testWidgets('tapping Remind me tomorrow shows confirmed state', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -198,14 +199,14 @@ void main() {
     );
   });
 
-  testWidgets('Patterns status card renders active commitment state',
-      (tester) async {
+  testWidgets('Patterns status card renders active commitment state', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     final now = DateTime(2026, 5, 25);
-    final commitment =
-        ScreenshotSampleData.tomorrowCommitmentForPreview(now);
+    final commitment = ScreenshotSampleData.tomorrowCommitmentForPreview(now);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -226,13 +227,12 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('doing it alone'), findsOneWidget);
-    expect(
-      find.text(ConsumerUiCopy.patternsComeBackRecordCta),
-      findsOneWidget,
-    );
+    expect(find.text(ConsumerUiCopy.patternsComeBackRecordCta), findsOneWidget);
   });
 
-  testWidgets('status card completed CTA routes to belief-changes', (tester) async {
+  testWidgets('status card completed CTA routes to belief-changes', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -250,22 +250,20 @@ void main() {
         ),
         GoRoute(
           path: '/belief-changes',
-          builder: (context, state) => const Scaffold(
-            body: Center(child: Text('changes-screen')),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Center(child: Text('changes-screen'))),
         ),
       ],
     );
 
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: AppTheme.light(),
-        routerConfig: router,
-      ),
+      MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
     );
     await tester.pump();
 
-    await tester.tap(find.text(ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta));
+    await tester.tap(
+      find.text(ConsumerUiCopy.tomorrowReturnStatusSeeChangedCta),
+    );
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

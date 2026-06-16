@@ -31,18 +31,17 @@ void main() {
 
   List<({String event, Map<String, Object> properties})> eventsNamed(
     String name,
-  ) =>
-      captured.where((e) => e.event == name).toList();
+  ) => captured.where((e) => e.event == name).toList();
 
   late MemoryAppLockStore memory;
   late _FakeBiometrics biometrics;
   late DateTime now;
 
   AppLockService buildService() => AppLockService(
-        store: AppLockStore(store: memory),
-        biometrics: biometrics,
-        clock: () => now,
-      );
+    store: AppLockStore(store: memory),
+    biometrics: biometrics,
+    clock: () => now,
+  );
 
   setUp(() {
     captured = [];
@@ -181,8 +180,7 @@ void main() {
   });
 
   group('Biometric rules', () {
-    test('ready only with PIN set, opt-in, and available hardware',
-        () async {
+    test('ready only with PIN set, opt-in, and available hardware', () async {
       biometrics
         ..isAvailable = true
         ..result = true;
@@ -233,8 +231,9 @@ void main() {
       final session2 = buildService();
       expect(await session2.attemptBiometricUnlock(), isTrue);
       expect(await session2.isLocked(), isFalse);
-      final succeeded =
-          eventsNamed(ActivationFunnelAnalytics.biometricUnlockSucceeded);
+      final succeeded = eventsNamed(
+        ActivationFunnelAnalytics.biometricUnlockSucceeded,
+      );
       expect(succeeded, hasLength(1));
       expect(succeeded.single.properties, {'method': 'biometric'});
     });
@@ -256,8 +255,7 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('hides archive content behind the lock screen',
-        (tester) async {
+    testWidgets('hides archive content behind the lock screen', (tester) async {
       await buildService().enableWithPin('1234');
       final session = buildService();
       await pumpGate(tester, session);
@@ -285,8 +283,9 @@ void main() {
       expect(find.text(privateProbe), findsOneWidget);
     });
 
-    testWidgets('wrong PIN shows Try again and keeps content hidden',
-        (tester) async {
+    testWidgets('wrong PIN shows Try again and keeps content hidden', (
+      tester,
+    ) async {
       await buildService().enableWithPin('1234');
       final session = buildService();
       await pumpGate(tester, session);
@@ -303,15 +302,15 @@ void main() {
       expect(find.text(privateProbe), findsNothing);
     });
 
-    testWidgets('content shows directly when the lock is off',
-        (tester) async {
+    testWidgets('content shows directly when the lock is off', (tester) async {
       await pumpGate(tester, buildService());
       expect(find.text(privateProbe), findsOneWidget);
       expect(find.byKey(const Key('app_lock_screen')), findsNothing);
     });
 
-    testWidgets('biometric button only when available, opted in, PIN set',
-        (tester) async {
+    testWidgets('biometric button only when available, opted in, PIN set', (
+      tester,
+    ) async {
       biometrics
         ..isAvailable = true
         ..result = false;
@@ -321,10 +320,7 @@ void main() {
 
       final session = buildService();
       await pumpGate(tester, session);
-      expect(
-        find.byKey(const Key('app_lock_biometric_cta')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('app_lock_biometric_cta')), findsOneWidget);
 
       // Biometric failure keeps the lock and the PIN path available.
       await tester.tap(find.byKey(const Key('app_lock_biometric_cta')));
@@ -361,8 +357,9 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('create + confirm enables the lock with hash + salt only',
-        (tester) async {
+    testWidgets('create + confirm enables the lock with hash + salt only', (
+      tester,
+    ) async {
       final service = buildService();
       await pumpSetup(tester, service);
 
@@ -386,8 +383,7 @@ void main() {
       expect(memory.values[AppLockStore.pinSaltKey], isNotNull);
     });
 
-    testWidgets('a mismatched confirmation asks to try again',
-        (tester) async {
+    testWidgets('a mismatched confirmation asks to try again', (tester) async {
       final service = buildService();
       await pumpSetup(tester, service);
 
@@ -447,44 +443,49 @@ void main() {
         'hacker',
         'voicememory',
       ]) {
-        expect(copy, isNot(contains(banned)),
-            reason: 'app lock copy must not contain "$banned"');
-      }
-    });
-
-    test('analytics carry only method/enabled ids — never PIN, hash, salt',
-        () async {
-      biometrics
-        ..isAvailable = true
-        ..result = true;
-      final service = buildService();
-      await service.enableWithPin('1234');
-      await service.setBiometricsEnabled(true);
-      await service.verifyPin('9999');
-      await service.verifyPin('1234');
-      await service.attemptBiometricUnlock();
-      await service.disable();
-
-      final hash = PinHash.hash(pin: '1234', salt: PinHash.generateSalt());
-      expect(captured, isNotEmpty);
-      for (final e in captured) {
         expect(
-          e.properties.keys.toSet().difference(const {'method', 'enabled'}),
-          isEmpty,
-          reason: '${e.event} carries a non-whitelisted key',
+          copy,
+          isNot(contains(banned)),
+          reason: 'app lock copy must not contain "$banned"',
         );
-        for (final value in e.properties.values) {
-          expect(
-            const {'pin', 'biometric', 'true', 'false'},
-            contains(value),
-            reason: '${e.event} carries unexpected value $value',
-          );
-        }
-        final flat = '${e.event} ${e.properties.values.join(' ')}';
-        expect(flat, isNot(contains('1234')));
-        expect(flat, isNot(contains('9999')));
-        expect(flat, isNot(contains(hash)));
       }
     });
+
+    test(
+      'analytics carry only method/enabled ids — never PIN, hash, salt',
+      () async {
+        biometrics
+          ..isAvailable = true
+          ..result = true;
+        final service = buildService();
+        await service.enableWithPin('1234');
+        await service.setBiometricsEnabled(true);
+        await service.verifyPin('9999');
+        await service.verifyPin('1234');
+        await service.attemptBiometricUnlock();
+        await service.disable();
+
+        final hash = PinHash.hash(pin: '1234', salt: PinHash.generateSalt());
+        expect(captured, isNotEmpty);
+        for (final e in captured) {
+          expect(
+            e.properties.keys.toSet().difference(const {'method', 'enabled'}),
+            isEmpty,
+            reason: '${e.event} carries a non-whitelisted key',
+          );
+          for (final value in e.properties.values) {
+            expect(
+              const {'pin', 'biometric', 'true', 'false'},
+              contains(value),
+              reason: '${e.event} carries unexpected value $value',
+            );
+          }
+          final flat = '${e.event} ${e.properties.values.join(' ')}';
+          expect(flat, isNot(contains('1234')));
+          expect(flat, isNot(contains('9999')));
+          expect(flat, isNot(contains(hash)));
+        }
+      },
+    );
   });
 }

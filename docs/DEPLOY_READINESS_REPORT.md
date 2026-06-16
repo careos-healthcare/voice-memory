@@ -1,6 +1,6 @@
 # Deploy readiness report
 
-Generated for VoiceMemory production deployment prep.
+Generated for ArchiveMe production deployment prep.
 
 ## Repo state
 

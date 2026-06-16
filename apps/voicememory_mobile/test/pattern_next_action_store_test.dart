@@ -16,19 +16,18 @@ Future<PatternNextActionStore> _store(String stamp) async {
 PatternNextAction _action({
   String id = 'na_pm1_3_repeatCheck',
   PatternNextActionType type = PatternNextActionType.repeatCheck,
-}) =>
-    PatternNextAction(
-      id: id,
-      memoryId: 'pm1',
-      createdAt: DateTime(2026, 6, 4),
-      type: type,
-      title: 'Check what happens before it starts',
-      body: 'Tomorrow, look at the moment right before it shows up.',
-      question: 'What happens right before it shows up?',
-      ctaLabel: 'Use this check',
-      sourceProgressType: 'stillRepeating',
-      sourceStatus: 'active',
-    );
+}) => PatternNextAction(
+  id: id,
+  memoryId: 'pm1',
+  createdAt: DateTime(2026, 6, 4),
+  type: type,
+  title: 'Check what happens before it starts',
+  body: 'Tomorrow, look at the moment right before it shows up.',
+  question: 'What happens right before it shows up?',
+  ctaLabel: 'Use this check',
+  sourceProgressType: 'stillRepeating',
+  sourceStatus: 'active',
+);
 
 void main() {
   test('saveLatest and loadLatest round-trip', () async {

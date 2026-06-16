@@ -17,7 +17,7 @@ import 'return_capture_metrics_store.dart';
 import 'watch_for_prompt_metrics_store.dart';
 
 /// Local activation events for first-pattern quality and funnel health.
-abstract final class ActivationTracker {
+abstract class ActivationTracker {
   ActivationTracker._();
 
   static const String firstReflectionSaved = 'firstReflectionSaved';
@@ -41,7 +41,8 @@ abstract final class ActivationTracker {
 
   static const String trialAppOpened = 'trialAppOpened';
   static const String trialRecordCtaTapped = 'trialRecordCtaTapped';
-  static const String trialMicPermissionRequested = 'trialMicPermissionRequested';
+  static const String trialMicPermissionRequested =
+      'trialMicPermissionRequested';
   static const String trialMicPermissionDenied = 'trialMicPermissionDenied';
   static const String trialRecordingStarted = 'trialRecordingStarted';
   static const String trialRecordingCancelled = 'trialRecordingCancelled';
@@ -136,8 +137,7 @@ abstract final class ActivationTracker {
   static const String resultNextCheckUsedFromPatterns =
       'resultNextCheckUsedFromPatterns';
   static const String usefulResultTakeawayShown = 'usefulResultTakeawayShown';
-  static const String makeResultMoreUsefulTapped =
-      'makeResultMoreUsefulTapped';
+  static const String makeResultMoreUsefulTapped = 'makeResultMoreUsefulTapped';
   static const String makeResultMoreUsefulReasonSelected =
       'makeResultMoreUsefulReasonSelected';
   static const String usefulResultNextCheckUsed = 'usefulResultNextCheckUsed';
@@ -171,14 +171,16 @@ abstract final class ActivationTracker {
   static const String keyMomentUseCheckTapped = 'keyMomentUseCheckTapped';
   static const String askArchiveOpened = 'askArchiveOpened';
   static const String askArchiveSearchUsed = 'askArchiveSearchUsed';
-  static const String askArchiveSuggestedChipTapped = 'askArchiveSuggestedChipTapped';
+  static const String askArchiveSuggestedChipTapped =
+      'askArchiveSuggestedChipTapped';
   static const String askArchiveResultOpened = 'askArchiveResultOpened';
   static const String askArchiveUseCheckTapped = 'askArchiveUseCheckTapped';
   static const String archiveCleanViewShown = 'archiveCleanViewShown';
   static const String archiveCleanSectionTapped = 'archiveCleanSectionTapped';
   static const String patternProfileShown = 'patternProfileShown';
   static const String patternProfileOpened = 'patternProfileOpened';
-  static const String patternProfileUseCheckTapped = 'patternProfileUseCheckTapped';
+  static const String patternProfileUseCheckTapped =
+      'patternProfileUseCheckTapped';
   static const String patternProfileFindMomentsTapped =
       'patternProfileFindMomentsTapped';
   static const String patternProfileOpenTimelineTapped =
@@ -192,7 +194,8 @@ abstract final class ActivationTracker {
   static const String archiveFeedbackTooGeneric = 'archiveFeedbackTooGeneric';
   static const String archiveFeedbackNotMe = 'archiveFeedbackNotMe';
   static const String archiveFeedbackAlreadyKnew = 'archiveFeedbackAlreadyKnew';
-  static const String archiveFeedbackMoreSpecific = 'archiveFeedbackMoreSpecific';
+  static const String archiveFeedbackMoreSpecific =
+      'archiveFeedbackMoreSpecific';
   static const String archiveCompressionShown = 'archiveCompressionShown';
   static const String archiveCompressionOpened = 'archiveCompressionOpened';
   static const String archiveCompressionKept = 'archiveCompressionKept';
@@ -301,8 +304,7 @@ abstract final class ActivationTracker {
       'activationTomorrowCheckIgnored';
   static const String activationUsefulTakeawayShown =
       'activationUsefulTakeawayShown';
-  static const String activationMakeUsefulTapped =
-      'activationMakeUsefulTapped';
+  static const String activationMakeUsefulTapped = 'activationMakeUsefulTapped';
   static const String activationMakeUsefulReasonSelected =
       'activationMakeUsefulReasonSelected';
   static const String activationResultRatedUseful =
@@ -360,16 +362,19 @@ abstract final class ActivationTracker {
   static Future<void> trackReflectionMilestones(int eligibleCount) async {
     if (!AppServices.isInitialized) return;
     final prefs = AppServices.instance.prefs;
-    if (eligibleCount >= 1 && await prefs.readBool(_firstReflectionFlagKey) != true) {
+    if (eligibleCount >= 1 &&
+        await prefs.readBool(_firstReflectionFlagKey) != true) {
       await prefs.writeBool(_firstReflectionFlagKey, true);
       await trackFirstReflectionSaved();
     }
-    if (eligibleCount >= 2 && await prefs.readBool(_secondReflectionFlagKey) != true) {
+    if (eligibleCount >= 2 &&
+        await prefs.readBool(_secondReflectionFlagKey) != true) {
       await prefs.writeBool(_secondReflectionFlagKey, true);
       await trackSecondReflectionSaved();
       trackSecondMomentRecorded();
     }
-    if (eligibleCount >= 3 && await prefs.readBool(_thirdReflectionFlagKey) != true) {
+    if (eligibleCount >= 3 &&
+        await prefs.readBool(_thirdReflectionFlagKey) != true) {
       await prefs.writeBool(_thirdReflectionFlagKey, true);
       await trackThirdReflectionSaved();
       trackThirdMomentRecorded();
@@ -467,9 +472,7 @@ abstract final class ActivationTracker {
   }) async {
     await _incrementEvent(watchForPromptShown);
     await _watchForMetrics().recordShown(strength: strength);
-    _trackAnalytics(watchForPromptShown, {
-      'prompt_strength': strength,
-    });
+    _trackAnalytics(watchForPromptShown, {'prompt_strength': strength});
   }
 
   static Future<void> trackWatchForPromptAccepted({
@@ -477,9 +480,7 @@ abstract final class ActivationTracker {
   }) async {
     await _incrementEvent(watchForPromptAccepted);
     await _watchForMetrics().recordAccepted(strength: strength);
-    _trackAnalytics(watchForPromptAccepted, {
-      'prompt_strength': strength,
-    });
+    _trackAnalytics(watchForPromptAccepted, {'prompt_strength': strength});
   }
 
   static Future<void> trackReturnCaptureQuickAnswerSelected({
@@ -1006,10 +1007,12 @@ abstract final class ActivationTracker {
   }
 
   static void trackArchiveFeedbackSelected(ArchiveFeedbackType type) {
-    unawaited(_safe(() async {
-      await _incrementEvent(archiveFeedbackSelected);
-      await _incrementEvent(_feedbackTypeEvent(type));
-    }));
+    unawaited(
+      _safe(() async {
+        await _incrementEvent(archiveFeedbackSelected);
+        await _incrementEvent(_feedbackTypeEvent(type));
+      }),
+    );
   }
 
   static String _feedbackTypeEvent(ArchiveFeedbackType type) {
@@ -1050,17 +1053,21 @@ abstract final class ActivationTracker {
 
   // --- Memory quality metrics ---
   static void trackMemoryQualityShown(MemoryQualityLevel level) {
-    unawaited(_safe(() async {
-      if (!AppServices.isInitialized) return;
-      await _events().recordMemoryQuality(level: level.name, tapped: false);
-    }));
+    unawaited(
+      _safe(() async {
+        if (!AppServices.isInitialized) return;
+        await _events().recordMemoryQuality(level: level.name, tapped: false);
+      }),
+    );
   }
 
   static void trackMemoryQualityTapped(MemoryQualityLevel level) {
-    unawaited(_safe(() async {
-      if (!AppServices.isInitialized) return;
-      await _events().recordMemoryQuality(level: level.name, tapped: true);
-    }));
+    unawaited(
+      _safe(() async {
+        if (!AppServices.isInitialized) return;
+        await _events().recordMemoryQuality(level: level.name, tapped: true);
+      }),
+    );
   }
 
   // --- Billing / paywall metrics ---
@@ -1199,11 +1206,14 @@ abstract final class ActivationTracker {
   }
 
   static void trackCurrentObjectiveShown(String type) {
-    unawaited(_safe(() async {
-      if (!AppServices.isInitialized) return;
-      await ActivationEventsStore(AppServices.instance.prefs)
-          .recordCurrentObjectiveShown(type);
-    }));
+    unawaited(
+      _safe(() async {
+        if (!AppServices.isInitialized) return;
+        await ActivationEventsStore(
+          AppServices.instance.prefs,
+        ).recordCurrentObjectiveShown(type);
+      }),
+    );
   }
 
   static void trackCurrentObjectivePrimaryTapped() {
@@ -1215,11 +1225,14 @@ abstract final class ActivationTracker {
   }
 
   static void trackProValuePreviewShown(String type) {
-    unawaited(_safe(() async {
-      if (!AppServices.isInitialized) return;
-      await ActivationEventsStore(AppServices.instance.prefs)
-          .recordProValuePreviewShown(type);
-    }));
+    unawaited(
+      _safe(() async {
+        if (!AppServices.isInitialized) return;
+        await ActivationEventsStore(
+          AppServices.instance.prefs,
+        ).recordProValuePreviewShown(type);
+      }),
+    );
   }
 
   static void trackProValuePreviewUnlockTapped() {
@@ -1300,19 +1313,21 @@ abstract final class ActivationTracker {
   static void trackPositioningComprehensionAnswered(
     PositioningComprehensionAnswer answer,
   ) {
-    unawaited(_safe(() async {
-      await _incrementEvent(positioningComprehensionAnswered);
-      switch (answer) {
-        case PositioningComprehensionAnswer.archiveMemory:
-          await _incrementEvent(positioningUnderstoodArchiveMemory);
-        case PositioningComprehensionAnswer.journal:
-          await _incrementEvent(positioningJournal);
-        case PositioningComprehensionAnswer.chat:
-          await _incrementEvent(positioningChat);
-        case PositioningComprehensionAnswer.notSure:
-          await _incrementEvent(positioningNotSure);
-      }
-    }));
+    unawaited(
+      _safe(() async {
+        await _incrementEvent(positioningComprehensionAnswered);
+        switch (answer) {
+          case PositioningComprehensionAnswer.archiveMemory:
+            await _incrementEvent(positioningUnderstoodArchiveMemory);
+          case PositioningComprehensionAnswer.journal:
+            await _incrementEvent(positioningJournal);
+          case PositioningComprehensionAnswer.chat:
+            await _incrementEvent(positioningChat);
+          case PositioningComprehensionAnswer.notSure:
+            await _incrementEvent(positioningNotSure);
+        }
+      }),
+    );
   }
 
   // --- Activation rescue pack metrics ---
@@ -1416,32 +1431,40 @@ abstract final class ActivationTracker {
 
   /// Adding a sharpening sentence both counts a coach action and a sharpen.
   static void trackInputQualitySentenceAdded() {
-    unawaited(_safe(() async {
-      await _incrementEvent(inputQualitySentenceAdded);
-      await _incrementEvent(sharpenedInputCount);
-    }));
+    unawaited(
+      _safe(() async {
+        await _incrementEvent(inputQualitySentenceAdded);
+        await _incrementEvent(sharpenedInputCount);
+      }),
+    );
   }
 
   /// Using weak input anyway both counts a coach action and an accepted-weak.
   static void trackInputQualityUsedAnyway() {
-    unawaited(_safe(() async {
-      await _incrementEvent(inputQualityUsedAnyway);
-      await _incrementEvent(acceptedWeakInputCount);
-    }));
+    unawaited(
+      _safe(() async {
+        await _incrementEvent(inputQualityUsedAnyway);
+        await _incrementEvent(acceptedWeakInputCount);
+      }),
+    );
   }
 
   /// Call when first-session pattern card is visible and watch-for not yet accepted.
   static Future<void> markWatchForAcceptPending() async {
     if (!TrialMode.enabled || !AppServices.isInitialized) return;
     await _safe(
-      () => AppServices.instance.prefs.writeBool(_watchForPendingAcceptKey, true),
+      () =>
+          AppServices.instance.prefs.writeBool(_watchForPendingAcceptKey, true),
     );
   }
 
   static Future<void> clearWatchForAcceptPending() async {
     if (!AppServices.isInitialized) return;
     await _safe(
-      () => AppServices.instance.prefs.writeBool(_watchForPendingAcceptKey, false),
+      () => AppServices.instance.prefs.writeBool(
+        _watchForPendingAcceptKey,
+        false,
+      ),
     );
   }
 
@@ -1561,13 +1584,17 @@ abstract final class ActivationTracker {
 
   static void trackLoopReviewConfirmed() {
     unawaited(
-      RetentionMetricsTracker.track(RetentionMetricsTracker.loopReviewConfirmed),
+      RetentionMetricsTracker.track(
+        RetentionMetricsTracker.loopReviewConfirmed,
+      ),
     );
   }
 
   static void trackLoopReviewCorrected() {
     unawaited(
-      RetentionMetricsTracker.track(RetentionMetricsTracker.loopReviewCorrected),
+      RetentionMetricsTracker.track(
+        RetentionMetricsTracker.loopReviewCorrected,
+      ),
     );
   }
 
@@ -1767,9 +1794,7 @@ abstract final class ActivationTracker {
 
   static void trackProveInviteCopied() {
     unawaited(
-      RetentionMetricsTracker.track(
-        RetentionMetricsTracker.proveInviteCopied,
-      ),
+      RetentionMetricsTracker.track(RetentionMetricsTracker.proveInviteCopied),
     );
   }
 

@@ -73,9 +73,7 @@ Future<MobilePrefsStore> _openPrefs(String stamp) async {
   return MobilePrefsStore.open(path);
 }
 
-ProveEnoughPostRecordModel _postRecord({
-  required String transcript,
-}) {
+ProveEnoughPostRecordModel _postRecord({required String transcript}) {
   const postEngine = ProveEnoughPostRecordEngine();
   const loopEngine = LoopModeEngine();
   return postEngine.analyze(
@@ -112,10 +110,7 @@ void main() {
       );
       final mission = missionEngine.fromPostRecord(postRecord: postRecord);
 
-      expect(
-        mission.kind,
-        NextEvidenceMissionKind.restPossibleOrUnsafe,
-      );
+      expect(mission.kind, NextEvidenceMissionKind.restPossibleOrUnsafe);
       expect(
         mission.mission,
         NextEvidenceMissionEngine.restPossibleOrUnsafeMission,
@@ -129,10 +124,7 @@ void main() {
       );
       final mission = missionEngine.fromPostRecord(postRecord: postRecord);
 
-      expect(
-        mission.kind,
-        NextEvidenceMissionKind.pressureNotChoice,
-      );
+      expect(mission.kind, NextEvidenceMissionKind.pressureNotChoice);
     });
 
     test('weak transcript uses conservative mission', () {
@@ -161,7 +153,10 @@ void main() {
       expect(saved.label, 'I rested without guilt');
       final rows = await store.loadForJourney('j-test');
       expect(rows, hasLength(1));
-      expect(rows.first.option, ProveEnoughContradictionOption.restedWithoutGuilt);
+      expect(
+        rows.first.option,
+        ProveEnoughContradictionOption.restedWithoutGuilt,
+      );
     });
 
     test('contradiction affects review challenge evidence', () async {
@@ -228,16 +223,15 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 800));
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: NextEvidenceMissionCard(
-              mission: mission,
-            ),
-          ),
+          home: Scaffold(body: NextEvidenceMissionCard(mission: mission)),
         ),
       );
       await _pumpFrames(tester);
 
-      expect(find.byKey(const Key('next_evidence_mission_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('next_evidence_mission_card')),
+        findsOneWidget,
+      );
       expect(find.text('Next evidence mission'), findsOneWidget);
       expect(find.text(mission.mission), findsOneWidget);
       expect(find.text('Record this when it happens'), findsOneWidget);
@@ -254,7 +248,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => NextEvidenceMissionCard(mission: mission),
+            builder: (context, state) =>
+                NextEvidenceMissionCard(mission: mission),
           ),
           GoRoute(
             path: '/record',
@@ -269,7 +264,9 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await _pumpFrames(tester);
 
-      await tester.tap(find.byKey(const Key('next_evidence_mission_record_cta')));
+      await tester.tap(
+        find.byKey(const Key('next_evidence_mission_record_cta')),
+      );
       await _pumpFrames(tester);
 
       expect(routed, isTrue);
@@ -292,19 +289,25 @@ void main() {
       );
       await _pumpFrames(tester);
 
-      expect(find.byKey(const Key('contradiction_capture_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('contradiction_capture_card')),
+        findsOneWidget,
+      );
       await tester.tap(
-        find.byKey(
-          const Key('contradiction_option_effort_chosen'),
-        ),
+        find.byKey(const Key('contradiction_option_effort_chosen')),
       );
       await _pumpFrames(tester);
 
-      expect(find.text('This challenges the proving-enough loop.'), findsOneWidget);
+      expect(
+        find.text('This challenges the proving-enough loop.'),
+        findsOneWidget,
+      );
       expect(find.text('The effort felt chosen'), findsWidgets);
     });
 
-    testWidgets('retention panel renders from post-record model', (tester) async {
+    testWidgets('retention panel renders from post-record model', (
+      tester,
+    ) async {
       final postRecord = _postRecord(
         transcript:
             'I kept going because stopping made me feel behind and I had to prove I was productive.',
@@ -325,13 +328,20 @@ void main() {
       );
       await _pumpFrames(tester);
 
-      expect(find.byKey(const Key('prove_enough_retention_panel')), findsOneWidget);
+      expect(
+        find.byKey(const Key('prove_enough_retention_panel')),
+        findsOneWidget,
+      );
       expect(find.text('Next evidence mission'), findsOneWidget);
       expect(find.text('Did this challenge the loop?'), findsOneWidget);
     });
 
-    testWidgets('cards do not render for capacity_yes post-save', (tester) async {
-      final capacityLoop = const LoopModeEngine().activate(LoopModeIds.capacityYes);
+    testWidgets('cards do not render for capacity_yes post-save', (
+      tester,
+    ) async {
+      final capacityLoop = const LoopModeEngine().activate(
+        LoopModeIds.capacityYes,
+      );
       final entry = _entry(
         'e-capacity',
         'I said yes again even though I was already stretched thin.',
@@ -356,7 +366,10 @@ void main() {
       );
       await _pumpFrames(tester);
 
-      expect(find.byKey(const Key('prove_enough_retention_panel')), findsNothing);
+      expect(
+        find.byKey(const Key('prove_enough_retention_panel')),
+        findsNothing,
+      );
       expect(find.text('Next evidence mission'), findsNothing);
     });
   });

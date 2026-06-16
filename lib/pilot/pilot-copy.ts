@@ -4,7 +4,7 @@ export const PILOT_PAGE_COPY = {
   eyebrow: "Archive continuity",
   title: "A small, careful pilot",
   description:
-    "VoiceMemory is being developed with a small group of people who want long-term archive protection — not fast growth.",
+    "ArchiveMe is being developed with a small group of people who want long-term archive protection — not fast growth.",
   sections: [
     {
       title: "What support covers",
@@ -55,7 +55,7 @@ export const PILOT_FORBIDDEN = [
 
 export const PILOT_SUPPRESSED_COPY = {
   title: "Still observing",
-  body: "VoiceMemory is still being developed carefully. Your archive stays private on this device until continuity support is offered thoughtfully.",
+  body: "ArchiveMe is still being developed carefully. Your archive stays private on this device until continuity support is offered thoughtfully.",
 } as const;
 
 export function passesPilotCopy(text: string): boolean {

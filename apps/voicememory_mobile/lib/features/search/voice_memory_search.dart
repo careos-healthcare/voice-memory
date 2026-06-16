@@ -5,11 +5,7 @@ import '../archive_state_object/archive_state_object.dart';
 import '../discover/discover_local.dart';
 import '../../storage/mobile_prefs_store.dart';
 
-enum SearchResultType {
-  recording,
-  archiveBelief,
-  discovery,
-}
+enum SearchResultType { recording, archiveBelief, discovery }
 
 class SearchResult {
   const SearchResult({
@@ -29,10 +25,10 @@ class SearchResult {
   final String route;
 
   String get typeLabel => switch (type) {
-        SearchResultType.recording => 'Recording',
-        SearchResultType.archiveBelief => 'Archive Belief',
-        SearchResultType.discovery => 'Discovery',
-      };
+    SearchResultType.recording => 'Recording',
+    SearchResultType.archiveBelief => 'Archive Belief',
+    SearchResultType.discovery => 'Discovery',
+  };
 }
 
 class VoiceMemorySearchIndex {
@@ -53,9 +49,7 @@ Future<VoiceMemorySearchIndex> buildVoiceMemorySearchIndex({
 }) async {
   final entries = await loadEntries();
   final baselineRaw = await prefs.discoverBaseline;
-  final baseline = baselineRaw?.map(
-    (k, v) => MapEntry(k, (v as num).toInt()),
-  );
+  final baseline = baselineRaw?.map((k, v) => MapEntry(k, (v as num).toInt()));
   final feed = DiscoverLocalEngine.build(
     entries: entries,
     baselineThemes: baseline,
@@ -102,14 +96,16 @@ List<SearchResult> searchArchiveMe(
     ].join('\n');
 
     if (_matches(searchable, query)) {
-      add(SearchResult(
-        type: SearchResultType.recording,
-        id: 'recording:${entry.id}',
-        title: title,
-        subtitle: _formatRecordingDate(entry),
-        snippet: _bestSnippet(searchable, query, fallback: title),
-        route: '/entry/${entry.id}',
-      ));
+      add(
+        SearchResult(
+          type: SearchResultType.recording,
+          id: 'recording:${entry.id}',
+          title: title,
+          subtitle: _formatRecordingDate(entry),
+          snippet: _bestSnippet(searchable, query, fallback: title),
+          route: '/entry/${entry.id}',
+        ),
+      );
     }
   }
 
@@ -124,31 +120,40 @@ List<SearchResult> searchArchiveMe(
     ];
     final beliefText = beliefFields.join('\n');
     if (beliefText.trim().isNotEmpty && _matches(beliefText, query)) {
-      add(SearchResult(
-        type: SearchResultType.archiveBelief,
-        id: 'archive-belief',
-        title: 'Archive belief',
-        subtitle: archive.belief?.trim().isNotEmpty == true
-            ? _truncate(archive.belief!, 80)
-            : 'Working belief',
-        snippet: _bestSnippet(beliefText, query, fallback: archive.changeSummary),
-        route: '/archive-belief',
-      ));
+      add(
+        SearchResult(
+          type: SearchResultType.archiveBelief,
+          id: 'archive-belief',
+          title: 'Archive belief',
+          subtitle: archive.belief?.trim().isNotEmpty == true
+              ? _truncate(archive.belief!, 80)
+              : 'Working belief',
+          snippet: _bestSnippet(
+            beliefText,
+            query,
+            fallback: archive.changeSummary,
+          ),
+          route: '/archive-belief',
+        ),
+      );
     }
   }
 
   void addDiscoverItems(List<DiscoverChangeItem> items, String section) {
     for (final item in items) {
-      final searchable = '${item.title}\n${item.detail}\n${item.kind}\n$section';
+      final searchable =
+          '${item.title}\n${item.detail}\n${item.kind}\n$section';
       if (_matches(searchable, query)) {
-        add(SearchResult(
-          type: SearchResultType.discovery,
-          id: 'discovery:${item.kind}:${item.title}',
-          title: item.title,
-          subtitle: section,
-          snippet: _bestSnippet(searchable, query, fallback: item.detail),
-          route: '/discover-yourself',
-        ));
+        add(
+          SearchResult(
+            type: SearchResultType.discovery,
+            id: 'discovery:${item.kind}:${item.title}',
+            title: item.title,
+            subtitle: section,
+            snippet: _bestSnippet(searchable, query, fallback: item.detail),
+            route: '/discover-yourself',
+          ),
+        );
       }
     }
   }

@@ -29,8 +29,8 @@ const checks = [
     tokens: ["HomepagePrimaryCtaProvider", "suppressRecordCta"],
   },
   {
-    file: "components/ActivationOnboarding.tsx",
-    tokens: ["usePrimaryCtaClaim", 'data-primary-cta="onboarding"', "canShowOnboardingCta"],
+    file: "components/onboarding/ArchiveOnboarding.tsx",
+    tokens: ["usePrimaryCtaClaim", 'data-primary-cta="onboarding"', "canShowRecordCta"],
   },
   {
     file: "components/Recorder.tsx",
@@ -64,7 +64,7 @@ function assertSingleConstDeclaration(file, name) {
 }
 
 for (const [file, names] of [
-  ["components/ActivationOnboarding.tsx", ["isLast", "canShowOnboardingCta"]],
+  ["components/onboarding/ArchiveOnboarding.tsx", ["isLast", "canShowRecordCta"]],
   ["components/Recorder.tsx", ["canShowRecorderCta", "canShowRetryCta"]],
 ]) {
   for (const name of names) {
@@ -83,7 +83,7 @@ if (providerOpens.length !== 1 || providerCloses.length !== 1) {
 }
 
 const activation = fs.readFileSync(
-  path.join(ROOT, "components/ActivationOnboarding.tsx"),
+  path.join(ROOT, "components/onboarding/ArchiveOnboarding.tsx"),
   "utf8",
 );
 const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
@@ -124,7 +124,7 @@ if (
 
 const unstableEffectDeps = [
   { file: "components/homepage/HomepagePrimaryCtaProvider.tsx", pattern: /\[ctx\b/ },
-  { file: "components/ActivationOnboarding.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
+  { file: "components/onboarding/ArchiveOnboarding.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
   { file: "components/Recorder.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
 ];
 
@@ -149,9 +149,13 @@ for (const file of ["app/page.tsx", "app/entry/[id]/page.tsx"]) {
   }
 }
 
-if (!activation.includes("Record a reflection") || !activation.includes("canShowOnboardingCta")) {
+if (
+  (!activation.includes("Record your first reflection") &&
+    !activation.includes("Record a reflection")) ||
+  !activation.includes("canShowRecordCta")
+) {
   console.error(
-    "Homepage CTA validation failed — onboarding record CTA must be gated by canShowOnboardingCta.",
+    "Homepage CTA validation failed — onboarding record CTA must be gated by canShowRecordCta.",
   );
   process.exit(1);
 }

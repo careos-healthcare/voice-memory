@@ -18,7 +18,7 @@ export function MobileCompressedHome({
 
   return (
     <div className="flex w-full max-w-md flex-col items-center text-center">
-      <h1 className="text-sm font-medium text-zinc-200">VoiceMemory</h1>
+      <h1 className="text-sm font-medium text-zinc-200">ArchiveMe</h1>
       <p className="mt-3 text-base leading-relaxed text-zinc-300">{MOBILE_FIRST_RUN_TAGLINE}</p>
       <div className="mt-6 w-full">{recorder}</div>
       <p className="mt-8 max-w-xs text-xs leading-relaxed text-muted">

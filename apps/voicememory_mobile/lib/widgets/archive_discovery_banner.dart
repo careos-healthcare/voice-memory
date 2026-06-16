@@ -23,7 +23,9 @@ class ArchiveDiscoveryBanner extends StatelessWidget {
     RetentionAnalytics.discoveryBannerOpened();
     final entries = await AppServices.instance.journal.loadAll();
     final state = buildArchiveStateObjectV3(entries: entries);
-    await ArchiveDiscoveryService(AppServices.instance.prefs).acknowledgeDiscovery(
+    await ArchiveDiscoveryService(
+      AppServices.instance.prefs,
+    ).acknowledgeDiscovery(
       entries: entries,
       state: state,
       viewedAt: DateTime.now(),

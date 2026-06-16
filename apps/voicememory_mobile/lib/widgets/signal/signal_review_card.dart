@@ -121,7 +121,8 @@ class SignalReviewCard extends StatelessWidget {
           ],
           const SizedBox(height: AppSpacing.xs),
           OutlinedButton(
-            onPressed: onViewFull ??
+            onPressed:
+                onViewFull ??
                 () => SignalReviewNavigation.openFullReview(context),
             child: Text(ConsumerUiCopy.signalReviewViewFull),
           ),
@@ -194,7 +195,8 @@ class SignalReviewCard extends StatelessWidget {
           ],
           const SizedBox(height: AppSpacing.xs),
           OutlinedButton(
-            onPressed: onViewFull ??
+            onPressed:
+                onViewFull ??
                 () => SignalReviewNavigation.openFullReview(context),
             child: Text(ConsumerUiCopy.signalReviewViewFull),
           ),
@@ -234,8 +236,8 @@ class SignalReviewCard extends StatelessWidget {
               review.isProveEnoughLoopReview
                   ? LoopModeCopy.reviewRecordNextProve
                   : review.isCapacityLoopReview
-                      ? LoopModeCopy.reviewRecordNextYes
-                      : ConsumerUiCopy.signalReviewRecordNext,
+                  ? LoopModeCopy.reviewRecordNextYes
+                  : ConsumerUiCopy.signalReviewRecordNext,
             ),
           ),
         ],
@@ -258,11 +260,7 @@ class SignalReviewCard extends StatelessWidget {
     );
   }
 
-  Widget _sectionList(
-    BuildContext context,
-    String label,
-    List<String> lines,
-  ) {
+  Widget _sectionList(BuildContext context, String label, List<String> lines) {
     if (lines.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),

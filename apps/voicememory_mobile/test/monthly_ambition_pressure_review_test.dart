@@ -121,9 +121,7 @@ void main() {
 
     test('unclear direction with too little data', () {
       final review = engine.build(
-        entries: [
-          _entryAt('j1', _pressureA, DateTime(2026, 6, 2)),
-        ],
+        entries: [_entryAt('j1', _pressureA, DateTime(2026, 6, 2))],
         now: juneNow,
       );
 
@@ -149,10 +147,7 @@ void main() {
         ...review.directionEvidence,
       ].join('\n').toLowerCase();
 
-      expect(
-        combined,
-        contains(transcript.toLowerCase().split(' ').first),
-      );
+      expect(combined, contains(transcript.toLowerCase().split(' ').first));
       expect(combined, isNot(contains('invented')));
     });
 
@@ -181,7 +176,9 @@ void main() {
   });
 
   group('MonthlyAmbitionPressureReviewScreen', () {
-    testWidgets('free user sees Pro preview after free review used', (tester) async {
+    testWidgets('free user sees Pro preview after free review used', (
+      tester,
+    ) async {
       final review = _sampleReview();
 
       await tester.binding.setSurfaceSize(const Size(390, 900));
@@ -196,9 +193,18 @@ void main() {
       );
       await _pumpFrames(tester);
 
-      expect(find.text(MonthlyAmbitionPressureReview.screenTitle), findsOneWidget);
-      expect(find.text(MonthlyAmbitionPressureReview.proPreviewTitle), findsOneWidget);
-      expect(find.text(MonthlyAmbitionPressureReview.proPreviewBody), findsOneWidget);
+      expect(
+        find.text(MonthlyAmbitionPressureReview.screenTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(MonthlyAmbitionPressureReview.proPreviewTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(MonthlyAmbitionPressureReview.proPreviewBody),
+        findsOneWidget,
+      );
       expect(
         find.text(MonthlyAmbitionPressureReview.whatRepeatedTitle),
         findsNothing,
@@ -207,7 +213,9 @@ void main() {
     });
 
     testWidgets('Pro user sees full monthly review sections', (tester) async {
-      final review = _sampleReview(direction: AmbitionPressureDirection.stronger);
+      final review = _sampleReview(
+        direction: AmbitionPressureDirection.stronger,
+      );
 
       await tester.binding.setSurfaceSize(const Size(390, 1600));
       await tester.pumpWidget(
@@ -240,7 +248,10 @@ void main() {
         expect(find.text(title), findsOneWidget);
       }
 
-      expect(find.text(MonthlyAmbitionPressureReview.proPreviewTitle), findsNothing);
+      expect(
+        find.text(MonthlyAmbitionPressureReview.proPreviewTitle),
+        findsNothing,
+      );
       expect(find.text(review.direction.copy), findsOneWidget);
     });
 
@@ -303,8 +314,14 @@ void main() {
         find.byKey(const Key('monthly_ambition_pressure_review_pro_preview')),
         findsOneWidget,
       );
-      expect(find.text(MonthlyAmbitionPressureReview.proPreviewTitle), findsOneWidget);
-      expect(find.text(MonthlyAmbitionPressureReview.proPreviewCta), findsOneWidget);
+      expect(
+        find.text(MonthlyAmbitionPressureReview.proPreviewTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(MonthlyAmbitionPressureReview.proPreviewCta),
+        findsOneWidget,
+      );
     });
   });
 }

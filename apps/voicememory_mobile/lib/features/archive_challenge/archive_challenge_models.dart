@@ -23,24 +23,25 @@ class ArchiveChallenge {
   int get evidenceCount => evidenceEntryIds.length;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'headline': headline,
-        'body': body,
-        'evidenceEntryIds': evidenceEntryIds,
-        'confidence': confidence,
-        'insightRefId': insightRef.id,
-        'insightKind': insightRef.kind.name,
-        'challengeIndex': insightRef.challengeIndex,
-        'askPrompt': insightRef.askPrompt,
-        'detectedAt': detectedAt.toUtc().toIso8601String(),
-      };
+    'id': id,
+    'headline': headline,
+    'body': body,
+    'evidenceEntryIds': evidenceEntryIds,
+    'confidence': confidence,
+    'insightRefId': insightRef.id,
+    'insightKind': insightRef.kind.name,
+    'challengeIndex': insightRef.challengeIndex,
+    'askPrompt': insightRef.askPrompt,
+    'detectedAt': detectedAt.toUtc().toIso8601String(),
+  };
 
   static ArchiveChallenge? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
     final id = json['id']?.toString() ?? '';
     final headline = json['headline']?.toString().trim() ?? '';
     if (id.isEmpty || headline.isEmpty) return null;
-    final evidence = (json['evidenceEntryIds'] as List<dynamic>?)
+    final evidence =
+        (json['evidenceEntryIds'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??
@@ -58,7 +59,8 @@ class ArchiveChallenge {
       }
     }
     if (ref == null) {
-      final kind = ArchiveInsightKind.values.asNameMap()[json['insightKind']?.toString()];
+      final kind = ArchiveInsightKind.values
+          .asNameMap()[json['insightKind']?.toString()];
       if (kind == ArchiveInsightKind.askArchive) {
         ref = ArchiveInsightRef.askArchive(json['askPrompt']?.toString() ?? '');
       }
@@ -72,7 +74,8 @@ class ArchiveChallenge {
       evidenceEntryIds: evidence,
       confidence: confidence,
       insightRef: ref,
-      detectedAt: DateTime.tryParse(json['detectedAt']?.toString() ?? '') ??
+      detectedAt:
+          DateTime.tryParse(json['detectedAt']?.toString() ?? '') ??
           DateTime.now(),
     );
   }

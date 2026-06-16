@@ -18,7 +18,7 @@ export const REFLECTION_MILESTONES = [
   },
   {
     after: 2 as const,
-    line: "A second entry — VoiceMemory can compare your words.",
+    line: "A second entry — ArchiveMe can compare your words.",
   },
   {
     after: 3 as const,
@@ -49,7 +49,7 @@ const ANTICIPATORY_BY_TIER: Record<EntryTier, AnticipatoryEmptyCopy> = {
   few: {
     tier: "few",
     headline: "Words are starting to repeat",
-    body: "What you said before may surface again.",
+    body: "What you said before may surface again. Each reflection gives ArchiveMe more evidence about what keeps repeating.",
     showMilestones: false,
   },
   building: {

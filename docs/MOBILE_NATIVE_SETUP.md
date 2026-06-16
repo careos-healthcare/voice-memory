@@ -1,6 +1,6 @@
 # Mobile native setup (Capacitor)
 
-VoiceMemory’s mobile path is a **Capacitor shell** around the existing Next.js app. Native projects live in `ios/` and `android/`.
+ArchiveMe’s mobile path is a **Capacitor shell** around the existing Next.js app. Native projects live in `ios/` and `android/`.
 
 ## Prerequisites
 

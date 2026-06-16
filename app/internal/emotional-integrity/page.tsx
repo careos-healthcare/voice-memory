@@ -58,6 +58,12 @@ export default function EmotionalIntegrityDebugPage() {
           <Link href="/internal/emotional-legitimacy" className="text-violet-300 hover:text-violet-200">
             Emotional legitimacy →
           </Link>
+          <Link href="/internal/archive-belief" className="text-zinc-500 hover:text-zinc-300">
+            Archive belief adoption →
+          </Link>
+          <Link href="/internal/archive-voice" className="text-zinc-500 hover:text-zinc-300">
+            Archive voice →
+          </Link>
           <Link href="/internal/archive-simplicity" className="text-zinc-500 hover:text-zinc-300">
             Archive simplicity →
           </Link>

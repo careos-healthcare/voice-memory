@@ -6,10 +6,11 @@ const _deviceIdKey = 'device_id';
 /// Stable UUID v4 for capture attest (matches web `deviceId` format).
 class DeviceIdStore {
   DeviceIdStore({FlutterSecureStorage? storage})
-      : _storage = storage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-            );
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+          );
 
   final FlutterSecureStorage _storage;
   final _uuid = const Uuid();

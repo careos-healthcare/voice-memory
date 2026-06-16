@@ -69,9 +69,7 @@ class _PromptChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected
-          ? AppColors.accentLight
-          : AppColors.backgroundSecondary,
+      color: selected ? AppColors.accentLight : AppColors.backgroundSecondary,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -82,14 +80,18 @@ class _PromptChip extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.accentPrimary : AppColors.borderSubtle,
+              color: selected
+                  ? AppColors.accentPrimary
+                  : AppColors.borderSubtle,
               width: selected ? 1.5 : 1,
             ),
           ),
           child: Text(
             label,
             style: VoiceMemoryTypography.bodyStyle(
-              color: emphasized ? AppColors.textPrimary : AppColors.textSecondary,
+              color: emphasized
+                  ? AppColors.textPrimary
+                  : AppColors.textSecondary,
             ),
           ),
         ),

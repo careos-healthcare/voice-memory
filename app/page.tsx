@@ -1,18 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 import { CrossDeviceCarryoverLine } from "@/components/sync/CrossDeviceCarryoverLine";
-import { ArchiveOwnershipSparseLine } from "@/components/archive/ArchiveOwnershipSparseLine";
 import { FollowupPromptInline } from "@/components/conversation/FollowupPromptInline";
 import { QuietSilenceLine } from "@/components/restraint/QuietSilenceLine";
 import { ArchiveValueMoments } from "@/components/retention/ArchiveValueMoments";
 import { OpenLoopReturnPrompt } from "@/components/open-loops/OpenLoopReturnPrompt";
 import { GentleReturnPrompt } from "@/components/retention/GentleReturnPrompt";
 import { DayTwoReturnPrompt } from "@/components/retention/DayTwoReturnPrompt";
+import { ProtectArchiveBanner } from "@/components/auth/ProtectArchiveBanner";
 import { ActivationOnboarding } from "@/components/ActivationOnboarding";
+import { ArchiveProgressBar } from "@/components/archive/ArchiveProgressBar";
+import { ArchiveDifferenceCard } from "@/components/archive/ArchiveDifferenceCard";
+import { ArchiveIdentityBar } from "@/components/archive/ArchiveIdentityBar";
+import { WhatIsMyArchive } from "@/components/archive/WhatIsMyArchive";
+import { HomeArchiveBeliefIntro } from "@/components/archive/HomeArchiveBeliefIntro";
+import { EvidenceArchivePreview } from "@/components/product/EvidenceArchivePreview";
+import { ProofWall } from "@/components/distribution/ProofWall";
+import { WhatThisArchiveCanAnswer } from "@/components/archive/WhatThisArchiveCanAnswer";
+import { ARCHIVE_WAYFINDING_TO_ARCHIVE } from "@/lib/product/archive-product-copy";
+import { TheoryCuriosityPrompt } from "@/components/theories/TheoryCuriosityPrompt";
+import { HomepageChatGptComparison } from "@/components/product/HomepageChatGptComparison";
+import { ProductDemoStory } from "@/components/product/ProductDemoStory";
+import { ReturningDiscoverRedirect } from "@/components/product/ReturningDiscoverRedirect";
 import { HomepagePrimaryCtaProvider } from "@/components/homepage/HomepagePrimaryCtaProvider";
 import { CalmComprehensionPrompt } from "@/components/onboarding/CalmComprehensionPrompt";
 import { OnboardingCompletionProof } from "@/components/social-proof/OnboardingCompletionProof";
@@ -70,16 +84,19 @@ import {
 } from "@/lib/refinement/revisit-rhythm";
 import { maybeTrackFirstSessionReturnAfterRevisit } from "@/lib/marketing/first-session-comprehension";
 import { checkVoluntaryReturns } from "@/lib/retention/retention-loops";
+import { observeReturnVisitForAttribution } from "@/lib/retention/return-trigger-attribution";
 import { maybeDetectReturnTriggers } from "@/lib/retention/return-triggers";
+import { ReturnTriggerReasonPrompt } from "@/components/retention/ReturnTriggerReasonPrompt";
 import {
   HONESTY_LINE,
   DEVICE_PRIVACY_LINE,
+  APP_HONESTY,
+  APP_SUPPORT,
   HOMEPAGE_CLARITY,
   POSITIONING_EYEBROW,
-  POSITIONING_LEAD,
-  POSITIONING_SUPPORT,
-  POSITIONING_TAGLINE,
+  PRODUCT_HERO,
 } from "@/lib/product-copy";
+import { isReturningProductUser } from "@/lib/product/returning-home";
 import { getMemoryEligibleEntries } from "@/lib/storage";
 import { useQuietMode } from "@/lib/hooks/useQuietMode";
 import { MOTION } from "@/lib/motion/tokens";
@@ -112,6 +129,7 @@ export default function HomePage() {
   const hydrated = useClientHydrated();
   const mobileFirstRun = hydrated && isMobileFirstRunHome();
   const mobileReturning = hydrated && isMobileReturningHome();
+  const returningProductUser = hydrated && isReturningProductUser();
   const entriesForHome = useMemo(
     () => (hydrated ? getMemoryEligibleEntries() : []),
     [hydrated],
@@ -163,6 +181,7 @@ export default function HomePage() {
     const id = requestAnimationFrame(() => {
       maybeTrackFirstSessionReturnAfterRevisit();
       maybeDetectReturnTriggers();
+      observeReturnVisitForAttribution();
       checkVoluntaryReturns();
       const entries = getMemoryEligibleEntries();
 
@@ -305,18 +324,51 @@ export default function HomePage() {
       </div>
 
       <HomepagePrimaryCtaProvider>
+      <Suspense fallback={null}>
+        <ReturningDiscoverRedirect />
+      </Suspense>
       <div className="relative mx-auto flex min-h-screen-mobile max-w-3xl flex-col px-4 pb-10 sm:px-6">
         {!captureFirstHome ? (
           <SiteHeader compact={mobileFirstRun || mobileReturning} />
         ) : null}
 
+        {!captureFirstHome ? (
+          <div className="mt-4 space-y-3">
+            <ArchiveIdentityBar />
+            {returningProductUser ? (
+              <WhatIsMyArchive compact className="max-w-xl" entriesOverride={entriesForHome} />
+            ) : null}
+          </div>
+        ) : null}
+
+        {hydrated ? (
+          <div className="mx-auto mt-4 w-full max-w-2xl px-4 sm:px-6">
+            <ProtectArchiveBanner />
+          </div>
+        ) : null}
+
         {!micCentric && !mobileFirstRun && !mobileReturning && !desktopRecognitionCenter ? (
           <div className="mt-6 space-y-10 py-2">
+            <WhatIsMyArchive className="mx-auto max-w-xl" />
+            <ArchiveDifferenceCard className="mx-auto max-w-xl" />
             <ActivationOnboarding />
             <CalmComprehensionPrompt />
             <OnboardingCompletionProof />
             <CrossDeviceCarryoverLine />
-            <ArchiveOwnershipSparseLine />
+            <HomeArchiveBeliefIntro className="px-1" entriesOverride={entriesForHome} />
+            <ArchiveProgressBar
+              surface="home"
+              entriesOverride={entriesForHome}
+              className="mx-auto mt-4 max-w-xl px-1"
+            />
+            <EvidenceArchivePreview
+              className="px-1 mt-4"
+              entriesOverride={entriesForHome}
+              surface="home"
+            />
+            <ProofWall className="px-1 mt-4" />
+            <WhatThisArchiveCanAnswer className="px-1 mt-4" />
+            <TheoryCuriosityPrompt className="px-1" />
             <PersonalisationProgressNote />
             <ReflectionGoalHint />
             <PrimaryCallbackNote
@@ -334,6 +386,7 @@ export default function HomePage() {
                 scrollToRecorder();
               }}
             />
+            <ReturnTriggerReasonPrompt className="px-1" />
             <GentleReturnPrompt />
             <DayTwoReturnPrompt />
             <ArchiveValueMoments />
@@ -400,6 +453,23 @@ export default function HomePage() {
               }
             />
           ) : mobileReturning ? (
+            <div className="flex w-full max-w-md flex-col items-center">
+              {returningProductUser ? (
+                <Link
+                  href="/archive-belief"
+                  className="mb-6 text-sm text-violet-300 underline-offset-2 hover:text-violet-200 hover:underline"
+                >
+                  {ARCHIVE_WAYFINDING_TO_ARCHIVE} →
+                </Link>
+              ) : null}
+              <HomeArchiveBeliefIntro className="mb-4 w-full" entriesOverride={entriesForHome} />
+              <ArchiveProgressBar
+                surface="home"
+                entriesOverride={entriesForHome}
+                className="mb-4 w-full"
+              />
+              <WhatThisArchiveCanAnswer className="mb-4 w-full" />
+              <ReturnTriggerReasonPrompt className="mb-4 w-full" />
             <MobileReturningHome
               continuityLine={reflexContinuityLine}
               recorder={
@@ -416,6 +486,7 @@ export default function HomePage() {
                 </div>
               }
             />
+            </div>
           ) : (
             <>
               <MotionPage className="max-w-2xl">
@@ -423,28 +494,25 @@ export default function HomePage() {
                   {POSITIONING_EYEBROW}
                 </p>
                 <h1 className="mt-5 text-4xl font-normal tracking-tight text-zinc-100 sm:text-5xl">
-                  VoiceMemory
+                  {PRODUCT_HERO.promise}
                 </h1>
-                <p className="mt-4 text-base leading-relaxed text-violet-200/80 sm:text-lg">
-                  {POSITIONING_TAGLINE}
-                </p>
                 <p className="mt-6 text-lg font-normal leading-relaxed text-zinc-200 sm:text-xl">
-                  {POSITIONING_LEAD}
+                  {PRODUCT_HERO.archiveLead}
                 </p>
+                <p className="mt-4 text-sm leading-relaxed text-zinc-500">{APP_SUPPORT}</p>
                 <ul className="mx-auto mt-5 max-w-md space-y-2 text-left text-sm leading-relaxed text-zinc-400">
                   <li>{HOMEPAGE_CLARITY.stepSpeak}</li>
                   <li>{HOMEPAGE_CLARITY.stepRemember}</li>
                   <li>{HOMEPAGE_CLARITY.stepReturn}</li>
                 </ul>
-                <div className="mx-auto mt-8 max-w-md rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-left">
-                  <p className="text-[10px] uppercase tracking-wider text-zinc-600">
-                    {HOMEPAGE_CLARITY.exampleLabel}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-400/95">
-                    {HOMEPAGE_CLARITY.example}
-                  </p>
+                <HomeArchiveBeliefIntro
+                  className="mx-auto mt-6 max-w-md"
+                  entriesOverride={entriesForHome}
+                />
+                <div className="mx-auto mt-8 max-w-md">
+                  <ProductDemoStory />
                 </div>
-                <p className="mt-6 text-sm leading-[1.75] text-zinc-500">{POSITIONING_SUPPORT}</p>
+                <HomepageChatGptComparison />
               </MotionPage>
 
               <motion.div
@@ -511,7 +579,7 @@ export default function HomePage() {
                 transition={{ duration: MOTION.duration.fade, delay: 0.55, ease: MOTION.ease }}
                 className="mt-5 max-w-md text-xs leading-relaxed text-zinc-600"
               >
-                {HONESTY_LINE}
+                {APP_HONESTY}
               </motion.p>
             </>
           ) : null}

@@ -36,7 +36,9 @@ class _IdentityScreenState extends State<IdentityScreen> {
     final baseline = baselineRaw?.map(
       (k, v) => MapEntry(k, (v as num).toInt()),
     );
-    final themeBaseline = ThemeTrackerService.canonicalBaselineFromStored(baseline);
+    final themeBaseline = ThemeTrackerService.canonicalBaselineFromStored(
+      baseline,
+    );
 
     final profile = const IdentityEngine().build(
       entries: entries,
@@ -90,7 +92,8 @@ class _IdentityScreenState extends State<IdentityScreen> {
 
   String _subtitle(IdentityProfile profile) {
     if (!profile.hasMinimumArchiveEvidence) {
-      final need = archiveMinEvidenceReflections - profile.evidenceReflectionCount;
+      final need =
+          archiveMinEvidenceReflections - profile.evidenceReflectionCount;
       return 'Record $need more reflections with enough spoken detail before '
           'the archive can form an evidence-backed identity profile.';
     }
@@ -177,7 +180,11 @@ class _TraitCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 const Text(
                   'Supporting quotes',
-                  style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                  style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 0.6,
+                    color: AppTheme.muted,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 for (var i = 0; i < trait.supportingQuotes.length; i++) ...[
@@ -202,8 +209,14 @@ class _TraitCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.muted)),
-          Text(value, style: const TextStyle(fontSize: 12, color: AppTheme.muted)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+          ),
         ],
       ),
     );
@@ -222,7 +235,11 @@ class _QuoteTile extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         '"$quote"',
-        style: const TextStyle(color: AppTheme.muted, fontSize: 13, height: 1.35),
+        style: const TextStyle(
+          color: AppTheme.muted,
+          fontSize: 13,
+          height: 1.35,
+        ),
       ),
     );
     if (entryId == null || entryId!.isEmpty) return child;

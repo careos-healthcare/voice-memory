@@ -1,6 +1,6 @@
 # Durable storage migration
 
-VoiceMemory stores **auth codes**, **sessions**, and **encrypted sync blobs** in Postgres when `DATABASE_URL` is set. Without it, production falls back to **ephemeral in-memory** storage (single warm serverless instance only). Local development without `DATABASE_URL` uses `.data/` on disk.
+ArchiveMe stores **auth codes**, **sessions**, and **encrypted sync blobs** in Postgres when `DATABASE_URL` is set. Without it, production falls back to **ephemeral in-memory** storage (single warm serverless instance only). Local development without `DATABASE_URL` uses `.data/` on disk.
 
 ## Implemented (Postgres via `DATABASE_URL`)
 

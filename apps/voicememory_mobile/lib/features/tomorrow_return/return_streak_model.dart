@@ -22,17 +22,18 @@ class ReturnStreak {
   bool get showOnRecordPostSave => currentStreakDays >= 2;
 
   Map<String, dynamic> toJson() => {
-        'currentStreakDays': currentStreakDays,
-        'longestStreakDays': longestStreakDays,
-        'completedDates': completedDates
-            .map((d) => TomorrowCommitment.dateOnly(d).toIso8601String())
-            .toList(),
-        'headline': headline,
-        'body': body,
-        if (lastCompletedDate != null)
-          'lastCompletedDate':
-              TomorrowCommitment.dateOnly(lastCompletedDate!).toIso8601String(),
-      };
+    'currentStreakDays': currentStreakDays,
+    'longestStreakDays': longestStreakDays,
+    'completedDates': completedDates
+        .map((d) => TomorrowCommitment.dateOnly(d).toIso8601String())
+        .toList(),
+    'headline': headline,
+    'body': body,
+    if (lastCompletedDate != null)
+      'lastCompletedDate': TomorrowCommitment.dateOnly(
+        lastCompletedDate!,
+      ).toIso8601String(),
+  };
 
   static ReturnStreak? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -64,8 +65,7 @@ class ReturnStreak {
   }
 
   static List<DateTime> uniqueSortedDates(List<DateTime> dates) {
-    final set = dates.map(TomorrowCommitment.dateOnly).toSet().toList()
-      ..sort();
+    final set = dates.map(TomorrowCommitment.dateOnly).toSet().toList()..sort();
     return set;
   }
 

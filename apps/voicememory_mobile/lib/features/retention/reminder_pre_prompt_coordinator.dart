@@ -62,7 +62,7 @@ enum ReminderPrePromptTrigger {
 }
 
 /// When to show the pre-permission reminder explanation.
-abstract final class ReminderPrePromptCoordinator {
+abstract class ReminderPrePromptCoordinator {
   ReminderPrePromptCoordinator._();
 
   static ReminderPrePromptStore _store() => ReminderPrePromptStore.instance();

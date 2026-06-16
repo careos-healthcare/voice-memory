@@ -18,7 +18,8 @@ class ArchiveWasWrongEngine {
 
   final BeliefTimelineEngine timelineEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
   static const int minConfidenceDrop = 15;
   static const int minEvidenceCount = 2;
 
@@ -36,11 +37,7 @@ class ArchiveWasWrongEngine {
     final candidates = <ArchiveWasWrongInsight>[];
 
     _detectConfidenceDrop(entries, state, snapshotBaseline, candidates);
-    _detectThemeDominanceShift(
-      eligible,
-      discoveryBaseline,
-      candidates,
-    );
+    _detectThemeDominanceShift(eligible, discoveryBaseline, candidates);
     _detectNamedShifts(eligible, discoveryBaseline, candidates);
 
     if (candidates.isEmpty) return null;
@@ -60,7 +57,8 @@ class ArchiveWasWrongEngine {
     final timeline = timelineEngine.build(entries: entries, beliefText: belief);
     if (timeline.points.length < 2) return;
 
-    final prior = snapshotBaseline?.confidence ?? timeline.points.first.strengthPercent;
+    final prior =
+        snapshotBaseline?.confidence ?? timeline.points.first.strengthPercent;
     final current = timeline.currentPercent;
     final drop = prior - current;
     if (drop < minConfidenceDrop) return;
@@ -112,7 +110,7 @@ class ArchiveWasWrongEngine {
         summary: prior == current
             ? headline
             : '${_label(prior)} weighed heavily before; '
-                '${_label(current)} show up more often in your recent recordings.',
+                  '${_label(current)} show up more often in your recent recordings.',
         evidenceIds: evidence,
         confidence: 74,
         insightRef: ArchiveInsightRef.theme(current),
@@ -208,11 +206,9 @@ class ArchiveWasWrongEngine {
   }
 
   static List<String> eligibleIds(List<JournalEntry> entries) {
-    return archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    return archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
   }
 
   static String _label(String key) {

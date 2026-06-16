@@ -1,5 +1,5 @@
 /// When to request GPT archive synthesis (pilot).
-abstract final class ArchiveSynthesisTrigger {
+abstract class ArchiveSynthesisTrigger {
   ArchiveSynthesisTrigger._();
 
   static const int minEligible = 50;
@@ -15,8 +15,7 @@ abstract final class ArchiveSynthesisTrigger {
   static bool isMonthlyReviewDue({
     required String monthKey,
     required String? lastReviewMonthKey,
-  }) =>
-      lastReviewMonthKey != monthKey;
+  }) => lastReviewMonthKey != monthKey;
 
   /// New milestone crossed since [celebratedMilestones].
   static int? newlyReachedMilestone({

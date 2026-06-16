@@ -12,7 +12,7 @@ export const SHORT_APP_DESCRIPTION = APP_DESCRIPTION_SHORT;
 
 export const FULL_APP_DESCRIPTION = `${NOT_AI_JOURNAL_LINE} ${PRODUCT_WEDGE_LINE}
 
-Talk naturally for a minute or two. Your audio and transcript stay on this device. Over time, VoiceMemory brings back words you forgot you were repeating — from your own voice, not therapy.
+Talk naturally for a minute or two. Your audio and transcript stay on this device. Over time, ArchiveMe brings back words you forgot you were repeating — from your own voice, not therapy.
 
 What you can do:
 • Record voice reflections in a quiet, private space
@@ -21,7 +21,7 @@ What you can do:
 • Export your archive anytime
 • Choose encrypted backup if you want a second copy
 
-What VoiceMemory is not:
+What ArchiveMe is not:
 Not therapy. Not coaching. Not a productivity system. No diagnosis, no performance dashboard, no pressure to record every day.
 
 Local-first. Your words stay yours.`;
@@ -134,7 +134,7 @@ export const TRUST_LINES = [
 
 export const REVIEW_RESPONSE_TEMPLATES = {
   grateful:
-    "Thank you for sharing this — it means a lot that VoiceMemory felt worth your time. If something confused you or broke, hello@voicememory.app reaches us directly.",
+    "Thank you for sharing this — it means a lot that ArchiveMe felt worth your time. If something confused you or broke, hello@voicememory.app reaches us directly.",
   privacyQuestion:
     "Your reflections stay on your device unless you turn on encrypted backup. We do not run a cloud journal database. More detail is on the Privacy page in the app.",
   revisitConfusion:

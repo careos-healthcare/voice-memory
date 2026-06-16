@@ -2,7 +2,7 @@ import '../archive_evidence/archive_evidence.dart';
 import '../archive_v1/archive_v1_models.dart';
 
 /// When Archive Deep Dive may be opened from the belief hero or routes.
-abstract final class ArchiveDeepDiveGate {
+abstract class ArchiveDeepDiveGate {
   ArchiveDeepDiveGate._();
 
   static bool canOpenDeepDive(ArchiveV1View view) {

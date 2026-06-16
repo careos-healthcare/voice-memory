@@ -57,7 +57,8 @@ String _watchItem({
   required bool hasMinimumEvidence,
 }) {
   if (!hasMinimumEvidence) {
-    final need = ArchiveEvidenceGuard.minimumEvidenceCount - eligibleEvidenceCount;
+    final need =
+        ArchiveEvidenceGuard.minimumEvidenceCount - eligibleEvidenceCount;
     return need > 0
         ? 'Record $need more reflection${need == 1 ? '' : 's'} with enough spoken detail for belief and evidence surfaces.'
         : 'Add reflections with at least $archiveMinTranscriptChars characters of transcript.';
@@ -81,17 +82,17 @@ ArchiveStateObjectV3? buildArchiveStateObjectV3({
   final evidenceCount = archiveEvidenceReflectionCount(entries);
   final hasMin = archiveHasMinimumEvidence(entries);
 
-  final belief =
-      hasMin ? archiveBeliefFromReflections(entries) : null;
-  final evidenceSummary =
-      hasMin ? archiveWhyArchiveBelievesCopy(entries) : null;
+  final belief = hasMin ? archiveBeliefFromReflections(entries) : null;
+  final evidenceSummary = hasMin
+      ? archiveWhyArchiveBelievesCopy(entries)
+      : null;
   final strongest = hasMin ? archiveStrongestEvidenceQuote(entries) : null;
 
   final changeSummary = !hasMin
       ? EmptyArchiveCopy.needMoreEvidenceBody
       : (delta != null && delta.hasChanges
-          ? delta.headline
-          : 'Nothing notable has shifted since your last visit.');
+            ? delta.headline
+            : 'Nothing notable has shifted since your last visit.');
 
   return ArchiveStateObjectV3(
     belief: belief,

@@ -34,7 +34,9 @@ class ReflectionValueLadder extends StatelessWidget {
             child: Row(
               children: [
                 Icon(
-                  count >= step.$1 ? Icons.check_circle_outline : Icons.circle_outlined,
+                  count >= step.$1
+                      ? Icons.check_circle_outline
+                      : Icons.circle_outlined,
                   size: 18,
                   color: count >= step.$1
                       ? VoiceMemoryColors.primaryIndigo

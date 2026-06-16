@@ -6,6 +6,20 @@ import { useSearchParams } from "next/navigation";
 import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
 import { Check, Crown, Lock } from "lucide-react";
 
+import { ArchiveDifferenceCard } from "@/components/archive/ArchiveDifferenceCard";
+import { ArchiveUniquenessPanel } from "@/components/archive/ArchiveUniquenessPanel";
+import { ArchiveAssetCard } from "@/components/archive/ArchiveAssetCard";
+import { ArchiveVisualModel } from "@/components/archive/ArchiveVisualModel";
+import { WhyPeopleReturn } from "@/components/archive/WhyPeopleReturn";
+import { ArchiveWorthStatement } from "@/components/archive/ArchiveWorthStatement";
+import { ArchiveProgressBar } from "@/components/archive/ArchiveProgressBar";
+import { EffortCompoundsPanel } from "@/components/archive/EffortCompoundsPanel";
+import { WhatThisArchiveCanAnswer } from "@/components/archive/WhatThisArchiveCanAnswer";
+import { ArchiveProofStories } from "@/components/social-proof/ArchiveProofStories";
+import { ConversionReasonPrompt } from "@/components/billing/ConversionReasonPrompt";
+import { PaywallInterestPrompt } from "@/components/billing/PaywallInterestPrompt";
+import { ARCHIVE_VS_SINGLE_CHAT_LINE } from "@/lib/archive/what-archive-can-answer-copy";
+import { armConversionReasonPrompt } from "@/lib/billing/paywall-attribution";
 import { BillingStatus, ErrorState, PrivacyNotice, TrustNotice } from "@/components/system";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,21 +28,21 @@ import { startStripeCheckout } from "@/lib/billing/start-checkout";
 import { useBillingPublicConfig } from "@/lib/billing/use-billing-public-config";
 import { isProPreviewAllowed } from "@/lib/billing/billing-state";
 import { refreshServerEntitlements } from "@/lib/entitlement/entitlements";
+import { VALUE_MOMENT_PRICING_COPY } from "@/lib/billing/value-moment-paywall-copy";
 import {
-  FREE_PLAN_FEATURES,
   FREE_ENTRY_LIMIT,
   getPlanId,
   getUpgradeClickEvents,
   isProUser,
   PRO_MEMORY_FEATURES,
-  PRO_PLAN_FEATURES,
   setPlanId,
   trackUpgradeClick,
   type PlanId,
   type UpgradeClickSource,
 } from "@/lib/subscription";
 import { PRO_DESCRIPTION, PRO_HEADLINE } from "@/lib/product/pro-framing";
-import { HONESTY_LINE, NOT_AI_JOURNAL_LINE, POSITIONING_TAGLINE } from "@/lib/product-copy";
+import { VOICEMEMORY_ARCHIVE_POSITIONING } from "@/lib/product/archive-positioning";
+import { HONESTY_LINE, NOT_AI_JOURNAL_LINE } from "@/lib/product-copy";
 import { trackPilotPricingOpened } from "@/lib/pilot/pilot-interest";
 import { RETENTION_EVENTS, trackRetentionEvent } from "@/lib/local-analytics";
 import { getLockedEntryCount, getStoredEntryCount } from "@/lib/storage";
@@ -61,6 +75,8 @@ export function PricingPageClient({
   const [showCheckoutNotice, setShowCheckoutNotice] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [showInterestPrompt, setShowInterestPrompt] = useState(false);
+  const [conversionPromptKey, setConversionPromptKey] = useState(0);
   const billingConfig = useBillingPublicConfig({
     billingLive: initialBillingLive,
     proPriceLabel: initialProPriceLabel,
@@ -90,12 +106,13 @@ export function PricingPageClient({
     if (checkout === "success" && billingLive) {
       void refreshServerEntitlements().then(() => {
         setPlan(getPlanId());
+        armConversionReasonPrompt(from);
+        setConversionPromptKey((k) => k + 1);
       });
     }
-  }, [searchParams, billingLive]);
+  }, [searchParams, billingLive, from]);
 
-  const handleUpgrade = async () => {
-    trackUpgradeClick(from, "pricing_cta");
+  const runCheckout = async () => {
     setCheckoutError(null);
 
     if (!billingLive) {
@@ -120,6 +137,11 @@ export function PricingPageClient({
     setCheckoutError(result.message);
   };
 
+  const handleUpgrade = () => {
+    trackUpgradeClick(from, "pricing_cta");
+    setShowInterestPrompt(true);
+  };
+
   const togglePreviewPro = () => {
     const next: PlanId = isProUser() ? "free" : "pro";
     setPlanId(next);
@@ -128,9 +150,32 @@ export function PricingPageClient({
 
   return (
     <>
+        {showInterestPrompt ? (
+          <PaywallInterestPrompt
+            className="mt-4"
+            source={from}
+            onDone={() => {
+              setShowInterestPrompt(false);
+              void runCheckout();
+            }}
+          />
+        ) : null}
+        <ConversionReasonPrompt className="mt-4" source={from} refreshKey={conversionPromptKey} />
         <AnimatedReveal className="mt-4 text-center sm:text-left">
-          <p className="text-sm leading-relaxed text-zinc-300">
-            {POSITIONING_TAGLINE} Free stays local-first on your device. {PRO_DESCRIPTION}
+          <p className="text-sm leading-relaxed text-zinc-300">{VOICEMEMORY_ARCHIVE_POSITIONING}</p>
+          <ArchiveVisualModel compact className="mt-4" />
+          <ArchiveDifferenceCard className="mt-4" />
+          <ArchiveUniquenessPanel className="mt-4" />
+          <WhyPeopleReturn className="mt-4" />
+          <p className="mt-4 text-sm leading-relaxed text-violet-200/90">{ARCHIVE_VS_SINGLE_CHAT_LINE}</p>
+          <ArchiveProgressBar surface="pricing" className="mt-4 text-left" linkHref="/discover" />
+          <WhatThisArchiveCanAnswer className="mt-4 text-left" />
+          <ArchiveAssetCard surface="pricing" className="mt-4 text-left" />
+          <ArchiveWorthStatement compact className="mt-4 text-left" />
+          <EffortCompoundsPanel className="mt-4 text-left" />
+          <ArchiveProofStories className="mt-4 text-left" />
+          <p className="mt-4 text-sm leading-relaxed text-zinc-300">
+            Free stays local-first on your device. {PRO_DESCRIPTION}
           </p>
           <p className="mt-2 text-xs text-muted">{NOT_AI_JOURNAL_LINE}</p>
           <p className="mt-1 text-xs text-muted">{HONESTY_LINE}</p>
@@ -159,7 +204,7 @@ export function PricingPageClient({
             </CardHeader>
             <CardContent>
               <ul className="space-y-2.5">
-                {FREE_PLAN_FEATURES.map((item) => (
+                {VALUE_MOMENT_PRICING_COPY.freeFeatures.map((item) => (
                   <PlanFeature key={item}>{item}</PlanFeature>
                 ))}
               </ul>
@@ -193,7 +238,7 @@ export function PricingPageClient({
             </CardHeader>
             <CardContent>
               <ul className="space-y-2.5">
-                {PRO_PLAN_FEATURES.map((item) => (
+                {VALUE_MOMENT_PRICING_COPY.proFeatures.map((item) => (
                   <PlanFeature key={item}>{item}</PlanFeature>
                 ))}
               </ul>
@@ -270,7 +315,7 @@ export function PricingPageClient({
               <div className="flex items-start gap-2">
                 <Lock className="mt-0.5 h-4 w-4 text-muted" />
                 <p className="text-xs leading-relaxed text-muted">
-                  Developer preview: toggle Pro locally without payment. Disabled when live Stripe
+                  Local preview: toggle Pro on this device without payment. Disabled when live Stripe
                   billing is enabled.
                 </p>
               </div>

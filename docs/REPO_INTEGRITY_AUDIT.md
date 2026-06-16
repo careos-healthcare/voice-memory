@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-05-25  
 **Mode:** Read-only (no commits, no destructive actions)  
-**Auditor context:** Commands run from both the Cursor workspace root and the VoiceMemory git root.
+**Auditor context:** Commands run from both the Cursor workspace root and the ArchiveMe git root.
 
 ---
 
@@ -10,21 +10,21 @@
 
 | Check | Result |
 | --- | --- |
-| VoiceMemory production source repo | **Clean** — `~/Desktop/voice-memory` → `careos-healthcare/voice-memory` |
-| Flutter repo contamination of VoiceMemory | **None detected** in source, imports, or tracked files |
-| VoiceMemory contamination of Flutter | **None detected** in `lib/`, `pubspec.yaml`, or Next.js artifacts |
-| Cursor workspace vs active git repo | **Mismatch** — workspace is Flutter; VoiceMemory work is on disk outside the workspace |
+| ArchiveMe production source repo | **Clean** — `~/Desktop/voice-memory` → `careos-healthcare/voice-memory` |
+| Flutter repo contamination of ArchiveMe | **None detected** in source, imports, or tracked files |
+| ArchiveMe contamination of Flutter | **None detected** in `lib/`, `pubspec.yaml`, or Next.js artifacts |
+| Cursor workspace vs active git repo | **Mismatch** — workspace is Flutter; ArchiveMe work is on disk outside the workspace |
 | Vercel linkage | **Correct** — local `.vercel/project.json` → project `voice-memory` → `voice-memory-iota.vercel.app` |
-| Cross-project reference scan | **No matches** for `TextRecognitionAppFlutter`, `AndroidStudioProjects`, `package:flutter`, or cross-repo relative imports in VoiceMemory |
-| Nested `.git` inside VoiceMemory | **None** — single root `.git` only |
+| Cross-project reference scan | **No matches** for `TextRecognitionAppFlutter`, `AndroidStudioProjects`, `package:flutter`, or cross-repo relative imports in ArchiveMe |
+| Nested `.git` inside ArchiveMe | **None** — single root `.git` only |
 
-**Primary risk:** Operational — editing and deploying VoiceMemory while Cursor is opened on `TextRecognitionAppFlutter` causes wrong-repo searches, terminal cwd confusion, and agent context stored under the Flutter Cursor project path. This does **not** imply Flutter files are being deployed to Vercel.
+**Primary risk:** Operational — editing and deploying ArchiveMe while Cursor is opened on `TextRecognitionAppFlutter` causes wrong-repo searches, terminal cwd confusion, and agent context stored under the Flutter Cursor project path. This does **not** imply Flutter files are being deployed to Vercel.
 
 ---
 
 ## 1. Environment snapshot (commands run)
 
-### VoiceMemory (`~/Desktop/voice-memory`)
+### ArchiveMe (`~/Desktop/voice-memory`)
 
 | Field | Value |
 | --- | --- |
@@ -45,7 +45,7 @@
 | **Remote** | `https://github.com/careos-healthcare/app15_full.git` |
 | **Branch** | `main` |
 | **Latest commit** | `dc84e34` — *core shift: enforced daily habit…* |
-| **Modified / untracked** | **341** status lines (**41** untracked `??`) — large in-progress CareOS Flutter tree; unrelated to VoiceMemory deploy |
+| **Modified / untracked** | **341** status lines (**41** untracked `??`) — large in-progress CareOS Flutter tree; unrelated to ArchiveMe deploy |
 
 ### `git remote -v` (both)
 
@@ -74,16 +74,16 @@ No `.git` inside `voice-memory` subdirectories. No `voice-memory` folder inside 
 
 ## 2. Workspace root mismatch (Cursor)
 
-| Item | VoiceMemory truth | Cursor default |
+| Item | ArchiveMe truth | Cursor default |
 | --- | --- | --- |
 | Opened workspace | Should be `~/Desktop/voice-memory` for VM work | `~/AndroidStudioProjects/TextRecognitionAppFlutter` |
 | `package.json` name | `voice-memory` | `careos-firestore-rules-tests` (root); Flutter `text_recognition_app_flutter` in `pubspec.yaml` |
 | App framework | Next.js 16 (`next.config.ts`, `app/`) | Flutter + Firebase rules helper `package.json` |
 | Ripgrep from Cursor | Scoped to Flutter workspace — **misses** `~/Desktop/voice-memory` unless absolute paths are used | |
 
-**Impact:** Agents and IDE search can report “no matches” for VoiceMemory paths, run `npm run build` in the wrong tree, or attach terminals under `.../TextRecognitionAppFlutter/terminals` while editing Desktop files.
+**Impact:** Agents and IDE search can report “no matches” for ArchiveMe paths, run `npm run build` in the wrong tree, or attach terminals under `.../TextRecognitionAppFlutter/terminals` while editing Desktop files.
 
-**Accidental shared state:** Cursor agent transcripts for VoiceMemory sessions are stored under:
+**Accidental shared state:** Cursor agent transcripts for ArchiveMe sessions are stored under:
 
 `~/.cursor/projects/Users-chiragpatel-AndroidStudioProjects-TextRecognitionAppFlutter/`
 
@@ -93,7 +93,7 @@ That is metadata only — not deployed — but it blurs project boundaries in ch
 
 ## 3. Contamination scan results
 
-### 3.1 TextRecognitionAppFlutter / Flutter references in VoiceMemory
+### 3.1 TextRecognitionAppFlutter / Flutter references in ArchiveMe
 
 Shell grep over `~/Desktop/voice-memory` (excluding `node_modules`, `.next`):
 
@@ -101,25 +101,25 @@ Shell grep over `~/Desktop/voice-memory` (excluding `node_modules`, `.next`):
 - `AndroidStudioProjects` — **none**
 - `app15_full` — **none**
 - `package:flutter` — **none**
-- `*.dart` files under VoiceMemory — **none**
+- `*.dart` files under ArchiveMe — **none**
 - `../../AndroidStudio` or `../../TextRecognition` imports — **none**
 
-### 3.2 VoiceMemory references in Flutter repo
+### 3.2 ArchiveMe references in Flutter repo
 
 Grep over `lib/` and `docs/` in TextRecognitionAppFlutter:
 
-- `voice-memory`, `VoiceMemory`, `voicememory.app` — **none** in Dart/docs sample paths
+- `voice-memory`, `ArchiveMe`, `voicememory.app` — **none** in Dart/docs sample paths
 
 ### 3.3 Duplicate / nested repositories
 
 | Location | Risk |
 | --- | --- |
-| `Desktop/voice-memory/.git` | Canonical VoiceMemory repo |
+| `Desktop/voice-memory/.git` | Canonical ArchiveMe repo |
 | `TextRecognitionAppFlutter/.git` | Separate product (CareOS) |
-| `Desktop/app36_full/.git` + nested `TextRecognitionApp/.git` | Unrelated nested Desktop repos — do not merge with VoiceMemory |
+| `Desktop/app36_full/.git` + nested `TextRecognitionApp/.git` | Unrelated nested Desktop repos — do not merge with ArchiveMe |
 | `Desktop/spp20/youtube-timestamp-search/.git` | Separate Vercel Next project |
 
-**Conclusion:** No nested git inside VoiceMemory; no monorepo coupling between Flutter and VoiceMemory.
+**Conclusion:** No nested git inside ArchiveMe; no monorepo coupling between Flutter and ArchiveMe.
 
 ### 3.4 Incorrect package names
 
@@ -127,7 +127,7 @@ Grep over `lib/` and `docs/` in TextRecognitionAppFlutter:
 | --- | --- | --- |
 | `voice-memory/package.json` | `"name": "voice-memory"` | Correct |
 | Flutter `pubspec.yaml` | `text_recognition_app_flutter` | Correct for CareOS app |
-| Flutter root `package.json` | `careos-firestore-rules-tests` | Firestore rules tests only — not VoiceMemory |
+| Flutter root `package.json` | `careos-firestore-rules-tests` | Firestore rules tests only — not ArchiveMe |
 
 ---
 
@@ -138,7 +138,7 @@ Grep over `lib/` and `docs/` in TextRecognitionAppFlutter:
 - **Root:** `/Users/chiragpatel/Desktop/voice-memory`
 - **Router:** `app/` (App Router)
 - **Config:** `next.config.ts`, `tsconfig.json` paths `@/*` → `./*` (repo-local only)
-- **No** `pubspec.yaml`, **no** `android/`, **no** `lib/*.dart` in VoiceMemory tree
+- **No** `pubspec.yaml`, **no** `android/`, **no** `lib/*.dart` in ArchiveMe tree
 
 ### 4.2 Vercel project linkage
 
@@ -171,13 +171,13 @@ Grep over `lib/` and `docs/` in TextRecognitionAppFlutter:
 | `voice-memory/.cursor/` | No |
 | `TextRecognitionAppFlutter/.cursor/rules/` | Yes — Firestore multi-tenant rules (CareOS only) |
 
-VoiceMemory does not inherit Flutter `.cursor/rules` from disk; Cursor only applies rules for the **opened** workspace folder.
+ArchiveMe does not inherit Flutter `.cursor/rules` from disk; Cursor only applies rules for the **opened** workspace folder.
 
 ---
 
 ## 5. Contamination and orphan risks
 
-### 5.1 VoiceMemory working tree (non-deploy blockers, hygiene)
+### 5.1 ArchiveMe working tree (non-deploy blockers, hygiene)
 
 **Modified (tracked) — sample from audit:**
 
@@ -208,7 +208,7 @@ Untracked file from a mistaken terminal/session name:
 lib/core/risk/# This will start a new terminal session
 ```
 
-This is **CareOS Flutter debris**, not VoiceMemory. It should not be committed to `app15_full`.
+This is **CareOS Flutter debris**, not ArchiveMe. It should not be committed to `app15_full`.
 
 ### 5.3 Accidental shared state (not in git)
 
@@ -260,7 +260,7 @@ If it is empty or junk:
 rm "/Users/chiragpatel/AndroidStudioProjects/TextRecognitionAppFlutter/lib/core/risk/# This will start a new terminal session"
 ```
 
-### 7.3 VoiceMemory — reconcile WIP (choose one strategy)
+### 7.3 ArchiveMe — reconcile WIP (choose one strategy)
 
 **Option A — commit on `main` in voice-memory repo:**
 
@@ -322,7 +322,7 @@ git status --short
 # 2. Nested repos
 find "$(git rev-parse --show-toplevel)" -name ".git" -type d
 
-# 3. Cross-project grep (VoiceMemory)
+# 3. Cross-project grep (ArchiveMe)
 grep -r 'TextRecognitionAppFlutter\|AndroidStudioProjects\|package:flutter' . \
   --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next
 
@@ -338,8 +338,8 @@ node -p "require('./package.json').name"
 
 ## 9. Sign-off
 
-- **Confirmed repo root for VoiceMemory:** `/Users/chiragpatel/Desktop/voice-memory`
+- **Confirmed repo root for ArchiveMe:** `/Users/chiragpatel/Desktop/voice-memory`
 - **Confirmed production deploy project:** Vercel `voice-memory` (`voice-memory-iota.vercel.app`)
-- **Contamination from TextRecognitionAppFlutter:** **Not found** in VoiceMemory source or Vercel linkage
-- **Workspace isolation issue:** **Yes** — Cursor opened on Flutter while VoiceMemory lives on Desktop; fix by switching workspace
+- **Contamination from TextRecognitionAppFlutter:** **Not found** in ArchiveMe source or Vercel linkage
+- **Workspace isolation issue:** **Yes** — Cursor opened on Flutter while ArchiveMe lives on Desktop; fix by switching workspace
 - **Commit:** None (per audit instructions)

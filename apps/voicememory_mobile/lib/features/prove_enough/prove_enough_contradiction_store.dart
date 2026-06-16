@@ -24,9 +24,11 @@ class ProveEnoughContradictionStore {
     if (items is! List) return const [];
     return items
         .whereType<Map>()
-        .map((e) => ProveEnoughContradictionRecord.fromJson(
-              Map<String, dynamic>.from(e),
-            ))
+        .map(
+          (e) => ProveEnoughContradictionRecord.fromJson(
+            Map<String, dynamic>.from(e),
+          ),
+        )
         .whereType<ProveEnoughContradictionRecord>()
         .toList();
   }
@@ -60,7 +62,9 @@ class ProveEnoughContradictionStore {
     await _prefs.updateMap(_key, (current) {
       final map = Map<String, dynamic>.from(current ?? {});
       final items = map['items'];
-      final list = items is List ? List<Map<String, dynamic>>.from(items) : <Map<String, dynamic>>[];
+      final list = items is List
+          ? List<Map<String, dynamic>>.from(items)
+          : <Map<String, dynamic>>[];
       list.add(record.toJson());
       map['items'] = list;
       return map;
@@ -70,14 +74,17 @@ class ProveEnoughContradictionStore {
   }
 
   /// Adds saved contradiction labels to prove_enough review challenge copy.
-  Future<SignalReview> enrichReviewChallengeEvidence(SignalReview review) async {
+  Future<SignalReview> enrichReviewChallengeEvidence(
+    SignalReview review,
+  ) async {
     if (review.loopModeId != LoopModeIds.proveEnough) return review;
 
     final labels = await labelsForJourney(review.journeyId);
     if (labels.isEmpty) return review;
 
-    final base = (review.whatWouldProveThisWrong ?? review.possibleContradictions)
-        .trim();
+    final base =
+        (review.whatWouldProveThisWrong ?? review.possibleContradictions)
+            .trim();
     final merged = <String>[];
     if (base.isNotEmpty) merged.add(base);
     for (final label in labels) {

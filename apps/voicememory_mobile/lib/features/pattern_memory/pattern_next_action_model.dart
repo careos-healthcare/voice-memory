@@ -45,17 +45,17 @@ class PatternNextAction {
   final String sourceStatus;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'memoryId': memoryId,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'type': type.id,
-        'title': title,
-        'body': body,
-        'question': question,
-        'ctaLabel': ctaLabel,
-        'sourceProgressType': sourceProgressType,
-        'sourceStatus': sourceStatus,
-      };
+    'id': id,
+    'memoryId': memoryId,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'type': type.id,
+    'title': title,
+    'body': body,
+    'question': question,
+    'ctaLabel': ctaLabel,
+    'sourceProgressType': sourceProgressType,
+    'sourceStatus': sourceStatus,
+  };
 
   static PatternNextAction? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

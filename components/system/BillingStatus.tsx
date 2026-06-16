@@ -72,7 +72,7 @@ export function BillingStatus({ className }: { className?: string }) {
         </p>
       ) : null}
       <TrustNotice>
-        Secure Stripe checkout. VoiceMemory does not store your card. Cancel anytime from your Stripe
+        Secure Stripe checkout. ArchiveMe does not store your card. Cancel anytime from your Stripe
         customer portal when subscribed.
       </TrustNotice>
       {billingLive ? (

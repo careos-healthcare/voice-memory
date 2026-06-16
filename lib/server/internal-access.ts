@@ -3,6 +3,7 @@ import "server-only";
 import type { NextRequest } from "next/server";
 
 import { debugAccessToken, isFounderEmail } from "@/lib/server/founder-access";
+import { isFounderModeEnabled } from "@/lib/server/founder-mode";
 import { getServerSession } from "@/lib/server/session";
 import { logInternalAccessEvent } from "@/lib/server/internal-access-log";
 
@@ -20,6 +21,7 @@ export function isDevelopmentRuntime(): boolean {
 }
 
 export function isInternalSurfaceEnabled(): boolean {
+  if (!isFounderModeEnabled()) return false;
   if (isDevelopmentRuntime()) {
     return process.env.VOICEMEMORY_ENABLE_INTERNAL !== "false";
   }

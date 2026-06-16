@@ -11,10 +11,7 @@ import '../archive_discovery_share/share_discovery_button.dart';
 
 /// Then → Now belief comparison.
 class ArchiveBeliefEvolutionThenNow extends StatelessWidget {
-  const ArchiveBeliefEvolutionThenNow({
-    super.key,
-    required this.thenNow,
-  });
+  const ArchiveBeliefEvolutionThenNow({super.key, required this.thenNow});
 
   final ArchiveV1ThenNow thenNow;
 
@@ -41,10 +38,7 @@ class ArchiveBeliefEvolutionThenNow extends StatelessWidget {
           size: 20,
         ),
         const SizedBox(height: 12),
-        _BeliefPhase(
-          label: ArchiveV1Copy.nowLabel,
-          belief: thenNow.nowBelief,
-        ),
+        _BeliefPhase(label: ArchiveV1Copy.nowLabel, belief: thenNow.nowBelief),
         const SizedBox(height: 14),
         if (!thenNow.hasDistinctEvolution)
           const Text(
@@ -68,7 +62,8 @@ class ArchiveBeliefEvolutionThenNow extends StatelessWidget {
           'Supporting recordings: ${thenNow.supportingEvidenceCount}',
           style: const TextStyle(color: AppTheme.muted, fontSize: 12),
         ),
-        if (ArchiveDiscoveryShareMoments.fromThenNow(thenNow) case final shareCard?) ...[
+        if (ArchiveDiscoveryShareMoments.fromThenNow(thenNow)
+            case final shareCard?) ...[
           const SizedBox(height: 8),
           ShareDiscoveryButton(
             card: shareCard,
@@ -81,10 +76,7 @@ class ArchiveBeliefEvolutionThenNow extends StatelessWidget {
 }
 
 class _BeliefPhase extends StatelessWidget {
-  const _BeliefPhase({
-    required this.label,
-    required this.belief,
-  });
+  const _BeliefPhase({required this.label, required this.belief});
 
   final String label;
   final String belief;

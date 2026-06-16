@@ -6,7 +6,7 @@ import 'package:crypto/crypto.dart';
 /// Salted, iterated PIN hashing. Pure functions only — no storage, no
 /// platform code, no logging. The raw PIN never leaves the call stack:
 /// only the salt and the derived hash are ever returned.
-abstract final class PinHash {
+abstract class PinHash {
   PinHash._();
 
   static const int minLength = 4;

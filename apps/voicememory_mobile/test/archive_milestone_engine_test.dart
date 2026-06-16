@@ -31,7 +31,10 @@ void main() {
     );
     expect(view.hasMeaningfulShifts, isFalse);
     expect(view.latest, isNull);
-    expect(archiveMilestonesEmptyCopy, contains('No meaningful archive shifts'));
+    expect(
+      archiveMilestonesEmptyCopy,
+      contains('No meaningful archive shifts'),
+    );
   });
 
   test('does not fabricate first reflection or count milestones', () {
@@ -57,9 +60,7 @@ void main() {
   });
 
   test('belief shift from snapshot uses real before/after text', () {
-    final entries = [
-      _entry(id: '1', createdAt: DateTime(2025, 3, 1)),
-    ];
+    final entries = [_entry(id: '1', createdAt: DateTime(2025, 3, 1))];
     final view = buildArchiveMilestones(
       entries: entries,
       currentBeliefText: 'New belief after more evidence.',
@@ -74,8 +75,14 @@ void main() {
     );
     expect(view.milestones.length, 1);
     expect(view.milestones.first.type, 'FIRST_BELIEF_CHANGE');
-    expect(view.milestones.first.explanation, contains('Earlier working belief'));
-    expect(view.milestones.first.explanation, contains('New belief after more evidence'));
+    expect(
+      view.milestones.first.explanation,
+      contains('Earlier working belief'),
+    );
+    expect(
+      view.milestones.first.explanation,
+      contains('New belief after more evidence'),
+    );
     expect(view.milestones.first.periodLabel, isNot('Recently'));
   });
 

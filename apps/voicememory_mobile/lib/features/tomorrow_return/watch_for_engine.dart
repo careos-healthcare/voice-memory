@@ -10,20 +10,21 @@ class WatchForEngine {
 
   static const int _vagueReflectionLength = 36;
 
-  static const List<({String text, List<String> chips})> fallbackAlternatives = [
-    (
-      text: 'whether you take responsibility before asking for help',
-      chips: ['feeling responsible', 'doing it alone', 'asking for help'],
-    ),
-    (
-      text: 'whether the same worry shows up again',
-      chips: ['same worry', 'same pressure', 'tonight again'],
-    ),
-    (
-      text: 'whether you say yes faster than you want to',
-      chips: ['saying yes too fast', 'saying yes', 'too fast'],
-    ),
-  ];
+  static const List<({String text, List<String> chips})> fallbackAlternatives =
+      [
+        (
+          text: 'whether you take responsibility before asking for help',
+          chips: ['feeling responsible', 'doing it alone', 'asking for help'],
+        ),
+        (
+          text: 'whether the same worry shows up again',
+          chips: ['same worry', 'same pressure', 'tonight again'],
+        ),
+        (
+          text: 'whether you say yes faster than you want to',
+          chips: ['saying yes too fast', 'saying yes', 'too fast'],
+        ),
+      ];
 
   WatchForItem buildSuggested({
     required DateTime now,
@@ -32,8 +33,13 @@ class WatchForEngine {
     JournalEntry? latestEntry,
     int alternativeIndex = 0,
   }) {
-    final built = _primarySuggestion(loop: loop, signals: signals, entry: latestEntry);
-    final alt = fallbackAlternatives[alternativeIndex % fallbackAlternatives.length];
+    final built = _primarySuggestion(
+      loop: loop,
+      signals: signals,
+      entry: latestEntry,
+    );
+    final alt =
+        fallbackAlternatives[alternativeIndex % fallbackAlternatives.length];
     final text = built?.text ?? alt.text;
     final chips = (built?.chips.isNotEmpty == true ? built!.chips : alt.chips)
         .take(3)
@@ -127,7 +133,9 @@ class WatchForEngine {
     final shiftHits = _countAny(blob, _shiftMarkers);
 
     if (overlap >= 2) {
-      return shiftHits >= 1 ? WatchForResult.changedShape : WatchForResult.showedAgain;
+      return shiftHits >= 1
+          ? WatchForResult.changedShape
+          : WatchForResult.showedAgain;
     }
     if (overlap == 1) {
       return shiftHits >= 1
@@ -162,10 +170,7 @@ class WatchForEngine {
     }
   }
 
-  String resultHeadline(
-    WatchForResult result, {
-    String? comparisonHint,
-  }) {
+  String resultHeadline(WatchForResult result, {String? comparisonHint}) {
     final hintHeadline = _headlineForComparisonHint(comparisonHint);
     if (hintHeadline != null) return hintHeadline;
 
@@ -206,10 +211,7 @@ class WatchForEngine {
     String? comparisonHint,
   }) {
     final watch = _displayWatchText(pending);
-    final hintBody = _bodyForComparisonHint(
-      hint: comparisonHint,
-      watch: watch,
-    );
+    final hintBody = _bodyForComparisonHint(hint: comparisonHint, watch: watch);
     if (hintBody != null) return hintBody;
 
     switch (result) {
@@ -268,7 +270,11 @@ class WatchForEngine {
       entry.reflection.concreteObservation,
       entry.reflection.repeatedSignal,
     ];
-    return parts.map((p) => p.trim()).where((p) => p.isNotEmpty).join(' ').length;
+    return parts
+        .map((p) => p.trim())
+        .where((p) => p.isNotEmpty)
+        .join(' ')
+        .length;
   }
 
   int _overlapCount(String blob, WatchForItem pending) {

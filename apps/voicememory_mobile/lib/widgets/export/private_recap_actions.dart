@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/export/private_recap_model.dart';
 import '../../features/export/private_recap_service.dart';
+import '../../features/share/archive_share_actions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
@@ -32,14 +33,24 @@ class PrivateRecapActions extends StatelessWidget {
     final handler = onCopy ?? PrivateRecapService.copyToClipboard;
     final ok = await handler(recap);
     if (!context.mounted) return;
-    _notify(context, ok ? 'Copied your recap.' : 'Could not copy.');
+    _notify(
+      context,
+      ok ? ArchiveShareActions.copyConfirmation : 'Could not copy.',
+    );
   }
 
   Future<void> _share(BuildContext context) async {
-    final handler = onShare ?? PrivateRecapService.shareText;
+    final handler =
+        onShare ??
+        ((r) => PrivateRecapService.shareText(
+          r,
+          sharePositionOrigin: ArchiveShareActions.sharePositionOrigin(context),
+        ));
     final shared = await handler(recap);
     if (!context.mounted) return;
-    if (!shared) _notify(context, 'Copied your recap.');
+    if (!shared) {
+      _notify(context, ArchiveShareActions.shareFallbackMessage);
+    }
   }
 
   Future<void> _save(BuildContext context) async {
@@ -50,9 +61,9 @@ class PrivateRecapActions extends StatelessWidget {
   }
 
   void _notify(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override

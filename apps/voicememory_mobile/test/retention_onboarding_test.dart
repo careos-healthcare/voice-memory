@@ -157,9 +157,20 @@ void main() {
   });
 
   test('onboarding copy avoids banned terms', () {
-    const banned = ['therapy', 'coach', 'diagnosis', 'AI friend', 'VoiceMemory'];
+    const banned = [
+      'therapy',
+      'coach',
+      'diagnosis',
+      'AI friend',
+      'VoiceMemory',
+    ];
     for (final s in [
       ConsumerUiCopy.onboardingPositioningHeadline,
+      ConsumerUiCopy.onboardingPositioningBody,
+      ConsumerUiCopy.onboardingStep1Title,
+      ConsumerUiCopy.onboardingStep2Title,
+      ConsumerUiCopy.onboardingStep3Title,
+      ConsumerUiCopy.onboardingFinalCta,
       ConsumerUiCopy.firstRecordingHandoffBody,
       ConsumerUiCopy.reminderPrePromptBody,
       ConsumerUiCopy.returnDayJourneyTitle,

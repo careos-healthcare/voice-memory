@@ -117,6 +117,9 @@ void main() {
     );
     expect(answer, isNotNull);
     expect(answer!.citedEntryIds, isNotEmpty);
-    expect(answer.answerLines.join(' '), anyOf(contains('confident'), contains('assured')));
+    expect(
+      answer.answerLines.join(' '),
+      anyOf(contains('confident'), contains('assured')),
+    );
   });
 }

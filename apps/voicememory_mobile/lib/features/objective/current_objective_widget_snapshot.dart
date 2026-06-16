@@ -21,15 +21,15 @@ class CurrentObjectiveWidgetSnapshot {
   final DateTime updatedAt;
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'body': body,
-        if (checkQuestion != null && checkQuestion!.isNotEmpty)
-          'checkQuestion': checkQuestion,
-        'primaryActionLabel': primaryActionLabel,
-        'route': route,
-        'type': type,
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-      };
+    'title': title,
+    'body': body,
+    if (checkQuestion != null && checkQuestion!.isNotEmpty)
+      'checkQuestion': checkQuestion,
+    'primaryActionLabel': primaryActionLabel,
+    'route': route,
+    'type': type,
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+  };
 
   /// Parses [json] or returns null when data is missing or invalid.
   static CurrentObjectiveWidgetSnapshot? tryFromJson(
@@ -48,8 +48,9 @@ class CurrentObjectiveWidgetSnapshot {
       if (primaryActionLabel.isEmpty || type.isEmpty) return null;
 
       final checkRaw = json['checkQuestion']?.toString().trim();
-      final checkQuestion =
-          checkRaw != null && checkRaw.isNotEmpty ? checkRaw : null;
+      final checkQuestion = checkRaw != null && checkRaw.isNotEmpty
+          ? checkRaw
+          : null;
 
       final updatedRaw = json['updatedAt']?.toString();
       final updatedAt = updatedRaw != null
@@ -76,11 +77,11 @@ class CurrentObjectiveWidgetSnapshot {
         CurrentObjectiveWidgetSnapshot(
           title: json['title']?.toString() ?? '',
           body: json['body']?.toString() ?? '',
-          primaryActionLabel:
-              json['primaryActionLabel']?.toString() ?? '',
+          primaryActionLabel: json['primaryActionLabel']?.toString() ?? '',
           route: json['route']?.toString() ?? '/record',
           type: json['type']?.toString() ?? '',
-          updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          updatedAt:
+              DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
               DateTime.now().toUtc(),
           checkQuestion: json['checkQuestion']?.toString(),
         );
@@ -94,14 +95,13 @@ class CurrentObjectiveWidgetSnapshot {
     String? route,
     String? type,
     DateTime? updatedAt,
-  }) =>
-      CurrentObjectiveWidgetSnapshot(
-        title: title ?? this.title,
-        body: body ?? this.body,
-        checkQuestion: checkQuestion ?? this.checkQuestion,
-        primaryActionLabel: primaryActionLabel ?? this.primaryActionLabel,
-        route: route ?? this.route,
-        type: type ?? this.type,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => CurrentObjectiveWidgetSnapshot(
+    title: title ?? this.title,
+    body: body ?? this.body,
+    checkQuestion: checkQuestion ?? this.checkQuestion,
+    primaryActionLabel: primaryActionLabel ?? this.primaryActionLabel,
+    route: route ?? this.route,
+    type: type ?? this.type,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 }

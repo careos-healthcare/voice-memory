@@ -91,10 +91,7 @@ void main() {
         ArchiveGrowthMaturity.fromRecordingCount(50).level,
         ArchiveGrowthLevel.established,
       );
-      expect(
-        ArchiveGrowthMaturity.fromRecordingCount(200).nextLevel,
-        isNull,
-      );
+      expect(ArchiveGrowthMaturity.fromRecordingCount(200).nextLevel, isNull);
     });
   });
 
@@ -167,7 +164,10 @@ void main() {
         7,
         (i) => _entry('e$i', DateTime(2026, 1, i + 1)),
       );
-      final journey = ArchiveJourneyEngine.build(entries: entries, archiveV1: v1);
+      final journey = ArchiveJourneyEngine.build(
+        entries: entries,
+        archiveV1: v1,
+      );
       expect(journey.steps[2].reward, contains('less often'));
     });
   });
@@ -193,7 +193,9 @@ void main() {
         ),
       );
       expect(
-        discoveries.any((d) => d.type == ArchiveDiscoveryShareCardType.contradiction),
+        discoveries.any(
+          (d) => d.type == ArchiveDiscoveryShareCardType.contradiction,
+        ),
         isTrue,
       );
       final card = discoveries.firstWhere(

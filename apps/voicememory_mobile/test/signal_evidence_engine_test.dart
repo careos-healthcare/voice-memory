@@ -62,7 +62,10 @@ void main() {
         observation: 'Pressure before saying yes at work.',
       ),
     ];
-    final trail = engine.build(signal: _signal(entryId: 'e1'), entries: entries);
+    final trail = engine.build(
+      signal: _signal(entryId: 'e1'),
+      entries: entries,
+    );
     expect(trail.needsMoreEvidence, isTrue);
     expect(trail.items.length, 1);
     expect(trail.items.first.relation, SignalEvidenceRelation.supports);
@@ -82,7 +85,8 @@ void main() {
       _entry(
         id: 'e2',
         createdAt: DateTime(2026, 6, 2),
-        transcript: 'More pressure to say yes when I was already stretched thin.',
+        transcript:
+            'More pressure to say yes when I was already stretched thin.',
         observation: 'More pressure to say yes while stretched.',
       ),
       _entry(
@@ -93,14 +97,14 @@ void main() {
         observation: 'Paused and said no with ease.',
       ),
     ];
-    final trail = engine.build(signal: _signal(entryId: 'e1'), entries: entries);
+    final trail = engine.build(
+      signal: _signal(entryId: 'e1'),
+      entries: entries,
+    );
     expect(trail.needsMoreEvidence, isFalse);
     expect(trail.supportingItems.length, greaterThanOrEqualTo(2));
     expect(trail.contradictingItems, isNotEmpty);
-    expect(
-      trail.contradictingItems.first.relation.label,
-      'Might contradict',
-    );
+    expect(trail.contradictingItems.first.relation.label, 'Might contradict');
   });
 
   test('copy constants avoid banned phrases', () {

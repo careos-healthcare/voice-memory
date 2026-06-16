@@ -39,10 +39,8 @@ class ReflectionLanguageStore {
             languageConfidence: detected.confidence,
             originalText: originalText ?? state.originalText,
             detectedCount: state.detectedCount + 1,
-            unsupportedCount:
-                state.unsupportedCount + (unsupported ? 1 : 0),
-            fallbackUsedCount:
-                state.fallbackUsedCount + (fallbackUsed ? 1 : 0),
+            unsupportedCount: state.unsupportedCount + (unsupported ? 1 : 0),
+            fallbackUsedCount: state.fallbackUsedCount + (fallbackUsed ? 1 : 0),
           )
           .toMap();
     });
@@ -52,9 +50,9 @@ class ReflectionLanguageStore {
   /// Records a manual override of the reflection language.
   Future<ReflectionLanguageState> recordOverride(String languageCode) async {
     final next = await _prefs.updateMap(_key, (current) {
-      return _state(current)
-          .copyWith(languageCode: languageCode, languageConfidence: 1.0)
-          .toMap();
+      return _state(
+        current,
+      ).copyWith(languageCode: languageCode, languageConfidence: 1.0).toMap();
     });
     return ReflectionLanguageState.fromMap(next);
   }
@@ -102,13 +100,13 @@ class ReflectionLanguageState {
   }
 
   Map<String, dynamic> toMap() => {
-        'languageCode': languageCode,
-        'languageConfidence': languageConfidence,
-        if (originalText != null) 'originalText': originalText,
-        'detectedCount': detectedCount,
-        'unsupportedCount': unsupportedCount,
-        'fallbackUsedCount': fallbackUsedCount,
-      };
+    'languageCode': languageCode,
+    'languageConfidence': languageConfidence,
+    if (originalText != null) 'originalText': originalText,
+    'detectedCount': detectedCount,
+    'unsupportedCount': unsupportedCount,
+    'fallbackUsedCount': fallbackUsedCount,
+  };
 
   factory ReflectionLanguageState.fromMap(Map<String, dynamic> map) {
     return ReflectionLanguageState(

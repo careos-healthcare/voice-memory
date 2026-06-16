@@ -13,7 +13,12 @@ export function isDevelopmentRuntime(): boolean {
   return process.env.NODE_ENV === "development";
 }
 
+export function isFounderModeEnabled(): boolean {
+  return process.env.FOUNDER_MODE === "true";
+}
+
 export function isInternalSurfaceEnabled(): boolean {
+  if (!isFounderModeEnabled()) return false;
   if (isDevelopmentRuntime()) {
     return process.env.VOICEMEMORY_ENABLE_INTERNAL !== "false";
   }

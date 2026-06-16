@@ -1,11 +1,8 @@
 /// Where a pattern correction was recorded.
-enum PatternCorrectionLearningSource {
-  firstSession,
-  activeThread,
-  watchFor,
-}
+enum PatternCorrectionLearningSource { firstSession, activeThread, watchFor }
 
-extension PatternCorrectionLearningSourceIds on PatternCorrectionLearningSource {
+extension PatternCorrectionLearningSourceIds
+    on PatternCorrectionLearningSource {
   String get id => name;
 }
 
@@ -48,38 +45,35 @@ class PatternCorrectionLearning {
   final bool usedForNextPrompt;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'originalTitle': originalTitle,
-        'correctedTitle': correctedTitle,
-        'originalCategoryId': originalCategoryId,
-        'correctedCategoryId': correctedCategoryId,
-        'reflectionSnippet': reflectionSnippet,
-        'matchedPhrases': matchedPhrases,
-        'correctedWatchForText': correctedWatchForText,
-        'source': source.id,
-        'usedForNextPrompt': usedForNextPrompt,
-      };
+    'id': id,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'originalTitle': originalTitle,
+    'correctedTitle': correctedTitle,
+    'originalCategoryId': originalCategoryId,
+    'correctedCategoryId': correctedCategoryId,
+    'reflectionSnippet': reflectionSnippet,
+    'matchedPhrases': matchedPhrases,
+    'correctedWatchForText': correctedWatchForText,
+    'source': source.id,
+    'usedForNextPrompt': usedForNextPrompt,
+  };
 
   static PatternCorrectionLearning? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     final id = json['id']?.toString().trim() ?? '';
     if (id.isEmpty) return null;
     final createdRaw = json['createdAt']?.toString();
-    final createdAt = createdRaw != null
-        ? DateTime.tryParse(createdRaw)
-        : null;
+    final createdAt = createdRaw != null ? DateTime.tryParse(createdRaw) : null;
     if (createdAt == null) return null;
-    final source = patternCorrectionLearningSourceFromId(
-          json['source']?.toString(),
-        ) ??
+    final source =
+        patternCorrectionLearningSourceFromId(json['source']?.toString()) ??
         PatternCorrectionLearningSource.firstSession;
     final phrasesRaw = json['matchedPhrases'];
     final matchedPhrases = phrasesRaw is List
         ? phrasesRaw
-            .map((e) => e.toString().trim())
-            .where((p) => p.isNotEmpty)
-            .toList()
+              .map((e) => e.toString().trim())
+              .where((p) => p.isNotEmpty)
+              .toList()
         : <String>[];
     return PatternCorrectionLearning(
       id: id,

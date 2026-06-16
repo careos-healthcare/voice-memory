@@ -10,10 +10,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Post-save card inviting a return tomorrow — compact, no filler chips.
 class TomorrowReturnCard extends StatelessWidget {
-  const TomorrowReturnCard({
-    super.key,
-    required this.loop,
-  });
+  const TomorrowReturnCard({super.key, required this.loop});
 
   final TomorrowReturnLoop loop; // retained for call-site compatibility
 
@@ -58,8 +55,9 @@ class TomorrowReturnCard extends StatelessWidget {
             ),
             child: Text(
               ConsumerUiCopy.postSaveRecordAnother,
-              style: ArchiveMobileTypography.responsiveBody(context)
-                  .copyWith(fontWeight: FontWeight.w600),
+              style: ArchiveMobileTypography.responsiveBody(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],

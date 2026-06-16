@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 
+import '../config/creator_demo_mode.dart';
 import '../push/firebase_bootstrap.dart';
 
 /// Production analytics — Firebase Analytics when configured, debug log in dev.
@@ -10,10 +11,16 @@ class ProductAnalytics {
   static FirebaseAnalytics? _analytics;
   static bool _initialized = false;
 
+  /// Counts events suppressed by creator demo mode — test/debug only.
+  @visibleForTesting
+  static int demoSuppressedCount = 0;
+
   /// Call after [FirebaseBootstrap.tryInitialize] (e.g. from [AppServices.initialize]).
   static Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+    // Creator demo mode: no production analytics collection at all.
+    if (CreatorDemoMode.isActive) return;
     if (!FirebaseBootstrap.isInitialized) return;
     try {
       _analytics = FirebaseAnalytics.instance;
@@ -32,6 +39,15 @@ class ProductAnalytics {
     Map<String, Object>? parameters,
   }) async {
     final sanitized = _sanitizeParameters(parameters);
+    // Creator demo mode: events are demo-marked in the debug log only and
+    // never sent to production analytics.
+    if (CreatorDemoMode.isActive) {
+      demoSuppressedCount += 1;
+      if (kDebugMode) {
+        debugPrint('analytics(demo, not sent):$event $sanitized');
+      }
+      return;
+    }
     if (kDebugMode) {
       debugPrint('analytics:$event $sanitized');
     }
@@ -61,9 +77,7 @@ class ProductAnalytics {
     }
     return track(
       event,
-      parameters: {
-        for (final e in properties.entries) e.key: e.value,
-      },
+      parameters: {for (final e in properties.entries) e.key: e.value},
     );
   }
 
@@ -80,9 +94,10 @@ class ProductAnalytics {
     if (raw == null || raw.isEmpty) return {};
     final out = <String, Object>{};
     for (final entry in raw.entries) {
-      final key = entry.key
-          .toLowerCase()
-          .replaceAll(RegExp(r'[^a-z0-9_]'), '_');
+      final key = entry.key.toLowerCase().replaceAll(
+        RegExp(r'[^a-z0-9_]'),
+        '_',
+      );
       if (key.isEmpty) continue;
       final value = entry.value;
       if (value is String) {

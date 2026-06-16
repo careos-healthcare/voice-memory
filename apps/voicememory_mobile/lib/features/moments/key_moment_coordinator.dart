@@ -6,7 +6,7 @@ import 'key_moment_store.dart';
 
 /// Builds and saves a [KeyMoment] after a reflection save or check-in
 /// completion, then tracks the create event. No-op in screenshot mode.
-abstract final class KeyMomentCoordinator {
+abstract class KeyMomentCoordinator {
   KeyMomentCoordinator._();
 
   static Future<KeyMoment?> captureAfterSave({

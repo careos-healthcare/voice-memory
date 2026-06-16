@@ -142,8 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
       list = list.where((r) {
         final d = _resultDate(r);
         if (d == null) return true;
-        final key =
-            '${d.year}-${d.month.toString().padLeft(2, '0')}';
+        final key = '${d.year}-${d.month.toString().padLeft(2, '0')}';
         return key == _monthFilter;
       }).toList();
     }
@@ -250,10 +249,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   IconData _iconFor(SearchResultType type) => switch (type) {
-        SearchResultType.recording => Icons.mic,
-        SearchResultType.archiveBelief => Icons.inventory_2_outlined,
-        SearchResultType.discovery => Icons.explore_outlined,
-      };
+    SearchResultType.recording => Icons.mic,
+    SearchResultType.archiveBelief => Icons.inventory_2_outlined,
+    SearchResultType.discovery => Icons.explore_outlined,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +289,9 @@ class _SearchScreenState extends State<SearchScreen> {
                           });
                         },
                       ),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -333,9 +334,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           padding: const EdgeInsets.only(top: 12, bottom: 8),
                           child: Text(
                             _monthFilterLabel(row.monthKey!),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
+                            style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         );
@@ -389,8 +388,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                     SearchHighlightText(
                                       text: result.title,
                                       query: query,
-                                      style:
-                                          Theme.of(context).textTheme.titleSmall,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleSmall,
                                       maxLines: 3,
                                     ),
                                     const SizedBox(height: 6),
@@ -429,14 +429,18 @@ class _SearchIdleState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search, size: 48, color: AppTheme.muted.withValues(alpha: 0.6)),
+            Icon(
+              Icons.search,
+              size: 48,
+              color: AppTheme.muted.withValues(alpha: 0.6),
+            ),
             const SizedBox(height: 16),
             Text(
               EmptyArchiveCopy.searchIdleTitle,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -467,10 +471,7 @@ class _SearchNoMatchesState extends StatelessWidget {
             Text(
               'No matches found',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                height: 1.45,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w600, height: 1.45),
             ),
             SizedBox(height: 8),
             Text(
@@ -486,10 +487,7 @@ class _SearchNoMatchesState extends StatelessWidget {
 }
 
 class _SearchNoResultsState extends StatelessWidget {
-  const _SearchNoResultsState({
-    required this.index,
-    required this.onTapRoute,
-  });
+  const _SearchNoResultsState({required this.index, required this.onTapRoute});
 
   final VoiceMemorySearchIndex? index;
   final void Function(String route) onTapRoute;
@@ -504,11 +502,11 @@ class _SearchNoResultsState extends StatelessWidget {
     final themes = index == null
         ? const <String>[]
         : const ThemeTrackerService()
-            .track(entries: entries)
-            .topThemes
-            .map((t) => t.name)
-            .take(4)
-            .toList();
+              .track(entries: entries)
+              .topThemes
+              .map((t) => t.name)
+              .take(4)
+              .toList();
 
     final archive = index?.archiveState;
     final beliefLine = archive?.belief?.trim();
@@ -523,9 +521,9 @@ class _SearchNoResultsState extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           'No matches found',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 4),
         const Text(
@@ -555,36 +553,38 @@ class _SearchNoResultsState extends StatelessWidget {
           children: recentSlice.isEmpty
               ? []
               : recentSlice
-                  .map(
-                    (e) => _SuggestionTile(
-                      icon: Icons.mic,
-                      label: timelineEntryTitle(e),
-                      subtitle: _formatRecordingDate(e),
-                      onTap: () => onTapRoute('/entry/${e.id}'),
-                    ),
-                  )
-                  .toList(),
+                    .map(
+                      (e) => _SuggestionTile(
+                        icon: Icons.mic,
+                        label: timelineEntryTitle(e),
+                        subtitle: _formatRecordingDate(e),
+                        onTap: () => onTapRoute('/entry/${e.id}'),
+                      ),
+                    )
+                    .toList(),
         ),
         const SizedBox(height: 16),
         _SuggestionGroup(
           title: 'Top themes',
-          emptyMessage: 'Themes appear after your reflections mention patterns.',
+          emptyMessage:
+              'Themes appear after your reflections mention patterns.',
           children: themes.isEmpty
               ? []
               : themes
-                  .map(
-                    (String name) => _SuggestionTile(
-                      icon: Icons.label_outline,
-                      label: name,
-                      onTap: () => onTapRoute('/archive-belief'),
-                    ),
-                  )
-                  .toList(),
+                    .map(
+                      (String name) => _SuggestionTile(
+                        icon: Icons.label_outline,
+                        label: name,
+                        onTap: () => onTapRoute('/archive-belief'),
+                      ),
+                    )
+                    .toList(),
         ),
         const SizedBox(height: 16),
         _SuggestionGroup(
           title: 'Archive belief',
-          emptyMessage: 'Your working belief will appear after enough reflections.',
+          emptyMessage:
+              'Your working belief will appear after enough reflections.',
           children: beliefPreview == null || beliefPreview.isEmpty
               ? []
               : [
@@ -634,7 +634,11 @@ class _SuggestionGroup extends StatelessWidget {
         if (children.isEmpty)
           Text(
             emptyMessage,
-            style: const TextStyle(color: AppTheme.muted, fontSize: 12, height: 1.4),
+            style: const TextStyle(
+              color: AppTheme.muted,
+              fontSize: 12,
+              height: 1.4,
+            ),
           )
         else
           ...children,
@@ -701,7 +705,11 @@ class _SuggestionTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, size: 18, color: AppTheme.muted),
+                const Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: AppTheme.muted,
+                ),
               ],
             ),
           ),

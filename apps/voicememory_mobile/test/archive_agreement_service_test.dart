@@ -39,8 +39,10 @@ void main() {
     expect(view.records, hasLength(1));
     expect(view.records.first.response, ArchiveTheoryAgreementResponse.agree);
     expect(view.records.first.confidencePercent, 72);
-    expect(view.latestForCurrentTheory?.response,
-        ArchiveTheoryAgreementResponse.agree);
+    expect(
+      view.latestForCurrentTheory?.response,
+      ArchiveTheoryAgreementResponse.agree,
+    );
   });
 
   test('each tap appends history newest first', () async {
@@ -77,9 +79,7 @@ void main() {
       response: ArchiveTheoryAgreementResponse.unsure,
     );
 
-    final latest = await service.latestResponseForTheory(
-      'you avoid conflict',
-    );
+    final latest = await service.latestResponseForTheory('you avoid conflict');
     expect(latest, ArchiveTheoryAgreementResponse.unsure);
   });
 

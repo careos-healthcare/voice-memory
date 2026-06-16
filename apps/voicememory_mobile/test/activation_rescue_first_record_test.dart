@@ -15,13 +15,12 @@ Future<void> _reset(String stamp) async {
 }
 
 void main() {
-  testWidgets('first-record card has one dominant Record one moment CTA',
-      (tester) async {
+  testWidgets('first-record card has one dominant Record one moment CTA', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: FirstLoopStartCard(onRecord: () {}),
-        ),
+        home: Scaffold(body: FirstLoopStartCard(onRecord: () {})),
       ),
     );
 

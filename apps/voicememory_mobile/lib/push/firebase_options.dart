@@ -13,8 +13,10 @@ class FirebaseOptionsConfig {
   static bool get isConfigured {
     const apiKey = String.fromEnvironment('FIREBASE_API_KEY', defaultValue: '');
     const appId = String.fromEnvironment('FIREBASE_APP_ID', defaultValue: '');
-    const projectId =
-        String.fromEnvironment('FIREBASE_PROJECT_ID', defaultValue: '');
+    const projectId = String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: '',
+    );
     return apiKey.isNotEmpty && appId.isNotEmpty && projectId.isNotEmpty;
   }
 
@@ -23,12 +25,18 @@ class FirebaseOptionsConfig {
 
     const apiKey = String.fromEnvironment('FIREBASE_API_KEY', defaultValue: '');
     const appId = String.fromEnvironment('FIREBASE_APP_ID', defaultValue: '');
-    const projectId =
-        String.fromEnvironment('FIREBASE_PROJECT_ID', defaultValue: '');
-    const messagingSenderId =
-        String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID', defaultValue: '');
-    const iosBundleId =
-        String.fromEnvironment('FIREBASE_IOS_BUNDLE_ID', defaultValue: 'com.voicememory.app');
+    const projectId = String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: '',
+    );
+    const messagingSenderId = String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '',
+    );
+    const iosBundleId = String.fromEnvironment(
+      'FIREBASE_IOS_BUNDLE_ID',
+      defaultValue: 'com.voicememory.app',
+    );
 
     if (kIsWeb) return null;
 

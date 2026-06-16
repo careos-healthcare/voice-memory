@@ -34,14 +34,11 @@ void main() {
 
     final events = await store.loadAll();
     expect(events, hasLength(3));
-    expect(
-      events.map((e) => e.rating).toSet(),
-      {
-        HookDiagnosisRating.yes,
-        HookDiagnosisRating.sortOf,
-        HookDiagnosisRating.notReally,
-      },
-    );
+    expect(events.map((e) => e.rating).toSet(), {
+      HookDiagnosisRating.yes,
+      HookDiagnosisRating.sortOf,
+      HookDiagnosisRating.notReally,
+    });
     for (final e in events) {
       expect(e.type, HookDiagnosisEventType.checkInQuestionRated);
     }

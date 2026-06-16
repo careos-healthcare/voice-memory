@@ -14,28 +14,28 @@ Future<ArchiveEvolutionStore> _store(String stamp) async {
 }
 
 ArchiveEvolutionTimeline _timeline() => ArchiveEvolutionTimeline(
-      patternTitle: 'Taking responsibility before asking for help',
-      firstSeenDate: DateTime(2026, 5, 4),
-      lastSeenDate: DateTime(2026, 5, 25),
-      eventCount: 2,
-      nextCheck: 'Did you ask for help?',
-      events: [
-        ArchiveEvolutionEvent(
-          id: 'e1',
-          date: DateTime(2026, 5, 4),
-          type: ArchiveEvolutionEventType.firstSeen,
-          title: 'First noticed',
-          body: 'First moment',
-        ),
-        ArchiveEvolutionEvent(
-          id: 'e2',
-          date: DateTime(2026, 5, 10),
-          type: ArchiveEvolutionEventType.showedAgain,
-          title: 'Showed up again',
-          body: 'Again',
-        ),
-      ],
-    );
+  patternTitle: 'Taking responsibility before asking for help',
+  firstSeenDate: DateTime(2026, 5, 4),
+  lastSeenDate: DateTime(2026, 5, 25),
+  eventCount: 2,
+  nextCheck: 'Did you ask for help?',
+  events: [
+    ArchiveEvolutionEvent(
+      id: 'e1',
+      date: DateTime(2026, 5, 4),
+      type: ArchiveEvolutionEventType.firstSeen,
+      title: 'First noticed',
+      body: 'First moment',
+    ),
+    ArchiveEvolutionEvent(
+      id: 'e2',
+      date: DateTime(2026, 5, 10),
+      type: ArchiveEvolutionEventType.showedAgain,
+      title: 'Showed up again',
+      body: 'Again',
+    ),
+  ],
+);
 
 void main() {
   test('loadLatest is null before anything is saved', () async {
@@ -49,7 +49,10 @@ void main() {
     final store = await _store(stamp);
     await store.saveLatest(_timeline());
     final loaded = await store.loadLatest();
-    expect(loaded!.patternTitle, 'Taking responsibility before asking for help');
+    expect(
+      loaded!.patternTitle,
+      'Taking responsibility before asking for help',
+    );
     expect(loaded.eventCount, 2);
     expect(loaded.events.length, 2);
     expect(loaded.nextCheck, 'Did you ask for help?');

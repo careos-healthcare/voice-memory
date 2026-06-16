@@ -13,22 +13,21 @@ PatternMemory _memory({
   List<String> helped = const ['paused before answering'],
   List<String> harder = const ['took it on alone'],
   String? next = 'What happens right before it shows up?',
-}) =>
-    PatternMemory(
-      id: 'pm1',
-      patternTitle: 'Taking responsibility before asking for help',
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 4),
-      checkInCount: checkInCount,
-      showedAgainCount: showedAgainCount,
-      lighterCount: lighterCount,
-      heavierCount: heavierCount,
-      changedCount: changedCount,
-      commonBeforeMoments: before,
-      helpedMoments: helped,
-      harderMoments: harder,
-      nextBestQuestion: next,
-    );
+}) => PatternMemory(
+  id: 'pm1',
+  patternTitle: 'Taking responsibility before asking for help',
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 4),
+  checkInCount: checkInCount,
+  showedAgainCount: showedAgainCount,
+  lighterCount: lighterCount,
+  heavierCount: heavierCount,
+  changedCount: changedCount,
+  commonBeforeMoments: before,
+  helpedMoments: helped,
+  harderMoments: harder,
+  nextBestQuestion: next,
+);
 
 void main() {
   test('maps core fields from pattern memory', () {
@@ -74,14 +73,22 @@ void main() {
   });
 
   test('confidence is an early read below three check-ins', () {
-    expect(buildPatternMap(memory: _memory(checkInCount: 1)).confidenceLabel,
-        'Early read');
-    expect(buildPatternMap(memory: _memory(checkInCount: 2)).confidenceLabel,
-        'Early read');
-    expect(buildPatternMap(memory: _memory(checkInCount: 3)).confidenceLabel,
-        'Based on 3 check-ins');
-    expect(buildPatternMap(memory: _memory(checkInCount: 4)).confidenceLabel,
-        'Based on 4 check-ins');
+    expect(
+      buildPatternMap(memory: _memory(checkInCount: 1)).confidenceLabel,
+      'Early read',
+    );
+    expect(
+      buildPatternMap(memory: _memory(checkInCount: 2)).confidenceLabel,
+      'Early read',
+    );
+    expect(
+      buildPatternMap(memory: _memory(checkInCount: 3)).confidenceLabel,
+      'Based on 3 check-ins',
+    );
+    expect(
+      buildPatternMap(memory: _memory(checkInCount: 4)).confidenceLabel,
+      'Based on 4 check-ins',
+    );
   });
 
   test('next check falls back when no question is stored', () {

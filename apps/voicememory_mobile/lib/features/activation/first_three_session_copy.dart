@@ -1,0 +1,106 @@
+import '../../product/consumer_ui_copy.dart';
+
+/// Consumer copy for ArchiveMe's first-three-session product loop.
+abstract class FirstThreeSessionCopy {
+  FirstThreeSessionCopy._();
+
+  // Session 1 — recorded something real.
+  static const String session0Title = 'Start your archive';
+  static const String session1CardTitle = 'You recorded something real.';
+  static const String session1CardBody =
+      'Add one more moment so ArchiveMe can compare what shows up again.';
+  static const String session1NextAction = 'Add one more moment';
+  static const String session1Title = 'Saved as evidence.';
+  static const String session1Body =
+      'This is now part of your private archive.';
+  static const String session1EnoughForToday =
+      'One small moment is enough for today.';
+  static const String session1ReturnTomorrow =
+      'Come back tomorrow to see whether this returns.';
+  static const String session1ViewArchive = 'View archive';
+  static const String session1RecordAnother = 'Record another';
+
+  // Journey indicator (Record / Patterns).
+  static const String journeyStep1 = 'Start your archive';
+  static const String journeyStep2 = 'Notice what repeats';
+  static const String journeyStep3 = 'Watch what changes';
+
+  // Session 2 — early noticing, not a confirmed repeat.
+  static const String session2StartingToNoticeTitle =
+      'ArchiveMe is starting to notice';
+  static const String session2StartingToNoticeBody =
+      'ArchiveMe can compare these moments once there is enough to compare.';
+
+  // Session 3 — archive becoming useful.
+  static const String session3Title =
+      'Your archive is starting to show a thread.';
+  static const String session3KeepsReturning =
+      "Here's what keeps coming back.";
+  static const String session3ChangedSince =
+      "Here's what changed since last time.";
+  static const String session3HonestMoment =
+      'Your archive is more useful when you add one honest moment at a time.';
+
+  // Soft Pro boundary (after repeat / archive value).
+  static const String proTitle = 'Keep your archive useful over time.';
+  static const String proBody = 'See deeper history and saved evidence.';
+  static const String proContinuityLine =
+      'Free keeps today\u2019s save. Pro keeps the thread connected over time.';
+  static const String proCta = 'See Pro';
+  static const String proSecondary = 'Not now';
+
+  static String journeyLabelForCount(int reflectionCount) {
+    if (reflectionCount <= 0) return journeyStep1;
+    if (reflectionCount < 3) return journeyStep2;
+    return journeyStep3;
+  }
+
+  static String journeyLabelForStepIndex(int stepIndex) {
+    switch (stepIndex.clamp(0, 2)) {
+      case 0:
+        return journeyStep1;
+      case 1:
+        return journeyStep2;
+      default:
+        return journeyStep3;
+    }
+  }
+
+  static const List<String> session1Lines = [
+    session1Title,
+    session1Body,
+    session1EnoughForToday,
+    session1ReturnTomorrow,
+  ];
+
+  static const List<String> session3Lines = [
+    session3Title,
+    session3KeepsReturning,
+    session3ChangedSince,
+    session3HonestMoment,
+  ];
+
+  static const List<String> proLines = [
+    proTitle,
+    proBody,
+    proContinuityLine,
+    proCta,
+    proSecondary,
+  ];
+
+  static const List<String> bannedInternalTerms = [
+    'revenuecat',
+    'testflight',
+    'entitlement',
+    'upgrade required',
+    'feature locked',
+    'billing entitlement',
+    'analysis complete',
+    'insight generated',
+    'ai detected',
+  ];
+
+  /// Session-2 repeat headline — shared with [ConsumerUiCopy].
+  static String get session2RepeatTitle =>
+      ConsumerUiCopy.secondSessionPossibleRepeatTitle;
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Shared max widths and page padding for ArchiveMe high-visibility screens.
-abstract final class ArchiveResponsiveLayout {
+abstract class ArchiveResponsiveLayout {
   ArchiveResponsiveLayout._();
 
   static const double contentMaxWidth = 720;

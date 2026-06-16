@@ -1,7 +1,7 @@
 import '../archive_theory/archive_theory_models.dart';
 
 /// Minimum thresholds for beliefs shown in Archive UI.
-abstract final class ArchiveBeliefVisibility {
+abstract class ArchiveBeliefVisibility {
   ArchiveBeliefVisibility._();
 
   static const int minConfidencePercent = 15;

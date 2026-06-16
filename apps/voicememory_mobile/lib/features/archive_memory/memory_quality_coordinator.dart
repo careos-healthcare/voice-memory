@@ -9,7 +9,7 @@ import 'memory_quality_engine.dart';
 import 'memory_quality_model.dart';
 
 /// Loads saved pattern data and returns a conservative [MemoryQuality].
-abstract final class MemoryQualityCoordinator {
+abstract class MemoryQualityCoordinator {
   MemoryQualityCoordinator._();
 
   static Future<MemoryQuality> load() async {

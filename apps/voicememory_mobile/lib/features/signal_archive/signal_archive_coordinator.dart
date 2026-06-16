@@ -9,7 +9,7 @@ import 'signal_corrections_model.dart';
 import 'signal_evidence_engine.dart';
 
 /// Loads journal-backed archive signal state for detail, trail, and dashboard surfaces.
-abstract final class SignalArchiveCoordinator {
+abstract class SignalArchiveCoordinator {
   SignalArchiveCoordinator._();
 
   static Future<SignalArchiveSnapshot> load() async {

@@ -35,10 +35,14 @@ class TrialSummaryEngine {
     final watch = await WatchForPromptMetricsStore(prefs).read();
     final capture = await ReturnCaptureMetricsStore(prefs).read();
 
-    final watchForPromptShown =
-        _max(events.watchForPromptShown, watch.shownCount);
-    final watchForPromptAccepted =
-        _max(events.watchForPromptAccepted, watch.acceptedCount);
+    final watchForPromptShown = _max(
+      events.watchForPromptShown,
+      watch.shownCount,
+    );
+    final watchForPromptAccepted = _max(
+      events.watchForPromptAccepted,
+      watch.acceptedCount,
+    );
     final returnCaptureQuickAnswerSelected = _max(
       events.returnCaptureQuickAnswerSelected,
       capture.quickAnswerSelectedCount,
@@ -53,14 +57,16 @@ class TrialSummaryEngine {
     final day2ReturnRate = events.firstPatternAccepted == 0
         ? null
         : events.returnedNextDay / events.firstPatternAccepted;
-    final usefulDenom = events.usefulnessYes +
+    final usefulDenom =
+        events.usefulnessYes +
         events.usefulnessSortOf +
         events.usefulnessNotReally;
     final usefulRate = usefulDenom == 0
         ? null
         : (events.usefulnessYes + events.usefulnessSortOf) / usefulDenom;
 
-    final recordingSavedCount = events.firstReflectionSaved +
+    final recordingSavedCount =
+        events.firstReflectionSaved +
         events.secondReflectionSaved +
         events.thirdReflectionSaved;
 
@@ -278,10 +284,8 @@ class TrialSummaryEngine {
       compellingCheckAcceptedCount: events.compellingCheckAccepted,
       realReminderPermissionRequestedCount:
           events.realReminderPermissionRequested,
-      realReminderPermissionGrantedCount:
-          events.realReminderPermissionGranted,
-      realReminderPermissionDeniedCount:
-          events.realReminderPermissionDenied,
+      realReminderPermissionGrantedCount: events.realReminderPermissionGranted,
+      realReminderPermissionDeniedCount: events.realReminderPermissionDenied,
       realReminderScheduledCount: events.realReminderScheduled,
       realReminderCancelledCount: events.realReminderCancelled,
       realReminderUnavailableCount: events.realReminderUnavailable,
@@ -317,8 +321,9 @@ class TrialSummaryEngine {
       positioningJournalCount: events.positioningJournal,
       positioningChatCount: events.positioningChat,
       positioningNotSureCount: events.positioningNotSure,
-      activationFullLoopCompletedCount:
-          activationLoop.completedFullLoop ? 1 : 0,
+      activationFullLoopCompletedCount: activationLoop.completedFullLoop
+          ? 1
+          : 0,
       activationWeakestBucket: activationLoop.weakestBucket.id,
       activationSavedFirstMoment: activationLoop.savedFirstMoment,
       activationChoseTomorrowCheck: activationLoop.choseTomorrowCheck,
@@ -326,8 +331,7 @@ class TrialSummaryEngine {
       activationClosedLoop: activationLoop.closedLoop,
       activationRatedUsefulOrSortOf: activationLoop.ratedUsefulOrSortOf,
       activationChoseNextCheck: activationLoop.choseNextCheck,
-      retentionDiagnosisSnapshot:
-          await RetentionDiagnosisV2Coordinator.build(),
+      retentionDiagnosisSnapshot: await RetentionDiagnosisV2Coordinator.build(),
       acquisitionCohort: acquisitionCohort,
       capacityInviteCopiedCount: await metrics.count(
         RetentionMetricsTracker.capacityInviteCopied,

@@ -46,7 +46,10 @@ class _WeeklyArchiveStoryCardState extends State<WeeklyArchiveStoryCard> {
                   const Expanded(
                     child: Text(
                       'Your Week in Reflection',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   ArchiveWhyButton(
@@ -61,8 +64,7 @@ class _WeeklyArchiveStoryCardState extends State<WeeklyArchiveStoryCard> {
                   'Most common themes:',
                   style: TextStyle(fontSize: 12, color: AppTheme.muted),
                 ),
-                for (final t in story.topThemes.take(3))
-                  Text('• ${t.label}'),
+                for (final t in story.topThemes.take(3)) Text('• ${t.label}'),
               ],
               if (story.growingThemes.isNotEmpty) ...[
                 const SizedBox(height: 8),

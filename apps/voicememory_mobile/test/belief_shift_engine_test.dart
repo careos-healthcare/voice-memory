@@ -65,11 +65,16 @@ void main() {
     final report = result.reports.first;
     expect(report.originalBelief.toLowerCase(), contains('hate'));
     expect(report.newBelief.toLowerCase(), contains('networking'));
-    expect(report.confidence, greaterThanOrEqualTo(BeliefShiftEngine.minConfidence));
+    expect(
+      report.confidence,
+      greaterThanOrEqualTo(BeliefShiftEngine.minConfidence),
+    );
     expect(report.evidenceIds.length, greaterThanOrEqualTo(2));
     expect(report.evolutionTimeline.length, greaterThanOrEqualTo(2));
     expect(
-      report.evolutionTimeline.any((s) => s.beliefText.toLowerCase().contains('uncomfortable')),
+      report.evolutionTimeline.any(
+        (s) => s.beliefText.toLowerCase().contains('uncomfortable'),
+      ),
       isTrue,
     );
   });
@@ -94,10 +99,7 @@ void main() {
       newBelief: 'Networking changed my career',
       confidence: 78,
       evolutionTimeline: [
-        BeliefShiftTimelineStep(
-          beliefText: 'I hate networking',
-          entryId: 'a',
-        ),
+        BeliefShiftTimelineStep(beliefText: 'I hate networking', entryId: 'a'),
         BeliefShiftTimelineStep(
           beliefText: 'Networking is uncomfortable',
           entryId: 'b',

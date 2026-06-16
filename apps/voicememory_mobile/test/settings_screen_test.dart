@@ -6,7 +6,7 @@ void main() {
   test('settings screen lists consumer items', () {
     final src = File('lib/screens/settings_screen.dart').readAsStringSync();
     for (final label in [
-      'ConsumerUiCopy.privacyPolicy',
+      'ConsumerUiCopy.privacy',
       'ConsumerUiCopy.termsOfUse',
       'ConsumerUiCopy.restorePurchases',
       'ConsumerUiCopy.exportReflections',

@@ -37,26 +37,35 @@ void main() {
   testWidgets('record tab journey card renders', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(body: SignalJourneyCard(journey: _journey(), compact: true)),
+        home: Scaffold(
+          body: SignalJourneyCard(journey: _journey(), compact: true),
+        ),
       ),
     );
     await tester.pump();
 
     expect(find.text(ConsumerUiCopy.signalJourneyTitle), findsOneWidget);
-    expect(find.textContaining('Saying yes before checking capacity'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.signalJourneyRecordEvidence), findsOneWidget);
+    expect(
+      find.textContaining('Saying yes before checking capacity'),
+      findsOneWidget,
+    );
+    expect(
+      find.text(ConsumerUiCopy.signalJourneyRecordEvidence),
+      findsOneWidget,
+    );
   });
 
   testWidgets('journey detail screen renders', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: SignalJourneyScreen(initialJourney: _journey()),
-      ),
+      MaterialApp(home: SignalJourneyScreen(initialJourney: _journey())),
     );
     await tester.pump();
 
     expect(find.text(ConsumerUiCopy.signalJourneyDetailTitle), findsOneWidget);
-    expect(find.textContaining('Saying yes before checking capacity'), findsOneWidget);
+    expect(
+      find.textContaining('Saying yes before checking capacity'),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.signalJourneyWouldConfirm), findsOneWidget);
   });
 
@@ -77,7 +86,10 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text(ConsumerUiCopy.signalJourneyCompletionTitle), findsOneWidget);
+    expect(
+      find.text(ConsumerUiCopy.signalJourneyCompletionTitle),
+      findsOneWidget,
+    );
     await tester.tap(find.text(ConsumerUiCopy.signalJourneyKeepWatching));
     expect(dismissed, isTrue);
   });
@@ -98,7 +110,8 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) => SignalJourneyCard(journey: _journey(), compact: true),
+              builder: (_, __) =>
+                  SignalJourneyCard(journey: _journey(), compact: true),
             ),
             GoRoute(
               path: '/record',

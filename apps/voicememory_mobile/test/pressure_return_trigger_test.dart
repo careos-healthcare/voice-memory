@@ -23,8 +23,9 @@ PressureCheckInRecord _record({required String id, int daysAgo = 0}) {
   );
 }
 
-List<PressureCheckInRecord> _records(int count) =>
-    [for (var i = 0; i < count; i++) _record(id: 'r$i', daysAgo: i)];
+List<PressureCheckInRecord> _records(int count) => [
+  for (var i = 0; i < count; i++) _record(id: 'r$i', daysAgo: i),
+];
 
 MobilePrefsStore _dummyPrefs() =>
     MobilePrefsStore(file: File('test/tmp/return_trigger/unused.json'));
@@ -65,7 +66,9 @@ Future<void> _pumpCard(WidgetTester tester, Widget child) async {
   await tester.binding.setSurfaceSize(const Size(390, 1600));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child))),
+    MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: child)),
+    ),
   );
   await tester.pump();
 }
@@ -138,8 +141,9 @@ void main() {
       final file = File(path);
       if (await file.exists()) await file.delete();
 
-      final store =
-          PressureReturnTriggerStore.forPrefs(await MobilePrefsStore.open(path));
+      final store = PressureReturnTriggerStore.forPrefs(
+        await MobilePrefsStore.open(path),
+      );
       expect(await store.accepted, isFalse);
       expect(await store.dismissed, isFalse);
 
@@ -154,8 +158,9 @@ void main() {
   });
 
   group('Pressure Insights integration', () {
-    testWidgets('trigger card shows at 5+ entries and accept persists',
-        (tester) async {
+    testWidgets('trigger card shows at 5+ entries and accept persists', (
+      tester,
+    ) async {
       final store = _MemoryTriggerStore();
       await _pumpInsights(tester, records: _records(5), triggerStore: store);
 
@@ -176,8 +181,9 @@ void main() {
       expect(find.text(PressureReturnTrigger.savedCopy), findsOneWidget);
     });
 
-    testWidgets('trigger card shows after accepted experiment with 3 entries',
-        (tester) async {
+    testWidgets('trigger card shows after accepted experiment with 3 entries', (
+      tester,
+    ) async {
       await _pumpInsights(
         tester,
         records: _records(3),
@@ -189,8 +195,9 @@ void main() {
       );
     });
 
-    testWidgets('no trigger card with 2 entries and no experiment',
-        (tester) async {
+    testWidgets('no trigger card with 2 entries and no experiment', (
+      tester,
+    ) async {
       await _pumpInsights(tester, records: _records(2));
       expect(
         find.byKey(const Key('pressure_return_trigger_card')),
@@ -198,8 +205,9 @@ void main() {
       );
     });
 
-    testWidgets('"Not now" stores dismissed state and hides the card',
-        (tester) async {
+    testWidgets('"Not now" stores dismissed state and hides the card', (
+      tester,
+    ) async {
       final store = _MemoryTriggerStore();
       await _pumpInsights(tester, records: _records(5), triggerStore: store);
 
@@ -216,8 +224,9 @@ void main() {
       );
     });
 
-    testWidgets('free user sees basic trigger without Pro wording',
-        (tester) async {
+    testWidgets('free user sees basic trigger without Pro wording', (
+      tester,
+    ) async {
       await _pumpInsights(tester, records: _records(5), pro: false);
       expect(
         find.byKey(const Key('pressure_return_trigger_card')),
@@ -248,7 +257,9 @@ void main() {
       );
       expect(
         PressureReturnTriggerReminder.shouldShow(
-            accepted: false, entryCount: 3),
+          accepted: false,
+          entryCount: 3,
+        ),
         isFalse,
       );
       // First-session card owns the brand-new-user moment.
@@ -276,8 +287,9 @@ void main() {
   });
 
   group('No VoiceMemory consumer copy', () {
-    testWidgets('trigger card and reminder never show VoiceMemory',
-        (tester) async {
+    testWidgets('trigger card and reminder never show VoiceMemory', (
+      tester,
+    ) async {
       await _pumpCard(
         tester,
         Column(

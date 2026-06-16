@@ -3,6 +3,7 @@ import '../acquisition/audience_wedge_model.dart';
 import '../acquisition/acquisition_intent_model.dart';
 import '../quality/first_insight_specificity_store.dart';
 import '../quality/interpretation_quality_signal_model.dart';
+
 /// Primary bottleneck in the early ArchiveMe loop — trial/debug only.
 enum RetentionBottleneckV2 {
   noFirstMoment,
@@ -152,22 +153,20 @@ class RetentionDiagnosisV2Engine {
     final cohortResult = _cohortWedgeDiagnosis(input);
     if (cohortResult != null) return cohortResult;
 
-    final loopSelected = input.loopModeSelected != null &&
-        input.loopModeSelected != 'not_sure';
+    final loopSelected =
+        input.loopModeSelected != null && input.loopModeSelected != 'not_sure';
 
     if (loopSelected && input.loopReviewConfirmed) {
       return RetentionDiagnosisV2Result(
         bottleneck: RetentionBottleneckV2.loopHealthy,
-        summary:
-            'Strong product signal: loop review reached and confirmed.',
+        summary: 'Strong product signal: loop review reached and confirmed.',
       );
     }
 
     if (loopSelected && input.loopReviewCorrected) {
       return RetentionDiagnosisV2Result(
         bottleneck: RetentionBottleneckV2.healthyEarlyLoop,
-        summary:
-            'Interpretation mismatch but engaged: loop review corrected.',
+        summary: 'Interpretation mismatch but engaged: loop review corrected.',
       );
     }
 
@@ -216,9 +215,7 @@ class RetentionDiagnosisV2Engine {
       );
     }
 
-    if (loopSelected &&
-        input.loopReadAccepted &&
-        !input.secondMomentRecorded) {
+    if (loopSelected && input.loopReadAccepted && !input.secondMomentRecorded) {
       return RetentionDiagnosisV2Result(
         bottleneck: RetentionBottleneckV2.loopNoSecondEvidence,
         summary: 'Loop read accepted but second evidence not recorded.',
@@ -232,7 +229,8 @@ class RetentionDiagnosisV2Engine {
       );
     }
 
-    final wedgeSelected = input.audienceWedge != null &&
+    final wedgeSelected =
+        input.audienceWedge != null &&
         input.audienceWedge != AudienceWedge.notSureYet;
 
     if (wedgeSelected && !input.firstMomentRecorded) {

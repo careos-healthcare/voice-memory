@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'config/app_config.dart';
 import 'router/app_router.dart';
 import 'security/app_lock_gate.dart';
+import 'security/app_privacy_shell.dart';
 import 'theme/app_theme.dart';
 
 class ArchiveMeApp extends StatelessWidget {
@@ -19,8 +20,9 @@ class ArchiveMeApp extends StatelessWidget {
       routerConfig: appRouter,
       // App lock sits above every route: when enabled and locked, only the
       // lock screen renders — no archive content, previews, or share cards.
-      builder: (context, child) =>
-          AppLockGate(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => AppLockGate(
+        child: AppPrivacyShell(child: child ?? const SizedBox.shrink()),
+      ),
     );
   }
 }

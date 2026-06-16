@@ -4,7 +4,7 @@ import 'hook_diagnosis_model.dart';
 import 'hook_diagnosis_store.dart';
 
 /// Non-blocking hook diagnosis events for trial learning.
-abstract final class HookDiagnosisTracker {
+abstract class HookDiagnosisTracker {
   HookDiagnosisTracker._();
 
   static Future<void> _safe(Future<void> Function() action) async {

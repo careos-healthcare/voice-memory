@@ -6,7 +6,7 @@ import 'private_recap_model.dart';
 
 /// Builds [PrivateRecap]s from what ArchiveMe already knows. Pure mapping — no
 /// I/O, no invented facts. Empty inputs stay empty.
-abstract final class PrivateRecapEngine {
+abstract class PrivateRecapEngine {
   PrivateRecapEngine._();
 
   static PrivateRecap fromKeyMoment(KeyMoment moment) {
@@ -99,8 +99,9 @@ abstract final class PrivateRecapEngine {
     final sorted = [...moments]..sort((a, b) => a.date.compareTo(b.date));
     final useful = <String>[];
     for (final m in sorted) {
-      final summary =
-          m.shortSummary.trim().isNotEmpty ? m.shortSummary.trim() : m.originalText.trim();
+      final summary = m.shortSummary.trim().isNotEmpty
+          ? m.shortSummary.trim()
+          : m.originalText.trim();
       if (summary.isEmpty) continue;
       useful.add('${_date(m.date)}: $summary');
     }
@@ -128,7 +129,9 @@ abstract final class PrivateRecapEngine {
 
     return PrivateRecap(
       type: PrivateRecapType.selectedRange,
-      title: (label ?? '').trim().isNotEmpty ? label!.trim() : 'Selected moments',
+      title: (label ?? '').trim().isNotEmpty
+          ? label!.trim()
+          : 'Selected moments',
       dateRange: range,
       summary: summary,
       usefulMoments: useful,
@@ -167,8 +170,18 @@ abstract final class PrivateRecapEngine {
 
   static String _date(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

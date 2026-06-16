@@ -1,4 +1,4 @@
-# Post-deploy QA — VoiceMemory
+# Post-deploy QA — ArchiveMe
 
 Run after each production deploy or before inviting testers. Check off each item; note browser and device.
 

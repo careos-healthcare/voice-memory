@@ -1,7 +1,7 @@
 import '../config/developer_settings_gate.dart';
 
 /// Consumer-safe redirects for legacy and internal routes.
-abstract final class DeveloperRouteGuard {
+abstract class DeveloperRouteGuard {
   DeveloperRouteGuard._();
 
   static const patternsHome = '/archive-belief';

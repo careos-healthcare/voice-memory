@@ -1,5 +1,6 @@
 import { isStripeConfigured } from "@/lib/billing/stripe-config";
 import { usesDurableRateLimits } from "@/lib/server/api-usage-store";
+import { assertProductionOpenAiSpendIsDurable } from "@/lib/server/openai-spend-store";
 import { hasDatabaseUrl } from "@/lib/server/db";
 import { getEmailMode } from "@/lib/server/email-mode";
 import {
@@ -45,4 +46,6 @@ export function assertProductionRuntimeReadiness(): void {
       "Production requires DATABASE_URL for DB-backed global rate limits (not memory-only).",
     );
   }
+
+  assertProductionOpenAiSpendIsDurable();
 }

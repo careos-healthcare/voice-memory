@@ -71,7 +71,9 @@ class PatternMemoryCard extends StatelessWidget {
         children: [
           Text(
             statusLine(memory.status),
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           if (memory.patternTitle.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
@@ -108,9 +110,14 @@ class PatternMemoryCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               nextQuestion,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
           ],
           const SizedBox(height: AppSpacing.md),

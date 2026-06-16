@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'backend_url_resolver.dart';
 import 'developer_settings_gate.dart';
+import '../storage/app_storage_paths.dart';
 
 /// Backend base URL — set at build/run time (never hardcode secrets here).
 ///
@@ -23,6 +24,8 @@ class AppConfig {
   static const String appName = 'ArchiveMe';
   static const String bundleId = 'com.voicememory.app';
 
+  /// Production Next.js API (Vercel). `careosapp.co.uk` is marketing-only and
+  /// does not serve `/api/*` — do not point mobile captures at that host.
   static const String productionApiBaseUrl =
       'https://voice-memory-iota.vercel.app';
 
@@ -34,7 +37,8 @@ class AppConfig {
   static const String defaultAndroidEmulatorBaseUrl = 'http://10.0.2.2:3000';
 
   /// Highest-priority dart-define: `--dart-define=BACKEND_URL=...`
-  static const String backendUrlDefineKey = BackendUrlResolver.backendUrlDefineKey;
+  static const String backendUrlDefineKey =
+      BackendUrlResolver.backendUrlDefineKey;
 
   /// Primary dart-define key (preferred).
   static const String apiBaseUrlDefineKey = 'VOICE_MEMORY_API_BASE_URL';
@@ -42,7 +46,8 @@ class AppConfig {
   /// Legacy alias (required on physical devices when primary is unset).
   static const String legacyApiBaseUrlDefineKey = 'API_BASE_URL';
 
-  static const String backendNotConfiguredMessage = 'Backend URL not configured';
+  static const String backendNotConfiguredMessage =
+      'Backend URL not configured';
 
   static bool _releaseApiWarningLogged = false;
   static bool _apiResolutionInitialized = false;
@@ -54,8 +59,9 @@ class AppConfig {
   /// Debug/profile IDE builds and `VM_DEBUG_TOOLS` dart-define.
   static bool get isDebugBuild => kDebugMode || _debugToolsFromEnvironment;
 
-  static bool get isBackendConfigured =>
-      _apiResolutionInitialized ? _backendConfigured : _urlFromDartDefinesSync() != null;
+  static bool get isBackendConfigured => _apiResolutionInitialized
+      ? _backendConfigured
+      : _urlFromDartDefinesSync() != null;
 
   static bool get isApiResolutionInitialized => _apiResolutionInitialized;
 
@@ -84,6 +90,14 @@ class AppConfig {
       _resolvedApiBase = defaultDevBaseUrl;
       _backendConfigured = true;
       _apiResolutionInitialized = true;
+      return;
+    }
+
+    if (AppStoragePaths.isIosDebugSimulator()) {
+      _resolvedApiBase = defaultDevBaseUrl;
+      _backendConfigured = true;
+      _apiResolutionInitialized = true;
+      debugPrint('AppConfig: debug API base → $_resolvedApiBase (iOS simulator)');
       return;
     }
 
@@ -145,9 +159,15 @@ class AppConfig {
   static String? _urlFromDartDefinesSync() {
     const backend = String.fromEnvironment('BACKEND_URL', defaultValue: '');
     if (backend.trim().isNotEmpty) return _normalizeBase(backend.trim());
-    const primary = String.fromEnvironment(apiBaseUrlDefineKey, defaultValue: '');
+    const primary = String.fromEnvironment(
+      apiBaseUrlDefineKey,
+      defaultValue: '',
+    );
     if (primary.trim().isNotEmpty) return _normalizeBase(primary.trim());
-    const legacy = String.fromEnvironment(legacyApiBaseUrlDefineKey, defaultValue: '');
+    const legacy = String.fromEnvironment(
+      legacyApiBaseUrlDefineKey,
+      defaultValue: '',
+    );
     if (legacy.trim().isNotEmpty) return _normalizeBase(legacy.trim());
     return null;
   }
@@ -173,9 +193,8 @@ class AppConfig {
 
   static bool get looksLikeLocalhost => _isLocalhostUrl(apiBaseUrl);
 
-  static String _normalizeBase(String url) {
-    return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
-  }
+  static String _normalizeBase(String url) =>
+      BackendUrlResolver.normalizeApiBaseUrl(url);
 
   /// User-facing hint for Native Push Verify and settings.
   static String get apiBaseUrlStatusLabel {

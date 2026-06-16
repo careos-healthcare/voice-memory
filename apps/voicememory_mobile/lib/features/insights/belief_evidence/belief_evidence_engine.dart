@@ -50,11 +50,13 @@ class BeliefEvidenceEngine {
       for (final text in archiveStatementTexts(e)) {
         final lower = text.toLowerCase();
         if (!_matches(lower, needle)) continue;
-        evidence.add(InsightEvidenceLine(
-          entryId: e.id,
-          quote: text,
-          recordedAt: e.createdAt,
-        ));
+        evidence.add(
+          InsightEvidenceLine(
+            entryId: e.id,
+            quote: text,
+            recordedAt: e.createdAt,
+          ),
+        );
       }
     }
 

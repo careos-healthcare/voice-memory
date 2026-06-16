@@ -50,7 +50,9 @@ class MonthlyPatternReviewCard extends StatelessWidget {
           ],
           Text(
             review.monthLabel,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 18,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
@@ -64,8 +66,11 @@ class MonthlyPatternReviewCard extends StatelessWidget {
           _section('This got lighter', review.gotLighter),
           _section('This got heavier', review.gotHeavier),
           _section('This helped', review.helped),
-          _section('One check for next month', review.nextCheck,
-              emphasize: true),
+          _section(
+            'One check for next month',
+            review.nextCheck,
+            emphasize: true,
+          ),
           if (review.hasNextCheck && onUseCheck != null) ...[
             const SizedBox(height: AppSpacing.md),
             SizedBox(
@@ -98,13 +103,12 @@ class MonthlyPatternReviewCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             value,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
-            ).copyWith(
-              fontSize: emphasize ? 16 : 15,
-              fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
-              height: 1.4,
-            ),
+            style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+                .copyWith(
+                  fontSize: emphasize ? 16 : 15,
+                  fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
+                  height: 1.4,
+                ),
           ),
         ],
       ),

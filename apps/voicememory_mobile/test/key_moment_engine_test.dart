@@ -6,7 +6,8 @@ void main() {
   final date = DateTime(2026, 6, 5, 9, 30);
 
   test('preserves the original text exactly', () {
-    const text = 'I said yes before checking what I needed, even though I was '
+    const text =
+        'I said yes before checking what I needed, even though I was '
         'tired.';
     final moment = buildKeyMoment(reflectionText: text, date: date);
     expect(moment.originalText, text);
@@ -29,18 +30,27 @@ void main() {
       'A pattern showed up again',
     );
     expect(
-      buildKeyMoment(reflectionText: 'x', date: date, resultHint: 'lighter')
-          .title,
+      buildKeyMoment(
+        reflectionText: 'x',
+        date: date,
+        resultHint: 'lighter',
+      ).title,
       'Something felt lighter',
     );
     expect(
-      buildKeyMoment(reflectionText: 'x', date: date, resultHint: 'heavier')
-          .title,
+      buildKeyMoment(
+        reflectionText: 'x',
+        date: date,
+        resultHint: 'heavier',
+      ).title,
       'Something felt heavier',
     );
     expect(
-      buildKeyMoment(reflectionText: 'x', date: date, resultHint: 'changed')
-          .title,
+      buildKeyMoment(
+        reflectionText: 'x',
+        date: date,
+        resultHint: 'changed',
+      ).title,
       'Something changed',
     );
   });
@@ -62,15 +72,19 @@ void main() {
       'same',
     );
     expect(
-      buildKeyMoment(reflectionText: 'x', date: date, resultHint: 'none_fit')
-          .resultHint,
+      buildKeyMoment(
+        reflectionText: 'x',
+        date: date,
+        resultHint: 'none_fit',
+      ).resultHint,
       'changed',
     );
   });
 
   test('short summary prefers a sentence with a moment cue', () {
     final moment = buildKeyMoment(
-      reflectionText: 'It was a long day. The worry came back when things '
+      reflectionText:
+          'It was a long day. The worry came back when things '
           'got quiet.',
       date: date,
     );
@@ -79,7 +93,8 @@ void main() {
 
   test('tags are conservative and keyword-driven', () {
     final moment = buildKeyMoment(
-      reflectionText: 'I felt pressure and was tired after the meeting '
+      reflectionText:
+          'I felt pressure and was tired after the meeting '
           'with my boss.',
       date: date,
       resultHint: 'heavier',

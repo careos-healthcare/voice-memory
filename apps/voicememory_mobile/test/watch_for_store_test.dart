@@ -42,7 +42,10 @@ void main() {
     await store.writePending(null);
     await store.writeLatestCompleted(completed);
     expect(await store.readPending(), isNull);
-    expect((await store.readLatestCompleted())?.result, WatchForResult.showedAgain);
+    expect(
+      (await store.readLatestCompleted())?.result,
+      WatchForResult.showedAgain,
+    );
 
     for (var i = 0; i < 16; i++) {
       await store.appendHistory(

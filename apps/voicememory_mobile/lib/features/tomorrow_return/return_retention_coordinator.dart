@@ -11,7 +11,7 @@ import 'return_streak_model.dart';
 import 'weekly_pattern_recap_engine.dart';
 
 /// Updates streak, change summary, and recap after a return comparison.
-abstract final class ReturnRetentionCoordinator {
+abstract class ReturnRetentionCoordinator {
   ReturnRetentionCoordinator._();
 
   static ReturnComparisonStore _comparisonStore() =>
@@ -29,7 +29,9 @@ abstract final class ReturnRetentionCoordinator {
     await ReturnStreakCoordinator.recordCompletion(now: now);
 
     final recent = await _comparisonStore().readRecent();
-    final prior = recent.where((c) => c.createdAt != comparison.createdAt).toList();
+    final prior = recent
+        .where((c) => c.createdAt != comparison.createdAt)
+        .toList();
     final summary = const ChangeSummaryEngine().build(
       latest: comparison,
       recent: prior,

@@ -88,9 +88,7 @@ class ArchiveInterpretationEngine {
         final belief = e.beliefStatement ?? 'this pattern';
         if (stats.uncertaintyMentions > stats.confidenceMentions &&
             stats.uncertaintyMentions >= 2) {
-          sentences.add(
-            'You often describe confidence as part of the story.',
-          );
+          sentences.add('You often describe confidence as part of the story.');
           sentences.add(
             'The archive found more references to uncertainty than confidence '
             'in eligible recordings.',
@@ -165,7 +163,8 @@ class ArchiveInterpretationEngine {
         );
       default:
         if (stats.workMentions > stats.relationshipMentions + 2 &&
-            stats.recentRelationshipMentions > stats.priorRelationshipMentions) {
+            stats.recentRelationshipMentions >
+                stats.priorRelationshipMentions) {
           sentences.add(
             'The archive previously linked stress mostly to work in older reflections.',
           );
@@ -231,14 +230,20 @@ class ArchiveInterpretationEngine {
   ) {
     final bullets = <String>[];
     if (stats.contradictingCount > 0) {
-      bullets.add('${stats.contradictingCount} recordings suggest a different pattern');
+      bullets.add(
+        '${stats.contradictingCount} recordings suggest a different pattern',
+      );
     }
     if (e.timeline.trend == BeliefTimelineTrend.strengthening &&
         e.kind == ArchiveInsightKind.belief) {
-      bullets.add('Some lines may still sound uncertain despite a strengthening trend');
+      bullets.add(
+        'Some lines may still sound uncertain despite a strengthening trend',
+      );
     }
     if (e.timeline.trend == BeliefTimelineTrend.weakening) {
-      bullets.add('Confidence may appear lower in the timeline than older peaks');
+      bullets.add(
+        'Confidence may appear lower in the timeline than older peaks',
+      );
     }
     if (stats.recentThemeMentions == 0 && stats.priorThemeMentions >= 3) {
       bullets.add('Theme absent in the most recent eligible month');
@@ -249,7 +254,9 @@ class ArchiveInterpretationEngine {
       );
     }
     if (stats.independenceSignals >= 2) {
-      bullets.add('${stats.independenceSignals} recordings suggest independence or self-trust');
+      bullets.add(
+        '${stats.independenceSignals} recordings suggest independence or self-trust',
+      );
     }
 
     return InterpretationEvidenceSummary(
@@ -271,13 +278,17 @@ class ArchiveInterpretationEngine {
         if (stats.uncertaintyMentions >= 2) {
           stronger.add('uncertainty continues appearing in new recordings');
         }
-        stronger.add('the same belief language repeats without counter-examples');
+        stronger.add(
+          'the same belief language repeats without counter-examples',
+        );
         weaker.add('decisive or self-trusting language appears more often');
         weaker.add('the belief stops appearing in recent reflections');
       case ArchiveInsightKind.theme:
         final theme = e.title.toLowerCase();
         stronger.add('$theme continues appearing in eligible reflections');
-        stronger.add('older recordings are outweighed by a sustained recent cluster');
+        stronger.add(
+          'older recordings are outweighed by a sustained recent cluster',
+        );
         weaker.add('$theme goes quiet for several new recordings');
         weaker.add('a different theme dominates the latest month');
       case ArchiveInsightKind.contradiction:
@@ -345,8 +356,12 @@ class _EvidenceStats {
     ArchiveExplanation explanation,
   ) {
     final eligible = archiveEligibleEvidenceEntries(entries);
-    final supportIds = explanation.supportingEvidence.map((e) => e.entryId).toSet();
-    final supportEntries = eligible.where((e) => supportIds.contains(e.id)).toList();
+    final supportIds = explanation.supportingEvidence
+        .map((e) => e.entryId)
+        .toSet();
+    final supportEntries = eligible
+        .where((e) => supportIds.contains(e.id))
+        .toList();
 
     var months = <String>{};
     for (final e in supportEntries) {
@@ -354,8 +369,9 @@ class _EvidenceStats {
     }
 
     final recentCutoff = DateTime.now().subtract(const Duration(days: 30));
-    final recentSupport =
-        supportEntries.where((e) => !e.createdAt.isBefore(recentCutoff)).length;
+    final recentSupport = supportEntries
+        .where((e) => !e.createdAt.isBefore(recentCutoff))
+        .length;
     final recentShare = supportEntries.isEmpty
         ? 0
         : ((recentSupport / supportEntries.length) * 100).round();
@@ -395,10 +411,12 @@ class _EvidenceStats {
         eligible,
         ArchiveInterpretationEngine._themeKeywords['relationship']!,
       ),
-      recentThemeMentions:
-          keywords.isEmpty ? 0 : _countHits(recentWindow, keywords),
-      priorThemeMentions:
-          keywords.isEmpty ? 0 : _countHits(priorWindow, keywords),
+      recentThemeMentions: keywords.isEmpty
+          ? 0
+          : _countHits(recentWindow, keywords),
+      priorThemeMentions: keywords.isEmpty
+          ? 0
+          : _countHits(priorWindow, keywords),
       recentRelationshipMentions: _countHits(
         recentWindow,
         ArchiveInterpretationEngine._themeKeywords['relationship']!,
@@ -407,17 +425,20 @@ class _EvidenceStats {
         priorWindow,
         ArchiveInterpretationEngine._themeKeywords['relationship']!,
       ),
-      independenceSignals: _countHits(
-        eligible,
-        const ['trust myself', 'on my own', 'independent', 'self-trust'],
-      ),
+      independenceSignals: _countHits(eligible, const [
+        'trust myself',
+        'on my own',
+        'independent',
+        'self-trust',
+      ]),
     );
   }
 
   static int _countHits(List<JournalEntry> entries, List<String> keywords) {
     var n = 0;
     for (final e in entries) {
-      final blob = '${e.transcript} ${e.reflection.exactLanguagePattern}'.toLowerCase();
+      final blob = '${e.transcript} ${e.reflection.exactLanguagePattern}'
+          .toLowerCase();
       if (keywords.any(blob.contains)) n++;
     }
     return n;

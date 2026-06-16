@@ -74,21 +74,26 @@ void main() {
   });
 
   test('groups chronological periods into evidence-backed chapters', () {
-    final result = const LifeChapterEngine().build(entries: _burnoutThenConfidenceArc());
+    final result = const LifeChapterEngine().build(
+      entries: _burnoutThenConfidenceArc(),
+    );
 
     expect(result.hasMinimumArchiveEvidence, isTrue);
     expect(result.hasChapters, isTrue);
     expect(result.chapters.length, greaterThanOrEqualTo(2));
 
-    final burnout = result.chapters.where((c) => c.title == 'Burnout Period').toList();
+    final burnout = result.chapters
+        .where((c) => c.title == 'Burnout Period')
+        .toList();
     expect(burnout, isNotEmpty);
     expect(burnout.first.dominantThemes, isNotEmpty);
     expect(burnout.first.keyBeliefs, isNotEmpty);
     expect(burnout.first.importantQuotes.length, greaterThanOrEqualTo(1));
     expect(burnout.first.evidenceIds.length, greaterThanOrEqualTo(2));
 
-    final rebuild =
-        result.chapters.where((c) => c.title == 'Confidence Rebuild').toList();
+    final rebuild = result.chapters
+        .where((c) => c.title == 'Confidence Rebuild')
+        .toList();
     expect(rebuild, isNotEmpty);
   });
 

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/user_facing_date.dart';
 import '../models/journal_entry.dart';
+import '../security/user_content_safety.dart';
 import '../theme/app_theme.dart';
 
 /// Observation with inline depth — expand, evidence, rationale, related entries.
@@ -27,7 +28,8 @@ class ExpandableObservationField extends StatefulWidget {
       _ExpandableObservationFieldState();
 }
 
-class _ExpandableObservationFieldState extends State<ExpandableObservationField> {
+class _ExpandableObservationFieldState
+    extends State<ExpandableObservationField> {
   var _tellMoreExpanded = false;
   var _whyExpanded = false;
   var _relatedExpanded = false;
@@ -37,8 +39,9 @@ class _ExpandableObservationFieldState extends State<ExpandableObservationField>
   bool get _isLong => widget.value.length > _shortLimit;
 
   String get _displayText {
-    if (_tellMoreExpanded || !_isLong) return widget.value;
-    return '${widget.value.substring(0, _shortLimit).trim()}…';
+    final value = UserContentSafety.sanitizePlainText(widget.value);
+    if (_tellMoreExpanded || !_isLong) return value;
+    return UserContentSafety.safeSnippet(value, maxChars: _shortLimit);
   }
 
   @override
@@ -110,7 +113,7 @@ class _ExpandableObservationFieldState extends State<ExpandableObservationField>
                 widget.rationale?.trim().isNotEmpty == true
                     ? widget.rationale!.trim()
                     : 'This comes from patterns in your transcripts — '
-                        'recurring themes and repeated language, not a guess.',
+                          'recurring themes and repeated language, not a guess.',
                 style: const TextStyle(
                   color: AppTheme.muted,
                   fontSize: 13,
@@ -176,9 +179,10 @@ class _ExpandableObservationFieldState extends State<ExpandableObservationField>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        entry.transcript.length > 80
-                            ? '${entry.transcript.substring(0, 80)}…'
-                            : entry.transcript,
+                        UserContentSafety.safeSnippet(
+                          entry.transcript,
+                          maxChars: 80,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 13, height: 1.35),
@@ -186,7 +190,11 @@ class _ExpandableObservationFieldState extends State<ExpandableObservationField>
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, size: 20, color: AppTheme.muted),
+                const Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: AppTheme.muted,
+                ),
               ],
             ),
           ),

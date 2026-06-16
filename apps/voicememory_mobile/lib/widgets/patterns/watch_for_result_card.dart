@@ -28,8 +28,7 @@ class WatchForResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = headline ?? WatchForCoordinator.headlineFor(completed);
-    final detail = body ??
-        _defaultBody(completed);
+    final detail = body ?? _defaultBody(completed);
     final foot = footer ?? WatchForCoordinator.footerLineFor(completed.result);
     final chips = completed.chips.take(3).toList();
 
@@ -117,8 +116,8 @@ class WatchForResultCard extends StatelessWidget {
     final label = watch.startsWith('Tomorrow, notice ')
         ? watch.substring('Tomorrow, notice '.length)
         : watch.startsWith('whether ')
-            ? watch.substring(8)
-            : watch;
+        ? watch.substring(8)
+        : watch;
     switch (item.result) {
       case WatchForResult.showedAgain:
         return 'Yesterday you were watching for $label. Today it showed up again.';

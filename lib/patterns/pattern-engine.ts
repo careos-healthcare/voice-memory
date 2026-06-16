@@ -614,6 +614,33 @@ export function buildPatternEngineReport(
   };
 }
 
+/** Relaxed candidates for early mini-wow tiers — drops generic/weak only, not the main specificity bar. */
+export function buildPatternCandidatesRelaxed(
+  entries: JournalEntry[],
+  options?: { limit?: number },
+): PatternInsight[] {
+  const limit = options?.limit ?? 16;
+  if (entries.length === 0) return [];
+
+  let insights = dedupeInsights([
+    ...collectContradictionInsights(entries),
+    ...collectPhraseInsights(entries),
+    ...collectAvoidanceInsights(entries),
+  ]);
+
+  insights = applyUsefulnessFromFeedback(insights);
+
+  return insights
+    .filter((i) => !i.specificity.isWeakOrGeneric)
+    .sort(
+      (a, b) =>
+        b.specificity.specificityScore - a.specificity.specificityScore ||
+        b.entryIds.length - a.entryIds.length ||
+        b.scores.total - a.scores.total,
+    )
+    .slice(0, limit);
+}
+
 /** Convenience helper for page-level scope filtering. */
 export function getPatternInsights(
   entries: JournalEntry[],

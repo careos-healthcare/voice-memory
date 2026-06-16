@@ -79,10 +79,13 @@ class ArchiveAnalystEngine {
     final blindSpots = v1.blindSpots;
     final maxCtr = contradictions.isEmpty
         ? 0
-        : contradictions.map((c) => c.confidenceScore).reduce((a, b) => a > b ? a : b);
+        : contradictions
+              .map((c) => c.confidenceScore)
+              .reduce((a, b) => a > b ? a : b);
 
-    final contradictionEntryIds =
-        contradictions.expand((c) => c.entryIds).toSet();
+    final contradictionEntryIds = contradictions
+        .expand((c) => c.entryIds)
+        .toSet();
 
     final scored = <_ScoredBelief>[];
     for (final c in candidates) {
@@ -99,13 +102,7 @@ class ArchiveAnalystEngine {
         maxContradictionScore: maxCtr,
         stale: split.stale,
       );
-      scored.add(
-        _ScoredBelief(
-          candidate: c,
-          confidence: conf,
-          split: split,
-        ),
-      );
+      scored.add(_ScoredBelief(candidate: c, confidence: conf, split: split));
     }
 
     final unifiedPrimary = v1.theoryRanking?.primaryTheory;
@@ -115,10 +112,12 @@ class ArchiveAnalystEngine {
 
     if (unifiedNorm != null) {
       scored.sort((a, b) {
-        final aUnified =
-            _normalize(a.candidate.statement) == unifiedNorm ? 1 : 0;
-        final bUnified =
-            _normalize(b.candidate.statement) == unifiedNorm ? 1 : 0;
+        final aUnified = _normalize(a.candidate.statement) == unifiedNorm
+            ? 1
+            : 0;
+        final bUnified = _normalize(b.candidate.statement) == unifiedNorm
+            ? 1
+            : 0;
         if (aUnified != bUnified) return bUnified.compareTo(aUnified);
         return b.confidence.compareTo(a.confidence);
       });
@@ -126,8 +125,8 @@ class ArchiveAnalystEngine {
       scored.sort((a, b) => b.confidence.compareTo(a.confidence));
     }
 
-    final primaryId = unifiedPrimary?.candidateId ??
-        _firstVisibleCandidateId(scored);
+    final primaryId =
+        unifiedPrimary?.candidateId ?? _firstVisibleCandidateId(scored);
 
     final visible = _visibleScored(scored);
 
@@ -300,9 +299,7 @@ class ArchiveAnalystEngine {
       beliefText: scored.candidate.statement,
     );
     if (timeline.firstSeen != null) {
-      notes.add(
-        'First mention: ${formatUserFacingDate(timeline.firstSeen!)}',
-      );
+      notes.add('First mention: ${formatUserFacingDate(timeline.firstSeen!)}');
     }
     if (timeline.peakLabel.isNotEmpty && timeline.peakLabel != '—') {
       notes.add(
@@ -324,21 +321,22 @@ class ArchiveAnalystEngine {
           belief: belief,
           excerpts: diveAgainst.isNotEmpty
               ? diveAgainst
-                  .map(
-                    (e) => ArchiveAnalystExcerpt(
-                      entryId: e.entryId,
-                      dateLabel: e.dateLabel,
-                      quote: e.quote,
-                    ),
-                  )
-                  .toList()
+                    .map(
+                      (e) => ArchiveAnalystExcerpt(
+                        entryId: e.entryId,
+                        dateLabel: e.dateLabel,
+                        quote: e.quote,
+                      ),
+                    )
+                    .toList()
               : counter.take(8).map(_excerpt).toList(),
         );
         return ArchiveAnalystDebate(
           beliefStatement: belief,
           confidencePercent: scored.confidence,
           evidenceForCount: supporting.length,
-          evidenceAgainstCount: counterExcerpts.length +
+          evidenceAgainstCount:
+              counterExcerpts.length +
               dive.counterEvidence.againstSummaries.length,
           supportingExcerpts: dive.counterEvidence.forExcerpts
               .map(
@@ -361,10 +359,7 @@ class ArchiveAnalystEngine {
       confidencePercent: scored.confidence,
       evidenceForCount: supporting.length,
       evidenceAgainstCount: counter.length,
-      supportingExcerpts: supporting
-          .take(4)
-          .map((e) => _excerpt(e))
-          .toList(),
+      supportingExcerpts: supporting.take(4).map((e) => _excerpt(e)).toList(),
       counterExcerpts: _topicalCounterExcerpts(
         belief: belief,
         excerpts: counter.take(8).map(_excerpt).toList(),

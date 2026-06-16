@@ -62,7 +62,9 @@ void main() {
     expect(text, isNot(contains('definitely')));
     expect(text, isNot(contains('proves')));
     expect(
-      text.contains('may') || text.contains('might') || text.contains('appears'),
+      text.contains('may') ||
+          text.contains('might') ||
+          text.contains('appears'),
       isTrue,
     );
   });
@@ -70,10 +72,7 @@ void main() {
   test('follow-up question is specific not generic', () {
     const engine = ArchiveFollowupQuestionEngine();
     final q = engine.generate(
-      ref: ArchiveInsightRef.contradiction(
-        entryIdA: 'a',
-        entryIdB: 'b',
-      ),
+      ref: ArchiveInsightRef.contradiction(entryIdA: 'a', entryIdB: 'b'),
       explanation: ArchiveExplanation(
         insightId: 'c',
         kind: ArchiveInsightKind.contradiction,
@@ -106,8 +105,9 @@ void main() {
       ),
     );
 
-    final snapshot =
-        const ArchiveExplanationEngine().discoverEngine.build(entries: entries);
+    final snapshot = const ArchiveExplanationEngine().discoverEngine.build(
+      entries: entries,
+    );
     expect(snapshot.themes, isNotEmpty);
     final key = snapshot.themes.first.themeKey;
 

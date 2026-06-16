@@ -84,7 +84,7 @@ export function QuickRecordPage() {
       id="main-content"
       className="record-capture-main mobile-recorder-dominant flex flex-1 flex-col justify-center pb-safe"
     >
-      <h1 className="sr-only">Record a reflection</h1>
+      <h1 className="sr-only">What&apos;s on your mind?</h1>
       <ZeroStateRecorderShell
         route="record"
         recordReturn={recordReturn}

@@ -6,7 +6,7 @@ import 'archive_discovery_share_moments.dart';
 import 'archive_discovery_share_types.dart';
 
 /// Builds screenshot-safe share cards from existing archive engines.
-abstract final class ArchiveDiscoveryShareEngine {
+abstract class ArchiveDiscoveryShareEngine {
   ArchiveDiscoveryShareEngine._();
 
   static const int maxCards = 5;
@@ -33,8 +33,7 @@ abstract final class ArchiveDiscoveryShareEngine {
         ArchiveDiscoveryShareCardModel(
           id: 'pattern-growing',
           type: ArchiveDiscoveryShareCardType.patternDiscovery,
-          insight:
-              '${eligible.length} reflections are building your archive.',
+          insight: '${eligible.length} reflections are building your archive.',
           evidenceRecordingCount: eligible.length,
         ),
       );
@@ -142,7 +141,9 @@ abstract final class ArchiveDiscoveryShareEngine {
       }
     }
     if (themeCounts.isEmpty) return;
-    final top = themeCounts.entries.reduce((a, b) => a.value >= b.value ? a : b);
+    final top = themeCounts.entries.reduce(
+      (a, b) => a.value >= b.value ? a : b,
+    );
     if (top.value < 3) return;
     out.add(
       ArchiveDiscoveryShareCardModel(
@@ -155,7 +156,10 @@ abstract final class ArchiveDiscoveryShareEngine {
     );
   }
 
-  static void _addMilestones(List<ArchiveDiscoveryShareCardModel> out, int count) {
+  static void _addMilestones(
+    List<ArchiveDiscoveryShareCardModel> out,
+    int count,
+  ) {
     const milestones = [200, 100, 50];
     for (final m in milestones) {
       if (count >= m) {

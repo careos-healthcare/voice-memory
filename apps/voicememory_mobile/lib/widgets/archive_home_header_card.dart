@@ -27,10 +27,7 @@ class ArchiveHomeHeaderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Your Archive',
-            style: VoiceMemoryTypography.headlineStyle(),
-          ),
+          Text('Your Archive', style: VoiceMemoryTypography.headlineStyle()),
           const SizedBox(height: AppSpacing.xs),
           Text(
             'Building evidence about who you are becoming.',

@@ -4,10 +4,7 @@ import '../features/archive_state_delta/archive_state_snapshot.dart';
 import '../theme/voicememory_colors.dart';
 
 class ArchiveStateDeltaCardMobile extends StatelessWidget {
-  const ArchiveStateDeltaCardMobile({
-    super.key,
-    required this.delta,
-  });
+  const ArchiveStateDeltaCardMobile({super.key, required this.delta});
 
   final ArchiveStateDeltaView delta;
 

@@ -63,7 +63,9 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    await SignalJourneyCoordinator.onSignalAccepted(_acceptInput(entryId: 'e1'));
+    await SignalJourneyCoordinator.onSignalAccepted(
+      _acceptInput(entryId: 'e1'),
+    );
     final updated = await SignalJourneyCoordinator.onSignalAccepted(
       _acceptInput(entryId: 'e2'),
     );
@@ -76,15 +78,27 @@ void main() {
     const engine = SignalJourneyEngine();
 
     expect(
-      engine.statusFor(supportingCount: 1, contradictionCount: 0, archived: false),
+      engine.statusFor(
+        supportingCount: 1,
+        contradictionCount: 0,
+        archived: false,
+      ),
       SignalJourneyStatus.collectingEvidence,
     );
     expect(
-      engine.statusFor(supportingCount: 2, contradictionCount: 0, archived: false),
+      engine.statusFor(
+        supportingCount: 2,
+        contradictionCount: 0,
+        archived: false,
+      ),
       SignalJourneyStatus.gettingClearer,
     );
     expect(
-      engine.statusFor(supportingCount: 3, contradictionCount: 0, archived: false),
+      engine.statusFor(
+        supportingCount: 3,
+        contradictionCount: 0,
+        archived: false,
+      ),
       SignalJourneyStatus.confirmedPattern,
     );
   });
@@ -93,7 +107,9 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
 
-    await SignalJourneyCoordinator.onSignalAccepted(_acceptInput(entryId: 'e1'));
+    await SignalJourneyCoordinator.onSignalAccepted(
+      _acceptInput(entryId: 'e1'),
+    );
     await SignalJourneyCoordinator.onSignalRejected(
       signalId: 'sig1',
       readId: 'read_pressure',
@@ -118,13 +134,21 @@ void main() {
     await _reset(stamp);
 
     expect(
-      await SignalJourneyCoordinator.shouldGateLongTermArchive(entitlements: null),
+      await SignalJourneyCoordinator.shouldGateLongTermArchive(
+        entitlements: null,
+      ),
       isFalse,
     );
 
-    await SignalJourneyCoordinator.onSignalAccepted(_acceptInput(entryId: 'e1'));
-    await SignalJourneyCoordinator.onSignalAccepted(_acceptInput(entryId: 'e2'));
-    await SignalJourneyCoordinator.onSignalAccepted(_acceptInput(entryId: 'e3'));
+    await SignalJourneyCoordinator.onSignalAccepted(
+      _acceptInput(entryId: 'e1'),
+    );
+    await SignalJourneyCoordinator.onSignalAccepted(
+      _acceptInput(entryId: 'e2'),
+    );
+    await SignalJourneyCoordinator.onSignalAccepted(
+      _acceptInput(entryId: 'e3'),
+    );
 
     final store = SignalJourneyStore.instance();
     await store.archiveToHistory(
@@ -132,13 +156,21 @@ void main() {
     );
 
     expect(
-      await SignalJourneyCoordinator.shouldGateLongTermArchive(entitlements: null),
+      await SignalJourneyCoordinator.shouldGateLongTermArchive(
+        entitlements: null,
+      ),
       isTrue,
     );
   });
 
   test('copy constants avoid banned phrases', () {
-    const banned = ['diagnosis', 'therapy', 'coach', 'AI friend', 'VoiceMemory'];
+    const banned = [
+      'diagnosis',
+      'therapy',
+      'coach',
+      'AI friend',
+      'VoiceMemory',
+    ];
     final copy = [
       ConsumerUiCopy.signalJourneyTitle,
       ConsumerUiCopy.signalJourneyCompletionTitle,

@@ -50,11 +50,13 @@ class SignalJourneyStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => SignalJourney.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : (e is Map ? Map<String, dynamic>.from(e) : null),
-            ))
+        .map(
+          (e) => SignalJourney.fromJson(
+            e is Map<String, dynamic>
+                ? e
+                : (e is Map ? Map<String, dynamic>.from(e) : null),
+          ),
+        )
         .whereType<SignalJourney>()
         .toList();
   }

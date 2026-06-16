@@ -7,7 +7,10 @@ ArchiveSearchQuery parseArchiveSearchQuery(String text) {
   final lower = raw.toLowerCase();
 
   if (lower.isEmpty) {
-    return ArchiveSearchQuery(intent: ArchiveSearchIntent.freeText, rawText: raw);
+    return ArchiveSearchQuery(
+      intent: ArchiveSearchIntent.freeText,
+      rawText: raw,
+    );
   }
 
   if (lower.contains('this week') || lower.contains('changed this week')) {
@@ -41,13 +44,19 @@ ArchiveSearchQuery parseArchiveSearchQuery(String text) {
   }
 
   if (lower.contains('changed')) {
-    return ArchiveSearchQuery(intent: ArchiveSearchIntent.changed, rawText: raw);
+    return ArchiveSearchQuery(
+      intent: ArchiveSearchIntent.changed,
+      rawText: raw,
+    );
   }
 
   if (lower.contains('last show') ||
       lower.contains('show up') ||
       lower.contains('showed up')) {
-    return ArchiveSearchQuery(intent: ArchiveSearchIntent.lastSeen, rawText: raw);
+    return ArchiveSearchQuery(
+      intent: ArchiveSearchIntent.lastSeen,
+      rawText: raw,
+    );
   }
 
   final topic = _topicTermFrom(lower);

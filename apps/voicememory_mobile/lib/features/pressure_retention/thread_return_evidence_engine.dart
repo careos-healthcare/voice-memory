@@ -1,3 +1,7 @@
+import '../memory/memory_authority_framing_engine.dart';
+import '../memory/memory_control_model.dart';
+import '../memory/memory_governance_policy.dart';
+import '../memory/memory_priority_governance.dart';
 import 'pressure_check_in_option.dart';
 import 'pressure_check_in_record.dart';
 import 'thread_return_evidence_model.dart';
@@ -25,28 +29,139 @@ class ThreadReturnEvidenceEngine {
   /// Filler plus generic app words — a thread named after these would read
   /// like template copy, not the user's own evidence.
   static const Set<String> _ignoredWords = {
-    'the', 'and', 'for', 'that', 'this', 'with', 'was', 'were', 'will',
-    'would', 'wont', "won't", 'its', "it's", 'not', 'but', 'had', 'have',
-    'has', 'did', 'does', 'about', 'from', 'they', 'them', 'when', 'then',
-    'than', 'what', 'how', 'why', 'who', 'all', 'too', 'very', 'just',
-    'like', 'get', 'got', 'gets', 'into', 'out', 'off', 'might', 'maybe',
-    'could', 'should', 'because', 'being', 'been', 'still', 'even', 'more',
-    'again', 'myself', 'dont', "don't", 'cant', "can't", 'ill', "i'll",
-    'pressure', 'moment', 'moments', 'pattern', 'patterns', 'archive',
-    'entry', 'entries', 'check', 'checkin', 'app', 'archiveme', 'feel',
-    'feels', 'felt', 'feeling',
+    'the',
+    'and',
+    'for',
+    'that',
+    'this',
+    'with',
+    'was',
+    'were',
+    'will',
+    'would',
+    'wont',
+    "won't",
+    'its',
+    "it's",
+    'not',
+    'but',
+    'had',
+    'have',
+    'has',
+    'did',
+    'does',
+    'about',
+    'from',
+    'they',
+    'them',
+    'when',
+    'then',
+    'than',
+    'what',
+    'how',
+    'why',
+    'who',
+    'all',
+    'too',
+    'very',
+    'just',
+    'like',
+    'get',
+    'got',
+    'gets',
+    'into',
+    'out',
+    'off',
+    'might',
+    'maybe',
+    'could',
+    'should',
+    'because',
+    'being',
+    'been',
+    'still',
+    'even',
+    'more',
+    'again',
+    'myself',
+    'dont',
+    "don't",
+    'cant',
+    "can't",
+    'ill',
+    "i'll",
+    'pressure',
+    'moment',
+    'moments',
+    'pattern',
+    'patterns',
+    'archive',
+    'entry',
+    'entries',
+    'check',
+    'checkin',
+    'app',
+    'archiveme',
+    'feel',
+    'feels',
+    'felt',
+    'feeling',
   };
 
   /// [now] is injectable for tests; "returned today" compares against it.
   ThreadReturnEvidence build(
     List<PressureCheckInRecord> records, {
     DateTime? now,
+    int? entryCount,
   }) {
-    if (records.length < ThreadReturnEvidence.minOccurrences) {
+    final totalEntryCount = entryCount ?? records.length;
+    final governance = MemoryGovernancePolicy.evaluate(
+      cardType: MemoryCardType.threadReturn,
+      records: records,
+      entryCount: totalEntryCount,
+      now: now,
+    );
+    if (!MemoryGovernancePolicy.permitsEngineBuild(governance)) {
+      return ThreadReturnEvidence.none();
+    }
+    // Authority framing: memory scope eligibility, retrieval scoring,
+    // and the explicit authority/influence decision all run before any
+    // evidence may back a claim. Records stay in the archive untouched
+    // either way; this card renders only when the frame's influence is
+    // compare or high authority.
+    final framing = const MemoryAuthorityFramingEngine().frame(
+      records,
+      now: now,
+      cardType: MemoryCardType.threadReturn,
+    );
+    if (!framing.allowsConnectionClaims) return ThreadReturnEvidence.none();
+    final priority = MemoryPriorityGovernance.evaluate(
+      cardType: MemoryCardType.threadReturn,
+      records: records,
+      governance: governance,
+      framing: framing,
+      now: now,
+      entryCount: totalEntryCount,
+      trackAnalytics: false,
+    );
+    if (!MemoryPriorityGovernance.permitsEngineBuild(
+      priority,
+      confirmationPending: governance.requiresUserConfirmation,
+    )) {
+      return ThreadReturnEvidence.none();
+    }
+    final eligible = MemoryPriorityGovernance.filterCandidates(
+      framing.candidates,
+      cardType: MemoryCardType.threadReturn,
+      priority: priority,
+      anchor: now,
+      confirmationPending: governance.requiresUserConfirmation,
+    );
+    if (eligible.length < ThreadReturnEvidence.minOccurrences) {
       return ThreadReturnEvidence.none();
     }
 
-    final thread = _dominantThread(records);
+    final thread = _dominantThread(eligible);
     if (thread == null) return ThreadReturnEvidence.none();
 
     final occurrences = [...thread.entries]
@@ -62,6 +177,7 @@ class ThreadReturnEvidenceEngine {
     return ThreadReturnEvidence(
       hasEvidence: true,
       headline: _headline(status, occurrences.last.createdAt, clock),
+      namedLine: _namedLine(thread),
       summaryLine: _summaryLine(status, thread.label, count, daysWindow),
       status: status,
       occurrenceCount: count,
@@ -70,7 +186,47 @@ class ThreadReturnEvidenceEngine {
       evidenceSnippets: _snippets(occurrences),
       entryIds: occurrences.map((r) => r.entryId).toList(),
       confidenceLabel: _confidenceLabel(count),
+      followUpPrompt: _followUpPrompt(status),
+      followUpCtaLabel: _followUpCtaLabel(status),
     );
+  }
+
+  /// Light affect labeling: names the thread with the user's own term.
+  /// Naming only — never a claim of processing, healing, or resolution.
+  String _namedLine(_ThreadCandidate thread) {
+    final term = thread.term.trim();
+    if (term.isEmpty) return ThreadReturnEvidence.genericNamedLine;
+    // Option themes ("stopping", "feeling behind") read as pressure, not as
+    // a thread noun.
+    if (thread.priority == 2) return 'You named the pressure around $term.';
+    return 'You named the $term thread.';
+  }
+
+  /// Turns the evidence into a next action: record what happened this time.
+  String _followUpCtaLabel(ThreadReturnStatus status) {
+    switch (status) {
+      case ThreadReturnStatus.returned:
+        return ThreadReturnEvidence.returnedFollowUpCta;
+      case ThreadReturnStatus.building:
+        return ThreadReturnEvidence.buildingFollowUpCta;
+      case ThreadReturnStatus.fading:
+        return ThreadReturnEvidence.fadingFollowUpCta;
+      case ThreadReturnStatus.earlySignal:
+        return ThreadReturnEvidence.earlySignalFollowUpCta;
+    }
+  }
+
+  String _followUpPrompt(ThreadReturnStatus status) {
+    switch (status) {
+      case ThreadReturnStatus.returned:
+        return ThreadReturnEvidence.returnedFollowUpPrompt;
+      case ThreadReturnStatus.building:
+        return ThreadReturnEvidence.buildingFollowUpPrompt;
+      case ThreadReturnStatus.fading:
+        return ThreadReturnEvidence.fadingFollowUpPrompt;
+      case ThreadReturnStatus.earlySignal:
+        return ThreadReturnEvidence.earlySignalFollowUpPrompt;
+    }
   }
 
   ThreadReturnStatus _status(
@@ -172,7 +328,8 @@ class ThreadReturnEvidenceEngine {
       for (final text in [record.fear, record.stopCostNote]) {
         final snippet = text?.trim() ?? '';
         if (snippet.isEmpty) continue;
-        if (snippets.length >= ThreadReturnEvidence.maxSnippets) return snippets;
+        if (snippets.length >= ThreadReturnEvidence.maxSnippets)
+          return snippets;
         if (seen.add(snippet.toLowerCase())) snippets.add(snippet);
       }
     }
@@ -193,12 +350,14 @@ class ThreadReturnEvidenceEngine {
     }
     contextCounts.forEach((label, entries) {
       if (entries.length >= 2) {
-        candidates.add(_ThreadCandidate(
-          label: '$label pressure',
-          term: label.toLowerCase(),
-          priority: 0,
-          entries: entries,
-        ));
+        candidates.add(
+          _ThreadCandidate(
+            label: '$label pressure',
+            term: label.toLowerCase(),
+            priority: 0,
+            entries: entries,
+          ),
+        );
       }
     });
 
@@ -210,12 +369,14 @@ class ThreadReturnEvidenceEngine {
     }
     wordEntries.forEach((word, entries) {
       if (entries.length >= 2) {
-        candidates.add(_ThreadCandidate(
-          label: '${_capitalize(word)} pressure',
-          term: word,
-          priority: 1,
-          entries: entries,
-        ));
+        candidates.add(
+          _ThreadCandidate(
+            label: '${_capitalize(word)} pressure',
+            term: word,
+            priority: 1,
+            entries: entries,
+          ),
+        );
       }
     });
 
@@ -226,12 +387,14 @@ class ThreadReturnEvidenceEngine {
     optionEntries.forEach((optionId, entries) {
       final theme = _optionTheme(optionId);
       if (entries.length >= 2 && theme != null) {
-        candidates.add(_ThreadCandidate(
-          label: 'Pressure around $theme',
-          term: theme,
-          priority: 2,
-          entries: entries,
-        ));
+        candidates.add(
+          _ThreadCandidate(
+            label: 'Pressure around $theme',
+            term: theme,
+            priority: 2,
+            entries: entries,
+          ),
+        );
       }
     });
 

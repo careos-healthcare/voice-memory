@@ -12,6 +12,15 @@ import 'package:flutter/services.dart' show rootBundle;
 class BackendUrlResolver {
   BackendUrlResolver._();
 
+  /// Marketing site only — does not serve `/api/*`. Remapped to production API.
+  static const String productionApiBaseUrl =
+      'https://voice-memory-iota.vercel.app';
+
+  static const Set<String> _marketingOnlyHosts = {
+    'careosapp.co.uk',
+    'www.careosapp.co.uk',
+  };
+
   static const String backendUrlDefineKey = 'BACKEND_URL';
   static const String primaryDefineKey = 'VOICE_MEMORY_API_BASE_URL';
   static const String legacyDefineKey = 'API_BASE_URL';
@@ -58,7 +67,10 @@ class BackendUrlResolver {
   }
 
   static String? _fromDartDefines() {
-    const backend = String.fromEnvironment(backendUrlDefineKey, defaultValue: '');
+    const backend = String.fromEnvironment(
+      backendUrlDefineKey,
+      defaultValue: '',
+    );
     if (backend.trim().isNotEmpty) return _normalize(backend.trim());
 
     const primary = String.fromEnvironment(primaryDefineKey, defaultValue: '');
@@ -135,8 +147,20 @@ class BackendUrlResolver {
     return null;
   }
 
-  static String _normalize(String url) =>
-      url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  static String normalizeApiBaseUrl(String url) => _normalize(url);
+
+  static String _normalize(String url) {
+    final trimmed = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+    final host = Uri.tryParse(trimmed)?.host.toLowerCase();
+    if (host != null && _marketingOnlyHosts.contains(host)) {
+      debugPrint(
+        'BackendUrlResolver: $host is marketing-only (no /api routes) — '
+        'using $productionApiBaseUrl',
+      );
+      return productionApiBaseUrl;
+    }
+    return trimmed;
+  }
 
   static void _logSource(String source, String url) {
     if (kDebugMode) {

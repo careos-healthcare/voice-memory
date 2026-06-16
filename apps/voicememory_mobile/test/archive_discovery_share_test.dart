@@ -18,7 +18,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/widgets/archive_discovery_share/archive_discovery_share_card.dart';
 import 'package:voicememory_mobile/widgets/archive_discovery_share/share_discovery_button.dart';
 
-JournalEntry _entry(String id, DateTime at, {List<String> themes = const ['work']}) {
+JournalEntry _entry(
+  String id,
+  DateTime at, {
+  List<String> themes = const ['work'],
+}) {
   return JournalEntry(
     id: id,
     createdAt: at,
@@ -90,8 +94,14 @@ void main() {
   group('ArchiveDiscoveryShareCopy', () {
     test('evidence line pluralizes', () {
       expect(ArchiveDiscoveryShareCopy.evidenceLine(1), 'Based on 1 recording');
-      expect(ArchiveDiscoveryShareCopy.evidenceLine(3), 'Based on 3 recordings');
-      expect(ArchiveDiscoveryShareCopy.evidenceLine(0), 'Based on your recordings');
+      expect(
+        ArchiveDiscoveryShareCopy.evidenceLine(3),
+        'Based on 3 recordings',
+      );
+      expect(
+        ArchiveDiscoveryShareCopy.evidenceLine(0),
+        'Based on your recordings',
+      );
     });
   });
 
@@ -193,7 +203,9 @@ void main() {
       );
       final cards = ArchiveDiscoveryShareEngine.build(entries: entries);
       expect(
-        cards.any((c) => c.type == ArchiveDiscoveryShareCardType.patternDiscovery),
+        cards.any(
+          (c) => c.type == ArchiveDiscoveryShareCardType.patternDiscovery,
+        ),
         isTrue,
       );
     });
@@ -228,7 +240,9 @@ void main() {
         ),
       );
       expect(
-        cards.any((c) => c.type == ArchiveDiscoveryShareCardType.changeDetected),
+        cards.any(
+          (c) => c.type == ArchiveDiscoveryShareCardType.changeDetected,
+        ),
         isTrue,
       );
     });
@@ -236,7 +250,9 @@ void main() {
 
   group('ArchiveDiscoverySharePalette', () {
     test('light and dark palettes differ', () {
-      final light = ArchiveDiscoverySharePalette.fromBrightness(Brightness.light);
+      final light = ArchiveDiscoverySharePalette.fromBrightness(
+        Brightness.light,
+      );
       final dark = ArchiveDiscoverySharePalette.fromBrightness(Brightness.dark);
       expect(light.background, isNot(dark.background));
       expect(light.insight, isNot(dark.insight));
@@ -254,9 +270,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ArchiveDiscoveryShareCard(card: card),
-          ),
+          home: Scaffold(body: ArchiveDiscoveryShareCard(card: card)),
         ),
       );
 
@@ -264,7 +278,10 @@ void main() {
       expect(find.text(card.insight), findsOneWidget);
       expect(find.text('Based on 6 recordings'), findsOneWidget);
       expect(find.text(ArchiveDiscoveryShareCopy.footer), findsOneWidget);
-      expect(find.byKey(const Key('archive_discovery_share_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_discovery_share_card')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('dark theme uses dark palette', (tester) async {
@@ -274,7 +291,9 @@ void main() {
         insight: 'Test insight',
         evidenceRecordingCount: 2,
       );
-      final palette = ArchiveDiscoverySharePalette.fromBrightness(Brightness.dark);
+      final palette = ArchiveDiscoverySharePalette.fromBrightness(
+        Brightness.dark,
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -285,7 +304,9 @@ void main() {
         ),
       );
 
-      final insightFinder = find.byKey(const Key('archive_discovery_share_insight'));
+      final insightFinder = find.byKey(
+        const Key('archive_discovery_share_insight'),
+      );
       final style = tester.widget<Text>(insightFinder).style;
       expect(style?.color, palette.insight);
     });
@@ -303,10 +324,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: ShareDiscoveryButton(
-              card: card,
-              surface: 'test_surface',
-            ),
+            body: ShareDiscoveryButton(card: card, surface: 'test_surface'),
           ),
         ),
       );

@@ -37,14 +37,14 @@ RetentionDiagnosis diagnoseRetentionFromSummary(TrialSummaryModel summary) {
   final closed = summary.checkInCompletedCount;
   final nextChosen = summary.resultNextCheckUsedCount;
 
-  final tomorrowCheckSetRate =
-      saved == 0 ? 0.0 : checksSet / saved.toDouble();
-  final nextDayReturnRate =
-      checksSet == 0 ? 0.0 : returned / checksSet.toDouble();
-  final loopCloseRate =
-      returned == 0 ? 0.0 : closed / returned.toDouble();
-  final nextCheckChoiceRate =
-      closed == 0 ? 0.0 : nextChosen / closed.toDouble();
+  final tomorrowCheckSetRate = saved == 0 ? 0.0 : checksSet / saved.toDouble();
+  final nextDayReturnRate = checksSet == 0
+      ? 0.0
+      : returned / checksSet.toDouble();
+  final loopCloseRate = returned == 0 ? 0.0 : closed / returned.toDouble();
+  final nextCheckChoiceRate = closed == 0
+      ? 0.0
+      : nextChosen / closed.toDouble();
 
   final bucket = _weakestBucket(
     tomorrowCheckSetRate: tomorrowCheckSetRate,
@@ -70,14 +70,14 @@ RetentionDiagnosis diagnoseRetentionFromEvents(ActivationEventCounts events) {
   final closed = events.tomorrowCheckInCompleted;
   final nextChosen = events.resultNextCheckUsed;
 
-  final tomorrowCheckSetRate =
-      saved == 0 ? 0.0 : checksSet / saved.toDouble();
-  final nextDayReturnRate =
-      checksSet == 0 ? 0.0 : returned / checksSet.toDouble();
-  final loopCloseRate =
-      returned == 0 ? 0.0 : closed / returned.toDouble();
-  final nextCheckChoiceRate =
-      closed == 0 ? 0.0 : nextChosen / closed.toDouble();
+  final tomorrowCheckSetRate = saved == 0 ? 0.0 : checksSet / saved.toDouble();
+  final nextDayReturnRate = checksSet == 0
+      ? 0.0
+      : returned / checksSet.toDouble();
+  final loopCloseRate = returned == 0 ? 0.0 : closed / returned.toDouble();
+  final nextCheckChoiceRate = closed == 0
+      ? 0.0
+      : nextChosen / closed.toDouble();
 
   final bucket = _weakestBucket(
     tomorrowCheckSetRate: tomorrowCheckSetRate,

@@ -7,7 +7,7 @@ import '../capture_entry_actions.dart';
 import '../record/start_here_loader.dart';
 
 /// Canonical copy for Search tab when there are no recordings.
-abstract final class SearchEmptyCopy {
+abstract class SearchEmptyCopy {
   SearchEmptyCopy._();
 
   static const String title = 'Nothing to search yet';
@@ -39,10 +39,7 @@ const double kSearchEmptyExamplesMaxWidth = 360;
 
 /// Search-specific first-time empty state — not the archive empty experience.
 class SearchEmptyState extends StatelessWidget {
-  const SearchEmptyState({
-    super.key,
-    this.onRecord,
-  });
+  const SearchEmptyState({super.key, this.onRecord});
 
   final VoidCallback? onRecord;
 
@@ -94,20 +91,24 @@ class SearchEmptyState extends StatelessWidget {
     Widget exampleTermsBlock() {
       return Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: kSearchEmptyExamplesMaxWidth),
+          constraints: const BoxConstraints(
+            maxWidth: kSearchEmptyExamplesMaxWidth,
+          ),
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: AppTheme.muted.withValues(alpha: 0.28),
-              ),
+              border: Border.all(color: AppTheme.muted.withValues(alpha: 0.28)),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (var i = 0; i < SearchEmptyCopy.exampleSearchTerms.length; i++)
+                for (
+                  var i = 0;
+                  i < SearchEmptyCopy.exampleSearchTerms.length;
+                  i++
+                )
                   Padding(
                     padding: EdgeInsets.only(
                       bottom: i < SearchEmptyCopy.exampleSearchTerms.length - 1
@@ -149,8 +150,9 @@ class SearchEmptyState extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(maxWidth: kSearchEmptyExamplesMaxWidth),
+                constraints: const BoxConstraints(
+                  maxWidth: kSearchEmptyExamplesMaxWidth,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -161,9 +163,7 @@ class SearchEmptyState extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text('•  ', style: bulletStyle),
-                            Expanded(
-                              child: Text(bullet, style: bulletStyle),
-                            ),
+                            Expanded(child: Text(bullet, style: bulletStyle)),
                           ],
                         ),
                       ),
@@ -201,7 +201,10 @@ class SearchEmptyState extends StatelessWidget {
             constraints: BoxConstraints(minHeight: minH),
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 24,
+                ),
                 child: content,
               ),
             ),

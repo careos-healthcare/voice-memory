@@ -7,10 +7,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Trial-only guidance shown before the first reflection is saved.
 class TrialFirstMomentCard extends StatelessWidget {
-  const TrialFirstMomentCard({
-    super.key,
-    required this.onStartRecording,
-  });
+  const TrialFirstMomentCard({super.key, required this.onStartRecording});
 
   final VoidCallback onStartRecording;
 

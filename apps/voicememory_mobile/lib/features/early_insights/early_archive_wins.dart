@@ -4,7 +4,7 @@ import '../theme_tracking/theme_track.dart';
 import '../theme_tracking/theme_tracker_service.dart';
 
 /// Thresholds for Early Archive Wins V1 (local engines only — no AI).
-abstract final class EarlyArchiveWinsThresholds {
+abstract class EarlyArchiveWinsThresholds {
   EarlyArchiveWinsThresholds._();
 
   static const int topicMentionMinRecordings = 3;
@@ -120,12 +120,12 @@ EarlyArchiveInsight? _topicMentionInsight(List<JournalEntry> working) {
     }
   }
 
-  if (bestId == null || bestHits < EarlyArchiveWinsThresholds.minMentionsInWindow) {
+  if (bestId == null ||
+      bestHits < EarlyArchiveWinsThresholds.minMentionsInWindow) {
     return null;
   }
 
-  final topic =
-      ThemeTrackerService.displayNames[bestId] ?? _titleCase(bestId);
+  final topic = ThemeTrackerService.displayNames[bestId] ?? _titleCase(bestId);
 
   return EarlyArchiveInsight(
     kind: EarlyArchiveInsightKind.topicInRecentWindow,

@@ -35,13 +35,13 @@ class ActivationLoopScore {
   final ActivationLoopWeakestBucket weakestBucket;
 
   Map<String, dynamic> toJson() => {
-        'savedFirstMoment': savedFirstMoment,
-        'choseTomorrowCheck': choseTomorrowCheck,
-        'returnedNextDay': returnedNextDay,
-        'closedLoop': closedLoop,
-        'ratedUsefulOrSortOf': ratedUsefulOrSortOf,
-        'choseNextCheck': choseNextCheck,
-        'completedFullLoop': completedFullLoop,
-        'weakestBucket': weakestBucket.id,
-      };
+    'savedFirstMoment': savedFirstMoment,
+    'choseTomorrowCheck': choseTomorrowCheck,
+    'returnedNextDay': returnedNextDay,
+    'closedLoop': closedLoop,
+    'ratedUsefulOrSortOf': ratedUsefulOrSortOf,
+    'choseNextCheck': choseNextCheck,
+    'completedFullLoop': completedFullLoop,
+    'weakestBucket': weakestBucket.id,
+  };
 }

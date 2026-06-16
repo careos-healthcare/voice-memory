@@ -8,16 +8,19 @@ export const PRIVATE_BY_DEFAULT_LINE =
   "Local-first and private by default. Your reflections stay on this device unless you choose encrypted backup.";
 
 export const NOT_THERAPY_LINE =
-  "VoiceMemory resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
+  "ArchiveMe resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
 
 export const CRISIS_DISCLAIMER =
-  "VoiceMemory cannot help in an emergency. If you or someone else may be in immediate danger, contact local emergency services. In the UK, Samaritans are available 24/7 on 116 123. In the US, call or text 988 for the Suicide & Crisis Lifeline.";
+  "ArchiveMe cannot help in an emergency. If you or someone else may be in immediate danger, contact local emergency services. In the UK, Samaritans are available 24/7 on 116 123. In the US, call or text 988 for the Suicide & Crisis Lifeline.";
 
 export const LOCAL_FIRST_SUMMARY =
-  "Your reflections, transcripts, mood notes, and memory patterns are stored in this browser (localStorage and IndexedDB for audio). VoiceMemory does not operate a cloud journal database for your entries.";
+  "Your reflections, transcripts, mood notes, and memory patterns are stored in this browser (localStorage and IndexedDB for audio). ArchiveMe does not operate a cloud journal database for your entries.";
 
-export const OPENAI_PROCESSING_SUMMARY =
-  "When you record, your audio is sent to our server and transcribed with OpenAI Whisper. The transcript is analyzed with OpenAI to produce structured reflection fields. We do not use your reflections to train OpenAI models. Audio is not retained on our servers after transcription completes.";
+export const AI_TRANSCRIPTION_ANALYSIS_SUMMARY =
+  "When you record, ArchiveMe may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive.";
+
+export const PROCESSING_PROVIDERS_SUMMARY =
+  "ArchiveMe may use trusted processing providers for transcription, analysis, account, billing, or crash diagnostics. Provider names may appear in the full privacy policy where required.";
 
 export const ENCRYPTED_SYNC_SUMMARY =
   "If you sign in, your archive is encrypted on this device before backup. Our servers store ciphertext only — not raw transcripts, audio, or reflection text. Sync is optional.";
@@ -31,7 +34,7 @@ export const DATA_DELETION_SUMMARY =
 export const DELETE_ALL_CONFIRM_PHRASE = "DELETE";
 
 export const DELETE_ALL_LOCAL_PROMPT =
-  "Delete ALL local VoiceMemory data on this device? This removes reflections, audio, bookmarks, preferences, and goals. This cannot be undone.";
+  "Delete ALL local ArchiveMe data on this device? This removes reflections, audio, bookmarks, preferences, and goals. This cannot be undone.";
 
 export const DELETE_ACCOUNT_LEAD =
   "Removes encrypted backup blobs and sessions from our servers. Your journal on this device is not deleted until you clear local data in Settings.";
@@ -53,11 +56,11 @@ export const PRIVACY_TRUST_POINTS = [
   },
   {
     title: "What is sent for transcription",
-    body: "When you record, audio is sent to our server for Whisper transcription, then discarded. It is not kept as a permanent cloud recording.",
+    body: "When you record, audio or transcript text may be sent to the app backend for transcription and analysis. Processing is limited to returning results to your archive.",
   },
   {
     title: "What is sent for reflection",
-    body: "Your transcript text is sent for structured reflection fields during analysis. That text is not stored on our servers as a journal — only processed to return results to your device.",
+    body: "Transcript text may be sent for structured reflection fields during analysis. That text is not stored on our servers as a journal — only processed to return results to your device.",
   },
   {
     title: "What is encrypted before sync",
@@ -75,24 +78,32 @@ export const PRIVACY_SECTIONS = [
     body: PRIVATE_BY_DEFAULT_LINE,
   },
   {
-    title: "What we collect",
-    body: "On your device: voice reflections, transcripts, reflection fields, optional reminder preferences, reflection goals, and optional Pro preview state. On our servers (transient): audio during transcription and transcript text during analysis — not kept as a permanent account journal.",
+    title: "What stays on your device",
+    body: "Your archive entries, saved details, action items, surfacing choices, memory controls, packs, pins, and collections are stored locally by default.",
   },
   {
     title: "Local-first storage",
     body: LOCAL_FIRST_SUMMARY,
   },
   {
-    title: "OpenAI processing",
-    body: OPENAI_PROCESSING_SUMMARY,
+    title: "AI transcription and analysis",
+    body: AI_TRANSCRIPTION_ANALYSIS_SUMMARY,
   },
   {
-    title: "Encrypted backup (optional)",
+    title: "Optional encrypted backup",
     body: ENCRYPTED_SYNC_SUMMARY,
   },
   {
-    title: "What we do not do",
-    body: "We do not sell your reflections. We do not provide therapy or clinical diagnosis. We do not use guilt, streaks, or pressure to keep you recording. Summaries from your transcript describe repeated words and themes — they are not complete or authoritative.",
+    title: "What ArchiveMe does not do",
+    body: "ArchiveMe does not sell your reflections. ArchiveMe does not include recording text in analytics. ArchiveMe does not turn every entry into personal memory by default.",
+  },
+  {
+    title: "Your controls",
+    body: "You can mark entries as Hypothetical, Not about me, Sensitive, Do not surface, Preserve original, Keep separate, or Treat as new.",
+  },
+  {
+    title: "Processing providers",
+    body: PROCESSING_PROVIDERS_SUMMARY,
   },
   {
     title: "Export your data",
@@ -123,7 +134,7 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "Acceptable use",
-    body: "Do not use VoiceMemory to store illegal content or to harass others. Do not attempt to reverse-engineer or abuse API endpoints.",
+    body: "Do not use ArchiveMe to store illegal content or to harass others. Do not attempt to reverse-engineer or abuse API endpoints.",
   },
   {
     title: "Subscriptions",
@@ -131,14 +142,14 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "Limitation of liability",
-    body: "VoiceMemory is a software tool, not a crisis service. We are not liable for decisions you make based on summaries generated from your transcript. See the Safety page for crisis resources.",
+    body: "ArchiveMe is a software tool, not a crisis service. We are not liable for decisions you make based on summaries generated from your transcript. See the Safety page for crisis resources.",
   },
 ] as const;
 
 export const EMOTIONAL_SAFETY_SECTIONS = [
   {
     title: "Not crisis support",
-    body: "VoiceMemory cannot monitor your safety or respond to emergencies. It does not have human moderators or clinicians on call.",
+    body: "ArchiveMe cannot monitor your safety or respond to emergencies. It does not have human moderators or clinicians on call.",
   },
   {
     title: "Not therapy",
@@ -182,6 +193,6 @@ export const SAFETY_SECTIONS = [
   },
   {
     title: "Cloud processing",
-    body: OPENAI_PROCESSING_SUMMARY,
+    body: AI_TRANSCRIPTION_ANALYSIS_SUMMARY,
   },
 ] as const;

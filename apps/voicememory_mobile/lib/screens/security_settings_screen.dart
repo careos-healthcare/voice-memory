@@ -18,7 +18,10 @@ import '../services/auth_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
+import '../widgets/security/archive_privacy_controls_card.dart';
 import '../widgets/security/setup_pin_screen.dart';
+import '../widgets/security/wipe_local_archive_dialog.dart';
+import '../security/sensitive_screen_guard.dart';
 
 /// One place to manage archive protection and account security: app lock
 /// (PIN + optional biometrics), account state, and the existing data
@@ -33,8 +36,7 @@ class SecuritySettingsScreen extends StatefulWidget {
   final AuthService? auth;
 
   @override
-  State<SecuritySettingsScreen> createState() =>
-      _SecuritySettingsScreenState();
+  State<SecuritySettingsScreen> createState() => _SecuritySettingsScreenState();
 }
 
 class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
@@ -47,6 +49,8 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   bool _signedIn = false;
   bool _busy = false;
   bool _restoreBusy = false;
+  bool _hideInAppSwitcher = false;
+  bool _wipeBusy = false;
 
   @override
   void initState() {
@@ -65,21 +69,28 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
       signedIn = _auth.currentSession != null;
     }
     if (!mounted) return;
+    var hideSwitcher = false;
+    try {
+      hideSwitcher = await SensitiveScreenPrivacySettings.hideInAppSwitcher(
+        AppServices.instance.prefs,
+      );
+    } catch (_) {
+      hideSwitcher = false;
+    }
     setState(() {
       _appLockEnabled = lockEnabled;
       _biometricsAvailable = available;
       _biometricsEnabled = biometricsOn;
       _signedIn = signedIn;
+      _hideInAppSwitcher = hideSwitcher;
     });
   }
 
   Future<void> _setupPin({required bool changeExisting}) async {
     await Navigator.of(context).push(
       MaterialPageRoute<bool>(
-        builder: (_) => SetupPinScreen(
-          service: _appLock,
-          changeExisting: changeExisting,
-        ),
+        builder: (_) =>
+            SetupPinScreen(service: _appLock, changeExisting: changeExisting),
       ),
     );
     await _refresh();
@@ -111,6 +122,30 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
       if (mounted) setState(() => _busy = false);
     }
     await _refresh();
+  }
+
+  Future<void> _toggleHideInAppSwitcher(bool enabled) async {
+    await SensitiveScreenPrivacySettings.setHideInAppSwitcher(
+      AppServices.instance.prefs,
+      enabled: enabled,
+    );
+    await _refresh();
+  }
+
+  Future<void> _wipeLocalArchive() async {
+    if (_wipeBusy) return;
+    setState(() => _wipeBusy = true);
+    try {
+      final wiped = await showWipeLocalArchiveDialog(context);
+      if (!mounted) return;
+      if (wiped) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Local archive data deleted.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _wipeBusy = false);
+    }
   }
 
   Future<void> _restorePurchases() async {
@@ -159,8 +194,22 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             Text(
               SecuritySettingsCopy.subtitle,
               key: const Key('security_subtitle'),
-              style: ArchiveMobileTypography.responsiveHelper(context)
-                  .copyWith(color: AppColors.textSecondary),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ArchivePrivacyControlsCard(
+              deleteBusy: _wipeBusy,
+              onLockTap: () {
+                if (_appLockEnabled) {
+                  _setupPin(changeExisting: true);
+                } else {
+                  _setupPin(changeExisting: false);
+                }
+              },
+              onExportTap: () => _openRoute('/export'),
+              onDeleteTap: _wipeLocalArchive,
             ),
             const SizedBox(height: AppSpacing.md),
             _sectionHeader(SecuritySettingsCopy.appLockSection),
@@ -244,8 +293,9 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
         ),
         Text(
           AccountAuthCopy.signOutKeepsArchive,
-          style: ArchiveMobileTypography.responsiveHelper(context)
-              .copyWith(color: AppColors.textSecondary),
+          style: ArchiveMobileTypography.responsiveHelper(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
       ];
     }
@@ -271,10 +321,31 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
 
   List<Widget> _dataTiles() {
     return [
+      SwitchListTile(
+        key: const Key('security_hide_app_switcher'),
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          SecuritySettingsCopy.hideInAppSwitcher,
+          style: ArchiveMobileTypography.listTitle(context),
+        ),
+        subtitle: Text(
+          SecuritySettingsCopy.hideInAppSwitcherBody,
+          style: ArchiveMobileTypography.listSubtitle(context),
+        ),
+        value: _hideInAppSwitcher,
+        onChanged: _toggleHideInAppSwitcher,
+      ),
       _tile(
         key: const Key('security_export'),
         title: ConsumerUiCopy.exportReflections,
         onTap: () => _openRoute('/export'),
+      ),
+      _tile(
+        key: const Key('security_wipe_local'),
+        title: SecuritySettingsCopy.wipeLocalArchive,
+        subtitle: SecuritySettingsCopy.wipeLocalArchiveBody,
+        onTap: _wipeBusy ? null : _wipeLocalArchive,
+        destructive: true,
       ),
       _tile(
         key: const Key('security_restore_purchases'),
@@ -321,10 +392,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
         ),
       ),
       subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: ArchiveMobileTypography.listSubtitle(context),
-            )
+          ? Text(subtitle, style: ArchiveMobileTypography.listSubtitle(context))
           : null,
       trailing: trailing ?? const Icon(Icons.chevron_right),
       onTap: onTap,

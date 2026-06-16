@@ -19,23 +19,23 @@ ArchiveMemorySummary _summary({int momentCount = 0, String? changedLine}) =>
     );
 
 KeyMoment _moment(int day) => KeyMoment(
-      id: 'm$day',
-      date: DateTime(2026, 6, day),
-      title: 'Moment',
-      originalText: 'text',
-      shortSummary: 'text',
-      patternTitle: 'Test pattern',
-    );
+  id: 'm$day',
+  date: DateTime(2026, 6, day),
+  title: 'Moment',
+  originalText: 'text',
+  shortSummary: 'text',
+  patternTitle: 'Test pattern',
+);
 
 void main() {
   test('earlyRead below 3 moments', () {
-    final quality = buildMemoryQuality(
-      summary: _summary(momentCount: 2),
-    );
+    final quality = buildMemoryQuality(summary: _summary(momentCount: 2));
     expect(quality.level, MemoryQualityLevel.earlyRead);
     expect(quality.label, 'Early read');
-    expect(quality.helperText,
-        'Record a few more moments to make this clearer.');
+    expect(
+      quality.helperText,
+      'Record a few more moments to make this clearer.',
+    );
   });
 
   test('gettingClearer at 3–4 moments', () {
@@ -101,9 +101,7 @@ void main() {
   });
 
   test('weekCount from key moment span when summary weeks missing', () {
-    final quality = buildMemoryQuality(
-      keyMoments: [_moment(1), _moment(15)],
-    );
+    final quality = buildMemoryQuality(keyMoments: [_moment(1), _moment(15)]);
     expect(quality.weekCount, greaterThanOrEqualTo(2));
   });
 

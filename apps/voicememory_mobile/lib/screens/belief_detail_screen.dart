@@ -32,7 +32,9 @@ class BeliefDetailScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               belief.statement,
-              style: VoiceMemoryTypography.headlineStyle().copyWith(fontSize: 28),
+              style: VoiceMemoryTypography.headlineStyle().copyWith(
+                fontSize: 28,
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             Text(

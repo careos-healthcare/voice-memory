@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 import {
   buildHomepageCarryoverLine,
   type HomepageCarryover,
 } from "@/lib/sync/cross-device-continuity";
 
 export function CrossDeviceCarryoverLine() {
+  const { requestAuth } = useAuthPrompt();
   const [carryover, setCarryover] = useState<HomepageCarryover | null>(null);
 
   useEffect(() => {
@@ -26,12 +27,17 @@ export function CrossDeviceCarryoverLine() {
 
   if (carryover.href) {
     return (
-      <Link
-        href={carryover.href}
-        className="block rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 transition-colors hover:bg-white/[0.04]"
+      <button
+        type="button"
+        onClick={() => {
+          if (!requestAuth("cross_device")) {
+            window.location.href = carryover.href!;
+          }
+        }}
+        className="block w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-left transition-colors hover:bg-white/[0.04]"
       >
         {content}
-      </Link>
+      </button>
     );
   }
 

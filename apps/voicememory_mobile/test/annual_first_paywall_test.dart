@@ -19,14 +19,8 @@ void main() {
   });
 
   test('annual label says best for long-term memory', () {
-    expect(
-      ArchivePaywallPlanCopy.annualLabel,
-      'Best for long-term memory',
-    );
-    expect(
-      ArchivePaywallPlanCopy.annualHelper,
-      contains('weeks and months'),
-    );
+    expect(ArchivePaywallPlanCopy.annualLabel, 'Best for long-term memory');
+    expect(ArchivePaywallPlanCopy.annualHelper, contains('weeks and months'));
   });
 
   test('monthly label and helper match launch copy', () {

@@ -13,12 +13,14 @@ Future<void> _resetTrial(String stamp) async {
 }
 
 void main() {
-  test('missing RevenueCat key leaves service unconfigured without crash',
-      () async {
-    final rc = RevenueCatService.instance;
-    await rc.initialize();
-    expect(rc.isConfigured, isFalse);
-  });
+  test(
+    'missing RevenueCat key leaves service unconfigured without crash',
+    () async {
+      final rc = RevenueCatService.instance;
+      await rc.initialize();
+      expect(rc.isConfigured, isFalse);
+    },
+  );
 
   test('trial local mode does not require billing', () {
     if (TrialMode.enabled) {
@@ -32,16 +34,18 @@ void main() {
   test('paywall surfaces clear message when billing not configured', () {
     expect(
       ConsumerUiCopy.paywallBillingNotConfigured,
-      contains('not set up'),
+      contains('Purchases are not available right now'),
     );
   });
 
-  test('trial reset initializes app services without RevenueCat configure',
-      () async {
-    if (!TrialMode.enabled) return;
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _resetTrial(stamp);
-    expect(AppServices.isInitialized, isTrue);
-    expect(RevenueCatService.instance.isConfigured, isFalse);
-  });
+  test(
+    'trial reset initializes app services without RevenueCat configure',
+    () async {
+      if (!TrialMode.enabled) return;
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _resetTrial(stamp);
+      expect(AppServices.isInitialized, isTrue);
+      expect(RevenueCatService.instance.isConfigured, isFalse);
+    },
+  );
 }

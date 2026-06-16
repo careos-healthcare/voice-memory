@@ -123,7 +123,11 @@ class _BeliefShiftCard extends StatelessWidget {
               const SizedBox(height: 14),
               const Text(
                 'Old belief',
-                style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                style: TextStyle(
+                  fontSize: 10,
+                  letterSpacing: 0.6,
+                  color: AppTheme.muted,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
@@ -135,7 +139,11 @@ class _BeliefShiftCard extends StatelessWidget {
               const SizedBox(height: 12),
               const Text(
                 'Current belief',
-                style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                style: TextStyle(
+                  fontSize: 10,
+                  letterSpacing: 0.6,
+                  color: AppTheme.muted,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
@@ -150,7 +158,11 @@ class _BeliefShiftCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 const Text(
                   'Evidence chain',
-                  style: TextStyle(fontSize: 10, letterSpacing: 0.6, color: AppTheme.muted),
+                  style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 0.6,
+                    color: AppTheme.muted,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 ...report.evolutionTimeline.asMap().entries.map((entry) {
@@ -162,7 +174,11 @@ class _BeliefShiftCard extends StatelessWidget {
                       if (i > 0) ...[
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 6),
-                          child: Icon(Icons.more_vert, size: 14, color: AppTheme.muted),
+                          child: Icon(
+                            Icons.more_vert,
+                            size: 14,
+                            color: AppTheme.muted,
+                          ),
                         ),
                       ],
                       InkWell(
@@ -192,7 +208,9 @@ class _BeliefShiftCard extends StatelessWidget {
                   for (final id in report.evidenceIds)
                     OutlinedButton(
                       onPressed: () => context.push('/entry/$id'),
-                      child: Text('Recording ${report.evidenceIds.indexOf(id) + 1}'),
+                      child: Text(
+                        'Recording ${report.evidenceIds.indexOf(id) + 1}',
+                      ),
                     ),
                 ],
               ),

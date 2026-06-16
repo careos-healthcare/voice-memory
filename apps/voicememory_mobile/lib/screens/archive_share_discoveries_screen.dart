@@ -46,27 +46,27 @@ class _ArchiveShareDiscoveriesScreenState
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _cards.isEmpty
-              ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Text(
-                      'Record more reflections — shareable moments appear when the archive notices change, patterns, or milestones.',
-                      style: TextStyle(color: AppTheme.muted, height: 1.45),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-                  children: [
-                    const Text(
-                      'Screenshot-safe cards — short quotes only, no full transcripts.',
-                      style: TextStyle(color: AppTheme.muted, fontSize: 13),
-                    ),
-                    const SizedBox(height: 16),
-                    ..._cards.map(_cardSection),
-                  ],
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'Record more reflections — shareable moments appear when the archive notices change, patterns, or milestones.',
+                  style: TextStyle(color: AppTheme.muted, height: 1.45),
+                  textAlign: TextAlign.center,
                 ),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              children: [
+                const Text(
+                  'Screenshot-safe cards — short quotes only, no full transcripts.',
+                  style: TextStyle(color: AppTheme.muted, fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                ..._cards.map(_cardSection),
+              ],
+            ),
     );
   }
 
@@ -109,7 +109,10 @@ class _ArchiveShareDiscoveriesScreenState
     );
   }
 
-  Future<void> _share(ArchiveDiscoveryShareCardModel card, GlobalKey key) async {
+  Future<void> _share(
+    ArchiveDiscoveryShareCardModel card,
+    GlobalKey key,
+  ) async {
     try {
       await ArchiveDiscoveryShareCard.sharePngViaSheet(
         boundaryKey: key,
@@ -118,13 +121,16 @@ class _ArchiveShareDiscoveriesScreenState
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not share: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not share: $e')));
     }
   }
 
-  Future<void> _exportPng(ArchiveDiscoveryShareCardModel card, GlobalKey key) async {
+  Future<void> _exportPng(
+    ArchiveDiscoveryShareCardModel card,
+    GlobalKey key,
+  ) async {
     try {
       await ArchiveDiscoveryShareCard.exportPng(
         boundaryKey: key,
@@ -133,9 +139,9 @@ class _ArchiveShareDiscoveriesScreenState
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not export PNG: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not export PNG: $e')));
     }
   }
 }

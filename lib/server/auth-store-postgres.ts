@@ -1,6 +1,12 @@
 import "server-only";
 
 import {
+  CODE_TTL_MS,
+  MAX_CODE_ATTEMPTS,
+  sendAllowed,
+  AuthRateLimitError,
+} from "@/lib/auth/auth-code-policy";
+import {
   hashSessionToken,
   hashVerificationCode,
   userIdFromEmail,
@@ -8,7 +14,6 @@ import {
 import { dbQuery } from "@/lib/server/db";
 import type { StoredUser } from "@/lib/server/auth-storage";
 
-const CODE_TTL_MS = 1000 * 60 * 10;
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 
 function normalizeEmail(email: string): string {
@@ -20,15 +25,29 @@ export async function issueAuthCodePostgres(
   code: string,
 ): Promise<{ userId: string; code: string }> {
   const normalized = normalizeEmail(email);
-  const expiresAt = new Date(Date.now() + CODE_TTL_MS);
+  const now = Date.now();
+
+  // Resend cooldown — refuse a new code while the last one is fresh.
+  const existing = await dbQuery<{ created_at: string }>(
+    `SELECT created_at FROM auth_codes WHERE email = $1`,
+    [normalized],
+  );
+  const createdAt = existing.rows[0]?.created_at;
+  const gate = sendAllowed(createdAt ? new Date(createdAt).getTime() : null, now);
+  if (!gate.allowed) {
+    throw new AuthRateLimitError(gate.retryAfterMs);
+  }
+
+  const expiresAt = new Date(now + CODE_TTL_MS);
   const codeHash = hashVerificationCode(code);
 
   await dbQuery(
-    `INSERT INTO auth_codes (email, code_hash, expires_at)
-     VALUES ($1, $2, $3)
+    `INSERT INTO auth_codes (email, code_hash, expires_at, attempts)
+     VALUES ($1, $2, $3, 0)
      ON CONFLICT (email) DO UPDATE SET
        code_hash = EXCLUDED.code_hash,
        expires_at = EXCLUDED.expires_at,
+       attempts = 0,
        created_at = now()`,
     [normalized, codeHash, expiresAt.toISOString()],
   );
@@ -48,15 +67,31 @@ export async function verifyAuthCodePostgres(
     email: string;
     code_hash: string;
     created_at: string;
+    attempts: number;
   }>(
-    `SELECT email, code_hash, created_at
+    `SELECT email, code_hash, created_at, attempts
      FROM auth_codes
      WHERE email = $1 AND expires_at > $2`,
     [normalized, now],
   );
 
   const row = result.rows[0];
-  if (!row || row.code_hash !== codeHash) return null;
+  if (!row) return null;
+
+  // Attempt limit — the code dies after too many wrong guesses, even
+  // inside its TTL, so a 6-digit code cannot be brute-forced.
+  if ((row.attempts ?? 0) >= MAX_CODE_ATTEMPTS) {
+    await dbQuery(`DELETE FROM auth_codes WHERE email = $1`, [normalized]);
+    return null;
+  }
+
+  if (row.code_hash !== codeHash) {
+    await dbQuery(
+      `UPDATE auth_codes SET attempts = attempts + 1 WHERE email = $1`,
+      [normalized],
+    );
+    return null;
+  }
 
   await dbQuery(`DELETE FROM auth_codes WHERE email = $1`, [normalized]);
 

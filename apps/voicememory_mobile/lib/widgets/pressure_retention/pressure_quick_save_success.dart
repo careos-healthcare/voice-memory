@@ -9,8 +9,7 @@ import '../../theme/voicememory_cards.dart';
 class PressureQuickSaveSuccess extends StatelessWidget {
   const PressureQuickSaveSuccess({super.key});
 
-  static const message =
-      'Logged. Your archive has one more piece of evidence.';
+  static const message = 'Logged. Your archive has one more piece of evidence.';
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +17,7 @@ class PressureQuickSaveSuccess extends StatelessWidget {
       key: const Key('pressure_quick_save_success'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.flat(
-        background: const Color(0xFFEFF7F0),
-      ),
+      decoration: VoiceMemoryCards.flat(background: const Color(0xFFEFF7F0)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -31,7 +31,7 @@ class RetentionMetricsStore {
 }
 
 /// Retention/onboarding analytics — separate from core activation funnel.
-abstract final class RetentionMetricsTracker {
+abstract class RetentionMetricsTracker {
   RetentionMetricsTracker._();
 
   static const onboardingStarted = 'onboardingStarted';

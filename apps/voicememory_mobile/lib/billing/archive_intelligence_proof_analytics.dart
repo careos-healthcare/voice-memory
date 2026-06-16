@@ -1,6 +1,6 @@
 import '../services/product_analytics.dart';
 
-abstract final class ArchiveIntelligenceProofAnalytics {
+abstract class ArchiveIntelligenceProofAnalytics {
   ArchiveIntelligenceProofAnalytics._();
 
   static Future<void> paywallProofSeen({

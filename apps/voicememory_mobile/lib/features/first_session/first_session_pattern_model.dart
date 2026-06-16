@@ -1,10 +1,6 @@
 import 'first_session_pattern_category.dart';
 
-enum FirstSessionConfidenceLabel {
-  early,
-  forming,
-  strong,
-}
+enum FirstSessionConfidenceLabel { early, forming, strong }
 
 /// Alternate first-pattern option when scores are close or the user corrects.
 class FirstSessionPatternAlternative {
@@ -25,13 +21,13 @@ class FirstSessionPatternAlternative {
   final String categoryId;
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'whyNoticed': whyNoticed,
-        'watchForText': watchForText,
-        'chips': chips,
-        'confidenceScore': confidenceScore,
-        'categoryId': categoryId,
-      };
+    'title': title,
+    'whyNoticed': whyNoticed,
+    'watchForText': watchForText,
+    'chips': chips,
+    'confidenceScore': confidenceScore,
+    'categoryId': categoryId,
+  };
 
   static FirstSessionPatternAlternative? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -39,7 +35,10 @@ class FirstSessionPatternAlternative {
     if (title.isEmpty) return null;
     final chipsRaw = json['chips'];
     final chips = chipsRaw is List
-        ? chipsRaw.map((e) => e.toString().trim()).where((c) => c.isNotEmpty).toList()
+        ? chipsRaw
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
     return FirstSessionPatternAlternative(
       title: title,
@@ -75,7 +74,7 @@ class FirstSessionPattern {
     this.negativeMatchPenaltyApplied = false,
     this.isAmbiguousMatch = false,
   }) : category =
-            category ?? firstSessionPatternCategoryFromIdOrFallback(categoryId);
+           category ?? firstSessionPatternCategoryFromIdOrFallback(categoryId);
 
   final String id;
   final DateTime createdAt;
@@ -148,7 +147,8 @@ class FirstSessionPattern {
       userCanCorrect: userCanCorrect ?? this.userCanCorrect,
       categoryId: nextCategoryId,
       category:
-          category ?? firstSessionPatternCategoryFromIdOrFallback(nextCategoryId),
+          category ??
+          firstSessionPatternCategoryFromIdOrFallback(nextCategoryId),
       competingCategoryScores:
           competingCategoryScores ?? this.competingCategoryScores,
       ambiguityMargin: ambiguityMargin ?? this.ambiguityMargin,
@@ -171,27 +171,26 @@ class FirstSessionPattern {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'title': title,
-        'whyNoticed': whyNoticed,
-        'watchForText': watchForText,
-        'chips': chips,
-        'confidenceLabel': confidenceLabel.name,
-        'sourceTextPreview': sourceTextPreview,
-        'matchReason': matchReason,
-        'confidenceScore': confidenceScore,
-        'matchedPhrases': matchedPhrases,
-        'alternativePatterns':
-            alternativePatterns.map((a) => a.toJson()).toList(),
-        'userCanCorrect': userCanCorrect,
-        'categoryId': categoryId,
-        'category': category.id,
-        'competingCategoryScores': competingCategoryScores,
-        'ambiguityMargin': ambiguityMargin,
-        'negativeMatchPenaltyApplied': negativeMatchPenaltyApplied,
-        'isAmbiguousMatch': isAmbiguousMatch,
-      };
+    'id': id,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'title': title,
+    'whyNoticed': whyNoticed,
+    'watchForText': watchForText,
+    'chips': chips,
+    'confidenceLabel': confidenceLabel.name,
+    'sourceTextPreview': sourceTextPreview,
+    'matchReason': matchReason,
+    'confidenceScore': confidenceScore,
+    'matchedPhrases': matchedPhrases,
+    'alternativePatterns': alternativePatterns.map((a) => a.toJson()).toList(),
+    'userCanCorrect': userCanCorrect,
+    'categoryId': categoryId,
+    'category': category.id,
+    'competingCategoryScores': competingCategoryScores,
+    'ambiguityMargin': ambiguityMargin,
+    'negativeMatchPenaltyApplied': negativeMatchPenaltyApplied,
+    'isAmbiguousMatch': isAmbiguousMatch,
+  };
 
   static FirstSessionPattern? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -204,23 +203,31 @@ class FirstSessionPattern {
 
     final chipsRaw = json['chips'];
     final chips = chipsRaw is List
-        ? chipsRaw.map((e) => e.toString().trim()).where((c) => c.isNotEmpty).toList()
+        ? chipsRaw
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
 
     final phrasesRaw = json['matchedPhrases'];
     final matchedPhrases = phrasesRaw is List
-        ? phrasesRaw.map((e) => e.toString().trim()).where((p) => p.isNotEmpty).toList()
+        ? phrasesRaw
+              .map((e) => e.toString().trim())
+              .where((p) => p.isNotEmpty)
+              .toList()
         : <String>[];
 
     final altRaw = json['alternativePatterns'];
     final alternatives = altRaw is List
         ? altRaw
-            .whereType<Map>()
-            .map((m) => FirstSessionPatternAlternative.fromJson(
+              .whereType<Map>()
+              .map(
+                (m) => FirstSessionPatternAlternative.fromJson(
                   Map<String, dynamic>.from(m),
-                ))
-            .whereType<FirstSessionPatternAlternative>()
-            .toList()
+                ),
+              )
+              .whereType<FirstSessionPatternAlternative>()
+              .toList()
         : <FirstSessionPatternAlternative>[];
 
     return FirstSessionPattern(
@@ -230,7 +237,9 @@ class FirstSessionPattern {
       whyNoticed: json['whyNoticed']?.toString().trim() ?? '',
       watchForText: json['watchForText']?.toString().trim() ?? '',
       chips: chips,
-      confidenceLabel: _parseConfidence(json['confidenceLabel']?.toString() ?? ''),
+      confidenceLabel: _parseConfidence(
+        json['confidenceLabel']?.toString() ?? '',
+      ),
       sourceTextPreview: json['sourceTextPreview']?.toString().trim() ?? '',
       matchReason: json['matchReason']?.toString().trim() ?? '',
       confidenceScore: (json['confidenceScore'] as num?)?.toDouble() ?? 0,

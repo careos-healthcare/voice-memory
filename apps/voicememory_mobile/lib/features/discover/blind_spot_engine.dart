@@ -37,14 +37,15 @@ class DiscoverBlindSpotEngine {
   }
 
   List<DiscoverBlindSpotCard> _secondarySpots(List<JournalEntry> entries) {
-    final eligible = entries
-        .where((e) => e.transcript.trim().length > 30)
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final eligible =
+        entries.where((e) => e.transcript.trim().length > 30).toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     final helpCount = eligible.where((e) {
       final t = e.transcript.toLowerCase();
-      return t.contains('help') || t.contains('support') || t.contains('others');
+      return t.contains('help') ||
+          t.contains('support') ||
+          t.contains('others');
     }).length;
     final planCount = eligible.where((e) {
       final t = e.transcript.toLowerCase();

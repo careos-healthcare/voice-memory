@@ -23,10 +23,7 @@ class ProveEnoughStopCostStore {
     return null;
   }
 
-  Future<void> save({
-    required String entryId,
-    required String answer,
-  }) async {
+  Future<void> save({required String entryId, required String answer}) async {
     await _prefs.updateMap(_key, (current) {
       final map = Map<String, dynamic>.from(current ?? {});
       map[entryId] = answer.trim();

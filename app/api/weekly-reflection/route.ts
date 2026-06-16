@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 
+import { guardOpenAiRoute } from "@/lib/server/api-guard";
+import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
 import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { getOpenAIClient } from "@/lib/openai";
 import type { WeeklyReflectionPayload } from "@/types/weekly";
 
 export const runtime = "nodejs";
 
-const SYSTEM_PROMPT = `You detect weekly language patterns for VoiceMemory — ${PRODUCT_WEDGE_LINE} NOT therapy.
+const SYSTEM_PROMPT = `You detect weekly language patterns for ArchiveMe — ${PRODUCT_WEDGE_LINE} NOT therapy.
 Given aggregated statistics from a user's last 7 days of voice reflections (no raw transcripts), write ONE paragraph (4-6 sentences) of pattern observations.
 
 Rules:
@@ -36,6 +38,9 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    const guard = await guardOpenAiRoute(request, "analyze");
+    if (!guard.ok) return guard.response;
 
     const openai = getOpenAIClient();
 
@@ -79,8 +84,10 @@ Write the weekly pattern observation summary.`;
     return NextResponse.json({ summary });
   } catch (error) {
     console.error("Weekly reflection failed:", error);
-    const message =
-      error instanceof Error ? error.message : "Weekly reflection failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const safe = safeOpenAiRouteError("analyze", error);
+    return NextResponse.json(
+      { error: safe.message, code: safe.code },
+      { status: 500 },
+    );
   }
 }

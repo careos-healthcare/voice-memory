@@ -31,14 +31,16 @@ Future<void> _pump(
 }
 
 void main() {
-  testWidgets('shows the kinder read, labels, caution and buttons',
-      (tester) async {
+  testWidgets('shows the kinder read, labels, caution and buttons', (
+    tester,
+  ) async {
     await _pump(tester);
 
     expect(find.text('A kinder angle'), findsOneWidget);
     expect(
       find.text(
-          'This may be a hard moment, not proof that something is wrong with you.'),
+        'This may be a hard moment, not proof that something is wrong with you.',
+      ),
       findsOneWidget,
     );
     expect(find.text('Why this helps'), findsOneWidget);
@@ -48,8 +50,9 @@ void main() {
     expect(find.text('Show another angle'), findsOneWidget);
   });
 
-  testWidgets('Use this check creates the check-in and confirms',
-      (tester) async {
+  testWidgets('Use this check creates the check-in and confirms', (
+    tester,
+  ) async {
     String? created;
     await _pump(
       tester,
@@ -63,12 +66,14 @@ void main() {
     expect(find.text(localized('tomorrowCheckSet', 'en')), findsOneWidget);
   });
 
-  testWidgets('Show another angle steps back to the broader read once',
-      (tester) async {
+  testWidgets('Show another angle steps back to the broader read once', (
+    tester,
+  ) async {
     await _pump(tester);
     expect(
       find.text(
-          'This may be a hard moment, not proof that something is wrong with you.'),
+        'This may be a hard moment, not proof that something is wrong with you.',
+      ),
       findsOneWidget,
     );
 
@@ -95,8 +100,9 @@ void main() {
     expect(find.text('Early read'), findsOneWidget);
   });
 
-  testWidgets('compact variant keeps the action but drops the why line',
-      (tester) async {
+  testWidgets('compact variant keeps the action but drops the why line', (
+    tester,
+  ) async {
     await _pump(tester, compact: true);
     expect(find.text('A kinder angle'), findsOneWidget);
     expect(find.text('Use this check'), findsOneWidget);

@@ -29,11 +29,11 @@ class WatchForStore {
     final list = raw['items'];
     if (list is! List) return const [];
     return list
-        .map((e) => WatchForItem.fromJson(
-              e is Map<String, dynamic>
-                  ? e
-                  : Map<String, dynamic>.from(e as Map),
-            ))
+        .map(
+          (e) => WatchForItem.fromJson(
+            e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map),
+          ),
+        )
         .whereType<WatchForItem>()
         .toList();
   }

@@ -1,6 +1,7 @@
 import '../api/api_client.dart';
 import '../api/api_exceptions.dart';
 import '../config/app_config.dart';
+import '../config/creator_demo_mode.dart';
 import '../product/consumer_ui_copy.dart';
 import '../storage/journal_store.dart';
 import '../storage/mobile_prefs_store.dart';
@@ -26,17 +27,23 @@ class SyncResult {
 }
 
 class SyncService {
-  SyncService(
-    this._api,
-    this._journal,
-    this._prefs,
-  );
+  SyncService(this._api, this._journal, this._prefs);
 
   final ApiClient _api;
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
 
   Future<SyncResult> syncNow() async {
+    // Creator demo mode: nothing syncs — no backend call is ever made and
+    // no demo content can reach an account.
+    if (CreatorDemoMode.isActive) {
+      return const SyncResult(
+        cloudSyncSucceeded: false,
+        message: 'Your moments stay on this device.',
+        pushed: 0,
+        pulled: 0,
+      );
+    }
     if (!AppConfig.isBackendConfigured) {
       return const SyncResult(
         cloudSyncSucceeded: false,

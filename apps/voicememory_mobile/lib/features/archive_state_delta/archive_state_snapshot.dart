@@ -18,13 +18,13 @@ class ArchiveStateSnapshot {
   final String timestamp;
 
   Map<String, dynamic> toJson() => {
-        'belief': belief,
-        'confidence': confidence,
-        'reputation': reputation,
-        'evidenceCount': evidenceCount,
-        'lifeAreas': lifeAreas,
-        'timestamp': timestamp,
-      };
+    'belief': belief,
+    'confidence': confidence,
+    'reputation': reputation,
+    'evidenceCount': evidenceCount,
+    'lifeAreas': lifeAreas,
+    'timestamp': timestamp,
+  };
 
   static ArchiveStateSnapshot? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
@@ -35,11 +35,13 @@ class ArchiveStateSnapshot {
       confidence: (json['confidence'] as num?)?.toInt() ?? 0,
       reputation: json['reputation']?.toString() ?? 'low',
       evidenceCount: (json['evidenceCount'] as num?)?.toInt() ?? 0,
-      lifeAreas: (json['lifeAreas'] as List<dynamic>?)
+      lifeAreas:
+          (json['lifeAreas'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      timestamp: json['timestamp']?.toString() ?? DateTime.now().toIso8601String(),
+      timestamp:
+          json['timestamp']?.toString() ?? DateTime.now().toIso8601String(),
     );
   }
 }
@@ -108,8 +110,8 @@ ArchiveStateDeltaView? buildMobileArchiveStateDelta({
 }) {
   if (reflectionCount < 2) return null;
 
-  final away = lastViewAt != null &&
-      DateTime.now().difference(lastViewAt).inDays >= 3;
+  final away =
+      lastViewAt != null && DateTime.now().difference(lastViewAt).inDays >= 3;
 
   if (baseline == null) {
     return ArchiveStateDeltaView(
@@ -124,21 +126,25 @@ ArchiveStateDeltaView? buildMobileArchiveStateDelta({
   final rows = <ArchiveStateDeltaRow>[];
   final nowRep = reputationLabel ?? 'Developing';
   if (baseline.reputation != nowRep) {
-    rows.add(ArchiveStateDeltaRow(
-      label: 'Reputation',
-      then: _titleCase(baseline.reputation),
-      now: nowRep,
-      difference: '${_titleCase(baseline.reputation)} → $nowRep',
-    ));
+    rows.add(
+      ArchiveStateDeltaRow(
+        label: 'Reputation',
+        then: _titleCase(baseline.reputation),
+        now: nowRep,
+        difference: '${_titleCase(baseline.reputation)} → $nowRep',
+      ),
+    );
   }
 
   if (reflectionCount != baseline.evidenceCount) {
-    rows.add(ArchiveStateDeltaRow(
-      label: 'Evidence',
-      then: '${baseline.evidenceCount}',
-      now: '$reflectionCount',
-      difference: '${baseline.evidenceCount} → $reflectionCount',
-    ));
+    rows.add(
+      ArchiveStateDeltaRow(
+        label: 'Evidence',
+        then: '${baseline.evidenceCount}',
+        now: '$reflectionCount',
+        difference: '${baseline.evidenceCount} → $reflectionCount',
+      ),
+    );
   }
 
   if (rows.isEmpty && !away) {

@@ -6,9 +6,7 @@ import 'reminder_timing_model.dart';
 class ReminderTimingEngine {
   const ReminderTimingEngine();
 
-  List<ReminderTimingVariant> offeredVariants({
-    RoutineAnchor? routineAnchor,
-  }) {
+  List<ReminderTimingVariant> offeredVariants({RoutineAnchor? routineAnchor}) {
     final variants = <ReminderTimingVariant>[
       ReminderTimingVariant.tomorrowMorning,
       ReminderTimingVariant.tomorrowEvening,
@@ -92,8 +90,12 @@ class ReminderTimingEngine {
     if (trimmed.isEmpty) {
       return ConsumerUiCopy.nextEvidenceReminderBodyDefault;
     }
-    final short = trimmed.length > 72 ? '${trimmed.substring(0, 71)}…' : trimmed;
-    return ConsumerUiCopy.nextEvidenceReminderBodyWithPrompt
-        .replaceAll('{prompt}', short);
+    final short = trimmed.length > 72
+        ? '${trimmed.substring(0, 71)}…'
+        : trimmed;
+    return ConsumerUiCopy.nextEvidenceReminderBodyWithPrompt.replaceAll(
+      '{prompt}',
+      short,
+    );
   }
 }

@@ -29,21 +29,21 @@ PressureCheckInRecord _record({
 /// Four entries with rich repetition: work context x3, evening x2,
 /// "deadline" written twice, dominant option `could_not_stop` x3.
 List<PressureCheckInRecord> _richRecords() => [
-      _record(
-        id: 'a',
-        daysAgo: 3,
-        contextIds: const ['work', 'evening'],
-        fear: 'Missing the deadline',
-      ),
-      _record(
-        id: 'b',
-        daysAgo: 2,
-        contextIds: const ['work'],
-        fear: 'The deadline slipping',
-      ),
-      _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
-      _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
-    ];
+  _record(
+    id: 'a',
+    daysAgo: 3,
+    contextIds: const ['work', 'evening'],
+    fear: 'Missing the deadline',
+  ),
+  _record(
+    id: 'b',
+    daysAgo: 2,
+    contextIds: const ['work'],
+    fear: 'The deadline slipping',
+  ),
+  _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
+  _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
+];
 
 void main() {
   const engine = PressurePersonalEvidenceSummaryEngine();
@@ -65,8 +65,10 @@ void main() {
       expect(summary.entryCount, 4);
       expect(summary.reasonLine, isNotNull);
       expect(summary.confidenceLabel, isNotNull);
-      expect(PressurePersonalEvidenceSummary.headline,
-          'Why this may be your pattern');
+      expect(
+        PressurePersonalEvidenceSummary.headline,
+        'Why this may be your pattern',
+      );
     });
 
     test('repeated terms are extracted, user words before contexts', () {
@@ -124,8 +126,11 @@ void main() {
           'diagnos',
           'disorder',
         ]) {
-          expect(copy, isNot(contains(overclaim)),
-              reason: 'copy must not contain "$overclaim"');
+          expect(
+            copy,
+            isNot(contains(overclaim)),
+            reason: 'copy must not contain "$overclaim"',
+          );
         }
       }
     });
@@ -176,8 +181,9 @@ void main() {
   });
 
   group('Personal evidence card', () {
-    testWidgets('renders reason line, chips, confidence, and entry count',
-        (tester) async {
+    testWidgets('renders reason line, chips, confidence, and entry count', (
+      tester,
+    ) async {
       final summary = engine.build(_richRecords());
       await tester.pumpWidget(
         MaterialApp(
@@ -222,8 +228,9 @@ void main() {
   });
 
   group('Pressure Insights integration', () {
-    testWidgets('shows the evidence card above the pattern reveal',
-        (tester) async {
+    testWidgets('shows the evidence card above the pattern reveal', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(390, 4200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -236,8 +243,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final cardFinder =
-          find.byKey(const Key('pressure_personal_evidence_card'));
+      final cardFinder = find.byKey(
+        const Key('pressure_personal_evidence_card'),
+      );
       expect(cardFinder, findsOneWidget);
       expect(
         find.byKey(const Key('pressure_pattern_reveal_card')),
@@ -247,9 +255,7 @@ void main() {
         tester.getTopLeft(cardFinder).dy,
         lessThan(
           tester
-              .getTopLeft(
-                find.byKey(const Key('pressure_pattern_reveal_card')),
-              )
+              .getTopLeft(find.byKey(const Key('pressure_pattern_reveal_card')))
               .dy,
         ),
       );

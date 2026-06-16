@@ -56,12 +56,7 @@ class MemoryResurfacingService {
     return candidates
         .take(limit)
         .map(
-          (c) => _toCard(
-            c.entry,
-            now: clock,
-            themes: themes,
-            belief: belief,
-          ),
+          (c) => _toCard(c.entry, now: clock, themes: themes, belief: belief),
         )
         .toList();
   }
@@ -153,11 +148,7 @@ bool _relatesToArchiveThemes(
   return false;
 }
 
-int _themeOverlapScore(
-  JournalEntry entry,
-  Set<String> themes,
-  String belief,
-) {
+int _themeOverlapScore(JournalEntry entry, Set<String> themes, String belief) {
   var score = 0;
   final entryThemes = {
     ...ThemeTrackerService.themesForEntry(entry),
@@ -231,8 +222,18 @@ String _quoteSnippet(JournalEntry entry) {
 
 String _formatOriginalDate(DateTime local) {
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${months[local.month - 1]} ${local.day}, ${local.year}';
 }

@@ -53,13 +53,19 @@ class PredictionInsightEngine {
     return insights;
   }
 
-  PredictionInsight? _detectPattern(_Pattern pattern, List<JournalEntry> sorted) {
+  PredictionInsight? _detectPattern(
+    _Pattern pattern,
+    List<JournalEntry> sorted,
+  ) {
     final events = <PredictionEvent>[];
 
     for (var i = 0; i < sorted.length; i++) {
       final trigger = sorted[i];
       final triggerText = _blob(trigger);
-      if (!InsightTextSignals.containsAny(triggerText, pattern.triggerMarkers)) {
+      if (!InsightTextSignals.containsAny(
+        triggerText,
+        pattern.triggerMarkers,
+      )) {
         continue;
       }
 
@@ -67,15 +73,22 @@ class PredictionInsightEngine {
       for (var j = i + 1; j < end; j++) {
         final outcome = sorted[j];
         final outcomeText = _blob(outcome);
-        if (!InsightTextSignals.containsAny(outcomeText, pattern.outcomeMarkers)) {
+        if (!InsightTextSignals.containsAny(
+          outcomeText,
+          pattern.outcomeMarkers,
+        )) {
           continue;
         }
         events.add(
           PredictionEvent(
             triggerEntryId: trigger.id,
             outcomeEntryId: outcome.id,
-            triggerQuote: archiveStatementTexts(trigger).firstOrNull ?? trigger.transcript,
-            outcomeQuote: archiveStatementTexts(outcome).firstOrNull ?? outcome.transcript,
+            triggerQuote:
+                archiveStatementTexts(trigger).firstOrNull ??
+                trigger.transcript,
+            outcomeQuote:
+                archiveStatementTexts(outcome).firstOrNull ??
+                outcome.transcript,
             recordedAt: outcome.createdAt,
           ),
         );

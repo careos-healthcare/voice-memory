@@ -63,8 +63,8 @@ class DiscoverYourselfEngine {
     final header = _headerStats(entries, eligible);
     final belief = beliefEngine.build(entries: entries, state: state);
 
-    final showEarly = mode == DiscoverInsightMode.growing ||
-        mode == DiscoverInsightMode.full;
+    final showEarly =
+        mode == DiscoverInsightMode.growing || mode == DiscoverInsightMode.full;
     final showFull = mode == DiscoverInsightMode.full;
 
     final beliefChanges = showEarly
@@ -158,12 +158,10 @@ class DiscoverYourselfEngine {
     }
 
     final sorted = [...all]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    final days = all
-        .map((e) {
-          final d = e.createdAt.toLocal();
-          return DateTime(d.year, d.month, d.day);
-        })
-        .toSet();
+    final days = all.map((e) {
+      final d = e.createdAt.toLocal();
+      return DateTime(d.year, d.month, d.day);
+    }).toSet();
 
     return DiscoverHeaderStats(
       totalRecordings: all.length,
@@ -227,14 +225,15 @@ class DiscoverYourselfEngine {
   (int longest, int current) _computeStreaks(List<JournalEntry> entries) {
     if (entries.isEmpty) return (0, 0);
 
-    final days = entries
-        .map((e) {
-          final d = e.createdAt.toLocal();
-          return DateTime(d.year, d.month, d.day);
-        })
-        .toSet()
-        .toList()
-      ..sort();
+    final days =
+        entries
+            .map((e) {
+              final d = e.createdAt.toLocal();
+              return DateTime(d.year, d.month, d.day);
+            })
+            .toSet()
+            .toList()
+          ..sort();
 
     var longest = 1;
     var run = 1;
@@ -299,7 +298,9 @@ class DiscoverYourselfEngine {
 
     return DiscoverArchiveAnswer(
       prompt: 'What changed most?',
-      answerLines: const ['Keep recording — a before/after arc needs more history.'],
+      answerLines: const [
+        'Keep recording — a before/after arc needs more history.',
+      ],
       citedEntryIds: const [],
     );
   }
@@ -309,22 +310,26 @@ class DiscoverYourselfEngine {
     if (themes.isEmpty) {
       return DiscoverArchiveAnswer(
         prompt: 'What do I keep repeating?',
-        answerLines: const ['Themes are still emerging — add a few more reflections.'],
+        answerLines: const [
+          'Themes are still emerging — add a few more reflections.',
+        ],
         citedEntryIds: const [],
       );
     }
     final top = themes.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     final key = top.first.key;
-    final ids = DiscoverThemeEngine().build(entries: entries).firstWhere(
-      (t) => t.themeKey == key,
-      orElse: () => DiscoverThemeInsight(
-        name: key,
-        themeKey: key,
-        frequency: top.first.value,
-        trend: ThemeTrendDirection.flat,
-      ),
-    );
+    final ids = DiscoverThemeEngine()
+        .build(entries: entries)
+        .firstWhere(
+          (t) => t.themeKey == key,
+          orElse: () => DiscoverThemeInsight(
+            name: key,
+            themeKey: key,
+            frequency: top.first.value,
+            trend: ThemeTrendDirection.flat,
+          ),
+        );
     return DiscoverArchiveAnswer(
       prompt: 'What do I keep repeating?',
       answerLines: [
@@ -369,14 +374,12 @@ class DiscoverYourselfEngine {
     List<JournalEntry> entries,
     ArchiveStateObjectV3? state,
   ) {
-    final belief = state?.belief?.trim() ??
-        archiveBeliefFromReflections(entries);
+    final belief =
+        state?.belief?.trim() ?? archiveBeliefFromReflections(entries);
     if (belief != null && belief.isNotEmpty) {
-      final cited = archiveEligibleEvidenceEntries(entries)
-          .reversed
-          .take(2)
-          .map((e) => e.id)
-          .toList();
+      final cited = archiveEligibleEvidenceEntries(
+        entries,
+      ).reversed.take(2).map((e) => e.id).toList();
       return DiscoverArchiveAnswer(
         prompt: 'What matters most to me?',
         answerLines: [
@@ -402,7 +405,9 @@ class DiscoverYourselfEngine {
 
     return DiscoverArchiveAnswer(
       prompt: 'What matters most to me?',
-      answerLines: const ['Record a few more reflections so patterns can form.'],
+      answerLines: const [
+        'Record a few more reflections so patterns can form.',
+      ],
       citedEntryIds: const [],
     );
   }

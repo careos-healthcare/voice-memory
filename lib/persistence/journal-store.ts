@@ -59,7 +59,7 @@ export async function persistJournalDualWrite(entries: JournalEntry[]): Promise<
   if (quotaWarn && Date.now() - lastQuotaWarnAt > 60_000) {
     lastQuotaWarnAt = Date.now();
     console.warn(
-      `[VoiceMemory] Journal size ~${Math.round(bytes / 1024)}KB — export a backup soon.`,
+      `[ArchiveMe] Journal size ~${Math.round(bytes / 1024)}KB — export a backup soon.`,
     );
   }
 

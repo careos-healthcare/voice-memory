@@ -1,11 +1,5 @@
 /// Trend label for a pattern across recent return comparisons.
-enum ChangeSummaryStatus {
-  stronger,
-  softer,
-  shifted,
-  steady,
-  unclear,
-}
+enum ChangeSummaryStatus { stronger, softer, shifted, steady, unclear }
 
 class ChangeSummary {
   const ChangeSummary({
@@ -25,12 +19,12 @@ class ChangeSummary {
   String get statusKey => status.name;
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'summary': summary,
-        'status': statusKey,
-        'chips': chips,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'title': title,
+    'summary': summary,
+    'status': statusKey,
+    'chips': chips,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   static ChangeSummary? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
@@ -44,9 +38,9 @@ class ChangeSummary {
     final chipsRaw = json['chips'];
     final chips = chipsRaw is List
         ? chipsRaw
-            .map((e) => e.toString().trim())
-            .where((c) => c.isNotEmpty)
-            .toList()
+              .map((e) => e.toString().trim())
+              .where((c) => c.isNotEmpty)
+              .toList()
         : <String>[];
 
     return ChangeSummary(

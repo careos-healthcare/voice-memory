@@ -10,10 +10,7 @@ import '../archive_discovery_share/share_discovery_button.dart';
 
 /// Evidence-backed observations vs apparent self-image.
 class ArchiveSurprisesSection extends StatelessWidget {
-  const ArchiveSurprisesSection({
-    super.key,
-    required this.surprises,
-  });
+  const ArchiveSurprisesSection({super.key, required this.surprises});
 
   final ArchiveSurprisesView surprises;
 
@@ -45,8 +42,7 @@ class ArchiveSurprisesSection extends StatelessWidget {
           const SizedBox(height: 12),
           for (final row in surprises.observations) ...[
             _observationTile(row),
-            if (row != surprises.observations.last)
-              const SizedBox(height: 12),
+            if (row != surprises.observations.last) const SizedBox(height: 12),
           ],
         ],
       ),
@@ -94,12 +90,10 @@ class ArchiveSurprisesSection extends StatelessWidget {
           '${row.evidenceCount == 1 ? 'recording' : 'recordings'}',
           style: const TextStyle(color: AppTheme.muted, fontSize: 12),
         ),
-        if (ArchiveDiscoveryShareMoments.fromSurprise(row) case final shareCard?) ...[
+        if (ArchiveDiscoveryShareMoments.fromSurprise(row)
+            case final shareCard?) ...[
           const SizedBox(height: 4),
-          ShareDiscoveryButton(
-            card: shareCard,
-            surface: 'archive_surprise',
-          ),
+          ShareDiscoveryButton(card: shareCard, surface: 'archive_surprise'),
         ],
       ],
     );

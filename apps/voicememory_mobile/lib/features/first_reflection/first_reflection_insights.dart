@@ -34,11 +34,14 @@ class FirstReflectionInsights {
       noticedLines.isNotEmpty || themeNames.isNotEmpty || phrases.isNotEmpty;
 }
 
-FirstReflectionInsights buildFirstReflectionInsights(List<JournalEntry> entries) {
+FirstReflectionInsights buildFirstReflectionInsights(
+  List<JournalEntry> entries,
+) {
   final eligible = archiveEligibleEvidenceEntries(entries);
-  final working = eligible.isNotEmpty
-      ? eligible
-      : entries.where((e) => e.transcript.trim().isNotEmpty).toList()
+  final working =
+      eligible.isNotEmpty
+            ? eligible
+            : entries.where((e) => e.transcript.trim().isNotEmpty).toList()
         ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
   final themes = const ThemeTrackerService()
@@ -49,11 +52,16 @@ FirstReflectionInsights buildFirstReflectionInsights(List<JournalEntry> entries)
 
   final noticed = <String>[];
   final seenNoticed = <String>{};
-  for (final theme in const ThemeTrackerService().track(entries: entries).topThemes.take(3)) {
+  for (final theme
+      in const ThemeTrackerService()
+          .track(entries: entries)
+          .topThemes
+          .take(3)) {
     final themeId = _themeIdForName(theme.name);
     if (themeId == null) continue;
     for (final entry in working.reversed) {
-      if (!ThemeTrackerService.themesForEntry(entry).contains(themeId)) continue;
+      if (!ThemeTrackerService.themesForEntry(entry).contains(themeId))
+        continue;
       final line = _noticedLineForTheme(themeId, entry);
       if (line != null && seenNoticed.add(line)) {
         noticed.add(line);

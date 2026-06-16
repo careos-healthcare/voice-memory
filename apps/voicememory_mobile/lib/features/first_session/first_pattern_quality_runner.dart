@@ -9,7 +9,7 @@ import 'first_session_pattern_model.dart';
 /// Runs labeled reflections through [FirstSessionPatternEngine] for QA.
 class FirstPatternQualityRunner {
   const FirstPatternQualityRunner({FirstSessionPatternEngine? engine})
-      : _engine = engine ?? const FirstSessionPatternEngine();
+    : _engine = engine ?? const FirstSessionPatternEngine();
 
   final FirstSessionPatternEngine _engine;
 
@@ -117,7 +117,10 @@ class FirstPatternQualityRunner {
       pattern.alternativePatterns.isNotEmpty ||
       pattern.userCanCorrect;
 
-  bool _isAccepted(FirstPatternQualitySample sample, FirstSessionPattern pattern) {
+  bool _isAccepted(
+    FirstPatternQualitySample sample,
+    FirstSessionPattern pattern,
+  ) {
     if (sample.acceptableTitles.contains(pattern.title)) return true;
     return sample.expectedCategory == pattern.categoryId &&
         sample.acceptableTitles.isEmpty;

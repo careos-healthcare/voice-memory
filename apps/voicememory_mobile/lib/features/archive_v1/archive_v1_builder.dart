@@ -106,8 +106,8 @@ class ArchiveV1Builder {
     final maxCtr = topContradictions.isEmpty
         ? 0
         : topContradictions
-            .map((c) => c.confidenceScore)
-            .reduce((a, b) => a > b ? a : b);
+              .map((c) => c.confidenceScore)
+              .reduce((a, b) => a > b ? a : b);
 
     final contradictionEntryIds = topContradictions
         .expand((c) => c.entryIds)
@@ -209,7 +209,8 @@ class ArchiveV1Builder {
     final thenText = first?.beliefText.trim() ?? nowText;
     final firstAt = eligible.isNotEmpty ? eligible.first.createdAt : null;
     final latestAt = eligible.isNotEmpty ? eligible.last.createdAt : null;
-    final supportCount = primarySupportCount ??
+    final supportCount =
+        primarySupportCount ??
         first?.supportingEntryIds.length ??
         eligible.length;
 

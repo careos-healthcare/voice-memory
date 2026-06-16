@@ -74,7 +74,9 @@ class PostSaveArchiveEvolutionCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             evo.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(height: 1.35),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              height: 1.35,
+            ),
           ),
           const SizedBox(height: 12),
           TextButton(

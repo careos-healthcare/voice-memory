@@ -47,22 +47,19 @@ void main() {
       ),
       isNull,
     );
-    expect(const ArchiveChallengeEngine().detectChallenge(entries: empty), isNull);
+    expect(
+      const ArchiveChallengeEngine().detectChallenge(entries: empty),
+      isNull,
+    );
     expect(const ArchiveWasWrongEngine().detect(entries: empty), isNull);
     expect(const BeliefUnderReviewEngine().build(entries: empty), isNull);
     expect(const WhatChangedTodayEngine().build(entries: empty), isNull);
-    expect(
-      const MostImportantInsightEngine().pick(entries: empty),
-      isNull,
-    );
+    expect(const MostImportantInsightEngine().pick(entries: empty), isNull);
     expect(const WeeklyStoryEngine().build(entries: empty), isNull);
   });
 
   test('short transcripts never count as evidence', () {
-    final entries = List.generate(
-      6,
-      (i) => _entry('$i', 'too short'),
-    );
+    final entries = List.generate(6, (i) => _entry('$i', 'too short'));
     expect(ArchiveEvidenceGuard.hasMinimumEvidence(entries), isFalse);
   });
 }

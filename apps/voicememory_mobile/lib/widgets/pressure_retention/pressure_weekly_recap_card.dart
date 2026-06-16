@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/pressure_retention/pressure_insights_copy.dart';
 import '../../features/pressure_retention/pressure_weekly_recap_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -15,6 +16,7 @@ class PressureWeeklyRecapCard extends StatelessWidget {
     super.key,
     required this.recap,
     this.locked = false,
+    this.entryCount = PressureInsightsCopy.minEntriesForLoopLanguage,
   });
 
   final PressureWeeklyRecap recap;
@@ -22,7 +24,11 @@ class PressureWeeklyRecapCard extends StatelessWidget {
   /// When true, the deeper insight (most common context/option) is locked.
   final bool locked;
 
-  static const title = 'Weekly pressure recap';
+  /// Logged pressure moments — softer titles below
+  /// [PressureInsightsCopy.minEntriesForLoopLanguage].
+  final int entryCount;
+
+  static const title = PressureInsightsCopy.weeklyRecapTitleStrong;
   static const previewMoreCopy =
       'Your archive has more to say about where this repeats.';
 
@@ -39,14 +45,11 @@ class PressureWeeklyRecapCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            title,
+            PressureInsightsCopy.weeklyRecapTitle(entryCount),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.sm),
-          if (locked)
-            ..._lockedBody(context)
-          else
-            ..._fullBody(context),
+          if (locked) ..._lockedBody(context) else ..._fullBody(context),
         ],
       ),
     );
@@ -56,9 +59,9 @@ class PressureWeeklyRecapCard extends StatelessWidget {
     return [
       Text(
         recap.sentence,
-        style: ArchiveMobileTypography.body(context).copyWith(
-          color: AppColors.textPrimary,
-        ),
+        style: ArchiveMobileTypography.body(
+          context,
+        ).copyWith(color: AppColors.textPrimary),
       ),
       if (recap.hasData) ...[
         const SizedBox(height: AppSpacing.md),
@@ -82,9 +85,9 @@ class PressureWeeklyRecapCard extends StatelessWidget {
       return [
         Text(
           recap.sentence,
-          style: ArchiveMobileTypography.body(context).copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: ArchiveMobileTypography.body(
+            context,
+          ).copyWith(color: AppColors.textPrimary),
         ),
       ];
     }
@@ -95,7 +98,11 @@ class PressureWeeklyRecapCard extends StatelessWidget {
       const SizedBox(height: AppSpacing.xs),
       Row(
         children: [
-          const Icon(Icons.lock_outline, size: 16, color: AppColors.textSecondary),
+          const Icon(
+            Icons.lock_outline,
+            size: 16,
+            color: AppColors.textSecondary,
+          ),
           const SizedBox(width: AppSpacing.xs),
           Expanded(
             child: Text(
@@ -105,43 +112,38 @@ class PressureWeeklyRecapCard extends StatelessWidget {
           ),
           Text(
             '•••••',
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textSecondary,
-              letterSpacing: 2,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textSecondary, letterSpacing: 2),
           ),
         ],
       ),
       const SizedBox(height: AppSpacing.sm),
       Text(
         previewMoreCopy,
-        style: ArchiveMobileTypography.body(context).copyWith(
-          color: AppColors.accentPrimary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: ArchiveMobileTypography.body(
+          context,
+        ).copyWith(color: AppColors.accentPrimary, fontWeight: FontWeight.w600),
       ),
     ];
   }
 
   Widget _row(BuildContext context, String label, String value) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: ArchiveMobileTypography.cardLabel(context),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Flexible(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: ArchiveMobileTypography.body(context).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: Text(label, style: ArchiveMobileTypography.cardLabel(context)),
+      ),
+      const SizedBox(width: AppSpacing.sm),
+      Flexible(
+        child: Text(
+          value,
+          textAlign: TextAlign.end,
+          style: ArchiveMobileTypography.body(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
+        ),
+      ),
+    ],
+  );
 }

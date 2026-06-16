@@ -51,9 +51,8 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) => Scaffold(
-                body: FirstThreeJourneyCard(model: model),
-              ),
+              builder: (_, __) =>
+                  Scaffold(body: FirstThreeJourneyCard(model: model)),
             ),
             GoRoute(
               path: '/record',
@@ -78,9 +77,8 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) => Scaffold(
-                body: FirstThreeJourneyCard(model: model),
-              ),
+              builder: (_, __) =>
+                  Scaffold(body: FirstThreeJourneyCard(model: model)),
             ),
             GoRoute(
               path: '/archive-belief',
@@ -90,7 +88,7 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.text('View your pattern'));
+    await tester.tap(find.text('View archive'));
     await tester.pumpAndSettle();
     expect(find.text('patterns tab'), findsOneWidget);
   });
@@ -161,11 +159,15 @@ void main() {
   test('coordinator hides advanced retention before 3 reflections', () {
     expect(FirstThreeJourneyCoordinator.shouldHideAdvancedRetention(0), isTrue);
     expect(FirstThreeJourneyCoordinator.shouldHideAdvancedRetention(2), isTrue);
-    expect(FirstThreeJourneyCoordinator.shouldHideAdvancedRetention(3), isFalse);
+    expect(
+      FirstThreeJourneyCoordinator.shouldHideAdvancedRetention(3),
+      isFalse,
+    );
   });
 
-  testWidgets('first-three patterns stack omits streak and weekly recap',
-      (tester) async {
+  testWidgets('first-three patterns stack omits streak and weekly recap', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 

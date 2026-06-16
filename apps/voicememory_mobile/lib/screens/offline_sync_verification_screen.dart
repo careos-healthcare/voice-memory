@@ -20,7 +20,8 @@ class OfflineSyncVerificationScreen extends StatefulWidget {
       _OfflineSyncVerificationScreenState();
 }
 
-class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationScreen> {
+class _OfflineSyncVerificationScreenState
+    extends State<OfflineSyncVerificationScreen> {
   static const int _targetOffline = 5;
 
   bool _airplaneOn = false;
@@ -35,7 +36,8 @@ class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationS
   String? _exportJson;
   bool _busy = false;
 
-  OfflineSyncJourneyStore get _journey => AppServices.instance.offlineSyncJourney;
+  OfflineSyncJourneyStore get _journey =>
+      AppServices.instance.offlineSyncJourney;
 
   @override
   void initState() {
@@ -99,7 +101,10 @@ class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationS
     final atStart = await _journey.eligibleAtAirplane();
     final added = _eligible - atStart;
     if (added < _targetOffline) {
-      setState(() => _message = 'Need $_targetOffline new eligible reflections (have $added)');
+      setState(
+        () => _message =
+            'Need $_targetOffline new eligible reflections (have $added)',
+      );
       return;
     }
     setState(() => _busy = true);
@@ -131,7 +136,8 @@ class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationS
     setState(() => _busy = true);
     final baseline = await _journey.baselineSnapshot();
     final now = await ArchiveIntegritySnapshot.capture();
-    final ok = baseline != null &&
+    final ok =
+        baseline != null &&
         baseline.timestampsMatch(now) &&
         baseline.eligibleCount == now.eligibleCount &&
         baseline.beliefPreservedComparedTo(now) &&
@@ -189,12 +195,12 @@ class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationS
         baseline != null && baseline.beliefPreservedComparedTo(now);
     final evidenceOk =
         baseline != null && baseline.evidencePreservedComparedTo(now);
-    final timestampsOk =
-        baseline != null && baseline.timestampsMatch(now);
+    final timestampsOk = baseline != null && baseline.timestampsMatch(now);
     final countsOk = recorded > 0 && recorded == synced;
 
     final json = await OfflineSyncProductionEvidence.toJson(
-      success: _restartVerified &&
+      success:
+          _restartVerified &&
           _networkBack &&
           beliefOk &&
           evidenceOk &&
@@ -270,7 +276,9 @@ class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationS
                 const SizedBox(height: 8),
                 OutlinedButton(
                   onPressed: _busy || !_airplaneOn ? null : _lockBaseline,
-                  child: Text('Lock baseline ($_targetOffline recorded offline)'),
+                  child: Text(
+                    'Lock baseline ($_targetOffline recorded offline)',
+                  ),
                 ),
               ],
             ),
@@ -320,10 +328,16 @@ class _OfflineSyncVerificationScreenState extends State<OfflineSyncVerificationS
         children: [
           SizedBox(
             width: 130,
-            child: Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.muted)),
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 12, color: AppTheme.muted),
+            ),
           ),
           Expanded(
-            child: Text(value, style: const TextStyle(fontSize: 13, color: AppTheme.foreground)),
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13, color: AppTheme.foreground),
+            ),
           ),
         ],
       ),

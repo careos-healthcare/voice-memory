@@ -44,9 +44,7 @@ export async function POST(request: Request) {
       );
     }
     logAuthError("verify", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Sign-in failed." },
-      { status: 400 },
-    );
+    // Generic message only — never echo internal error details to clients.
+    return NextResponse.json({ error: "Sign-in failed." }, { status: 400 });
   }
 }

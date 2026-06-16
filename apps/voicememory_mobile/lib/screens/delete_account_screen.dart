@@ -31,7 +31,10 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              userFacingErrorMessage(e, fallback: 'Account deletion failed. Try again.'),
+              userFacingErrorMessage(
+                e,
+                fallback: 'Account deletion failed. Try again.',
+              ),
             ),
           ),
         );

@@ -7,12 +7,11 @@ enum BeliefChangeKind { strengthening, weakening, newBelief, shifting }
 
 extension BeliefChangeNarrative on BeliefChangeTimelineItem {
   String get narrativeHeadline => switch (kind) {
-        BeliefChangeKind.strengthening =>
-          BeliefProductCopy.narrativeStrengthening,
-        BeliefChangeKind.weakening => BeliefProductCopy.narrativeWeakening,
-        BeliefChangeKind.newBelief => BeliefProductCopy.narrativeEmerging,
-        BeliefChangeKind.shifting => BeliefProductCopy.narrativeShifting,
-      };
+    BeliefChangeKind.strengthening => BeliefProductCopy.narrativeStrengthening,
+    BeliefChangeKind.weakening => BeliefProductCopy.narrativeWeakening,
+    BeliefChangeKind.newBelief => BeliefProductCopy.narrativeEmerging,
+    BeliefChangeKind.shifting => BeliefProductCopy.narrativeShifting,
+  };
 }
 
 class BeliefChangeTimelineItem {

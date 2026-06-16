@@ -54,10 +54,7 @@ class TopThemesSection extends StatelessWidget {
 }
 
 class _ThemesTable extends StatelessWidget {
-  const _ThemesTable({
-    required this.themes,
-    required this.entries,
-  });
+  const _ThemesTable({required this.themes, required this.entries});
 
   final List<ArchiveTheme> themes;
   final List<JournalEntry> entries;
@@ -92,13 +89,14 @@ class _TableHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Row(
       children: [
-        Expanded(
-          flex: 3,
-          child: Text('Theme', style: _headerStyle),
-        ),
+        Expanded(flex: 3, child: Text('Theme', style: _headerStyle)),
         Expanded(
           flex: 2,
-          child: Text('Occurrences', style: _headerStyle, textAlign: TextAlign.center),
+          child: Text(
+            'Occurrences',
+            style: _headerStyle,
+            textAlign: TextAlign.center,
+          ),
         ),
         Expanded(
           flex: 2,
@@ -116,10 +114,7 @@ class _TableHeader extends StatelessWidget {
 }
 
 class _ThemeRow extends StatelessWidget {
-  const _ThemeRow({
-    required this.theme,
-    required this.entries,
-  });
+  const _ThemeRow({required this.theme, required this.entries});
 
   final ArchiveTheme theme;
   final List<JournalEntry> entries;

@@ -46,7 +46,7 @@ export default function ExportPrintPage() {
         <h1 className="text-lg font-semibold text-zinc-900">Print reflection report</h1>
         <p className="text-sm text-zinc-900">No report data found.</p>
         <p className="text-xs text-zinc-800">
-          Open Export from VoiceMemory and choose &ldquo;Print reflection report&rdquo;.
+          Open Export from ArchiveMe and choose &ldquo;Print reflection report&rdquo;.
         </p>
       </PrimaryMain>
     );

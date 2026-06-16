@@ -1,7 +1,7 @@
 import 'belief_lifecycle_models.dart';
 
 /// User-facing belief lifecycle strings.
-abstract final class BeliefLifecycleCopy {
+abstract class BeliefLifecycleCopy {
   BeliefLifecycleCopy._();
 
   static const String sectionTitle = 'Belief lifecycle';
@@ -13,7 +13,8 @@ abstract final class BeliefLifecycleCopy {
 
   static const String noLongerDetectedTitle = 'Belief No Longer Detected';
 
-  static String statusLabelFor(BeliefLifecycleStatus status) => switch (status) {
+  static String statusLabelFor(BeliefLifecycleStatus status) =>
+      switch (status) {
         BeliefLifecycleStatus.emerging => 'Emerging',
         BeliefLifecycleStatus.stable => 'Stable',
         BeliefLifecycleStatus.weakening => 'Weakening',

@@ -7,17 +7,16 @@ TomorrowCheckIn _checkIn({
   required String targetDate,
   bool completed = false,
   String question = 'Did this pattern show up again?',
-}) =>
-    TomorrowCheckIn(
-      id: 'tci_test',
-      createdAt: DateTime(2026, 6, 1),
-      targetDate: targetDate,
-      patternTitle: 'Evening pressure',
-      prompt: 'Tomorrow, check whether this pattern shows up again.',
-      question: question,
-      options: kDefaultTomorrowCheckInOptions,
-      completedAt: completed ? DateTime(2026, 6, 2) : null,
-    );
+}) => TomorrowCheckIn(
+  id: 'tci_test',
+  createdAt: DateTime(2026, 6, 1),
+  targetDate: targetDate,
+  patternTitle: 'Evening pressure',
+  prompt: 'Tomorrow, check whether this pattern shows up again.',
+  question: question,
+  options: kDefaultTomorrowCheckInOptions,
+  completedAt: completed ? DateTime(2026, 6, 2) : null,
+);
 
 void main() {
   final now = DateTime(2026, 6, 2, 10);
@@ -88,7 +87,9 @@ void main() {
       isTrue,
     );
     expect(
-      retentionStateDuplicatesFullDueCard(RetentionStateType.checkSetForTomorrow),
+      retentionStateDuplicatesFullDueCard(
+        RetentionStateType.checkSetForTomorrow,
+      ),
       isFalse,
     );
   });

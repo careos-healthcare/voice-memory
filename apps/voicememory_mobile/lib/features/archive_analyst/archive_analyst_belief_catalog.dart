@@ -39,8 +39,7 @@ class ArchiveAnalystBeliefCatalog {
     }
 
     final card = beliefEngine.build(entries: entries, state: state);
-    if (card != null &&
-        !card.statement.contains('still gathering evidence')) {
+    if (card != null && !card.statement.contains('still gathering evidence')) {
       add(card.statement, 'primary_belief', lastUpdated: card.lastReinforced);
     }
 

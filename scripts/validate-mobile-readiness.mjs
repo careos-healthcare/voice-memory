@@ -1,73 +1,135 @@
 #!/usr/bin/env node
+/**
+ * Mobile Production Readiness v1
+ */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-
-const REQUIRED = [
-  "lib/mobile/platform.ts",
-  "lib/mobile/mobile-readiness.ts",
-  "lib/mobile/microphone.ts",
-  "lib/mobile/storage-audit.ts",
-  "lib/notifications/scheduler.ts",
-  "lib/notifications/triggers.ts",
-  "lib/notifications/notification-copy.ts",
-  "app/manifest.ts",
-  "app/icon.tsx",
-  "app/apple-icon.tsx",
-  "public/sw.js",
-  "app/offline/page.tsx",
-  "components/mobile/PwaBootstrap.tsx",
-  "components/mobile/InstallPrompt.tsx",
-  "app/internal/mobile-readiness/page.tsx",
-  "docs/MOBILE_SUBSCRIPTION_STRATEGY.md",
-];
-
 const failures = [];
+const fail = (msg) => failures.push(msg);
 
-for (const rel of REQUIRED) {
-  if (!fs.existsSync(path.join(ROOT, rel))) {
-    failures.push(`missing ${rel}`);
+function read(rel) {
+  return fs.readFileSync(path.join(ROOT, rel), "utf8");
+}
+
+function mustExist(rel) {
+  if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
+}
+
+for (const rel of [
+  "types/mobile-production-readiness.ts",
+  "lib/mobile/release-evidence.ts",
+  "lib/mobile/mobile-production-readiness.ts",
+  "components/internal/MobileProductionReadinessPanel.tsx",
+  "app/internal/mobile-readiness/page.tsx",
+  "mobile/evidence/README.md",
+  "scripts/generate-mobile-readiness-report.mjs",
+  "apps/voicememory_mobile/pubspec.yaml",
+  "lib/mobile/mobile-readiness.ts",
+]) {
+  mustExist(rel);
+}
+
+const evidence = read("lib/mobile/release-evidence.ts");
+for (const id of [
+  "testflight_uploaded",
+  "play_internal_uploaded",
+  "ios_purchase_tested",
+  "android_purchase_tested",
+  "readReleaseEvidenceRecords",
+  "collectStructuralEvidenceSignals",
+]) {
+  if (!evidence.includes(id)) fail(`release-evidence missing ${id}`);
+}
+
+const production = read("lib/mobile/mobile-production-readiness.ts");
+for (const item of [
+  "push_notifications",
+  "background_recording",
+  "offline_mode",
+  "sync_recovery",
+  "revenuecat",
+  "stripe",
+  "restore_purchases",
+  "ios_signing",
+  "android_signing",
+  "testflight",
+  "play_store",
+]) {
+  if (!production.includes(item)) fail(`mobile-production-readiness missing ${item}`);
+}
+
+const page = read("app/internal/mobile-readiness/page.tsx");
+if (!page.includes("MobileProductionReadinessPanel")) {
+  fail("mobile-readiness page must use MobileProductionReadinessPanel");
+}
+if (!page.includes("buildMobileProductionReadinessReport")) {
+  fail("mobile-readiness page must build production report");
+}
+
+const panel = read("components/internal/MobileProductionReadinessPanel.tsx");
+for (const status of ["FAILING", "PASSING"]) {
+  if (!panel.includes(status)) fail(`panel must render ${status}`);
+}
+if (!read("types/mobile-production-readiness.ts").includes("UNKNOWN")) {
+  fail("types must define UNKNOWN status");
+}
+
+spawnSync("node", ["--import", "tsx", "scripts/generate-mobile-readiness-report.mjs"], {
+  cwd: ROOT,
+  stdio: "inherit",
+});
+
+if (!fs.existsSync(path.join(ROOT, "docs/MOBILE_READINESS_REPORT.md"))) {
+  fail("docs/MOBILE_READINESS_REPORT.md not generated");
+}
+
+const reportMd = read("docs/MOBILE_READINESS_REPORT.md");
+for (const token of [
+  "Product Readiness",
+  "Store Readiness",
+  "Distribution Readiness",
+  "Push notifications",
+  "TestFlight",
+  "Play Store",
+]) {
+  if (!reportMd.includes(token)) fail(`report missing ${token}`);
+}
+
+try {
+  const { buildMobileProductionReadinessReport } = await import(
+    path.join(ROOT, "lib/mobile/mobile-production-readiness.ts")
+  );
+  const report = buildMobileProductionReadinessReport();
+  if (report.items.length !== 11) {
+    fail(`expected 11 checklist items, got ${report.items.length}`);
   }
-}
-
-const platform = fs.readFileSync(path.join(ROOT, "lib/mobile/platform.ts"), "utf8");
-for (const fn of ["isNativeWrapper", "isPWA", "supportsPush", "supportsBackgroundAudio"]) {
-  if (!platform.includes(`export function ${fn}`)) {
-    failures.push(`platform.ts missing ${fn}`);
+  if (report.unknownCount > 0) {
+    fail(
+      `${report.unknownCount} readiness item(s) still UNKNOWN — add evidence or structural FAILING notes`,
+    );
+    for (const item of report.items.filter((i) => i.status === "UNKNOWN")) {
+      fail(`  UNKNOWN: ${item.id}`);
+    }
   }
+} catch (e) {
+  fail(`report import failed: ${e.message}`);
 }
 
-const install = fs.readFileSync(path.join(ROOT, "components/mobile/InstallPrompt.tsx"), "utf8");
-if (!install.includes("DISMISS_KEY") || !install.includes("Not now")) {
-  failures.push("InstallPrompt must support dismiss without nag loops");
+const pkg = JSON.parse(read("package.json"));
+if (!pkg.scripts?.["validate:mobile-readiness"]) {
+  fail("package.json missing validate:mobile-readiness");
+}
+if (!pkg.scripts?.["generate:mobile-readiness-report"]) {
+  fail("package.json missing generate:mobile-readiness-report");
 }
 
-const copy = fs.readFileSync(path.join(ROOT, "lib/notifications/notification-copy.ts"), "utf8");
-for (const banned of ["come back", "streak", "don't forget", "upgrade now"]) {
-  if (copy.toLowerCase().includes(banned)) {
-    failures.push(`notification-copy contains banned phrase: ${banned}`);
-  }
-}
-
-const providers = fs.readFileSync(path.join(ROOT, "app/providers.tsx"), "utf8");
-if (!providers.includes("PwaBootstrap")) {
-  failures.push("providers must mount PwaBootstrap");
-}
-
-const storageBootstrap = fs.readFileSync(
-  path.join(ROOT, "components/providers/StorageBootstrap.tsx"),
-  "utf8",
-);
-if (!storageBootstrap.includes("runWhenIdle")) {
-  failures.push("StorageBootstrap must defer work via runWhenIdle");
-}
-
-if (failures.length > 0) {
-  console.error("Mobile readiness validation failed:\n");
-  for (const f of failures) console.error(`  ${f}`);
+if (failures.length) {
+  console.error("validate-mobile-readiness failed:\n");
+  for (const f of failures) console.error(`  - ${f}`);
   process.exit(1);
 }
-
-console.log("Mobile readiness validation passed.");
+console.log("validate-mobile-readiness ok");

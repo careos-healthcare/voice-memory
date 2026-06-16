@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../services/activation_funnel_analytics.dart';
 import '../../features/pressure_retention/done_for_today_receipt_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -17,6 +18,11 @@ class DoneForTodayReceiptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!receipt.hasReceipt) return const SizedBox.shrink();
+    ActivationFunnelAnalytics.track(
+      ActivationFunnelAnalytics.doneForTodaySeen,
+      hasConnectedThread: receipt.sourceTerms.isNotEmpty,
+      oncePerSession: true,
+    );
 
     return Container(
       key: const Key('done_for_today_receipt_card'),
@@ -39,8 +45,9 @@ class DoneForTodayReceiptCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   receipt.title,
-                  style:
-                      ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],
@@ -50,6 +57,19 @@ class DoneForTodayReceiptCard extends StatelessWidget {
           _line(context, receipt.archiveLine, primary: true),
           _line(context, receipt.tomorrowLine),
           _line(context, receipt.restLine),
+          if (receipt.tomorrowCueLine.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              receipt.tomorrowCueTitle,
+              key: const Key('done_for_today_tomorrow_cue_title'),
+              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            _line(context, receipt.tomorrowCueLine, primary: true),
+            _line(context, DoneForTodayReceipt.tomorrowCueAutonomyLine),
+          ],
           if (receipt.sourceTerms.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.xs),

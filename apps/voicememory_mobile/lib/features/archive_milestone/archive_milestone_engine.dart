@@ -50,26 +50,27 @@ ArchiveMilestonesView buildArchiveMilestones({
   }) {
     if (seenTypes.contains(type)) return;
     seenTypes.add(type);
-    list.add(ArchiveMilestone(
-      id: 'ms-$type-${occurredAt.millisecondsSinceEpoch}',
-      type: type,
-      title: title,
-      explanation: explanation,
-      periodLabel: _formatPeriodLabel(occurredAt),
-      occurredAt: occurredAt,
-    ));
+    list.add(
+      ArchiveMilestone(
+        id: 'ms-$type-${occurredAt.millisecondsSinceEpoch}',
+        type: type,
+        title: title,
+        explanation: explanation,
+        periodLabel: _formatPeriodLabel(occurredAt),
+        occurredAt: occurredAt,
+      ),
+    );
   }
 
-  final eligible = entries
-      .where((e) => e.transcript.trim().isNotEmpty)
-      .toList()
+  final eligible = entries.where((e) => e.transcript.trim().isNotEmpty).toList()
     ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
   if (eligible.isEmpty || baseline == null) {
     return ArchiveMilestonesView(milestones: list, latest: null);
   }
 
-  final occurredAt = DateTime.tryParse(baseline.timestamp) ??
+  final occurredAt =
+      DateTime.tryParse(baseline.timestamp) ??
       eligible.last.createdAt.toLocal();
 
   final priorBelief = baseline.belief.trim();
@@ -112,7 +113,10 @@ ArchiveMilestonesView buildArchiveMilestones({
   );
 }
 
-List<ArchiveMilestone> recentMilestones(ArchiveMilestonesView view, {int limit = 5}) {
+List<ArchiveMilestone> recentMilestones(
+  ArchiveMilestonesView view, {
+  int limit = 5,
+}) {
   if (view.milestones.isEmpty) return [];
   final start = view.milestones.length > limit
       ? view.milestones.length - limit

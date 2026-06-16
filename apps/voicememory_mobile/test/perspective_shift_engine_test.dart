@@ -18,8 +18,10 @@ void main() {
   });
 
   test('showed_up_again maps to the same preferred angle', () {
-    expect(preferredPerspectiveType('showed_up_again'),
-        PerspectiveShiftType.pattern);
+    expect(
+      preferredPerspectiveType('showed_up_again'),
+      PerspectiveShiftType.pattern,
+    );
   });
 
   test('heavier result prefers pressure or need', () {
@@ -91,8 +93,10 @@ void main() {
     );
     expect(shift.type, PerspectiveShiftType.kindness);
     expect(shift.title, 'A kinder angle');
-    expect(shift.nextCheck,
-        'What would you say if this happened to someone else?');
+    expect(
+      shift.nextCheck,
+      'What would you say if this happened to someone else?',
+    );
   });
 
   test('cycle starts with the preferred type and covers every angle', () {

@@ -118,7 +118,10 @@ class _ArchiveToolScreenState extends State<ArchiveToolScreen> {
           mainContent: body,
           actionArea: TextButton(
             onPressed: () => context.go('/archive-belief'),
-            child: const Text('Back to Archive', style: TextStyle(color: AppTheme.muted)),
+            child: const Text(
+              'Back to Archive',
+              style: TextStyle(color: AppTheme.muted),
+            ),
           ),
         ),
       ),
@@ -134,9 +137,9 @@ class _ArchiveToolScreenState extends State<ArchiveToolScreen> {
       return Text(
         need > 0
             ? '$evidenceCount of $archiveMinEvidenceReflections reflections with enough '
-                'transcript detail to track belief survival. Record $need more to continue.'
+                  'transcript detail to track belief survival. Record $need more to continue.'
             : 'Add reflections with at least $archiveMinTranscriptChars characters of '
-                'transcript before belief survival can be shown.',
+                  'transcript before belief survival can be shown.',
         style: const TextStyle(color: AppTheme.muted, height: 1.45),
       );
     }

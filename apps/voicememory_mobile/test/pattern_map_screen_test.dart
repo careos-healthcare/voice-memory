@@ -6,16 +6,16 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/pattern_map_screen.dart';
 
 PatternMap _map() => PatternMap(
-      patternTitle: 'Taking responsibility before asking for help',
-      seenCount: 4,
-      lastSeenDate: DateTime(2026, 6, 4),
-      usuallyStartsBefore: 'before saying yes',
-      oftenFeelsLike: 'heavier',
-      getsLighterWhen: 'paused before answering',
-      getsHeavierWhen: 'took it on alone',
-      nextCheck: 'What happens right before it shows up?',
-      confidenceLabel: 'Based on 4 check-ins',
-    );
+  patternTitle: 'Taking responsibility before asking for help',
+  seenCount: 4,
+  lastSeenDate: DateTime(2026, 6, 4),
+  usuallyStartsBefore: 'before saying yes',
+  oftenFeelsLike: 'heavier',
+  getsLighterWhen: 'paused before answering',
+  getsHeavierWhen: 'took it on alone',
+  nextCheck: 'What happens right before it shows up?',
+  confidenceLabel: 'Based on 4 check-ins',
+);
 
 void main() {
   testWidgets('shows the map sections and title', (tester) async {
@@ -51,10 +51,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.textContaining('Record a few moments'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Record a few moments'), findsOneWidget);
   });
 
   testWidgets('Use this check fires and confirms', (tester) async {
@@ -79,8 +76,9 @@ void main() {
     expect(find.textContaining('check is set'), findsOneWidget);
   });
 
-  testWidgets('non-Pro after first loop shows memory limit on full map',
-      (tester) async {
+  testWidgets('non-Pro after first loop shows memory limit on full map', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: PatternMapScreen(

@@ -55,7 +55,10 @@ String localizedCheckInQuestion(String? optionId, String languageCode) {
   if (languageCode == 'en') {
     return CheckInResultCopy.tomorrowsBetterQuestion(optionId);
   }
-  return localized('result.${_resultHintFor(optionId)}.nextCheck', languageCode);
+  return localized(
+    'result.${_resultHintFor(optionId)}.nextCheck',
+    languageCode,
+  );
 }
 
 String _resultHintFor(String? optionId) {
@@ -152,7 +155,8 @@ const Map<String, Map<String, String>> _copy = {
     'example': 'Example',
     'result.same.headline': 'This was a repeat, not a one-off.',
     'result.same.meaning': 'The same pattern showed up again today.',
-    'result.same.why': 'Repeats are useful because they show where to look next.',
+    'result.same.why':
+        'Repeats are useful because they show where to look next.',
     'result.same.nextCheck': 'What happened right before it showed up?',
     'result.same.example': 'It started before I said yes.',
     'result.lighter.headline': 'Something made this lighter.',
@@ -162,7 +166,8 @@ const Map<String, Map<String, String>> _copy = {
     'result.lighter.example': 'It felt lighter after I paused.',
     'result.heavier.headline': 'Something made this heavier.',
     'result.heavier.meaning': 'Today this pattern took more from you.',
-    'result.heavier.why': 'That is useful because it shows what needs attention.',
+    'result.heavier.why':
+        'That is useful because it shows what needs attention.',
     'result.heavier.nextCheck': 'What made it heavier?',
     'result.heavier.example': 'It got heavier after I carried it alone.',
     'result.changed.headline': 'Today was different.',
@@ -350,25 +355,36 @@ const Map<String, Map<String, String>> _copy = {
     'result.lighter.headline': 'Quelque chose a rendu ceci plus léger.',
     'result.lighter.meaning': 'Aujourd\u2019hui ce schéma a pris moins de toi.',
     'result.lighter.why': 'C\u2019est utile car cela montre ce qui a aidé.',
-    'result.lighter.nextCheck': 'Qu\u2019est-ce qui l\u2019a rendu plus léger ?',
+    'result.lighter.nextCheck':
+        'Qu\u2019est-ce qui l\u2019a rendu plus léger ?',
     'result.lighter.example': 'C\u2019était plus léger après une pause.',
     'result.heavier.headline': 'Quelque chose a rendu ceci plus lourd.',
     'result.heavier.meaning': 'Aujourd\u2019hui ce schéma a pris plus de toi.',
-    'result.heavier.why': 'C\u2019est utile car cela montre ce qui demande attention.',
-    'result.heavier.nextCheck': 'Qu\u2019est-ce qui l\u2019a rendu plus lourd ?',
-    'result.heavier.example': 'C\u2019est devenu plus lourd quand je l\u2019ai porté seul.',
+    'result.heavier.why':
+        'C\u2019est utile car cela montre ce qui demande attention.',
+    'result.heavier.nextCheck':
+        'Qu\u2019est-ce qui l\u2019a rendu plus lourd ?',
+    'result.heavier.example':
+        'C\u2019est devenu plus lourd quand je l\u2019ai porté seul.',
     'result.changed.headline': 'Aujourd\u2019hui c\u2019était différent.',
     'result.changed.meaning': 'Ce n\u2019était pas juste le même schéma.',
-    'result.changed.why': 'C\u2019est utile car le changement montre ce qui peut bouger.',
-    'result.changed.nextCheck': 'Qu\u2019est-ce qui était différent aujourd\u2019hui ?',
-    'result.changed.example': 'Ça a changé quand j\u2019ai attendu avant de répondre.',
+    'result.changed.why':
+        'C\u2019est utile car le changement montre ce qui peut bouger.',
+    'result.changed.nextCheck':
+        'Qu\u2019est-ce qui était différent aujourd\u2019hui ?',
+    'result.changed.example':
+        'Ça a changé quand j\u2019ai attendu avant de répondre.',
     'result.concrete.headline': 'Rends ceci plus concret.',
-    'result.concrete.meaning': 'La prochaine vérification doit viser un moment.',
+    'result.concrete.meaning':
+        'La prochaine vérification doit viser un moment.',
     'result.concrete.why': 'Un moment clair est plus facile à comparer demain.',
-    'result.concrete.example': 'C\u2019est arrivé quand j\u2019ai ouvert le message.',
+    'result.concrete.example':
+        'C\u2019est arrivé quand j\u2019ai ouvert le message.',
     'result.concreteNextCheck': 'À quel moment précis est-ce arrivé ?',
-    'result.weakNudge': 'Ajoute un moment clair de plus pour rendre ceci plus utile.',
-    'category.responsibility': 'Prendre la responsabilité avant de demander de l\u2019aide',
+    'result.weakNudge':
+        'Ajoute un moment clair de plus pour rendre ceci plus utile.',
+    'category.responsibility':
+        'Prendre la responsabilité avant de demander de l\u2019aide',
     'category.worry': 'L\u2019inquiétude qui revient dans le calme',
     'category.relationship': 'Une relation qui reste dans ta tête',
     'category.selfDoubt': 'Essayer de prouver que tu suffis',
@@ -408,8 +424,7 @@ const Map<String, Map<String, String>> _copy = {
     'useItAnyway': 'फिर भी उपयोग करें',
     'exampleLabel': 'उदाहरण',
     'inputQualityCoachTitle': 'इसे और उपयोगी बनाएं',
-    'inputQualityCoachBody':
-        'एक साफ़ पल जोड़ें ताकि बेहतर पैटर्न मिल सके।',
+    'inputQualityCoachBody': 'एक साफ़ पल जोड़ें ताकि बेहतर पैटर्न मिल सके।',
     'addSentenceHint': 'एक वाक्य जोड़ें\u2026',
     'firstPatternEarlyReadHint':
         'एक और साफ़ पल के बाद यह और स्पष्ट हो सकता है।',
@@ -449,12 +464,14 @@ const Map<String, Map<String, String>> _copy = {
     'result.lighter.example': 'रुककर सोचने के बाद यह हल्का लगा।',
     'result.heavier.headline': 'किसी चीज़ ने इसे भारी बनाया।',
     'result.heavier.meaning': 'आज इस पैटर्न ने आपसे अधिक लिया।',
-    'result.heavier.why': 'यह उपयोगी है क्योंकि यह बताता है कि किस पर ध्यान दें।',
+    'result.heavier.why':
+        'यह उपयोगी है क्योंकि यह बताता है कि किस पर ध्यान दें।',
     'result.heavier.nextCheck': 'इसे भारी किसने बनाया?',
     'result.heavier.example': 'अकेले संभालने पर यह भारी हो गया।',
     'result.changed.headline': 'आज कुछ अलग था।',
     'result.changed.meaning': 'यह सिर्फ़ वही पैटर्न दोहराना नहीं था।',
-    'result.changed.why': 'यह उपयोगी है क्योंकि बदलाव बताता है कि क्या बदल सकता है।',
+    'result.changed.why':
+        'यह उपयोगी है क्योंकि बदलाव बताता है कि क्या बदल सकता है।',
     'result.changed.nextCheck': 'आज क्या अलग था?',
     'result.changed.example': 'जवाब देने से पहले रुकने पर यह बदल गया।',
     'result.concrete.headline': 'इसे और ठोस बनाएं।',
@@ -503,11 +520,9 @@ const Map<String, Map<String, String>> _copy = {
     'useItAnyway': 'તેમ છતાં વાપરો',
     'exampleLabel': 'ઉદાહરણ',
     'inputQualityCoachTitle': 'આને વધુ ઉપયોગી બનાવો',
-    'inputQualityCoachBody':
-        'એક સ્પષ્ટ ક્ષણ ઉમેરો જેથી વધુ સારી પેટર્ન મળે.',
+    'inputQualityCoachBody': 'એક સ્પષ્ટ ક્ષણ ઉમેરો જેથી વધુ સારી પેટર્ન મળે.',
     'addSentenceHint': 'એક વાક્ય ઉમેરો\u2026',
-    'firstPatternEarlyReadHint':
-        'એક વધુ સ્પષ્ટ ક્ષણ પછી આ વધુ સ્પષ્ટ થઈ શકે.',
+    'firstPatternEarlyReadHint': 'એક વધુ સ્પષ્ટ ક્ષણ પછી આ વધુ સ્પષ્ટ થઈ શકે.',
     'addAnotherMoment': 'બીજી એક ક્ષણ ઉમેરો',
     'reflectionLanguageTitle': 'વિચારની ભાષા',
     'useDetectedLanguage': 'શોધાયેલી ભાષા વાપરો',
@@ -544,7 +559,8 @@ const Map<String, Map<String, String>> _copy = {
     'result.lighter.example': 'થોભ્યા પછી આ હળવું લાગ્યું.',
     'result.heavier.headline': 'કોઈ વસ્તુએ આને ભારે બનાવ્યું.',
     'result.heavier.meaning': 'આજે આ પેટર્ને તમારી પાસેથી વધુ લીધું.',
-    'result.heavier.why': 'આ ઉપયોગી છે કેમ કે તે બતાવે છે કે શેના પર ધ્યાન આપવું.',
+    'result.heavier.why':
+        'આ ઉપયોગી છે કેમ કે તે બતાવે છે કે શેના પર ધ્યાન આપવું.',
     'result.heavier.nextCheck': 'આને ભારે શેણે બનાવ્યું?',
     'result.heavier.example': 'એકલા ઉપાડ્યું ત્યારે આ ભારે થયું.',
     'result.changed.headline': 'આજે કંઈક અલગ હતું.',

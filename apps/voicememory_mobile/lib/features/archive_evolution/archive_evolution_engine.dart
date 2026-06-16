@@ -25,7 +25,8 @@ class ArchiveEvolutionEngine {
   final DailyDiscoveryEngine dailyEngine;
   final BeliefTimelineEngine timelineEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
 
   ArchiveEvolution? detect({
     required List<JournalEntry> entries,
@@ -48,21 +49,9 @@ class ArchiveEvolutionEngine {
       baseline,
       candidates,
     );
-    _detectConfidence(
-      entries,
-      state,
-      snapshotBaseline,
-      baseline,
-      candidates,
-    );
+    _detectConfidence(entries, state, snapshotBaseline, baseline, candidates);
     _detectBeliefUnderReview(entries, state, candidates);
-    _detectPatterns(
-      entries,
-      state,
-      baseline,
-      viewedDiscoveryIds,
-      candidates,
-    );
+    _detectPatterns(entries, state, baseline, viewedDiscoveryIds, candidates);
 
     if (candidates.isEmpty) return null;
     candidates.sort((a, b) => b.confidence.compareTo(a.confidence));
@@ -114,8 +103,9 @@ class ArchiveEvolutionEngine {
       ArchiveEvolution(
         id: 'evo:changed-mind:${wrong.id}',
         kind: ArchiveEvolutionKind.archiveChangedMind,
-        sectionHeadline:
-            ArchiveEvolutionCopy.sectionHeadlineFor(ArchiveEvolutionKind.archiveChangedMind),
+        sectionHeadline: ArchiveEvolutionCopy.sectionHeadlineFor(
+          ArchiveEvolutionKind.archiveChangedMind,
+        ),
         headline: headline,
         summary: wrong.summary,
         confidence: wrong.confidence,
@@ -139,7 +129,8 @@ class ArchiveEvolutionEngine {
     final timeline = timelineEngine.build(entries: entries, beliefText: belief);
     if (timeline.points.length < 2) return;
 
-    final prior = compareBaseline?.beliefStrengthPercent ??
+    final prior =
+        compareBaseline?.beliefStrengthPercent ??
         snapshotBaseline?.confidence ??
         timeline.points.first.strengthPercent;
     final current = timeline.currentPercent;
@@ -215,8 +206,7 @@ class ArchiveEvolutionEngine {
         sectionHeadline: ArchiveEvolutionCopy.sectionHeadlineFor(
           ArchiveEvolutionKind.beliefUnderReview,
         ),
-        headline:
-            'The archive has conflicting evidence about this belief.',
+        headline: 'The archive has conflicting evidence about this belief.',
         summary:
             'Two reflections pull apart while both remain linked to “${_truncate(belief, 48)}”.',
         confidence: top.confidenceScore.clamp(62, 88),
@@ -299,11 +289,9 @@ class ArchiveEvolutionEngine {
   }
 
   static List<String> _recentEvidenceIds(List<JournalEntry> entries) {
-    return archiveEligibleEvidenceEntries(entries)
-        .reversed
-        .take(4)
-        .map((e) => e.id)
-        .toList();
+    return archiveEligibleEvidenceEntries(
+      entries,
+    ).reversed.take(4).map((e) => e.id).toList();
   }
 
   static String? _dominantTheme(Map<String, int> counts) {

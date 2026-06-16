@@ -21,9 +21,7 @@ class PressureFirstWeekNudge extends StatelessWidget {
       key: const Key('pressure_first_week_nudge'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.flat(
-        background: AppColors.surfaceAlt,
-      ),
+      decoration: VoiceMemoryCards.flat(background: AppColors.surfaceAlt),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -37,16 +35,13 @@ class PressureFirstWeekNudge extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: ArchiveMobileTypography.cardLabel(context),
-                ),
+                Text(title, style: ArchiveMobileTypography.cardLabel(context)),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   body,
-                  style: ArchiveMobileTypography.body(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.body(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),

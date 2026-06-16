@@ -53,7 +53,10 @@ void main() {
       final evolution = BeliefEvolutionService.fromPrefs(prefs);
       final entries = List.generate(
         10,
-        (i) => _entry('e$i', 'This is a long enough transcript about work and stress today.'),
+        (i) => _entry(
+          'e$i',
+          'This is a long enough transcript about work and stress today.',
+        ),
       );
       final report = await const ArchiveAnalystEngine().build(
         entries: entries,
@@ -89,7 +92,11 @@ void main() {
       final entries = [
         ..._fiftyPlusEntries(),
         ..._fiftyPlusEntries().map(
-          (e) => _entry('${e.id}_b', e.transcript, at: e.createdAt.add(const Duration(days: 30))),
+          (e) => _entry(
+            '${e.id}_b',
+            e.transcript,
+            at: e.createdAt.add(const Duration(days: 30)),
+          ),
         ),
       ];
 

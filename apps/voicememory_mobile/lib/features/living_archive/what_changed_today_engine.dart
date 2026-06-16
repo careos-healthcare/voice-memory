@@ -16,7 +16,8 @@ class WhatChangedTodayEngine {
 
   final BeliefTimelineEngine timelineEngine;
 
-  static int get minEligibleEntries => ArchiveEvidenceGuard.minimumEvidenceCount;
+  static int get minEligibleEntries =>
+      ArchiveEvidenceGuard.minimumEvidenceCount;
 
   static const Map<String, List<String>> _keywordThemes = {
     'approval': ['approval', 'approve', 'validation', 'validate'],
@@ -64,7 +65,8 @@ class WhatChangedTodayEngine {
     final timeline = timelineEngine.build(entries: entries, beliefText: belief);
     if (timeline.points.length < 2) return;
 
-    final before = snapshotBaseline?.confidence ?? timeline.points.first.strengthPercent;
+    final before =
+        snapshotBaseline?.confidence ?? timeline.points.first.strengthPercent;
     final after = timeline.currentPercent;
     if (before == after) return;
 
@@ -107,8 +109,8 @@ class WhatChangedTodayEngine {
       final label = key == 'approval'
           ? 'Approval mentions'
           : key == 'work'
-              ? 'Work references'
-              : '${key[0].toUpperCase()}${key.substring(1)} mentions';
+          ? 'Work references'
+          : '${key[0].toUpperCase()}${key.substring(1)} mentions';
 
       final themeName = key == 'approval' ? 'approval' : 'work';
       if (delta < 0 && beforeCount >= 3) {

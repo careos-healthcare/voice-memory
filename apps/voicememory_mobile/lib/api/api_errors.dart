@@ -31,7 +31,11 @@ class ApiErrorMapper {
         }
         return ApiException(message, statusCode: 503, code: code);
       case 422:
-        return ApiException(message, statusCode: 422, code: code ?? 'NO_SPEECH');
+        return ApiException(
+          message,
+          statusCode: 422,
+          code: code ?? 'NO_SPEECH',
+        );
       default:
         return ApiException(
           message,
@@ -44,6 +48,5 @@ class ApiErrorMapper {
 
 class RateLimitedException extends ApiException {
   RateLimitedException(super.message, {String? code})
-      : super(statusCode: 429, code: code ?? 'RATE_LIMIT');
+    : super(statusCode: 429, code: code ?? 'RATE_LIMIT');
 }
-

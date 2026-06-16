@@ -11,9 +11,7 @@ import 'surprise_store.dart';
 
 /// Resolves the single Archive home surprise and persists engagement.
 class SurpriseCoordinator {
-  const SurpriseCoordinator({
-    this.engine = const SurpriseEngine(),
-  });
+  const SurpriseCoordinator({this.engine = const SurpriseEngine()});
 
   final SurpriseEngine engine;
 
@@ -108,13 +106,19 @@ class SurpriseCoordinator {
     return detected;
   }
 
-  Future<void> markOpened(ArchiveSurprise surprise, {MobilePrefsStore? prefs}) async {
+  Future<void> markOpened(
+    ArchiveSurprise surprise, {
+    MobilePrefsStore? prefs,
+  }) async {
     final store = SurpriseStore(prefs ?? AppServices.instance.prefs);
     await store.markSeen(surprise);
     await SurpriseAnalytics.opened(surprise);
   }
 
-  Future<void> markIgnored(ArchiveSurprise surprise, {MobilePrefsStore? prefs}) async {
+  Future<void> markIgnored(
+    ArchiveSurprise surprise, {
+    MobilePrefsStore? prefs,
+  }) async {
     final store = SurpriseStore(prefs ?? AppServices.instance.prefs);
     await store.dismiss(surprise);
     await SurpriseAnalytics.ignored(surprise);

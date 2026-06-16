@@ -30,7 +30,8 @@ class ArchiveDeepDiveInquiryEngine {
         const ArchiveDeepDiveInquiryQuestion(
           id: 'first_appearance',
           prompt: 'When did this pattern first appear?',
-          rationale: 'Your earliest eligible recording is on the timeline below.',
+          rationale:
+              'Your earliest eligible recording is on the timeline below.',
         ),
       );
     }

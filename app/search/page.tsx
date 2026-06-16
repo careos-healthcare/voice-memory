@@ -6,7 +6,9 @@ import { motion } from "framer-motion";
 import { AnimatedReveal } from "@/components/motion/AnimatedReveal";
 import { ArrowRight, Filter, Search } from "lucide-react";
 
+import { EvidenceSearch } from "@/components/archive/EvidenceSearch";
 import { UpgradeCta } from "@/components/billing/UpgradeCta";
+import { ArchiveIdentityBar } from "@/components/archive/ArchiveIdentityBar";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EntryListRowMeta } from "@/components/memory/EntryListRowMeta";
@@ -123,6 +125,7 @@ export default function SearchPage() {
         <SiteHeader />
 
         <PrimaryMain className="mt-2">
+        <ArchiveIdentityBar className="mb-4" />
         <AnimatedReveal className="mt-2">
           <p className="text-xs uppercase tracking-[0.2em] text-violet-200">
             {APP_SUBTITLE}
@@ -135,6 +138,8 @@ export default function SearchPage() {
             concerns, and people. All on this device.
           </p>
         </AnimatedReveal>
+
+        <EvidenceSearch className="mt-6" />
 
         <div className="mt-6">
           <UpgradeCta

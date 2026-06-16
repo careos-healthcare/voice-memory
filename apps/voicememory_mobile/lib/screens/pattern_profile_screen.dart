@@ -28,7 +28,8 @@ class PatternProfileScreen extends StatefulWidget {
 
   final Future<PatternProfile?> Function()? loader;
   final Future<MemoryQuality> Function()? qualityLoader;
-  final Future<void> Function(String nextCheck, String patternTitle)? onUseCheck;
+  final Future<void> Function(String nextCheck, String patternTitle)?
+  onUseCheck;
 
   /// When true, shows one feedback row at the bottom of the profile.
   final bool showFeedback;
@@ -56,10 +57,7 @@ class _PatternProfileScreenState extends State<PatternProfileScreen> {
   Future<void> _load() async {
     final loader = widget.loader ?? PatternProfileCoordinator.load;
     final qualityLoader = widget.qualityLoader ?? MemoryQualityCoordinator.load;
-    final results = await Future.wait([
-      loader(),
-      qualityLoader(),
-    ]);
+    final results = await Future.wait([loader(), qualityLoader()]);
     if (!mounted) return;
     setState(() {
       _profile = results[0] as PatternProfile?;
@@ -103,8 +101,8 @@ class _PatternProfileScreenState extends State<PatternProfileScreen> {
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : _profile == null
-                ? _emptyState()
-                : _content(_profile!),
+            ? _emptyState()
+            : _content(_profile!),
       ),
     );
   }
@@ -238,13 +236,12 @@ class _PatternProfileScreenState extends State<PatternProfileScreen> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
-            style: VoiceMemoryTypography.bodyStyle(
-              color: AppColors.textPrimary,
-            ).copyWith(
-              fontSize: emphasize ? 16 : 14,
-              fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
-              height: 1.4,
-            ),
+            style: VoiceMemoryTypography.bodyStyle(color: AppColors.textPrimary)
+                .copyWith(
+                  fontSize: emphasize ? 16 : 14,
+                  fontWeight: emphasize ? FontWeight.w600 : FontWeight.w400,
+                  height: 1.4,
+                ),
           ),
         ],
       ),
@@ -257,8 +254,10 @@ class _PatternProfileScreenState extends State<PatternProfileScreen> {
       'Pattern map',
       [
         if (map.oftenFeelsLike != null) 'Often feels: ${map.oftenFeelsLike}',
-        if (map.getsLighterWhen != null) 'Gets lighter when: ${map.getsLighterWhen}',
-        if (map.getsHeavierWhen != null) 'Gets heavier when: ${map.getsHeavierWhen}',
+        if (map.getsLighterWhen != null)
+          'Gets lighter when: ${map.getsLighterWhen}',
+        if (map.getsHeavierWhen != null)
+          'Gets heavier when: ${map.getsHeavierWhen}',
       ].join('\n'),
     );
   }
@@ -280,8 +279,18 @@ class _PatternProfileScreenState extends State<PatternProfileScreen> {
 
   String _dayLabel(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }

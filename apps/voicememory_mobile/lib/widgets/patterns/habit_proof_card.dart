@@ -8,11 +8,7 @@ import '../../theme/voicememory_typography.dart';
 
 /// Patterns-screen proof: why it is worth continuing to check this pattern.
 class HabitProofCard extends StatefulWidget {
-  const HabitProofCard({
-    super.key,
-    required this.proof,
-    this.onUseNext,
-  });
+  const HabitProofCard({super.key, required this.proof, this.onUseNext});
 
   final HabitProofMoment proof;
 
@@ -65,7 +61,9 @@ class _HabitProofCardState extends State<HabitProofCard> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             proof.headline,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 17),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 17,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -85,9 +83,14 @@ class _HabitProofCardState extends State<HabitProofCard> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               proof.nextLine!,
-              style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textPrimary,
-              ).copyWith(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+              style:
+                  VoiceMemoryTypography.bodyStyle(
+                    color: AppColors.textPrimary,
+                  ).copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
             ),
             const SizedBox(height: AppSpacing.md),
             SizedBox(

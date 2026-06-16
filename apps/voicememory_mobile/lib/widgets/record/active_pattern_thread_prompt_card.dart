@@ -25,8 +25,7 @@ class ActivePatternThreadPromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusLine =
-        ActivePatternThreadCoordinator.recordStatusLine(thread);
+    final statusLine = ActivePatternThreadCoordinator.recordStatusLine(thread);
 
     return Container(
       width: double.infinity,

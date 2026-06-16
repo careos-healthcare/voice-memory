@@ -41,5 +41,5 @@ export const BANNED_USER_MEMORY_PHRASES = [
   "mood tracker",
   "intensity/10",
   "voice notes app",
-  "voicememory brings back",
+  "archiveme brings back",
 ] as const;
