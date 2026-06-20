@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../features/patterns/pattern_display_copy_gate.dart';
 import '../../features/archive_evidence/archive_belief_thread_copy.dart';
 import '../../features/archive_evidence/archive_belief_thread_model.dart';
 import '../../theme/app_spacing.dart';
 
 /// Simple vertical timeline for a repeated thread.
 class ArchiveEvidenceTimeline extends StatelessWidget {
-  const ArchiveEvidenceTimeline({
-    super.key,
-    required this.steps,
-    this.title,
-  });
+  const ArchiveEvidenceTimeline({super.key, required this.steps});
 
   final List<ArchiveEvidenceTimelineStep> steps;
-  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +19,7 @@ class ArchiveEvidenceTimeline extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title ?? ArchiveBeliefThreadCopy.timelineTitle,
+          ArchiveBeliefThreadCopy.timelineTitle,
           key: const Key('archive_evidence_timeline_title'),
           style: ArchiveMobileTypography.cardLabel(context),
         ),
@@ -53,10 +47,7 @@ class ArchiveEvidenceTimeline extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      PatternDisplayCopyGate.displayOrFallback(
-                        PatternDisplayField.timelineLabel,
-                        steps[i].body,
-                      ),
+                      steps[i].body,
                       style: ArchiveMobileTypography.body(context),
                     ),
                   ],
