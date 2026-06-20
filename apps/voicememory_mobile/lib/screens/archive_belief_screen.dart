@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,12 +8,8 @@ import '../config/screenshot_mode.dart';
 import '../config/force_screenshot_repeat_card.dart';
 import '../config/screenshot_sample_data.dart';
 import '../design/empty_archive_experience.dart';
-import '../features/archive_reactivity/archive_delta.dart';
-import '../features/archive_reactivity/archive_full_loop_log.dart';
-import '../features/archive_reactivity/archive_lens.dart';
-import '../features/archive_reactivity/archive_lens_return_result.dart';
-import '../features/archive_reactivity/archive_wow_moment.dart';
 import '../features/archive_evidence/archive_belief_correction_store.dart';
+import '../features/archive_evidence/archive_belief_thread_engine.dart';
 import '../features/archive_evidence/archive_belief_thread_model.dart';
 import '../features/archive_evidence/archive_intelligence_tier.dart';
 import '../features/archive_evidence/archive_intelligence_tier_resolver.dart';
@@ -39,7 +34,6 @@ import '../features/insights/archive_insights_engine.dart';
 import '../models/journal_entry.dart';
 import '../product/consumer_ui_copy.dart';
 import '../services/app_services.dart';
-import '../startup/startup_light_mode.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
@@ -54,27 +48,6 @@ import '../features/tomorrow_return/return_streak_model.dart';
 import '../features/tomorrow_return/weekly_pattern_recap_engine.dart';
 import '../features/tomorrow_return/tomorrow_commitment_coordinator.dart';
 import '../features/tomorrow_return/tomorrow_commitment_model.dart';
-import '../features/archive_reactivity/archive_lens_return_hook_reminder.dart';
-import '../features/archive_reactivity/archive_belief_surface.dart';
-import '../features/archive_reactivity/archive_belief_specificity.dart';
-import '../features/archive_reactivity/archive_change_timeline.dart';
-import '../features/archive_reactivity/archive_daily_pattern_check_in.dart';
-import '../features/archive_reactivity/archive_daily_pattern_check_in_store.dart';
-import '../features/archive_reactivity/archive_emerging_pattern_radar.dart';
-import '../features/archive_reactivity/archive_loop_experiment.dart';
-import '../features/archive_reactivity/archive_loop_experiment_store.dart';
-import '../features/archive_reactivity/archive_personal_pattern_manual.dart';
-import '../features/archive_reactivity/archive_positive_pattern_detector.dart';
-import '../features/archive_reactivity/archive_return_value_proof.dart';
-import '../features/archive_reactivity/archive_return_value_proof_store.dart';
-import '../features/archive_reactivity/archive_thought_map.dart';
-import '../features/archive_reactivity/archive_thought_map_evidence.dart';
-import '../features/archive_reactivity/archive_thought_map_node_edits.dart';
-import '../features/patterns/transcript_evidence_extractor.dart';
-import '../features/loop_map/loop_map_primary_surface.dart';
-import '../navigation/main_shell_tabs.dart';
-import '../features/onboarding/archive_loop_onboarding.dart';
-import '../screens/archive_loop_onboarding_screen.dart';
 import '../features/activation/activation_tracker.dart';
 import '../features/activation/first_loop_activation_coordinator.dart';
 import '../features/activation/first_loop_activation_model.dart';
@@ -92,11 +65,6 @@ import '../features/moments/key_moment_model.dart';
 import '../features/moments/key_moment_store.dart';
 import '../features/pattern_map/pattern_map_engine.dart';
 import '../features/patterns/patterns_stack_policy.dart';
-import '../features/patterns/pattern_display_cache_cleanup.dart';
-import '../features/patterns/pattern_display_copy_gate.dart';
-import '../features/patterns/pattern_intelligence_pipeline.dart';
-import '../features/patterns/patterns_human_copy.dart';
-import '../features/patterns/patterns_tab_stability.dart';
 import '../features/pattern_profile/pattern_profile_engine.dart';
 import '../features/pattern_memory/pattern_memory_store.dart';
 import '../features/perspective/kinder_angle_model.dart';
@@ -149,20 +117,6 @@ import '../widgets/patterns/tomorrow_return_status_card.dart';
 import '../widgets/patterns/weekly_pattern_recap_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/activation/third_session_archive_usefulness_card.dart';
-import '../widgets/patterns/archive_latest_change_strip.dart';
-import '../widgets/patterns/archive_return_value_proof_card.dart';
-import '../widgets/patterns/archive_belief_surface_card.dart';
-import '../widgets/patterns/archive_change_timeline_card.dart';
-import '../widgets/patterns/archive_daily_pattern_check_in_card.dart';
-import '../widgets/patterns/archive_emerging_pattern_radar_card.dart';
-import '../widgets/patterns/archive_loop_experiment_card.dart';
-import '../widgets/patterns/archive_loop_experiment_result_card.dart';
-import '../widgets/patterns/archive_personal_pattern_manual_card.dart';
-import '../widgets/patterns/archive_return_value_result_card.dart';
-import '../widgets/patterns/loop_map_primary_surface_card.dart';
-import '../widgets/patterns/archive_lens_top_insight_card.dart';
-import '../widgets/record/archive_lens_return_result_post_save_card.dart';
-import '../widgets/patterns/archive_wow_moment_insight_strip.dart';
 import '../widgets/patterns/archive_belief_thread_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
@@ -240,30 +194,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   List<KeyMoment> _keyMoments = const [];
   List<ArchiveMomentGroup> _compressionGroups = const [];
   FirstLoopActivationState _firstLoop = FirstLoopActivationState.empty;
-  bool _showArchiveLoopOnboardingBanner = false;
   bool _loading = true;
   bool _reloadScheduled = false;
-  bool _patternsInitialLoadScheduled = false;
-  bool _patternsInitialLoadComplete = false;
-  bool _hasNavigationShellHost = false;
   bool _archiveIsPro = false;
   bool _proBridgeResolved = false;
-  ArchiveDelta? _latestArchiveDelta;
-  ArchiveWowMoment? _latestArchiveWowMoment;
-  ArchiveLensInsight? _latestArchiveLens;
-  ArchiveLensReturnResult? _latestReturnResult;
-  ArchiveReturnValueProof? _pendingReturnValueProof;
-  ArchiveReturnValueProof? _completedReturnValueProof;
-  LoopMapPrimarySurfaceModel? _loopMapPrimarySurface;
-  ArchiveThoughtMap? _loopMapThoughtMap;
-  ArchiveEmergingPatternRadar? _emergingPatternRadar;
-  ArchiveLoopExperiment? _suggestedLoopExperiment;
-  ArchiveLoopExperiment? _completedLoopExperiment;
-  bool _hasPositivePatternSignal = false;
-  ArchivePersonalPatternManual? _personalPatternManual;
-  ArchiveDailyPatternCheckIn? _dailyPatternCheckIn;
-  ArchiveChangeTimeline? _changeTimeline;
-  ArchiveBeliefSurface? _beliefSurface;
   static const _tierResolver = ArchiveIntelligenceTierResolver();
 
   ArchiveIntelligenceTier get _archiveIntelligenceTier =>
@@ -282,61 +216,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       return;
     }
     final peek = peekJournalEntriesSync(AppServices.instance.journalStore);
-    _entries = peek;
     if (peek.isEmpty || peek.length == 1) {
+      _entries = peek;
       _loading = false;
     }
-    if (StartupLightMode.shouldDeferPatternsInitialLoad) {
-      _loading = false;
-      StartupLightMode.logArchiveEnginesSkipped('initial_launch');
-    } else {
-      _load();
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _schedulePatternsInitialLoadIfVisible();
-  }
-
-  /// Indexed-stack mounts Patterns off-screen — defer heavy engines until the
-  /// branch is active (or this screen is hosted standalone in widget tests).
-  void _schedulePatternsInitialLoadIfVisible() {
-    if (_patternsInitialLoadComplete ||
-        _patternsInitialLoadScheduled ||
-        ForceScreenshotRepeatCard.enabled ||
-        ScreenshotMode.enabled) {
-      return;
-    }
-
-    final shell = StatefulNavigationShell.maybeOf(context);
-    if (shell != null) {
-      _hasNavigationShellHost = true;
-    }
-
-    if (StartupLightMode.shouldDeferPatternsInitialLoad) {
-      if (shell != null && shell.currentIndex != MainShellTabIndex.map) return;
-      if (shell == null && _hasNavigationShellHost) return;
-    }
-
-    _patternsInitialLoadScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _patternsInitialLoadScheduled = false;
-      if (!mounted || _patternsInitialLoadComplete) return;
-
-      final activeShell = StatefulNavigationShell.maybeOf(context);
-      if (StartupLightMode.shouldDeferPatternsInitialLoad) {
-        if (activeShell != null) {
-          if (activeShell.currentIndex != MainShellTabIndex.map) return;
-        } else if (_hasNavigationShellHost) {
-          return;
-        }
-      }
-
-      _patternsInitialLoadComplete = true;
-      unawaited(_load());
-    });
+    _load();
   }
 
   void _applyScreenshotSample() {
@@ -528,50 +412,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _applyScreenshotSample();
       return;
     }
-    try {
-      await _loadPatternsData();
-    } catch (e, st) {
-      PatternsTabStability.logBuildFailed('load:$e');
-      if (kDebugMode) {
-        debugPrint('$st');
-      }
-      if (!mounted) return;
-      setState(() {
-        _beliefs = null;
-        _loading = false;
-      });
-    }
-  }
-
-  Future<void> _loadPatternsData() async {
     await ArchiveBeliefCorrectionStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
-    final latestDelta =
-        await ArchiveDeltaStore(AppServices.instance.prefs).read();
-    final latestWowMoment =
-        await ArchiveWowMomentStore(AppServices.instance.prefs).read();
     final entries = await AppServices.instance.journal.loadAll();
-    final latestLens = await ArchiveLensStore(
-      AppServices.instance.prefs,
-    ).readValidForEntries(entries.map((e) => e.id).toSet());
-    ArchiveLensReturnResult? latestReturnResult;
-    try {
-      latestReturnResult =
-          await ArchiveLensReturnResultStore(AppServices.instance.prefs).latest();
-    } catch (_) {
-      ArchiveLensReturnResultResolver.logSkipped('patterns_load_failed');
-    }
     if (!mounted) return;
 
     if (entries.isEmpty) {
-      final loopMapPrimarySurface = await _resolveLoopMapPrimarySurface(entries);
       setState(() {
         _entries = entries;
         _beliefs = null;
         _changing = const [];
         _insights = ArchiveInsightsSnapshot.empty;
-        _loopMapPrimarySurface = loopMapPrimarySurface;
         _loading = false;
       });
       First25UserMetrics.trackArchiveOpened(surface: 'archive_beliefs_empty');
@@ -579,7 +431,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     if (entries.length == 1) {
-      final loopMapPrimarySurface = await _resolveLoopMapPrimarySurface(entries);
       setState(() {
         _archiveIsPro = isPro;
         _proBridgeResolved = recordReturnPro.proBridgeResolved;
@@ -587,7 +438,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         _beliefs = null;
         _changing = const [];
         _insights = ArchiveInsightsSnapshot.empty;
-        _loopMapPrimarySurface = loopMapPrimarySurface;
         _loading = false;
       });
       First25UserMetrics.trackArchiveOpened(
@@ -597,7 +447,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     if (isIntentionalEmptyArchive(entries)) {
-      final loopMapPrimarySurface = await _resolveLoopMapPrimarySurface(entries);
       setState(() {
         _archiveIsPro = isPro;
         _proBridgeResolved = recordReturnPro.proBridgeResolved;
@@ -605,7 +454,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         _beliefs = null;
         _changing = const [];
         _insights = ArchiveInsightsSnapshot.empty;
-        _loopMapPrimarySurface = loopMapPrimarySurface;
         _loading = false;
       });
       First25UserMetrics.trackArchiveOpened(surface: 'archive_beliefs_empty');
@@ -635,7 +483,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
 
     await ReturnComparisonCoordinator.acknowledgePatternsOpened();
-    await PatternDisplayCacheCleanup.runOnceIfNeeded();
 
     final commitment = await TomorrowCommitmentCoordinator.load();
     final commitmentState = commitment == null
@@ -646,10 +493,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final changeSummary = await ReturnRetentionCoordinator.loadChangeSummary();
     final weeklyRecap = await ReturnRetentionCoordinator.loadWeeklyRecap();
     final watchForCompleted = await WatchForCoordinator.loadLatestCompleted();
-    final activeThreadRaw =
-        await ActivePatternThreadCoordinator.loadCurrentThread();
     final activeThread =
-        PatternDisplayCopyGate.sanitizeActiveThread(activeThreadRaw);
+        await ActivePatternThreadCoordinator.loadCurrentThread();
     final journey = await FirstThreeJourneyCoordinator.load();
     final selectedSignal = await SelectedSignalCoordinator.loadCurrent();
     final signalArchiveSnapshot = await SignalArchiveCoordinator.load();
@@ -693,10 +538,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ? await PatternMemoryCoordinator.buildShareRecap()
         : null;
     final firstLoop = await FirstLoopActivationCoordinator.load();
-    final showOnboardingBanner =
-        await ArchiveLoopOnboardingCoordinator.shouldShowOptionalBanner(
-      entryCount: entries.length,
-    );
     final monthlyReview = await _buildMonthlyReview(patternMemory);
     final archiveMemory = await ArchiveMemorySummaryCoordinator.refresh();
     final archiveTimeline = await ArchiveEvolutionCoordinator.refresh();
@@ -709,87 +550,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
 
     if (!mounted) return;
-    final loopMapPrimarySurface = await _resolveLoopMapPrimarySurface(entries);
-    ArchiveReturnValueProof? pendingReturnValueProof;
-    ArchiveReturnValueProof? completedReturnValueProof;
-    if (AppServices.isInitialized) {
-      final proofStore = ArchiveReturnValueProofStore(
-        AppServices.instance.prefs,
-      );
-      pendingReturnValueProof = await proofStore.latestPending();
-      completedReturnValueProof = await proofStore.latestCompleted();
-    }
-    final emergingPatternRadar = _resolveEmergingPatternRadar(
-      entries,
-      completedReturnProof: completedReturnValueProof,
-    );
-    final loopExperimentState = await _loadLoopExperimentState(
-      entries,
-      completedReturnProof: completedReturnValueProof,
-      radar: emergingPatternRadar,
-    );
-    final personalPatternManual = _resolvePersonalPatternManual(
-      entries,
-      radar: emergingPatternRadar,
-      completedReturnProof: completedReturnValueProof,
-      completedLoopExperiment: loopExperimentState.completed,
-      positiveSignals: ArchivePositivePatternDetector.detectFromTranscripts(
-        entries: entries
-            .where((entry) => entry.transcript.trim().isNotEmpty)
-            .map((entry) => (entryId: entry.id, transcript: entry.transcript))
-            .toList(),
-      ),
-    );
-    final dailyPatternCheckIn = await _loadDailyCheckInState(
-      entries,
-      radar: emergingPatternRadar,
-      pendingReturnProof: pendingReturnValueProof,
-      completedReturnProof: completedReturnValueProof,
-      completedLoopExperiment: loopExperimentState.completed,
-      personalPatternManual: personalPatternManual,
-    );
-    final acceptedLoopExperiment = AppServices.isInitialized
-        ? await ArchiveLoopExperimentStore(AppServices.instance.prefs)
-            .latestAccepted()
-        : null;
-    final changeTimeline = _resolveChangeTimeline(
-      entries,
-      radar: emergingPatternRadar,
-      completedReturnProof: completedReturnValueProof,
-      acceptedLoopExperiment: acceptedLoopExperiment,
-      completedLoopExperiment: loopExperimentState.completed,
-      dailyCheckIn: dailyPatternCheckIn,
-      personalPatternManual: personalPatternManual,
-    );
-    final beliefSurface = _resolveBeliefSurface(
-      entries: entries,
-      beliefs: beliefs,
-      changeTimeline: changeTimeline,
-      completedReturnProof: completedReturnValueProof,
-      latestLens: latestLens,
-      latestReturnResult: latestReturnResult,
-    );
     setState(() {
       _archiveIsPro = isPro;
       _proBridgeResolved = recordReturnPro.proBridgeResolved;
-      _latestArchiveDelta = latestDelta;
-      _latestArchiveWowMoment = latestWowMoment;
-      _latestArchiveLens = latestLens;
-      _latestReturnResult = latestReturnResult;
-      _pendingReturnValueProof = pendingReturnValueProof;
-      _completedReturnValueProof = completedReturnValueProof;
       _entries = entries;
       _firstLoop = firstLoop;
-      _showArchiveLoopOnboardingBanner = showOnboardingBanner;
-      _loopMapPrimarySurface = loopMapPrimarySurface;
-      _emergingPatternRadar = emergingPatternRadar;
-      _suggestedLoopExperiment = loopExperimentState.suggested;
-      _completedLoopExperiment = loopExperimentState.completed;
-      _hasPositivePatternSignal = loopExperimentState.hasPositiveSignal;
-      _personalPatternManual = personalPatternManual;
-      _dailyPatternCheckIn = dailyPatternCheckIn;
-      _changeTimeline = changeTimeline;
-      _beliefSurface = beliefSurface;
       _beliefs = beliefs;
       _changing = buildBeliefChangeTimeline(snapshot: beliefs, feed: feed);
       _insights = insights;
@@ -827,12 +592,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _compressionGroups = compressionGroups;
       _loading = false;
     });
-    if (latestLens != null &&
-        latestLens.shouldDisplayPatterns &&
-        latestReturnResult != null &&
-        latestReturnResult.shouldDisplayPatterns) {
-      ArchiveFullLoopLog.step('patterns_verified');
-    }
     if (rangeReview?.hasEnoughData == true) {
       ActivationTracker.trackArchiveRangeReviewShown();
     }
@@ -1005,77 +764,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     return all.isEmpty ? null : all.first;
   }
 
-  int get _patternCount {
-    final s = _beliefs;
-    if (s == null) return 0;
-    return s.current.length +
-        s.homeBeliefs.length +
-        s.emerging.length +
-        s.changing.length +
-        s.hiddenPatterns.length;
-  }
-
-  bool get _hasArchiveReactivityPatterns =>
-      (_latestReturnResult?.shouldDisplayPatterns ?? false) ||
-      (_latestArchiveLens?.shouldDisplayPatterns ?? false);
-
-  bool get _hasRenderablePatternInsight =>
-      PatternsTabStability.hasRenderablePatternInsight(
-        beliefs: _beliefs,
-        strongest: _strongest,
-      );
-
-  String get _patternsEmptyReason {
-    if (isIntentionalEmptyArchive(_entries)) return 'no_evidence_entries';
-    return 'null_belief_snapshot_or_field';
-  }
-
-  List<Widget> _safeOrderedPatternsStack() {
-    try {
-      return _orderedPatternsStack();
-    } catch (e, st) {
-      PatternsTabStability.logBuildFailed('ordered_stack:$e');
-      if (kDebugMode) {
-        debugPrint('$st');
-      }
-      return const [];
-    }
-  }
-
-  List<Widget> _safeLegacyBeliefSections(ArchiveBeliefCardModel strongest) {
-    try {
-      return _legacyBeliefSections(strongest);
-    } catch (e, st) {
-      PatternsTabStability.logBuildFailed('legacy_belief_sections:$e');
-      if (kDebugMode) {
-        debugPrint('$st');
-      }
-      return const [];
-    }
-  }
-
-  Widget _buildPatternsNoClearPatternScaffold(
-    BuildContext context, {
-    required String reason,
-  }) {
-    PatternsTabStability.logEmptyState(reason);
-    return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _load,
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: ArchiveMobileSpacing.pagePadding,
-            children: _withLoopMapPrimarySurface(
-              const [PatternsNoClearPatternView(fillViewport: false)],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   int get _evidenceReflectionCount => archiveEvidenceReflectionCount(_entries);
 
   bool get _showEmpty {
@@ -1104,7 +792,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     if (ScreenshotMode.enabled || _loading || _reloadScheduled) return;
 
     final shell = StatefulNavigationShell.maybeOf(context);
-    if (shell != null && shell.currentIndex != MainShellTabIndex.map) return;
+    if (shell != null && shell.currentIndex != 1) return;
 
     final peekEntries = peekJournalEntriesSync(
       AppServices.instance.journalStore,
@@ -1120,10 +808,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _reloadScheduled = false;
       if (!mounted || _loading) return;
       final activeShell = StatefulNavigationShell.maybeOf(context);
-      if (activeShell != null &&
-          activeShell.currentIndex != MainShellTabIndex.map) {
-        return;
-      }
+      if (activeShell != null && activeShell.currentIndex != 1) return;
       unawaited(_load());
     });
   }
@@ -1172,512 +857,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   }
 
   void _goToRecord() => context.go('/record');
-
-  Future<LoopMapPrimarySurfaceModel> _resolveLoopMapPrimarySurface(
-    List<JournalEntry> entries,
-  ) async {
-    if (!AppServices.isInitialized) {
-      return LoopMapPrimarySurfaceResolver.resolve(
-        onboarding: ArchiveLoopOnboardingState.empty,
-      );
-    }
-    final prefs = AppServices.instance.prefs;
-    final loaded = await LoopMapThoughtMapLoader.load(
-      entries: entries,
-      readLens: () => ArchiveLensStore(prefs).readValidForEntries(
-        entries.map((e) => e.id).toSet(),
-      ),
-      readReturnResult: () =>
-          ArchiveLensReturnResultStore(prefs).latest(),
-      readPendingHook: () =>
-          ArchiveLensReturnHookReminderStore(prefs).latestPending(),
-      readOnboarding: () => ArchiveLoopOnboardingCoordinator.load(),
-      readEvidence: (mapId) =>
-          ArchiveThoughtMapEvidenceStore(prefs).listForMap(mapId),
-      readNodeEdits: (mapId) =>
-          ArchiveThoughtMapNodeEditStore(prefs).listForMap(mapId),
-    );
-    _loopMapThoughtMap = loaded.thoughtMap;
-    return loaded.surface;
-  }
-
-  ArchiveEmergingPatternRadar? _resolveEmergingPatternRadar(
-    List<JournalEntry> entries, {
-    ArchiveReturnValueProof? completedReturnProof,
-  }) {
-    final radar = ArchiveEmergingPatternRadarResolver.resolve(
-      entries: entries,
-      latestThoughtMap: _loopMapThoughtMap,
-      latestReturnResult: (completedReturnProof ?? _completedReturnValueProof)
-          ?.result,
-    );
-    final hasFullMap = _loopMapThoughtMap?.hasEnoughEvidence == true;
-    final hasReturnResult = _completedReturnValueProof?.result != null;
-    final shouldShow = ArchiveEmergingPatternRadarPlacement.shouldShow(
-      entryCount: entries.length,
-      firstValueRescueActive: false,
-      radar: radar,
-      hasFullMap: hasFullMap,
-      hasReturnResult: hasReturnResult,
-    );
-    return shouldShow ? radar : null;
-  }
-
-  List<Widget> _loopMapEmergingPatternRadarWidgets() {
-    final radar = _emergingPatternRadar;
-    if (radar == null || !radar.shouldDisplay) return const [];
-    return [
-      ArchiveEmergingPatternRadarCard(
-        radar: radar,
-        surface: 'map_tab',
-        compact: radar.isLightMode,
-      ),
-      const SizedBox(height: AppSpacing.lg),
-    ];
-  }
-
-  Future<
-      ({
-        ArchiveLoopExperiment? suggested,
-        ArchiveLoopExperiment? completed,
-        bool hasPositiveSignal,
-      })> _loadLoopExperimentState(
-    List<JournalEntry> entries, {
-    ArchiveReturnValueProof? completedReturnProof,
-    ArchiveEmergingPatternRadar? radar,
-  }) async {
-    if (!AppServices.isInitialized) {
-      return (
-        suggested: null,
-        completed: null,
-        hasPositiveSignal: false,
-      );
-    }
-    final positiveSignals = ArchivePositivePatternDetector.detectFromTranscripts(
-      entries: entries
-          .where((entry) => entry.transcript.trim().isNotEmpty)
-          .map((entry) => (entryId: entry.id, transcript: entry.transcript))
-          .toList(),
-    );
-    final resolved = ArchiveLoopExperimentResolver.resolve(
-      thoughtMap: _loopMapThoughtMap,
-      radar: radar,
-      returnResult: completedReturnProof?.result,
-      positiveSignals: positiveSignals,
-      recentEntries: entries,
-    );
-    final store = ArchiveLoopExperimentStore(AppServices.instance.prefs);
-    if (resolved != null) {
-      await store.saveSuggested(resolved);
-    }
-    return (
-      suggested: await store.latestSuggested(),
-      completed: await store.latestCompleted(),
-      hasPositiveSignal: positiveSignals.isNotEmpty,
-    );
-  }
-
-  List<Widget> _loopMapExperimentWidgets() {
-    final widgets = <Widget>[];
-
-    final completed = _completedLoopExperiment;
-    if (completed != null &&
-        ArchiveLoopExperimentPlacement.shouldShowResult(
-          experiment: completed,
-        )) {
-      widgets.add(
-        ArchiveLoopExperimentResultCard(
-          experiment: completed,
-          surface: 'map_tab',
-        ),
-      );
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-
-    final suggested = _suggestedLoopExperiment;
-    final hasFullMap = _loopMapThoughtMap?.hasEnoughEvidence == true;
-    final hasReturnResult = _completedReturnValueProof?.result != null;
-    if (suggested != null &&
-        ArchiveLoopExperimentPlacement.shouldShowSuggestion(
-          entryCount: _entries.length,
-          firstValueRescueActive: false,
-          experiment: suggested,
-          hasFullMap: hasFullMap,
-          hasReturnResult: hasReturnResult,
-          hasPositiveSignal: _hasPositivePatternSignal,
-        )) {
-      widgets.add(
-        ArchiveLoopExperimentCard(
-          experiment: suggested,
-          surface: 'map_tab',
-          onTryPressed: () => unawaited(_tryLoopExperiment(suggested)),
-          onSkipPressed: () => unawaited(_skipLoopExperiment(suggested)),
-        ),
-      );
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-
-    return widgets;
-  }
-
-  Future<void> _tryLoopExperiment(ArchiveLoopExperiment experiment) async {
-    if (!AppServices.isInitialized) return;
-    final store = ArchiveLoopExperimentStore(AppServices.instance.prefs);
-    await store.accept(experiment.id);
-    ArchiveLoopExperimentLog.started(experimentId: experiment.id);
-    if (!mounted) return;
-    setState(() => _suggestedLoopExperiment = null);
-    context.go(ArchiveLoopExperimentResolver.recordRouteFor(experiment));
-  }
-
-  Future<void> _skipLoopExperiment(ArchiveLoopExperiment experiment) async {
-    if (!AppServices.isInitialized) return;
-    await ArchiveLoopExperimentStore(AppServices.instance.prefs)
-        .skip(experiment.id);
-    if (!mounted) return;
-    setState(() => _suggestedLoopExperiment = null);
-  }
-
-  ArchivePersonalPatternManual? _resolvePersonalPatternManual(
-    List<JournalEntry> entries, {
-    ArchiveEmergingPatternRadar? radar,
-    ArchiveReturnValueProof? completedReturnProof,
-    ArchiveLoopExperiment? completedLoopExperiment,
-    required List<ArchivePositivePatternSignal> positiveSignals,
-  }) {
-    return ArchivePersonalPatternManualResolver.resolve(
-      entries: entries,
-      latestThoughtMap: _loopMapThoughtMap,
-      latestRadar: radar,
-      latestReturnResult: completedReturnProof?.result,
-      latestExperimentResult: completedLoopExperiment?.result,
-      positiveSignals: positiveSignals,
-    );
-  }
-
-  Future<ArchiveDailyPatternCheckIn?> _loadDailyCheckInState(
-    List<JournalEntry> entries, {
-    ArchiveEmergingPatternRadar? radar,
-    ArchiveReturnValueProof? pendingReturnProof,
-    ArchiveReturnValueProof? completedReturnProof,
-    ArchiveLoopExperiment? completedLoopExperiment,
-    ArchivePersonalPatternManual? personalPatternManual,
-  }) async {
-    if (!AppServices.isInitialized) return null;
-    final now = DateTime.now();
-    final dateKey = ArchiveDailyPatternCheckInResolver.dateKeyFor(now);
-    final store = ArchiveDailyPatternCheckInStore(AppServices.instance.prefs);
-    final existing = await store.latestForDate(dateKey);
-    if (existing != null) {
-      if (existing.isSkipped) return null;
-      return existing;
-    }
-
-    final acceptedLoopExperiment =
-        await ArchiveLoopExperimentStore(AppServices.instance.prefs)
-            .latestAccepted();
-    final positiveSignals = ArchivePositivePatternDetector.detectFromTranscripts(
-      entries: entries
-          .where((entry) => entry.transcript.trim().isNotEmpty)
-          .map((entry) => (entryId: entry.id, transcript: entry.transcript))
-          .toList(),
-    );
-    final resolved = ArchiveDailyPatternCheckInResolver.resolve(
-      now: now,
-      entries: entries,
-      thoughtMap: _loopMapThoughtMap,
-      radar: radar,
-      latestExperiment: acceptedLoopExperiment,
-      latestExperimentResult: completedLoopExperiment?.result,
-      pendingReturnProof: pendingReturnProof,
-      latestReturnResult: completedReturnProof?.result,
-      manual: personalPatternManual,
-      positiveSignals: positiveSignals,
-    );
-    if (resolved == null) return null;
-    await store.saveActive(resolved);
-    return resolved;
-  }
-
-  List<Widget> _loopMapDailyCheckInWidgets() {
-    final checkIn = _dailyPatternCheckIn;
-    final hasFullMap = _loopMapThoughtMap?.hasEnoughEvidence == true;
-    if (!ArchiveDailyPatternCheckInPlacement.shouldShow(
-      entryCount: _entries.length,
-      firstValueRescueActive: false,
-      checkIn: checkIn,
-      hasFullMap: hasFullMap,
-    )) {
-      return const [];
-    }
-
-    return [
-      ArchiveDailyPatternCheckInCard(
-        checkIn: checkIn!,
-        surface: 'map_tab',
-        onRecordPressed: () {
-          ArchiveDailyPatternCheckInLog.started(checkInId: checkIn.id);
-          context.go(ArchiveDailyPatternCheckInResolver.recordRouteFor(checkIn));
-        },
-        onSkipPressed: () => unawaited(_skipDailyCheckIn(checkIn)),
-      ),
-      const SizedBox(height: AppSpacing.lg),
-    ];
-  }
-
-  Future<void> _skipDailyCheckIn(ArchiveDailyPatternCheckIn checkIn) async {
-    if (!AppServices.isInitialized) return;
-    await ArchiveDailyPatternCheckInStore(AppServices.instance.prefs)
-        .skip(checkIn.id);
-    if (!mounted) return;
-    setState(() => _dailyPatternCheckIn = null);
-  }
-
-  ArchiveChangeTimeline? _resolveChangeTimeline(
-    List<JournalEntry> entries, {
-    ArchiveEmergingPatternRadar? radar,
-    ArchiveReturnValueProof? completedReturnProof,
-    ArchiveLoopExperiment? acceptedLoopExperiment,
-    ArchiveLoopExperiment? completedLoopExperiment,
-    ArchiveDailyPatternCheckIn? dailyCheckIn,
-    ArchivePersonalPatternManual? personalPatternManual,
-  }) {
-    final positiveSignals = ArchivePositivePatternDetector.detectFromTranscripts(
-      entries: entries
-          .where((entry) => entry.transcript.trim().isNotEmpty)
-          .map((entry) => (entryId: entry.id, transcript: entry.transcript))
-          .toList(),
-    );
-    final latestExperiment = completedLoopExperiment ?? acceptedLoopExperiment;
-    return ArchiveChangeTimelineResolver.resolve(
-      entries: entries,
-      thoughtMap: _loopMapThoughtMap,
-      radar: radar,
-      latestReturnResult: completedReturnProof?.result,
-      latestExperiment: latestExperiment,
-      latestExperimentResult: completedLoopExperiment?.result,
-      latestDailyCheckIn: dailyCheckIn,
-      latestDailyCheckInResult: dailyCheckIn?.result,
-      manual: personalPatternManual,
-      positiveSignals: positiveSignals,
-    );
-  }
-
-  ArchiveBeliefSurface? _resolveBeliefSurface({
-    required List<JournalEntry> entries,
-    required ArchiveBeliefsSnapshot beliefs,
-    required ArchiveChangeTimeline? changeTimeline,
-    required ArchiveReturnValueProof? completedReturnProof,
-    required ArchiveLensInsight? latestLens,
-    required ArchiveLensReturnResult? latestReturnResult,
-  }) {
-    final beliefCard = beliefs.current.isNotEmpty
-        ? beliefs.current.first
-        : (beliefs.homeBeliefs.isNotEmpty ? beliefs.homeBeliefs.first : null);
-    ArchiveBeliefSpecificity? specificity;
-    if (beliefCard != null) {
-      specificity = ArchiveBeliefSpecificityResolver.resolve(
-        ArchiveBeliefSpecificityInput(
-          belief: beliefCard,
-          entries: entries,
-          latestEntry: entries.isNotEmpty ? entries.last : null,
-          repeatedPhrases: TranscriptEvidenceExtractor.extractRepeatedPhrases(
-            entries.map((e) => e.transcript).toList(),
-          ),
-          archiveLensInsight: latestLens,
-          returnResult: latestReturnResult,
-        ),
-      );
-    }
-    return ArchiveBeliefSurfaceResolver.resolve(
-      entries: entries,
-      thoughtMap: _loopMapThoughtMap,
-      changeTimeline: changeTimeline,
-      beliefs: beliefs,
-      specificity: specificity,
-      latestReturnResult: completedReturnProof?.result,
-      latestLens: latestLens,
-      latestLensReturnResult: latestReturnResult,
-    );
-  }
-
-  List<Widget> _loopMapBeliefSurfaceWidgets() {
-    final surface = _beliefSurface;
-    if (!ArchiveBeliefSurfacePlacement.shouldShow(
-      entryCount: _entries.length,
-      firstValueRescueActive: false,
-      surface: surface,
-    )) {
-      return const [];
-    }
-    return [
-      ArchiveBeliefSurfaceCard(
-        surface: surface!,
-        onSurface: 'map_tab',
-      ),
-      const SizedBox(height: AppSpacing.lg),
-    ];
-  }
-
-  List<Widget> _loopMapProofLoopWidgets() {
-    return [
-      ..._loopMapBeliefSurfaceWidgets(),
-      ..._loopMapChangeTimelineWidgets(),
-    ];
-  }
-
-  List<Widget> _loopMapChangeTimelineWidgets() {
-    final timeline = _changeTimeline;
-    final hasFullMap = _loopMapThoughtMap?.hasEnoughEvidence == true;
-    if (!ArchiveChangeTimelinePlacement.shouldShow(
-      entryCount: _entries.length,
-      firstValueRescueActive: false,
-      timeline: timeline,
-      hasFullMap: hasFullMap,
-      radar: _emergingPatternRadar,
-      manual: _personalPatternManual,
-    )) {
-      return const [];
-    }
-
-    final prominent = _completedLoopExperiment?.isCompleted == true;
-    return [
-      ArchiveChangeTimelineCard(
-        timeline: timeline!,
-        surface: 'map_tab',
-        compact: !prominent && timeline.timelineItems.length > 4,
-      ),
-      const SizedBox(height: AppSpacing.lg),
-    ];
-  }
-
-  List<Widget> _loopMapPersonalManualWidgets() {
-    final manual = _personalPatternManual;
-    final hasFullMap = _loopMapThoughtMap?.hasEnoughEvidence == true;
-    if (!ArchivePersonalPatternManualPlacement.shouldShow(
-      entryCount: _entries.length,
-      firstValueRescueActive: false,
-      manual: manual,
-      hasFullMap: hasFullMap,
-    )) {
-      return const [];
-    }
-
-    return [
-      ArchivePersonalPatternManualCard(
-        manual: manual!,
-        surface: 'map_tab',
-        prominent: _completedLoopExperiment?.isCompleted == true,
-      ),
-      const SizedBox(height: AppSpacing.lg),
-    ];
-  }
-
-  bool get _loopMapShowsReturnValueProof {
-    final surface = _loopMapPrimarySurface;
-    if (surface == null) return false;
-    return surface.state != LoopMapPrimarySurfaceState.newUser &&
-        surface.state != LoopMapPrimarySurfaceState.earlyPreview;
-  }
-
-  List<Widget> _loopMapReturnValueProofWidgets() {
-    if (!_loopMapShowsReturnValueProof) return const [];
-
-    final widgets = <Widget>[];
-    final completed = _completedReturnValueProof;
-    if (completed != null && completed.result != null) {
-      widgets.add(
-        ArchiveReturnValueResultCard(
-          proof: completed,
-          surface: 'map_tab',
-        ),
-      );
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-
-    final pending = _pendingReturnValueProof;
-    if (pending != null && pending.isPending) {
-      widgets.add(
-        ArchiveReturnValueProofCard(
-          proof: pending,
-          surface: 'map_tab',
-          onSkipPressed: () => unawaited(_skipReturnValueProof(pending)),
-        ),
-      );
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-    return widgets;
-  }
-
-  Future<void> _skipReturnValueProof(ArchiveReturnValueProof proof) async {
-    if (!AppServices.isInitialized) return;
-    await ArchiveReturnValueProofStore(AppServices.instance.prefs).clearPending();
-    ArchiveReturnValueProofLog.skipped(proofId: proof.id);
-    if (!mounted) return;
-    setState(() => _pendingReturnValueProof = null);
-  }
-
-  List<Widget> _loopMapPrimarySurfaceHeader() {
-    final surface = _loopMapPrimarySurface;
-    if (surface == null) return const [];
-    return [
-      LoopMapPrimarySurfaceCard(model: surface),
-      const SizedBox(height: AppSpacing.lg),
-      ..._loopMapDailyCheckInWidgets(),
-      ..._loopMapReturnValueProofWidgets(),
-      ..._loopMapProofLoopWidgets(),
-      ..._loopMapEmergingPatternRadarWidgets(),
-      ..._loopMapExperimentWidgets(),
-      ..._loopMapPersonalManualWidgets(),
-    ];
-  }
-
-  List<Widget> _withLoopMapPrimarySurface(List<Widget> children) {
-    final surface = _loopMapPrimarySurface;
-    if (surface == null) return children;
-    return [
-      LoopMapPrimarySurfaceCard(model: surface),
-      const SizedBox(height: AppSpacing.lg),
-      ..._loopMapDailyCheckInWidgets(),
-      ..._loopMapReturnValueProofWidgets(),
-      ..._loopMapProofLoopWidgets(),
-      ..._loopMapEmergingPatternRadarWidgets(),
-      ..._loopMapExperimentWidgets(),
-      ..._loopMapPersonalManualWidgets(),
-      if (surface.state != LoopMapPrimarySurfaceState.newUser &&
-          surface.state != LoopMapPrimarySurfaceState.earlyPreview &&
-          children.isNotEmpty) ...[
-        const LoopMapArchiveHistoryHeading(),
-        const SizedBox(height: AppSpacing.sm),
-      ],
-      ...children,
-    ];
-  }
-
-  List<Widget> _orderedArchiveInsightWidgets() {
-    final widgets = <Widget>[];
-    if (_latestReturnResult != null &&
-        _latestReturnResult!.shouldDisplayPatterns) {
-      widgets.add(
-        ArchiveLensReturnResultPatternsCard(result: _latestReturnResult!),
-      );
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-    if (_latestArchiveLens != null &&
-        _latestArchiveLens!.shouldDisplayPatterns) {
-      widgets.add(ArchiveLensTopInsightCard(insight: _latestArchiveLens!));
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    } else if (_latestArchiveWowMoment != null &&
-        _latestArchiveWowMoment!.shouldDisplay) {
-      widgets.add(ArchiveWowMomentInsightStrip(moment: _latestArchiveWowMoment!));
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-    if (_latestArchiveDelta != null && _latestArchiveDelta!.shouldDisplay) {
-      widgets.add(ArchiveLatestChangeStrip(delta: _latestArchiveDelta!));
-      widgets.add(const SizedBox(height: AppSpacing.lg));
-    }
-    return widgets;
-  }
 
   List<Widget> _signalArchiveSurfaces() {
     final snapshot = _signalArchiveSnapshot;
@@ -1986,8 +1165,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       const SizedBox(height: AppSpacing.sm),
       ArchiveHeroBeliefCard(
         belief: strongest,
-        reflectionsAnalysed:
-            _beliefs?.stats.reflectionsAnalysed ?? _entries.length,
+        reflectionsAnalysed: _beliefs!.stats.reflectionsAnalysed,
       ),
       const SizedBox(height: AppSpacing.lg),
       if (_commitmentState == TomorrowCommitmentDisplayState.hidden)
@@ -2466,24 +1644,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   }
 
   List<Widget> _buildArchiveIntelligenceWidgets({
-    required PatternIntelligenceDisplayBundle bundle,
+    required ArchiveBeliefThread belief,
+    required WeeklyWhatChangedReview weekly,
+    required ArchiveOhWowMoment ohWow,
   }) {
-    final belief = bundle.belief;
-    final weekly = bundle.weekly;
-    final ohWow = bundle.ohWow;
-    final humanCopy = bundle.humanCopy;
-
     final widgets = <Widget>[];
     if (ohWow.hasMoment &&
         !ArchiveBeliefCorrectionStore.isDismissed(ohWow.suggestionId)) {
-      widgets.add(ArchiveOhWowMomentCard(moment: ohWow, humanCopy: humanCopy));
+      widgets.add(ArchiveOhWowMomentCard(moment: ohWow));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     if (belief.hasEnoughData) {
       widgets.add(
         ArchiveBeliefThreadCard(
           thread: belief,
-          humanCopy: humanCopy,
           onRecordMoreEvidence: _goToRecord,
           onDismissed: () => setState(() {}),
         ),
@@ -2491,9 +1665,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     if (weekly.hasReview) {
-      widgets.add(
-        WeeklyWhatChangedReviewCard(review: weekly, humanCopy: humanCopy),
-      );
+      widgets.add(WeeklyWhatChangedReviewCard(review: weekly));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     if (_showArchiveIntelligenceProBridge(
@@ -2518,8 +1690,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
 
   List<Widget> _archiveDifferentiationSurfaces() {
     final tier = _archiveIntelligenceTier;
-    final bundle = PatternIntelligencePipeline.build(_entries, tier: tier);
-    return _buildArchiveIntelligenceWidgets(bundle: bundle);
+    const engine = ArchiveBeliefThreadEngine();
+    final belief = engine.build(_entries, tier: tier);
+    final weekly = const WeeklyWhatChangedReviewEngine().build(
+      _entries,
+      tier: tier,
+    );
+    final ohWow = engine.buildOhWow(_entries, tier: tier);
+    return _buildArchiveIntelligenceWidgets(
+      belief: belief,
+      weekly: weekly,
+      ohWow: ohWow,
+    );
   }
 
   List<Widget> _orderedPatternsStack() {
@@ -2558,10 +1740,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         }
       }
     }
-    final insightWidgets = _orderedArchiveInsightWidgets();
-    if (insightWidgets.isNotEmpty) {
-      widgets.addAll(insightWidgets);
-    }
     return widgets;
   }
 
@@ -2594,31 +1772,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     _queueJournalDriftCheck();
-    _schedulePatternsInitialLoadIfVisible();
-
-    Widget buildBody() => _buildPatternsTabBody(context);
-    return PatternsTabStability.guard(
-      builder: buildBody,
-      fallbackBuilder: () => _buildPatternsNoClearPatternScaffold(
-        context,
-        reason: 'build_guard',
-      ),
-    );
-  }
-
-  Widget _buildPatternsTabBody(BuildContext context) {
-    PatternsTabStability.logTabBuild(
-      entryCount: _entries.length,
-      patternCount: _patternCount,
-    );
 
     if (_loading) {
-      if (_entries.length >= 3 && isIntentionalEmptyArchive(_entries)) {
-        return _buildPatternsNoClearPatternScaffold(
-          context,
-          reason: 'no_evidence_entries',
-        );
-      }
       return const Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: Center(child: CircularProgressIndicator()),
@@ -2634,9 +1789,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
-              children: _withLoopMapPrimarySurface(
-                const [PatternsEmptyView(fillViewport: false)],
-              ),
+              children: const [PatternsEmptyView(fillViewport: false)],
             ),
           ),
         ),
@@ -2652,12 +1805,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
-              children: _withLoopMapPrimarySurface([
+              children: [
                 PatternsFirstArchiveView(
                   fillViewport: false,
                   savedEntryId: _firstArchiveEntryId,
                 ),
-              ]),
+              ],
             ),
           ),
         ),
@@ -2671,41 +1824,27 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             reflectionCount: _entries.length,
             entries: _entries,
           );
-      final secondSessionComparisonRaw =
+      final secondSessionComparison =
           _entries.length == FirstThreeSessionGates.minEntriesForRepeatSurface
           ? const SecondSessionSignalEngine().build(_entries)
           : null;
-      final humanInput = PatternHumanCopyInput.fromEntries(_entries);
-      final secondSessionComparison = secondSessionComparisonRaw == null
-          ? null
-          : PatternDisplayCopyGate.sanitizeSecondSessionComparison(
-              PatternIntelligencePipeline.applyHumanCopyToComparison(
-                secondSessionComparisonRaw,
-                humanInput,
-              ),
-            );
       final thirdSessionUsefulness =
           FirstThreeSessionGates.showSession3ArchiveSurface(_entries.length)
           ? const ThirdSessionArchiveUsefulnessEngine().build(_entries)
           : ThirdSessionArchiveUsefulness.insufficient;
-      final intelligenceBundle = PatternIntelligencePipeline.build(
+      final archiveBeliefThread = const ArchiveBeliefThreadEngine().build(
+        _entries,
+        tier: _archiveIntelligenceTier,
+      );
+      final weeklyWhatChanged = const WeeklyWhatChangedReviewEngine().build(
+        _entries,
+        tier: _archiveIntelligenceTier,
+      );
+      final ohWowMoment = const ArchiveBeliefThreadEngine().buildOhWow(
         _entries,
         tier: _archiveIntelligenceTier,
       );
       final strongest = _strongest;
-      final patternProgress = _patternProgress;
-      final patternNextAction = _patternNextAction;
-      final habitProof = _habitProof;
-      final patternWeeklyRecap = _patternWeeklyRecap;
-      final patternShareRecap = _patternShareRecap;
-      final patternMemory = _patternMemory;
-      final activePatternThread = _activePatternThread;
-      final selectedSignal = _selectedSignal;
-      final signalArchiveSnapshot = _signalArchiveSnapshot;
-      final firstLoopPhase = _firstLoopPhase;
-      final missedCheckInForDiagnosis = _missedCheckInForDiagnosis;
-      final checkInDueToday = _checkInDueToday;
-      final checkInCompletedRecently = _checkInCompletedRecently;
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
@@ -2713,30 +1852,25 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             onRefresh: _load,
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
-              children: _withLoopMapPrimarySurface([
-                if (_showArchiveLoopOnboardingBanner &&
-                    _loopMapPrimarySurface?.state !=
-                        LoopMapPrimarySurfaceState.newUser) ...[
-                  ArchiveLoopOnboardingBanner(
-                    onStart: () => context.go('/archive-loop-onboarding'),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
-                ..._buildArchiveIntelligenceWidgets(bundle: intelligenceBundle),
-                if (!intelligenceBundle.belief.hasEnoughData &&
+              children: [
+                ..._buildArchiveIntelligenceWidgets(
+                  belief: archiveBeliefThread,
+                  weekly: weeklyWhatChanged,
+                  ohWow: ohWowMoment,
+                ),
+                if (!archiveBeliefThread.hasEnoughData &&
                     thirdSessionUsefulness.hasEnoughData) ...[
                   ThirdSessionArchiveUsefulnessCard(
                     usefulness: thirdSessionUsefulness,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (secondSessionComparison != null &&
-                    secondSessionComparison.hasEnoughData &&
+                if (secondSessionComparison?.hasEnoughData == true &&
                     !ArchiveBeliefCorrectionStore.isDismissed(
                       'second_session_repeat',
                     )) ...[
                   SecondSessionComparisonCard(
-                    comparison: secondSessionComparison,
+                    comparison: secondSessionComparison!,
                     onGoDeeper: _goToRecord,
                     onRecordNextEvidence: _goToRecord,
                     onNotTheSame: () {
@@ -2748,39 +1882,39 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (firstLoopPhase != null &&
-                    firstLoopPhase != FirstLoopStatePhase.recordMoment) ...[
+                if (_firstLoopPhase != null &&
+                    _firstLoopPhase != FirstLoopStatePhase.recordMoment) ...[
                   FirstLoopStateCard(
-                    phase: firstLoopPhase,
+                    phase: _firstLoopPhase!,
                     question: _firstLoop.tomorrowQuestion,
                     onRecord: _goToRecord,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (missedCheckInForDiagnosis != null) ...[
+                if (_missedCheckInForDiagnosis != null) ...[
                   MissedCheckInReasonPrompt(
-                    checkIn: missedCheckInForDiagnosis,
+                    checkIn: _missedCheckInForDiagnosis!,
                     onAnswered: () =>
                         setState(() => _missedCheckInForDiagnosis = null),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                ] else if (checkInDueToday != null) ...[
+                ] else if (_checkInDueToday != null) ...[
                   PatternsCheckInStatusCard.waiting(
-                    question: checkInDueToday.question,
+                    question: _checkInDueToday!.question,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                ] else if (checkInCompletedRecently != null) ...[
+                ] else if (_checkInCompletedRecently != null) ...[
                   PatternsCheckInStatusCard.closed(
-                    completed: checkInCompletedRecently,
+                    completed: _checkInCompletedRecently,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  if (checkInCompletedRecently.selectedOptionId == 'heavier')
+                  if (_checkInCompletedRecently!.selectedOptionId == 'heavier')
                     KinderAngleCard(
                       reflectionText: '',
-                      patternTitle: checkInCompletedRecently.patternTitle,
-                      specificPrompt: checkInCompletedRecently.prompt,
+                      patternTitle: _checkInCompletedRecently!.patternTitle,
+                      specificPrompt: _checkInCompletedRecently!.prompt,
                       resultHint:
-                          checkInCompletedRecently.selectedOptionId ?? 'same',
+                          _checkInCompletedRecently!.selectedOptionId ?? 'same',
                       trigger: KinderAngleTrigger.genericHardMoment,
                       compact: true,
                       fromPatterns: true,
@@ -2789,54 +1923,54 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     PerspectiveShiftCard(
                       reflectionText: '',
                       resultHint:
-                          checkInCompletedRecently.selectedOptionId ?? 'same',
-                      checkInQuestion: checkInCompletedRecently.question,
-                      patternTitle: checkInCompletedRecently.patternTitle,
-                      specificPrompt: checkInCompletedRecently.prompt,
+                          _checkInCompletedRecently!.selectedOptionId ?? 'same',
+                      checkInQuestion: _checkInCompletedRecently!.question,
+                      patternTitle: _checkInCompletedRecently!.patternTitle,
+                      specificPrompt: _checkInCompletedRecently!.prompt,
                       compact: true,
                       fromPatterns: true,
                     ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (patternProgress != null) ...[
+                if (_patternProgress != null) ...[
                   PatternProgressCard(
-                    progress: patternProgress,
-                    showRecordCta: patternNextAction == null,
+                    progress: _patternProgress!,
+                    showRecordCta: _patternNextAction == null,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (patternNextAction != null) ...[
+                if (_patternNextAction != null) ...[
                   PatternNextActionCard(
-                    action: patternNextAction,
-                    onUse: () => _usePatternNextAction(patternNextAction),
+                    action: _patternNextAction!,
+                    onUse: () => _usePatternNextAction(_patternNextAction!),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (habitProof != null) ...[
+                if (_habitProof != null) ...[
                   HabitProofCard(
-                    proof: habitProof,
-                    onUseNext: () => _useHabitProofNext(habitProof),
+                    proof: _habitProof!,
+                    onUseNext: () => _useHabitProofNext(_habitProof!),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (patternWeeklyRecap != null) ...[
+                if (_patternWeeklyRecap != null) ...[
                   weekly_recap_card.WeeklyPatternRecapCard(
-                    recap: patternWeeklyRecap,
+                    recap: _patternWeeklyRecap!,
                     onUseNext: () =>
-                        _usePatternWeeklyRecapNext(patternWeeklyRecap),
+                        _usePatternWeeklyRecapNext(_patternWeeklyRecap!),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (patternShareRecap != null) ...[
-                  PatternShareRecapCard(recap: patternShareRecap),
+                if (_patternShareRecap != null) ...[
+                  PatternShareRecapCard(recap: _patternShareRecap!),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (patternMemory != null) ...[
-                  PatternMemoryCard(memory: patternMemory),
+                if (_patternMemory != null) ...[
+                  PatternMemoryCard(memory: _patternMemory!),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (activePatternThread != null) ...[
-                  ActivePatternThreadCard(thread: activePatternThread),
+                if (_activePatternThread != null) ...[
+                  ActivePatternThreadCard(thread: _activePatternThread!),
                   const SizedBox(height: AppSpacing.lg),
                 ] else if (strongest != null) ...[
                   const BeliefSectionHeading(
@@ -2850,19 +1984,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (selectedSignal != null && !journey.completed) ...[
+                if (_selectedSignal != null && !journey.completed) ...[
                   PatternsSignalsWaitingCard(
-                    selected: selectedSignal,
+                    selected: _selectedSignal!,
                     reflectionCount: _entries.length,
-                    nextPrompt: selectedSignal.nextPrompt,
+                    nextPrompt: _selectedSignal!.nextPrompt,
                     onViewDetail: () =>
                         SignalArchiveNavigation.openSignalDetail(context),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (signalArchiveSnapshot != null &&
-                    (signalArchiveSnapshot.hasActiveSignal ||
-                        signalArchiveSnapshot.reflectionCount > 0 ||
+                if (_signalArchiveSnapshot != null &&
+                    (_signalArchiveSnapshot!.hasActiveSignal ||
+                        _signalArchiveSnapshot!.reflectionCount > 0 ||
                         _signalJourney != null)) ...[
                   ..._signalArchiveSurfaces(),
                 ],
@@ -2874,55 +2008,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 const SizedBox(height: AppSpacing.xl),
                 const ArchiveRecordEvidenceCta(),
                 const SizedBox(height: AppSpacing.lg),
-              ]),
+              ],
             ),
           ),
         ),
       );
     }
 
-    if (!_hasRenderablePatternInsight) {
-      if (_hasArchiveReactivityPatterns) {
-        return Scaffold(
-          backgroundColor: AppColors.backgroundPrimary,
-          body: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _load,
-              child: ListView(
-                padding: ArchiveMobileSpacing.pagePadding,
-                children: _withLoopMapPrimarySurface(_safeOrderedPatternsStack()),
-              ),
-            ),
-          ),
-        );
-      }
-      return _buildPatternsNoClearPatternScaffold(
-        context,
-        reason: _patternsEmptyReason,
-      );
-    }
-
-    final strongest = _strongest;
-    if (strongest == null) {
-      if (_hasArchiveReactivityPatterns) {
-        return Scaffold(
-          backgroundColor: AppColors.backgroundPrimary,
-          body: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _load,
-              child: ListView(
-                padding: ArchiveMobileSpacing.pagePadding,
-                children: _withLoopMapPrimarySurface(_safeOrderedPatternsStack()),
-              ),
-            ),
-          ),
-        );
-      }
-      return _buildPatternsNoClearPatternScaffold(
-        context,
-        reason: 'null_belief_snapshot_or_field',
-      );
-    }
+    final strongest = _strongest!;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
@@ -2931,10 +2024,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           onRefresh: _load,
           child: ListView(
             padding: ArchiveMobileSpacing.pagePadding,
-            children: _withLoopMapPrimarySurface([
-              ..._safeOrderedPatternsStack(),
-              ..._safeLegacyBeliefSections(strongest),
-            ]),
+            children: [
+              ..._orderedPatternsStack(),
+              ..._legacyBeliefSections(strongest),
+            ],
           ),
         ),
       ),

@@ -7,31 +7,32 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_pages.dart';
 import 'package:voicememory_mobile/onboarding/onboarding_visuals.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/screens/onboarding_screen.dart';
 import 'package:voicememory_mobile/theme/app_colors.dart';
 import 'package:voicememory_mobile/theme/app_spacing.dart';
 
 /// Exports onboarding-1.png … onboarding-4.png for design review.
 ///
-/// CI runs the layout pass only (fast). Set `RUN_SCREENSHOT_EXPORT=true` to
-/// write PNG files locally:
+/// Run:
 /// ```bash
-/// RUN_SCREENSHOT_EXPORT=true flutter test test/export_onboarding_pages_png_test.dart
+/// cd apps/voicememory_mobile
+/// flutter test test/export_onboarding_pages_png_test.dart
 /// ```
 ///
-/// Output default: `build/onboarding_screenshots/onboarding-{1..4}.png`
+/// Output default: `~/Desktop/upload12/screenshots/onboarding-{1..4}.png`
 void main() {
   testWidgets('export belief-first onboarding pages as PNG', (tester) async {
     const logicalSize = Size(393, 852);
     await tester.binding.setSurfaceSize(logicalSize);
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    final writeFiles = Platform.environment['RUN_SCREENSHOT_EXPORT'] == 'true';
+    final home = Platform.environment['HOME'] ?? '';
     final outDir =
         Platform.environment['ONBOARDING_SCREENSHOT_ROOT'] ??
-        'build/onboarding_screenshots';
-    if (writeFiles) {
-      await Directory(outDir).create(recursive: true);
-    }
+        (home.isNotEmpty
+            ? '$home/Desktop/upload12/screenshots'
+            : 'build/onboarding_screenshots');
+    await Directory(outDir).create(recursive: true);
 
     for (var i = 0; i < OnboardingPages.pageCount; i++) {
       final page = OnboardingPages.pages[i];
@@ -63,20 +64,12 @@ void main() {
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      expect(
-        find.byKey(const Key('export_onboarding_repaint_boundary')),
-        findsOneWidget,
-      );
 
-      if (writeFiles) {
-        await _writePng(tester: tester, path: '$outDir/onboarding-${i + 1}.png');
-      }
+      await _writePng(tester: tester, path: '$outDir/onboarding-${i + 1}.png');
     }
 
-    if (writeFiles) {
-      // ignore: avoid_print
-      print('Onboarding screenshots written to: $outDir');
-    }
+    // ignore: avoid_print
+    print('Onboarding screenshots written to: $outDir');
   });
 }
 
@@ -94,7 +87,6 @@ class _OnboardingExportFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      key: const Key('export_onboarding_repaint_boundary'),
       child: Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
@@ -202,9 +194,9 @@ Future<void> _writePng({
   required String path,
 }) async {
   final boundary = tester.renderObject<RenderRepaintBoundary>(
-    find.byKey(const Key('export_onboarding_repaint_boundary')),
+    find.byType(RepaintBoundary).first,
   );
-  final image = await boundary.toImage(pixelRatio: 1);
+  final image = await boundary.toImage(pixelRatio: 3);
   final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
   expect(bytes, isNotNull);
   await File(path).writeAsBytes(bytes!.buffer.asUint8List());

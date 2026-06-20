@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../services/activation_funnel_analytics.dart';
-import '../../startup/startup_light_mode.dart';
 import '../archive_packs/archive_pack_scope_policy.dart';
 import '../archive_packs/cross_pack_confirmation.dart';
 import '../pressure_retention/pressure_check_in_record.dart';
@@ -42,19 +41,6 @@ abstract class MemoryGovernancePolicy {
     DateTime? now,
     String source = 'memory_card',
   }) {
-    if (StartupLightMode.shouldSkipRecordArchiveEngines &&
-        _isRecordSurfaceSource(source)) {
-      StartupLightMode.logRecordStartupArchiveEnginesBlocked();
-      return const MemoryGovernanceDecision(
-        allowed: false,
-        decisionId: MemoryGovernanceDecisionId.blockedLowRelevance,
-        reasonId: 'startup_light_mode',
-        currentIntent: CurrentIntent.unknown,
-        relevanceBand: RelevanceBand.none,
-        requiresUserConfirmation: false,
-      );
-    }
-
     var scopedRecords = records;
     final intent = CurrentIntentSignal.classify(
       cardType: cardType,
@@ -696,14 +682,6 @@ abstract class MemoryGovernancePolicy {
   }
 
   @visibleForTesting
-  static bool _isRecordSurfaceSource(String source) {
-    // Record-tab startup deferral only — not generic memory_card callers
-    // (Pressure Insights, guided thread plan, unit tests).
-    return source == 'record' ||
-        source == 'aha_engine' ||
-        source.startsWith('record_');
-  }
-
   static void resetForTest() {
     CurrentIntentSignal.resetSessionForTest();
     EntryAboutnessSession.resetSessionForTest();

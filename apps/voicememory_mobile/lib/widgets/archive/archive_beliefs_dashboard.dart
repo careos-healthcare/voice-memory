@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/archive_beliefs/archive_belief_models.dart';
-import '../../features/patterns/pattern_display_copy_gate.dart';
-import '../../features/patterns/patterns_human_copy.dart';
 import '../../features/archive_beliefs/belief_change_timeline.dart';
 import '../../product/belief_clarity.dart';
 import '../../product/belief_product_copy.dart';
@@ -24,26 +22,6 @@ class ArchiveHeroBeliefCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statement = PatternDisplayCopyGate.displayOrFallback(
-      PatternDisplayField.currentBelief,
-      belief.statement,
-    );
-    final fallbackObservation = PatternHumanCopy.fallbackMainObservation;
-    final gatedStatement =
-        PatternDisplayCopyGate.containsBlockedCopy(belief.statement)
-        ? fallbackObservation
-        : statement;
-    final gatedBelief = ArchiveBeliefCardModel(
-      id: belief.id,
-      statement: gatedStatement,
-      confidencePercent: belief.confidencePercent,
-      evidenceSummary: belief.evidenceSummary,
-      whyExplanation: belief.whyExplanation,
-      section: belief.section,
-      timeline: belief.timeline,
-      conclusion: belief.conclusion,
-    );
-
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
@@ -56,10 +34,10 @@ class ArchiveHeroBeliefCard extends StatelessWidget {
         ],
       ),
       child: BeliefClarityCard(
-        belief: gatedBelief,
+        belief: belief,
         reflectionsAnalysed: reflectionsAnalysed,
         showArchiveExplanation: true,
-        onTap: () => context.push('/belief-detail', extra: gatedBelief),
+        onTap: () => context.push('/belief-detail', extra: belief),
       ),
     );
   }

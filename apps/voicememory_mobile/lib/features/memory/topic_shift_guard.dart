@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../services/activation_funnel_analytics.dart';
-import '../../startup/startup_light_mode.dart';
 import '../archive_packs/archive_pack_scope_policy.dart';
 import '../archive_packs/entry_pack_scope.dart';
 import '../pressure_retention/pressure_check_in_record.dart';
@@ -38,12 +37,6 @@ abstract class TopicShiftGuard {
     String source = 'record',
     bool trackAnalytics = true,
   }) {
-    if (StartupLightMode.shouldSkipRecordArchiveEngines &&
-        _isRecordSurfaceSource(source)) {
-      StartupLightMode.logRecordStartupArchiveEnginesBlocked();
-      return _noPrompt;
-    }
-
     final decision = _evaluate(
       entryCount: entryCount,
       records: records,
@@ -307,12 +300,6 @@ abstract class TopicShiftGuard {
         )
         .toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-  }
-
-  static bool _isRecordSurfaceSource(String source) {
-    return source == 'record' ||
-        source == 'aha_engine' ||
-        source.startsWith('record_');
   }
 
   @visibleForTesting
