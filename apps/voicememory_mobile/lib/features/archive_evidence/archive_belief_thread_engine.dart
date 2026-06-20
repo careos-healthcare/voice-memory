@@ -3,6 +3,7 @@ import '../../models/journal_entry.dart';
 import '../activation/first_three_session_gates.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../first_session/first_session_pattern_engine.dart';
+import '../patterns/pattern_copy_quality_gate.dart';
 import '../retention/second_session_signal_engine.dart';
 import 'archive_belief_thread_copy.dart';
 import 'archive_belief_thread_model.dart';
@@ -48,21 +49,24 @@ class ArchiveBeliefThreadEngine {
       return ArchiveBeliefThread.insufficient;
     }
 
-    final belief = analysis.beliefLine.isNotEmpty
+    final beliefRaw = analysis.beliefLine.isNotEmpty
         ? analysis.beliefLine
         : _beliefFallback(comparison, eligible.last);
+    final belief = PatternCopyQualityGate.gateBelief(beliefRaw);
 
-    final whatChanged = analysis.whatChangedLine?.trim().isNotEmpty == true
+    final whatChangedRaw = analysis.whatChangedLine?.trim().isNotEmpty == true
         ? analysis.whatChangedLine!.trim()
         : (comparison.whatChanged?.trim().isNotEmpty == true
               ? comparison.whatChanged!.trim()
               : 'Your latest moment may sit differently from the one before it.');
+    final whatChanged = PatternCopyQualityGate.gateSentence(whatChangedRaw);
 
-    final whatToTest = analysis.whatToTestLine?.trim().isNotEmpty == true
+    final whatToTestRaw = analysis.whatToTestLine?.trim().isNotEmpty == true
         ? analysis.whatToTestLine!.trim()
         : (comparison.whatToTestNext?.trim().isNotEmpty == true
               ? comparison.whatToTestNext!.trim()
               : 'Record another ordinary moment and notice what feels different.');
+    final whatToTest = PatternCopyQualityGate.gateSentence(whatToTestRaw);
 
     return ArchiveBeliefThread(
       hasEnoughData: true,
@@ -111,11 +115,18 @@ class ArchiveBeliefThreadEngine {
     final latestPattern = _patternEngine.build(latest);
     if (comparison.whatRepeated?.trim().isNotEmpty == true) {
       final repeated = comparison.whatRepeated!.trim();
-      if (repeated.length <= 90) return 'You may be $repeated';
+      if (repeated.length <= 90) {
+        return PatternCopyQualityGate.gateBelief('You may be $repeated.');
+      }
     }
     final watch = latestPattern.watchForText.trim();
-    if (watch.isNotEmpty) return 'You may be noticing $watch.';
-    return 'Something similar may be showing up across your recent moments.';
+    if (watch.isNotEmpty) {
+      final gatedWatch = PatternCopyQualityGate.gatePhraseOrNull(watch);
+      if (gatedWatch != null) {
+        return PatternCopyQualityGate.gateBelief('You may be noticing $gatedWatch.');
+      }
+    }
+    return PatternCopyQualityGate.currentBeliefFallback;
   }
 
   List<ArchiveEvidenceTimelineStep> _timeline(
@@ -189,7 +200,10 @@ class ArchiveBeliefThreadEngine {
   String _momentLabel(JournalEntry entry, {required String fallback}) {
     final pattern = _patternEngine.build(entry);
     final title = pattern.title.trim();
-    if (title.isNotEmpty && title.length <= 48) return title;
+    if (title.isNotEmpty && title.length <= 48) {
+      final gated = PatternCopyQualityGate.gatePhraseOrNull(title);
+      if (gated != null) return gated;
+    }
     return fallback;
   }
 
@@ -293,25 +307,28 @@ class WeeklyWhatChangedReviewEngine {
     if (!comparison.hasEnoughData) return WeeklyWhatChangedReview.insufficient;
 
     final latestPattern = _patternEngine.build(eligible.last);
-    final keptReturning = analysis.whatReturnedLine?.trim().isNotEmpty == true
+    final keptReturningRaw = analysis.whatReturnedLine?.trim().isNotEmpty == true
         ? analysis.whatReturnedLine!.trim()
         : (comparison.whatRepeated?.trim().isNotEmpty == true
               ? comparison.whatRepeated!.trim()
               : (latestPattern.title.trim().isNotEmpty
                     ? latestPattern.title.trim()
-                    : 'Similar themes may be showing up across your recent moments.'));
+                    : PatternCopyQualityGate.similarDirection));
+    final keptReturning = PatternCopyQualityGate.gateSentence(keptReturningRaw);
 
-    final changed = analysis.whatChangedLine?.trim().isNotEmpty == true
+    final changedRaw = analysis.whatChangedLine?.trim().isNotEmpty == true
         ? analysis.whatChangedLine!.trim()
         : (comparison.whatChanged?.trim().isNotEmpty == true
               ? comparison.whatChanged!.trim()
               : 'You caught the pressure earlier once.');
+    final changed = PatternCopyQualityGate.gateSentence(changedRaw);
 
-    final next = analysis.whatToTestLine?.trim().isNotEmpty == true
+    final nextRaw = analysis.whatToTestLine?.trim().isNotEmpty == true
         ? analysis.whatToTestLine!.trim()
         : (comparison.whatToTestNext?.trim().isNotEmpty == true
               ? comparison.whatToTestNext!.trim()
               : 'Pause before agreeing to new requests.');
+    final next = PatternCopyQualityGate.gateSentence(nextRaw);
 
     if (tier == ArchiveIntelligenceTier.freeMedium) {
       return WeeklyWhatChangedReview(

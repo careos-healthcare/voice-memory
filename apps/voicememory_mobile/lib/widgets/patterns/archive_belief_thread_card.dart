@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/archive_reactivity/archive_display_copy_guard.dart';
 import '../../features/archive_evidence/archive_evidence_heuristics.dart';
 import '../../features/archive_evidence/archive_belief_correction_store.dart';
 import '../../features/archive_evidence/archive_belief_thread_copy.dart';
 import '../../features/archive_evidence/archive_belief_thread_model.dart';
+import '../../features/patterns/pattern_display_copy_gate.dart';
+import '../../features/patterns/patterns_human_copy.dart';
 import '../../features/tomorrow_return/active_pattern_thread_coordinator.dart';
 import '../../features/tomorrow_return/active_pattern_thread_model.dart';
 import '../../features/tomorrow_return/watch_for_model.dart';
@@ -20,10 +23,12 @@ class ArchiveBeliefThreadCard extends StatefulWidget {
     super.key,
     required this.thread,
     required this.onRecordMoreEvidence,
+    this.humanCopy,
     this.onDismissed,
   });
 
   final ArchiveBeliefThread thread;
+  final PatternHumanCopyBundle? humanCopy;
   final VoidCallback onRecordMoreEvidence;
   final VoidCallback? onDismissed;
 
@@ -40,18 +45,26 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
 
   Future<void> _saveThread() async {
     final now = DateTime.now();
+    final currentBelief = ArchiveDisplayCopyGuard.grammarDisplayOrFallback(
+      field: PatternDisplayField.currentBelief,
+      text: widget.thread.currentBelief,
+    );
+    final whatToTest = ArchiveDisplayCopyGuard.grammarDisplayOrFallback(
+      field: PatternDisplayField.whatToTest,
+      text: widget.thread.whatToTest,
+    );
     await ActivePatternThreadCoordinator.writeCurrentForFirstSession(
       ActivePatternThread(
         id: 'thread_${now.millisecondsSinceEpoch}',
-        title: widget.thread.currentBelief,
+        title: currentBelief,
         createdAt: now,
         updatedAt: now,
-        watchForText: widget.thread.whatToTest,
+        watchForText: whatToTest,
         chips: const [],
         status: ActivePatternThreadStatus.active,
         daysActive: 1,
         lastResult: WatchForResult.unclear,
-        nextPrompt: widget.thread.whatToTest,
+        nextPrompt: whatToTest,
       ),
     );
     ArchiveBeliefCorrectionStore.markSaved(widget.thread.suggestionId);
@@ -69,6 +82,61 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
     if (_hidden) return const SizedBox.shrink();
 
     final thread = widget.thread;
+    final copy = widget.humanCopy;
+    final cardTitle = copy?.cardTitle ?? ArchiveBeliefThreadCopy.threadTitle;
+    final evidenceFirst = copy?.isEvidenceFirstLayout ?? false;
+    final repeatedPhrases = copy?.exactEvidencePhrases ?? const <String>[];
+    final interpretationLabel =
+        copy?.interpretationLabel ?? ArchiveBeliefThreadCopy.currentBeliefLabel;
+    final confidenceLabel =
+        copy?.whatChangedTitle ?? ArchiveBeliefThreadCopy.whatChangedLabel;
+    final whatToNoticeLabel =
+        copy?.whatToTestTitle ?? ArchiveBeliefThreadCopy.whatToTestLabel;
+    final timelineTitle =
+        copy?.threadOverTimeTitle ?? ArchiveBeliefThreadCopy.timelineTitle;
+
+    final interpretation = ArchiveDisplayCopyGuard.validateAndNormalize(
+      field: 'currentBelief',
+      text: thread.currentBelief,
+    );
+    final confidenceCopy = ArchiveDisplayCopyGuard.validateAndNormalize(
+      field: 'whatChanged',
+      text: thread.whatChanged,
+    );
+    final whatToNotice = ArchiveDisplayCopyGuard.validateAndNormalize(
+      field: 'whatToNotice',
+      text: thread.whatToTest,
+      requireSpecificity: false,
+    );
+    final gatedPhrases = repeatedPhrases.isNotEmpty
+        ? repeatedPhrases
+        : thread.evidenceSnippets;
+    final whatReturned = thread.whatReturnedLine == null
+        ? null
+        : ArchiveDisplayCopyGuard.grammarDisplayOrFallback(
+            field: PatternDisplayField.whatReturned,
+            text: thread.whatReturnedLine!,
+          );
+    final previousBelief = thread.previousBeliefLine == null
+        ? null
+        : ArchiveDisplayCopyGuard.grammarDisplayOrFallback(
+            field: PatternDisplayField.currentBelief,
+            text: thread.previousBeliefLine!,
+          );
+    final whatFaded = thread.whatFadedLine == null
+        ? null
+        : ArchiveDisplayCopyGuard.grammarDisplayOrFallback(
+            field: PatternDisplayField.whatChanged,
+            text: thread.whatFadedLine!,
+          );
+    final worthWatching = thread.worthWatchingLine == null
+        ? null
+        : ArchiveDisplayCopyGuard.grammarDisplayOrFallback(
+            field: PatternDisplayField.evidence,
+            text: thread.worthWatchingLine!,
+          );
+    if (interpretation.isEmpty) return const SizedBox.shrink();
+
     return Container(
       key: const Key('archive_belief_thread_card'),
       width: double.infinity,
@@ -80,30 +148,57 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            ArchiveBeliefThreadCopy.threadTitle,
+            cardTitle,
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.md),
-          if (thread.previousBeliefLine == null) ...[
+          if (evidenceFirst && gatedPhrases.isNotEmpty) ...[
             Text(
-              ArchiveBeliefThreadCopy.currentBeliefLabel,
+              copy?.evidenceLabel ?? PatternHumanCopy.repeatedWordsLabel,
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            for (final phrase in gatedPhrases) ...[
+              Text(
+                '“$phrase”',
+                style: ArchiveMobileTypography.body(
+                  context,
+                ).copyWith(color: AppColors.textPrimary),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+            ],
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              interpretationLabel,
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              thread.currentBelief,
+              interpretation,
+              style: ArchiveMobileTypography.body(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
+            ),
+          ] else if (thread.previousBeliefLine == null) ...[
+            Text(
+              interpretationLabel,
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              interpretation,
               style: ArchiveMobileTypography.body(
                 context,
               ).copyWith(color: AppColors.textPrimary),
             ),
           ] else ...[
             Text(
-              thread.previousBeliefLine!,
+              previousBelief!,
               style: ArchiveMobileTypography.body(context),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              '${ArchiveBeliefThreadCopy.nowBeliefLabel} ${thread.currentBelief}',
+              '${ArchiveBeliefThreadCopy.nowBeliefLabel} $interpretation',
               style: ArchiveMobileTypography.body(
                 context,
               ).copyWith(color: AppColors.textPrimary),
@@ -111,18 +206,20 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
           ],
           const SizedBox(height: AppSpacing.sm),
           Text(
-            ArchiveBeliefThreadCopy.evidenceLabel,
+            confidenceLabel,
             style: ArchiveMobileTypography.cardLabel(context),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            thread.evidenceLine,
+            confidenceCopy,
             style: ArchiveMobileTypography.body(context),
           ),
-          if (thread.worthWatchingLine != null) ...[
+          if (worthWatching != null &&
+              !evidenceFirst &&
+              worthWatching != confidenceCopy) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
-              thread.worthWatchingLine!,
+              worthWatching,
               style: ArchiveMobileTypography.responsiveHelper(context),
             ),
           ],
@@ -139,7 +236,7 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
             ),
           ],
 
-          if (thread.whatReturnedLine != null) ...[
+          if (whatReturned != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               ArchiveBeliefThreadCopy.whatReturnedLabel,
@@ -147,11 +244,11 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              thread.whatReturnedLine!,
+              whatReturned,
               style: ArchiveMobileTypography.body(context),
             ),
           ],
-          if (thread.evidenceSnippets.isNotEmpty) ...[
+          if (!evidenceFirst && thread.evidenceSnippets.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               ArchiveBeliefThreadCopy.supportingEvidenceLabel,
@@ -168,15 +265,15 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
           ],
           const SizedBox(height: AppSpacing.sm),
           Text(
-            ArchiveBeliefThreadCopy.whatChangedLabel,
+            whatToNoticeLabel,
             style: ArchiveMobileTypography.cardLabel(context),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            thread.whatChanged,
+            whatToNotice,
             style: ArchiveMobileTypography.body(context),
           ),
-          if (thread.whatFadedLine != null) ...[
+          if (whatFaded != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               ArchiveBeliefThreadCopy.whatFadedLabel,
@@ -184,22 +281,12 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              thread.whatFadedLine!,
+              whatFaded,
               style: ArchiveMobileTypography.body(context),
             ),
           ],
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            ArchiveBeliefThreadCopy.whatToTestLabel,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            thread.whatToTest,
-            style: ArchiveMobileTypography.body(context),
-          ),
           const SizedBox(height: AppSpacing.lg),
-          ArchiveEvidenceTimeline(steps: thread.timeline),
+          ArchiveEvidenceTimeline(steps: thread.timeline, title: timelineTitle),
           const SizedBox(height: AppSpacing.lg),
           if (_statusMessage != null) ...[
             Text(

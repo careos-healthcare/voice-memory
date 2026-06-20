@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Test-generated local state
+*_journal.json
+*_prefs.json
+
+# Test-generated local state
+*_journal.json
+*_prefs.json

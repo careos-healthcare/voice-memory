@@ -82,6 +82,7 @@ Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
     journalPath: '/tmp/vm_wedge_journal_$stamp.json',
     prefsPath: '/tmp/vm_wedge_prefs_$stamp.json',
+    skipRevenueCat: true,
   );
 }
 
@@ -221,8 +222,6 @@ void main() {
     });
 
     testWidgets('too generic opens clearer prompt', (tester) async {
-      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _reset(stamp);
       await tester.binding.setSurfaceSize(const Size(390, 1600));
       await tester.pumpWidget(
         MaterialApp(
@@ -246,9 +245,12 @@ void main() {
       await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
-      await tester.ensureVisible(
+      await tester.scrollUntilVisible(
         find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
+        500,
+        scrollable: find.byType(Scrollable).first,
       );
+      await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(
         find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
       );
@@ -261,8 +263,6 @@ void main() {
     });
 
     testWidgets('wrong angle opens alternatives', (tester) async {
-      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _reset(stamp);
       await tester.binding.setSurfaceSize(const Size(390, 1600));
       await tester.pumpWidget(
         MaterialApp(
@@ -285,9 +285,12 @@ void main() {
       await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
-      await tester.ensureVisible(
+      await tester.scrollUntilVisible(
         find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
+        500,
+        scrollable: find.byType(Scrollable).first,
       );
+      await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(
         find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
       );
