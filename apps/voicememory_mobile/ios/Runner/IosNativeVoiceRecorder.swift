@@ -11,6 +11,13 @@ final class IosNativeVoiceRecorder {
     case wav
   }
 
+  private enum NativeRecordPermission: String {
+    case granted
+    case denied
+    case undetermined
+    case unknown
+  }
+
   private var recorder: AVAudioRecorder?
   private var startedAt: Date?
   private var activePath: String?
@@ -37,12 +44,59 @@ final class IosNativeVoiceRecorder {
     lastFailedStep
   }
 
-  func start(path: String) throws -> String {
+  func microphonePermissionStatus() -> [String: Any] {
+    let status = currentRecordPermissionStatus()
+    logMicPermission(status)
+    return [
+      "status": status.rawValue,
+      "granted": status == .granted,
+      "canRequest": status == .undetermined,
+    ]
+  }
+
+  func requestMicrophonePermission(completion: @escaping (Bool) -> Void) {
+    if #available(iOS 17.0, *) {
+      AVAudioApplication.requestRecordPermission { granted in
+        DispatchQueue.main.async {
+          completion(granted)
+        }
+      }
+      return
+    }
+
+    AVAudioSession.sharedInstance().requestRecordPermission { granted in
+      DispatchQueue.main.async {
+        completion(granted)
+      }
+    }
+  }
+
+  func start(path: String, preferredFormat: String = "wav") throws -> String {
     stopInternal(deleteFile: true)
     lastFailedStep = nil
 
-    logStep("prepare_session_start")
-    try configureSession()
+    logStep("prepare_session_start format=\(preferredFormat)")
+    try ensureMicrophonePermissionGranted()
+
+    let session = AVAudioSession.sharedInstance()
+    logAudioRoute(session, label: "ARCHIVEME_NATIVE_AUDIO_ROUTE_BEFORE")
+
+    try configureCaptureOnlySession()
+
+    logAudioRoute(session, label: "ARCHIVEME_NATIVE_AUDIO_ROUTE_AFTER")
+    logSelectedInput(session)
+
+    let targetFormat = parsePreferredFormat(preferredFormat)
+
+    if targetFormat == .wav {
+      let wavURL = try resolveRecordingURL(
+        preferredPath: swapPathExtension(path, to: "wav"),
+        fileExtension: "wav"
+      )
+      let resolvedPath = try startRecording(at: wavURL, format: .wav)
+      logStartSuccess(path: resolvedPath, format: .wav)
+      return resolvedPath
+    }
 
     let aacURL = try resolveRecordingURL(preferredPath: path, fileExtension: "m4a")
     do {
@@ -97,6 +151,13 @@ final class IosNativeVoiceRecorder {
     let likelySilent = sampleCount == 0 || resolvedMaxDb < silentThresholdDb
     let format = activeFormat?.rawValue ?? "unknown"
 
+    let session = AVAudioSession.sharedInstance()
+    logAudioRoute(session, label: "ARCHIVEME_NATIVE_AUDIO_ROUTE_AFTER")
+    let selectedInput = resolvedSelectedInput(session)
+    logSelectedInput(session)
+
+    try? session.setActive(false, options: .notifyOthersOnDeactivation)
+
     print(
       "\(logPrefix)_STOP path=\(path) bytes=\(bytes) durationMs=\(durationMs) " +
         "format=\(format) maxDb=\(resolvedMaxDb) avgDb=\(avgDb) likelySilent=\(likelySilent)"
@@ -116,6 +177,8 @@ final class IosNativeVoiceRecorder {
       "avgDb": Double(avgDb),
       "likelySilent": likelySilent,
       "format": format,
+      "inputPortName": selectedInput.name,
+      "inputPortType": selectedInput.type,
     ]
   }
 
@@ -142,37 +205,113 @@ final class IosNativeVoiceRecorder {
     ]
   }
 
-  private func configureSession() throws {
-    let session = AVAudioSession.sharedInstance()
-
-    do {
-      try session.setCategory(.playAndRecord, options: [.defaultToSpeaker])
-      logStep("set_category_ok")
-    } catch {
-      lastFailedStep = "set_category_failed"
-      logStep("set_category_failed error=\(error.localizedDescription)")
-      throw error
+  private func parsePreferredFormat(_ value: String) -> RecordingFormat {
+    switch value.lowercased() {
+    case "aac", "m4a":
+      return .aac
+    default:
+      return .wav
     }
+  }
 
-    do {
-      try session.setMode(.default)
-      logStep("set_mode_ok")
-    } catch {
-      lastFailedStep = "set_mode_failed"
-      logStep("set_mode_failed error=\(error.localizedDescription)")
-      throw error
-    }
-
-    if let inputs = session.availableInputs,
-       let builtInMic = inputs.first(where: { $0.portType == .builtInMic }) {
-      do {
-        try session.setPreferredInput(builtInMic)
-        logStep("set_preferred_input_ok input=\(builtInMic.portName)")
-      } catch {
-        logStep("set_preferred_input_failed error=\(error.localizedDescription)")
+  private func currentRecordPermissionStatus() -> NativeRecordPermission {
+    if #available(iOS 17.0, *) {
+      switch AVAudioApplication.shared.recordPermission {
+      case .granted:
+        return .granted
+      case .denied:
+        return .denied
+      case .undetermined:
+        return .undetermined
+      @unknown default:
+        return .unknown
       }
-    } else {
-      logStep("set_preferred_input_skipped reason=no_built_in_mic")
+    }
+
+    switch AVAudioSession.sharedInstance().recordPermission {
+    case .granted:
+      return .granted
+    case .denied:
+      return .denied
+    case .undetermined:
+      return .undetermined
+    @unknown default:
+      return .unknown
+    }
+  }
+
+  private func ensureMicrophonePermissionGranted() throws {
+    let status = currentRecordPermissionStatus()
+    logMicPermission(status)
+    guard status == .granted else {
+      lastFailedStep = "microphone_permission_denied"
+      throw RecorderError(
+        step: "microphone_permission_denied",
+        message: "Native microphone permission is \(status.rawValue)"
+      )
+    }
+  }
+
+  private func configureCaptureOnlySession() throws {
+    let session = AVAudioSession.sharedInstance()
+    let bluetoothOptions: AVAudioSession.CategoryOptions = [.allowBluetooth]
+
+    do {
+      try session.setActive(false, options: .notifyOthersOnDeactivation)
+      logStep("set_active_false_ok")
+    } catch {
+      logStep("set_active_false_failed error=\(error.localizedDescription)")
+    }
+
+    var categoryConfigured = false
+    do {
+      try session.setCategory(.record, mode: .measurement, options: bluetoothOptions)
+      logStep("set_category_ok category=record mode=measurement options=allowBluetooth")
+      categoryConfigured = true
+    } catch {
+      logStep("set_category_measurement_failed error=\(error.localizedDescription)")
+    }
+
+    if !categoryConfigured {
+      do {
+        try session.setCategory(.record, mode: .default, options: bluetoothOptions)
+        logStep("set_category_ok category=record mode=default options=allowBluetooth")
+        categoryConfigured = true
+      } catch {
+        logStep("set_category_record_default_failed error=\(error.localizedDescription)")
+      }
+    }
+
+    if !categoryConfigured {
+      do {
+        try session.setCategory(
+          .playAndRecord,
+          mode: .measurement,
+          options: bluetoothOptions
+        )
+        logStep(
+          "set_category_ok category=playAndRecord mode=measurement options=allowBluetooth"
+        )
+        categoryConfigured = true
+      } catch {
+        lastFailedStep = "set_category_failed"
+        logStep("set_category_playAndRecord_failed error=\(error.localizedDescription)")
+        throw error
+      }
+    }
+
+    do {
+      try session.setPreferredSampleRate(44100)
+      logStep("set_preferred_sample_rate_ok sampleRate=44100")
+    } catch {
+      logStep("set_preferred_sample_rate_failed error=\(error.localizedDescription)")
+    }
+
+    do {
+      try session.setPreferredInputNumberOfChannels(1)
+      logStep("set_preferred_input_channels_ok channels=1")
+    } catch {
+      logStep("set_preferred_input_channels_failed error=\(error.localizedDescription)")
     }
 
     do {
@@ -183,6 +322,78 @@ final class IosNativeVoiceRecorder {
       logStep("set_active_failed error=\(error.localizedDescription)")
       throw error
     }
+
+    selectPreferredRecordingInput(session)
+  }
+
+  private func selectPreferredRecordingInput(_ session: AVAudioSession) {
+    logAvailableInputs(session)
+
+    guard let inputs = session.availableInputs, !inputs.isEmpty else {
+      print("ARCHIVEME_NATIVE_INPUT_SELECTION preferred=default name=none type=none")
+      return
+    }
+
+    let headsetTypes: Set<AVAudioSession.Port> = [
+      .bluetoothHFP,
+      .bluetoothLE,
+      .headsetMic,
+    ]
+
+    if let headsetInput = inputs.first(where: { headsetTypes.contains($0.portType) }) {
+      applyPreferredInput(
+        session,
+        input: headsetInput,
+        preference: "bluetooth"
+      )
+      return
+    }
+
+    if let builtInMic = inputs.first(where: { $0.portType == .builtInMic }) {
+      applyPreferredInput(
+        session,
+        input: builtInMic,
+        preference: "builtin"
+      )
+      return
+    }
+
+    let fallback = inputs[0]
+    applyPreferredInput(
+      session,
+      input: fallback,
+      preference: "default"
+    )
+  }
+
+  private func applyPreferredInput(
+    _ session: AVAudioSession,
+    input: AVAudioSessionPortDescription,
+    preference: String
+  ) {
+    do {
+      try session.setPreferredInput(input)
+      print(
+        "ARCHIVEME_NATIVE_INPUT_SELECTION preferred=\(preference) " +
+          "name=\(input.portName) type=\(input.portType.rawValue)"
+      )
+    } catch {
+      print(
+        "ARCHIVEME_NATIVE_INPUT_SELECTION preferred=\(preference) " +
+          "name=\(input.portName) type=\(input.portType.rawValue) " +
+          "error=\(error.localizedDescription)"
+      )
+    }
+  }
+
+  private func logAvailableInputs(_ session: AVAudioSession) {
+    let available = session.availableInputs ?? []
+    let description = available
+      .map { "\($0.portName):\($0.portType.rawValue)" }
+      .joined(separator: ",")
+    print(
+      "ARCHIVEME_NATIVE_AVAILABLE_INPUTS inputs=\(description.isEmpty ? "none" : description)"
+    )
   }
 
   private func startRecording(at url: URL, format: RecordingFormat) throws -> String {
@@ -298,6 +509,7 @@ final class IosNativeVoiceRecorder {
         AVLinearPCMBitDepthKey: NSNumber(value: 16),
         AVLinearPCMIsFloatKey: NSNumber(value: false),
         AVLinearPCMIsBigEndianKey: NSNumber(value: false),
+        AVLinearPCMIsNonInterleaved: NSNumber(value: false),
       ]
     }
   }
@@ -316,19 +528,44 @@ final class IosNativeVoiceRecorder {
   }
 
   private func logStartSuccess(path: String, format: RecordingFormat) {
-    let inputName = currentInputLabel()
     print("\(logPrefix)_START path=\(path) format=\(format.rawValue)")
+    print("\(logPrefix)_SESSION category=record mode=capture_only format=\(format.rawValue)")
+  }
+
+  private func logMicPermission(_ status: NativeRecordPermission) {
     print(
-      "\(logPrefix)_SESSION category=playAndRecord mode=default input=\(inputName)"
+      "ARCHIVEME_NATIVE_MIC_PERMISSION status=\(status.rawValue) " +
+        "granted=\(status == .granted)"
     )
   }
 
-  private func currentInputLabel() -> String {
-    let session = AVAudioSession.sharedInstance()
-    if let input = session.preferredInput ?? session.currentRoute.inputs.first {
-      return "\(input.portName):\(input.portType.rawValue)"
+  private func logAudioRoute(_ session: AVAudioSession, label: String) {
+    let route = session.currentRoute
+    let inputs = route.inputs
+      .map { "\($0.portName):\($0.portType.rawValue)" }
+      .joined(separator: ",")
+    let outputs = route.outputs
+      .map { "\($0.portName):\($0.portType.rawValue)" }
+      .joined(separator: ",")
+    print("\(label) inputs=\(inputs.isEmpty ? "none" : inputs) outputs=\(outputs.isEmpty ? "none" : outputs)")
+  }
+
+  private func logSelectedInput(_ session: AVAudioSession) {
+    let input = resolvedSelectedInput(session)
+    if input.name.isEmpty && input.type.isEmpty {
+      print("ARCHIVEME_NATIVE_SELECTED_INPUT name=none type=unknown")
+      return
     }
-    return "unknown"
+    print(
+      "ARCHIVEME_NATIVE_SELECTED_INPUT name=\(input.name) type=\(input.type)"
+    )
+  }
+
+  private func resolvedSelectedInput(_ session: AVAudioSession) -> (name: String, type: String) {
+    if let input = session.preferredInput ?? session.currentRoute.inputs.first {
+      return (input.portName, input.portType.rawValue)
+    }
+    return ("", "")
   }
 
   private func startMeterTimer() {
@@ -395,6 +632,7 @@ final class IosNativeVoiceRecorder {
     activeFormat = nil
     startedAt = nil
     resetMeterStats()
+    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
   }
 
   private func logStep(_ message: String) {
@@ -432,10 +670,20 @@ final class IosNativeVoiceRecorderHandler {
     case "isNativeRecorderAvailable":
       result(recorder.isAvailable())
 
+    case "nativeMicrophonePermission":
+      result(recorder.microphonePermissionStatus())
+
+    case "requestNativeMicrophonePermission":
+      recorder.requestMicrophonePermission { _ in
+        result(recorder.microphonePermissionStatus())
+      }
+
     case "startNativeRecording":
-      let path = (call.arguments as? [String: Any])?["path"] as? String ?? ""
+      let args = call.arguments as? [String: Any]
+      let path = args?["path"] as? String ?? ""
+      let format = args?["format"] as? String ?? "wav"
       do {
-        let resolvedPath = try recorder.start(path: path)
+        let resolvedPath = try recorder.start(path: path, preferredFormat: format)
         result(["path": resolvedPath])
       } catch let error as IosNativeVoiceRecorder.RecorderError {
         print(

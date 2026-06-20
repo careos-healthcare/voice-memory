@@ -10,6 +10,8 @@ import '../features/voice_capture/audio/audio_diag_log.dart';
 import '../features/voice_capture/audio/audio_level_monitor.dart';
 import '../features/voice_capture/audio/ios_audio_session.dart';
 import '../features/voice_capture/audio/ios_native_recorder.dart';
+import '../features/voice_capture/audio/ios_native_recorder_config.dart';
+import '../features/voice_capture/audio/mic_capture_input_health.dart';
 import '../features/voice_capture/microphone_permission_environment.dart';
 import '../features/voice_capture/microphone_permission_gateway.dart';
 import '../features/voice_capture/microphone_permission_state.dart';
@@ -20,9 +22,21 @@ void _recordLog(String message) {
   debugPrint('RECORD: $message');
 }
 
-String _testRecordingPath({required bool native}) {
-  final name = native ? 'vm_rec_test_native.m4a' : 'vm_rec_test.m4a';
-  return '${Directory.systemTemp.path}/$name';
+String _testRecordingPath({
+  required bool native,
+  IosRecordingFormat format = IosRecordingFormat.wav,
+}) {
+  if (!native) {
+    return '${Directory.systemTemp.path}/vm_rec_test.m4a';
+  }
+  final ext = IosNativeRecorderConfig.fileExtensionFor(format);
+  return '${Directory.systemTemp.path}/vm_rec_test_native.$ext';
+}
+
+Future<String> _nativeRecordingPath(String directoryPath) async {
+  final format = await IosNativeRecorderConfig.recordingFormatForDevice();
+  final ext = IosNativeRecorderConfig.fileExtensionFor(format);
+  return '$directoryPath/vm_rec_${DateTime.now().millisecondsSinceEpoch}.$ext';
 }
 
 enum RecordingPhase {
@@ -41,27 +55,33 @@ class RecordingResult {
     required this.durationSeconds,
     this.likelySilentInput = false,
     this.audioLevelSummary,
+    this.captureInputPortName,
+    this.captureInputPortType,
   });
 
   final File file;
   final int durationSeconds;
   final bool likelySilentInput;
   final AudioLevelSummary? audioLevelSummary;
+  final String? captureInputPortName;
+  final String? captureInputPortType;
 }
 
-/// Normalized microphone permission from permission_handler + recorder.
+/// Normalized microphone permission for voice capture.
 class MicPermissionResolution {
   const MicPermissionResolution({
     required this.phase,
     required this.state,
     required this.hasRecorder,
-    required this.permissionHandlerStatus,
+    this.permissionHandlerStatus,
+    this.nativePermissionStatus,
   });
 
   final RecordingPhase phase;
   final MicrophonePermissionState state;
   final bool hasRecorder;
-  final PermissionStatus permissionHandlerStatus;
+  final PermissionStatus? permissionHandlerStatus;
+  final String? nativePermissionStatus;
 
   bool get isRecordable => MicrophonePermissionResolver.isRecordable(state);
 }
@@ -225,16 +245,83 @@ class RecordingService {
     );
   }
 
+  Future<bool> _usesNativeMicPermission() async {
+    return MicrophonePermissionEnvironment.isIosPhysicalDevice();
+  }
+
+  Future<MicPermissionResolution> _evaluateNativeMicrophonePermission({
+    String logPrefix = 'check',
+  }) async {
+    final native = await IosNativeRecorder.microphonePermission();
+    final platform = await MicrophonePermissionEnvironment.platformLabel();
+    debugPrint(
+      'ARCHIVEME_NATIVE_MIC_PERMISSION status=${native.status} '
+      'granted=${native.granted}',
+    );
+    final state = MicrophonePermissionResolver.resolveFromNative(native);
+    debugPrint(
+      'ARCHIVEME_MIC_PERMISSION_REFRESH native_status=${native.status} '
+      'resolved=${MicrophonePermissionResolver.resolvedLogName(state)}',
+    );
+    MicrophonePermissionResolver.logNativePermissionSource(
+      nativeStatus: native.status,
+      granted: native.granted,
+      resolved: state,
+      platform: platform,
+    );
+    final phase = MicrophonePermissionResolver.toRecordingPhase(state);
+    _recordLog(
+      'native permission result status=${native.status} granted=${native.granted} phase=$phase',
+    );
+    RecordPipelineLog.microphonePermission(
+      before: 'native_status=${native.status}',
+      after: '$state',
+      prefix: logPrefix,
+    );
+    if (!MicPermissionResolution(
+      phase: phase,
+      state: state,
+      hasRecorder: native.granted,
+      nativePermissionStatus: native.status,
+    ).isRecordable) {
+      RecordPipelineLog.microphonePermissionBlocked(blocked: true);
+    }
+    return MicPermissionResolution(
+      phase: phase,
+      state: state,
+      hasRecorder: native.granted,
+      nativePermissionStatus: native.status,
+    );
+  }
+
+  Future<RecordingPhase> _requestNativeMicrophone() async {
+    debugPrint('ARCHIVEME_MIC_PERMISSION_ACTION request_native_permission');
+    RecordPipelineLog.microphonePermissionRequestShown(shown: true);
+    final native = await IosNativeRecorder.requestMicrophonePermission();
+    debugPrint(
+      'ARCHIVEME_NATIVE_MIC_PERMISSION_REQUEST_RESULT '
+      'granted=${native.granted} status=${native.status}',
+    );
+    final resolution = await _evaluateNativeMicrophonePermission(
+      logPrefix: 'after-request',
+    );
+    return resolution.phase;
+  }
+
   Future<MicPermissionResolution> evaluateMicrophonePermission() async {
     if (_testMode &&
         _permissionGateway is! FakeMicrophonePermissionGateway &&
-        _hasRecorderOverride == null) {
+        _hasRecorderOverride == null &&
+        !await _usesNativeMicPermission()) {
       return const MicPermissionResolution(
         phase: RecordingPhase.ready,
         state: MicrophonePermissionState.granted,
         hasRecorder: true,
         permissionHandlerStatus: PermissionStatus.granted,
       );
+    }
+    if (await _usesNativeMicPermission()) {
+      return _evaluateNativeMicrophonePermission();
     }
     final status = await _permissionGateway.status;
     await _logMicDiag(status);
@@ -263,9 +350,13 @@ class RecordingService {
   Future<RecordingPhase> requestMicrophone() async {
     if (_testMode &&
         _permissionGateway is! FakeMicrophonePermissionGateway &&
-        _hasRecorderOverride == null) {
+        _hasRecorderOverride == null &&
+        !await _usesNativeMicPermission()) {
       _recordLog('permission result ready (test mode)');
       return RecordingPhase.ready;
+    }
+    if (await _usesNativeMicPermission()) {
+      return _requestNativeMicrophone();
     }
     final beforeStatus = await _permissionGateway.status;
     await _logMicDiag(beforeStatus);
@@ -345,15 +436,26 @@ class RecordingService {
         throw RecordingException('Microphone not available: ${resolution.phase}');
       }
     } else {
-      final status = await _permissionGateway.status;
-      await _logMicDiag(status);
-      final hasRecorder = await _hasRecorderPermission();
-      if (!status.isGranted && !hasRecorder) {
-        _recordLog('start failed — microphone not granted');
-        RecordPipelineLog.microphonePermissionBlocked(blocked: true);
-        throw RecordingException(
-          'Microphone not available: ${RecordingPhase.permissionDenied}',
-        );
+      if (await _usesNativeMicPermission()) {
+        final resolution = await evaluateMicrophonePermission();
+        if (!resolution.isRecordable) {
+          _recordLog('start failed — native microphone phase=${resolution.phase}');
+          RecordPipelineLog.microphonePermissionBlocked(blocked: true);
+          throw RecordingException(
+            'Microphone not available: ${resolution.phase}',
+          );
+        }
+      } else {
+        final status = await _permissionGateway.status;
+        await _logMicDiag(status);
+        final hasRecorder = await _hasRecorderPermission();
+        if (!status.isGranted && !hasRecorder) {
+          _recordLog('start failed — microphone not granted');
+          RecordPipelineLog.microphonePermissionBlocked(blocked: true);
+          throw RecordingException(
+            'Microphone not available: ${RecordingPhase.permissionDenied}',
+          );
+        }
       }
     }
     if (_testMode) {
@@ -371,8 +473,7 @@ class RecordingService {
     }
     _usingNativeRecorder = await _shouldUseNativeRecorder();
     final dir = await AppStoragePaths.temporaryDirectory();
-    final path =
-        '${dir.path}/vm_rec_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    final path = await _nativeRecordingPath(dir.path);
     _activePath = path;
     _startedAt = DateTime.now();
     _elapsedSeconds = 0;
@@ -389,9 +490,16 @@ class RecordingService {
       AudioCaptureDiagnostics.logRecorderConfig();
       if (_usingNativeRecorder) {
         nativeStartCallCount++;
-        final resolvedPath = await IosNativeRecorder.startRecording(path);
+        final format = await IosNativeRecorderConfig.recordingFormatForDevice();
+        final resolvedPath = await IosNativeRecorder.startRecording(
+          path,
+          format: format,
+        );
         _activePath = resolvedPath;
-        _recordLog('native recorder start success path=$resolvedPath');
+        _recordLog(
+          'native recorder start success path=$resolvedPath '
+          'format=${IosNativeRecorderConfig.fileExtensionFor(format)}',
+        );
       } else {
         await _startPluginCaptureAtPath(path);
       }
@@ -442,6 +550,8 @@ class RecordingService {
           durationSeconds: (nativeResult.durationMs / 1000).ceil().clamp(1, 9999),
           likelySilentInput: nativeResult.likelySilent,
           audioLevelSummary: nativeResult.toAudioLevelSummary(),
+          captureInputPortName: nativeResult.inputPortName,
+          captureInputPortType: nativeResult.inputPortType,
         );
       }
       return RecordingResult(file: file, durationSeconds: 1);
@@ -478,6 +588,11 @@ class RecordingService {
         sampleCount: summary.sampleCount,
         likelySilent: summary.likelySilent,
       );
+      MicCaptureInputHealth.log(
+        likelySilent: nativeResult.likelySilent,
+        portName: nativeResult.inputPortName,
+        portType: nativeResult.inputPortType,
+      );
       _startedAt = null;
       _activePath = null;
       _usingNativeRecorder = false;
@@ -486,6 +601,8 @@ class RecordingService {
         durationSeconds: durationSeconds,
         likelySilentInput: nativeResult.likelySilent,
         audioLevelSummary: summary,
+        captureInputPortName: nativeResult.inputPortName,
+        captureInputPortType: nativeResult.inputPortType,
       );
     }
 

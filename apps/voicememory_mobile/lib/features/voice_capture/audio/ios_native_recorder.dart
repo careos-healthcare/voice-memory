@@ -89,6 +89,33 @@ class NativeRecordingLevel {
   }
 }
 
+class NativeMicrophonePermission {
+  const NativeMicrophonePermission({
+    required this.status,
+    required this.granted,
+    required this.canRequest,
+  });
+
+  factory NativeMicrophonePermission.fromMap(Map<Object?, Object?>? map) {
+    if (map == null) {
+      return const NativeMicrophonePermission(
+        status: 'unknown',
+        granted: false,
+        canRequest: false,
+      );
+    }
+    return NativeMicrophonePermission(
+      status: map['status']?.toString() ?? 'unknown',
+      granted: map['granted'] == true,
+      canRequest: map['canRequest'] == true,
+    );
+  }
+
+  final String status;
+  final bool granted;
+  final bool canRequest;
+}
+
 class NativeRecordingStopResult {
   const NativeRecordingStopResult({
     required this.path,
@@ -99,6 +126,8 @@ class NativeRecordingStopResult {
     required this.avgDb,
     required this.likelySilent,
     this.format,
+    this.inputPortName,
+    this.inputPortType,
   });
 
   factory NativeRecordingStopResult.fromMap(Map<Object?, Object?> map) {
@@ -111,6 +140,8 @@ class NativeRecordingStopResult {
       avgDb: (map['avgDb'] as num?)?.toDouble() ?? -160,
       likelySilent: map['likelySilent'] == true,
       format: map['format']?.toString(),
+      inputPortName: map['inputPortName']?.toString(),
+      inputPortType: map['inputPortType']?.toString(),
     );
   }
 
@@ -122,6 +153,8 @@ class NativeRecordingStopResult {
   final double avgDb;
   final bool likelySilent;
   final String? format;
+  final String? inputPortName;
+  final String? inputPortType;
 
   AudioLevelSummary toAudioLevelSummary() {
     return AudioLevelSummary(
@@ -136,7 +169,12 @@ class NativeRecordingStopResult {
 
 abstract class IosNativeRecorderPlatform {
   Future<bool> isNativeRecorderAvailable();
-  Future<String> startNativeRecording(String path);
+  Future<NativeMicrophonePermission> nativeMicrophonePermission();
+  Future<NativeMicrophonePermission> requestNativeMicrophonePermission();
+  Future<String> startNativeRecording(
+    String path, {
+    required IosRecordingFormat format,
+  });
   Future<NativeRecordingStopResult> stopNativeRecording();
   Future<NativeRecordingLevel> currentNativeLevel();
 }
@@ -155,11 +193,43 @@ class MethodChannelIosNativeRecorderPlatform implements IosNativeRecorderPlatfor
   }
 
   @override
-  Future<String> startNativeRecording(String path) async {
+  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+    final result = await _channel.invokeMethod<Object?>(
+      'nativeMicrophonePermission',
+    );
+    if (result is Map) {
+      return NativeMicrophonePermission.fromMap(result);
+    }
+    return NativeMicrophonePermission.fromMap(null);
+  }
+
+  @override
+  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+    final result = await _channel.invokeMethod<Object?>(
+      'requestNativeMicrophonePermission',
+    );
+    if (result is Map) {
+      return NativeMicrophonePermission.fromMap(result);
+    }
+    return const NativeMicrophonePermission(
+      status: 'denied',
+      granted: false,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<String> startNativeRecording(
+    String path, {
+    required IosRecordingFormat format,
+  }) async {
     try {
       final result = await _channel.invokeMethod<Object?>(
         'startNativeRecording',
-        {'path': path},
+        {
+          'path': path,
+          'format': IosNativeRecorderConfig.channelFormatValue(format),
+        },
       );
       if (result is Map && result['path'] is String) {
         return result['path'] as String;
@@ -226,8 +296,45 @@ abstract class IosNativeRecorder {
 
   static Future<bool> isAvailable() => _platform.isNativeRecorderAvailable();
 
-  static Future<String> startRecording(String path) =>
-      _platform.startNativeRecording(path);
+  static Future<NativeMicrophonePermission> microphonePermission() =>
+      _platform.nativeMicrophonePermission();
+
+  static Future<NativeMicrophonePermission> requestMicrophonePermission() =>
+      _platform.requestNativeMicrophonePermission();
+
+  static Future<void> ensureMicrophonePermission() async {
+    var permission = await microphonePermission();
+    debugPrint(
+      'ARCHIVEME_NATIVE_MIC_PERMISSION status=${permission.status} '
+      'granted=${permission.granted}',
+    );
+    if (permission.granted) return;
+    if (permission.canRequest) {
+      permission = await requestMicrophonePermission();
+      debugPrint(
+        'ARCHIVEME_NATIVE_MIC_PERMISSION status=${permission.status} '
+        'granted=${permission.granted} after_request=true',
+      );
+    }
+    if (!permission.granted) {
+      throw NativeRecorderException(
+        step: 'microphone_permission_denied',
+        reason: 'Native microphone permission is ${permission.status}',
+      );
+    }
+  }
+
+  static Future<String> startRecording(
+    String path, {
+    IosRecordingFormat? format,
+  }) async {
+    final resolvedFormat =
+        format ?? await IosNativeRecorderConfig.recordingFormatForDevice();
+    if (testPlatform == null) {
+      await ensureMicrophonePermission();
+    }
+    return _platform.startNativeRecording(path, format: resolvedFormat);
+  }
 
   static Future<NativeRecordingStopResult> stopRecording() =>
       _platform.stopNativeRecording();

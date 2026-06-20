@@ -5,6 +5,39 @@ import Flutter
 enum IosCaptureAudioSession {
   private static let logPrefix = "ARCHIVEME_IOS"
 
+  static func configureForPlayback() throws -> [String: Any] {
+    let session = AVAudioSession.sharedInstance()
+
+    do {
+      try session.setActive(false, options: .notifyOthersOnDeactivation)
+    } catch {
+      print(
+        "\(logPrefix)_AUDIO_SESSION playback_set_active_false_failed " +
+          "error=\(error.localizedDescription)"
+      )
+    }
+
+    try session.setCategory(
+      .playAndRecord,
+      mode: .default,
+      options: [.defaultToSpeaker, .allowBluetooth]
+    )
+    try session.setActive(true)
+    logRouteDiagnostics(session: session)
+
+    let outputVolume = session.outputVolume
+    print(
+      "\(logPrefix)_AUDIO_SESSION category=playAndRecord mode=default playback=true " +
+        "outputVolume=\(outputVolume)"
+    )
+    return [
+      "category": "playAndRecord",
+      "mode": "default",
+      "outputVolume": Double(outputVolume),
+      "configured": true,
+    ]
+  }
+
   static func configure(mode: String) throws -> [String: Any] {
     let session = AVAudioSession.sharedInstance()
     let avMode: AVAudioSession.Mode = mode == "measurement" ? .measurement : .spokenAudio
@@ -98,6 +131,24 @@ enum IosCaptureAudioSession {
 final class IosCaptureAudioSessionHandler {
   func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
+    case "configurePlaybackSession":
+      do {
+        let snapshot = try IosCaptureAudioSession.configureForPlayback()
+        result(snapshot)
+      } catch {
+        print(
+          "ARCHIVEME_IOS_AUDIO_SESSION configured=false playback=true " +
+            "detail=\(error.localizedDescription)"
+        )
+        result(
+          FlutterError(
+            code: "audio_session",
+            message: error.localizedDescription,
+            details: nil
+          )
+        )
+      }
+
     case "configureCaptureSession":
       guard let args = call.arguments as? [String: Any],
             let mode = args["mode"] as? String else {
