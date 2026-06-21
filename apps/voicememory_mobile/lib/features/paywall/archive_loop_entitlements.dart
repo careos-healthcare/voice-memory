@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
 import '../../billing/archive_entitlement_reader.dart';
 import '../../storage/mobile_prefs_store.dart';
@@ -292,7 +291,7 @@ abstract class ArchiveLoopEntitlementGate {
         : await entitlementStore.load();
     final entitlementReader =
         reader ?? ArchiveEntitlementReader.forAccessCheck();
-    final billingPro = store != null ? await entitlementReader.isPro : false;
+    final billingPro = entitlementStore != null ? await entitlementReader.isPro : false;
     final isPro = billingPro || state.isPro;
     if (billingPro && store != null && !state.isPro) {
       await store.setPro(true);
