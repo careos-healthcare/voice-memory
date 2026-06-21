@@ -53,7 +53,28 @@ class _AlwaysAvailableNativePlatform implements IosNativeRecorderPlatform {
   Future<bool> isNativeRecorderAvailable() async => true;
 
   @override
-  Future<String> startNativeRecording(String path) async => path;
+  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<String> startNativeRecording(
+    String path, {
+    required dynamic format,
+  }) async => path;
 
   @override
   Future<NativeRecordingStopResult> stopNativeRecording() async {
