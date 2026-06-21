@@ -117,7 +117,12 @@ import '../widgets/patterns/tomorrow_return_status_card.dart';
 import '../widgets/patterns/weekly_pattern_recap_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/activation/third_session_archive_usefulness_card.dart';
-import '../widgets/patterns/archive_belief_thread_card.dart';
+import '../features/archive_proof/archive_belief_surface.dart';
+import '../features/archive_proof/archive_change_timeline_metrics_store.dart';
+import '../features/archive_proof/archive_paid_value_proof_source.dart';
+import '../features/archive_proof/archive_proof_record_routes.dart';
+import '../widgets/patterns/archive_belief_surface_card.dart';
+import '../widgets/patterns/archive_paid_value_proof_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
 import '../widgets/patterns/weekly_what_changed_review_card.dart';
@@ -1526,6 +1531,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         return [
           ArchiveEvolutionTimelineCard(
             timeline: _archiveTimeline!,
+            metricsStore: _timelineMetricsStore,
             showOpenTimeline: !decision.suppressSeparateTimelineCard,
             onOpenTimeline: () => context.push('/archive-timeline'),
             onUseCheck:
@@ -1655,14 +1661,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     if (belief.hasEnoughData) {
-      widgets.add(
-        ArchiveBeliefThreadCard(
-          thread: belief,
-          onRecordMoreEvidence: _goToRecord,
-          onDismissed: () => setState(() {}),
-        ),
-      );
-      widgets.add(const SizedBox(height: AppSpacing.lg));
+      // Belief proof surface renders above timeline via [_buildArchiveBeliefProofWidgets].
     }
     if (weekly.hasReview) {
       widgets.add(WeeklyWhatChangedReviewCard(review: weekly));
@@ -1704,8 +1703,33 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
   }
 
+  ArchiveChangeTimelineMetricsStore get _timelineMetricsStore =>
+      ArchiveChangeTimelineMetricsStore(AppServices.instance.prefs);
+
+  List<Widget> _buildArchiveBeliefProofWidgets() {
+    final surface = ArchiveBeliefSurfaceSource().resolve(
+      _entries,
+      tier: _archiveIntelligenceTier,
+    );
+    if (!surface.shouldShow) return const [];
+    return [
+      ArchiveBeliefSurfaceCard(
+        surface: surface,
+        onRecordNext: () => context.go(
+          ArchiveProofRecordRoutes.uri(
+            guidedPromptNodeKey: ArchiveProofRecordRoutes.changeTimelineNodeKey,
+          ),
+        ),
+        onDismissed: () => setState(() {}),
+      ),
+      const SizedBox(height: AppSpacing.lg),
+    ];
+  }
+
   List<Widget> _orderedPatternsStack() {
     final decision = _stackDecision;
+    const engine = ArchiveBeliefThreadEngine();
+    final belief = engine.build(_entries, tier: _archiveIntelligenceTier);
     final widgets = <Widget>[
       QuickHelpButton(
         alignment: Alignment.centerRight,
@@ -1715,7 +1739,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ),
       const SizedBox(height: AppSpacing.sm),
     ];
-    widgets.addAll(_archiveDifferentiationSurfaces());
     if (_signalArchiveSnapshot != null &&
         (_signalArchiveSnapshot!.hasActiveSignal ||
             _signalArchiveSnapshot!.reflectionCount > 0 ||
@@ -1729,8 +1752,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         widgets.add(const SizedBox(height: AppSpacing.lg));
       }
     }
-    widgets.addAll(_fallbackEntryCards(decision));
     for (final section in decision.sections) {
+      if (section == PatternsSectionType.timeline) {
+        widgets.addAll(_buildArchiveBeliefProofWidgets());
+      }
       widgets.addAll(_sectionWidgets(section, decision));
       if (section == PatternsSectionType.activeCheckIn) {
         final objective = _patternsObjectiveCard();
@@ -1739,6 +1764,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           widgets.add(const SizedBox(height: AppSpacing.lg));
         }
       }
+    }
+    widgets.addAll(_archiveDifferentiationSurfaces());
+    widgets.addAll(_fallbackEntryCards(decision));
+    if (ArchivePaidValueProofSource.shouldShow(
+      entryCount: _entries.where((e) => !e.isArchived).length,
+      belief: belief,
+      timeline: _archiveTimeline,
+      returnProofSeen: _habitProof != null || _patternProgress != null,
+    )) {
+      widgets.add(const ArchivePaidValueProofCard());
+      widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     return widgets;
   }
@@ -1809,6 +1845,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 PatternsFirstArchiveView(
                   fillViewport: false,
                   savedEntryId: _firstArchiveEntryId,
+                  entries: _entries,
                 ),
               ],
             ),

@@ -68,6 +68,7 @@ import '../screens/signal_detail_screen.dart';
 import '../screens/signal_evidence_screen.dart';
 import '../screens/signal_journey_screen.dart';
 import '../screens/signal_review_screen.dart';
+import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../screens/record_screen.dart';
 import '../screens/quick_text_capture_screen.dart';
 import '../screens/pressure_check_in_screen.dart';
@@ -244,9 +245,12 @@ final GoRouter appRouter = GoRouter(
               path: '/record',
               builder: (context, state) {
                 final prompt = state.uri.queryParameters['prompt'];
+                final guidedNode =
+                    state.uri.queryParameters['guidedPromptNodeKey'];
                 final autostart = state.uri.queryParameters['autostart'] == '1';
                 return RecordScreen(
-                  initialPrompt: prompt,
+                  initialPrompt: prompt ??
+                      ArchiveProofRecordRoutes.promptForGuidedNode(guidedNode),
                   autostartWithPrompt: autostart,
                 );
               },

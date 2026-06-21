@@ -41,7 +41,7 @@ class PatternsStackDecision {
   bool includes(PatternsSectionType type) => sections.contains(type);
 }
 
-/// Decides Patterns tab section order and duplicate suppression.
+/// Proof-layer order: check-in → return proof → timeline → radar → experiment → manual.
 PatternsStackDecision decidePatternsStack({
   required bool hasActiveCheckIn,
   required bool hasArchiveMemory,
@@ -62,14 +62,17 @@ PatternsStackDecision decidePatternsStack({
   if (hasActiveCheckIn) {
     sections.add(PatternsSectionType.activeCheckIn);
   }
+  if (hasProgress) {
+    sections.add(PatternsSectionType.patternProgress);
+  }
+  if (hasTimeline) {
+    sections.add(PatternsSectionType.timeline);
+  }
   if (hasArchiveMemory) {
     sections.add(PatternsSectionType.archiveMemory);
   }
   if (hasNextCheck && !hasArchiveMemory) {
     sections.add(PatternsSectionType.nextCheck);
-  }
-  if (hasArchiveCleanView) {
-    sections.add(PatternsSectionType.archiveNavigation);
   }
   if (hasPatternProfile) {
     sections.add(PatternsSectionType.patternProfile);
@@ -80,17 +83,14 @@ PatternsStackDecision decidePatternsStack({
   if (hasArchiveCompression) {
     sections.add(PatternsSectionType.archiveCompression);
   }
-  if (hasProgress) {
-    sections.add(PatternsSectionType.patternProgress);
-  }
-  if (hasTimeline && !hasPatternProfile) {
-    sections.add(PatternsSectionType.timeline);
-  }
   if (hasRecap) {
     sections.add(PatternsSectionType.recap);
   }
   if (hasShare) {
     sections.add(PatternsSectionType.share);
+  }
+  if (hasArchiveCleanView) {
+    sections.add(PatternsSectionType.archiveNavigation);
   }
   if (!hasAnyMoment && !hasArchiveMemory) {
     sections.add(PatternsSectionType.emptyState);
@@ -104,7 +104,7 @@ PatternsStackDecision decidePatternsStack({
     suppressSeparateAskArchiveCard: suppressNav,
     suppressSeparateFindMomentCard: suppressNav,
     suppressSeparatePatternMapCard: suppressNav || suppressFromProfile,
-    suppressSeparateTimelineCard: suppressNav || suppressFromProfile,
+    suppressSeparateTimelineCard: suppressNav,
     suppressLowerPriorityCtas: hasArchiveMemory && hasNextCheck,
     showCurrentObjectiveCard: !hasDueCheckStatusCard,
   );

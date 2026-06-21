@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../features/activation/activation_tracker.dart';
 import '../../features/archive_memory/archive_evolution_model.dart';
+import '../../features/archive_proof/archive_change_timeline_metrics_store.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_typography.dart';
+import 'archive_timeline_truth_feedback_card.dart';
 
 /// Compact preview of how one pattern has changed over time.
 class ArchiveEvolutionTimelineCard extends StatefulWidget {
@@ -15,6 +19,8 @@ class ArchiveEvolutionTimelineCard extends StatefulWidget {
     this.onOpenTimeline,
     this.onUseCheck,
     this.showOpenTimeline = true,
+    this.metricsStore,
+    this.showTruthFeedback = true,
   });
 
   final ArchiveEvolutionTimeline timeline;
@@ -25,6 +31,11 @@ class ArchiveEvolutionTimelineCard extends StatefulWidget {
 
   /// When false, hides the open-timeline link (archive clean view handles it).
   final bool showOpenTimeline;
+
+  final ArchiveChangeTimelineMetricsStore? metricsStore;
+
+  /// Beta truth question after the user expands or opens the timeline.
+  final bool showTruthFeedback;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
   static const Color _warmBorder = Color(0xFFF5E6D3);
@@ -37,16 +48,37 @@ class ArchiveEvolutionTimelineCard extends StatefulWidget {
 class _ArchiveEvolutionTimelineCardState
     extends State<ArchiveEvolutionTimelineCard> {
   bool _checkSet = false;
+  bool _expanded = false;
+  bool _showFeedback = false;
+  bool _feedbackAnswered = false;
 
   @override
   void initState() {
     super.initState();
     ActivationTracker.trackArchiveTimelineShown();
+    widget.metricsStore?.markTimelineViewed();
+  }
+
+  Future<void> _engageTimeline({required bool expanded}) async {
+    if (expanded) {
+      await widget.metricsStore?.markTimelineExpanded();
+    }
+    if (!mounted) return;
+    setState(() {
+      _expanded = expanded || _expanded;
+      _showFeedback =
+          widget.showTruthFeedback && widget.metricsStore != null && expanded;
+    });
   }
 
   void _openTimeline() {
     ActivationTracker.trackArchiveTimelineOpened();
+    unawaited(_engageTimeline(expanded: true));
     widget.onOpenTimeline?.call();
+  }
+
+  Future<void> _expandInline() async {
+    await _engageTimeline(expanded: true);
   }
 
   void _useCheck(String nextCheck) {
@@ -57,9 +89,11 @@ class _ArchiveEvolutionTimelineCardState
 
   @override
   Widget build(BuildContext context) {
-    final preview = widget.timeline.events.take(4).toList();
+    final previewCount = _expanded ? widget.timeline.events.length : 4;
+    final preview = widget.timeline.events.take(previewCount).toList();
     final hasNextCheck = widget.timeline.hasNextCheck;
     return Container(
+      key: const Key('archive_evolution_timeline_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -88,14 +122,32 @@ class _ArchiveEvolutionTimelineCardState
             _eventRow(event),
             const SizedBox(height: AppSpacing.sm),
           ],
+          if (!_expanded && widget.timeline.events.length > 4) ...[
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                key: const Key('archive_timeline_expand_inline'),
+                onPressed: _expandInline,
+                child: const Text('See how this changed'),
+              ),
+            ),
+          ],
           if (widget.showOpenTimeline)
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
+                key: const Key('archive_timeline_open_full'),
                 onPressed: _openTimeline,
                 child: const Text('Open timeline'),
               ),
             ),
+          if (_showFeedback && !_feedbackAnswered) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ArchiveTimelineTruthFeedbackCard(
+              store: widget.metricsStore!,
+              onAnswered: () => setState(() => _feedbackAnswered = true),
+            ),
+          ],
           if (hasNextCheck && widget.onUseCheck != null) ...[
             const SizedBox(height: AppSpacing.sm),
             SizedBox(
@@ -146,8 +198,8 @@ class _ArchiveEvolutionTimelineCardState
                 style: VoiceMemoryTypography.bodyStyle(
                   color: AppColors.textSecondary,
                 ).copyWith(fontSize: 13, height: 1.35),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                maxLines: _expanded ? null : 2,
+                overflow: _expanded ? null : TextOverflow.ellipsis,
               ),
             ],
           ),
