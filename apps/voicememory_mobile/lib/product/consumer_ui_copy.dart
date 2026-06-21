@@ -952,4 +952,9 @@ abstract class ConsumerUiCopy {
       'Does this feel worth checking tomorrow?';
   static const String checkInResultUsefulPrompt = 'Was this useful?';
   static const String missedCheckInReasonTitle = 'What got in the way?';
+  static const String patternsNoClearPatternTitle = 'No clear pattern yet';
+
+  static const String patternsNoClearPatternBody =
+      'Keep recording short reflections. Patterns become clearer after a few entries.';
+
 }
