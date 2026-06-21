@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
 /// Gates App Store review access UI — compile-time only via dart-define.
 abstract class ArchiveAppReviewAccessGate {
