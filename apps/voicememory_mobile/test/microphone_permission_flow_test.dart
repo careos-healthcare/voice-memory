@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,14 +18,44 @@ import 'package:voicememory_mobile/widgets/record/microphone_permission_blocked_
 import 'package:voicememory_mobile/widgets/record/record_screen_close_button.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  const nativeRecorderChannel = MethodChannel('archive_me/ios_native_recorder');
+
+  var nativeMicResponse = <String, Object>{
+    'status': 'granted',
+    'granted': true,
+    'canRequest': false,
+  };
+
   late Directory tempDir;
 
   setUp(() async {
     tempDir = Directory.systemTemp.createTempSync('vm_mic_perm_');
     VisualAuditOverrides.setRecordPresentation(null);
+    nativeMicResponse = <String, Object>{
+      'status': 'granted',
+      'granted': true,
+      'canRequest': false,
+    };
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(nativeRecorderChannel, (call) async {
+      switch (call.method) {
+        case 'isNativeRecorderAvailable':
+          return true;
+        case 'nativeMicrophonePermission':
+        case 'requestNativeMicrophonePermission':
+          return nativeMicResponse;
+        default:
+          return null;
+      }
+    });
   });
 
   tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(nativeRecorderChannel, null);
     VisualAuditOverrides.setRecordPresentation(null);
     MicrophonePermissionEnvironment.resetForTest();
   });
@@ -222,7 +253,7 @@ void main() {
       expect(await recording.checkMicrophone(), RecordingPhase.permissionDenied);
     });
 
-    test('non-simulator policy resolves physical mismatch to ready', () async {
+    test('physical iOS native granted resolves to ready', () async {
       MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
       final gateway = FakeMicrophonePermissionGateway(
         statusValue: PermissionStatus.denied,
@@ -238,7 +269,7 @@ void main() {
       final resolution = await recording.evaluateMicrophonePermission();
       expect(
         resolution.state,
-        MicrophonePermissionState.grantedWithPermissionHandlerMismatch,
+        MicrophonePermissionState.granted,
       );
     });
 
@@ -259,7 +290,7 @@ void main() {
       expect(recording.recorderStartCallCount, 1);
     });
 
-    test('physical iOS policy allows permanentlyDenied mismatch + hasRecorder', () async {
+    test('physical iOS native granted overrides permission_handler permanentlyDenied', () async {
       MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
       final gateway = FakeMicrophonePermissionGateway(
         statusValue: PermissionStatus.permanentlyDenied,
@@ -275,7 +306,7 @@ void main() {
       final resolution = await recording.evaluateMicrophonePermission();
       expect(
         resolution.state,
-        MicrophonePermissionState.grantedWithPermissionHandlerMismatch,
+        MicrophonePermissionState.granted,
       );
     });
 
@@ -295,8 +326,13 @@ void main() {
       expect(gateway.requestCallCount, 0);
     });
 
-    test('physical iOS policy blocks permanentlyDenied without recorder', () async {
+    test('physical iOS native permanentlyDenied without recorder is unavailable', () async {
       MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+      nativeMicResponse = <String, Object>{
+        'status': 'permanentlyDenied',
+        'granted': false,
+        'canRequest': false,
+      };
       final gateway = FakeMicrophonePermissionGateway(
         statusValue: PermissionStatus.permanentlyDenied,
         hasRecorder: false,
@@ -309,8 +345,10 @@ void main() {
 
       expect(
         await recording.checkMicrophone(),
-        RecordingPhase.permissionPermanentlyDenied,
+        RecordingPhase.error,
       );
+      final resolution = await recording.evaluateMicrophonePermission();
+      expect(resolution.state, MicrophonePermissionState.unavailable);
     });
 
     test('startRecording does not start recorder when non-simulator policy denies', () async {
@@ -915,7 +953,7 @@ void main() {
       expect(
         plist,
         contains(
-          'ArchiveMe needs microphone access so you can record private voice moments.',
+          'ArchiveMe uses the microphone so you can record short private reflections.',
         ),
       );
     });
