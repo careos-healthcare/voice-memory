@@ -7,9 +7,9 @@ abstract class PrivacyScreenCopy {
   static const String screenTitle = 'Privacy';
 
   static const String intro =
-      'Your archive is private by default. ArchiveMe only sends data for '
-      'transcription, analysis, sync, or account features when those features '
-      'are used.';
+      'Your recordings and reflections are personal. Some data may be stored '
+      'on this device. ArchiveMe only sends data for transcription, analysis, '
+      'sync, or account features when you use those features.';
 
   static const String privateByDefaultTitle = PrivacyCopyPolicy.privateByDefault;
   static const String privateByDefaultBody =
@@ -35,7 +35,8 @@ abstract class PrivacyScreenCopy {
   static const String doesNotDoBody =
       'ArchiveMe does not sell your reflections. ArchiveMe does not include '
       'recording text in analytics. ArchiveMe does not turn every entry into '
-      'personal memory by default.';
+      'personal memory by default. ArchiveMe is not therapy, medical advice, '
+      'or emergency support.';
 
   static const String controlsTitle = 'Your controls';
   static const String controlsBody =

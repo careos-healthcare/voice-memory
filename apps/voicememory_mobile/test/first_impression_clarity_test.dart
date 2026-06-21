@@ -8,10 +8,10 @@ import 'package:voicememory_mobile/widgets/onboarding/record_once_intro_card.dar
 void main() {
   group('First impression clarity', () {
     test('record once copy is exact', () {
-      expect(RecordReturnProCopy.recordOnceCta, 'Record one thought');
+      expect(RecordReturnProCopy.recordOnceCta, 'Record one moment');
       expect(
         RecordReturnProCopy.recordOnceSupporting,
-        'One entry starts your archive.',
+        'ArchiveMe helps you notice what keeps repeating in your own words.',
       );
     });
 

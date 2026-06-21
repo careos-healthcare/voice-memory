@@ -80,6 +80,7 @@ import '../screens/revenuecat_verification_screen.dart';
 import '../screens/offline_sync_verification_screen.dart';
 import '../screens/about_screen.dart';
 import '../screens/privacy_screen.dart';
+import '../screens/terms_screen.dart';
 import '../screens/developer_diagnostics_screen.dart';
 import '../screens/first_pattern_quality_screen.dart';
 import '../screens/trial_control_screen.dart';
@@ -160,6 +161,7 @@ final GoRouter appRouter = GoRouter(
         path != '/settings' &&
         path != '/about' &&
         path != '/privacy' &&
+        path != '/terms' &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -653,6 +655,11 @@ final GoRouter appRouter = GoRouter(
       path: '/privacy',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const PrivacyScreen(),
+    ),
+    GoRoute(
+      path: '/terms',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const TermsScreen(),
     ),
     GoRoute(
       path: '/developer-diagnostics',

@@ -133,12 +133,13 @@ abstract class First60Copy {
   First60Copy._();
 
   // A. First open / pre-record clarity.
-  static const String introTitle = 'Record one thought';
+  static const String introTitle = 'Notice what keeps repeating';
   static const String introBody =
-      'ArchiveMe starts by saving what is on your mind. Later, it can show '
-      'what keeps returning, fading, or changing.';
-  static const String introCta = 'Record one thought';
-  static const String introReassurance = 'Your archive starts private.';
+      'ArchiveMe helps you notice what keeps repeating in your own words. '
+      'Start with one honest moment.';
+  static const String introCta = 'Record one moment';
+  static const String introReassurance =
+      'Your recordings stay on this device unless you choose sync or transcription.';
 
   // B. First save immediate value.
   static const String valueTitle = 'Saved to your archive';

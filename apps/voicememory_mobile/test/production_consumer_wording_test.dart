@@ -17,6 +17,8 @@ const _bannedInternalPhrases = [
   'Upgrade required',
   'Billing entitlement',
   'billing entitlement',
+  'launch readiness',
+  'vercel.app',
 ];
 
 /// Compile-time consumer copy only — not screens with imports or runtime UI.
@@ -24,6 +26,8 @@ const _productionCopyFiles = [
   'lib/product/consumer_ui_copy.dart',
   'lib/product/loop_mode_copy.dart',
   'lib/features/trust/pro_trust_copy.dart',
+  'lib/features/trust/terms_screen_copy.dart',
+  'lib/features/onboarding/first_user_experience_copy.dart',
   'lib/features/onboarding/first_60_second_state.dart',
   'lib/features/onboarding/record_return_pro_state.dart',
   'lib/billing/archive_paywall_copy.dart',

@@ -253,7 +253,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.textContaining('Nothing is sent unless you choose'),
+        find.textContaining('not therapy'),
         findsOneWidget,
       );
       expect(
@@ -648,7 +648,7 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
