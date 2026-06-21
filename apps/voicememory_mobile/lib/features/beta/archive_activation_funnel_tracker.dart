@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
 import '../app_review/archive_app_review_access_gate.dart';
 

@@ -1,4 +1,5 @@
-import 'package:meta/meta.dart';
+
+import 'package:flutter/foundation.dart';
 
 import '../../services/app_services.dart';
 import '../../storage/mobile_prefs_store.dart';
