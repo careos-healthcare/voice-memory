@@ -95,7 +95,28 @@ class _AacSuccessPlatform implements IosNativeRecorderPlatform {
   Future<bool> isNativeRecorderAvailable() async => true;
 
   @override
-  Future<String> startNativeRecording(String path) async => path;
+  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<String> startNativeRecording(
+    String path, {
+    required dynamic format,
+  }) async => path;
 
   @override
   Future<NativeRecordingStopResult> stopNativeRecording() async {
@@ -127,7 +148,28 @@ class _FallbackSuccessPlatform implements IosNativeRecorderPlatform {
   Future<bool> isNativeRecorderAvailable() async => true;
 
   @override
-  Future<String> startNativeRecording(String path) async {
+  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<String> startNativeRecording(
+    String path, {
+    required dynamic format,
+  }) async {
     return path.replaceAll('.m4a', '.wav');
   }
 
@@ -161,7 +203,28 @@ class _BothFailPlatform implements IosNativeRecorderPlatform {
   Future<bool> isNativeRecorderAvailable() async => true;
 
   @override
-  Future<String> startNativeRecording(String path) async {
+  Future<NativeMicrophonePermission> nativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<NativeMicrophonePermission> requestNativeMicrophonePermission() async {
+    return const NativeMicrophonePermission(
+      status: 'granted',
+      granted: true,
+      canRequest: false,
+    );
+  }
+
+  @override
+  Future<String> startNativeRecording(
+    String path, {
+    required dynamic format,
+  }) async {
     throw const NativeRecorderException(
       step: 'record_start_failed',
       reason: 'AVAudioRecorder.record() returned false for wav',
