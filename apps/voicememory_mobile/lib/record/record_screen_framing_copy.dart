@@ -16,9 +16,9 @@ abstract class RecordScreenFramingCopy {
       'Nothing is analysed until you save something.';
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.
-  static const String firstRunPrivacyTitle = PrivacyCopyPolicy.privateByDefault;
+  static const String firstRunPrivacyTitle = 'Before you record';
   static const String firstRunPrivacyBody =
-      PrivacyCopyPolicy.nothingSentUnlessChosen;
+      PrivacyCopyPolicy.personalNotMedicalDisclaimer;
   static const String firstRunPrivacyLink = 'How it works';
 
   /// One saved moment — calm started state, no pattern claims.

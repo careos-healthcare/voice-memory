@@ -98,8 +98,8 @@ class _AboutScreenState extends State<AboutScreen> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('Terms'),
-            trailing: const Icon(Icons.open_in_new, size: 18),
-            onTap: () => _openUrl(AppConfig.termsUrl),
+            trailing: const Icon(Icons.chevron_right, size: 18),
+            onTap: () => context.push('/terms'),
           ),
         ],
       ),

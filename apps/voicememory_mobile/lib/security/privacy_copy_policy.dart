@@ -14,6 +14,12 @@ abstract class PrivacyCopyPolicy {
 
   static const String lockArchiveMe = 'Lock ArchiveMe';
 
+  /// Calm first-run / legal disclaimer — no encryption or therapy claims.
+  static const String personalNotMedicalDisclaimer =
+      'Your recordings and reflections are personal. Some data may be stored '
+      'on this device. ArchiveMe is not therapy, medical advice, or emergency '
+      'support.';
+
   /// Shorter variant for compact trust rows — still requires an explicit choice.
   static const String nothingSentUnlessFeatureChosen =
       'Nothing is sent unless you choose a feature that needs it.';
@@ -33,6 +39,8 @@ abstract class PrivacyCopyPolicy {
     'lib/widgets/security/archive_privacy_controls_card.dart',
     'lib/widgets/account/account_privacy_controls_section.dart',
     'lib/widgets/record/record_first_run_privacy_reassurance.dart',
+    'lib/features/trust/terms_screen_copy.dart',
+    'lib/features/onboarding/first_user_experience_copy.dart',
   ];
 
   static final List<RegExp> _allowedEncryptedContexts = [

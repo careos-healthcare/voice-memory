@@ -202,8 +202,11 @@ class AppConfig {
     return apiBaseUrl.isEmpty ? backendNotConfiguredMessage : apiBaseUrl;
   }
 
-  static const String privacyUrl = '$productionApiBaseUrl/privacy';
-  static const String termsUrl = '$productionApiBaseUrl/terms';
+  /// Consumer-facing legal URLs — not the API backend host.
+  static const String privacyUrl = 'https://careosapp.co.uk/archiveme-privacy';
+
+  /// In-app terms route (see [TermsScreen]).
+  static const String termsRoute = '/terms';
   static const String contactUrl = '$productionApiBaseUrl/contact';
   static const String helpEmail = 'hello@voicememory.app';
 

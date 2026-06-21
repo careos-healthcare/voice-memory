@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../api/api_error_message.dart';
 import '../billing/revenuecat_service.dart';
 import '../billing/subscription_copy.dart';
-import '../config/app_config.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
@@ -86,17 +84,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _openUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not open $url')));
-      }
-    }
-  }
-
   Future<void> _restorePurchases() async {
     if (!RevenueCatService.instance.isConfigured) {
       if (mounted) {
@@ -154,8 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _tile(
               ConsumerUiCopy.termsOfUse,
-              onTap: () => _openUrl(AppConfig.termsUrl),
-              trailing: const Icon(Icons.open_in_new, size: 18),
+              onTap: () => context.push('/terms'),
             ),
             _tile(
               ConsumerUiCopy.restorePurchases,

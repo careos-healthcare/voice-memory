@@ -98,14 +98,17 @@ void main() {
 
   group('Copy guardrails', () {
     test('intro copy is exact', () {
-      expect(First60Copy.introTitle, 'Record one thought');
+      expect(First60Copy.introTitle, 'Notice what keeps repeating');
       expect(
         First60Copy.introBody,
-        'ArchiveMe starts by saving what is on your mind. Later, it can '
-        'show what keeps returning, fading, or changing.',
+        'ArchiveMe helps you notice what keeps repeating in your own words. '
+        'Start with one honest moment.',
       );
-      expect(First60Copy.introCta, 'Record one thought');
-      expect(First60Copy.introReassurance, 'Your archive starts private.');
+      expect(First60Copy.introCta, 'Record one moment');
+      expect(
+        First60Copy.introReassurance,
+        'Your recordings stay on this device unless you choose sync or transcription.',
+      );
     });
 
     test('first save value card copy is exact', () {
@@ -335,8 +338,8 @@ void main() {
       await pumpIntro(tester);
       expect(find.byKey(const Key('first_60_intro_card')), findsOneWidget);
       expect(find.text(First60Copy.introBody), findsOneWidget);
-      // Title and CTA share the same line by design: "Record one thought".
-      expect(find.text(First60Copy.introTitle), findsNWidgets(2));
+      expect(find.text(First60Copy.introTitle), findsOneWidget);
+      expect(find.text(First60Copy.introCta), findsOneWidget);
       expect(find.byKey(const Key('first_60_record_cta')), findsOneWidget);
       expect(find.text(First60Copy.introReassurance), findsOneWidget);
     });

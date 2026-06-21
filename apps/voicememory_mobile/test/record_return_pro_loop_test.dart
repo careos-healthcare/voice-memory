@@ -93,10 +93,10 @@ void main() {
 
   group('Copy guardrails', () {
     test('record once copy is exact', () {
-      expect(RecordReturnProCopy.recordOnceCta, 'Record one thought');
+      expect(RecordReturnProCopy.recordOnceCta, 'Record one moment');
       expect(
         RecordReturnProCopy.recordOnceSupporting,
-        'One entry starts your archive.',
+        'ArchiveMe helps you notice what keeps repeating in your own words.',
       );
     });
 
@@ -283,7 +283,7 @@ void main() {
   });
 
   group('Widgets', () {
-    testWidgets('zero-entry user sees Record one thought CTA', (tester) async {
+    testWidgets('zero-entry user sees Record one moment CTA', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -293,8 +293,13 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('record_once_intro_card')), findsOneWidget);
-      expect(find.text('Record one thought'), findsOneWidget);
-      expect(find.text('One entry starts your archive.'), findsOneWidget);
+      expect(find.text('Record one moment'), findsOneWidget);
+      expect(
+        find.text(
+          'ArchiveMe helps you notice what keeps repeating in your own words.',
+        ),
+        findsOneWidget,
+      );
       expect(
         eventsNamed(ActivationFunnelAnalytics.recordReturnLoopStarted),
         isNotEmpty,

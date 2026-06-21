@@ -278,6 +278,7 @@ import '../widgets/retention/tiny_record_again_cta.dart';
 import '../widgets/onboarding/change_starts_card.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
+import '../widgets/onboarding/first_60_second_intro_card.dart';
 import '../widgets/onboarding/record_once_intro_card.dart';
 import '../widgets/onboarding/tomorrow_return_cue_card.dart';
 import '../record/example_prompt_visibility.dart';
@@ -3061,6 +3062,15 @@ class _RecordScreenState extends State<RecordScreen> {
                         },
                       ),
                     ],
+                    if (ui == RecordUiState.ready &&
+                        _journalEntryCountReady &&
+                        _journalEntryCount == 0 &&
+                        !stack.showDueCheckCard &&
+                        First60IntroCard.shouldShow(_journalEntryCount)) ...[
+                      First60IntroCard(
+                        onRecord: () => unawaited(_onRecordPressed(source: 'main')),
+                      ),
+                    ],
                     if (ui == RecordUiState.ready && _showDailyMirrorCard) ...[
                       DailyMirrorRecordCard(
                         mirror: _dailyMirror,
@@ -4074,6 +4084,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ),
                               ],
                               if (_returnStreak != null &&
+                                  _journalEntryCount >= 2 &&
                                   _returnStreak!.currentStreakDays >= 2) ...[
                                 const SizedBox(height: 12),
                                 ReturnStreakCard(
