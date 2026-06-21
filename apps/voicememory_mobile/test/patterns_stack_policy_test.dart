@@ -21,7 +21,7 @@ void main() {
       expect(d.sections.first, PatternsSectionType.activeCheckIn);
     });
 
-    test('archive memory appears before navigation', () {
+    test('archive memory appears before manual navigation', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
         hasArchiveMemory: true,
@@ -41,8 +41,8 @@ void main() {
         lessThan(d.sections.indexOf(PatternsSectionType.archiveNavigation)),
       );
       expect(
-        d.sections.indexOf(PatternsSectionType.archiveNavigation),
-        lessThan(d.sections.indexOf(PatternsSectionType.patternProfile)),
+        d.sections.indexOf(PatternsSectionType.patternProfile),
+        lessThan(d.sections.indexOf(PatternsSectionType.archiveNavigation)),
       );
     });
 
@@ -70,7 +70,7 @@ void main() {
     );
 
     test(
-      'Pattern Profile suppresses duplicate Pattern Map and Timeline entry CTAs',
+      'Pattern Profile suppresses duplicate Pattern Map but timeline stays visible',
       () {
         final d = decidePatternsStack(
           hasActiveCheckIn: false,
@@ -88,7 +88,11 @@ void main() {
         );
         expect(d.suppressSeparatePatternMapCard, isTrue);
         expect(d.suppressSeparateTimelineCard, isTrue);
-        expect(d.includes(PatternsSectionType.timeline), isFalse);
+        expect(d.includes(PatternsSectionType.timeline), isTrue);
+        expect(
+          d.sections.indexOf(PatternsSectionType.timeline),
+          lessThan(d.sections.indexOf(PatternsSectionType.patternProfile)),
+        );
       },
     );
 

@@ -3,7 +3,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
+import '../../features/archive_proof/archive_demo_preview_resolver.dart';
+import '../../features/archive_proof/archive_proof_record_routes.dart';
+import '../../models/journal_entry.dart';
 import '../../product/consumer_ui_copy.dart';
+import 'archive_demo_preview_card.dart';
 
 /// Patterns tab — exactly one saved entry. Confirms the archive started and
 /// nudges a second entry without zero-entry upload copy.
@@ -12,6 +16,7 @@ class PatternsFirstArchiveView extends StatelessWidget {
     super.key,
     this.fillViewport = false,
     this.savedEntryId,
+    this.entries = const [],
   });
 
   final bool fillViewport;
@@ -19,10 +24,13 @@ class PatternsFirstArchiveView extends StatelessWidget {
   /// When set, shows a secondary action to open the saved entry detail.
   final String? savedEntryId;
 
+  final List<JournalEntry> entries;
+
   @override
   Widget build(BuildContext context) {
     final gap = ArchiveResponsiveLayout.gap(context);
     final entryId = savedEntryId?.trim();
+    final demo = const ArchiveDemoPreviewResolver().resolve(entries);
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
@@ -37,6 +45,18 @@ class PatternsFirstArchiveView extends StatelessWidget {
           ConsumerUiCopy.patternsFirstEntrySavedBody,
           style: ArchiveMobileTypography.explanationBody(context),
         ),
+        if (demo.shouldShow) ...[
+          SizedBox(height: gap),
+          ArchiveDemoPreviewCard(
+            preview: demo,
+            onRecordNext: () => context.go(
+              ArchiveProofRecordRoutes.uri(
+                guidedPromptNodeKey:
+                    ArchiveProofRecordRoutes.changeTimelineNodeKey,
+              ),
+            ),
+          ),
+        ],
         SizedBox(height: gap),
         Text(
           ConsumerUiCopy.patternsFirstEntrySavedHelper,

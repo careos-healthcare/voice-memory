@@ -276,7 +276,10 @@ import '../widgets/retention/day2_return_reason_card.dart';
 import '../widgets/retention/second_entry_nudge_card.dart';
 import '../widgets/retention/tiny_record_again_cta.dart';
 import '../widgets/onboarding/change_starts_card.dart';
+import '../features/archive_proof/archive_demo_preview_resolver.dart';
+import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
+import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
 import '../widgets/onboarding/first_60_second_intro_card.dart';
 import '../widgets/onboarding/record_once_intro_card.dart';
@@ -3580,6 +3583,19 @@ class _RecordScreenState extends State<RecordScreen> {
                             onViewArchive: () => context.go('/archive-belief'),
                             onRecordAnother: () => unawaited(_onRecordPressed(source: 'main')),
                           ),
+                          if (_journalEntryCount == 1) ...[
+                            const SizedBox(height: 16),
+                            ArchiveDemoPreviewCard(
+                              preview: const ArchiveDemoPreviewResolver()
+                                  .resolve(_journalEntries),
+                              onRecordNext: () => context.go(
+                                ArchiveProofRecordRoutes.uri(
+                                  guidedPromptNodeKey: ArchiveProofRecordRoutes
+                                      .changeTimelineNodeKey,
+                                ),
+                              ),
+                            ),
+                          ],
                           if (_recordReturnCueVisible) ...[
                             const SizedBox(height: 16),
                             TomorrowReturnCueCard(
