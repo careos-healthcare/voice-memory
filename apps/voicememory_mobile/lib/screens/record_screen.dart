@@ -1,3 +1,4 @@
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -1894,7 +1895,7 @@ class _RecordScreenState extends State<RecordScreen> {
           _ui = RecordUiState.ready;
         });
       } else if (!await MicrophonePermissionEnvironment.shouldSkipPermissionRequest(
-        status: resolution.permissionHandlerStatus,
+        status: resolution.permissionHandlerStatus ?? PermissionStatus.denied,
         hasRecorder: resolution.hasRecorder,
       )) {
         await _recording.requestMicrophone();

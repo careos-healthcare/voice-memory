@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../audio/recording_service.dart';
+import 'audio/ios_native_recorder.dart';
 
 /// Microphone permission state for voice capture — factual, no overclaiming.
 enum MicrophonePermissionState {
@@ -23,6 +24,23 @@ abstract class MicrophonePermissionResolver {
   /// [preferRecorderOnIosSimulator] — simulator-only override to granted.
   /// [allowPhysicalRecorderMismatch] — physical iOS when recorder confirms access
   /// but permission_handler is wrong.
+  /// Physical iOS: [NativeMicrophonePermission] from AVAudioApplication.
+  static MicrophonePermissionState resolveFromNative(
+    NativeMicrophonePermission native,
+  ) {
+    if (native.granted) {
+      return MicrophonePermissionState.granted;
+    }
+    final status = native.status.toLowerCase();
+    if (status == 'undetermined' || status == 'notdetermined') {
+      return MicrophonePermissionState.deniedCanAskAgain;
+    }
+    if (status == 'denied' || status == 'restricted') {
+      return MicrophonePermissionState.deniedOpenSettings;
+    }
+    return MicrophonePermissionState.unavailable;
+  }
+
   static MicrophonePermissionState resolve({
     required PermissionStatus status,
     required bool hasRecorder,
@@ -115,6 +133,20 @@ abstract class MicrophonePermissionResolver {
       'permission_handler=$permissionHandler '
       'record_has_permission=$recordHasPermission trusted=$trusted '
       'resolved=${resolvedLogName(resolved)}',
+    );
+  }
+
+  static void logNativePermissionSource({
+    required String nativeStatus,
+    required bool granted,
+    required MicrophonePermissionState resolved,
+    String? platform,
+  }) {
+    final resolvedPlatform = platform ?? 'unknown';
+    debugPrint(
+      'ARCHIVEME_MIC_PERMISSION_SOURCE platform=$resolvedPlatform '
+      'native_status=$nativeStatus native_granted=$granted '
+      'trusted=native_ios resolved=${resolvedLogName(resolved)}',
     );
   }
 }
