@@ -39,6 +39,11 @@ class BillingService {
     return server ?? store;
   }
 
+  Future<PremiumEntitlements?> loadCachedEntitlements() async {
+    if (_memory != null) return _memory;
+    return _cache.load();
+  }
+
   Future<PremiumEntitlements> loadEntitlements({
     bool forceRefresh = false,
   }) async {
