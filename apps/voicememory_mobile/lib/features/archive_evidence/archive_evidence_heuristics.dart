@@ -77,7 +77,7 @@ class ArchiveEvidenceHeuristics {
     'not enough': 'push to feel enough',
     'guilty': 'carry guilt when resting',
     'prove': 'prove yourself through doing more',
-    'should': 'follow a heavy should',
+    'should': 'feel pulled by a heavy should',
     'too late': 'worry about being too late',
     'say yes': 'say yes before checking capacity',
     'said yes': 'say yes before checking capacity',
@@ -252,7 +252,7 @@ class ArchiveEvidenceHeuristics {
       return 'The pressure may return around saying yes before checking capacity.';
     }
     if (dominantPressure != null) {
-      return 'You may do more when $dominantPressure.';
+      return 'You may do more when you $dominantPressure.';
     }
     if (pressureHits.isNotEmpty) {
       return 'You may be ${pressureHits.first}.';
@@ -316,7 +316,7 @@ class ArchiveEvidenceHeuristics {
       return 'Pause before agreeing to new requests.';
     }
     if (dominantPressure != null) {
-      return 'Record another ordinary moment and notice whether $dominantPressure shows up again.';
+      return 'Record another ordinary moment and notice whether you $dominantPressure again.';
     }
     return 'Record another ordinary moment and notice what feels different.';
   }
