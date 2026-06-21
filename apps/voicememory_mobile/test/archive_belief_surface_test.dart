@@ -74,6 +74,13 @@ void main() {
   });
 
   group('ArchiveBeliefSurfaceSource', () {
+    test('zero entries returns static empty preview', () {
+      final surface = const ArchiveBeliefSurfaceSource().resolve([]);
+      expect(surface.shouldShow, isTrue);
+      expect(surface.isPreview, isTrue);
+      expect(surface.beliefSummary, contains('Not enough evidence yet'));
+    });
+
     test('builds belief from real capacity repeat entries', () {
       final surface = const ArchiveBeliefSurfaceSource().resolve([
         _entry(
@@ -157,7 +164,7 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('archive_belief_surface_card')), findsOneWidget);
+      expect(find.byKey(const Key('archive_belief_proof_primary_card')), findsOneWidget);
       expect(find.text(ArchiveBeliefSurfaceCopy.evidenceLabel), findsOneWidget);
       expect(find.byKey(const Key('archive_belief_surface_record_next')), findsOneWidget);
     });

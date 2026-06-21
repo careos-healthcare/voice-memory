@@ -45,10 +45,10 @@ void main() {
   });
 
   group('Copy split', () {
-    test('zero-entry copy stays upload-style', () {
+    test('zero-entry copy stays preview-style', () {
       expect(
         ConsumerUiCopy.patternsEmptyPageTitle,
-        'Your archive starts with one moment.',
+        'What ArchiveMe will show over time',
       );
       expect(ConsumerUiCopy.patternsEmptyCta, 'Record one moment');
     });
@@ -56,15 +56,15 @@ void main() {
     test('one-entry copy confirms save and second entry value', () {
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedTitle,
-        'Your first moment is saved.',
+        'Your archive has one piece of evidence.',
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedBody,
-        'ArchiveMe needs one more moment before it can compare what repeats.',
+        'Add one more moment and ArchiveMe can start comparing what repeats.',
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedHelper,
-        'Come back tomorrow or record another moment when something feels familiar.',
+        'Preview — not a conclusion yet',
       );
       expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Add another moment');
     });
@@ -103,7 +103,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Add another moment'), findsNothing);
-      expect(find.text('Your first moment is saved.'), findsNothing);
+      expect(find.text('Your archive has one piece of evidence.'), findsNothing);
     });
   });
 

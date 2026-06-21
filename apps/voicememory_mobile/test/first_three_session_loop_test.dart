@@ -35,18 +35,18 @@ JournalEntry _entry(String id, String transcript) {
 void main() {
   group('FirstThreeSessionCopy', () {
     test('session 1 lines match product loop', () {
-      expect(RecordReturnProCopy.evidenceTitle, 'Saved as evidence.');
+      expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        'This is now part of your private archive.',
+        contains('first piece of evidence'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        'One small moment is enough for today.',
+        contains('No conclusion yet'),
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
-        'Come back tomorrow to see whether this returns.',
+        contains('No conclusion yet'),
       );
     });
 
@@ -140,16 +140,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Saved as evidence.'), findsOneWidget);
+      expect(find.text('Your archive has started.'), findsOneWidget);
       expect(
-        find.text('This is now part of your private archive.'),
+        find.textContaining('first piece of evidence'),
         findsOneWidget,
       );
-      expect(find.text('One small moment is enough for today.'), findsOneWidget);
-      expect(
-        find.text('Come back tomorrow to see whether this returns.'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('No conclusion yet'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.text('Record another'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);

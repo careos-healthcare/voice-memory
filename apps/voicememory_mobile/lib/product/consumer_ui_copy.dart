@@ -171,13 +171,13 @@ abstract class ConsumerUiCopy {
   static const String patternsRecordCta = 'Record another moment';
 
   static const String patternsEmptyPageTitle =
-      'Your archive starts with one moment.';
+      'What ArchiveMe will show over time';
   static const String patternsFirstEntrySavedTitle =
-      'Your first moment is saved.';
+      'Your archive has one piece of evidence.';
   static const String patternsFirstEntrySavedBody =
-      'ArchiveMe needs one more moment before it can compare what repeats.';
+      'Add one more moment and ArchiveMe can start comparing what repeats.';
   static const String patternsFirstEntrySavedHelper =
-      'Come back tomorrow or record another moment when something feels familiar.';
+      'Preview — not a conclusion yet';
   static const String patternsFirstEntrySavedCta = 'Add another moment';
   static const String patternsFirstEntryViewSavedCta = 'View saved entry';
 

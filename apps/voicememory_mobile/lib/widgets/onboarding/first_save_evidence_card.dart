@@ -29,7 +29,7 @@ class FirstSaveEvidenceCard extends StatelessWidget {
       oncePerSession: true,
     );
     return Container(
-      key: const Key('first_save_evidence_card'),
+      key: const Key('first_save_archive_started_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: VoiceMemoryCards.standard(
@@ -52,12 +52,6 @@ class FirstSaveEvidenceCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             RecordReturnProCopy.evidenceSecondLine,
-            style: ArchiveMobileTypography.body(
-              context,
-            ).copyWith(color: AppColors.textSecondary),
-          ),
-          Text(
-            RecordReturnProCopy.evidenceThirdLine,
             style: ArchiveMobileTypography.body(
               context,
             ).copyWith(color: AppColors.textSecondary),

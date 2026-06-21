@@ -648,6 +648,10 @@ void main() {
     ) async {
       await pumpRecordScreen(tester);
 
+      expect(
+        find.byKey(const Key('record_top_archive_promise_hero')),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);

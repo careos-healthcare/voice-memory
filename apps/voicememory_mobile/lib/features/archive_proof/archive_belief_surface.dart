@@ -8,6 +8,7 @@ import 'archive_belief_surface_copy.dart';
 import 'archive_demo_preview_model.dart';
 import 'archive_demo_preview_resolver.dart';
 import 'archive_display_copy_guard.dart';
+import 'visible_archive_proof_copy.dart';
 
 /// Display model for the archive belief proof surface.
 class ArchiveBeliefSurface {
@@ -42,6 +43,17 @@ class ArchiveBeliefSurface {
     beliefSummary: '',
     evidenceSummary: '',
   );
+
+  /// Zero-entry static preview — no fabricated user-specific patterns.
+  static const emptyStaticPreview = ArchiveBeliefSurface(
+    shouldShow: true,
+    isPreview: true,
+    headline: ArchiveBeliefSurfaceCopy.headlineStarting,
+    beliefSummary: VisibleArchiveProofCopy.emptyProofBelief,
+    evidenceSummary: VisibleArchiveProofCopy.emptyProofEvidence,
+    whatChangedSummary: VisibleArchiveProofCopy.emptyProofChanged,
+    recordNextCta: VisibleArchiveProofCopy.patternsEmptyPreviewCta,
+  );
 }
 
 /// Builds [ArchiveBeliefSurface] from existing archive engines only.
@@ -59,6 +71,10 @@ class ArchiveBeliefSurfaceSource {
     List<JournalEntry> entries, {
     ArchiveIntelligenceTier tier = ArchiveIntelligenceTier.freeMedium,
   }) {
+    if (entries.isEmpty) {
+      return ArchiveBeliefSurface.emptyStaticPreview;
+    }
+
     final thread = _beliefEngine.build(entries, tier: tier);
     if (thread.hasEnoughData &&
         !ArchiveBeliefCorrectionStore.isDismissed(thread.suggestionId)) {
