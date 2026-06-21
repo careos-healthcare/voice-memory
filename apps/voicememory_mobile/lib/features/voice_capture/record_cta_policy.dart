@@ -183,25 +183,6 @@ abstract class RecordCtaPolicy {
         : RecordCtaPolicyState.returning;
     const secondaryLabels = [EmptyArchiveCopy.typeInsteadCta];
 
-    if (micPhase == RecordingPhase.ready ||
-        micPermissionState == MicrophonePermissionState.granted ||
-        micPermissionState ==
-            MicrophonePermissionState.grantedWithPermissionHandlerMismatch) {
-      return RecordCtaPolicyResolution(
-        state: state,
-        primaryLabel: isFirstUse
-            ? ConsumerUiCopy.recordOneMomentCta
-            : ConsumerUiCopy.recordMomentCta,
-        secondaryLabels: secondaryLabels,
-        showMainBottomCta: true,
-        hideCardRecordCtas: true,
-        showTypeInsteadSecondary: true,
-        action: RecordCtaAction.startRecording,
-        micPhase: RecordingPhase.ready,
-        micPermissionState: micPermissionState,
-      );
-    }
-
     if (micPhase == RecordingPhase.permissionPermanentlyDenied ||
         micPermissionState == MicrophonePermissionState.deniedOpenSettings) {
       return RecordCtaPolicyResolution(
@@ -228,6 +209,25 @@ abstract class RecordCtaPolicy {
         showTypeInsteadSecondary: true,
         action: RecordCtaAction.requestPermission,
         micPhase: micPhase,
+        micPermissionState: micPermissionState,
+      );
+    }
+
+    if (micPhase == RecordingPhase.ready ||
+        micPermissionState == MicrophonePermissionState.granted ||
+        micPermissionState ==
+            MicrophonePermissionState.grantedWithPermissionHandlerMismatch) {
+      return RecordCtaPolicyResolution(
+        state: state,
+        primaryLabel: isFirstUse
+            ? ConsumerUiCopy.recordOneMomentCta
+            : ConsumerUiCopy.recordMomentCta,
+        secondaryLabels: secondaryLabels,
+        showMainBottomCta: true,
+        hideCardRecordCtas: true,
+        showTypeInsteadSecondary: true,
+        action: RecordCtaAction.startRecording,
+        micPhase: RecordingPhase.ready,
         micPermissionState: micPermissionState,
       );
     }

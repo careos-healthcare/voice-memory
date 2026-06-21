@@ -785,7 +785,7 @@ void main() {
       );
 
       expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
