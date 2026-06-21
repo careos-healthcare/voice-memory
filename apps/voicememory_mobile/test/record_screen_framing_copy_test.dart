@@ -654,7 +654,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
     });
 
-    testWidgets('simulator deniedCanAskAgain shows Allow microphone bottom CTA', (
+    testWidgets('simulator deniedCanAskAgain with recorder access shows Record moment', (
       tester,
     ) async {
       await pumpRecordScreen(
@@ -664,8 +664,8 @@ void main() {
         userDeniedThisSession: false,
       );
 
-      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
 
@@ -717,8 +717,8 @@ void main() {
 
         expect(find.byKey(const Key('one_small_recording_card')), findsOneWidget);
         expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
-        expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsOneWidget);
-        expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+        expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
         expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       },
     );
@@ -758,7 +758,7 @@ void main() {
       expect(policy.action, RecordCtaAction.requestPermission);
     });
 
-    testWidgets('permanently denied shows Open Settings not Record this', (
+    testWidgets('simulator permanently denied with recorder access shows Record moment', (
       tester,
     ) async {
       await pumpRecordScreen(
@@ -768,9 +768,9 @@ void main() {
         userDeniedThisSession: false,
       );
 
-      expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsNothing);
       expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
     });
 
@@ -785,7 +785,7 @@ void main() {
       );
 
       expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
