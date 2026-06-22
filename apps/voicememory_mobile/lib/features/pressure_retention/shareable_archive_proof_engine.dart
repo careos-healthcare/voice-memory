@@ -1,4 +1,5 @@
 import 'archive_proof_counter_engine.dart';
+import '../archive_proof/visible_archive_proof_copy.dart';
 import 'pressure_check_in_record.dart';
 import 'shareable_archive_proof_model.dart';
 
@@ -26,6 +27,7 @@ class ShareableArchiveProofEngine {
   ShareableArchiveProof build(
     List<PressureCheckInRecord> records, {
     bool savedToday = false,
+    int entryCount = 0,
     DateTime? now,
   }) {
     final counter = _counterEngine.build(
@@ -48,12 +50,15 @@ class ShareableArchiveProofEngine {
       );
     }
 
-    if (savedToday && records.isNotEmpty) {
-      return const ShareableArchiveProof(
+    if (savedToday && records.isNotEmpty && entryCount >= 1) {
+      final recordedLine = entryCount == 1
+          ? VisibleArchiveProofCopy.oneEntryShareableLine
+          : ShareableArchiveProof.starterRecordedLine;
+      return ShareableArchiveProof(
         hasProof: true,
         title: ShareableArchiveProof.defaultTitle,
         lines: [
-          ShareableArchiveProof.starterRecordedLine,
+          recordedLine,
           ShareableArchiveProof.starterClosureLine,
         ],
         footer: ShareableArchiveProof.defaultFooter,

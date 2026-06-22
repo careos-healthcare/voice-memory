@@ -1362,6 +1362,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _recordReturnProIsPro = isPro;
       _doneForTodayReceipt = const DoneForTodayReceiptEngine().build(
         saved: true,
+        entryCount: _journalEntryCount,
         records: records,
       );
       // Same evidence, one more honest count: the save that just happened.
@@ -1373,6 +1374,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _shareableProof = const ShareableArchiveProofEngine().build(
         records,
         savedToday: true,
+        entryCount: _journalEntryCount,
       );
       // Pro bridge only after a real value moment — and the save is already
       // done, so it can never block recording or saving.

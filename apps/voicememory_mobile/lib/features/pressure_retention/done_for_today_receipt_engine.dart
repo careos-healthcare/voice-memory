@@ -1,3 +1,4 @@
+import '../../features/archive_proof/visible_archive_proof_copy.dart';
 import 'done_for_today_receipt_model.dart';
 import 'one_small_recording_engine.dart';
 import 'pressure_check_in_record.dart';
@@ -14,9 +15,10 @@ import 'thread_return_evidence_model.dart';
 ///   receipt closes the loop the user just recorded on.
 /// - With a thread term: "You added words to the work thread." and
 ///   "Tomorrow ArchiveMe can check whether this returned, faded, or changed."
-/// - Without one: the generic affect label — "You added words to something
-///   that was repeating." — and tomorrow ArchiveMe can check whether it
-///   shows up again. Nothing fabricated, nothing claimed beyond naming.
+/// - Without one: the generic affect label — "You added one piece today."
+///   at a single entry, or a thread label once comparison is possible.
+///   Tomorrow ArchiveMe can check whether it shows up again. Nothing
+///   fabricated, nothing claimed beyond naming.
 class DoneForTodayReceiptEngine {
   const DoneForTodayReceiptEngine();
 
@@ -28,6 +30,7 @@ class DoneForTodayReceiptEngine {
   /// [now] is injectable for tests and forwarded to the source engines.
   DoneForTodayReceipt build({
     required bool saved,
+    required int entryCount,
     List<PressureCheckInRecord> records = const [],
     DateTime? now,
   }) {
@@ -38,21 +41,26 @@ class DoneForTodayReceiptEngine {
         .take(DoneForTodayReceipt.maxTerms)
         .toList();
     final term = terms.isEmpty ? null : terms.first;
+    final isSingleEntry = entryCount == 1;
 
     return DoneForTodayReceipt(
       hasReceipt: true,
       completionLine: 'That is enough for today.',
       // Light affect labeling: the user added words, using their own term
       // when one exists. Naming only — no processing or resolution claims.
-      archiveLine: term != null
+      archiveLine: isSingleEntry
+          ? VisibleArchiveProofCopy.oneEntryAddedTodayLine
+          : term != null
           ? 'You added words to the $term thread.'
-          : 'You added words to something that was repeating.',
-      tomorrowLine: term != null
+          : VisibleArchiveProofCopy.oneEntryAddedTodayLine,
+      tomorrowLine: isSingleEntry
+          ? VisibleArchiveProofCopy.oneEntryTomorrowLine
+          : term != null
           ? 'Tomorrow ArchiveMe can check whether this returned, faded, '
                 'or changed.'
-          : 'Tomorrow ArchiveMe can check whether this shows up again.',
+          : VisibleArchiveProofCopy.oneEntryTomorrowLine,
       tomorrowCueTitle: DoneForTodayReceipt.defaultTomorrowCueTitle,
-      tomorrowCueLine: _tomorrowCue(records, term, now),
+      tomorrowCueLine: _tomorrowCue(records, term, now, isSingleEntry: isSingleEntry),
       sourceTerms: terms,
       entryIds: source.entryIds,
     );
@@ -63,8 +71,12 @@ class DoneForTodayReceiptEngine {
   String _tomorrowCue(
     List<PressureCheckInRecord> records,
     String? term,
-    DateTime? now,
-  ) {
+    DateTime? now, {
+    required bool isSingleEntry,
+  }) {
+    if (isSingleEntry) {
+      return DoneForTodayReceipt.genericTomorrowCue;
+    }
     final evidence = _threadEngine.build(records, now: now);
     if (evidence.hasEvidence && evidence.sourceTerms.isNotEmpty) {
       final threadTerm = evidence.sourceTerms.first;

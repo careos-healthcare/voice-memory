@@ -510,6 +510,7 @@ void main() {
       const doneEngine = DoneForTodayReceiptEngine();
       final doneReceipt = doneEngine.build(
         saved: true,
+        entryCount: 1,
         now: DateTime(2026, 6, 12),
       );
 

@@ -312,6 +312,7 @@ void main() {
     ) async {
       final receipt = const DoneForTodayReceiptEngine().build(
         saved: true,
+        entryCount: 1,
         now: DateTime(2026, 6, 11, 12),
       );
       await tester.binding.setSurfaceSize(const Size(390, 2000));

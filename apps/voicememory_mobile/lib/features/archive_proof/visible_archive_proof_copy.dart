@@ -17,10 +17,10 @@ abstract final class VisibleArchiveProofCopy {
 
   static const firstSaveBody =
       'This is your first piece of evidence. Add one more moment and '
-      'ArchiveMe can start comparing what repeats.';
+      'ArchiveMe can compare later.';
 
   static const firstSaveSecondary =
-      'No conclusion yet — just the first thread to return to.';
+      'No conclusion yet — just one moment saved so far.';
 
   static const firstSavePrimaryCta = 'Add one more moment';
   static const firstSaveViewArchiveCta = 'View archive';
@@ -70,6 +70,17 @@ abstract final class VisibleArchiveProofCopy {
 
   static const earlyRepeatNextAction =
       'Record once more to strengthen the signal.';
+
+  // One-entry post-save — evidence only, no loop/repeat claims yet.
+  static const oneEntryAddedTodayLine = 'You added one piece today.';
+  static const oneEntryArchiveLine =
+      'ArchiveMe has one moment to compare later.';
+  static const oneEntryTomorrowLine =
+      'Tomorrow, check whether this shows up again.';
+  static const oneEntryAddMoreInvite =
+      'Add one more moment when it happens again.';
+  static const oneEntryShareableLine =
+      'I recorded one moment for my archive.';
 
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
