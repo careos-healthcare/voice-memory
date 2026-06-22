@@ -426,6 +426,23 @@ abstract final class VisibleArchiveProofCopy {
 
   static const nextMomentViewReviewCta = archiveHomeViewReviewCta;
 
+  // Archive insight feedback — local trust controls on belief/review surfaces.
+  static const insightFeedbackFeelsRight = 'Feels right';
+
+  static const insightFeedbackNotQuite = 'Not quite';
+
+  static const insightFeedbackHideThis = 'Hide this';
+
+  static const insightFeedbackWhySeeing = 'Why am I seeing this?';
+
+  static const insightFeedbackWhySource =
+      'ArchiveMe is using your saved words, not guessing.';
+
+  static const insightFeedbackWhyNotConclusion = 'This is not a conclusion.';
+
+  static const insightFeedbackWhyHide =
+      'You can hide this if it does not feel useful.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/activation/archive_insight_feedback.dart';
 import '../../features/activation/belief_evidence_trail.dart';
 import '../../features/activation/belief_history_timeline.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'archive_insight_feedback_controls.dart';
 
 /// Proof trail sections for a belief update — not a generic journal list.
 class BeliefEvidenceTrailCard extends StatelessWidget {
@@ -57,7 +59,14 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
       );
     }
 
-    return Container(
+    return ArchiveInsightFeedbackHost(
+      insightId: ArchiveInsightFeedbackStore.targetId(
+        ArchiveInsightTarget.beliefEvidence,
+      ),
+      showControls: ArchiveInsightFeedbackGate.showForBeliefEvidence(
+        hasEnoughEvidence: trail.hasEnoughEvidence,
+      ),
+      child: Container(
       key: const Key('belief_evidence_trail_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -174,6 +183,7 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
           ],
         ],
       ),
+    ),
     );
   }
 }
