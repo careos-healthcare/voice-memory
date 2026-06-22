@@ -69,6 +69,8 @@ void main() {
       expect(find.text(VisibleArchiveProofCopy.firstSaveTitle), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveBody), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveSecondary), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSavePrimaryCta), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstSaveViewArchiveCta), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
     });
 
@@ -121,10 +123,10 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedBody),
+        find.text(VisibleArchiveProofCopy.patternsOneEntryEvidenceRow),
         findsOneWidget,
       );
-      expect(find.text('Add another moment'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.patternsOneEntryCta), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
     });
   });

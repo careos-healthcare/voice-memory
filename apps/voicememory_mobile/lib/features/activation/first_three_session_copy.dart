@@ -17,19 +17,25 @@ abstract class FirstThreeSessionCopy {
       VisibleArchiveProofCopy.firstSaveSecondary;
   static const String session1ReturnTomorrow =
       VisibleArchiveProofCopy.firstSaveSecondary;
-  static const String session1ViewArchive = 'View archive';
-  static const String session1RecordAnother = 'Record another';
+  static const String session1ViewArchive =
+      VisibleArchiveProofCopy.firstSaveViewArchiveCta;
+  static const String session1RecordAnother =
+      VisibleArchiveProofCopy.firstSavePrimaryCta;
 
   // Journey indicator (Record / Patterns).
   static const String journeyStep1 = 'Start your archive';
   static const String journeyStep2 = 'Notice what repeats';
   static const String journeyStep3 = 'Watch what changes';
 
-  // Session 2 — early noticing, not a confirmed repeat.
+  // Session 2 — early comparing, not a confirmed repeat.
   static const String session2StartingToNoticeTitle =
-      'ArchiveMe is starting to notice';
+      VisibleArchiveProofCopy.earlyRepeatTitle;
   static const String session2StartingToNoticeBody =
-      'ArchiveMe can compare these moments once there is enough to compare.';
+      VisibleArchiveProofCopy.earlyRepeatBody;
+  static const String session2EvidenceLine =
+      VisibleArchiveProofCopy.earlyRepeatEvidenceLine;
+  static const String session2NextAction =
+      VisibleArchiveProofCopy.earlyRepeatNextAction;
 
   // Session 3 — archive becoming useful.
   static const String session3Title =

@@ -1,7 +1,11 @@
+import '../archive_proof/visible_archive_proof_copy.dart';
+
 /// Cold-start preview copy — watch state, not a conclusion.
 abstract final class ArchiveDemoPreviewCopy {
   static const title =
       "Here's what ArchiveMe will track if this keeps appearing.";
+
+  static const twoEntryTitle = VisibleArchiveProofCopy.earlyRepeatTitle;
 
   static const previewBadge = 'Preview — ArchiveMe is watching, not concluding';
 
@@ -27,10 +31,10 @@ abstract final class ArchiveDemoPreviewCopy {
       'Record one more moment when something feels familiar — even loosely.';
 
   static const twoEntryNoRepeatHint =
-      'Your archive is starting to notice — nothing clear yet.';
+      VisibleArchiveProofCopy.earlyRepeatBody;
 
   static const twoEntryRepeatHint =
-      'Your own words echo across two or more moments.';
+      VisibleArchiveProofCopy.earlyRepeatEvidenceLine;
 
   /// When Daily Mirror sees a possible loop in two entries.
   static const twoEntryPossibleLoopRepeatHint =
@@ -40,5 +44,5 @@ abstract final class ArchiveDemoPreviewCopy {
       'You catch the thread earlier or your response shifts.';
 
   static const twoEntryRecordNextHint =
-      'Record when the same feeling or situation shows up again.';
+      VisibleArchiveProofCopy.earlyRepeatNextAction;
 }

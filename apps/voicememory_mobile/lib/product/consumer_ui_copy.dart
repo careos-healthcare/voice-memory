@@ -175,10 +175,10 @@ abstract class ConsumerUiCopy {
   static const String patternsFirstEntrySavedTitle =
       'Your archive has one piece of evidence.';
   static const String patternsFirstEntrySavedBody =
-      'Add one more moment and ArchiveMe can start comparing what repeats.';
+      'Add one more moment and ArchiveMe can start comparing your own words.';
   static const String patternsFirstEntrySavedHelper =
       'Preview — not a conclusion yet';
-  static const String patternsFirstEntrySavedCta = 'Add another moment';
+  static const String patternsFirstEntrySavedCta = 'Add one more moment';
   static const String patternsFirstEntryViewSavedCta = 'View saved entry';
 
   /// Legacy alias — prefer [patternsFirstEntrySavedTitle].

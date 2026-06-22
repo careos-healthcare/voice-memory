@@ -3,14 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
-import '../../features/archive_proof/archive_belief_surface.dart';
-import '../../features/archive_proof/archive_demo_preview_resolver.dart';
-import '../../features/archive_proof/archive_proof_record_routes.dart';
+import '../../features/archive_proof/visible_archive_proof_copy.dart';
 import '../../models/journal_entry.dart';
-import '../../product/consumer_ui_copy.dart';
 import '../../theme/app_spacing.dart';
-import 'archive_belief_surface_card.dart';
-import 'archive_demo_preview_card.dart';
 
 /// Patterns tab — exactly one saved entry. Confirms the archive started and
 /// nudges a second entry without zero-entry upload copy.
@@ -27,31 +22,19 @@ class PatternsFirstArchiveView extends StatelessWidget {
   /// When set, shows a secondary action to open the saved entry detail.
   final String? savedEntryId;
 
+  /// Retained for callers that pass journal entries; the one-entry preview
+  /// card is self-contained and does not duplicate the belief proof layer.
   final List<JournalEntry> entries;
 
   @override
   Widget build(BuildContext context) {
     final gap = ArchiveResponsiveLayout.gap(context);
     final entryId = savedEntryId?.trim();
-    final beliefSurface = const ArchiveBeliefSurfaceSource().resolve(entries);
-    final demo = const ArchiveDemoPreviewResolver().resolve(entries);
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (beliefSurface.shouldShow) ...[
-          ArchiveBeliefSurfaceCard(
-            surface: beliefSurface,
-            onRecordNext: () => context.go(
-              ArchiveProofRecordRoutes.uri(
-                guidedPromptNodeKey:
-                    ArchiveProofRecordRoutes.changeTimelineNodeKey,
-              ),
-            ),
-          ),
-          SizedBox(height: gap),
-        ],
         Container(
           key: const Key('patterns_one_entry_archive_preview_card'),
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -59,30 +42,37 @@ class PatternsFirstArchiveView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                ConsumerUiCopy.patternsFirstEntrySavedTitle,
+                VisibleArchiveProofCopy.patternsOneEntryTitle,
                 style: ArchiveMobileTypography.responsivePageTitle(context),
               ),
               SizedBox(height: gap),
               Text(
-                ConsumerUiCopy.patternsFirstEntrySavedBody,
+                VisibleArchiveProofCopy.patternsOneEntryBody,
                 style: ArchiveMobileTypography.explanationBody(context),
               ),
-              if (demo.shouldShow) ...[
-                SizedBox(height: gap),
-                ArchiveDemoPreviewCard(
-                  preview: demo,
-                  onRecordNext: () => context.go(
-                    ArchiveProofRecordRoutes.uri(
-                      guidedPromptNodeKey:
-                          ArchiveProofRecordRoutes.changeTimelineNodeKey,
-                    ),
-                  ),
-                ),
-              ],
               SizedBox(height: gap),
               Text(
-                ConsumerUiCopy.patternsFirstEntrySavedHelper,
-                style: ArchiveMobileTypography.responsiveHelper(context),
+                VisibleArchiveProofCopy.patternsEmptyPreviewBadge,
+                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(height: gap),
+              _PreviewRow(
+                label: 'Current belief',
+                value: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
+              ),
+              SizedBox(height: gap),
+              _PreviewRow(
+                label: 'Evidence',
+                value: VisibleArchiveProofCopy.patternsOneEntryEvidenceRow,
+              ),
+              SizedBox(height: gap),
+              _PreviewRow(
+                label: 'What changes next',
+                value: VisibleArchiveProofCopy.patternsOneEntryChangedRow,
               ),
               SizedBox(height: gap + 4),
               FilledButton(
@@ -92,7 +82,7 @@ class PatternsFirstArchiveView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 child: Text(
-                  ConsumerUiCopy.patternsFirstEntrySavedCta,
+                  VisibleArchiveProofCopy.patternsOneEntryCta,
                   style: ArchiveMobileTypography.responsiveCta(context),
                 ),
               ),
@@ -101,7 +91,7 @@ class PatternsFirstArchiveView extends StatelessWidget {
                 TextButton(
                   key: const Key('patterns_first_archive_view_saved_entry'),
                   onPressed: () => context.push('/entry/$entryId'),
-                  child: Text(ConsumerUiCopy.patternsFirstEntryViewSavedCta),
+                  child: const Text('View saved entry'),
                 ),
               ],
             ],
@@ -121,6 +111,31 @@ class PatternsFirstArchiveView extends StatelessWidget {
           ? const AlwaysScrollableScrollPhysics()
           : const ClampingScrollPhysics(),
       child: padded,
+    );
+  }
+}
+
+class _PreviewRow extends StatelessWidget {
+  const _PreviewRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: ArchiveMobileTypography.cardLabel(context),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: ArchiveMobileTypography.body(context),
+        ),
+      ],
     );
   }
 }

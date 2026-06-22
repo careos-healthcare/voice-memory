@@ -16,11 +16,14 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveTitle = 'Your archive has started.';
 
   static const firstSaveBody =
-      'This is your first piece of evidence. Come back with one more moment '
-      'and ArchiveMe can start comparing what repeats.';
+      'This is your first piece of evidence. Add one more moment and '
+      'ArchiveMe can start comparing what repeats.';
 
   static const firstSaveSecondary =
-      'No conclusion yet — just the beginning of a pattern you can return to.';
+      'No conclusion yet — just the first thread to return to.';
+
+  static const firstSavePrimaryCta = 'Add one more moment';
+  static const firstSaveViewArchiveCta = 'View archive';
 
   // Patterns zero-entry preview.
   static const patternsEmptyPreviewTitle = 'What ArchiveMe will show over time';
@@ -32,8 +35,7 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsEmptyPreviewBadge =
       'Preview — not a conclusion yet';
 
-  static const patternsEmptyPreviewBeliefRow =
-      'Not enough evidence yet';
+  static const patternsEmptyPreviewBeliefRow = 'Not enough evidence yet';
   static const patternsEmptyPreviewEvidenceRow =
       'Your own words across recordings';
   static const patternsEmptyPreviewChangedRow =
@@ -46,9 +48,28 @@ abstract final class VisibleArchiveProofCopy {
       'Your archive has one piece of evidence.';
 
   static const patternsOneEntryBody =
-      'Add one more moment and ArchiveMe can start comparing what repeats.';
+      'Add one more moment and ArchiveMe can start comparing your own words.';
 
-  static const patternsOneEntryCta = 'Add another moment';
+  static const patternsOneEntryBeliefRow = 'Not enough evidence yet';
+  static const patternsOneEntryEvidenceRow = '1 saved moment';
+  static const patternsOneEntryChangedRow =
+      'A second moment can show whether the same thread returns.';
+
+  static const patternsOneEntryCta = 'Add one more moment';
+
+  // Early repeat / two-entry payoff (cautious).
+  static const earlyRepeatTitle =
+      'ArchiveMe is starting to compare your moments.';
+
+  static const earlyRepeatBody =
+      'If the same words or situations keep returning, this is where your '
+      'archive will show the thread.';
+
+  static const earlyRepeatEvidenceLine =
+      'You now have more than one moment to compare.';
+
+  static const earlyRepeatNextAction =
+      'Record once more to strengthen the signal.';
 
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;

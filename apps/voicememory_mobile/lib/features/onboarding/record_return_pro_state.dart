@@ -189,7 +189,7 @@ abstract class RecordReturnProCopy {
       'changed.';
   static const String archiveSearchAction = 'Search archive';
   static const String archivePinAction = 'Pin this entry';
-  static const String archiveRecordAnother = 'Record another';
+  static const String archiveRecordAnother = 'Add one more moment';
 
   static const List<String> all = [
     recordOnceCta,

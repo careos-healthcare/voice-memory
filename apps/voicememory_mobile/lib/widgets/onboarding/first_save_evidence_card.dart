@@ -7,8 +7,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// B. Saved as evidence — preservation value only, shown right after the
-/// very first successful save. Nothing here claims a pattern or change.
+/// B. First save payoff — archive started, one more moment to compare.
 class FirstSaveEvidenceCard extends StatelessWidget {
   const FirstSaveEvidenceCard({
     super.key,
@@ -58,6 +57,12 @@ class FirstSaveEvidenceCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
+            key: const Key('first_save_record_another_cta'),
+            onPressed: onRecordAnother,
+            child: const Text(RecordReturnProCopy.evidenceRecordAnother),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          TextButton(
             key: const Key('first_save_view_archive_cta'),
             onPressed: () {
               ActivationFunnelAnalytics.track(
@@ -69,12 +74,6 @@ class FirstSaveEvidenceCard extends StatelessWidget {
               onViewArchive();
             },
             child: const Text(RecordReturnProCopy.evidenceViewArchive),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          TextButton(
-            key: const Key('first_save_record_another_cta'),
-            onPressed: onRecordAnother,
-            child: const Text(RecordReturnProCopy.evidenceRecordAnother),
           ),
         ],
       ),
