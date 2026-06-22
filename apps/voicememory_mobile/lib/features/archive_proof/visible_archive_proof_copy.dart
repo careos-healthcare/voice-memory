@@ -147,6 +147,35 @@ abstract final class VisibleArchiveProofCopy {
 
   static const beliefUpdateViewEvidenceCta = 'View evidence';
 
+  // Belief evidence drilldown — proof trail behind belief updates.
+  static const beliefEvidenceTrailTitle = 'Evidence behind this belief';
+
+  static const beliefEvidenceNotConclusion = 'This is not a conclusion.';
+
+  static const beliefEvidenceSourceLine =
+      'ArchiveMe is using your saved words, not guessing.';
+
+  static const beliefEvidenceInsufficientBody =
+      'Your archive needs more moments before it can show an evidence trail.';
+
+  static const beliefEvidenceCurrentBeliefLabel = 'Current belief';
+
+  static const beliefEvidenceWhatChangedLabel = 'What changed';
+
+  static const beliefEvidenceArchiveLabel = 'Evidence from your archive';
+
+  static const beliefEvidenceStillUncertainLabel = 'Still uncertain';
+
+  static const beliefEvidenceStillThin = 'The evidence is still thin.';
+
+  static const beliefEvidenceAddNextLabel = 'Add one more moment';
+
+  static const beliefEvidenceNextWhenThin =
+      'Add one more distinct moment to make this belief clearer.';
+
+  static const beliefEvidenceNextDefault =
+      'Add another moment when this shows up again.';
+
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
   static const returnLoopOneEntryBody =
       'Come back when this shows up again.';
