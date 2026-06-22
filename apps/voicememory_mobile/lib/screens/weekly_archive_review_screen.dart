@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
 import '../features/activation/belief_evidence_trail.dart';
+import '../features/activation/next_moment_prompt.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/pressure_retention/shareable_archive_proof_model.dart';
@@ -11,6 +12,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
+import '../widgets/record/next_moment_prompt_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 
@@ -30,6 +32,7 @@ class WeeklyArchiveReviewScreen extends StatefulWidget {
 class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
   WeeklyArchiveReview? _review;
   ShareableArchiveProof? _shareProof;
+  NextMomentPrompt? _nextMomentPrompt;
   bool _loading = true;
 
   @override
@@ -53,6 +56,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
       _shareProof = const ShareableArchiveProofEngine().buildFromJournal(
         entries: entries,
       );
+      _nextMomentPrompt = NextMomentPromptEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -63,6 +67,17 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
 
   void _goToEvidence() {
     context.push(BeliefEvidenceNavigation.route);
+  }
+
+  void _handleNextMomentPrompt(NextMomentPromptAction action) {
+    switch (action) {
+      case NextMomentPromptAction.addMoment:
+        _goToRecord();
+      case NextMomentPromptAction.viewEvidence:
+        _goToEvidence();
+      case NextMomentPromptAction.viewReview:
+        break;
+    }
   }
 
   @override
@@ -121,6 +136,18 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),
                 ShareableArchiveProofCard(proof: _shareProof!),
+              ],
+              if (_nextMomentPrompt?.stage == NextMomentPromptStage.fivePlus) ...[
+                const SizedBox(height: AppSpacing.lg),
+                NextMomentPromptCard(
+                  prompt: _nextMomentPrompt!,
+                  onPrimary: () => _handleNextMomentPrompt(
+                    _nextMomentPrompt!.primaryAction,
+                  ),
+                  onSecondary: () => _handleNextMomentPrompt(
+                    _nextMomentPrompt!.secondaryAction,
+                  ),
+                ),
               ],
             ],
           ),

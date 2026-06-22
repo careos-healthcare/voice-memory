@@ -372,7 +372,8 @@ void main() {
         entriesAfterSave: _fourDistinctWorkEntries().sublist(0, 3),
       );
 
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
       expect(
         find.text('ArchiveMe is starting to form a belief.'),
@@ -388,12 +389,12 @@ void main() {
       );
 
       expect(find.byKey(const Key('belief_update_payoff_card')), findsOneWidget);
-      expect(find.text('Your archive updated its belief.'), findsOneWidget);
+      expect(find.text('Your archive updated its belief.'), findsWidgets);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       expect(find.text('Add one more moment'), findsWidgets);
-      expect(find.text('View evidence'), findsOneWidget);
+      expect(find.text('View evidence'), findsWidgets);
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
 

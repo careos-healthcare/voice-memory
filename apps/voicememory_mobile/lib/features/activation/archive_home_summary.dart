@@ -3,6 +3,7 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'belief_update_payoff.dart';
+import 'next_moment_prompt.dart';
 import 'second_session_payoff.dart';
 import 'third_entry_belief_payoff.dart';
 import 'weekly_archive_review.dart';
@@ -87,6 +88,9 @@ class ArchiveHomeSummary {
 abstract final class ArchiveHomeSummaryEngine {
   ArchiveHomeSummaryEngine._();
 
+  static String? _nextActionLine(List<JournalEntry> entries) =>
+      NextMomentPromptEngine.build(entries: entries)?.nextActionSummary;
+
   static ArchiveHomeSummary build({
     required List<JournalEntry> entries,
   }) {
@@ -116,7 +120,8 @@ abstract final class ArchiveHomeSummaryEngine {
         currentBeliefLine: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
         whatChangedLine: VisibleArchiveProofCopy.archiveHomeNotEnoughChanged,
         evidenceRows: const [VisibleArchiveProofCopy.patternsOneEntryEvidenceRow],
-        nextActionLine: VisibleArchiveProofCopy.firstSavePrimaryCta,
+        nextActionLine: _nextActionLine(entries) ??
+            VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryAction: ArchiveHomeAction.addMoment,
         suppressDuplicatePayoffCards: true,
@@ -134,7 +139,8 @@ abstract final class ArchiveHomeSummaryEngine {
         whatChangedLine: payoff?.hasGroundedMatch == true
             ? payoff!.body
             : VisibleArchiveProofCopy.twoEntryBodyUngrounded,
-        nextActionLine: VisibleArchiveProofCopy.twoEntryNextAction,
+        nextActionLine: _nextActionLine(entries) ??
+            VisibleArchiveProofCopy.twoEntryNextAction,
         primaryCta: VisibleArchiveProofCopy.twoEntryPrimaryCta,
         primaryAction: ArchiveHomeAction.addMoment,
         suppressDuplicatePayoffCards: true,
@@ -153,7 +159,8 @@ abstract final class ArchiveHomeSummaryEngine {
         whatChangedLine: payoff?.thinEvidenceNote ??
             VisibleArchiveProofCopy.threeEntryBeliefEvidenceThin,
         evidenceRows: payoff?.evidenceRows ?? const [],
-        nextActionLine: payoff?.thinEvidenceAction ??
+        nextActionLine: _nextActionLine(entries) ??
+            payoff?.thinEvidenceAction ??
             VisibleArchiveProofCopy.threeEntryBeliefEvidenceThinAction,
         primaryCta: VisibleArchiveProofCopy.threeEntryBeliefPrimaryCta,
         secondaryCta: VisibleArchiveProofCopy.threeEntryBeliefViewArchiveCta,
@@ -172,7 +179,7 @@ abstract final class ArchiveHomeSummaryEngine {
         currentBeliefLine: payoff?.currentBelief,
         whatChangedLine: payoff?.whatChangedLine,
         evidenceRows: payoff?.evidenceRows ?? const [],
-        nextActionLine: payoff?.primaryCta,
+        nextActionLine: _nextActionLine(entries) ?? payoff?.primaryCta,
         primaryCta: VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta,
         secondaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryAction: ArchiveHomeAction.viewEvidence,
@@ -195,7 +202,7 @@ abstract final class ArchiveHomeSummaryEngine {
       currentBeliefLine: review.strongestThreadLine,
       whatChangedLine: review.whatChangedLine,
       evidenceRows: review.evidenceRows,
-      nextActionLine: review.nextActionLine,
+      nextActionLine: _nextActionLine(entries) ?? review.nextActionLine,
       primaryCta: ArchiveHomeSummaryCopy.viewReviewCta,
       secondaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
       primaryAction: ArchiveHomeAction.viewReview,
