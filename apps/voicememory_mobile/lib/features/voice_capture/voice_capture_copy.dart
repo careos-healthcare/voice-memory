@@ -29,7 +29,10 @@ abstract class VoiceCaptureCopy {
   static const String recordingSavedTitle = 'Recording saved.';
 
   static const String analysisUnavailableNote =
-      'Archive insight will appear when processing is available.';
+      'Deeper analysis can run later. This moment is already saved.';
+
+  /// Legacy alias — prefer [analysisUnavailableNote] for deferred analysis copy.
+  static const String analysisDeferredFootnote = analysisUnavailableNote;
 
   static const String typeWhatYouSaid = 'Type what you said';
 

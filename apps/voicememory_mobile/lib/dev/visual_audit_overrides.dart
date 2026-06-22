@@ -47,6 +47,7 @@ class RecordAuditPresentation {
     this.entriesAfterSave,
     this.micPhase,
     this.userDeniedThisSession,
+    this.lastCaptureAnalysisSucceeded = true,
   });
 
   final RecordUiState ui;
@@ -58,4 +59,5 @@ class RecordAuditPresentation {
   final List<JournalEntry>? entriesAfterSave;
   final RecordingPhase? micPhase;
   final bool? userDeniedThisSession;
+  final bool lastCaptureAnalysisSucceeded;
 }
