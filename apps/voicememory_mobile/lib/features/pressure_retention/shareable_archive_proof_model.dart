@@ -1,31 +1,33 @@
 import '../archive_proof/visible_archive_proof_copy.dart';
 
-/// A privacy-safe, shareable proof-of-use card: counts and generic lines
-/// only, so a user can explain ArchiveMe without exposing any evidence.
-///
-/// Built exclusively from counts — never from notes, snippets, terms, names,
-/// or any other user text. No streaks, no health claims, no social feed.
+/// A privacy-safe, shareable proof-of-use card: fixed lines only, never user
+/// text, transcripts, or evidence snippets.
 class ShareableArchiveProof {
   const ShareableArchiveProof({
     required this.hasProof,
     this.title = '',
+    this.subtitle = '',
     this.lines = const [],
-    this.footer = '',
   });
 
-  static const String defaultTitle = 'My archive this week';
+  static const String defaultTitle = VisibleArchiveProofCopy.shareProofTitle;
 
-  /// Names the app without naming the user or their content.
-  static const String defaultFooter = 'Recorded with ArchiveMe.';
+  static const String defaultSubtitle =
+      VisibleArchiveProofCopy.shareProofSubtitle;
 
-  // Starter variant — right after a save, before any thread connects.
-  static const String starterRecordedLine =
-      VisibleArchiveProofCopy.oneEntryShareableLine;
-  static const String starterClosureLine = 'Done for today.';
+  static const String variantA = VisibleArchiveProofCopy.shareProofVariantA;
 
-  // Connected variant — only when a thread genuinely connects entries.
-  static const String connectedReturnedLine = 'One thread returned.';
-  static const String connectedTomorrowLine = 'I know what to check tomorrow.';
+  static const String variantB = VisibleArchiveProofCopy.shareProofVariantB;
+
+  static const String variantC = VisibleArchiveProofCopy.shareProofVariantC;
+
+  static const String variantD = VisibleArchiveProofCopy.shareProofVariantD;
+
+  static const String privacyFooter =
+      VisibleArchiveProofCopy.shareProofPrivacyFooter;
+
+  static const String productLine =
+      VisibleArchiveProofCopy.shareProofProductLine;
 
   static const String copyLabel = 'Copy share text';
   static const String copiedLabel = 'Copied';
@@ -36,13 +38,17 @@ class ShareableArchiveProof {
 
   final String title;
 
-  /// Anonymous, general lines — counts only, never user text.
+  final String subtitle;
+
+  /// Anonymous, general lines — never user text or transcripts.
   final List<String> lines;
 
-  final String footer;
-
   /// The full text placed on the clipboard or share sheet.
-  String get shareText => [title, ...lines, footer].join('\n');
+  String get shareText => [
+        ...lines,
+        privacyFooter,
+        productLine,
+      ].join('\n');
 
   factory ShareableArchiveProof.none() =>
       const ShareableArchiveProof(hasProof: false);

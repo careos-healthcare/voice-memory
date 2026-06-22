@@ -136,6 +136,7 @@ import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/weekly_archive_review.dart';
+import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -164,6 +165,7 @@ import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
+import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -1816,6 +1818,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
+    final shareableProof = const ShareableArchiveProofEngine().buildFromJournal(
+      entries: _entries,
+    );
+    if (shareableProof.hasProof) {
+      widgets.add(ShareableArchiveProofCard(proof: shareableProof));
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
     for (final section in decision.sections) {
       widgets.addAll(_sectionWidgets(section, decision));
       if (section == PatternsSectionType.activeCheckIn) {
@@ -1934,6 +1943,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
               ? WeeklyArchiveReviewEngine.build(entries: _entries)
               : null;
+      final shareableProof =
+          const ShareableArchiveProofEngine().buildFromJournal(
+        entries: _entries,
+      );
       final thirdEntryBeliefPayoff =
           beliefUpdatePayoff == null &&
                   ArchiveEvidenceGuard.eligibleReflectionCount(_entries) ==
@@ -1999,6 +2012,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         context.push(WeeklyArchiveReviewNavigation.route),
                     onAddAnother: _goToRecord,
                   ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (shareableProof.hasProof) ...[
+                  ShareableArchiveProofCard(proof: shareableProof),
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (thirdEntryBeliefPayoff != null) ...[

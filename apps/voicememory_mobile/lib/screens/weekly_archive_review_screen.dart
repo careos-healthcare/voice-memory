@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 import '../design/archive_mobile_spacing.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/weekly_archive_review.dart';
+import '../features/pressure_retention/shareable_archive_proof_engine.dart';
+import '../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
+import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 
 /// Full weekly archive review — strongest thread, change, evidence, uncertainty.
 class WeeklyArchiveReviewScreen extends StatefulWidget {
@@ -26,6 +29,7 @@ class WeeklyArchiveReviewScreen extends StatefulWidget {
 
 class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
   WeeklyArchiveReview? _review;
+  ShareableArchiveProof? _shareProof;
   bool _loading = true;
 
   @override
@@ -46,6 +50,9 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
     if (!mounted) return;
     setState(() {
       _review = WeeklyArchiveReviewEngine.build(entries: entries);
+      _shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: entries,
+      );
       _loading = false;
     });
   }
@@ -111,6 +118,10 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
                 onAddAnother: review.hasEnoughEvidence ? _goToRecord : null,
                 onViewEvidence: review.hasEnoughEvidence ? _goToEvidence : null,
               ),
+              if (_shareProof?.hasProof == true) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ShareableArchiveProofCard(proof: _shareProof!),
+              ],
             ],
           ),
         ),

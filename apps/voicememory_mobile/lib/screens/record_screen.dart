@@ -3075,6 +3075,15 @@ class _RecordScreenState extends State<RecordScreen> {
             entriesAfterSave.isNotEmpty
         ? WeeklyArchiveReviewEngine.build(entries: entriesAfterSave)
         : null;
+    final journalShareProof = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? const ShareableArchiveProofEngine().buildFromJournal(
+            entries: entriesAfterSave,
+          )
+        : null;
+    final shareableProof = journalShareProof?.hasProof == true
+        ? journalShareProof
+        : _shareableProof;
     final returnLoopPayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             thirdEntryBeliefPayoff == null &&
@@ -3900,11 +3909,11 @@ class _RecordScreenState extends State<RecordScreen> {
                             counter: _archiveProofCounter!,
                           ),
                         ],
-                        if (_shareableProof != null &&
-                            _shareableProof!.hasProof &&
+                        if (shareableProof != null &&
+                            shareableProof.hasProof &&
                             !suppressNoisyFirstSaveCards) ...[
                           const SizedBox(height: 16),
-                          ShareableArchiveProofCard(proof: _shareableProof!),
+                          ShareableArchiveProofCard(proof: shareableProof),
                         ],
                         if (_valueMomentBridge != null &&
                             _valueMomentBridge!.show &&

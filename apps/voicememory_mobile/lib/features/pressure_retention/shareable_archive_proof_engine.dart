@@ -1,29 +1,32 @@
+import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
 import 'archive_proof_counter_engine.dart';
-import '../archive_proof/visible_archive_proof_copy.dart';
 import 'pressure_check_in_record.dart';
 import 'shareable_archive_proof_model.dart';
 
 /// Builds the privacy-safe share card. Pure and deterministic.
 ///
-/// Privacy by construction: the share text is assembled only from counts
-/// derived by the proof-counter engine. Record notes, evidence snippets,
-/// source terms, and entry ids are never read into the output, so no private
-/// text can leak — by default or by accident.
-///
-/// Variants:
-/// - A connected thread (2+ entries) → "My archive connected N recordings."
-///   plus the returned/tomorrow lines.
-/// - Right after a save with no thread yet ([savedToday]) → the starter
-///   variant. (The spec's "ArchiveMe found what kept returning" line is
-///   intentionally not used here: nothing has returned yet, and the card
-///   never overclaims.)
-/// - Otherwise → nothing to share yet.
+/// Privacy by construction: share text uses fixed product lines and eligible
+/// entry counts only. Transcripts, evidence snippets, names, and entry ids are
+/// never read into the output.
 class ShareableArchiveProofEngine {
   const ShareableArchiveProofEngine();
 
   static const _counterEngine = ArchiveProofCounterEngine();
+  static const _minJournalEligibleCount = 3;
 
-  /// [now] is injectable for tests and forwarded to thread detection.
+  /// Journal activation loop — eligible usable entries only, never snippets.
+  ShareableArchiveProof buildFromJournal({
+    required List<JournalEntry> entries,
+  }) {
+    final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
+    if (eligibleCount < _minJournalEligibleCount) {
+      return ShareableArchiveProof.none();
+    }
+    return _proofForEligibleCount(eligibleCount);
+  }
+
+  /// Pressure-check-in path — counts from thread detection only.
   ShareableArchiveProof build(
     List<PressureCheckInRecord> records, {
     bool savedToday = false,
@@ -37,34 +40,40 @@ class ShareableArchiveProofEngine {
     );
 
     if (counter.connectedCount >= 2) {
-      return ShareableArchiveProof(
-        hasProof: true,
-        title: ShareableArchiveProof.defaultTitle,
-        lines: [
-          'My archive connected ${counter.connectedCount} recordings.',
-          if (counter.threadReturnCount >= 1)
-            ShareableArchiveProof.connectedReturnedLine,
-          ShareableArchiveProof.connectedTomorrowLine,
-        ],
-        footer: ShareableArchiveProof.defaultFooter,
-      );
+      final variant = counter.connectedCount >= 3
+          ? ShareableArchiveProof.variantC
+          : ShareableArchiveProof.variantB;
+      return _proof([variant]);
     }
 
-    if (savedToday && records.isNotEmpty && entryCount >= 1) {
-      final recordedLine = entryCount == 1
-          ? VisibleArchiveProofCopy.oneEntryShareableLine
-          : ShareableArchiveProof.starterRecordedLine;
-      return ShareableArchiveProof(
-        hasProof: true,
-        title: ShareableArchiveProof.defaultTitle,
-        lines: [
-          recordedLine,
-          ShareableArchiveProof.starterClosureLine,
-        ],
-        footer: ShareableArchiveProof.defaultFooter,
-      );
+    if (entryCount >= _minJournalEligibleCount &&
+        savedToday &&
+        records.isNotEmpty) {
+      return _proofForEligibleCount(entryCount);
     }
 
     return ShareableArchiveProof.none();
+  }
+
+  static ShareableArchiveProof _proofForEligibleCount(int eligibleCount) {
+    if (eligibleCount >= 5) {
+      return _proof([ShareableArchiveProof.variantC]);
+    }
+    if (eligibleCount == 4) {
+      return _proof([ShareableArchiveProof.variantA]);
+    }
+    if (eligibleCount >= 3) {
+      return _proof([ShareableArchiveProof.variantB]);
+    }
+    return ShareableArchiveProof.none();
+  }
+
+  static ShareableArchiveProof _proof(List<String> lines) {
+    return ShareableArchiveProof(
+      hasProof: true,
+      title: ShareableArchiveProof.defaultTitle,
+      subtitle: ShareableArchiveProof.defaultSubtitle,
+      lines: lines,
+    );
   }
 }
