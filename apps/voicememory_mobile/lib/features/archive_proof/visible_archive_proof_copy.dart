@@ -112,6 +112,41 @@ abstract final class VisibleArchiveProofCopy {
 
   static const threeEntryBeliefViewArchiveCta = firstSaveViewArchiveCta;
 
+  // Four-plus entry belief update — cautious evolution hook.
+  static const beliefUpdateTitle = 'Your archive updated its belief.';
+
+  static const beliefUpdateBodyChanged =
+      'Something shifted in your saved words.';
+
+  static const beliefUpdateBodyStillBuilding =
+      'Your archive is still building evidence.';
+
+  static const beliefUpdateCurrentBeliefLabel = 'Current belief';
+
+  static const beliefUpdateEvidenceLabel = 'Evidence';
+
+  static const beliefUpdateWhatChangedLabel = 'What changed';
+
+  static const beliefUpdateChangeNewContext =
+      'This showed up in a new context.';
+
+  static const beliefUpdateChangeDifferentWords =
+      'The same feeling appeared again, but with different words.';
+
+  static const beliefUpdateChangeEasierCompare =
+      'The evidence is still thin, but it is becoming easier to compare.';
+
+  static const beliefUpdateDefaultBelief =
+      'Your archive is beginning to notice similar pressure across your '
+      'saved moments.';
+
+  static const beliefUpdateWorkBelief =
+      'Your archive is beginning to associate this with pressure around work.';
+
+  static const beliefUpdatePrimaryCta = firstSavePrimaryCta;
+
+  static const beliefUpdateViewEvidenceCta = 'View evidence';
+
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
   static const returnLoopOneEntryBody =
       'Come back when this shows up again.';
