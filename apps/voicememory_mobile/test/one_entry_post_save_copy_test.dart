@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/shareable_archive_proof_card.dart';
 import 'package:voicememory_mobile/widgets/record/done_for_today_receipt_card.dart';
 
 JournalEntry _entry({String id = 'e1'}) => JournalEntry(
@@ -79,19 +78,14 @@ void main() {
       _expectNoBannedOneEntryCopy([receipt.archiveLine, receipt.tomorrowLine]);
     });
 
-    test('shareable proof uses neutral one-entry line', () {
+    test('shareable proof stays hidden before three entries', () {
       const engine = ShareableArchiveProofEngine();
       final proof = engine.build(
         [_pressureRecord()],
         savedToday: true,
         entryCount: 1,
       );
-      expect(proof.hasProof, isTrue);
-      expect(
-        proof.lines.first,
-        VisibleArchiveProofCopy.oneEntryShareableLine,
-      );
-      _expectNoBannedOneEntryCopy(proof.lines);
+      expect(proof.hasProof, isFalse);
     });
 
     test('first-save evidence copy avoids premature pattern claims', () {
@@ -133,7 +127,9 @@ void main() {
       expect(comparison.title, isNotEmpty);
     });
 
-    testWidgets('one-entry cards render neutral copy', (tester) async {
+    testWidgets('one-entry cards render neutral copy without share proof', (
+      tester,
+    ) async {
       const doneEngine = DoneForTodayReceiptEngine();
       final doneReceipt = doneEngine.build(saved: true, entryCount: 1);
       const shareEngine = ShareableArchiveProofEngine();
@@ -142,6 +138,7 @@ void main() {
         savedToday: true,
         entryCount: 1,
       );
+      expect(shareProof.hasProof, isFalse);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -155,7 +152,6 @@ void main() {
                     onRecordAnother: () {},
                   ),
                   DoneForTodayReceiptCard(receipt: doneReceipt),
-                  ShareableArchiveProofCard(proof: shareProof),
                 ],
               ),
             ),
@@ -169,10 +165,7 @@ void main() {
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsOneWidget,
       );
-      expect(
-        find.text(VisibleArchiveProofCopy.oneEntryShareableLine),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);
       _expectNoBannedOneEntryCopy(_visibleText(tester));
     });
   });

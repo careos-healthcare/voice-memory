@@ -7,9 +7,8 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Small share card: a preview of the anonymous proof lines plus a copy
-/// action and the existing native share. Renders nothing without real proof.
-/// Entirely optional and passive — never blocks the core flow, no feed.
+/// Small share card: preview of anonymous proof lines plus copy/share actions.
+/// Renders nothing without real proof. Optional and passive — never blocks flow.
 class ShareableArchiveProofCard extends StatefulWidget {
   const ShareableArchiveProofCard({
     super.key,
@@ -79,6 +78,15 @@ class _ShareableArchiveProofCardState extends State<ShareableArchiveProofCard> {
     final proof = widget.proof;
     if (!proof.hasProof) return const SizedBox.shrink();
 
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+      color: AppColors.textPrimary,
+      height: 1.45,
+    );
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+      color: AppColors.textSecondary,
+      height: 1.4,
+    );
+
     return Container(
       key: const Key('shareable_archive_proof_card'),
       width: double.infinity,
@@ -91,21 +99,34 @@ class _ShareableArchiveProofCardState extends State<ShareableArchiveProofCard> {
         children: [
           Text(
             proof.title,
+            key: const Key('shareable_proof_title'),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
-          const SizedBox(height: AppSpacing.xs),
-          for (final line in proof.lines)
+          if (proof.subtitle.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
             Text(
-              line,
-              style: ArchiveMobileTypography.responsiveHelper(
-                context,
-              ).copyWith(color: AppColors.textPrimary),
+              proof.subtitle,
+              key: const Key('shareable_proof_subtitle'),
+              style: bodyStyle,
             ),
+          ],
+          const SizedBox(height: AppSpacing.sm),
+          for (var i = 0; i < proof.lines.length; i++)
+            Text(
+              proof.lines[i],
+              key: Key('shareable_proof_line_$i'),
+              style: bodyStyle,
+            ),
+          const SizedBox(height: AppSpacing.xs),
           Text(
-            proof.footer,
-            style: ArchiveMobileTypography.responsiveHelper(
-              context,
-            ).copyWith(color: AppColors.textSecondary),
+            ShareableArchiveProof.privacyFooter,
+            key: const Key('shareable_proof_privacy_footer'),
+            style: footnoteStyle,
+          ),
+          Text(
+            ShareableArchiveProof.productLine,
+            key: const Key('shareable_proof_product_line'),
+            style: footnoteStyle,
           ),
           const SizedBox(height: AppSpacing.xs),
           Wrap(

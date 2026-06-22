@@ -3,12 +3,15 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
 import '../features/activation/belief_evidence_trail.dart';
+import '../features/pressure_retention/shareable_archive_proof_engine.dart';
+import '../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive/belief_evidence_trail_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
+import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 
 /// Proof trail for a belief update — saved words, not guesses.
 class BeliefEvidenceScreen extends StatefulWidget {
@@ -24,6 +27,7 @@ class BeliefEvidenceScreen extends StatefulWidget {
 
 class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
   BeliefEvidenceTrail? _trail;
+  ShareableArchiveProof? _shareProof;
   bool _loading = true;
 
   @override
@@ -44,6 +48,9 @@ class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
     if (!mounted) return;
     setState(() {
       _trail = BeliefEvidenceTrailEngine.build(entries: entries);
+      _shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: entries,
+      );
       _loading = false;
     });
   }
@@ -97,6 +104,10 @@ class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
                 onAddAnother:
                     trail.hasEnoughEvidence ? _goToRecord : null,
               ),
+              if (_shareProof?.hasProof == true) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ShareableArchiveProofCard(proof: _shareProof!),
+              ],
             ],
           ),
         ),

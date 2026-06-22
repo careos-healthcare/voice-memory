@@ -288,6 +288,29 @@ abstract final class VisibleArchiveProofCopy {
   static const oneEntryShareableLine =
       'I recorded one moment for my archive.';
 
+  // Share-safe proof — privacy-first growth copy (counts only, never snippets).
+  static const shareProofTitle = 'Share-safe proof';
+
+  static const shareProofSubtitle =
+      'Share ArchiveMe without exposing private entries.';
+
+  static const shareProofVariantA =
+      'I\'m building evidence about what keeps repeating in my life.';
+
+  static const shareProofVariantB =
+      'My archive is starting to show what keeps coming back.';
+
+  static const shareProofVariantC =
+      'ArchiveMe is helping me notice what repeats — with evidence, not guesses.';
+
+  static const shareProofVariantD =
+      'I saved moments. My archive started showing the thread.';
+
+  static const shareProofPrivacyFooter = 'No private entries shared.';
+
+  static const shareProofProductLine =
+      'ArchiveMe — your private evidence-based life archive.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
