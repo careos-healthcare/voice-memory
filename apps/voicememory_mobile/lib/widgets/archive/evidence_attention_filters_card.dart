@@ -12,10 +12,12 @@ class EvidenceAttentionFiltersCard extends StatelessWidget {
     super.key,
     required this.filters,
     this.onFilterTap,
+    this.hideTitle = false,
   });
 
   final EvidenceAttentionFilters filters;
   final ValueChanged<EvidenceAttentionFilter>? onFilterTap;
+  final bool hideTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +35,14 @@ class EvidenceAttentionFiltersCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            filters.title,
-            key: const Key('evidence_attention_filters_title'),
-            style: titleStyle,
-          ),
-          const SizedBox(height: AppSpacing.sm),
+          if (!hideTitle) ...[
+            Text(
+              filters.title,
+              key: const Key('evidence_attention_filters_title'),
+              style: titleStyle,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           Wrap(
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,

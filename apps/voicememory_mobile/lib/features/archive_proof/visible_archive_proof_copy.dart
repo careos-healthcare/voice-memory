@@ -886,6 +886,14 @@ abstract final class VisibleArchiveProofCopy {
 
   static const evidenceAttentionFilterHidden = 'Hidden';
 
+  static const archiveWorkspaceNeedsAttentionHeading = 'Needs attention';
+
+  static const archiveWorkspaceEvidenceQualityHeading = 'Evidence quality';
+
+  static const archiveWorkspaceReviewHistoryHeading = 'Review and history';
+
+  static const archiveWorkspaceControlsHeading = 'Controls';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
