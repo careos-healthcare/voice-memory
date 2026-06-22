@@ -48,6 +48,22 @@ class BeliefHistoryTimelineCard extends StatelessWidget {
             key: const Key('belief_history_timeline_body'),
             style: bodyStyle,
           ),
+          if (timeline.contextAwareSummaryLine case final contextSummary?) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              contextSummary,
+              key: const Key('belief_history_timeline_context_summary'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
+          if (timeline.contextAwareDetailLine case final contextDetail?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              contextDetail,
+              key: const Key('belief_history_timeline_context_detail'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           Text(
             BeliefHistoryTimelineCopy.earlierBeliefLabel,

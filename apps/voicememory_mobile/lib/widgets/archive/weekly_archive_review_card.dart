@@ -223,6 +223,14 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
+          if (review.contextAwareDetailLine case final contextDetail?) ...[
+            Text(
+              contextDetail,
+              key: const Key('weekly_archive_review_context_detail'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           if (review.nextActionLine case final nextAction?) ...[
             Text(
               WeeklyArchiveReviewCopy.addNextLabel,

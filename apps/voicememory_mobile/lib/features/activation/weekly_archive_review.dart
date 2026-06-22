@@ -4,7 +4,7 @@ import '../archive_evidence/archive_evidence_heuristics.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'belief_update_payoff.dart';
-import 'capture_context_tags.dart';
+import 'context_aware_archive_copy.dart';
 
 /// Route for the weekly archive review screen.
 abstract final class WeeklyArchiveReviewNavigation {
@@ -77,6 +77,7 @@ class WeeklyArchiveReview {
     this.secondaryCta,
     this.insufficientBody,
     this.evidenceWeak = false,
+    this.contextAwareDetailLine,
   });
 
   final bool hasEnoughEvidence;
@@ -93,6 +94,7 @@ class WeeklyArchiveReview {
   final String? secondaryCta;
   final String? insufficientBody;
   final bool evidenceWeak;
+  final String? contextAwareDetailLine;
 
   factory WeeklyArchiveReview.insufficient() {
     return const WeeklyArchiveReview(
@@ -128,6 +130,7 @@ abstract final class WeeklyArchiveReviewEngine {
     final fullAnalysis = _heuristics.analyze(entries);
     final evidenceWeak = payoff.evidenceWeak;
     final evidenceRows = _evidenceRows(weekEntries.isNotEmpty ? weekEntries : eligible);
+    final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
 
     return WeeklyArchiveReview(
       hasEnoughEvidence: true,
@@ -148,9 +151,9 @@ abstract final class WeeklyArchiveReviewEngine {
       evidenceRows: evidenceRows,
       uncertaintyLine: evidenceWeak
           ? WeeklyArchiveReviewCopy.evidenceStillThin
-          : (CaptureContextTagAnalysis.hasVariedTagContext(entries)
-              ? VisibleArchiveProofCopy.weeklyArchiveReviewVariedContextNote
-              : null),
+          : (contextCopy.showLines ? contextCopy.summaryLine : null),
+      contextAwareDetailLine:
+          evidenceWeak ? null : contextCopy.detailLine,
       nextActionLine: evidenceWeak
           ? WeeklyArchiveReviewCopy.nextWhenThin
           : WeeklyArchiveReviewCopy.nextDefault,

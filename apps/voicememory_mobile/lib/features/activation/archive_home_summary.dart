@@ -3,6 +3,7 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'belief_update_payoff.dart';
+import 'context_aware_archive_copy.dart';
 import 'next_moment_prompt.dart';
 import 'second_session_payoff.dart';
 import 'third_entry_belief_payoff.dart';
@@ -55,6 +56,8 @@ class ArchiveHomeSummary {
     required this.body,
     this.subtitle,
     this.footnoteLine,
+    this.contextAwareSummaryLine,
+    this.contextAwareDetailLine,
     this.currentBeliefLine,
     this.whatChangedLine,
     this.evidenceRows = const [],
@@ -72,6 +75,8 @@ class ArchiveHomeSummary {
   final String body;
   final String? subtitle;
   final String? footnoteLine;
+  final String? contextAwareSummaryLine;
+  final String? contextAwareDetailLine;
   final String? currentBeliefLine;
   final String? whatChangedLine;
   final List<String> evidenceRows;
@@ -92,6 +97,12 @@ abstract final class ArchiveHomeSummaryEngine {
       NextMomentPromptEngine.build(entries: entries)?.nextActionSummary;
 
   static ArchiveHomeSummary build({
+    required List<JournalEntry> entries,
+  }) {
+    return _applyContextAware(_buildSummary(entries: entries), entries);
+  }
+
+  static ArchiveHomeSummary _buildSummary({
     required List<JournalEntry> entries,
   }) {
     final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
@@ -209,6 +220,33 @@ abstract final class ArchiveHomeSummaryEngine {
       secondaryAction: ArchiveHomeAction.addMoment,
       suppressDuplicatePayoffCards: true,
       showShareProof: shareProof.hasProof,
+    );
+  }
+
+  static ArchiveHomeSummary _applyContextAware(
+    ArchiveHomeSummary summary,
+    List<JournalEntry> entries,
+  ) {
+    final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
+    if (!contextCopy.showLines) return summary;
+    return ArchiveHomeSummary(
+      stage: summary.stage,
+      title: summary.title,
+      body: summary.body,
+      subtitle: summary.subtitle,
+      footnoteLine: summary.footnoteLine,
+      contextAwareSummaryLine: contextCopy.summaryLine,
+      contextAwareDetailLine: contextCopy.detailLine,
+      currentBeliefLine: summary.currentBeliefLine,
+      whatChangedLine: summary.whatChangedLine,
+      evidenceRows: summary.evidenceRows,
+      nextActionLine: summary.nextActionLine,
+      primaryCta: summary.primaryCta,
+      secondaryCta: summary.secondaryCta,
+      primaryAction: summary.primaryAction,
+      secondaryAction: summary.secondaryAction,
+      suppressDuplicatePayoffCards: summary.suppressDuplicatePayoffCards,
+      showShareProof: summary.showShareProof,
     );
   }
 }

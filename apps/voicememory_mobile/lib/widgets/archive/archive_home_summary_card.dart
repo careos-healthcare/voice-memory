@@ -97,6 +97,22 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
               style: footnoteStyle,
             ),
           ],
+          if (summary.contextAwareSummaryLine case final contextSummary?) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              contextSummary,
+              key: const Key('archive_home_summary_context_summary'),
+              style: footnoteStyle,
+            ),
+          ],
+          if (summary.contextAwareDetailLine case final contextDetail?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              contextDetail,
+              key: const Key('archive_home_summary_context_detail'),
+              style: footnoteStyle,
+            ),
+          ],
           if (summary.currentBeliefLine case final belief?) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(

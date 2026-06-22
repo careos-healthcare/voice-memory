@@ -1,6 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
+import 'context_aware_archive_copy.dart';
 import 'correction_informed_next_prompt.dart';
 
 /// Ladder stage for personalized next-moment prompts.
@@ -47,14 +48,22 @@ abstract final class NextMomentPromptEngine {
     final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
     if (eligibleCount == 0) return null;
 
-    final base = _buildBase(eligibleCount);
+    final base = _buildBase(eligibleCount, entries);
     return CorrectionInformedNextPrompt.apply(
       base: base,
       eligibleCount: eligibleCount,
     );
   }
 
-  static NextMomentPrompt _buildBase(int eligibleCount) {
+  static NextMomentPrompt _buildBase(
+    int eligibleCount,
+    List<JournalEntry> entries,
+  ) {
+    final base = _baseForCount(eligibleCount);
+    return _withContextAware(base, entries);
+  }
+
+  static NextMomentPrompt _baseForCount(int eligibleCount) {
     if (eligibleCount == 1) {
       return const NextMomentPrompt(
         stage: NextMomentPromptStage.one,
@@ -105,6 +114,32 @@ abstract final class NextMomentPromptEngine {
       secondaryCta: VisibleArchiveProofCopy.nextMomentViewReviewCta,
       primaryAction: NextMomentPromptAction.addMoment,
       secondaryAction: NextMomentPromptAction.viewReview,
+    );
+  }
+
+  static NextMomentPrompt _withContextAware(
+    NextMomentPrompt base,
+    List<JournalEntry> entries,
+  ) {
+    final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
+    if (!contextCopy.showLines) return base;
+
+    final parts = <String>[base.body];
+    if (contextCopy.summaryLine case final summary?) {
+      parts.add(summary);
+    }
+    if (contextCopy.detailLine case final detail?) {
+      parts.add(detail);
+    }
+
+    return NextMomentPrompt(
+      stage: base.stage,
+      title: base.title,
+      body: parts.join(' '),
+      primaryCta: base.primaryCta,
+      secondaryCta: base.secondaryCta,
+      primaryAction: base.primaryAction,
+      secondaryAction: base.secondaryAction,
     );
   }
 }
