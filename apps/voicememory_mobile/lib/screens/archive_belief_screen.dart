@@ -140,11 +140,13 @@ import '../features/activation/archive_home_summary.dart';
 import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/evidence_attention_filters.dart';
 import '../features/activation/archive_workspace_layout.dart';
+import '../features/activation/archive_workspace_quick_actions.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
 import '../features/activation/insight_quality_dashboard.dart';
 import '../features/activation/weekly_archive_review.dart';
+import '../features/share/archive_share_actions.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
@@ -178,6 +180,7 @@ import '../widgets/archive/archive_home_summary_card.dart';
 import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/evidence_attention_filters_card.dart';
 import '../widgets/archive/archive_workspace_section_heading.dart';
+import '../widgets/archive/archive_workspace_quick_actions_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -905,6 +908,30 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   }
 
   void _goToRecord() => context.go('/record');
+
+  Future<void> _shareArchiveProofSafely() async {
+    final proof =
+        const ShareableArchiveProofEngine().buildFromJournal(entries: _entries);
+    if (!proof.hasProof || !ArchiveShareActions.isShareable(proof.shareText)) {
+      return;
+    }
+    await ArchiveShareActions.shareShareText(context, text: proof.shareText);
+  }
+
+  void _onArchiveWorkspaceQuickAction(ArchiveWorkspaceQuickAction action) {
+    switch (action.destination) {
+      case ArchiveWorkspaceQuickActionDestination.record:
+        _goToRecord();
+      case ArchiveWorkspaceQuickActionDestination.untaggedDrilldown:
+      case ArchiveWorkspaceQuickActionDestination.insightQuality:
+      case ArchiveWorkspaceQuickActionDestination.archiveBelief:
+      case ArchiveWorkspaceQuickActionDestination.weeklyReview:
+        final route = action.resolveRoute();
+        if (route != null) context.push(route);
+      case ArchiveWorkspaceQuickActionDestination.shareProof:
+        unawaited(_shareArchiveProofSafely());
+    }
+  }
 
   List<Widget> _signalArchiveSurfaces() {
     final snapshot = _signalArchiveSnapshot;
@@ -1851,6 +1878,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             : null;
     final standaloneShareProof =
         const ShareableArchiveProofEngine().buildFromJournal(entries: _entries);
+    final quickActions = ArchiveWorkspaceQuickActionsEngine.build(
+      entries: _entries,
+      archiveHome: summary,
+      workspaceLayout: layout,
+      evidenceMapVisible: evidenceMap.showCard,
+      weeklyReview: weeklyReview,
+      shareProof: standaloneShareProof,
+    );
 
     final widgets = <Widget>[
       ArchiveHomeSummaryCard(
@@ -1862,6 +1897,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         shareProof: shareProof?.hasProof == true ? shareProof : null,
       ),
     ];
+
+    if (quickActions.showCard) {
+      widgets.add(const SizedBox(height: AppSpacing.md));
+      widgets.add(
+        ArchiveWorkspaceQuickActionsCard(
+          quickActions: quickActions,
+          onActionTap: _onArchiveWorkspaceQuickAction,
+        ),
+      );
+    }
 
     if (layout.needsAttention.show) {
       widgets.addAll(_archiveWorkspaceSectionSpacer());

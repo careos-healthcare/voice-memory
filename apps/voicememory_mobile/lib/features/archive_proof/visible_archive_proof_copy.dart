@@ -894,6 +894,24 @@ abstract final class VisibleArchiveProofCopy {
 
   static const archiveWorkspaceControlsHeading = 'Controls';
 
+  static const archiveWorkspaceQuickActionsTitle = 'Next best actions';
+
+  static const archiveWorkspaceQuickActionAddMoment = 'Add one more moment';
+
+  static const archiveWorkspaceQuickActionTagUntagged = 'Tag untagged entries';
+
+  static const archiveWorkspaceQuickActionReviewCorrections =
+      'Review corrections';
+
+  static const archiveWorkspaceQuickActionViewEvidenceMap =
+      'View evidence map';
+
+  static const archiveWorkspaceQuickActionViewWeeklyReview =
+      'View weekly review';
+
+  static const archiveWorkspaceQuickActionShareProofSafely =
+      'Share proof safely';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
