@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
 import '../features/activation/archive_evidence_map.dart';
+import '../features/activation/evidence_attention_filters.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -18,6 +19,7 @@ import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../services/app_services.dart';
 import '../widgets/archive/archive_evidence_map_card.dart';
+import '../widgets/archive/evidence_attention_filters_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -47,6 +49,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
   ArchiveHealthActionPlan _actionPlan = ArchiveHealthActionPlan.hidden();
   ContextInsights _contextInsights = ContextInsights.hidden();
   ArchiveEvidenceMap _evidenceMap = ArchiveEvidenceMap.hidden();
+  EvidenceAttentionFilters _attentionFilters = EvidenceAttentionFilters.hidden();
 
   @override
   void initState() {
@@ -70,6 +73,13 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
       _contextInsights = ContextInsightsEngine.build(entries: entries);
       _evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
+      _attentionFilters = EvidenceAttentionFiltersEngine.build(
+        entries: entries,
+        omitKinds: const {
+          EvidenceAttentionFilterKind.corrections,
+          EvidenceAttentionFilterKind.hidden,
+        },
+      );
       _loading = false;
     });
   }
@@ -172,6 +182,16 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
                       if (_contextInsights.showCard) ...[
                         const SizedBox(height: AppSpacing.lg),
                         ContextInsightsCard(insights: _contextInsights),
+                      ],
+                      if (_attentionFilters.showCard) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        EvidenceAttentionFiltersCard(
+                          filters: _attentionFilters,
+                          onFilterTap: (filter) {
+                            final route = filter.resolveRoute();
+                            if (route != null) context.push(route);
+                          },
+                        ),
                       ],
                       if (_evidenceMap.showCard) ...[
                         const SizedBox(height: AppSpacing.lg),

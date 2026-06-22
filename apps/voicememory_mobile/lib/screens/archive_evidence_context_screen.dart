@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
 import '../features/activation/archive_evidence_map.dart';
+import '../features/activation/evidence_attention_filters.dart';
 import '../models/journal_entry.dart';
 import '../services/app_services.dart';
 import '../security/sensitive_screen_guard.dart';
@@ -10,6 +11,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive/archive_evidence_context_list.dart';
+import '../widgets/archive/evidence_attention_filters_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
 
 /// Private drilldown for one evidence map context row.
@@ -29,6 +31,7 @@ class ArchiveEvidenceContextScreen extends StatefulWidget {
 class _ArchiveEvidenceContextScreenState
     extends State<ArchiveEvidenceContextScreen> {
   ArchiveEvidenceContextDrilldown? _drilldown;
+  EvidenceAttentionFilters _attentionFilters = EvidenceAttentionFilters.hidden();
   bool _loading = true;
 
   @override
@@ -48,8 +51,28 @@ class _ArchiveEvidenceContextScreenState
         entries: entries,
         contextTagId: widget.contextTagId,
       );
+      _attentionFilters = EvidenceAttentionFiltersEngine.build(
+        entries: entries,
+        omitKinds: _omitKindsForCurrentContext(),
+      );
       _loading = false;
     });
+  }
+
+  Set<EvidenceAttentionFilterKind> _omitKindsForCurrentContext() {
+    final omit = <EvidenceAttentionFilterKind>{
+      EvidenceAttentionFilterKind.sameContext,
+    };
+    if (widget.contextTagId == ArchiveEvidenceMapRowIds.untagged) {
+      omit.add(EvidenceAttentionFilterKind.untagged);
+    }
+    return omit;
+  }
+
+  void _onAttentionFilterTap(EvidenceAttentionFilter filter) {
+    final route = filter.resolveRoute();
+    if (route == null) return;
+    context.push(route);
   }
 
   void _openEntry(String entryId) {
@@ -86,6 +109,13 @@ class _ArchiveEvidenceContextScreenState
                         style: VoiceMemoryTypography.bodyStyle(),
                       ),
                       const SizedBox(height: AppSpacing.lg),
+                      if (_attentionFilters.showCard) ...[
+                        EvidenceAttentionFiltersCard(
+                          filters: _attentionFilters,
+                          onFilterTap: _onAttentionFilterTap,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                      ],
                       if (drilldown.isEmpty)
                         Text(
                           drilldown.emptyBody,

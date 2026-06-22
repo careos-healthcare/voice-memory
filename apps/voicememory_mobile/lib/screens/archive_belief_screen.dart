@@ -138,6 +138,7 @@ import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/archive_home_summary.dart';
 import '../features/activation/archive_evidence_map.dart';
+import '../features/activation/evidence_attention_filters.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -174,6 +175,7 @@ import '../widgets/archive/belief_history_timeline_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/archive/archive_home_summary_card.dart';
 import '../widgets/archive/archive_evidence_map_card.dart';
+import '../widgets/archive/evidence_attention_filters_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -1798,6 +1800,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final actionPlan = ArchiveHealthActionPlanEngine.build(entries: _entries);
     final contextInsights = ContextInsightsEngine.build(entries: _entries);
     final evidenceMap = ArchiveEvidenceMapEngine.build(entries: _entries);
+    final attentionFilters = EvidenceAttentionFiltersEngine.build(
+      entries: _entries,
+      omitKinds: const {EvidenceAttentionFilterKind.sameContext},
+    );
     return [
       ArchiveHomeSummaryCard(
         summary: summary,
@@ -1825,6 +1831,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       if (contextInsights.showCard) ...[
         const SizedBox(height: AppSpacing.md),
         ContextInsightsCard(insights: contextInsights),
+      ],
+      if (attentionFilters.showCard) ...[
+        const SizedBox(height: AppSpacing.md),
+        EvidenceAttentionFiltersCard(
+          filters: attentionFilters,
+          onFilterTap: (filter) {
+            final route = filter.resolveRoute();
+            if (route != null) context.push(route);
+          },
+        ),
       ],
       if (evidenceMap.showCard) ...[
         const SizedBox(height: AppSpacing.md),
