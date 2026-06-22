@@ -426,6 +426,30 @@ abstract final class VisibleArchiveProofCopy {
 
   static const nextMomentViewReviewCta = archiveHomeViewReviewCta;
 
+  // Correction-informed next-moment prompts — user context, not facts.
+  static const correctionNextGenericTitle =
+      'Add a moment that clarifies your correction.';
+
+  static const correctionNextGenericBody =
+      'You marked an archive insight as not quite right. '
+      'Save the next example that shows what ArchiveMe missed.';
+
+  static const correctionNextFourTitle = 'Help ArchiveMe retest this belief.';
+
+  static const correctionNextFourBody =
+      'Your note says this insight missed something. '
+      'Add the next moment that supports, weakens, or changes the evidence.';
+
+  static const correctionNextFiveReviewTitle =
+      'Help your review learn from your correction.';
+
+  static const correctionNextFiveReviewBody =
+      'Save the next moment that shows whether your correction '
+      'holds across more than one example.';
+
+  static const correctionNextThinEvidenceSuffix =
+      'The evidence is still thin, so one more saved moment helps.';
+
   // Archive insight feedback — local trust controls on belief/review surfaces.
   static const insightFeedbackFeelsRight = 'Feels right';
 
