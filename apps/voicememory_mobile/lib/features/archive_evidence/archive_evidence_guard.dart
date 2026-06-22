@@ -1,5 +1,6 @@
 import '../../config/app_config.dart';
 import '../../models/journal_entry.dart';
+import '../voice_capture/voice_capture_quality.dart';
 
 /// Production safeguard — insights only surface when real reflections meet thresholds.
 abstract class ArchiveEvidenceGuard {
@@ -15,7 +16,11 @@ abstract class ArchiveEvidenceGuard {
 
   static List<JournalEntry> eligibleEntries(List<JournalEntry> entries) {
     return entries
-        .where((e) => e.transcript.trim().length >= minimumTranscriptChars)
+        .where(
+          (e) =>
+              e.transcript.trim().length >= minimumTranscriptChars &&
+              !VoiceCaptureQuality.isDegradedVoiceCapture(e),
+        )
         .toList()
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
   }

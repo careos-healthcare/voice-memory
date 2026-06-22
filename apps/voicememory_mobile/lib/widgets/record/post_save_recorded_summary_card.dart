@@ -240,18 +240,26 @@ class _DegradedTranscriptionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            VoiceCaptureCopy.savedPrivatelySuccess,
-            key: const Key('post_save_saved_privately_title'),
+            VoiceCaptureCopy.degradedRecoveryTitle,
+            key: const Key('post_save_degraded_recovery_title'),
             style: successStyle.copyWith(
               color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            bodyCopy,
-            key: const Key('post_save_transcription_failed_body'),
+            VoiceCaptureCopy.degradedRecoveryBody,
+            key: const Key('post_save_degraded_recovery_body'),
             style: bodyStyle,
           ),
+          if (bodyCopy != VoiceCaptureCopy.transcriptionFailedIssue) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              bodyCopy,
+              key: const Key('post_save_transcription_failed_body'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
           if (kDebugMode && showSilentInputWarning) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
