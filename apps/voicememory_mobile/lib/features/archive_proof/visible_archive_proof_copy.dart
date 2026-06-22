@@ -112,6 +112,21 @@ abstract final class VisibleArchiveProofCopy {
 
   static const threeEntryBeliefViewArchiveCta = firstSaveViewArchiveCta;
 
+  // Day-two / return loop — calm next-return framing (no streaks or pressure).
+  static const returnLoopOneEntryBody =
+      'Come back when this shows up again.';
+
+  static const returnLoopTwoEntryBody =
+      'One more moment can make the thread clearer.';
+
+  static const returnLoopThreeEntryBody =
+      'Your archive is starting a cautious belief. '
+      'Add one more moment to strengthen the evidence.';
+
+  static const returnLoopPrimaryCta = firstSavePrimaryCta;
+
+  static const returnLoopViewArchiveCta = firstSaveViewArchiveCta;
+
   // One-entry post-save — evidence only, no loop/repeat claims yet.
   static const oneEntryAddedTodayLine = 'You added one piece today.';
   static const oneEntryArchiveLine =
