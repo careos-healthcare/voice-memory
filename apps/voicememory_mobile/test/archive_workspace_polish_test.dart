@@ -4,6 +4,7 @@ import 'package:voicememory_mobile/features/activation/archive_health_action_pla
 import 'package:voicememory_mobile/features/activation/archive_health_score.dart';
 import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
 import 'package:voicememory_mobile/features/activation/archive_insight_feedback.dart';
+import 'package:voicememory_mobile/features/activation/archive_workspace_hints.dart';
 import 'package:voicememory_mobile/features/activation/archive_workspace_layout.dart';
 import 'package:voicememory_mobile/features/activation/belief_history_timeline.dart';
 import 'package:voicememory_mobile/features/activation/capture_context_tags.dart';
@@ -136,6 +137,25 @@ void main() {
       expect(layout.showContextInsights, isFalse);
       expect(layout.showEvidenceMap, isFalse);
       expect(layout.showInsightQualityLink, isFalse);
+    });
+
+    test('1 entry keeps needs-attention section without shortcut hint noise', () {
+      final layout = _layout(_distinctWorkEntries(1));
+      expect(layout.needsAttention.show, isTrue);
+      expect(layout.needsAttention.heading, isNull);
+      expect(layout.showAttentionFilters, isFalse);
+
+      final hints = ArchiveWorkspaceHintsEngine.build(layout: layout);
+      expect(hints.needsAttentionHint, isNull);
+    });
+
+    test('needs attention heading appears once attention filters unlock', () {
+      final layout = _layout(_distinctWorkEntries(2));
+      expect(layout.showAttentionFilters, isTrue);
+      expect(
+        layout.needsAttention.heading,
+        VisibleArchiveProofCopy.archiveWorkspaceNeedsAttentionHeading,
+      );
     });
 
     test('2 entries shows needs attention but not review/history', () {

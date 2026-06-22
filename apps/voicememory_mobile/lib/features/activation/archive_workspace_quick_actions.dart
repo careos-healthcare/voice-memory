@@ -162,7 +162,7 @@ abstract final class ArchiveWorkspaceQuickActionsEngine {
       case ArchiveWorkspaceQuickActionKind.viewEvidenceMap:
         return eligibleCount >= 3 && evidenceMapVisible;
       case ArchiveWorkspaceQuickActionKind.addMoment:
-        return eligibleCount >= 1 && eligibleCount <= 4;
+        return eligibleCount >= 2 && eligibleCount <= 4;
       case ArchiveWorkspaceQuickActionKind.shareProofSafely:
         return eligibleCount >= 5 &&
             (shareProof?.hasProof ?? false) &&
