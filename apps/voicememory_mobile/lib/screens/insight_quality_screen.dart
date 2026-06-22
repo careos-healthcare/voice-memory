@@ -175,7 +175,12 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
                       ],
                       if (_evidenceMap.showCard) ...[
                         const SizedBox(height: AppSpacing.lg),
-                        ArchiveEvidenceMapCard(map: _evidenceMap),
+                        ArchiveEvidenceMapCard(
+                          map: _evidenceMap,
+                          onRowTap: (tagId) => context.push(
+                            ArchiveEvidenceMapNavigation.contextPath(tagId),
+                          ),
+                        ),
                       ],
                       const SizedBox(height: AppSpacing.lg),
                       if (_summary.isEmpty) ...[

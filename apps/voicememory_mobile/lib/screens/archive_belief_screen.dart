@@ -1828,7 +1828,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ],
       if (evidenceMap.showCard) ...[
         const SizedBox(height: AppSpacing.md),
-        ArchiveEvidenceMapCard(map: evidenceMap),
+        ArchiveEvidenceMapCard(
+          map: evidenceMap,
+          onRowTap: (tagId) => context.push(
+            ArchiveEvidenceMapNavigation.contextPath(tagId),
+          ),
+        ),
       ],
       Align(
         alignment: Alignment.centerLeft,

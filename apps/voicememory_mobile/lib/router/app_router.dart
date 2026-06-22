@@ -19,7 +19,9 @@ import '../features/archive_explanations/archive_explanation_navigation.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/activation/insight_quality_dashboard.dart';
+import '../features/activation/archive_evidence_map.dart';
 import '../screens/insight_quality_screen.dart';
+import '../screens/archive_evidence_context_screen.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
@@ -335,6 +337,13 @@ final GoRouter appRouter = GoRouter(
       path: InsightQualityNavigation.route,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const InsightQualityScreen(),
+    ),
+    GoRoute(
+      path: ArchiveEvidenceMapNavigation.contextRoute,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => ArchiveEvidenceContextScreen(
+        contextTagId: state.pathParameters['tagId'] ?? '',
+      ),
     ),
     GoRoute(path: '/timeline', redirect: (context, state) => '/archive-belief'),
     GoRoute(
