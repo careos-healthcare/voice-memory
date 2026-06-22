@@ -805,6 +805,62 @@ abstract final class VisibleArchiveProofCopy {
   static String contextAwareCompareAcross(String first, String second) =>
       'Your archive is beginning to compare this across $first and $second.';
 
+  // Archive evidence map — local context distribution readout.
+  static const archiveEvidenceMapTitle = 'Evidence map';
+
+  static const archiveEvidenceMapSubtitle =
+      'Where your saved moments are showing up on this device.';
+
+  static const archiveEvidenceMapNotEnough =
+      'Your archive needs a saved moment before it can map evidence.';
+
+  static const archiveEvidenceMapOneTagged =
+      'Your evidence map has one tagged moment.';
+
+  static const archiveEvidenceMapAddAnother =
+      'Add another moment to compare contexts.';
+
+  static String archiveEvidenceMapMostEvidenceIn(String label) =>
+      'Most evidence is currently in $label.';
+
+  static const archiveEvidenceMapAddDifferentContext =
+      'Add a moment from a different context to see whether it travels.';
+
+  static const archiveEvidenceMapSpansContexts =
+      'Your evidence spans more than one context.';
+
+  static const archiveEvidenceMapUntaggedSuggest =
+      'Add context tags to make your evidence map clearer.';
+
+  static const archiveEvidenceMapExcludedNote =
+      'Unclear recordings are excluded from evidence quality.';
+
+  static const archiveEvidenceMapStrongestLabel = 'Strongest context';
+
+  static const archiveEvidenceMapThinLabel = 'Thin contexts';
+
+  static const archiveEvidenceMapUntaggedLabel = 'Untagged moments';
+
+  static const archiveEvidenceMapNextLabel = 'What to add next';
+
+  static const archiveEvidenceMapUntaggedRow = 'Untagged';
+
+  static String archiveEvidenceMapUntaggedCount(int count) =>
+      count == 1
+          ? '1 moment does not have a context tag yet.'
+          : '$count moments do not have a context tag yet.';
+
+  static String archiveEvidenceMapThinContexts(List<String> labels) {
+    if (labels.length == 1) {
+      return '${labels.first} still has only one moment.';
+    }
+    if (labels.length == 2) {
+      return '${labels[0]} and ${labels[1]} still have only one moment each.';
+    }
+    final head = labels.sublist(0, labels.length - 1).join(', ');
+    return '$head, and ${labels.last} still have only one moment each.';
+  }
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

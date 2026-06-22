@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -14,6 +15,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
+import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -42,6 +44,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
   ArchiveHealthScore? _archiveHealth;
   ArchiveHealthActionPlan? _actionPlan;
   ContextInsights? _contextInsights;
+  ArchiveEvidenceMap? _evidenceMap;
   bool _loading = true;
 
   @override
@@ -53,6 +56,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: const []);
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: const []);
       _contextInsights = ContextInsightsEngine.build(entries: const []);
+      _evidenceMap = ArchiveEvidenceMapEngine.build(entries: const []);
       _loading = false;
       return;
     }
@@ -72,6 +76,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
       _contextInsights = ContextInsightsEngine.build(entries: entries);
+      _evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -169,6 +174,11 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
                   (_contextInsights?.showCard ?? false)) ...[
                 const SizedBox(height: AppSpacing.lg),
                 ContextInsightsCard(insights: _contextInsights!),
+              ],
+              if (review.hasEnoughEvidence &&
+                  (_evidenceMap?.showCard ?? false)) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ArchiveEvidenceMapCard(map: _evidenceMap!),
               ],
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),
