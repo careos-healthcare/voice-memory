@@ -16,6 +16,7 @@ import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
+import '../features/voice_capture/analysis_fallback_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
 import '../features/voice_capture/microphone_permission_copy.dart';
@@ -248,6 +249,7 @@ import '../widgets/billing/value_moment_pro_bridge.dart';
 import '../widgets/pressure_retention/archive_proof_counter_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/record/done_for_today_receipt_card.dart';
+import '../widgets/record/analysis_fallback_payoff_card.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
 import '../widgets/record/evidence_context_tag_card.dart';
@@ -2973,6 +2975,7 @@ class _RecordScreenState extends State<RecordScreen> {
     var syncNote = ConsumerCopyGuard.userFacingSyncNote(_syncNote);
     var stageLabel = _stageLabel;
     var entriesAfterSave = _entriesAfterSave;
+    var lastCaptureAnalysisSucceeded = _lastCaptureAnalysisSucceeded;
     if (VisualAuditOverrides.active) {
       final audit = VisualAuditOverrides.peekRecordPresentation();
       if (audit != null) {
@@ -2988,6 +2991,7 @@ class _RecordScreenState extends State<RecordScreen> {
         localSaveTitle = audit.localSaveTitle;
         syncNote = ConsumerCopyGuard.userFacingSyncNote(audit.syncNote);
         stageLabel = audit.stageLabel ?? _stageLabel;
+        lastCaptureAnalysisSucceeded = audit.lastCaptureAnalysisSucceeded;
       }
     }
 
@@ -3023,6 +3027,13 @@ class _RecordScreenState extends State<RecordScreen> {
                     : _journalEntries,
               ),
         );
+    final analysisFallbackPayoff = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? AnalysisFallbackPayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3609,14 +3620,16 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ? VoiceCaptureCopy.lowQualityTranscriptIssue
                                 : null,
                             showSilentInputWarning: _lastCaptureLikelySilentInput,
-                            showAnalysisPendingNote:
-                                !_lastCaptureAnalysisSucceeded &&
-                                VoiceCaptureQuality.hasUsableSpokenText(
-                                  entriesAfterSave.first,
-                                ),
+                            showAnalysisPendingNote: false,
                             mirror: const DailyMirrorEngine().build(
                               entriesAfterSave,
                             ),
+                          ),
+                        ],
+                        if (analysisFallbackPayoff != null) ...[
+                          const SizedBox(height: 16),
+                          AnalysisFallbackPayoffCard(
+                            payoff: analysisFallbackPayoff,
                           ),
                         ],
                         if (_languageCode != 'en') ...[
