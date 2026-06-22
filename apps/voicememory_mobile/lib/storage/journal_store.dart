@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../config/creator_demo_mode.dart';
+import '../features/activation/capture_context_tags.dart';
 import '../features/first25/first25_journal_hooks.dart';
 import '../features/memory/entry_memory_mode.dart';
 import '../features/memory/entry_save_coordinator.dart';
@@ -117,6 +118,13 @@ class JournalStore {
   }
 
   Future<void> update(JournalEntry entry) async => save(entry);
+
+  /// Updates or clears the optional local context tag on a saved entry.
+  Future<void> updateCaptureContextTag(String id, {String? tagId}) async {
+    final entry = await getById(id);
+    if (entry == null) return;
+    await save(CaptureContextTags.updateTag(entry, tagId));
+  }
 
   /// Copy with memory metadata only — id, text, and timestamps untouched.
   static JournalEntry _withMemoryFlags(

@@ -73,7 +73,37 @@ abstract final class CaptureContextTags {
   }
 
   static JournalEntry applyTag(JournalEntry entry, String tagId) =>
-      entry.copyWith(captureContextTag: tagId);
+      updateTag(entry, tagId);
+
+  static JournalEntry updateTag(JournalEntry entry, String? tagId) =>
+      JournalEntry(
+        id: entry.id,
+        createdAt: entry.createdAt,
+        transcript: entry.transcript,
+        durationSeconds: entry.durationSeconds,
+        reflection: entry.reflection,
+        syncStatus: entry.syncStatus,
+        localAudioPath: entry.localAudioPath,
+        treatAsNew: entry.treatAsNew,
+        connectionApproved: entry.connectionApproved,
+        keepExactDetails: entry.keepExactDetails,
+        keepSeparate: entry.keepSeparate,
+        archiveThreadId: entry.archiveThreadId,
+        archivePackId: entry.archivePackId,
+        isPinned: entry.isPinned,
+        pinnedAt: entry.pinnedAt,
+        isArchived: entry.isArchived,
+        archivedAt: entry.archivedAt,
+        entryAboutness: entry.entryAboutness,
+        memorySurfacing: entry.memorySurfacing,
+        preserveOriginal: entry.preserveOriginal,
+        captureContextTag: tagId,
+      );
+
+  static JournalEntry clearTag(JournalEntry entry) => updateTag(entry, null);
+
+  static String? labelForEntry(JournalEntry entry) =>
+      byId(entry.captureContextTag)?.label;
 }
 
 /// Reads tag-based context diversity from eligible journal entries.
