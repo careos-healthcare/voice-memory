@@ -287,19 +287,16 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('second_session_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
       expect(
         find.text('ArchiveMe has two moments to compare.'),
         findsOneWidget,
       );
       expect(find.textContaining('No clear repeat yet'), findsOneWidget);
-      expect(
-        find.textContaining('One more moment can make the thread clearer'),
-        findsOneWidget,
-      );
-      expect(find.text('Add one more moment'), findsNWidgets(2));
-      expect(find.text('View archive'), findsNWidgets(2));
+      expect(find.text('Add one more moment'), findsWidgets);
+      expect(find.text('View archive'), findsWidgets);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
 
@@ -324,6 +321,7 @@ void main() {
         ],
       );
 
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
       expect(find.textContaining('may be related'), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
     });

@@ -1,12 +1,20 @@
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
-  // Record screen top hero (zero entries).
-  static const recordHeroTitle =
-      'ArchiveMe notices what keeps repeating in your own words.';
+  // First-run framing — shared across Record and Archive Home.
+  static const firstRunBuildingLine =
+      'ArchiveMe is building from your saved words.';
+
+  static const firstRunCompareLine =
+      'It needs more than one moment to compare.';
+
+  static const firstRunBeliefsNotConclusionsLine =
+      'Beliefs are not conclusions.';
+
+  // Record screen top hero (zero entries) — matches Archive Home empty promise.
+  static const recordHeroTitle = 'Your archive starts with one moment.';
 
   static const recordHeroBody =
-      'Record one honest moment today. After a few moments, your archive '
-      'can show what returned, what softened, and what changed.';
+      '$firstRunBuildingLine Record one honest moment to begin your private archive.';
 
   static const recordHeroChipReturned = 'What returned';
   static const recordHeroChipSoftened = 'What softened';
@@ -16,8 +24,7 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveTitle = 'Your archive has started.';
 
   static const firstSaveBody =
-      'This is your first piece of evidence. Add one more moment and '
-      'ArchiveMe can compare later.';
+      '$firstRunBuildingLine $firstRunCompareLine';
 
   static const firstSaveSecondary =
       'No conclusion yet — just one moment saved so far.';
@@ -315,7 +322,10 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveHomeEmptyTitle = 'Your archive starts with one moment.';
 
   static const archiveHomeEmptyBody =
-      'Record one honest moment to begin your private archive.';
+      '$firstRunBuildingLine Record one honest moment to begin your private archive.';
+
+  static const archiveHomeOneBody =
+      '$firstRunBuildingLine $firstRunCompareLine';
 
   static const archiveHomeRecordCta = 'Record a moment';
 

@@ -418,7 +418,9 @@ void main() {
       _expectNoBannedCopy(_visibleText(tester), _bannedTwoEntryWords);
     });
 
-    testWidgets('three entries shows belief payoff card', (tester) async {
+    testWidgets('three entries post-save nudges Archive Home instead of duplicate payoff', (
+      tester,
+    ) async {
       await pumpDoneState(
         tester,
         entriesAfterSave: [
@@ -443,17 +445,18 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(
         find.text('ArchiveMe is starting to form a belief.'),
         findsOneWidget,
       );
-      expect(find.textContaining('not a conclusion yet'), findsOneWidget);
+      expect(find.textContaining('not a conclusion'), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
 
-    testWidgets('analysis unavailable still shows third-entry belief payoff', (
+    testWidgets('analysis unavailable still nudges Archive Home at third entry', (
       tester,
     ) async {
       await pumpDoneState(
@@ -481,9 +484,10 @@ void main() {
         lastCaptureAnalysisSucceeded: false,
       );
 
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(
-        find.textContaining('Deeper analysis can run later'),
+        find.text('ArchiveMe is starting to form a belief.'),
         findsOneWidget,
       );
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);

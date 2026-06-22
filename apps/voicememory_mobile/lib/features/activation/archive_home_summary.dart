@@ -108,15 +108,18 @@ abstract final class ArchiveHomeSummaryEngine {
     }
 
     if (eligibleCount == 1) {
-      return const ArchiveHomeSummary(
+      return ArchiveHomeSummary(
         stage: ArchiveHomeStage.one,
         title: ArchiveHomeSummaryCopy.oneTitle,
-        body: VisibleArchiveProofCopy.returnLoopOneEntryBody,
+        body: VisibleArchiveProofCopy.archiveHomeOneBody,
+        footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
         currentBeliefLine: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
         whatChangedLine: VisibleArchiveProofCopy.archiveHomeNotEnoughChanged,
+        evidenceRows: const [VisibleArchiveProofCopy.patternsOneEntryEvidenceRow],
         nextActionLine: VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryAction: ArchiveHomeAction.addMoment,
+        suppressDuplicatePayoffCards: true,
       );
     }
 
@@ -126,6 +129,7 @@ abstract final class ArchiveHomeSummaryEngine {
         stage: ArchiveHomeStage.two,
         title: payoff?.title ?? VisibleArchiveProofCopy.twoEntryCompareTitle,
         body: payoff?.body ?? VisibleArchiveProofCopy.twoEntryBodyUngrounded,
+        footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
         currentBeliefLine: VisibleArchiveProofCopy.archiveHomeNotEnoughBelief,
         whatChangedLine: payoff?.hasGroundedMatch == true
             ? payoff!.body

@@ -70,7 +70,11 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('first piece of evidence'),
+        contains('saved words'),
+      );
+      expect(
+        RecordReturnProCopy.evidenceBody,
+        contains('compare'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
@@ -213,7 +217,7 @@ void main() {
 
       expect(find.text('Your archive has started.'), findsOneWidget);
       expect(
-        find.textContaining('first piece of evidence'),
+        find.textContaining('saved words'),
         findsOneWidget,
       );
       expect(find.textContaining('No conclusion yet'), findsOneWidget);

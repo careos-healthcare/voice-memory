@@ -294,6 +294,8 @@ import '../widgets/retention/tiny_record_again_cta.dart';
 import '../widgets/onboarding/change_starts_card.dart';
 import '../features/archive_proof/archive_demo_preview_resolver.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
+import '../features/activation/archive_home_summary.dart';
+import '../widgets/archive/post_save_archive_home_nudge_card.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
@@ -3094,6 +3096,12 @@ class _RecordScreenState extends State<RecordScreen> {
                 _offerDayTwoReminder && !_recordReturnCueVisible,
           )
         : null;
+    final archiveHomePostSave = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? ArchiveHomeSummaryEngine.build(entries: entriesAfterSave)
+        : null;
+    final suppressArchiveHomeDuplicatePayoffs =
+        archiveHomePostSave?.suppressDuplicatePayoffCards ?? false;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3715,7 +3723,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                 unawaited(_onRecordPressed(source: 'main')),
                           ),
                         ],
-                        if (thirdEntryBeliefPayoff != null) ...[
+                        if (thirdEntryBeliefPayoff != null &&
+                            !suppressArchiveHomeDuplicatePayoffs) ...[
                           const SizedBox(height: 16),
                           ThirdEntryBeliefPayoffCard(
                             payoff: thirdEntryBeliefPayoff,
@@ -3724,13 +3733,25 @@ class _RecordScreenState extends State<RecordScreen> {
                             onViewArchive: () => context.go('/archive-belief'),
                           ),
                         ],
-                        if (secondSessionPayoff != null) ...[
+                        if (secondSessionPayoff != null &&
+                            !suppressArchiveHomeDuplicatePayoffs) ...[
                           const SizedBox(height: 16),
                           SecondSessionPayoffCard(
                             payoff: secondSessionPayoff,
                             onAddAnother: () =>
                                 unawaited(_onRecordPressed(source: 'main')),
                             onViewArchive: () => context.go('/archive-belief'),
+                          ),
+                        ],
+                        if (archiveHomePostSave != null &&
+                            suppressArchiveHomeDuplicatePayoffs &&
+                            !_recordReturnProJustSaved) ...[
+                          const SizedBox(height: 16),
+                          PostSaveArchiveHomeNudgeCard(
+                            summary: archiveHomePostSave,
+                            onViewArchive: () => context.go('/archive-belief'),
+                            onAddMoment: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
                           ),
                         ],
                         if (analysisFallbackPayoff != null &&
