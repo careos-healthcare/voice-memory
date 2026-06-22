@@ -141,6 +141,8 @@ import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/evidence_attention_filters.dart';
 import '../features/activation/archive_workspace_layout.dart';
 import '../features/activation/archive_workspace_quick_actions.dart';
+import '../features/activation/archive_workspace_hints.dart';
+import '../features/activation/archive_workspace_hint_store.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -181,6 +183,7 @@ import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/evidence_attention_filters_card.dart';
 import '../widgets/archive/archive_workspace_section_heading.dart';
 import '../widgets/archive/archive_workspace_quick_actions_card.dart';
+import '../widgets/archive/archive_workspace_hint_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -451,6 +454,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       return;
     }
     await ArchiveBeliefCorrectionStore.ensureLoaded();
+    await ArchiveWorkspaceHintStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -931,6 +935,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       case ArchiveWorkspaceQuickActionDestination.shareProof:
         unawaited(_shareArchiveProofSafely());
     }
+  }
+
+  void _dismissWorkspaceHint(String hintId) {
+    ArchiveWorkspaceHintStore.dismiss(hintId);
+    setState(() {});
+  }
+
+  Widget? _workspaceHintWidget(ArchiveWorkspaceHint? hint) {
+    if (hint == null) return null;
+    return ArchiveWorkspaceHintCard(
+      hint: hint,
+      onDismiss: () => _dismissWorkspaceHint(hint.hintId),
+    );
   }
 
   List<Widget> _signalArchiveSurfaces() {
@@ -1886,6 +1903,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       weeklyReview: weeklyReview,
       shareProof: standaloneShareProof,
     );
+    final hints = ArchiveWorkspaceHintsEngine.build(layout: layout);
 
     final widgets = <Widget>[
       ArchiveHomeSummaryCard(
@@ -1897,6 +1915,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         shareProof: shareProof?.hasProof == true ? shareProof : null,
       ),
     ];
+
+    if (hints.introHint case final introHint?) {
+      widgets.add(const SizedBox(height: AppSpacing.md));
+      widgets.add(_workspaceHintWidget(introHint)!);
+    }
 
     if (quickActions.showCard) {
       widgets.add(const SizedBox(height: AppSpacing.md));
@@ -1917,6 +1940,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             title: heading,
           ),
         );
+      }
+      if (hints.needsAttentionHint case final sectionHint?) {
+        widgets.add(const SizedBox(height: AppSpacing.xs));
+        widgets.add(_workspaceHintWidget(sectionHint)!);
       }
       if (layout.showAttentionFilters) {
         widgets.add(
@@ -1957,6 +1984,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ),
         );
       }
+      if (hints.evidenceQualityHint case final sectionHint?) {
+        widgets.add(const SizedBox(height: AppSpacing.xs));
+        widgets.add(_workspaceHintWidget(sectionHint)!);
+      }
       var addedQualityCard = false;
       void addQualityCard(Widget card) {
         if (addedQualityCard) {
@@ -1993,6 +2024,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             title: heading,
           ),
         );
+      }
+      if (hints.reviewHistoryHint case final sectionHint?) {
+        widgets.add(const SizedBox(height: AppSpacing.xs));
+        widgets.add(_workspaceHintWidget(sectionHint)!);
       }
       if (layout.showBeliefHistory && beliefHistory != null) {
         widgets.add(BeliefHistoryTimelineCard(timeline: beliefHistory));
