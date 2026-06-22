@@ -298,9 +298,11 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.text('Add one more moment'), findsWidgets);
+      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('View archive'), findsOneWidget);
     });
   });
 }

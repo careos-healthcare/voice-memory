@@ -1762,8 +1762,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     switch (action) {
       case ArchiveHomeAction.record:
       case ArchiveHomeAction.addMoment:
-      case ArchiveHomeAction.viewArchive:
         _goToRecord();
+      case ArchiveHomeAction.viewArchive:
+        if (_entries.isEmpty) break;
+        final sorted = List<JournalEntry>.from(_entries)
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        context.push('/entry/${sorted.first.id}');
       case ArchiveHomeAction.typeInstead:
         context.push('/quick-capture');
       case ArchiveHomeAction.viewEvidence:
@@ -2094,7 +2098,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (!journey.completed &&
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    !journey.completed &&
                     secondSessionPayoff == null) ...[
                   FirstThreeJourneyCard(model: journey),
                   const SizedBox(height: AppSpacing.lg),
@@ -2117,7 +2122,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (!archiveBeliefThread.hasEnoughData &&
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    !archiveBeliefThread.hasEnoughData &&
                     thirdSessionUsefulness.hasEnoughData &&
                     thirdEntryBeliefPayoff == null) ...[
                   ThirdSessionArchiveUsefulnessCard(
@@ -2130,7 +2136,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   weekly: weeklyWhatChanged,
                   ohWow: ohWowMoment,
                 ),
-                if (_firstLoopPhase != null &&
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    _firstLoopPhase != null &&
                     _firstLoopPhase != FirstLoopStatePhase.recordMoment) ...[
                   FirstLoopStateCard(
                     phase: _firstLoopPhase!,

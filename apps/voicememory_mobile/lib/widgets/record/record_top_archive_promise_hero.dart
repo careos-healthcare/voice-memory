@@ -37,44 +37,14 @@ class RecordTopArchivePromiseHero extends StatelessWidget {
             VisibleArchiveProofCopy.recordHeroBody,
             style: ArchiveMobileTypography.explanationBody(context),
           ),
-          const SizedBox(height: AppSpacing.md),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: const [
-              _PromiseChip(label: VisibleArchiveProofCopy.recordHeroChipReturned),
-              _PromiseChip(label: VisibleArchiveProofCopy.recordHeroChipSoftened),
-              _PromiseChip(label: VisibleArchiveProofCopy.recordHeroChipChanged),
-            ],
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
+            style: ArchiveMobileTypography.explanationBody(context).copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _PromiseChip extends StatelessWidget {
-  const _PromiseChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.accentPrimary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.accentPrimary.withValues(alpha: 0.25),
-        ),
-      ),
-      child: Text(
-        label,
-        style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-          fontWeight: FontWeight.w600,
-          color: AppColors.accentPrimary,
-        ),
       ),
     );
   }

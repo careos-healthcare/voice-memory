@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive/archive_home_summary_card.dart';
+import 'package:voicememory_mobile/widgets/archive/post_save_archive_home_nudge_card.dart';
+import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -88,6 +91,7 @@ void main() {
       final summary = ArchiveHomeSummaryEngine.build(entries: const []);
       expect(summary.stage, ArchiveHomeStage.empty);
       expect(summary.title, 'Your archive starts with one moment.');
+      expect(summary.body, contains(VisibleArchiveProofCopy.firstRunBuildingLine));
       expect(summary.primaryCta, 'Record a moment');
       expect(summary.secondaryCta, 'Type instead');
       expect(summary.primaryAction, ArchiveHomeAction.record);
@@ -99,10 +103,13 @@ void main() {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(1));
       expect(summary.stage, ArchiveHomeStage.one);
       expect(summary.title, 'Your archive has one piece of evidence.');
-      expect(summary.body, 'Come back when this shows up again.');
+      expect(summary.body, VisibleArchiveProofCopy.archiveHomeOneBody);
       expect(summary.body.toLowerCase(), isNot(contains('repeat')));
       expect(summary.body.toLowerCase(), isNot(contains('pattern')));
+      expect(summary.footnoteLine, VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine);
+      expect(summary.evidenceRows, contains('1 saved moment'));
       expect(summary.primaryAction, ArchiveHomeAction.addMoment);
+      expect(summary.suppressDuplicatePayoffCards, isTrue);
     });
 
     test('2 entries shows two-moments-to-compare copy', () {
@@ -133,6 +140,8 @@ void main() {
       expect(summary.stage, ArchiveHomeStage.three);
       expect(summary.title, 'ArchiveMe is starting to form a belief.');
       expect(summary.body, contains('not a conclusion'));
+      expect(summary.secondaryCta, 'View archive');
+      expect(summary.secondaryAction, ArchiveHomeAction.viewArchive);
       expect(summary.suppressDuplicatePayoffCards, isTrue);
       _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
     });
@@ -167,6 +176,36 @@ void main() {
         ],
       );
       expect(summary.stage, ArchiveHomeStage.two);
+    });
+
+    test('first-run framing lines appear through early ladder stages', () {
+      for (final count in [0, 1, 2]) {
+        final summary = ArchiveHomeSummaryEngine.build(
+          entries: count == 0 ? const [] : _entries(count),
+        );
+        final visible = [
+          summary.title,
+          summary.body,
+          summary.footnoteLine,
+        ].whereType<String>();
+        if (count == 0 || count == 1) {
+          expect(
+            visible,
+            anyElement(contains(VisibleArchiveProofCopy.firstRunBuildingLine)),
+            reason: 'count $count should mention saved words',
+          );
+        }
+        if (count == 1 || count == 2) {
+          expect(
+            visible,
+            anyElement(contains('compare')),
+            reason: 'count $count should mention compare',
+          );
+        }
+        _expectNoBannedCopy(visible);
+      }
+      final three = ArchiveHomeSummaryEngine.build(entries: _entries(3));
+      expect(three.body.toLowerCase(), contains('not a conclusion'));
     });
   });
 
@@ -224,6 +263,47 @@ void main() {
 
       expect(find.byKey(const Key('shareable_archive_proof_card')), findsOneWidget);
       expect(find.text('No private entries shared.'), findsOneWidget);
+    });
+
+    testWidgets('first save card exposes view archive callback', (tester) async {
+      var viewedArchive = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: FirstSaveEvidenceCard(
+              onViewArchive: () => viewedArchive = true,
+              onRecordAnother: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('first_save_view_archive_cta')));
+      await tester.pump();
+      expect(viewedArchive, isTrue);
+    });
+
+    testWidgets('post-save nudge routes to archive home copy at two entries', (
+      tester,
+    ) async {
+      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(2));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: PostSaveArchiveHomeNudgeCard(
+              summary: summary,
+              onViewArchive: () {},
+              onAddMoment: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.byKey(const Key('post_save_view_archive_cta')), findsOneWidget);
+      expect(find.text('View archive'), findsOneWidget);
+      expect(find.text(summary.title), findsOneWidget);
     });
   });
 }

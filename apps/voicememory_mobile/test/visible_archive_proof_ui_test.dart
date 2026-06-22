@@ -20,7 +20,7 @@ void main() {
       );
       expect(
         FirstThreeSessionCopy.session1Body,
-        contains('first piece of evidence'),
+        contains('saved words'),
       );
       expect(
         FirstThreeSessionCopy.session1EnoughForToday,
@@ -48,9 +48,11 @@ void main() {
       );
       expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.recordHeroBody), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.recordHeroChipReturned), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.recordHeroChipSoftened), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.recordHeroChipChanged), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine),
+        findsOneWidget,
+      );
+      expect(find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
     });
 
