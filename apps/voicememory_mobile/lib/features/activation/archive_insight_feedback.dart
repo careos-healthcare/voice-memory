@@ -247,12 +247,25 @@ abstract final class ArchiveInsightFeedbackStore {
   static void _persist() {
     if (!AppServices.isInitialized) return;
     // ignore: discarded_futures
-    AppServices.instance.prefs.writeMap(_prefsKey, {
+    _persistAsync();
+  }
+
+  static Future<void> _persistAsync() async {
+    if (!AppServices.isInitialized) return;
+    await AppServices.instance.prefs.writeMap(_prefsKey, {
       'hidden': _hidden.toList()..sort(),
       'feelsRight': _feelsRight,
       'notQuite': _notQuite,
       'correctionNotes': _correctionNotes,
     });
+  }
+
+  static Future<void> clearAll() async {
+    _hidden.clear();
+    _feelsRight.clear();
+    _notQuite.clear();
+    _correctionNotes.clear();
+    await _persistAsync();
   }
 
   @visibleForTesting

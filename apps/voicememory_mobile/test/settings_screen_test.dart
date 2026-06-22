@@ -9,7 +9,7 @@ void main() {
       'ConsumerUiCopy.privacy',
       'ConsumerUiCopy.termsOfUse',
       'ConsumerUiCopy.restorePurchases',
-      'ConsumerUiCopy.exportReflections',
+      'PrivacyDataControlsSection',
       'ConsumerUiCopy.deleteAccount',
       'ConsumerUiCopy.appVersion',
     ]) {
