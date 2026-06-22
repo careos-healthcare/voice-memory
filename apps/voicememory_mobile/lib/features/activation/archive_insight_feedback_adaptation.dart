@@ -105,13 +105,43 @@ abstract final class ArchiveInsightFeedbackAdaptation {
     ArchiveInsightTarget target, {
     ArchiveHomeStage? archiveHomeStage,
   }) {
+    final insightId = resolveInsightId(
+      target,
+      archiveHomeStage: archiveHomeStage,
+    );
+    final parts = <String>[];
+
+    final correctionBlock = correctionContextFor(insightId);
+    if (correctionBlock != null &&
+        !baseCopy.contains(ArchiveInsightFeedbackCopy.correctionMarkedNotQuite)) {
+      parts.add(correctionBlock);
+    }
+
     final cautionLine = cautionLineFor(
       target,
       archiveHomeStage: archiveHomeStage,
     );
-    if (cautionLine == null || baseCopy.startsWith(cautionLine)) {
-      return baseCopy;
+    if (cautionLine != null && !baseCopy.contains(cautionLine)) {
+      parts.add(cautionLine);
     }
-    return '$cautionLine\n\n$baseCopy';
+
+    parts.add(baseCopy);
+    return parts.join('\n\n');
+  }
+
+  /// Local-only correction context for insight display — never shared.
+  static String? correctionContextFor(String insightId) {
+    if (!ArchiveInsightFeedbackStore.hasCorrectionNote(insightId)) {
+      return null;
+    }
+    final note = ArchiveInsightFeedbackStore.correctionNote(insightId)!;
+    return '${ArchiveInsightFeedbackCopy.correctionMarkedNotQuite}\n'
+        '${ArchiveInsightFeedbackCopy.correctionYourNotePrefix} $note';
+  }
+
+  static String correctionNoteLineFor(String insightId) {
+    final note = ArchiveInsightFeedbackStore.correctionNote(insightId);
+    if (note == null) return '';
+    return '${ArchiveInsightFeedbackCopy.correctionYourNotePrefix} $note';
   }
 }

@@ -28,14 +28,54 @@ class _ArchiveInsightFeedbackControlsState
     extends State<ArchiveInsightFeedbackControls> {
   bool _whyExpanded = false;
   bool _showFeelsRightConfirmation = false;
+  bool _showCorrectionEditor = false;
+  late final TextEditingController _correctionController;
+
+  @override
+  void initState() {
+    super.initState();
+    _correctionController = TextEditingController(
+      text: ArchiveInsightFeedbackStore.correctionNote(widget.insightId) ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _correctionController.dispose();
+    super.dispose();
+  }
 
   Future<void> _record(ArchiveInsightFeedbackChoice choice) async {
     await ArchiveInsightFeedbackStore.ensureLoaded();
     ArchiveInsightFeedbackStore.record(widget.insightId, choice);
     if (choice == ArchiveInsightFeedbackChoice.feelsRight) {
       _showFeelsRightConfirmation = true;
+      _showCorrectionEditor = false;
+    }
+    if (choice == ArchiveInsightFeedbackChoice.notQuite) {
+      _showFeelsRightConfirmation = false;
+      _showCorrectionEditor = true;
+      _correctionController.text =
+          ArchiveInsightFeedbackStore.correctionNote(widget.insightId) ?? '';
     }
     widget.onFeedbackChanged?.call();
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _saveCorrectionNote() async {
+    await ArchiveInsightFeedbackStore.ensureLoaded();
+    final saved = ArchiveInsightFeedbackStore.saveCorrectionNote(
+      widget.insightId,
+      _correctionController.text,
+    );
+    if (!saved) return;
+    _showCorrectionEditor = false;
+    widget.onFeedbackChanged?.call();
+    if (mounted) setState(() {});
+  }
+
+  void _skipCorrectionNote() {
+    _showCorrectionEditor = false;
     if (mounted) setState(() {});
   }
 
@@ -45,6 +85,31 @@ class _ArchiveInsightFeedbackControlsState
     widget.onHidden?.call();
     widget.onFeedbackChanged?.call();
     if (mounted) setState(() {});
+  }
+
+  Widget _buildCorrectionContext(TextStyle explainStyle) {
+    if (!ArchiveInsightFeedbackStore.hasCorrectionNote(widget.insightId)) {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          ArchiveInsightFeedbackCopy.correctionMarkedNotQuite,
+          key: const Key('archive_insight_feedback_correction_marked'),
+          style: explainStyle,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          ArchiveInsightFeedbackAdaptation.correctionNoteLineFor(
+            widget.insightId,
+          ),
+          key: const Key('archive_insight_feedback_correction_saved_note'),
+          style: explainStyle,
+        ),
+      ],
+    );
   }
 
   @override
@@ -117,6 +182,49 @@ class _ArchiveInsightFeedbackControlsState
             ),
           ],
         ),
+        if (_showCorrectionEditor) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            ArchiveInsightFeedbackCopy.correctionAffordance,
+            key: const Key('archive_insight_feedback_correction_affordance'),
+            style: explainStyle,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          TextField(
+            key: const Key('archive_insight_feedback_correction_field'),
+            controller: _correctionController,
+            maxLength: ArchiveInsightFeedbackStore.maxCorrectionNoteLength,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: ArchiveInsightFeedbackCopy.correctionPlaceholder,
+              isDense: true,
+              counterText: '',
+            ),
+            style: explainStyle.copyWith(color: AppColors.textPrimary),
+          ),
+          Row(
+            children: [
+              TextButton(
+                key: const Key('archive_insight_feedback_correction_save'),
+                onPressed: _saveCorrectionNote,
+                child: Text(
+                  ArchiveInsightFeedbackCopy.correctionSaveCta,
+                  style: chipStyle,
+                ),
+              ),
+              TextButton(
+                key: const Key('archive_insight_feedback_correction_skip'),
+                onPressed: _skipCorrectionNote,
+                child: Text(
+                  ArchiveInsightFeedbackCopy.correctionSkipCta,
+                  style: chipStyle,
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (!_showCorrectionEditor)
+          _buildCorrectionContext(explainStyle),
         if (_whyExpanded) ...[
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -136,6 +244,22 @@ class _ArchiveInsightFeedbackControlsState
             key: const Key('archive_insight_feedback_why_hide'),
             style: explainStyle,
           ),
+          if (ArchiveInsightFeedbackStore.hasCorrectionNote(widget.insightId)) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              ArchiveInsightFeedbackCopy.correctionMarkedNotQuite,
+              key: const Key('archive_insight_feedback_why_correction_marked'),
+              style: explainStyle,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              ArchiveInsightFeedbackAdaptation.correctionNoteLineFor(
+                widget.insightId,
+              ),
+              key: const Key('archive_insight_feedback_why_correction_note'),
+              style: explainStyle,
+            ),
+          ],
         ],
         if (_showFeelsRightConfirmation) ...[
           const SizedBox(height: AppSpacing.xs),
