@@ -69,7 +69,7 @@ abstract final class ArchiveWorkspaceHintsEngine {
 
     return ArchiveWorkspaceHintsPlan(
       introHint: introHint,
-      needsAttentionHint: layout.needsAttention.show && layout.eligibleCount >= 1
+      needsAttentionHint: layout.showAttentionFilters
           ? _sectionHint(
               hintId: ArchiveWorkspaceHintIds.needsAttention,
               body: VisibleArchiveProofCopy.archiveWorkspaceHintNeedsAttentionBody,

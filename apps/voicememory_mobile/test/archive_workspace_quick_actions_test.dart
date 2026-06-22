@@ -159,14 +159,9 @@ void main() {
       expect(actions.showCard, isFalse);
     });
 
-    test('1 entry shows Add one more moment', () {
+    test('1 entry does not duplicate archive home add-moment guidance', () {
       final actions = _quickActions(_distinctWorkEntries(1));
-      expect(actions.showCard, isTrue);
-      expect(_kinds(actions), [ArchiveWorkspaceQuickActionKind.addMoment]);
-      expect(
-        actions.actions.first.resolveRoute(),
-        '/record',
-      );
+      expect(actions.showCard, isFalse);
     });
 
     test('2 entries with untagged usable entries shows Tag untagged entries', () {

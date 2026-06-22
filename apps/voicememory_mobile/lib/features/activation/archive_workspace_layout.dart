@@ -96,11 +96,14 @@ abstract final class ArchiveWorkspaceLayoutEngine {
     final showActionPlan = actionPlan.showCard && eligibleCount >= 1;
     final showAttentionFilters = attentionFilters.showCard && eligibleCount >= 2;
 
+    final needsAttentionHeading = showAttentionFilters ||
+            (showActionPlan && eligibleCount >= 2)
+        ? VisibleArchiveProofCopy.archiveWorkspaceNeedsAttentionHeading
+        : null;
+
     final needsAttention = ArchiveWorkspaceSectionLayout(
       show: showActionPlan || showAttentionFilters,
-      heading: (showActionPlan || showAttentionFilters)
-          ? VisibleArchiveProofCopy.archiveWorkspaceNeedsAttentionHeading
-          : null,
+      heading: needsAttentionHeading,
     );
 
     final showArchiveHealth = archiveHealth.showCard && eligibleCount >= 3;
