@@ -1,6 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
+import 'correction_informed_next_prompt.dart';
 
 /// Ladder stage for personalized next-moment prompts.
 enum NextMomentPromptStage { one, two, three, four, fivePlus }
@@ -46,6 +47,14 @@ abstract final class NextMomentPromptEngine {
     final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
     if (eligibleCount == 0) return null;
 
+    final base = _buildBase(eligibleCount);
+    return CorrectionInformedNextPrompt.apply(
+      base: base,
+      eligibleCount: eligibleCount,
+    );
+  }
+
+  static NextMomentPrompt _buildBase(int eligibleCount) {
     if (eligibleCount == 1) {
       return const NextMomentPrompt(
         stage: NextMomentPromptStage.one,
