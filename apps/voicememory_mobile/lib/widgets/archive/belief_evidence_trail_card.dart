@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/belief_evidence_trail.dart';
+import '../../features/activation/belief_history_timeline.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
@@ -167,8 +168,70 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
               child: Text(trail.primaryCta!),
             ),
           ],
+          if (trail.historyTimeline case final history?) ...[
+            const SizedBox(height: AppSpacing.lg),
+            _BeliefHistorySection(timeline: history),
+          ],
         ],
       ),
+    );
+  }
+}
+
+class _BeliefHistorySection extends StatelessWidget {
+  const _BeliefHistorySection({required this.timeline});
+
+  final BeliefHistoryTimeline timeline;
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+      color: AppColors.textSecondary,
+      fontWeight: FontWeight.w600,
+    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+      color: AppColors.textPrimary,
+      height: 1.45,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          BeliefHistoryTimelineCopy.titleBuilding,
+          key: const Key('belief_evidence_trail_history_heading'),
+          style: labelStyle,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          timeline.body,
+          key: const Key('belief_evidence_trail_history_body'),
+          style: bodyStyle,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          BeliefHistoryTimelineCopy.earlierBeliefLabel,
+          key: const Key('belief_evidence_trail_history_earlier_label'),
+          style: labelStyle,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          timeline.earlierBelief,
+          key: const Key('belief_evidence_trail_history_earlier_belief'),
+          style: bodyStyle,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          BeliefHistoryTimelineCopy.currentBeliefLabel,
+          style: labelStyle,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          timeline.currentBelief,
+          key: const Key('belief_evidence_trail_history_current_belief'),
+          style: bodyStyle,
+        ),
+      ],
     );
   }
 }

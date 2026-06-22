@@ -134,6 +134,7 @@ import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
+import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -160,6 +161,7 @@ import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
+import '../widgets/archive/belief_history_timeline_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -1778,6 +1780,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 4
             ? BeliefUpdatePayoffEngine.build(entries: _entries)
             : null;
+    final beliefHistoryTimeline =
+        ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+            ? BeliefHistoryTimelineEngine.build(entries: _entries)
+            : null;
     if (beliefUpdatePayoff != null) {
       widgets.add(
         BeliefUpdatePayoffCard(
@@ -1786,6 +1792,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           onViewEvidence: () => context.push(BeliefEvidenceNavigation.route),
         ),
       );
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
+    if (beliefHistoryTimeline != null) {
+      widgets.add(BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     for (final section in decision.sections) {
@@ -1898,6 +1908,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 4
               ? BeliefUpdatePayoffEngine.build(entries: _entries)
               : null;
+      final beliefHistoryTimeline =
+          ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+              ? BeliefHistoryTimelineEngine.build(entries: _entries)
+              : null;
       final thirdEntryBeliefPayoff =
           beliefUpdatePayoff == null &&
                   ArchiveEvidenceGuard.eligibleReflectionCount(_entries) ==
@@ -1948,6 +1962,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     onViewEvidence: () =>
                         context.push(BeliefEvidenceNavigation.route),
                   ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (beliefHistoryTimeline != null) ...[
+                  BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline),
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (thirdEntryBeliefPayoff != null) ...[
