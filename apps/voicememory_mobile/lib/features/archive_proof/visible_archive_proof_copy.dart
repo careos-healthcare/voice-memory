@@ -176,6 +176,41 @@ abstract final class VisibleArchiveProofCopy {
   static const beliefEvidenceNextDefault =
       'Add another moment when this shows up again.';
 
+  // Five-plus entry belief history — cautious change-over-time surface.
+  static const beliefHistoryTitleChanged = 'Your archive belief changed.';
+
+  static const beliefHistoryBodyChanged =
+      'Earlier, your archive was mostly seeing pressure around one moment. '
+      'Now it is seeing that pressure across more than one context.';
+
+  static const beliefHistoryTitleBuilding = 'Belief history';
+
+  static const beliefHistoryBodyNotChanged =
+      'Your archive belief has not clearly changed yet.';
+
+  static const beliefHistoryNotEnoughChange =
+      'Your archive belief has not clearly changed yet.';
+
+  static const beliefHistoryEarlierBeliefLabel = 'Earlier belief';
+
+  static const beliefHistoryCurrentBeliefLabel = 'Current belief';
+
+  static const beliefHistoryWhatChangedLabel = 'What changed';
+
+  static const beliefHistoryEvidenceLabel = 'Evidence that changed it';
+
+  static const beliefHistoryEarlierOneMoment =
+      'Your archive was mostly seeing pressure around one moment.';
+
+  static const beliefHistoryCurrentMultiContext =
+      'Your archive appears to see that pressure across more than one context.';
+
+  static const beliefHistoryWhatChangedDefault =
+      'A newer moment may have widened what your archive can compare.';
+
+  static const beliefHistoryWhatChangedStillThin =
+      'The evidence is still thin, but it is becoming easier to compare.';
+
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
   static const returnLoopOneEntryBody =
       'Come back when this shows up again.';

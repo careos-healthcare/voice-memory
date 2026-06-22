@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
+import 'belief_history_timeline.dart';
 import 'belief_update_payoff.dart';
 
 /// Route for the belief evidence drilldown screen.
@@ -57,6 +58,7 @@ class BeliefEvidenceTrail {
     this.primaryCta,
     this.insufficientBody,
     this.footnoteLine,
+    this.historyTimeline,
   });
 
   final bool hasEnoughEvidence;
@@ -71,6 +73,7 @@ class BeliefEvidenceTrail {
   final String? primaryCta;
   final String? insufficientBody;
   final String? footnoteLine;
+  final BeliefHistoryTimeline? historyTimeline;
 
   factory BeliefEvidenceTrail.insufficient() {
     return const BeliefEvidenceTrail(
@@ -95,6 +98,8 @@ abstract final class BeliefEvidenceTrailEngine {
     );
     if (payoff == null) return BeliefEvidenceTrail.insufficient();
 
+    final historyTimeline = BeliefHistoryTimelineEngine.build(entries: entries);
+
     return BeliefEvidenceTrail(
       hasEnoughEvidence: true,
       title: BeliefEvidenceTrailCopy.title,
@@ -110,6 +115,7 @@ abstract final class BeliefEvidenceTrailEngine {
           : BeliefEvidenceTrailCopy.nextDefault,
       primaryCta: BeliefEvidenceTrailCopy.primaryCta,
       footnoteLine: payoff.footnoteLine,
+      historyTimeline: historyTimeline,
     );
   }
 }
