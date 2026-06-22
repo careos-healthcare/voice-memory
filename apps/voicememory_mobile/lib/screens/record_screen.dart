@@ -22,6 +22,7 @@ import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
+import '../features/activation/weekly_archive_review.dart';
 import '../features/activation/day_two_return_loop_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
@@ -260,6 +261,7 @@ import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
+import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
@@ -3069,6 +3071,10 @@ class _RecordScreenState extends State<RecordScreen> {
             entriesAfterSave.isNotEmpty
         ? BeliefHistoryTimelineEngine.build(entries: entriesAfterSave)
         : null;
+    final weeklyArchiveReview = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? WeeklyArchiveReviewEngine.build(entries: entriesAfterSave)
+        : null;
     final returnLoopPayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             thirdEntryBeliefPayoff == null &&
@@ -3685,6 +3691,19 @@ class _RecordScreenState extends State<RecordScreen> {
                           const SizedBox(height: 16),
                           BeliefHistoryTimelineCard(
                             timeline: beliefHistoryTimeline,
+                          ),
+                        ],
+                        if (weeklyArchiveReview != null &&
+                            weeklyArchiveReview.hasEnoughEvidence) ...[
+                          const SizedBox(height: 16),
+                          WeeklyArchiveReviewCard(
+                            review: weeklyArchiveReview,
+                            compact: true,
+                            onViewFullReview: () => context.push(
+                              WeeklyArchiveReviewNavigation.route,
+                            ),
+                            onAddAnother: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
                           ),
                         ],
                         if (thirdEntryBeliefPayoff != null) ...[

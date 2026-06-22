@@ -211,6 +211,57 @@ abstract final class VisibleArchiveProofCopy {
   static const beliefHistoryWhatChangedStillThin =
       'The evidence is still thin, but it is becoming easier to compare.';
 
+  // Five-plus entry weekly archive review — summary retention hook.
+  static const weeklyArchiveReviewTitle = 'Your archive review';
+
+  static const weeklyArchiveReviewSubtitle =
+      'What your saved words are starting to show.';
+
+  static const weeklyArchiveReviewNotConclusion = 'This is not a conclusion.';
+
+  static const weeklyArchiveReviewSourceLine =
+      'ArchiveMe is using your saved words, not guessing.';
+
+  static const weeklyArchiveReviewInsufficientBody =
+      'Your archive needs more moments before it can create a review.';
+
+  static const weeklyArchiveReviewStrongestThreadLabel =
+      'This week\'s strongest thread';
+
+  static const weeklyArchiveReviewWhatChangedLabel = 'What changed';
+
+  static const weeklyArchiveReviewEvidenceLabel = 'Evidence from your archive';
+
+  static const weeklyArchiveReviewStillUncertainLabel = 'Still uncertain';
+
+  static const weeklyArchiveReviewAddNextLabel = 'What to add next';
+
+  static const weeklyArchiveReviewStillThin = 'The evidence is still thin.';
+
+  static const weeklyArchiveReviewNextDefault =
+      'Add one more moment when this shows up again.';
+
+  static const weeklyArchiveReviewNextWhenThin =
+      'Add one more distinct moment to make this review clearer.';
+
+  static const weeklyArchiveReviewPrimaryCta = firstSavePrimaryCta;
+
+  static const weeklyArchiveReviewViewEvidenceCta = 'View evidence';
+
+  static const weeklyArchiveReviewViewFullCta = 'View review';
+
+  static const weeklyArchiveReviewStrongestThreadWork =
+      'Pressure around work may be the strongest thread in your recent moments.';
+
+  static const weeklyArchiveReviewStrongestThreadDefault =
+      'Similar pressure may be the strongest thread in your recent moments.';
+
+  static const weeklyArchiveReviewWhatChangedDefault =
+      'Your latest moments may be widening what your archive can compare.';
+
+  static const weeklyArchiveReviewWhatChangedStillThin =
+      'The evidence is still thin, but it is becoming easier to compare.';
+
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
   static const returnLoopOneEntryBody =
       'Come back when this shows up again.';

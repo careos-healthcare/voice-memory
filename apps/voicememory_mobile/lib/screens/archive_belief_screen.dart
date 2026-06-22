@@ -135,6 +135,7 @@ import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
+import '../features/activation/weekly_archive_review.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -162,6 +163,7 @@ import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
+import '../widgets/archive/weekly_archive_review_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -1798,6 +1800,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       widgets.add(BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
+    final weeklyArchiveReview =
+        ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+            ? WeeklyArchiveReviewEngine.build(entries: _entries)
+            : null;
+    if (weeklyArchiveReview != null && weeklyArchiveReview.hasEnoughEvidence) {
+      widgets.add(
+        WeeklyArchiveReviewCard(
+          review: weeklyArchiveReview,
+          compact: true,
+          onViewFullReview: () =>
+              context.push(WeeklyArchiveReviewNavigation.route),
+          onAddAnother: _goToRecord,
+        ),
+      );
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    }
     for (final section in decision.sections) {
       widgets.addAll(_sectionWidgets(section, decision));
       if (section == PatternsSectionType.activeCheckIn) {
@@ -1912,6 +1930,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
               ? BeliefHistoryTimelineEngine.build(entries: _entries)
               : null;
+      final weeklyArchiveReview =
+          ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+              ? WeeklyArchiveReviewEngine.build(entries: _entries)
+              : null;
       final thirdEntryBeliefPayoff =
           beliefUpdatePayoff == null &&
                   ArchiveEvidenceGuard.eligibleReflectionCount(_entries) ==
@@ -1966,6 +1988,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ],
                 if (beliefHistoryTimeline != null) ...[
                   BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (weeklyArchiveReview != null &&
+                    weeklyArchiveReview.hasEnoughEvidence) ...[
+                  WeeklyArchiveReviewCard(
+                    review: weeklyArchiveReview,
+                    compact: true,
+                    onViewFullReview: () =>
+                        context.push(WeeklyArchiveReviewNavigation.route),
+                    onAddAnother: _goToRecord,
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (thirdEntryBeliefPayoff != null) ...[
