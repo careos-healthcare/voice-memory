@@ -1,0 +1,203 @@
+import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_proof/visible_archive_proof_copy.dart';
+import '../pressure_retention/shareable_archive_proof_engine.dart';
+import 'belief_update_payoff.dart';
+import 'second_session_payoff.dart';
+import 'third_entry_belief_payoff.dart';
+import 'weekly_archive_review.dart';
+
+/// Ladder stage for the Archive Home command center.
+enum ArchiveHomeStage { empty, one, two, three, four, fivePlus }
+
+/// Primary navigation action for Archive Home CTAs.
+enum ArchiveHomeAction {
+  none,
+  record,
+  typeInstead,
+  addMoment,
+  viewArchive,
+  viewEvidence,
+  viewReview,
+}
+
+/// User-facing copy constants for Archive Home.
+abstract final class ArchiveHomeSummaryCopy {
+  static const emptyTitle = VisibleArchiveProofCopy.archiveHomeEmptyTitle;
+
+  static const emptyBody = VisibleArchiveProofCopy.archiveHomeEmptyBody;
+
+  static const recordCta = VisibleArchiveProofCopy.archiveHomeRecordCta;
+
+  static const typeInsteadCta = VisibleArchiveProofCopy.archiveHomeTypeInsteadCta;
+
+  static const oneTitle = VisibleArchiveProofCopy.archiveHomeOneTitle;
+
+  static const beliefLabel = VisibleArchiveProofCopy.archiveHomeBeliefLabel;
+
+  static const whatChangedLabel =
+      VisibleArchiveProofCopy.archiveHomeWhatChangedLabel;
+
+  static const evidenceLabel = VisibleArchiveProofCopy.archiveHomeEvidenceLabel;
+
+  static const nextActionLabel =
+      VisibleArchiveProofCopy.archiveHomeNextActionLabel;
+
+  static const viewReviewCta = VisibleArchiveProofCopy.archiveHomeViewReviewCta;
+}
+
+/// Central Archive Home summary — adapts by usable entry count.
+class ArchiveHomeSummary {
+  const ArchiveHomeSummary({
+    required this.stage,
+    required this.title,
+    required this.body,
+    this.subtitle,
+    this.footnoteLine,
+    this.currentBeliefLine,
+    this.whatChangedLine,
+    this.evidenceRows = const [],
+    this.nextActionLine,
+    this.primaryCta,
+    this.secondaryCta,
+    this.primaryAction = ArchiveHomeAction.none,
+    this.secondaryAction = ArchiveHomeAction.none,
+    this.suppressDuplicatePayoffCards = false,
+    this.showShareProof = false,
+  });
+
+  final ArchiveHomeStage stage;
+  final String title;
+  final String body;
+  final String? subtitle;
+  final String? footnoteLine;
+  final String? currentBeliefLine;
+  final String? whatChangedLine;
+  final List<String> evidenceRows;
+  final String? nextActionLine;
+  final String? primaryCta;
+  final String? secondaryCta;
+  final ArchiveHomeAction primaryAction;
+  final ArchiveHomeAction secondaryAction;
+  final bool suppressDuplicatePayoffCards;
+  final bool showShareProof;
+}
+
+/// Builds Archive Home from eligible entry count and existing engines.
+abstract final class ArchiveHomeSummaryEngine {
+  ArchiveHomeSummaryEngine._();
+
+  static ArchiveHomeSummary build({
+    required List<JournalEntry> entries,
+  }) {
+    final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
+
+    if (eligibleCount == 0) {
+      return const ArchiveHomeSummary(
+        stage: ArchiveHomeStage.empty,
+        title: ArchiveHomeSummaryCopy.emptyTitle,
+        body: ArchiveHomeSummaryCopy.emptyBody,
+        currentBeliefLine: VisibleArchiveProofCopy.archiveHomeNotEnoughBelief,
+        whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
+        nextActionLine: ArchiveHomeSummaryCopy.recordCta,
+        primaryCta: ArchiveHomeSummaryCopy.recordCta,
+        secondaryCta: ArchiveHomeSummaryCopy.typeInsteadCta,
+        primaryAction: ArchiveHomeAction.record,
+        secondaryAction: ArchiveHomeAction.typeInstead,
+      );
+    }
+
+    if (eligibleCount == 1) {
+      return const ArchiveHomeSummary(
+        stage: ArchiveHomeStage.one,
+        title: ArchiveHomeSummaryCopy.oneTitle,
+        body: VisibleArchiveProofCopy.returnLoopOneEntryBody,
+        currentBeliefLine: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
+        whatChangedLine: VisibleArchiveProofCopy.archiveHomeNotEnoughChanged,
+        nextActionLine: VisibleArchiveProofCopy.firstSavePrimaryCta,
+        primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
+        primaryAction: ArchiveHomeAction.addMoment,
+      );
+    }
+
+    if (eligibleCount == 2) {
+      final payoff = SecondSessionPayoffEngine.build(entries: entries);
+      return ArchiveHomeSummary(
+        stage: ArchiveHomeStage.two,
+        title: payoff?.title ?? VisibleArchiveProofCopy.twoEntryCompareTitle,
+        body: payoff?.body ?? VisibleArchiveProofCopy.twoEntryBodyUngrounded,
+        currentBeliefLine: VisibleArchiveProofCopy.archiveHomeNotEnoughBelief,
+        whatChangedLine: payoff?.hasGroundedMatch == true
+            ? payoff!.body
+            : VisibleArchiveProofCopy.twoEntryBodyUngrounded,
+        nextActionLine: VisibleArchiveProofCopy.twoEntryNextAction,
+        primaryCta: VisibleArchiveProofCopy.twoEntryPrimaryCta,
+        primaryAction: ArchiveHomeAction.addMoment,
+        suppressDuplicatePayoffCards: true,
+      );
+    }
+
+    if (eligibleCount == 3) {
+      final payoff = ThirdEntryBeliefPayoffEngine.build(entries: entries);
+      return ArchiveHomeSummary(
+        stage: ArchiveHomeStage.three,
+        title: payoff?.title ?? VisibleArchiveProofCopy.threeEntryBeliefTitle,
+        body: payoff?.bodyIntro ??
+            VisibleArchiveProofCopy.threeEntryBeliefBodyIntro,
+        footnoteLine: payoff?.bodySource,
+        currentBeliefLine: VisibleArchiveProofCopy.threeEntryBeliefTitle,
+        whatChangedLine: payoff?.thinEvidenceNote ??
+            VisibleArchiveProofCopy.threeEntryBeliefEvidenceThin,
+        evidenceRows: payoff?.evidenceRows ?? const [],
+        nextActionLine: payoff?.thinEvidenceAction ??
+            VisibleArchiveProofCopy.threeEntryBeliefEvidenceThinAction,
+        primaryCta: VisibleArchiveProofCopy.threeEntryBeliefPrimaryCta,
+        secondaryCta: VisibleArchiveProofCopy.threeEntryBeliefViewArchiveCta,
+        primaryAction: ArchiveHomeAction.addMoment,
+        secondaryAction: ArchiveHomeAction.viewArchive,
+        suppressDuplicatePayoffCards: true,
+      );
+    }
+
+    if (eligibleCount == 4) {
+      final payoff = BeliefUpdatePayoffEngine.build(entries: entries);
+      return ArchiveHomeSummary(
+        stage: ArchiveHomeStage.four,
+        title: payoff?.title ?? VisibleArchiveProofCopy.beliefUpdateTitle,
+        body: payoff?.body ?? VisibleArchiveProofCopy.beliefUpdateBodyChanged,
+        currentBeliefLine: payoff?.currentBelief,
+        whatChangedLine: payoff?.whatChangedLine,
+        evidenceRows: payoff?.evidenceRows ?? const [],
+        nextActionLine: payoff?.primaryCta,
+        primaryCta: VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta,
+        secondaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
+        primaryAction: ArchiveHomeAction.viewEvidence,
+        secondaryAction: ArchiveHomeAction.addMoment,
+        suppressDuplicatePayoffCards: true,
+      );
+    }
+
+    final review = WeeklyArchiveReviewEngine.build(entries: entries);
+    final shareProof =
+        const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+    return ArchiveHomeSummary(
+      stage: ArchiveHomeStage.fivePlus,
+      title: review.title,
+      subtitle: review.subtitle,
+      body: review.strongestThreadLine ??
+          review.subtitle ??
+          VisibleArchiveProofCopy.weeklyArchiveReviewSubtitle,
+      footnoteLine: review.notConclusionLine,
+      currentBeliefLine: review.strongestThreadLine,
+      whatChangedLine: review.whatChangedLine,
+      evidenceRows: review.evidenceRows,
+      nextActionLine: review.nextActionLine,
+      primaryCta: ArchiveHomeSummaryCopy.viewReviewCta,
+      secondaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
+      primaryAction: ArchiveHomeAction.viewReview,
+      secondaryAction: ArchiveHomeAction.addMoment,
+      suppressDuplicatePayoffCards: true,
+      showShareProof: shareProof.hasProof,
+    );
+  }
+}
