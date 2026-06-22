@@ -89,6 +89,29 @@ abstract final class VisibleArchiveProofCopy {
   static const twoEntryNextAction =
       'Add one more moment to make the thread clearer.';
 
+  // Three-entry belief payoff (cautious, evidence-based).
+  static const threeEntryBeliefTitle =
+      'ArchiveMe is starting to form a belief.';
+
+  static const threeEntryBeliefBodyIntro =
+      'This is not a conclusion yet. It is the first version of what your '
+      'archive can compare.';
+
+  static const threeEntryBeliefBodySource =
+      'ArchiveMe is using your saved words, not guessing.';
+
+  static const threeEntryBeliefEvidenceLabel = 'Evidence from your archive';
+
+  static const threeEntryBeliefEvidenceThin =
+      'The evidence is still thin.';
+
+  static const threeEntryBeliefEvidenceThinAction =
+      'Add one more moment to make this clearer.';
+
+  static const threeEntryBeliefPrimaryCta = firstSavePrimaryCta;
+
+  static const threeEntryBeliefViewArchiveCta = firstSaveViewArchiveCta;
+
   // One-entry post-save — evidence only, no loop/repeat claims yet.
   static const oneEntryAddedTodayLine = 'You added one piece today.';
   static const oneEntryArchiveLine =

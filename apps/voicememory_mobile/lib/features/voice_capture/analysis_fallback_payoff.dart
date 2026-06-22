@@ -79,7 +79,7 @@ abstract final class AnalysisFallbackPayoffEngine {
     if (!VoiceCaptureQuality.hasUsableSpokenText(latest)) return null;
 
     final count = eligible.length;
-    if (count == 2) return null;
+    if (count == 2 || count == 3) return null;
 
     if (count == 1) {
       return const AnalysisFallbackPayoff(

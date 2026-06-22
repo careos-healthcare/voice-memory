@@ -129,7 +129,9 @@ import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../features/activation/first_three_session_gates.dart';
+import '../features/archive_evidence/archive_evidence_guard.dart';
 import '../features/activation/second_session_payoff.dart';
+import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -154,6 +156,7 @@ import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
+import '../widgets/record/third_entry_belief_payoff_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -1874,6 +1877,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             reflectionCount: _entries.length,
             entries: _entries,
           );
+      final thirdEntryBeliefPayoff =
+          ArchiveEvidenceGuard.eligibleReflectionCount(_entries) ==
+                  FirstThreeSessionGates.minEntriesForUsefulArchive
+              ? ThirdEntryBeliefPayoffEngine.build(entries: _entries)
+              : null;
       final secondSessionPayoff = _entries.length ==
               FirstThreeSessionGates.minEntriesForRepeatSurface
           ? SecondSessionPayoffEngine.build(entries: _entries)
@@ -1911,6 +1919,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               children: [
                 if (!_suppressEarlyArchiveBeliefProof)
                   ..._buildArchiveBeliefProofWidgets(),
+                if (thirdEntryBeliefPayoff != null) ...[
+                  ThirdEntryBeliefPayoffCard(
+                    payoff: thirdEntryBeliefPayoff,
+                    onAddAnother: _goToRecord,
+                    onViewArchive: () {
+                      if (_entries.isEmpty) return;
+                      final sorted = List<JournalEntry>.from(_entries)
+                        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+                      context.push('/entry/${sorted.first.id}');
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (secondSessionPayoff != null) ...[
                   SecondSessionPayoffCard(
                     payoff: secondSessionPayoff,
@@ -1947,7 +1968,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (!archiveBeliefThread.hasEnoughData &&
-                    thirdSessionUsefulness.hasEnoughData) ...[
+                    thirdSessionUsefulness.hasEnoughData &&
+                    thirdEntryBeliefPayoff == null) ...[
                   ThirdSessionArchiveUsefulnessCard(
                     usefulness: thirdSessionUsefulness,
                   ),
