@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,7 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/archive_belief_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/patterns/patterns_empty_view.dart';
 import 'package:voicememory_mobile/widgets/patterns/patterns_first_archive_view.dart';
@@ -245,6 +248,23 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
+    });
+  });
+
+  group('App restart persistence', () {
+    test('saved entry persists across journal store reopen', () async {
+      final tempDir = Directory.systemTemp.createTempSync('vm_restart_');
+      addTearDown(() => tempDir.deleteSync(recursive: true));
+      final journalPath = '${tempDir.path}/entries.json';
+
+      final store = await JournalStore.open(journalPath);
+      await store.save(_entry(id: 'persist1'));
+
+      final reopened = await JournalStore.open(journalPath);
+      final entries = await reopened.loadAll();
+
+      expect(entries.length, 1);
+      expect(entries.first.id, 'persist1');
     });
   });
 
