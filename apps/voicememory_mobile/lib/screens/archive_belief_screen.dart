@@ -137,6 +137,7 @@ import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/archive_home_summary.dart';
+import '../features/activation/archive_health_score.dart';
 import '../features/activation/insight_quality_dashboard.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
@@ -169,6 +170,7 @@ import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/archive/archive_home_summary_card.dart';
+import '../widgets/archive/archive_health_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
@@ -1786,6 +1788,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final shareProof = summary.showShareProof
         ? const ShareableArchiveProofEngine().buildFromJournal(entries: _entries)
         : null;
+    final archiveHealth = ArchiveHealthScoreEngine.build(entries: _entries);
     return [
       ArchiveHomeSummaryCard(
         summary: summary,
@@ -1795,6 +1798,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             : null,
         shareProof: shareProof?.hasProof == true ? shareProof : null,
       ),
+      if (archiveHealth.showCard) ...[
+        const SizedBox(height: AppSpacing.md),
+        ArchiveHealthCard(score: archiveHealth),
+      ],
       Align(
         alignment: Alignment.centerLeft,
         child: TextButton(
