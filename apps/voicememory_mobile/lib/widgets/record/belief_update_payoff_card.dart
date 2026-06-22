@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/activation/archive_insight_feedback.dart';
 import '../../features/activation/belief_update_payoff.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../archive/archive_insight_feedback_controls.dart';
 
 /// Four-plus entry payoff — cautious belief update with evidence snippets.
 class BeliefUpdatePayoffCard extends StatelessWidget {
@@ -35,7 +37,12 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
       height: 1.4,
     );
 
-    return Container(
+    return ArchiveInsightFeedbackHost(
+      insightId: ArchiveInsightFeedbackStore.targetId(
+        ArchiveInsightTarget.beliefUpdate,
+      ),
+      showControls: ArchiveInsightFeedbackGate.showForBeliefUpdate(),
+      child: Container(
       key: const Key('belief_update_payoff_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -120,6 +127,7 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

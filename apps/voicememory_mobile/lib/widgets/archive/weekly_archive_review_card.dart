@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/activation/archive_insight_feedback.dart';
 import '../../features/activation/weekly_archive_review.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'archive_insight_feedback_controls.dart';
 
 /// Compact or full weekly archive review — summary, not belief history.
 class WeeklyArchiveReviewCard extends StatelessWidget {
@@ -22,6 +24,18 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
   final VoidCallback? onAddAnother;
   final VoidCallback? onViewEvidence;
   final VoidCallback? onViewFullReview;
+
+  Widget _wrapWithFeedback(Widget card) {
+    return ArchiveInsightFeedbackHost(
+      insightId: ArchiveInsightFeedbackStore.targetId(
+        ArchiveInsightTarget.weeklyReview,
+      ),
+      showControls: ArchiveInsightFeedbackGate.showForWeeklyReview(
+        hasEnoughEvidence: review.hasEnoughEvidence,
+      ),
+      child: card,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +73,8 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
     }
 
     if (compact) {
-      return Container(
+      return _wrapWithFeedback(
+        Container(
         key: const Key('weekly_archive_review_compact_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -113,10 +128,12 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
               ),
           ],
         ),
+      ),
       );
     }
 
-    return Container(
+    return _wrapWithFeedback(
+      Container(
       key: const Key('weekly_archive_review_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -233,6 +250,7 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
           ],
         ],
       ),
+    ),
     );
   }
 }

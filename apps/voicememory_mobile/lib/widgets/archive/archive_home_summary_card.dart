@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/archive_home_summary.dart';
+import '../../features/activation/archive_insight_feedback.dart';
 import '../../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../pressure_retention/shareable_archive_proof_card.dart';
+import 'archive_insight_feedback_controls.dart';
 
 /// Archive Home command center — belief, change, evidence, and next action.
 class ArchiveHomeSummaryCard extends StatelessWidget {
@@ -39,7 +41,10 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
       height: 1.4,
     );
 
-    return Container(
+    return ArchiveInsightFeedbackHost(
+      insightId: ArchiveInsightFeedbackStore.archiveHomeId(summary.stage),
+      showControls: ArchiveInsightFeedbackGate.showForArchiveHome(summary.stage),
+      child: Container(
       key: const Key('archive_home_summary_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -158,6 +163,7 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
           ],
         ],
       ),
+    ),
     );
   }
 }

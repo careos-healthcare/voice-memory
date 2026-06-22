@@ -289,14 +289,18 @@ void main() {
         secondaryCta: BeliefUpdatePayoffCopy.secondaryCta,
       );
 
+      await tester.binding.setSurfaceSize(const Size(390, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: BeliefUpdatePayoffCard(
-              payoff: payoff,
-              onAddAnother: () {},
-              onViewEvidence: () {},
+            body: SingleChildScrollView(
+              child: BeliefUpdatePayoffCard(
+                payoff: payoff,
+                onAddAnother: () {},
+                onViewEvidence: () {},
+              ),
             ),
           ),
         ),
