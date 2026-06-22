@@ -20,6 +20,7 @@ import '../features/voice_capture/analysis_fallback_payoff.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
+import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/day_two_return_loop_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
@@ -3670,7 +3671,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             payoff: beliefUpdatePayoff,
                             onAddAnother: () =>
                                 unawaited(_onRecordPressed(source: 'main')),
-                            onViewEvidence: () => context.go('/archive-belief'),
+                            onViewEvidence: () =>
+                                context.push(BeliefEvidenceNavigation.route),
                           ),
                         ],
                         if (thirdEntryBeliefPayoff != null) ...[

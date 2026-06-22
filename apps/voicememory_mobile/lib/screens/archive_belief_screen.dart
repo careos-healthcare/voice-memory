@@ -133,6 +133,7 @@ import '../features/archive_evidence/archive_evidence_guard.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
+import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -1782,12 +1783,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         BeliefUpdatePayoffCard(
           payoff: beliefUpdatePayoff,
           onAddAnother: _goToRecord,
-          onViewEvidence: () {
-            if (_entries.isEmpty) return;
-            final sorted = List<JournalEntry>.from(_entries)
-              ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-            context.push('/entry/${sorted.first.id}');
-          },
+          onViewEvidence: () => context.push(BeliefEvidenceNavigation.route),
         ),
       );
       widgets.add(const SizedBox(height: AppSpacing.lg));
@@ -1949,12 +1945,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   BeliefUpdatePayoffCard(
                     payoff: beliefUpdatePayoff,
                     onAddAnother: _goToRecord,
-                    onViewEvidence: () {
-                      if (_entries.isEmpty) return;
-                      final sorted = List<JournalEntry>.from(_entries)
-                        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-                      context.push('/entry/${sorted.first.id}');
-                    },
+                    onViewEvidence: () =>
+                        context.push(BeliefEvidenceNavigation.route),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],

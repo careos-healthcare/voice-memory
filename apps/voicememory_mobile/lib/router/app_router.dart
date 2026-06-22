@@ -7,6 +7,7 @@ import '../screens/security_settings_screen.dart';
 import '../screens/blind_spots_screen.dart';
 import '../screens/delete_account_screen.dart';
 import '../screens/belief_changes_screen.dart';
+import '../screens/belief_evidence_screen.dart';
 import '../features/archive_beliefs/archive_belief_models.dart';
 import '../screens/beliefs_screen.dart';
 import '../screens/belief_detail_screen.dart';
@@ -14,6 +15,7 @@ import '../screens/discover_chapter_detail_screen.dart';
 import '../screens/weekly_story_screen.dart';
 import '../screens/archive_explanation_screen.dart';
 import '../features/archive_explanations/archive_explanation_navigation.dart';
+import '../features/activation/belief_evidence_trail.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
@@ -314,6 +316,11 @@ final GoRouter appRouter = GoRouter(
       path: '/belief-changes',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const BeliefChangesScreen(),
+    ),
+    GoRoute(
+      path: BeliefEvidenceNavigation.route,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const BeliefEvidenceScreen(),
     ),
     GoRoute(path: '/timeline', redirect: (context, state) => '/archive-belief'),
     GoRoute(
