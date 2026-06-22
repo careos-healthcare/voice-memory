@@ -129,6 +129,7 @@ void main() {
     expect(SensitiveRoutes.isSensitiveRoute('/entry/abc'), isTrue);
     expect(SensitiveRoutes.isSensitiveRoute('/record'), isTrue);
     expect(SensitiveRoutes.isSensitiveRoute('/export'), isTrue);
+    expect(SensitiveRoutes.isSensitiveRoute('/insight-quality'), isTrue);
     expect(SensitiveRoutes.isSensitiveRoute('/about'), isFalse);
   });
 }

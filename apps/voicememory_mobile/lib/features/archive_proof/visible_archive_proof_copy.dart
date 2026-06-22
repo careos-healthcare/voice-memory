@@ -494,6 +494,80 @@ abstract final class VisibleArchiveProofCopy {
 
   static const insightCorrectionYourNotePrefix = 'Your note:';
 
+  // Insight quality dashboard — local feedback review and control.
+  static const insightQualityTitle = 'Insight quality';
+
+  static const insightQualitySubtitle =
+      'Control what ArchiveMe learns from your feedback. This stays on this device.';
+
+  static const insightQualitySettingsTitle = 'Insight quality';
+
+  static const insightQualitySettingsSubtitle = 'Manage feedback';
+
+  static const insightQualityArchiveLink = 'Manage feedback';
+
+  static const insightQualitySummaryHeading = 'Feedback summary';
+
+  static const insightQualityFeelsRightLabel = 'Feels right';
+
+  static const insightQualityNotQuiteLabel = 'Not quite';
+
+  static const insightQualityHiddenLabel = 'Hidden insights';
+
+  static const insightQualityCorrectionNotesLabel = 'Correction notes';
+
+  static const insightQualityNotQuiteHeading = 'Insights marked Not quite';
+
+  static const insightQualityHiddenHeading = 'Hidden insights';
+
+  static const insightQualityNotesHeading = 'Correction notes';
+
+  static const insightQualityEmptyHeading = 'No local feedback yet';
+
+  static const insightQualityEmptyBody =
+      'When you respond to archive insights, your feedback will appear here.';
+
+  static const insightQualityPrivacyHeading = 'Privacy';
+
+  static const insightQualityPrivacyDevice =
+      'Your feedback stays on this device.';
+
+  static const insightQualityPrivacyNotes =
+      'Correction notes are not shared.';
+
+  static const insightQualityPrivacyShareSafe =
+      'Share-safe proof never includes your private notes.';
+
+  static const insightQualityEditNoteCta = 'Edit note';
+
+  static const insightQualityClearFeedbackCta = 'Clear feedback';
+
+  static const insightQualityUnhideCta = 'Unhide';
+
+  static const insightQualityDeleteNoteCta = 'Delete note';
+
+  static const insightQualityCautionMild = 'More cautious copy is active.';
+
+  static const insightQualityCautionElevated =
+      'ArchiveMe is still testing this insight.';
+
+  static const insightQualityLabelArchiveHome = 'Archive Home';
+
+  static const insightQualityLabelArchiveHomeThree =
+      'Archive Home (three moments)';
+
+  static const insightQualityLabelArchiveHomeFour =
+      'Archive Home (four moments)';
+
+  static const insightQualityLabelArchiveHomeFivePlus =
+      'Archive Home (weekly review stage)';
+
+  static const insightQualityLabelWeeklyReview = 'Weekly archive review';
+
+  static const insightQualityLabelBeliefEvidence = 'Belief evidence trail';
+
+  static const insightQualityLabelBeliefUpdate = 'Belief update';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

@@ -135,6 +135,68 @@ abstract final class ArchiveInsightFeedbackStore {
     _persist();
   }
 
+  static void unhide(String insightId) {
+    _hidden.remove(insightId);
+    _persist();
+  }
+
+  static void clearFeedback(String insightId) {
+    _feelsRight.remove(insightId);
+    _notQuite.remove(insightId);
+    _persist();
+  }
+
+  static void deleteCorrectionNote(String insightId) {
+    _correctionNotes.remove(insightId);
+    _persist();
+  }
+
+  static int totalFeelsRightCount() =>
+      _feelsRight.values.fold<int>(0, (sum, count) => sum + count);
+
+  static int totalNotQuiteCount() =>
+      _notQuite.values.fold<int>(0, (sum, count) => sum + count);
+
+  static int hiddenInsightCount() => _hidden.length;
+
+  static int correctionNoteCount() => _correctionNotes.length;
+
+  static bool hasAnyFeedback() =>
+      totalFeelsRightCount() > 0 ||
+      totalNotQuiteCount() > 0 ||
+      hiddenInsightCount() > 0 ||
+      correctionNoteCount() > 0;
+
+  static List<String> allKnownInsightIds() {
+    final ids = <String>{
+      ..._hidden,
+      ..._feelsRight.keys,
+      ..._notQuite.keys,
+      ..._correctionNotes.keys,
+    };
+    final sorted = ids.toList()..sort();
+    return sorted;
+  }
+
+  static List<String> notQuiteInsightIds() {
+    final ids = _notQuite.entries
+        .where((entry) => entry.value > 0)
+        .map((entry) => entry.key)
+        .toList()
+      ..sort();
+    return ids;
+  }
+
+  static List<String> hiddenInsightIds() {
+    final ids = _hidden.toList()..sort();
+    return ids;
+  }
+
+  static List<String> correctionNoteInsightIds() {
+    final ids = _correctionNotes.keys.toList()..sort();
+    return ids;
+  }
+
   static Future<void> ensureLoaded() async {
     if (!AppServices.isInitialized) return;
     final raw = await AppServices.instance.prefs.readMap(_prefsKey);

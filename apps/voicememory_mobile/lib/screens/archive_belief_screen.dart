@@ -121,6 +121,7 @@ import '../features/archive_proof/archive_belief_surface.dart';
 import '../features/archive_proof/archive_change_timeline_metrics_store.dart';
 import '../features/archive_proof/archive_paid_value_proof_source.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
+import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../widgets/patterns/archive_belief_surface_card.dart';
 import '../widgets/patterns/archive_paid_value_proof_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
@@ -136,6 +137,7 @@ import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/archive_home_summary.dart';
+import '../features/activation/insight_quality_dashboard.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
@@ -1792,6 +1794,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             ? () => _handleArchiveHomeAction(summary.secondaryAction)
             : null,
         shareProof: shareProof?.hasProof == true ? shareProof : null,
+      ),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton(
+          key: const Key('archive_belief_insight_quality_link'),
+          onPressed: () => context.push(InsightQualityNavigation.route),
+          child: Text(VisibleArchiveProofCopy.insightQualityArchiveLink),
+        ),
       ),
       const SizedBox(height: AppSpacing.lg),
     ];
