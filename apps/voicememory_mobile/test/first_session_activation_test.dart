@@ -5,7 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart';
+import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
+import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
+import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/first_session/two_day_activation_engine.dart';
 import 'package:voicememory_mobile/features/referral/invite_attribution.dart';
 import 'package:voicememory_mobile/features/referral/invite_funnel_metrics.dart';
@@ -497,25 +503,75 @@ void main() {
     });
   });
 
-  group('Record screen first-session visibility', () {
+  group('Record screen first-session ladder', () {
     late Directory tempDir;
 
+    JournalEntry _usableEntry({String id = 'e1'}) => JournalEntry(
+          id: id,
+          createdAt: DateTime(2026, 6, 12, 12),
+          transcript:
+              'I felt pressure before saying yes again even when I was tired.',
+          durationSeconds: 30,
+          localAudioPath: '/tmp/$id.m4a',
+          reflection: const Reflection(
+            mood: 'neutral',
+            emotionalIntensity: 2,
+            recurringThemes: ['work'],
+            exactLanguagePattern: '',
+            concreteObservation: 'Work pressure showed up in this moment.',
+            repeatedSignal: '',
+          ),
+        );
+
+    JournalEntry _degradedEntry({String id = 'v1'}) => JournalEntry(
+          id: id,
+          createdAt: DateTime(2026, 6, 12, 12),
+          transcript:
+              '[draft] Recording saved locally — transcribe when connected',
+          durationSeconds: 20,
+          localAudioPath: '/tmp/$id.m4a',
+          reflection: const Reflection(
+            mood: 'neutral',
+            emotionalIntensity: 0,
+            recurringThemes: [],
+            exactLanguagePattern: '',
+            concreteObservation: '',
+            repeatedSignal: '',
+          ),
+        );
+
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first_session_loop_');
+      tempDir = Directory.systemTemp.createTempSync('vm_first_session_ladder_');
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
-      VisualAuditOverrides.setRecordPresentation(
-        const RecordAuditPresentation(ui: RecordUiState.ready),
-      );
+      VisualAuditOverrides.setRecordPresentation(null);
     });
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
-    Future<void> pumpRecordScreen(WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
+    Future<void> seedEntries(WidgetTester tester, int count) async {
+      if (count == 0) return;
+      await tester.runAsync(() async {
+        for (var i = 0; i < count; i++) {
+          await AppServices.instance.journalStore.save(
+            _usableEntry(id: 'seed_$i'),
+          );
+        }
+      });
+    }
+
+    Future<void> pumpRecordScreen(
+      WidgetTester tester, {
+      int entryCount = 0,
+    }) async {
+      await seedEntries(tester, entryCount);
+      VisualAuditOverrides.setRecordPresentation(
+        const RecordAuditPresentation(ui: RecordUiState.ready),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
         MaterialApp(
@@ -529,129 +585,140 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
     }
 
-    testWidgets('loop explanation appears before the first save', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
+    test('empty-archive gates retire legacy onboarding on the record screen', () {
       expect(
-        find.byKey(const Key('first_session_explanation_card')),
-        findsOneWidget,
-      );
-      expect(find.text('How ArchiveMe works'), findsOneWidget);
-      expect(find.text('Record one small thing.'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('rescue appears at zero entries alongside the explainer', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
-      // Both first-session surfaces coexist; the rescue replaces nothing.
-      expect(find.byKey(const Key('first_save_rescue_card')), findsOneWidget);
-      expect(find.text('Try a 10-second test'), findsOneWidget);
-      expect(
-        find.byKey(const Key('first_session_explanation_card')),
-        findsOneWidget,
-      );
-      expect(find.text('How ArchiveMe works'), findsOneWidget);
-      // The normal recording path stays available — never blocked.
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('confidence lines appear at zero entries', (tester) async {
-      await pumpRecordScreen(tester);
-      expect(
-        find.text('This can be short, private, and deleted anytime.'),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('first_save_one_sentence_helper')),
-        findsOneWidget,
-      );
-      expect(find.text('One sentence is enough.'), findsOneWidget);
-      // Plain text — no new CTA, no new prompt choice.
-      expect(
-        find.widgetWithText(ButtonStyleButton, 'One sentence is enough.'),
-        findsNothing,
-      );
-      expect(
-        find.widgetWithText(
-          ButtonStyleButton,
-          'This can be short, private, and deleted anytime.',
+        RecordEmptyArchiveGates.showLegacyEmptyOnboarding(
+          loaded: true,
+          entryCount: 0,
         ),
-        findsNothing,
-      );
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('rescue hides once a recording is saved', (tester) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
-            ),
-          ),
-        );
-      });
-      await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
-      expect(find.text('Try a 10-second test'), findsNothing);
-      // All first-save confidence lines are gone after the first save.
-      expect(
-        find.text('This can be short, private, and deleted anytime.'),
-        findsNothing,
+        isFalse,
       );
       expect(
-        find.byKey(const Key('first_save_one_sentence_helper')),
-        findsNothing,
+        RecordEmptyArchiveGates.showTwoDayActivationCard(
+          loaded: true,
+          entryCount: 0,
+        ),
+        isFalse,
       );
-      expect(find.text('One sentence is enough.'), findsNothing);
-      expect(tester.takeException(), isNull);
+      expect(
+        RecordEmptyArchiveGates.showBottomRetentionCards(
+          loaded: true,
+          entryCount: 0,
+        ),
+        isFalse,
+      );
     });
 
-    testWidgets('loop explanation hides once a recording is saved', (
+    testWidgets('zero entries show archive promise hero not legacy cards', (
       tester,
     ) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
+      await pumpRecordScreen(tester);
+
+      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
+      expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
+      expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      expect(find.byType(CaptureEntryActions), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('one entry ready shows archive started without legacy cards', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 1);
+
+      expect(find.text(DailyMirrorCopy.heardHeroTitle), findsOneWidget);
+      expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
+      expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    Future<void> pumpDoneState(
+      WidgetTester tester, {
+      required List<JournalEntry> entriesAfterSave,
+      bool degradedVoicePostSave = false,
+    }) async {
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: entriesAfterSave,
+          degradedVoicePostSave: degradedVoicePostSave,
+          lastCaptureAnalysisSucceeded: !degradedVoicePostSave,
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
-        );
-      });
-      await pumpRecordScreen(tester);
-      expect(
-        find.byKey(const Key('first_session_explanation_card')),
-        findsNothing,
+        ),
       );
-      expect(find.text('How ArchiveMe works'), findsNothing);
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+    }
+
+    testWidgets('first save post-save shows return loop without competing cards', (
+      tester,
+    ) async {
+      await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
+
+      expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
+      expect(
+        find.textContaining(VisibleArchiveProofCopy.returnLoopOneEntryBody),
+        findsOneWidget,
+      );
+      expect(find.text(VisibleArchiveProofCopy.returnLoopPrimaryCta), findsWidgets);
+      expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('degraded first save shows recovery not return loop', (
+      tester,
+    ) async {
+      await pumpDoneState(
+        tester,
+        entriesAfterSave: [_degradedEntry()],
+        degradedVoicePostSave: true,
+      );
+
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
+      expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('good transcript post-save hides degraded recovery', (
+      tester,
+    ) async {
+      await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
+
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsNothing);
+      expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
@@ -905,11 +972,11 @@ void main() {
     });
   });
 
-  group('Record screen 2-day path visibility', () {
+  group('Record screen return-path gates', () {
     late Directory tempDir;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_two_day_path_');
+      tempDir = Directory.systemTemp.createTempSync('vm_return_path_gates_');
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
@@ -921,24 +988,6 @@ void main() {
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
-
-    Future<void> pumpRecordScreen(WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(390, 3200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-    }
 
     Future<void> seedEntries(List<DateTime> dates) async {
       for (var i = 0; i < dates.length; i++) {
@@ -962,39 +1011,64 @@ void main() {
       }
     }
 
-    testWidgets('day 1 plan appears for a new user', (tester) async {
-      await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
-      expect(find.text('Try ArchiveMe for 2 days'), findsOneWidget);
-      expect(find.text('Today: record one small thing.'), findsOneWidget);
-      expect(tester.takeException(), isNull);
+    Future<void> pumpRecordScreen(WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+    }
+
+    test('two-day activation card gate opens only after comparison seed', () {
+      expect(
+        RecordEmptyArchiveGates.showTwoDayActivationCard(
+          loaded: true,
+          entryCount: 0,
+        ),
+        isFalse,
+      );
+      expect(
+        RecordEmptyArchiveGates.showTwoDayActivationCard(
+          loaded: true,
+          entryCount: 1,
+        ),
+        isFalse,
+      );
+      expect(
+        RecordEmptyArchiveGates.showTwoDayActivationCard(
+          loaded: true,
+          entryCount: 2,
+        ),
+        isTrue,
+      );
     });
 
-    testWidgets('day 2 return copy appears when yesterday holds one save', (
+    testWidgets('zero and one entry ready screens hide two-day activation card', (
       tester,
     ) async {
-      await tester.runAsync(() async {
-        await seedEntries([DateTime.now().subtract(const Duration(days: 1))]);
-      });
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
-      expect(find.text('Day 2: check what changed'), findsOneWidget);
-      expect(
-        find.text(
-          'See whether yesterday\u2019s thread returned, faded, or changed.',
-        ),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
-    });
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
 
-    testWidgets('the path never blocks recording', (tester) async {
       await tester.runAsync(() async {
-        await seedEntries([DateTime.now().subtract(const Duration(days: 1))]);
+        await seedEntries([DateTime.now()]);
       });
       await pumpRecordScreen(tester);
-      // The day-2 card and the normal record entry actions coexist.
-      expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -1346,40 +1420,33 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
     }
 
-    testWidgets('appears with invite attribution and replaces the explainer', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+    testWidgets(
+      'empty archive uses hero onboarding — invited welcome stays off record screen',
+      (tester) async {
+        await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(
-        find.byKey(const Key('invited_user_welcome_card')),
-        findsOneWidget,
-      );
-      expect(
-        find.text('You were invited after a weekly review'),
-        findsOneWidget,
-      );
-      // Replaces (never joins) the generic explainer — no extra crowding.
-      expect(
-        find.byKey(const Key('first_session_explanation_card')),
-        findsNothing,
-      );
-      // The normal recording path stays available — never blocked.
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
+        expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
+        expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    testWidgets('hidden without attribution — explainer stays', (tester) async {
+    testWidgets('hidden without attribution — hero onboarding only', (tester) async {
       await pumpRecordScreen(tester, store: storeWith());
 
       expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
-      expect(
-        find.byKey(const Key('first_session_explanation_card')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
+      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -1405,34 +1472,6 @@ void main() {
       });
       await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('dismiss hides it and shows nothing else in its place', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, store: storeWith(source: 'proof_counter'));
-      final dismiss = find.byKey(const Key('invited_user_welcome_dismiss'));
-      await tester.ensureVisible(dismiss);
-      await tester.pump();
-      await tester.tap(dismiss);
-      await tester.pump();
-      expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('only once per session across screen instances', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
-      expect(
-        find.byKey(const Key('invited_user_welcome_card')),
-        findsOneWidget,
-      );
-
-      await tester.pumpWidget(const SizedBox.shrink());
-      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
       expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
@@ -1797,32 +1836,32 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
     }
 
-    testWidgets('replaces the generic Day 2 card for invited users', (
-      tester,
-    ) async {
-      await saveEntry(
-        tester,
-        id: 'e1',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      );
-      await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+    testWidgets(
+      'one entry ready hides invited and generic day-two cards on record screen',
+      (tester) async {
+        await saveEntry(
+          tester,
+          id: 'e1',
+          createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        );
+        await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(
-        find.byKey(const Key('invited_day_two_return_card')),
-        findsOneWidget,
-      );
-      expect(find.text('Start your own weekly thread'), findsOneWidget);
-      // Replaces (never joins) the generic Day 2 card.
-      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
-      // The normal recording path stays available — never blocked.
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
+        expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    testWidgets('non-invited users keep the generic Day 2 card', (
+    testWidgets('non-invited users also hide generic Day 2 card before two entries', (
       tester,
     ) async {
       await saveEntry(
@@ -1832,21 +1871,15 @@ void main() {
       );
       await pumpRecordScreen(tester, store: storeWith());
 
-      expect(
-        find.byKey(const Key('invited_day_two_return_card')),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
+      expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
+      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
     testWidgets('hidden before the first save', (tester) async {
       await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(
-        find.byKey(const Key('invited_day_two_return_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -1863,10 +1896,7 @@ void main() {
       );
       await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(
-        find.byKey(const Key('invited_day_two_return_card')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
   });
