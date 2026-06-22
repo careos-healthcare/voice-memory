@@ -31,6 +31,7 @@ class FirstThreeJourneyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: const Key('first_three_journey_payoff_card'),
       width: double.infinity,
       padding: EdgeInsets.all(compact ? AppSpacing.sm : AppSpacing.md),
       decoration: BoxDecoration(

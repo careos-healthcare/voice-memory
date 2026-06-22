@@ -230,17 +230,15 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 shows Your archive is empty', (tester) async {
+    testWidgets('entry count 0 shows archive promise hero not generic framing', (
+      tester,
+    ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
-      expect(find.text(RecordScreenFramingCopy.guidance), findsOneWidget);
-      expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsOneWidget);
-      expect(find.text(RecordScreenFramingCopy.emptyArchiveBody), findsOneWidget);
-      expect(
-        find.text(RecordScreenFramingCopy.emptyArchiveFootnote),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+      expect(find.text(RecordScreenFramingCopy.title), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsNothing);
     });
 
     testWidgets('entry count 0 shows first-run privacy reassurance', (

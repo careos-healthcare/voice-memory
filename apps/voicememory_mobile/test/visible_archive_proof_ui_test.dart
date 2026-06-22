@@ -1,3 +1,4 @@
+import 'package:voicememory_mobile/features/activation/first_three_journey_engine.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -128,6 +129,13 @@ void main() {
       );
       expect(find.text(VisibleArchiveProofCopy.patternsOneEntryCta), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
+    });
+
+    test('early two-entry journey includes evidence line', () {
+      expect(
+        const FirstThreeJourneyEngine().build(reflectionCount: 2).body,
+        contains(VisibleArchiveProofCopy.earlyRepeatEvidenceLine),
+      );
     });
   });
 }

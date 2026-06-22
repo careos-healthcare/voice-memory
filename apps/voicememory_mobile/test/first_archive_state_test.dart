@@ -127,10 +127,7 @@ void main() {
         find.text(VisibleArchiveProofCopy.patternsOneEntryEvidenceRow),
         findsOneWidget,
       );
-      expect(
-        find.text(VisibleArchiveProofCopy.patternsOneEntryChangedRow),
-        findsOneWidget,
-      );
+      expect(find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBadge), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);

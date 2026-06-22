@@ -157,8 +157,12 @@ RecordStackDecision decideRecordStack({
 
   final suppressDuplicateUseTomorrowCtas = showResultNextCheck;
 
+  // Generic title/subtitle competes with the zero-entry archive promise hero.
   final showFramingTitle =
-      readyNotPostSave && !showDueCheckCard && !suppressForReturnDay;
+      readyNotPostSave &&
+      !showDueCheckCard &&
+      !suppressForReturnDay &&
+      !isFirstRun;
 
   final showActivePatternThread =
       readyNotPostSave &&

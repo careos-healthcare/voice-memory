@@ -282,7 +282,6 @@ import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
-import '../widgets/onboarding/first_60_second_intro_card.dart';
 import '../widgets/onboarding/record_once_intro_card.dart';
 import '../widgets/onboarding/tomorrow_return_cue_card.dart';
 import '../record/example_prompt_visibility.dart';
@@ -3039,6 +3038,13 @@ class _RecordScreenState extends State<RecordScreen> {
                       const RecordTopArchivePromiseHero(),
                       const SizedBox(height: 16),
                     ],
+                    if (ui == RecordUiState.ready &&
+                        _journalEntryCountReady &&
+                        _journalEntryCount == 0 &&
+                        _showFirstRunPrivacyReassurance) ...[
+                      const RecordFirstRunPrivacyReassurance(),
+                      const SizedBox(height: 12),
+                    ],
                     if (showFraming && stack.showFramingTitle) ...[
                       Text(
                         RecordScreenFramingCopy.title,
@@ -3081,16 +3087,11 @@ class _RecordScreenState extends State<RecordScreen> {
                         },
                       ),
                     ],
+                    // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
+                    // carries the first-open promise without a second competing card.
                     if (ui == RecordUiState.ready &&
-                        _journalEntryCountReady &&
-                        _journalEntryCount == 0 &&
-                        !stack.showDueCheckCard &&
-                        First60IntroCard.shouldShow(_journalEntryCount)) ...[
-                      First60IntroCard(
-                        onRecord: () => unawaited(_onRecordPressed(source: 'main')),
-                      ),
-                    ],
-                    if (ui == RecordUiState.ready && _showDailyMirrorCard) ...[
+                        _showDailyMirrorCard &&
+                        !(_journalEntryCountReady && _journalEntryCount == 0)) ...[
                       DailyMirrorRecordCard(
                         mirror: _dailyMirror,
                         onPrimaryCta: () => unawaited(_onRecordPressed(source: 'moment')),
@@ -3599,20 +3600,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             onViewArchive: () => context.go('/archive-belief'),
                             onRecordAnother: () => unawaited(_onRecordPressed(source: 'main')),
                           ),
-                          if (_journalEntryCount == 1) ...[
-                            const SizedBox(height: 16),
-                            ArchiveDemoPreviewCard(
-                              preview: const ArchiveDemoPreviewResolver()
-                                  .resolve(_journalEntries),
-                              onRecordNext: () => context.go(
-                                ArchiveProofRecordRoutes.uri(
-                                  guidedPromptNodeKey: ArchiveProofRecordRoutes
-                                      .changeTimelineNodeKey,
-                                ),
-                              ),
-                            ),
-                          ],
-                          if (_recordReturnCueVisible) ...[
+                          if (_recordReturnCueVisible &&
+                              _journalEntryCount != 1) ...[
                             const SizedBox(height: 16),
                             TomorrowReturnCueCard(
                               reminderAvailable: _offerDayTwoReminder,
