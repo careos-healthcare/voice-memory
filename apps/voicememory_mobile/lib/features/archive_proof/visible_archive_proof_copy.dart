@@ -688,6 +688,41 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveHealthActionCorrection =
       'Add a moment that clarifies your correction.';
 
+  // Optional capture context tags — local only, never shared.
+  static const captureContextTagTitle = 'Where did this show up?';
+
+  static const captureContextTagHelper =
+      'Tags stay on this device and help your archive compare moments.';
+
+  static const captureContextTagSkip = 'Skip';
+
+  static const captureContextTagSave = 'Save tag';
+
+  static const captureContextTagWork = 'Work';
+
+  static const captureContextTagHome = 'Home';
+
+  static const captureContextTagFamily = 'Family';
+
+  static const captureContextTagMoney = 'Money';
+
+  static const captureContextTagHealth = 'Health';
+
+  static const captureContextTagDecision = 'Decision';
+
+  static const captureContextTagRelationship = 'Relationship';
+
+  static const captureContextTagOther = 'Other';
+
+  static const archiveHealthSingleContextTagLine =
+      'Tagged moments so far share one context.';
+
+  static const archiveHealthVariedContextTagLine =
+      'Tagged moments may span more than one context.';
+
+  static const weeklyArchiveReviewVariedContextNote =
+      'Tagged moments may span more than one context.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

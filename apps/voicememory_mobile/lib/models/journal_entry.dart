@@ -23,6 +23,7 @@ class JournalEntry {
     this.entryAboutness = 'about_me',
     this.memorySurfacing = 'normal',
     this.preserveOriginal = false,
+    this.captureContextTag,
   });
 
   final String id;
@@ -83,6 +84,9 @@ class JournalEntry {
   /// Preserve original wording as evidence — metadata only.
   final bool preserveOriginal;
 
+  /// Optional local context tag — stable id only, never shared externally.
+  final String? captureContextTag;
+
   String get reflectionSummary => reflection.concreteObservation.isNotEmpty
       ? reflection.concreteObservation
       : reflection.exactLanguagePattern;
@@ -116,6 +120,9 @@ class JournalEntry {
       entryAboutness: json['entryAboutness'] as String? ?? 'about_me',
       memorySurfacing: json['memorySurfacing'] as String? ?? 'normal',
       preserveOriginal: json['preserveOriginal'] == true,
+      captureContextTag: json['captureContextTag'] is String
+          ? json['captureContextTag'] as String
+          : null,
     );
   }
 
@@ -140,7 +147,32 @@ class JournalEntry {
     if (entryAboutness != 'about_me') 'entryAboutness': entryAboutness,
     if (memorySurfacing != 'normal') 'memorySurfacing': memorySurfacing,
     if (preserveOriginal) 'preserveOriginal': true,
+    if (captureContextTag != null) 'captureContextTag': captureContextTag,
   };
+
+  JournalEntry copyWith({String? captureContextTag}) => JournalEntry(
+        id: id,
+        createdAt: createdAt,
+        transcript: transcript,
+        durationSeconds: durationSeconds,
+        reflection: reflection,
+        syncStatus: syncStatus,
+        localAudioPath: localAudioPath,
+        treatAsNew: treatAsNew,
+        connectionApproved: connectionApproved,
+        keepExactDetails: keepExactDetails,
+        keepSeparate: keepSeparate,
+        archiveThreadId: archiveThreadId,
+        archivePackId: archivePackId,
+        isPinned: isPinned,
+        pinnedAt: pinnedAt,
+        isArchived: isArchived,
+        archivedAt: archivedAt,
+        entryAboutness: entryAboutness,
+        memorySurfacing: memorySurfacing,
+        preserveOriginal: preserveOriginal,
+        captureContextTag: captureContextTag ?? this.captureContextTag,
+      );
 
   static SyncStatus _parseSync(String? raw) {
     switch (raw) {

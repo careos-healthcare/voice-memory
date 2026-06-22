@@ -3,6 +3,7 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'archive_insight_feedback.dart';
+import 'capture_context_tags.dart';
 
 /// Readiness stage for archive evidence quality — not a streak or score.
 enum ArchiveHealthStage {
@@ -115,8 +116,15 @@ abstract final class ArchiveHealthScoreEngine {
     if (correctionNoteCount > 0) {
       needsMore.add(VisibleArchiveProofCopy.archiveHealthCorrectionLine);
     }
+    if (CaptureContextTagAnalysis.singleContextEvidence(entries)) {
+      needsMore.add(VisibleArchiveProofCopy.archiveHealthSingleContextTagLine);
+    } else if (CaptureContextTagAnalysis.hasVariedTagContext(entries)) {
+      needsMore.add(VisibleArchiveProofCopy.archiveHealthVariedContextTagLine);
+    }
 
-    final evidenceWeak = hasDuplicates || hasNearDuplicates;
+    final evidenceWeak = hasDuplicates ||
+        hasNearDuplicates ||
+        CaptureContextTagAnalysis.singleContextEvidence(entries);
     final status = _statusForStage(stage);
     final evidenceQualityLine = _evidenceQualityLine(
       stage: stage,

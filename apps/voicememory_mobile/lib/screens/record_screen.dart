@@ -265,7 +265,7 @@ import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
-import '../widgets/record/evidence_context_tag_card.dart';
+import '../widgets/record/capture_context_tag_card.dart';
 import '../widgets/record/low_effort_check_in_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
 import '../widgets/record/daily_mirror_record_card.dart';
@@ -299,6 +299,7 @@ import '../widgets/record/next_moment_prompt_card.dart';
 import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
 import '../features/activation/archive_home_summary.dart';
+import '../features/activation/capture_context_tags.dart';
 import '../widgets/archive/post_save_archive_home_nudge_card.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
@@ -1428,31 +1429,27 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  /// Stores the single optional context tag against the entry that was just
-  /// saved, then retires the prompt. Skipping never stores anything.
-  Future<void> _saveEvidenceContextTag(PressureContext tag) async {
+  /// Stores the single optional context tag on the journal entry that was
+  /// just saved, then retires the prompt. Skipping never stores anything.
+  Future<void> _saveEvidenceContextTag(String tagId) async {
     setState(() => _showEvidenceContextTag = false);
-    if (_entriesAfterSave.isEmpty) return;
-    if (widget.pressureCheckInStore == null && !AppServices.isInitialized) {
-      return;
-    }
-    final store =
-        widget.pressureCheckInStore ?? PressureCheckInStore.instance();
-    await store.addContextTag(
-      entryId: _lastSavedEntry!.id,
-      contextId: tag.id,
-      // A fresh-entry save keeps its optional tag out of connection claims.
-      treatAsNew: TreatAsNew.lastSaveWasFresh,
+    final entry = _lastSavedEntry;
+    if (entry == null) return;
+    if (!AppServices.isInitialized) return;
+    final tagged = CaptureContextTags.applyTag(entry, tagId);
+    await AppServices.instance.journalStore.save(
+      tagged,
+      first25Source: 'capture_context_tag',
     );
-    // The just-saved tag can make tomorrow's-check preview more specific.
-    final records = await store.loadAll();
     if (!mounted) return;
     setState(() {
-      _dayTwoReturnPreview = const DayTwoReturnPreviewEngine().build(
-        entryCount: _journalEntryCount,
-        contextTagIds: [for (final r in records) ...r.contextIds],
-        entryDates: [for (final r in records) r.createdAt],
-      );
+      if (_entriesAfterSave.isNotEmpty &&
+          _entriesAfterSave.first.id == tagged.id) {
+        _entriesAfterSave = [
+          tagged,
+          ..._entriesAfterSave.skip(1),
+        ];
+      }
     });
   }
 
@@ -4024,7 +4021,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         if (_showEvidenceContextTag &&
                             !suppressNoisyFirstSaveCards) ...[
                           const SizedBox(height: 16),
-                          EvidenceContextTagCard(
+                          CaptureContextTagCard(
                             onSaveTag: _saveEvidenceContextTag,
                             onSkip: () =>
                                 setState(() => _showEvidenceContextTag = false),

@@ -168,5 +168,6 @@ abstract class EntrySaveCoordinator {
     entryAboutness: entryAboutness ?? entry.entryAboutness,
     memorySurfacing: memorySurfacing ?? entry.memorySurfacing,
     preserveOriginal: preserveOriginal ?? entry.preserveOriginal,
+    captureContextTag: entry.captureContextTag,
   );
 }

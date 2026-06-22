@@ -2,6 +2,7 @@ import '../../models/journal_entry.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import 'archive_health_score.dart';
 import 'archive_insight_feedback.dart';
+import 'capture_context_tags.dart';
 import 'next_moment_prompt.dart';
 
 /// Navigation action for archive health action plan CTAs.
@@ -60,6 +61,8 @@ abstract final class ArchiveHealthActionPlanEngine {
     _addStageAction(items, health.stage);
 
     if (_hasDuplicateIssue(health)) {
+      items.add(VisibleArchiveProofCopy.archiveHealthActionDuplicates);
+    } else if (CaptureContextTagAnalysis.allTaggedSameContext(entries)) {
       items.add(VisibleArchiveProofCopy.archiveHealthActionDuplicates);
     }
     if (health.excludedEntryCount > 0) {

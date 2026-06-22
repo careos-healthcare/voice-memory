@@ -4,6 +4,7 @@ import '../archive_evidence/archive_evidence_heuristics.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'belief_update_payoff.dart';
+import 'capture_context_tags.dart';
 
 /// User-facing copy for the five-plus entry belief history surface.
 abstract final class BeliefHistoryTimelineCopy {
@@ -149,6 +150,9 @@ abstract final class BeliefHistoryTimelineEngine {
   static Set<String> _contextsFor(List<JournalEntry> entries) {
     final contexts = <String>{};
     for (final entry in entries) {
+      if (entry.captureContextTag case final tag?) {
+        contexts.add(tag);
+      }
       contexts.addAll(_contextsInText(_entryText(entry).toLowerCase()));
     }
     return contexts;

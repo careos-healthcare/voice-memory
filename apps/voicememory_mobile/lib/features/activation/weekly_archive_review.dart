@@ -4,6 +4,7 @@ import '../archive_evidence/archive_evidence_heuristics.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'belief_update_payoff.dart';
+import 'capture_context_tags.dart';
 
 /// Route for the weekly archive review screen.
 abstract final class WeeklyArchiveReviewNavigation {
@@ -145,8 +146,11 @@ abstract final class WeeklyArchiveReviewEngine {
         evidenceWeak: evidenceWeak,
       ),
       evidenceRows: evidenceRows,
-      uncertaintyLine:
-          evidenceWeak ? WeeklyArchiveReviewCopy.evidenceStillThin : null,
+      uncertaintyLine: evidenceWeak
+          ? WeeklyArchiveReviewCopy.evidenceStillThin
+          : (CaptureContextTagAnalysis.hasVariedTagContext(entries)
+              ? VisibleArchiveProofCopy.weeklyArchiveReviewVariedContextNote
+              : null),
       nextActionLine: evidenceWeak
           ? WeeklyArchiveReviewCopy.nextWhenThin
           : WeeklyArchiveReviewCopy.nextDefault,
