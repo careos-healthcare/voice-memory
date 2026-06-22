@@ -4,6 +4,7 @@ import 'package:voicememory_mobile/config/production_navigation.dart';
 import 'package:voicememory_mobile/config/release_config.dart';
 import 'package:voicememory_mobile/config/screenshot_mode.dart';
 import 'package:voicememory_mobile/features/activation/belief_evidence_trail.dart';
+import 'package:voicememory_mobile/features/activation/weekly_archive_review.dart';
 import 'package:voicememory_mobile/router/developer_route_guard.dart';
 
 void main() {
@@ -71,6 +72,7 @@ void main() {
       expect(DeveloperRouteGuard.redirectFor('/discover-yourself'), isNull);
       expect(DeveloperRouteGuard.redirectFor('/belief-changes'), isNull);
       expect(DeveloperRouteGuard.redirectFor(BeliefEvidenceNavigation.route), isNull);
+      expect(DeveloperRouteGuard.redirectFor(WeeklyArchiveReviewNavigation.route), isNull);
       expect(DeveloperRouteGuard.redirectFor('/belief-detail'), isNull);
       expect(DeveloperRouteGuard.redirectFor('/subscription'), isNull);
       expect(DeveloperRouteGuard.redirectFor('/settings'), isNull);
