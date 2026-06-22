@@ -838,5 +838,30 @@ void main() {
         isTrue,
       );
     });
+
+    testWidgets('zero entries hides returning-user Today card', (tester) async {
+      await pumpRecordScreen(tester);
+
+      expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
+    });
+
+    testWidgets('one entry ready shows Today card without hiding record CTA', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 1);
+
+      expect(find.byKey(const Key('returning_user_today_card')), findsOneWidget);
+      expect(find.text('Add one more moment.'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+    });
+
+    testWidgets('post-save done state hides returning-user Today card', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 1, ui: RecordUiState.done);
+
+      expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
+    });
   });
 }
