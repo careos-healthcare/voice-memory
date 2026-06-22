@@ -1,7 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
-import '../timeline/timeline_entry_display.dart';
 import 'voice_capture_quality.dart';
 
 /// User-facing copy when transcription succeeded but backend analysis failed.
@@ -64,32 +63,6 @@ class AnalysisFallbackPayoff {
 abstract final class AnalysisFallbackPayoffEngine {
   AnalysisFallbackPayoffEngine._();
 
-  static const _stopWords = {
-    'about',
-    'after',
-    'again',
-    'before',
-    'could',
-    'from',
-    'have',
-    'just',
-    'like',
-    'more',
-    'much',
-    'really',
-    'said',
-    'that',
-    'then',
-    'they',
-    'this',
-    'today',
-    'very',
-    'when',
-    'with',
-    'would',
-    'your',
-  };
-
   /// Returns null when analysis succeeded, transcript is unusable, or entry
   /// is a degraded voice capture awaiting typed recovery.
   static AnalysisFallbackPayoff? build({
@@ -106,29 +79,14 @@ abstract final class AnalysisFallbackPayoffEngine {
     if (!VoiceCaptureQuality.hasUsableSpokenText(latest)) return null;
 
     final count = eligible.length;
+    if (count == 2) return null;
+
     if (count == 1) {
       return const AnalysisFallbackPayoff(
         title: AnalysisFallbackPayoffCopy.title,
         body: AnalysisFallbackPayoffCopy.bodyOneEntry,
         evidenceLine: AnalysisFallbackPayoffCopy.evidenceOneEntry,
         nextActionLine: AnalysisFallbackPayoffCopy.nextActionOneEntry,
-        footnoteLine: AnalysisFallbackPayoffCopy.deferredFootnote,
-      );
-    }
-
-    if (count == 2) {
-      final overlap = _hasSimpleTranscriptOverlap(
-        eligible[eligible.length - 2],
-        latest,
-      );
-      return AnalysisFallbackPayoff(
-        title: AnalysisFallbackPayoffCopy.title,
-        body: AnalysisFallbackPayoffCopy.bodyTwoEntries,
-        evidenceLine: overlap
-            ? AnalysisFallbackPayoffCopy.evidenceTwoEntriesOverlap
-            : AnalysisFallbackPayoffCopy.evidenceTwoEntries,
-        secondaryLine: overlap ? null : AnalysisFallbackPayoffCopy.noClearRepeatYet,
-        nextActionLine: AnalysisFallbackPayoffCopy.nextActionTwoEntries,
         footnoteLine: AnalysisFallbackPayoffCopy.deferredFootnote,
       );
     }
@@ -140,32 +98,5 @@ abstract final class AnalysisFallbackPayoffEngine {
       nextActionLine: AnalysisFallbackPayoffCopy.nextActionTwoEntries,
       footnoteLine: AnalysisFallbackPayoffCopy.deferredFootnote,
     );
-  }
-
-  static bool _hasSimpleTranscriptOverlap(
-    JournalEntry previous,
-    JournalEntry latest,
-  ) {
-    final priorWords = _significantWords(_entryText(previous));
-    final latestWords = _significantWords(_entryText(latest));
-    if (priorWords.isEmpty || latestWords.isEmpty) return false;
-    final shared = priorWords.intersection(latestWords);
-    return shared.length >= 2;
-  }
-
-  static String _entryText(JournalEntry entry) {
-    final resolution = resolveEntryDisplayText(entry);
-    if (resolution.text.isNotEmpty) return resolution.text;
-    return entry.transcript.trim();
-  }
-
-  static Set<String> _significantWords(String text) {
-    return text
-        .toLowerCase()
-        .split(RegExp(r'[\s\-—]+'))
-        .map((word) => word.replaceAll(RegExp(r"[^\w']"), ''))
-        .where((word) => word.length >= 4)
-        .where((word) => !_stopWords.contains(word))
-        .toSet();
   }
 }

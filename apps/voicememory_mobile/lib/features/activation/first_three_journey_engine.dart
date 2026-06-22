@@ -7,6 +7,7 @@ import '../tomorrow_return/return_comparison_model.dart';
 import 'first_three_journey_model.dart';
 import 'first_three_session_copy.dart';
 import 'first_three_session_gates.dart';
+import 'second_session_payoff.dart';
 
 /// Builds copy and step state for the first-three reflections journey.
 class FirstThreeJourneyEngine {
@@ -28,7 +29,7 @@ class FirstThreeJourneyEngine {
       );
     }
     if (count == 2) {
-      return _stepTwo(count);
+      return _stepTwo(count, entries: entries);
     }
     if (count == 1) {
       return _stepOne(count);
@@ -94,14 +95,13 @@ class FirstThreeJourneyEngine {
     );
   }
 
-  FirstThreeJourneyModel _stepTwo(int count) {
+  FirstThreeJourneyModel _stepTwo(int count, {List<JournalEntry> entries = const []}) {
+    final payoff = SecondSessionPayoffEngine.build(entries: entries);
     return FirstThreeJourneyModel(
       reflectionCount: count,
       currentStep: FirstThreeJourneyStep.three,
-      title: FirstThreeSessionCopy.session2StartingToNoticeTitle,
-      body:
-          '${FirstThreeSessionCopy.session2StartingToNoticeBody}\n\n'
-          '${FirstThreeSessionCopy.session2EvidenceLine}',
+      title: payoff?.title ?? FirstThreeSessionCopy.session2StartingToNoticeTitle,
+      body: payoff?.body ?? FirstThreeSessionCopy.session2StartingToNoticeBody,
       progressLabel: FirstThreeSessionCopy.journeyStep2,
       nextAction: FirstThreeSessionCopy.session2NextAction,
       completed: false,

@@ -101,15 +101,15 @@ void main() {
     test('early repeat copy is cautious', () {
       expect(
         FirstThreeSessionCopy.session2StartingToNoticeTitle,
-        contains('starting to compare'),
+        'ArchiveMe has two moments to compare.',
       );
       expect(
         FirstThreeSessionCopy.session2StartingToNoticeBody,
-        contains('archive will show the thread'),
+        contains('No clear repeat yet'),
       );
       expect(
         FirstThreeSessionCopy.session2NextAction,
-        contains('strengthen the signal'),
+        contains('thread clearer'),
       );
     });
 
@@ -419,10 +419,9 @@ void main() {
       expect(model.journeyStepIndex, 1);
     });
 
-    test('two entries shows starting to compare, not possible repeat', () {
+    test('two entries shows comparison payoff, not possible repeat headline', () {
       final model = engine.build(reflectionCount: 2);
-      expect(model.title, FirstThreeSessionCopy.session2StartingToNoticeTitle);
-      expect(model.title, contains('starting to compare'));
+      expect(model.title, 'ArchiveMe has two moments to compare.');
       expect(model.title, isNot(FirstThreeSessionCopy.session2RepeatTitle));
       expect(model.journeyStepIndex, 1);
       expect(model.progressLabel, FirstThreeSessionCopy.journeyStep2);

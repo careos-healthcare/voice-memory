@@ -17,6 +17,7 @@ import '../theme/voicememory_typography.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/voice_capture/analysis_fallback_payoff.dart';
+import '../features/activation/second_session_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
 import '../features/voice_capture/microphone_permission_copy.dart';
@@ -250,6 +251,7 @@ import '../widgets/pressure_retention/archive_proof_counter_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/analysis_fallback_payoff_card.dart';
+import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
 import '../widgets/record/evidence_context_tag_card.dart';
@@ -2311,9 +2313,8 @@ class _RecordScreenState extends State<RecordScreen> {
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
       );
-      if (all.length >= FirstThreeSessionGates.minEntriesForUsefulArchive ||
-          (all.length == FirstThreeSessionGates.minEntriesForRepeatSurface &&
-              const SecondSessionSignalEngine().hasGroundedRepeatMatch(all))) {
+      if (all.length >= FirstThreeSessionGates.minEntriesForUsefulArchive &&
+          const SecondSessionSignalEngine().hasGroundedRepeatMatch(all)) {
         secondComparison = const SecondSessionSignalEngine().build(all);
       }
     }
@@ -3034,6 +3035,13 @@ class _RecordScreenState extends State<RecordScreen> {
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
+    final secondSessionPayoff = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? SecondSessionPayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3626,6 +3634,15 @@ class _RecordScreenState extends State<RecordScreen> {
                             ),
                           ),
                         ],
+                        if (secondSessionPayoff != null) ...[
+                          const SizedBox(height: 16),
+                          SecondSessionPayoffCard(
+                            payoff: secondSessionPayoff,
+                            onAddAnother: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
+                            onViewArchive: () => context.go('/archive-belief'),
+                          ),
+                        ],
                         if (analysisFallbackPayoff != null) ...[
                           const SizedBox(height: 16),
                           AnalysisFallbackPayoffCard(
@@ -3988,8 +4005,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             !_returnDayJustClosed &&
                             !suppressNoisyFirstSaveCards &&
                             !suppressEarlyPatternClaimCards) ...[
-                          if (_secondSessionComparison?.hasEnoughData ==
-                              true) ...[
+                          if (_secondSessionComparison?.hasEnoughData == true &&
+                              secondSessionPayoff == null) ...[
                             const SizedBox(height: 12),
                             SecondSessionComparisonCard(
                               comparison: _secondSessionComparison!,

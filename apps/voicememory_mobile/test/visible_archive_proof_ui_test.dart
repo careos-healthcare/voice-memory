@@ -131,10 +131,14 @@ void main() {
       expect(find.textContaining('pattern found'), findsNothing);
     });
 
-    test('early two-entry journey includes evidence line', () {
+    test('early two-entry journey uses comparison payoff copy', () {
+      expect(
+        const FirstThreeJourneyEngine().build(reflectionCount: 2).title,
+        VisibleArchiveProofCopy.twoEntryCompareTitle,
+      );
       expect(
         const FirstThreeJourneyEngine().build(reflectionCount: 2).body,
-        contains(VisibleArchiveProofCopy.earlyRepeatEvidenceLine),
+        contains('No clear repeat yet'),
       );
     });
   });
