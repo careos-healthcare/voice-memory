@@ -1,3 +1,5 @@
+import '../archive_proof/visible_archive_proof_copy.dart';
+
 /// How a detected thread is moving over time. Labels stay hedged — the app
 /// reports what repeated, never a diagnosis or a certainty.
 enum ThreadReturnStatus {
@@ -60,7 +62,7 @@ class ThreadReturnEvidence {
   /// Light affect-label fallback when no strong term exists — words were
   /// added, nothing more is claimed.
   static const String genericNamedLine =
-      'You added words to something that was repeating.';
+      VisibleArchiveProofCopy.oneEntryAddedTodayLine;
 
   // Follow-up CTA labels per status — a clear next action, never a demand.
   static const String returnedFollowUpCta = 'Record what happened this time';

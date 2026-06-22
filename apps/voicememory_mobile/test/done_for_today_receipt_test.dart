@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_engine.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -75,6 +76,7 @@ void main() {
     test('no receipt before a save (or after a failed one)', () {
       final receipt = engine.build(
         saved: false,
+        entryCount: 0,
         records: _workThread3(),
         now: _base,
       );
@@ -84,7 +86,7 @@ void main() {
     });
 
     test('receipt exists after a successful save', () {
-      final receipt = engine.build(saved: true, now: _base);
+      final receipt = engine.build(saved: true, entryCount: 1, now: _base);
       expect(receipt.hasReceipt, isTrue);
       expect(receipt.completionLine, 'That is enough for today.');
     });
@@ -92,6 +94,7 @@ void main() {
     test('uses the thread term when one exists', () {
       final receipt = engine.build(
         saved: true,
+        entryCount: 3,
         records: _workThread3(),
         now: _base,
       );
@@ -104,23 +107,45 @@ void main() {
       expect(receipt.sourceTerms, contains('work'));
     });
 
-    test('falls back to the generic affect label without a thread term', () {
-      final receipt = engine.build(saved: true, now: _base);
+    test('falls back to one-entry copy without a thread term', () {
+      final receipt = engine.build(saved: true, entryCount: 1, now: _base);
       expect(
         receipt.archiveLine,
-        'You added words to something that was repeating.',
+        VisibleArchiveProofCopy.oneEntryAddedTodayLine,
       );
       expect(
         receipt.tomorrowLine,
-        'Tomorrow ArchiveMe can check whether this shows up again.',
+        VisibleArchiveProofCopy.oneEntryTomorrowLine,
       );
       expect(receipt.sourceTerms, isEmpty);
     });
 
+    test('single entry with thread metadata stays neutral — no repeat claim', () {
+      final receipt = engine.build(
+        saved: true,
+        entryCount: 1,
+        records: _workThread3(),
+        now: _base,
+      );
+      expect(
+        receipt.archiveLine,
+        VisibleArchiveProofCopy.oneEntryAddedTodayLine,
+      );
+      expect(
+        receipt.tomorrowLine,
+        VisibleArchiveProofCopy.oneEntryTomorrowLine,
+      );
+    });
+
     test('includes "Done for today", enough-for-today, and the rest line', () {
       for (final receipt in [
-        engine.build(saved: true, records: _workThread3(), now: _base),
-        engine.build(saved: true, now: _base),
+        engine.build(
+          saved: true,
+          entryCount: 3,
+          records: _workThread3(),
+          now: _base,
+        ),
+        engine.build(saved: true, entryCount: 1, now: _base),
       ]) {
         expect(receipt.title, 'Done for today');
         expect(receipt.completionLine, 'That is enough for today.');
@@ -133,14 +158,25 @@ void main() {
 
     test('return reason is concrete and cautious — never an obligation', () {
       for (final receipt in [
-        engine.build(saved: true, records: _workThread3(), now: _base),
-        engine.build(saved: true, now: _base),
+        engine.build(
+          saved: true,
+          entryCount: 3,
+          records: _workThread3(),
+          now: _base,
+        ),
+        engine.build(saved: true, entryCount: 1, now: _base),
       ]) {
-        // Concrete: tomorrow + what ArchiveMe can actually check.
-        expect(
-          receipt.tomorrowLine,
-          startsWith('Tomorrow ArchiveMe can check'),
-        );
+        if (receipt.sourceTerms.isNotEmpty) {
+          expect(
+            receipt.tomorrowLine,
+            startsWith('Tomorrow ArchiveMe can check'),
+          );
+        } else {
+          expect(
+            receipt.tomorrowLine,
+            VisibleArchiveProofCopy.oneEntryTomorrowLine,
+          );
+        }
         final copy = _allCopy(receipt).toLowerCase();
         expect(copy, isNot(contains('you must')));
         expect(copy, isNot(contains('don\u2019t miss')));
@@ -150,7 +186,12 @@ void main() {
 
     test('source terms are capped at 3 and map to real evidence', () {
       final records = _workThread3();
-      final receipt = engine.build(saved: true, records: records, now: _base);
+      final receipt = engine.build(
+        saved: true,
+        entryCount: 3,
+        records: records,
+        now: _base,
+      );
       expect(
         receipt.sourceTerms.length,
         lessThanOrEqualTo(DoneForTodayReceipt.maxTerms),
@@ -163,8 +204,13 @@ void main() {
 
     test('no banned wording in any variant', () {
       final scenarios = [
-        engine.build(saved: true, records: _workThread3(), now: _base),
-        engine.build(saved: true, now: _base),
+        engine.build(
+          saved: true,
+          entryCount: 3,
+          records: _workThread3(),
+          now: _base,
+        ),
+        engine.build(saved: true, entryCount: 1, now: _base),
       ];
       for (final receipt in scenarios) {
         final copy = _allCopy(receipt).toLowerCase();
@@ -202,8 +248,13 @@ void main() {
 
     test('no VoiceMemory in consumer copy', () {
       for (final receipt in [
-        engine.build(saved: true, records: _workThread3(), now: _base),
-        engine.build(saved: true, now: _base),
+        engine.build(
+          saved: true,
+          entryCount: 3,
+          records: _workThread3(),
+          now: _base,
+        ),
+        engine.build(saved: true, entryCount: 1, now: _base),
       ]) {
         expect(_allCopy(receipt), isNot(contains('VoiceMemory')));
       }
@@ -211,8 +262,16 @@ void main() {
   });
 
   group('Concrete tomorrow cue', () {
-    DoneForTodayReceipt buildFor(List<PressureCheckInRecord> records) =>
-        engine.build(saved: true, records: records, now: _base);
+    DoneForTodayReceipt buildFor(
+      List<PressureCheckInRecord> records, {
+      int? entryCount,
+    }) =>
+        engine.build(
+          saved: true,
+          entryCount: entryCount ?? records.length.clamp(2, 99),
+          records: records,
+          now: _base,
+        );
 
     test('returned thread gets the thread-specific cue', () {
       final receipt = buildFor(_workThread3());
@@ -261,9 +320,17 @@ void main() {
     });
 
     test('generic fallback cue without any thread or term', () {
-      final receipt = engine.build(saved: true, now: _base);
+      final receipt = engine.build(saved: true, entryCount: 2, now: _base);
       expect(receipt.tomorrowCueLine, 'See whether this shows up again.');
       expect(receipt.tomorrowCueTitle, 'Tomorrow, check one thing');
+    });
+
+    test('one-entry cue uses future check framing only', () {
+      final receipt = engine.build(saved: true, entryCount: 1, now: _base);
+      expect(
+        receipt.tomorrowCueLine,
+        DoneForTodayReceipt.genericTomorrowCue,
+      );
     });
 
     test('cue is one sentence in every variant', () {
@@ -273,7 +340,7 @@ void main() {
           _record(id: 'e0', daysAgo: 5, contextIds: const ['work']),
           _record(id: 'e1', daysAgo: 0, contextIds: const ['work']),
         ]).tomorrowCueLine,
-        engine.build(saved: true, now: _base).tomorrowCueLine,
+        engine.build(saved: true, entryCount: 2, now: _base).tomorrowCueLine,
       ];
       for (final cue in cues) {
         expect(cue, endsWith('.'));
@@ -297,7 +364,7 @@ void main() {
     test('no daily-obligation, streak, or guilt language', () {
       for (final receipt in [
         buildFor(_workThread3()),
-        engine.build(saved: true, now: _base),
+        engine.build(saved: true, entryCount: 1, now: _base),
       ]) {
         final copy = _allCopy(receipt).toLowerCase();
         for (final banned in const [
@@ -326,6 +393,7 @@ void main() {
     ) async {
       final receipt = engine.build(
         saved: true,
+        entryCount: 3,
         records: _workThread3(),
         now: _base,
       );
@@ -370,10 +438,10 @@ void main() {
       expect(find.textContaining('VoiceMemory'), findsNothing);
     });
 
-    testWidgets('renders the generic variant without a thread term', (
+    testWidgets('renders the one-entry variant without a thread term', (
       tester,
     ) async {
-      final receipt = engine.build(saved: true, now: _base);
+      final receipt = engine.build(saved: true, entryCount: 1, now: _base);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -386,14 +454,13 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('You added words to something that was repeating.'),
+        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsOneWidget,
       );
       expect(
-        find.text('Tomorrow ArchiveMe can check whether this shows up again.'),
+        find.text(VisibleArchiveProofCopy.oneEntryTomorrowLine),
         findsOneWidget,
       );
-      // The generic cue still gives one concrete thing to check.
       expect(find.text('Tomorrow, check one thing'), findsOneWidget);
       expect(find.text('See whether this shows up again.'), findsOneWidget);
       expect(
@@ -412,6 +479,7 @@ void main() {
     ) async {
       final receipt = engine.build(
         saved: true,
+        entryCount: 3,
         records: _workThread3(),
         now: _base,
       );
@@ -440,6 +508,7 @@ void main() {
     ) async {
       final receipt = engine.build(
         saved: true,
+        entryCount: 3,
         records: _workThread3(),
         now: _base,
       );
@@ -498,6 +567,7 @@ void main() {
       expect(startHere, isNotNull);
       final doneForToday = engine.build(
         saved: true,
+        entryCount: 3,
         records: _workThread3(),
         now: _base,
       );

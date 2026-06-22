@@ -88,11 +88,12 @@ void main() {
       final proof = engine.build(
         _unrelatedRecords(),
         savedToday: true,
+        entryCount: 1,
         now: _base,
       );
       expect(proof.hasProof, isTrue);
       expect(proof.lines, const [
-        'I recorded one pressure loop.',
+        'I recorded one moment for my archive.',
         'Done for today.',
       ]);
     });
@@ -136,7 +137,7 @@ void main() {
     test('copy includes ArchiveMe and never VoiceMemory', () {
       for (final proof in [
         engine.build(_sensitiveThread3(), now: _base),
-        engine.build(_unrelatedRecords(), savedToday: true, now: _base),
+        engine.build(_unrelatedRecords(), savedToday: true, entryCount: 1, now: _base),
       ]) {
         expect(proof.shareText, contains('ArchiveMe'));
         expect(proof.shareText, isNot(contains('VoiceMemory')));
@@ -146,7 +147,7 @@ void main() {
     test('no streak, therapy, diagnosis, or health-claim words', () {
       for (final proof in [
         engine.build(_sensitiveThread3(), now: _base),
-        engine.build(_unrelatedRecords(), savedToday: true, now: _base),
+        engine.build(_unrelatedRecords(), savedToday: true, entryCount: 1, now: _base),
       ]) {
         final text = proof.shareText.toLowerCase();
         for (final banned in const [

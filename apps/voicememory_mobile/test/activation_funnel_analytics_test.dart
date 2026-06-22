@@ -481,6 +481,7 @@ void main() {
     testWidgets('done for today receipt', (tester) async {
       final receipt = const DoneForTodayReceiptEngine().build(
         saved: true,
+        entryCount: 3,
         records: _workThread3(),
         now: _base,
       );

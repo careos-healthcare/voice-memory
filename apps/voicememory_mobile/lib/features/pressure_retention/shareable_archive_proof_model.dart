@@ -1,3 +1,5 @@
+import '../archive_proof/visible_archive_proof_copy.dart';
+
 /// A privacy-safe, shareable proof-of-use card: counts and generic lines
 /// only, so a user can explain ArchiveMe without exposing any evidence.
 ///
@@ -17,7 +19,8 @@ class ShareableArchiveProof {
   static const String defaultFooter = 'Recorded with ArchiveMe.';
 
   // Starter variant — right after a save, before any thread connects.
-  static const String starterRecordedLine = 'I recorded one pressure loop.';
+  static const String starterRecordedLine =
+      VisibleArchiveProofCopy.oneEntryShareableLine;
   static const String starterClosureLine = 'Done for today.';
 
   // Connected variant — only when a thread genuinely connects entries.

@@ -316,7 +316,7 @@ void main() {
     test('generic fallback never claims more than adding words', () {
       expect(
         ThreadReturnEvidence.genericNamedLine,
-        'You added words to something that was repeating.',
+        'You added one piece today.',
       );
     });
 
