@@ -27,15 +27,21 @@ abstract class FirstThreeSessionCopy {
   static const String journeyStep2 = 'Notice what repeats';
   static const String journeyStep3 = 'Watch what changes';
 
-  // Session 2 — early comparing, not a confirmed repeat.
+  // Session 2 — two moments to compare, not a confirmed repeat.
   static const String session2StartingToNoticeTitle =
-      VisibleArchiveProofCopy.earlyRepeatTitle;
+      VisibleArchiveProofCopy.twoEntryCompareTitle;
   static const String session2StartingToNoticeBody =
-      VisibleArchiveProofCopy.earlyRepeatBody;
+      VisibleArchiveProofCopy.twoEntryBodyUngrounded;
+  static const String session2BodyGrounded =
+      VisibleArchiveProofCopy.twoEntryBodyGrounded;
   static const String session2EvidenceLine =
-      VisibleArchiveProofCopy.earlyRepeatEvidenceLine;
+      VisibleArchiveProofCopy.twoEntryCompareTitle;
   static const String session2NextAction =
-      VisibleArchiveProofCopy.earlyRepeatNextAction;
+      VisibleArchiveProofCopy.twoEntryNextAction;
+  static const String session2PrimaryCta =
+      VisibleArchiveProofCopy.twoEntryPrimaryCta;
+  static const String session2ViewArchiveCta =
+      VisibleArchiveProofCopy.twoEntryViewArchiveCta;
 
   // Session 3 — archive becoming useful.
   static const String session3Title =

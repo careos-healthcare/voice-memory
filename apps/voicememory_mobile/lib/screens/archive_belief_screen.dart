@@ -129,6 +129,7 @@ import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../features/activation/first_three_session_gates.dart';
+import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -152,6 +153,7 @@ import '../widgets/signal/signal_journey_card.dart';
 import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
+import '../widgets/record/second_session_payoff_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
 class ArchiveBeliefScreen extends StatefulWidget {
@@ -1872,8 +1874,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             reflectionCount: _entries.length,
             entries: _entries,
           );
+      final secondSessionPayoff = _entries.length ==
+              FirstThreeSessionGates.minEntriesForRepeatSurface
+          ? SecondSessionPayoffEngine.build(entries: _entries)
+          : null;
       final groundedSecondSessionRepeat =
-          _entries.length == FirstThreeSessionGates.minEntriesForRepeatSurface &&
+          _entries.length > FirstThreeSessionGates.minEntriesForRepeatSurface &&
           const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
       final secondSessionComparison = groundedSecondSessionRepeat
           ? const SecondSessionSignalEngine().build(_entries)
@@ -1905,7 +1911,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               children: [
                 if (!_suppressEarlyArchiveBeliefProof)
                   ..._buildArchiveBeliefProofWidgets(),
-                if (!journey.completed) ...[
+                if (secondSessionPayoff != null) ...[
+                  SecondSessionPayoffCard(
+                    payoff: secondSessionPayoff,
+                    onAddAnother: _goToRecord,
+                    onViewArchive: () {
+                      if (_entries.isEmpty) return;
+                      final sorted = List<JournalEntry>.from(_entries)
+                        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+                      context.push('/entry/${sorted.first.id}');
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (!journey.completed &&
+                    secondSessionPayoff == null) ...[
                   FirstThreeJourneyCard(model: journey),
                   const SizedBox(height: AppSpacing.lg),
                 ],

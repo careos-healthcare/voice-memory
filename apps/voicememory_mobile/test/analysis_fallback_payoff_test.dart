@@ -127,7 +127,7 @@ void main() {
       ]);
     });
 
-    test('two entries without overlap stay cautious', () {
+    test('two entries defers to second-session payoff card', () {
       final payoff = AnalysisFallbackPayoffEngine.build(
         entries: [
           _voiceEntry(
@@ -143,17 +143,10 @@ void main() {
         ],
         analysisSucceeded: false,
       );
-
-      expect(payoff, isNotNull);
-      expect(payoff!.evidenceLine, AnalysisFallbackPayoffCopy.evidenceTwoEntries);
-      expect(payoff.secondaryLine, AnalysisFallbackPayoffCopy.noClearRepeatYet);
-      _expectNoBannedCopy(
-        [payoff.evidenceLine, payoff.secondaryLine!],
-        _bannedPatternWords,
-      );
+      expect(payoff, isNull);
     });
 
-    test('two entries with simple overlap mentions shared words only', () {
+    test('two entries with overlap still defer to second-session payoff', () {
       final payoff = AnalysisFallbackPayoffEngine.build(
         entries: [
           _voiceEntry(
@@ -170,13 +163,7 @@ void main() {
         analysisSucceeded: false,
       );
 
-      expect(payoff, isNotNull);
-      expect(
-        payoff!.evidenceLine,
-        AnalysisFallbackPayoffCopy.evidenceTwoEntriesOverlap,
-      );
-      expect(payoff.secondaryLine, isNull);
-      _expectNoBannedCopy([payoff.evidenceLine], _bannedPatternWords);
+      expect(payoff, isNull);
     });
 
     test('footnote defers analysis without claiming success', () {
@@ -369,7 +356,7 @@ void main() {
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
 
-    testWidgets('two entries with analysis unavailable stay comparison-only', (
+    testWidgets('two entries with analysis unavailable use second-session payoff', (
       tester,
     ) async {
       await pumpDoneState(
@@ -386,14 +373,14 @@ void main() {
             createdAt: DateTime(2026, 6, 12, 12),
           ),
         ],
+        lastCaptureAnalysisSucceeded: false,
       );
 
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsOneWidget);
-      expect(
-        find.text(AnalysisFallbackPayoffCopy.evidenceTwoEntries),
-        findsOneWidget,
-      );
-      expect(find.text(AnalysisFallbackPayoffCopy.noClearRepeatYet), findsOneWidget);
+      expect(find.byKey(const Key('second_session_payoff_card')), findsOneWidget);
+      expect(find.text('ArchiveMe has two moments to compare.'), findsOneWidget);
+      expect(find.textContaining('No clear repeat yet'), findsOneWidget);
+      expect(find.text('Deeper analysis can run later. This moment is already saved.'), findsOneWidget);
+      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedPatternWords);
     });
 

@@ -71,6 +71,24 @@ abstract final class VisibleArchiveProofCopy {
   static const earlyRepeatNextAction =
       'Record once more to strengthen the signal.';
 
+  // Two-entry comparison payoff (second session).
+  static const twoEntryCompareTitle =
+      'ArchiveMe has two moments to compare.';
+
+  static const twoEntryBodyUngrounded =
+      'No clear repeat yet. One more moment will make the thread easier to see.';
+
+  static const twoEntryBodyGrounded =
+      'These two moments may be related. ArchiveMe is keeping the evidence '
+      'separate until there is more to compare.';
+
+  static const twoEntryPrimaryCta = firstSavePrimaryCta;
+
+  static const twoEntryViewArchiveCta = firstSaveViewArchiveCta;
+
+  static const twoEntryNextAction =
+      'Add one more moment to make the thread clearer.';
+
   // One-entry post-save — evidence only, no loop/repeat claims yet.
   static const oneEntryAddedTodayLine = 'You added one piece today.';
   static const oneEntryArchiveLine =
