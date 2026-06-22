@@ -241,4 +241,80 @@ abstract final class ArchiveEvidenceMapEngine {
 
   static String momentCountLabel(int count) =>
       ContextInsightsEngine.momentCountLabel(count);
+
+  static List<JournalEntry> eligibleEntriesForContext({
+    required List<JournalEntry> entries,
+    required String contextTagId,
+  }) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (contextTagId == ArchiveEvidenceMapRowIds.untagged) {
+      return eligible
+          .where(
+            (entry) {
+              final tag = entry.captureContextTag;
+              return tag == null || tag.isEmpty;
+            },
+          )
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    }
+
+    return eligible
+        .where((entry) => entry.captureContextTag == contextTagId)
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  static ArchiveEvidenceContextDrilldown buildContextDrilldown({
+    required List<JournalEntry> entries,
+    required String contextTagId,
+  }) {
+    final filtered = eligibleEntriesForContext(
+      entries: entries,
+      contextTagId: contextTagId,
+    );
+    final isUntagged = contextTagId == ArchiveEvidenceMapRowIds.untagged;
+    final label = isUntagged
+        ? VisibleArchiveProofCopy.archiveEvidenceMapUntaggedRow
+        : (CaptureContextTags.byId(contextTagId)?.label ?? contextTagId);
+
+    return ArchiveEvidenceContextDrilldown(
+      contextTagId: contextTagId,
+      title: isUntagged
+          ? VisibleArchiveProofCopy.archiveEvidenceContextUntaggedTitle
+          : VisibleArchiveProofCopy.archiveEvidenceContextTitle(label),
+      subtitle: VisibleArchiveProofCopy.archiveEvidenceContextSubtitle,
+      entries: filtered,
+      emptyBody: VisibleArchiveProofCopy.archiveEvidenceContextEmpty,
+    );
+  }
+}
+
+/// Route helpers for the archive evidence map drilldown.
+abstract final class ArchiveEvidenceMapNavigation {
+  ArchiveEvidenceMapNavigation._();
+
+  static const contextRoute = '/archive-evidence-map/context/:tagId';
+
+  static String contextPath(String tagId) =>
+      '/archive-evidence-map/context/$tagId';
+}
+
+/// Local drilldown for one evidence map context row.
+class ArchiveEvidenceContextDrilldown {
+  const ArchiveEvidenceContextDrilldown({
+    required this.contextTagId,
+    required this.title,
+    required this.subtitle,
+    required this.entries,
+    required this.emptyBody,
+  });
+
+  final String contextTagId;
+  final String title;
+  final String subtitle;
+  final List<JournalEntry> entries;
+  final String emptyBody;
+
+  bool get isEmpty => entries.isEmpty;
 }

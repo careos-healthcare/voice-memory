@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voicememory_mobile/features/activation/archive_evidence_map.dart';
+import 'package:voicememory_mobile/features/activation/capture_context_tags.dart';
 import 'package:voicememory_mobile/security/app_privacy_shell.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 
@@ -130,6 +132,12 @@ void main() {
     expect(SensitiveRoutes.isSensitiveRoute('/record'), isTrue);
     expect(SensitiveRoutes.isSensitiveRoute('/export'), isTrue);
     expect(SensitiveRoutes.isSensitiveRoute('/insight-quality'), isTrue);
+    expect(
+      SensitiveRoutes.isSensitiveRoute(
+        ArchiveEvidenceMapNavigation.contextPath(CaptureContextTagIds.work),
+      ),
+      isTrue,
+    );
     expect(SensitiveRoutes.isSensitiveRoute('/about'), isFalse);
   });
 }

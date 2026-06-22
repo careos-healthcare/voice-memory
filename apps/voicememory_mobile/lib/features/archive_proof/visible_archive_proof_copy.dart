@@ -861,6 +861,19 @@ abstract final class VisibleArchiveProofCopy {
     return '$head, and ${labels.last} still have only one moment each.';
   }
 
+  static String archiveEvidenceContextTitle(String label) =>
+      'Evidence in $label';
+
+  static const archiveEvidenceContextUntaggedTitle = 'Untagged evidence';
+
+  static const archiveEvidenceContextSubtitle =
+      'Saved moments counted in your evidence map.';
+
+  static const archiveEvidenceContextEmpty =
+      'No saved moments are counted in this context right now.';
+
+  static const archiveEvidenceContextOpenEntry = 'Open entry';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

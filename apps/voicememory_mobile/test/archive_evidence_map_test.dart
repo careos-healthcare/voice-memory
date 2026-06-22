@@ -398,5 +398,47 @@ void main() {
       expect(find.textContaining('Work: 2 moments'), findsOneWidget);
       expect(find.textContaining('Untagged: 1 moment'), findsOneWidget);
     });
+
+    testWidgets('row tap invokes onRowTap with context id', (tester) async {
+      final map = ArchiveEvidenceMapEngine.build(
+        entries: [
+          _voiceEntry(
+            id: 'e1',
+            transcript:
+                'I felt pressure at work before saying yes again even when I was tired moment one.',
+            captureContextTag: CaptureContextTagIds.work,
+          ),
+          _voiceEntry(
+            id: 'e2',
+            transcript:
+                'Home felt loud before I could settle into the evening moment two.',
+            createdAt: DateTime(2026, 6, 11),
+            captureContextTag: CaptureContextTagIds.home,
+          ),
+        ],
+      );
+      String? tappedId;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: SingleChildScrollView(
+            child: ArchiveEvidenceMapCard(
+              map: map,
+              onRowTap: (tagId) => tappedId = tagId,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('archive_evidence_map_row_tap_work')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const Key('archive_evidence_map_row_tap_work')));
+      await tester.pump();
+      expect(tappedId, CaptureContextTagIds.work);
+    });
   });
 }

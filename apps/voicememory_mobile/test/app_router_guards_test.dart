@@ -4,6 +4,8 @@ import 'package:voicememory_mobile/config/production_navigation.dart';
 import 'package:voicememory_mobile/config/release_config.dart';
 import 'package:voicememory_mobile/config/screenshot_mode.dart';
 import 'package:voicememory_mobile/features/activation/belief_evidence_trail.dart';
+import 'package:voicememory_mobile/features/activation/capture_context_tags.dart';
+import 'package:voicememory_mobile/features/activation/archive_evidence_map.dart';
 import 'package:voicememory_mobile/features/activation/insight_quality_dashboard.dart';
 import 'package:voicememory_mobile/features/activation/weekly_archive_review.dart';
 import 'package:voicememory_mobile/router/developer_route_guard.dart';
@@ -75,6 +77,12 @@ void main() {
       expect(DeveloperRouteGuard.redirectFor(BeliefEvidenceNavigation.route), isNull);
       expect(DeveloperRouteGuard.redirectFor(WeeklyArchiveReviewNavigation.route), isNull);
       expect(DeveloperRouteGuard.redirectFor(InsightQualityNavigation.route), isNull);
+      expect(
+        DeveloperRouteGuard.redirectFor(
+          ArchiveEvidenceMapNavigation.contextPath(CaptureContextTagIds.work),
+        ),
+        isNull,
+      );
       expect(DeveloperRouteGuard.redirectFor('/belief-detail'), isNull);
       expect(DeveloperRouteGuard.redirectFor('/subscription'), isNull);
       expect(DeveloperRouteGuard.redirectFor('/settings'), isNull);

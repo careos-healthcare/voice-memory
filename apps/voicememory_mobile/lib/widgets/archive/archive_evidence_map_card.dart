@@ -12,9 +12,11 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
   const ArchiveEvidenceMapCard({
     super.key,
     required this.map,
+    this.onRowTap,
   });
 
   final ArchiveEvidenceMap map;
+  final ValueChanged<String>? onRowTap;
 
   @override
   Widget build(BuildContext context) {
@@ -57,32 +59,59 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
           if (map.rows.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             for (final row in map.rows) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${row.label}: '
-                      '${ArchiveEvidenceMapEngine.momentCountLabel(row.count)}',
-                      key: Key('archive_evidence_map_row_${row.rowId}'),
-                      style: bodyStyle,
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: Key('archive_evidence_map_row_tap_${row.rowId}'),
+                  onTap: onRowTap == null
+                      ? null
+                      : () => onRowTap!(row.rowId),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${row.label}: '
+                                '${ArchiveEvidenceMapEngine.momentCountLabel(row.count)}',
+                                key: Key('archive_evidence_map_row_${row.rowId}'),
+                                style: bodyStyle,
+                              ),
+                            ),
+                            if (onRowTap != null)
+                              Icon(
+                                Icons.chevron_right,
+                                key: Key(
+                                  'archive_evidence_map_row_chevron_${row.rowId}',
+                                ),
+                                color: AppColors.textSecondary,
+                                size: 20,
+                              ),
+                          ],
+                        ),
+                        if (maxCount > 0) ...[
+                          const SizedBox(height: AppSpacing.xs),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              key: Key('archive_evidence_map_bar_${row.rowId}'),
+                              value: row.count / maxCount,
+                              minHeight: 6,
+                              backgroundColor: AppColors.backgroundPrimary,
+                              color: AppColors.accentPrimary,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                ],
-              ),
-              if (maxCount > 0) ...[
-                const SizedBox(height: AppSpacing.xs),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    key: Key('archive_evidence_map_bar_${row.rowId}'),
-                    value: row.count / maxCount,
-                    minHeight: 6,
-                    backgroundColor: AppColors.backgroundPrimary,
-                    color: AppColors.accentPrimary,
-                  ),
                 ),
-              ],
-              const SizedBox(height: AppSpacing.sm),
+              ),
+              const SizedBox(height: AppSpacing.xs),
             ],
           ],
           if (map.strongestContextLine case final strongest?) ...[

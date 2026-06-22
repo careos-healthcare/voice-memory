@@ -178,7 +178,12 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
               if (review.hasEnoughEvidence &&
                   (_evidenceMap?.showCard ?? false)) ...[
                 const SizedBox(height: AppSpacing.lg),
-                ArchiveEvidenceMapCard(map: _evidenceMap!),
+                ArchiveEvidenceMapCard(
+                  map: _evidenceMap!,
+                  onRowTap: (tagId) => context.push(
+                    ArchiveEvidenceMapNavigation.contextPath(tagId),
+                  ),
+                ),
               ],
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),
