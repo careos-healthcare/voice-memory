@@ -863,5 +863,29 @@ void main() {
 
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
     });
+
+    testWidgets('zero entries hides next-moment prompt card', (tester) async {
+      await pumpRecordScreen(tester);
+
+      expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
+    });
+
+    testWidgets('one entry ready shows next-moment prompt with record CTA', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 1);
+
+      expect(find.byKey(const Key('next_moment_prompt_card')), findsOneWidget);
+      expect(find.text('Add one more moment like this.'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+    });
+
+    testWidgets('post-save done state hides next-moment prompt card', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 2, ui: RecordUiState.done);
+
+      expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
+    });
   });
 }

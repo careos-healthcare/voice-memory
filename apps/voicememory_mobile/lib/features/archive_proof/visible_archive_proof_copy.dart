@@ -387,6 +387,45 @@ abstract final class VisibleArchiveProofCopy {
 
   static const returningUserViewReviewCta = archiveHomeViewReviewCta;
 
+  // Personalized next-moment prompts — what to capture next (curiosity, not pressure).
+  static const nextMomentPromptSectionLabel = archiveHomeNextActionLabel;
+
+  static const nextMomentOneTitle = 'Add one more moment like this.';
+
+  static const nextMomentOneBody =
+      'Your archive needs another saved moment before it can compare.';
+
+  static const nextMomentTwoTitle = 'Add the moment that makes this clearer.';
+
+  static const nextMomentTwoBody =
+      'ArchiveMe has two moments to compare. '
+      'A third can help it form a cautious first belief.';
+
+  static const nextMomentThreeTitle = 'Test this belief with one more moment.';
+
+  static const nextMomentThreeBody =
+      'Your archive is starting to form a belief. '
+      'Another example can show whether the evidence holds.';
+
+  static const nextMomentFourTitle =
+      'Add the moment that would change the evidence.';
+
+  static const nextMomentFourBody =
+      'Your archive updated its belief. '
+      'Save the next moment when this shows up in a new context.';
+
+  static const nextMomentFivePlusTitle = 'Help your archive review the week.';
+
+  static const nextMomentFivePlusBody =
+      'Save the next moment that confirms, weakens, or changes '
+      'this week\u2019s strongest thread.';
+
+  static const nextMomentAddCta = firstSavePrimaryCta;
+
+  static const nextMomentViewEvidenceCta = beliefUpdateViewEvidenceCta;
+
+  static const nextMomentViewReviewCta = archiveHomeViewReviewCta;
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
