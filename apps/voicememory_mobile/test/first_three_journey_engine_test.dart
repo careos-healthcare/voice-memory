@@ -75,7 +75,7 @@ void main() {
     expect(m.currentStep, FirstThreeJourneyStep.three);
     expect(m.title, FirstThreeSessionCopy.session2StartingToNoticeTitle);
     expect(m.title, contains('starting to compare'));
-    expect(m.body, FirstThreeSessionCopy.session2StartingToNoticeBody);
+    expect(m.body, contains(FirstThreeSessionCopy.session2EvidenceLine));
     expect(m.progressLabel, FirstThreeSessionCopy.journeyStep2);
     expect(m.nextAction, FirstThreeSessionCopy.session2NextAction);
     expect(m.journeyStepIndex, 1);

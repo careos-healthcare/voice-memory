@@ -607,14 +607,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('intro shows at zero entries and does not block recording', (
+    testWidgets('zero entries shows archive promise hero instead of intro card', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('first_60_intro_card')), findsOneWidget);
-      expect(find.text(First60Copy.introBody), findsOneWidget);
-      expect(find.text(First60Copy.introReassurance), findsOneWidget);
-      // The normal recording path stays fully available below the intro.
+      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+      expect(find.byKey(const Key('first_60_intro_card')), findsNothing);
+      expect(find.text('What is on your mind?'), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -648,17 +647,14 @@ void main() {
       'advanced memory controls are not forced into the first 60 seconds',
       (tester) async {
         await pumpRecordScreen(tester);
-        // The intro never pushes evidence/memory architecture; the existing
-        // memory scope control stays available further down — unchanged,
-        // never inside the intro card.
-        final intro = find.byKey(const Key('first_60_intro_card'));
-        expect(intro, findsOneWidget);
+        final hero = find.byKey(const Key('record_top_archive_promise_hero'));
+        expect(hero, findsOneWidget);
         expect(
-          find.descendant(of: intro, matching: find.textContaining('Memory')),
+          find.descendant(of: hero, matching: find.textContaining('Memory')),
           findsNothing,
         );
         expect(
-          find.descendant(of: intro, matching: find.textContaining('evidence')),
+          find.descendant(of: hero, matching: find.textContaining('evidence')),
           findsNothing,
         );
         expect(tester.takeException(), isNull);

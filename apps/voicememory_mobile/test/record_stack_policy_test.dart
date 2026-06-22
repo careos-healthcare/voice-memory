@@ -41,7 +41,7 @@ void main() {
       );
       expect(d.primaryState, RecordPrimaryState.firstRun);
       expect(d.showFirstRecordingHandoff, isFalse);
-      expect(d.showFramingTitle, isTrue);
+      expect(d.showFramingTitle, isFalse);
       expect(d.showFirstThreeJourney, isFalse);
       expect(d.showStarterPrompts, isFalse);
       expect(d.suppressDuplicateRecordCtas, isFalse);

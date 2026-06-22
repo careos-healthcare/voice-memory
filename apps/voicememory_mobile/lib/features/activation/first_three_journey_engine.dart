@@ -99,7 +99,9 @@ class FirstThreeJourneyEngine {
       reflectionCount: count,
       currentStep: FirstThreeJourneyStep.three,
       title: FirstThreeSessionCopy.session2StartingToNoticeTitle,
-      body: FirstThreeSessionCopy.session2StartingToNoticeBody,
+      body:
+          '${FirstThreeSessionCopy.session2StartingToNoticeBody}\n\n'
+          '${FirstThreeSessionCopy.session2EvidenceLine}',
       progressLabel: FirstThreeSessionCopy.journeyStep2,
       nextAction: FirstThreeSessionCopy.session2NextAction,
       completed: false,

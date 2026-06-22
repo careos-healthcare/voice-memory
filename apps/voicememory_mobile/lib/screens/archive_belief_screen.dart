@@ -1888,16 +1888,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
-                ..._buildArchiveIntelligenceWidgets(
-                  belief: archiveBeliefThread,
-                  weekly: weeklyWhatChanged,
-                  ohWow: ohWowMoment,
-                ),
-                if (!archiveBeliefThread.hasEnoughData &&
-                    thirdSessionUsefulness.hasEnoughData) ...[
-                  ThirdSessionArchiveUsefulnessCard(
-                    usefulness: thirdSessionUsefulness,
-                  ),
+                ..._buildArchiveBeliefProofWidgets(),
+                if (!journey.completed) ...[
+                  FirstThreeJourneyCard(model: journey),
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (secondSessionComparison?.hasEnoughData == true &&
@@ -1917,6 +1910,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                if (!archiveBeliefThread.hasEnoughData &&
+                    thirdSessionUsefulness.hasEnoughData) ...[
+                  ThirdSessionArchiveUsefulnessCard(
+                    usefulness: thirdSessionUsefulness,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                ..._buildArchiveIntelligenceWidgets(
+                  belief: archiveBeliefThread,
+                  weekly: weeklyWhatChanged,
+                  ohWow: ohWowMoment,
+                ),
                 if (_firstLoopPhase != null &&
                     _firstLoopPhase != FirstLoopStatePhase.recordMoment) ...[
                   FirstLoopStateCard(
@@ -2034,10 +2039,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         _signalArchiveSnapshot!.reflectionCount > 0 ||
                         _signalJourney != null)) ...[
                   ..._signalArchiveSurfaces(),
-                ],
-                if (!journey.completed) ...[
-                  FirstThreeJourneyCard(model: journey),
-                  const SizedBox(height: AppSpacing.lg),
                 ],
                 const PatternsComeBackTomorrowCard(),
                 const SizedBox(height: AppSpacing.xl),

@@ -5,6 +5,7 @@ import '../../features/onboarding/record_return_pro_state.dart';
 import '../../services/activation_funnel_analytics.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../theme/voicememory_colors.dart';
 import '../../theme/voicememory_cards.dart';
 
 /// B. First save payoff — archive started, one more moment to compare.
@@ -37,9 +38,24 @@ class FirstSaveEvidenceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            RecordReturnProCopy.evidenceTitle,
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                color: VoiceMemoryColors.captureSuccess,
+                size: 22,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  RecordReturnProCopy.evidenceTitle,
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ).copyWith(color: VoiceMemoryColors.captureSuccess),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

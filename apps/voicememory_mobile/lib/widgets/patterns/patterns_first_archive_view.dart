@@ -5,7 +5,9 @@ import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
 import '../../features/archive_proof/visible_archive_proof_copy.dart';
 import '../../models/journal_entry.dart';
+import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../../theme/voicememory_cards.dart';
 
 /// Patterns tab — exactly one saved entry. Confirms the archive started and
 /// nudges a second entry without zero-entry upload copy.
@@ -37,10 +39,29 @@ class PatternsFirstArchiveView extends StatelessWidget {
       children: [
         Container(
           key: const Key('patterns_one_entry_archive_preview_card'),
+          width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F9F4),
+            borderRadius: BorderRadius.circular(VoiceMemoryCards.radius),
+            border: Border.all(
+              color: AppColors.accentPrimary.withValues(alpha: 0.35),
+              width: 1.5,
+            ),
+            boxShadow: VoiceMemoryCards.standard().boxShadow,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Text(
+                VisibleArchiveProofCopy.patternsEmptyPreviewBadge,
+                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(height: gap),
               Text(
                 VisibleArchiveProofCopy.patternsOneEntryTitle,
                 style: ArchiveMobileTypography.responsivePageTitle(context),
@@ -49,15 +70,6 @@ class PatternsFirstArchiveView extends StatelessWidget {
               Text(
                 VisibleArchiveProofCopy.patternsOneEntryBody,
                 style: ArchiveMobileTypography.explanationBody(context),
-              ),
-              SizedBox(height: gap),
-              Text(
-                VisibleArchiveProofCopy.patternsEmptyPreviewBadge,
-                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
               ),
               SizedBox(height: gap),
               _PreviewRow(
