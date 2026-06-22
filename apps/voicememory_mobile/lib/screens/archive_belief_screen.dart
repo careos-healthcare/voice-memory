@@ -139,6 +139,7 @@ import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/archive_home_summary.dart';
 import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/evidence_attention_filters.dart';
+import '../features/activation/archive_workspace_layout.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -176,6 +177,7 @@ import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/archive/archive_home_summary_card.dart';
 import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/evidence_attention_filters_card.dart';
+import '../widgets/archive/archive_workspace_section_heading.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -1791,20 +1793,66 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
   }
 
+  ArchiveWorkspaceLayout _archiveWorkspaceLayout() {
+    final summary = _archiveHomeSummary();
+    final beliefHistory =
+        ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+            ? BeliefHistoryTimelineEngine.build(entries: _entries)
+            : null;
+    final weeklyReview =
+        ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+            ? WeeklyArchiveReviewEngine.build(entries: _entries)
+            : null;
+    final shareProof =
+        const ShareableArchiveProofEngine().buildFromJournal(entries: _entries);
+
+    return ArchiveWorkspaceLayoutEngine.build(
+      entries: _entries,
+      archiveHome: summary,
+      attentionFilters: EvidenceAttentionFiltersEngine.build(
+        entries: _entries,
+        omitKinds: const {EvidenceAttentionFilterKind.sameContext},
+      ),
+      actionPlan: ArchiveHealthActionPlanEngine.build(entries: _entries),
+      archiveHealth: ArchiveHealthScoreEngine.build(entries: _entries),
+      contextInsights: ContextInsightsEngine.build(entries: _entries),
+      evidenceMap: ArchiveEvidenceMapEngine.build(entries: _entries),
+      beliefHistory: beliefHistory,
+      weeklyReview: weeklyReview,
+      shareProof: shareProof,
+    );
+  }
+
+  List<Widget> _archiveWorkspaceSectionSpacer() => const [
+        SizedBox(height: AppSpacing.lg),
+      ];
+
   List<Widget> _archiveHomeCommandCenterWidgets() {
     final summary = _archiveHomeSummary();
     final shareProof = summary.showShareProof
         ? const ShareableArchiveProofEngine().buildFromJournal(entries: _entries)
         : null;
-    final archiveHealth = ArchiveHealthScoreEngine.build(entries: _entries);
+    final layout = _archiveWorkspaceLayout();
     final actionPlan = ArchiveHealthActionPlanEngine.build(entries: _entries);
-    final contextInsights = ContextInsightsEngine.build(entries: _entries);
-    final evidenceMap = ArchiveEvidenceMapEngine.build(entries: _entries);
     final attentionFilters = EvidenceAttentionFiltersEngine.build(
       entries: _entries,
       omitKinds: const {EvidenceAttentionFilterKind.sameContext},
     );
-    return [
+    final archiveHealth = ArchiveHealthScoreEngine.build(entries: _entries);
+    final contextInsights = ContextInsightsEngine.build(entries: _entries);
+    final evidenceMap = ArchiveEvidenceMapEngine.build(entries: _entries);
+    final beliefHistory =
+        ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+            ? BeliefHistoryTimelineEngine.build(entries: _entries)
+            : null;
+    final weeklyReview =
+        ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
+            ? WeeklyArchiveReviewEngine.build(entries: _entries)
+            : null;
+    final standaloneShareProof =
+        const ShareableArchiveProofEngine().buildFromJournal(entries: _entries);
+
+    final widgets = <Widget>[
       ArchiveHomeSummaryCard(
         summary: summary,
         onPrimary: () => _handleArchiveHomeAction(summary.primaryAction),
@@ -1813,54 +1861,145 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             : null,
         shareProof: shareProof?.hasProof == true ? shareProof : null,
       ),
-      if (archiveHealth.showCard) ...[
-        const SizedBox(height: AppSpacing.md),
-        ArchiveHealthCard(score: archiveHealth),
-      ],
-      if (actionPlan.showCard) ...[
-        const SizedBox(height: AppSpacing.md),
-        ArchiveHealthActionPlanCard(
-          plan: actionPlan,
-          onPrimary: _goToRecord,
-          onSecondary: actionPlan.secondaryAction ==
-                  ArchiveHealthActionPlanCta.viewEvidence
-              ? () => context.push(BeliefEvidenceNavigation.route)
-              : null,
-        ),
-      ],
-      if (contextInsights.showCard) ...[
-        const SizedBox(height: AppSpacing.md),
-        ContextInsightsCard(insights: contextInsights),
-      ],
-      if (attentionFilters.showCard) ...[
-        const SizedBox(height: AppSpacing.md),
-        EvidenceAttentionFiltersCard(
-          filters: attentionFilters,
-          onFilterTap: (filter) {
-            final route = filter.resolveRoute();
-            if (route != null) context.push(route);
-          },
-        ),
-      ],
-      if (evidenceMap.showCard) ...[
-        const SizedBox(height: AppSpacing.md),
-        ArchiveEvidenceMapCard(
-          map: evidenceMap,
-          onRowTap: (tagId) => context.push(
-            ArchiveEvidenceMapNavigation.contextPath(tagId),
-          ),
-        ),
-      ],
-      Align(
-        alignment: Alignment.centerLeft,
-        child: TextButton(
-          key: const Key('archive_belief_insight_quality_link'),
-          onPressed: () => context.push(InsightQualityNavigation.route),
-          child: Text(VisibleArchiveProofCopy.insightQualityArchiveLink),
-        ),
-      ),
-      const SizedBox(height: AppSpacing.lg),
     ];
+
+    if (layout.needsAttention.show) {
+      widgets.addAll(_archiveWorkspaceSectionSpacer());
+      if (layout.needsAttention.heading case final heading?) {
+        widgets.add(
+          ArchiveWorkspaceSectionHeading(
+            sectionId: 'needs_attention',
+            title: heading,
+          ),
+        );
+      }
+      if (layout.showAttentionFilters) {
+        widgets.add(
+          EvidenceAttentionFiltersCard(
+            filters: attentionFilters,
+            hideTitle: layout.needsAttention.heading != null,
+            onFilterTap: (filter) {
+              final route = filter.resolveRoute();
+              if (route != null) context.push(route);
+            },
+          ),
+        );
+        if (layout.showActionPlan) {
+          widgets.add(const SizedBox(height: AppSpacing.md));
+        }
+      }
+      if (layout.showActionPlan) {
+        widgets.add(
+          ArchiveHealthActionPlanCard(
+            plan: actionPlan,
+            onPrimary: _goToRecord,
+            onSecondary: actionPlan.secondaryAction ==
+                    ArchiveHealthActionPlanCta.viewEvidence
+                ? () => context.push(BeliefEvidenceNavigation.route)
+                : null,
+          ),
+        );
+      }
+    }
+
+    if (layout.evidenceQuality.show) {
+      widgets.addAll(_archiveWorkspaceSectionSpacer());
+      if (layout.evidenceQuality.heading case final heading?) {
+        widgets.add(
+          ArchiveWorkspaceSectionHeading(
+            sectionId: 'evidence_quality',
+            title: heading,
+          ),
+        );
+      }
+      var addedQualityCard = false;
+      void addQualityCard(Widget card) {
+        if (addedQualityCard) {
+          widgets.add(const SizedBox(height: AppSpacing.md));
+        }
+        widgets.add(card);
+        addedQualityCard = true;
+      }
+
+      if (layout.showArchiveHealth) {
+        addQualityCard(ArchiveHealthCard(score: archiveHealth));
+      }
+      if (layout.showContextInsights) {
+        addQualityCard(ContextInsightsCard(insights: contextInsights));
+      }
+      if (layout.showEvidenceMap) {
+        addQualityCard(
+          ArchiveEvidenceMapCard(
+            map: evidenceMap,
+            onRowTap: (tagId) => context.push(
+              ArchiveEvidenceMapNavigation.contextPath(tagId),
+            ),
+          ),
+        );
+      }
+    }
+
+    if (layout.reviewHistory.show) {
+      widgets.addAll(_archiveWorkspaceSectionSpacer());
+      if (layout.reviewHistory.heading case final heading?) {
+        widgets.add(
+          ArchiveWorkspaceSectionHeading(
+            sectionId: 'review_history',
+            title: heading,
+          ),
+        );
+      }
+      if (layout.showBeliefHistory && beliefHistory != null) {
+        widgets.add(BeliefHistoryTimelineCard(timeline: beliefHistory));
+      }
+      if (layout.showWeeklyReview && weeklyReview != null) {
+        if (layout.showBeliefHistory) {
+          widgets.add(const SizedBox(height: AppSpacing.md));
+        }
+        widgets.add(
+          WeeklyArchiveReviewCard(
+            review: weeklyReview,
+            compact: true,
+            onViewFullReview: () =>
+                context.push(WeeklyArchiveReviewNavigation.route),
+            onAddAnother: _goToRecord,
+          ),
+        );
+      }
+    }
+
+    if (layout.controls.show) {
+      widgets.addAll(_archiveWorkspaceSectionSpacer());
+      if (layout.controls.heading case final heading?) {
+        widgets.add(
+          ArchiveWorkspaceSectionHeading(
+            sectionId: 'controls',
+            title: heading,
+          ),
+        );
+      }
+      if (layout.showInsightQualityLink) {
+        widgets.add(
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('archive_belief_insight_quality_link'),
+              onPressed: () => context.push(InsightQualityNavigation.route),
+              child: Text(VisibleArchiveProofCopy.insightQualityArchiveLink),
+            ),
+          ),
+        );
+      }
+      if (layout.showStandaloneShareProof && standaloneShareProof.hasProof) {
+        if (layout.showInsightQualityLink) {
+          widgets.add(const SizedBox(height: AppSpacing.md));
+        }
+        widgets.add(ShareableArchiveProofCard(proof: standaloneShareProof));
+      }
+    }
+
+    widgets.add(const SizedBox(height: AppSpacing.lg));
+    return widgets;
   }
 
   List<Widget> _orderedPatternsStack() {
@@ -1868,6 +2007,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     const engine = ArchiveBeliefThreadEngine();
     final belief = engine.build(_entries, tier: _archiveIntelligenceTier);
     final archiveHome = _archiveHomeSummary();
+    final workspaceLayout = _archiveWorkspaceLayout();
     final widgets = <Widget>[
       QuickHelpButton(
         alignment: Alignment.centerRight,
@@ -1911,7 +2051,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
     if (!archiveHome.suppressDuplicatePayoffCards &&
-        beliefHistoryTimeline != null) {
+        beliefHistoryTimeline != null &&
+        !workspaceLayout.includesReviewHistoryInWorkspace) {
       widgets.add(BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
@@ -1921,7 +2062,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             : null;
     if (!archiveHome.suppressDuplicatePayoffCards &&
         weeklyArchiveReview != null &&
-        weeklyArchiveReview.hasEnoughEvidence) {
+        weeklyArchiveReview.hasEnoughEvidence &&
+        !workspaceLayout.includesReviewHistoryInWorkspace) {
       widgets.add(
         WeeklyArchiveReviewCard(
           review: weeklyArchiveReview,
@@ -1938,7 +2080,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
     if (!archiveHome.suppressDuplicatePayoffCards &&
         !archiveHome.showShareProof &&
-        shareableProof.hasProof) {
+        shareableProof.hasProof &&
+        !workspaceLayout.includesStandaloneShareProofInWorkspace) {
       widgets.add(ShareableArchiveProofCard(proof: shareableProof));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
@@ -2043,6 +2186,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             entries: _entries,
           );
       final archiveHome = _archiveHomeSummary();
+      final workspaceLayout = _archiveWorkspaceLayout();
       final beliefUpdatePayoff =
           ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 4
               ? BeliefUpdatePayoffEngine.build(entries: _entries)
@@ -2114,13 +2258,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
-                    beliefHistoryTimeline != null) ...[
+                    beliefHistoryTimeline != null &&
+                    !workspaceLayout.includesReviewHistoryInWorkspace) ...[
                   BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline),
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     weeklyArchiveReview != null &&
-                    weeklyArchiveReview.hasEnoughEvidence) ...[
+                    weeklyArchiveReview.hasEnoughEvidence &&
+                    !workspaceLayout.includesReviewHistoryInWorkspace) ...[
                   WeeklyArchiveReviewCard(
                     review: weeklyArchiveReview,
                     compact: true,
@@ -2132,7 +2278,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     !archiveHome.showShareProof &&
-                    shareableProof.hasProof) ...[
+                    shareableProof.hasProof &&
+                    !workspaceLayout.includesStandaloneShareProofInWorkspace) ...[
                   ShareableArchiveProofCard(proof: shareableProof),
                   const SizedBox(height: AppSpacing.lg),
                 ],
