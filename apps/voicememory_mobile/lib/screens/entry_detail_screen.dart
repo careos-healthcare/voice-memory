@@ -21,6 +21,7 @@ import '../widgets/pins/pin_entry_button.dart';
 import '../widgets/memory/entry_aboutness_editor.dart';
 import '../widgets/memory/memory_surfacing_editor.dart';
 import '../widgets/memory/preserve_original_control.dart';
+import '../widgets/archive/entry_context_tag_editor.dart';
 import '../features/memory/memory_surfacing_mode.dart';
 import '../features/memory/sensitive_surfacing_policy.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -146,6 +147,12 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 16),
+                EntryContextTagEditor(
+                  entry: e,
+                  journalStore: AppServices.instance.journalStore,
+                  onChanged: _load,
                 ),
                 const SizedBox(height: 16),
                 RememberThisButton(

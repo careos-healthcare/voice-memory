@@ -714,6 +714,18 @@ abstract final class VisibleArchiveProofCopy {
 
   static const captureContextTagOther = 'Other';
 
+  static const entryContextTagNone = 'No context tag';
+
+  static String entryContextTagPresent(String label) => 'Context: $label';
+
+  static const entryContextTagEdit = 'Edit context';
+
+  static const entryContextTagEditTitle = 'Edit context tag';
+
+  static const entryContextTagClear = 'Clear tag';
+
+  static const entryContextTagCancel = 'Cancel';
+
   static const archiveHealthSingleContextTagLine =
       'Tagged moments so far share one context.';
 

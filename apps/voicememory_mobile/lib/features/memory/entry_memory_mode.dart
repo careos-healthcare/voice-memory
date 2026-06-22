@@ -145,6 +145,10 @@ abstract class EntryMemoryModeSession {
     pinnedAt: entry.pinnedAt,
     isArchived: entry.isArchived,
     archivedAt: entry.archivedAt,
+    entryAboutness: entry.entryAboutness,
+    memorySurfacing: entry.memorySurfacing,
+    preserveOriginal: entry.preserveOriginal,
+    captureContextTag: entry.captureContextTag,
   );
 
   @visibleForTesting
