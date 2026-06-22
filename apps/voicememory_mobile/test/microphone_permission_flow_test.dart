@@ -897,6 +897,36 @@ void main() {
 
       expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
       expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.typeInsteadBlockedHelper), findsOneWidget);
+    });
+
+    testWidgets('simulator layout prioritizes Type Instead over Open Settings', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MicrophonePermissionBlockedPanel(
+              showSimulatorHelper: true,
+              onOpenSettings: () {},
+              onTypeInstead: () async {},
+            ),
+          ),
+        ),
+      );
+
+      final typeInstead = find.byKey(const Key('microphone_permission_type_instead'));
+      final openSettings = find.byKey(const Key('microphone_permission_open_settings'));
+      expect(typeInstead, findsOneWidget);
+      expect(openSettings, findsOneWidget);
+      expect(
+        tester.getTopLeft(typeInstead).dy < tester.getTopLeft(openSettings).dy,
+        isTrue,
+      );
+      expect(
+        find.text(MicrophonePermissionCopy.simulatorHelper),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows simulator helper copy when enabled', (tester) async {
@@ -939,6 +969,7 @@ void main() {
       );
       expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsOneWidget);
       expect(find.text(MicrophonePermissionCopy.typeInsteadCta), findsOneWidget);
+      expect(find.text(MicrophonePermissionCopy.typeInsteadBlockedHelper), findsOneWidget);
     });
 
     testWidgets('Type Instead navigates to quick capture', (tester) async {

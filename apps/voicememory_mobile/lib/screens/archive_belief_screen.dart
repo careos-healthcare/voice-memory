@@ -839,6 +839,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
   }
 
+  bool get _suppressEarlyArchiveBeliefProof {
+    if (!_patternsFirstThreeStack) return false;
+    if (_entries.length < FirstThreeSessionGates.minEntriesForRepeatSurface) {
+      return true;
+    }
+    if (_entries.length == FirstThreeSessionGates.minEntriesForRepeatSurface) {
+      return !const SecondSessionSignalEngine().hasGroundedRepeatMatch(
+        _entries,
+      );
+    }
+    return false;
+  }
+
   bool get _patternsHideAdvancedRetention =>
       _patternsFirstThreeStack ||
       FirstThreeJourneyCoordinator.shouldHideAdvancedRetention(_entries.length);
@@ -1890,7 +1903,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
-                ..._buildArchiveBeliefProofWidgets(),
+                if (!_suppressEarlyArchiveBeliefProof)
+                  ..._buildArchiveBeliefProofWidgets(),
                 if (!journey.completed) ...[
                   FirstThreeJourneyCard(model: journey),
                   const SizedBox(height: AppSpacing.lg),
