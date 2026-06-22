@@ -226,7 +226,7 @@ void main() {
 
       expect(policy.state, RecordCtaPolicyState.returning);
       expect(policy.primaryLabel, MicrophonePermissionCopy.openSettingsCta);
-      expect(policy.action, RecordCtaAction.routeToBlockedPanel);
+      expect(policy.action, RecordCtaAction.openSettings);
       expect(policy.micPermissionState, MicrophonePermissionState.deniedOpenSettings);
     });
 
@@ -308,7 +308,7 @@ void main() {
       ]);
     });
 
-    test('permission blocked hides card record CTAs', () {
+    test('permission blocked shows Open Settings and Type Instead', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.permissionBlocked,
         entryCount: 0,
@@ -317,11 +317,66 @@ void main() {
         isDegradedVoiceSave: false,
         micPhase: RecordingPhase.permissionDenied,
         micPermissionState: MicrophonePermissionState.deniedCanAskAgain,
+        userDeniedThisSession: true,
       );
 
       expect(policy.state, RecordCtaPolicyState.permissionBlocked);
-      expect(policy.primaryLabel, isNull);
+      expect(policy.primaryLabel, MicrophonePermissionCopy.openSettingsCta);
+      expect(policy.action, RecordCtaAction.openSettings);
+      expect(policy.secondaryLabels, [EmptyArchiveCopy.typeInsteadCta]);
       expect(policy.hideCardRecordCtas, isTrue);
+      expect(policy.primaryLabel, isNotNull);
+      expect(policy.action, isNotNull);
+    });
+
+    test('requestable denied state shows Allow microphone', () {
+      final policy = RecordCtaPolicy.resolve(
+        ui: RecordUiState.ready,
+        entryCount: 0,
+        entryCountLoaded: true,
+        showPostSaveLoop: false,
+        isDegradedVoiceSave: false,
+        micPhase: RecordingPhase.permissionDenied,
+        micPermissionState: MicrophonePermissionState.deniedCanAskAgain,
+        userDeniedThisSession: false,
+      );
+
+      expect(policy.primaryLabel, MicrophonePermissionCopy.allowMicrophoneCta);
+      expect(policy.action, RecordCtaAction.requestPermission);
+      expect(policy.secondaryLabels, [EmptyArchiveCopy.typeInsteadCta]);
+    });
+
+    test('session denial on ready shows Open Settings', () {
+      final policy = RecordCtaPolicy.resolve(
+        ui: RecordUiState.ready,
+        entryCount: 0,
+        entryCountLoaded: true,
+        showPostSaveLoop: false,
+        isDegradedVoiceSave: false,
+        micPhase: RecordingPhase.permissionDenied,
+        micPermissionState: MicrophonePermissionState.deniedCanAskAgain,
+        userDeniedThisSession: true,
+      );
+
+      expect(policy.primaryLabel, MicrophonePermissionCopy.openSettingsCta);
+      expect(policy.action, RecordCtaAction.openSettings);
+    });
+
+    test('permanentlyDenied maps to Open Settings', () {
+      final policy = RecordCtaPolicy.resolve(
+        ui: RecordUiState.permissionBlocked,
+        entryCount: 0,
+        entryCountLoaded: true,
+        showPostSaveLoop: false,
+        isDegradedVoiceSave: false,
+        micPhase: RecordingPhase.permissionPermanentlyDenied,
+        micPermissionState: MicrophonePermissionState.deniedOpenSettings,
+        sessionRequiresOpenSettings: true,
+      );
+
+      expect(policy.primaryLabel, MicrophonePermissionCopy.openSettingsCta);
+      expect(policy.action, RecordCtaAction.openSettings);
+      expect(policy.micPermissionState, MicrophonePermissionState.deniedOpenSettings);
     });
   });
 }

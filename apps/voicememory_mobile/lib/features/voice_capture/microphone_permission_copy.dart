@@ -11,4 +11,7 @@ abstract class MicrophonePermissionCopy {
   static const String typeInsteadCta = 'Type Instead';
 
   static const String statusBlocked = 'Microphone blocked';
+
+  static const String simulatorHelper =
+      'Turn microphone on in Settings, or reset this simulator\'s privacy permissions.';
 }

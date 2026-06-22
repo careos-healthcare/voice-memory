@@ -6,26 +6,20 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/voice_capture/microphone_permission_copy.dart';
-import '../../features/voice_capture/microphone_permission_state.dart';
 import '../../services/capture_pipeline_service.dart';
 
 /// Denied-microphone recovery UI on the Record screen.
 class MicrophonePermissionBlockedPanel extends StatelessWidget {
   const MicrophonePermissionBlockedPanel({
     super.key,
-    required this.state,
-    required this.onAllowMicrophone,
     required this.onOpenSettings,
     required this.onTypeInstead,
+    this.showSimulatorHelper = false,
   });
 
-  final MicrophonePermissionState state;
-  final VoidCallback onAllowMicrophone;
   final VoidCallback onOpenSettings;
   final Future<void> Function() onTypeInstead;
-
-  bool get _showOpenSettings =>
-      state == MicrophonePermissionState.deniedOpenSettings;
+  final bool showSimulatorHelper;
 
   @override
   Widget build(BuildContext context) {
@@ -47,27 +41,27 @@ class MicrophonePermissionBlockedPanel extends StatelessWidget {
             height: 1.4,
           ),
         ),
-        const SizedBox(height: 16),
-        if (_showOpenSettings)
-          SizedBox(
-            height: 48,
-            width: double.infinity,
-            child: FilledButton(
-              key: const Key('microphone_permission_open_settings'),
-              onPressed: onOpenSettings,
-              child: const Text(MicrophonePermissionCopy.openSettingsCta),
-            ),
-          )
-        else
-          SizedBox(
-            height: 48,
-            width: double.infinity,
-            child: FilledButton(
-              key: const Key('microphone_permission_allow'),
-              onPressed: onAllowMicrophone,
-              child: const Text(MicrophonePermissionCopy.allowMicrophoneCta),
+        if (showSimulatorHelper) ...[
+          const SizedBox(height: 8),
+          Text(
+            MicrophonePermissionCopy.simulatorHelper,
+            key: const Key('microphone_permission_simulator_helper'),
+            style: ArchiveMobileTypography.responsiveBody(context).copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              height: 1.4,
             ),
           ),
+        ],
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 48,
+          width: double.infinity,
+          child: FilledButton(
+            key: const Key('microphone_permission_open_settings'),
+            onPressed: onOpenSettings,
+            child: const Text(MicrophonePermissionCopy.openSettingsCta),
+          ),
+        ),
         const SizedBox(height: 8),
         SizedBox(
           height: 48,

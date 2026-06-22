@@ -6,6 +6,7 @@ enum RecordCtaAction {
   startRecording,
   requestPermission,
   routeToBlockedPanel,
+  openSettings,
 }
 
 abstract class RecordMicrophonePermissionUi {
@@ -55,12 +56,14 @@ abstract class RecordMicrophonePermissionUi {
   static MicrophoneBlockedPanelKind blockedPanelKind({
     required RecordingPhase micPhase,
     required bool userDeniedThisSession,
+    bool sessionRequiresOpenSettings = false,
   }) {
-    if (micPhase == RecordingPhase.permissionPermanentlyDenied) {
+    if (sessionRequiresOpenSettings ||
+        micPhase == RecordingPhase.permissionPermanentlyDenied) {
       return MicrophoneBlockedPanelKind.openSettings;
     }
     if (micPhase == RecordingPhase.permissionDenied && userDeniedThisSession) {
-      return MicrophoneBlockedPanelKind.allowMicrophone;
+      return MicrophoneBlockedPanelKind.openSettings;
     }
     return MicrophoneBlockedPanelKind.none;
   }
@@ -87,6 +90,7 @@ abstract class RecordMicrophonePermissionUi {
     required RecordUiState currentUi,
     required bool ignoreAfterGrant,
     required bool fromUserRequest,
+    bool sessionRequiresOpenSettings = false,
   }) {
     if (shouldIgnoreStaleMicRefresh(
       ignoreAfterGrant: ignoreAfterGrant,
@@ -99,9 +103,15 @@ abstract class RecordMicrophonePermissionUi {
     final nextUserDenied = switch (phase) {
       RecordingPhase.ready => false,
       RecordingPhase.permissionPermanentlyDenied => true,
-      RecordingPhase.permissionDenied => fromUserRequest,
+      RecordingPhase.permissionDenied =>
+        fromUserRequest || userDeniedThisSession,
       _ => userDeniedThisSession,
     };
+
+    final nextSessionRequiresOpenSettings =
+        sessionRequiresOpenSettings ||
+        phase == RecordingPhase.permissionPermanentlyDenied ||
+        (fromUserRequest && phase != RecordingPhase.ready);
 
     final nextUi = uiForMicPhase(
       phase: phase,
@@ -112,10 +122,12 @@ abstract class RecordMicrophonePermissionUi {
       mic: phase,
       userDenied: nextUserDenied,
       ui: nextUi,
+      sessionRequiresOpenSettings: nextSessionRequiresOpenSettings,
       initialDeniedCanAskAgain: !fromUserRequest &&
           phase == RecordingPhase.permissionDenied &&
           !nextUserDenied,
-      permanentDenied: phase == RecordingPhase.permissionPermanentlyDenied,
+      permanentDenied: phase == RecordingPhase.permissionPermanentlyDenied ||
+          nextSessionRequiresOpenSettings,
       userDeniedBlocked: fromUserRequest &&
           phase == RecordingPhase.permissionDenied &&
           nextUserDenied,
@@ -140,11 +152,11 @@ abstract class RecordMicrophonePermissionUi {
       return RecordCtaAction.startRecording;
     }
     if (micPhase == RecordingPhase.permissionPermanentlyDenied) {
-      return RecordCtaAction.routeToBlockedPanel;
+      return RecordCtaAction.openSettings;
     }
     if (micPhase == RecordingPhase.permissionDenied) {
       return userDeniedThisSession
-          ? RecordCtaAction.routeToBlockedPanel
+          ? RecordCtaAction.openSettings
           : RecordCtaAction.requestPermission;
     }
     return RecordCtaAction.requestPermission;
@@ -192,6 +204,7 @@ class RecordMicRefreshApplyResult {
     this.mic,
     this.userDenied,
     this.ui,
+    this.sessionRequiresOpenSettings = false,
     this.initialDeniedCanAskAgain = false,
     this.permanentDenied = false,
     this.userDeniedBlocked = false,
@@ -203,6 +216,7 @@ class RecordMicRefreshApplyResult {
     required RecordingPhase mic,
     required bool userDenied,
     required RecordUiState ui,
+    bool sessionRequiresOpenSettings = false,
     bool initialDeniedCanAskAgain = false,
     bool permanentDenied = false,
     bool userDeniedBlocked = false,
@@ -211,6 +225,7 @@ class RecordMicRefreshApplyResult {
          mic: mic,
          userDenied: userDenied,
          ui: ui,
+         sessionRequiresOpenSettings: sessionRequiresOpenSettings,
          initialDeniedCanAskAgain: initialDeniedCanAskAgain,
          permanentDenied: permanentDenied,
          userDeniedBlocked: userDeniedBlocked,
@@ -220,6 +235,7 @@ class RecordMicRefreshApplyResult {
   final RecordingPhase? mic;
   final bool? userDenied;
   final RecordUiState? ui;
+  final bool sessionRequiresOpenSettings;
   final bool initialDeniedCanAskAgain;
   final bool permanentDenied;
   final bool userDeniedBlocked;
