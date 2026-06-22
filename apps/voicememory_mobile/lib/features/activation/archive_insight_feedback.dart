@@ -34,6 +34,24 @@ abstract final class ArchiveInsightFeedbackCopy {
       VisibleArchiveProofCopy.insightFeedbackWhyNotConclusion;
 
   static const whyHide = VisibleArchiveProofCopy.insightFeedbackWhyHide;
+
+  static const correctionAffordance =
+      VisibleArchiveProofCopy.insightCorrectionAffordance;
+
+  static const correctionPlaceholder =
+      VisibleArchiveProofCopy.insightCorrectionPlaceholder;
+
+  static const correctionSaveCta =
+      VisibleArchiveProofCopy.insightCorrectionSaveCta;
+
+  static const correctionSkipCta =
+      VisibleArchiveProofCopy.insightCorrectionSkipCta;
+
+  static const correctionMarkedNotQuite =
+      VisibleArchiveProofCopy.insightCorrectionMarkedNotQuite;
+
+  static const correctionYourNotePrefix =
+      VisibleArchiveProofCopy.insightCorrectionYourNotePrefix;
 }
 
 /// Visibility gates — no controls on premature early-ladder surfaces.
@@ -60,9 +78,12 @@ abstract final class ArchiveInsightFeedbackStore {
 
   static const _prefsKey = 'archive_insight_feedback';
 
+  static const maxCorrectionNoteLength = 240;
+
   static final Set<String> _hidden = <String>{};
   static final Map<String, int> _feelsRight = <String, int>{};
   static final Map<String, int> _notQuite = <String, int>{};
+  static final Map<String, String> _correctionNotes = <String, String>{};
 
   static String archiveHomeId(ArchiveHomeStage stage) =>
       'archive_home_${stage.name}';
@@ -74,6 +95,27 @@ abstract final class ArchiveInsightFeedbackStore {
   static int feelsRightCount(String insightId) => _feelsRight[insightId] ?? 0;
 
   static int notQuiteCount(String insightId) => _notQuite[insightId] ?? 0;
+
+  static String? correctionNote(String insightId) => _correctionNotes[insightId];
+
+  static bool hasCorrectionNote(String insightId) =>
+      (_correctionNotes[insightId]?.trim().isNotEmpty ?? false);
+
+  /// Returns trimmed note capped at [maxCorrectionNoteLength], or null if empty.
+  static String? normalizeCorrectionNote(String rawNote) {
+    final trimmed = rawNote.trim();
+    if (trimmed.isEmpty) return null;
+    if (trimmed.length <= maxCorrectionNoteLength) return trimmed;
+    return trimmed.substring(0, maxCorrectionNoteLength);
+  }
+
+  static bool saveCorrectionNote(String insightId, String rawNote) {
+    final normalized = normalizeCorrectionNote(rawNote);
+    if (normalized == null) return false;
+    _correctionNotes[insightId] = normalized;
+    _persist();
+    return true;
+  }
 
   static void record(
     String insightId,
@@ -124,6 +166,20 @@ abstract final class ArchiveInsightFeedbackStore {
         }
       }
     }
+    _correctionNotes.clear();
+    final notesRaw = raw['correctionNotes'];
+    if (notesRaw is Map) {
+      for (final entry in notesRaw.entries) {
+        final key = entry.key?.toString();
+        final value = entry.value?.toString().trim();
+        if (key != null && value != null && value.isNotEmpty) {
+          final normalized = normalizeCorrectionNote(value);
+          if (normalized != null) {
+            _correctionNotes[key] = normalized;
+          }
+        }
+      }
+    }
   }
 
   static void _persist() {
@@ -133,6 +189,7 @@ abstract final class ArchiveInsightFeedbackStore {
       'hidden': _hidden.toList()..sort(),
       'feelsRight': _feelsRight,
       'notQuite': _notQuite,
+      'correctionNotes': _correctionNotes,
     });
   }
 
@@ -141,5 +198,6 @@ abstract final class ArchiveInsightFeedbackStore {
     _hidden.clear();
     _feelsRight.clear();
     _notQuite.clear();
+    _correctionNotes.clear();
   }
 }

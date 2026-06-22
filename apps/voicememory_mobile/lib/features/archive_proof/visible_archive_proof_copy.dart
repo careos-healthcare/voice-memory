@@ -456,6 +456,20 @@ abstract final class VisibleArchiveProofCopy {
   static const insightAdaptationSavedUsefulFeedback =
       'Saved as useful feedback.';
 
+  // Private correction notes — local only, never shared.
+  static const insightCorrectionAffordance = 'Tell ArchiveMe what it missed';
+
+  static const insightCorrectionPlaceholder = 'Add a private note\u2026';
+
+  static const insightCorrectionSaveCta = 'Save note';
+
+  static const insightCorrectionSkipCta = 'Skip';
+
+  static const insightCorrectionMarkedNotQuite =
+      'You marked this as not quite right.';
+
+  static const insightCorrectionYourNotePrefix = 'Your note:';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
