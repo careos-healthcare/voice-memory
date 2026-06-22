@@ -508,13 +508,13 @@ void main() {
       );
     });
 
-    test('loop record CTA uses blocked panel path when permanently denied', () {
+    test('loop record CTA uses open settings path when permanently denied', () {
       expect(
         RecordMicrophonePermissionUi.recordCtaAction(
           micPhase: RecordingPhase.permissionPermanentlyDenied,
           userDeniedThisSession: true,
         ),
-        RecordCtaAction.routeToBlockedPanel,
+        RecordCtaAction.openSettings,
       );
       expect(
         RecordMicrophonePermissionUi.shouldHideCompetingRecordCtas(

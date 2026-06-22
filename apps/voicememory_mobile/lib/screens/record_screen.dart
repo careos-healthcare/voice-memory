@@ -348,6 +348,8 @@ class _RecordScreenState extends State<RecordScreen> {
   MicrophonePermissionState _micPermissionState =
       MicrophonePermissionState.unknown;
   bool _micPermissionUserDenied = false;
+  bool _micSessionRequiresOpenSettings = false;
+  bool _showMicPermissionSimulatorHelper = false;
   bool _ignoreStaleMicRefreshAfterGrant = false;
   final GlobalKey _permissionPanelKey = GlobalKey();
   int _seconds = 0;
@@ -463,6 +465,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (mounted) setState(() => _seconds = s);
     });
     _refreshMic();
+    unawaited(_loadMicPermissionSimulatorHelper());
     unawaited(
       _loadJournalEntryCount().then((_) async {
         if (_journalEntryCount >= 2) {
@@ -1528,6 +1531,14 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
+  Future<void> _loadMicPermissionSimulatorHelper() async {
+    final showHelper = await MicrophonePermissionEnvironment.isIosSimulator();
+    if (!mounted) return;
+    if (_showMicPermissionSimulatorHelper != showHelper) {
+      setState(() => _showMicPermissionSimulatorHelper = showHelper);
+    }
+  }
+
   Future<void> _openMicSettings() async {
     _ignoreStaleMicRefreshAfterGrant = false;
     await openMicrophoneSettings();
@@ -1592,6 +1603,7 @@ class _RecordScreenState extends State<RecordScreen> {
       micPhase: effectiveMicPhase,
       micPermissionState: permission,
       userDeniedThisSession: userDenied,
+      sessionRequiresOpenSettings: _micSessionRequiresOpenSettings,
     );
   }
 
@@ -1612,25 +1624,6 @@ class _RecordScreenState extends State<RecordScreen> {
     if (_lastCtaPolicyLogLine == line) return;
     _lastCtaPolicyLogLine = line;
     RecordCtaPolicy.log(resolution);
-  }
-
-  MicrophonePermissionState _micPermissionUiState() {
-    if (_micPermissionState == MicrophonePermissionState.granted ||
-        _micPermissionState ==
-            MicrophonePermissionState.grantedWithPermissionHandlerMismatch) {
-      return _micPermissionState;
-    }
-    return switch (RecordMicrophonePermissionUi.blockedPanelKind(
-      micPhase: _mic,
-      userDeniedThisSession: _micPermissionUserDenied,
-    )) {
-      MicrophoneBlockedPanelKind.openSettings =>
-        MicrophonePermissionState.deniedOpenSettings,
-      MicrophoneBlockedPanelKind.allowMicrophone =>
-        MicrophonePermissionState.deniedCanAskAgain,
-      MicrophoneBlockedPanelKind.none =>
-        MicrophonePermissionState.deniedCanAskAgain,
-    };
   }
 
   void _logMicRefreshApply(RecordMicRefreshApplyResult applied) {
@@ -1657,6 +1650,7 @@ class _RecordScreenState extends State<RecordScreen> {
         _mic = RecordingPhase.ready;
         _micPermissionState = resolution.state;
         _micPermissionUserDenied = false;
+        _micSessionRequiresOpenSettings = false;
         _ui = RecordUiState.ready;
         if (resolution.state == MicrophonePermissionState.granted) {
           _ignoreStaleMicRefreshAfterGrant = true;
@@ -1673,6 +1667,7 @@ class _RecordScreenState extends State<RecordScreen> {
       currentUi: _ui,
       ignoreAfterGrant: _ignoreStaleMicRefreshAfterGrant,
       fromUserRequest: fromUserRequest,
+      sessionRequiresOpenSettings: _micSessionRequiresOpenSettings,
     );
     if (applied.ignored) {
       _recordPermissionUiLog('stale refresh ignored after granted=true');
@@ -1683,6 +1678,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _mic = applied.mic!;
       _micPermissionState = resolution.state;
       _micPermissionUserDenied = applied.userDenied!;
+      _micSessionRequiresOpenSettings = applied.sessionRequiresOpenSettings;
       _ui = applied.ui!;
     });
     _recordLog('state ui=$_ui mic=$cap (refresh)');
@@ -1787,6 +1783,9 @@ class _RecordScreenState extends State<RecordScreen> {
       case RecordCtaAction.requestPermission:
         _trackRecordCtaPressed();
         await _requestPermissionAndRecord();
+      case RecordCtaAction.openSettings:
+        _recordCtaLog('open_settings=true');
+        await _openMicSettings();
       case RecordCtaAction.routeToBlockedPanel:
         final stateLabel = RecordMicrophonePermissionUi.micBlockedStateLabel(
           micPhase: _mic,
@@ -1795,7 +1794,9 @@ class _RecordScreenState extends State<RecordScreen> {
         _recordCtaLog('blocked_by_permission state=$stateLabel');
         if (policy.micPermissionState ==
                 MicrophonePermissionState.deniedOpenSettings ||
-            _mic == RecordingPhase.permissionPermanentlyDenied) {
+            _mic == RecordingPhase.permissionPermanentlyDenied ||
+            _micSessionRequiresOpenSettings ||
+            _micPermissionUserDenied) {
           await _openMicSettings();
         } else {
           await _routeToPermissionPanel();
@@ -1838,6 +1839,7 @@ class _RecordScreenState extends State<RecordScreen> {
         _mic = RecordingPhase.ready;
         _micPermissionState = existing.state;
         _micPermissionUserDenied = false;
+        _micSessionRequiresOpenSettings = false;
         _ui = RecordUiState.ready;
       });
       _recordPermissionUiLog(
@@ -1870,7 +1872,12 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     _recordPermissionUiLog('request result=denied show_blocked=true');
     if (_ui != RecordUiState.permissionBlocked) {
-      setState(() => _ui = RecordUiState.permissionBlocked);
+      setState(() {
+        _ui = RecordUiState.permissionBlocked;
+        _micSessionRequiresOpenSettings = true;
+      });
+    } else {
+      setState(() => _micSessionRequiresOpenSettings = true);
     }
     await _routeToPermissionPanel();
   }
@@ -1904,6 +1911,7 @@ class _RecordScreenState extends State<RecordScreen> {
           _mic = RecordingPhase.ready;
           _micPermissionState = resolution.state;
           _micPermissionUserDenied = false;
+          _micSessionRequiresOpenSettings = false;
           _ui = RecordUiState.ready;
         });
       } else if (!await MicrophonePermissionEnvironment.shouldSkipPermissionRequest(
@@ -1938,7 +1946,12 @@ class _RecordScreenState extends State<RecordScreen> {
     _recordLog('start failed — permission not granted');
     RecordPipelineLog.microphonePermissionBlocked(blocked: true);
     if (_ui != RecordUiState.permissionBlocked) {
-      setState(() => _ui = RecordUiState.permissionBlocked);
+      setState(() {
+        _ui = RecordUiState.permissionBlocked;
+        _micSessionRequiresOpenSettings = true;
+      });
+    } else {
+      setState(() => _micSessionRequiresOpenSettings = true);
     }
     await _routeToPermissionPanel();
   }
@@ -3241,8 +3254,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       KeyedSubtree(
                         key: _permissionPanelKey,
                         child: MicrophonePermissionBlockedPanel(
-                          state: _micPermissionUiState(),
-                          onAllowMicrophone: _requestMic,
+                          showSimulatorHelper: _showMicPermissionSimulatorHelper,
                           onOpenSettings: _openMicSettings,
                           onTypeInstead: _typeInsteadFromPermission,
                         ),

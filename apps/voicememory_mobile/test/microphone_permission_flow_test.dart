@@ -510,7 +510,7 @@ void main() {
       expect(applied.ignored, isTrue);
     });
 
-    test('user denial maps to permissionBlocked with Allow microphone path', () {
+    test('user denial maps to permissionBlocked with Open Settings path', () {
       expect(
         RecordMicrophonePermissionUi.uiForMicPhase(
           phase: RecordingPhase.permissionDenied,
@@ -523,7 +523,7 @@ void main() {
           micPhase: RecordingPhase.permissionDenied,
           userDeniedThisSession: true,
         ),
-        MicrophoneBlockedPanelKind.allowMicrophone,
+        MicrophoneBlockedPanelKind.openSettings,
       );
     });
 
@@ -610,13 +610,13 @@ void main() {
       );
     });
 
-    test('record CTA routes to blocked panel after session denial', () {
+    test('record CTA routes to open settings after session denial', () {
       expect(
         RecordMicrophonePermissionUi.recordCtaAction(
           micPhase: RecordingPhase.permissionDenied,
           userDeniedThisSession: true,
         ),
-        RecordCtaAction.routeToBlockedPanel,
+        RecordCtaAction.openSettings,
       );
       expect(
         RecordMicrophonePermissionUi.micBlockedStateLabel(
@@ -627,13 +627,13 @@ void main() {
       );
     });
 
-    test('record CTA routes to blocked panel when permanently denied', () {
+    test('record CTA routes to open settings when permanently denied', () {
       expect(
         RecordMicrophonePermissionUi.recordCtaAction(
           micPhase: RecordingPhase.permissionPermanentlyDenied,
           userDeniedThisSession: false,
         ),
-        RecordCtaAction.routeToBlockedPanel,
+        RecordCtaAction.openSettings,
       );
       expect(
         RecordMicrophonePermissionUi.micBlockedStateLabel(
@@ -719,7 +719,7 @@ void main() {
       expect(applied.ignored, isTrue);
     });
 
-    test('passive refresh never marks userDenied for deniedCanAskAgain', () {
+    test('passive refresh preserves session denial for deniedCanAskAgain', () {
       final applied = RecordMicrophonePermissionUi.applyMicRefresh(
         phase: RecordingPhase.permissionDenied,
         userDeniedThisSession: true,
@@ -727,8 +727,73 @@ void main() {
         ignoreAfterGrant: false,
         fromUserRequest: false,
       );
-      expect(applied.userDenied, isFalse);
-      expect(applied.ui, RecordUiState.ready);
+      expect(applied.userDenied, isTrue);
+      expect(applied.ui, RecordUiState.permissionBlocked);
+      expect(applied.sessionRequiresOpenSettings, isFalse);
+    });
+
+    test('passive refresh preserves permanentlyDenied session block', () {
+      final applied = RecordMicrophonePermissionUi.applyMicRefresh(
+        phase: RecordingPhase.permissionDenied,
+        userDeniedThisSession: true,
+        currentUi: RecordUiState.permissionBlocked,
+        ignoreAfterGrant: false,
+        fromUserRequest: false,
+        sessionRequiresOpenSettings: true,
+      );
+      expect(applied.userDenied, isTrue);
+      expect(applied.ui, RecordUiState.permissionBlocked);
+      expect(applied.sessionRequiresOpenSettings, isTrue);
+      expect(
+        RecordMicrophonePermissionUi.blockedPanelKind(
+          micPhase: applied.mic!,
+          userDeniedThisSession: applied.userDenied!,
+          sessionRequiresOpenSettings: applied.sessionRequiresOpenSettings,
+        ),
+        MicrophoneBlockedPanelKind.openSettings,
+      );
+    });
+
+    test('user request denial sets session open settings requirement', () {
+      final applied = RecordMicrophonePermissionUi.applyMicRefresh(
+        phase: RecordingPhase.permissionDenied,
+        userDeniedThisSession: false,
+        currentUi: RecordUiState.requestingPermission,
+        ignoreAfterGrant: false,
+        fromUserRequest: true,
+      );
+      expect(applied.userDenied, isTrue);
+      expect(applied.ui, RecordUiState.permissionBlocked);
+      expect(applied.sessionRequiresOpenSettings, isTrue);
+    });
+
+    test('permanentlyDenied request result keeps open settings until granted', () {
+      final denied = RecordMicrophonePermissionUi.applyMicRefresh(
+        phase: RecordingPhase.permissionPermanentlyDenied,
+        userDeniedThisSession: false,
+        currentUi: RecordUiState.requestingPermission,
+        ignoreAfterGrant: false,
+        fromUserRequest: true,
+      );
+      expect(denied.sessionRequiresOpenSettings, isTrue);
+
+      final refreshed = RecordMicrophonePermissionUi.applyMicRefresh(
+        phase: RecordingPhase.permissionDenied,
+        userDeniedThisSession: denied.userDenied!,
+        currentUi: denied.ui!,
+        ignoreAfterGrant: false,
+        fromUserRequest: false,
+        sessionRequiresOpenSettings: denied.sessionRequiresOpenSettings,
+      );
+      expect(refreshed.sessionRequiresOpenSettings, isTrue);
+      expect(
+        RecordMicrophonePermissionUi.blockedPanelKind(
+          micPhase: refreshed.mic!,
+          userDeniedThisSession: refreshed.userDenied!,
+          sessionRequiresOpenSettings: refreshed.sessionRequiresOpenSettings,
+        ),
+        MicrophoneBlockedPanelKind.openSettings,
+      );
     });
 
     test('initial deniedCanAskAgain shows Record one moment not blocked copy', () {
@@ -816,24 +881,41 @@ void main() {
   });
 
   group('MicrophonePermissionBlockedPanel', () {
-    testWidgets('denied can-ask-again shows Allow microphone CTA', (
+    testWidgets('blocked panel always shows Open Settings CTA', (
       tester,
     ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: MicrophonePermissionBlockedPanel(
-              state: MicrophonePermissionState.deniedCanAskAgain,
-              onAllowMicrophone: () {},
-              onOpenSettings: () async {},
+              onOpenSettings: () {},
               onTypeInstead: () async {},
             ),
           ),
         ),
       );
 
-      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsOneWidget);
-      expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsNothing);
+      expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
+      expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsOneWidget);
+    });
+
+    testWidgets('shows simulator helper copy when enabled', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MicrophonePermissionBlockedPanel(
+              showSimulatorHelper: true,
+              onOpenSettings: () {},
+              onTypeInstead: () async {},
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        find.text(MicrophonePermissionCopy.simulatorHelper),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows denied copy, Open Settings, and Type Instead', (
@@ -843,8 +925,6 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: MicrophonePermissionBlockedPanel(
-              state: MicrophonePermissionState.deniedOpenSettings,
-              onAllowMicrophone: () {},
               onOpenSettings: () async {},
               onTypeInstead: () async {},
             ),
@@ -871,8 +951,6 @@ void main() {
                 path: '/',
                 builder: (context, state) => Scaffold(
                   body: MicrophonePermissionBlockedPanel(
-                    state: MicrophonePermissionState.deniedCanAskAgain,
-                    onAllowMicrophone: () {},
                     onOpenSettings: () async {},
                     onTypeInstead: () => navigateToTypeInsteadCapture(context),
                   ),

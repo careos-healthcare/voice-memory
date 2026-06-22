@@ -42,6 +42,7 @@ extension RecordCtaActionLabel on RecordCtaAction {
     RecordCtaAction.startRecording => 'start_recording',
     RecordCtaAction.requestPermission => 'request_permission',
     RecordCtaAction.routeToBlockedPanel => 'route_to_blocked_panel',
+    RecordCtaAction.openSettings => 'open_settings',
   };
 }
 
@@ -85,14 +86,15 @@ abstract class RecordCtaPolicy {
     MicrophonePermissionState micPermissionState =
         MicrophonePermissionState.granted,
     bool userDeniedThisSession = false,
+    bool sessionRequiresOpenSettings = false,
     JournalEntry? lastSavedEntry,
   }) {
     if (ui == RecordUiState.permissionBlocked) {
-      return RecordCtaPolicyResolution(
-        state: RecordCtaPolicyState.permissionBlocked,
-        hideCardRecordCtas: true,
+      return _blockedPermissionPolicy(
         micPhase: micPhase,
         micPermissionState: micPermissionState,
+        userDeniedThisSession: userDeniedThisSession,
+        sessionRequiresOpenSettings: sessionRequiresOpenSettings,
       );
     }
 
@@ -160,6 +162,7 @@ abstract class RecordCtaPolicy {
         micPhase: micPhase,
         micPermissionState: micPermissionState,
         userDeniedThisSession: userDeniedThisSession,
+        sessionRequiresOpenSettings: sessionRequiresOpenSettings,
       );
     }
 
@@ -171,11 +174,40 @@ abstract class RecordCtaPolicy {
     );
   }
 
+  static RecordCtaPolicyResolution _blockedPermissionPolicy({
+    required RecordingPhase micPhase,
+    required MicrophonePermissionState micPermissionState,
+    required bool userDeniedThisSession,
+    required bool sessionRequiresOpenSettings,
+  }) {
+    const secondaryLabels = [EmptyArchiveCopy.typeInsteadCta];
+    final effectivePermission =
+        sessionRequiresOpenSettings ||
+            userDeniedThisSession ||
+            micPermissionState == MicrophonePermissionState.deniedOpenSettings ||
+            micPhase == RecordingPhase.permissionPermanentlyDenied
+        ? MicrophonePermissionState.deniedOpenSettings
+        : micPermissionState;
+
+    return RecordCtaPolicyResolution(
+      state: RecordCtaPolicyState.permissionBlocked,
+      primaryLabel: MicrophonePermissionCopy.openSettingsCta,
+      secondaryLabels: secondaryLabels,
+      showMainBottomCta: true,
+      hideCardRecordCtas: true,
+      showTypeInsteadSecondary: true,
+      action: RecordCtaAction.openSettings,
+      micPhase: micPhase,
+      micPermissionState: effectivePermission,
+    );
+  }
+
   static RecordCtaPolicyResolution _readyCapturePolicy({
     required int entryCount,
     required RecordingPhase micPhase,
     required MicrophonePermissionState micPermissionState,
     required bool userDeniedThisSession,
+    required bool sessionRequiresOpenSettings,
   }) {
     final isFirstUse = entryCount == 0;
     final state = isFirstUse
@@ -184,7 +216,9 @@ abstract class RecordCtaPolicy {
     const secondaryLabels = [EmptyArchiveCopy.typeInsteadCta];
 
     if (micPhase == RecordingPhase.permissionPermanentlyDenied ||
-        micPermissionState == MicrophonePermissionState.deniedOpenSettings) {
+        micPermissionState == MicrophonePermissionState.deniedOpenSettings ||
+        sessionRequiresOpenSettings ||
+        userDeniedThisSession) {
       return RecordCtaPolicyResolution(
         state: state,
         primaryLabel: MicrophonePermissionCopy.openSettingsCta,
@@ -192,9 +226,12 @@ abstract class RecordCtaPolicy {
         showMainBottomCta: true,
         hideCardRecordCtas: true,
         showTypeInsteadSecondary: true,
-        action: RecordCtaAction.routeToBlockedPanel,
+        action: RecordCtaAction.openSettings,
         micPhase: micPhase,
-        micPermissionState: micPermissionState,
+        micPermissionState: micPermissionState ==
+                MicrophonePermissionState.deniedCanAskAgain
+            ? MicrophonePermissionState.deniedOpenSettings
+            : micPermissionState,
       );
     }
 
