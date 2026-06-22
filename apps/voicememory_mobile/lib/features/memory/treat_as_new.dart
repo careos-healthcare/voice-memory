@@ -85,6 +85,7 @@ abstract class TreatAsNew {
       pinnedAt: entry.pinnedAt,
       isArchived: entry.isArchived,
       archivedAt: entry.archivedAt,
+      captureContextTag: entry.captureContextTag,
     );
   }
 

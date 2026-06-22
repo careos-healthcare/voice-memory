@@ -126,6 +126,7 @@ class JournalStore {
     bool? keepSeparate,
     String? archiveThreadId,
     String? archivePackId,
+    String? captureContextTag,
   }) => JournalEntry(
     id: entry.id,
     createdAt: entry.createdAt,
@@ -144,6 +145,10 @@ class JournalStore {
     pinnedAt: entry.pinnedAt,
     isArchived: entry.isArchived,
     archivedAt: entry.archivedAt,
+    entryAboutness: entry.entryAboutness,
+    memorySurfacing: entry.memorySurfacing,
+    preserveOriginal: entry.preserveOriginal,
+    captureContextTag: captureContextTag ?? entry.captureContextTag,
   );
 
   /// Completed reflections (non-empty transcript).
@@ -193,6 +198,10 @@ class JournalStore {
         pinnedAt: entry.pinnedAt,
         isArchived: entry.isArchived,
         archivedAt: entry.archivedAt,
+        entryAboutness: entry.entryAboutness,
+        memorySurfacing: entry.memorySurfacing,
+        preserveOriginal: entry.preserveOriginal,
+        captureContextTag: entry.captureContextTag,
       ),
     );
   }
@@ -225,6 +234,11 @@ class JournalStore {
           pinnedAt: r.pinnedAt ?? existing?.pinnedAt,
           isArchived: r.isArchived || (existing?.isArchived ?? false),
           archivedAt: r.archivedAt ?? existing?.archivedAt,
+          entryAboutness: r.entryAboutness,
+          memorySurfacing: r.memorySurfacing,
+          preserveOriginal:
+              r.preserveOriginal || (existing?.preserveOriginal ?? false),
+          captureContextTag: r.captureContextTag ?? existing?.captureContextTag,
         );
       }
     }

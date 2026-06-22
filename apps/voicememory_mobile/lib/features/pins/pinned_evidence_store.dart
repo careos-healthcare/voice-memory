@@ -65,6 +65,10 @@ class PinnedEvidenceStore {
       pinnedAt: pinned ? (now ?? DateTime.now()) : null,
       isArchived: entry.isArchived,
       archivedAt: entry.archivedAt,
+      entryAboutness: entry.entryAboutness,
+      memorySurfacing: entry.memorySurfacing,
+      preserveOriginal: entry.preserveOriginal,
+      captureContextTag: entry.captureContextTag,
     );
     await _journal.save(updated, first25Source: 'pin_toggle');
     return updated;
