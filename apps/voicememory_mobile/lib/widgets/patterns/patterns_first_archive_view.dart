@@ -3,10 +3,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
+import '../../features/archive_proof/archive_belief_surface.dart';
 import '../../features/archive_proof/archive_demo_preview_resolver.dart';
 import '../../features/archive_proof/archive_proof_record_routes.dart';
 import '../../models/journal_entry.dart';
 import '../../product/consumer_ui_copy.dart';
+import '../../theme/app_spacing.dart';
+import 'archive_belief_surface_card.dart';
 import 'archive_demo_preview_card.dart';
 
 /// Patterns tab — exactly one saved entry. Confirms the archive started and
@@ -30,25 +33,16 @@ class PatternsFirstArchiveView extends StatelessWidget {
   Widget build(BuildContext context) {
     final gap = ArchiveResponsiveLayout.gap(context);
     final entryId = savedEntryId?.trim();
+    final beliefSurface = const ArchiveBeliefSurfaceSource().resolve(entries);
     final demo = const ArchiveDemoPreviewResolver().resolve(entries);
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          ConsumerUiCopy.patternsFirstEntrySavedTitle,
-          style: ArchiveMobileTypography.responsivePageTitle(context),
-        ),
-        SizedBox(height: gap),
-        Text(
-          ConsumerUiCopy.patternsFirstEntrySavedBody,
-          style: ArchiveMobileTypography.explanationBody(context),
-        ),
-        if (demo.shouldShow) ...[
-          SizedBox(height: gap),
-          ArchiveDemoPreviewCard(
-            preview: demo,
+        if (beliefSurface.shouldShow) ...[
+          ArchiveBeliefSurfaceCard(
+            surface: beliefSurface,
             onRecordNext: () => context.go(
               ArchiveProofRecordRoutes.uri(
                 guidedPromptNodeKey:
@@ -56,32 +50,63 @@ class PatternsFirstArchiveView extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: gap),
         ],
-        SizedBox(height: gap),
-        Text(
-          ConsumerUiCopy.patternsFirstEntrySavedHelper,
-          style: ArchiveMobileTypography.responsiveHelper(context),
+        Container(
+          key: const Key('patterns_one_entry_archive_preview_card'),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                ConsumerUiCopy.patternsFirstEntrySavedTitle,
+                style: ArchiveMobileTypography.responsivePageTitle(context),
+              ),
+              SizedBox(height: gap),
+              Text(
+                ConsumerUiCopy.patternsFirstEntrySavedBody,
+                style: ArchiveMobileTypography.explanationBody(context),
+              ),
+              if (demo.shouldShow) ...[
+                SizedBox(height: gap),
+                ArchiveDemoPreviewCard(
+                  preview: demo,
+                  onRecordNext: () => context.go(
+                    ArchiveProofRecordRoutes.uri(
+                      guidedPromptNodeKey:
+                          ArchiveProofRecordRoutes.changeTimelineNodeKey,
+                    ),
+                  ),
+                ),
+              ],
+              SizedBox(height: gap),
+              Text(
+                ConsumerUiCopy.patternsFirstEntrySavedHelper,
+                style: ArchiveMobileTypography.responsiveHelper(context),
+              ),
+              SizedBox(height: gap + 4),
+              FilledButton(
+                key: const Key('patterns_first_archive_record_another'),
+                onPressed: () => context.go('/record'),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: Text(
+                  ConsumerUiCopy.patternsFirstEntrySavedCta,
+                  style: ArchiveMobileTypography.responsiveCta(context),
+                ),
+              ),
+              if (entryId != null && entryId.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                TextButton(
+                  key: const Key('patterns_first_archive_view_saved_entry'),
+                  onPressed: () => context.push('/entry/$entryId'),
+                  child: Text(ConsumerUiCopy.patternsFirstEntryViewSavedCta),
+                ),
+              ],
+            ],
+          ),
         ),
-        SizedBox(height: gap + 4),
-        FilledButton(
-          key: const Key('patterns_first_archive_record_another'),
-          onPressed: () => context.go('/record'),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-          child: Text(
-            ConsumerUiCopy.patternsFirstEntrySavedCta,
-            style: ArchiveMobileTypography.responsiveCta(context),
-          ),
-        ),
-        if (entryId != null && entryId.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          TextButton(
-            key: const Key('patterns_first_archive_view_saved_entry'),
-            onPressed: () => context.push('/entry/$entryId'),
-            child: Text(ConsumerUiCopy.patternsFirstEntryViewSavedCta),
-          ),
-        ],
       ],
     );
 

@@ -1752,10 +1752,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         widgets.add(const SizedBox(height: AppSpacing.lg));
       }
     }
+    widgets.addAll(_buildArchiveBeliefProofWidgets());
     for (final section in decision.sections) {
-      if (section == PatternsSectionType.timeline) {
-        widgets.addAll(_buildArchiveBeliefProofWidgets());
-      }
       widgets.addAll(_sectionWidgets(section, decision));
       if (section == PatternsSectionType.activeCheckIn) {
         final objective = _patternsObjectiveCard();

@@ -1,4 +1,5 @@
 import '../../product/consumer_ui_copy.dart';
+import '../archive_proof/visible_archive_proof_copy.dart';
 
 /// Consumer copy for ArchiveMe's first-three-session product loop.
 abstract class FirstThreeSessionCopy {
@@ -10,13 +11,12 @@ abstract class FirstThreeSessionCopy {
   static const String session1CardBody =
       'Add one more moment so ArchiveMe can compare what shows up again.';
   static const String session1NextAction = 'Add one more moment';
-  static const String session1Title = 'Saved as evidence.';
-  static const String session1Body =
-      'This is now part of your private archive.';
+  static const String session1Title = VisibleArchiveProofCopy.firstSaveTitle;
+  static const String session1Body = VisibleArchiveProofCopy.firstSaveBody;
   static const String session1EnoughForToday =
-      'One small moment is enough for today.';
+      VisibleArchiveProofCopy.firstSaveSecondary;
   static const String session1ReturnTomorrow =
-      'Come back tomorrow to see whether this returns.';
+      VisibleArchiveProofCopy.firstSaveSecondary;
   static const String session1ViewArchive = 'View archive';
   static const String session1RecordAnother = 'Record another';
 

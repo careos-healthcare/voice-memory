@@ -82,7 +82,7 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
 
     final surface = widget.surface;
     return Container(
-      key: const Key('archive_belief_surface_card'),
+      key: const Key('archive_belief_proof_primary_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(

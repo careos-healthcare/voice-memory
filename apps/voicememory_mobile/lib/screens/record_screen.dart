@@ -255,6 +255,7 @@ import '../widgets/record/low_effort_check_in_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
 import '../widgets/record/daily_mirror_record_card.dart';
 import '../widgets/record/microphone_permission_blocked_panel.dart';
+import '../widgets/record/record_top_archive_promise_hero.dart';
 import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
 import '../features/onboarding/record_return_pro_state.dart';
@@ -1573,6 +1574,14 @@ class _RecordScreenState extends State<RecordScreen> {
     bool? userDeniedThisSession,
   }) {
     final phase = micPhase ?? _mic;
+    final permission = micPermissionState ?? _micPermissionState;
+    // Recorder access (e.g. iOS simulator mismatch) wins over a stale denied phase.
+    final effectiveMicPhase =
+        permission == MicrophonePermissionState.granted ||
+            permission ==
+                MicrophonePermissionState.grantedWithPermissionHandlerMismatch
+        ? RecordingPhase.ready
+        : phase;
     final userDenied = userDeniedThisSession ?? _micPermissionUserDenied;
     return RecordCtaPolicy.resolve(
       ui: ui,
@@ -1581,8 +1590,8 @@ class _RecordScreenState extends State<RecordScreen> {
       showPostSaveLoop: _showPostSaveLoop,
       isDegradedVoiceSave: _lastSavedEntryIsDegraded,
       lastSavedEntry: _lastSavedEntry,
-      micPhase: phase,
-      micPermissionState: micPermissionState ?? _micPermissionState,
+      micPhase: effectiveMicPhase,
+      micPermissionState: permission,
       userDeniedThisSession: userDenied,
     );
   }
@@ -3023,6 +3032,13 @@ class _RecordScreenState extends State<RecordScreen> {
                         width: 0,
                         height: 0,
                       ),
+                    if (showFraming &&
+                        ui == RecordUiState.ready &&
+                        _journalEntryCountReady &&
+                        _journalEntryCount == 0) ...[
+                      const RecordTopArchivePromiseHero(),
+                      const SizedBox(height: 16),
+                    ],
                     if (showFraming && stack.showFramingTitle) ...[
                       Text(
                         RecordScreenFramingCopy.title,

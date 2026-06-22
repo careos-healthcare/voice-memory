@@ -18,7 +18,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_60_second_intro_card.dart';
-import 'package:voicememory_mobile/widgets/onboarding/first_archive_helper_card.dart';
+import 'package:voicememory_mobile/widgets/onboarding/first_archive_value_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_recording_value_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/pro_continuity_bridge_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/tomorrow_return_card.dart';
@@ -273,8 +273,8 @@ void main() {
       expect(First60Gates.showArchiveHelper(entryCount: 0), isFalse);
       expect(First60Gates.showArchiveHelper(entryCount: 1), isTrue);
       expect(First60Gates.showArchiveHelper(entryCount: 2), isFalse);
-      expect(FirstArchiveHelperCard.shouldShow(1), isTrue);
-      expect(FirstArchiveHelperCard.shouldShow(2), isFalse);
+      expect(FirstArchiveValueCard.shouldShow(1), isTrue);
+      expect(FirstArchiveValueCard.shouldShow(2), isFalse);
     });
   });
 
@@ -703,16 +703,16 @@ void main() {
       await pumpJournal(tester);
 
       expect(
-        find.byKey(const Key('first_60_archive_helper_card')),
+        find.byKey(const Key('first_archive_value_card')),
         findsOneWidget,
       );
-      expect(find.text(First60Copy.helperTitle), findsOneWidget);
-      expect(find.text(First60Copy.helperBody), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.archiveTitle), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.archiveBody), findsOneWidget);
       // Search 2.0 and Pins exist on this branch, so both actions render.
-      expect(find.byKey(const Key('first_60_helper_search')), findsOneWidget);
-      expect(find.byKey(const Key('first_60_helper_pin')), findsOneWidget);
+      expect(find.byKey(const Key('first_archive_search_cta')), findsOneWidget);
+      expect(find.byKey(const Key('first_archive_pin_cta')), findsOneWidget);
       // No Collections / bulk-action pushes inside the helper.
-      final helper = find.byKey(const Key('first_60_archive_helper_card'));
+      final helper = find.byKey(const Key('first_archive_value_card'));
       expect(
         find.descendant(
           of: helper,
@@ -721,7 +721,7 @@ void main() {
         findsNothing,
       );
       expect(
-        eventsNamed(ActivationFunnelAnalytics.first60ArchiveOpened),
+        eventsNamed(ActivationFunnelAnalytics.firstArchiveValueCardSeen),
         hasLength(1),
       );
       expect(tester.takeException(), isNull);
@@ -736,7 +736,7 @@ void main() {
       });
       await pumpJournal(tester);
       expect(
-        find.byKey(const Key('first_60_archive_helper_card')),
+        find.byKey(const Key('first_archive_value_card')),
         findsNothing,
       );
       expect(tester.takeException(), isNull);
@@ -749,7 +749,7 @@ void main() {
         await AppServices.instance.journalStore.save(_entry(id: 'a'));
       });
       await pumpJournal(tester);
-      await tester.tap(find.byKey(const Key('first_60_helper_search')));
+      await tester.tap(find.byKey(const Key('first_archive_search_cta')));
       await tester.pump();
       final field = tester.widget<TextField>(
         find.byKey(const Key('archive_search_bar')),
@@ -765,7 +765,7 @@ void main() {
         await AppServices.instance.journalStore.save(_entry(id: 'a'));
       });
       await pumpJournal(tester);
-      await tester.tap(find.byKey(const Key('first_60_helper_pin')));
+      await tester.tap(find.byKey(const Key('first_archive_pin_cta')));
       await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 100)),
       );
@@ -779,10 +779,10 @@ void main() {
       // An already-pinned entry gets no pin action on a fresh view.
       await pumpJournal(tester);
       expect(
-        find.byKey(const Key('first_60_archive_helper_card')),
+        find.byKey(const Key('first_archive_value_card')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('first_60_helper_pin')), findsNothing);
+      expect(find.byKey(const Key('first_archive_pin_cta')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 

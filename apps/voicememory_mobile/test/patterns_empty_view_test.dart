@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/widgets/patterns/patterns_empty_view.dart';
 import 'package:voicememory_mobile/widgets/patterns/patterns_first_archive_view.dart';
@@ -16,7 +17,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.patternsEarlyStateBody), findsOneWidget);
+    expect(
+      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBody),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.patternsEmptyCta), findsOneWidget);
     expect(find.text('Record one moment'), findsOneWidget);
     expect(find.text('Record first moment'), findsNothing);
