@@ -311,6 +311,33 @@ abstract final class VisibleArchiveProofCopy {
   static const shareProofProductLine =
       'ArchiveMe — your private evidence-based life archive.';
 
+  // Archive Home command center — one surface across the entry ladder.
+  static const archiveHomeEmptyTitle = 'Your archive starts with one moment.';
+
+  static const archiveHomeEmptyBody =
+      'Record one honest moment to begin your private archive.';
+
+  static const archiveHomeRecordCta = 'Record a moment';
+
+  static const archiveHomeTypeInsteadCta = 'Type instead';
+
+  static const archiveHomeOneTitle = 'Your archive has one piece of evidence.';
+
+  static const archiveHomeBeliefLabel = 'Current belief';
+
+  static const archiveHomeWhatChangedLabel = 'What changed';
+
+  static const archiveHomeEvidenceLabel = 'Evidence from your archive';
+
+  static const archiveHomeNextActionLabel = 'What to add next';
+
+  static const archiveHomeNotEnoughBelief = 'Not enough evidence yet';
+
+  static const archiveHomeNotEnoughChanged =
+      'A second moment can show whether the same thread returns.';
+
+  static const archiveHomeViewReviewCta = 'View review';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

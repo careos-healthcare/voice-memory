@@ -135,6 +135,7 @@ import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
+import '../features/activation/archive_home_summary.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
@@ -165,6 +166,7 @@ import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
+import '../widgets/archive/archive_home_summary_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 
 /// Patterns tab — recurring themes dashboard (RECORD → PATTERN → CHANGE).
@@ -1753,10 +1755,49 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     ];
   }
 
+  ArchiveHomeSummary _archiveHomeSummary() =>
+      ArchiveHomeSummaryEngine.build(entries: _entries);
+
+  void _handleArchiveHomeAction(ArchiveHomeAction action) {
+    switch (action) {
+      case ArchiveHomeAction.record:
+      case ArchiveHomeAction.addMoment:
+      case ArchiveHomeAction.viewArchive:
+        _goToRecord();
+      case ArchiveHomeAction.typeInstead:
+        context.push('/quick-capture');
+      case ArchiveHomeAction.viewEvidence:
+        context.push(BeliefEvidenceNavigation.route);
+      case ArchiveHomeAction.viewReview:
+        context.push(WeeklyArchiveReviewNavigation.route);
+      case ArchiveHomeAction.none:
+        break;
+    }
+  }
+
+  List<Widget> _archiveHomeCommandCenterWidgets() {
+    final summary = _archiveHomeSummary();
+    final shareProof = summary.showShareProof
+        ? const ShareableArchiveProofEngine().buildFromJournal(entries: _entries)
+        : null;
+    return [
+      ArchiveHomeSummaryCard(
+        summary: summary,
+        onPrimary: () => _handleArchiveHomeAction(summary.primaryAction),
+        onSecondary: summary.secondaryAction != ArchiveHomeAction.none
+            ? () => _handleArchiveHomeAction(summary.secondaryAction)
+            : null,
+        shareProof: shareProof?.hasProof == true ? shareProof : null,
+      ),
+      const SizedBox(height: AppSpacing.lg),
+    ];
+  }
+
   List<Widget> _orderedPatternsStack() {
     final decision = _stackDecision;
     const engine = ArchiveBeliefThreadEngine();
     final belief = engine.build(_entries, tier: _archiveIntelligenceTier);
+    final archiveHome = _archiveHomeSummary();
     final widgets = <Widget>[
       QuickHelpButton(
         alignment: Alignment.centerRight,
@@ -1765,6 +1806,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         onStartRecording: () async => _goToRecord(),
       ),
       const SizedBox(height: AppSpacing.sm),
+      ..._archiveHomeCommandCenterWidgets(),
     ];
     if (_signalArchiveSnapshot != null &&
         (_signalArchiveSnapshot!.hasActiveSignal ||
@@ -1788,7 +1830,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
             ? BeliefHistoryTimelineEngine.build(entries: _entries)
             : null;
-    if (beliefUpdatePayoff != null) {
+    if (!archiveHome.suppressDuplicatePayoffCards && beliefUpdatePayoff != null) {
       widgets.add(
         BeliefUpdatePayoffCard(
           payoff: beliefUpdatePayoff,
@@ -1798,7 +1840,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
-    if (beliefHistoryTimeline != null) {
+    if (!archiveHome.suppressDuplicatePayoffCards &&
+        beliefHistoryTimeline != null) {
       widgets.add(BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
@@ -1806,7 +1849,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 5
             ? WeeklyArchiveReviewEngine.build(entries: _entries)
             : null;
-    if (weeklyArchiveReview != null && weeklyArchiveReview.hasEnoughEvidence) {
+    if (!archiveHome.suppressDuplicatePayoffCards &&
+        weeklyArchiveReview != null &&
+        weeklyArchiveReview.hasEnoughEvidence) {
       widgets.add(
         WeeklyArchiveReviewCard(
           review: weeklyArchiveReview,
@@ -1821,7 +1866,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final shareableProof = const ShareableArchiveProofEngine().buildFromJournal(
       entries: _entries,
     );
-    if (shareableProof.hasProof) {
+    if (!archiveHome.suppressDuplicatePayoffCards &&
+        !archiveHome.showShareProof &&
+        shareableProof.hasProof) {
       widgets.add(ShareableArchiveProofCard(proof: shareableProof));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
@@ -1895,7 +1942,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
-              children: const [PatternsEmptyView(fillViewport: false)],
+              children: _archiveHomeCommandCenterWidgets(),
             ),
           ),
         ),
@@ -1911,13 +1958,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
-              children: [
-                PatternsFirstArchiveView(
-                  fillViewport: false,
-                  savedEntryId: _firstArchiveEntryId,
-                  entries: _entries,
-                ),
-              ],
+              children: _archiveHomeCommandCenterWidgets(),
             ),
           ),
         ),
@@ -1931,6 +1972,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             reflectionCount: _entries.length,
             entries: _entries,
           );
+      final archiveHome = _archiveHomeSummary();
       final beliefUpdatePayoff =
           ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 4
               ? BeliefUpdatePayoffEngine.build(entries: _entries)
@@ -1988,9 +2030,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
+                ..._archiveHomeCommandCenterWidgets(),
                 if (!_suppressEarlyArchiveBeliefProof)
                   ..._buildArchiveBeliefProofWidgets(),
-                if (beliefUpdatePayoff != null) ...[
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    beliefUpdatePayoff != null) ...[
                   BeliefUpdatePayoffCard(
                     payoff: beliefUpdatePayoff,
                     onAddAnother: _goToRecord,
@@ -1999,11 +2043,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (beliefHistoryTimeline != null) ...[
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    beliefHistoryTimeline != null) ...[
                   BeliefHistoryTimelineCard(timeline: beliefHistoryTimeline),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (weeklyArchiveReview != null &&
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    weeklyArchiveReview != null &&
                     weeklyArchiveReview.hasEnoughEvidence) ...[
                   WeeklyArchiveReviewCard(
                     review: weeklyArchiveReview,
@@ -2014,11 +2060,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (shareableProof.hasProof) ...[
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    !archiveHome.showShareProof &&
+                    shareableProof.hasProof) ...[
                   ShareableArchiveProofCard(proof: shareableProof),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (thirdEntryBeliefPayoff != null) ...[
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    thirdEntryBeliefPayoff != null) ...[
                   ThirdEntryBeliefPayoffCard(
                     payoff: thirdEntryBeliefPayoff,
                     onAddAnother: _goToRecord,
@@ -2031,7 +2080,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (secondSessionPayoff != null) ...[
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    secondSessionPayoff != null) ...[
                   SecondSessionPayoffCard(
                     payoff: secondSessionPayoff,
                     onAddAnother: _goToRecord,
@@ -2049,7 +2099,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   FirstThreeJourneyCard(model: journey),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (secondSessionComparison?.hasEnoughData == true &&
+                if (!archiveHome.suppressDuplicatePayoffCards &&
+                    secondSessionComparison?.hasEnoughData == true &&
                     !ArchiveBeliefCorrectionStore.isDismissed(
                       'second_session_repeat',
                     )) ...[
