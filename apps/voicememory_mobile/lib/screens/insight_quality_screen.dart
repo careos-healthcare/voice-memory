@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
+import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/archive_insight_feedback.dart';
 import '../features/activation/insight_quality_dashboard.dart';
 import '../features/archive_proof/visible_archive_proof_copy.dart';
@@ -11,6 +15,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../services/app_services.dart';
+import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
 import '../widgets/archive/insight_quality_dashboard_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
@@ -35,6 +40,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
   List<InsightQualityEntry> _hiddenEntries = const [];
   List<InsightQualityEntry> _noteEntries = const [];
   ArchiveHealthScore _archiveHealth = ArchiveHealthScore.hidden();
+  ArchiveHealthActionPlan _actionPlan = ArchiveHealthActionPlan.hidden();
 
   @override
   void initState() {
@@ -55,6 +61,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
       _hiddenEntries = InsightQualityDashboardEngine.hiddenEntries();
       _noteEntries = InsightQualityDashboardEngine.correctionNoteEntries();
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
+      _actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -140,6 +147,19 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
                       if (_archiveHealth.showCard) ...[
                         const SizedBox(height: AppSpacing.lg),
                         ArchiveHealthCard(score: _archiveHealth),
+                      ],
+                      if (_actionPlan.showCard) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        ArchiveHealthActionPlanCard(
+                          plan: _actionPlan,
+                          onPrimary: () => context.go('/record'),
+                          onSecondary: _actionPlan.secondaryAction ==
+                                  ArchiveHealthActionPlanCta.viewEvidence
+                              ? () => context.push(
+                                    BeliefEvidenceNavigation.route,
+                                  )
+                              : null,
+                        ),
                       ],
                       const SizedBox(height: AppSpacing.lg),
                       if (_summary.isEmpty) ...[

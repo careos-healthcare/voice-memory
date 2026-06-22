@@ -654,6 +654,40 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveHealthAddNextWhenThin =
       'Add one more distinct saved moment.';
 
+  // Archive health action plan — concrete next steps from health status.
+  static const archiveHealthActionPlanTitle = 'Improve your archive';
+
+  static const archiveHealthActionPlanSubtitle =
+      'Small steps that make your archive more useful.';
+
+  static const archiveHealthActionPlanItemsLabel = 'What would help next';
+
+  static const archiveHealthActionPlanPrimaryCta = firstSavePrimaryCta;
+
+  static const archiveHealthActionOneEntry =
+      'Add one more moment before ArchiveMe compares anything.';
+
+  static const archiveHealthActionTwoEntries =
+      'Add a third moment to help form a cautious first belief.';
+
+  static const archiveHealthActionThreeEntries =
+      'Add a moment that tests the first cautious belief.';
+
+  static const archiveHealthActionFourEntries =
+      'Add a moment that might change what the archive notices.';
+
+  static const archiveHealthActionFivePlus =
+      'Add the next moment that confirms, weakens, or changes this week\'s strongest thread.';
+
+  static const archiveHealthActionDuplicates =
+      'Add a moment from a different context.';
+
+  static const archiveHealthActionExcluded =
+      'Add text to recorded moments that were too unclear.';
+
+  static const archiveHealthActionCorrection =
+      'Add a moment that clarifies your correction.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
