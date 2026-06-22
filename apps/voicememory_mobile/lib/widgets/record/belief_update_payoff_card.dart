@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/archive_insight_feedback.dart';
+import '../../features/activation/archive_insight_feedback_adaptation.dart';
 import '../../features/activation/belief_update_payoff.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -42,7 +43,14 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
         ArchiveInsightTarget.beliefUpdate,
       ),
       showControls: ArchiveInsightFeedbackGate.showForBeliefUpdate(),
-      child: Container(
+      childBuilder: (context) {
+        const target = ArchiveInsightTarget.beliefUpdate;
+        final adaptedBody = ArchiveInsightFeedbackAdaptation.adaptedCopyFor(
+          payoff.body,
+          target,
+        );
+
+        return Container(
       key: const Key('belief_update_payoff_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -59,7 +67,7 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            payoff.body,
+            adaptedBody,
             key: const Key('belief_update_payoff_body'),
             style: bodyStyle,
           ),
@@ -127,7 +135,8 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
           ),
         ],
       ),
-    ),
+    );
+      },
     );
   }
 }

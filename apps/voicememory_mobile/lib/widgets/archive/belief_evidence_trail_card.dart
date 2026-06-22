@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/archive_insight_feedback.dart';
+import '../../features/activation/archive_insight_feedback_adaptation.dart';
 import '../../features/activation/belief_evidence_trail.dart';
 import '../../features/activation/belief_history_timeline.dart';
 import '../../theme/app_colors.dart';
@@ -66,7 +67,16 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
       showControls: ArchiveInsightFeedbackGate.showForBeliefEvidence(
         hasEnoughEvidence: trail.hasEnoughEvidence,
       ),
-      child: Container(
+      childBuilder: (context) {
+        const target = ArchiveInsightTarget.beliefEvidence;
+        final adaptedChangeLine = trail.whatChangedLine == null
+            ? null
+            : ArchiveInsightFeedbackAdaptation.adaptedCopyFor(
+                trail.whatChangedLine!,
+                target,
+              );
+
+        return Container(
       key: const Key('belief_evidence_trail_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -111,7 +121,7 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            trail.whatChangedLine ?? '',
+            adaptedChangeLine ?? '',
             key: const Key('belief_evidence_trail_change_line'),
             style: bodyStyle,
           ),
@@ -183,7 +193,8 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
           ],
         ],
       ),
-    ),
+    );
+      },
     );
   }
 }

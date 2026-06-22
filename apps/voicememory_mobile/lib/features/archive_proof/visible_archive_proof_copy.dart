@@ -443,6 +443,19 @@ abstract final class VisibleArchiveProofCopy {
   static const insightFeedbackWhyHide =
       'You can hide this if it does not feel useful.';
 
+  // Archive insight feedback adaptation — cautious copy after local Not quite.
+  static const insightAdaptationStillTestingBelief =
+      'Your archive is still testing this belief.';
+
+  static const insightAdaptationMayNotBeQuiteRight =
+      'This may not be quite right yet.';
+
+  static const insightAdaptationNeedsAnotherMoment =
+      'The evidence needs another moment before this is useful.';
+
+  static const insightAdaptationSavedUsefulFeedback =
+      'Saved as useful feedback.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
