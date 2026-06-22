@@ -19,6 +19,7 @@ import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/voice_capture/analysis_fallback_payoff.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
+import '../features/activation/day_two_return_loop_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
 import '../features/voice_capture/microphone_permission_copy.dart';
@@ -254,6 +255,7 @@ import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/analysis_fallback_payoff_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
+import '../widgets/record/day_two_return_loop_card.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
 import '../widgets/record/evidence_context_tag_card.dart';
@@ -3051,6 +3053,15 @@ class _RecordScreenState extends State<RecordScreen> {
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
+    final returnLoopPayoff = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty &&
+            thirdEntryBeliefPayoff == null
+        ? DayTwoReturnLoopPayoffEngine.build(
+            entries: entriesAfterSave,
+            reminderAvailable:
+                _offerDayTwoReminder && !_recordReturnCueVisible,
+          )
+        : null;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3668,6 +3679,47 @@ class _RecordScreenState extends State<RecordScreen> {
                             payoff: analysisFallbackPayoff,
                           ),
                         ],
+                        if (returnLoopPayoff != null) ...[
+                          const SizedBox(height: 16),
+                          DayTwoReturnLoopCard(
+                            payoff: returnLoopPayoff,
+                            onAddAnother: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
+                            onViewArchive: () => context.go('/archive-belief'),
+                            onReminderAccepted: () async {
+                              await RecordReturnProStore.instance()
+                                  .markReturnCueResolved(
+                                RecordReturnProReturnCueMethod.reminder,
+                              );
+                              if (!mounted) return;
+                              setState(() {
+                                _offerDayTwoReminder = false;
+                                _recordReturnProState =
+                                    _recordReturnProState?.copyWith(
+                                  returnCueResolved: true,
+                                  returnCueMethod:
+                                      RecordReturnProReturnCueMethod.reminder,
+                                );
+                              });
+                            },
+                            onReminderDeclined: () async {
+                              await RecordReturnProStore.instance()
+                                  .markReturnCueResolved(
+                                RecordReturnProReturnCueMethod.localCue,
+                              );
+                              if (!mounted) return;
+                              setState(() {
+                                _offerDayTwoReminder = false;
+                                _recordReturnProState =
+                                    _recordReturnProState?.copyWith(
+                                  returnCueResolved: true,
+                                  returnCueMethod:
+                                      RecordReturnProReturnCueMethod.localCue,
+                                );
+                              });
+                            },
+                          ),
+                        ],
                         if (_languageCode != 'en') ...[
                           const SizedBox(height: 12),
                           LanguageIndicatorChip(
@@ -3685,7 +3737,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             onRecordAnother: () => unawaited(_onRecordPressed(source: 'main')),
                           ),
                           if (_recordReturnCueVisible &&
-                              _journalEntryCount != 1) ...[
+                              _journalEntryCount != 1 &&
+                              returnLoopPayoff == null) ...[
                             const SizedBox(height: 16),
                             TomorrowReturnCueCard(
                               reminderAvailable: _offerDayTwoReminder,
@@ -3753,7 +3806,9 @@ class _RecordScreenState extends State<RecordScreen> {
                             builder: (context) {
                               final path = const TwoDayActivationEngine()
                                   .buildPostSave(entryCount: _journalEntryCount);
-                              if (!path.show) return const SizedBox.shrink();
+                              if (!path.show || returnLoopPayoff != null) {
+                                return const SizedBox.shrink();
+                              }
                               return Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: TwoDayActivationCard(path: path),
@@ -3764,7 +3819,9 @@ class _RecordScreenState extends State<RecordScreen> {
                           // only, below (never instead of) the receipt. The
                           // First 60 return cue carries the same single
                           // reminder offer, so the two never show together.
-                          if (_offerDayTwoReminder && !_recordReturnCueVisible)
+                          if (_offerDayTwoReminder &&
+                              !_recordReturnCueVisible &&
+                              returnLoopPayoff == null)
                             const Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: DayTwoReminderCard(),
@@ -3772,7 +3829,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           // Tomorrow's-check preview — passive, no CTA,
                           // safe labels only.
                           if (_dayTwoReturnPreview != null &&
-                              _dayTwoReturnPreview!.show)
+                              _dayTwoReturnPreview!.show &&
+                              returnLoopPayoff == null)
                             Padding(
                               padding: const EdgeInsets.only(top: 16),
                               child: DayTwoReturnPreviewCard(
