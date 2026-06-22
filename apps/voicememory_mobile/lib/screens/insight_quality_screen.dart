@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/archive_health_score.dart';
 import '../features/activation/archive_insight_feedback.dart';
 import '../features/activation/insight_quality_dashboard.dart';
 import '../features/archive_proof/visible_archive_proof_copy.dart';
+import '../models/journal_entry.dart';
 import '../security/sensitive_screen_guard.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
+import '../services/app_services.dart';
+import '../widgets/archive/archive_health_card.dart';
 import '../widgets/archive/insight_quality_dashboard_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
 
@@ -30,6 +34,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
   List<InsightQualityEntry> _notQuiteEntries = const [];
   List<InsightQualityEntry> _hiddenEntries = const [];
   List<InsightQualityEntry> _noteEntries = const [];
+  ArchiveHealthScore _archiveHealth = ArchiveHealthScore.hidden();
 
   @override
   void initState() {
@@ -40,12 +45,16 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
   Future<void> _load() async {
     setState(() => _loading = true);
     await ArchiveInsightFeedbackStore.ensureLoaded();
+    final entries = AppServices.isInitialized
+        ? await AppServices.instance.journal.loadAll()
+        : const <JournalEntry>[];
     if (!mounted) return;
     setState(() {
       _summary = InsightQualityDashboardEngine.buildSummary();
       _notQuiteEntries = InsightQualityDashboardEngine.notQuiteEntries();
       _hiddenEntries = InsightQualityDashboardEngine.hiddenEntries();
       _noteEntries = InsightQualityDashboardEngine.correctionNoteEntries();
+      _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -128,6 +137,10 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       InsightQualitySummaryCard(summary: _summary),
+                      if (_archiveHealth.showCard) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        ArchiveHealthCard(score: _archiveHealth),
+                      ],
                       const SizedBox(height: AppSpacing.lg),
                       if (_summary.isEmpty) ...[
                         Text(

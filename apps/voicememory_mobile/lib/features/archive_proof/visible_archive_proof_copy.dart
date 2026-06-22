@@ -568,6 +568,92 @@ abstract final class VisibleArchiveProofCopy {
 
   static const insightQualityLabelBeliefUpdate = 'Belief update';
 
+  // Archive health — local evidence quality indicator.
+  static const archiveHealthTitle = 'Archive health';
+
+  static const archiveHealthSubtitle =
+      'Based on usable saved moments on this device.';
+
+  static const archiveHealthUsableMomentsLabel = 'Usable moments';
+
+  static const archiveHealthQualityLabel = 'Evidence quality';
+
+  static const archiveHealthNeedsMoreLabel = 'What needs more evidence';
+
+  static const archiveHealthAddNextLabel = 'What to add next';
+
+  static const archiveHealthThinStatus = 'Evidence is still thin.';
+
+  static const archiveHealthThinBody =
+      'Your archive needs another saved moment before it can compare.';
+
+  static const archiveHealthStartingStatus =
+      'Your archive is starting to compare.';
+
+  static const archiveHealthStartingBody =
+      'One more moment can make the thread clearer.';
+
+  static const archiveHealthFirstBeliefStatus =
+      'Your archive has enough to form a cautious first belief.';
+
+  static const archiveHealthFirstBeliefBody = 'Beliefs are not conclusions.';
+
+  static const archiveHealthBeliefUpdateStatus =
+      'Your archive has enough evidence to update a belief.';
+
+  static const archiveHealthBeliefUpdateBody =
+      'Your archive is getting clearer.';
+
+  static const archiveHealthReviewStatus =
+      'Your archive has enough to create a review.';
+
+  static const archiveHealthReviewBody =
+      'Evidence is stronger when moments appear across more than one context.';
+
+  static const archiveHealthQualityGettingClearer =
+      'Your archive is getting clearer.';
+
+  static const archiveHealthQualityEnoughToReview =
+      'Your archive has enough to review.';
+
+  static const archiveHealthExcludedLine =
+      'saved moments were too short or unclear to count';
+
+  static const archiveHealthDuplicateLine =
+      'Some saved moments look very similar.';
+
+  static const archiveHealthNearDuplicateLine =
+      'Some saved moments look nearly the same.';
+
+  static const archiveHealthNotQuiteLine =
+      'Some insights were marked not quite right.';
+
+  static const archiveHealthCorrectionLine =
+      'Correction notes are active on this device.';
+
+  static const archiveHealthCautionFeedback =
+      'Local feedback suggests staying cautious.';
+
+  static const archiveHealthAddNextOne = 'Save one more ordinary moment.';
+
+  static const archiveHealthAddNextTwo =
+      'Add one more moment from a different part of your day.';
+
+  static const archiveHealthAddNextThree =
+      'Add a moment that tests the first cautious belief.';
+
+  static const archiveHealthAddNextFour =
+      'Add a moment that might change what the archive notices.';
+
+  static const archiveHealthAddNextFive =
+      'Add a moment from a different context to strengthen the review.';
+
+  static const archiveHealthAddNextWhenDuplicates =
+      'Add a moment with different words or context.';
+
+  static const archiveHealthAddNextWhenThin =
+      'Add one more distinct saved moment.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

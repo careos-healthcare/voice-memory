@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/archive_health_score.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/next_moment_prompt.dart';
 import '../features/activation/weekly_archive_review.dart';
@@ -11,6 +12,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
+import '../widgets/archive/archive_health_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/record/next_moment_prompt_card.dart';
 import '../widgets/consumer/consumer_screen_back_header.dart';
@@ -33,6 +35,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
   WeeklyArchiveReview? _review;
   ShareableArchiveProof? _shareProof;
   NextMomentPrompt? _nextMomentPrompt;
+  ArchiveHealthScore? _archiveHealth;
   bool _loading = true;
 
   @override
@@ -41,6 +44,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
     final preview = widget.previewReview;
     if (preview != null) {
       _review = preview;
+      _archiveHealth = ArchiveHealthScoreEngine.build(entries: const []);
       _loading = false;
       return;
     }
@@ -57,6 +61,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
         entries: entries,
       );
       _nextMomentPrompt = NextMomentPromptEngine.build(entries: entries);
+      _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -133,6 +138,11 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
                 onAddAnother: review.hasEnoughEvidence ? _goToRecord : null,
                 onViewEvidence: review.hasEnoughEvidence ? _goToEvidence : null,
               ),
+              if (review.hasEnoughEvidence &&
+                  (_archiveHealth?.showCard ?? false)) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ArchiveHealthCard(score: _archiveHealth!),
+              ],
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),
                 ShareableArchiveProofCard(proof: _shareProof!),
