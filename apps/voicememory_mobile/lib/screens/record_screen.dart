@@ -294,6 +294,8 @@ import '../widgets/retention/tiny_record_again_cta.dart';
 import '../widgets/onboarding/change_starts_card.dart';
 import '../features/archive_proof/archive_demo_preview_resolver.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
+import '../features/activation/returning_user_today.dart';
+import '../widgets/record/returning_user_today_card.dart';
 import '../features/activation/archive_home_summary.dart';
 import '../widgets/archive/post_save_archive_home_nudge_card.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
@@ -2976,6 +2978,19 @@ class _RecordScreenState extends State<RecordScreen> {
     context.go('/archive-belief');
   }
 
+  void _handleReturningUserTodayAction(ReturningUserTodayAction action) {
+    switch (action) {
+      case ReturningUserTodayAction.addMoment:
+        unawaited(_onRecordPressed(source: 'returning_today'));
+      case ReturningUserTodayAction.viewArchive:
+        context.go('/archive-belief');
+      case ReturningUserTodayAction.viewEvidence:
+        context.push(BeliefEvidenceNavigation.route);
+      case ReturningUserTodayAction.viewReview:
+        context.push(WeeklyArchiveReviewNavigation.route);
+    }
+  }
+
   bool _compactLayout(RecordUiState ui) =>
       ui == RecordUiState.recording || ui == RecordUiState.processing;
 
@@ -3102,6 +3117,10 @@ class _RecordScreenState extends State<RecordScreen> {
         : null;
     final suppressArchiveHomeDuplicatePayoffs =
         archiveHomePostSave?.suppressDuplicatePayoffCards ?? false;
+    final returningUserToday = ui == RecordUiState.ready &&
+            _journalEntryCountReady
+        ? ReturningUserTodayEngine.build(entries: _journalEntries)
+        : null;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3201,6 +3220,18 @@ class _RecordScreenState extends State<RecordScreen> {
                           );
                         },
                       ),
+                    ],
+                    if (returningUserToday != null) ...[
+                      ReturningUserTodayCard(
+                        model: returningUserToday,
+                        onPrimary: () => _handleReturningUserTodayAction(
+                          returningUserToday.primaryAction,
+                        ),
+                        onSecondary: () => _handleReturningUserTodayAction(
+                          returningUserToday.secondaryAction,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                     ],
                     // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
                     // carries the first-open promise without a second competing card.

@@ -348,6 +348,45 @@ abstract final class VisibleArchiveProofCopy {
 
   static const archiveHomeViewReviewCta = 'View review';
 
+  // Returning-user Today card on Record (open/return state, not post-save).
+  static const returningUserTodaySectionLabel = 'Today';
+
+  static const returningUserOneTitle = 'Add one more moment.';
+
+  static const returningUserOneBody =
+      'Your archive has one piece. Come back when this shows up again.';
+
+  static const returningUserTwoTitle =
+      'One more moment can make the thread clearer.';
+
+  static const returningUserTwoBody =
+      'ArchiveMe has two moments to compare. '
+      'A third can help it form a cautious first belief.';
+
+  static const returningUserThreeTitle =
+      'Your archive is starting to form a belief.';
+
+  static const returningUserThreeBody =
+      'Add one more moment to test whether the evidence holds.';
+
+  static const returningUserFourTitle = 'Your archive updated its belief.';
+
+  static const returningUserFourBody =
+      'Review what changed, then add another moment when it shows up again.';
+
+  static const returningUserFivePlusTitle = 'Your archive review is ready.';
+
+  static const returningUserFivePlusBody =
+      'See what your saved words are starting to show this week.';
+
+  static const returningUserAddMomentCta = firstSavePrimaryCta;
+
+  static const returningUserViewArchiveCta = firstSaveViewArchiveCta;
+
+  static const returningUserViewEvidenceCta = beliefUpdateViewEvidenceCta;
+
+  static const returningUserViewReviewCta = archiveHomeViewReviewCta;
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
