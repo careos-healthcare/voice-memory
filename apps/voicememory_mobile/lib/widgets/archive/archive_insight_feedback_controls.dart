@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/archive_insight_feedback.dart';
+import '../../features/activation/archive_insight_feedback_adaptation.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
@@ -11,10 +12,12 @@ class ArchiveInsightFeedbackControls extends StatefulWidget {
     super.key,
     required this.insightId,
     this.onHidden,
+    this.onFeedbackChanged,
   });
 
   final String insightId;
   final VoidCallback? onHidden;
+  final VoidCallback? onFeedbackChanged;
 
   @override
   State<ArchiveInsightFeedbackControls> createState() =>
@@ -24,10 +27,15 @@ class ArchiveInsightFeedbackControls extends StatefulWidget {
 class _ArchiveInsightFeedbackControlsState
     extends State<ArchiveInsightFeedbackControls> {
   bool _whyExpanded = false;
+  bool _showFeelsRightConfirmation = false;
 
   Future<void> _record(ArchiveInsightFeedbackChoice choice) async {
     await ArchiveInsightFeedbackStore.ensureLoaded();
     ArchiveInsightFeedbackStore.record(widget.insightId, choice);
+    if (choice == ArchiveInsightFeedbackChoice.feelsRight) {
+      _showFeelsRightConfirmation = true;
+    }
+    widget.onFeedbackChanged?.call();
     if (mounted) setState(() {});
   }
 
@@ -35,6 +43,7 @@ class _ArchiveInsightFeedbackControlsState
     await ArchiveInsightFeedbackStore.ensureLoaded();
     ArchiveInsightFeedbackStore.hide(widget.insightId);
     widget.onHidden?.call();
+    widget.onFeedbackChanged?.call();
     if (mounted) setState(() {});
   }
 
@@ -128,23 +137,31 @@ class _ArchiveInsightFeedbackControlsState
             style: explainStyle,
           ),
         ],
+        if (_showFeelsRightConfirmation) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            ArchiveInsightFeedbackAdaptationCopy.savedUsefulFeedback,
+            key: const Key('archive_insight_feedback_feels_right_confirmation'),
+            style: explainStyle,
+          ),
+        ],
       ],
     );
   }
 }
 
-/// Hides [child] locally when the user dismisses an insight card.
+/// Hides [childBuilder] output locally when the user dismisses an insight card.
 class ArchiveInsightFeedbackHost extends StatefulWidget {
   const ArchiveInsightFeedbackHost({
     super.key,
     required this.insightId,
     required this.showControls,
-    required this.child,
+    required this.childBuilder,
   });
 
   final String insightId;
   final bool showControls;
-  final Widget child;
+  final WidgetBuilder childBuilder;
 
   @override
   State<ArchiveInsightFeedbackHost> createState() =>
@@ -184,11 +201,12 @@ class _ArchiveInsightFeedbackHostState extends State<ArchiveInsightFeedbackHost>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        widget.child,
+        widget.childBuilder(context),
         if (widget.showControls)
           ArchiveInsightFeedbackControls(
             insightId: widget.insightId,
             onHidden: _onHidden,
+            onFeedbackChanged: () => setState(() {}),
           ),
       ],
     );

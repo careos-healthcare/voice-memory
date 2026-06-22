@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/archive_home_summary.dart';
 import '../../features/activation/archive_insight_feedback.dart';
+import '../../features/activation/archive_insight_feedback_adaptation.dart';
 import '../../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -44,7 +45,22 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
     return ArchiveInsightFeedbackHost(
       insightId: ArchiveInsightFeedbackStore.archiveHomeId(summary.stage),
       showControls: ArchiveInsightFeedbackGate.showForArchiveHome(summary.stage),
-      child: Container(
+      childBuilder: (context) {
+        const target = ArchiveInsightTarget.archiveHome;
+        final adaptedBody = ArchiveInsightFeedbackAdaptation.adaptedCopyFor(
+          summary.body,
+          target,
+          archiveHomeStage: summary.stage,
+        );
+        final adaptedSubtitle = summary.subtitle == null
+            ? null
+            : ArchiveInsightFeedbackAdaptation.adaptedCopyFor(
+                summary.subtitle!,
+                target,
+                archiveHomeStage: summary.stage,
+              );
+
+        return Container(
       key: const Key('archive_home_summary_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -59,7 +75,7 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
             key: const Key('archive_home_summary_title'),
             style: titleStyle,
           ),
-          if (summary.subtitle case final subtitle?) ...[
+          if (adaptedSubtitle case final subtitle?) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
               subtitle,
@@ -69,7 +85,7 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
           ],
           const SizedBox(height: AppSpacing.xs),
           Text(
-            summary.body,
+            adaptedBody,
             key: const Key('archive_home_summary_body'),
             style: bodyStyle,
           ),
@@ -163,7 +179,8 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
           ],
         ],
       ),
-    ),
+    );
+      },
     );
   }
 }

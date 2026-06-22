@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/activation/archive_insight_feedback.dart';
+import '../../features/activation/archive_insight_feedback_adaptation.dart';
 import '../../features/activation/weekly_archive_review.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -25,7 +26,7 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
   final VoidCallback? onViewEvidence;
   final VoidCallback? onViewFullReview;
 
-  Widget _wrapWithFeedback(Widget card) {
+  Widget _wrapWithFeedback(WidgetBuilder buildCard) {
     return ArchiveInsightFeedbackHost(
       insightId: ArchiveInsightFeedbackStore.targetId(
         ArchiveInsightTarget.weeklyReview,
@@ -33,9 +34,15 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
       showControls: ArchiveInsightFeedbackGate.showForWeeklyReview(
         hasEnoughEvidence: review.hasEnoughEvidence,
       ),
-      child: card,
+      childBuilder: buildCard,
     );
   }
+
+  String _adaptWeeklyCopy(String base) =>
+      ArchiveInsightFeedbackAdaptation.adaptedCopyFor(
+        base,
+        ArchiveInsightTarget.weeklyReview,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +80,7 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
     }
 
     if (compact) {
-      return _wrapWithFeedback(
-        Container(
+      return _wrapWithFeedback((context) => Container(
         key: const Key('weekly_archive_review_compact_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -92,7 +98,7 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
             if (review.subtitle case final subtitle?) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
-                subtitle,
+                _adaptWeeklyCopy(subtitle),
                 key: const Key('weekly_archive_review_subtitle'),
                 style: bodyStyle,
               ),
@@ -106,7 +112,7 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                thread,
+                _adaptWeeklyCopy(thread),
                 key: const Key('weekly_archive_review_compact_thread_line'),
                 style: bodyStyle,
               ),
@@ -128,12 +134,10 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
               ),
           ],
         ),
-      ),
-      );
+      ));
     }
 
-    return _wrapWithFeedback(
-      Container(
+    return _wrapWithFeedback((context) => Container(
       key: const Key('weekly_archive_review_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -181,7 +185,7 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              changed,
+              _adaptWeeklyCopy(changed),
               key: const Key('weekly_archive_review_change_line'),
               style: bodyStyle,
             ),
@@ -250,7 +254,6 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
           ],
         ],
       ),
-    ),
-    );
+    ));
   }
 }
