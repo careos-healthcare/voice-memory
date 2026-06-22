@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
 import '../features/activation/belief_evidence_trail.dart';
@@ -15,6 +16,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../services/app_services.dart';
+import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
 import '../widgets/archive/insight_quality_dashboard_card.dart';
@@ -41,6 +43,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
   List<InsightQualityEntry> _noteEntries = const [];
   ArchiveHealthScore _archiveHealth = ArchiveHealthScore.hidden();
   ArchiveHealthActionPlan _actionPlan = ArchiveHealthActionPlan.hidden();
+  ContextInsights _contextInsights = ContextInsights.hidden();
 
   @override
   void initState() {
@@ -62,6 +65,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
       _noteEntries = InsightQualityDashboardEngine.correctionNoteEntries();
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
+      _contextInsights = ContextInsightsEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -160,6 +164,10 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
                                   )
                               : null,
                         ),
+                      ],
+                      if (_contextInsights.showCard) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        ContextInsightsCard(insights: _contextInsights),
                       ],
                       const SizedBox(height: AppSpacing.lg),
                       if (_summary.isEmpty) ...[
