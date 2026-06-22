@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -16,6 +17,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../services/app_services.dart';
+import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -44,6 +46,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
   ArchiveHealthScore _archiveHealth = ArchiveHealthScore.hidden();
   ArchiveHealthActionPlan _actionPlan = ArchiveHealthActionPlan.hidden();
   ContextInsights _contextInsights = ContextInsights.hidden();
+  ArchiveEvidenceMap _evidenceMap = ArchiveEvidenceMap.hidden();
 
   @override
   void initState() {
@@ -66,6 +69,7 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
       _contextInsights = ContextInsightsEngine.build(entries: entries);
+      _evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -168,6 +172,10 @@ class _InsightQualityScreenState extends State<InsightQualityScreen> {
                       if (_contextInsights.showCard) ...[
                         const SizedBox(height: AppSpacing.lg),
                         ContextInsightsCard(insights: _contextInsights),
+                      ],
+                      if (_evidenceMap.showCard) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        ArchiveEvidenceMapCard(map: _evidenceMap),
                       ],
                       const SizedBox(height: AppSpacing.lg),
                       if (_summary.isEmpty) ...[

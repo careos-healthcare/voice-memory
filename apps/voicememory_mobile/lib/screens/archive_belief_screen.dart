@@ -137,6 +137,7 @@ import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/archive_home_summary.dart';
+import '../features/activation/archive_evidence_map.dart';
 import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
@@ -172,6 +173,7 @@ import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/archive/belief_history_timeline_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/archive/archive_home_summary_card.dart';
+import '../widgets/archive/archive_evidence_map_card.dart';
 import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
@@ -1795,6 +1797,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final archiveHealth = ArchiveHealthScoreEngine.build(entries: _entries);
     final actionPlan = ArchiveHealthActionPlanEngine.build(entries: _entries);
     final contextInsights = ContextInsightsEngine.build(entries: _entries);
+    final evidenceMap = ArchiveEvidenceMapEngine.build(entries: _entries);
     return [
       ArchiveHomeSummaryCard(
         summary: summary,
@@ -1822,6 +1825,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       if (contextInsights.showCard) ...[
         const SizedBox(height: AppSpacing.md),
         ContextInsightsCard(insights: contextInsights),
+      ],
+      if (evidenceMap.showCard) ...[
+        const SizedBox(height: AppSpacing.md),
+        ArchiveEvidenceMapCard(map: evidenceMap),
       ],
       Align(
         alignment: Alignment.centerLeft,
