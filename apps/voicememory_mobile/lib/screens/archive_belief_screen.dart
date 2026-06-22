@@ -1859,8 +1859,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             reflectionCount: _entries.length,
             entries: _entries,
           );
-      final secondSessionComparison =
-          _entries.length == FirstThreeSessionGates.minEntriesForRepeatSurface
+      final groundedSecondSessionRepeat =
+          _entries.length == FirstThreeSessionGates.minEntriesForRepeatSurface &&
+          const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
+      final secondSessionComparison = groundedSecondSessionRepeat
           ? const SecondSessionSignalEngine().build(_entries)
           : null;
       final thirdSessionUsefulness =

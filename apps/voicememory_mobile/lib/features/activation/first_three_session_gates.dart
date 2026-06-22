@@ -12,6 +12,14 @@ abstract class FirstThreeSessionGates {
   }) =>
       justSavedFirst && entryCount == 1;
 
+  /// Hide "possible repeat" / hypothesis cards after the second save unless
+  /// the overlap is grounded in the user's own words.
+  static bool suppressEarlyPatternClaimCards({
+    required int entryCount,
+    required bool hasGroundedRepeatMatch,
+  }) =>
+      entryCount == minEntriesForRepeatSurface && !hasGroundedRepeatMatch;
+
   static bool showSession2RepeatSurface(int entryCount) =>
       entryCount >= minEntriesForRepeatSurface;
 

@@ -2305,9 +2305,13 @@ class _RecordScreenState extends State<RecordScreen> {
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
       );
-      secondComparison = const SecondSessionSignalEngine().build(all);
+      if (all.length >= FirstThreeSessionGates.minEntriesForUsefulArchive ||
+          (all.length == FirstThreeSessionGates.minEntriesForRepeatSurface &&
+              const SecondSessionSignalEngine().hasGroundedRepeatMatch(all))) {
+        secondComparison = const SecondSessionSignalEngine().build(all);
+      }
     }
-    if (all.length >= 2) {
+    if (all.length >= FirstThreeSessionGates.minEntriesForUsefulArchive) {
       patternHypothesis = await const PatternHypothesisEngine().build(all);
     }
 
@@ -2999,6 +3003,17 @@ class _RecordScreenState extends State<RecordScreen> {
         FirstThreeSessionGates.suppressNoisyPostSaveCards(
           justSavedFirst: _recordReturnProJustSaved,
           entryCount: _journalEntryCount,
+        );
+    final suppressEarlyPatternClaimCards =
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: _journalEntryCount,
+          hasGroundedRepeatMatch:
+              _secondSessionComparison?.hasEnoughData == true &&
+              const SecondSessionSignalEngine().hasGroundedRepeatMatch(
+                _entriesAfterSave.isNotEmpty
+                    ? _entriesAfterSave
+                    : _journalEntries,
+              ),
         );
 
     _logRecordEmptyGate('build');
@@ -3950,7 +3965,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         if (!stack.showInputQualityCoach &&
                             _tomorrowReturnLoop != null &&
                             !_returnDayJustClosed &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressEarlyPatternClaimCards) ...[
                           if (_secondSessionComparison?.hasEnoughData ==
                               true) ...[
                             const SizedBox(height: 12),

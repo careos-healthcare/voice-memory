@@ -9,6 +9,7 @@ import 'package:voicememory_mobile/features/retention/second_session_signal_engi
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/activation/first_three_session_journey_indicator.dart';
 import 'package:voicememory_mobile/widgets/activation/third_session_archive_usefulness_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
@@ -33,6 +34,14 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 void main() {
+  setUp(() async {
+    await AppServices.resetForTest(
+      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
+      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      skipRevenueCat: true,
+    );
+  });
+
   group('FirstThreeSessionCopy', () {
     test('session 1 lines match product loop', () {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
@@ -113,6 +122,30 @@ void main() {
       );
     });
 
+    test('suppresses early pattern claims until grounded repeat or third entry', () {
+      expect(
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: 2,
+          hasGroundedRepeatMatch: false,
+        ),
+        isTrue,
+      );
+      expect(
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: 2,
+          hasGroundedRepeatMatch: true,
+        ),
+        isFalse,
+      );
+      expect(
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: 3,
+          hasGroundedRepeatMatch: false,
+        ),
+        isFalse,
+      );
+    });
+
     test('Pro bridge waits until repeat value exists', () {
       expect(
         FirstThreeSessionGates.showSoftProBridge(
@@ -165,6 +198,34 @@ void main() {
       expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
       expect(find.text('ArchiveMe found a possible repeat'), findsNothing);
+    });
+  });
+
+  group('Session 2 cautious comparison', () {
+    test('ungrounded two-entry save suppresses possible-repeat headline', () {
+      final entries = [
+        _entry(
+          '1',
+          'A quiet moment about lunch with a friend today.',
+        ),
+        _entry(
+          '2',
+          'Another unrelated note about errands this afternoon.',
+        ),
+      ];
+      const engine = SecondSessionSignalEngine();
+      expect(engine.hasGroundedRepeatMatch(entries), isFalse);
+      expect(
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: 2,
+          hasGroundedRepeatMatch: engine.hasGroundedRepeatMatch(entries),
+        ),
+        isTrue,
+      );
+      expect(
+        engine.build(entries).title,
+        ConsumerUiCopy.secondSessionPossibleRepeatTitle,
+      );
     });
   });
 
