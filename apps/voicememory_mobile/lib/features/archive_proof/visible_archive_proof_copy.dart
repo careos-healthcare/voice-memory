@@ -723,6 +723,32 @@ abstract final class VisibleArchiveProofCopy {
   static const weeklyArchiveReviewVariedContextNote =
       'Tagged moments may span more than one context.';
 
+  // Context insights — local tag distribution readout.
+  static const contextInsightsTitle = 'Where this shows up';
+
+  static const contextInsightsSubtitle =
+      'Based on optional tags saved on this device.';
+
+  static const contextInsightsOneTagged =
+      'Your archive has one tagged moment.';
+
+  static const contextInsightsAddAnotherTagged =
+      'Add another tagged moment to compare contexts.';
+
+  static String contextInsightsMostlyIn(String label) =>
+      'This is mostly showing up in $label.';
+
+  static const contextInsightsAddDifferentContext =
+      'Add a moment from a different context to see whether it travels.';
+
+  static const contextInsightsAcrossContexts =
+      'This is showing up across more than one context.';
+
+  static const contextInsightsStillThin =
+      'The context evidence is still thin.';
+
+  static const contextInsightsTopContextsLabel = 'Tagged moments by context';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

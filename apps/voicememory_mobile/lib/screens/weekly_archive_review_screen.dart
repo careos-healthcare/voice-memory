@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/activation/context_insights.dart';
 import '../features/activation/archive_health_action_plan.dart';
 import '../features/activation/archive_health_score.dart';
 import '../features/activation/belief_evidence_trail.dart';
@@ -13,6 +14,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
+import '../widgets/archive/context_insights_card.dart';
 import '../widgets/archive/archive_health_action_plan_card.dart';
 import '../widgets/archive/archive_health_card.dart';
 import '../widgets/archive/weekly_archive_review_card.dart';
@@ -39,6 +41,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
   NextMomentPrompt? _nextMomentPrompt;
   ArchiveHealthScore? _archiveHealth;
   ArchiveHealthActionPlan? _actionPlan;
+  ContextInsights? _contextInsights;
   bool _loading = true;
 
   @override
@@ -49,6 +52,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
       _review = preview;
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: const []);
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: const []);
+      _contextInsights = ContextInsightsEngine.build(entries: const []);
       _loading = false;
       return;
     }
@@ -67,6 +71,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
       _nextMomentPrompt = NextMomentPromptEngine.build(entries: entries);
       _archiveHealth = ArchiveHealthScoreEngine.build(entries: entries);
       _actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
+      _contextInsights = ContextInsightsEngine.build(entries: entries);
       _loading = false;
     });
   }
@@ -159,6 +164,11 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
                       ? _goToEvidence
                       : null,
                 ),
+              ],
+              if (review.hasEnoughEvidence &&
+                  (_contextInsights?.showCard ?? false)) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ContextInsightsCard(insights: _contextInsights!),
               ],
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),
