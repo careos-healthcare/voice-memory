@@ -19,6 +19,7 @@ import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/voice_capture/analysis_fallback_payoff.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
+import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/day_two_return_loop_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
@@ -255,6 +256,7 @@ import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/analysis_fallback_payoff_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
+import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
@@ -3053,9 +3055,17 @@ class _RecordScreenState extends State<RecordScreen> {
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
+    final beliefUpdatePayoff = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? BeliefUpdatePayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
     final returnLoopPayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
-            thirdEntryBeliefPayoff == null
+            thirdEntryBeliefPayoff == null &&
+            beliefUpdatePayoff == null
         ? DayTwoReturnLoopPayoffEngine.build(
             entries: entriesAfterSave,
             reminderAvailable:
@@ -3654,6 +3664,15 @@ class _RecordScreenState extends State<RecordScreen> {
                             ),
                           ),
                         ],
+                        if (beliefUpdatePayoff != null) ...[
+                          const SizedBox(height: 16),
+                          BeliefUpdatePayoffCard(
+                            payoff: beliefUpdatePayoff,
+                            onAddAnother: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
+                            onViewEvidence: () => context.go('/archive-belief'),
+                          ),
+                        ],
                         if (thirdEntryBeliefPayoff != null) ...[
                           const SizedBox(height: 16),
                           ThirdEntryBeliefPayoffCard(
@@ -3673,7 +3692,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                         ],
                         if (analysisFallbackPayoff != null &&
-                            thirdEntryBeliefPayoff == null) ...[
+                            thirdEntryBeliefPayoff == null &&
+                            beliefUpdatePayoff == null) ...[
                           const SizedBox(height: 16),
                           AnalysisFallbackPayoffCard(
                             payoff: analysisFallbackPayoff,
