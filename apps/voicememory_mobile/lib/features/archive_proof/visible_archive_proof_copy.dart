@@ -912,6 +912,23 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveWorkspaceQuickActionShareProofSafely =
       'Share proof safely';
 
+  static const archiveWorkspaceHintIntroTitle =
+      'This is your private archive workspace.';
+
+  static const archiveWorkspaceHintIntroBody =
+      'ArchiveMe uses your saved moments to show evidence, patterns, and what to add next.';
+
+  static const archiveWorkspaceHintNeedsAttentionBody =
+      'These shortcuts point to evidence that may need a tag, correction, or another moment.';
+
+  static const archiveWorkspaceHintEvidenceQualityBody =
+      'This section shows where your archive has enough evidence, and where it is still thin.';
+
+  static const archiveWorkspaceHintReviewHistoryBody =
+      'When you have enough saved moments, ArchiveMe can show how its belief changed.';
+
+  static const archiveWorkspaceHintSectionPrompt = 'Why this section?';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;
