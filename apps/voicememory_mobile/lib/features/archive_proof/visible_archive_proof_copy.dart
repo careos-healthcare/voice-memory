@@ -749,6 +749,50 @@ abstract final class VisibleArchiveProofCopy {
 
   static const contextInsightsTopContextsLabel = 'Tagged moments by context';
 
+  // Context-aware supporting copy — subtle lines outside Context Insights card.
+  static const contextAwareStillThin = contextInsightsStillThin;
+
+  static String contextAwareMostlyAt(String tagId) {
+    switch (tagId) {
+      case 'work':
+        return 'This is mostly showing up at work.';
+      case 'home':
+        return 'This is mostly showing up at home.';
+      default:
+        return 'This is mostly showing up around ${_captureContextLabelForId(tagId)}.';
+    }
+  }
+
+  static String _captureContextLabelForId(String tagId) {
+    switch (tagId) {
+      case 'work':
+        return captureContextTagWork;
+      case 'home':
+        return captureContextTagHome;
+        return captureContextTagFamily;
+      case 'money':
+        return captureContextTagMoney;
+      case 'health':
+        return captureContextTagHealth;
+      case 'decision':
+        return captureContextTagDecision;
+      case 'relationship':
+        return captureContextTagRelationship;
+      case 'other':
+        return captureContextTagOther;
+      default:
+        return tagId;
+    }
+  }
+
+  static const contextAwareAddDifferentContext = contextInsightsAddDifferentContext;
+
+  static const contextAwareAcrossContexts =
+      'This has shown up in more than one context.';
+
+  static String contextAwareCompareAcross(String first, String second) =>
+      'Your archive is beginning to compare this across $first and $second.';
+
   // Static empty belief proof rows (Archive/Patterns proof card).
   static const emptyProofBelief = patternsEmptyPreviewBeliefRow;
   static const emptyProofEvidence = patternsEmptyPreviewEvidenceRow;

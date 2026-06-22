@@ -338,7 +338,11 @@ void main() {
       expect(review.hasEnoughEvidence, isTrue);
       expect(
         review.uncertaintyLine,
-        VisibleArchiveProofCopy.weeklyArchiveReviewVariedContextNote,
+        VisibleArchiveProofCopy.contextAwareAcrossContexts,
+      );
+      expect(
+        review.contextAwareDetailLine,
+        contains('Home'),
       );
     });
 
@@ -351,7 +355,8 @@ void main() {
         ...CaptureContextTags.all.map((tag) => tag.label),
         VisibleArchiveProofCopy.archiveHealthSingleContextTagLine,
         VisibleArchiveProofCopy.archiveHealthVariedContextTagLine,
-        VisibleArchiveProofCopy.weeklyArchiveReviewVariedContextNote,
+        VisibleArchiveProofCopy.contextAwareAcrossContexts,
+        VisibleArchiveProofCopy.contextAwareCompareAcross('Work', 'Home'),
       ]);
     });
   });

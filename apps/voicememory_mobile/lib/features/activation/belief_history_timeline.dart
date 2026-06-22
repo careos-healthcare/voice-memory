@@ -5,6 +5,7 @@ import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'belief_update_payoff.dart';
 import 'capture_context_tags.dart';
+import 'context_aware_archive_copy.dart';
 
 /// User-facing copy for the five-plus entry belief history surface.
 abstract final class BeliefHistoryTimelineCopy {
@@ -41,6 +42,8 @@ class BeliefHistoryTimeline {
     required this.evidenceRows,
     required this.hasMeaningfulChange,
     required this.evidenceWeak,
+    this.contextAwareSummaryLine,
+    this.contextAwareDetailLine,
   });
 
   final String title;
@@ -51,6 +54,8 @@ class BeliefHistoryTimeline {
   final List<String> evidenceRows;
   final bool hasMeaningfulChange;
   final bool evidenceWeak;
+  final String? contextAwareSummaryLine;
+  final String? contextAwareDetailLine;
 }
 
 /// Deterministic belief history — grounded in saved words only.
@@ -105,26 +110,49 @@ abstract final class BeliefHistoryTimelineEngine {
       hasMeaningfulChange: hasMeaningfulChange,
     );
 
-    return BeliefHistoryTimeline(
-      title: hasMeaningfulChange
-          ? BeliefHistoryTimelineCopy.titleChanged
-          : BeliefHistoryTimelineCopy.titleBuilding,
-      body: hasMeaningfulChange
-          ? (contextExpanded
-              ? BeliefHistoryTimelineCopy.bodyChanged
-              : _bodyWhenChanged(currentPayoff))
-          : BeliefHistoryTimelineCopy.bodyNotChanged,
-      earlierBelief: earlierBelief,
-      currentBelief: currentBelief,
-      whatChangedLine: _whatChangedLine(
-        currentPayoff: currentPayoff,
-        fullAnalysis: fullAnalysis,
+    return _applyContextAware(
+      BeliefHistoryTimeline(
+        title: hasMeaningfulChange
+            ? BeliefHistoryTimelineCopy.titleChanged
+            : BeliefHistoryTimelineCopy.titleBuilding,
+        body: hasMeaningfulChange
+            ? (contextExpanded
+                ? BeliefHistoryTimelineCopy.bodyChanged
+                : _bodyWhenChanged(currentPayoff))
+            : BeliefHistoryTimelineCopy.bodyNotChanged,
+        earlierBelief: earlierBelief,
+        currentBelief: currentBelief,
+        whatChangedLine: _whatChangedLine(
+          currentPayoff: currentPayoff,
+          fullAnalysis: fullAnalysis,
+          hasMeaningfulChange: hasMeaningfulChange,
+          evidenceWeak: evidenceWeak,
+        ),
+        evidenceRows: _changeEvidenceRows(eligible),
         hasMeaningfulChange: hasMeaningfulChange,
         evidenceWeak: evidenceWeak,
       ),
-      evidenceRows: _changeEvidenceRows(eligible),
-      hasMeaningfulChange: hasMeaningfulChange,
-      evidenceWeak: evidenceWeak,
+      entries,
+    );
+  }
+
+  static BeliefHistoryTimeline _applyContextAware(
+    BeliefHistoryTimeline timeline,
+    List<JournalEntry> entries,
+  ) {
+    final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
+    if (!contextCopy.showLines) return timeline;
+    return BeliefHistoryTimeline(
+      title: timeline.title,
+      body: timeline.body,
+      earlierBelief: timeline.earlierBelief,
+      currentBelief: timeline.currentBelief,
+      whatChangedLine: timeline.whatChangedLine,
+      evidenceRows: timeline.evidenceRows,
+      hasMeaningfulChange: timeline.hasMeaningfulChange,
+      evidenceWeak: timeline.evidenceWeak,
+      contextAwareSummaryLine: contextCopy.summaryLine,
+      contextAwareDetailLine: contextCopy.detailLine,
     );
   }
 

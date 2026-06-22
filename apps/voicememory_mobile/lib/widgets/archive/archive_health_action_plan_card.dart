@@ -55,6 +55,22 @@ class ArchiveHealthActionPlanCard extends StatelessWidget {
             key: const Key('archive_health_action_plan_subtitle'),
             style: bodyStyle.copyWith(color: AppColors.textSecondary),
           ),
+          if (plan.contextAwareSummaryLine case final contextSummary?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              contextSummary,
+              key: const Key('archive_health_action_plan_context_summary'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
+          if (plan.contextAwareDetailLine case final contextDetail?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              contextDetail,
+              key: const Key('archive_health_action_plan_context_detail'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           Text(
             VisibleArchiveProofCopy.archiveHealthActionPlanItemsLabel,

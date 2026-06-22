@@ -107,4 +107,14 @@ abstract final class CaptureContextTagAnalysis {
     if (!hasAnyTaggedEligibleEntries(entries)) return false;
     return !hasVariedTagContext(entries);
   }
+
+  static Map<String, int> tagCounts(List<JournalEntry> entries) {
+    final counts = <String, int>{};
+    for (final entry in ArchiveEvidenceGuard.eligibleEntries(entries)) {
+      final tagId = entry.captureContextTag;
+      if (tagId == null || tagId.isEmpty) continue;
+      counts[tagId] = (counts[tagId] ?? 0) + 1;
+    }
+    return counts;
+  }
 }

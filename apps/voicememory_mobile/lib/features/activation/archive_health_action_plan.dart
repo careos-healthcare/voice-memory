@@ -3,6 +3,7 @@ import '../archive_proof/visible_archive_proof_copy.dart';
 import 'archive_health_score.dart';
 import 'archive_insight_feedback.dart';
 import 'capture_context_tags.dart';
+import 'context_aware_archive_copy.dart';
 import 'next_moment_prompt.dart';
 
 /// Navigation action for archive health action plan CTAs.
@@ -22,6 +23,8 @@ class ArchiveHealthActionPlan {
     required this.primaryAction,
     this.secondaryCta,
     this.secondaryAction,
+    this.contextAwareSummaryLine,
+    this.contextAwareDetailLine,
   });
 
   final bool showCard;
@@ -32,6 +35,8 @@ class ArchiveHealthActionPlan {
   final ArchiveHealthActionPlanCta primaryAction;
   final String? secondaryCta;
   final ArchiveHealthActionPlanCta? secondaryAction;
+  final String? contextAwareSummaryLine;
+  final String? contextAwareDetailLine;
 
   factory ArchiveHealthActionPlan.hidden() => const ArchiveHealthActionPlan(
         showCard: false,
@@ -78,6 +83,11 @@ abstract final class ArchiveHealthActionPlanEngine {
       usableCount: health.usableMomentCount,
       nextPrompt: nextPrompt,
     );
+    final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
+    final contextLines = _contextSupportLines(
+      contextCopy: contextCopy,
+      entries: entries,
+    );
 
     return ArchiveHealthActionPlan(
       showCard: actionItems.isNotEmpty,
@@ -88,7 +98,20 @@ abstract final class ArchiveHealthActionPlanEngine {
       primaryAction: ArchiveHealthActionPlanCta.addMoment,
       secondaryCta: ctas.$2,
       secondaryAction: ctas.$3,
+      contextAwareSummaryLine: contextLines.$1,
+      contextAwareDetailLine: contextLines.$2,
     );
+  }
+
+  static (String?, String?) _contextSupportLines({
+    required ContextAwareArchiveCopy contextCopy,
+    required List<JournalEntry> entries,
+  }) {
+    if (!contextCopy.showLines) return (null, null);
+    if (CaptureContextTagAnalysis.allTaggedSameContext(entries)) {
+      return (contextCopy.summaryLine, null);
+    }
+    return (contextCopy.summaryLine, contextCopy.detailLine);
   }
 
   static void _addStageAction(List<String> items, ArchiveHealthStage stage) {
