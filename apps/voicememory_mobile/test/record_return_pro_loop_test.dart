@@ -115,7 +115,7 @@ void main() {
         contains('No conclusion yet'),
       );
       expect(RecordReturnProCopy.evidenceViewArchive, 'View archive');
-      expect(RecordReturnProCopy.evidenceRecordAnother, 'Record another');
+      expect(RecordReturnProCopy.evidenceRecordAnother, 'Add one more moment');
     });
 
     test('return cue copy is exact', () {

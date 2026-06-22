@@ -66,6 +66,21 @@ void main() {
       );
     });
 
+    test('early repeat copy is cautious', () {
+      expect(
+        FirstThreeSessionCopy.session2StartingToNoticeTitle,
+        contains('starting to compare'),
+      );
+      expect(
+        FirstThreeSessionCopy.session2StartingToNoticeBody,
+        contains('archive will show the thread'),
+      );
+      expect(
+        FirstThreeSessionCopy.session2NextAction,
+        contains('strengthen the signal'),
+      );
+    });
+
     test('consumer copy avoids internal billing language', () {
       final haystack = [
         ...FirstThreeSessionCopy.session1Lines,
@@ -147,7 +162,7 @@ void main() {
       );
       expect(find.textContaining('No conclusion yet'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
-      expect(find.text('Record another'), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
       expect(find.text('ArchiveMe found a possible repeat'), findsNothing);
     });
@@ -320,9 +335,10 @@ void main() {
       expect(model.journeyStepIndex, 1);
     });
 
-    test('two entries shows starting to notice, not possible repeat', () {
+    test('two entries shows starting to compare, not possible repeat', () {
       final model = engine.build(reflectionCount: 2);
       expect(model.title, FirstThreeSessionCopy.session2StartingToNoticeTitle);
+      expect(model.title, contains('starting to compare'));
       expect(model.title, isNot(FirstThreeSessionCopy.session2RepeatTitle));
       expect(model.journeyStepIndex, 1);
       expect(model.progressLabel, FirstThreeSessionCopy.journeyStep2);

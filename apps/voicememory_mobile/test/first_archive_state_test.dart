@@ -5,6 +5,7 @@ import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/archive_belief_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -60,13 +61,9 @@ void main() {
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedBody,
-        'Add one more moment and ArchiveMe can start comparing what repeats.',
+        'Add one more moment and ArchiveMe can start comparing your own words.',
       );
-      expect(
-        ConsumerUiCopy.patternsFirstEntrySavedHelper,
-        'Preview — not a conclusion yet',
-      );
-      expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Add another moment');
+      expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Add one more moment');
     });
 
     test('one saved entry is not intentional empty archive', () {
@@ -102,7 +99,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Add another moment'), findsNothing);
+      expect(find.text('Add one more moment'), findsNothing);
       expect(find.text('Your archive has one piece of evidence.'), findsNothing);
     });
   });
@@ -127,10 +124,14 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedHelper),
+        find.text(VisibleArchiveProofCopy.patternsOneEntryEvidenceRow),
         findsOneWidget,
       );
-      expect(find.text('Add another moment'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.patternsOneEntryChangedRow),
+        findsOneWidget,
+      );
+      expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
@@ -219,7 +220,7 @@ void main() {
         find.text(ConsumerUiCopy.patternsFirstEntrySavedBody),
         findsOneWidget,
       );
-      expect(find.text('Add another moment'), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
     });
@@ -242,7 +243,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('Your first moment is saved.'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.patternsOneEntryTitle),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
     });
   });

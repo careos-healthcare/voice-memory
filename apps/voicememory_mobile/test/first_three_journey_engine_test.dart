@@ -70,13 +70,14 @@ void main() {
     expect(m.title, isNot(contains('possible repeat')));
   });
 
-  test('2 reflections shows starting to notice, not possible repeat', () {
+  test('2 reflections shows starting to compare, not possible repeat', () {
     final m = engine.build(reflectionCount: 2);
     expect(m.currentStep, FirstThreeJourneyStep.three);
     expect(m.title, FirstThreeSessionCopy.session2StartingToNoticeTitle);
+    expect(m.title, contains('starting to compare'));
     expect(m.body, FirstThreeSessionCopy.session2StartingToNoticeBody);
     expect(m.progressLabel, FirstThreeSessionCopy.journeyStep2);
-    expect(m.nextAction, FirstThreeSessionCopy.session1NextAction);
+    expect(m.nextAction, FirstThreeSessionCopy.session2NextAction);
     expect(m.journeyStepIndex, 1);
     expect(m.completed, isFalse);
     expect(m.title, isNot(contains('possible repeat')));

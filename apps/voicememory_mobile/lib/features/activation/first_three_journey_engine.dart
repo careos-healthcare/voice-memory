@@ -101,7 +101,7 @@ class FirstThreeJourneyEngine {
       title: FirstThreeSessionCopy.session2StartingToNoticeTitle,
       body: FirstThreeSessionCopy.session2StartingToNoticeBody,
       progressLabel: FirstThreeSessionCopy.journeyStep2,
-      nextAction: FirstThreeSessionCopy.session1NextAction,
+      nextAction: FirstThreeSessionCopy.session2NextAction,
       completed: false,
       journeyStepIndex: 1,
     );
