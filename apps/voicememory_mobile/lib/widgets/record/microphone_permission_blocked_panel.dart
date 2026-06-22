@@ -52,27 +52,74 @@ class MicrophonePermissionBlockedPanel extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: FilledButton(
-            key: const Key('microphone_permission_open_settings'),
-            onPressed: onOpenSettings,
-            child: const Text(MicrophonePermissionCopy.openSettingsCta),
-          ),
-        ),
         const SizedBox(height: 8),
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: OutlinedButton(
-            key: const Key('microphone_permission_type_instead'),
-            onPressed: () => unawaited(onTypeInstead()),
-            child: const Text(MicrophonePermissionCopy.typeInsteadCta),
+        Text(
+          MicrophonePermissionCopy.typeInsteadBlockedHelper,
+          key: const Key('microphone_permission_type_instead_helper'),
+          style: ArchiveMobileTypography.responsiveBody(context).copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.4,
           ),
         ),
+        const SizedBox(height: 16),
+        if (showSimulatorHelper) ...[
+          _typeInsteadButton(filled: true),
+          const SizedBox(height: 8),
+          _openSettingsButton(outlined: true),
+        ] else ...[
+          _openSettingsButton(outlined: false),
+          const SizedBox(height: 8),
+          _typeInsteadButton(filled: false),
+        ],
       ],
+    );
+  }
+
+  Widget _openSettingsButton({required bool outlined}) {
+    final child = const Text(MicrophonePermissionCopy.openSettingsCta);
+    if (outlined) {
+      return SizedBox(
+        height: 48,
+        width: double.infinity,
+        child: OutlinedButton(
+          key: const Key('microphone_permission_open_settings'),
+          onPressed: onOpenSettings,
+          child: child,
+        ),
+      );
+    }
+    return SizedBox(
+      height: 48,
+      width: double.infinity,
+      child: FilledButton(
+        key: const Key('microphone_permission_open_settings'),
+        onPressed: onOpenSettings,
+        child: child,
+      ),
+    );
+  }
+
+  Widget _typeInsteadButton({required bool filled}) {
+    final child = const Text(MicrophonePermissionCopy.typeInsteadCta);
+    if (filled) {
+      return SizedBox(
+        height: 48,
+        width: double.infinity,
+        child: FilledButton(
+          key: const Key('microphone_permission_type_instead'),
+          onPressed: () => unawaited(onTypeInstead()),
+          child: child,
+        ),
+      );
+    }
+    return SizedBox(
+      height: 48,
+      width: double.infinity,
+      child: OutlinedButton(
+        key: const Key('microphone_permission_type_instead'),
+        onPressed: () => unawaited(onTypeInstead()),
+        child: child,
+      ),
     );
   }
 }

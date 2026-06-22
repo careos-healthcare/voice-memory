@@ -42,6 +42,29 @@ void main() {
     );
   });
 
+  group('FirstThreeSessionGates', () {
+    test('early archive proof stays hidden until grounded repeat at two entries', () {
+      final entries = [
+        _entry(
+          '1',
+          'A quiet moment about lunch with a friend today.',
+        ),
+        _entry(
+          '2',
+          'Another unrelated note about errands this afternoon.',
+        ),
+      ];
+      expect(
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: 2,
+          hasGroundedRepeatMatch:
+              const SecondSessionSignalEngine().hasGroundedRepeatMatch(entries),
+        ),
+        isTrue,
+      );
+    });
+  });
+
   group('FirstThreeSessionCopy', () {
     test('session 1 lines match product loop', () {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
