@@ -20,7 +20,9 @@ import 'package:voicememory_mobile/features/voice_capture/microphone_permission_
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
+import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -48,6 +50,23 @@ JournalEntry _entry({
     repeatedSignal: '',
   ),
 );
+
+JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
+      id: id,
+      createdAt: DateTime(2026, 6, 12, 12),
+      transcript:
+          '[draft] Recording saved locally — transcribe when connected',
+      durationSeconds: 20,
+      localAudioPath: '/tmp/audio.m4a',
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 0,
+        recurringThemes: [],
+        exactLanguagePattern: '',
+        concreteObservation: '',
+        repeatedSignal: '',
+      ),
+    );
 
 List<PressureCheckInRecord> _workThread3() => [
   PressureCheckInRecord(
@@ -598,15 +617,21 @@ void main() {
         await tester.runAsync(() async {
           for (var i = 0; i < entryCount; i++) {
             await AppServices.instance.journalStore.save(
-              _entry(id: 'e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
+              degradedVoicePostSave
+                  ? _degradedVoiceEntry(id: 'v$i')
+                  : _entry(id: 'e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
             );
           }
         });
       }
+      final auditEntriesAfterSave = degradedVoicePostSave && entryCount > 0
+          ? List.generate(entryCount, (i) => _degradedVoiceEntry(id: 'v$i'))
+          : null;
       VisualAuditOverrides.setRecordPresentation(
         RecordAuditPresentation(
           ui: ui,
           degradedVoicePostSave: degradedVoicePostSave,
+          entriesAfterSave: auditEntriesAfterSave,
           micPhase: micPhase,
           userDeniedThisSession: userDeniedThisSession,
         ),
@@ -786,12 +811,32 @@ void main() {
         degradedVoicePostSave: true,
       );
 
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryBody), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.evidenceTitle), findsNothing);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
+    });
+
+    testWidgets('degraded first save does not show archive started payoff', (
+      tester,
+    ) async {
+      await pumpRecordScreen(
+        tester,
+        entryCount: 1,
+        ui: RecordUiState.done,
+        degradedVoicePostSave: true,
+      );
+
+      expect(find.byKey(const Key('first_save_archive_started_card')), findsNothing);
+      expect(
+        VoiceCaptureQuality.isDegradedVoiceCapture(_degradedVoiceEntry()),
+        isTrue,
+      );
     });
   });
 }

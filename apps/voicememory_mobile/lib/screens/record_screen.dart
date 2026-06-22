@@ -2147,8 +2147,10 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() {
       _ui = RecordUiState.done;
       _entriesAfterSave = all;
-      // First 60 Seconds: the very first entry just landed.
-      _recordReturnProJustSaved = all.length == 1;
+      // First 60 Seconds: usable first entry only — degraded voice waits for typed recovery.
+      _recordReturnProJustSaved =
+          all.length == 1 &&
+          !VoiceCaptureQuality.isDegradedVoiceCapture(savedEntry);
       _archiveStateAfterSave = state;
       _inputQuality = inputQuality;
       _inputQualityText = latestReflectionText;
@@ -2183,7 +2185,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (VoiceCaptureQuality.isDegradedVoiceCapture(savedEntry)) {
         _localSaveTitle = null;
         _syncNote = null;
-        _stageLabel = VoiceCaptureCopy.savedPrivatelySuccess;
+        _stageLabel = VoiceCaptureCopy.degradedRecoveryTitle;
       } else if (!cloudOk && hasSavedTranscript && !pipelineResult.analysisSucceeded) {
         _localSaveTitle = VoiceCaptureCopy.recordingSavedTitle;
         _syncNote = VoiceCaptureCopy.analysisUnavailableNote;
@@ -2968,10 +2970,14 @@ class _RecordScreenState extends State<RecordScreen> {
     var localSaveTitle = _localSaveTitle;
     var syncNote = ConsumerCopyGuard.userFacingSyncNote(_syncNote);
     var stageLabel = _stageLabel;
+    var entriesAfterSave = _entriesAfterSave;
     if (VisualAuditOverrides.active) {
       final audit = VisualAuditOverrides.peekRecordPresentation();
       if (audit != null) {
         ui = audit.ui;
+        if (audit.entriesAfterSave != null) {
+          entriesAfterSave = audit.entriesAfterSave!;
+        }
         if (audit.micPhase != null) policyMic = audit.micPhase!;
         if (audit.userDeniedThisSession != null) {
           policyUserDenied = audit.userDeniedThisSession!;
@@ -3564,11 +3570,11 @@ class _RecordScreenState extends State<RecordScreen> {
                           onStartRecording: () => _onRecordPressed(source: 'main'),
                         ),
                       ],
-                      if (_ui == RecordUiState.done &&
-                          _entriesAfterSave.isNotEmpty) ...[
+                      if (ui == RecordUiState.done &&
+                          entriesAfterSave.isNotEmpty) ...[
                         if (!suppressNoisyFirstSaveCards) ...[
                           if (!VoiceCaptureQuality.isDegradedVoiceCapture(
-                            _lastSavedEntry!,
+                            entriesAfterSave.first,
                           )) ...[
                             const SizedBox(height: 16),
                             Row(
@@ -3595,8 +3601,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             const SizedBox(height: 16),
                           ],
                           PostSaveRecordedSummaryCard(
-                            entry: _lastSavedEntry!,
-                            allEntries: _entriesAfterSave,
+                            entry: entriesAfterSave.first,
+                            allEntries: entriesAfterSave,
                             degradedBodyCopy: _lastCaptureLowQualityTranscript
                                 ? VoiceCaptureCopy.lowQualityTranscriptIssue
                                 : null,
@@ -3604,10 +3610,10 @@ class _RecordScreenState extends State<RecordScreen> {
                             showAnalysisPendingNote:
                                 !_lastCaptureAnalysisSucceeded &&
                                 VoiceCaptureQuality.hasUsableSpokenText(
-                                  _lastSavedEntry!,
+                                  entriesAfterSave.first,
                                 ),
                             mirror: const DailyMirrorEngine().build(
-                              _entriesAfterSave,
+                              entriesAfterSave,
                             ),
                           ),
                         ],

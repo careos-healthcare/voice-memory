@@ -118,7 +118,8 @@ void main() {
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.lowQualityTranscriptIssue), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryBody), findsOneWidget);
     });
 
     testWidgets('degraded voice capture shows transcription fallback', (
@@ -142,8 +143,9 @@ void main() {
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsNothing);
-      expect(find.text(VoiceCaptureCopy.savedPrivatelySuccess), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.degradedRecoveryBody), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
       expect(find.byKey(const Key('post_save_type_what_you_said')), findsNothing);
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
       expect(find.byKey(const Key('post_save_play_recording_debug')), findsOneWidget);

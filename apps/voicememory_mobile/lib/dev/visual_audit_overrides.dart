@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 
 import '../audio/recording_service.dart';
+import '../models/journal_entry.dart';
 import '../screens/record_screen.dart';
 
 /// Compile-time flag: `flutter test --dart-define=VISUAL_AUDIT=true`
@@ -43,6 +44,7 @@ class RecordAuditPresentation {
     this.syncNote,
     this.stageLabel,
     this.degradedVoicePostSave = false,
+    this.entriesAfterSave,
     this.micPhase,
     this.userDeniedThisSession,
   });
@@ -53,6 +55,7 @@ class RecordAuditPresentation {
   final String? syncNote;
   final String? stageLabel;
   final bool degradedVoicePostSave;
+  final List<JournalEntry>? entriesAfterSave;
   final RecordingPhase? micPhase;
   final bool? userDeniedThisSession;
 }

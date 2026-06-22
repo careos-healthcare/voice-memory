@@ -33,6 +33,12 @@ abstract class VoiceCaptureCopy {
 
   static const String typeWhatYouSaid = 'Type what you said';
 
+  static const String degradedRecoveryTitle = 'We recorded your audio.';
+
+  static const String degradedRecoveryBody =
+      'The transcript was not clear enough. Add a short note so this moment '
+      'is useful in your archive.';
+
   static const List<String> all = [
     notEnoughAudio,
     transcriptionFailedTitle,
@@ -44,5 +50,7 @@ abstract class VoiceCaptureCopy {
     recordingSavedTitle,
     analysisUnavailableNote,
     typeWhatYouSaid,
+    degradedRecoveryTitle,
+    degradedRecoveryBody,
   ];
 }
