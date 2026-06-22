@@ -12,6 +12,7 @@ import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
 import '../features/fact_ledger/archive_fact.dart';
 import '../features/collections/archive_collection.dart';
+import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/pins/pinned_evidence_store.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/tomorrow_return/tomorrow_check_in_coordinator.dart';
@@ -165,6 +166,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               child: MemoryScopeSettingsSection(),
+            ),
+            ListTile(
+              key: const Key('settings_insight_quality_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                VisibleArchiveProofCopy.insightQualitySettingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                VisibleArchiveProofCopy.insightQualitySettingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/insight-quality'),
             ),
             ListTile(
               key: const Key('settings_security_tile'),

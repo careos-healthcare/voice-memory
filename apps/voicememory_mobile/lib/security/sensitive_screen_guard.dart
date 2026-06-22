@@ -29,6 +29,7 @@ abstract class SensitiveRoutes {
     '/archive-belief',
     '/belief-evidence',
     '/weekly-archive-review',
+    '/insight-quality',
     '/patterns',
     '/export',
     '/security',

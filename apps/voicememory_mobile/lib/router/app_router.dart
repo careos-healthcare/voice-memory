@@ -18,6 +18,8 @@ import '../screens/archive_explanation_screen.dart';
 import '../features/archive_explanations/archive_explanation_navigation.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/weekly_archive_review.dart';
+import '../features/activation/insight_quality_dashboard.dart';
+import '../screens/insight_quality_screen.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
@@ -328,6 +330,11 @@ final GoRouter appRouter = GoRouter(
       path: WeeklyArchiveReviewNavigation.route,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const WeeklyArchiveReviewScreen(),
+    ),
+    GoRoute(
+      path: InsightQualityNavigation.route,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const InsightQualityScreen(),
     ),
     GoRoute(path: '/timeline', redirect: (context, state) => '/archive-belief'),
     GoRoute(
