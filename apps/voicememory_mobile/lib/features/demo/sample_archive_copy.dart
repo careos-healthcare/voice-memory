@@ -43,4 +43,23 @@ abstract final class SampleArchiveCopy {
   static const tourStep5Title = 'Go back to your archive';
   static const tourStep5Body =
       'Sample data is only an example. Your real archive stays separate.';
+
+  static const demoShareTitle = 'ArchiveMe sample archive';
+  static const demoShareSubtitle = 'Example data only — not your private archive';
+  static const demoShareBulletOne =
+      'ArchiveMe compares saved moments over time.';
+  static const demoShareBulletTwo =
+      'It shows cautious beliefs with evidence.';
+  static const demoShareBulletThree =
+      'It highlights where evidence is strong, thin, or needs attention.';
+  static const demoShareEvidenceMapHeading = 'Sample evidence map:';
+  static const demoShareReviewLine =
+      'This sample shows how a pattern can appear across contexts.';
+  static const demoSharePrivacyFooter = 'No private entries shared.';
+  static const demoShareShareButton = 'Share demo summary';
+  static const demoShareCopyButton = 'Copy demo summary';
+  static const demoShareSubject = 'ArchiveMe sample archive';
+
+  static String demoShareEvidenceMapRow(String label, int count) =>
+      '$label: $count ${count == 1 ? 'moment' : 'moments'}';
 }
