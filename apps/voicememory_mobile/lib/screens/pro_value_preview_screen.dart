@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../billing/revenuecat_service.dart';
 import '../design/archive_mobile_typography.dart';
-import '../features/archive_depth/archive_depth_copy.dart';
+import '../features/archive_depth/archive_depth_models.dart';
 import '../features/pro/pro_value_preview_copy.dart';
+import '../features/pro_value/pro_value_engine.dart';
+import '../features/pro_value/pro_value_models.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -12,8 +15,23 @@ import '../widgets/pushed_screen_shell.dart';
 class ProValuePreviewScreen extends StatelessWidget {
   const ProValuePreviewScreen({super.key});
 
+  ProValuePlan _plan() {
+    return const ProValueEngine().build(
+      ProValueInput(
+        savedEntryCount: 0,
+        depthLevel: ArchiveDepthLevel.notStarted,
+        watchlistCount: 0,
+        weeklyReviewAvailable: false,
+        evidenceMapContextCount: 0,
+        beliefHistoryAvailable: false,
+        purchasesAvailable: RevenueCatService.instance.isConfigured,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final plan = _plan();
     return PushedScreenShell(
       title: ProValuePreviewCopy.screenTitle,
       fallbackRoute: '/settings',
@@ -23,16 +41,37 @@ class ProValuePreviewScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              plan.headline,
+              key: const Key('pro_value_preview_headline'),
+              style: ArchiveMobileTypography.responsiveSectionTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              plan.subheadline,
+              key: const Key('pro_value_preview_subheadline'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              plan.body,
+              key: const Key('pro_value_preview_body'),
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
+            const SizedBox(height: AppSpacing.lg),
             _Section(
               key: const Key('pro_value_preview_free_section'),
               title: ProValuePreviewCopy.freeNowTitle,
-              bullets: ProValuePreviewCopy.freeNowBullets,
+              bullets: plan.freeNowBullets,
             ),
             const SizedBox(height: AppSpacing.lg),
             _Section(
               key: const Key('pro_value_preview_pro_section'),
               title: ProValuePreviewCopy.proForTitle,
-              bullets: ProValuePreviewCopy.proForBullets,
+              bullets: plan.valueBullets,
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
@@ -42,7 +81,7 @@ class ProValuePreviewScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              ProValuePreviewCopy.whyBodyOne,
+              plan.whyBodyOne,
               key: const Key('pro_value_preview_why_body_one'),
               style: ArchiveMobileTypography.explanationBody(
                 context,
@@ -51,32 +90,8 @@ class ProValuePreviewScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              ProValuePreviewCopy.whyBodyTwo,
+              plan.whyBodyTwo,
               key: const Key('pro_value_preview_why_body_two'),
-              style: ArchiveMobileTypography.explanationBody(
-                context,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              ArchiveDepthCopy.whyDepthTitle,
-              key: const Key('pro_value_preview_depth_title'),
-              style: ArchiveMobileTypography.cardLabel(context),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              ArchiveDepthCopy.whyDepthBodyOne,
-              key: const Key('pro_value_preview_depth_body_one'),
-              style: ArchiveMobileTypography.explanationBody(
-                context,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              ArchiveDepthCopy.whyDepthBodyTwo,
-              key: const Key('pro_value_preview_depth_body_two'),
               style: ArchiveMobileTypography.explanationBody(
                 context,
                 color: AppColors.textSecondary,
@@ -90,35 +105,28 @@ class ProValuePreviewScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              ProValuePreviewCopy.purchaseUnavailable,
+              plan.purchaseUnavailableNote,
               key: const Key('pro_value_preview_purchase_unavailable'),
               style: ArchiveMobileTypography.listTitle(context),
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              ProValuePreviewCopy.purchaseKeepFree,
-              key: const Key('pro_value_preview_purchase_keep_free'),
-              style: ArchiveMobileTypography.explanationBody(
-                context,
-                color: AppColors.textSecondary,
+            if (RevenueCatService.instance.isConfigured) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                plan.purchaseAfterSetupNote,
+                key: const Key('pro_value_preview_purchase_after_setup'),
+                style: ArchiveMobileTypography.explanationBody(
+                  context,
+                  color: AppColors.textSecondary,
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              ProValuePreviewCopy.purchaseAfterSetup,
-              key: const Key('pro_value_preview_purchase_after_setup'),
-              style: ArchiveMobileTypography.explanationBody(
-                context,
-                color: AppColors.textSecondary,
-              ),
-            ),
+            ],
             const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
               child: FilledButton(
                 key: const Key('pro_value_preview_keep_building_cta'),
-                onPressed: () => context.go('/record'),
-                child: const Text(ProValuePreviewCopy.keepBuildingCta),
+                onPressed: () => context.go(plan.primaryCta.route),
+                child: Text(plan.primaryCta.label),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -126,8 +134,8 @@ class ProValuePreviewScreen extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 key: const Key('pro_value_preview_sample_archive_cta'),
-                onPressed: () => context.push('/sample-archive'),
-                child: const Text(ProValuePreviewCopy.trySampleArchiveCta),
+                onPressed: () => context.push(plan.secondaryCta.route),
+                child: Text(plan.secondaryCta.label),
               ),
             ),
           ],

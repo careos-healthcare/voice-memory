@@ -39,6 +39,7 @@ const _consumerFacingSources = [
   'lib/features/return_ritual/return_ritual_copy.dart',
   'lib/features/moment_quality/moment_quality_copy.dart',
   'lib/features/pro/pro_value_preview_copy.dart',
+  'lib/features/pro_value/pro_value_copy.dart',
   'lib/features/return_changes/archive_return_changes_copy.dart',
   'lib/features/archive_depth/archive_depth_copy.dart',
   'lib/features/archive_watchlist/archive_watchlist_copy.dart',

@@ -1,13 +1,13 @@
 import 'archive_depth_models.dart';
+import '../pro_value/pro_value_copy.dart';
 
 /// User-facing copy for the archive depth meter — no pressure or certainty.
 abstract final class ArchiveDepthCopy {
   ArchiveDepthCopy._();
 
   static const cardTitle = 'Archive depth';
-  static const proPreviewButton = 'See Pro preview';
-  static const proLineLongTerm =
-      'Pro is designed for deeper long-term archive history as your evidence grows.';
+  static const proPreviewButton = ProValueCopy.proPreviewButton;
+  static const proLineLongTerm = ProValueCopy.cardProLine;
 
   static const whyDepthTitle = 'Why archive depth matters';
   static const whyDepthBodyOne =

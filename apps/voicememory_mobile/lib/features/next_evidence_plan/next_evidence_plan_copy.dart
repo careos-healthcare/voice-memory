@@ -1,4 +1,6 @@
 /// User-facing copy for the next evidence plan — no pressure or certainty.
+import '../pro_value/pro_value_copy.dart';
+
 abstract final class NextEvidencePlanCopy {
   NextEvidencePlanCopy._();
 
@@ -29,12 +31,11 @@ abstract final class NextEvidencePlanCopy {
 
   static const addMomentAction = 'Add a moment';
   static const reviewWatchlistAction = 'Review watchlist';
-  static const proPreviewButton = 'See Pro preview';
-  static const proLineLongTerm =
-      'Longer-term evidence plans are where Pro becomes more useful.';
+  static const proPreviewButton = ProValueCopy.proPreviewButton;
+  static const proLineLongTerm = ProValueCopy.cardProLine;
 
   static const addMomentRoute = '/record';
-  static const proPreviewRoute = '/pro-preview';
+  static const proPreviewRoute = ProValueCopy.proPreviewRoute;
 
   static String watchingForLine(String label) => 'You are watching for: $label.';
 

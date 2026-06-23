@@ -1,4 +1,5 @@
 import '../archive_proof/visible_archive_proof_copy.dart';
+import '../pro_value/pro_value_copy.dart';
 import '../submission/app_store_submission_copy.dart';
 
 /// Static copy for the in-app Help & reviewer guide.
@@ -48,6 +49,9 @@ abstract final class HelpReviewerGuideCopy {
   static const sectionExpectationsBulletThree =
       'It is not a therapy or medical service.';
 
+  static const sectionProLaterTitle = ProValueCopy.helpProLaterTitle;
+  static const sectionProLaterNote = ProValueCopy.helpProLaterNote;
+
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 
   static List<HelpReviewerGuideSection> get sections => [
@@ -86,6 +90,10 @@ abstract final class HelpReviewerGuideCopy {
         sectionPrivacyBulletTwo,
         sectionPrivacyBulletThree,
       ],
+    ),
+    HelpReviewerGuideSection(
+      title: sectionProLaterTitle,
+      bullets: const [sectionProLaterNote],
     ),
     HelpReviewerGuideSection(
       title: sectionExpectationsTitle,

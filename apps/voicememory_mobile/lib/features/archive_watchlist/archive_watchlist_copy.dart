@@ -1,4 +1,5 @@
 import 'archive_watchlist_models.dart';
+import '../pro_value/pro_value_copy.dart';
 
 /// User-facing copy for the archive watchlist — no pressure or certainty.
 abstract final class ArchiveWatchlistCopy {
@@ -31,12 +32,11 @@ abstract final class ArchiveWatchlistCopy {
 
   static const privacyLine = 'Watch themes stay on this device.';
 
-  static const proLineLongTerm =
-      'Deeper long-term watch history is where Pro becomes more useful.';
-  static const proPreviewButton = 'See Pro preview';
+  static const proLineLongTerm = ProValueCopy.cardProLine;
+  static const proPreviewButton = ProValueCopy.proPreviewButton;
 
-  static const themeLimitBody =
-      'Three watch themes is enough for this version. Pro is designed for deeper long-term watch history.';
+  static String get themeLimitBody =>
+      'Three watch themes is enough for this version. ${ProValueCopy.cardProLine}';
 
   static const presetUnclearDecisions = ArchiveWatchlistPreset(
     id: 'unclear_decisions',

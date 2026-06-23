@@ -9,6 +9,7 @@ import 'package:voicememory_mobile/features/archive_depth/archive_depth_gates.da
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_depth_card.dart';
@@ -269,8 +270,8 @@ void main() {
     });
   });
 
-  group('Pro preview depth section', () {
-    testWidgets('shows why archive depth matters section', (tester) async {
+  group('Pro preview value section', () {
+    testWidgets('shows central Pro value headline', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -278,8 +279,8 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.text(ArchiveDepthCopy.whyDepthTitle), findsOneWidget);
-      expect(find.text(ArchiveDepthCopy.whyDepthBodyOne), findsOneWidget);
+      expect(find.text(ProValueCopy.headline), findsOneWidget);
+      expect(find.text(ProValueCopy.subheadline), findsOneWidget);
     });
   });
 }
