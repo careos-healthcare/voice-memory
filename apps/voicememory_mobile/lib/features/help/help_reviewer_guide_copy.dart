@@ -1,4 +1,5 @@
 import '../archive_proof/visible_archive_proof_copy.dart';
+import '../submission/app_store_submission_copy.dart';
 
 /// Static copy for the in-app Help & reviewer guide.
 abstract final class HelpReviewerGuideCopy {
@@ -73,6 +74,10 @@ abstract final class HelpReviewerGuideCopy {
         sectionQuickValueBulletFour,
         sectionQuickValueBulletFive,
       ],
+    ),
+    HelpReviewerGuideSection(
+      title: AppStoreSubmissionCopy.suggestedReviewPathTitle,
+      bullets: AppStoreSubmissionCopy.suggestedReviewPathBullets,
     ),
     HelpReviewerGuideSection(
       title: sectionPrivacyTitle,
