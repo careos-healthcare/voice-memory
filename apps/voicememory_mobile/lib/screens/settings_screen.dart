@@ -22,6 +22,7 @@ import '../services/app_services.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
+import '../widgets/settings/privacy_data_controls_section.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -148,6 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ConsumerUiCopy.restorePurchases,
               onTap: _restoreBusy ? null : _restorePurchases,
             ),
+            const PrivacyDataControlsSection(),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(
@@ -194,10 +196,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/security'),
-            ),
-            _tile(
-              ConsumerUiCopy.exportReflections,
-              onTap: () => context.push('/export'),
             ),
             ListTile(
               key: const Key('settings_pinned_evidence_tile'),

@@ -38,6 +38,12 @@ abstract final class ArchiveWorkspaceHintStore {
     });
   }
 
+  static Future<void> resetDismissedTips() async {
+    _dismissed.clear();
+    _lastPersist = _persist();
+    await flushForTest();
+  }
+
   @visibleForTesting
   static Future<void> flushForTest() async {
     await (_lastPersist ?? Future<void>.value());

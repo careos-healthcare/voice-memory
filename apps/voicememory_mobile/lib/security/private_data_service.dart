@@ -77,7 +77,15 @@ class PrivateDataService {
     if (confirmationPhrase.trim() != wipeConfirmationPhrase) {
       throw ArgumentError('Confirmation phrase did not match.');
     }
+    await clearLocalArchiveData();
+  }
 
+  /// Clears local journal data and archive-derived caches after UI confirmation.
+  Future<void> clearLocalArchiveData() async {
+    await _performLocalArchiveWipe();
+  }
+
+  Future<void> _performLocalArchiveWipe() async {
     final entries = await _journal.loadAll();
     for (final entry in entries) {
       final path = entry.localAudioPath?.trim();
@@ -149,6 +157,8 @@ class PrivateDataService {
       'pinnedEvidence',
       'factLedger',
       'actionItems',
+      'archive_insight_feedback',
+      'archive_workspace_hints_dismissed',
     ];
     for (final key in cacheKeys) {
       await prefs.writeMap(key, {});
