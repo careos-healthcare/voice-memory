@@ -121,7 +121,7 @@ void main() {
 
       expect(find.text('How ArchiveMe works'), findsOneWidget);
       expect(find.text('Record one small thing.'), findsOneWidget);
-      expect(find.text('ArchiveMe notices what repeats.'), findsOneWidget);
+      expect(find.text('After a second moment, ArchiveMe can start comparing your own words.'), findsOneWidget);
       expect(
         find.text('Tomorrow, check whether it returned, faded, or changed.'),
         findsOneWidget,

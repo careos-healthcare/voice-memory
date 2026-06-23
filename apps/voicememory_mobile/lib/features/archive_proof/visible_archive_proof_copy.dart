@@ -33,6 +33,18 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveSecondary =
       'No conclusion yet — just one moment saved so far.';
 
+  static const firstSaveReturnTomorrowBody =
+      'Come back tomorrow to see whether this moment shows up again. '
+      'No conclusion yet — just one private save so far.';
+
+  static const archiveHomeEmptySampleHint =
+      'Sample Archive below shows how comparison works — demo moments only, '
+      'no private entries.';
+
+  static const secondMomentWhyLine =
+      'A second moment lets ArchiveMe compare your own words — cautiously, '
+      'not as a conclusion.';
+
   static const firstSavePrimaryCta = 'Add one more moment';
   static const firstSaveViewArchiveCta = 'View archive';
 
@@ -398,7 +410,7 @@ abstract final class VisibleArchiveProofCopy {
   // Personalized next-moment prompts — what to capture next (curiosity, not pressure).
   static const nextMomentPromptSectionLabel = archiveHomeNextActionLabel;
 
-  static const nextMomentOneTitle = 'Add one more moment like this.';
+  static const nextMomentOneTitle = secondMomentWhyLine;
 
   static const nextMomentOneBody =
       'Your archive needs another saved moment before it can compare.';

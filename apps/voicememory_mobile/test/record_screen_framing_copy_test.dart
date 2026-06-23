@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -876,7 +877,7 @@ void main() {
       await pumpRecordScreen(tester, entryCount: 1);
 
       expect(find.byKey(const Key('next_moment_prompt_card')), findsOneWidget);
-      expect(find.text('Add one more moment like this.'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.secondMomentWhyLine), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 

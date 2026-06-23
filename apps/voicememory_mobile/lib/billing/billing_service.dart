@@ -34,8 +34,21 @@ class BillingService {
   PremiumEntitlements _merge(
     PremiumEntitlements? server,
     PremiumEntitlements store,
-  ) {
+  ) =>
+      mergeEntitlements(
+        server: server,
+        store: store,
+        revenueCatConfigured: _revenueCat.isConfigured,
+      );
+
+  /// When RevenueCat is configured and reports free, stale cached Pro must not win.
+  static PremiumEntitlements mergeEntitlements({
+    required PremiumEntitlements? server,
+    required PremiumEntitlements store,
+    required bool revenueCatConfigured,
+  }) {
     if (store.isPro) return store;
+    if (revenueCatConfigured && !store.isPro) return store;
     return server ?? store;
   }
 
@@ -85,6 +98,12 @@ class BillingService {
           await _cache.save(_memory!);
         } catch (e) {
           debugPrint('Billing: cache save skipped — $e');
+        }
+      } else if (_revenueCat.isConfigured) {
+        try {
+          await _cache.clear();
+        } catch (e) {
+          debugPrint('Billing: cache clear skipped — $e');
         }
       }
       return _memory!;

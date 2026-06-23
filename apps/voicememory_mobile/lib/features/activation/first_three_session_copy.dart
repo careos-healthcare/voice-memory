@@ -16,7 +16,7 @@ abstract class FirstThreeSessionCopy {
   static const String session1EnoughForToday =
       VisibleArchiveProofCopy.firstSaveSecondary;
   static const String session1ReturnTomorrow =
-      VisibleArchiveProofCopy.firstSaveSecondary;
+      VisibleArchiveProofCopy.firstSaveReturnTomorrowBody;
   static const String session1ViewArchive =
       VisibleArchiveProofCopy.firstSaveViewArchiveCta;
   static const String session1RecordAnother =

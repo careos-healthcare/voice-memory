@@ -92,11 +92,12 @@ void main() {
       expect(summary.stage, ArchiveHomeStage.empty);
       expect(summary.title, 'Your archive starts with one moment.');
       expect(summary.body, contains(VisibleArchiveProofCopy.firstRunBuildingLine));
+      expect(summary.footnoteLine, VisibleArchiveProofCopy.archiveHomeEmptySampleHint);
       expect(summary.primaryCta, 'Record a moment');
       expect(summary.secondaryCta, 'Type instead');
       expect(summary.primaryAction, ArchiveHomeAction.record);
       expect(summary.suppressDuplicatePayoffCards, isFalse);
-      _expectNoBannedCopy([summary.title, summary.body]);
+      _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
     });
 
     test('1 entry shows one-piece evidence without repeat claims', () {
@@ -108,6 +109,7 @@ void main() {
       expect(summary.body.toLowerCase(), isNot(contains('pattern')));
       expect(summary.footnoteLine, VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine);
       expect(summary.evidenceRows, contains('1 saved moment'));
+      expect(summary.nextActionLine, VisibleArchiveProofCopy.secondMomentWhyLine);
       expect(summary.primaryAction, ArchiveHomeAction.addMoment);
       expect(summary.suppressDuplicatePayoffCards, isTrue);
     });

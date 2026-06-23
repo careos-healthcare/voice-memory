@@ -112,6 +112,7 @@ abstract final class ArchiveHomeSummaryEngine {
         stage: ArchiveHomeStage.empty,
         title: ArchiveHomeSummaryCopy.emptyTitle,
         body: ArchiveHomeSummaryCopy.emptyBody,
+        footnoteLine: VisibleArchiveProofCopy.archiveHomeEmptySampleHint,
         currentBeliefLine: VisibleArchiveProofCopy.archiveHomeNotEnoughBelief,
         whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
         nextActionLine: ArchiveHomeSummaryCopy.recordCta,
@@ -132,7 +133,7 @@ abstract final class ArchiveHomeSummaryEngine {
         whatChangedLine: VisibleArchiveProofCopy.archiveHomeNotEnoughChanged,
         evidenceRows: const [VisibleArchiveProofCopy.patternsOneEntryEvidenceRow],
         nextActionLine: _nextActionLine(entries) ??
-            VisibleArchiveProofCopy.firstSavePrimaryCta,
+            VisibleArchiveProofCopy.secondMomentWhyLine,
         primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         primaryAction: ArchiveHomeAction.addMoment,
         suppressDuplicatePayoffCards: true,

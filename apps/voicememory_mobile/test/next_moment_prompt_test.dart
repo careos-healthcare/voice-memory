@@ -108,7 +108,7 @@ void main() {
       final prompt = NextMomentPromptEngine.build(entries: _entries(1));
       expect(prompt, isNotNull);
       expect(prompt!.stage, NextMomentPromptStage.one);
-      expect(prompt.title, 'Add one more moment like this.');
+      expect(prompt.title, VisibleArchiveProofCopy.secondMomentWhyLine);
       expect(prompt.body, contains('another saved moment'));
       expect(prompt.secondaryCta, isNull);
       expect(prompt.primaryAction, NextMomentPromptAction.addMoment);
@@ -168,7 +168,7 @@ void main() {
   group('ArchiveHomeSummaryEngine next-moment integration', () {
     test('1 entry Archive Home uses personalized next action line', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(1));
-      expect(summary.nextActionLine, 'Add one more moment like this.');
+      expect(summary.nextActionLine, VisibleArchiveProofCopy.secondMomentWhyLine);
     });
 
     test('5+ Archive Home uses weekly next-moment summary without extra card', () {

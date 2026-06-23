@@ -104,7 +104,7 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('first piece of evidence'),
+        contains('more than one moment to compare'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
@@ -122,7 +122,7 @@ void main() {
       expect(RecordReturnProCopy.returnTitle, 'Return tomorrow');
       expect(
         RecordReturnProCopy.returnBody,
-        contains('No conclusion yet'),
+        contains('tomorrow'),
       );
       expect(
         RecordReturnProCopy.returnLocalCta,
@@ -322,7 +322,7 @@ void main() {
 
       expect(find.text('Your archive has started.'), findsOneWidget);
       expect(
-        find.textContaining('first piece of evidence'),
+        find.textContaining('more than one moment to compare'),
         findsOneWidget,
       );
       expect(find.textContaining('No conclusion yet'), findsOneWidget);

@@ -34,9 +34,10 @@ abstract class ConsumerUiCopy {
   static const String onboardingStep1Title = 'Record one small moment';
   static const String onboardingStep1Body =
       'Say what happened in your own words. A few sentences is enough.';
-  static const String onboardingStep2Title = 'ArchiveMe notices what repeats';
+  static const String onboardingStep2Title = 'ArchiveMe compares your moments';
   static const String onboardingStep2Body =
-      'After a second moment, ArchiveMe shows what looks similar.';
+      'After a second moment, ArchiveMe can start comparing your own words — '
+      'cautiously, not as a conclusion.';
   static const String onboardingStep3Title =
       'Return tomorrow to see what changed';
   static const String onboardingStep3Body =
