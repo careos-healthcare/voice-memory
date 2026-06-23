@@ -290,6 +290,12 @@ void main() {
       );
       expect(proof.shareText, isNot(contains('Beta feedback')));
     });
+
+    test('share-safe proof excludes beta outcomes data', () {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      expect(proof.shareText, isNot(contains('Beta outcomes')));
+      expect(proof.shareText, isNot(contains('ArchiveMe beta summary')));
+    });
   });
 
   group('Shareable archive proof card', () {

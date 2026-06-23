@@ -17,6 +17,7 @@ class BetaFeedbackState {
     this.usefulness,
     this.clarity,
     this.note,
+    this.testimonialCopied = false,
     this.updatedAt,
   });
 
@@ -24,6 +25,7 @@ class BetaFeedbackState {
   final BetaFeedbackUsefulness? usefulness;
   final BetaFeedbackClarity? clarity;
   final String? note;
+  final bool testimonialCopied;
   final DateTime? updatedAt;
 
   static const empty = BetaFeedbackState();
@@ -38,6 +40,7 @@ class BetaFeedbackState {
     bool clearClarity = false,
     String? note,
     bool clearNote = false,
+    bool? testimonialCopied,
     DateTime? updatedAt,
   }) {
     return BetaFeedbackState(
@@ -45,6 +48,7 @@ class BetaFeedbackState {
       usefulness: clearUsefulness ? null : (usefulness ?? this.usefulness),
       clarity: clearClarity ? null : (clarity ?? this.clarity),
       note: clearNote ? null : (note ?? this.note),
+      testimonialCopied: testimonialCopied ?? this.testimonialCopied,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -54,6 +58,7 @@ class BetaFeedbackState {
         if (usefulness != null) 'usefulness': usefulness!.name,
         if (clarity != null) 'clarity': clarity!.name,
         if (note != null && note!.trim().isNotEmpty) 'note': note!.trim(),
+        if (testimonialCopied) 'testimonialCopied': true,
         if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
       };
 
@@ -90,6 +95,7 @@ class BetaFeedbackState {
       usefulness: usefulness,
       clarity: clarity,
       note: note is String && note.trim().isNotEmpty ? note.trim() : null,
+      testimonialCopied: json['testimonialCopied'] == true,
       updatedAt: updatedAt,
     );
   }

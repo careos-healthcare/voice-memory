@@ -48,6 +48,7 @@ const _consumerFacingSources = [
   'lib/features/archive_home/archive_home_priority_copy.dart',
   'lib/features/support/support_feedback_copy.dart',
   'lib/features/beta_feedback/beta_feedback_copy.dart',
+  'lib/features/beta_outcomes/beta_outcomes_copy.dart',
   'lib/widgets/security/archive_privacy_controls_card.dart',
   'lib/widgets/security/archive_data_flow_sheet.dart',
   'lib/security/account_privacy_controls_copy.dart',
