@@ -133,7 +133,9 @@ import '../widgets/first_week_path_card.dart';
 import '../widgets/daily_archive_exercise_card.dart';
 import '../widgets/archive_clarity_progress_card.dart';
 import '../widgets/then_vs_now_card.dart';
+import '../widgets/archive_calendar_card.dart';
 import '../features/then_now/then_now_engine.dart';
+import '../features/archive_calendar/archive_calendar_engine.dart';
 import '../widgets/archive_milestones_card.dart';
 import '../widgets/archive_return_changes_card.dart';
 import '../features/beta_feedback/beta_feedback_engine.dart';
@@ -1958,6 +1960,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final realSavedCount = BetaFeedbackEngine.realEntryCountFor(_entries);
     final depth = const ArchiveDepthEngine().build(entries: _entries);
     final thenNow = const ThenNowEngine().buildFromJournal(entries: _entries);
+    final archiveCalendar =
+        const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
     return ArchiveHomePriorityInput(
       savedEntryCount: savedCount,
       usableEvidenceCount: layout.eligibleCount,
@@ -1979,6 +1983,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       archiveClarityProgressVisible: !ScreenshotMode.enabled,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
+      archiveCalendarVisible:
+          !ScreenshotMode.enabled &&
+          archiveCalendar.hasCard &&
+          archiveCalendar.showOnArchiveHome,
     );
   }
 
@@ -2151,6 +2159,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             entries: _entries,
             result: ThenNowEngine().buildFromJournal(entries: _entries),
             onSecondaryAction: _goToRecord,
+          ),
+        ];
+      case ArchiveHomeSectionId.archiveCalendar:
+        return [
+          ArchiveCalendarCard(
+            result: ArchiveCalendarEngine().buildFromJournal(entries: _entries),
           ),
         ];
       case ArchiveHomeSectionId.milestones:

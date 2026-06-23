@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/then_now/then_now_copy.dart';
+import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/then_now/then_now_engine.dart';
 import '../features/then_now/then_now_models.dart';
 import '../services/app_services.dart';
@@ -194,6 +195,12 @@ class _ThenVsNowScreenState extends State<ThenVsNowScreen> {
             style: ArchiveMobileTypography.listSubtitle(context),
           ),
         ],
+        const SizedBox(height: AppSpacing.lg),
+        OutlinedButton(
+          key: const Key('then_vs_now_screen_archive_calendar_button'),
+          onPressed: () => context.push(ArchiveCalendarCopy.route),
+          child: const Text(ArchiveCalendarCopy.openCalendarCta),
+        ),
         const SizedBox(height: AppSpacing.lg),
         FilledButton(
           key: const Key('then_vs_now_screen_save_another_button'),
