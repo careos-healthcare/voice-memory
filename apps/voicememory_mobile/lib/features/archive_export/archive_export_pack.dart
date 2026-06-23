@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../../security/user_content_safety.dart';
+import '../demo/sample_archive_mode.dart';
 import '../activation/archive_evidence_map.dart';
 import '../activation/archive_home_summary.dart';
 import '../activation/capture_context_tags.dart';
@@ -87,8 +88,9 @@ abstract final class ArchiveExportPackEngine {
     required List<JournalEntry> entries,
     DateTime? exportedAt,
   }) {
+    final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final at = (exportedAt ?? DateTime.now()).toUtc();
-    final saved = List<JournalEntry>.from(entries)
+    final saved = List<JournalEntry>.from(realEntries)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     if (saved.isEmpty) {
@@ -101,11 +103,11 @@ abstract final class ArchiveExportPackEngine {
       );
     }
 
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(realEntries);
     final eligibleIds = eligible.map((entry) => entry.id).toSet();
-    final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
-    final evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
-    final weeklyReview = WeeklyArchiveReviewEngine.build(entries: entries);
+    final archiveHome = ArchiveHomeSummaryEngine.build(entries: realEntries);
+    final evidenceMap = ArchiveEvidenceMapEngine.build(entries: realEntries);
+    final weeklyReview = WeeklyArchiveReviewEngine.build(entries: realEntries);
 
     final evidenceMapSummary = evidenceMap.rows
         .map(
