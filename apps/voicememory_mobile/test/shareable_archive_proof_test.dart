@@ -276,6 +276,11 @@ void main() {
       final proof = engine.buildFromJournal(entries: _journalEntries(5));
       expect(proof.shareText, isNot(contains('Next evidence plan')));
     });
+
+    test('share-safe proof excludes archive milestones data', () {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      expect(proof.shareText, isNot(contains('Archive milestones')));
+    });
   });
 
   group('Shareable archive proof card', () {

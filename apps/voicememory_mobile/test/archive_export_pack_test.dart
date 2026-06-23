@@ -279,5 +279,13 @@ void main() {
       );
       expect(pack.plainText, isNot(contains('Next evidence plan')));
     });
+
+    test('export pack excludes archive milestones data', () {
+      final pack = ArchiveExportPackEngine.build(
+        entries: _taggedEntries(),
+        exportedAt: DateTime.utc(2026, 6, 15),
+      );
+      expect(pack.plainText, isNot(contains('Archive milestones')));
+    });
   });
 }
