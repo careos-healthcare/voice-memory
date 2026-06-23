@@ -6,6 +6,42 @@ class ArchiveHomePriorityEngine {
 
   static const _primaryCardLimit = 3;
 
+  /// Sticky-loop surfaces in product order (#129–#136).
+  static const stickyLoopSequence = [
+    ArchiveHomeSectionId.firstWeekPath,
+    ArchiveHomeSectionId.dailyArchiveExercise,
+    ArchiveHomeSectionId.archiveClarityProgress,
+    ArchiveHomeSectionId.thenVsNow,
+    ArchiveHomeSectionId.archiveCalendar,
+    ArchiveHomeSectionId.reviewRitual,
+    ArchiveHomeSectionId.milestoneShare,
+  ];
+
+  /// Returns visible sticky-loop sections in canonical order.
+  static List<ArchiveHomeSectionId> stickyLoopSections(
+    ArchiveHomePriorityInput input,
+  ) =>
+      stickyLoopSequence
+          .where((id) => _isStickyLoopVisible(input, id))
+          .toList();
+
+  static bool _isStickyLoopVisible(
+    ArchiveHomePriorityInput input,
+    ArchiveHomeSectionId id,
+  ) =>
+      switch (id) {
+        ArchiveHomeSectionId.firstWeekPath => input.firstWeekPathVisible,
+        ArchiveHomeSectionId.dailyArchiveExercise =>
+          input.dailyArchiveExerciseVisible,
+        ArchiveHomeSectionId.archiveClarityProgress =>
+          input.archiveClarityProgressVisible,
+        ArchiveHomeSectionId.thenVsNow => input.thenVsNowVisible,
+        ArchiveHomeSectionId.archiveCalendar => input.archiveCalendarVisible,
+        ArchiveHomeSectionId.reviewRitual => input.reviewRitualVisible,
+        ArchiveHomeSectionId.milestoneShare => input.milestoneShareVisible,
+        _ => false,
+      };
+
   ArchiveHomePriorityPlan build(ArchiveHomePriorityInput input) {
     if (input.sampleMode) {
       return const ArchiveHomePriorityPlan(
@@ -69,32 +105,10 @@ class ArchiveHomePriorityEngine {
   static Set<ArchiveHomeSectionId> _hiddenForStage(ArchiveHomePriorityInput input) {
     final hidden = <ArchiveHomeSectionId>{};
 
-    if (!input.firstWeekPathVisible) {
-      hidden.add(ArchiveHomeSectionId.firstWeekPath);
-    }
-
-    if (!input.dailyArchiveExerciseVisible) {
-      hidden.add(ArchiveHomeSectionId.dailyArchiveExercise);
-    }
-
-    if (!input.archiveClarityProgressVisible) {
-      hidden.add(ArchiveHomeSectionId.archiveClarityProgress);
-    }
-
-    if (!input.thenVsNowVisible) {
-      hidden.add(ArchiveHomeSectionId.thenVsNow);
-    }
-
-    if (!input.archiveCalendarVisible) {
-      hidden.add(ArchiveHomeSectionId.archiveCalendar);
-    }
-
-    if (!input.reviewRitualVisible) {
-      hidden.add(ArchiveHomeSectionId.reviewRitual);
-    }
-
-    if (!input.milestoneShareVisible) {
-      hidden.add(ArchiveHomeSectionId.milestoneShare);
+    for (final id in stickyLoopSequence) {
+      if (!_isStickyLoopVisible(input, id)) {
+        hidden.add(id);
+      }
     }
 
     if (input.savedEntryCount <= 0) {
@@ -102,6 +116,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.milestones,
         ArchiveHomeSectionId.betaFeedback,
+        ArchiveHomeSectionId.proInterestLink,
         ArchiveHomeSectionId.evidenceQuality,
         ArchiveHomeSectionId.reviewHistory,
         ArchiveHomeSectionId.controls,
@@ -124,6 +139,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.needsAttention,
         ArchiveHomeSectionId.milestones,
         ArchiveHomeSectionId.betaFeedback,
+        ArchiveHomeSectionId.proInterestLink,
       });
       return hidden;
     }
@@ -135,6 +151,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.controls,
         ArchiveHomeSectionId.milestones,
         ArchiveHomeSectionId.betaFeedback,
+        ArchiveHomeSectionId.proInterestLink,
       });
       return hidden;
     }
@@ -153,6 +170,8 @@ class ArchiveHomePriorityEngine {
         hidden.add(ArchiveHomeSectionId.returnChanges);
       } else if (!input.weeklyReviewAvailable) {
         hidden.add(ArchiveHomeSectionId.reviewHistory);
+      } else if (!input.returnChangesAvailable) {
+        hidden.add(ArchiveHomeSectionId.returnChanges);
       }
       return hidden;
     }
@@ -163,154 +182,56 @@ class ArchiveHomePriorityEngine {
     return hidden;
   }
 
+  static List<ArchiveHomeSectionId> _betaGrowthSections(
+    ArchiveHomePriorityInput input,
+  ) {
+    if (input.savedEntryCount < 3) return const [];
+    return const [
+      ArchiveHomeSectionId.betaFeedback,
+      ArchiveHomeSectionId.proInterestLink,
+      ArchiveHomeSectionId.milestones,
+    ];
+  }
+
+  static List<ArchiveHomeSectionId> _secondaryToolSections(
+    ArchiveHomePriorityInput input,
+  ) {
+    final count = input.savedEntryCount;
+    return [
+      if (count >= 3 && input.returnChangesAvailable)
+        ArchiveHomeSectionId.returnChanges,
+      if (count >= 5 && input.weeklyReviewAvailable)
+        ArchiveHomeSectionId.reviewHistory,
+      if (count >= 1) ArchiveHomeSectionId.nextEvidencePlan,
+      if (count >= 1) ArchiveHomeSectionId.watchlist,
+      if (count >= 1) ArchiveHomeSectionId.archiveDepth,
+      if (count >= 2) ArchiveHomeSectionId.evidenceQuality,
+      if (count >= 1) ArchiveHomeSectionId.returnRitual,
+      if (count >= 2) ArchiveHomeSectionId.needsAttention,
+      if (count >= 5) ArchiveHomeSectionId.controls,
+      if (input.proPreviewPromoVisible && count >= 1)
+        ArchiveHomeSectionId.proPreview,
+      ArchiveHomeSectionId.quickActions,
+      ArchiveHomeSectionId.introHint,
+    ];
+  }
+
   static List<ArchiveHomeSectionId> _rankedOrder(ArchiveHomePriorityInput input) {
     if (input.savedEntryCount <= 0) {
       return [
         ArchiveHomeSectionId.archiveSummary,
-        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
-        if (input.dailyArchiveExerciseVisible)
-          ArchiveHomeSectionId.dailyArchiveExercise,
-        ArchiveHomeSectionId.quickActions,
-        ArchiveHomeSectionId.introHint,
+        ...stickyLoopSections(input),
         ArchiveHomeSectionId.sampleArchive,
-        if (input.archiveClarityProgressVisible)
-          ArchiveHomeSectionId.archiveClarityProgress,
-        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
-        if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
-        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
-        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
-      ];
-    }
-
-    if (input.savedEntryCount == 1) {
-      return [
-        ArchiveHomeSectionId.archiveSummary,
-        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
-        ArchiveHomeSectionId.nextEvidencePlan,
-        if (input.dailyArchiveExerciseVisible)
-          ArchiveHomeSectionId.dailyArchiveExercise,
-        ArchiveHomeSectionId.returnRitual,
-        ArchiveHomeSectionId.archiveDepth,
-        ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
-        ArchiveHomeSectionId.proPreview,
-        if (input.archiveClarityProgressVisible)
-          ArchiveHomeSectionId.archiveClarityProgress,
-        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
-        if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
-        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
-        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
-      ];
-    }
-
-    if (input.savedEntryCount == 2) {
-      return [
-        ArchiveHomeSectionId.archiveSummary,
-        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
-        ArchiveHomeSectionId.nextEvidencePlan,
-        if (input.dailyArchiveExerciseVisible)
-          ArchiveHomeSectionId.dailyArchiveExercise,
-        ArchiveHomeSectionId.watchlist,
-        ArchiveHomeSectionId.archiveDepth,
-        ArchiveHomeSectionId.evidenceQuality,
-        ArchiveHomeSectionId.returnRitual,
-        ArchiveHomeSectionId.needsAttention,
-        ArchiveHomeSectionId.quickActions,
-        ArchiveHomeSectionId.introHint,
-        if (input.archiveClarityProgressVisible)
-          ArchiveHomeSectionId.archiveClarityProgress,
-        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
-        if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
-        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
-        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
-      ];
-    }
-
-    if (input.savedEntryCount <= 4) {
-      return [
-        ArchiveHomeSectionId.archiveSummary,
-        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
-        if (input.returnChangesAvailable) ArchiveHomeSectionId.returnChanges,
-        ArchiveHomeSectionId.nextEvidencePlan,
-        if (input.dailyArchiveExerciseVisible)
-          ArchiveHomeSectionId.dailyArchiveExercise,
-        ArchiveHomeSectionId.watchlist,
-        ArchiveHomeSectionId.milestones,
-        ArchiveHomeSectionId.betaFeedback,
-        ArchiveHomeSectionId.proInterestLink,
-        ArchiveHomeSectionId.evidenceQuality,
-        ArchiveHomeSectionId.archiveDepth,
-        ArchiveHomeSectionId.returnRitual,
-        ArchiveHomeSectionId.needsAttention,
-        ArchiveHomeSectionId.quickActions,
-        ArchiveHomeSectionId.introHint,
-        ArchiveHomeSectionId.proPreview,
-        if (input.archiveClarityProgressVisible)
-          ArchiveHomeSectionId.archiveClarityProgress,
-        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
-        if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
-        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
-        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
-      ];
-    }
-
-    if (input.savedEntryCount <= 9) {
-      return [
-        ArchiveHomeSectionId.archiveSummary,
-        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
-        if (input.weeklyReviewAvailable)
-          ArchiveHomeSectionId.reviewHistory
-        else if (input.returnChangesAvailable)
-          ArchiveHomeSectionId.returnChanges,
-        ArchiveHomeSectionId.nextEvidencePlan,
-        if (input.dailyArchiveExerciseVisible)
-          ArchiveHomeSectionId.dailyArchiveExercise,
-        ArchiveHomeSectionId.evidenceQuality,
-        ArchiveHomeSectionId.watchlist,
-        ArchiveHomeSectionId.milestones,
-        ArchiveHomeSectionId.betaFeedback,
-        ArchiveHomeSectionId.proInterestLink,
-        ArchiveHomeSectionId.returnChanges,
-        ArchiveHomeSectionId.archiveDepth,
-        ArchiveHomeSectionId.needsAttention,
-        ArchiveHomeSectionId.returnRitual,
-        ArchiveHomeSectionId.controls,
-        ArchiveHomeSectionId.quickActions,
-        ArchiveHomeSectionId.proPreview,
-        if (input.archiveClarityProgressVisible)
-          ArchiveHomeSectionId.archiveClarityProgress,
-        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
-        if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
-        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
-        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
       ];
     }
 
     return [
       ArchiveHomeSectionId.archiveSummary,
-      ArchiveHomeSectionId.reviewHistory,
-      ArchiveHomeSectionId.nextEvidencePlan,
-      if (input.dailyArchiveExerciseVisible)
-        ArchiveHomeSectionId.dailyArchiveExercise,
-      ArchiveHomeSectionId.evidenceQuality,
-      if (input.proPreviewPromoVisible) ArchiveHomeSectionId.proPreview,
-      ArchiveHomeSectionId.watchlist,
-      ArchiveHomeSectionId.milestones,
-      ArchiveHomeSectionId.betaFeedback,
-      ArchiveHomeSectionId.proInterestLink,
-      ArchiveHomeSectionId.returnChanges,
-      ArchiveHomeSectionId.archiveDepth,
-      ArchiveHomeSectionId.needsAttention,
-      ArchiveHomeSectionId.returnRitual,
-      ArchiveHomeSectionId.controls,
-      ArchiveHomeSectionId.quickActions,
-      if (input.archiveClarityProgressVisible)
-        ArchiveHomeSectionId.archiveClarityProgress,
-      if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
-      if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
-      if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
-      if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
+      ...stickyLoopSections(input),
+      ..._betaGrowthSections(input),
+      ..._secondaryToolSections(input),
     ];
   }
 }

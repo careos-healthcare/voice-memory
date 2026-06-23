@@ -4,7 +4,7 @@ abstract final class ArchiveHomePriorityCopy {
 
   static const moreArchiveToolsTitle = 'More archive tools';
   static const moreArchiveToolsBody =
-      'ArchiveMe keeps advanced tools here so your main view stays calm.';
+      'ArchiveMe keeps comparison, watchlist, and review history here so your sticky loop stays calm.';
 
   static Iterable<String> allVisibleCopy() sync* {
     yield moreArchiveToolsTitle;

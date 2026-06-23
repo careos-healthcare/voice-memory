@@ -237,13 +237,17 @@ void main() {
       );
 
       expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
+      expect(plan.primarySections, contains(ArchiveHomeSectionId.dailyArchiveExercise));
       expect(
-        plan.primarySections.contains(ArchiveHomeSectionId.dailyArchiveExercise),
-        isTrue,
+        plan.primarySections.indexOf(ArchiveHomeSectionId.firstWeekPath),
+        lessThan(
+          plan.primarySections.indexOf(ArchiveHomeSectionId.dailyArchiveExercise),
+        ),
       );
+      final ranked = [...plan.primarySections, ...plan.secondarySections];
       expect(
-        plan.primarySections.contains(ArchiveHomeSectionId.archiveClarityProgress),
-        isFalse,
+        ranked.indexOf(ArchiveHomeSectionId.dailyArchiveExercise),
+        lessThan(ranked.indexOf(ArchiveHomeSectionId.archiveClarityProgress)),
       );
     });
 
