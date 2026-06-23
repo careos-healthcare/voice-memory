@@ -21,6 +21,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.watchlist,
           ArchiveHomeSectionId.nextEvidencePlan,
           ArchiveHomeSectionId.firstWeekPath,
+          ArchiveHomeSectionId.dailyArchiveExercise,
           ArchiveHomeSectionId.milestones,
           ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.proInterestLink,
@@ -65,6 +66,10 @@ class ArchiveHomePriorityEngine {
 
     if (!input.firstWeekPathVisible) {
       hidden.add(ArchiveHomeSectionId.firstWeekPath);
+    }
+
+    if (!input.dailyArchiveExerciseVisible) {
+      hidden.add(ArchiveHomeSectionId.dailyArchiveExercise);
     }
 
     if (input.savedEntryCount <= 0) {
@@ -138,6 +143,8 @@ class ArchiveHomePriorityEngine {
       return [
         ArchiveHomeSectionId.archiveSummary,
         if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
+        if (input.dailyArchiveExerciseVisible)
+          ArchiveHomeSectionId.dailyArchiveExercise,
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
         ArchiveHomeSectionId.sampleArchive,
@@ -149,6 +156,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.archiveSummary,
         if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
+        if (input.dailyArchiveExerciseVisible)
+          ArchiveHomeSectionId.dailyArchiveExercise,
         ArchiveHomeSectionId.returnRitual,
         ArchiveHomeSectionId.archiveDepth,
         ArchiveHomeSectionId.watchlist,
@@ -163,6 +172,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.archiveSummary,
         if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
+        if (input.dailyArchiveExerciseVisible)
+          ArchiveHomeSectionId.dailyArchiveExercise,
         ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.archiveDepth,
         ArchiveHomeSectionId.evidenceQuality,
@@ -179,6 +190,8 @@ class ArchiveHomePriorityEngine {
         if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         if (input.returnChangesAvailable) ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.nextEvidencePlan,
+        if (input.dailyArchiveExerciseVisible)
+          ArchiveHomeSectionId.dailyArchiveExercise,
         ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.milestones,
         ArchiveHomeSectionId.betaFeedback,
@@ -202,6 +215,8 @@ class ArchiveHomePriorityEngine {
         else if (input.returnChangesAvailable)
           ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.nextEvidencePlan,
+        if (input.dailyArchiveExerciseVisible)
+          ArchiveHomeSectionId.dailyArchiveExercise,
         ArchiveHomeSectionId.evidenceQuality,
         ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.milestones,
@@ -221,6 +236,8 @@ class ArchiveHomePriorityEngine {
       ArchiveHomeSectionId.archiveSummary,
       ArchiveHomeSectionId.reviewHistory,
       ArchiveHomeSectionId.nextEvidencePlan,
+      if (input.dailyArchiveExerciseVisible)
+        ArchiveHomeSectionId.dailyArchiveExercise,
       ArchiveHomeSectionId.evidenceQuality,
       if (input.proPreviewPromoVisible) ArchiveHomeSectionId.proPreview,
       ArchiveHomeSectionId.watchlist,

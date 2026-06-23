@@ -213,6 +213,7 @@ void main() {
           proPreviewPromoVisible: false,
           showEmptySample: false,
           firstWeekPathVisible: true,
+          dailyArchiveExerciseVisible: true,
         ),
       );
 

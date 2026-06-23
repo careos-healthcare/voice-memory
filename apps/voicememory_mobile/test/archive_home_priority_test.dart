@@ -33,6 +33,7 @@ ArchiveHomePriorityInput _input({
   bool proPreviewPromoVisible = false,
   bool showEmptySample = false,
   bool firstWeekPathVisible = true,
+  bool dailyArchiveExerciseVisible = true,
 }) =>
     ArchiveHomePriorityInput(
       savedEntryCount: savedEntryCount,
@@ -44,6 +45,7 @@ ArchiveHomePriorityInput _input({
       proPreviewPromoVisible: proPreviewPromoVisible,
       showEmptySample: showEmptySample,
       firstWeekPathVisible: firstWeekPathVisible && savedEntryCount < 7,
+      dailyArchiveExerciseVisible: dailyArchiveExerciseVisible,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {
@@ -110,10 +112,11 @@ void main() {
         ArchiveHomeSectionId.archiveSummary,
         ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
-        ArchiveHomeSectionId.watchlist,
+        ArchiveHomeSectionId.dailyArchiveExercise,
       ]);
 
       final secondary = plan.secondarySections;
+      expect(secondary, contains(ArchiveHomeSectionId.watchlist));
       expect(secondary.indexOf(ArchiveHomeSectionId.evidenceQuality), lessThan(
         secondary.indexOf(ArchiveHomeSectionId.returnRitual),
       ));
@@ -219,6 +222,7 @@ void main() {
         if (id == ArchiveHomeSectionId.sampleArchive) continue;
         if (id == ArchiveHomeSectionId.introHint) continue;
         if (id == ArchiveHomeSectionId.firstWeekPath) continue;
+        if (id == ArchiveHomeSectionId.dailyArchiveExercise) continue;
         expect(reachable, contains(id), reason: '$id should remain reachable');
       }
     });
