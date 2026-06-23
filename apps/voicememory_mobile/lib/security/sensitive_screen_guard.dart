@@ -39,6 +39,7 @@ abstract class SensitiveRoutes {
     '/support-feedback',
     '/beta-feedback',
     '/beta-outcomes',
+    '/beta-invite-pack',
     '/pro-interest',
     '/pro-preview',
     '/security',

@@ -2,6 +2,8 @@ import '../../models/journal_entry.dart';
 import '../archive_depth/archive_depth_engine.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../beta_feedback/beta_feedback_models.dart';
+import '../beta_invite/beta_invite_engine.dart';
+import '../beta_invite/beta_invite_models.dart';
 import '../demo/sample_archive_mode.dart';
 import '../pro_interest/pro_interest_copy.dart';
 import '../pro_interest/pro_interest_engine.dart';
@@ -20,6 +22,7 @@ class BetaOutcomesEngine {
     required bool returnRitualSet,
     required BetaFeedbackState feedbackState,
     required ProInterestState proInterestState,
+    BetaInviteCopyStats betaInviteCopyStats = BetaInviteCopyStats.empty,
     ShareableArchiveProofEngine proofEngine =
         const ShareableArchiveProofEngine(),
   }) {
@@ -39,6 +42,7 @@ class BetaOutcomesEngine {
         feedbackState: feedbackState,
         shareProofReady: shareProofReady,
         proInterestState: proInterestState,
+        betaInviteCopyStats: betaInviteCopyStats,
       ),
     );
   }
@@ -48,6 +52,8 @@ class BetaOutcomesEngine {
     final proInterest = input.proInterestState;
     final proInterestInterpretations =
         const ProInterestEngine().interpretations(proInterest);
+    final inviteSummary =
+        const BetaInviteEngine().outcomesSummary(input.betaInviteCopyStats);
     return BetaOutcomesSnapshot(
       savedMomentCount: input.savedMomentCount,
       usableEvidenceCount: input.usableEvidenceCount,
@@ -70,6 +76,9 @@ class BetaOutcomesEngine {
       proInterestNotePresent: proInterest.optionalNotePresent,
       proInterestInterpretations: proInterestInterpretations,
       proInterestState: proInterest,
+      betaInviteCopiedCount: inviteSummary.totalCopiedCount,
+      betaInviteLastVariantLabel: inviteSummary.lastVariantLabel,
+      betaInviteTaskCopied: inviteSummary.testerTaskCopied,
     );
   }
 
