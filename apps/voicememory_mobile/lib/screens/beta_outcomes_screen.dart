@@ -7,6 +7,7 @@ import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/beta_invite/beta_invite_store.dart';
 import '../features/pro_interest/pro_interest_store.dart';
 import '../features/pro_interest/pro_interest_copy.dart';
+import '../features/then_now/then_now_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_engine.dart';
 import '../features/beta_outcomes/beta_outcomes_models.dart';
@@ -132,6 +133,12 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
               key: const Key('beta_outcomes_archive_clarity'),
               label: BetaOutcomesCopy.archiveClarityStageLabel,
               value: snapshot.archiveClarityStageLabel,
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_then_vs_now'),
+              label: ThenNowCopy.betaOutcomesLabel,
+              value: snapshot.thenVsNowAvailableLabel,
             ),
             _metricRow(
               context,

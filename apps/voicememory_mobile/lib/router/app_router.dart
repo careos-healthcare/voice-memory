@@ -34,6 +34,7 @@ import '../screens/first_week_path_screen.dart';
 import '../screens/daily_archive_exercise_screen.dart';
 import '../screens/archive_clarity_progress_screen.dart';
 import '../screens/todays_one_question_screen.dart';
+import '../screens/then_vs_now_screen.dart';
 import '../screens/pro_interest_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
@@ -193,6 +194,7 @@ final GoRouter appRouter = GoRouter(
         path != '/daily-archive-exercise' &&
         path != '/archive-clarity-progress' &&
         path != '/todays-one-question' &&
+        path != '/then-vs-now' &&
         path != '/beta-outcomes' &&
         path != '/beta-invite-pack' &&
         path != '/pro-interest' &&
@@ -752,6 +754,11 @@ final GoRouter appRouter = GoRouter(
       path: '/todays-one-question',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const TodaysOneQuestionScreen(),
+    ),
+    GoRoute(
+      path: '/then-vs-now',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ThenVsNowScreen(),
     ),
     GoRoute(
       path: '/beta-outcomes',

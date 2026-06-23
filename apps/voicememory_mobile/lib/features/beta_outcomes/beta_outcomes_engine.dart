@@ -13,6 +13,8 @@ import '../first_week_path/first_week_path_models.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import '../archive_clarity/archive_clarity_engine.dart';
 import '../archive_clarity/archive_clarity_models.dart';
+import '../then_now/then_now_copy.dart';
+import '../then_now/then_now_engine.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
 
@@ -21,10 +23,12 @@ class BetaOutcomesEngine {
   const BetaOutcomesEngine({
     this.firstWeekPathEngine = const FirstWeekPathEngine(),
     this.archiveClarityEngine = const ArchiveClarityEngine(),
+    this.thenNowEngine = const ThenNowEngine(),
   });
 
   final FirstWeekPathEngine firstWeekPathEngine;
   final ArchiveClarityEngine archiveClarityEngine;
+  final ThenNowEngine thenNowEngine;
 
   BetaOutcomesSnapshot buildFromJournal({
     required List<JournalEntry> entries,
@@ -60,6 +64,7 @@ class BetaOutcomesEngine {
         weeklyReviewAvailable: hasWeeklyReviewAvailable,
       ),
     );
+    final thenNow = thenNowEngine.buildFromJournal(entries: realEntries);
 
     return build(
       BetaOutcomesInput(
@@ -74,6 +79,9 @@ class BetaOutcomesEngine {
         betaInviteCopyStats: betaInviteCopyStats,
         firstWeekPathProgressLabel: firstWeekPath.progressLabel,
         archiveClarityStageLabel: clarity.stageLabel,
+        thenVsNowAvailableLabel: thenNow.hasCard
+            ? ThenNowCopy.betaOutcomesYes
+            : ThenNowCopy.betaOutcomesNo,
       ),
     );
   }
@@ -112,6 +120,7 @@ class BetaOutcomesEngine {
       betaInviteTaskCopied: inviteSummary.testerTaskCopied,
       firstWeekPathProgressLabel: input.firstWeekPathProgressLabel,
       archiveClarityStageLabel: input.archiveClarityStageLabel,
+      thenVsNowAvailableLabel: input.thenVsNowAvailableLabel,
     );
   }
 

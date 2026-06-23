@@ -35,6 +35,7 @@ ArchiveHomePriorityInput _input({
   bool firstWeekPathVisible = true,
   bool dailyArchiveExerciseVisible = true,
   bool archiveClarityProgressVisible = true,
+  bool thenVsNowVisible = false,
 }) =>
     ArchiveHomePriorityInput(
       savedEntryCount: savedEntryCount,
@@ -48,6 +49,7 @@ ArchiveHomePriorityInput _input({
       firstWeekPathVisible: firstWeekPathVisible && savedEntryCount < 7,
       dailyArchiveExerciseVisible: dailyArchiveExerciseVisible,
       archiveClarityProgressVisible: archiveClarityProgressVisible,
+      thenVsNowVisible: thenVsNowVisible,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {

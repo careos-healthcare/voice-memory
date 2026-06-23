@@ -229,6 +229,7 @@ void main() {
           firstWeekPathVisible: true,
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
+          thenVsNowVisible: false,
         ),
       );
 

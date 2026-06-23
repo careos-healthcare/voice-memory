@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../features/first_week_path/first_week_path_copy.dart';
 import '../features/archive_clarity/archive_clarity_copy.dart';
 import '../features/todays_question/todays_question_copy.dart';
+import '../features/then_now/then_now_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_invite/beta_invite_copy.dart';
 import '../features/pro_interest/pro_interest_copy.dart';
@@ -137,6 +138,21 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_todays_one_question'),
                 onPressed: () => context.push(TodaysQuestionCopy.route),
                 child: const Text(TodaysQuestionCopy.eyebrow),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_then_vs_now'),
+              title: ThenNowCopy.supportSectionTitle,
+              body: ThenNowCopy.supportSectionBody,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_then_vs_now'),
+                onPressed: () => context.push(ThenNowCopy.route),
+                child: const Text(ThenNowCopy.viewThenVsNowCta),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
