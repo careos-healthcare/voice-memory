@@ -158,6 +158,7 @@ class PrivateDataService {
       'factLedger',
       'actionItems',
       'archive_insight_feedback',
+      'archiveInsightFeedbackRecords',
       'archive_workspace_hints_dismissed',
     ];
     for (final key in cacheKeys) {

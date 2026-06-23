@@ -17,6 +17,9 @@ import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
+import '../widgets/insight_feedback_actions.dart';
+import '../features/insight_feedback/insight_feedback_gates.dart';
+import '../features/insight_feedback/insight_feedback_models.dart';
 
 /// Full archive clarity progress screen — metadata only, no journal text.
 class ArchiveClarityProgressScreen extends StatefulWidget {
@@ -152,6 +155,15 @@ class _ArchiveClarityProgressScreenState
           result.nextStepText,
           key: const Key('archive_clarity_progress_screen_next'),
           style: ArchiveMobileTypography.listSubtitle(context),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        InsightFeedbackActions(
+          insightId: InsightFeedbackIds.archiveClarity,
+          insightType: InsightFeedbackType.archiveClarity,
+          sourceRoute: ArchiveClarityCopy.route,
+          show: InsightFeedbackGates.showForArchiveClarity(
+            hasInsight: result.stageLabel.isNotEmpty,
+          ),
         ),
         const SizedBox(height: AppSpacing.lg),
         FilledButton(

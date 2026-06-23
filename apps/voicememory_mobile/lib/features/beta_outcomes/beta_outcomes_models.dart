@@ -29,6 +29,7 @@ class BetaOutcomesSnapshot {
     required this.archiveClarityStageLabel,
     required this.thenVsNowAvailableLabel,
     required this.archiveCalendarAvailableLabel,
+    required this.insightFeedbackCapturedLabel,
   });
 
   final int savedMomentCount;
@@ -55,6 +56,7 @@ class BetaOutcomesSnapshot {
   final String archiveClarityStageLabel;
   final String thenVsNowAvailableLabel;
   final String archiveCalendarAvailableLabel;
+  final String insightFeedbackCapturedLabel;
 }
 
 /// Local inputs for deterministic beta outcomes — metadata only.
@@ -73,6 +75,7 @@ class BetaOutcomesInput {
     this.archiveClarityStageLabel = '',
     this.thenVsNowAvailableLabel = '',
     this.archiveCalendarAvailableLabel = '',
+    this.insightFeedbackCapturedLabel = '',
   });
 
   final int savedMomentCount;
@@ -88,4 +91,5 @@ class BetaOutcomesInput {
   final String archiveClarityStageLabel;
   final String thenVsNowAvailableLabel;
   final String archiveCalendarAvailableLabel;
+  final String insightFeedbackCapturedLabel;
 }

@@ -17,6 +17,7 @@ import '../then_now/then_now_copy.dart';
 import '../then_now/then_now_engine.dart';
 import '../archive_calendar/archive_calendar_copy.dart';
 import '../archive_calendar/archive_calendar_engine.dart';
+import '../insight_feedback/insight_feedback_engine.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
 
@@ -27,12 +28,14 @@ class BetaOutcomesEngine {
     this.archiveClarityEngine = const ArchiveClarityEngine(),
     this.thenNowEngine = const ThenNowEngine(),
     this.archiveCalendarEngine = const ArchiveCalendarEngine(),
+    this.insightFeedbackEngine = const InsightFeedbackEngine(),
   });
 
   final FirstWeekPathEngine firstWeekPathEngine;
   final ArchiveClarityEngine archiveClarityEngine;
   final ThenNowEngine thenNowEngine;
   final ArchiveCalendarEngine archiveCalendarEngine;
+  final InsightFeedbackEngine insightFeedbackEngine;
 
   BetaOutcomesSnapshot buildFromJournal({
     required List<JournalEntry> entries,
@@ -91,6 +94,7 @@ class BetaOutcomesEngine {
         archiveCalendarAvailableLabel: archiveCalendar.hasCard
             ? ArchiveCalendarCopy.betaOutcomesYes
             : ArchiveCalendarCopy.betaOutcomesNo,
+        insightFeedbackCapturedLabel: insightFeedbackEngine.betaOutcomesLabel(),
       ),
     );
   }
@@ -131,6 +135,7 @@ class BetaOutcomesEngine {
       archiveClarityStageLabel: input.archiveClarityStageLabel,
       thenVsNowAvailableLabel: input.thenVsNowAvailableLabel,
       archiveCalendarAvailableLabel: input.archiveCalendarAvailableLabel,
+      insightFeedbackCapturedLabel: input.insightFeedbackCapturedLabel,
     );
   }
 

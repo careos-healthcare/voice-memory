@@ -5,10 +5,12 @@ import '../design/archive_mobile_typography.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/beta_invite/beta_invite_store.dart';
+import '../features/insight_feedback/insight_feedback_store.dart';
 import '../features/pro_interest/pro_interest_store.dart';
 import '../features/pro_interest/pro_interest_copy.dart';
 import '../features/then_now/then_now_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
+import '../features/insight_feedback/insight_feedback_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_engine.dart';
 import '../features/beta_outcomes/beta_outcomes_models.dart';
@@ -58,6 +60,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
     await BetaFeedbackStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
     await BetaInviteStore.ensureLoaded();
+    await InsightFeedbackStore.ensureLoaded();
     final entries = await journal.loadAll();
     final watchItems = await watchlist.loadItems();
     final ritual = await returnRitual.load();
@@ -146,6 +149,12 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
               key: const Key('beta_outcomes_archive_calendar'),
               label: ArchiveCalendarCopy.betaOutcomesLabel,
               value: snapshot.archiveCalendarAvailableLabel,
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_insight_feedback'),
+              label: InsightFeedbackCopy.betaOutcomesLabel,
+              value: snapshot.insightFeedbackCapturedLabel,
             ),
             _metricRow(
               context,
