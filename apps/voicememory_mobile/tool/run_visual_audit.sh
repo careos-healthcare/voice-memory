@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR="${HOME}/Desktop/upload1"
-ADB_PULL_PATH="/storage/emulated/0/Android/data/com.voicememory.app/files/voicememory_visual_audit"
+ADB_PULL_PATH="/storage/emulated/0/Android/data/com.voicememory.mobile/files/voicememory_visual_audit"
 API_BASE_URL="${SCREENSHOT_API_BASE_URL:-https://voice-memory-iota.vercel.app}"
 
 mkdir -p "$OUTPUT_DIR"

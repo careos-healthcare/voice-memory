@@ -42,11 +42,9 @@ NOT `ios/Runner.xcodeproj` (CocoaPods integration lives in the workspace).
 
 ## 4. Bundle id checklist
 - App bundle id (Xcode): `com.voicememory.mobile`.
-- Confirm it matches the App Store Connect app record.
-- (Known minor inconsistency: `AppConfig.bundleId` constant reads
-  `com.voicememory.app`; the Xcode `PRODUCT_BUNDLE_IDENTIFIER` is the source of
-  truth for the build. Align these before release if the constant is used anywhere
-  user/analytics-facing.)
+- Confirm it matches `AppConfig.bundleId` and the App Store Connect app record.
+- App Group (widget prep): `group.com.voicememory.mobile`.
+- URL schemes in Info.plist: `archiveme://` (primary), `voicememory://` (legacy).
 - Deployment target: iOS 13.0 (satisfies flutter_local_notifications + others).
 
 ## 5. Build number increment

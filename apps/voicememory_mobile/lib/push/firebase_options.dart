@@ -35,7 +35,7 @@ class FirebaseOptionsConfig {
     );
     const iosBundleId = String.fromEnvironment(
       'FIREBASE_IOS_BUNDLE_ID',
-      defaultValue: 'com.voicememory.app',
+      defaultValue: 'com.voicememory.mobile',
     );
 
     if (kIsWeb) return null;

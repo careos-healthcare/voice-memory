@@ -3,8 +3,10 @@
 ## Identity
 
 - **Display name:** ArchiveMe (`CFBundleDisplayName` in Info.plist)
-- **Bundle ID:** `com.voicememory.app` (set in Xcode → Runner → Signing)
-- **URL scheme:** `voicememory://` (optional deep links)
+- **Bundle ID:** `com.voicememory.mobile` (Runner target in Xcode → Signing)
+- **Widget extension ID (when enabled):** `com.voicememory.mobile.TodayCheckWidget`
+- **App Group:** `group.com.voicememory.mobile`
+- **URL schemes:** `archiveme://` (primary widget/deep link), `voicememory://` (legacy compatibility)
 
 ## Capabilities
 

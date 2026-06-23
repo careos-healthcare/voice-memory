@@ -127,12 +127,16 @@ void main() {
       expect(plist, contains('<string>ArchiveMe</string>'));
     });
 
-    test('bundle identifier config remains unchanged', () {
-      expect(AppConfig.bundleId, 'com.voicememory.app');
+    test('bundle identifier is aligned across Flutter and iOS', () {
+      expect(AppConfig.bundleId, 'com.voicememory.mobile');
 
       final pbxproj =
           File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
       expect(pbxproj, contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile;'));
+      expect(
+        pbxproj,
+        contains('PRODUCT_BUNDLE_IDENTIFIER = com.voicememory.mobile.RunnerTests;'),
+      );
     });
 
     test('screenshot and debug capture modes stay off in release config', () {

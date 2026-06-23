@@ -3,7 +3,7 @@ import WidgetKit
 
 /// Shared App Group payload for Today\u{2019}s Check home-screen widgets.
 enum ObjectiveWidgetStorage {
-  static let appGroupId = "group.com.voicememory.app"
+  static let appGroupId = "group.com.voicememory.mobile"
 
   static let keyTitle = "title"
   static let keyBody = "body"

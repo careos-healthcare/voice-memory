@@ -1,4 +1,4 @@
-package com.voicememory.app.widget
+package com.voicememory.mobile.widget
 
 import android.content.Context
 

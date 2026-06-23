@@ -6,6 +6,13 @@ gives you one simple check about it. Over a few days it shows what kept repeatin
 
 It is **not** a medical or mental-health service and makes no diagnostic claims.
 
+## Release identity (reviewer reference)
+
+- **Public app name:** ArchiveMe
+- **iOS bundle ID:** `com.voicememory.mobile`
+- **Android application ID:** `com.voicememory.mobile`
+- **Deep links:** `archiveme://` (primary), `voicememory://` (legacy compatibility)
+
 ## Reviewing without a backend / account
 
 The full product talks to a backend for transcription and uses an account. For

@@ -22,7 +22,7 @@ class AppConfig {
   AppConfig._();
 
   static const String appName = 'ArchiveMe';
-  static const String bundleId = 'com.voicememory.app';
+  static const String bundleId = 'com.voicememory.mobile';
 
   /// Production Next.js API (Vercel). `careosapp.co.uk` is marketing-only and
   /// does not serve `/api/*` — do not point mobile captures at that host.

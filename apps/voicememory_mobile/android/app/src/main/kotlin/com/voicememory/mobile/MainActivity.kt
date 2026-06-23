@@ -1,9 +1,9 @@
-package com.voicememory.app
+package com.voicememory.mobile
 
 import android.content.Intent
 import android.os.Bundle
-import com.voicememory.app.widget.ObjectiveWidgetStorage
-import com.voicememory.app.widget.TodayCheckWidgetProvider
+import com.voicememory.mobile.widget.ObjectiveWidgetStorage
+import com.voicememory.mobile.widget.TodayCheckWidgetProvider
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall

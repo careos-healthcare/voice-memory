@@ -8,18 +8,17 @@ debug build on a physical device or emulator.
 The launchable Android application id is:
 
 ```
-com.voicememory.app
+com.voicememory.mobile
 ```
 
-> **Important:** `com.voicememory.mobile` is **not** a valid package and is **not
-> launchable**. If a script or command references it, the launch (e.g. via
-> `monkey`) will silently do nothing. Always use `com.voicememory.app`.
+> **Important:** Always use `com.voicememory.mobile` — the canonical application id.
+> Do not use the retired `.app` suffix id in scripts or adb commands.
 
 The id is defined in `android/app/build.gradle.kts`:
 
 ```kotlin
-namespace = "com.voicememory.app"
-applicationId = "com.voicememory.app"
+namespace = "com.voicememory.mobile"
+applicationId = "com.voicememory.mobile"
 ```
 
 ## 1. List devices
@@ -70,7 +69,7 @@ adb -s DEVICE_ID install -r -d --no-streaming \
 use `monkey` (no main-activity name needed):
 
 ```bash
-adb -s DEVICE_ID shell monkey -p com.voicememory.app 1
+adb -s DEVICE_ID shell monkey -p com.voicememory.mobile 1
 ```
 
 ## Run directly with `flutter run`
@@ -99,7 +98,7 @@ flutter run -d DEVICE_ID
 ## Troubleshooting
 
 - **Nothing launches after `monkey`:** you almost certainly used the wrong
-  package. It must be `com.voicememory.app`, never `com.voicememory.mobile`.
+  package. It must be `com.voicememory.mobile`.
 - **`adb: more than one device/emulator`:** pass `-s DEVICE_ID` (from
   `flutter devices` / `adb devices`).
 - **Streaming install failure:** use `--no-streaming` as shown above.
@@ -116,5 +115,5 @@ flutter run -d DEVICE_ID
   - Many Huawei devices reject streaming installs — always use
     `--no-streaming` (the helper script and the command above already do).
   - If install still fails, uninstall first:
-    `adb -s DEVICE_ID uninstall com.voicememory.app`, then reinstall.
+    `adb -s DEVICE_ID uninstall com.voicememory.mobile`, then reinstall.
   - HMS-only devices (no Google Play) still run debug APKs fine via `adb`.
