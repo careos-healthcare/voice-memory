@@ -3,6 +3,7 @@ import '../beta_invite/beta_invite_copy.dart';
 import '../beta_outcomes/beta_outcomes_copy.dart';
 import '../first_week_path/first_week_path_copy.dart';
 import '../archive_calendar/archive_calendar_copy.dart';
+import '../review_ritual/view_ritual_copy.dart';
 import '../pro_value/pro_value_copy.dart';
 import '../submission/app_store_submission_copy.dart';
 
@@ -99,6 +100,10 @@ abstract final class HelpReviewerGuideCopy {
     HelpReviewerGuideSection(
       title: ArchiveCalendarCopy.helpSectionTitle,
       bullets: const [ArchiveCalendarCopy.helpSectionBullet],
+    ),
+    HelpReviewerGuideSection(
+      title: ReviewRitualCopy.helpSectionTitle,
+      bullets: const [ReviewRitualCopy.helpSectionBullet],
     ),
     HelpReviewerGuideSection(
       title: AppStoreSubmissionCopy.suggestedReviewPathTitle,

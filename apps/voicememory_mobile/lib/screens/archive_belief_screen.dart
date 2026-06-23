@@ -134,6 +134,10 @@ import '../widgets/daily_archive_exercise_card.dart';
 import '../widgets/archive_clarity_progress_card.dart';
 import '../widgets/then_vs_now_card.dart';
 import '../widgets/archive_calendar_card.dart';
+import '../widgets/review_ritual_card.dart';
+import '../features/review_ritual/view_ritual_engine.dart';
+import '../features/review_ritual/view_ritual_models.dart';
+import '../features/review_ritual/view_ritual_store.dart';
 import '../features/then_now/then_now_engine.dart';
 import '../features/archive_calendar/archive_calendar_engine.dart';
 import '../widgets/archive_milestones_card.dart';
@@ -494,6 +498,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ArchiveWorkspaceHintStore.ensureLoaded();
     await ProValuePreviewDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
+    await ReviewRitualStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -1962,6 +1967,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final thenNow = const ThenNowEngine().buildFromJournal(entries: _entries);
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
+    final reviewRitualResult = const ReviewRitualEngine().build(
+      ReviewRitualInput(
+        realSavedMomentCount: realSavedCount,
+        weeklyReviewAvailable: weeklyReview?.hasEnoughEvidence ?? false,
+        ritual: ReviewRitualStore.cached,
+      ),
+    );
     return ArchiveHomePriorityInput(
       savedEntryCount: savedCount,
       usableEvidenceCount: layout.eligibleCount,
@@ -1987,6 +1999,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           !ScreenshotMode.enabled &&
           archiveCalendar.hasCard &&
           archiveCalendar.showOnArchiveHome,
+      reviewRitualVisible:
+          !ScreenshotMode.enabled && reviewRitualResult.showOnArchiveHome,
     );
   }
 
@@ -2165,6 +2179,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         return [
           ArchiveCalendarCard(
             result: ArchiveCalendarEngine().buildFromJournal(entries: _entries),
+          ),
+        ];
+      case ArchiveHomeSectionId.reviewRitual:
+        return [
+          ReviewRitualCard(
+            result: const ReviewRitualEngine().build(
+              ReviewRitualInput(
+                realSavedMomentCount:
+                    BetaFeedbackEngine.realEntryCountFor(_entries),
+                weeklyReviewAvailable: weeklyReview?.hasEnoughEvidence ?? false,
+                ritual: ReviewRitualStore.cached,
+              ),
+            ),
           ),
         ];
       case ArchiveHomeSectionId.milestones:

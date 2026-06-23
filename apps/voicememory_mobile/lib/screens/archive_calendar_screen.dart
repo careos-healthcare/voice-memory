@@ -8,6 +8,7 @@ import '../features/archive_calendar/archive_calendar_engine.dart';
 import '../features/archive_calendar/archive_calendar_models.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/then_now/then_now_engine.dart';
+import '../features/review_ritual/view_ritual_copy.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -182,6 +183,12 @@ class _ArchiveCalendarScreenState extends State<ArchiveCalendarScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
+        OutlinedButton(
+          key: const Key('archive_calendar_screen_review_ritual_button'),
+          onPressed: () => context.push(ReviewRitualCopy.route),
+          child: const Text(ReviewRitualCopy.openReviewRitualCta),
+        ),
+        const SizedBox(height: AppSpacing.sm),
         FilledButton(
           key: const Key('archive_calendar_screen_record_button'),
           onPressed: () => context.push(result.recordRoute),

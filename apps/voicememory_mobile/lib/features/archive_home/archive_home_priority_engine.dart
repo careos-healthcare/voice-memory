@@ -25,6 +25,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveClarityProgress,
           ArchiveHomeSectionId.thenVsNow,
           ArchiveHomeSectionId.archiveCalendar,
+          ArchiveHomeSectionId.reviewRitual,
           ArchiveHomeSectionId.milestones,
           ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.proInterestLink,
@@ -85,6 +86,10 @@ class ArchiveHomePriorityEngine {
 
     if (!input.archiveCalendarVisible) {
       hidden.add(ArchiveHomeSectionId.archiveCalendar);
+    }
+
+    if (!input.reviewRitualVisible) {
+      hidden.add(ArchiveHomeSectionId.reviewRitual);
     }
 
     if (input.savedEntryCount <= 0) {
@@ -167,6 +172,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveClarityProgress,
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
+        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
       ];
     }
 
@@ -187,6 +193,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveClarityProgress,
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
+        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
       ];
     }
 
@@ -208,6 +215,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveClarityProgress,
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
+        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
       ];
     }
 
@@ -234,6 +242,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveClarityProgress,
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
+        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
       ];
     }
 
@@ -264,6 +273,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveClarityProgress,
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
+        if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
       ];
     }
 
@@ -289,6 +299,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.archiveClarityProgress,
       if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
+      if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
     ];
   }
 }

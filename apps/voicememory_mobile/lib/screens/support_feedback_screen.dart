@@ -6,6 +6,7 @@ import '../features/first_week_path/first_week_path_copy.dart';
 import '../features/archive_clarity/archive_clarity_copy.dart';
 import '../features/todays_question/todays_question_copy.dart';
 import '../features/then_now/then_now_copy.dart';
+import '../features/review_ritual/view_ritual_copy.dart';
 import '../features/insight_feedback/insight_feedback_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
@@ -170,6 +171,21 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_archive_calendar'),
                 onPressed: () => context.push(ArchiveCalendarCopy.route),
                 child: const Text(ArchiveCalendarCopy.openCalendarCta),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_review_ritual'),
+              title: ReviewRitualCopy.supportSectionTitle,
+              body: ReviewRitualCopy.supportSectionBody,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_review_ritual'),
+                onPressed: () => context.push(ReviewRitualCopy.route),
+                child: const Text(ReviewRitualCopy.openReviewRitualCta),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
