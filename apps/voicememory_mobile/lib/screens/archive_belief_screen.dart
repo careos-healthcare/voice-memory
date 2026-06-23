@@ -111,6 +111,9 @@ import '../widgets/patterns/patterns_come_back_tomorrow_card.dart';
 import '../widgets/patterns/patterns_first_archive_view.dart';
 import '../widgets/demo/sample_archive_entry_card.dart';
 import '../widgets/return_ritual_card.dart';
+import '../widgets/pro_value_preview_card.dart';
+import '../features/pro/pro_value_preview_dismiss_store.dart';
+import '../features/pro/pro_value_preview_gates.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
@@ -458,6 +461,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
     await ArchiveBeliefCorrectionStore.ensureLoaded();
     await ArchiveWorkspaceHintStore.ensureLoaded();
+    await ProValuePreviewDismissStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -1940,6 +1944,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ReturnRitualCard(
           entryCount: _entries.length,
           onAddMoment: _goToRecord,
+        ),
+      );
+    }
+
+    if (ProValuePreviewGates.showArchivePromo(
+      entryCount: _entries.length,
+      dismissed: ProValuePreviewDismissStore.isDismissed,
+    )) {
+      widgets.add(const SizedBox(height: AppSpacing.md));
+      widgets.add(
+        ProValuePreviewPromoCard(
+          onDismiss: () async {
+            await ProValuePreviewDismissStore.dismiss();
+            if (!mounted) return;
+            setState(() {});
+          },
         ),
       );
     }
