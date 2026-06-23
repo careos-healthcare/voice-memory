@@ -1,5 +1,7 @@
 # iOS release checklist — ArchiveMe
 
+See also: **`APP_STORE_SUBMISSION_PACK.md`** (TestFlight + App Store Connect one-pager).
+
 ## Identity
 
 - **Display name:** ArchiveMe (`CFBundleDisplayName` in Info.plist)

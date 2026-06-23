@@ -48,7 +48,7 @@ NOT `ios/Runner.xcodeproj` (CocoaPods integration lives in the workspace).
 - Deployment target: iOS 13.0 (satisfies flutter_local_notifications + others).
 
 ## 5. Build number increment
-- Version/build come from `pubspec.yaml` (`version: 0.2.0+1` → CFBundleShortVersionString 0.2.0, CFBundleVersion 1).
+- Version/build come from `pubspec.yaml` (`version: 0.2.0+38` → CFBundleShortVersionString 0.2.0, CFBundleVersion 38).
 - Increment the build number for every TestFlight upload:
   - bump the `+N` in pubspec (e.g. `0.2.0+2`), or
   - pass `--build-number=N` to the flutter build command.
