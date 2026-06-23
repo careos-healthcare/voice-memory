@@ -5,6 +5,7 @@ import '../billing/revenuecat_service.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/archive_depth/archive_depth_models.dart';
 import '../features/pro/pro_value_preview_copy.dart';
+import '../features/pro_interest/pro_interest_copy.dart';
 import '../features/pro_value/pro_value_engine.dart';
 import '../features/pro_value/pro_value_models.dart';
 import '../theme/app_colors.dart';
@@ -95,6 +96,30 @@ class ProValuePreviewScreen extends StatelessWidget {
               style: ArchiveMobileTypography.explanationBody(
                 context,
                 color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
+              ProInterestCopy.previewSectionTitle,
+              key: const Key('pro_value_preview_interest_title'),
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              ProInterestCopy.previewSectionBody,
+              key: const Key('pro_value_preview_interest_body'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('pro_value_preview_open_pro_interest'),
+                onPressed: () => context.push('/pro-interest'),
+                child: const Text(ProInterestCopy.openProInterestButton),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),

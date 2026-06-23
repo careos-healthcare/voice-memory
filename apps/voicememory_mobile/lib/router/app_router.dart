@@ -29,6 +29,7 @@ import '../screens/pro_value_preview_screen.dart';
 import '../screens/support_feedback_screen.dart';
 import '../screens/beta_feedback_screen.dart';
 import '../screens/beta_outcomes_screen.dart';
+import '../screens/pro_interest_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
 import '../screens/sample_archive_context_screen.dart';
@@ -184,6 +185,8 @@ final GoRouter appRouter = GoRouter(
         path != '/support-feedback' &&
         path != '/beta-feedback' &&
         path != '/beta-outcomes' &&
+        path != '/pro-interest' &&
+        path != '/pro-preview' &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -734,6 +737,11 @@ final GoRouter appRouter = GoRouter(
       path: '/pro-preview',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ProValuePreviewScreen(),
+    ),
+    GoRoute(
+      path: '/pro-interest',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ProInterestScreen(),
     ),
     GoRoute(
       path: '/about',

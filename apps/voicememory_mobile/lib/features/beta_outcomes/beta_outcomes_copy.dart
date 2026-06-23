@@ -1,4 +1,5 @@
 import '../beta_feedback/beta_feedback_models.dart';
+import '../pro_interest/pro_interest_copy.dart';
 import 'beta_outcomes_models.dart';
 
 /// Copy for the local beta outcomes dashboard.
@@ -21,6 +22,13 @@ abstract final class BetaOutcomesCopy {
   static const optionalNoteLabel = 'Optional note present';
   static const testimonialCopiedLabel = 'Testimonial helper copied';
   static const shareProofReadyLabel = 'Share-safe proof ready';
+
+  static const proInterestCapturedLabel = ProInterestCopy.betaOutcomesCapturedLabel;
+  static const proInterestValueCountLabel =
+      ProInterestCopy.betaOutcomesValueCountLabel;
+  static const proInterestPricingLabel = ProInterestCopy.betaOutcomesPricingLabel;
+  static const proInterestNotePresentLabel =
+      ProInterestCopy.betaOutcomesNotePresentLabel;
 
   static const yesLabel = 'Yes';
   static const noLabel = 'No';
@@ -104,6 +112,10 @@ abstract final class BetaOutcomesCopy {
         optionalNoteLabel,
         testimonialCopiedLabel,
         shareProofReadyLabel,
+        proInterestCapturedLabel,
+        proInterestValueCountLabel,
+        proInterestPricingLabel,
+        proInterestNotePresentLabel,
         yesLabel,
         noLabel,
         interpretationNotEnoughEvidence,
