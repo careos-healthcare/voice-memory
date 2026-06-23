@@ -57,3 +57,5 @@ Open **`ios/Runner.xcworkspace`** for iOS builds (not `Runner.xcodeproj`).
 ## TestFlight / App Store submission
 
 See [APP_STORE_SUBMISSION_PACK.md](./APP_STORE_SUBMISSION_PACK.md) for the consolidated reviewer path, internal TestFlight checklist, and validation commands.
+
+**Physical-device QA:** [docs/TESTFLIGHT_MANUAL_QA.md](./docs/TESTFLIGHT_MANUAL_QA.md)

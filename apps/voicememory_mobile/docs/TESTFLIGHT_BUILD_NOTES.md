@@ -80,3 +80,7 @@ flutter analyze lib/
 ./tool/run_app_store_readiness_check.sh
 ./tool/run_trial_execution_check.sh
 ```
+
+## 11. Manual QA on device
+
+After upload, run the physical-device script in [TESTFLIGHT_MANUAL_QA.md](./TESTFLIGHT_MANUAL_QA.md) before inviting external testers.

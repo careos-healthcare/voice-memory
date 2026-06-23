@@ -145,6 +145,7 @@ bash scripts/validate-mobile-clean-working-tree.sh
 
 ## Related docs
 
+- `docs/TESTFLIGHT_MANUAL_QA.md` — physical-device QA script and release decision checklist
 - `docs/APP_REVIEW_NOTES.md` — App Store reviewer notes
 - `docs/APP_STORE_COPY.md` — listing copy draft
 - `docs/IOS_RELEASE_CHECKLIST.md` — iOS release checklist
