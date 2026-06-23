@@ -44,6 +44,7 @@ abstract class SensitiveRoutes {
     '/todays-one-question',
     '/then-vs-now',
     '/archive-calendar',
+    '/review-ritual',
     '/beta-outcomes',
     '/beta-invite-pack',
     '/pro-interest',

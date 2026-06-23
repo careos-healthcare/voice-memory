@@ -201,6 +201,7 @@ void main() {
           archiveClarityProgressVisible: true,
           thenVsNowVisible: true,
           archiveCalendarVisible: false,
+          reviewRitualVisible: false,
         ),
       );
 

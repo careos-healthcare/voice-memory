@@ -9,6 +9,7 @@ import '../features/activation/archive_health_score.dart';
 import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/next_moment_prompt.dart';
 import '../features/activation/weekly_archive_review.dart';
+import '../features/review_ritual/view_ritual_copy.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../services/app_services.dart';
@@ -153,6 +154,14 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
                 onAddAnother: review.hasEnoughEvidence ? _goToRecord : null,
                 onViewEvidence: review.hasEnoughEvidence ? _goToEvidence : null,
               ),
+              if (review.hasEnoughEvidence) ...[
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton(
+                  key: const Key('weekly_archive_review_screen_review_ritual_link'),
+                  onPressed: () => context.push(ReviewRitualCopy.route),
+                  child: const Text(ReviewRitualCopy.openReviewRitualCta),
+                ),
+              ],
               if (review.hasEnoughEvidence &&
                   (_archiveHealth?.showCard ?? false)) ...[
                 const SizedBox(height: AppSpacing.lg),

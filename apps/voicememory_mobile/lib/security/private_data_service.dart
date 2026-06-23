@@ -159,6 +159,7 @@ class PrivateDataService {
       'actionItems',
       'archive_insight_feedback',
       'archiveInsightFeedbackRecords',
+      'archiveReviewRitual',
       'archive_workspace_hints_dismissed',
     ];
     for (final key in cacheKeys) {
