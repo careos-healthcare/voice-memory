@@ -3,6 +3,9 @@ import '../archive_depth/archive_depth_engine.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../beta_feedback/beta_feedback_models.dart';
 import '../demo/sample_archive_mode.dart';
+import '../pro_interest/pro_interest_copy.dart';
+import '../pro_interest/pro_interest_engine.dart';
+import '../pro_interest/pro_interest_models.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
@@ -16,6 +19,7 @@ class BetaOutcomesEngine {
     required int watchThemesCount,
     required bool returnRitualSet,
     required BetaFeedbackState feedbackState,
+    required ProInterestState proInterestState,
     ShareableArchiveProofEngine proofEngine =
         const ShareableArchiveProofEngine(),
   }) {
@@ -34,12 +38,16 @@ class BetaOutcomesEngine {
         returnRitualSet: returnRitualSet,
         feedbackState: feedbackState,
         shareProofReady: shareProofReady,
+        proInterestState: proInterestState,
       ),
     );
   }
 
   BetaOutcomesSnapshot build(BetaOutcomesInput input) {
     final feedbackStatus = BetaOutcomesCopy.feedbackStatusFor(input.feedbackState);
+    final proInterest = input.proInterestState;
+    final proInterestInterpretations =
+        const ProInterestEngine().interpretations(proInterest);
     return BetaOutcomesSnapshot(
       savedMomentCount: input.savedMomentCount,
       usableEvidenceCount: input.usableEvidenceCount,
@@ -50,8 +58,18 @@ class BetaOutcomesEngine {
       optionalNotePresent: input.feedbackState.note?.trim().isNotEmpty == true,
       testimonialCopied: input.feedbackState.testimonialCopied,
       shareProofReady: input.shareProofReady,
-      interpretations: _interpretations(input),
+      interpretations: [
+        ..._interpretations(input),
+        ...proInterestInterpretations,
+      ],
       feedbackState: input.feedbackState,
+      proInterestCaptured: proInterest.hasCapture,
+      selectedProValueCount: proInterest.selectedValueIds.length,
+      proInterestPricingLabel:
+          ProInterestCopy.labelForPricing(proInterest.pricingIntentId),
+      proInterestNotePresent: proInterest.optionalNotePresent,
+      proInterestInterpretations: proInterestInterpretations,
+      proInterestState: proInterest,
     );
   }
 

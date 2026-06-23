@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_models.d
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_copy.dart';
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_engine.dart';
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_models.dart';
+import 'package:voicememory_mobile/features/pro_interest/pro_interest_models.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -69,6 +70,7 @@ BetaOutcomesInput _input({
   bool returnRitualSet = false,
   BetaFeedbackState feedbackState = BetaFeedbackState.empty,
   bool shareProofReady = false,
+  ProInterestState proInterestState = ProInterestState.empty,
 }) =>
     BetaOutcomesInput(
       savedMomentCount: savedMomentCount,
@@ -78,6 +80,7 @@ BetaOutcomesInput _input({
       returnRitualSet: returnRitualSet,
       feedbackState: feedbackState,
       shareProofReady: shareProofReady,
+      proInterestState: proInterestState,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {
@@ -226,6 +229,7 @@ void main() {
           usefulness: BetaFeedbackUsefulness.useful,
           note: privateNote,
         ),
+        proInterestState: ProInterestState.empty,
       );
       final summary = BetaOutcomesCopy.buildSafeSummary(snapshot);
       expect(summary, isNot(contains(privateText)));
@@ -273,6 +277,7 @@ void main() {
           usefulness: BetaFeedbackUsefulness.useful,
           note: 'Local note only',
         ),
+        proInterestState: ProInterestState.empty,
         proofEngine: _FakeProofEngine(hasProof: true),
       );
 

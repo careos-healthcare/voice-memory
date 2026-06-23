@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
+import '../features/pro_interest/pro_interest_store.dart';
+import '../features/pro_interest/pro_interest_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_engine.dart';
 import '../features/beta_outcomes/beta_outcomes_models.dart';
@@ -51,6 +53,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
     final returnRitual = widget.returnRitualStore ??
         ReturnRitualStore(AppServices.instance.prefs);
     await BetaFeedbackStore.ensureLoaded();
+    await ProInterestStore.ensureLoaded();
     final entries = await journal.loadAll();
     final watchItems = await watchlist.loadItems();
     final ritual = await returnRitual.load();
@@ -61,6 +64,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
         watchThemesCount: watchItems.length,
         returnRitualSet: ritual?.isValid == true,
         feedbackState: BetaFeedbackStore.cached,
+        proInterestState: ProInterestStore.cached,
       );
       _loading = false;
     });
@@ -175,6 +179,34 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
                   ? BetaOutcomesCopy.yesLabel
                   : BetaOutcomesCopy.noLabel,
             ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_pro_interest_captured'),
+              label: BetaOutcomesCopy.proInterestCapturedLabel,
+              value: snapshot.proInterestCaptured
+                  ? BetaOutcomesCopy.yesLabel
+                  : BetaOutcomesCopy.noLabel,
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_pro_interest_value_count'),
+              label: BetaOutcomesCopy.proInterestValueCountLabel,
+              value: '${snapshot.selectedProValueCount}',
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_pro_interest_pricing'),
+              label: BetaOutcomesCopy.proInterestPricingLabel,
+              value: snapshot.proInterestPricingLabel,
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_pro_interest_note_present'),
+              label: BetaOutcomesCopy.proInterestNotePresentLabel,
+              value: snapshot.proInterestNotePresent
+                  ? BetaOutcomesCopy.yesLabel
+                  : BetaOutcomesCopy.noLabel,
+            ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               BetaOutcomesCopy.interpretationSectionTitle,
@@ -200,6 +232,15 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
                 key: const Key('beta_outcomes_open_beta_feedback'),
                 onPressed: () => context.push('/beta-feedback'),
                 child: const Text(BetaOutcomesCopy.openBetaFeedbackButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('beta_outcomes_open_pro_interest'),
+                onPressed: () => context.push('/pro-interest'),
+                child: const Text(ProInterestCopy.openProInterestButton),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

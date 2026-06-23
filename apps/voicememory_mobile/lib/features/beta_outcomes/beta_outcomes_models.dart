@@ -1,4 +1,5 @@
 import '../beta_feedback/beta_feedback_models.dart';
+import '../pro_interest/pro_interest_models.dart';
 
 /// Read-only beta validation snapshot — counts and booleans only.
 class BetaOutcomesSnapshot {
@@ -14,6 +15,12 @@ class BetaOutcomesSnapshot {
     required this.shareProofReady,
     required this.interpretations,
     required this.feedbackState,
+    required this.proInterestCaptured,
+    required this.selectedProValueCount,
+    required this.proInterestPricingLabel,
+    required this.proInterestNotePresent,
+    required this.proInterestInterpretations,
+    required this.proInterestState,
   });
 
   final int savedMomentCount;
@@ -27,6 +34,12 @@ class BetaOutcomesSnapshot {
   final bool shareProofReady;
   final List<String> interpretations;
   final BetaFeedbackState feedbackState;
+  final bool proInterestCaptured;
+  final int selectedProValueCount;
+  final String proInterestPricingLabel;
+  final bool proInterestNotePresent;
+  final List<String> proInterestInterpretations;
+  final ProInterestState proInterestState;
 }
 
 /// Local inputs for deterministic beta outcomes — metadata only.
@@ -39,6 +52,7 @@ class BetaOutcomesInput {
     required this.returnRitualSet,
     required this.feedbackState,
     required this.shareProofReady,
+    required this.proInterestState,
   });
 
   final int savedMomentCount;
@@ -48,4 +62,5 @@ class BetaOutcomesInput {
   final bool returnRitualSet;
   final BetaFeedbackState feedbackState;
   final bool shareProofReady;
+  final ProInterestState proInterestState;
 }

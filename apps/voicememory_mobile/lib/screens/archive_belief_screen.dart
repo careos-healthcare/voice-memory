@@ -112,6 +112,7 @@ import '../widgets/patterns/patterns_first_archive_view.dart';
 import '../widgets/demo/sample_archive_entry_card.dart';
 import '../widgets/return_ritual_card.dart';
 import '../widgets/beta_feedback_card.dart';
+import '../widgets/pro_interest_link_card.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../widgets/pro_value_preview_card.dart';
 import '../features/pro/pro_value_preview_dismiss_store.dart';
@@ -2126,6 +2127,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               if (!mounted) return;
               setState(() {});
             },
+          ),
+        ];
+      case ArchiveHomeSectionId.proInterestLink:
+        return [
+          ProInterestLinkCard(
+            entries: _entries,
+            sampleMode: ScreenshotMode.enabled,
           ),
         ];
       case ArchiveHomeSectionId.needsAttention:
