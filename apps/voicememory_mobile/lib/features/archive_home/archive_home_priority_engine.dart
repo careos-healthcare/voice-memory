@@ -20,6 +20,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.archiveDepth,
           ArchiveHomeSectionId.watchlist,
           ArchiveHomeSectionId.nextEvidencePlan,
+          ArchiveHomeSectionId.firstWeekPath,
           ArchiveHomeSectionId.milestones,
           ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.proInterestLink,
@@ -61,6 +62,10 @@ class ArchiveHomePriorityEngine {
 
   static Set<ArchiveHomeSectionId> _hiddenForStage(ArchiveHomePriorityInput input) {
     final hidden = <ArchiveHomeSectionId>{};
+
+    if (!input.firstWeekPathVisible) {
+      hidden.add(ArchiveHomeSectionId.firstWeekPath);
+    }
 
     if (input.savedEntryCount <= 0) {
       hidden.addAll(const {
@@ -130,8 +135,9 @@ class ArchiveHomePriorityEngine {
 
   static List<ArchiveHomeSectionId> _rankedOrder(ArchiveHomePriorityInput input) {
     if (input.savedEntryCount <= 0) {
-      return const [
+      return [
         ArchiveHomeSectionId.archiveSummary,
+        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
         ArchiveHomeSectionId.sampleArchive,
@@ -139,8 +145,9 @@ class ArchiveHomePriorityEngine {
     }
 
     if (input.savedEntryCount == 1) {
-      return const [
+      return [
         ArchiveHomeSectionId.archiveSummary,
+        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
         ArchiveHomeSectionId.returnRitual,
         ArchiveHomeSectionId.archiveDepth,
@@ -152,8 +159,9 @@ class ArchiveHomePriorityEngine {
     }
 
     if (input.savedEntryCount == 2) {
-      return const [
+      return [
         ArchiveHomeSectionId.archiveSummary,
+        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
         ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.archiveDepth,
@@ -168,6 +176,7 @@ class ArchiveHomePriorityEngine {
     if (input.savedEntryCount <= 4) {
       return [
         ArchiveHomeSectionId.archiveSummary,
+        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         if (input.returnChangesAvailable) ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.nextEvidencePlan,
         ArchiveHomeSectionId.watchlist,
@@ -187,6 +196,7 @@ class ArchiveHomePriorityEngine {
     if (input.savedEntryCount <= 9) {
       return [
         ArchiveHomeSectionId.archiveSummary,
+        if (input.firstWeekPathVisible) ArchiveHomeSectionId.firstWeekPath,
         if (input.weeklyReviewAvailable)
           ArchiveHomeSectionId.reviewHistory
         else if (input.returnChangesAvailable)

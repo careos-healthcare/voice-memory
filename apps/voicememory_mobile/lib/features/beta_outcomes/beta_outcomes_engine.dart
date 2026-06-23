@@ -8,13 +8,19 @@ import '../demo/sample_archive_mode.dart';
 import '../pro_interest/pro_interest_copy.dart';
 import '../pro_interest/pro_interest_engine.dart';
 import '../pro_interest/pro_interest_models.dart';
+import '../first_week_path/first_week_path_engine.dart';
+import '../first_week_path/first_week_path_models.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
 
 /// Deterministic beta outcomes builder — read-only local signals.
 class BetaOutcomesEngine {
-  const BetaOutcomesEngine();
+  const BetaOutcomesEngine({
+    this.firstWeekPathEngine = const FirstWeekPathEngine(),
+  });
+
+  final FirstWeekPathEngine firstWeekPathEngine;
 
   BetaOutcomesSnapshot buildFromJournal({
     required List<JournalEntry> entries,
@@ -25,12 +31,22 @@ class BetaOutcomesEngine {
     BetaInviteCopyStats betaInviteCopyStats = BetaInviteCopyStats.empty,
     ShareableArchiveProofEngine proofEngine =
         const ShareableArchiveProofEngine(),
+    bool hasWatchTheme = false,
+    bool hasWeeklyReviewAvailable = false,
   }) {
     final realEntries = _realEntries(entries);
     final depth = const ArchiveDepthEngine().build(entries: realEntries);
     final usableCount = ArchiveEvidenceGuard.eligibleReflectionCount(realEntries);
     final shareProofReady =
         proofEngine.buildFromJournal(entries: realEntries).hasProof;
+    final firstWeekPath = firstWeekPathEngine.build(
+      FirstWeekPathInput(
+        realSavedMomentCount: realEntries.length,
+        hasWatchTheme: hasWatchTheme,
+        betaFeedbackCaptured: feedbackState.hasResponse,
+        hasWeeklyReviewAvailable: hasWeeklyReviewAvailable,
+      ),
+    );
 
     return build(
       BetaOutcomesInput(
@@ -43,6 +59,7 @@ class BetaOutcomesEngine {
         shareProofReady: shareProofReady,
         proInterestState: proInterestState,
         betaInviteCopyStats: betaInviteCopyStats,
+        firstWeekPathProgressLabel: firstWeekPath.progressLabel,
       ),
     );
   }
@@ -79,6 +96,7 @@ class BetaOutcomesEngine {
       betaInviteCopiedCount: inviteSummary.totalCopiedCount,
       betaInviteLastVariantLabel: inviteSummary.lastVariantLabel,
       betaInviteTaskCopied: inviteSummary.testerTaskCopied,
+      firstWeekPathProgressLabel: input.firstWeekPathProgressLabel,
     );
   }
 

@@ -30,6 +30,7 @@ import '../screens/support_feedback_screen.dart';
 import '../screens/beta_feedback_screen.dart';
 import '../screens/beta_outcomes_screen.dart';
 import '../screens/beta_invite_pack_screen.dart';
+import '../screens/first_week_path_screen.dart';
 import '../screens/pro_interest_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
@@ -185,6 +186,7 @@ final GoRouter appRouter = GoRouter(
         path != '/help-reviewer-guide' &&
         path != '/support-feedback' &&
         path != '/beta-feedback' &&
+        path != '/first-week-path' &&
         path != '/beta-outcomes' &&
         path != '/beta-invite-pack' &&
         path != '/pro-interest' &&
@@ -724,6 +726,11 @@ final GoRouter appRouter = GoRouter(
       path: '/beta-feedback',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const BetaFeedbackScreen(),
+    ),
+    GoRoute(
+      path: '/first-week-path',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const FirstWeekPathScreen(),
     ),
     GoRoute(
       path: '/beta-outcomes',
