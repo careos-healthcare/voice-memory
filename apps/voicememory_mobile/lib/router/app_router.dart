@@ -23,6 +23,7 @@ import '../features/activation/archive_evidence_map.dart';
 import '../screens/insight_quality_screen.dart';
 import '../screens/archive_evidence_context_screen.dart';
 import '../screens/entry_detail_screen.dart';
+import '../screens/archive_export_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
 import '../screens/archive_pack_detail_screen.dart';
@@ -664,6 +665,11 @@ final GoRouter appRouter = GoRouter(
       path: '/restore-production-verify',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const RestoreProductionVerificationScreen(),
+    ),
+    GoRoute(
+      path: '/archive-export',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ArchiveExportScreen(),
     ),
     GoRoute(
       path: '/export',
