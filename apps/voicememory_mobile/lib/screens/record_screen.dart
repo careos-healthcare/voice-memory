@@ -307,6 +307,11 @@ import '../features/archive_proof/archive_demo_preview_resolver.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../features/activation/next_moment_prompt.dart';
 import '../widgets/record/next_moment_prompt_card.dart';
+import '../features/todays_question/todays_question_copy.dart';
+import '../features/todays_question/todays_question_engine.dart';
+import '../features/todays_question/todays_question_models.dart';
+import '../widgets/record/todays_one_question_card.dart';
+import '../screens/todays_one_question_screen.dart';
 import '../features/daily_archive_exercise/daily_archive_exercise_copy.dart';
 import '../features/daily_archive_exercise/daily_archive_exercise_engine.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
@@ -3061,6 +3066,32 @@ class _RecordScreenState extends State<RecordScreen> {
     context.push(route);
   }
 
+  void _handleTodaysOneQuestionAction(TodaysQuestionResult question) {
+    if (question.primaryRoute == TodaysQuestionCopy.recordRoute) {
+      setState(() => _selectedPromptLine = question.questionText);
+      unawaited(_onRecordPressed(source: 'todays_one_question'));
+      return;
+    }
+    context.push(question.primaryRoute);
+  }
+
+  Future<void> _openTodaysOneQuestionScreen() async {
+    final action = await context.push<TodaysQuestionScreenAction>(
+      TodaysQuestionCopy.route,
+    );
+    if (!mounted || action == null) return;
+    switch (action) {
+      case TodaysQuestionScreenAction.record:
+        unawaited(_onRecordPressed(source: 'todays_one_question'));
+      case TodaysQuestionScreenAction.type:
+        await navigateToTypeInsteadCapture(
+          context,
+          prompt: _selectedPromptLine,
+          onSaved: _finishSuccessfulCapture,
+        );
+    }
+  }
+
   bool _compactLayout(RecordUiState ui) =>
       ui == RecordUiState.recording || ui == RecordUiState.processing;
 
@@ -3204,6 +3235,18 @@ class _RecordScreenState extends State<RecordScreen> {
             betaFeedbackCaptured: _betaFeedbackCaptured,
           )
         : null;
+    final todaysOneQuestion = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !ScreenshotMode.enabled
+        ? const TodaysQuestionEngine().buildFromJournal(
+            entries: _journalEntries,
+            hasWatchTheme: _hasWatchTheme,
+            betaFeedbackCaptured: _betaFeedbackCaptured,
+            weeklyReviewAvailable: WeeklyArchiveReviewEngine.build(
+              entries: _journalEntries,
+            ).hasEnoughEvidence,
+          )
+        : null;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3337,6 +3380,16 @@ class _RecordScreenState extends State<RecordScreen> {
                         onPrimary: () => _handleDailyArchiveExerciseAction(
                           dailyArchiveExercise.primaryRoute,
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (todaysOneQuestion != null &&
+                        todaysOneQuestion.showOnRecord) ...[
+                      TodaysOneQuestionCard(
+                        question: todaysOneQuestion,
+                        onPrimary: () =>
+                            _handleTodaysOneQuestionAction(todaysOneQuestion),
+                        onViewFull: _openTodaysOneQuestionScreen,
                       ),
                       const SizedBox(height: 12),
                     ],

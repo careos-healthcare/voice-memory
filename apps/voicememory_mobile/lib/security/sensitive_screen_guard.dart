@@ -41,6 +41,7 @@ abstract class SensitiveRoutes {
     '/first-week-path',
     '/daily-archive-exercise',
     '/archive-clarity-progress',
+    '/todays-one-question',
     '/beta-outcomes',
     '/beta-invite-pack',
     '/pro-interest',

@@ -5,38 +5,39 @@ import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
-import '../features/daily_archive_exercise/daily_archive_exercise_copy.dart';
-import '../features/daily_archive_exercise/daily_archive_exercise_engine.dart';
-import '../features/daily_archive_exercise/daily_archive_exercise_models.dart';
 import '../features/todays_question/todays_question_copy.dart';
+import '../features/todays_question/todays_question_engine.dart';
+import '../features/todays_question/todays_question_models.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
 
-/// Full daily archive exercise screen — no journal text.
-class DailyArchiveExerciseScreen extends StatefulWidget {
-  const DailyArchiveExerciseScreen({
+/// Full today's one question screen — no private journal text.
+class TodaysOneQuestionScreen extends StatefulWidget {
+  const TodaysOneQuestionScreen({
     super.key,
     this.journalService,
     this.watchlistStore,
-    this.engine = const DailyArchiveExerciseEngine(),
-    DailyArchiveExerciseResult? initialResult,
+    this.engine = const TodaysQuestionEngine(),
+    TodaysQuestionResult? initialResult,
+    this.weeklyReviewAvailable = false,
   }) : _initialResult = initialResult;
 
   final JournalService? journalService;
   final ArchiveWatchlistStore? watchlistStore;
-  final DailyArchiveExerciseEngine engine;
-  final DailyArchiveExerciseResult? _initialResult;
+  final TodaysQuestionEngine engine;
+  final bool weeklyReviewAvailable;
+  final TodaysQuestionResult? _initialResult;
 
   @override
-  State<DailyArchiveExerciseScreen> createState() =>
-      _DailyArchiveExerciseScreenState();
+  State<TodaysOneQuestionScreen> createState() =>
+      _TodaysOneQuestionScreenState();
 }
 
-class _DailyArchiveExerciseScreenState extends State<DailyArchiveExerciseScreen> {
-  DailyArchiveExerciseResult? _result;
+class _TodaysOneQuestionScreenState extends State<TodaysOneQuestionScreen> {
+  TodaysQuestionResult? _result;
   bool _loading = true;
 
   @override
@@ -55,8 +56,9 @@ class _DailyArchiveExerciseScreenState extends State<DailyArchiveExerciseScreen>
       if (!mounted) return;
       setState(() {
         _result = widget.engine.build(
-          DailyArchiveExerciseInput(
+          TodaysQuestionInput(
             realSavedMomentCount: 0,
+            usableEvidenceCount: 0,
             hasWatchTheme: false,
             betaFeedbackCaptured: false,
             sampleMode: true,
@@ -79,6 +81,7 @@ class _DailyArchiveExerciseScreenState extends State<DailyArchiveExerciseScreen>
         entries: entries,
         hasWatchTheme: watchItems.isNotEmpty,
         betaFeedbackCaptured: BetaFeedbackStore.cached.hasResponse,
+        weeklyReviewAvailable: widget.weeklyReviewAvailable,
       );
       _loading = false;
     });
@@ -87,64 +90,61 @@ class _DailyArchiveExerciseScreenState extends State<DailyArchiveExerciseScreen>
   @override
   Widget build(BuildContext context) {
     return PushedScreenShell(
-      title: DailyArchiveExerciseCopy.screenTitle,
-      fallbackRoute: '/archive-belief',
+      title: TodaysQuestionCopy.eyebrow,
+      fallbackRoute: TodaysQuestionCopy.recordRoute,
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              key: const Key('daily_archive_exercise_screen'),
+              key: const Key('todays_one_question_screen'),
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               child: _content(context, _result!),
             ),
     );
   }
 
-  Widget _content(BuildContext context, DailyArchiveExerciseResult result) {
+  Widget _content(BuildContext context, TodaysQuestionResult result) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          result.title,
-          key: const Key('daily_archive_exercise_screen_title'),
+          result.questionText,
+          key: const Key('todays_one_question_screen_question'),
           style: ArchiveMobileTypography.listTitle(context),
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          result.prompt,
-          key: const Key('daily_archive_exercise_screen_prompt'),
-          style: ArchiveMobileTypography.explanationBody(
-            context,
-            color: AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          result.hint,
-          key: const Key('daily_archive_exercise_screen_hint'),
+          TodaysQuestionCopy.fullScreenWhy,
+          key: const Key('todays_one_question_screen_why'),
           style: ArchiveMobileTypography.explanationBody(
             context,
             color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton(
-            key: const Key('daily_archive_exercise_screen_primary_button'),
-            onPressed: () => context.push(result.primaryRoute),
-            child: Text(result.primaryCtaLabel),
-          ),
+        FilledButton(
+          key: const Key('todays_one_question_screen_record_button'),
+          onPressed: () => context.pop(TodaysQuestionScreenAction.record),
+          child: const Text(TodaysQuestionCopy.recordAnswerCta),
         ),
         const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            key: const Key('daily_archive_exercise_screen_todays_question_link'),
-            onPressed: () => context.push(TodaysQuestionCopy.route),
-            child: const Text(TodaysQuestionCopy.eyebrow),
-          ),
+        OutlinedButton(
+          key: const Key('todays_one_question_screen_type_button'),
+          onPressed: () => context.pop(TodaysQuestionScreenAction.type),
+          child: const Text(TodaysQuestionCopy.typeAnswerCta),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        TextButton(
+          key: const Key('todays_one_question_screen_back_button'),
+          onPressed: () => context.pop(),
+          child: const Text(TodaysQuestionCopy.backToRecordCta),
         ),
       ],
     );
   }
+}
+
+/// Actions returned from the full question screen.
+enum TodaysQuestionScreenAction {
+  record,
+  type,
 }

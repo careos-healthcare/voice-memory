@@ -8,6 +8,7 @@ import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/first_week_path/first_week_path_copy.dart';
 import '../features/first_week_path/first_week_path_engine.dart';
 import '../features/first_week_path/first_week_path_models.dart';
+import '../features/todays_question/todays_question_copy.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -134,6 +135,15 @@ class _FirstWeekPathScreenState extends State<FirstWeekPathScreen> {
             key: const Key('first_week_path_screen_primary_button'),
             onPressed: () => context.push(result.primaryRoute),
             child: Text(result.primaryCtaLabel),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            key: const Key('first_week_path_screen_todays_question_link'),
+            onPressed: () => context.push(TodaysQuestionCopy.route),
+            child: const Text(TodaysQuestionCopy.eyebrow),
           ),
         ),
         if (result.isComplete) ...[
