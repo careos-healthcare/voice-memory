@@ -109,6 +109,7 @@ import '../widgets/record/kinder_angle_card.dart';
 import '../widgets/record/perspective_shift_card.dart';
 import '../widgets/patterns/patterns_come_back_tomorrow_card.dart';
 import '../widgets/patterns/patterns_first_archive_view.dart';
+import '../widgets/demo/sample_archive_entry_card.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
@@ -2076,6 +2077,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         }
         widgets.add(ShareableArchiveProofCard(proof: standaloneShareProof));
       }
+    }
+
+    if (_showEmpty) {
+      widgets.add(
+        SampleArchiveEntryCard(
+          onViewSample: () => context.push('/sample-archive'),
+        ),
+      );
     }
 
     widgets.add(const SizedBox(height: AppSpacing.lg));

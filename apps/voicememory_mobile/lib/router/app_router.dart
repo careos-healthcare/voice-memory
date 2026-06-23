@@ -24,6 +24,7 @@ import '../screens/insight_quality_screen.dart';
 import '../screens/archive_evidence_context_screen.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/archive_export_screen.dart';
+import '../screens/sample_archive_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
 import '../screens/archive_pack_detail_screen.dart';
@@ -670,6 +671,11 @@ final GoRouter appRouter = GoRouter(
       path: '/archive-export',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ArchiveExportScreen(),
+    ),
+    GoRoute(
+      path: '/sample-archive',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const SampleArchiveScreen(),
     ),
     GoRoute(
       path: '/export',

@@ -13,6 +13,10 @@ abstract final class PrivacyDataControlsCopy {
   static const exportArchiveSubtitle =
       'Create a private file or preview from this device.';
 
+  static const viewSampleArchiveTitle = 'View sample archive';
+  static const viewSampleArchiveSubtitle =
+      'Example data only — your private archive stays untouched.';
+
   static const clearLocalArchiveTitle = 'Clear local archive';
   static const clearLocalArchiveSubtitle =
       'Remove saved moments and local archive insights from this device.';

@@ -107,6 +107,20 @@ class _PrivacyDataControlsSectionState extends State<PrivacyDataControlsSection>
           onTap: () => context.push('/archive-export'),
         ),
         ListTile(
+          key: const Key('privacy_data_view_sample_archive_tile'),
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            PrivacyDataControlsCopy.viewSampleArchiveTitle,
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          subtitle: Text(
+            PrivacyDataControlsCopy.viewSampleArchiveSubtitle,
+            style: ArchiveMobileTypography.listSubtitle(context),
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/sample-archive'),
+        ),
+        ListTile(
           key: const Key('privacy_data_clear_local_archive_tile'),
           contentPadding: EdgeInsets.zero,
           title: Text(

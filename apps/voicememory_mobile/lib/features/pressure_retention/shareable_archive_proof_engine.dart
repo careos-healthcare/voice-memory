@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../demo/sample_archive_mode.dart';
 import 'archive_proof_counter_engine.dart';
 import 'pressure_check_in_record.dart';
 import 'shareable_archive_proof_model.dart';
@@ -19,7 +20,9 @@ class ShareableArchiveProofEngine {
   ShareableArchiveProof buildFromJournal({
     required List<JournalEntry> entries,
   }) {
-    final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
+    final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
+    final eligibleCount =
+        ArchiveEvidenceGuard.eligibleReflectionCount(realEntries);
     if (eligibleCount < _minJournalEligibleCount) {
       return ShareableArchiveProof.none();
     }
