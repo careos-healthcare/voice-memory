@@ -11,6 +11,7 @@ enum ArchiveHomeSectionId {
   archiveDepth,
   watchlist,
   nextEvidencePlan,
+  firstWeekPath,
   milestones,
   betaFeedback,
   proInterestLink,
@@ -32,6 +33,7 @@ class ArchiveHomePriorityInput {
     required this.sampleMode,
     required this.proPreviewPromoVisible,
     required this.showEmptySample,
+    required this.firstWeekPathVisible,
   });
 
   final int savedEntryCount;
@@ -42,6 +44,7 @@ class ArchiveHomePriorityInput {
   final bool sampleMode;
   final bool proPreviewPromoVisible;
   final bool showEmptySample;
+  final bool firstWeekPathVisible;
 }
 
 /// Ordered Archive Home layout plan — primary first, then optional collapse.

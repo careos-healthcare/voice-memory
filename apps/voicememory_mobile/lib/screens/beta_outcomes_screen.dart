@@ -68,6 +68,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
         feedbackState: BetaFeedbackStore.cached,
         proInterestState: ProInterestStore.cached,
         betaInviteCopyStats: BetaInviteStore.cached,
+        hasWatchTheme: watchItems.isNotEmpty,
       );
       _loading = false;
     });
@@ -120,6 +121,12 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.sm),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_first_week_path'),
+              label: BetaOutcomesCopy.firstWeekPathProgressLabel,
+              value: snapshot.firstWeekPathProgressLabel,
+            ),
             _metricRow(
               context,
               key: const Key('beta_outcomes_saved_moments'),

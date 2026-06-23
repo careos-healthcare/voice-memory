@@ -129,8 +129,10 @@ import '../features/return_changes/archive_return_snapshot.dart';
 import '../widgets/archive_depth_card.dart';
 import '../widgets/archive_watchlist_card.dart';
 import '../widgets/next_evidence_plan_card.dart';
+import '../widgets/first_week_path_card.dart';
 import '../widgets/archive_milestones_card.dart';
 import '../widgets/archive_return_changes_card.dart';
+import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../features/archive_home/archive_home_priority_engine.dart';
 import '../features/archive_home/archive_home_priority_models.dart';
 import '../widgets/archive_home_more_tools_section.dart';
@@ -1949,6 +1951,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               !e.transcript.startsWith('[draft]'),
         )
         .length;
+    final realSavedCount = BetaFeedbackEngine.realEntryCountFor(_entries);
     final depth = const ArchiveDepthEngine().build(entries: _entries);
     return ArchiveHomePriorityInput(
       savedEntryCount: savedCount,
@@ -1966,6 +1969,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         dismissed: ProValuePreviewDismissStore.isDismissed,
       ),
       showEmptySample: _showEmpty,
+      firstWeekPathVisible: !ScreenshotMode.enabled && realSavedCount < 7,
     );
   }
 
@@ -2104,6 +2108,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             entryCount: _entries.length,
             entries: _entries,
             onAddMoment: _goToRecord,
+          ),
+        ];
+      case ArchiveHomeSectionId.firstWeekPath:
+        return [
+          FirstWeekPathCard(
+            entries: _entries,
+            onPrimaryAction: _goToRecord,
+            hasWeeklyReviewAvailable: weeklyReview?.hasEnoughEvidence ?? false,
+            sampleMode: ScreenshotMode.enabled,
           ),
         ];
       case ArchiveHomeSectionId.milestones:

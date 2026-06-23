@@ -32,6 +32,7 @@ ArchiveHomePriorityInput _input({
   bool sampleMode = false,
   bool proPreviewPromoVisible = false,
   bool showEmptySample = false,
+  bool firstWeekPathVisible = true,
 }) =>
     ArchiveHomePriorityInput(
       savedEntryCount: savedEntryCount,
@@ -42,6 +43,7 @@ ArchiveHomePriorityInput _input({
       sampleMode: sampleMode,
       proPreviewPromoVisible: proPreviewPromoVisible,
       showEmptySample: showEmptySample,
+      firstWeekPathVisible: firstWeekPathVisible && savedEntryCount < 7,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {
@@ -71,13 +73,13 @@ void main() {
       expect(plan.isHidden(ArchiveHomeSectionId.nextEvidencePlan), isTrue);
       expect(plan.isHidden(ArchiveHomeSectionId.watchlist), isTrue);
 
-      expect(
-        plan.primarySections.indexOf(ArchiveHomeSectionId.quickActions),
-        lessThan(plan.primarySections.indexOf(ArchiveHomeSectionId.sampleArchive)),
-      );
+      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
+      expect(plan.primarySections, contains(ArchiveHomeSectionId.quickActions));
+      expect(plan.primarySections.indexOf(ArchiveHomeSectionId.firstWeekPath),
+          lessThan(plan.primarySections.indexOf(ArchiveHomeSectionId.quickActions)));
     });
 
-    test('1-entry layout prioritises Next Evidence Plan and Return Ritual', () {
+    test('1-entry layout prioritises First Week Path and Next Evidence Plan', () {
       final plan = engine.build(
         _input(
           savedEntryCount: 1,
@@ -87,8 +89,8 @@ void main() {
 
       expect(plan.primarySections.take(3).toList(), [
         ArchiveHomeSectionId.archiveSummary,
+        ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
-        ArchiveHomeSectionId.returnRitual,
       ]);
       expect(plan.isHidden(ArchiveHomeSectionId.evidenceQuality), isTrue);
       expect(plan.isHidden(ArchiveHomeSectionId.milestones), isTrue);
@@ -106,9 +108,9 @@ void main() {
 
       expect(plan.primarySections, [
         ArchiveHomeSectionId.archiveSummary,
+        ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.nextEvidencePlan,
         ArchiveHomeSectionId.watchlist,
-        ArchiveHomeSectionId.archiveDepth,
       ]);
 
       final secondary = plan.secondarySections;
@@ -127,12 +129,13 @@ void main() {
         ),
       );
 
-      expect(plan.primarySections[1], ArchiveHomeSectionId.returnChanges);
+      expect(plan.primarySections[1], ArchiveHomeSectionId.firstWeekPath);
+      expect(plan.primarySections[2], ArchiveHomeSectionId.returnChanges);
       expect(plan.primarySections.take(4), [
         ArchiveHomeSectionId.archiveSummary,
+        ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.nextEvidencePlan,
-        ArchiveHomeSectionId.watchlist,
       ]);
       expect(plan.isHidden(ArchiveHomeSectionId.reviewHistory), isTrue);
     });
@@ -145,7 +148,8 @@ void main() {
           depthLevel: ArchiveDepthLevel.weeklyReviewReady,
         ),
       );
-      expect(withReview.primarySections[1], ArchiveHomeSectionId.reviewHistory);
+      expect(withReview.primarySections[1], ArchiveHomeSectionId.firstWeekPath);
+      expect(withReview.primarySections[2], ArchiveHomeSectionId.reviewHistory);
 
       final withChanges = engine.build(
         _input(
@@ -154,7 +158,8 @@ void main() {
           depthLevel: ArchiveDepthLevel.weeklyReviewReady,
         ),
       );
-      expect(withChanges.primarySections[1], ArchiveHomeSectionId.returnChanges);
+      expect(withChanges.primarySections[1], ArchiveHomeSectionId.firstWeekPath);
+      expect(withChanges.primarySections[2], ArchiveHomeSectionId.returnChanges);
     });
 
     test('10+ layout allows Pro Preview but no purchase CTAs in copy', () {
@@ -213,6 +218,7 @@ void main() {
         if (plan.isHidden(id)) continue;
         if (id == ArchiveHomeSectionId.sampleArchive) continue;
         if (id == ArchiveHomeSectionId.introHint) continue;
+        if (id == ArchiveHomeSectionId.firstWeekPath) continue;
         expect(reachable, contains(id), reason: '$id should remain reachable');
       }
     });

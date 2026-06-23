@@ -25,6 +25,7 @@ class BetaOutcomesSnapshot {
     required this.betaInviteCopiedCount,
     required this.betaInviteLastVariantLabel,
     required this.betaInviteTaskCopied,
+    required this.firstWeekPathProgressLabel,
   });
 
   final int savedMomentCount;
@@ -47,6 +48,7 @@ class BetaOutcomesSnapshot {
   final int betaInviteCopiedCount;
   final String betaInviteLastVariantLabel;
   final bool betaInviteTaskCopied;
+  final String firstWeekPathProgressLabel;
 }
 
 /// Local inputs for deterministic beta outcomes — metadata only.
@@ -61,6 +63,7 @@ class BetaOutcomesInput {
     required this.shareProofReady,
     required this.proInterestState,
     this.betaInviteCopyStats = BetaInviteCopyStats.empty,
+    this.firstWeekPathProgressLabel = '',
   });
 
   final int savedMomentCount;
@@ -72,4 +75,5 @@ class BetaOutcomesInput {
   final bool shareProofReady;
   final ProInterestState proInterestState;
   final BetaInviteCopyStats betaInviteCopyStats;
+  final String firstWeekPathProgressLabel;
 }
