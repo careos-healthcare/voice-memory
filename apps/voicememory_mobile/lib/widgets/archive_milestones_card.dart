@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
 import '../features/archive_milestones/archive_milestones_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/archive_milestones/archive_milestones_engine.dart';
 import '../features/archive_milestones/archive_milestones_gates.dart';
 import '../features/archive_milestones/archive_milestones_models.dart';
@@ -164,6 +165,14 @@ class _ArchiveMilestonesCardState extends State<ArchiveMilestonesCard> {
                 () => context.push(result.primaryActionRoute),
             child: Text(result.primaryActionLabel),
           ),
+          if (widget.entries.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            OutlinedButton(
+              key: const Key('archive_milestones_milestone_share_button'),
+              onPressed: () => context.push(MilestoneShareCopy.route),
+              child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
+            ),
+          ],
         ],
       ),
     );

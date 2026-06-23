@@ -9,6 +9,7 @@ import '../features/archive_calendar/archive_calendar_models.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/then_now/then_now_engine.dart';
 import '../features/review_ritual/view_ritual_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -188,6 +189,14 @@ class _ArchiveCalendarScreenState extends State<ArchiveCalendarScreen> {
           onPressed: () => context.push(ReviewRitualCopy.route),
           child: const Text(ReviewRitualCopy.openReviewRitualCta),
         ),
+        if (result.activeDayCount >= 1) ...[
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('archive_calendar_screen_milestone_share_button'),
+            onPressed: () => context.push(MilestoneShareCopy.route),
+            child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
+          ),
+        ],
         const SizedBox(height: AppSpacing.sm),
         FilledButton(
           key: const Key('archive_calendar_screen_record_button'),

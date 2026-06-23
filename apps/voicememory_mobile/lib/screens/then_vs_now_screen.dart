@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/then_now/then_now_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/then_now/then_now_engine.dart';
 import '../features/then_now/then_now_models.dart';
@@ -210,6 +211,14 @@ class _ThenVsNowScreenState extends State<ThenVsNowScreen> {
           onPressed: () => context.push(ArchiveCalendarCopy.route),
           child: const Text(ArchiveCalendarCopy.openCalendarCta),
         ),
+        if (result.hasCard) ...[
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('then_vs_now_screen_milestone_share_button'),
+            onPressed: () => context.push(MilestoneShareCopy.route),
+            child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
+          ),
+        ],
         const SizedBox(height: AppSpacing.lg),
         FilledButton(
           key: const Key('then_vs_now_screen_save_another_button'),

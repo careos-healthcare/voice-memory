@@ -11,6 +11,7 @@ import '../features/pro_interest/pro_interest_copy.dart';
 import '../features/then_now/then_now_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/insight_feedback/insight_feedback_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_engine.dart';
 import '../features/beta_outcomes/beta_outcomes_models.dart';
@@ -155,6 +156,12 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
               key: const Key('beta_outcomes_insight_feedback'),
               label: InsightFeedbackCopy.betaOutcomesLabel,
               value: snapshot.insightFeedbackCapturedLabel,
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_milestone_share'),
+              label: MilestoneShareCopy.betaOutcomesLabel,
+              value: snapshot.milestoneShareCountLabel,
             ),
             _metricRow(
               context,

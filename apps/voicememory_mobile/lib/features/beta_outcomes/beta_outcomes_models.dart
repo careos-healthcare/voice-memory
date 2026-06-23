@@ -30,6 +30,7 @@ class BetaOutcomesSnapshot {
     required this.thenVsNowAvailableLabel,
     required this.archiveCalendarAvailableLabel,
     required this.insightFeedbackCapturedLabel,
+    required this.milestoneShareCountLabel,
   });
 
   final int savedMomentCount;
@@ -57,6 +58,7 @@ class BetaOutcomesSnapshot {
   final String thenVsNowAvailableLabel;
   final String archiveCalendarAvailableLabel;
   final String insightFeedbackCapturedLabel;
+  final String milestoneShareCountLabel;
 }
 
 /// Local inputs for deterministic beta outcomes — metadata only.
@@ -76,6 +78,7 @@ class BetaOutcomesInput {
     this.thenVsNowAvailableLabel = '',
     this.archiveCalendarAvailableLabel = '',
     this.insightFeedbackCapturedLabel = '',
+    this.milestoneShareCountLabel = '',
   });
 
   final int savedMomentCount;
@@ -92,4 +95,5 @@ class BetaOutcomesInput {
   final String thenVsNowAvailableLabel;
   final String archiveCalendarAvailableLabel;
   final String insightFeedbackCapturedLabel;
+  final String milestoneShareCountLabel;
 }

@@ -244,6 +244,7 @@ void main() {
           thenVsNowVisible: true,
           archiveCalendarVisible: true,
           reviewRitualVisible: true,
+          milestoneShareVisible: true,
         ),
       );
 

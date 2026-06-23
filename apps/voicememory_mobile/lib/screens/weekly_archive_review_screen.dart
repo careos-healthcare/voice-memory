@@ -10,6 +10,7 @@ import '../features/activation/belief_evidence_trail.dart';
 import '../features/activation/next_moment_prompt.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/review_ritual/view_ritual_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
 import '../features/pressure_retention/shareable_archive_proof_model.dart';
 import '../services/app_services.dart';
@@ -160,6 +161,12 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
                   key: const Key('weekly_archive_review_screen_review_ritual_link'),
                   onPressed: () => context.push(ReviewRitualCopy.route),
                   child: const Text(ReviewRitualCopy.openReviewRitualCta),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton(
+                  key: const Key('weekly_archive_review_screen_milestone_share_link'),
+                  onPressed: () => context.push(MilestoneShareCopy.route),
+                  child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
                 ),
               ],
               if (review.hasEnoughEvidence &&

@@ -7,6 +7,7 @@ import '../features/archive_clarity/archive_clarity_copy.dart';
 import '../features/todays_question/todays_question_copy.dart';
 import '../features/then_now/then_now_copy.dart';
 import '../features/review_ritual/view_ritual_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/insight_feedback/insight_feedback_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
@@ -186,6 +187,21 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_review_ritual'),
                 onPressed: () => context.push(ReviewRitualCopy.route),
                 child: const Text(ReviewRitualCopy.openReviewRitualCta),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_milestone_share'),
+              title: MilestoneShareCopy.supportSectionTitle,
+              body: MilestoneShareCopy.supportSectionBody,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_milestone_share'),
+                onPressed: () => context.push(MilestoneShareCopy.route),
+                child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

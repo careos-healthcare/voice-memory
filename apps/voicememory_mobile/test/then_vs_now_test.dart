@@ -202,6 +202,7 @@ void main() {
           thenVsNowVisible: true,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,
+          milestoneShareVisible: false,
         ),
       );
 

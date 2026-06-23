@@ -26,6 +26,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.thenVsNow,
           ArchiveHomeSectionId.archiveCalendar,
           ArchiveHomeSectionId.reviewRitual,
+          ArchiveHomeSectionId.milestoneShare,
           ArchiveHomeSectionId.milestones,
           ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.proInterestLink,
@@ -90,6 +91,10 @@ class ArchiveHomePriorityEngine {
 
     if (!input.reviewRitualVisible) {
       hidden.add(ArchiveHomeSectionId.reviewRitual);
+    }
+
+    if (!input.milestoneShareVisible) {
+      hidden.add(ArchiveHomeSectionId.milestoneShare);
     }
 
     if (input.savedEntryCount <= 0) {
@@ -173,6 +178,7 @@ class ArchiveHomePriorityEngine {
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
         if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
+        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
       ];
     }
 
@@ -194,6 +200,7 @@ class ArchiveHomePriorityEngine {
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
         if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
+        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
       ];
     }
 
@@ -216,6 +223,7 @@ class ArchiveHomePriorityEngine {
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
         if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
+        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
       ];
     }
 
@@ -243,6 +251,7 @@ class ArchiveHomePriorityEngine {
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
         if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
+        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
       ];
     }
 
@@ -274,6 +283,7 @@ class ArchiveHomePriorityEngine {
         if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
         if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
         if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
+        if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
       ];
     }
 
@@ -300,6 +310,7 @@ class ArchiveHomePriorityEngine {
       if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       if (input.archiveCalendarVisible) ArchiveHomeSectionId.archiveCalendar,
       if (input.reviewRitualVisible) ArchiveHomeSectionId.reviewRitual,
+      if (input.milestoneShareVisible) ArchiveHomeSectionId.milestoneShare,
     ];
   }
 }

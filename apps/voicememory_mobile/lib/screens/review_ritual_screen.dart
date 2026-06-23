@@ -6,6 +6,7 @@ import '../design/archive_mobile_typography.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../features/review_ritual/view_ritual_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/review_ritual/view_ritual_engine.dart';
 import '../features/review_ritual/view_ritual_models.dart';
 import '../features/review_ritual/view_ritual_store.dart';
@@ -243,6 +244,14 @@ class _ReviewRitualScreenState extends State<ReviewRitualScreen> {
             onPressed: () => context.push(WeeklyArchiveReviewNavigation.route),
             child: const Text(ReviewRitualCopy.openWeeklyReviewCta),
           ),
+        if (_realSavedMomentCount >= 1) ...[
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('review_ritual_screen_milestone_share_button'),
+            onPressed: () => context.push(MilestoneShareCopy.route),
+            child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
+          ),
+        ],
         const SizedBox(height: AppSpacing.sm),
         OutlinedButton(
           key: const Key('review_ritual_screen_archive_home_button'),

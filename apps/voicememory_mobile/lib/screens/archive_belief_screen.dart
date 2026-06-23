@@ -138,6 +138,8 @@ import '../widgets/review_ritual_card.dart';
 import '../features/review_ritual/view_ritual_engine.dart';
 import '../features/review_ritual/view_ritual_models.dart';
 import '../features/review_ritual/view_ritual_store.dart';
+import '../widgets/milestone_share_card.dart';
+import '../features/milestone_share/milestone_share_gates.dart';
 import '../features/then_now/then_now_engine.dart';
 import '../features/archive_calendar/archive_calendar_engine.dart';
 import '../widgets/archive_milestones_card.dart';
@@ -1974,6 +1976,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ritual: ReviewRitualStore.cached,
       ),
     );
+    final milestoneShareVisible = MilestoneShareGates.showOnArchiveHome(
+      realSavedMomentCount: realSavedCount,
+      milestoneCount: realSavedCount >= 1 ? 1 : 0,
+      sampleMode: ScreenshotMode.enabled,
+    );
     return ArchiveHomePriorityInput(
       savedEntryCount: savedCount,
       usableEvidenceCount: layout.eligibleCount,
@@ -2001,6 +2008,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           archiveCalendar.showOnArchiveHome,
       reviewRitualVisible:
           !ScreenshotMode.enabled && reviewRitualResult.showOnArchiveHome,
+      milestoneShareVisible: milestoneShareVisible,
     );
   }
 
@@ -2193,6 +2201,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               ),
             ),
           ),
+        ];
+      case ArchiveHomeSectionId.milestoneShare:
+        return [
+          MilestoneShareHomeCard(entries: _entries),
         ];
       case ArchiveHomeSectionId.milestones:
         if (!ArchiveMilestonesGates.showOnArchive(
