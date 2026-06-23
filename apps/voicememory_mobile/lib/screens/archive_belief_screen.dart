@@ -130,6 +130,7 @@ import '../widgets/archive_depth_card.dart';
 import '../widgets/archive_watchlist_card.dart';
 import '../widgets/next_evidence_plan_card.dart';
 import '../widgets/first_week_path_card.dart';
+import '../widgets/daily_archive_exercise_card.dart';
 import '../widgets/archive_milestones_card.dart';
 import '../widgets/archive_return_changes_card.dart';
 import '../features/beta_feedback/beta_feedback_engine.dart';
@@ -1970,6 +1971,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ),
       showEmptySample: _showEmpty,
       firstWeekPathVisible: !ScreenshotMode.enabled && realSavedCount < 7,
+      dailyArchiveExerciseVisible: !ScreenshotMode.enabled,
     );
   }
 
@@ -2116,6 +2118,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             entries: _entries,
             onPrimaryAction: _goToRecord,
             hasWeeklyReviewAvailable: weeklyReview?.hasEnoughEvidence ?? false,
+            sampleMode: ScreenshotMode.enabled,
+          ),
+        ];
+      case ArchiveHomeSectionId.dailyArchiveExercise:
+        return [
+          DailyArchiveExerciseCard(
+            entries: _entries,
+            onPrimaryAction: _goToRecord,
             sampleMode: ScreenshotMode.enabled,
           ),
         ];

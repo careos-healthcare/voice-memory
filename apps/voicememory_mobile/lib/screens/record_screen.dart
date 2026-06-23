@@ -307,6 +307,11 @@ import '../features/archive_proof/archive_demo_preview_resolver.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../features/activation/next_moment_prompt.dart';
 import '../widgets/record/next_moment_prompt_card.dart';
+import '../features/daily_archive_exercise/daily_archive_exercise_copy.dart';
+import '../features/daily_archive_exercise/daily_archive_exercise_engine.dart';
+import '../features/archive_watchlist/archive_watchlist_store.dart';
+import '../features/beta_feedback/beta_feedback_store.dart';
+import '../widgets/record/daily_archive_exercise_record_card.dart';
 import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
 import '../features/activation/archive_home_summary.dart';
@@ -395,6 +400,8 @@ class _RecordScreenState extends State<RecordScreen> {
   ArchiveReturnChangesResult? _archiveReturnChangesResult;
   ArchiveReturnSnapshot? _archiveReturnCurrentSnapshot;
   List<JournalEntry> _journalEntries = const [];
+  bool _hasWatchTheme = false;
+  bool _betaFeedbackCaptured = false;
   DateTime? _lastReflectionAt;
 
   /// Saved entry dates for the 2-day activation path; falls back to
@@ -1084,11 +1091,16 @@ class _RecordScreenState extends State<RecordScreen> {
 
   Future<void> _loadJournalEntryCount() async {
     final all = await AppServices.instance.journal.loadAll();
+    await BetaFeedbackStore.ensureLoaded();
+    final watchItems = await ArchiveWatchlistStore(AppServices.instance.prefs)
+        .loadItems();
     if (!mounted) return;
     setState(() {
       _journalEntryCount = all.length;
       _journalEntryCountLoaded = true;
       _journalEntries = all;
+      _hasWatchTheme = watchItems.isNotEmpty;
+      _betaFeedbackCaptured = BetaFeedbackStore.cached.hasResponse;
       _lastReflectionAt = all.isEmpty ? null : all.last.createdAt;
       _entryDates = all.map((e) => e.createdAt).toList();
       _firstArchiveMilestoneCompleted =
@@ -3041,6 +3053,14 @@ class _RecordScreenState extends State<RecordScreen> {
     }
   }
 
+  void _handleDailyArchiveExerciseAction(String route) {
+    if (route == DailyArchiveExerciseCopy.recordRoute) {
+      unawaited(_onRecordPressed(source: 'daily_archive_exercise'));
+      return;
+    }
+    context.push(route);
+  }
+
   bool _compactLayout(RecordUiState ui) =>
       ui == RecordUiState.recording || ui == RecordUiState.processing;
 
@@ -3175,6 +3195,15 @@ class _RecordScreenState extends State<RecordScreen> {
             _journalEntryCountReady
         ? NextMomentPromptEngine.build(entries: _journalEntries)
         : null;
+    final dailyArchiveExercise = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !ScreenshotMode.enabled
+        ? const DailyArchiveExerciseEngine().buildFromJournal(
+            entries: _journalEntries,
+            hasWatchTheme: _hasWatchTheme,
+            betaFeedbackCaptured: _betaFeedbackCaptured,
+          )
+        : null;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3298,6 +3327,16 @@ class _RecordScreenState extends State<RecordScreen> {
                                   nextMomentPrompt.secondaryAction,
                                 )
                             : null,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (dailyArchiveExercise != null &&
+                        dailyArchiveExercise.showOnRecord) ...[
+                      DailyArchiveExerciseRecordCard(
+                        exercise: dailyArchiveExercise,
+                        onPrimary: () => _handleDailyArchiveExerciseAction(
+                          dailyArchiveExercise.primaryRoute,
+                        ),
                       ),
                       const SizedBox(height: 12),
                     ],
