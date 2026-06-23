@@ -1,4 +1,5 @@
 import '../archive_proof/visible_archive_proof_copy.dart';
+import '../beta_outcomes/beta_outcomes_copy.dart';
 import '../pro_value/pro_value_copy.dart';
 import '../submission/app_store_submission_copy.dart';
 
@@ -51,6 +52,9 @@ abstract final class HelpReviewerGuideCopy {
 
   static const sectionProLaterTitle = ProValueCopy.helpProLaterTitle;
   static const sectionProLaterNote = ProValueCopy.helpProLaterNote;
+
+  static const helpBetaOutcomesTitle = BetaOutcomesCopy.helpSectionTitle;
+  static const helpBetaOutcomesBody = BetaOutcomesCopy.helpSectionBody;
 
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 

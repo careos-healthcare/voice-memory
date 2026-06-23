@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_feedback/beta_feedback_copy.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/share/archive_share_actions.dart';
@@ -86,6 +87,21 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_beta_feedback'),
                 onPressed: () => context.push('/beta-feedback'),
                 child: const Text(BetaFeedbackCopy.openBetaFeedbackButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_beta_outcomes'),
+              title: BetaOutcomesCopy.supportSectionTitle,
+              body: BetaOutcomesCopy.supportSectionBody,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_beta_outcomes'),
+                onPressed: () => context.push('/beta-outcomes'),
+                child: const Text(BetaOutcomesCopy.openBetaOutcomesButton),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

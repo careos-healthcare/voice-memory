@@ -299,5 +299,14 @@ void main() {
       );
       expect(pack.plainText, isNot(contains('archiveBetaFeedback')));
     });
+
+    test('export pack excludes beta outcomes data', () {
+      final pack = ArchiveExportPackEngine.build(
+        entries: _taggedEntries(),
+        exportedAt: DateTime.utc(2026, 6, 15),
+      );
+      expect(pack.plainText, isNot(contains('Beta outcomes')));
+      expect(pack.plainText, isNot(contains('ArchiveMe beta summary')));
+    });
   });
 }

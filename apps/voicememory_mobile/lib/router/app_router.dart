@@ -28,6 +28,7 @@ import '../screens/help_reviewer_guide_screen.dart';
 import '../screens/pro_value_preview_screen.dart';
 import '../screens/support_feedback_screen.dart';
 import '../screens/beta_feedback_screen.dart';
+import '../screens/beta_outcomes_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
 import '../screens/sample_archive_context_screen.dart';
@@ -182,6 +183,7 @@ final GoRouter appRouter = GoRouter(
         path != '/help-reviewer-guide' &&
         path != '/support-feedback' &&
         path != '/beta-feedback' &&
+        path != '/beta-outcomes' &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -717,6 +719,11 @@ final GoRouter appRouter = GoRouter(
       path: '/beta-feedback',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const BetaFeedbackScreen(),
+    ),
+    GoRoute(
+      path: '/beta-outcomes',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const BetaOutcomesScreen(),
     ),
     GoRoute(
       path: '/help-reviewer-guide',

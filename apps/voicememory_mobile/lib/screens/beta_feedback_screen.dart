@@ -115,6 +115,10 @@ class _BetaFeedbackScreenState extends State<BetaFeedbackScreen> {
     if (!context.mounted) return;
     if (outcome == ArchiveShareOutcome.copied ||
         outcome == ArchiveShareOutcome.fallbackCopied) {
+      await (widget.feedbackStore ?? BetaFeedbackStore.instance())
+          .markTestimonialCopied();
+      if (!context.mounted) return;
+      setState(() => _feedback = BetaFeedbackStore.cached);
       ArchiveShareActions.showFeedback(
         context,
         BetaFeedbackCopy.testimonialCopied,

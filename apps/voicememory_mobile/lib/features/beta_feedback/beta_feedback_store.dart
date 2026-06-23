@@ -61,6 +61,11 @@ class BetaFeedbackStore {
     );
   }
 
+  Future<void> markTestimonialCopied() async {
+    final current = await load();
+    await save(current.copyWith(testimonialCopied: true));
+  }
+
   static String? _trimNote(String? note) {
     final trimmed = note?.trim();
     if (trimmed == null || trimmed.isEmpty) return null;

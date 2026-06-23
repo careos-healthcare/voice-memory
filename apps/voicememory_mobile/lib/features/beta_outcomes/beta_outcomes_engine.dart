@@ -1,0 +1,97 @@
+import '../../models/journal_entry.dart';
+import '../archive_depth/archive_depth_engine.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
+import '../beta_feedback/beta_feedback_models.dart';
+import '../demo/sample_archive_mode.dart';
+import '../pressure_retention/shareable_archive_proof_engine.dart';
+import 'beta_outcomes_copy.dart';
+import 'beta_outcomes_models.dart';
+
+/// Deterministic beta outcomes builder — read-only local signals.
+class BetaOutcomesEngine {
+  const BetaOutcomesEngine();
+
+  BetaOutcomesSnapshot buildFromJournal({
+    required List<JournalEntry> entries,
+    required int watchThemesCount,
+    required bool returnRitualSet,
+    required BetaFeedbackState feedbackState,
+    ShareableArchiveProofEngine proofEngine =
+        const ShareableArchiveProofEngine(),
+  }) {
+    final realEntries = _realEntries(entries);
+    final depth = const ArchiveDepthEngine().build(entries: realEntries);
+    final usableCount = ArchiveEvidenceGuard.eligibleReflectionCount(realEntries);
+    final shareProofReady =
+        proofEngine.buildFromJournal(entries: realEntries).hasProof;
+
+    return build(
+      BetaOutcomesInput(
+        savedMomentCount: realEntries.length,
+        usableEvidenceCount: usableCount,
+        depthLevelLabel: depth.levelLabel,
+        watchThemesCount: watchThemesCount,
+        returnRitualSet: returnRitualSet,
+        feedbackState: feedbackState,
+        shareProofReady: shareProofReady,
+      ),
+    );
+  }
+
+  BetaOutcomesSnapshot build(BetaOutcomesInput input) {
+    final feedbackStatus = BetaOutcomesCopy.feedbackStatusFor(input.feedbackState);
+    return BetaOutcomesSnapshot(
+      savedMomentCount: input.savedMomentCount,
+      usableEvidenceCount: input.usableEvidenceCount,
+      depthLevelLabel: input.depthLevelLabel,
+      watchThemesCount: input.watchThemesCount,
+      returnRitualSet: input.returnRitualSet,
+      feedbackStatusLabel: feedbackStatus,
+      optionalNotePresent: input.feedbackState.note?.trim().isNotEmpty == true,
+      testimonialCopied: input.feedbackState.testimonialCopied,
+      shareProofReady: input.shareProofReady,
+      interpretations: _interpretations(input),
+      feedbackState: input.feedbackState,
+    );
+  }
+
+  static List<String> _interpretations(BetaOutcomesInput input) {
+    final lines = <String>[];
+    final count = input.savedMomentCount;
+    final feedback = input.feedbackState;
+
+    if (count <= 2) {
+      lines.add(BetaOutcomesCopy.interpretationNotEnoughEvidence);
+    } else {
+      if (!feedback.hasResponse) {
+        lines.add(BetaOutcomesCopy.interpretationReadyForFeedback);
+      }
+      if (feedback.usefulness == BetaFeedbackUsefulness.useful ||
+          feedback.clarity == BetaFeedbackClarity.understood) {
+        lines.add(BetaOutcomesCopy.interpretationEarlyValue);
+      }
+      if (feedback.usefulness == BetaFeedbackUsefulness.notYet ||
+          feedback.clarity == BetaFeedbackClarity.confused) {
+        lines.add(BetaOutcomesCopy.interpretationClarityRisk);
+      }
+    }
+
+    if (count >= 5) {
+      lines.add(BetaOutcomesCopy.interpretationArchiveLoop);
+    }
+    if (count >= 10) {
+      lines.add(BetaOutcomesCopy.interpretationLongTerm);
+    }
+
+    return lines;
+  }
+
+  static List<JournalEntry> _realEntries(List<JournalEntry> entries) =>
+      SampleArchiveMode.excludeSampleEntries(entries)
+          .where(
+            (e) =>
+                e.transcript.trim().isNotEmpty &&
+                !e.transcript.startsWith('[draft]'),
+          )
+          .toList();
+}
