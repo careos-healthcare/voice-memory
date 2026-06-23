@@ -10,6 +10,7 @@ import '../services/product_analytics.dart';
 import '../record/start_here_visibility.dart';
 import '../theme/voicememory_colors.dart';
 import '../widgets/record/start_here_recording_section.dart';
+import '../widgets/moment_quality_card.dart';
 
 class QuickTextCaptureScreen extends StatefulWidget {
   const QuickTextCaptureScreen({
@@ -252,6 +253,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                           border: const OutlineInputBorder(),
                         ),
                       ),
+                      MomentQualityCard(text: _controller.text),
                       const SizedBox(height: 8),
                       Text(
                         '$length characters',
