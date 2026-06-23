@@ -107,6 +107,7 @@ import '../widgets/potential_signals_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
 import '../widgets/patterns/return_streak_card.dart';
 import '../widgets/routine/routine_anchor_chooser.dart';
+import '../widgets/return_ritual_card.dart';
 import '../widgets/record/tomorrow_commitment_card.dart';
 import '../widgets/record/tomorrow_return_card.dart';
 import '../widgets/record/active_pattern_thread_prompt_card.dart';
@@ -163,6 +164,7 @@ import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/record/record_empty_archive_gates.dart';
+import '../features/return_ritual/return_ritual_gates.dart';
 import '../features/acquisition/audience_wedge_model.dart';
 import '../features/acquisition/audience_wedge_store.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
@@ -4790,6 +4792,19 @@ class _RecordScreenState extends State<RecordScreen> {
             context: context,
             selectedPrompt: selectedPrompt,
             policy: readyPolicy,
+          ),
+        );
+      }
+      if (ReturnRitualGates.showOnRecord(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+        isPostSave: _isPostSaveSurface,
+        isReadyOrIdle: true,
+      )) {
+        actions.add(
+          ReturnRitualCard(
+            entryCount: _journalEntryCount,
+            onAddMoment: () => unawaited(_onRecordPressed(source: 'main')),
           ),
         );
       }

@@ -110,6 +110,7 @@ import '../widgets/record/perspective_shift_card.dart';
 import '../widgets/patterns/patterns_come_back_tomorrow_card.dart';
 import '../widgets/patterns/patterns_first_archive_view.dart';
 import '../widgets/demo/sample_archive_entry_card.dart';
+import '../widgets/return_ritual_card.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
@@ -151,6 +152,7 @@ import '../features/activation/insight_quality_dashboard.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/share/archive_share_actions.dart';
 import '../features/pressure_retention/shareable_archive_proof_engine.dart';
+import '../features/return_ritual/return_ritual_gates.dart';
 import '../features/activation/third_session_archive_usefulness_engine.dart';
 import '../features/activation/third_session_archive_usefulness_model.dart';
 import '../features/retention/second_session_signal_engine.dart';
@@ -1928,6 +1930,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ArchiveWorkspaceQuickActionsCard(
           quickActions: quickActions,
           onActionTap: _onArchiveWorkspaceQuickAction,
+        ),
+      );
+    }
+
+    if (ReturnRitualGates.showOnArchive(entryCount: _entries.length)) {
+      widgets.add(const SizedBox(height: AppSpacing.md));
+      widgets.add(
+        ReturnRitualCard(
+          entryCount: _entries.length,
+          onAddMoment: _goToRecord,
         ),
       );
     }
