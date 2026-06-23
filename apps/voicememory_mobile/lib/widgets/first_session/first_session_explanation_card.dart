@@ -25,7 +25,7 @@ class FirstSessionExplanationCard extends StatelessWidget {
   /// The core loop in three short steps — no claims beyond noticing.
   static const steps = [
     'Record one small thing.',
-    'ArchiveMe notices what repeats.',
+    'After a second moment, ArchiveMe can start comparing your own words.',
     'Tomorrow, check whether it returned, faded, or changed.',
   ];
 

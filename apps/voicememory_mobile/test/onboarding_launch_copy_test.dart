@@ -21,7 +21,7 @@ void main() {
     expect(page.stepNumber, 1);
   });
 
-  test('page 3 — notices what repeats', () {
+  test('page 3 — compares your moments', () {
     final page = OnboardingPages.pages[2];
     expect(page.title, ConsumerUiCopy.onboardingStep2Title);
     expect(page.body, ConsumerUiCopy.onboardingStep2Body);

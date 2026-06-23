@@ -62,3 +62,9 @@ apps/voicememory_mobile/.flutter-plugins-dependencies
 
 # Flutter test temp files
 apps/voicememory_mobile/test/tmp/
+
+# Flutter test-generated journal/prefs in mobile app cwd (must not pollute git or exports)
+apps/voicememory_mobile/*_journal.json
+apps/voicememory_mobile/*_prefs.json
+apps/voicememory_mobile/_journal.json
+apps/voicememory_mobile/_prefs.json

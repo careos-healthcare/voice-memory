@@ -1,25 +1,20 @@
 # ArchiveMe Mobile (Flutter)
 
-Native iOS/Android MVP — **record → attest → transcribe → analyze → local journal**.
+Native iOS/Android app — **record → transcribe → analyze → local journal → Archive Home**.
 
-The Next.js web app at the repo root is **not modified** by this package.
+The Next.js web app at the repo root is a separate package.
 
-## MVP loop (implemented)
+## Core loop (implemented)
 
 1. Onboarding → Record
-2. Microphone permission + AAC recording to temp file
-3. `POST /api/capture/attest` (device UUID in secure storage)
-4. `POST /api/transcribe` with `x-vm-capture-token`
-5. `POST /api/analyze`
-6. Save `JournalEntry` to `journal_entries.json` on device
-7. Journal list → entry detail → export/share JSON
+2. Microphone permission + AAC recording
+3. API attest / transcribe / analyze (when connected)
+4. Save `JournalEntry` locally
+5. Archive Home, evidence tools, export/share
 
-## Not implemented
+## Billing (not launch-ready)
 
-- Magic-link / cookie auth
-- Server journal sync
-- Resurfacing, search, Stripe/IAP, push
-- iOS release build (not run in CI here unless stated in report)
+RevenueCat + native IAP code exists, but **purchases are unavailable** until store/RevenueCat setup completes (see `REVENUECAT_LAUNCH_BLOCKERS.md`). No Stripe checkout in the mobile app.
 
 ## Run
 
@@ -28,18 +23,22 @@ cd apps/voicememory_mobile
 flutter pub get
 npm run dev   # from repo root — backend on :3000
 
-flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000   # Android emulator
-flutter run --dart-define=API_BASE_URL=http://127.0.0.1:3000 # iOS Simulator
+flutter run --dart-define=VOICE_MEMORY_API_BASE_URL=http://127.0.0.1:3000
 ```
 
-## Validate
+## Validate (launch-focused)
 
-See [VALIDATION.md](./VALIDATION.md).
+See [LAUNCH_VALIDATION.md](./LAUNCH_VALIDATION.md) — not the full historical test suite.
 
 ```bash
-flutter analyze
-flutter test
-flutter build apk --debug
+flutter test test/launch_hardening_test.dart
+flutter build ios --release --no-codesign
+```
+
+From repo root:
+
+```bash
+./scripts/validate-mobile-clean-working-tree.sh
 ```
 
 ## Bundle ID

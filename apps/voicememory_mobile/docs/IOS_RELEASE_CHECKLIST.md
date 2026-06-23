@@ -4,7 +4,7 @@
 
 - **Display name:** ArchiveMe (`CFBundleDisplayName` in Info.plist)
 - **Bundle ID:** `com.voicememory.app` (set in Xcode → Runner → Signing)
-- **URL scheme:** `voicememory://` (checkout/auth return — optional)
+- **URL scheme:** `voicememory://` (optional deep links)
 
 ## Capabilities
 
@@ -23,21 +23,23 @@
 
 - Privacy nutrition labels: voice audio, email (if signed in), device identifiers for capture attest
 - No health/diagnosis claims
-- Screenshots: Record, Memory, Discover, Pattern review, Account
+- Screenshots: Record, Archive (Patterns), Account, Sample Archive
 
-## Stripe checkout
+## Purchases (RevenueCat — not ready until setup complete)
 
-- Pro upgrade opens Stripe Checkout in Safari / ASWebAuthenticationSession via `url_launcher`
-- Success/cancel URLs point to web `/pricing` — user returns to app manually
+- Native IAP via RevenueCat — **not** Stripe / Safari checkout
+- Purchases unavailable until App Store Connect banking + RevenueCat products are configured
+- Release build must include `REVENUECAT_IOS_API_KEY` when ready (see `docs/REVENUECAT_RELEASE_CHECKLIST.md`)
+- Entitlement id: **`pro`**
+- Complete sandbox purchase + restore evidence before paid launch
 
 ## TestFlight
 
 - [ ] Mic permission prompt on first record
 - [ ] Record → transcribe → analyze on production API
-- [ ] Sign in with email code
-- [ ] Sync journal
-- [ ] Blind spot at 5+ reflections
-- [ ] Discover second visit paywall (if free tier)
+- [ ] First save → Archive Home shows cautious next step
+- [ ] Sample Archive reachable from Archive Home
+- [ ] Restore purchases path reachable (returns unavailable until RC configured)
 
 ## Build
 
@@ -45,3 +47,7 @@
 flutter build ios --release \
   --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app
 ```
+
+Add RevenueCat dart-define when billing setup is complete.
+
+See also: `LAUNCH_VALIDATION.md`, `REVENUECAT_LAUNCH_BLOCKERS.md`.
