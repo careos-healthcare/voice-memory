@@ -42,7 +42,7 @@ abstract final class ReviewRitualCopy {
   static const cardSummaryUnset =
       'Choose when you usually review and what to look for.';
   static const cardHeadlineSet =
-      'ArchiveMe knows when you usually review your archive.';
+      'Your weekly review rhythm is saved locally in ArchiveMe.';
   static const cardSummarySet =
       'Your ritual stays on this device — no reminders sent yet.';
 

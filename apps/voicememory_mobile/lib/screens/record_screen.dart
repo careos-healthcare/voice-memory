@@ -3247,6 +3247,13 @@ class _RecordScreenState extends State<RecordScreen> {
             ).hasEnoughEvidence,
           )
         : null;
+    final suppressDuplicateRecordPrompts =
+        !ScreenshotMode.enabled &&
+        _journalEntryCountReady &&
+        _journalEntryCount > 0 &&
+        _journalEntryCount < 7 &&
+        (dailyArchiveExercise?.showOnRecord == true ||
+            todaysOneQuestion?.showOnRecord == true);
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3347,7 +3354,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         },
                       ),
                     ],
-                    if (returningUserToday != null) ...[
+                    if (returningUserToday != null &&
+                        !suppressDuplicateRecordPrompts) ...[
                       ReturningUserTodayCard(
                         model: returningUserToday,
                         onPrimary: () => _handleReturningUserTodayAction(
@@ -3359,7 +3367,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (nextMomentPrompt != null) ...[
+                    if (nextMomentPrompt != null &&
+                        !suppressDuplicateRecordPrompts) ...[
                       NextMomentPromptCard(
                         prompt: nextMomentPrompt,
                         onPrimary: () => _handleNextMomentPromptAction(

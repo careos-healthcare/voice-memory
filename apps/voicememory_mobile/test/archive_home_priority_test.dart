@@ -86,25 +86,28 @@ void main() {
       expect(plan.isHidden(ArchiveHomeSectionId.watchlist), isTrue);
 
       expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.quickActions));
-      expect(plan.primarySections.indexOf(ArchiveHomeSectionId.firstWeekPath),
-          lessThan(plan.primarySections.indexOf(ArchiveHomeSectionId.quickActions)));
-    });
-
-    test('archive clarity stays secondary so First Week Path stays primary', () {
-      final plan = engine.build(_input(savedEntryCount: 0, showEmptySample: true));
-
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
       expect(plan.primarySections, contains(ArchiveHomeSectionId.dailyArchiveExercise));
-      expect(plan.primarySections, isNot(contains(ArchiveHomeSectionId.archiveClarityProgress)));
+      expect(plan.secondarySections, contains(ArchiveHomeSectionId.quickActions));
       expect(
-        plan.secondarySections.contains(ArchiveHomeSectionId.archiveClarityProgress) ||
-            plan.primarySections.contains(ArchiveHomeSectionId.archiveClarityProgress),
-        isTrue,
+        plan.primarySections.indexOf(ArchiveHomeSectionId.firstWeekPath),
+        lessThan(plan.primarySections.indexOf(ArchiveHomeSectionId.dailyArchiveExercise)),
       );
     });
 
-    test('1-entry layout prioritises First Week Path and Next Evidence Plan', () {
+    test('archive clarity follows daily exercise in sticky loop order', () {
+      final plan = engine.build(_input(savedEntryCount: 0, showEmptySample: true));
+      final ranked = [...plan.primarySections, ...plan.secondarySections];
+
+      expect(ranked, contains(ArchiveHomeSectionId.firstWeekPath));
+      expect(ranked, contains(ArchiveHomeSectionId.dailyArchiveExercise));
+      expect(ranked, contains(ArchiveHomeSectionId.archiveClarityProgress));
+      expect(
+        ranked.indexOf(ArchiveHomeSectionId.dailyArchiveExercise),
+        lessThan(ranked.indexOf(ArchiveHomeSectionId.archiveClarityProgress)),
+      );
+    });
+
+    test('1-entry layout prioritises First Week Path and Daily Exercise', () {
       final plan = engine.build(
         _input(
           savedEntryCount: 1,
@@ -115,14 +118,15 @@ void main() {
       expect(plan.primarySections.take(3).toList(), [
         ArchiveHomeSectionId.archiveSummary,
         ArchiveHomeSectionId.firstWeekPath,
-        ArchiveHomeSectionId.nextEvidencePlan,
+        ArchiveHomeSectionId.dailyArchiveExercise,
       ]);
       expect(plan.isHidden(ArchiveHomeSectionId.evidenceQuality), isTrue);
       expect(plan.isHidden(ArchiveHomeSectionId.milestones), isTrue);
+      expect(plan.secondarySections, contains(ArchiveHomeSectionId.nextEvidencePlan));
       expect(plan.showMoreArchiveTools, isTrue);
     });
 
-    test('2-entry layout shows Watchlist and Evidence Quality after primary cards', () {
+    test('2-entry layout keeps sticky loop before secondary tools', () {
       final plan = engine.build(
         _input(
           savedEntryCount: 2,
@@ -134,19 +138,21 @@ void main() {
       expect(plan.primarySections, [
         ArchiveHomeSectionId.archiveSummary,
         ArchiveHomeSectionId.firstWeekPath,
-        ArchiveHomeSectionId.nextEvidencePlan,
         ArchiveHomeSectionId.dailyArchiveExercise,
+        ArchiveHomeSectionId.archiveClarityProgress,
       ]);
 
       final secondary = plan.secondarySections;
+      expect(secondary, contains(ArchiveHomeSectionId.nextEvidencePlan));
       expect(secondary, contains(ArchiveHomeSectionId.watchlist));
-      expect(secondary.indexOf(ArchiveHomeSectionId.evidenceQuality), lessThan(
-        secondary.indexOf(ArchiveHomeSectionId.returnRitual),
-      ));
+      expect(
+        secondary.indexOf(ArchiveHomeSectionId.dailyArchiveExercise),
+        -1,
+      );
       expect(plan.isHidden(ArchiveHomeSectionId.milestones), isTrue);
     });
 
-    test('3–4 entry layout prioritises Return Changes when available', () {
+    test('3–4 entry layout keeps Return Changes secondary', () {
       final plan = engine.build(
         _input(
           savedEntryCount: 3,
@@ -156,17 +162,13 @@ void main() {
       );
 
       expect(plan.primarySections[1], ArchiveHomeSectionId.firstWeekPath);
-      expect(plan.primarySections[2], ArchiveHomeSectionId.returnChanges);
-      expect(plan.primarySections.take(4), [
-        ArchiveHomeSectionId.archiveSummary,
-        ArchiveHomeSectionId.firstWeekPath,
-        ArchiveHomeSectionId.returnChanges,
-        ArchiveHomeSectionId.nextEvidencePlan,
-      ]);
+      expect(plan.primarySections[2], ArchiveHomeSectionId.dailyArchiveExercise);
+      expect(plan.primarySections, isNot(contains(ArchiveHomeSectionId.returnChanges)));
+      expect(plan.secondarySections, contains(ArchiveHomeSectionId.returnChanges));
       expect(plan.isHidden(ArchiveHomeSectionId.reviewHistory), isTrue);
     });
 
-    test('5+ layout prioritises Weekly Review or Return Changes', () {
+    test('5+ layout keeps weekly review in secondary until sticky loop fills primary', () {
       final withReview = engine.build(
         _input(
           savedEntryCount: 5,
@@ -175,7 +177,8 @@ void main() {
         ),
       );
       expect(withReview.primarySections[1], ArchiveHomeSectionId.firstWeekPath);
-      expect(withReview.primarySections[2], ArchiveHomeSectionId.reviewHistory);
+      expect(withReview.primarySections[2], ArchiveHomeSectionId.dailyArchiveExercise);
+      expect(withReview.secondarySections, contains(ArchiveHomeSectionId.reviewHistory));
 
       final withChanges = engine.build(
         _input(
@@ -185,7 +188,43 @@ void main() {
         ),
       );
       expect(withChanges.primarySections[1], ArchiveHomeSectionId.firstWeekPath);
-      expect(withChanges.primarySections[2], ArchiveHomeSectionId.returnChanges);
+      expect(withChanges.secondarySections, contains(ArchiveHomeSectionId.returnChanges));
+    });
+
+    test('sticky loop order is stable across entry counts', () {
+      final plan = engine.build(
+        _input(
+          savedEntryCount: 8,
+          weeklyReviewAvailable: true,
+          returnChangesAvailable: true,
+          thenVsNowVisible: true,
+          archiveCalendarVisible: true,
+          reviewRitualVisible: true,
+          milestoneShareVisible: true,
+        ),
+      );
+
+      final ranked = [
+        ...plan.primarySections,
+        ...plan.secondarySections,
+      ];
+      final sticky = ArchiveHomePriorityEngine.stickyLoopSections(
+        _input(
+          savedEntryCount: 8,
+          weeklyReviewAvailable: true,
+          returnChangesAvailable: true,
+          thenVsNowVisible: true,
+          archiveCalendarVisible: true,
+          reviewRitualVisible: true,
+          milestoneShareVisible: true,
+        ),
+      );
+      var lastIndex = -1;
+      for (final id in sticky) {
+        final index = ranked.indexOf(id);
+        expect(index, greaterThan(lastIndex));
+        lastIndex = index;
+      }
     });
 
     test('10+ layout allows Pro Preview but no purchase CTAs in copy', () {
