@@ -5,6 +5,7 @@ import '../features/demo/sample_archive_copy.dart';
 import '../features/demo/sample_archive_entries.dart';
 import '../features/demo/sample_archive_workspace.dart';
 import '../widgets/demo/sample_archive_banner.dart';
+import '../widgets/demo/sample_archive_tour_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Optional sample archive — in-memory example data, never mixed with real entries.
@@ -23,6 +24,7 @@ class SampleArchiveScreen extends StatelessWidget {
         padding: ArchiveMobileSpacing.pagePadding,
         children: [
           const SampleArchiveBanner(),
+          const SampleArchiveTourCard(),
           ...SampleArchiveWorkspace.build(context, entries),
         ],
       ),
