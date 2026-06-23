@@ -164,6 +164,8 @@ void main() {
     test('support URL references remain ArchiveMe-facing', () {
       expect(AppConfig.privacyUrl, contains('archiveme'));
       expect(AppConfig.privacyUrl, startsWith('https://'));
+      expect(AppConfig.supportUrl, contains('archiveme-support'));
+      expect(AppConfig.supportUrl, startsWith('https://'));
     });
 
     test('settings and workspace copy avoid debug-only language', () {

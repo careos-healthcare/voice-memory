@@ -68,6 +68,15 @@ class HelpReviewerGuideScreen extends StatelessWidget {
                 child: const Text(HelpReviewerGuideCopy.openSampleArchiveButton),
               ),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('help_reviewer_guide_support_feedback_link'),
+                onPressed: () => context.push('/support-feedback'),
+                child: const Text(HelpReviewerGuideCopy.supportFeedbackLink),
+              ),
+            ),
           ],
         ),
       ),
