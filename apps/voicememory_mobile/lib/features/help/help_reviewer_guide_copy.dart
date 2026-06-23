@@ -30,6 +30,8 @@ abstract final class HelpReviewerGuideCopy {
   static const sectionQuickValueBulletTwo = 'Follow the sample tour.';
   static const sectionQuickValueBulletThree = 'Open Evidence Map.';
   static const sectionQuickValueBulletFour = 'Try the demo share summary.';
+  static const sectionQuickValueBulletFive =
+      'For screenshots or review, use Sample Archive. It uses example data only.';
 
   static const sectionPrivacyTitle = 'Privacy basics';
   static const sectionPrivacyBulletOne =
@@ -69,6 +71,7 @@ abstract final class HelpReviewerGuideCopy {
         sectionQuickValueBulletTwo,
         sectionQuickValueBulletThree,
         sectionQuickValueBulletFour,
+        sectionQuickValueBulletFive,
       ],
     ),
     HelpReviewerGuideSection(

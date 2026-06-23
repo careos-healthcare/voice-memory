@@ -62,4 +62,22 @@ abstract final class SampleArchiveCopy {
 
   static String demoShareEvidenceMapRow(String label, int count) =>
       '$label: $count ${count == 1 ? 'moment' : 'moments'}';
+
+  static const demoPathsTitle = 'Good demo paths';
+  static const demoPathsIntro =
+      'Use these example screens for review or demos.';
+  static const demoPathsFooterOne =
+      'Sample data is separate from your private archive.';
+  static const demoPathsFooterTwo =
+      'Nothing here is saved to your real archive.';
+
+  static const demoPathStartTitle = '1. Start here: Sample Archive';
+  static const demoPathEvidenceMapTitle = '2. Open Evidence Map';
+  static const demoPathWorkContextTitle = '3. Open Work context';
+  static const demoPathCopySummaryTitle = '4. Copy demo summary';
+  static const demoPathBackArchiveTitle = '5. Back to your archive';
+
+  static const sampleContextBanner =
+      'Sample archive — example data only';
+  static const sampleContextExampleLabel = 'Example moment';
 }

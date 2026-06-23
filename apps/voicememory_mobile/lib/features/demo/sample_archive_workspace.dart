@@ -37,7 +37,12 @@ abstract final class SampleArchiveWorkspace {
     );
   }
 
-  static List<Widget> build(BuildContext context, List<JournalEntry> entries) {
+  static List<Widget> build(
+    BuildContext context,
+    List<JournalEntry> entries, {
+    GlobalKey? evidenceMapKey,
+    void Function(String tagId)? onEvidenceMapRowTap,
+  }) {
     final summary = ArchiveHomeSummaryEngine.build(entries: entries);
     final layout = _layout(entries, summary);
     final actionPlan = ArchiveHealthActionPlanEngine.build(entries: entries);
@@ -149,9 +154,12 @@ abstract final class SampleArchiveWorkspace {
       }
       if (layout.showEvidenceMap) {
         addQualityCard(
-          ArchiveEvidenceMapCard(
-            map: evidenceMap,
-            onRowTap: (_) => _showExampleOnly(context),
+          KeyedSubtree(
+            key: evidenceMapKey,
+            child: ArchiveEvidenceMapCard(
+              map: evidenceMap,
+              onRowTap: onEvidenceMapRowTap ?? (_) => _showExampleOnly(context),
+            ),
           ),
         );
       }
