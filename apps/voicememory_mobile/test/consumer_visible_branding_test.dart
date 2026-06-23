@@ -40,6 +40,7 @@ const _consumerFacingSources = [
   'lib/features/moment_quality/moment_quality_copy.dart',
   'lib/features/pro/pro_value_preview_copy.dart',
   'lib/features/return_changes/archive_return_changes_copy.dart',
+  'lib/features/archive_depth/archive_depth_copy.dart',
   'lib/features/support/support_feedback_copy.dart',
   'lib/widgets/security/archive_privacy_controls_card.dart',
   'lib/widgets/security/archive_data_flow_sheet.dart',

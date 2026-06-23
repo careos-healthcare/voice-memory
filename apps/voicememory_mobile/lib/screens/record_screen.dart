@@ -109,6 +109,9 @@ import '../widgets/patterns/return_streak_card.dart';
 import '../widgets/routine/routine_anchor_chooser.dart';
 import '../widgets/return_ritual_card.dart';
 import '../widgets/archive_return_changes_card.dart';
+import '../widgets/archive_depth_card.dart';
+import '../features/archive_depth/archive_depth_engine.dart';
+import '../features/archive_depth/archive_depth_gates.dart';
 import '../features/return_changes/archive_return_changes_engine.dart';
 import '../features/return_changes/archive_return_changes_gates.dart';
 import '../features/return_changes/archive_return_changes_store.dart';
@@ -4857,6 +4860,19 @@ class _RecordScreenState extends State<RecordScreen> {
           ArchiveReturnChangesCard(
             result: _archiveReturnChangesResult!,
             onMarkSeen: () => unawaited(_markArchiveReturnChangesSeen()),
+          ),
+        );
+      }
+      if (ArchiveDepthGates.showCompactOnRecord(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+        isPostSave: _isPostSaveSurface,
+      )) {
+        actions.add(
+          ArchiveDepthCompactHint(
+            result: const ArchiveDepthEngine().build(
+              entries: _journalEntries,
+            ),
           ),
         );
       }
