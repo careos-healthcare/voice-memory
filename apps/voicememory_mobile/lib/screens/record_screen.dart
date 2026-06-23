@@ -108,6 +108,7 @@ import '../widgets/patterns/return_comparison_card.dart';
 import '../widgets/patterns/return_streak_card.dart';
 import '../widgets/routine/routine_anchor_chooser.dart';
 import '../widgets/return_ritual_card.dart';
+import '../widgets/moment_quality_card.dart';
 import '../widgets/record/tomorrow_commitment_card.dart';
 import '../widgets/record/tomorrow_return_card.dart';
 import '../widgets/record/active_pattern_thread_prompt_card.dart';
@@ -3753,6 +3754,9 @@ class _RecordScreenState extends State<RecordScreen> {
                             mirror: const DailyMirrorEngine().build(
                               entriesAfterSave,
                             ),
+                          ),
+                          SavedMomentQualityCard(
+                            transcript: entriesAfterSave.first.transcript,
                           ),
                         ],
                         if (beliefUpdatePayoff != null) ...[
