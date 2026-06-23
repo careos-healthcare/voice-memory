@@ -2,7 +2,7 @@
 
 ## Before you build
 
-- [ ] Confirm package name: `com.voicememory.app`
+- [ ] Confirm package name: `com.voicememory.mobile`
 - [ ] Confirm signing keystore and `key.properties`
 - [ ] Increment version code in `pubspec.yaml` / `build.gradle`
 - [ ] Confirm **no** screenshot dart-defines in release
@@ -57,7 +57,7 @@ flutter run --dart-define=ARCHIVEME_TRIAL_MODE=true
 ## Debug launch command (developers only)
 
 ```bash
-adb shell monkey -p com.voicememory.app 1
+adb shell monkey -p com.voicememory.mobile 1
 ```
 
 Do not document this for testers; internal use only.

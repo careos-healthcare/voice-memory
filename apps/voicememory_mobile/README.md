@@ -43,4 +43,13 @@ From repo root:
 
 ## Bundle ID
 
-`com.voicememory.app`
+**Public app name:** ArchiveMe
+
+**iOS bundle ID:** `com.voicememory.mobile`
+
+**Android application ID:** `com.voicememory.mobile`
+
+The internal Flutter package folder is still named `voicememory_mobile`; that repo
+path does not affect the public app identity on device or in the stores.
+
+Open **`ios/Runner.xcworkspace`** for iOS builds (not `Runner.xcodeproj`).

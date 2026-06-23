@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.voicememory.app"
+    namespace = "com.voicememory.mobile"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,9 +21,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.voicememory.app"
-        // You can update the following values to match your application needs.
+        applicationId = "com.voicememory.mobile"
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = maxOf(24, flutter.minSdkVersion)
         targetSdk = flutter.targetSdkVersion

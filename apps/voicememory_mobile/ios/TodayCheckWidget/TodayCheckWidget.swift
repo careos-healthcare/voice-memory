@@ -3,7 +3,7 @@ import WidgetKit
 
 // Keys mirror Runner/ObjectiveWidgetStorage.swift and buildWidgetPayload() in Dart.
 private enum WidgetPayloadKeys {
-  static let appGroupId = "group.com.voicememory.app"
+  static let appGroupId = "group.com.voicememory.mobile"
   static let title = "title"
   static let body = "body"
   static let checkQuestion = "checkQuestion"

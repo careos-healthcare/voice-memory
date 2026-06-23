@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 UPLOADS_DIR="${HOME}/Desktop/uploads"
-ADB_PULL_PATH="/storage/emulated/0/Android/data/com.voicememory.app/files/voicememory_screenshots"
+ADB_PULL_PATH="/storage/emulated/0/Android/data/com.voicememory.mobile/files/voicememory_screenshots"
 # Default: production host (session check succeeds without a local server).
 # Override for local backend, e.g. SCREENSHOT_API_BASE_URL=http://192.168.1.10:3000
 API_BASE_URL="${SCREENSHOT_API_BASE_URL:-https://voice-memory-iota.vercel.app}"

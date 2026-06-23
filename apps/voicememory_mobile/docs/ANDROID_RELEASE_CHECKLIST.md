@@ -2,7 +2,8 @@
 
 ## Identity
 
-- **Application ID:** `com.voicememory.app`
+- **Application ID:** `com.voicememory.mobile`
+- **Namespace:** `com.voicememory.mobile` (`android/app/build.gradle.kts`)
 - **App label:** ArchiveMe (`AndroidManifest.xml`)
 
 ## Permissions

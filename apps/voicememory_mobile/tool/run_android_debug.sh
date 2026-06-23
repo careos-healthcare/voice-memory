@@ -13,7 +13,7 @@ APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$APP_DIR"
 
 # The launchable package. NOTE: com.voicememory.mobile is NOT launchable.
-PACKAGE="com.voicememory.app"
+PACKAGE="com.voicememory.mobile"
 APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
 
 if ! command -v adb >/dev/null 2>&1; then

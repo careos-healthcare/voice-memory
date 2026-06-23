@@ -2,11 +2,14 @@
 
 Focused commands for release readiness. Run from `apps/voicememory_mobile`.
 
+**Release identity:** public app name **ArchiveMe**; iOS/Android id **`com.voicememory.mobile`**.
+
 ## Release-blocking (focused suite)
 
 ```bash
 flutter pub get
 flutter test \
+  test/release_identity_consistency_test.dart \
   test/app_store_rc_polish_test.dart \
   test/mobile_production_readiness_test.dart \
   test/consumer_visible_branding_test.dart \

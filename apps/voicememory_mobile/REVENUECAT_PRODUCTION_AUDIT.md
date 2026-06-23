@@ -347,7 +347,7 @@ Use string parameters only (matches `trackStrings` sanitizer).
 
 | Item | Value | File |
 |------|--------|------|
-| Bundle ID | `com.voicememory.app` | `lib/config/app_config.dart`, Xcode signing (checklist) |
+| Bundle ID | `com.voicememory.mobile` | `lib/config/app_config.dart`, Xcode signing |
 | URL scheme | `voicememory://` | `docs/IOS_RELEASE_CHECKLIST.md` |
 | StoreKit Configuration | **None** (no `.storekit` file in project) | — |
 | Hardcoded IAP product IDs | **None** (by design — RevenueCat packages) | — |
@@ -383,8 +383,8 @@ Use string parameters only (matches `trackStrings` sanitizer).
 
 | Item | Value | File |
 |------|--------|------|
-| `applicationId` | `com.voicememory.app` | `android/app/build.gradle.kts` |
-| `namespace` | `com.voicememory.app` | same |
+| `applicationId` | `com.voicememory.mobile` | `android/app/build.gradle.kts` |
+| `namespace` | `com.voicememory.mobile` | same |
 | Play Billing permission | Implicit via `purchases_flutter` / Play Billing Library | transitive |
 | Hardcoded product IDs | **None** | — |
 

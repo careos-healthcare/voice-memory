@@ -1,4 +1,4 @@
-package com.voicememory.app.widget
+package com.voicememory.mobile.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -8,8 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.RemoteViews
-import com.voicememory.app.MainActivity
-import com.voicememory.app.R
+import com.voicememory.mobile.MainActivity
+import com.voicememory.mobile.R
 
 class TodayCheckWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(

@@ -26,7 +26,7 @@ ArchiveMe keeps one useful check ready on the home screen.
 
 See also [`IOS_WIDGETKIT_SETUP.md`](IOS_WIDGETKIT_SETUP.md) for one-time Xcode target setup.
 
-1. Enable App Group **`group.com.voicememory.app`** in Apple Developer portal.
+1. Enable App Group **`group.com.voicememory.mobile`** in Apple Developer portal.
 2. Open `ios/Runner.xcworkspace` and confirm TodayCheckWidget extension target exists.
 3. Enable App Groups on Runner + widget extension (same group id).
 4. Build to device:

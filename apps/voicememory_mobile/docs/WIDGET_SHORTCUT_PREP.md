@@ -53,7 +53,7 @@ Flutter reads the route on launch via `consumePendingWidgetRoute`.
 
 Swift source and entitlements live in `ios/TodayCheckWidget/` and
 `ios/Runner/ObjectiveWidgetStorage.swift`. AppDelegate implements the same
-method channel and writes to App Group **`group.com.voicememory.app`**.
+method channel and writes to App Group **`group.com.voicememory.mobile`**.
 
 The Widget extension **target must be added once in Xcode** — see
 `docs/IOS_WIDGETKIT_SETUP.md`.

@@ -7,7 +7,7 @@ ArchiveMe keeps one useful check ready on the iOS home screen.
 1. Open **`ios/Runner.xcworkspace`** (not `Runner.xcodeproj`).
 2. In [Apple Developer](https://developer.apple.com/account/resources/identifiers/list):
    - Enable App Groups on the Runner App ID (`com.voicememory.mobile`).
-   - Create App Group: **`group.com.voicememory.app`**
+   - Create App Group: **`group.com.voicememory.mobile`**
    - Assign the App Group to Runner and the widget extension App ID.
 3. Do not commit provisioning profiles, certificates, or secrets.
 
@@ -30,8 +30,7 @@ Follow the steps below once in Xcode.
 1. Open `ios/Runner.xcworkspace`.
 2. **File → New → Target… → Widget Extension**.
 3. Product name: **`TodayCheckWidget`**
-4. Bundle identifier: **`com.voicememory.app.TodayCheckWidget`**
-   (or `com.voicememory.mobile.TodayCheckWidget` if you prefer matching Runner)
+4. Bundle identifier: **`com.voicememory.mobile.TodayCheckWidget`**
 5. Uncheck “Include Configuration Intent” (static widget only).
 6. Delete the auto-generated Swift file Xcode creates.
 7. Add existing files to the extension target:
@@ -41,7 +40,7 @@ Follow the steps below once in Xcode.
    `TodayCheckWidget/TodayCheckWidgetExtension.entitlements`.
 9. **Signing & Capabilities** for **Runner** and **TodayCheckWidget**:
    - Add App Groups capability
-   - Check **`group.com.voicememory.app`**
+   - Check **`group.com.voicememory.mobile`**
 10. Deployment target: **iOS 14.0** minimum (WidgetKit).
 11. Build scheme: select **Runner** (widget embeds automatically).
 
