@@ -287,5 +287,17 @@ void main() {
       );
       expect(pack.plainText, isNot(contains('Archive milestones')));
     });
+
+    test('export pack excludes beta feedback data', () {
+      final pack = ArchiveExportPackEngine.build(
+        entries: _taggedEntries(),
+        exportedAt: DateTime.utc(2026, 6, 15),
+      );
+      expect(
+        pack.plainText,
+        isNot(contains('Did ArchiveMe show you something useful?')),
+      );
+      expect(pack.plainText, isNot(contains('archiveBetaFeedback')));
+    });
   });
 }

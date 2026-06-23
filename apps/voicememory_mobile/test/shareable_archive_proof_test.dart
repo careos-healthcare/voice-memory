@@ -281,6 +281,15 @@ void main() {
       final proof = engine.buildFromJournal(entries: _journalEntries(5));
       expect(proof.shareText, isNot(contains('Archive milestones')));
     });
+
+    test('share-safe proof excludes beta feedback data', () {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      expect(
+        proof.shareText,
+        isNot(contains('Did ArchiveMe show you something useful?')),
+      );
+      expect(proof.shareText, isNot(contains('Beta feedback')));
+    });
   });
 
   group('Shareable archive proof card', () {

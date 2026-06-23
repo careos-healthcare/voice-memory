@@ -12,6 +12,7 @@ enum ArchiveHomeSectionId {
   watchlist,
   nextEvidencePlan,
   milestones,
+  betaFeedback,
   needsAttention,
   evidenceQuality,
   reviewHistory,
