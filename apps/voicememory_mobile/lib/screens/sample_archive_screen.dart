@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../features/demo/demo_share_pack.dart';
 import '../features/demo/sample_archive_copy.dart';
 import '../features/demo/sample_archive_entries.dart';
 import '../features/demo/sample_archive_workspace.dart';
+import '../widgets/demo/demo_share_pack_card.dart';
 import '../widgets/demo/sample_archive_banner.dart';
 import '../widgets/demo/sample_archive_tour_card.dart';
 import '../widgets/pushed_screen_shell.dart';
@@ -15,6 +17,7 @@ class SampleArchiveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entries = SampleArchiveEntries.build();
+    final demoSharePack = DemoSharePackEngine.build();
     return PushedScreenShell(
       title: SampleArchiveCopy.screenTitle,
       doneLabel: SampleArchiveCopy.exitDone,
@@ -25,6 +28,7 @@ class SampleArchiveScreen extends StatelessWidget {
         children: [
           const SampleArchiveBanner(),
           const SampleArchiveTourCard(),
+          DemoSharePackCard(pack: demoSharePack),
           ...SampleArchiveWorkspace.build(context, entries),
         ],
       ),
