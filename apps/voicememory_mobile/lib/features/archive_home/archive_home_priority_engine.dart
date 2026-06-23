@@ -23,6 +23,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.firstWeekPath,
           ArchiveHomeSectionId.dailyArchiveExercise,
           ArchiveHomeSectionId.archiveClarityProgress,
+          ArchiveHomeSectionId.thenVsNow,
           ArchiveHomeSectionId.milestones,
           ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.proInterestLink,
@@ -75,6 +76,10 @@ class ArchiveHomePriorityEngine {
 
     if (!input.archiveClarityProgressVisible) {
       hidden.add(ArchiveHomeSectionId.archiveClarityProgress);
+    }
+
+    if (!input.thenVsNowVisible) {
+      hidden.add(ArchiveHomeSectionId.thenVsNow);
     }
 
     if (input.savedEntryCount <= 0) {
@@ -155,6 +160,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.sampleArchive,
         if (input.archiveClarityProgressVisible)
           ArchiveHomeSectionId.archiveClarityProgress,
+        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       ];
     }
 
@@ -173,6 +179,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.proPreview,
         if (input.archiveClarityProgressVisible)
           ArchiveHomeSectionId.archiveClarityProgress,
+        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       ];
     }
 
@@ -192,6 +199,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.introHint,
         if (input.archiveClarityProgressVisible)
           ArchiveHomeSectionId.archiveClarityProgress,
+        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       ];
     }
 
@@ -216,6 +224,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.proPreview,
         if (input.archiveClarityProgressVisible)
           ArchiveHomeSectionId.archiveClarityProgress,
+        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       ];
     }
 
@@ -244,6 +253,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.proPreview,
         if (input.archiveClarityProgressVisible)
           ArchiveHomeSectionId.archiveClarityProgress,
+        if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
       ];
     }
 
@@ -267,6 +277,7 @@ class ArchiveHomePriorityEngine {
       ArchiveHomeSectionId.quickActions,
       if (input.archiveClarityProgressVisible)
         ArchiveHomeSectionId.archiveClarityProgress,
+      if (input.thenVsNowVisible) ArchiveHomeSectionId.thenVsNow,
     ];
   }
 }

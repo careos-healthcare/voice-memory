@@ -14,6 +14,7 @@ enum ArchiveHomeSectionId {
   firstWeekPath,
   dailyArchiveExercise,
   archiveClarityProgress,
+  thenVsNow,
   milestones,
   betaFeedback,
   proInterestLink,
@@ -38,6 +39,7 @@ class ArchiveHomePriorityInput {
     required this.firstWeekPathVisible,
     required this.dailyArchiveExerciseVisible,
     required this.archiveClarityProgressVisible,
+    required this.thenVsNowVisible,
   });
 
   final int savedEntryCount;
@@ -51,6 +53,7 @@ class ArchiveHomePriorityInput {
   final bool firstWeekPathVisible;
   final bool dailyArchiveExerciseVisible;
   final bool archiveClarityProgressVisible;
+  final bool thenVsNowVisible;
 }
 
 /// Ordered Archive Home layout plan — primary first, then optional collapse.
