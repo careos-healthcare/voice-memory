@@ -1,6 +1,6 @@
 # ArchiveMe sticky loop product map
 
-Branch sequence on `main`: #129–#136.
+Branch sequence on `main`: #129–#137 (sticky-loop consolidation).
 
 ## Core loop
 
@@ -48,4 +48,4 @@ Primary area caps at summary + three cards. Everything else collapses under **Mo
 
 ## Next non-feature priority
 
-TestFlight / manual QA and real beta feedback — not another surface card.
+TestFlight / manual QA and real beta feedback — not another surface card. See [TESTFLIGHT_MANUAL_QA.md](./TESTFLIGHT_MANUAL_QA.md) for the physical-device script.
