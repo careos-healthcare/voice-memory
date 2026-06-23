@@ -26,7 +26,9 @@ import '../screens/entry_detail_screen.dart';
 import '../screens/archive_export_screen.dart';
 import '../screens/help_reviewer_guide_screen.dart';
 import '../screens/support_feedback_screen.dart';
+import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
+import '../screens/sample_archive_context_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
 import '../screens/archive_pack_detail_screen.dart';
@@ -680,6 +682,13 @@ final GoRouter appRouter = GoRouter(
       path: '/sample-archive',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SampleArchiveScreen(),
+    ),
+    GoRoute(
+      path: SampleArchiveDemoPaths.sampleContextRoute,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => SampleArchiveContextScreen(
+        contextTagId: state.pathParameters['tagId'] ?? '',
+      ),
     ),
     GoRoute(
       path: '/export',

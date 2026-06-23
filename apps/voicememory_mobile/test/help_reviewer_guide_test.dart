@@ -48,6 +48,7 @@ void main() {
         HelpReviewerGuideCopy.sectionWhatBulletOne,
         HelpReviewerGuideCopy.sectionTypeInsteadBulletOne,
         HelpReviewerGuideCopy.sectionQuickValueBulletOne,
+        HelpReviewerGuideCopy.sectionQuickValueBulletFive,
         HelpReviewerGuideCopy.sectionPrivacyBulletTwo,
         HelpReviewerGuideCopy.sectionExpectationsBulletOne,
         HelpReviewerGuideCopy.sectionExpectationsBulletTwo,
@@ -139,6 +140,10 @@ void main() {
         findsOneWidget,
       );
       expect(
+        find.text(HelpReviewerGuideCopy.sectionQuickValueBulletFive),
+        findsOneWidget,
+      );
+      expect(
         find.text(HelpReviewerGuideCopy.sectionExpectationsBulletOne),
         findsOneWidget,
       );
@@ -195,7 +200,7 @@ void main() {
         ],
       );
 
-      await tester.binding.setSurfaceSize(const Size(390, 3000));
+      await tester.binding.setSurfaceSize(const Size(390, 3600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
@@ -208,8 +213,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       final link = find.byKey(const Key('sample_archive_help_guide_link'));
-      await tester.ensureVisible(link);
-      await tester.tap(link);
+      await tester.scrollUntilVisible(
+        link,
+        400,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pump();
+      await tester.tap(link, warnIfMissed: false);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 

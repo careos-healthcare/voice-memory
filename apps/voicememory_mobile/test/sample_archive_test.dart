@@ -65,6 +65,10 @@ void main() {
         SampleArchiveCopy.themeLabel,
         SampleArchiveCopy.exitDone,
         SampleArchiveCopy.exampleOnlySnackbar,
+        SampleArchiveCopy.demoPathsTitle,
+        SampleArchiveCopy.demoPathsIntro,
+        SampleArchiveCopy.demoPathsFooterOne,
+        SampleArchiveCopy.demoPathsFooterTwo,
         PrivacyDataControlsCopy.viewSampleArchiveTitle,
         PrivacyDataControlsCopy.viewSampleArchiveSubtitle,
       ];
@@ -120,6 +124,7 @@ void main() {
       final src = File('lib/screens/archive_belief_screen.dart').readAsStringSync();
       expect(src, contains('SampleArchiveEntryCard'));
       expect(src, contains("context.push('/sample-archive')"));
+      expect(src, isNot(contains('sample_archive_demo_paths')));
     });
 
     test('router registers /sample-archive route', () {
@@ -170,6 +175,7 @@ void main() {
       expect(find.text(SampleArchiveCopy.bannerTitle), findsWidgets);
       expect(find.text(SampleArchiveCopy.bannerSubtitle), findsOneWidget);
       expect(find.text(SampleArchiveCopy.themeLabel), findsOneWidget);
+      expect(find.byKey(const Key('sample_archive_demo_paths_card')), findsOneWidget);
       expect(find.text(SampleArchiveCopy.emptyStateTitle), findsNothing);
     });
 
