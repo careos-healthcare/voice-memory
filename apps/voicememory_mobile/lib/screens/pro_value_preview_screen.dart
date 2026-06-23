@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
+import '../features/archive_depth/archive_depth_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -52,6 +53,30 @@ class ProValuePreviewScreen extends StatelessWidget {
             Text(
               ProValuePreviewCopy.whyBodyTwo,
               key: const Key('pro_value_preview_why_body_two'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
+              ArchiveDepthCopy.whyDepthTitle,
+              key: const Key('pro_value_preview_depth_title'),
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              ArchiveDepthCopy.whyDepthBodyOne,
+              key: const Key('pro_value_preview_depth_body_one'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              ArchiveDepthCopy.whyDepthBodyTwo,
+              key: const Key('pro_value_preview_depth_body_two'),
               style: ArchiveMobileTypography.explanationBody(
                 context,
                 color: AppColors.textSecondary,
