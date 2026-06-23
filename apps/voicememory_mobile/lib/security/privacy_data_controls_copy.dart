@@ -11,7 +11,7 @@ abstract final class PrivacyDataControlsCopy {
 
   static const exportArchiveTitle = 'Export archive';
   static const exportArchiveSubtitle =
-      'Save a JSON copy of your locally saved moments.';
+      'Create a private file or preview from this device.';
 
   static const clearLocalArchiveTitle = 'Clear local archive';
   static const clearLocalArchiveSubtitle =

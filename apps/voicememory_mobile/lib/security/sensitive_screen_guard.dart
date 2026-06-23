@@ -33,6 +33,7 @@ abstract class SensitiveRoutes {
     '/archive-evidence-map',
     '/patterns',
     '/export',
+    '/archive-export',
     '/security',
     '/delete-account',
     '/journal',

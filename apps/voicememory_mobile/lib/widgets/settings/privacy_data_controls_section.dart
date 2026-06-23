@@ -104,7 +104,7 @@ class _PrivacyDataControlsSectionState extends State<PrivacyDataControlsSection>
             style: ArchiveMobileTypography.listSubtitle(context),
           ),
           trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.push('/export'),
+          onTap: () => context.push('/archive-export'),
         ),
         ListTile(
           key: const Key('privacy_data_clear_local_archive_tile'),

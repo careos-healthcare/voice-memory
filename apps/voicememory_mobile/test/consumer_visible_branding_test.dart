@@ -32,6 +32,7 @@ const _consumerFacingSources = [
   'lib/screens/export_screen.dart',
   'lib/security/archive_privacy_controls_copy.dart',
   'lib/security/privacy_data_controls_copy.dart',
+  'lib/features/archive_export/archive_export_pack_copy.dart',
   'lib/widgets/security/archive_privacy_controls_card.dart',
   'lib/widgets/security/archive_data_flow_sheet.dart',
   'lib/security/account_privacy_controls_copy.dart',
