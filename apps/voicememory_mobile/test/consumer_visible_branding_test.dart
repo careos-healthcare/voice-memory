@@ -44,6 +44,7 @@ const _consumerFacingSources = [
   'lib/features/archive_watchlist/archive_watchlist_copy.dart',
   'lib/features/next_evidence_plan/next_evidence_plan_copy.dart',
   'lib/features/archive_milestones/archive_milestones_copy.dart',
+  'lib/features/archive_home/archive_home_priority_copy.dart',
   'lib/features/support/support_feedback_copy.dart',
   'lib/widgets/security/archive_privacy_controls_card.dart',
   'lib/widgets/security/archive_data_flow_sheet.dart',
