@@ -187,6 +187,7 @@ void main() {
           showEmptySample: false,
           firstWeekPathVisible: true,
           dailyArchiveExerciseVisible: true,
+          archiveClarityProgressVisible: true,
         ),
       );
 

@@ -32,6 +32,7 @@ import '../screens/beta_outcomes_screen.dart';
 import '../screens/beta_invite_pack_screen.dart';
 import '../screens/first_week_path_screen.dart';
 import '../screens/daily_archive_exercise_screen.dart';
+import '../screens/archive_clarity_progress_screen.dart';
 import '../screens/pro_interest_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
@@ -189,6 +190,7 @@ final GoRouter appRouter = GoRouter(
         path != '/beta-feedback' &&
         path != '/first-week-path' &&
         path != '/daily-archive-exercise' &&
+        path != '/archive-clarity-progress' &&
         path != '/beta-outcomes' &&
         path != '/beta-invite-pack' &&
         path != '/pro-interest' &&
@@ -738,6 +740,11 @@ final GoRouter appRouter = GoRouter(
       path: '/daily-archive-exercise',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const DailyArchiveExerciseScreen(),
+    ),
+    GoRoute(
+      path: '/archive-clarity-progress',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ArchiveClarityProgressScreen(),
     ),
     GoRoute(
       path: '/beta-outcomes',

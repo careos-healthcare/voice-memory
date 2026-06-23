@@ -34,6 +34,7 @@ ArchiveHomePriorityInput _input({
   bool showEmptySample = false,
   bool firstWeekPathVisible = true,
   bool dailyArchiveExerciseVisible = true,
+  bool archiveClarityProgressVisible = true,
 }) =>
     ArchiveHomePriorityInput(
       savedEntryCount: savedEntryCount,
@@ -46,6 +47,7 @@ ArchiveHomePriorityInput _input({
       showEmptySample: showEmptySample,
       firstWeekPathVisible: firstWeekPathVisible && savedEntryCount < 7,
       dailyArchiveExerciseVisible: dailyArchiveExerciseVisible,
+      archiveClarityProgressVisible: archiveClarityProgressVisible,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {
@@ -79,6 +81,19 @@ void main() {
       expect(plan.primarySections, contains(ArchiveHomeSectionId.quickActions));
       expect(plan.primarySections.indexOf(ArchiveHomeSectionId.firstWeekPath),
           lessThan(plan.primarySections.indexOf(ArchiveHomeSectionId.quickActions)));
+    });
+
+    test('archive clarity stays secondary so First Week Path stays primary', () {
+      final plan = engine.build(_input(savedEntryCount: 0, showEmptySample: true));
+
+      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
+      expect(plan.primarySections, contains(ArchiveHomeSectionId.dailyArchiveExercise));
+      expect(plan.primarySections, isNot(contains(ArchiveHomeSectionId.archiveClarityProgress)));
+      expect(
+        plan.secondarySections.contains(ArchiveHomeSectionId.archiveClarityProgress) ||
+            plan.primarySections.contains(ArchiveHomeSectionId.archiveClarityProgress),
+        isTrue,
+      );
     });
 
     test('1-entry layout prioritises First Week Path and Next Evidence Plan', () {
@@ -223,6 +238,7 @@ void main() {
         if (id == ArchiveHomeSectionId.introHint) continue;
         if (id == ArchiveHomeSectionId.firstWeekPath) continue;
         if (id == ArchiveHomeSectionId.dailyArchiveExercise) continue;
+        if (id == ArchiveHomeSectionId.archiveClarityProgress) continue;
         expect(reachable, contains(id), reason: '$id should remain reachable');
       }
     });

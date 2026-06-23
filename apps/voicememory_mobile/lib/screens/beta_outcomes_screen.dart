@@ -129,6 +129,12 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
             ),
             _metricRow(
               context,
+              key: const Key('beta_outcomes_archive_clarity'),
+              label: BetaOutcomesCopy.archiveClarityStageLabel,
+              value: snapshot.archiveClarityStageLabel,
+            ),
+            _metricRow(
+              context,
               key: const Key('beta_outcomes_saved_moments'),
               label: BetaOutcomesCopy.savedMomentsLabel,
               value: '${snapshot.savedMomentCount}',
