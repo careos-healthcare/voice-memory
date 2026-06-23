@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/archive_evidence/archive_evidence.dart';
+import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../models/journal_entry.dart';
 import '../storage/journal_store.dart';
 import '../theme/app_theme.dart';
@@ -20,7 +21,7 @@ abstract class EmptyArchiveCopy {
       ConsumerUiCopy.patternsEarlyStateBody;
 
   static const String recordThoughtCta = ConsumerUiCopy.patternsEmptyCta;
-  static const String typeInsteadCta = 'Type Instead';
+  static const String typeInsteadCta = VisibleArchiveProofCopy.typeInsteadCta;
 
   static const String firstRecordingTitle = 'No recordings yet';
   static const String firstRecordingBody = intentionalEmptyOpening;

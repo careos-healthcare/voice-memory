@@ -162,7 +162,8 @@ abstract final class ArchiveWorkspaceQuickActionsEngine {
       case ArchiveWorkspaceQuickActionKind.viewEvidenceMap:
         return eligibleCount >= 3 && evidenceMapVisible;
       case ArchiveWorkspaceQuickActionKind.addMoment:
-        return eligibleCount >= 2 && eligibleCount <= 4;
+        if (eligibleCount < 2 || eligibleCount > 4) return false;
+        return !_homeAlreadyPromptsAddMoment(archiveHome);
       case ArchiveWorkspaceQuickActionKind.shareProofSafely:
         return eligibleCount >= 5 &&
             (shareProof?.hasProof ?? false) &&
@@ -230,4 +231,17 @@ abstract final class ArchiveWorkspaceQuickActionsEngine {
   static bool _hasCorrections() =>
       ArchiveInsightFeedbackStore.totalNotQuiteCount() > 0 ||
       ArchiveInsightFeedbackStore.correctionNoteCount() > 0;
+
+  static bool _homeAlreadyPromptsAddMoment(ArchiveHomeSummary archiveHome) {
+    const addLabel = VisibleArchiveProofCopy.firstSavePrimaryCta;
+    if (archiveHome.primaryAction == ArchiveHomeAction.addMoment &&
+        archiveHome.primaryCta == addLabel) {
+      return true;
+    }
+    if (archiveHome.secondaryAction == ArchiveHomeAction.addMoment &&
+        archiveHome.secondaryCta == addLabel) {
+      return true;
+    }
+    return false;
+  }
 }

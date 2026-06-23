@@ -10,11 +10,15 @@ abstract final class VisibleArchiveProofCopy {
   static const firstRunBeliefsNotConclusionsLine =
       'Beliefs are not conclusions.';
 
+  /// Shared label for typed capture — no microphone required (Apple review path).
+  static const typeInsteadCta = 'Type instead';
+
   // Record screen top hero (zero entries) — matches Archive Home empty promise.
   static const recordHeroTitle = 'Your archive starts with one moment.';
 
   static const recordHeroBody =
-      '$firstRunBuildingLine Record one honest moment to begin your private archive.';
+      '$firstRunBuildingLine $firstRunCompareLine Record one honest moment to '
+      'begin your private archive.';
 
   static const recordHeroChipReturned = 'What returned';
   static const recordHeroChipSoftened = 'What softened';
@@ -99,6 +103,9 @@ abstract final class VisibleArchiveProofCopy {
   // Three-entry belief payoff (cautious, evidence-based).
   static const threeEntryBeliefTitle =
       'ArchiveMe is starting to form a belief.';
+
+  static const threeEntryBeliefCurrentBeliefLine =
+      'Still forming — not a conclusion yet';
 
   static const threeEntryBeliefBodyIntro =
       'This is not a conclusion yet. It is the first version of what your '
@@ -322,14 +329,15 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveHomeEmptyTitle = 'Your archive starts with one moment.';
 
   static const archiveHomeEmptyBody =
-      '$firstRunBuildingLine Record one honest moment to begin your private archive.';
+      '$firstRunBuildingLine $firstRunCompareLine Record one honest moment to '
+      'begin your private archive.';
 
   static const archiveHomeOneBody =
       '$firstRunBuildingLine $firstRunCompareLine';
 
   static const archiveHomeRecordCta = 'Record a moment';
 
-  static const archiveHomeTypeInsteadCta = 'Type instead';
+  static const archiveHomeTypeInsteadCta = typeInsteadCta;
 
   static const archiveHomeOneTitle = 'Your archive has one piece of evidence.';
 

@@ -194,8 +194,8 @@ void main() {
       final home = ArchiveHomeSummaryEngine.build(entries: entries);
 
       expect(layout.stage, ArchiveWorkspaceStage.one);
-      expect(layout.showActionPlan, isTrue);
-      expect(layout.needsAttention.heading, isNull);
+      expect(layout.showActionPlan, isFalse);
+      expect(layout.needsAttention.show, isFalse);
       expect(layout.evidenceQuality.show, isFalse);
       expect(layout.reviewHistory.show, isFalse);
       expect(quickActions.showCard, isFalse);

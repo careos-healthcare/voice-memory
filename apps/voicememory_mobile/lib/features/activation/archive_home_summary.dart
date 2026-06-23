@@ -166,7 +166,7 @@ abstract final class ArchiveHomeSummaryEngine {
         body: payoff?.bodyIntro ??
             VisibleArchiveProofCopy.threeEntryBeliefBodyIntro,
         footnoteLine: payoff?.bodySource,
-        currentBeliefLine: VisibleArchiveProofCopy.threeEntryBeliefTitle,
+        currentBeliefLine: VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
         whatChangedLine: payoff?.thinEvidenceNote ??
             VisibleArchiveProofCopy.threeEntryBeliefEvidenceThin,
         evidenceRows: payoff?.evidenceRows ?? const [],

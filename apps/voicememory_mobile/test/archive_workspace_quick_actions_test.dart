@@ -181,14 +181,19 @@ void main() {
       ]);
       expect(
         _kinds(actions),
-        [
-          ArchiveWorkspaceQuickActionKind.tagUntagged,
-          ArchiveWorkspaceQuickActionKind.addMoment,
-        ],
+        [ArchiveWorkspaceQuickActionKind.tagUntagged],
       );
       expect(
         actions.actions.first.resolveRoute(),
         ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+      );
+    });
+
+    test('2 entries does not duplicate archive home add-moment quick action', () {
+      final actions = _quickActions(_distinctWorkEntries(2));
+      expect(
+        _kinds(actions),
+        isNot(contains(ArchiveWorkspaceQuickActionKind.addMoment)),
       );
     });
 

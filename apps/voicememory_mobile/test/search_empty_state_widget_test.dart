@@ -91,7 +91,7 @@ void main() {
       expect(find.text('"starting a business"'), findsOneWidget);
       expect(find.text('"I\'m not ready"'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.startRecording), findsOneWidget);
-      expect(find.text('Type Instead'), findsOneWidget);
+      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(find.byType(SearchEmptyState), findsOneWidget);
       expect(find.byType(IntentionalEmptyArchiveView), findsNothing);
     });

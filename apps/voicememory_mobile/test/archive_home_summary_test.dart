@@ -140,6 +140,10 @@ void main() {
       expect(summary.stage, ArchiveHomeStage.three);
       expect(summary.title, 'ArchiveMe is starting to form a belief.');
       expect(summary.body, contains('not a conclusion'));
+      expect(
+        summary.currentBeliefLine,
+        VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
+      );
       expect(summary.secondaryCta, 'View archive');
       expect(summary.secondaryAction, ArchiveHomeAction.viewArchive);
       expect(summary.suppressDuplicatePayoffCards, isTrue);
