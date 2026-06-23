@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/submission/app_store_submission_copy.dart';
 import 'package:voicememory_mobile/router/app_router.dart';
 import 'package:voicememory_mobile/screens/help_reviewer_guide_screen.dart';
 import 'package:voicememory_mobile/screens/sample_archive_screen.dart';
@@ -49,6 +50,8 @@ void main() {
         HelpReviewerGuideCopy.sectionTypeInsteadBulletOne,
         HelpReviewerGuideCopy.sectionQuickValueBulletOne,
         HelpReviewerGuideCopy.sectionQuickValueBulletFive,
+        AppStoreSubmissionCopy.suggestedReviewPathTitle,
+        ...AppStoreSubmissionCopy.suggestedReviewPathBullets,
         HelpReviewerGuideCopy.sectionPrivacyBulletTwo,
         HelpReviewerGuideCopy.sectionExpectationsBulletOne,
         HelpReviewerGuideCopy.sectionExpectationsBulletTwo,
@@ -141,6 +144,14 @@ void main() {
       );
       expect(
         find.text(HelpReviewerGuideCopy.sectionQuickValueBulletFive),
+        findsOneWidget,
+      );
+      expect(
+        find.text(AppStoreSubmissionCopy.suggestedReviewPathTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(AppStoreSubmissionCopy.suggestedReviewPathBullets.first),
         findsOneWidget,
       );
       expect(
