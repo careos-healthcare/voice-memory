@@ -261,6 +261,16 @@ void main() {
         expect(proof.shareText, isNot(contains('VoiceMemory')));
       }
     });
+
+    test('share-safe proof excludes archive watchlist data', () {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      expect(proof.shareText, isNot(contains('Watching for:')));
+      expect(proof.shareText, isNot(contains('archiveWatchlistItems')));
+      expect(
+        proof.shareText,
+        isNot(contains('What should ArchiveMe watch for?')),
+      );
+    });
   });
 
   group('Shareable archive proof card', () {

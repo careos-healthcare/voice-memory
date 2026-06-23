@@ -258,5 +258,18 @@ void main() {
               .readAsStringSync();
       expect(section, contains("context.push('/archive-export')"));
     });
+
+    test('export pack excludes archive watchlist data', () {
+      final pack = ArchiveExportPackEngine.build(
+        entries: _taggedEntries(),
+        exportedAt: DateTime.utc(2026, 6, 15),
+      );
+      expect(pack.plainText, isNot(contains('Watching for:')));
+      expect(pack.plainText, isNot(contains('archiveWatchlistItems')));
+      expect(
+        pack.plainText,
+        isNot(contains('What should ArchiveMe watch for?')),
+      );
+    });
   });
 }

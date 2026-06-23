@@ -116,11 +116,13 @@ import '../features/pro/pro_value_preview_dismiss_store.dart';
 import '../features/pro/pro_value_preview_gates.dart';
 import '../features/archive_depth/archive_depth_engine.dart';
 import '../features/archive_depth/archive_depth_gates.dart';
+import '../features/archive_watchlist/archive_watchlist_gates.dart';
 import '../features/return_changes/archive_return_changes_engine.dart';
 import '../features/return_changes/archive_return_changes_gates.dart';
 import '../features/return_changes/archive_return_changes_store.dart';
 import '../features/return_changes/archive_return_snapshot.dart';
 import '../widgets/archive_depth_card.dart';
+import '../widgets/archive_watchlist_card.dart';
 import '../widgets/archive_return_changes_card.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/change_summary_card.dart';
@@ -2029,6 +2031,24 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       widgets.add(
         ArchiveDepthCard(
           result: const ArchiveDepthEngine().build(entries: _entries),
+        ),
+      );
+    }
+
+    if (ArchiveWatchlistGates.showTeaser(
+          entryCount: _entries.length,
+          sampleMode: ScreenshotMode.enabled,
+        ) ||
+        ArchiveWatchlistGates.showCard(
+          entryCount: _entries.length,
+          sampleMode: ScreenshotMode.enabled,
+        )) {
+      widgets.add(const SizedBox(height: AppSpacing.md));
+      widgets.add(
+        ArchiveWatchlistCard(
+          entryCount: _entries.length,
+          entries: _entries,
+          onAddMoment: _goToRecord,
         ),
       );
     }
