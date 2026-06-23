@@ -37,6 +37,7 @@ import '../screens/todays_one_question_screen.dart';
 import '../screens/then_vs_now_screen.dart';
 import '../screens/archive_calendar_screen.dart';
 import '../screens/review_ritual_screen.dart';
+import '../screens/milestone_share_cards_screen.dart';
 import '../screens/pro_interest_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
@@ -199,6 +200,7 @@ final GoRouter appRouter = GoRouter(
         path != '/then-vs-now' &&
         path != '/archive-calendar' &&
         path != '/review-ritual' &&
+        path != '/milestone-share-cards' &&
         path != '/beta-outcomes' &&
         path != '/beta-invite-pack' &&
         path != '/pro-interest' &&
@@ -773,6 +775,11 @@ final GoRouter appRouter = GoRouter(
       path: '/review-ritual',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ReviewRitualScreen(),
+    ),
+    GoRoute(
+      path: '/milestone-share-cards',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MilestoneShareCardsScreen(),
     ),
     GoRoute(
       path: '/beta-outcomes',

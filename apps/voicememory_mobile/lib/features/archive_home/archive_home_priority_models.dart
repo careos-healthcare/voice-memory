@@ -17,6 +17,7 @@ enum ArchiveHomeSectionId {
   thenVsNow,
   archiveCalendar,
   reviewRitual,
+  milestoneShare,
   milestones,
   betaFeedback,
   proInterestLink,
@@ -44,6 +45,7 @@ class ArchiveHomePriorityInput {
     required this.thenVsNowVisible,
     required this.archiveCalendarVisible,
     required this.reviewRitualVisible,
+    required this.milestoneShareVisible,
   });
 
   final int savedEntryCount;
@@ -60,6 +62,7 @@ class ArchiveHomePriorityInput {
   final bool thenVsNowVisible;
   final bool archiveCalendarVisible;
   final bool reviewRitualVisible;
+  final bool milestoneShareVisible;
 }
 
 /// Ordered Archive Home layout plan — primary first, then optional collapse.

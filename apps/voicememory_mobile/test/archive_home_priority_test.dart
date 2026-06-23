@@ -38,6 +38,7 @@ ArchiveHomePriorityInput _input({
   bool thenVsNowVisible = false,
   bool archiveCalendarVisible = false,
   bool reviewRitualVisible = false,
+  bool milestoneShareVisible = false,
 }) =>
     ArchiveHomePriorityInput(
       savedEntryCount: savedEntryCount,
@@ -54,6 +55,7 @@ ArchiveHomePriorityInput _input({
       thenVsNowVisible: thenVsNowVisible,
       archiveCalendarVisible: archiveCalendarVisible,
       reviewRitualVisible: reviewRitualVisible,
+      milestoneShareVisible: milestoneShareVisible,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {

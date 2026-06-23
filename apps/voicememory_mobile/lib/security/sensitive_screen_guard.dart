@@ -45,6 +45,7 @@ abstract class SensitiveRoutes {
     '/then-vs-now',
     '/archive-calendar',
     '/review-ritual',
+    '/milestone-share-cards',
     '/beta-outcomes',
     '/beta-invite-pack',
     '/pro-interest',

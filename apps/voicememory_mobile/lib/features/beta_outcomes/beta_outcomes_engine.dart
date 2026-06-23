@@ -18,6 +18,8 @@ import '../then_now/then_now_engine.dart';
 import '../archive_calendar/archive_calendar_copy.dart';
 import '../archive_calendar/archive_calendar_engine.dart';
 import '../insight_feedback/insight_feedback_engine.dart';
+import '../milestone_share/milestone_share_copy.dart';
+import '../milestone_share/milestone_share_engine.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
 
@@ -74,6 +76,10 @@ class BetaOutcomesEngine {
     final thenNow = thenNowEngine.buildFromJournal(entries: realEntries);
     final archiveCalendar =
         archiveCalendarEngine.buildFromJournal(entries: realEntries);
+    final milestoneShare = const MilestoneShareEngine().buildFromJournal(
+      entries: realEntries,
+      hasWatchTheme: hasWatchTheme,
+    );
 
     return build(
       BetaOutcomesInput(
@@ -95,6 +101,9 @@ class BetaOutcomesEngine {
             ? ArchiveCalendarCopy.betaOutcomesYes
             : ArchiveCalendarCopy.betaOutcomesNo,
         insightFeedbackCapturedLabel: insightFeedbackEngine.betaOutcomesLabel(),
+        milestoneShareCountLabel: MilestoneShareCopy.betaOutcomesValue(
+          milestoneShare.totalAvailableCount,
+        ),
       ),
     );
   }
@@ -136,6 +145,7 @@ class BetaOutcomesEngine {
       thenVsNowAvailableLabel: input.thenVsNowAvailableLabel,
       archiveCalendarAvailableLabel: input.archiveCalendarAvailableLabel,
       insightFeedbackCapturedLabel: input.insightFeedbackCapturedLabel,
+      milestoneShareCountLabel: input.milestoneShareCountLabel,
     );
   }
 

@@ -10,6 +10,7 @@ import '../features/first_week_path/first_week_path_engine.dart';
 import '../features/first_week_path/first_week_path_models.dart';
 import '../features/todays_question/todays_question_copy.dart';
 import '../features/review_ritual/view_ritual_copy.dart';
+import '../features/milestone_share/milestone_share_copy.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -153,6 +154,12 @@ class _FirstWeekPathScreenState extends State<FirstWeekPathScreen> {
             key: const Key('first_week_path_screen_review_ritual_link'),
             onPressed: () => context.push(ReviewRitualCopy.route),
             child: const Text(ReviewRitualCopy.openReviewRitualCta),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('first_week_path_screen_milestone_share_link'),
+            onPressed: () => context.push(MilestoneShareCopy.route),
+            child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
