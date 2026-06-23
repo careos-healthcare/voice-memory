@@ -11,6 +11,8 @@ import '../pro_interest/pro_interest_models.dart';
 import '../first_week_path/first_week_path_engine.dart';
 import '../first_week_path/first_week_path_models.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
+import '../archive_clarity/archive_clarity_engine.dart';
+import '../archive_clarity/archive_clarity_models.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
 
@@ -18,9 +20,11 @@ import 'beta_outcomes_models.dart';
 class BetaOutcomesEngine {
   const BetaOutcomesEngine({
     this.firstWeekPathEngine = const FirstWeekPathEngine(),
+    this.archiveClarityEngine = const ArchiveClarityEngine(),
   });
 
   final FirstWeekPathEngine firstWeekPathEngine;
+  final ArchiveClarityEngine archiveClarityEngine;
 
   BetaOutcomesSnapshot buildFromJournal({
     required List<JournalEntry> entries,
@@ -47,6 +51,15 @@ class BetaOutcomesEngine {
         hasWeeklyReviewAvailable: hasWeeklyReviewAvailable,
       ),
     );
+    final clarity = archiveClarityEngine.build(
+      ArchiveClarityInput(
+        realSavedMomentCount: realEntries.length,
+        usableEvidenceCount: usableCount,
+        hasWatchTheme: hasWatchTheme,
+        betaFeedbackCaptured: feedbackState.hasResponse,
+        weeklyReviewAvailable: hasWeeklyReviewAvailable,
+      ),
+    );
 
     return build(
       BetaOutcomesInput(
@@ -60,6 +73,7 @@ class BetaOutcomesEngine {
         proInterestState: proInterestState,
         betaInviteCopyStats: betaInviteCopyStats,
         firstWeekPathProgressLabel: firstWeekPath.progressLabel,
+        archiveClarityStageLabel: clarity.stageLabel,
       ),
     );
   }
@@ -97,6 +111,7 @@ class BetaOutcomesEngine {
       betaInviteLastVariantLabel: inviteSummary.lastVariantLabel,
       betaInviteTaskCopied: inviteSummary.testerTaskCopied,
       firstWeekPathProgressLabel: input.firstWeekPathProgressLabel,
+      archiveClarityStageLabel: input.archiveClarityStageLabel,
     );
   }
 

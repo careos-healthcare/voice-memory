@@ -38,6 +38,7 @@ abstract final class BetaOutcomesCopy {
       BetaInviteCopy.betaOutcomesTaskCopiedLabel;
 
   static const firstWeekPathProgressLabel = 'First week path progress';
+  static const archiveClarityStageLabel = 'Archive clarity stage';
 
   static const openBetaInvitePackButton = BetaInviteCopy.openBetaInviteButton;
 

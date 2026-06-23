@@ -22,6 +22,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.nextEvidencePlan,
           ArchiveHomeSectionId.firstWeekPath,
           ArchiveHomeSectionId.dailyArchiveExercise,
+          ArchiveHomeSectionId.archiveClarityProgress,
           ArchiveHomeSectionId.milestones,
           ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.proInterestLink,
@@ -70,6 +71,10 @@ class ArchiveHomePriorityEngine {
 
     if (!input.dailyArchiveExerciseVisible) {
       hidden.add(ArchiveHomeSectionId.dailyArchiveExercise);
+    }
+
+    if (!input.archiveClarityProgressVisible) {
+      hidden.add(ArchiveHomeSectionId.archiveClarityProgress);
     }
 
     if (input.savedEntryCount <= 0) {
@@ -148,6 +153,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
         ArchiveHomeSectionId.sampleArchive,
+        if (input.archiveClarityProgressVisible)
+          ArchiveHomeSectionId.archiveClarityProgress,
       ];
     }
 
@@ -164,6 +171,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
         ArchiveHomeSectionId.proPreview,
+        if (input.archiveClarityProgressVisible)
+          ArchiveHomeSectionId.archiveClarityProgress,
       ];
     }
 
@@ -181,6 +190,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.needsAttention,
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
+        if (input.archiveClarityProgressVisible)
+          ArchiveHomeSectionId.archiveClarityProgress,
       ];
     }
 
@@ -203,6 +214,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.introHint,
         ArchiveHomeSectionId.proPreview,
+        if (input.archiveClarityProgressVisible)
+          ArchiveHomeSectionId.archiveClarityProgress,
       ];
     }
 
@@ -229,6 +242,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.controls,
         ArchiveHomeSectionId.quickActions,
         ArchiveHomeSectionId.proPreview,
+        if (input.archiveClarityProgressVisible)
+          ArchiveHomeSectionId.archiveClarityProgress,
       ];
     }
 
@@ -250,6 +265,8 @@ class ArchiveHomePriorityEngine {
       ArchiveHomeSectionId.returnRitual,
       ArchiveHomeSectionId.controls,
       ArchiveHomeSectionId.quickActions,
+      if (input.archiveClarityProgressVisible)
+        ArchiveHomeSectionId.archiveClarityProgress,
     ];
   }
 }
