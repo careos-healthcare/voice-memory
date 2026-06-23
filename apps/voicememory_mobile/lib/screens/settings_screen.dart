@@ -8,6 +8,7 @@ import '../billing/subscription_copy.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
+import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
 import '../features/fact_ledger/archive_fact.dart';
@@ -144,6 +145,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _tile(
               ConsumerUiCopy.termsOfUse,
               onTap: () => context.push('/terms'),
+            ),
+            ListTile(
+              key: const Key('settings_help_reviewer_guide_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                HelpReviewerGuideCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                HelpReviewerGuideCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/help-reviewer-guide'),
             ),
             _tile(
               ConsumerUiCopy.restorePurchases,

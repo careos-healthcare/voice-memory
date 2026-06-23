@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
 import '../features/demo/demo_share_pack.dart';
 import '../features/demo/sample_archive_copy.dart';
+import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/demo/sample_archive_entries.dart';
 import '../features/demo/sample_archive_workspace.dart';
 import '../widgets/demo/demo_share_pack_card.dart';
@@ -29,6 +31,14 @@ class SampleArchiveScreen extends StatelessWidget {
           const SampleArchiveBanner(),
           const SampleArchiveTourCard(),
           DemoSharePackCard(pack: demoSharePack),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('sample_archive_help_guide_link'),
+              onPressed: () => context.push('/help-reviewer-guide'),
+              child: const Text(HelpReviewerGuideCopy.sampleArchiveHelpLink),
+            ),
+          ),
           ...SampleArchiveWorkspace.build(context, entries),
         ],
       ),
