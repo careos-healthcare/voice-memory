@@ -108,6 +108,11 @@ import '../widgets/patterns/return_comparison_card.dart';
 import '../widgets/patterns/return_streak_card.dart';
 import '../widgets/routine/routine_anchor_chooser.dart';
 import '../widgets/return_ritual_card.dart';
+import '../widgets/archive_return_changes_card.dart';
+import '../features/return_changes/archive_return_changes_engine.dart';
+import '../features/return_changes/archive_return_changes_gates.dart';
+import '../features/return_changes/archive_return_changes_store.dart';
+import '../features/return_changes/archive_return_snapshot.dart';
 import '../widgets/moment_quality_card.dart';
 import '../widgets/record/tomorrow_commitment_card.dart';
 import '../widgets/record/tomorrow_return_card.dart';
@@ -384,6 +389,8 @@ class _RecordScreenState extends State<RecordScreen> {
   ArchiveMovementUpdate? _archiveMovement;
   int _journalEntryCount = 0;
   bool _journalEntryCountLoaded = false;
+  ArchiveReturnChangesResult? _archiveReturnChangesResult;
+  ArchiveReturnSnapshot? _archiveReturnCurrentSnapshot;
   List<JournalEntry> _journalEntries = const [];
   DateTime? _lastReflectionAt;
 
@@ -1084,7 +1091,34 @@ class _RecordScreenState extends State<RecordScreen> {
       _firstArchiveMilestoneCompleted =
           ExamplePromptVisibility.hasCompletedFirstArchiveMilestone(all);
     });
+    await _refreshArchiveReturnChanges(all);
+    if (!mounted) return;
     _logRecordEmptyGate('journal_loaded');
+  }
+
+  Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
+    final store = ArchiveReturnChangesStore.fromAppPrefs(
+      AppServices.instance.prefs,
+    );
+    final resolved = await resolveArchiveReturnChanges(
+      entries: entries,
+      store: store,
+    );
+    if (!mounted) return;
+    setState(() {
+      _archiveReturnCurrentSnapshot = resolved.current;
+      _archiveReturnChangesResult = resolved.result;
+    });
+  }
+
+  Future<void> _markArchiveReturnChangesSeen() async {
+    final snapshot = _archiveReturnCurrentSnapshot;
+    if (snapshot == null) return;
+    await ArchiveReturnChangesStore.fromAppPrefs(
+      AppServices.instance.prefs,
+    ).markSeen(snapshot);
+    if (!mounted) return;
+    setState(() => _archiveReturnChangesResult = null);
   }
 
   bool _returnTriggerAccepted = false;
@@ -4809,6 +4843,20 @@ class _RecordScreenState extends State<RecordScreen> {
           ReturnRitualCard(
             entryCount: _journalEntryCount,
             onAddMoment: () => unawaited(_onRecordPressed(source: 'main')),
+          ),
+        );
+      }
+      if (ArchiveReturnChangesGates.showOnRecord(
+        loaded: _journalEntryCountLoaded,
+        entryCount: _journalEntryCount,
+        isPostSave: _isPostSaveSurface,
+        sampleMode: false,
+        result: _archiveReturnChangesResult,
+      )) {
+        actions.add(
+          ArchiveReturnChangesCard(
+            result: _archiveReturnChangesResult!,
+            onMarkSeen: () => unawaited(_markArchiveReturnChangesSeen()),
           ),
         );
       }

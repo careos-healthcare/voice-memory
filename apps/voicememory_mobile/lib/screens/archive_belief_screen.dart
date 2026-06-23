@@ -114,6 +114,11 @@ import '../widgets/return_ritual_card.dart';
 import '../widgets/pro_value_preview_card.dart';
 import '../features/pro/pro_value_preview_dismiss_store.dart';
 import '../features/pro/pro_value_preview_gates.dart';
+import '../features/return_changes/archive_return_changes_engine.dart';
+import '../features/return_changes/archive_return_changes_gates.dart';
+import '../features/return_changes/archive_return_changes_store.dart';
+import '../features/return_changes/archive_return_snapshot.dart';
+import '../widgets/archive_return_changes_card.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
@@ -205,6 +210,8 @@ class ArchiveBeliefScreen extends StatefulWidget {
 
 class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   List<JournalEntry> _entries = [];
+  ArchiveReturnChangesResult? _archiveReturnChangesResult;
+  ArchiveReturnSnapshot? _archiveReturnCurrentSnapshot;
   ArchiveBeliefsSnapshot? _beliefs;
   List<BeliefChangeTimelineItem> _changing = const [];
   ArchiveInsightsSnapshot _insights = ArchiveInsightsSnapshot.empty;
@@ -474,6 +481,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         _changing = const [];
         _insights = ArchiveInsightsSnapshot.empty;
         _loading = false;
+        _archiveReturnChangesResult = null;
+        _archiveReturnCurrentSnapshot = null;
       });
       First25UserMetrics.trackArchiveOpened(surface: 'archive_beliefs_empty');
       return;
@@ -641,6 +650,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _compressionGroups = compressionGroups;
       _loading = false;
     });
+    await _refreshArchiveReturnChanges(entries);
     if (rangeReview?.hasEnoughData == true) {
       ActivationTracker.trackArchiveRangeReviewShown();
     }
@@ -947,6 +957,39 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   void _dismissWorkspaceHint(String hintId) {
     ArchiveWorkspaceHintStore.dismiss(hintId);
     setState(() {});
+  }
+
+  Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
+    if (ScreenshotMode.enabled) {
+      if (!mounted) return;
+      setState(() {
+        _archiveReturnChangesResult = null;
+        _archiveReturnCurrentSnapshot = null;
+      });
+      return;
+    }
+    final store = ArchiveReturnChangesStore.fromAppPrefs(
+      AppServices.instance.prefs,
+    );
+    final resolved = await resolveArchiveReturnChanges(
+      entries: entries,
+      store: store,
+    );
+    if (!mounted) return;
+    setState(() {
+      _archiveReturnCurrentSnapshot = resolved.current;
+      _archiveReturnChangesResult = resolved.result;
+    });
+  }
+
+  Future<void> _markArchiveReturnChangesSeen() async {
+    final snapshot = _archiveReturnCurrentSnapshot;
+    if (snapshot == null) return;
+    await ArchiveReturnChangesStore.fromAppPrefs(
+      AppServices.instance.prefs,
+    ).markSeen(snapshot);
+    if (!mounted) return;
+    setState(() => _archiveReturnChangesResult = null);
   }
 
   Widget? _workspaceHintWidget(ArchiveWorkspaceHint? hint) {
@@ -1960,6 +2003,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             if (!mounted) return;
             setState(() {});
           },
+        ),
+      );
+    }
+
+    if (ArchiveReturnChangesGates.show(
+      entryCount: _entries.length,
+      sampleMode: ScreenshotMode.enabled,
+      result: _archiveReturnChangesResult,
+    )) {
+      widgets.add(const SizedBox(height: AppSpacing.md));
+      widgets.add(
+        ArchiveReturnChangesCard(
+          result: _archiveReturnChangesResult!,
+          onMarkSeen: () => unawaited(_markArchiveReturnChangesSeen()),
         ),
       );
     }
