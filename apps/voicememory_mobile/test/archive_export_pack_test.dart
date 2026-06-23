@@ -271,5 +271,13 @@ void main() {
         isNot(contains('What should ArchiveMe watch for?')),
       );
     });
+
+    test('export pack excludes next evidence plan data', () {
+      final pack = ArchiveExportPackEngine.build(
+        entries: _taggedEntries(),
+        exportedAt: DateTime.utc(2026, 6, 15),
+      );
+      expect(pack.plainText, isNot(contains('Next evidence plan')));
+    });
   });
 }
