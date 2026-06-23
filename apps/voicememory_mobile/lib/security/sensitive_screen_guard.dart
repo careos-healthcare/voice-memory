@@ -35,6 +35,7 @@ abstract class SensitiveRoutes {
     '/export',
     '/archive-export',
     '/sample-archive',
+    '/help-reviewer-guide',
     '/security',
     '/delete-account',
     '/journal',

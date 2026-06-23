@@ -24,6 +24,7 @@ import '../screens/insight_quality_screen.dart';
 import '../screens/archive_evidence_context_screen.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/archive_export_screen.dart';
+import '../screens/help_reviewer_guide_screen.dart';
 import '../screens/sample_archive_screen.dart';
 import '../screens/export_screen.dart';
 import '../screens/collection_detail_screen.dart';
@@ -173,6 +174,7 @@ final GoRouter appRouter = GoRouter(
         path != '/about' &&
         path != '/privacy' &&
         path != '/terms' &&
+        path != '/help-reviewer-guide' &&
         !path.startsWith('/entry/')) {
       if (path == '/onboarding') return '/record';
       if (DeveloperRouteGuard.redirectFor(path) != null ||
@@ -691,6 +693,11 @@ final GoRouter appRouter = GoRouter(
       path: '/settings',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/help-reviewer-guide',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const HelpReviewerGuideScreen(),
     ),
     GoRoute(
       path: '/about',
