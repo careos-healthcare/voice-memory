@@ -1,69 +1,40 @@
-/// Static copy for the honest Pro value preview — no purchase pressure.
+import '../pro_value/pro_value_copy.dart';
+
+/// Static copy for the honest Pro value preview — delegates to [ProValueCopy].
 abstract final class ProValuePreviewCopy {
   ProValuePreviewCopy._();
 
-  static const screenTitle = 'ArchiveMe Pro';
+  static const screenTitle = ProValueCopy.screenTitle;
+  static const settingsTitle = ProValueCopy.settingsTitle;
+  static const settingsSubtitle = ProValueCopy.settingsSubtitle;
 
-  static const settingsTitle = 'ArchiveMe Pro';
-  static const settingsSubtitle = 'See what Pro will unlock.';
+  static const archiveCardTitle = ProValueCopy.archiveCardTitle;
+  static const archiveCardCta = ProValueCopy.archiveCardCta;
+  static const archiveCardDismiss = ProValueCopy.archiveCardDismiss;
 
-  static const archiveCardTitle = 'Pro can make your archive deeper';
-  static const archiveCardCta = 'See what Pro unlocks';
-  static const archiveCardDismiss = 'Not now';
+  static const headline = ProValueCopy.headline;
+  static const subheadline = ProValueCopy.subheadline;
+  static const body = ProValueCopy.body;
 
-  static const freeNowTitle = 'What you have now';
-  static const freeNowBullets = [
-    'Save private moments',
-    'See early archive patterns',
-    'Use Sample Archive',
-    'Export when you choose',
-    'Share proof safely',
-  ];
+  static const freeNowTitle = ProValueCopy.freeNowSectionTitle;
+  static const freeNowBullets = ProValueCopy.freeNowBullets;
 
-  static const proForTitle = 'What Pro is for';
-  static const proForBullets = [
-    'Deeper belief history over time',
-    'Richer weekly reviews',
-    'More context evidence views',
-    'Better export packs for reflection and review',
-    'More advanced archive comparison as your archive grows',
-  ];
+  static const proForTitle = ProValueCopy.proForSectionTitle;
+  static const proForBullets = ProValueCopy.valueBullets;
 
-  static const whyTitle = 'Why it matters';
-  static const whyBodyOne =
-      'The more evidence you save, the more useful your archive becomes.';
-  static const whyBodyTwo =
-      'Pro is designed for people who want ArchiveMe to become a long-term private evidence archive.';
+  static const whyTitle = ProValueCopy.whySectionTitle;
+  static const whyBodyOne = ProValueCopy.whyBodyOne;
+  static const whyBodyTwo = ProValueCopy.whyBodyTwo;
 
-  static const purchaseTitle = 'Purchase status';
-  static const purchaseUnavailable = 'Purchases are not available yet.';
-  static const purchaseKeepFree =
-      'You can keep using the free archive flow.';
-  static const purchaseAfterSetup =
-      'Pro will be enabled after store setup is complete.';
+  static const purchaseTitle = ProValueCopy.purchaseSectionTitle;
+  static const purchaseUnavailable = ProValueCopy.purchaseUnavailableNote;
+  static const purchaseKeepFree = ProValueCopy.purchaseKeepFreeNote;
+  static const purchaseAfterSetup = ProValueCopy.purchaseAfterSetupNote;
 
-  static const keepBuildingCta = 'Keep building my archive';
-  static const trySampleArchiveCta = 'Try Sample Archive';
+  static const keepBuildingCta = ProValueCopy.primaryCtaLabel;
+  static const trySampleArchiveCta = ProValueCopy.secondaryCtaLabel;
 
   static Iterable<String> allVisibleCopy() sync* {
-    yield screenTitle;
-    yield settingsTitle;
-    yield settingsSubtitle;
-    yield archiveCardTitle;
-    yield archiveCardCta;
-    yield archiveCardDismiss;
-    yield freeNowTitle;
-    yield* freeNowBullets;
-    yield proForTitle;
-    yield* proForBullets;
-    yield whyTitle;
-    yield whyBodyOne;
-    yield whyBodyTwo;
-    yield purchaseTitle;
-    yield purchaseUnavailable;
-    yield purchaseKeepFree;
-    yield purchaseAfterSetup;
-    yield keepBuildingCta;
-    yield trySampleArchiveCta;
+    yield* ProValueCopy.allVisibleCopy();
   }
 }

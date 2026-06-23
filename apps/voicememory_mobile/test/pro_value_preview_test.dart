@@ -124,6 +124,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ProValuePreviewCopy.whyTitle), findsOneWidget);
+      expect(find.text(ProValuePreviewCopy.headline), findsOneWidget);
     });
 
     testWidgets('honestly says purchases are not available yet', (tester) async {
@@ -136,12 +137,11 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(ProValuePreviewCopy.purchaseUnavailable),
+        find.textContaining('Purchases are not available yet'),
         findsOneWidget,
       );
-      expect(find.text(ProValuePreviewCopy.purchaseKeepFree), findsOneWidget);
       expect(
-        find.text(ProValuePreviewCopy.purchaseAfterSetup),
+        find.textContaining('free archive flow remains usable'),
         findsOneWidget,
       );
       for (final cta in _forbiddenPurchaseCtas) {

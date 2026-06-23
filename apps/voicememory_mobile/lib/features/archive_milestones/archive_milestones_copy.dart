@@ -1,4 +1,5 @@
 import 'archive_milestones_models.dart';
+import '../pro_value/pro_value_copy.dart';
 
 /// User-facing copy for archive milestones — no streaks or pressure.
 abstract final class ArchiveMilestonesCopy {
@@ -13,12 +14,11 @@ abstract final class ArchiveMilestonesCopy {
   static const stateNext = 'Next';
 
   static const addMomentAction = 'Add a moment';
-  static const proPreviewButton = 'See Pro preview';
-  static const proLineLongTerm =
-      'Longer-term milestone history is where Pro becomes more useful.';
+  static const proPreviewButton = ProValueCopy.proPreviewButton;
+  static const proLineLongTerm = ProValueCopy.cardProLine;
 
   static const addMomentRoute = '/record';
-  static const proPreviewRoute = '/pro-preview';
+  static const proPreviewRoute = ProValueCopy.proPreviewRoute;
 
   static const firstMomentSaved = 'First moment saved';
   static const firstComparisonPossible = 'First comparison possible';

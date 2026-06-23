@@ -15,6 +15,15 @@
 
 When keys are missing, the paywall shows: *“Purchases are not available right now.”*
 
+## Pro value message (packaging)
+
+- **Core promise:** “Deeper long-term evidence history”
+- Pro Preview and archive cards explain what Pro adds later — not a live paywall
+- Purchases remain **unavailable** until RevenueCat/store setup and sandbox purchase/restore evidence pass
+- Do **not** claim subscriptions can be purchased in App Store metadata until verified
+
+See `lib/features/pro_value/pro_value_copy.dart` for the central copy source.
+
 ## Before paid launch
 
 1. Complete App Store Connect / Play Console banking and agreements.

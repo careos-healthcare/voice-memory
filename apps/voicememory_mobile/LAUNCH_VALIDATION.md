@@ -19,7 +19,8 @@ flutter test \
   test/shareable_archive_proof_test.dart \
   test/archive_export_pack_test.dart \
   test/launch_hardening_test.dart \
-  test/revenuecat_release_config_test.dart
+  test/revenuecat_release_config_test.dart \
+  test/pro_value_packaging_test.dart
 ```
 
 Also run from repo root:
