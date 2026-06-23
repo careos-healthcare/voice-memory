@@ -111,6 +111,8 @@ import '../widgets/patterns/patterns_come_back_tomorrow_card.dart';
 import '../widgets/patterns/patterns_first_archive_view.dart';
 import '../widgets/demo/sample_archive_entry_card.dart';
 import '../widgets/return_ritual_card.dart';
+import '../widgets/beta_feedback_card.dart';
+import '../features/beta_feedback/beta_feedback_store.dart';
 import '../widgets/pro_value_preview_card.dart';
 import '../features/pro/pro_value_preview_dismiss_store.dart';
 import '../features/pro/pro_value_preview_gates.dart';
@@ -482,6 +484,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ArchiveBeliefCorrectionStore.ensureLoaded();
     await ArchiveWorkspaceHintStore.ensureLoaded();
     await ProValuePreviewDismissStore.ensureLoaded();
+    await BetaFeedbackStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -2112,6 +2115,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ArchiveMilestonesCard(
             entries: _entries,
             onAddMoment: _goToRecord,
+          ),
+        ];
+      case ArchiveHomeSectionId.betaFeedback:
+        return [
+          BetaFeedbackCard(
+            entries: _entries,
+            sampleMode: ScreenshotMode.enabled,
+            onChanged: () {
+              if (!mounted) return;
+              setState(() {});
+            },
           ),
         ];
       case ArchiveHomeSectionId.needsAttention:

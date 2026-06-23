@@ -21,6 +21,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.watchlist,
           ArchiveHomeSectionId.nextEvidencePlan,
           ArchiveHomeSectionId.milestones,
+          ArchiveHomeSectionId.betaFeedback,
           ArchiveHomeSectionId.needsAttention,
           ArchiveHomeSectionId.evidenceQuality,
           ArchiveHomeSectionId.reviewHistory,
@@ -64,6 +65,7 @@ class ArchiveHomePriorityEngine {
       hidden.addAll(const {
         ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.milestones,
+        ArchiveHomeSectionId.betaFeedback,
         ArchiveHomeSectionId.evidenceQuality,
         ArchiveHomeSectionId.reviewHistory,
         ArchiveHomeSectionId.controls,
@@ -85,6 +87,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.controls,
         ArchiveHomeSectionId.needsAttention,
         ArchiveHomeSectionId.milestones,
+        ArchiveHomeSectionId.betaFeedback,
       });
       return hidden;
     }
@@ -95,6 +98,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.reviewHistory,
         ArchiveHomeSectionId.controls,
         ArchiveHomeSectionId.milestones,
+        ArchiveHomeSectionId.betaFeedback,
       });
       return hidden;
     }
@@ -167,6 +171,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.nextEvidencePlan,
         ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.milestones,
+        ArchiveHomeSectionId.betaFeedback,
         ArchiveHomeSectionId.evidenceQuality,
         ArchiveHomeSectionId.archiveDepth,
         ArchiveHomeSectionId.returnRitual,
@@ -188,6 +193,7 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.evidenceQuality,
         ArchiveHomeSectionId.watchlist,
         ArchiveHomeSectionId.milestones,
+        ArchiveHomeSectionId.betaFeedback,
         ArchiveHomeSectionId.returnChanges,
         ArchiveHomeSectionId.archiveDepth,
         ArchiveHomeSectionId.needsAttention,
@@ -206,6 +212,7 @@ class ArchiveHomePriorityEngine {
       if (input.proPreviewPromoVisible) ArchiveHomeSectionId.proPreview,
       ArchiveHomeSectionId.watchlist,
       ArchiveHomeSectionId.milestones,
+      ArchiveHomeSectionId.betaFeedback,
       ArchiveHomeSectionId.returnChanges,
       ArchiveHomeSectionId.archiveDepth,
       ArchiveHomeSectionId.needsAttention,
