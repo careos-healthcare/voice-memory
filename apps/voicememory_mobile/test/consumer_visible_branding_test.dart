@@ -36,6 +36,7 @@ const _consumerFacingSources = [
   'lib/features/demo/sample_archive_copy.dart',
   'lib/features/help/help_reviewer_guide_copy.dart',
   'lib/features/submission/app_store_submission_copy.dart',
+  'lib/features/return_ritual/return_ritual_copy.dart',
   'lib/features/support/support_feedback_copy.dart',
   'lib/widgets/security/archive_privacy_controls_card.dart',
   'lib/widgets/security/archive_data_flow_sheet.dart',
