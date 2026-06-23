@@ -53,3 +53,7 @@ The internal Flutter package folder is still named `voicememory_mobile`; that re
 path does not affect the public app identity on device or in the stores.
 
 Open **`ios/Runner.xcworkspace`** for iOS builds (not `Runner.xcodeproj`).
+
+## TestFlight / App Store submission
+
+See [APP_STORE_SUBMISSION_PACK.md](./APP_STORE_SUBMISSION_PACK.md) for the consolidated reviewer path, internal TestFlight checklist, and validation commands.

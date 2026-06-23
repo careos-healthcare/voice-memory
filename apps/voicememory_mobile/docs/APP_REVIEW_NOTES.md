@@ -58,9 +58,21 @@ If using screenshot mode, you can jump straight to seeded states (see
   launch. Reminders can be toggled in Settings → "Check-in reminders".
 
 ## Subscriptions / RevenueCat
-- Subscriptions are handled via RevenueCat when billing is enabled. Billing is not
-  required to use the core loop in trial mode. "Restore purchases" is available in
-  Settings.
+- **Purchases are unavailable** until App Store Connect banking and RevenueCat product setup are complete. RevenueCat work is **paused** on this release branch.
+- The free archive loop remains usable without Pro.
+- **Restore purchases** is available from Settings — expect honest unavailable/inert copy until billing is configured.
+- **Pro preview** (Settings → See Pro preview → `/pro-preview`) explains future Pro value only — no live purchase CTA.
+- Support: https://careosapp.co.uk/archiveme-support
+
+## Reviewer routes (production build)
+- **Record:** `/record` — use **Type instead** if microphone is unavailable
+- **Archive Home:** Archive tab → `/archive-belief`
+- **Sample Archive:** `/sample-archive` (example data only)
+- **Help & reviewer guide:** Settings → `/help-reviewer-guide`
+- **Support & feedback:** Settings → `/support-feedback`
+- **Pro preview:** Settings → `/pro-preview`
+- **Restore purchases:** Settings → Restore purchases action
+- **Privacy / Terms:** Settings → `/privacy` and `/terms`
 
 ## Microphone usage
 - Used only to record the user's own voice reflections. String shown:

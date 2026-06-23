@@ -34,6 +34,16 @@ pattern, reflection, memory, moments, routine, check-in, compare, repeat
 
 Your reflections are personal. Keep store copy privacy-safe and do not overclaim processing, sharing, or outcomes.
 
+## Release identity (listing prep)
+
+- **App name:** ArchiveMe (public consumer name)
+- **iOS bundle ID:** `com.voicememory.mobile`
+- **Support URL:** https://careosapp.co.uk/archiveme-support
+- **Purchases:** unavailable until RevenueCat / store banking setup — do not use subscribe-or-buy CTAs in listing copy while billing is paused.
+- Open **`ios/Runner.xcworkspace`** for iOS archive/upload.
+
+Reviewers can use **Sample Archive** and **Support & feedback** without a backend account.
+
 ## Screenshot themes (suggested)
 
 1. Onboarding — "Remember what keeps repeating"
