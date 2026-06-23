@@ -15,6 +15,8 @@ import '../archive_clarity/archive_clarity_engine.dart';
 import '../archive_clarity/archive_clarity_models.dart';
 import '../then_now/then_now_copy.dart';
 import '../then_now/then_now_engine.dart';
+import '../archive_calendar/archive_calendar_copy.dart';
+import '../archive_calendar/archive_calendar_engine.dart';
 import 'beta_outcomes_copy.dart';
 import 'beta_outcomes_models.dart';
 
@@ -24,11 +26,13 @@ class BetaOutcomesEngine {
     this.firstWeekPathEngine = const FirstWeekPathEngine(),
     this.archiveClarityEngine = const ArchiveClarityEngine(),
     this.thenNowEngine = const ThenNowEngine(),
+    this.archiveCalendarEngine = const ArchiveCalendarEngine(),
   });
 
   final FirstWeekPathEngine firstWeekPathEngine;
   final ArchiveClarityEngine archiveClarityEngine;
   final ThenNowEngine thenNowEngine;
+  final ArchiveCalendarEngine archiveCalendarEngine;
 
   BetaOutcomesSnapshot buildFromJournal({
     required List<JournalEntry> entries,
@@ -65,6 +69,8 @@ class BetaOutcomesEngine {
       ),
     );
     final thenNow = thenNowEngine.buildFromJournal(entries: realEntries);
+    final archiveCalendar =
+        archiveCalendarEngine.buildFromJournal(entries: realEntries);
 
     return build(
       BetaOutcomesInput(
@@ -82,6 +88,9 @@ class BetaOutcomesEngine {
         thenVsNowAvailableLabel: thenNow.hasCard
             ? ThenNowCopy.betaOutcomesYes
             : ThenNowCopy.betaOutcomesNo,
+        archiveCalendarAvailableLabel: archiveCalendar.hasCard
+            ? ArchiveCalendarCopy.betaOutcomesYes
+            : ArchiveCalendarCopy.betaOutcomesNo,
       ),
     );
   }
@@ -121,6 +130,7 @@ class BetaOutcomesEngine {
       firstWeekPathProgressLabel: input.firstWeekPathProgressLabel,
       archiveClarityStageLabel: input.archiveClarityStageLabel,
       thenVsNowAvailableLabel: input.thenVsNowAvailableLabel,
+      archiveCalendarAvailableLabel: input.archiveCalendarAvailableLabel,
     );
   }
 

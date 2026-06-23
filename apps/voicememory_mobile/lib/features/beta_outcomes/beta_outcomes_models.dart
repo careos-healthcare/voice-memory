@@ -28,6 +28,7 @@ class BetaOutcomesSnapshot {
     required this.firstWeekPathProgressLabel,
     required this.archiveClarityStageLabel,
     required this.thenVsNowAvailableLabel,
+    required this.archiveCalendarAvailableLabel,
   });
 
   final int savedMomentCount;
@@ -53,6 +54,7 @@ class BetaOutcomesSnapshot {
   final String firstWeekPathProgressLabel;
   final String archiveClarityStageLabel;
   final String thenVsNowAvailableLabel;
+  final String archiveCalendarAvailableLabel;
 }
 
 /// Local inputs for deterministic beta outcomes — metadata only.
@@ -70,6 +72,7 @@ class BetaOutcomesInput {
     this.firstWeekPathProgressLabel = '',
     this.archiveClarityStageLabel = '',
     this.thenVsNowAvailableLabel = '',
+    this.archiveCalendarAvailableLabel = '',
   });
 
   final int savedMomentCount;
@@ -84,4 +87,5 @@ class BetaOutcomesInput {
   final String firstWeekPathProgressLabel;
   final String archiveClarityStageLabel;
   final String thenVsNowAvailableLabel;
+  final String archiveCalendarAvailableLabel;
 }

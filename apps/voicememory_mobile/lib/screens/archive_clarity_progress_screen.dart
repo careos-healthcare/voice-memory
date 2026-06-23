@@ -9,6 +9,7 @@ import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/archive_clarity/archive_clarity_copy.dart';
 import '../features/then_now/then_now_copy.dart';
+import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/archive_clarity/archive_clarity_engine.dart';
 import '../features/archive_clarity/archive_clarity_models.dart';
 import '../services/app_services.dart';
@@ -164,6 +165,11 @@ class _ArchiveClarityProgressScreenState
             key: const Key('archive_clarity_progress_screen_then_vs_now'),
             onPressed: () => context.push(ThenNowCopy.route),
             child: const Text(ThenNowCopy.viewThenVsNowCta),
+          ),
+          OutlinedButton(
+            key: const Key('archive_clarity_progress_screen_archive_calendar'),
+            onPressed: () => context.push(ArchiveCalendarCopy.route),
+            child: const Text(ArchiveCalendarCopy.openCalendarCta),
           ),
         ],
       ],

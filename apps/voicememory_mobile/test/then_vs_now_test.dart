@@ -200,6 +200,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           thenVsNowVisible: true,
+          archiveCalendarVisible: false,
         ),
       );
 

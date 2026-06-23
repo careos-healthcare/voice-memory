@@ -230,6 +230,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           thenVsNowVisible: false,
+          archiveCalendarVisible: false,
         ),
       );
 
