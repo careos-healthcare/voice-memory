@@ -128,22 +128,16 @@ void main() {
       expect(layout.showInsightQualityLink, isFalse);
     });
 
-    test('1 entry shows action guidance but not evidence or review stack', () {
+    test('1 entry keeps archive home calm without workspace card stack', () {
       final layout = _layout(_distinctWorkEntries(1));
       expect(layout.stage, ArchiveWorkspaceStage.one);
-      expect(layout.showActionPlan, isTrue);
+      expect(layout.showActionPlan, isFalse);
+      expect(layout.needsAttention.show, isFalse);
       expect(layout.evidenceQuality.show, isFalse);
       expect(layout.reviewHistory.show, isFalse);
       expect(layout.showContextInsights, isFalse);
       expect(layout.showEvidenceMap, isFalse);
       expect(layout.showInsightQualityLink, isFalse);
-    });
-
-    test('1 entry keeps needs-attention section without shortcut hint noise', () {
-      final layout = _layout(_distinctWorkEntries(1));
-      expect(layout.needsAttention.show, isTrue);
-      expect(layout.needsAttention.heading, isNull);
-      expect(layout.showAttentionFilters, isFalse);
 
       final hints = ArchiveWorkspaceHintsEngine.build(layout: layout);
       expect(hints.needsAttentionHint, isNull);

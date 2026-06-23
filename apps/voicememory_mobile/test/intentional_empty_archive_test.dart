@@ -45,7 +45,7 @@ void main() {
       ConsumerUiCopy.patternsEarlyStateBody,
     );
     expect(EmptyArchiveCopy.recordThoughtCta, ConsumerUiCopy.patternsEmptyCta);
-    expect(EmptyArchiveCopy.typeInsteadCta, 'Type Instead');
+    expect(EmptyArchiveCopy.typeInsteadCta, 'Type instead');
 
     final label = IntentionalEmptyArchiveContent.semanticsLabel;
     expect(label, contains(EmptyArchiveCopy.intentionalEmptyTitle));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
@@ -154,7 +155,7 @@ void main() {
     await tester.tap(find.text(mainPrompt));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Type Instead'));
+    await tester.tap(find.text(EmptyArchiveCopy.typeInsteadCta));
     await tester.pumpAndSettle();
 
     expect(capturedExtra, mainPrompt);

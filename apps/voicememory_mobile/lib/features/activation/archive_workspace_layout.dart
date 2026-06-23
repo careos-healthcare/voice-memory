@@ -93,7 +93,7 @@ abstract final class ArchiveWorkspaceLayoutEngine {
     final eligibleCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
     final stage = _stageForCount(eligibleCount);
 
-    final showActionPlan = actionPlan.showCard && eligibleCount >= 1;
+    final showActionPlan = actionPlan.showCard && eligibleCount >= 2;
     final showAttentionFilters = attentionFilters.showCard && eligibleCount >= 2;
 
     final needsAttentionHeading = showAttentionFilters ||
