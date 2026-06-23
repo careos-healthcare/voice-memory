@@ -204,6 +204,7 @@ class AppConfig {
 
   /// Consumer-facing legal URLs — not the API backend host.
   static const String privacyUrl = 'https://careosapp.co.uk/archiveme-privacy';
+  static const String supportUrl = 'https://careosapp.co.uk/archiveme-support';
 
   /// In-app terms route (see [TermsScreen]).
   static const String termsRoute = '/terms';

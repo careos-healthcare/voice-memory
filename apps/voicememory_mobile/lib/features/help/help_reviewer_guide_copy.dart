@@ -11,6 +11,7 @@ abstract final class HelpReviewerGuideCopy {
 
   static const openSampleArchiveButton = 'Open Sample Archive';
   static const sampleArchiveHelpLink = 'Help & reviewer guide';
+  static const supportFeedbackLink = 'Support & feedback';
 
   static const sectionWhatTitle = 'What ArchiveMe does';
   static const sectionWhatBulletOne =

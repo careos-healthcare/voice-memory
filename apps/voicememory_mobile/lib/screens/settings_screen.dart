@@ -9,6 +9,7 @@ import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
+import '../features/support/support_feedback_copy.dart';
 import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
 import '../features/fact_ledger/archive_fact.dart';
@@ -159,6 +160,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/help-reviewer-guide'),
+            ),
+            ListTile(
+              key: const Key('settings_support_feedback_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                SupportFeedbackCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                SupportFeedbackCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/support-feedback'),
             ),
             _tile(
               ConsumerUiCopy.restorePurchases,
