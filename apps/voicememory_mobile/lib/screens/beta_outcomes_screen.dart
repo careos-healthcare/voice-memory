@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
+import '../features/beta_invite/beta_invite_store.dart';
 import '../features/pro_interest/pro_interest_store.dart';
 import '../features/pro_interest/pro_interest_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
@@ -54,6 +55,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
         ReturnRitualStore(AppServices.instance.prefs);
     await BetaFeedbackStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
+    await BetaInviteStore.ensureLoaded();
     final entries = await journal.loadAll();
     final watchItems = await watchlist.loadItems();
     final ritual = await returnRitual.load();
@@ -65,6 +67,7 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
         returnRitualSet: ritual?.isValid == true,
         feedbackState: BetaFeedbackStore.cached,
         proInterestState: ProInterestStore.cached,
+        betaInviteCopyStats: BetaInviteStore.cached,
       );
       _loading = false;
     });
@@ -207,6 +210,26 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
                   ? BetaOutcomesCopy.yesLabel
                   : BetaOutcomesCopy.noLabel,
             ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_beta_invite_copied'),
+              label: BetaOutcomesCopy.betaInviteCopiedLabel,
+              value: '${snapshot.betaInviteCopiedCount}',
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_beta_invite_last_variant'),
+              label: BetaOutcomesCopy.betaInviteLastVariantLabel,
+              value: snapshot.betaInviteLastVariantLabel,
+            ),
+            _metricRow(
+              context,
+              key: const Key('beta_outcomes_beta_invite_task_copied'),
+              label: BetaOutcomesCopy.betaInviteTaskCopiedLabel,
+              value: snapshot.betaInviteTaskCopied
+                  ? BetaOutcomesCopy.yesLabel
+                  : BetaOutcomesCopy.noLabel,
+            ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               BetaOutcomesCopy.interpretationSectionTitle,
@@ -241,6 +264,15 @@ class _BetaOutcomesScreenState extends State<BetaOutcomesScreen> {
                 key: const Key('beta_outcomes_open_pro_interest'),
                 onPressed: () => context.push('/pro-interest'),
                 child: const Text(ProInterestCopy.openProInterestButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('beta_outcomes_open_beta_invite_pack'),
+                onPressed: () => context.push('/beta-invite-pack'),
+                child: const Text(BetaOutcomesCopy.openBetaInvitePackButton),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

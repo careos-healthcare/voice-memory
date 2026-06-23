@@ -317,5 +317,14 @@ void main() {
       expect(pack.plainText, isNot(contains('Pro interest')));
       expect(pack.plainText, isNot(contains('ArchiveMe Pro interest')));
     });
+
+    test('export pack excludes beta invite data', () {
+      final pack = ArchiveExportPackEngine.build(
+        entries: _taggedEntries(),
+        exportedAt: DateTime.utc(2026, 6, 15),
+      );
+      expect(pack.plainText, isNot(contains('Invite a beta tester')));
+      expect(pack.plainText, isNot(contains('archiveBetaInviteCopies')));
+    });
   });
 }

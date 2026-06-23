@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
+import '../features/beta_invite/beta_invite_copy.dart';
 import '../features/pro_interest/pro_interest_copy.dart';
 import '../features/beta_feedback/beta_feedback_copy.dart';
 import '../design/archive_mobile_typography.dart';
@@ -103,6 +104,21 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_beta_outcomes'),
                 onPressed: () => context.push('/beta-outcomes'),
                 child: const Text(BetaOutcomesCopy.openBetaOutcomesButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_beta_invite'),
+              title: BetaInviteCopy.supportTitle,
+              body: BetaInviteCopy.supportSubtitle,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_beta_invite_pack'),
+                onPressed: () => context.push('/beta-invite-pack'),
+                child: const Text(BetaInviteCopy.openBetaInviteButton),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

@@ -1,4 +1,5 @@
 import '../beta_feedback/beta_feedback_models.dart';
+import '../beta_invite/beta_invite_copy.dart';
 import '../pro_interest/pro_interest_copy.dart';
 import 'beta_outcomes_models.dart';
 
@@ -29,6 +30,14 @@ abstract final class BetaOutcomesCopy {
   static const proInterestPricingLabel = ProInterestCopy.betaOutcomesPricingLabel;
   static const proInterestNotePresentLabel =
       ProInterestCopy.betaOutcomesNotePresentLabel;
+
+  static const betaInviteCopiedLabel = BetaInviteCopy.betaOutcomesTotalLabel;
+  static const betaInviteLastVariantLabel =
+      BetaInviteCopy.betaOutcomesLastVariantLabel;
+  static const betaInviteTaskCopiedLabel =
+      BetaInviteCopy.betaOutcomesTaskCopiedLabel;
+
+  static const openBetaInvitePackButton = BetaInviteCopy.openBetaInviteButton;
 
   static const yesLabel = 'Yes';
   static const noLabel = 'No';
@@ -116,6 +125,10 @@ abstract final class BetaOutcomesCopy {
         proInterestValueCountLabel,
         proInterestPricingLabel,
         proInterestNotePresentLabel,
+        betaInviteCopiedLabel,
+        betaInviteLastVariantLabel,
+        betaInviteTaskCopiedLabel,
+        openBetaInvitePackButton,
         yesLabel,
         noLabel,
         interpretationNotEnoughEvidence,

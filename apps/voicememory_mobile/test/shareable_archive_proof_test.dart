@@ -302,6 +302,12 @@ void main() {
       expect(proof.shareText, isNot(contains('Pro interest')));
       expect(proof.shareText, isNot(contains('ArchiveMe Pro interest')));
     });
+
+    test('share-safe proof excludes beta invite data', () {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      expect(proof.shareText, isNot(contains('Invite a beta tester')));
+      expect(proof.shareText, isNot(contains('archiveBetaInviteCopies')));
+    });
   });
 
   group('Shareable archive proof card', () {

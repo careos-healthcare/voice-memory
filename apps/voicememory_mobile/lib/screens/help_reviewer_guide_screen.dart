@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
+import '../features/beta_invite/beta_invite_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../theme/app_colors.dart';
@@ -94,6 +95,33 @@ class HelpReviewerGuideScreen extends StatelessWidget {
                 key: const Key('help_reviewer_guide_open_beta_outcomes'),
                 onPressed: () => context.push('/beta-outcomes'),
                 child: const Text(BetaOutcomesCopy.openBetaOutcomesButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                HelpReviewerGuideCopy.helpBetaInviteTitle,
+                key: const Key('help_reviewer_guide_beta_invite_title'),
+                style: ArchiveMobileTypography.cardLabel(context),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              HelpReviewerGuideCopy.helpBetaInviteBody,
+              key: const Key('help_reviewer_guide_beta_invite_body'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('help_reviewer_guide_open_beta_invite_pack'),
+                onPressed: () => context.push('/beta-invite-pack'),
+                child: const Text(BetaInviteCopy.openBetaInviteButton),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
