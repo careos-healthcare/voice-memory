@@ -25,6 +25,7 @@ import '../screens/archive_evidence_context_screen.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/archive_export_screen.dart';
 import '../screens/help_reviewer_guide_screen.dart';
+import '../screens/pro_value_preview_screen.dart';
 import '../screens/support_feedback_screen.dart';
 import '../features/demo/sample_archive_demo_paths.dart';
 import '../screens/sample_archive_screen.dart';
@@ -714,6 +715,11 @@ final GoRouter appRouter = GoRouter(
       path: '/help-reviewer-guide',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const HelpReviewerGuideScreen(),
+    ),
+    GoRoute(
+      path: '/pro-preview',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ProValuePreviewScreen(),
     ),
     GoRoute(
       path: '/about',

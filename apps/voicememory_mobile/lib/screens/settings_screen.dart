@@ -9,6 +9,7 @@ import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
+import '../features/pro/pro_value_preview_copy.dart';
 import '../features/support/support_feedback_copy.dart';
 import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
@@ -174,6 +175,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/support-feedback'),
+            ),
+            ListTile(
+              key: const Key('settings_pro_value_preview_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                ProValuePreviewCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                ProValuePreviewCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/pro-preview'),
             ),
             _tile(
               ConsumerUiCopy.restorePurchases,
