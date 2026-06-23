@@ -271,6 +271,11 @@ void main() {
         isNot(contains('What should ArchiveMe watch for?')),
       );
     });
+
+    test('share-safe proof excludes next evidence plan data', () {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      expect(proof.shareText, isNot(contains('Next evidence plan')));
+    });
   });
 
   group('Shareable archive proof card', () {
