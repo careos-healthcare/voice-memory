@@ -12,6 +12,9 @@ import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
+import '../widgets/insight_feedback_actions.dart';
+import '../features/insight_feedback/insight_feedback_gates.dart';
+import '../features/insight_feedback/insight_feedback_models.dart';
 
 /// Full Then vs Now screen — cautious summaries, no journal text.
 class ThenVsNowScreen extends StatefulWidget {
@@ -195,6 +198,12 @@ class _ThenVsNowScreenState extends State<ThenVsNowScreen> {
             style: ArchiveMobileTypography.listSubtitle(context),
           ),
         ],
+        InsightFeedbackActions(
+          insightId: InsightFeedbackIds.thenVsNow,
+          insightType: InsightFeedbackType.thenVsNow,
+          sourceRoute: ThenNowCopy.route,
+          show: InsightFeedbackGates.showForThenVsNow(hasInsight: result.hasCard),
+        ),
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton(
           key: const Key('then_vs_now_screen_archive_calendar_button'),

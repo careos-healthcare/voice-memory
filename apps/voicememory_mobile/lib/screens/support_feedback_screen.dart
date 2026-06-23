@@ -6,6 +6,7 @@ import '../features/first_week_path/first_week_path_copy.dart';
 import '../features/archive_clarity/archive_clarity_copy.dart';
 import '../features/todays_question/todays_question_copy.dart';
 import '../features/then_now/then_now_copy.dart';
+import '../features/insight_feedback/insight_feedback_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_invite/beta_invite_copy.dart';
@@ -170,6 +171,13 @@ class SupportFeedbackScreen extends StatelessWidget {
                 onPressed: () => context.push(ArchiveCalendarCopy.route),
                 child: const Text(ArchiveCalendarCopy.openCalendarCta),
               ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_insight_feedback'),
+              title: InsightFeedbackCopy.supportSectionTitle,
+              body: InsightFeedbackCopy.supportSectionBody,
             ),
             const SizedBox(height: AppSpacing.sm),
             _section(
