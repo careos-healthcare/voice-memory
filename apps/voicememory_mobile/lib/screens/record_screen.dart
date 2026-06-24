@@ -181,6 +181,8 @@ import '../features/loop_mode/loop_mode_model.dart';
 import '../features/quality/first_insight_specificity_store.dart';
 import '../widgets/loop_mode/loop_mode_progress_card.dart';
 import '../widgets/record/loop_mode_first_handoff_card.dart';
+import '../widgets/record/capacity_yes_record_prompt_card.dart';
+import '../features/capacity_loop/capacity_loop_gates.dart';
 import '../features/retention/next_evidence_reminder_service.dart';
 import '../features/retention/reminder_pre_prompt_coordinator.dart';
 import '../features/retention/return_reason_capture_coordinator.dart';
@@ -3497,7 +3499,24 @@ class _RecordScreenState extends State<RecordScreen> {
                         onViewChanged: () => context.push('/signal-journey'),
                       ),
                       const SizedBox(height: 12),
-                    ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                    ],
+                    if (!_shouldHideCompetingRecordCtas(ui) &&
+                        _activeLoop?.isCapacityYes == true &&
+                        CapacityLoopGates.showRecordPrompt(
+                          capacityWedgeActive: true,
+                          sampleMode: ScreenshotMode.enabled,
+                        ) &&
+                        ui == RecordUiState.ready &&
+                        _mic == RecordingPhase.ready &&
+                        _postSavePattern == null) ...[
+                      CapacityYesRecordPromptCard(
+                        onSaveMoment: () =>
+                            unawaited(_onRecordPressed(source: 'capacity_loop')),
+                        showRecordCta: !_shouldHideCardRecordButtons(ui),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (!_shouldHideCompetingRecordCtas(ui) &&
                         stack.showFirstRecordingHandoff &&
                         _activeLoop != null) ...[
                       LoopModeFirstHandoffCard(

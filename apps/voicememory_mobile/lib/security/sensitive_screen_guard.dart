@@ -43,6 +43,7 @@ abstract class SensitiveRoutes {
     '/archive-clarity-progress',
     '/todays-one-question',
     '/then-vs-now',
+    '/capacity-loop',
     '/archive-calendar',
     '/review-ritual',
     '/milestone-share-cards',
