@@ -83,6 +83,7 @@ class CapacityDecisionOutcomeInput {
     required this.sampleMode,
     required this.records,
     this.pendingEntryId,
+    this.capacityMomentCount = 0,
   });
 
   final int realSavedMomentCount;
@@ -91,6 +92,7 @@ class CapacityDecisionOutcomeInput {
   final bool sampleMode;
   final List<CapacityDecisionOutcomeRecord> records;
   final String? pendingEntryId;
+  final int capacityMomentCount;
 }
 
 class CapacityDecisionOutcomeResult {

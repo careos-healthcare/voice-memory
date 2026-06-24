@@ -100,7 +100,7 @@ void main() {
 
     test('capacity handoff copy unchanged', () {
       expect(LoopModeCopy.capacityHandoffTitle, 'See why you keep saying yes.');
-      expect(LoopModeCopy.capacityHandoffCta, 'Save one moment');
+      expect(LoopModeCopy.capacityHandoffCta, 'Save yes moment');
       expect(LoopModeCopy.capacityHandoffPrompt, contains('say yes'));
     });
 

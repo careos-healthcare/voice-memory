@@ -143,7 +143,7 @@ void main() {
       );
       expect(result.hasCard, isTrue);
       expect(result.showOnArchiveHome, isTrue);
-      expect(result.progressLabel, '0 of 3 saved');
+      expect(result.progressLabel, '0 of 3 yes moments saved');
       expect(result.emptyBody, CapacityThreeMomentCopy.emptyBody);
     });
 
@@ -174,7 +174,7 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(one.progressLabel, '1 of 3 saved');
+      expect(one.progressLabel, '1 of 3 yes moments saved');
 
       final two = engine.buildFromJournal(
         entries: [
@@ -184,7 +184,7 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(two.progressLabel, '2 of 3 saved');
+      expect(two.progressLabel, '2 of 3 yes moments saved');
     });
 
     test('switches CTA to review loop at 3/3', () {
@@ -199,7 +199,7 @@ void main() {
       );
       expect(result.primaryCtaLabel, CapacityThreeMomentCopy.reviewLoopCta);
       expect(result.primaryRoute, CapacityThreeMomentCopy.loopRoute);
-      expect(result.progressLabel, '3 of 3 saved — review your yes loop');
+      expect(result.progressLabel, '3 of 3 yes moments saved — review your yes loop');
       expect(result.showOnArchiveHome, isFalse);
     });
 
@@ -211,7 +211,7 @@ void main() {
       );
       expect(
         CapacityThreeMomentEngine.recordProgressLine(result),
-        'Capacity path: 1 of 3 yes moments saved',
+        '1 of 3 yes moments saved',
       );
     });
 

@@ -53,11 +53,11 @@ Record one honest moment today, then one tomorrow, and see if the app catches th
 Route: ${cohortRouteFor(variant)} ($cohortRouteLabel)''';
       case TestFlightInviteVariant.capacityYes:
         return '''
-ArchiveMe TestFlight — yes-before-capacity loop
+ArchiveMe TestFlight — yes loop wedge
 
 ${LoopAcquisitionCopy.capacityYes.headline}
 
-Open ArchiveMe, record one moment where you said yes before checking capacity, then come back for the next yes moment.
+Save 3 yes moments where you felt pulled to agree, then review your yes loop.
 
 Route: ${cohortRouteFor(variant)} ($cohortRouteLabel)''';
       case TestFlightInviteVariant.generic:

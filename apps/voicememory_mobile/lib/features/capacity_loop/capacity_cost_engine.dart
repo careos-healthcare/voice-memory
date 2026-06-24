@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
+import 'capacity_launch_wedge_gates.dart';
 import 'capacity_cost_copy.dart';
 import 'capacity_cost_models.dart';
 import 'capacity_cost_store.dart';
@@ -36,7 +37,10 @@ class CapacityCostEngine {
 
     return CapacityCostCheckinResult(
       hasCard: true,
-      showOnArchiveHome: true,
+      showOnArchiveHome: CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+        capacityWedgeActive: input.capacityWedgeActive,
+        capacityMomentCount: input.capacityMomentCount,
+      ),
       title: CapacityCostCopy.cardTitle,
       body: CapacityCostCopy.cardBody,
       helperText: CapacityCostCopy.cardHelper,
@@ -61,6 +65,7 @@ class CapacityCostEngine {
     if (realCount <= 0) return CapacityCostCheckinResult.hidden;
 
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
     final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
     final pendingId = findPendingEntryId(
       entries: realEntries,
@@ -76,6 +81,7 @@ class CapacityCostEngine {
         sampleMode: sampleMode,
         records: records,
         pendingEntryId: pendingId,
+        capacityMomentCount: momentCount,
       ),
     );
   }

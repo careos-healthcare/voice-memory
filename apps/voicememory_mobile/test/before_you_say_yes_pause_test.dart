@@ -131,9 +131,25 @@ void main() {
       expect(result.showOnRecord, isTrue);
     });
 
-    test('archive home visible with loop/cost evidence and no pending cost', () {
+    test('archive home hidden during early wedge activation', () {
       final result = engine.buildFromJournal(
         entries: [_capacityEntry('real_0'), _capacityEntry('real_1')],
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+        capacityLoopHasCard: true,
+        costLaterCheckinVisible: false,
+      );
+      expect(result.showOnArchiveHome, isFalse);
+      expect(result.showOnCapacityLoop, isTrue);
+    });
+
+    test('archive home visible with loop/cost evidence after 3 moments', () {
+      final result = engine.buildFromJournal(
+        entries: [
+          _capacityEntry('real_0'),
+          _capacityEntry('real_1'),
+          _capacityEntry('real_2'),
+        ],
         capacityLoopActive: true,
         capacityCohortActive: false,
         capacityLoopHasCard: true,

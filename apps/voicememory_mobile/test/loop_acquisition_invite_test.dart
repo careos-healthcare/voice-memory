@@ -56,9 +56,9 @@ void main() {
     test('capacity variant includes required fields', () {
       final v = LoopAcquisitionCopy.capacityYes;
       expect(v.headline, contains('See why you keep saying yes'));
-      expect(v.subheadline, contains('overcommitted professionals'));
+      expect(v.subheadline, contains('pulled to agree'));
       expect(v.bullets, hasLength(4));
-      expect(v.cta, 'Save one moment');
+      expect(v.cta, 'Save yes moment');
     });
 
     test('prove variant includes required fields', () {

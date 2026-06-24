@@ -187,7 +187,7 @@ void main() {
       expect(result.hasCard, isTrue);
       expect(result.showOnCapacityLoop, isTrue);
       expect(result.showOnArchiveHome, isTrue);
-      expect(result.title, 'Does this yes loop fit?');
+      expect(result.title, 'Does this feel accurate?');
     });
 
     test('hidden on archive home when higher-priority cards pending', () {

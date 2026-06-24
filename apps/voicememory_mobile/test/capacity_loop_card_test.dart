@@ -288,7 +288,7 @@ void main() {
 
       expect(find.byKey(const Key('capacity_loop_card')), findsOneWidget);
       expect(find.text('Your yes loop'), findsOneWidget);
-      expect(find.text('Save a yes moment'), findsOneWidget);
+      expect(find.text('Save yes moment'), findsOneWidget);
       expect(find.text('Built from 3 saved moments'), findsOneWidget);
     });
 

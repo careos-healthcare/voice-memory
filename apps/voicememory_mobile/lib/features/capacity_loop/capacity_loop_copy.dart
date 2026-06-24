@@ -7,8 +7,7 @@ abstract final class CapacityLoopCopy {
   static const archiveHomeRoute = '/archive-belief';
 
   static const title = 'Your yes loop';
-  static const subtitle =
-      'A private card for the pattern behind saying yes with no capacity.';
+  static const subtitle = 'Built from the moments you saved.';
 
   static String evidenceCountLabel(int count) =>
       'Built from $count saved moment${count == 1 ? '' : 's'}';
@@ -57,9 +56,9 @@ abstract final class CapacityLoopCopy {
   static const patternMayHaveChanged =
       'Some moments show the pattern may have changed.';
 
-  static const saveYesMomentCta = 'Save a yes moment';
+  static const saveYesMomentCta = 'Save yes moment';
   static const saveYesMomentShortCta = 'Save yes moment';
-  static const reviewLoopCta = 'Review the loop';
+  static const reviewLoopCta = 'Review your yes loop';
 
   static const recordPromptTitle = 'About to say yes?';
   static const recordPromptBody = 'Save the moment first.';
@@ -69,10 +68,10 @@ abstract final class CapacityLoopCopy {
 
   static const screenshotTitle = 'Your yes loop';
   static const screenshotSubtitle =
-      'A private card built from saved moments — no journal text shown.';
+      'Built from the moments you saved — no journal text shown.';
   static const screenshotEvidence = 'Built from 2 saved moments';
   static const screenshotWhatRepeated =
-      'Your archive is starting to show a yes-before-capacity pattern.';
+      'Your archive is starting to show what pulls you toward yes.';
   static const screenshotCostLater =
       'Cost later may be forming across saved moments.';
   static const screenshotWatchNext = watchNext;

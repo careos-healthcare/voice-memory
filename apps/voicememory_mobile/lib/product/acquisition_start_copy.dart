@@ -4,11 +4,10 @@ abstract class AcquisitionStartCopy {
 
   static const String capacityTitle = 'See why you keep saying yes.';
   static const String capacityBody =
-      'Save one real moment where you said yes before checking capacity. '
-      'After a few moments, ArchiveMe helps show what repeated. '
-      'Private on this device. Not therapy. Not coaching. '
-      'A private evidence archive.';
-  static const String capacityStartCta = 'Save one moment';
+      'Save real moments where you felt pulled to agree. '
+      'After 3 moments, ArchiveMe helps you review what repeated. '
+      'Private on this device.';
+  static const String capacityStartCta = 'Save yes moment';
 
   static const String proveTitle =
       'Catch the moment you do more to feel enough';
@@ -21,4 +20,10 @@ abstract class AcquisitionStartCopy {
   static const String startLoopCta = 'Start this loop';
   static const String startGenericCta = 'Start';
   static const String chooseAnotherLoop = 'Choose another loop';
+
+  static List<String> capacityVisibleStrings() => [
+        capacityTitle,
+        capacityBody,
+        capacityStartCta,
+      ];
 }

@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
+import 'capacity_launch_wedge_gates.dart';
 import 'capacity_cost_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_loop_engine.dart';
@@ -54,6 +55,7 @@ class BeforeYesPauseInput {
     required this.capacityLoopHasCard,
     required this.costLaterCheckinVisible,
     required this.recordedCostCount,
+    this.capacityMomentCount = 0,
   });
 
   final bool capacityWedgeActive;
@@ -63,6 +65,7 @@ class BeforeYesPauseInput {
   final bool capacityLoopHasCard;
   final bool costLaterCheckinVisible;
   final int recordedCostCount;
+  final int capacityMomentCount;
 }
 
 /// Builds before-you-say-yes visibility — capacity wedge only.
@@ -83,7 +86,12 @@ class BeforeYesPauseEngine {
     return BeforeYesPauseResult(
       showOnRecord: true,
       showOnArchiveHome:
-          hasLoopOrCostEvidence && !input.costLaterCheckinVisible,
+          hasLoopOrCostEvidence &&
+              !input.costLaterCheckinVisible &&
+              CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+                capacityWedgeActive: input.capacityWedgeActive,
+                capacityMomentCount: input.capacityMomentCount,
+              ),
       showOnCapacityLoop: hasLoopOrCostEvidence,
       title: BeforeYesCopy.title,
       body: BeforeYesCopy.body,
@@ -107,6 +115,7 @@ class BeforeYesPauseEngine {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realCount = loopEngine.realSavedMomentCount(realEntries);
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
     final recordedCostCount = CapacityCostStore.countWithLaterCost(
       costRecords ?? const [],
     );
@@ -120,6 +129,7 @@ class BeforeYesPauseEngine {
         capacityLoopHasCard: capacityLoopHasCard,
         costLaterCheckinVisible: costLaterCheckinVisible,
         recordedCostCount: recordedCostCount,
+        capacityMomentCount: momentCount,
       ),
     );
   }

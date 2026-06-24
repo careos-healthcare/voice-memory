@@ -4,15 +4,15 @@ import 'capacity_activation_fit_models.dart';
 abstract final class CapacityActivationFitCopy {
   CapacityActivationFitCopy._();
 
-  static const cardTitle = 'Does this yes loop fit?';
+  static const cardTitle = 'Does this feel accurate?';
   static const cardBody =
-      'You saved 3 yes moments. Tell ArchiveMe whether this pattern feels accurate.';
+      'You saved 3 yes moments. Does this loop fit what you noticed?';
 
   static const saveFeedbackCta = 'Save feedback';
   static const skipCta = 'Skip for now';
 
   static const betaTaskLine =
-      'After 3 yes moments, answer whether the loop fits.';
+      'After 3 yes moments, answer whether the loop feels accurate.';
 
   static String labelForResponse(String responseId) => switch (responseId) {
         CapacityActivationFitResponseIds.fits => 'Yes, this fits',

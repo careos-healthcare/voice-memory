@@ -159,6 +159,7 @@ import '../features/capacity_loop/capacity_activation_fit_engine.dart';
 import '../features/capacity_loop/capacity_activation_fit_store.dart';
 import '../features/capacity_loop/capacity_beta_mission_engine.dart';
 import '../features/capacity_loop/capacity_beta_mission_store.dart';
+import '../features/capacity_loop/capacity_launch_wedge_gates.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/capacity_loop_copy.dart';
@@ -2109,6 +2110,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       milestoneCount: realSavedCount >= 1 ? 1 : 0,
       sampleMode: ScreenshotMode.enabled,
     );
+    final capacityWedgeActive =
+        _capacityLoopActive || _capacityCohortActive;
+    final earlyCapacityWedgeSession = CapacityLaunchWedgeGates.inEarlyActivationPhase(
+      capacityWedgeActive: capacityWedgeActive,
+      capacityMomentCount: capacityThreeMoment.capacityMomentCount,
+    );
     return ArchiveHomePriorityInput(
       savedEntryCount: savedCount,
       usableEvidenceCount: layout.eligibleCount,
@@ -2125,9 +2132,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         dismissed: ProValuePreviewDismissStore.isDismissed,
       ),
       showEmptySample: _showEmpty,
-      firstWeekPathVisible: !ScreenshotMode.enabled && realSavedCount < 7,
-      dailyArchiveExerciseVisible: !ScreenshotMode.enabled,
-      archiveClarityProgressVisible: !ScreenshotMode.enabled,
+      firstWeekPathVisible: !ScreenshotMode.enabled &&
+          realSavedCount < 7 &&
+          !earlyCapacityWedgeSession,
+      dailyArchiveExerciseVisible:
+          !ScreenshotMode.enabled && !earlyCapacityWedgeSession,
+      archiveClarityProgressVisible:
+          !ScreenshotMode.enabled && !earlyCapacityWedgeSession,
       capacityThreeMomentActivationVisible: !ScreenshotMode.enabled &&
           capacityThreeMoment.hasCard &&
           capacityThreeMoment.showOnArchiveHome,
@@ -2926,7 +2937,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       proInterestState: ProInterestStore.cached,
       missionRecord: CapacityBetaMissionStore.cached,
     );
-    if (missionResult.showOnArchiveHome) {
+    final capacityThreeMomentOnHome =
+        const CapacityThreeMomentEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+    ).showOnArchiveHome;
+    if (missionResult.showOnArchiveHome && !capacityThreeMomentOnHome) {
       widgets.addAll(_archiveWorkspaceSectionSpacer());
       widgets.add(
         CapacityBetaMissionCard(
