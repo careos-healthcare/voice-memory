@@ -8,6 +8,8 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_models.d
 import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_store.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_engine.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_models.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -90,7 +92,17 @@ Future<void> _resetStore(String stamp) async {
     prefsPath: '/tmp/vm_capacity_cost_prefs_$stamp.json',
   );
   await CapacityCostStore.resetForTest();
+  await CapacityDecisionOutcomeStore.resetForTest();
 }
+
+CapacityDecisionOutcomeRecord _outcomeForEntry(String entryId) =>
+    CapacityDecisionOutcomeRecord(
+      sourceEntryId: entryId,
+      outcomeId: CapacityDecisionOutcomeIds.saidYes,
+      status: CapacityDecisionOutcomeStatus.answered,
+      createdAt: DateTime(2026, 6, 12),
+      updatedAt: DateTime(2026, 6, 12),
+    );
 
 void main() {
   const costEngine = CapacityCostEngine();
@@ -119,15 +131,29 @@ void main() {
 
     test('appears for capacity-yes user with at least one real yes moment', () {
       final entries = [_capacityEntry('real_0')];
+      final outcomes = [_outcomeForEntry('real_0')];
       final result = costEngine.buildFromJournal(
         entries: entries,
         capacityLoopActive: true,
         capacityCohortActive: false,
         records: const [],
+        outcomeRecords: outcomes,
       );
       expect(result.hasCard, isTrue);
       expect(result.title, 'Did that yes cost you later?');
       expect(result.pendingEntryId, 'real_0');
+    });
+
+    test('hidden until outcome is recorded for the moment', () {
+      final entries = [_capacityEntry('real_0')];
+      final result = costEngine.buildFromJournal(
+        entries: entries,
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+        records: const [],
+        outcomeRecords: const [],
+      );
+      expect(result.hasCard, isFalse);
     });
 
     test('hidden in ScreenshotMode', () {
@@ -160,11 +186,16 @@ void main() {
         _capacityEntry('real_0'),
         _capacityEntry('real_1'),
       ];
+      final outcomes = [
+        _outcomeForEntry('real_0'),
+        _outcomeForEntry('real_1'),
+      ];
       final result = costEngine.buildFromJournal(
         entries: entries,
         capacityLoopActive: false,
         capacityCohortActive: false,
         records: const [],
+        outcomeRecords: outcomes,
       );
       expect(result.hasCard, isTrue);
     });
@@ -184,6 +215,7 @@ void main() {
             updatedAt: DateTime(2026, 6, 12),
           ),
         ],
+        outcomeRecords: [_outcomeForEntry('real_0')],
       );
       expect(result.hasCard, isFalse);
     });
@@ -268,6 +300,7 @@ void main() {
 
     test('strengthen prompt when pending check-in and no records', () {
       CapacityCostStore.seedForTest(const []);
+      CapacityDecisionOutcomeStore.seedForTest(const []);
 
       final result = loopEngine.buildFromJournal(
         entries: [
@@ -278,11 +311,12 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
         costRecords: const [],
+        outcomeRecords: const [],
       );
 
       expect(
         result.costLater,
-        CapacityLoopCopy.costLaterStrengthenPrompt,
+        contains(CapacityLoopCopy.outcomeStrengthenPrompt),
       );
     });
   });

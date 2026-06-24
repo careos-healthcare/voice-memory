@@ -86,6 +86,17 @@ class CapacityLoopCard extends StatelessWidget {
               ),
             ),
           ],
+          if (result.outcomeEvidenceLabel.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              result.outcomeEvidenceLabel,
+              key: const Key('capacity_loop_card_outcome_evidence'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           _loopRow(
             context,

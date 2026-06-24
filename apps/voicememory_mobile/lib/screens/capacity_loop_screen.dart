@@ -10,6 +10,7 @@ import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
+import '../features/capacity_loop/capacity_decision_outcome_store.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../services/app_services.dart';
@@ -74,6 +75,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
     }
 
     await CapacityCostStore.ensureLoaded();
+    await CapacityDecisionOutcomeStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -90,6 +92,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         capacityLoopActive: loopActive,
         capacityCohortActive: cohortActive,
         costRecords: CapacityCostStore.cached,
+        outcomeRecords: CapacityDecisionOutcomeStore.cached,
       );
       _beforeYesPause = const BeforeYesPauseEngine().buildFromJournal(
         entries: entries,
@@ -152,6 +155,17 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
           Text(
             result.costEvidenceLabel,
             key: const Key('capacity_loop_screen_cost_evidence'),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+        if (result.outcomeEvidenceLabel.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            result.outcomeEvidenceLabel,
+            key: const Key('capacity_loop_screen_outcome_evidence'),
             style: ArchiveMobileTypography.explanationBody(
               context,
               color: AppColors.textSecondary,

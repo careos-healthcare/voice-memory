@@ -6,6 +6,8 @@ import '../loop_mode/loop_mode_engine.dart';
 import '../loop_mode/loop_mode_model.dart';
 import 'capacity_cost_models.dart';
 import 'capacity_cost_store.dart';
+import 'capacity_decision_outcome_models.dart';
+import 'capacity_decision_outcome_store.dart';
 import 'capacity_loop_copy.dart';
 import 'capacity_loop_gates.dart';
 import 'capacity_loop_models.dart';
@@ -84,6 +86,7 @@ class CapacityLoopEngine {
       repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
       watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
       costEvidenceLabel: _costEvidenceLabel(input.costCheckinRecordedCount),
+      outcomeEvidenceLabel: _outcomeEvidenceLabel(input),
     );
   }
 
@@ -93,6 +96,7 @@ class CapacityLoopEngine {
     required bool capacityCohortActive,
     bool sampleMode = false,
     List<CapacityCostRecord>? costRecords,
+    List<CapacityDecisionOutcomeRecord>? outcomeRecords,
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realCount = BetaFeedbackEngine.realEntryCountFor(realEntries);
@@ -101,8 +105,11 @@ class CapacityLoopEngine {
     final theme = _topRecurringTheme(eligible);
     final costCount = _countCostSignals(eligible);
     final records = costRecords ?? CapacityCostStore.cached;
+    final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
     final checkinCount = CapacityCostStore.countWithLaterCost(records);
-    final pendingCheckin = _findPendingCostCheckin(realEntries, records);
+    final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(outcomes);
+    final pendingCheckin = _findPendingCostCheckin(realEntries, records, outcomes);
+    final pendingOutcome = _findPendingOutcome(realEntries, outcomes);
 
     return build(
       CapacityLoopInput(
@@ -116,6 +123,10 @@ class CapacityLoopEngine {
         triggerSignalCount: capacityCount,
         costCheckinRecordedCount: checkinCount,
         hasPendingCostCheckin: pendingCheckin != null,
+        outcomeRecordedCount: outcomeCount,
+        hasPendingOutcome: pendingOutcome != null,
+        hasPatternChangeOutcomes:
+            CapacityDecisionOutcomeStore.hasAnyPatternChange(outcomes),
       ),
     );
   }
@@ -134,11 +145,25 @@ class CapacityLoopEngine {
   String? _findPendingCostCheckin(
     List<JournalEntry> entries,
     List<CapacityCostRecord> records,
+    List<CapacityDecisionOutcomeRecord> outcomes,
   ) {
     final ids = eligibleCapacityEntryIds(entries);
     if (ids.isEmpty) return null;
     for (final id in ids.reversed) {
+      if (!CapacityDecisionOutcomeStore.hasRecordFor(id, outcomes)) continue;
       if (!CapacityCostStore.hasRecordFor(id, records)) return id;
+    }
+    return null;
+  }
+
+  String? _findPendingOutcome(
+    List<JournalEntry> entries,
+    List<CapacityDecisionOutcomeRecord> outcomes,
+  ) {
+    final ids = eligibleCapacityEntryIds(entries);
+    if (ids.isEmpty) return null;
+    for (final id in ids.reversed) {
+      if (!CapacityDecisionOutcomeStore.hasRecordFor(id, outcomes)) return id;
     }
     return null;
   }
@@ -184,6 +209,7 @@ class CapacityLoopEngine {
       repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
       watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
       costEvidenceLabel: _costEvidenceLabel(input.costCheckinRecordedCount),
+      outcomeEvidenceLabel: _outcomeEvidenceLabel(input),
     );
   }
 
@@ -208,6 +234,7 @@ class CapacityLoopEngine {
         repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
         watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
         costEvidenceLabel: '',
+        outcomeEvidenceLabel: '',
       );
 
   String _whatRepeated(CapacityLoopInput input) {
@@ -222,6 +249,24 @@ class CapacityLoopEngine {
   }
 
   String _costLater(CapacityLoopInput input) {
+    final outcomeLine = _outcomeSummary(input);
+    final costLine = _costLaterOnly(input);
+    if (outcomeLine.isEmpty) return costLine;
+    if (costLine.isEmpty) return outcomeLine;
+    return '$outcomeLine $costLine';
+  }
+
+  String _outcomeSummary(CapacityLoopInput input) {
+    if (input.outcomeRecordedCount > 0) {
+      return CapacityLoopCopy.outcomeMarkedCount(input.outcomeRecordedCount);
+    }
+    if (input.hasPendingOutcome) {
+      return CapacityLoopCopy.outcomeStrengthenPrompt;
+    }
+    return '';
+  }
+
+  String _costLaterOnly(CapacityLoopInput input) {
     if (input.costCheckinRecordedCount >= 2) {
       return CapacityLoopCopy.costLaterRecordedCount(
         input.costCheckinRecordedCount,
@@ -245,6 +290,17 @@ class CapacityLoopEngine {
   static String _costEvidenceLabel(int count) {
     if (count <= 0) return '';
     return CapacityLoopCopy.costEvidenceOnScreen(count);
+  }
+
+  static String _outcomeEvidenceLabel(CapacityLoopInput input) {
+    if (input.outcomeRecordedCount <= 0) return '';
+    final lines = <String>[
+      CapacityLoopCopy.outcomesMarkedAfterPause(input.outcomeRecordedCount),
+    ];
+    if (input.hasPatternChangeOutcomes) {
+      lines.add(CapacityLoopCopy.patternMayHaveChanged);
+    }
+    return lines.join(' ');
   }
 
   int _countCapacityEvidence(List<JournalEntry> eligible) {

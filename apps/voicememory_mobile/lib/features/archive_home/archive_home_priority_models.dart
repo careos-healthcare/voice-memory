@@ -15,6 +15,7 @@ enum ArchiveHomeSectionId {
   dailyArchiveExercise,
   archiveClarityProgress,
   capacityLoop,
+  capacityDecisionOutcome,
   capacityCostLaterCheckin,
   beforeYouSayYesPause,
   thenVsNow,
@@ -46,6 +47,7 @@ class ArchiveHomePriorityInput {
     required this.dailyArchiveExerciseVisible,
     required this.archiveClarityProgressVisible,
     required this.capacityLoopVisible,
+    required this.capacityDecisionOutcomeVisible,
     required this.capacityCostLaterCheckinVisible,
     required this.beforeYouSayYesPauseVisible,
     required this.thenVsNowVisible,
@@ -66,6 +68,7 @@ class ArchiveHomePriorityInput {
   final bool dailyArchiveExerciseVisible;
   final bool archiveClarityProgressVisible;
   final bool capacityLoopVisible;
+  final bool capacityDecisionOutcomeVisible;
   final bool capacityCostLaterCheckinVisible;
   final bool beforeYouSayYesPauseVisible;
   final bool thenVsNowVisible;

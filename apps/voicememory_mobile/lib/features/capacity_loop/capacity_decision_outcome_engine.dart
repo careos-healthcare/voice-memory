@@ -1,16 +1,13 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
-import 'capacity_cost_copy.dart';
-import 'capacity_cost_models.dart';
-import 'capacity_cost_store.dart';
+import 'capacity_decision_outcome_copy.dart';
 import 'capacity_decision_outcome_models.dart';
-import 'capacity_decision_outcome_store.dart';
 import 'capacity_decision_outcome_store.dart';
 import 'capacity_loop_engine.dart';
 
-/// Builds later-cost check-in visibility and pending targets — local only.
-class CapacityCostEngine {
-  const CapacityCostEngine({
+/// Builds decision outcome visibility and pending targets — local only.
+class CapacityDecisionOutcomeEngine {
+  const CapacityDecisionOutcomeEngine({
     this.loopEngine = const CapacityLoopEngine(),
   });
 
@@ -18,58 +15,55 @@ class CapacityCostEngine {
 
   static const minCapacityEvidenceForGeneric = 2;
 
-  CapacityCostCheckinResult build(CapacityCostInput input) {
+  CapacityDecisionOutcomeResult build(CapacityDecisionOutcomeInput input) {
     if (input.sampleMode || input.realSavedMomentCount <= 0) {
-      return CapacityCostCheckinResult.hidden;
+      return CapacityDecisionOutcomeResult.hidden;
     }
 
-    if (!_shouldOfferCheckin(input)) {
-      return CapacityCostCheckinResult.hidden;
+    if (!_shouldOfferOutcome(input)) {
+      return CapacityDecisionOutcomeResult.hidden;
     }
 
     final pendingId = input.pendingEntryId?.trim();
     if (pendingId == null || pendingId.isEmpty) {
-      return CapacityCostCheckinResult.hidden;
+      return CapacityDecisionOutcomeResult.hidden;
     }
 
-    final recordedCount = CapacityCostStore.countWithLaterCost(input.records);
+    final recordedCount =
+        CapacityDecisionOutcomeStore.countWithOutcome(input.records);
 
-    return CapacityCostCheckinResult(
+    return CapacityDecisionOutcomeResult(
       hasCard: true,
       showOnArchiveHome: true,
-      title: CapacityCostCopy.cardTitle,
-      body: CapacityCostCopy.cardBody,
-      helperText: CapacityCostCopy.cardHelper,
-      primaryCtaLabel: CapacityCostCopy.answerCheckinCta,
-      secondaryCtaLabel: CapacityCostCopy.skipCta,
+      title: CapacityDecisionOutcomeCopy.cardTitle,
+      body: CapacityDecisionOutcomeCopy.cardBody,
+      helperText: CapacityDecisionOutcomeCopy.cardHelper,
+      primaryCtaLabel: CapacityDecisionOutcomeCopy.saveOutcomeCta,
+      secondaryCtaLabel: CapacityDecisionOutcomeCopy.skipCta,
       pendingEntryId: pendingId,
-      recordedCostCount: recordedCount,
-      earlyStateBody: CapacityCostCopy.earlyStateBody,
+      recordedOutcomeCount: recordedCount,
     );
   }
 
-  CapacityCostCheckinResult buildFromJournal({
+  CapacityDecisionOutcomeResult buildFromJournal({
     required List<JournalEntry> entries,
     required bool capacityLoopActive,
     required bool capacityCohortActive,
-    required List<CapacityCostRecord> records,
-    List<CapacityDecisionOutcomeRecord>? outcomeRecords,
+    required List<CapacityDecisionOutcomeRecord> records,
     bool sampleMode = false,
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realCount = loopEngine.realSavedMomentCount(realEntries);
-    if (realCount <= 0) return CapacityCostCheckinResult.hidden;
+    if (realCount <= 0) return CapacityDecisionOutcomeResult.hidden;
 
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
-    final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
     final pendingId = findPendingEntryId(
       entries: realEntries,
       records: records,
-      outcomeRecords: outcomes,
     );
 
     return build(
-      CapacityCostInput(
+      CapacityDecisionOutcomeInput(
         realSavedMomentCount: realCount,
         capacityEvidenceCount: capacityCount,
         capacityWedgeActive: capacityLoopActive || capacityCohortActive,
@@ -82,22 +76,18 @@ class CapacityCostEngine {
 
   String? findPendingEntryId({
     required List<JournalEntry> entries,
-    required List<CapacityCostRecord> records,
-    required List<CapacityDecisionOutcomeRecord> outcomeRecords,
+    required List<CapacityDecisionOutcomeRecord> records,
   }) {
     final eligible = loopEngine.eligibleCapacityEntryIds(entries);
     if (eligible.isEmpty) return null;
 
     for (final id in eligible.reversed) {
-      if (!CapacityDecisionOutcomeStore.hasRecordFor(id, outcomeRecords)) {
-        continue;
-      }
-      if (!CapacityCostStore.hasRecordFor(id, records)) return id;
+      if (!CapacityDecisionOutcomeStore.hasRecordFor(id, records)) return id;
     }
     return null;
   }
 
-  bool _shouldOfferCheckin(CapacityCostInput input) {
+  bool _shouldOfferOutcome(CapacityDecisionOutcomeInput input) {
     if (input.capacityEvidenceCount <= 0) return false;
     if (input.capacityWedgeActive) return true;
     return input.capacityEvidenceCount >= minCapacityEvidenceForGeneric;

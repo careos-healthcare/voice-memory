@@ -153,6 +153,7 @@ ArchiveHomePriorityInput _priorityInput({
       dailyArchiveExerciseVisible: true,
       archiveClarityProgressVisible: true,
       capacityLoopVisible: false,
+      capacityDecisionOutcomeVisible: false,
       capacityCostLaterCheckinVisible: false,
       beforeYouSayYesPauseVisible: false,
       thenVsNowVisible: thenVsNowVisible,
