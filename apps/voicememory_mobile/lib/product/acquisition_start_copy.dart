@@ -2,12 +2,21 @@
 abstract class AcquisitionStartCopy {
   AcquisitionStartCopy._();
 
-  static const String capacityTitle = 'See why you keep saying yes.';
+  static const String capacityTitle = 'Catch the yes before it costs you.';
   static const String capacityBody =
-      'Save real moments where you felt pulled to agree. '
-      'After 3 moments, ArchiveMe helps you review what repeated. '
-      'Private on this device.';
+      'ArchiveMe helps you spot why you keep agreeing before checking your capacity.';
+  static const List<String> capacitySteps = [
+    'Save a yes moment',
+    'See what pulled you in',
+    'Review what changed',
+  ];
+  static const String capacityProductLine =
+      'ArchiveMe is a private archive for patterns that repeat.';
   static const String capacityStartCta = 'Save yes moment';
+  static const String capacityHowItWorksCta = 'How it works';
+  static const String capacityHowItWorksBody =
+      'Save real yes moments when they happen. Mark what pulled you toward yes. '
+      'After a few moments, review what keeps repeating — privately on this device.';
 
   static const String proveTitle =
       'Catch the moment you do more to feel enough';
@@ -24,6 +33,10 @@ abstract class AcquisitionStartCopy {
   static List<String> capacityVisibleStrings() => [
         capacityTitle,
         capacityBody,
+        ...capacitySteps,
+        capacityProductLine,
         capacityStartCta,
+        capacityHowItWorksCta,
+        capacityHowItWorksBody,
       ];
 }

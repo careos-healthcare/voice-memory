@@ -116,7 +116,7 @@ void main() {
       );
       expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle);
       expect(one.body, contains('1 of 3'));
-      expect(one.body.toLowerCase(), contains('next real moment'));
+      expect(one.body.toLowerCase(), contains('next real request'));
 
       final two = engine.buildFromJournal(
         entries: [
@@ -128,7 +128,7 @@ void main() {
         surface: CapacityReturnTriggerSurface.archiveHome,
       );
       expect(two.body, contains('2 of 3'));
-      expect(two.body.toLowerCase(), contains('next real moment'));
+      expect(two.body.toLowerCase(), contains('next real request'));
     });
 
     test('hides archive home return trigger at 3/3', () {
@@ -311,7 +311,7 @@ void main() {
       );
     });
 
-    testWidgets('routes primary to record', (tester) async {
+    testWidgets('routes secondary to record on completion card', (tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -340,11 +340,41 @@ void main() {
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       await tester.tap(
-        find.byKey(const Key('capacity_return_trigger_card_primary_button')),
+        find.byKey(const Key('capacity_return_trigger_card_secondary_button')),
       );
       await tester.pumpAndSettle();
 
       expect(find.text('record screen'), findsOneWidget);
+    });
+
+    testWidgets('primary dismisses completion card', (tester) async {
+      var dismissed = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: CapacityReturnTriggerCard(
+              result: engine.build(
+                const CapacityReturnTriggerInput(
+                  sampleMode: false,
+                  screenshotMode: false,
+                  capacityWedgeActive: true,
+                  capacityMomentCount: 1,
+                  surface: CapacityReturnTriggerSurface.completion,
+                ),
+              ),
+              onPrimaryDismiss: () => dismissed = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(
+        find.byKey(const Key('capacity_return_trigger_card_primary_button')),
+      );
+      await tester.pump();
+
+      expect(dismissed, isTrue);
     });
   });
 

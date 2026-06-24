@@ -6,19 +6,19 @@ Docs-only readiness pack for the next TestFlight cohort. No new product features
 
 Test whether users understand and complete the capacity-yes wedge:
 
-**See why you keep saying yes → Save 3 yes moments → Review your yes loop → Tell us if it fits.**
+**Catch the yes before it costs you → Save a yes moment → See what pulled you in → Review what changed → Tell us if it fits.**
 
 This beta is evidence for wedge clarity and completion — not for paid conversion yet.
 
 ## Core promise
 
-**See why you keep saying yes.**
+**Catch the yes before it costs you.**
 
 First-session path:
 
-1. Save your first yes moment
-2. Save 3 yes moments
-3. Review your yes loop
+1. Save a yes moment
+2. See what pulled you in
+3. Review what changed
 4. Tell us if it fits
 
 ## Beta mission (tester-facing)

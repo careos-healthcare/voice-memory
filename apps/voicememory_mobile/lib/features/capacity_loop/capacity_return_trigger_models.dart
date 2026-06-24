@@ -31,6 +31,7 @@ class CapacityReturnTriggerResult {
     required this.body,
     required this.primaryCtaLabel,
     required this.primaryRoute,
+    required this.primaryDismisses,
     required this.secondaryCtaLabel,
     required this.secondaryRoute,
     required this.showSecondary,
@@ -46,6 +47,7 @@ class CapacityReturnTriggerResult {
     body: '',
     primaryCtaLabel: '',
     primaryRoute: '',
+    primaryDismisses: false,
     secondaryCtaLabel: '',
     secondaryRoute: '',
     showSecondary: false,
@@ -60,6 +62,7 @@ class CapacityReturnTriggerResult {
   final String body;
   final String primaryCtaLabel;
   final String primaryRoute;
+  final bool primaryDismisses;
   final String secondaryCtaLabel;
   final String secondaryRoute;
   final bool showSecondary;

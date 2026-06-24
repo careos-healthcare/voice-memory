@@ -115,7 +115,7 @@ void main() {
         BetaFeedbackResponseCopy.suggestedFixClarifyPromise,
       );
       expect(result.recommendedResponseSummary, contains('onboarding copy'));
-      expect(result.recommendedResponseSummary, contains('See why you keep saying yes'));
+      expect(result.recommendedResponseSummary, contains('Catch the yes before it costs you'));
     });
 
     test('first moment blocked maps to record/start flow fix', () {

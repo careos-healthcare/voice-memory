@@ -39,7 +39,7 @@ abstract final class BetaFeedbackResponseCopy {
       'Quick capture may still feel like extra workload.';
 
   static const unclearPromiseChange =
-      'Tighten onboarding copy. Show: See why you keep saying yes. Save 3 yes moments. Review your yes loop. Do not add more explanation.';
+      'Tighten onboarding copy. Show: Catch the yes before it costs you. Save a yes moment. See what pulled you in. Review what changed. Do not add more explanation.';
   static const firstMomentBlockedChange =
       'Fix record/start flow. Make CTA Save yes moment. Show prompt: What are you about to agree to, and what makes it hard to pause? Reduce competing cards before first save.';
   static const activationDropoffChange =

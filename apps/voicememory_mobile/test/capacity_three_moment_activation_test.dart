@@ -186,7 +186,7 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(one.title, 'Come back for the next yes moment');
+      expect(one.title, 'Waiting for the next yes moment');
       expect(one.subtitle, contains('1 of 3'));
       expect(one.progressLabel, isEmpty);
       expect(one.showReviewSecondary, isTrue);
@@ -227,7 +227,7 @@ void main() {
       );
       expect(
         CapacityThreeMomentEngine.recordProgressLine(result),
-        'Next goal: save the next real yes moment.',
+        'Use this when a real yes moment happens again.',
       );
     });
 

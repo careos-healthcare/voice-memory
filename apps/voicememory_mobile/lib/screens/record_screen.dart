@@ -4072,7 +4072,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                   const SizedBox(height: 16),
                                   CapacityReturnTriggerCard(
                                     result: returnTrigger,
-                                    onSecondary: _resetPostSaveToReady,
+                                    onPrimaryDismiss: _resetPostSaveToReady,
                                   ),
                                 ],
                               );
