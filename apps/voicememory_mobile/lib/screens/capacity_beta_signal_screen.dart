@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
+import '../features/archive_daily_change/archive_daily_change_store.dart';
+import '../features/beta_feedback/beta_feedback_response_copy.dart';
+import '../features/beta_feedback/beta_feedback_response_engine.dart';
+import '../features/beta_feedback/beta_feedback_response_models.dart';
+import '../features/capacity_loop/capacity_activation_fit_models.dart';
 import '../features/capacity_loop/capacity_activation_fit_store.dart';
 import '../features/capacity_loop/capacity_beta_mission_copy.dart';
 import '../features/capacity_loop/capacity_beta_signal_copy.dart';
@@ -40,6 +45,7 @@ class CapacityBetaSignalScreen extends StatefulWidget {
 
 class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
   CapacityBetaSignalSnapshot? _snapshot;
+  BetaFeedbackResponseResult? _feedbackResponse;
   bool _loading = true;
 
   @override
@@ -56,6 +62,7 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
     await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
+    await ArchiveDailyChangeStore.ensureLoaded();
 
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -63,6 +70,8 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
     final capacityLoopActive = loop?.isCapacityYes ?? false;
     final capacityCohortActive =
         cohort?.cohortId == AcquisitionCohortId.capacityYesDirect;
+    final capacityWedgeActive = capacityLoopActive || capacityCohortActive;
+    final fitRecord = CapacityActivationFitStore.cached;
 
     if (!mounted) return;
     setState(() {
@@ -70,9 +79,19 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
         entries: entries,
         capacityLoopActive: capacityLoopActive,
         capacityCohortActive: capacityCohortActive,
-        fitRecord: CapacityActivationFitStore.cached,
+        fitRecord: fitRecord,
         boundarySelection: CapacityBoundaryResponseStore.cached,
         proInterestState: ProInterestStore.cached,
+      );
+      _feedbackResponse = const BetaFeedbackResponseEngine().buildFromBetaSnapshot(
+        snapshot: _snapshot!,
+        capacityWedgeActive: capacityWedgeActive,
+        fitIsPositive: _fitIsPositive(fitRecord),
+        fitIsUnclear: _fitIsUnclear(fitRecord),
+        fitNotAnswered:
+            BetaFeedbackResponseEngine.fitNotAnsweredFromRecord(fitRecord),
+        dailyChangeDismissed:
+            ArchiveDailyChangeStore.cached.dismissedAt != null,
       );
       _loading = false;
     });
@@ -260,6 +279,39 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
                 ),
               ),
             ],
+            if (_feedbackResponse != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              _sectionTitle(
+                context,
+                BetaFeedbackResponseCopy.sectionTitle,
+                key: const Key('capacity_beta_feedback_response_section'),
+              ),
+              if (_feedbackResponse!.hasRecommendation) ...[
+                Text(
+                  _feedbackResponse!.suggestedNextFixLabel,
+                  key: const Key('capacity_beta_feedback_suggested_fix'),
+                  style: ArchiveMobileTypography.cardLabel(context),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  _feedbackResponse!.localBetaSignalLabel,
+                  key: const Key('capacity_beta_feedback_local_signal'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ] else ...[
+                Text(
+                  BetaFeedbackResponseCopy.notEnoughEvidence,
+                  key: const Key('capacity_beta_feedback_not_enough_evidence'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ],
             const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
@@ -293,6 +345,22 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
         ),
       ),
     );
+  }
+
+  static bool _fitIsPositive(CapacityActivationFitRecord? record) {
+    if (record == null || record.isSkipped || !record.isAnswered) {
+      return false;
+    }
+    return record.responseId == CapacityActivationFitResponseIds.fits ||
+        record.responseId == CapacityActivationFitResponseIds.partly;
+  }
+
+  static bool _fitIsUnclear(CapacityActivationFitRecord? record) {
+    if (record == null || record.isSkipped || !record.isAnswered) {
+      return true;
+    }
+    return record.responseId == CapacityActivationFitResponseIds.notYet ||
+        record.responseId == CapacityActivationFitResponseIds.tooEarly;
   }
 
   static Widget _sectionTitle(
