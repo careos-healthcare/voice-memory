@@ -197,6 +197,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
         boundarySelection: CapacityBoundaryResponseStore.cached,
+        activationFitRecord: CapacityActivationFitStore.cached,
         weeklyReviewAvailable: _weeklyReview?.showOnCapacityLoop ?? false,
       );
       _loading = false;

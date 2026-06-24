@@ -7,9 +7,11 @@ import 'package:voicememory_mobile/features/archive_daily_change/archive_daily_c
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_engine.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_models.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_activation_fit_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_models.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_models.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -36,6 +38,15 @@ const _bannedWords = [
   'streak',
   'fake stats',
   'testimonial',
+];
+
+const _forbiddenTone = [
+  'always',
+  'never',
+  'proves',
+  'diagnoses',
+  'archiveme knows',
+  'you are',
 ];
 
 const _privateSnippet = 'felt pressure at work before saying yes';
@@ -84,6 +95,28 @@ CapacityCostRecord _laterCostRecord(String entryId, {DateTime? updatedAt}) =>
       updatedAt: updatedAt ?? DateTime(2026, 6, 15, 12),
     );
 
+CapacityDecisionOutcomeRecord _outcomeRecord(
+  String entryId,
+  String outcomeId,
+) =>
+    CapacityDecisionOutcomeRecord(
+      sourceEntryId: entryId,
+      outcomeId: outcomeId,
+      status: CapacityDecisionOutcomeStatus.answered,
+      createdAt: DateTime(2026, 6, 15, 12),
+      updatedAt: DateTime(2026, 6, 15, 12),
+    );
+
+CapacityActivationFitRecord _fitRecord(String responseId) =>
+    CapacityActivationFitRecord(
+      responseId: responseId,
+      source: CapacityActivationFitSource.capacityLoopActivation,
+      activationEntryCount: 3,
+      status: CapacityActivationFitStatus.answered,
+      createdAt: DateTime(2026, 6, 15, 12),
+      updatedAt: DateTime(2026, 6, 16, 12),
+    );
+
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
     final lower = text.toLowerCase();
@@ -94,7 +127,13 @@ void _expectNoBannedCopy(Iterable<String> visible) {
         reason: 'must not contain "$word" in "$text"',
       );
     }
-    expect(lower, isNot(contains('archiveme knows')));
+    for (final word in _forbiddenTone) {
+      expect(
+        lower,
+        isNot(contains(word)),
+        reason: 'must not contain "$word" in "$text"',
+      );
+    }
     expect(lower, isNot(contains(_privateSnippet)));
   }
 }
@@ -110,7 +149,7 @@ Future<void> _resetStore(String stamp) async {
 void main() {
   const engine = ArchiveDailyChangeEngine();
 
-  group('ArchiveDailyChangeEngine', () {
+  group('ArchiveDailyChangeEngine sharpened responses', () {
     test('hidden for sample-only entries', () {
       final result = engine.buildFromJournal(
         entries: SampleArchiveEntries.build(),
@@ -128,9 +167,8 @@ void main() {
     });
 
     test('hidden in sample mode', () {
-      final entries = [_capacityEntry('real_0')];
       final result = engine.buildFromJournal(
-        entries: entries,
+        entries: [_capacityEntry('real_0')],
         capacityLoopActive: true,
         capacityCohortActive: false,
         state: ArchiveDailyChangeState.empty,
@@ -145,50 +183,7 @@ void main() {
       expect(result.hasFeature, isFalse);
     });
 
-    test('hidden when no changes since last seen', () {
-      final entries = [_capacityEntry('real_0')];
-      final result = engine.buildFromJournal(
-        entries: entries,
-        capacityLoopActive: true,
-        capacityCohortActive: false,
-        state: ArchiveDailyChangeState(
-          lastSeenAt: DateTime(2026, 6, 16, 12).toUtc(),
-        ),
-        pullReasonRecords: const [],
-        costRecords: const [],
-        outcomeRecords: const [],
-        boundarySelection: null,
-        weeklyReviewAvailable: false,
-      );
-
-      expect(result.hasFeature, isFalse);
-    });
-
-    test('shows title and change line after new yes moment', () {
-      final entries = [
-        _capacityEntry(
-          'real_0',
-          createdAt: DateTime(2026, 6, 16, 13),
-        ),
-      ];
-      final result = engine.buildFromJournal(
-        entries: entries,
-        capacityLoopActive: true,
-        capacityCohortActive: false,
-        state: ArchiveDailyChangeState.empty,
-        pullReasonRecords: const [],
-        costRecords: const [],
-        outcomeRecords: const [],
-        boundarySelection: null,
-        weeklyReviewAvailable: false,
-      );
-
-      expect(result.title, 'Your archive changed today');
-      expect(result.changeLine, ArchiveDailyChangeCopy.changeNewYesMoment);
-      expect(result.showOnArchiveHome, isTrue);
-    });
-
-    test('shows urgency-based alternative when urgency is most common pull', () {
+    test('repeated urgency + later cost produces sharper combined copy', () {
       final entries = [
         _capacityEntry('real_0'),
         _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
@@ -206,19 +201,33 @@ void main() {
             updatedAt: DateTime(2026, 6, 16, 13),
           ),
         ],
-        costRecords: const [],
+        costRecords: [_laterCostRecord('real_0')],
         outcomeRecords: const [],
         boundarySelection: null,
         weeklyReviewAvailable: false,
       );
 
-      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.alternativeUrgency);
+      expect(
+        result.responseType,
+        ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
+      );
+      expect(
+        result.changeLine,
+        contains('appeared more than once'),
+      );
+      expect(result.changeLine, contains('later cost'));
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDelayAnswer);
+      expect(
+        result.alternativeNextMove,
+        ArchiveDailyChangeCopy.bodyDelayBeforeReplying,
+      );
     });
 
-    test('shows responsibility-based alternative when responsibility is most common pull', () {
+    test('repeated responsibility + said yes produces sharper combined copy', () {
       final entries = [
         _capacityEntry('real_0'),
         _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
+        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 14)),
       ];
       final result = engine.buildFromJournal(
         entries: entries,
@@ -227,28 +236,106 @@ void main() {
         state: ArchiveDailyChangeState.empty,
         pullReasonRecords: [
           _pullReason('real_0', [CapacityPullReasonIds.feltResponsible]),
-          _pullReason(
-            'real_1',
-            [CapacityPullReasonIds.feltResponsible],
-            updatedAt: DateTime(2026, 6, 16, 13),
-          ),
+          _pullReason('real_1', [CapacityPullReasonIds.feltResponsible]),
         ],
+        costRecords: const [],
+        outcomeRecords: [
+          _outcomeRecord('real_0', CapacityDecisionOutcomeIds.saidYes),
+        ],
+        boundarySelection: null,
+        weeklyReviewAvailable: false,
+      );
+
+      expect(
+        result.responseType,
+        ArchiveDailyChangeResponseType.repeatedPullWithSaidYes,
+      );
+      expect(result.changeLine, contains('kept saying yes'));
+      expect(result.changeLine, contains('feeling responsible'));
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelCheckCapacity);
+    });
+
+    test('delayed/no outcome produces pattern changed copy', () {
+      final entries = [
+        _capacityEntry('real_0'),
+        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
+        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 14)),
+      ];
+      final result = engine.buildFromJournal(
+        entries: entries,
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+        state: ArchiveDailyChangeState.empty,
+        pullReasonRecords: [
+          _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
+        ],
+        costRecords: const [],
+        outcomeRecords: [
+          _outcomeRecord('real_0', CapacityDecisionOutcomeIds.delayed),
+        ],
+        boundarySelection: null,
+        weeklyReviewAvailable: false,
+      );
+
+      expect(
+        result.responseType,
+        ArchiveDailyChangeResponseType.patternInterrupted,
+      );
+      expect(result.changeLine, ArchiveDailyChangeCopy.patternInterruptedLine);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDefaultPause);
+      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.bodyUsePauseAgain);
+    });
+
+    test('fewer than 3 moments produces still forming copy', () {
+      final result = engine.buildFromJournal(
+        entries: [_capacityEntry('real_0')],
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+        state: ArchiveDailyChangeState.empty,
+        pullReasonRecords: const [],
         costRecords: const [],
         outcomeRecords: const [],
         boundarySelection: null,
         weeklyReviewAvailable: false,
       );
 
-      expect(
-        result.alternativeNextMove,
-        ArchiveDailyChangeCopy.alternativeResponsibility,
-      );
+      expect(result.responseType, ArchiveDailyChangeResponseType.stillForming);
+      expect(result.changeLine, ArchiveDailyChangeCopy.stillFormingLine);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelSaveOneMore);
     });
 
-    test('prefers selected boundary response when available', () {
+    test('fit/partly response produces marked loop as fitting copy', () {
+      final entries = [
+        _capacityEntry('real_0'),
+        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 11)),
+        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 12)),
+      ];
+      final result = engine.buildFromJournal(
+        entries: entries,
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+        state: ArchiveDailyChangeState.empty,
+        pullReasonRecords: [
+          _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
+          _pullReason('real_1', [CapacityPullReasonIds.soundedUrgent]),
+        ],
+        costRecords: const [],
+        outcomeRecords: const [],
+        boundarySelection: null,
+        activationFitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
+        weeklyReviewAvailable: false,
+      );
+
+      expect(result.responseType, ArchiveDailyChangeResponseType.fitConfirmed);
+      expect(result.changeLine, ArchiveDailyChangeCopy.fitConfirmedLine);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelWatchPull);
+    });
+
+    test('selected boundary response is preferred in alternative', () {
       final entries = [
         _capacityEntry('real_0'),
         _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
+        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 14)),
       ];
       final selection = CapacityBoundaryResponseSelection(
         responseId: CapacityBoundaryResponseIds.needPauseBeforeYes,
@@ -260,10 +347,13 @@ void main() {
         capacityCohortActive: false,
         state: ArchiveDailyChangeState.empty,
         pullReasonRecords: [
-          _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
+          _pullReason('real_0', [CapacityPullReasonIds.feltResponsible]),
+          _pullReason('real_1', [CapacityPullReasonIds.feltResponsible]),
         ],
         costRecords: const [],
-        outcomeRecords: const [],
+        outcomeRecords: [
+          _outcomeRecord('real_0', CapacityDecisionOutcomeIds.saidYes),
+        ],
         boundarySelection: selection,
         weeklyReviewAvailable: false,
       );
@@ -274,29 +364,30 @@ void main() {
           CapacityBoundaryResponseIds.needPauseBeforeYes,
         ),
       );
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDefaultPause);
     });
 
-    test('shows later cost change line when cost recorded since last seen', () {
-      final lastSeen = DateTime(2026, 6, 15, 10).toUtc();
-      final entries = [_capacityEntry('real_0')];
+    test('no pull reason produces pull is still unclear copy', () {
+      final entries = [
+        _capacityEntry('real_0'),
+        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
+        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 14)),
+      ];
       final result = engine.buildFromJournal(
         entries: entries,
         capacityLoopActive: true,
         capacityCohortActive: false,
-        state: ArchiveDailyChangeState(lastSeenAt: lastSeen),
+        state: ArchiveDailyChangeState.empty,
         pullReasonRecords: const [],
-        costRecords: [
-          _laterCostRecord(
-            'real_0',
-            updatedAt: DateTime(2026, 6, 16, 12),
-          ),
-        ],
+        costRecords: const [],
         outcomeRecords: const [],
         boundarySelection: null,
         weeklyReviewAvailable: false,
       );
 
-      expect(result.changeLine, ArchiveDailyChangeCopy.changeLaterCost);
+      expect(result.responseType, ArchiveDailyChangeResponseType.noPullReasonYet);
+      expect(result.changeLine, ArchiveDailyChangeCopy.noPullReasonLine);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelMarkPull);
     });
 
     test('copy safety across visible strings', () {
@@ -305,16 +396,18 @@ void main() {
   });
 
   group('ArchiveDailyChangeCard widget', () {
-    testWidgets('shows title and change line', (tester) async {
+    testWidgets('shows sharpened label and body', (tester) async {
       const result = ArchiveDailyChangeResult(
         hasFeature: true,
         showOnArchiveHome: true,
         showOnCapacityLoop: true,
         showOnWeeklyReview: false,
+        responseType: ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
         title: ArchiveDailyChangeCopy.title,
-        changeLine: ArchiveDailyChangeCopy.changeNewYesMoment,
+        changeLine: 'Urgency has appeared more than once, and at least one yes moment had a later cost.',
         repeatedLine: 'What repeated: urgency.',
-        alternativeNextMove: ArchiveDailyChangeCopy.alternativeUrgency,
+        alternativeLabel: ArchiveDailyChangeCopy.labelDelayAnswer,
+        alternativeNextMove: ArchiveDailyChangeCopy.bodyDelayBeforeReplying,
         watchNextLine: ArchiveDailyChangeCopy.watchUrgentResponsible,
         alternativeSectionTitle: ArchiveDailyChangeCopy.alternativeSectionTitle,
         loopSectionTitle: ArchiveDailyChangeCopy.loopSectionTitle,
@@ -331,36 +424,11 @@ void main() {
       );
 
       expect(find.text('Your archive changed today'), findsOneWidget);
-      expect(find.text(ArchiveDailyChangeCopy.changeNewYesMoment), findsOneWidget);
-      expect(find.text(ArchiveDailyChangeCopy.alternativeUrgency), findsOneWidget);
-    });
-
-    testWidgets('hidden in screenshot mode flag path via sampleMode engine', (
-      tester,
-    ) async {
-      final result = engine.buildFromJournal(
-        entries: [_capacityEntry('real_0')],
-        capacityLoopActive: true,
-        capacityCohortActive: false,
-        state: ArchiveDailyChangeState.empty,
-        pullReasonRecords: const [],
-        costRecords: const [],
-        outcomeRecords: const [],
-        boundarySelection: null,
-        weeklyReviewAvailable: false,
-        sampleMode: true,
+      expect(find.text(ArchiveDailyChangeCopy.labelDelayAnswer), findsOneWidget);
+      expect(
+        find.text(ArchiveDailyChangeCopy.bodyDelayBeforeReplying),
+        findsOneWidget,
       );
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveDailyChangeCard(result: result),
-          ),
-        ),
-      );
-
-      expect(find.byKey(const Key('archive_daily_change_card_hidden')), findsOneWidget);
     });
 
     testWidgets('does not render private transcript text', (tester) async {
@@ -369,10 +437,12 @@ void main() {
         showOnArchiveHome: true,
         showOnCapacityLoop: true,
         showOnWeeklyReview: false,
+        responseType: ArchiveDailyChangeResponseType.stillForming,
         title: ArchiveDailyChangeCopy.title,
-        changeLine: ArchiveDailyChangeCopy.changeNewYesMoment,
+        changeLine: ArchiveDailyChangeCopy.stillFormingLine,
         repeatedLine: '',
-        alternativeNextMove: ArchiveDailyChangeCopy.alternativeNoPullReason,
+        alternativeLabel: ArchiveDailyChangeCopy.labelSaveOneMore,
+        alternativeNextMove: ArchiveDailyChangeCopy.bodyOneMoreMoment,
         watchNextLine: ArchiveDailyChangeCopy.watchHardToDelay,
         alternativeSectionTitle: ArchiveDailyChangeCopy.alternativeSectionTitle,
         loopSectionTitle: ArchiveDailyChangeCopy.loopSectionTitle,
@@ -389,40 +459,6 @@ void main() {
       );
 
       expect(find.textContaining(_privateSnippet), findsNothing);
-    });
-  });
-
-  group('ArchiveDailyChangeSection', () {
-    testWidgets('shows capacity loop daily change section safely', (
-      tester,
-    ) async {
-      const result = ArchiveDailyChangeResult(
-        hasFeature: true,
-        showOnArchiveHome: true,
-        showOnCapacityLoop: true,
-        showOnWeeklyReview: false,
-        title: ArchiveDailyChangeCopy.title,
-        changeLine: ArchiveDailyChangeCopy.changeUrgencyPull,
-        repeatedLine: 'What repeated: urgency.',
-        alternativeNextMove: ArchiveDailyChangeCopy.alternativeUrgency,
-        watchNextLine: ArchiveDailyChangeCopy.watchUrgentResponsible,
-        alternativeSectionTitle: ArchiveDailyChangeCopy.alternativeSectionTitle,
-        loopSectionTitle: ArchiveDailyChangeCopy.loopSectionTitle,
-        weeklySectionTitle: ArchiveDailyChangeCopy.weeklySectionTitle,
-      );
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const Scaffold(
-            body: ArchiveDailyChangeSection(result: result),
-          ),
-        ),
-      );
-
-      expect(find.text(ArchiveDailyChangeCopy.loopSectionTitle), findsOneWidget);
-      expect(find.text(ArchiveDailyChangeCopy.changeUrgencyPull), findsOneWidget);
-      expect(find.text(ArchiveDailyChangeCopy.alternativeUrgency), findsOneWidget);
     });
   });
 

@@ -1,9 +1,9 @@
 import '../../models/journal_entry.dart';
 import '../beta_feedback/beta_feedback_engine.dart';
+import '../capacity_loop/capacity_activation_fit_models.dart';
 import '../capacity_loop/capacity_boundary_response_copy.dart';
 import '../capacity_loop/capacity_boundary_response_models.dart';
 import '../capacity_loop/capacity_cost_models.dart';
-import '../capacity_loop/capacity_cost_store.dart';
 import '../capacity_loop/capacity_decision_outcome_models.dart';
 import '../capacity_loop/capacity_loop_engine.dart';
 import '../capacity_loop/capacity_pull_reason_copy.dart';
@@ -21,6 +21,24 @@ class _DetectedChange {
 
   final DateTime at;
   final ArchiveDailyChangeKind kind;
+}
+
+class _SharpenedResponse {
+  const _SharpenedResponse({
+    required this.type,
+    required this.changeLine,
+    required this.alternativeLabel,
+    required this.alternativeBody,
+    required this.watchNextLine,
+    required this.repeatedLine,
+  });
+
+  final ArchiveDailyChangeResponseType type;
+  final String changeLine;
+  final String alternativeLabel;
+  final String alternativeBody;
+  final String watchNextLine;
+  final String repeatedLine;
 }
 
 /// Builds daily archive change lines and alternative next moves from local signals.
@@ -55,31 +73,25 @@ class ArchiveDailyChangeEngine {
       return ArchiveDailyChangeResult.hidden;
     }
 
-    final change = _latestChange(input, since);
-    if (change == null && since != null) {
+    if (since != null && _latestChange(input, since) == null) {
       return ArchiveDailyChangeResult.hidden;
     }
 
-    final changeLine = change != null
-        ? ArchiveDailyChangeCopy.changeLineFor(change.kind)
-        : ArchiveDailyChangeCopy.changeNewYesMoment;
-    final alternative = _alternativeNextMove(input);
-    final repeatedLine = _repeatedLine(input.mostCommonPullReasonId);
-    final watchNext = ArchiveDailyChangeCopy.watchNextForPullReason(
-      input.mostCommonPullReasonId,
-    );
+    final sharpened = _sharpenedResponse(input, since);
 
     return ArchiveDailyChangeResult(
       hasFeature: true,
       showOnArchiveHome: true,
       showOnCapacityLoop: input.capacityMomentCount >= 2,
       showOnWeeklyReview:
-          input.weeklyReviewAvailable && alternative.isNotEmpty,
+          input.weeklyReviewAvailable && sharpened.alternativeBody.isNotEmpty,
+      responseType: sharpened.type,
       title: ArchiveDailyChangeCopy.title,
-      changeLine: changeLine,
-      repeatedLine: repeatedLine,
-      alternativeNextMove: alternative,
-      watchNextLine: watchNext,
+      changeLine: sharpened.changeLine,
+      repeatedLine: sharpened.repeatedLine,
+      alternativeLabel: sharpened.alternativeLabel,
+      alternativeNextMove: sharpened.alternativeBody,
+      watchNextLine: sharpened.watchNextLine,
       alternativeSectionTitle: ArchiveDailyChangeCopy.alternativeSectionTitle,
       loopSectionTitle: ArchiveDailyChangeCopy.loopSectionTitle,
       weeklySectionTitle: ArchiveDailyChangeCopy.weeklySectionTitle,
@@ -95,6 +107,7 @@ class ArchiveDailyChangeEngine {
     required List<CapacityCostRecord> costRecords,
     required List<CapacityDecisionOutcomeRecord> outcomeRecords,
     required CapacityBoundaryResponseSelection? boundarySelection,
+    CapacityActivationFitRecord? activationFitRecord,
     required bool weeklyReviewAvailable,
     bool sampleMode = false,
   }) {
@@ -102,8 +115,8 @@ class ArchiveDailyChangeEngine {
     final capacityMomentCount =
         loopEngine.eligibleCapacityEntryIds(realEntries).length;
     final capacityEvidenceCount = loopEngine.countCapacityEvidence(realEntries);
-    final mostCommonPull =
-        _mostCommonReasonId(pullReasonRecords);
+    final mostCommonPull = _mostCommonReasonId(pullReasonRecords);
+    final pullReasonCount = pullReasonRecords.where((r) => r.hasReasons).length;
 
     return build(
       ArchiveDailyChangeInput(
@@ -113,16 +126,202 @@ class ArchiveDailyChangeEngine {
         capacityMomentCount: capacityMomentCount,
         capacityEvidenceCount: capacityEvidenceCount,
         mostCommonPullReasonId: mostCommonPull,
+        pullReasonRecordCount: pullReasonCount,
         state: state,
         entries: entries,
         pullReasonRecords: pullReasonRecords,
         costRecords: costRecords,
         outcomeRecords: outcomeRecords,
         boundarySelection: boundarySelection,
-        activationFitRecord: null,
+        activationFitRecord: activationFitRecord,
         weeklyReviewAvailable: weeklyReviewAvailable,
       ),
     );
+  }
+
+  _SharpenedResponse _sharpenedResponse(
+    ArchiveDailyChangeInput input,
+    DateTime? since,
+  ) {
+    final pullId = input.mostCommonPullReasonId;
+    final pullShort = ArchiveDailyChangeCopy.pullShortLabel(pullId);
+    final pullCount = _pullOccurrenceCount(pullId, input.pullReasonRecords);
+    final hasLaterCost = input.costRecords.any((record) => record.hasLaterCost);
+    final hasSaidYes = input.outcomeRecords.any(
+      (record) =>
+          record.hasOutcome &&
+          record.outcomeId == CapacityDecisionOutcomeIds.saidYes,
+    );
+    final hasPatternChange = input.outcomeRecords.any(
+      (record) => record.showsPatternChange,
+    );
+    final fitRecord = input.activationFitRecord;
+    final fitConfirmed = fitRecord != null &&
+        fitRecord.isAnswered &&
+        (fitRecord.responseId == CapacityActivationFitResponseIds.fits ||
+            fitRecord.responseId == CapacityActivationFitResponseIds.partly);
+    final noPullReason = input.pullReasonRecordCount == 0;
+    final stillForming = input.capacityMomentCount <
+        CapacityThreeMomentGates.activationTarget;
+
+    if (pullId != null &&
+        pullCount >= 2 &&
+        hasLaterCost &&
+        pullId == CapacityPullReasonIds.soundedUrgent) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
+        changeLine: ArchiveDailyChangeCopy.repeatedPullWithLaterCostLine(
+          pullShort,
+        ),
+        alternativeLabel: ArchiveDailyChangeCopy.labelDelayAnswer,
+        alternativeBody: ArchiveDailyChangeCopy.bodyDelayBeforeReplying,
+        watchNextLine: ArchiveDailyChangeCopy.watchUrgentResponsible,
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (pullId != null && pullCount >= 2 && hasLaterCost) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
+        changeLine: ArchiveDailyChangeCopy.repeatedPullWithLaterCostLine(
+          pullShort,
+        ),
+        alternativeLabel: ArchiveDailyChangeCopy.labelDelayAnswer,
+        alternativeBody: ArchiveDailyChangeCopy.bodyDelayBeforeReplying,
+        watchNextLine: ArchiveDailyChangeCopy.watchNextForPullReason(pullId),
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (pullId != null && pullCount >= 2 && hasSaidYes) {
+      final boundaryBody = _selectedBoundaryBody(input.boundarySelection);
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.repeatedPullWithSaidYes,
+        changeLine: ArchiveDailyChangeCopy.repeatedPullWithSaidYesLine(pullShort),
+        alternativeLabel: boundaryBody != null
+            ? ArchiveDailyChangeCopy.labelDefaultPause
+            : ArchiveDailyChangeCopy.labelCheckCapacity,
+        alternativeBody: boundaryBody ??
+            ArchiveDailyChangeCopy.bodyBeforeReplyingTemplate,
+        watchNextLine: ArchiveDailyChangeCopy.watchSamePullMayRepeat,
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (hasPatternChange) {
+      final boundaryBody = _selectedBoundaryBody(input.boundarySelection);
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.patternInterrupted,
+        changeLine: ArchiveDailyChangeCopy.patternInterruptedLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelDefaultPause,
+        alternativeBody:
+            boundaryBody ?? ArchiveDailyChangeCopy.bodyUsePauseAgain,
+        watchNextLine: ArchiveDailyChangeCopy.watchAnswerBeforeCapacity,
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (fitConfirmed) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.fitConfirmed,
+        changeLine: ArchiveDailyChangeCopy.fitConfirmedLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelWatchPull,
+        alternativeBody: ArchiveDailyChangeCopy.bodyWatchSamePull,
+        watchNextLine: ArchiveDailyChangeCopy.watchNextForPullReason(pullId),
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (stillForming) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.stillForming,
+        changeLine: ArchiveDailyChangeCopy.stillFormingLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelSaveOneMore,
+        alternativeBody: ArchiveDailyChangeCopy.bodyOneMoreMoment,
+        watchNextLine: ArchiveDailyChangeCopy.watchHardToDelay,
+        repeatedLine: '',
+      );
+    }
+
+    if (noPullReason && input.capacityMomentCount >= 1) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.noPullReasonYet,
+        changeLine: ArchiveDailyChangeCopy.noPullReasonLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelMarkPull,
+        alternativeBody: ArchiveDailyChangeCopy.bodyMarkPull,
+        watchNextLine: ArchiveDailyChangeCopy.watchHardToDelay,
+        repeatedLine: '',
+      );
+    }
+
+    return _recentChangeResponse(input, since, pullId, pullShort);
+  }
+
+  _SharpenedResponse _recentChangeResponse(
+    ArchiveDailyChangeInput input,
+    DateTime? since,
+    String? pullId,
+    String pullShort,
+  ) {
+    final change = _latestChange(input, since);
+    final changeLine = switch (change?.kind) {
+      ArchiveDailyChangeKind.laterCost => ArchiveDailyChangeCopy.changeLaterCost,
+      ArchiveDailyChangeKind.boundarySelected =>
+        ArchiveDailyChangeCopy.changeBoundarySelected,
+      ArchiveDailyChangeKind.yesLoopReady =>
+        ArchiveDailyChangeCopy.changeYesLoopReady,
+      ArchiveDailyChangeKind.urgencyPull =>
+        ArchiveDailyChangeCopy.repeatedPullWithLaterCostLine('urgency'),
+      _ => ArchiveDailyChangeCopy.changeNewYesMoment,
+    };
+
+    final boundaryBody = _selectedBoundaryBody(input.boundarySelection);
+    if (boundaryBody != null) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.recentChange,
+        changeLine: changeLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelDefaultPause,
+        alternativeBody: boundaryBody,
+        watchNextLine: ArchiveDailyChangeCopy.watchNextForPullReason(pullId),
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (pullId == CapacityPullReasonIds.soundedUrgent) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.recentChange,
+        changeLine: changeLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelDelayAnswer,
+        alternativeBody: ArchiveDailyChangeCopy.bodyUrgencyCheckCapacity,
+        watchNextLine: ArchiveDailyChangeCopy.watchUrgentResponsible,
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (pullId != null && pullId.isNotEmpty) {
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.recentChange,
+        changeLine: changeLine,
+        alternativeLabel: ArchiveDailyChangeCopy.labelCheckCapacity,
+        alternativeBody: ArchiveDailyChangeCopy.bodyBeforeReplyingTemplate,
+        watchNextLine: ArchiveDailyChangeCopy.watchNextForPullReason(pullId),
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    return _SharpenedResponse(
+      type: ArchiveDailyChangeResponseType.recentChange,
+      changeLine: changeLine,
+      alternativeLabel: ArchiveDailyChangeCopy.labelMarkPull,
+      alternativeBody: ArchiveDailyChangeCopy.bodyMarkPull,
+      watchNextLine: ArchiveDailyChangeCopy.watchHardToDelay,
+      repeatedLine: '',
+    );
+  }
+
+  String? _selectedBoundaryBody(CapacityBoundaryResponseSelection? selection) {
+    if (selection == null || !selection.hasSelection) return null;
+    return CapacityBoundaryResponseCopy.textForId(selection.responseId);
   }
 
   bool _hasChangesSince(ArchiveDailyChangeInput input, DateTime? since) =>
@@ -168,6 +367,16 @@ class ArchiveDailyChangeEngine {
       );
     }
 
+    for (final record in input.outcomeRecords) {
+      if (!record.hasOutcome || !_isAfter(record.updatedAt, since)) continue;
+      changes.add(
+        _DetectedChange(
+          at: record.updatedAt,
+          kind: ArchiveDailyChangeKind.newYesMoment,
+        ),
+      );
+    }
+
     final selection = input.boundarySelection;
     if (selection != null &&
         selection.hasSelection &&
@@ -176,6 +385,18 @@ class ArchiveDailyChangeEngine {
         _DetectedChange(
           at: selection.selectedAt,
           kind: ArchiveDailyChangeKind.boundarySelected,
+        ),
+      );
+    }
+
+    final fit = input.activationFitRecord;
+    if (fit != null &&
+        fit.isAnswered &&
+        _isAfter(fit.updatedAt, since)) {
+      changes.add(
+        _DetectedChange(
+          at: fit.updatedAt,
+          kind: ArchiveDailyChangeKind.fitAnswered,
         ),
       );
     }
@@ -226,22 +447,6 @@ class ArchiveDailyChangeEngine {
         countNow >= CapacityThreeMomentGates.activationTarget;
   }
 
-  String _alternativeNextMove(ArchiveDailyChangeInput input) {
-    final selection = input.boundarySelection;
-    if (selection != null && selection.hasSelection) {
-      final selected = CapacityBoundaryResponseCopy.textForId(
-        selection.responseId,
-      );
-      if (selected != null && selected.isNotEmpty) return selected;
-    }
-
-    final pullId = input.mostCommonPullReasonId;
-    if (pullId == null || pullId.isEmpty) {
-      return ArchiveDailyChangeCopy.alternativeNoPullReason;
-    }
-    return ArchiveDailyChangeCopy.alternativeForPullReason(pullId);
-  }
-
   String _repeatedLine(String? mostCommonPullReasonId) {
     if (mostCommonPullReasonId == null || mostCommonPullReasonId.isEmpty) {
       return '';
@@ -250,6 +455,21 @@ class ArchiveDailyChangeEngine {
       mostCommonPullReasonId,
     );
     return 'What repeated: $label.';
+  }
+
+  int _pullOccurrenceCount(
+    String? pullId,
+    List<CapacityPullReasonRecord> records,
+  ) {
+    if (pullId == null || pullId.isEmpty) return 0;
+    var count = 0;
+    for (final record in records) {
+      if (!record.hasReasons) continue;
+      for (final id in record.reasonIds) {
+        if (id == pullId) count++;
+      }
+    }
+    return count;
   }
 
   String? _mostCommonReasonId(List<CapacityPullReasonRecord> records) {

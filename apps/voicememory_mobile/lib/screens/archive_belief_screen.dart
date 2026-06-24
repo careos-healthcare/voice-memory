@@ -2110,6 +2110,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       costRecords: CapacityCostStore.cached,
       outcomeRecords: CapacityDecisionOutcomeStore.cached,
       boundarySelection: CapacityBoundaryResponseStore.cached,
+      activationFitRecord: CapacityActivationFitStore.cached,
       weeklyReviewAvailable: capacityWeeklyReview.showOnArchiveHome,
       sampleMode: ScreenshotMode.enabled,
     );
@@ -2252,6 +2253,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           costRecords: CapacityCostStore.cached,
           outcomeRecords: CapacityDecisionOutcomeStore.cached,
           boundarySelection: CapacityBoundaryResponseStore.cached,
+          activationFitRecord: CapacityActivationFitStore.cached,
           weeklyReviewAvailable: const CapacityWeeklyReviewEngine()
                   .buildFromJournal(
                 entries: _entries,
