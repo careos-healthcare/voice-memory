@@ -352,6 +352,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           capacityLoopVisible: true,
+          capacityThreeMomentActivationVisible: false,
           capacityPullReasonVisible: false,
           capacityDecisionOutcomeVisible: true,
           capacityCostLaterCheckinVisible: true,

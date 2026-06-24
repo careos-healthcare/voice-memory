@@ -10,6 +10,7 @@ class ArchiveHomePriorityEngine {
   static const stickyLoopSequence = [
     ArchiveHomeSectionId.firstWeekPath,
     ArchiveHomeSectionId.dailyArchiveExercise,
+    ArchiveHomeSectionId.capacityThreeMomentActivation,
     ArchiveHomeSectionId.capacityLoop,
     ArchiveHomeSectionId.capacityPullReason,
     ArchiveHomeSectionId.capacityDecisionOutcome,
@@ -42,6 +43,8 @@ class ArchiveHomePriorityEngine {
           input.dailyArchiveExerciseVisible,
         ArchiveHomeSectionId.archiveClarityProgress =>
           input.archiveClarityProgressVisible,
+        ArchiveHomeSectionId.capacityThreeMomentActivation =>
+          input.capacityThreeMomentActivationVisible,
         ArchiveHomeSectionId.capacityLoop => input.capacityLoopVisible,
         ArchiveHomeSectionId.capacityPullReason =>
           input.capacityPullReasonVisible,
@@ -78,6 +81,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.nextEvidencePlan,
           ArchiveHomeSectionId.firstWeekPath,
           ArchiveHomeSectionId.dailyArchiveExercise,
+          ArchiveHomeSectionId.capacityThreeMomentActivation,
           ArchiveHomeSectionId.capacityLoop,
           ArchiveHomeSectionId.capacityPullReason,
           ArchiveHomeSectionId.capacityDecisionOutcome,

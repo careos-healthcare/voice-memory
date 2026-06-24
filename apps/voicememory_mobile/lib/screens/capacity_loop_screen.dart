@@ -21,6 +21,9 @@ import '../features/capacity_loop/capacity_boundary_response_copy.dart';
 import '../features/capacity_loop/capacity_boundary_response_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_models.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
+import '../features/capacity_loop/capacity_three_moment_copy.dart';
+import '../features/capacity_loop/capacity_three_moment_engine.dart';
+import '../features/capacity_loop/capacity_three_moment_models.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -53,6 +56,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   BeforeYesPauseResult? _beforeYesPause;
   CapacityWeeklyReviewResult? _weeklyReview;
   CapacityBoundaryResponseResult? _boundaryResponse;
+  CapacityThreeMomentResult? _threeMoment;
   bool _loading = true;
 
   @override
@@ -132,6 +136,11 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
         pullReasonRecords: CapacityPullReasonStore.cached,
       );
+      _threeMoment = const CapacityThreeMomentEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+      );
       _loading = false;
     });
   }
@@ -152,6 +161,11 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   }
 
   Widget _content(BuildContext context, CapacityLoopResult result) {
+    final threeMoment = _threeMoment ?? CapacityThreeMomentResult.hidden;
+    if (threeMoment.showOnCapacityLoop) {
+      return _activationGuidance(context, threeMoment);
+    }
+
     if (!result.hasCard) {
       return _insufficientState(context);
     }
@@ -287,6 +301,45 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         FilledButton(
           onPressed: () => context.push(CapacityLoopCopy.recordRoute),
           child: Text(CapacityLoopCopy.saveYesMomentShortCta),
+        ),
+      ],
+    );
+  }
+
+  Widget _activationGuidance(
+    BuildContext context,
+    CapacityThreeMomentResult threeMoment,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          CapacityThreeMomentCopy.loopGuidanceTitle,
+          key: const Key('capacity_loop_screen_activation_title'),
+          style: ArchiveMobileTypography.listTitle(context),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          CapacityThreeMomentCopy.loopGuidanceBody,
+          key: const Key('capacity_loop_screen_activation_body'),
+          style: ArchiveMobileTypography.listSubtitle(context),
+        ),
+        if (threeMoment.progressLabel.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            threeMoment.progressLabel,
+            key: const Key('capacity_loop_screen_activation_progress'),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton(
+          key: const Key('capacity_loop_screen_activation_button'),
+          onPressed: () => context.push(threeMoment.primaryRoute),
+          child: Text(threeMoment.primaryCtaLabel),
         ),
       ],
     );
