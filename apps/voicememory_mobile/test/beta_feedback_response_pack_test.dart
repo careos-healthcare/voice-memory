@@ -47,6 +47,9 @@ BetaFeedbackResponseInput _input({
   bool boundaryResponseSelected = false,
   bool boundaryResponseCopied = false,
   bool proInterestCaptured = false,
+  bool paidIntentStrongWtp = false,
+  bool paidIntentSoftWtp = false,
+  bool dailyChangeAvailable = false,
   bool dailyChangeDismissed = false,
 }) =>
     BetaFeedbackResponseInput(
@@ -63,6 +66,9 @@ BetaFeedbackResponseInput _input({
       boundaryResponseSelected: boundaryResponseSelected,
       boundaryResponseCopied: boundaryResponseCopied,
       proInterestCaptured: proInterestCaptured,
+      paidIntentStrongWtp: paidIntentStrongWtp,
+      paidIntentSoftWtp: paidIntentSoftWtp,
+      dailyChangeAvailable: dailyChangeAvailable,
       dailyChangeDismissed: dailyChangeDismissed,
     );
 
@@ -177,7 +183,8 @@ void main() {
           fitIsPositive: true,
           fitIsUnclear: false,
           fitNotAnswered: false,
-          proInterestCaptured: true,
+          paidIntentStrongWtp: true,
+          dailyChangeAvailable: true,
           weeklyReviewAvailable: true,
           outcomeRecordCount: 1,
         ),

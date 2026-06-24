@@ -1,3 +1,5 @@
+import '../paid_intent/paid_intent_confirmation_models.dart';
+
 /// Local beta verdict — cautious, not PMF proof.
 enum CapacityBetaSignalVerdict {
   strong,
@@ -21,6 +23,9 @@ class CapacityBetaSignalSnapshot {
     required this.boundaryResponseSelected,
     required this.boundaryResponseCopied,
     required this.proInterestCaptured,
+    required this.paidIntentAnswered,
+    required this.paidIntentStrongWtp,
+    required this.paidIntentSoftWtp,
     required this.paymentSignalLabel,
     required this.verdict,
     required this.verdictLabel,
@@ -40,6 +45,9 @@ class CapacityBetaSignalSnapshot {
     boundaryResponseSelected: false,
     boundaryResponseCopied: false,
     proInterestCaptured: false,
+    paidIntentAnswered: false,
+    paidIntentStrongWtp: false,
+    paidIntentSoftWtp: false,
     paymentSignalLabel: 'Payment signal not tracked yet',
     verdict: CapacityBetaSignalVerdict.weak,
     verdictLabel: 'Weak activation signal',
@@ -59,6 +67,9 @@ class CapacityBetaSignalSnapshot {
   final bool boundaryResponseSelected;
   final bool boundaryResponseCopied;
   final bool proInterestCaptured;
+  final bool paidIntentAnswered;
+  final bool paidIntentStrongWtp;
+  final bool paidIntentSoftWtp;
   final String paymentSignalLabel;
   final CapacityBetaSignalVerdict verdict;
   final String verdictLabel;
@@ -82,6 +93,8 @@ class CapacityBetaSignalInput {
     required this.boundaryResponseSelected,
     required this.boundaryResponseCopied,
     required this.proInterestCaptured,
+    required this.paidIntentRecord,
+    required this.dailyChangeAvailable,
     required this.trackPaymentSignal,
   });
 
@@ -99,5 +112,7 @@ class CapacityBetaSignalInput {
   final bool boundaryResponseSelected;
   final bool boundaryResponseCopied;
   final bool proInterestCaptured;
+  final PaidIntentConfirmationRecord? paidIntentRecord;
+  final bool dailyChangeAvailable;
   final bool trackPaymentSignal;
 }

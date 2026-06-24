@@ -19,12 +19,17 @@ import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_pull_reason_store.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
+import '../features/paid_intent/paid_intent_confirmation_copy.dart';
+import '../features/paid_intent/paid_intent_confirmation_engine.dart';
+import '../features/paid_intent/paid_intent_confirmation_models.dart';
+import '../features/paid_intent/paid_intent_confirmation_store.dart';
 import '../features/pro_interest/pro_interest_store.dart';
 import '../features/share/archive_share_actions.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/paid_intent_confirmation_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Local capacity beta signal dashboard — counts only, no uploads.
@@ -46,6 +51,8 @@ class CapacityBetaSignalScreen extends StatefulWidget {
 class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
   CapacityBetaSignalSnapshot? _snapshot;
   BetaFeedbackResponseResult? _feedbackResponse;
+  PaidIntentConfirmationResult? _paidIntentResult;
+  PaidIntentValueSignalsAtResponse? _paidIntentValueSignals;
   bool _loading = true;
 
   @override
@@ -62,6 +69,7 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
     await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
+    await PaidIntentConfirmationStore.ensureLoaded();
     await ArchiveDailyChangeStore.ensureLoaded();
 
     final entries = await journal.loadAll();
@@ -72,26 +80,58 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
         cohort?.cohortId == AcquisitionCohortId.capacityYesDirect;
     final capacityWedgeActive = capacityLoopActive || capacityCohortActive;
     final fitRecord = CapacityActivationFitStore.cached;
+    final fitIsPositive = _fitIsPositive(fitRecord);
+    final dailyChangeShown =
+        ArchiveDailyChangeStore.cached.lastSeenAt != null;
+
+    final snapshot = widget.engine.buildFromJournal(
+      entries: entries,
+      capacityLoopActive: capacityLoopActive,
+      capacityCohortActive: capacityCohortActive,
+      fitRecord: fitRecord,
+      boundarySelection: CapacityBoundaryResponseStore.cached,
+      proInterestState: ProInterestStore.cached,
+      paidIntentRecord: PaidIntentConfirmationStore.cached,
+      dailyChangeAvailable: dailyChangeShown,
+    );
+    final paidIntentResult =
+        const PaidIntentConfirmationEngine().buildFromJournal(
+      entries: entries,
+      capacityLoopActive: capacityLoopActive,
+      capacityCohortActive: capacityCohortActive,
+      fitIsPositive: fitIsPositive,
+      fitResponseLabel: snapshot.fitResponseLabel,
+      dailyChangeShown: dailyChangeShown,
+      weeklyReviewAvailable: snapshot.weeklyReviewAvailable,
+      boundaryResponseSelected: snapshot.boundaryResponseSelected,
+      screenshotMode: false,
+      record: PaidIntentConfirmationStore.cached,
+    );
+    final valueSignals = PaidIntentConfirmationEngine.valueSignalsFrom(
+      capacityMomentCount: snapshot.capacityMomentCount,
+      fitResponseLabel: snapshot.fitResponseLabel,
+      dailyChangeAvailable: dailyChangeShown,
+      weeklyReviewAvailable: snapshot.weeklyReviewAvailable,
+      boundaryResponseSelected: snapshot.boundaryResponseSelected,
+    );
 
     if (!mounted) return;
     setState(() {
-      _snapshot = widget.engine.buildFromJournal(
-        entries: entries,
-        capacityLoopActive: capacityLoopActive,
-        capacityCohortActive: capacityCohortActive,
-        fitRecord: fitRecord,
-        boundarySelection: CapacityBoundaryResponseStore.cached,
-        proInterestState: ProInterestStore.cached,
-      );
+      _snapshot = snapshot;
+      _paidIntentResult = paidIntentResult;
+      _paidIntentValueSignals = valueSignals;
       _feedbackResponse = const BetaFeedbackResponseEngine().buildFromBetaSnapshot(
-        snapshot: _snapshot!,
+        snapshot: snapshot,
         capacityWedgeActive: capacityWedgeActive,
-        fitIsPositive: _fitIsPositive(fitRecord),
+        fitIsPositive: fitIsPositive,
         fitIsUnclear: _fitIsUnclear(fitRecord),
         fitNotAnswered:
             BetaFeedbackResponseEngine.fitNotAnsweredFromRecord(fitRecord),
         dailyChangeDismissed:
             ArchiveDailyChangeStore.cached.dismissedAt != null,
+        dailyChangeAvailable: dailyChangeShown,
+        paidIntentStrongWtp: snapshot.paidIntentStrongWtp,
+        paidIntentSoftWtp: snapshot.paidIntentSoftWtp,
       );
       _loading = false;
     });
@@ -258,6 +298,37 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
                 label: CapacityBetaSignalCopy.paymentSignalLabel,
                 value: snapshot.paymentSignalLabel,
               ),
+              const SizedBox(height: AppSpacing.md),
+              _sectionTitle(
+                context,
+                PaidIntentConfirmationCopy.dashboardSectionTitle,
+                key: const Key('capacity_beta_signal_paid_intent_section'),
+              ),
+              if (snapshot.paidIntentAnswered) ...[
+                _metricRow(
+                  context,
+                  key: const Key('capacity_beta_signal_paid_intent_answer'),
+                  label: CapacityBetaSignalCopy.paidIntentAnswerLabel,
+                  value: snapshot.paymentSignalLabel,
+                ),
+              ] else if (_paidIntentResult != null &&
+                  _paidIntentValueSignals != null &&
+                  _paidIntentResult!.showCard) ...[
+                PaidIntentConfirmationCard(
+                  result: _paidIntentResult!,
+                  valueSignals: _paidIntentValueSignals!,
+                  onSaved: _load,
+                ),
+              ] else ...[
+                Text(
+                  PaidIntentConfirmationCopy.dashboardNotEnoughSignal,
+                  key: const Key('capacity_beta_signal_paid_intent_not_ready'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               _sectionTitle(
                 context,

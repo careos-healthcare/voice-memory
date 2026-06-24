@@ -8,6 +8,8 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_resp
 import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_models.dart';
+import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_copy.dart';
+import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_models.dart';
 import 'package:voicememory_mobile/features/pro_interest/pro_interest_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -70,6 +72,9 @@ CapacityBetaSignalInput _input({
   bool boundaryResponseSelected = false,
   bool boundaryResponseCopied = false,
   bool proInterestCaptured = false,
+  bool paidIntentStrongWtp = false,
+  bool paidIntentSoftWtp = false,
+  bool dailyChangeAvailable = false,
   bool trackPaymentSignal = true,
 }) =>
     CapacityBetaSignalInput(
@@ -87,6 +92,18 @@ CapacityBetaSignalInput _input({
       boundaryResponseSelected: boundaryResponseSelected,
       boundaryResponseCopied: boundaryResponseCopied,
       proInterestCaptured: proInterestCaptured,
+      paidIntentRecord: paidIntentStrongWtp
+          ? const PaidIntentConfirmationRecord(
+              responseId: PaidIntentConfirmationResponseIds.yes999,
+              status: PaidIntentConfirmationStatus.answered,
+            )
+          : paidIntentSoftWtp
+              ? const PaidIntentConfirmationRecord(
+                  responseId: PaidIntentConfirmationResponseIds.maybe,
+                  status: PaidIntentConfirmationStatus.answered,
+                )
+              : null,
+      dailyChangeAvailable: dailyChangeAvailable,
       trackPaymentSignal: trackPaymentSignal,
     );
 
@@ -311,7 +328,7 @@ void main() {
       expect(snapshot.exportSummary.toLowerCase(), isNot(contains(_privateSnippet)));
     });
 
-    test('payment signal uses pro interest when tracked', () {
+    test('payment signal uses pro interest when tracked and no paid intent', () {
       final captured = engine.build(
         _input(
           capacityMomentCount: 3,
@@ -319,7 +336,22 @@ void main() {
           proInterestCaptured: true,
         ),
       );
-      expect(captured.paymentSignalLabel, CapacityBetaSignalCopy.yesLabel);
+      expect(
+        captured.paymentSignalLabel,
+        CapacityBetaSignalCopy.proInterestFallbackLabel,
+      );
+
+      final paidIntent = engine.build(
+        _input(
+          capacityMomentCount: 3,
+          capacityEvidenceCount: 3,
+          paidIntentStrongWtp: true,
+        ),
+      );
+      expect(
+        paidIntent.paymentSignalLabel,
+        PaidIntentConfirmationCopy.paymentSignalStrong,
+      );
 
       final notTracked = engine.build(
         _input(

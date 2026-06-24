@@ -30,7 +30,9 @@ abstract final class CapacityBetaSignalCopy {
   static const boundarySelectedLabel = 'Boundary response selected';
   static const boundaryCopiedLabel = 'Boundary response copied';
   static const proInterestSeenLabel = 'Pro interest seen/tapped';
+  static const paidIntentAnswerLabel = 'Paid intent answer';
   static const paymentSignalLabel = 'Payment signal';
+  static const proInterestFallbackLabel = 'yes (Pro interest)';
   static const openCapacityLoopButton = 'Open capacity loop';
 
   static const yesLabel = 'yes';
@@ -95,7 +97,9 @@ abstract final class CapacityBetaSignalCopy {
         boundarySelectedLabel,
         boundaryCopiedLabel,
         proInterestSeenLabel,
+        paidIntentAnswerLabel,
         paymentSignalLabel,
+        proInterestFallbackLabel,
         openCapacityLoopButton,
         cardTitle,
         cardBody,

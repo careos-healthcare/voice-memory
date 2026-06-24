@@ -35,6 +35,9 @@ class BetaFeedbackResponseInput {
     required this.boundaryResponseSelected,
     required this.boundaryResponseCopied,
     required this.proInterestCaptured,
+    required this.paidIntentStrongWtp,
+    required this.paidIntentSoftWtp,
+    required this.dailyChangeAvailable,
     required this.dailyChangeDismissed,
   });
 
@@ -51,6 +54,9 @@ class BetaFeedbackResponseInput {
   final bool boundaryResponseSelected;
   final bool boundaryResponseCopied;
   final bool proInterestCaptured;
+  final bool paidIntentStrongWtp;
+  final bool paidIntentSoftWtp;
+  final bool dailyChangeAvailable;
   final bool dailyChangeDismissed;
 }
 
