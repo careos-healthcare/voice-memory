@@ -16,6 +16,9 @@ import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_models.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
+import '../features/archive_daily_change/archive_daily_change_engine.dart';
+import '../features/archive_daily_change/archive_daily_change_models.dart';
+import '../features/archive_daily_change/archive_daily_change_store.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
@@ -23,6 +26,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../widgets/capacity_boundary_response_card.dart';
+import '../widgets/archive_daily_change_card.dart';
 
 /// Full capacity weekly review screen — cautious summaries, no journal text.
 class CapacityWeeklyReviewScreen extends StatefulWidget {
@@ -50,6 +54,7 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
   CapacityWeeklyReviewResult? _result;
   CapacityBoundaryResponseResult? _boundaryResponse;
   CapacityBoundaryResponseInput? _boundaryInput;
+  ArchiveDailyChangeResult? _archiveDailyChange;
   bool _loading = true;
 
   @override
@@ -77,6 +82,7 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
     await CapacityDecisionOutcomeStore.ensureLoaded();
     await CapacityPullReasonStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
+    await ArchiveDailyChangeStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -113,15 +119,28 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
           CapacityPullReasonStore.mostCommonReasonId(CapacityPullReasonStore.cached),
       selection: CapacityBoundaryResponseStore.cached,
     );
+    final reviewResult = widget.engine.buildFromJournal(
+      entries: entries,
+      capacityLoopActive: loopActive,
+      capacityCohortActive: cohortActive,
+      costRecords: CapacityCostStore.cached,
+      outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      pullReasonRecords: CapacityPullReasonStore.cached,
+    );
     setState(() {
       _boundaryInput = boundaryInput;
-      _result = widget.engine.buildFromJournal(
+      _result = reviewResult;
+      _archiveDailyChange =
+          const ArchiveDailyChangeEngine().buildFromJournal(
         entries: entries,
         capacityLoopActive: loopActive,
         capacityCohortActive: cohortActive,
+        state: ArchiveDailyChangeStore.cached,
+        pullReasonRecords: CapacityPullReasonStore.cached,
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
-        pullReasonRecords: CapacityPullReasonStore.cached,
+        boundarySelection: CapacityBoundaryResponseStore.cached,
+        weeklyReviewAvailable: reviewResult.hasReview,
       );
       _boundaryResponse =
           const CapacityBoundaryResponseEngine().build(boundaryInput);
@@ -243,6 +262,13 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
           result.watchNext,
           key: const Key('capacity_weekly_review_screen_watch_next'),
         ),
+        if (_archiveDailyChange != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          ArchiveDailyChangeSection(
+            result: _archiveDailyChange!,
+            useWeeklyTitle: true,
+          ),
+        ],
         if (_boundaryResponse?.showOnWeeklyReview == true) ...[
           const SizedBox(height: AppSpacing.md),
           CapacityBoundaryResponsePicker(
