@@ -36,7 +36,19 @@ RevenueCat should only be finished after return + willingness-to-pay signal. Do 
 | 3+ moments, fit not answered / not yet / too early | `unclear_promise` (or `repetitive_loop` if daily change dismissed) |
 | 3+ moments, daily change dismissed, fit unclear | `repetitive_loop` |
 | 3+ moments, pull reasons saved, boundary not selected/copied | `weak_alternative` |
-| Fit fits/partly + return signal + Pro interest captured | `paid_signal_ready` |
+| Fit fits/partly + return signal + paid intent yes/maybe | `paid_signal_ready` |
+
+---
+
+## Paid intent confirmation
+
+After users reach real capacity-loop value, ask locally whether they would pay to keep the archive improving.
+
+- **No payment is taken in beta intent check.**
+- **1 paid-intent user (yes £9.99/month) = promising but not enough for full paid launch.**
+- **2–3 paid-intent users = RevenueCat readiness branch.**
+- `maybe` counts as soft WTP; `not_yet` and `no` do not count as paid-ready.
+- Do not say paid launch is proven.
 
 ---
 

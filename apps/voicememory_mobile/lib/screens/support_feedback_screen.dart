@@ -12,6 +12,7 @@ import '../features/insight_feedback/insight_feedback_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
 import '../features/capacity_loop/capacity_beta_mission_copy.dart';
 import '../features/capacity_loop/capacity_beta_signal_copy.dart';
+import '../features/paid_intent/paid_intent_confirmation_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_invite/beta_invite_copy.dart';
 import '../features/pro_interest/pro_interest_copy.dart';
@@ -256,6 +257,23 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_capacity_beta_signals'),
                 onPressed: () => context.push(CapacityBetaSignalCopy.route),
                 child: const Text(CapacityBetaSignalCopy.openFromSupportButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_paid_intent'),
+              title: PaidIntentConfirmationCopy.supportSectionTitle,
+              body: PaidIntentConfirmationCopy.supportSectionBody,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_paid_intent'),
+                onPressed: () => context.push(CapacityBetaSignalCopy.route),
+                child: const Text(
+                  PaidIntentConfirmationCopy.supportOpenDashboardCta,
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

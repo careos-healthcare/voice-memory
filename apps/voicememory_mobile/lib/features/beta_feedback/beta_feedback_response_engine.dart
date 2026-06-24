@@ -27,6 +27,9 @@ class BetaFeedbackResponseEngine {
     required bool fitIsUnclear,
     required bool fitNotAnswered,
     required bool dailyChangeDismissed,
+    required bool dailyChangeAvailable,
+    required bool paidIntentStrongWtp,
+    required bool paidIntentSoftWtp,
   }) {
     return build(
       BetaFeedbackResponseInput(
@@ -43,6 +46,9 @@ class BetaFeedbackResponseEngine {
         boundaryResponseSelected: snapshot.boundaryResponseSelected,
         boundaryResponseCopied: snapshot.boundaryResponseCopied,
         proInterestCaptured: snapshot.proInterestCaptured,
+        paidIntentStrongWtp: paidIntentStrongWtp,
+        paidIntentSoftWtp: paidIntentSoftWtp,
+        dailyChangeAvailable: dailyChangeAvailable,
         dailyChangeDismissed: dailyChangeDismissed,
       ),
     );
@@ -55,7 +61,8 @@ class BetaFeedbackResponseEngine {
 
     if (activationReached &&
         input.fitIsPositive &&
-        input.proInterestCaptured &&
+        input.dailyChangeAvailable &&
+        (input.paidIntentStrongWtp || input.paidIntentSoftWtp) &&
         (input.weeklyReviewAvailable || input.outcomeRecordCount >= 1)) {
       return BetaFeedbackIssueIds.paidSignalReady;
     }

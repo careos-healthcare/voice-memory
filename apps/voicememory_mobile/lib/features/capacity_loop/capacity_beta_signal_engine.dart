@@ -1,6 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
 import '../pro_interest/pro_interest_models.dart';
+import '../paid_intent/paid_intent_confirmation_copy.dart';
+import '../paid_intent/paid_intent_confirmation_models.dart';
 import 'capacity_activation_fit_copy.dart';
 import 'capacity_activation_fit_models.dart';
 import 'capacity_boundary_response_models.dart';
@@ -8,6 +10,7 @@ import 'capacity_cost_models.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_pull_reason_models.dart';
 import 'capacity_beta_signal_copy.dart';
+import '../paid_intent/paid_intent_confirmation_models.dart';
 import 'capacity_beta_signal_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_store.dart';
@@ -42,9 +45,11 @@ class CapacityBetaSignalEngine {
       boundaryResponseSelected: input.boundaryResponseSelected,
     );
 
-    final paymentSignalLabel = input.trackPaymentSignal
-        ? CapacityBetaSignalCopy.yesNo(input.proInterestCaptured)
-        : CapacityBetaSignalCopy.paymentNotTrackedLabel;
+    final paymentSignalLabel = _paymentSignalLabel(
+      trackPaymentSignal: input.trackPaymentSignal,
+      paidIntent: input.paidIntentRecord,
+      proInterestCaptured: input.proInterestCaptured,
+    );
 
     return CapacityBetaSignalSnapshot(
       hasCapacityEvidence: hasCapacityEvidence,
@@ -59,6 +64,9 @@ class CapacityBetaSignalEngine {
       boundaryResponseSelected: input.boundaryResponseSelected,
       boundaryResponseCopied: input.boundaryResponseCopied,
       proInterestCaptured: input.proInterestCaptured,
+      paidIntentAnswered: input.paidIntentRecord?.isAnswered ?? false,
+      paidIntentStrongWtp: input.paidIntentRecord?.isStrongWtp ?? false,
+      paidIntentSoftWtp: input.paidIntentRecord?.isSoftWtp ?? false,
       paymentSignalLabel: paymentSignalLabel,
       verdict: verdict,
       verdictLabel: CapacityBetaSignalCopy.verdictLabelFor(verdict),
@@ -82,6 +90,8 @@ class CapacityBetaSignalEngine {
     List<CapacityCostRecord>? costRecords,
     CapacityBoundaryResponseSelection? boundarySelection,
     ProInterestState proInterestState = ProInterestState.empty,
+    PaidIntentConfirmationRecord? paidIntentRecord,
+    bool dailyChangeAvailable = false,
     bool trackPaymentSignal = true,
     bool sampleMode = false,
   }) {
@@ -129,6 +139,8 @@ class CapacityBetaSignalEngine {
         boundaryResponseSelected: boundarySelection?.hasSelection ?? false,
         boundaryResponseCopied: boundarySelection?.lastCopiedAt != null,
         proInterestCaptured: proInterestState.hasCapture,
+        paidIntentRecord: paidIntentRecord,
+        dailyChangeAvailable: dailyChangeAvailable,
         trackPaymentSignal: trackPaymentSignal,
       ),
     );
@@ -209,6 +221,23 @@ class CapacityBetaSignalEngine {
       isPositive: isPositive,
       isUnclear: isUnclear || !isPositive,
     );
+  }
+
+  static String _paymentSignalLabel({
+    required bool trackPaymentSignal,
+    required PaidIntentConfirmationRecord? paidIntent,
+    required bool proInterestCaptured,
+  }) {
+    if (!trackPaymentSignal) {
+      return CapacityBetaSignalCopy.paymentNotTrackedLabel;
+    }
+    if (paidIntent != null && paidIntent.isComplete) {
+      return PaidIntentConfirmationCopy.paymentSignalLabelForRecord(paidIntent);
+    }
+    if (proInterestCaptured) {
+      return CapacityBetaSignalCopy.proInterestFallbackLabel;
+    }
+    return CapacityBetaSignalCopy.noLabel;
   }
 
   static String _buildExportSummary({

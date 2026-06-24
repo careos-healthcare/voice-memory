@@ -16,6 +16,10 @@ import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_models.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
+import '../features/paid_intent/paid_intent_confirmation_engine.dart';
+import '../features/paid_intent/paid_intent_confirmation_models.dart';
+import '../features/paid_intent/paid_intent_confirmation_store.dart';
+import '../features/capacity_loop/capacity_activation_fit_models.dart';
 import '../features/capacity_loop/capacity_activation_fit_store.dart';
 import '../features/archive_daily_change/archive_daily_change_engine.dart';
 import '../features/archive_daily_change/archive_daily_change_models.dart';
@@ -25,6 +29,7 @@ import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/paid_intent_confirmation_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../widgets/capacity_boundary_response_card.dart';
 import '../widgets/archive_daily_change_card.dart';
@@ -56,6 +61,8 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
   CapacityBoundaryResponseResult? _boundaryResponse;
   CapacityBoundaryResponseInput? _boundaryInput;
   ArchiveDailyChangeResult? _archiveDailyChange;
+  PaidIntentConfirmationResult? _paidIntentResult;
+  PaidIntentValueSignalsAtResponse? _paidIntentValueSignals;
   bool _loading = true;
 
   @override
@@ -84,6 +91,8 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
     await CapacityPullReasonStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     await ArchiveDailyChangeStore.ensureLoaded();
+    await CapacityActivationFitStore.ensureLoaded();
+    await PaidIntentConfirmationStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -128,6 +137,41 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
       outcomeRecords: CapacityDecisionOutcomeStore.cached,
       pullReasonRecords: CapacityPullReasonStore.cached,
     );
+    final fitRecord = CapacityActivationFitStore.cached;
+    final fitIsPositive = fitRecord != null &&
+        !fitRecord.isSkipped &&
+        fitRecord.isAnswered &&
+        (fitRecord.responseId == CapacityActivationFitResponseIds.fits ||
+            fitRecord.responseId == CapacityActivationFitResponseIds.partly);
+    final dailyChangeShown =
+        ArchiveDailyChangeStore.cached.lastSeenAt != null;
+    final paidIntentResult =
+        const PaidIntentConfirmationEngine().buildFromJournal(
+      entries: entries,
+      capacityLoopActive: loopActive,
+      capacityCohortActive: cohortActive,
+      fitIsPositive: fitIsPositive,
+      fitResponseLabel: reviewResult.hasReview
+          ? (fitIsPositive ? 'partly' : 'not answered')
+          : 'not answered',
+      dailyChangeShown: dailyChangeShown,
+      weeklyReviewAvailable: reviewResult.hasReview,
+      boundaryResponseSelected:
+          CapacityBoundaryResponseStore.cached?.hasSelection ?? false,
+      screenshotMode: false,
+      record: PaidIntentConfirmationStore.cached,
+    );
+    final valueSignals = PaidIntentConfirmationEngine.valueSignalsFrom(
+      capacityMomentCount: const CapacityBoundaryResponseEngine()
+          .loopEngine
+          .eligibleCapacityEntryIds(realEntries)
+          .length,
+      fitResponseLabel: fitIsPositive ? 'partly' : 'not answered',
+      dailyChangeAvailable: dailyChangeShown,
+      weeklyReviewAvailable: reviewResult.hasReview,
+      boundaryResponseSelected:
+          CapacityBoundaryResponseStore.cached?.hasSelection ?? false,
+    );
     setState(() {
       _boundaryInput = boundaryInput;
       _result = reviewResult;
@@ -141,9 +185,11 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
         boundarySelection: CapacityBoundaryResponseStore.cached,
-        activationFitRecord: CapacityActivationFitStore.cached,
+        activationFitRecord: fitRecord,
         weeklyReviewAvailable: reviewResult.hasReview,
       );
+      _paidIntentResult = paidIntentResult;
+      _paidIntentValueSignals = valueSignals;
       _boundaryResponse =
           const CapacityBoundaryResponseEngine().build(boundaryInput);
       _loading = false;
@@ -289,6 +335,17 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
                 );
               });
             },
+          ),
+        ],
+        if (_paidIntentResult?.showOnWeeklyReview == true &&
+            _paidIntentResult!.showCard &&
+            _paidIntentValueSignals != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          PaidIntentConfirmationCard(
+            result: _paidIntentResult!,
+            valueSignals: _paidIntentValueSignals!,
+            compact: true,
+            onSaved: _load,
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
