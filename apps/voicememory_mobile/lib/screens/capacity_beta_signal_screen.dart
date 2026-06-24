@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_typography.dart';
 import '../features/capacity_loop/capacity_activation_fit_store.dart';
+import '../features/capacity_loop/capacity_beta_mission_copy.dart';
 import '../features/capacity_loop/capacity_beta_signal_copy.dart';
 import '../features/capacity_loop/capacity_beta_signal_engine.dart';
 import '../features/capacity_loop/capacity_beta_signal_models.dart';
@@ -268,6 +269,15 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
                     ? () => _copySummary(snapshot)
                     : null,
                 child: const Text(CapacityBetaSignalCopy.copySummaryButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('capacity_beta_signal_open_mission'),
+                onPressed: () => context.push(CapacityBetaMissionCopy.route),
+                child: const Text(CapacityBetaMissionCopy.betaSignalsMissionLink),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

@@ -10,6 +10,7 @@ import '../features/review_ritual/view_ritual_copy.dart';
 import '../features/milestone_share/milestone_share_copy.dart';
 import '../features/insight_feedback/insight_feedback_copy.dart';
 import '../features/archive_calendar/archive_calendar_copy.dart';
+import '../features/capacity_loop/capacity_beta_mission_copy.dart';
 import '../features/capacity_loop/capacity_beta_signal_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
 import '../features/beta_invite/beta_invite_copy.dart';
@@ -225,6 +226,21 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_open_beta_outcomes'),
                 onPressed: () => context.push('/beta-outcomes'),
                 child: const Text(BetaOutcomesCopy.openBetaOutcomesButton),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _section(
+              context,
+              key: const Key('support_feedback_capacity_beta_mission'),
+              title: CapacityBetaMissionCopy.supportTitle,
+              body: CapacityBetaMissionCopy.supportSubtitle,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('support_feedback_open_capacity_beta_mission'),
+                onPressed: () => context.push(CapacityBetaMissionCopy.route),
+                child: const Text(CapacityBetaMissionCopy.startMissionCta),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

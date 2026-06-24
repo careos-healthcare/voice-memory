@@ -134,6 +134,7 @@ import '../widgets/daily_archive_exercise_card.dart';
 import '../widgets/archive_clarity_progress_card.dart';
 import '../widgets/then_vs_now_card.dart';
 import '../widgets/capacity_loop_card.dart';
+import '../widgets/capacity_beta_mission_card.dart';
 import '../widgets/capacity_cost_later_card.dart';
 import '../widgets/capacity_decision_outcome_card.dart';
 import '../widgets/capacity_pull_reason_card.dart';
@@ -152,9 +153,12 @@ import '../features/capacity_loop/capacity_decision_outcome_engine.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
 import '../features/capacity_loop/capacity_pull_reason_engine.dart';
 import '../features/capacity_loop/capacity_pull_reason_store.dart';
+import '../features/pro_interest/pro_interest_store.dart';
 import '../features/capacity_loop/capacity_three_moment_engine.dart';
 import '../features/capacity_loop/capacity_activation_fit_engine.dart';
 import '../features/capacity_loop/capacity_activation_fit_store.dart';
+import '../features/capacity_loop/capacity_beta_mission_engine.dart';
+import '../features/capacity_loop/capacity_beta_mission_store.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/capacity_loop_copy.dart';
@@ -536,6 +540,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await CapacityPullReasonStore.ensureLoaded();
     await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
+    await CapacityBetaMissionStore.ensureLoaded();
+    await ProInterestStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -2910,6 +2916,31 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     final widgets = buildOrderedSections(priorityPlan.primarySections);
+
+    final missionResult = const CapacityBetaMissionEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      fitRecord: CapacityActivationFitStore.cached,
+      boundarySelection: CapacityBoundaryResponseStore.cached,
+      proInterestState: ProInterestStore.cached,
+      missionRecord: CapacityBetaMissionStore.cached,
+    );
+    if (missionResult.showOnArchiveHome) {
+      widgets.addAll(_archiveWorkspaceSectionSpacer());
+      widgets.add(
+        CapacityBetaMissionCard(
+          key: const Key('archive_home_capacity_beta_mission'),
+          result: missionResult,
+          compact: true,
+          onDismiss: () async {
+            await CapacityBetaMissionStore.instance().dismiss();
+            if (!mounted) return;
+            setState(() {});
+          },
+        ),
+      );
+    }
 
     if (priorityPlan.showMoreArchiveTools) {
       final secondaryWidgets =
