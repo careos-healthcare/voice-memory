@@ -189,10 +189,13 @@ import '../features/capacity_loop/capacity_boundary_response_copy.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../product/loop_mode_copy.dart';
 import '../features/capacity_loop/capacity_loop_gates.dart';
+import '../features/capacity_loop/capacity_return_trigger_engine.dart';
+import '../features/capacity_loop/capacity_return_trigger_models.dart';
 import '../features/capacity_loop/capacity_three_moment_engine.dart';
 import '../features/capacity_loop/low_effort_yes_capture_engine.dart';
 import '../features/capacity_loop/low_effort_yes_capture_models.dart';
 import '../widgets/low_effort_yes_capture_card.dart';
+import '../widgets/capacity_return_trigger_card.dart';
 import '../features/retention/next_evidence_reminder_service.dart';
 import '../features/retention/reminder_pre_prompt_coordinator.dart';
 import '../features/retention/return_reason_capture_coordinator.dart';
@@ -3608,7 +3611,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             capacityLoopActive:
                                 _activeLoop?.isCapacityYes ?? false,
                             capacityCohortActive: false,
-                            sampleMode: ScreenshotMode.enabled,
+                            sampleMode: false,
                           );
                           final progressLine =
                               CapacityThreeMomentEngine.recordProgressLine(
@@ -4046,6 +4049,34 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                           SavedMomentQualityCard(
                             transcript: entriesAfterSave.first.transcript,
+                          ),
+                          Builder(
+                            builder: (context) {
+                              final returnTrigger =
+                                  const CapacityReturnTriggerEngine()
+                                      .buildFromJournal(
+                                entries: entriesAfterSave,
+                                capacityLoopActive:
+                                    _activeLoop?.isCapacityYes ?? false,
+                                capacityCohortActive: false,
+                                surface:
+                                    CapacityReturnTriggerSurface.completion,
+                                sampleMode: false,
+                                screenshotMode: ScreenshotMode.enabled,
+                              );
+                              if (!returnTrigger.showCard) {
+                                return const SizedBox.shrink();
+                              }
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 16),
+                                  CapacityReturnTriggerCard(
+                                    result: returnTrigger,
+                                    onSecondary: _resetPostSaveToReady,
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ],
                         if (beliefUpdatePayoff != null) ...[

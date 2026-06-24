@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,6 +9,8 @@ import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_decision_outcome_models.dart';
 import '../features/capacity_loop/capacity_pull_reason_models.dart';
+import '../features/capacity_loop/capacity_return_trigger_engine.dart';
+import '../features/capacity_loop/capacity_return_trigger_models.dart';
 import '../features/capacity_loop/low_effort_yes_capture_copy.dart';
 import '../features/capacity_loop/low_effort_yes_capture_engine.dart';
 import '../features/capacity_loop/low_effort_yes_capture_models.dart';
@@ -18,6 +22,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/pushed_screen_shell.dart';
 import '../widgets/quick_capture_friction_card.dart';
+import '../widgets/capacity_return_trigger_card.dart';
 
 /// Quick yes capture screen — fixed pull + decision options only.
 class LowEffortYesCaptureScreen extends StatefulWidget {
@@ -36,6 +41,7 @@ class LowEffortYesCaptureScreen extends StatefulWidget {
 class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
   LowEffortYesCaptureResult? _result;
   QuickCaptureFrictionResult? _frictionResult;
+  CapacityReturnTriggerResult? _returnTriggerResult;
   bool _loading = true;
   bool _capacityWedgeActive = false;
   String? _selectedPullReasonId;
@@ -99,7 +105,27 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
     });
   }
 
-  void _dismissAfterFriction() {
+  Future<void> _dismissAfterFriction() async {
+    final entries = await AppServices.instance.journalStore.loadAll();
+    final returnTrigger = const CapacityReturnTriggerEngine().buildFromJournal(
+      entries: entries,
+      capacityLoopActive: _capacityWedgeActive,
+      capacityCohortActive: false,
+      surface: CapacityReturnTriggerSurface.completion,
+    );
+    if (!mounted) return;
+    if (returnTrigger.showCard) {
+      setState(() {
+        _frictionResult = null;
+        _returnTriggerResult = returnTrigger;
+      });
+      return;
+    }
+    if (!mounted) return;
+    context.pop(true);
+  }
+
+  void _dismissAfterReturnTrigger() {
     if (!mounted) return;
     context.pop(true);
   }
@@ -139,7 +165,23 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           child: QuickCaptureFrictionCard(
             result: frictionResult,
-            onSaved: _dismissAfterFriction,
+            onSaved: () => unawaited(_dismissAfterFriction()),
+          ),
+        ),
+      );
+    }
+
+    final returnTriggerResult = _returnTriggerResult;
+    if (returnTriggerResult != null && returnTriggerResult.showCard) {
+      return PushedScreenShell(
+        title: returnTriggerResult.title,
+        fallbackRoute: LowEffortYesCaptureCopy.recordRoute,
+        body: SingleChildScrollView(
+          key: const Key('low_effort_yes_capture_return_trigger_completion'),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          child: CapacityReturnTriggerCard(
+            result: returnTriggerResult,
+            onSecondary: _dismissAfterReturnTrigger,
           ),
         ),
       );

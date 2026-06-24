@@ -218,6 +218,17 @@ class _CapacityBetaMissionScreenState extends State<CapacityBetaMissionScreen> {
           ),
           if (task.status != CapacityBetaMissionTaskStatus.done &&
               task.status != CapacityBetaMissionTaskStatus.notStarted) ...[
+            if (task.hintLabel.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                task.hintLabel,
+                key: Key('capacity_beta_mission_task_hint_${task.id}'),
+                style: ArchiveMobileTypography.explanationBody(
+                  context,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.xs),
             Align(
               alignment: Alignment.centerLeft,

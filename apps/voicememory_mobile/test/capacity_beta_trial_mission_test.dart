@@ -202,13 +202,25 @@ void main() {
       );
     });
 
-    test('computes 3 yes moments task', () {
+    test('computes 3 yes moments task with return hint for 1-2 moments', () {
       final one = engine.build(
         _input(capacityWedgeActive: true, capacityMomentCount: 1),
       );
       expect(
         _task(one, CapacityBetaMissionTaskIds.threeYesMoments)!.status,
         CapacityBetaMissionTaskStatus.ready,
+      );
+      expect(
+        _task(one, CapacityBetaMissionTaskIds.threeYesMoments)!.hintLabel,
+        'Come back when the next yes moment happens.',
+      );
+
+      final two = engine.build(
+        _input(capacityWedgeActive: true, capacityMomentCount: 2),
+      );
+      expect(
+        _task(two, CapacityBetaMissionTaskIds.threeYesMoments)!.hintLabel,
+        'Come back when the next yes moment happens.',
       );
 
       final three = engine.build(
@@ -217,6 +229,10 @@ void main() {
       expect(
         _task(three, CapacityBetaMissionTaskIds.threeYesMoments)!.status,
         CapacityBetaMissionTaskStatus.done,
+      );
+      expect(
+        _task(three, CapacityBetaMissionTaskIds.threeYesMoments)!.hintLabel,
+        isEmpty,
       );
     });
 

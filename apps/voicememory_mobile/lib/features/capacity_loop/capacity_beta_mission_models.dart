@@ -47,6 +47,7 @@ class CapacityBetaMissionTask {
     required this.route,
     required this.ctaLabel,
     this.isOptional = false,
+    this.hintLabel = '',
   });
 
   final String id;
@@ -56,6 +57,7 @@ class CapacityBetaMissionTask {
   final String route;
   final String ctaLabel;
   final bool isOptional;
+  final String hintLabel;
 
   bool get isDone => status == CapacityBetaMissionTaskStatus.done;
 }
