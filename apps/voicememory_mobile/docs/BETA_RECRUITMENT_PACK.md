@@ -4,13 +4,15 @@ Calm, specific, honest scripts for recruiting TestFlight beta testers. No hype, 
 
 **Core task for every tester:** Save 3 real moments. Return once. Review what repeated. Tell us if it fits.
 
-**Positioning line:** ArchiveMe is a private evidence archive for noticing what keeps repeating, what changed, and what to watch next.
+**Positioning line:** ArchiveMe shows what keeps repeating in your life — a private evidence archive for what changed and what to watch next.
+
+**Launch wedge line:** Start with one pattern: saying yes when you have no capacity.
 
 ---
 
 ## 5 short DM scripts
 
-1. **Capacity wedge:** “I'm testing ArchiveMe for people who say yes before checking capacity. Would you try saving 3 real moments this week and tell me if the archive shows a pattern?”
+1. **Capacity wedge:** “I'm testing ArchiveMe — start with one pattern: saying yes before checking capacity. Would you save 3 real moments this week and tell me if the archive shows what keeps repeating?”
 
 2. **Prove enough wedge:** “I'm testing ArchiveMe for people who keep doing more to feel enough. Save 3 moments and tell me if anything useful shows up by the third.”
 

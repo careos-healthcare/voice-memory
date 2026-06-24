@@ -1,10 +1,12 @@
 # ArchiveMe — Capacity Yes Beta Interview Script
 
-Structured interviews for the overcommitment wedge. **Stay in pattern-evidence language.** Record notes; do not quote users publicly without consent.
+Structured interviews for the **launch wedge** (saying yes with no capacity) on a **broad private archive**. **Stay in pattern-evidence language.** Record notes; do not quote users publicly without consent.
+
+**Broad product:** ArchiveMe shows what keeps repeating in your life. **Bridge:** Start with one pattern: saying yes when you have no capacity.
 
 ## Screening questions
 
-1. What kind of work do you do (founder, freelancer, manager, consultant, other)?
+1. What describes you best (founder, freelancer, manager, student, carer/parent, other)?
 2. In the last month, did you agree to something before checking if you had capacity?
 3. How often does the cost of that yes show up later (same week, next week)?
 4. Do you already use notes, voice memos, or journals for work stress?
@@ -104,7 +106,7 @@ Structured interviews for the overcommitment wedge. **Stay in pattern-evidence l
 
 - [ ] All exact required questions asked by moment 3 or day 7
 - [ ] WTP and “too expensive” price recorded
-- [ ] User segment tagged (founder / freelancer / manager / consultant / carer)
+- [ ] User segment tagged (founder / freelancer / manager / student / carer / other — examples only)
 - [ ] Cohort noted (`capacity_yes_direct` if applicable)
 - [ ] No leading wellness or diagnostic language
 

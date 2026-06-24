@@ -6,13 +6,17 @@ Branch context on `main`: sticky-loop consolidation, TestFlight QA pack, access 
 
 ## Positioning
 
-**One sentence:** ArchiveMe is a private evidence archive for noticing what keeps repeating, what changed, and what to watch next.
+**Broad product:** ArchiveMe shows what keeps repeating in your life.
 
-**Sharper beta wedge:** For people who keep saying yes when they have no capacity, ArchiveMe helps you save real moments and see the pattern over time.
+**Product line:** ArchiveMe is a private evidence archive for noticing what keeps repeating, what changed, and what to watch next.
+
+**Primary launch wedge:** Start with one pattern — saying yes when you have no capacity. ArchiveMe helps you save real moments and see the pattern over time.
+
+**Audience:** People who keep taking on too much, agreeing too quickly, or only seeing the cost later. Examples: founders, managers, freelancers, carers, parents, students, and anyone who keeps overcommitting.
 
 ## Primary wedge
 
-**People who keep saying yes when they have no capacity.**
+**People who keep saying yes when they have no capacity** — the first pattern to test, not the only use of the archive.
 
 Pain: agreeing before checking room, then paying the cost later. ArchiveMe turns real moments into cautious evidence — not a verdict.
 

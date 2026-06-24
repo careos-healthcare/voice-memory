@@ -1,6 +1,21 @@
 # ArchiveMe — Capacity Yes Landing Page Copy
 
-For overcommitted professionals — private evidence archive for repeated overcommitment patterns. No wellness scores. No generic journaling pitch.
+Broad private evidence archive; **launch wedge** = repeated yes-with-no-capacity. No wellness scores. No generic journaling pitch.
+
+## Central positioning
+
+| Field | Copy |
+| --- | --- |
+| **Headline** | See why you keep saying yes. |
+| **Subheadline** | ArchiveMe helps you save real moments and spot repeated overcommitment patterns over time. |
+| **Product line** | ArchiveMe is a private evidence archive for what keeps repeating. |
+| **Bridge line** | Start with one pattern: saying yes when you have no capacity. |
+
+**Broad product:** ArchiveMe shows what keeps repeating in your life.
+
+**Audience:** People who keep taking on too much, agreeing too quickly, or only seeing the cost later.
+
+**Examples:** Founders, managers, freelancers, carers, parents, students, and anyone who keeps overcommitting.
 
 ## Hero headline variants
 
@@ -10,14 +25,14 @@ For overcommitted professionals — private evidence archive for repeated overco
 4. **Save the moment. See the pattern.**
 5. **ArchiveMe shows what keeps repeating.**
 
-**Recommended A/B default:** #4 (action → outcome) with subhead #2.
+**Recommended A/B default:** #1 (headline) with central subheadline above.
 
 ## Subheadline variants
 
-- ArchiveMe is a private evidence archive for people who say yes before checking capacity.
+- ArchiveMe helps you save real moments and spot repeated overcommitment patterns over time.
+- Start with one pattern: saying yes when you have no capacity. Build a broader archive over time.
 - Save real moments. After a few saves, see what keeps repeating — cautiously, from your own words.
-- For founders and operators who overcommit: build proof, not another pile of notes.
-- Stop guessing why you keep taking on too much. Compare moments over time on your device.
+- For people who agree too quickly: build private evidence, not another pile of notes.
 - Private archive. No public sharing of raw entries. Pattern evidence when you are ready.
 
 ## Pain bullets
@@ -26,7 +41,7 @@ For overcommitted professionals — private evidence archive for repeated overco
 - The same overcommit pattern is hard to see in one note or one week
 - You want proof from your own words, not another productivity framework
 - You need privacy — not a public feed or wellness score
-- You are responsible for too many threads and need a calm place to compare what repeated
+- You take on too much and need a calm place to compare what repeated
 
 ## How it works
 
@@ -35,6 +50,7 @@ For overcommitted professionals — private evidence archive for repeated overco
 3. **Open Archive** — see cautious evidence: what repeated, what changed, what to watch next
 4. **Compare over time** — Then vs Now and weekly review when eligible
 5. **Keep it private** — share-safe proof uses fixed copy only, never raw entries
+6. **Broaden later** — same archive can hold other repeating patterns when you are ready
 
 ## Proof concept
 
@@ -57,7 +73,7 @@ For overcommitted professionals — private evidence archive for repeated overco
 
 ## Beta invite copy (landing block)
 
-**Headline:** Test ArchiveMe for overcommitment patterns
+**Headline:** Start with one pattern — saying yes with no capacity
 
 **Body:** Save 3 real moments this week — especially when you say yes before checking capacity. Return once. Open Archive and tell us if anything useful showed up about what keeps repeating.
 
@@ -74,20 +90,20 @@ For overcommitted professionals — private evidence archive for repeated overco
 ## App Store promo text options (≤170 chars)
 
 - Save moments when you say yes too fast. ArchiveMe helps you see what keeps repeating — private evidence, not another journal.
-- For operators who overcommit: build a private archive of real moments and compare what changed over time.
+- Start with one pattern: yes with no capacity. Build a private archive of real moments and compare what changed over time.
 - Stop guessing why you keep taking on too much. Save the moment. See the pattern. TestFlight beta open.
 
 ## Short description options
 
-**Option A:** ArchiveMe helps overcommitted professionals save private moments and see repeated overcommitment patterns over time.
+**Option A:** ArchiveMe helps you save real moments and spot repeated overcommitment patterns over time — starting with saying yes when you have no capacity.
 
-**Option B:** Private evidence archive — what repeated, what changed, what to watch next. No public sharing of raw entries.
+**Option B:** Private evidence archive for what keeps repeating — what changed, what to watch next. No public sharing of raw entries.
 
 ## Long description draft
 
-ArchiveMe is a private evidence archive for people who keep saying yes when they have no capacity.
+ArchiveMe is a private evidence archive for what keeps repeating in your life.
 
-Save a moment when you agree to something — or when the cost lands later. After a few saves, ArchiveMe helps you compare your own words cautiously: what keeps repeating, what changed, and what to watch next before the next yes.
+**Start with one pattern:** saying yes when you have no capacity. Save a moment when you agree — or when the cost lands later. After a few saves, compare your own words cautiously: what keeps repeating, what changed, and what to watch next before the next yes.
 
 **Not** a task manager, diary, or wellness score app. Your archive stays private on device. Share-safe proof never includes raw entry text.
 
@@ -98,5 +114,6 @@ TestFlight beta: save 3 moments, return once, review what repeated.
 - AI journal / AI knows you
 - Productivity / life hack framing
 - Wellness or clinical claims
+- “Busy professionals” or “overcommitted professionals” as the only audience
 - Invented urgency or invented social proof
 - Streak guilt or “don’t break your streak”

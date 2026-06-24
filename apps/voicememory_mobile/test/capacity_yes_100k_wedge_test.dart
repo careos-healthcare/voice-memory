@@ -8,12 +8,19 @@ const _creatorPath = 'docs/CAPACITY_YES_CREATOR_SCRIPTS.md';
 const _interviewPath = 'docs/CAPACITY_YES_BETA_INTERVIEW_SCRIPT.md';
 const _appStorePath = 'docs/CAPACITY_YES_APP_STORE_TEST_COPY.md';
 
-const _docPaths = [
+const _capacityOnlyPaths = [
   _wedgePlanPath,
   _landingPath,
   _creatorPath,
   _interviewPath,
   _appStorePath,
+  'docs/CAPACITY_YES_POSITIONING_ONE_PAGER.md',
+];
+
+const _docPaths = [
+  ..._capacityOnlyPaths,
+  'docs/WEDGE_RETENTION_ACQUISITION_PLAN.md',
+  'docs/BETA_RECRUITMENT_PACK.md',
 ];
 
 const _forbiddenPurchaseCtas = [
@@ -49,6 +56,7 @@ void main() {
   late String creator;
   late String interview;
   late String appStore;
+  late String capacityDocs;
   late String allDocs;
 
   setUpAll(() {
@@ -57,7 +65,9 @@ void main() {
     creator = File(_creatorPath).readAsStringSync();
     interview = File(_interviewPath).readAsStringSync();
     appStore = File(_appStorePath).readAsStringSync();
-    allDocs = [wedgePlan, landing, creator, interview, appStore].join('\n');
+    capacityDocs =
+        _capacityOnlyPaths.map((path) => File(path).readAsStringSync()).join('\n');
+    allDocs = _docPaths.map((path) => File(path).readAsStringSync()).join('\n');
   });
 
   group('Capacity yes 100k wedge docs exist', () {
@@ -69,16 +79,21 @@ void main() {
 
     test('ArchiveMe identity and primary wedge', () {
       expect(allDocs, contains('ArchiveMe'));
-      expect(allDocs.toLowerCase(), contains('overcommitted professionals'));
+      expect(
+        allDocs.toLowerCase(),
+        contains('people who keep taking on too much'),
+      );
       expect(
         allDocs.toLowerCase(),
         anyOf(
           contains('saying yes when they have no capacity'),
           contains('saying yes when you have no capacity'),
           contains('say yes before checking capacity'),
+          contains('start with one pattern'),
         ),
       );
       expect(allDocs.toLowerCase(), contains('private evidence archive'));
+      expect(allDocs.toLowerCase(), contains('what keeps repeating'));
     });
 
     test('pattern and moment language', () {
@@ -145,28 +160,28 @@ void main() {
   });
 
   group('Copy safety in capacity yes pack', () {
-    test('no forbidden purchase CTAs', () {
+    test('no forbidden purchase CTAs in capacity docs', () {
       for (final cta in _forbiddenPurchaseCtas) {
-        expect(allDocs, isNot(contains(cta)));
+        expect(capacityDocs, isNot(contains(cta)));
       }
     });
 
     test('no clinical terms in growth docs', () {
-      final lower = allDocs.toLowerCase();
+      final lower = capacityDocs.toLowerCase();
       for (final term in _forbiddenClinicalTerms) {
         expect(lower, isNot(contains(term)), reason: 'must not contain $term');
       }
     });
 
     test('no forbidden score language', () {
-      final lower = allDocs.toLowerCase();
+      final lower = capacityDocs.toLowerCase();
       for (final term in _forbiddenScoreTerms) {
         expect(lower, isNot(contains(term)), reason: 'must not contain $term');
       }
     });
 
     test('no fake testimonials or invented user counts', () {
-      final lower = allDocs.toLowerCase();
+      final lower = capacityDocs.toLowerCase();
       for (final phrase in _forbiddenHypePhrases) {
         expect(lower, isNot(contains(phrase)), reason: 'must not contain $phrase');
       }

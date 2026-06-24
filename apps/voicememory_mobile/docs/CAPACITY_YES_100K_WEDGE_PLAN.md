@@ -1,18 +1,37 @@
 # ArchiveMe — Capacity Yes £100k/month Wedge Plan
 
-Commercial validation pack for the **primary** wedge — not a new product feature. Builds on [WEDGE_RETENTION_ACQUISITION_PLAN.md](./WEDGE_RETENTION_ACQUISITION_PLAN.md) (#140).
+Commercial validation pack for the **primary launch wedge** — not a new product feature. Builds on [WEDGE_RETENTION_ACQUISITION_PLAN.md](./WEDGE_RETENTION_ACQUISITION_PLAN.md) (#140).
 
-## Primary wedge
+## Broad product
 
-**For overcommitted professionals who keep saying yes when they have no capacity, ArchiveMe shows the repeated pattern before it costs them.**
+**ArchiveMe shows what keeps repeating in your life.**
 
-**Short version:** Stop guessing why you keep overcommitting. Build the private evidence.
+ArchiveMe is a private evidence archive underneath — compare moments over time, not a diary or task app.
 
-**Positioning:** ArchiveMe is a private evidence archive for repeated overcommitment patterns.
+## Primary launch wedge
 
-## Target user
+**Start with one pattern: saying yes when you have no capacity.**
 
-Founders, freelancers, managers, senior operators, consultants, and carers/parents under work pressure — people who repeatedly say yes, overdeliver, then feel the cost later.
+Behavior-led and specific enough for acquisition; the archive can broaden to other patterns later.
+
+## Central positioning
+
+| Field | Copy |
+| --- | --- |
+| **Headline** | See why you keep saying yes. |
+| **Subheadline** | ArchiveMe helps you save real moments and spot repeated overcommitment patterns over time. |
+| **Product line** | ArchiveMe is a private evidence archive for what keeps repeating. |
+| **Bridge line** | Start with one pattern: saying yes when you have no capacity. |
+
+**Short version:** Save the moment. See the pattern.
+
+## Audience
+
+**People who keep taking on too much, agreeing too quickly, or only seeing the cost later.**
+
+**Examples (not the whole audience):** Founders, managers, freelancers, carers, parents, students, and anyone who keeps overcommitting.
+
+Do not narrow to “busy professionals” or “overcommitted professionals” alone — those are segments, not the full story.
 
 ## Pain statement
 
@@ -25,7 +44,7 @@ Founders, freelancers, managers, senior operators, consultants, and carers/paren
 
 ## Why this wedge can pay
 
-Overcommitted professionals already spend on tools, coaching-adjacent products, and time recovery. If ArchiveMe clearly surfaces **what keeps repeating** before the next yes, £10–£30/month is plausible for a private long-term evidence trail — especially vs. losing a weekend or a client relationship to another overcommit.
+People with **repeated overcommitment** already spend on tools and time recovery. If ArchiveMe clearly surfaces **what keeps repeating** before the next yes, £10–£30/month is plausible for a private long-term evidence trail — especially vs. losing a weekend or a relationship thread to another overcommit.
 
 ## Why this is sharper than journaling
 
@@ -162,6 +181,7 @@ See [CAPACITY_YES_BETA_INTERVIEW_SCRIPT.md](./CAPACITY_YES_BETA_INTERVIEW_SCRIPT
 
 ## Related docs
 
+- [CAPACITY_YES_POSITIONING_ONE_PAGER.md](./CAPACITY_YES_POSITIONING_ONE_PAGER.md)
 - [CAPACITY_YES_LANDING_PAGE_COPY.md](./CAPACITY_YES_LANDING_PAGE_COPY.md)
 - [CAPACITY_YES_CREATOR_SCRIPTS.md](./CAPACITY_YES_CREATOR_SCRIPTS.md)
 - [CAPACITY_YES_BETA_INTERVIEW_SCRIPT.md](./CAPACITY_YES_BETA_INTERVIEW_SCRIPT.md)

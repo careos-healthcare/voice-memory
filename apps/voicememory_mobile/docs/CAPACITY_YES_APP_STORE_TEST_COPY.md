@@ -82,9 +82,9 @@ overcommit,archive,pattern,moments,private,voice,work,operator,compare,review
 
 ## Long description (test)
 
-ArchiveMe is a private evidence archive for people who keep saying yes when they have no capacity.
+ArchiveMe is a private evidence archive for what keeps repeating in your life.
 
-Save a moment when you agree — or when the cost shows up later. After a few saves, compare what keeps repeating, what changed, and what to watch next. Cautious reads come from your own words — not generic advice.
+**Start with one pattern:** saying yes when you have no capacity. Save a moment when you agree — or when the cost shows up later. After a few saves, compare what keeps repeating, what changed, and what to watch next. Cautious reads come from your own words — not generic advice.
 
 Features:
 • Voice or typed moments
@@ -94,7 +94,7 @@ Features:
 • Share-safe proof (counts only)
 • Optional app lock
 
-Not a task manager or wellness score app. Built for founders, managers, consultants, and operators who want private proof before the next yes.
+Not a task manager or wellness score app. For people who take on too much — founders, managers, students, carers, and anyone who keeps overcommitting — who want private proof before the next yes.
 
 ## Promo text (≤170 chars)
 
@@ -106,8 +106,8 @@ Save moments when you say yes too fast. ArchiveMe helps you see what keeps repea
 | --- | --- |
 | **Name** | ArchiveMe |
 | **Subtitle** | See repeated yes patterns |
-| **Promo** | Save the moment. See the pattern. Private archive for overcommitted professionals — your words, your device. |
-| **Description lead** | For overcommitted professionals who keep saying yes when they have no capacity, ArchiveMe helps you build a private evidence archive and see what keeps repeating over time. |
+| **Promo** | Save the moment. See the pattern. Start with yes-with-no-capacity — private archive on your device. |
+| **Description lead** | ArchiveMe helps you save real moments and spot repeated overcommitment patterns over time. Start with one pattern: saying yes when you have no capacity. |
 | **Screenshot 1** | Save the moment |
 | **Screenshot 3** | After 3 moments — see what keeps repeating |
 | **Privacy line** | Entries on device. Share cards never include raw text. |

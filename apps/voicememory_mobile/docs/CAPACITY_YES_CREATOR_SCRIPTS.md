@@ -1,6 +1,8 @@
 # ArchiveMe — Capacity Yes Creator Scripts
 
-Short-form and founder content for the overcommitment wedge. **Use real beta gates only — no invented numbers or quoted users. Pattern-evidence language only.**
+Short-form and founder content for the repeated yes-with-no-capacity launch wedge. **Use real beta gates only — no invented numbers or quoted users. Pattern-evidence language only.**
+
+**Broad product:** ArchiveMe shows what keeps repeating in your life. **Bridge:** Start with one pattern: saying yes when you have no capacity.
 
 ## 10 hook lines
 
@@ -150,7 +152,7 @@ Each script: **yes → cost → save → pattern → privacy**. No private detai
 7. Testing ArchiveMe for capacity yes patterns — TestFlight in bio.
 8. Share cards show counts only. Raw entries stay private.
 9. Building proof before the next yes. Join the beta if this sounds like you.
-10. For overcommitted professionals: what repeated, what changed, what to watch next.
+10. For anyone who keeps overcommitting: what repeated, what changed, what to watch next.
 
 ## 10 comment replies
 
@@ -180,7 +182,7 @@ I won’t put my raw notes on LinkedIn. Share-safe proof uses counts only. The a
 Task apps don’t show that you said yes the same way three Tuesdays in a row. ArchiveMe compares — cautiously — what keeps repeating.
 
 ### 5 — Beta ask
-Looking for 20 overcommitted professionals for a two-week TestFlight: save 3 moments, return once, tell me if anything useful showed up. DM or comment “beta.”
+Looking for 20 testers for a two-week TestFlight — start with the yes-with-no-capacity pattern: save 3 moments, return once, tell me if anything useful showed up. DM or comment “beta.”
 
 ## 5 LinkedIn posts
 
@@ -202,7 +204,7 @@ If you’re a manager, consultant, or founder who agrees before checking capacit
 Generic advice: “learn to say no.” What I needed: my own words lined up across weeks. Building ArchiveMe for that. Early testers welcome.
 
 ### 5 — Build in public (honest)
-Week 1 beta goal: 20 users, 5 complete 3 moments. No inflated numbers — just learning if the wedge lands. Link in comments for TestFlight.
+Week 1 beta goal: 20 users, 5 complete 3 moments on the capacity-yes pattern. No inflated numbers — just learning if the wedge lands. Link in comments for TestFlight.
 
 ## 5 DM replies
 
@@ -214,7 +216,7 @@ Week 1 beta goal: 20 users, 5 complete 3 moments. No inflated numbers — just l
 
 ## 5 beta invite messages
 
-1. **Short:** Testing ArchiveMe for overcommitted professionals — save 3 moments, see if the yes-pattern repeats. TestFlight?
+1. **Short:** Testing ArchiveMe — start with one pattern: saying yes with no capacity. Save 3 moments, see if it repeats. TestFlight?
 2. **LinkedIn:** I’m recruiting operators who say yes too fast for a private evidence archive beta. 2 weeks, 3 saves, one follow-up call. Interested?
 3. **Slack:** ArchiveMe beta — capacity yes wedge. Not a journal. Save moments → compare pattern. DM for link.
 4. **Email:** Subject: ArchiveMe beta — overcommitment patterns. Body: private archive on device; save 3 real moments; feedback call optional.
