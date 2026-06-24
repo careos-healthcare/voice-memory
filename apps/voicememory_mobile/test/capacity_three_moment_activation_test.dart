@@ -112,6 +112,7 @@ ArchiveHomePriorityInput _priorityInput({
       capacityPullReasonVisible: capacityPullReasonVisible,
       capacityDecisionOutcomeVisible: false,
       capacityCostLaterCheckinVisible: false,
+      capacityActivationFitVisible: false,
       beforeYouSayYesPauseVisible: false,
       capacityWeeklyReviewVisible: false,
       capacityBoundaryResponseVisible: false,

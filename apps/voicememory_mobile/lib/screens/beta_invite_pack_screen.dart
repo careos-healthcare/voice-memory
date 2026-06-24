@@ -118,6 +118,15 @@ class _BetaInvitePackScreenState extends State<BetaInvitePackScreen> {
                 color: AppColors.textSecondary,
               ),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              BetaInviteCopy.capacityActivationFitBetaLine,
+              key: const Key('beta_invite_pack_capacity_activation_fit_task'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               BetaInviteCopy.variantSectionTitle,

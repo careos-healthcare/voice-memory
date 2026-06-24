@@ -391,6 +391,7 @@ void main() {
           capacityPullReasonVisible: false,
           capacityDecisionOutcomeVisible: false,
           capacityCostLaterCheckinVisible: false,
+          capacityActivationFitVisible: false,
           beforeYouSayYesPauseVisible: false,
           capacityWeeklyReviewVisible: false,
           capacityBoundaryResponseVisible: false,

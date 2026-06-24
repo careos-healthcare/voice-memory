@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -24,6 +26,13 @@ import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../features/capacity_loop/capacity_three_moment_copy.dart';
 import '../features/capacity_loop/capacity_three_moment_engine.dart';
 import '../features/capacity_loop/capacity_three_moment_models.dart';
+import '../features/capacity_loop/capacity_activation_fit_engine.dart';
+import '../features/capacity_loop/capacity_activation_fit_models.dart';
+import '../features/capacity_loop/capacity_activation_fit_store.dart';
+import '../features/capacity_loop/capacity_cost_engine.dart';
+import '../features/capacity_loop/capacity_decision_outcome_engine.dart';
+import '../features/capacity_loop/capacity_pull_reason_engine.dart';
+import '../widgets/capacity_activation_fit_card.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -57,6 +66,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   CapacityWeeklyReviewResult? _weeklyReview;
   CapacityBoundaryResponseResult? _boundaryResponse;
   CapacityThreeMomentResult? _threeMoment;
+  CapacityActivationFitResult? _activationFit;
   bool _loading = true;
 
   @override
@@ -91,6 +101,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
     await CapacityPullReasonStore.ensureLoaded();
+    await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
@@ -140,6 +151,35 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         entries: entries,
         capacityLoopActive: loopActive,
         capacityCohortActive: cohortActive,
+      );
+      final pullReason = const CapacityPullReasonEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        records: CapacityPullReasonStore.cached,
+      );
+      final decisionOutcome =
+          const CapacityDecisionOutcomeEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        records: CapacityDecisionOutcomeStore.cached,
+      );
+      final costCheckin = const CapacityCostEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        records: CapacityCostStore.cached,
+        outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      );
+      _activationFit = const CapacityActivationFitEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        pendingPullReasonOnHome: pullReason.showOnArchiveHome,
+        pendingDecisionOutcomeOnHome: decisionOutcome.showOnArchiveHome,
+        pendingCostCheckinOnHome: costCheckin.showOnArchiveHome,
+        threeMomentActivationOnHome: _threeMoment!.showOnArchiveHome,
       );
       _loading = false;
     });
@@ -223,6 +263,29 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
             key: const Key('capacity_loop_screen_cost_later')),
         _section(context, result.watchNextLabel, result.watchNext,
             key: const Key('capacity_loop_screen_watch_next')),
+        if (_activationFit?.showAnsweredLineOnCapacityLoop == true) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            _activationFit!.answeredSummaryLine,
+            key: const Key('capacity_loop_screen_activation_fit_answered'),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+        if (_activationFit?.showOnCapacityLoop == true) ...[
+          const SizedBox(height: AppSpacing.md),
+          CapacityActivationFitCard(
+            compact: false,
+            showOnSurface: _activationFit!.showOnCapacityLoop,
+            result: _activationFit!,
+            onSaved: () {
+              if (!mounted) return;
+              unawaited(_load());
+            },
+          ),
+        ],
         if (_beforeYesPause?.showOnCapacityLoop == true) ...[
           const SizedBox(height: AppSpacing.sm),
           _section(
