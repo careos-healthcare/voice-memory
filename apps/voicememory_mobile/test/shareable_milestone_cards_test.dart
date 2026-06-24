@@ -154,6 +154,7 @@ ArchiveHomePriorityInput _priorityInput({
       archiveClarityProgressVisible: true,
       capacityLoopVisible: false,
       capacityCostLaterCheckinVisible: false,
+      beforeYouSayYesPauseVisible: false,
       thenVsNowVisible: thenVsNowVisible,
       archiveCalendarVisible: archiveCalendarVisible,
       reviewRitualVisible: reviewRitualVisible,

@@ -181,7 +181,10 @@ import '../features/loop_mode/loop_mode_model.dart';
 import '../features/quality/first_insight_specificity_store.dart';
 import '../widgets/loop_mode/loop_mode_progress_card.dart';
 import '../widgets/record/loop_mode_first_handoff_card.dart';
-import '../widgets/record/capacity_yes_record_prompt_card.dart';
+import '../widgets/before_you_say_yes_card.dart';
+import '../features/capacity_loop/before_yes_copy.dart';
+import '../features/capacity_loop/before_yes_engine.dart';
+import '../product/loop_mode_copy.dart';
 import '../features/capacity_loop/capacity_loop_gates.dart';
 import '../features/retention/next_evidence_reminder_service.dart';
 import '../features/retention/reminder_pre_prompt_coordinator.dart';
@@ -3509,10 +3512,35 @@ class _RecordScreenState extends State<RecordScreen> {
                         ui == RecordUiState.ready &&
                         _mic == RecordingPhase.ready &&
                         _postSavePattern == null) ...[
-                      CapacityYesRecordPromptCard(
-                        onSaveMoment: () =>
-                            unawaited(_onRecordPressed(source: 'capacity_loop')),
-                        showRecordCta: !_shouldHideCardRecordButtons(ui),
+                      BeforeYouSayYesCard(
+                        result: const BeforeYesPauseEngine().build(
+                          BeforeYesPauseInput(
+                            capacityWedgeActive: true,
+                            sampleMode: ScreenshotMode.enabled,
+                            realSavedMomentCount: 0,
+                            capacityEvidenceCount: 0,
+                            capacityLoopHasCard: false,
+                            costLaterCheckinVisible: false,
+                            recordedCostCount: 0,
+                          ),
+                        ),
+                        onPauseBeforeYes: () {
+                          setState(
+                            () => _selectedPromptLine = BeforeYesCopy.recordPrompt,
+                          );
+                          unawaited(
+                            _onRecordPressed(source: 'before_yes_pause'),
+                          );
+                        },
+                        onAlreadySaidYes: () {
+                          setState(
+                            () => _selectedPromptLine =
+                                LoopModeCopy.capacityHandoffPrompt,
+                          );
+                          unawaited(
+                            _onRecordPressed(source: 'capacity_loop'),
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
                     ],

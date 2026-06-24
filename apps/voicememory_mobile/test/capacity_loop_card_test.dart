@@ -388,6 +388,7 @@ void main() {
           archiveClarityProgressVisible: true,
           capacityLoopVisible: true,
           capacityCostLaterCheckinVisible: false,
+          beforeYouSayYesPauseVisible: false,
           thenVsNowVisible: false,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,
