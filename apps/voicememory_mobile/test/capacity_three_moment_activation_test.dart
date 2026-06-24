@@ -69,6 +69,8 @@ CapacityThreeMomentResult _visibleResult({
       primaryRoute: count >= 3
           ? CapacityThreeMomentCopy.loopRoute
           : CapacityThreeMomentCopy.recordRoute,
+      showQuickSaveSecondary: count < 3,
+      quickSaveRoute: '/quick-yes-capture',
       capacityMomentCount: count,
       activationTarget: 3,
     );

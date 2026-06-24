@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/capacity_loop/capacity_three_moment_models.dart';
+import '../features/capacity_loop/low_effort_yes_capture_copy.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
@@ -84,6 +85,14 @@ class CapacityThreeMomentCard extends StatelessWidget {
             onPressed: () => context.push(result.primaryRoute),
             child: Text(result.primaryCtaLabel),
           ),
+          if (result.showQuickSaveSecondary) ...[
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('capacity_three_moment_card_quick_save_button'),
+              onPressed: () => context.push(result.quickSaveRoute),
+              child: const Text(LowEffortYesCaptureCopy.quickSaveCta),
+            ),
+          ],
         ],
       ),
     );

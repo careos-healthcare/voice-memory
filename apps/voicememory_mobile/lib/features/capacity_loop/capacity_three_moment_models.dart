@@ -26,6 +26,8 @@ class CapacityThreeMomentResult {
     required this.emptyBody,
     required this.primaryCtaLabel,
     required this.primaryRoute,
+    required this.showQuickSaveSecondary,
+    required this.quickSaveRoute,
     required this.capacityMomentCount,
     required this.activationTarget,
   });
@@ -41,6 +43,8 @@ class CapacityThreeMomentResult {
     emptyBody: '',
     primaryCtaLabel: '',
     primaryRoute: '',
+    showQuickSaveSecondary: false,
+    quickSaveRoute: '',
     capacityMomentCount: 0,
     activationTarget: 0,
   );
@@ -55,6 +59,8 @@ class CapacityThreeMomentResult {
   final String emptyBody;
   final String primaryCtaLabel;
   final String primaryRoute;
+  final bool showQuickSaveSecondary;
+  final String quickSaveRoute;
   final int capacityMomentCount;
   final int activationTarget;
 }

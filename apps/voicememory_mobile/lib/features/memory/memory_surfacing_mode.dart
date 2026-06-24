@@ -131,6 +131,8 @@ abstract class MemorySurfacingSession {
     archivedAt: entry.archivedAt,
     entryAboutness: entry.entryAboutness,
     memorySurfacing: memorySurfacing,
+    preserveOriginal: entry.preserveOriginal,
+    captureContextTag: entry.captureContextTag,
   );
 
   static void resetAfterSave() {
