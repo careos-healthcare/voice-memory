@@ -20,6 +20,8 @@ abstract final class BetaFeedbackResponseCopy {
       'Suggested next fix: sharpen alternative rules';
   static const suggestedFixPaidLaunch =
       'Suggested next fix: prepare paid launch';
+  static const suggestedFixReduceCaptureWorkload =
+      'Suggested next fix: reduce capture workload further';
 
   static const unclearPromiseProblem =
       'The first-session promise may still be too broad.';
@@ -33,6 +35,8 @@ abstract final class BetaFeedbackResponseCopy {
       'Alternative next moves may feel too generic.';
   static const paidSignalReadyProblem =
       'Return and willingness-to-pay signals may be strong enough to prepare paid launch.';
+  static const quickCaptureStillWorkProblem =
+      'Quick capture may still feel like extra workload.';
 
   static const unclearPromiseChange =
       'Tighten onboarding copy. Show: See why you keep saying yes. Save 3 yes moments. Review your yes loop. Do not add more explanation.';
@@ -46,6 +50,8 @@ abstract final class BetaFeedbackResponseCopy {
       'Improve alternative rules. Prefer selected boundary response. Match pull reason to a stronger fixed response.';
   static const paidSignalReadyChange =
       'Prepare RevenueCat / paid launch next. Do not enable payments in the response branch. RevenueCat should only be finished after return + WTP signal.';
+  static const quickCaptureStillWorkChange =
+      'Reduce capture workload further. Keep quick save fixed and optional. Do not add typing or long journaling.';
 
   static const doNotEnablePayments =
       'Do not enable RevenueCat or payments in this response branch.';
@@ -69,6 +75,8 @@ abstract final class BetaFeedbackResponseCopy {
       'Users copy or select a boundary response that matches the pull.';
   static const paidSignalReadySuccess =
       'User returns, marks fit, and expresses willingness to pay — prepare paid launch separately.';
+  static const quickCaptureStillWorkSuccess =
+      'User reports quick capture felt light enough to use again.';
 
   static String suggestedFixForIssue(String issueId) => switch (issueId) {
         BetaFeedbackIssueIds.unclearPromise => suggestedFixClarifyPromise,
@@ -78,6 +86,8 @@ abstract final class BetaFeedbackResponseCopy {
         BetaFeedbackIssueIds.repetitiveLoop => suggestedFixDailyChange,
         BetaFeedbackIssueIds.weakAlternative => suggestedFixAlternatives,
         BetaFeedbackIssueIds.paidSignalReady => suggestedFixPaidLaunch,
+        BetaFeedbackIssueIds.quickCaptureStillWork =>
+          suggestedFixReduceCaptureWorkload,
         _ => '',
       };
 
@@ -91,18 +101,21 @@ abstract final class BetaFeedbackResponseCopy {
         suggestedFixDailyChange,
         suggestedFixAlternatives,
         suggestedFixPaidLaunch,
+        suggestedFixReduceCaptureWorkload,
         unclearPromiseProblem,
         firstMomentBlockedProblem,
         activationDropoffProblem,
         repetitiveLoopProblem,
         weakAlternativeProblem,
         paidSignalReadyProblem,
+        quickCaptureStillWorkProblem,
         unclearPromiseChange,
         firstMomentBlockedChange,
         activationDropoffChange,
         repetitiveLoopChange,
         weakAlternativeChange,
         paidSignalReadyChange,
+        quickCaptureStillWorkChange,
         doNotEnablePayments,
         doNotAddBackend,
         doNotBuildAllFixes,
@@ -114,5 +127,6 @@ abstract final class BetaFeedbackResponseCopy {
         repetitiveLoopSuccess,
         weakAlternativeSuccess,
         paidSignalReadySuccess,
+        quickCaptureStillWorkSuccess,
       ];
 }

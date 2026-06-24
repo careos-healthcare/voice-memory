@@ -51,6 +51,7 @@ BetaFeedbackResponseInput _input({
   bool paidIntentSoftWtp = false,
   bool dailyChangeAvailable = false,
   bool dailyChangeDismissed = false,
+  bool quickCaptureFrictionStillWork = false,
 }) =>
     BetaFeedbackResponseInput(
       capacityWedgeActive: capacityWedgeActive,
@@ -70,6 +71,7 @@ BetaFeedbackResponseInput _input({
       paidIntentSoftWtp: paidIntentSoftWtp,
       dailyChangeAvailable: dailyChangeAvailable,
       dailyChangeDismissed: dailyChangeDismissed,
+      quickCaptureFrictionStillWork: quickCaptureFrictionStillWork,
     );
 
 void _expectNoBannedCopy(Iterable<String> visible) {
@@ -197,6 +199,21 @@ void main() {
       expect(result.recommendedResponseSummary, contains('RevenueCat'));
       expect(result.recommendedResponseSummary, contains('Do not enable payments'));
       expect(result.whatNotToChangeSummary, contains('Do not enable RevenueCat'));
+    });
+
+    test('quick capture still work maps to reduce workload fix', () {
+      final result = engine.build(
+        _input(
+          capacityMomentCount: 1,
+          quickCaptureFrictionStillWork: true,
+        ),
+      );
+      expect(result.issueId, BetaFeedbackIssueIds.quickCaptureStillWork);
+      expect(
+        result.suggestedNextFixLabel,
+        BetaFeedbackResponseCopy.suggestedFixReduceCaptureWorkload,
+      );
+      expect(result.recommendedResponseSummary, contains('Reduce capture workload further'));
     });
 
     test('returns hidden when wedge inactive', () {

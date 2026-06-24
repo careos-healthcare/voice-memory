@@ -24,6 +24,7 @@ RevenueCat should only be finished after return + willingness-to-pay signal. Do 
 | User says loop is repetitive | Daily change feels generic | Sharpen daily change. Combine pull reason + outcome + later cost. Avoid repeating the same line. | Do not add AI or transcript analysis | Return users say daily change feels specific |
 | User says alternatives are weak | Alternatives too generic | Improve alternative rules. Prefer selected boundary response. Match pull reason to stronger fixed response. | Do not expose private transcript text | User selects or copies a boundary response that fits |
 | User returns and would pay | Paid signal may be ready | Prepare RevenueCat / paid launch **next**. Do not enable in the response branch. | Do not enable payments before return + WTP evidence | User returns, marks fit, expresses WTP — then prepare paid launch separately |
+| Quick capture still felt like work | Capture path still too heavy | Reduce capture workload further. Keep quick save fixed and optional. Do not add typing or long journaling. | Do not add backend work or enable payments | User reports quick capture felt light enough to use again |
 
 ---
 
@@ -37,6 +38,7 @@ RevenueCat should only be finished after return + willingness-to-pay signal. Do 
 | 3+ moments, daily change dismissed, fit unclear | `repetitive_loop` |
 | 3+ moments, pull reasons saved, boundary not selected/copied | `weak_alternative` |
 | Fit fits/partly + return signal + paid intent yes/maybe | `paid_signal_ready` |
+| Quick capture friction = still work | `quick_capture_still_work` |
 
 ---
 
@@ -62,6 +64,7 @@ Fixed copy on the capacity beta signal dashboard (Support path only — not Arch
 - Suggested next fix: sharpen daily change response
 - Suggested next fix: sharpen alternative rules
 - Suggested next fix: prepare paid launch
+- Suggested next fix: reduce capture workload further
 
 ---
 

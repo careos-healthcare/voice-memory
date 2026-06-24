@@ -1,4 +1,5 @@
 import '../paid_intent/paid_intent_confirmation_models.dart';
+import 'quick_capture_friction_models.dart';
 
 /// Local beta verdict — cautious, not PMF proof.
 enum CapacityBetaSignalVerdict {
@@ -27,6 +28,7 @@ class CapacityBetaSignalSnapshot {
     required this.paidIntentStrongWtp,
     required this.paidIntentSoftWtp,
     required this.paymentSignalLabel,
+    required this.quickCaptureFrictionLabel,
     required this.verdict,
     required this.verdictLabel,
     required this.exportSummary,
@@ -49,6 +51,7 @@ class CapacityBetaSignalSnapshot {
     paidIntentStrongWtp: false,
     paidIntentSoftWtp: false,
     paymentSignalLabel: 'Payment signal not tracked yet',
+    quickCaptureFrictionLabel: 'not answered',
     verdict: CapacityBetaSignalVerdict.weak,
     verdictLabel: 'Weak activation signal',
     exportSummary:
@@ -71,6 +74,7 @@ class CapacityBetaSignalSnapshot {
   final bool paidIntentStrongWtp;
   final bool paidIntentSoftWtp;
   final String paymentSignalLabel;
+  final String quickCaptureFrictionLabel;
   final CapacityBetaSignalVerdict verdict;
   final String verdictLabel;
   final String exportSummary;
@@ -96,6 +100,7 @@ class CapacityBetaSignalInput {
     required this.paidIntentRecord,
     required this.dailyChangeAvailable,
     required this.trackPaymentSignal,
+    required this.quickCaptureFrictionRecord,
   });
 
   final int capacityMomentCount;
@@ -115,4 +120,5 @@ class CapacityBetaSignalInput {
   final PaidIntentConfirmationRecord? paidIntentRecord;
   final bool dailyChangeAvailable;
   final bool trackPaymentSignal;
+  final QuickCaptureFrictionRecord? quickCaptureFrictionRecord;
 }

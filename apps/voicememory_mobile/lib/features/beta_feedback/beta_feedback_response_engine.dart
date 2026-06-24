@@ -30,6 +30,7 @@ class BetaFeedbackResponseEngine {
     required bool dailyChangeAvailable,
     required bool paidIntentStrongWtp,
     required bool paidIntentSoftWtp,
+    required bool quickCaptureFrictionStillWork,
   }) {
     return build(
       BetaFeedbackResponseInput(
@@ -50,6 +51,7 @@ class BetaFeedbackResponseEngine {
         paidIntentSoftWtp: paidIntentSoftWtp,
         dailyChangeAvailable: dailyChangeAvailable,
         dailyChangeDismissed: dailyChangeDismissed,
+        quickCaptureFrictionStillWork: quickCaptureFrictionStillWork,
       ),
     );
   }
@@ -58,6 +60,10 @@ class BetaFeedbackResponseEngine {
     final count = input.capacityMomentCount;
     final target = input.activationTarget;
     final activationReached = count >= target;
+
+    if (input.quickCaptureFrictionStillWork) {
+      return BetaFeedbackIssueIds.quickCaptureStillWork;
+    }
 
     if (activationReached &&
         input.fitIsPositive &&
@@ -138,6 +144,12 @@ class BetaFeedbackResponseEngine {
           BetaFeedbackResponseCopy.paidSignalReadyChange,
           BetaFeedbackResponseCopy.paidSignalReadySuccess,
           BetaFeedbackResponseCopy.doNotEnablePayments,
+        ),
+      BetaFeedbackIssueIds.quickCaptureStillWork => (
+          BetaFeedbackResponseCopy.quickCaptureStillWorkProblem,
+          BetaFeedbackResponseCopy.quickCaptureStillWorkChange,
+          BetaFeedbackResponseCopy.quickCaptureStillWorkSuccess,
+          BetaFeedbackResponseCopy.doNotAddBackend,
         ),
       _ => ('', '', '', ''),
     };

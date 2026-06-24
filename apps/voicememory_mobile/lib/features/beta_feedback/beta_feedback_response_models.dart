@@ -8,6 +8,7 @@ abstract final class BetaFeedbackIssueIds {
   static const repetitiveLoop = 'repetitive_loop';
   static const weakAlternative = 'weak_alternative';
   static const paidSignalReady = 'paid_signal_ready';
+  static const quickCaptureStillWork = 'quick_capture_still_work';
 
   static const all = [
     unclearPromise,
@@ -16,6 +17,7 @@ abstract final class BetaFeedbackIssueIds {
     repetitiveLoop,
     weakAlternative,
     paidSignalReady,
+    quickCaptureStillWork,
   ];
 }
 
@@ -39,6 +41,7 @@ class BetaFeedbackResponseInput {
     required this.paidIntentSoftWtp,
     required this.dailyChangeAvailable,
     required this.dailyChangeDismissed,
+    required this.quickCaptureFrictionStillWork,
   });
 
   final bool capacityWedgeActive;
@@ -58,6 +61,7 @@ class BetaFeedbackResponseInput {
   final bool paidIntentSoftWtp;
   final bool dailyChangeAvailable;
   final bool dailyChangeDismissed;
+  final bool quickCaptureFrictionStillWork;
 }
 
 /// Local beta response recommendation — fixed copy only.
