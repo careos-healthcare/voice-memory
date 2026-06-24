@@ -50,4 +50,4 @@ Primary area caps at summary + three cards. Everything else collapses under **Mo
 
 TestFlight / manual QA and real beta feedback — not another surface card. See [TESTFLIGHT_MANUAL_QA.md](./TESTFLIGHT_MANUAL_QA.md) for the physical-device script.
 
-Revenue validation: [WEDGE_RETENTION_ACQUISITION_PLAN.md](./WEDGE_RETENTION_ACQUISITION_PLAN.md)
+Revenue validation: [WEDGE_RETENTION_ACQUISITION_PLAN.md](./WEDGE_RETENTION_ACQUISITION_PLAN.md) · [CAPACITY_YES_100K_WEDGE_PLAN.md](./CAPACITY_YES_100K_WEDGE_PLAN.md)

@@ -89,9 +89,9 @@ abstract final class BetaInviteCopy {
       'this week and tell me if the archive shows anything useful.';
 
   static const _shortWorkPatterns =
-      'I\'m testing ArchiveMe for noticing repeated work decisions, stress, '
-      'or avoidance patterns. Save 3 moments this week and tell me if the '
-      'archive shows anything useful by the third.';
+      'I\'m testing ArchiveMe for people who keep saying yes when they have '
+      'no capacity. Save 3 real moments this week — especially yes moments — '
+      'and tell me if the archive shows what keeps repeating by the third.';
 
   static const _shortJournalingUpgrade =
       'I\'m testing ArchiveMe for people who already journal but want evidence '
@@ -114,8 +114,9 @@ abstract final class BetaInviteCopy {
       'you can review over time.';
 
   static const _longWorkPatterns =
-      'ArchiveMe helps you compare work-related moments in your own words so '
-      'you can see whether the same pressure, stress, or avoidance keeps showing up.';
+      'ArchiveMe is a private evidence archive for overcommitment patterns — '
+      'save when you say yes too fast, then compare what keeps repeating in '
+      'your own words.';
 
   static const _longJournalingUpgrade =
       'If you already journal, ArchiveMe is meant to turn saved moments into a '

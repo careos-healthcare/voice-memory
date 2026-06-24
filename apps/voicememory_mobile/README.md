@@ -63,3 +63,5 @@ See [APP_STORE_SUBMISSION_PACK.md](./APP_STORE_SUBMISSION_PACK.md) for the conso
 **Access protection:** [docs/ACCESS_PROTECTION_AUDIT.md](./docs/ACCESS_PROTECTION_AUDIT.md)
 
 **Wedge / retention / acquisition:** [docs/WEDGE_RETENTION_ACQUISITION_PLAN.md](./docs/WEDGE_RETENTION_ACQUISITION_PLAN.md)
+
+**Capacity yes £100k wedge:** [docs/CAPACITY_YES_100K_WEDGE_PLAN.md](./docs/CAPACITY_YES_100K_WEDGE_PLAN.md)
