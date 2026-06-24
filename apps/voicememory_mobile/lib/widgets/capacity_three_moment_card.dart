@@ -93,6 +93,14 @@ class CapacityThreeMomentCard extends StatelessWidget {
               child: const Text(LowEffortYesCaptureCopy.quickSaveCta),
             ),
           ],
+          if (result.showReviewSecondary) ...[
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('capacity_three_moment_card_review_button'),
+              onPressed: () => context.push(result.reviewSecondaryRoute),
+              child: Text(result.reviewSecondaryLabel),
+            ),
+          ],
         ],
       ),
     );

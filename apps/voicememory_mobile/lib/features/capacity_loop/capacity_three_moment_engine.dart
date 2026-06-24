@@ -1,6 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
 import 'capacity_loop_engine.dart';
+import 'capacity_return_trigger_engine.dart';
+import 'capacity_return_trigger_models.dart';
 import 'capacity_three_moment_copy.dart';
 import 'capacity_three_moment_gates.dart';
 import 'capacity_three_moment_models.dart';
@@ -40,6 +42,16 @@ class CapacityThreeMomentEngine {
         screenshotMode: false,
       ),
     );
+    final returnTrigger = const CapacityReturnTriggerEngine().build(
+      CapacityReturnTriggerInput(
+        sampleMode: input.sampleMode,
+        screenshotMode: false,
+        capacityWedgeActive: input.capacityWedgeActive,
+        capacityMomentCount: count,
+        surface: CapacityReturnTriggerSurface.archiveHome,
+      ),
+    );
+    final useReturnTrigger = returnTrigger.showCard;
 
     return CapacityThreeMomentResult(
       hasCard: hasCard,
@@ -56,12 +68,18 @@ class CapacityThreeMomentEngine {
         eligible: true,
         capacityMomentCount: count,
       ),
-      title: CapacityThreeMomentCopy.cardTitle,
-      subtitle: CapacityThreeMomentCopy.cardSubtitle,
-      progressLabel: CapacityThreeMomentCopy.progressLabel(
-        count,
-        target: target,
-      ),
+      title: useReturnTrigger
+          ? returnTrigger.title
+          : CapacityThreeMomentCopy.cardTitle,
+      subtitle: useReturnTrigger
+          ? returnTrigger.body
+          : CapacityThreeMomentCopy.cardSubtitle,
+      progressLabel: useReturnTrigger
+          ? ''
+          : CapacityThreeMomentCopy.progressLabel(
+              count,
+              target: target,
+            ),
       emptyBody: count <= 0 ? CapacityThreeMomentCopy.emptyBody : '',
       primaryCtaLabel: atTarget
           ? CapacityThreeMomentCopy.reviewLoopCta
@@ -71,6 +89,9 @@ class CapacityThreeMomentEngine {
           : CapacityThreeMomentCopy.recordRoute,
       showQuickSaveSecondary: !atTarget && quickCapture.showCard,
       quickSaveRoute: LowEffortYesCaptureCopy.route,
+      showReviewSecondary: useReturnTrigger && returnTrigger.showSecondary,
+      reviewSecondaryLabel: returnTrigger.secondaryCtaLabel,
+      reviewSecondaryRoute: returnTrigger.secondaryRoute,
       capacityMomentCount: count,
       activationTarget: target,
     );
@@ -102,9 +123,15 @@ class CapacityThreeMomentEngine {
 
   static String recordProgressLine(CapacityThreeMomentResult result) {
     if (!result.showOnRecordProgress) return '';
-    return CapacityThreeMomentCopy.recordProgressLine(
-      result.capacityMomentCount,
-      target: result.activationTarget,
+    final returnLine = const CapacityReturnTriggerEngine().build(
+      CapacityReturnTriggerInput(
+        sampleMode: false,
+        screenshotMode: false,
+        capacityWedgeActive: true,
+        capacityMomentCount: result.capacityMomentCount,
+        surface: CapacityReturnTriggerSurface.recordLine,
+      ),
     );
+    return CapacityReturnTriggerEngine.recordProgressLine(returnLine);
   }
 }

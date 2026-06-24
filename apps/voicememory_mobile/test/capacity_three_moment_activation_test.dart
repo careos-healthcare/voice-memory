@@ -71,6 +71,9 @@ CapacityThreeMomentResult _visibleResult({
           : CapacityThreeMomentCopy.recordRoute,
       showQuickSaveSecondary: count < 3,
       quickSaveRoute: '/quick-yes-capture',
+      showReviewSecondary: count >= 1 && count < 3,
+      reviewSecondaryLabel: 'Review what I have',
+      reviewSecondaryRoute: '/capacity-loop',
       capacityMomentCount: count,
       activationTarget: 3,
     );
@@ -170,13 +173,23 @@ void main() {
       expect(result.hasCard, isFalse);
     });
 
-    test('shows 0/3, 1/3, 2/3 progress', () {
+    test('shows 0/3 progress and return copy for 1/3 and 2/3', () {
+      final zero = engine.buildFromJournal(
+        entries: const [],
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+      );
+      expect(zero.progressLabel, '0 of 3 yes moments saved');
+
       final one = engine.buildFromJournal(
         entries: [_capacityEntry('real_0')],
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(one.progressLabel, '1 of 3 yes moments saved');
+      expect(one.title, 'Come back for the next yes moment');
+      expect(one.subtitle, contains('1 of 3'));
+      expect(one.progressLabel, isEmpty);
+      expect(one.showReviewSecondary, isTrue);
 
       final two = engine.buildFromJournal(
         entries: [
@@ -186,7 +199,8 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(two.progressLabel, '2 of 3 yes moments saved');
+      expect(two.subtitle, contains('2 of 3'));
+      expect(two.progressLabel, isEmpty);
     });
 
     test('switches CTA to review loop at 3/3', () {
@@ -213,7 +227,7 @@ void main() {
       );
       expect(
         CapacityThreeMomentEngine.recordProgressLine(result),
-        '1 of 3 yes moments saved',
+        'Next goal: save the next real yes moment.',
       );
     });
 

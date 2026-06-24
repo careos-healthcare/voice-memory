@@ -12,6 +12,8 @@ import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_store.dart';
 import 'capacity_loop_engine.dart';
 import 'capacity_pull_reason_store.dart';
+import 'capacity_return_trigger_engine.dart';
+import 'capacity_return_trigger_models.dart';
 import 'capacity_three_moment_gates.dart';
 import 'capacity_weekly_review_engine.dart';
 
@@ -148,6 +150,7 @@ class CapacityBetaMissionEngine {
         ready: count >= 1,
         route: '/record',
         cta: CapacityBetaMissionCopy.ctaSaveYesMoment,
+        hint: _threeYesMomentsHint(count, target, input),
       ),
       _task(
         id: CapacityBetaMissionTaskIds.pullReason,
@@ -216,6 +219,7 @@ class CapacityBetaMissionEngine {
     required String route,
     required String cta,
     bool isOptional = false,
+    String hint = '',
   }) {
     final status = done
         ? CapacityBetaMissionTaskStatus.done
@@ -242,7 +246,26 @@ class CapacityBetaMissionEngine {
       route: route,
       ctaLabel: cta,
       isOptional: isOptional,
+      hintLabel: hint,
     );
+  }
+
+  String _threeYesMomentsHint(
+    int count,
+    int target,
+    CapacityBetaMissionInput input,
+  ) {
+    if (!input.capacityWedgeActive) return '';
+    final hint = const CapacityReturnTriggerEngine().build(
+      CapacityReturnTriggerInput(
+        sampleMode: input.sampleMode,
+        screenshotMode: false,
+        capacityWedgeActive: input.capacityWedgeActive,
+        capacityMomentCount: count,
+        surface: CapacityReturnTriggerSurface.betaMissionHint,
+      ),
+    );
+    return CapacityReturnTriggerEngine.betaMissionHint(hint);
   }
 
   static bool shouldMarkCompleted(CapacityBetaMissionResult result) =>
