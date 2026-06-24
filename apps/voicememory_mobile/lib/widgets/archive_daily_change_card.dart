@@ -92,11 +92,22 @@ class ArchiveDailyChangeCard extends StatelessWidget {
                 color: AppColors.textSecondary,
               ),
             ),
+            if (result.alternativeLabel.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                result.alternativeLabel,
+                key: const Key('archive_daily_change_card_alternative_label'),
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+            ],
             const SizedBox(height: AppSpacing.xs),
             Text(
               result.alternativeNextMove,
               key: const Key('archive_daily_change_card_alternative_move'),
-              style: ArchiveMobileTypography.listSubtitle(context),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
           if (!compact && result.watchNextLine.isNotEmpty) ...[
@@ -167,6 +178,14 @@ class ArchiveDailyChangeSection extends StatelessWidget {
         ),
         if (result.alternativeNextMove.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.sm),
+          if (result.alternativeLabel.isNotEmpty)
+            Text(
+              result.alternativeLabel,
+              key: const Key('archive_daily_change_section_alternative_label'),
+              style: ArchiveMobileTypography.listSubtitle(context),
+            ),
+          if (result.alternativeLabel.isNotEmpty)
+            const SizedBox(height: AppSpacing.xs),
           Text(
             result.alternativeNextMove,
             key: const Key('archive_daily_change_section_alternative_move'),

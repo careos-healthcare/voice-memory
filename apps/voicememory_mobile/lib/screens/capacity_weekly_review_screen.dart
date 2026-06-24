@@ -16,6 +16,7 @@ import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_models.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
+import '../features/capacity_loop/capacity_activation_fit_store.dart';
 import '../features/archive_daily_change/archive_daily_change_engine.dart';
 import '../features/archive_daily_change/archive_daily_change_models.dart';
 import '../features/archive_daily_change/archive_daily_change_store.dart';
@@ -140,6 +141,7 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
         boundarySelection: CapacityBoundaryResponseStore.cached,
+        activationFitRecord: CapacityActivationFitStore.cached,
         weeklyReviewAvailable: reviewResult.hasReview,
       );
       _boundaryResponse =

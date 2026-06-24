@@ -5,13 +5,25 @@ import '../capacity_loop/capacity_cost_models.dart';
 import '../capacity_loop/capacity_decision_outcome_models.dart';
 import '../capacity_loop/capacity_pull_reason_models.dart';
 
-/// Fixed change kinds — metadata only, no journal text.
+/// Fixed change kinds for recent-activity detection — metadata only.
 enum ArchiveDailyChangeKind {
   newYesMoment,
   urgencyPull,
   laterCost,
   boundarySelected,
   yesLoopReady,
+  fitAnswered,
+}
+
+/// Sharpened interpretation types from combined local signals.
+enum ArchiveDailyChangeResponseType {
+  repeatedPullWithLaterCost,
+  repeatedPullWithSaidYes,
+  patternInterrupted,
+  fitConfirmed,
+  noPullReasonYet,
+  stillForming,
+  recentChange,
 }
 
 /// Local last-seen state — timestamps only.
@@ -65,6 +77,7 @@ class ArchiveDailyChangeInput {
     required this.capacityMomentCount,
     required this.capacityEvidenceCount,
     required this.mostCommonPullReasonId,
+    required this.pullReasonRecordCount,
     required this.state,
     required this.entries,
     required this.pullReasonRecords,
@@ -81,6 +94,7 @@ class ArchiveDailyChangeInput {
   final int capacityMomentCount;
   final int capacityEvidenceCount;
   final String? mostCommonPullReasonId;
+  final int pullReasonRecordCount;
   final ArchiveDailyChangeState state;
   final List<JournalEntry> entries;
   final List<CapacityPullReasonRecord> pullReasonRecords;
@@ -98,9 +112,11 @@ class ArchiveDailyChangeResult {
     required this.showOnArchiveHome,
     required this.showOnCapacityLoop,
     required this.showOnWeeklyReview,
+    required this.responseType,
     required this.title,
     required this.changeLine,
     required this.repeatedLine,
+    required this.alternativeLabel,
     required this.alternativeNextMove,
     required this.watchNextLine,
     required this.alternativeSectionTitle,
@@ -112,9 +128,11 @@ class ArchiveDailyChangeResult {
   final bool showOnArchiveHome;
   final bool showOnCapacityLoop;
   final bool showOnWeeklyReview;
+  final ArchiveDailyChangeResponseType? responseType;
   final String title;
   final String changeLine;
   final String repeatedLine;
+  final String alternativeLabel;
   final String alternativeNextMove;
   final String watchNextLine;
   final String alternativeSectionTitle;
@@ -126,9 +144,11 @@ class ArchiveDailyChangeResult {
     showOnArchiveHome: false,
     showOnCapacityLoop: false,
     showOnWeeklyReview: false,
+    responseType: null,
     title: '',
     changeLine: '',
     repeatedLine: '',
+    alternativeLabel: '',
     alternativeNextMove: '',
     watchNextLine: '',
     alternativeSectionTitle: '',
