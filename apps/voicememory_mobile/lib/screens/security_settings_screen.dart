@@ -242,7 +242,9 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
       _tile(
         key: const Key('security_app_lock_status'),
         title: AppLockCopy.settingsTitle,
-        subtitle: SecuritySettingsCopy.statusOn,
+        subtitle:
+            '${SecuritySettingsCopy.statusOn} · ${AppLockCopy.settingsBody} '
+            '${AppLockCopy.relockTimeoutNote}',
         trailing: const SizedBox.shrink(),
       ),
       SwitchListTile(

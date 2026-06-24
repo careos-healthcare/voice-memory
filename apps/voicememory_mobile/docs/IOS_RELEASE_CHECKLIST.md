@@ -41,6 +41,8 @@ See also: **`APP_STORE_SUBMISSION_PACK.md`** (TestFlight + App Store Connect one
 
 Manual QA script: [TESTFLIGHT_MANUAL_QA.md](./TESTFLIGHT_MANUAL_QA.md)
 
+Access protection audit: [ACCESS_PROTECTION_AUDIT.md](./ACCESS_PROTECTION_AUDIT.md)
+
 - [ ] Mic permission prompt on first record
 - [ ] Record → transcribe → analyze on production API
 - [ ] First save → Archive Home shows cautious next step

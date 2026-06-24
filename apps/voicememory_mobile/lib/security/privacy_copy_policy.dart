@@ -12,7 +12,7 @@ abstract class PrivacyCopyPolicy {
   static const String exportDeleteAnytime =
       'You can export or delete your local archive at any time.';
 
-  static const String lockArchiveMe = 'Lock ArchiveMe';
+  static const String lockArchiveMe = 'Protect this archive';
 
   /// Calm first-run / legal disclaimer — no encryption or therapy claims.
   static const String personalNotMedicalDisclaimer =

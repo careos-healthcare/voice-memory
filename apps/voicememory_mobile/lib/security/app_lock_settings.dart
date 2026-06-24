@@ -4,9 +4,11 @@ abstract class AppLockCopy {
   AppLockCopy._();
 
   // Security settings.
-  static const String settingsTitle = 'Require Face ID or passcode';
+  static const String settingsTitle = 'Protect this archive';
   static const String settingsBody =
-      'Lock ArchiveMe on this device until you unlock it.';
+      'This protects the archive on this device.';
+  static const String relockTimeoutNote =
+      'Relocks after about 2 minutes in the background.';
   static const String settingsBiometricsLabel =
       'Use Face ID or Touch ID when available.';
   static const String settingsChangePin = 'Change PIN';
@@ -15,7 +17,7 @@ abstract class AppLockCopy {
   // PIN setup.
   static const String setupTitle = 'Create a PIN';
   static const String setupBody =
-      'Use this to unlock ArchiveMe on this device.';
+      'This protects the archive on this device. PINs do not leave this device.';
   static const String setupConfirmTitle = 'Confirm PIN';
   static const String setupPrivacyLine = 'PINs do not leave this device.';
   static const String setupMismatch = 'Try again';

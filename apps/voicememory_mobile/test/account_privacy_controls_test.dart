@@ -108,7 +108,7 @@ void main() {
       );
     });
 
-    testWidgets('shows Lock ArchiveMe with Off when app lock disabled', (
+    testWidgets('shows Protect this archive with Off when app lock disabled', (
       tester,
     ) async {
       await pumpAccount(tester);
@@ -117,7 +117,7 @@ void main() {
       expect(find.text(AccountPrivacyControlsCopy.lockOn), findsNothing);
     });
 
-    testWidgets('shows Lock ArchiveMe with On when app lock enabled', (
+    testWidgets('shows Protect this archive with On when app lock enabled', (
       tester,
     ) async {
       await appLock.enableWithPin('1234');

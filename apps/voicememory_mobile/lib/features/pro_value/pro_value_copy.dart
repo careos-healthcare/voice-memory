@@ -48,6 +48,8 @@ abstract final class ProValueCopy {
   static const purchaseAfterSetupNote =
       'Pro will be enabled after store setup and sandbox purchase evidence '
       'are complete.';
+  static const accountRestoreNote =
+      'Create an account later to restore Pro access when purchases are available.';
 
   static const primaryCtaLabel = 'Keep building your archive';
   static const secondaryCtaLabel = 'Try Sample Archive';
@@ -86,6 +88,7 @@ abstract final class ProValueCopy {
     yield purchaseUnavailableNote;
     yield purchaseKeepFreeNote;
     yield purchaseAfterSetupNote;
+    yield accountRestoreNote;
     yield primaryCtaLabel;
     yield secondaryCtaLabel;
     yield screenTitle;

@@ -134,6 +134,15 @@ class ProValuePreviewScreen extends StatelessWidget {
               key: const Key('pro_value_preview_purchase_unavailable'),
               style: ArchiveMobileTypography.listTitle(context),
             ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              ProValuePreviewCopy.accountRestoreNote,
+              key: const Key('pro_value_preview_account_restore'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
             if (RevenueCatService.instance.isConfigured) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
