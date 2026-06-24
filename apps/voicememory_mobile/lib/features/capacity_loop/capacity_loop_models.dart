@@ -14,6 +14,8 @@ class CapacityLoopInput {
     this.outcomeRecordedCount = 0,
     this.hasPendingOutcome = false,
     this.hasPatternChangeOutcomes = false,
+    this.hasPendingPullReason = false,
+    this.pullReasonSummary = '',
   });
 
   final int realSavedMomentCount;
@@ -29,6 +31,8 @@ class CapacityLoopInput {
   final int outcomeRecordedCount;
   final bool hasPendingOutcome;
   final bool hasPatternChangeOutcomes;
+  final bool hasPendingPullReason;
+  final String pullReasonSummary;
 
   bool get capacityWedgeActive => capacityLoopActive || capacityCohortActive;
 }
@@ -57,6 +61,7 @@ class CapacityLoopResult {
     required this.watchNextLabel,
     this.costEvidenceLabel = '',
     this.outcomeEvidenceLabel = '',
+    this.pullReasonSummary = '',
   });
 
   static const empty = CapacityLoopResult(
@@ -81,6 +86,7 @@ class CapacityLoopResult {
     watchNextLabel: '',
     costEvidenceLabel: '',
     outcomeEvidenceLabel: '',
+    pullReasonSummary: '',
   );
 
   final bool hasCard;
@@ -104,4 +110,5 @@ class CapacityLoopResult {
   final String watchNextLabel;
   final String costEvidenceLabel;
   final String outcomeEvidenceLabel;
+  final String pullReasonSummary;
 }

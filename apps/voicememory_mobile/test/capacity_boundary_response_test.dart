@@ -58,6 +58,7 @@ JournalEntry _capacityEntry(String id) => JournalEntry(
 
 CapacityBoundaryResponseInput _eligibleInput({
   CapacityBoundaryResponseSelection? selection,
+  bool pendingPullReason = false,
   bool pendingDecisionOutcome = false,
   bool pendingCostCheckin = false,
   bool beforeYesPauseOnHome = false,
@@ -70,6 +71,7 @@ CapacityBoundaryResponseInput _eligibleInput({
       capacityMomentCount: 3,
       capacityEvidenceCount: 3,
       outcomeOrCostRecordCount: 2,
+      pendingPullReasonOnHome: pendingPullReason,
       pendingDecisionOutcome: pendingDecisionOutcome,
       pendingCostCheckin: pendingCostCheckin,
       beforeYesPauseOnHome: beforeYesPauseOnHome,
@@ -118,6 +120,7 @@ void main() {
           capacityMomentCount: 0,
           capacityEvidenceCount: 0,
           outcomeOrCostRecordCount: 0,
+          pendingPullReasonOnHome: false,
           pendingDecisionOutcome: false,
           pendingCostCheckin: false,
           beforeYesPauseOnHome: false,
@@ -188,11 +191,24 @@ void main() {
       ]);
     });
 
-    test('archive home suppresses when pending outcome/cost/weekly review', () {
+    test('archive home suppresses when pending pull reason/outcome/cost/weekly review', () {
       expect(
         CapacityBoundaryResponseEngine.showOnArchiveHome(
           hasFeature: true,
           sampleMode: false,
+          pendingPullReason: true,
+          pendingDecisionOutcome: false,
+          pendingCostCheckin: false,
+          beforeYesPauseOnHome: false,
+          weeklyReviewOnHome: false,
+        ),
+        isFalse,
+      );
+      expect(
+        CapacityBoundaryResponseEngine.showOnArchiveHome(
+          hasFeature: true,
+          sampleMode: false,
+          pendingPullReason: false,
           pendingDecisionOutcome: true,
           pendingCostCheckin: false,
           beforeYesPauseOnHome: false,
@@ -204,6 +220,7 @@ void main() {
         CapacityBoundaryResponseEngine.showOnArchiveHome(
           hasFeature: true,
           sampleMode: false,
+          pendingPullReason: false,
           pendingDecisionOutcome: false,
           pendingCostCheckin: true,
           beforeYesPauseOnHome: false,
@@ -215,6 +232,7 @@ void main() {
         CapacityBoundaryResponseEngine.showOnArchiveHome(
           hasFeature: true,
           sampleMode: false,
+          pendingPullReason: false,
           pendingDecisionOutcome: false,
           pendingCostCheckin: false,
           beforeYesPauseOnHome: false,
@@ -387,6 +405,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           capacityLoopVisible: true,
+          capacityPullReasonVisible: false,
           capacityDecisionOutcomeVisible: false,
           capacityCostLaterCheckinVisible: false,
           beforeYouSayYesPauseVisible: false,

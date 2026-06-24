@@ -200,6 +200,17 @@ class _CapacityBoundaryResponsePickerState
           ),
         ),
         if (_selectedId != null) ...[
+          if (widget.result.recommendedResponseNote.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              widget.result.recommendedResponseNote,
+              key: const Key('capacity_boundary_response_recommendation_note'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('capacity_boundary_response_copy_button'),

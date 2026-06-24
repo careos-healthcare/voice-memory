@@ -14,6 +14,7 @@ abstract final class CapacityWeeklyReviewCopy {
   static const sectionWhatRepeated = 'What repeated';
   static const sectionWhatChanged = 'What changed';
   static const sectionLaterCost = 'Later cost';
+  static const sectionWhatPulledYouIn = 'What pulled you in';
   static const sectionWatchNext = 'Watch next';
 
   static const reviewThisWeekCta = 'Review this week';
@@ -54,6 +55,7 @@ abstract final class CapacityWeeklyReviewCopy {
         sectionWhatRepeated,
         sectionWhatChanged,
         sectionLaterCost,
+        sectionWhatPulledYouIn,
         sectionWatchNext,
         reviewThisWeekCta,
         saveNextYesMomentCta,

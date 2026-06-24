@@ -136,6 +136,7 @@ import '../widgets/then_vs_now_card.dart';
 import '../widgets/capacity_loop_card.dart';
 import '../widgets/capacity_cost_later_card.dart';
 import '../widgets/capacity_decision_outcome_card.dart';
+import '../widgets/capacity_pull_reason_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../widgets/capacity_weekly_review_card.dart';
 import '../widgets/capacity_boundary_response_card.dart';
@@ -147,6 +148,8 @@ import '../features/capacity_loop/capacity_cost_engine.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
 import '../features/capacity_loop/capacity_decision_outcome_engine.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
+import '../features/capacity_loop/capacity_pull_reason_engine.dart';
+import '../features/capacity_loop/capacity_pull_reason_store.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/capacity_loop_copy.dart';
@@ -525,6 +528,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
+    await CapacityPullReasonStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
@@ -2003,6 +2007,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       capacityCohortActive: _capacityCohortActive,
       costRecords: CapacityCostStore.cached,
       outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      pullReasonRecords: CapacityPullReasonStore.cached,
+    );
+    final capacityPullReason =
+        const CapacityPullReasonEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      records: CapacityPullReasonStore.cached,
     );
     final capacityDecisionOutcome =
         const CapacityDecisionOutcomeEngine().buildFromJournal(
@@ -2037,6 +2049,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       pendingDecisionOutcome: capacityDecisionOutcome.showOnArchiveHome,
       pendingCostCheckin: capacityCostCheckin.showOnArchiveHome,
       beforeYesPauseOnHome: beforeYesPause.showOnArchiveHome,
+      pendingPullReasonOnHome: capacityPullReason.showOnArchiveHome,
+      pullReasonRecords: CapacityPullReasonStore.cached,
     );
     final capacityBoundaryResponse =
         const CapacityBoundaryResponseEngine().buildFromJournal(
@@ -2049,6 +2063,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       pendingCostCheckin: capacityCostCheckin.showOnArchiveHome,
       beforeYesPauseOnHome: beforeYesPause.showOnArchiveHome,
       weeklyReviewOnHome: capacityWeeklyReview.showOnArchiveHome,
+      pendingPullReasonOnHome: capacityPullReason.showOnArchiveHome,
+      pullReasonRecords: CapacityPullReasonStore.cached,
     );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
@@ -2086,13 +2102,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       capacityLoopVisible: !ScreenshotMode.enabled &&
           capacityLoop.hasCard &&
           capacityLoop.showOnArchiveHome,
+      capacityPullReasonVisible: !ScreenshotMode.enabled &&
+          capacityPullReason.hasCard &&
+          capacityPullReason.showOnArchiveHome,
       capacityDecisionOutcomeVisible: !ScreenshotMode.enabled &&
           capacityDecisionOutcome.hasCard &&
-          capacityDecisionOutcome.showOnArchiveHome,
+          capacityDecisionOutcome.showOnArchiveHome &&
+          !capacityPullReason.showOnArchiveHome,
       capacityCostLaterCheckinVisible: !ScreenshotMode.enabled &&
           capacityCostCheckin.hasCard &&
           capacityCostCheckin.showOnArchiveHome &&
-          !capacityDecisionOutcome.showOnArchiveHome,
+          !capacityDecisionOutcome.showOnArchiveHome &&
+          !capacityPullReason.showOnArchiveHome,
       beforeYouSayYesPauseVisible: !ScreenshotMode.enabled &&
           beforeYesPause.showOnArchiveHome,
       capacityWeeklyReviewVisible: !ScreenshotMode.enabled &&
@@ -2284,10 +2305,26 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               capacityCohortActive: _capacityCohortActive,
               costRecords: CapacityCostStore.cached,
               outcomeRecords: CapacityDecisionOutcomeStore.cached,
+              pullReasonRecords: CapacityPullReasonStore.cached,
             ),
             capacityLoopActive: _capacityLoopActive,
             capacityCohortActive: _capacityCohortActive,
             onPrimaryAction: _goToRecord,
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityPullReason:
+        return [
+          CapacityPullReasonCard(
+            result: const CapacityPullReasonEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+              records: CapacityPullReasonStore.cached,
+            ),
+            onSaved: () {
+              if (!mounted) return;
+              setState(() {});
+            },
           ),
         ];
       case ArchiveHomeSectionId.capacityDecisionOutcome:

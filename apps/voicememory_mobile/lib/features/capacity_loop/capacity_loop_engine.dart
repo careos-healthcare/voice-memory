@@ -8,7 +8,10 @@ import 'capacity_cost_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_decision_outcome_store.dart';
+import 'capacity_pull_reason_models.dart';
+import 'capacity_pull_reason_store.dart';
 import 'capacity_loop_copy.dart';
+import 'capacity_pull_reason_engine.dart';
 import 'capacity_loop_gates.dart';
 import 'capacity_loop_models.dart';
 
@@ -87,6 +90,7 @@ class CapacityLoopEngine {
       watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
       costEvidenceLabel: _costEvidenceLabel(input.costCheckinRecordedCount),
       outcomeEvidenceLabel: _outcomeEvidenceLabel(input),
+      pullReasonSummary: input.pullReasonSummary,
     );
   }
 
@@ -97,6 +101,7 @@ class CapacityLoopEngine {
     bool sampleMode = false,
     List<CapacityCostRecord>? costRecords,
     List<CapacityDecisionOutcomeRecord>? outcomeRecords,
+    List<CapacityPullReasonRecord>? pullReasonRecords,
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realCount = BetaFeedbackEngine.realEntryCountFor(realEntries);
@@ -106,10 +111,12 @@ class CapacityLoopEngine {
     final costCount = _countCostSignals(eligible);
     final records = costRecords ?? CapacityCostStore.cached;
     final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
+    final pullReasons = pullReasonRecords ?? CapacityPullReasonStore.cached;
     final checkinCount = CapacityCostStore.countWithLaterCost(records);
     final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(outcomes);
     final pendingCheckin = _findPendingCostCheckin(realEntries, records, outcomes);
     final pendingOutcome = _findPendingOutcome(realEntries, outcomes);
+    final pendingPullReason = _findPendingPullReason(realEntries, pullReasons);
 
     return build(
       CapacityLoopInput(
@@ -127,6 +134,9 @@ class CapacityLoopEngine {
         hasPendingOutcome: pendingOutcome != null,
         hasPatternChangeOutcomes:
             CapacityDecisionOutcomeStore.hasAnyPatternChange(outcomes),
+        hasPendingPullReason: pendingPullReason != null,
+        pullReasonSummary:
+            CapacityPullReasonEngine.loopPullSummary(pullReasons),
       ),
     );
   }
@@ -156,6 +166,18 @@ class CapacityLoopEngine {
     return null;
   }
 
+  String? _findPendingPullReason(
+    List<JournalEntry> entries,
+    List<CapacityPullReasonRecord> pullReasons,
+  ) {
+    final ids = eligibleCapacityEntryIds(entries);
+    if (ids.isEmpty) return null;
+    for (final id in ids.reversed) {
+      if (!CapacityPullReasonStore.hasRecordFor(id, pullReasons)) return id;
+    }
+    return null;
+  }
+
   String? _findPendingOutcome(
     List<JournalEntry> entries,
     List<CapacityDecisionOutcomeRecord> outcomes,
@@ -163,6 +185,7 @@ class CapacityLoopEngine {
     final ids = eligibleCapacityEntryIds(entries);
     if (ids.isEmpty) return null;
     for (final id in ids.reversed) {
+      if (!CapacityPullReasonStore.hasRecordFor(id)) continue;
       if (!CapacityDecisionOutcomeStore.hasRecordFor(id, outcomes)) return id;
     }
     return null;
@@ -210,6 +233,7 @@ class CapacityLoopEngine {
       watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
       costEvidenceLabel: _costEvidenceLabel(input.costCheckinRecordedCount),
       outcomeEvidenceLabel: _outcomeEvidenceLabel(input),
+      pullReasonSummary: input.pullReasonSummary,
     );
   }
 
@@ -235,6 +259,7 @@ class CapacityLoopEngine {
         watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
         costEvidenceLabel: '',
         outcomeEvidenceLabel: '',
+        pullReasonSummary: '',
       );
 
   String _whatRepeated(CapacityLoopInput input) {
