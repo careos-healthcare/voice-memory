@@ -18,6 +18,9 @@ import 'capacity_loop_engine.dart';
 import 'capacity_pull_reason_store.dart';
 import 'capacity_three_moment_gates.dart';
 import 'capacity_weekly_review_engine.dart';
+import 'quick_capture_friction_copy.dart';
+import 'quick_capture_friction_models.dart';
+import 'quick_capture_friction_store.dart';
 
 /// Aggregates local capacity beta signals — read-only, no journal text.
 class CapacityBetaSignalEngine {
@@ -68,6 +71,9 @@ class CapacityBetaSignalEngine {
       paidIntentStrongWtp: input.paidIntentRecord?.isStrongWtp ?? false,
       paidIntentSoftWtp: input.paidIntentRecord?.isSoftWtp ?? false,
       paymentSignalLabel: paymentSignalLabel,
+      quickCaptureFrictionLabel: QuickCaptureFrictionCopy.dashboardValueForRecord(
+        input.quickCaptureFrictionRecord,
+      ),
       verdict: verdict,
       verdictLabel: CapacityBetaSignalCopy.verdictLabelFor(verdict),
       exportSummary: _buildExportSummary(
@@ -91,6 +97,7 @@ class CapacityBetaSignalEngine {
     CapacityBoundaryResponseSelection? boundarySelection,
     ProInterestState proInterestState = ProInterestState.empty,
     PaidIntentConfirmationRecord? paidIntentRecord,
+    QuickCaptureFrictionRecord? quickCaptureFrictionRecord,
     bool dailyChangeAvailable = false,
     bool trackPaymentSignal = true,
     bool sampleMode = false,
@@ -142,6 +149,8 @@ class CapacityBetaSignalEngine {
         paidIntentRecord: paidIntentRecord,
         dailyChangeAvailable: dailyChangeAvailable,
         trackPaymentSignal: trackPaymentSignal,
+        quickCaptureFrictionRecord:
+            quickCaptureFrictionRecord ?? QuickCaptureFrictionStore.cached,
       ),
     );
   }

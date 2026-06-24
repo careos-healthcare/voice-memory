@@ -18,6 +18,7 @@ import '../features/capacity_loop/capacity_decision_outcome_store.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_pull_reason_store.dart';
+import '../features/capacity_loop/quick_capture_friction_store.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/paid_intent/paid_intent_confirmation_copy.dart';
 import '../features/paid_intent/paid_intent_confirmation_engine.dart';
@@ -70,6 +71,7 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
     await CapacityBoundaryResponseStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
     await PaidIntentConfirmationStore.ensureLoaded();
+    await QuickCaptureFrictionStore.ensureLoaded();
     await ArchiveDailyChangeStore.ensureLoaded();
 
     final entries = await journal.loadAll();
@@ -92,6 +94,7 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
       boundarySelection: CapacityBoundaryResponseStore.cached,
       proInterestState: ProInterestStore.cached,
       paidIntentRecord: PaidIntentConfirmationStore.cached,
+      quickCaptureFrictionRecord: QuickCaptureFrictionStore.cached,
       dailyChangeAvailable: dailyChangeShown,
     );
     final paidIntentResult =
@@ -132,6 +135,8 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
         dailyChangeAvailable: dailyChangeShown,
         paidIntentStrongWtp: snapshot.paidIntentStrongWtp,
         paidIntentSoftWtp: snapshot.paidIntentSoftWtp,
+        quickCaptureFrictionStillWork:
+            QuickCaptureFrictionStore.cached?.isStillWork ?? false,
       );
       _loading = false;
     });
@@ -223,6 +228,12 @@ class _CapacityBetaSignalScreenState extends State<CapacityBetaSignalScreen> {
                 key: const Key('capacity_beta_signal_fit_response'),
                 label: CapacityBetaSignalCopy.loopFitResponseLabel,
                 value: snapshot.fitResponseLabel,
+              ),
+              _metricRow(
+                context,
+                key: const Key('capacity_beta_signal_quick_capture_friction'),
+                label: CapacityBetaSignalCopy.quickCaptureFrictionLabel,
+                value: snapshot.quickCaptureFrictionLabel,
               ),
               const SizedBox(height: AppSpacing.md),
               _sectionTitle(

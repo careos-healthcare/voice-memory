@@ -105,6 +105,7 @@ CapacityBetaSignalInput _input({
               : null,
       dailyChangeAvailable: dailyChangeAvailable,
       trackPaymentSignal: trackPaymentSignal,
+      quickCaptureFrictionRecord: null,
     );
 
 CapacityActivationFitRecord _fitRecord(String responseId) =>

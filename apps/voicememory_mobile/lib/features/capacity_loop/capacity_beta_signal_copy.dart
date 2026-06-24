@@ -41,6 +41,8 @@ abstract final class CapacityBetaSignalCopy {
   static const skippedLabel = 'skipped';
   static const paymentNotTrackedLabel = 'Payment signal not tracked yet';
 
+  static const quickCaptureFrictionLabel = 'Quick capture friction';
+
   static const cardTitle = 'Capacity beta signals';
   static const cardBody = 'Review local activation and fit signals.';
   static const openDashboardButton = 'Open capacity beta signals';
@@ -116,5 +118,6 @@ abstract final class CapacityBetaSignalCopy {
         paymentNotTrackedLabel,
         notAnsweredLabel,
         skippedLabel,
+        quickCaptureFrictionLabel,
       ];
 }
