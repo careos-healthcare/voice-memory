@@ -204,6 +204,7 @@ void main() {
           capacityCostLaterCheckinVisible: false,
           beforeYouSayYesPauseVisible: false,
           capacityWeeklyReviewVisible: false,
+          capacityBoundaryResponseVisible: false,
           thenVsNowVisible: true,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,

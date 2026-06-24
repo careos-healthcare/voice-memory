@@ -16,6 +16,10 @@ import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/capacity_weekly_review_copy.dart';
 import '../features/capacity_loop/capacity_weekly_review_engine.dart';
 import '../features/capacity_loop/capacity_weekly_review_models.dart';
+import '../features/capacity_loop/capacity_boundary_response_copy.dart';
+import '../features/capacity_loop/capacity_boundary_response_engine.dart';
+import '../features/capacity_loop/capacity_boundary_response_models.dart';
+import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -47,6 +51,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   CapacityLoopResult? _result;
   BeforeYesPauseResult? _beforeYesPause;
   CapacityWeeklyReviewResult? _weeklyReview;
+  CapacityBoundaryResponseResult? _boundaryResponse;
   bool _loading = true;
 
   @override
@@ -80,6 +85,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
 
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
+    await CapacityBoundaryResponseStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -107,6 +113,14 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         costRecords: CapacityCostStore.cached,
       );
       _weeklyReview = const CapacityWeeklyReviewEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        costRecords: CapacityCostStore.cached,
+        outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      );
+      _boundaryResponse =
+          const CapacityBoundaryResponseEngine().buildFromJournal(
         entries: entries,
         capacityLoopActive: loopActive,
         capacityCohortActive: cohortActive,
@@ -213,6 +227,24 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
             key: const Key('capacity_loop_screen_weekly_review_button'),
             onPressed: () => context.push(CapacityWeeklyReviewCopy.route),
             child: Text(_weeklyReview!.primaryCtaLabel),
+          ),
+        ],
+        if (_boundaryResponse?.showOnCapacityLoop == true) ...[
+          const SizedBox(height: AppSpacing.md),
+          _section(
+            context,
+            CapacityBoundaryResponseCopy.loopSectionTitle,
+            _boundaryResponse!.hasSelection
+                ? _boundaryResponse!.selectedResponseText
+                : CapacityBoundaryResponseCopy.body,
+            key: const Key('capacity_loop_screen_boundary_response'),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('capacity_loop_screen_boundary_response_button'),
+            onPressed: () =>
+                context.push(CapacityBoundaryResponseCopy.route),
+            child: Text(_boundaryResponse!.primaryCtaLabel),
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
