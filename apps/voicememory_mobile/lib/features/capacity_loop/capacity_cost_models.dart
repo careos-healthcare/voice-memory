@@ -94,6 +94,7 @@ class CapacityCostInput {
     required this.sampleMode,
     required this.records,
     this.pendingEntryId,
+    this.capacityMomentCount = 0,
   });
 
   final int realSavedMomentCount;
@@ -102,6 +103,7 @@ class CapacityCostInput {
   final bool sampleMode;
   final List<CapacityCostRecord> records;
   final String? pendingEntryId;
+  final int capacityMomentCount;
 }
 
 /// Archive Home / prompt result — counts and copy only.

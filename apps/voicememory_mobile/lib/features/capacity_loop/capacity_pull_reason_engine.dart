@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
+import 'capacity_launch_wedge_gates.dart';
 import 'capacity_pull_reason_copy.dart';
 import 'capacity_pull_reason_models.dart';
 import 'capacity_pull_reason_store.dart';
@@ -31,7 +32,10 @@ class CapacityPullReasonEngine {
 
     return CapacityPullReasonResult(
       hasCard: true,
-      showOnArchiveHome: true,
+      showOnArchiveHome: CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+        capacityWedgeActive: input.capacityWedgeActive,
+        capacityMomentCount: input.capacityMomentCount,
+      ),
       title: CapacityPullReasonCopy.cardTitle,
       body: CapacityPullReasonCopy.cardBody,
       primaryCtaLabel: CapacityPullReasonCopy.saveReasonCta,
@@ -53,6 +57,7 @@ class CapacityPullReasonEngine {
     if (realCount <= 0) return CapacityPullReasonResult.hidden;
 
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
     final pendingId = findPendingEntryId(
       entries: realEntries,
       records: records,
@@ -66,6 +71,7 @@ class CapacityPullReasonEngine {
         sampleMode: sampleMode,
         records: records,
         pendingEntryId: pendingId,
+        capacityMomentCount: momentCount,
       ),
     );
   }

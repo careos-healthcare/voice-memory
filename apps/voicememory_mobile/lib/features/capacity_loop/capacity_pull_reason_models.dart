@@ -92,6 +92,7 @@ class CapacityPullReasonInput {
     required this.sampleMode,
     required this.records,
     this.pendingEntryId,
+    this.capacityMomentCount = 0,
   });
 
   final int realSavedMomentCount;
@@ -100,6 +101,7 @@ class CapacityPullReasonInput {
   final bool sampleMode;
   final List<CapacityPullReasonRecord> records;
   final String? pendingEntryId;
+  final int capacityMomentCount;
 }
 
 class CapacityPullReasonResult {

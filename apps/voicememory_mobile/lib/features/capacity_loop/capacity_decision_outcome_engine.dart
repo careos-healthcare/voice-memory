@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../demo/sample_archive_mode.dart';
+import 'capacity_launch_wedge_gates.dart';
 import 'capacity_decision_outcome_copy.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_decision_outcome_store.dart';
@@ -35,7 +36,10 @@ class CapacityDecisionOutcomeEngine {
 
     return CapacityDecisionOutcomeResult(
       hasCard: true,
-      showOnArchiveHome: true,
+      showOnArchiveHome: CapacityLaunchWedgeGates.showAdvancedSurfaceOnArchiveHome(
+        capacityWedgeActive: input.capacityWedgeActive,
+        capacityMomentCount: input.capacityMomentCount,
+      ),
       title: CapacityDecisionOutcomeCopy.cardTitle,
       body: CapacityDecisionOutcomeCopy.cardBody,
       helperText: CapacityDecisionOutcomeCopy.cardHelper,
@@ -58,6 +62,7 @@ class CapacityDecisionOutcomeEngine {
     if (realCount <= 0) return CapacityDecisionOutcomeResult.hidden;
 
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
     final pendingId = findPendingEntryId(
       entries: realEntries,
       records: records,
@@ -71,6 +76,7 @@ class CapacityDecisionOutcomeEngine {
         sampleMode: sampleMode,
         records: records,
         pendingEntryId: pendingId,
+        capacityMomentCount: momentCount,
       ),
     );
   }

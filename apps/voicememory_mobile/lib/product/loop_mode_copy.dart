@@ -11,20 +11,20 @@ abstract class LoopModeCopy {
   // ——— capacity_yes handoff ———
   static const String capacityHandoffTitle = 'See why you keep saying yes.';
   static const String capacityHandoffBody =
-      'When did you say yes before checking whether you had room? One honest save is enough to start.';
+      'Save real moments where you felt pulled to agree. After 3 moments, ArchiveMe helps you review what repeated.';
   static const String capacityHandoffPrompt =
-      'When did you say yes before checking whether you had room?';
-  static const String capacityHandoffCta = 'Save one moment';
+      'What are you about to agree to, and what makes it hard to pause?';
+  static const String capacityHandoffCta = 'Save yes moment';
 
   // ——— Interpretation unsupported ———
   static const String capacityUnsupportedTitle =
-      'ArchiveMe did not see the capacity loop clearly yet.';
+      'ArchiveMe did not see a clear yes pattern yet.';
   static const String capacityUnsupportedPrompt =
       'Try recording what you agreed to, what it cost, and what you felt afterward.';
 
   // ——— Post-save ———
   static const String capacityPostSaveTitle =
-      'ArchiveMe is checking the yes-before-capacity loop';
+      'ArchiveMe is reviewing your yes moments';
   static const String capacityPostSaveSubtitle =
       'This is not treated as true yet. Your next moments will test whether it repeats.';
   static const String postSavePossibleLoop = 'Possible loop';
@@ -39,11 +39,11 @@ abstract class LoopModeCopy {
       'Choosing freely, having enough capacity, or no guilt or pressure afterward.';
 
   // ——— Journey ———
-  static const String capacityJourneyTitle = 'Yes-before-capacity journey';
-  static String capacityProgress(int count) => '$count of 3 yes moments';
-  static const String capacityRecordCardTitle = 'Record the next yes moment';
+  static const String capacityJourneyTitle = 'Your yes loop';
+  static String capacityProgress(int count) => '$count of 3 yes moments saved';
+  static const String capacityRecordCardTitle = 'Save your next yes moment';
   static const String capacityRecordCardBody =
-      'ArchiveMe is watching whether you agree before checking capacity.';
+      'Save real moments where you felt pulled to agree.';
   static const List<String> capacityNextPrompts = [
     'When did you next agree before checking whether you had room?',
     'What did saying yes cost you this time?',
@@ -61,10 +61,9 @@ abstract class LoopModeCopy {
       'Record whether you had capacity before you agreed.';
 
   // ——— Review ———
-  static const String capacityReviewTitle =
-      'ArchiveMe reviewed your yes-before-capacity loop';
+  static const String capacityReviewTitle = 'Your yes loop';
   static const String capacityReviewSubtitle =
-      'So far, this looks like a loop worth watching.';
+      'Built from the moments you saved.';
   static const String reviewWhatRepeated = 'What repeated';
   static const String reviewWhatItCost = 'What it seemed to cost';
   static const String reviewWhatTriggeredYes = 'What triggered the yes';
@@ -105,7 +104,7 @@ abstract class LoopModeCopy {
   static const String progressGettingClearer = 'Getting clearer';
   static const String progressReadyToReview = 'Ready to review';
   static const String progressRecordNextCta = 'Record next yes moment';
-  static const String progressViewLoopCta = 'View loop';
+  static const String progressViewLoopCta = 'Review your yes loop';
 
   // ——— Loop detail ———
   static const String detailPromise = 'Promise';
@@ -123,7 +122,7 @@ abstract class LoopModeCopy {
   static const String paywallAfterLoopBody =
       'ArchiveMe can keep the full evidence trail and show whether this loop fades, gets stronger, or changes.';
   static const List<String> paywallAfterLoopBullets = [
-    'Track future yes-before-capacity moments',
+    'Track future yes moments',
     'Keep the full evidence trail',
     'See what confirms or challenges the loop',
     'Export monthly pattern reviews',

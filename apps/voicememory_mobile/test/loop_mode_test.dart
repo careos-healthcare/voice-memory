@@ -299,7 +299,7 @@ void main() {
     expect(LoopModeCopy.paywallAfterLoopHeadline, contains('loop'));
     expect(
       LoopModeCopy.paywallAfterLoopBullets.first,
-      contains('yes-before-capacity'),
+      contains('yes moment'),
     );
     expect(LoopModeCopy.paywallAfterLoopBody, contains('evidence trail'));
   });

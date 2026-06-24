@@ -6,9 +6,9 @@ abstract final class CapacityBetaMissionCopy {
 
   static const route = '/capacity-beta-mission';
 
-  static const title = 'Your 7-day capacity test';
+  static const title = '7-day capacity test';
   static const subtitle =
-      'Save 3 real yes moments, review your loop, and tell us if it fits.';
+      'Save 3 yes moments, review your loop, and tell us if it fits.';
 
   static const calmNote = 'This helps test whether ArchiveMe is useful.';
   static const skipNote = 'Skip anything that does not apply.';
@@ -47,11 +47,11 @@ abstract final class CapacityBetaMissionCopy {
 
   static const cardTitle = startMissionCta;
   static const cardBody =
-      'Follow a simple 7-day path to test the capacity yes loop.';
+      'Save 3 yes moments, review your loop, and tell us if it fits.';
 
   static const supportTitle = '7-day capacity test';
   static const supportSubtitle =
-      'Guided steps for beta testers to reach activation and fit signals.';
+      'Guided steps for beta testers: save yes moments, review the loop, and share fit feedback.';
 
   static const betaSignalsMissionLink = 'Back to 7-day capacity test';
 

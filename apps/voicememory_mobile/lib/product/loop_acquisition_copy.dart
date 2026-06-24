@@ -47,14 +47,14 @@ abstract class LoopAcquisitionCopy {
     id: 'capacity_yes',
     headline: 'See why you keep saying yes.',
     subheadline:
-        'ArchiveMe helps overcommitted professionals save real moments and spot the repeated pattern over time.',
+        'Save real moments where you felt pulled to agree. After 3 moments, see what keeps repeating.',
     bullets: [
-      'Save one moment when you said yes before checking capacity',
-      'After a few saves, see what keeps repeating',
-      'Private on this device — your words, your archive',
-      'Build private evidence before the next yes',
+      'Save your first yes moment in under a minute',
+      'Reach 3 yes moments to review your yes loop',
+      'Private archive on this device — your words stay here',
+      'Tell us if the loop fits after 3 moments',
     ],
-    cta: 'Save one moment',
+    cta: 'Save yes moment',
     cohortRoutePath: '/start/capacity-yes',
   );
 

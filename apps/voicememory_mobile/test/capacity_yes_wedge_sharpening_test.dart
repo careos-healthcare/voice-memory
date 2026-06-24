@@ -116,20 +116,20 @@ void main() {
         AcquisitionStartCopy.capacityBody.toLowerCase(),
         contains('private on this device'),
       );
-      expect(AcquisitionStartCopy.capacityStartCta, 'Save one moment');
+      expect(AcquisitionStartCopy.capacityStartCta, 'Save yes moment');
     });
 
     test('loop acquisition capacity variant aligned', () {
       final v = LoopAcquisitionCopy.capacityYes;
       expect(v.headline, 'See why you keep saying yes.');
-      expect(v.subheadline.toLowerCase(), contains('overcommitted professionals'));
-      expect(v.cta, 'Save one moment');
+      expect(v.subheadline.toLowerCase(), contains('pulled to agree'));
+      expect(v.cta, 'Save yes moment');
     });
 
     test('capacity yes record handoff prompt is specific', () {
       expect(
         LoopModeCopy.capacityHandoffPrompt,
-        'When did you say yes before checking whether you had room?',
+        'What are you about to agree to, and what makes it hard to pause?',
       );
       expect(
         AudienceWedge.sayingYesNoCapacity.firstPrompt,

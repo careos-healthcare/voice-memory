@@ -1,4 +1,5 @@
 import '../loop_mode/loop_mode_model.dart';
+import '../../product/loop_mode_copy.dart';
 
 /// Pressure-loop wedge selected during onboarding — analytics + ranking.
 enum AudienceWedge {
@@ -86,7 +87,7 @@ extension AudienceWedgeIds on AudienceWedge {
         return 'When did you feel pressure to do more to feel okay?';
       case AudienceWedge.sayingYesNoCapacity:
       case AudienceWedge.sayingYesCapacity:
-        return 'When did you say yes before checking whether you had room?';
+        return LoopModeCopy.capacityHandoffPrompt;
       case AudienceWedge.relationshipReplay:
         return 'What interaction kept replaying in your head?';
       case AudienceWedge.avoidingDirectConversations:
