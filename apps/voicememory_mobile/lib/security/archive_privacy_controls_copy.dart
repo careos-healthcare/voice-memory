@@ -8,7 +8,7 @@ abstract class ArchivePrivacyControlsCopy {
 
   static const String lockTitle = PrivacyCopyPolicy.lockArchiveMe;
   static const String lockSubtitle =
-      'Require Face ID or passcode before opening your archive.';
+      'Require Face ID, Touch ID, or a PIN before opening your archive on this device.';
 
   static const String exportTitle = 'Export my archive';
   static const String exportSubtitle =

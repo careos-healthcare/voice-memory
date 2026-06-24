@@ -15,7 +15,7 @@ void main() {
         PrivacyCopyPolicy.exportDeleteAnytime,
         'You can export or delete your local archive at any time.',
       );
-      expect(PrivacyCopyPolicy.lockArchiveMe, 'Lock ArchiveMe');
+      expect(PrivacyCopyPolicy.lockArchiveMe, 'Protect this archive');
     });
   });
 

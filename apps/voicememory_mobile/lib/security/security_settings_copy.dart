@@ -9,7 +9,7 @@ abstract class SecuritySettingsCopy {
       'Control how ArchiveMe protects this device and your account.';
 
   // Sections.
-  static const String appLockSection = 'App lock';
+  static const String appLockSection = 'Protect this archive';
   static const String accountSection = 'Account';
   static const String dataSection = 'Data';
 

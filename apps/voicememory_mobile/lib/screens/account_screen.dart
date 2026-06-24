@@ -134,6 +134,11 @@ class _AccountScreenState extends State<AccountScreen> {
               if (_showSignIn) ...[
                 const SizedBox(height: AppSpacing.lg),
                 Text(
+                  AccountAuthCopy.accountTimingNote,
+                  style: ArchiveMobileTypography.responsiveHelper(context),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
                   AccountAuthCopy.createBody,
                   style: ArchiveMobileTypography.responsiveHelper(context),
                 ),

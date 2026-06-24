@@ -30,6 +30,7 @@ abstract final class ProValuePreviewCopy {
   static const purchaseUnavailable = ProValueCopy.purchaseUnavailableNote;
   static const purchaseKeepFree = ProValueCopy.purchaseKeepFreeNote;
   static const purchaseAfterSetup = ProValueCopy.purchaseAfterSetupNote;
+  static const accountRestoreNote = ProValueCopy.accountRestoreNote;
 
   static const keepBuildingCta = ProValueCopy.primaryCtaLabel;
   static const trySampleArchiveCta = ProValueCopy.secondaryCtaLabel;

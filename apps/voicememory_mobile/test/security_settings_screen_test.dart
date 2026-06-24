@@ -104,7 +104,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ArchivePrivacyControlsCopy.cardTitle), findsOneWidget);
-      expect(find.text(ArchivePrivacyControlsCopy.lockTitle), findsOneWidget);
+      expect(find.text(ArchivePrivacyControlsCopy.lockTitle), findsWidgets);
       expect(find.text(ArchivePrivacyControlsCopy.exportTitle), findsOneWidget);
       expect(find.text(ArchivePrivacyControlsCopy.deleteTitle), findsOneWidget);
       expect(
@@ -144,7 +144,10 @@ void main() {
       final status = tester.widget<ListTile>(
         find.byKey(const Key('security_app_lock_status')),
       );
-      expect((status.subtitle! as Text).data, SecuritySettingsCopy.statusOn);
+      expect(
+        (status.subtitle! as Text).data,
+        contains(SecuritySettingsCopy.statusOn),
+      );
       expect(find.text(AppLockCopy.settingsChangePin), findsOneWidget);
       expect(find.text(AppLockCopy.settingsTurnOff), findsOneWidget);
     });

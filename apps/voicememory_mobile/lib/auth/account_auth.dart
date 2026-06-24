@@ -45,6 +45,11 @@ abstract class AccountAuthCopy {
   static const String signOut = 'Sign out';
   static const String signOutKeepsArchive =
       'Signing out keeps your recordings on this device.';
+
+  /// Shown on account surfaces — local use first; account optional until value.
+  static const String accountTimingNote =
+      'You can use ArchiveMe locally without an account. Create one when you '
+      'want to restore access or connect Pro later.';
 }
 
 /// Pure helpers for the account flow: validation and the mapping from
