@@ -157,6 +157,7 @@ ArchiveHomePriorityInput _priorityInput({
       capacityCostLaterCheckinVisible: false,
       beforeYouSayYesPauseVisible: false,
       capacityWeeklyReviewVisible: false,
+      capacityBoundaryResponseVisible: false,
       thenVsNowVisible: thenVsNowVisible,
       archiveCalendarVisible: archiveCalendarVisible,
       reviewRitualVisible: reviewRitualVisible,

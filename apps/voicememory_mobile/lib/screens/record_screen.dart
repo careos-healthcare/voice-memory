@@ -184,6 +184,8 @@ import '../widgets/record/loop_mode_first_handoff_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
+import '../features/capacity_loop/capacity_boundary_response_copy.dart';
+import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../product/loop_mode_copy.dart';
 import '../features/capacity_loop/capacity_loop_gates.dart';
 import '../features/retention/next_evidence_reminder_service.dart';
@@ -424,6 +426,7 @@ class _RecordScreenState extends State<RecordScreen> {
   String? _selectedPromptLine;
   AudienceWedge? _audienceWedge;
   LoopMode? _activeLoop;
+  String? _defaultBoundaryPauseLabel;
   String? _postSaveFollowUp;
   bool _showPostSaveLoop = false;
   bool _lastCaptureAnalysisSucceeded = true;
@@ -532,6 +535,7 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     _loadRecordReturnProState();
     _loadFirstLoop();
+    unawaited(_loadDefaultBoundaryPause());
     _loadReturnTriggerAccepted();
     unawaited(_loadPurchaseIntentCue());
     unawaited(_loadInvitedWelcome());
@@ -1572,6 +1576,41 @@ class _RecordScreenState extends State<RecordScreen> {
     if (!mounted) return;
     setState(() => _firstLoop = state);
   }
+
+  Future<void> _loadDefaultBoundaryPause() async {
+    if (ScreenshotMode.enabled || !AppServices.isInitialized) return;
+    await CapacityBoundaryResponseStore.ensureLoaded();
+    final loop = _activeLoop ?? await LoopModeCoordinator.loadActive();
+    final selection = CapacityBoundaryResponseStore.cached;
+    final text = selection != null && selection.hasSelection
+        ? CapacityBoundaryResponseCopy.textForId(selection.responseId)
+        : null;
+    if (!mounted) return;
+    setState(() {
+      _defaultBoundaryPauseLabel = text != null && (loop?.isCapacityYes ?? false)
+          ? CapacityBoundaryResponseCopy.recordDefaultPauseLabel(text)
+          : null;
+    });
+  }
+
+  bool _showBeforeYesCardOnRecord(RecordUiState ui) =>
+      !_shouldHideCompetingRecordCtas(ui) &&
+      _activeLoop?.isCapacityYes == true &&
+      CapacityLoopGates.showRecordPrompt(
+        capacityWedgeActive: true,
+        sampleMode: ScreenshotMode.enabled,
+      ) &&
+      ui == RecordUiState.ready &&
+      _mic == RecordingPhase.ready &&
+      _postSavePattern == null;
+
+  bool _showDefaultBoundaryPauseOnRecord(RecordUiState ui) =>
+      _defaultBoundaryPauseLabel != null &&
+      _activeLoop?.isCapacityYes == true &&
+      ui == RecordUiState.ready &&
+      _postSavePattern == null &&
+      !_shouldHideCompetingRecordCtas(ui) &&
+      !_showBeforeYesCardOnRecord(ui);
 
   bool get _showAdvancedRetentionPostSave {
     if (_isFirstSessionPostSave) return false;
@@ -3541,6 +3580,18 @@ class _RecordScreenState extends State<RecordScreen> {
                             _onRecordPressed(source: 'capacity_loop'),
                           );
                         },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (_showDefaultBoundaryPauseOnRecord(ui)) ...[
+                      Text(
+                        _defaultBoundaryPauseLabel!,
+                        key: const Key('record_screen_default_boundary_pause'),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: VoiceMemoryColors.textSecondary,
+                          height: 1.5,
+                        ),
                       ),
                       const SizedBox(height: 12),
                     ],

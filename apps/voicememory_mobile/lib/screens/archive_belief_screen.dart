@@ -138,7 +138,10 @@ import '../widgets/capacity_cost_later_card.dart';
 import '../widgets/capacity_decision_outcome_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../widgets/capacity_weekly_review_card.dart';
+import '../widgets/capacity_boundary_response_card.dart';
 import '../features/capacity_loop/capacity_weekly_review_engine.dart';
+import '../features/capacity_loop/capacity_boundary_response_engine.dart';
+import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../features/capacity_loop/capacity_loop_engine.dart';
 import '../features/capacity_loop/capacity_cost_engine.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
@@ -522,6 +525,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
+    await CapacityBoundaryResponseStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -2034,6 +2038,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       pendingCostCheckin: capacityCostCheckin.showOnArchiveHome,
       beforeYesPauseOnHome: beforeYesPause.showOnArchiveHome,
     );
+    final capacityBoundaryResponse =
+        const CapacityBoundaryResponseEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      costRecords: CapacityCostStore.cached,
+      outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      pendingDecisionOutcome: capacityDecisionOutcome.showOnArchiveHome,
+      pendingCostCheckin: capacityCostCheckin.showOnArchiveHome,
+      beforeYesPauseOnHome: beforeYesPause.showOnArchiveHome,
+      weeklyReviewOnHome: capacityWeeklyReview.showOnArchiveHome,
+    );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
     final reviewRitualResult = const ReviewRitualEngine().build(
@@ -2081,6 +2097,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           beforeYesPause.showOnArchiveHome,
       capacityWeeklyReviewVisible: !ScreenshotMode.enabled &&
           capacityWeeklyReview.showOnArchiveHome,
+      capacityBoundaryResponseVisible: !ScreenshotMode.enabled &&
+          capacityBoundaryResponse.showOnArchiveHome,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
       archiveCalendarVisible:
@@ -2379,6 +2397,98 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         .hasCard,
                     costLaterCheckinVisible: false,
                     costRecords: CapacityCostStore.cached,
+                  )
+                  .showOnArchiveHome,
+            ),
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityBoundaryResponse:
+        return [
+          CapacityBoundaryResponseCard(
+            result: const CapacityBoundaryResponseEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+              costRecords: CapacityCostStore.cached,
+              outcomeRecords: CapacityDecisionOutcomeStore.cached,
+              pendingDecisionOutcome: const CapacityDecisionOutcomeEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityDecisionOutcomeStore.cached,
+                  )
+                  .showOnArchiveHome,
+              pendingCostCheckin: const CapacityCostEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityCostStore.cached,
+                    outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                  )
+                  .showOnArchiveHome,
+              beforeYesPauseOnHome: const BeforeYesPauseEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    capacityLoopHasCard: const CapacityLoopEngine()
+                        .buildFromJournal(
+                          entries: _entries,
+                          capacityLoopActive: _capacityLoopActive,
+                          capacityCohortActive: _capacityCohortActive,
+                          costRecords: CapacityCostStore.cached,
+                          outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                        )
+                        .hasCard,
+                    costLaterCheckinVisible: false,
+                    costRecords: CapacityCostStore.cached,
+                  )
+                  .showOnArchiveHome,
+              weeklyReviewOnHome: const CapacityWeeklyReviewEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    costRecords: CapacityCostStore.cached,
+                    outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                    pendingDecisionOutcome: const CapacityDecisionOutcomeEngine()
+                        .buildFromJournal(
+                          entries: _entries,
+                          capacityLoopActive: _capacityLoopActive,
+                          capacityCohortActive: _capacityCohortActive,
+                          records: CapacityDecisionOutcomeStore.cached,
+                        )
+                        .showOnArchiveHome,
+                    pendingCostCheckin: const CapacityCostEngine()
+                        .buildFromJournal(
+                          entries: _entries,
+                          capacityLoopActive: _capacityLoopActive,
+                          capacityCohortActive: _capacityCohortActive,
+                          records: CapacityCostStore.cached,
+                          outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                        )
+                        .showOnArchiveHome,
+                    beforeYesPauseOnHome: const BeforeYesPauseEngine()
+                        .buildFromJournal(
+                          entries: _entries,
+                          capacityLoopActive: _capacityLoopActive,
+                          capacityCohortActive: _capacityCohortActive,
+                          capacityLoopHasCard: const CapacityLoopEngine()
+                              .buildFromJournal(
+                                entries: _entries,
+                                capacityLoopActive: _capacityLoopActive,
+                                capacityCohortActive: _capacityCohortActive,
+                                costRecords: CapacityCostStore.cached,
+                                outcomeRecords:
+                                    CapacityDecisionOutcomeStore.cached,
+                              )
+                              .hasCard,
+                          costLaterCheckinVisible: false,
+                          costRecords: CapacityCostStore.cached,
+                        )
+                        .showOnArchiveHome,
                   )
                   .showOnArchiveHome,
             ),
