@@ -51,6 +51,10 @@ abstract final class BetaInviteCopy {
       'Save 3 moments. After the third, open Archive and answer whether '
       'ArchiveMe showed something useful.';
 
+  static const betaSuccessChecklist =
+      'Beta success means: save 3 real moments, return once, review what '
+      'repeated, tell us if it fits.';
+
   static const reportBackPrompt =
       'Did you understand the app? Did it show anything useful by entry 3? '
       'Would deeper long-term evidence history be worth paying for later?';
@@ -172,6 +176,7 @@ $privacyReminder
         variantPrivateArchiveTitle,
         testerTask,
         reportBackPrompt,
+        betaSuccessChecklist,
         ...BetaInviteVariantId.values.map(shortInvite),
         ...BetaInviteVariantId.values.map(longInvite),
       ];
