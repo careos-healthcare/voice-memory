@@ -61,3 +61,5 @@ See [APP_STORE_SUBMISSION_PACK.md](./APP_STORE_SUBMISSION_PACK.md) for the conso
 **Physical-device QA:** [docs/TESTFLIGHT_MANUAL_QA.md](./docs/TESTFLIGHT_MANUAL_QA.md)
 
 **Access protection:** [docs/ACCESS_PROTECTION_AUDIT.md](./docs/ACCESS_PROTECTION_AUDIT.md)
+
+**Wedge / retention / acquisition:** [docs/WEDGE_RETENTION_ACQUISITION_PLAN.md](./docs/WEDGE_RETENTION_ACQUISITION_PLAN.md)

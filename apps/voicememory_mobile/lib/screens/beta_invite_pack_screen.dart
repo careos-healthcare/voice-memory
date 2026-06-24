@@ -100,6 +100,15 @@ class _BetaInvitePackScreenState extends State<BetaInvitePackScreen> {
               key: const Key('beta_invite_pack_positioning'),
               style: ArchiveMobileTypography.explanationBody(context),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              BetaInviteCopy.betaSuccessChecklist,
+              key: const Key('beta_invite_pack_success_checklist'),
+              style: ArchiveMobileTypography.explanationBody(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               BetaInviteCopy.variantSectionTitle,
