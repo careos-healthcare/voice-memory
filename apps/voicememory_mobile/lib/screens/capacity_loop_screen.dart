@@ -29,6 +29,10 @@ import '../features/capacity_loop/capacity_three_moment_models.dart';
 import '../features/capacity_loop/capacity_activation_fit_engine.dart';
 import '../features/capacity_loop/capacity_activation_fit_models.dart';
 import '../features/capacity_loop/capacity_activation_fit_store.dart';
+import '../features/archive_daily_change/archive_daily_change_engine.dart';
+import '../features/archive_daily_change/archive_daily_change_models.dart';
+import '../features/archive_daily_change/archive_daily_change_store.dart';
+import '../widgets/archive_daily_change_card.dart';
 import '../features/capacity_loop/capacity_cost_engine.dart';
 import '../features/capacity_loop/capacity_decision_outcome_engine.dart';
 import '../features/capacity_loop/capacity_pull_reason_engine.dart';
@@ -67,6 +71,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   CapacityBoundaryResponseResult? _boundaryResponse;
   CapacityThreeMomentResult? _threeMoment;
   CapacityActivationFitResult? _activationFit;
+  ArchiveDailyChangeResult? _archiveDailyChange;
   bool _loading = true;
 
   @override
@@ -103,6 +108,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
     await CapacityPullReasonStore.ensureLoaded();
     await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
+    await ArchiveDailyChangeStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -181,6 +187,18 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         pendingCostCheckinOnHome: costCheckin.showOnArchiveHome,
         threeMomentActivationOnHome: _threeMoment!.showOnArchiveHome,
       );
+      _archiveDailyChange =
+          const ArchiveDailyChangeEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        state: ArchiveDailyChangeStore.cached,
+        pullReasonRecords: CapacityPullReasonStore.cached,
+        costRecords: CapacityCostStore.cached,
+        outcomeRecords: CapacityDecisionOutcomeStore.cached,
+        boundarySelection: CapacityBoundaryResponseStore.cached,
+        weeklyReviewAvailable: _weeklyReview?.showOnCapacityLoop ?? false,
+      );
       _loading = false;
     });
   }
@@ -255,6 +273,10 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
               color: AppColors.textSecondary,
             ),
           ),
+        ],
+        if (_archiveDailyChange != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          ArchiveDailyChangeSection(result: _archiveDailyChange!),
         ],
         const SizedBox(height: AppSpacing.md),
         _section(context, result.repeatedLabel, result.whatRepeated,

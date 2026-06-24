@@ -79,6 +79,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.returnRitual,
           ArchiveHomeSectionId.proPreview,
           ArchiveHomeSectionId.returnChanges,
+          ArchiveHomeSectionId.archiveDailyChange,
           ArchiveHomeSectionId.archiveDepth,
           ArchiveHomeSectionId.watchlist,
           ArchiveHomeSectionId.nextEvidencePlan,
@@ -255,6 +256,8 @@ class ArchiveHomePriorityEngine {
     if (input.savedEntryCount <= 0) {
       return [
         ArchiveHomeSectionId.archiveSummary,
+        if (input.archiveDailyChangeVisible)
+          ArchiveHomeSectionId.archiveDailyChange,
         ...stickyLoopSections(input),
         ArchiveHomeSectionId.sampleArchive,
         ArchiveHomeSectionId.quickActions,
@@ -264,6 +267,8 @@ class ArchiveHomePriorityEngine {
 
     return [
       ArchiveHomeSectionId.archiveSummary,
+      if (input.archiveDailyChangeVisible)
+        ArchiveHomeSectionId.archiveDailyChange,
       ...stickyLoopSections(input),
       ..._betaGrowthSections(input),
       ..._secondaryToolSections(input),

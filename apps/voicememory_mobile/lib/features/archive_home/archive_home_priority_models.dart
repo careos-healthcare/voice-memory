@@ -3,6 +3,7 @@ import '../archive_depth/archive_depth_models.dart';
 /// Archive Home surface identifiers for priority stacking.
 enum ArchiveHomeSectionId {
   archiveSummary,
+  archiveDailyChange,
   introHint,
   quickActions,
   returnRitual,
@@ -48,6 +49,7 @@ class ArchiveHomePriorityInput {
     required this.sampleMode,
     required this.proPreviewPromoVisible,
     required this.showEmptySample,
+    this.archiveDailyChangeVisible = false,
     required this.firstWeekPathVisible,
     required this.dailyArchiveExerciseVisible,
     required this.archiveClarityProgressVisible,
@@ -74,6 +76,7 @@ class ArchiveHomePriorityInput {
   final bool sampleMode;
   final bool proPreviewPromoVisible;
   final bool showEmptySample;
+  final bool archiveDailyChangeVisible;
   final bool firstWeekPathVisible;
   final bool dailyArchiveExerciseVisible;
   final bool archiveClarityProgressVisible;

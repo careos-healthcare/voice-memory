@@ -143,6 +143,9 @@ import '../widgets/capacity_activation_fit_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../widgets/capacity_weekly_review_card.dart';
 import '../widgets/capacity_boundary_response_card.dart';
+import '../widgets/archive_daily_change_card.dart';
+import '../features/archive_daily_change/archive_daily_change_engine.dart';
+import '../features/archive_daily_change/archive_daily_change_store.dart';
 import '../features/capacity_loop/capacity_weekly_review_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_engine.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
@@ -541,6 +544,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await CapacityPullReasonStore.ensureLoaded();
     await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
+    await ArchiveDailyChangeStore.ensureLoaded();
     await CapacityBetaMissionStore.ensureLoaded();
     await ProInterestStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
@@ -2096,6 +2100,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       pendingPullReasonOnHome: capacityPullReason.showOnArchiveHome,
       pullReasonRecords: CapacityPullReasonStore.cached,
     );
+    final archiveDailyChange =
+        const ArchiveDailyChangeEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      state: ArchiveDailyChangeStore.cached,
+      pullReasonRecords: CapacityPullReasonStore.cached,
+      costRecords: CapacityCostStore.cached,
+      outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      boundarySelection: CapacityBoundaryResponseStore.cached,
+      weeklyReviewAvailable: capacityWeeklyReview.showOnArchiveHome,
+      sampleMode: ScreenshotMode.enabled,
+    );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
     final reviewRitualResult = const ReviewRitualEngine().build(
@@ -2132,6 +2149,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         dismissed: ProValuePreviewDismissStore.isDismissed,
       ),
       showEmptySample: _showEmpty,
+      archiveDailyChangeVisible: !ScreenshotMode.enabled &&
+          archiveDailyChange.hasFeature &&
+          archiveDailyChange.showOnArchiveHome,
       firstWeekPathVisible: !ScreenshotMode.enabled &&
           realSavedCount < 7 &&
           !earlyCapacityWedgeSession,
@@ -2219,6 +2239,44 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ? () => _handleArchiveHomeAction(summary.secondaryAction)
                 : null,
             shareProof: shareProof?.hasProof == true ? shareProof : null,
+          ),
+        ];
+      case ArchiveHomeSectionId.archiveDailyChange:
+        final dailyChange =
+            const ArchiveDailyChangeEngine().buildFromJournal(
+          entries: _entries,
+          capacityLoopActive: _capacityLoopActive,
+          capacityCohortActive: _capacityCohortActive,
+          state: ArchiveDailyChangeStore.cached,
+          pullReasonRecords: CapacityPullReasonStore.cached,
+          costRecords: CapacityCostStore.cached,
+          outcomeRecords: CapacityDecisionOutcomeStore.cached,
+          boundarySelection: CapacityBoundaryResponseStore.cached,
+          weeklyReviewAvailable: const CapacityWeeklyReviewEngine()
+                  .buildFromJournal(
+                entries: _entries,
+                capacityLoopActive: _capacityLoopActive,
+                capacityCohortActive: _capacityCohortActive,
+                costRecords: CapacityCostStore.cached,
+                outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                pullReasonRecords: CapacityPullReasonStore.cached,
+              )
+              .showOnArchiveHome,
+          sampleMode: ScreenshotMode.enabled,
+        );
+        if (!dailyChange.hasFeature || !dailyChange.showOnArchiveHome) {
+          return const [];
+        }
+        unawaited(ArchiveDailyChangeStore.instance().markSeen(DateTime.now().toUtc()));
+        return [
+          ArchiveDailyChangeCard(
+            result: dailyChange,
+            onDismiss: () async {
+              await ArchiveDailyChangeStore.instance()
+                  .dismiss(DateTime.now().toUtc());
+              if (!mounted) return;
+              setState(() {});
+            },
           ),
         ];
       case ArchiveHomeSectionId.introHint:
