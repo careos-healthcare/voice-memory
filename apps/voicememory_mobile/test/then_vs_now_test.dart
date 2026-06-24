@@ -199,6 +199,7 @@ void main() {
           firstWeekPathVisible: true,
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
+          capacityLoopVisible: false,
           thenVsNowVisible: true,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,

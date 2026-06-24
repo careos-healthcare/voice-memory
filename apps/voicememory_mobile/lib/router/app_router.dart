@@ -35,6 +35,7 @@ import '../screens/daily_archive_exercise_screen.dart';
 import '../screens/archive_clarity_progress_screen.dart';
 import '../screens/todays_one_question_screen.dart';
 import '../screens/then_vs_now_screen.dart';
+import '../screens/capacity_loop_screen.dart';
 import '../screens/archive_calendar_screen.dart';
 import '../screens/review_ritual_screen.dart';
 import '../screens/milestone_share_cards_screen.dart';
@@ -198,6 +199,7 @@ final GoRouter appRouter = GoRouter(
         path != '/archive-clarity-progress' &&
         path != '/todays-one-question' &&
         path != '/then-vs-now' &&
+        path != '/capacity-loop' &&
         path != '/archive-calendar' &&
         path != '/review-ritual' &&
         path != '/milestone-share-cards' &&
@@ -765,6 +767,11 @@ final GoRouter appRouter = GoRouter(
       path: '/then-vs-now',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ThenVsNowScreen(),
+    ),
+    GoRoute(
+      path: '/capacity-loop',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const CapacityLoopScreen(),
     ),
     GoRoute(
       path: '/archive-calendar',

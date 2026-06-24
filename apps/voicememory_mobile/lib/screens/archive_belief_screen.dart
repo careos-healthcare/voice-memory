@@ -133,6 +133,11 @@ import '../widgets/first_week_path_card.dart';
 import '../widgets/daily_archive_exercise_card.dart';
 import '../widgets/archive_clarity_progress_card.dart';
 import '../widgets/then_vs_now_card.dart';
+import '../widgets/capacity_loop_card.dart';
+import '../features/capacity_loop/capacity_loop_engine.dart';
+import '../features/loop_mode/loop_mode_coordinator.dart';
+import '../features/acquisition/acquisition_cohort_coordinator.dart';
+import '../features/acquisition/acquisition_cohort_model.dart';
 import '../widgets/archive_calendar_card.dart';
 import '../widgets/review_ritual_card.dart';
 import '../features/review_ritual/view_ritual_engine.dart';
@@ -278,6 +283,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   List<KeyMoment> _keyMoments = const [];
   List<ArchiveMomentGroup> _compressionGroups = const [];
   FirstLoopActivationState _firstLoop = FirstLoopActivationState.empty;
+  bool _capacityLoopActive = false;
+  bool _capacityCohortActive = false;
   bool _loading = true;
   bool _reloadScheduled = false;
   bool _archiveIsPro = false;
@@ -628,6 +635,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ? await PatternMemoryCoordinator.buildShareRecap()
         : null;
     final firstLoop = await FirstLoopActivationCoordinator.load();
+    final activeLoop = await LoopModeCoordinator.loadActive();
+    final acquisitionCohort = await AcquisitionCohortCoordinator.load();
     final monthlyReview = await _buildMonthlyReview(patternMemory);
     final archiveMemory = await ArchiveMemorySummaryCoordinator.refresh();
     final archiveTimeline = await ArchiveEvolutionCoordinator.refresh();
@@ -645,6 +654,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _proBridgeResolved = recordReturnPro.proBridgeResolved;
       _entries = entries;
       _firstLoop = firstLoop;
+      _capacityLoopActive = activeLoop?.isCapacityYes ?? false;
+      _capacityCohortActive =
+          acquisitionCohort?.cohortId == AcquisitionCohortId.capacityYesDirect;
       _beliefs = beliefs;
       _changing = buildBeliefChangeTimeline(snapshot: beliefs, feed: feed);
       _insights = insights;
@@ -1967,6 +1979,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final realSavedCount = BetaFeedbackEngine.realEntryCountFor(_entries);
     final depth = const ArchiveDepthEngine().build(entries: _entries);
     final thenNow = const ThenNowEngine().buildFromJournal(entries: _entries);
+    final capacityLoop = const CapacityLoopEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+    );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
     final reviewRitualResult = const ReviewRitualEngine().build(
@@ -2000,6 +2017,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       firstWeekPathVisible: !ScreenshotMode.enabled && realSavedCount < 7,
       dailyArchiveExerciseVisible: !ScreenshotMode.enabled,
       archiveClarityProgressVisible: !ScreenshotMode.enabled,
+      capacityLoopVisible: !ScreenshotMode.enabled &&
+          capacityLoop.hasCard &&
+          capacityLoop.showOnArchiveHome,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
       archiveCalendarVisible:
@@ -2173,6 +2193,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             onPrimaryAction: _goToRecord,
             sampleMode: ScreenshotMode.enabled,
             weeklyReviewAvailable: weeklyReview?.hasEnoughEvidence ?? false,
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityLoop:
+        return [
+          CapacityLoopCard(
+            entries: _entries,
+            result: const CapacityLoopEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+            ),
+            capacityLoopActive: _capacityLoopActive,
+            capacityCohortActive: _capacityCohortActive,
+            onPrimaryAction: _goToRecord,
           ),
         ];
       case ArchiveHomeSectionId.thenVsNow:
