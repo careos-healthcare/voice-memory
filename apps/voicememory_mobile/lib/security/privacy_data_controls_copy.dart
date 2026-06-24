@@ -1,13 +1,16 @@
 /// Settings copy for local privacy and data controls.
+import 'privacy_copy_policy.dart';
+
 abstract final class PrivacyDataControlsCopy {
   PrivacyDataControlsCopy._();
 
   static const sectionTitle = 'Privacy & data';
 
-  static const dataStaysOnDeviceTitle = 'Your data stays on this device';
+  static const dataStaysOnDeviceTitle = PrivacyCopyPolicy.privateByDefault;
   static const dataStaysOnDeviceBody =
-      'ArchiveMe uses your saved moments to build your private archive on this '
-      'device. Share cards do not include your raw entries.';
+      'ArchiveMe stores your journal file encrypted on this device. Archive '
+      'metadata and prefs remain in plaintext JSON. Share cards do not include '
+      'your raw entries.';
 
   static const exportArchiveTitle = 'Export archive';
   static const exportArchiveSubtitle =

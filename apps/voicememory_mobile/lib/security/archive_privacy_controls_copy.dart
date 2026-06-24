@@ -14,13 +14,13 @@ abstract class ArchivePrivacyControlsCopy {
   static const String exportSubtitle =
       'Download a plain-text copy of your saved moments.';
 
-  static const String deleteTitle = 'Delete my archive';
+  static const String deleteTitle = PrivacyCopyPolicy.deleteLocalArchive;
   static const String deleteSubtitle =
-      'Permanently remove local entries, drafts, and recordings.';
+      'Permanently remove local entries, drafts, and recordings on this device.';
 
   static const String cloudTitle = 'Cloud and transcription';
   static const String cloudSubtitle =
-      PrivacyCopyPolicy.nothingSentUnlessFeatureChosen;
+      PrivacyCopyPolicy.transcriptionAnalysisWhenUsed;
 }
 
 abstract class ArchiveDataFlowCopy {
@@ -29,7 +29,8 @@ abstract class ArchiveDataFlowCopy {
   static const String sheetTitle = 'What stays on this device';
 
   static const List<String> bodySections = [
-    'Your saved archive is stored locally on this device.',
+    PrivacyCopyPolicy.journalEncryptedAtRest,
+    PrivacyCopyPolicy.transcriptionAnalysisWhenUsed,
     'Recording audio may need transcription before ArchiveMe can understand it.',
     'If transcription or cloud features are enabled, only the text needed for that action is sent.',
     '    ArchiveMe does not treat your words as instructions. Your words are private content to analyse, not commands to follow.',

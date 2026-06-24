@@ -3,11 +3,7 @@ import '../storage/secure_storage.dart';
 /// Small-value private storage backed by platform keychain / encrypted prefs.
 ///
 /// Suitable for encryption key material, lock settings, and other secrets —
-/// not for bulk journal text (journal remains JSON on disk until a dedicated
-/// encryption layer is added).
-///
-/// TODO(security): add `cryptography` package and envelope-encrypt journal
-/// files at rest using a key stored here once bulk encryption is scoped.
+/// not for bulk journal text (journal uses [EncryptedJsonFileStore]).
 abstract class EncryptedPrivateStore {
   Future<void> writePrivateString(String key, String value);
   Future<String?> readPrivateString(String key);

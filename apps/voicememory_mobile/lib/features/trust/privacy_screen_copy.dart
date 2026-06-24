@@ -7,18 +7,19 @@ abstract class PrivacyScreenCopy {
   static const String screenTitle = 'Privacy';
 
   static const String intro =
-      'Your recordings and reflections are personal. Some data may be stored '
-      'on this device. ArchiveMe only sends data for transcription, analysis, '
-      'sync, or account features when you use those features.';
+      'Your recordings and reflections are personal. ArchiveMe is private by '
+      'default. Some features send audio or text for transcription or analysis '
+      'when you use them.';
 
   static const String privateByDefaultTitle = PrivacyCopyPolicy.privateByDefault;
   static const String privateByDefaultBody =
-      'Your entries stay on this device unless you choose account sync or backup.';
+      PrivacyCopyPolicy.journalEncryptedAtRest;
 
   static const String onDeviceTitle = 'What stays on your device';
   static const String onDeviceBody =
       'Your archive entries, saved details, action items, surfacing choices, '
-      'memory controls, packs, pins, and collections are stored locally by default.';
+      'memory controls, packs, pins, and collections are stored locally by default. '
+      'Archive metadata and prefs remain on this device in plaintext JSON.';
 
   static const String aiProcessingTitle = 'AI transcription and analysis';
   static const String aiProcessingBody =

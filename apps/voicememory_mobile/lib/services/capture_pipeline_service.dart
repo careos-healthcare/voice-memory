@@ -13,6 +13,7 @@ import '../models/journal_entry.dart';
 import '../models/reflection.dart';
 import '../models/sync_status.dart';
 import '../security/api_usage_guard.dart';
+import '../security/private_data_service.dart';
 import '../security/user_content_safety.dart';
 import '../storage/journal_store.dart';
 import 'capture_attest_service.dart';
@@ -557,6 +558,7 @@ class CapturePipelineService {
     required String first25Source,
   }) async {
     await _journalStore.save(entry, first25Source: first25Source);
+    await TempRecordingCleanup.purgeRetryRecordings();
     final reloaded = await _journalStore.getById(entry.id);
     final saved = reloaded ?? entry;
     _logSavedEntryReloaded(saved);

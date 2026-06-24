@@ -35,6 +35,45 @@ class ArchiveExportPayload {
   });
 }
 
+/// Removes orphaned temp recording files from the device temp directory.
+abstract class TempRecordingCleanup {
+  TempRecordingCleanup._();
+
+  static Future<void> purgeRetryRecordings({Directory? tempDir}) async {
+    final temp = tempDir ?? await AppStoragePaths.temporaryDirectory();
+    if (!temp.existsSync()) return;
+    for (final entity in temp.listSync()) {
+      if (entity is! File) continue;
+      final name = entity.path.split(Platform.pathSeparator).last;
+      if (name.startsWith('vm_rec_retry_')) {
+        try {
+          if (entity.existsSync()) await entity.delete();
+        } catch (_) {}
+      }
+    }
+  }
+
+  static Future<void> purgeTempRecordings({
+    Directory? tempDir,
+    Set<String> preservePaths = const {},
+  }) async {
+    final temp = tempDir ?? await AppStoragePaths.temporaryDirectory();
+    if (!temp.existsSync()) return;
+    for (final entity in temp.listSync()) {
+      if (entity is! File) continue;
+      final name = entity.path.split(Platform.pathSeparator).last;
+      final isTempRecording =
+          name.startsWith('vm_rec_') &&
+          (name.endsWith('.m4a') || name.endsWith('.wav'));
+      if (!isTempRecording) continue;
+      if (preservePaths.contains(entity.path)) continue;
+      try {
+        if (entity.existsSync()) await entity.delete();
+      } catch (_) {}
+    }
+  }
+}
+
 /// Secure delete, wipe, and export for private archive data.
 class PrivateDataService {
   PrivateDataService({
@@ -51,7 +90,6 @@ class PrivateDataService {
 
   static const wipeConfirmationPhrase = 'DELETE MY ARCHIVE';
 
-  /// Deletes a journal entry and its local audio file when present.
   Future<SecureDeleteEntryResult> deleteEntrySecurely(String id) async {
     final entry = await _journal.getById(id);
     if (entry == null) {
@@ -65,6 +103,9 @@ class PrivateDataService {
     }
 
     await _journal.delete(id);
+    await TempRecordingCleanup.purgeRetryRecordings(
+      tempDir: await _tempDirProvider(),
+    );
     return SecureDeleteEntryResult(
       deleted: true,
       audioFileRemoved: audioRemoved,
@@ -72,7 +113,6 @@ class PrivateDataService {
     );
   }
 
-  /// Wipes journal, offline drafts, temp recordings, and archive insight caches.
   Future<void> wipeAllLocalArchive({required String confirmationPhrase}) async {
     if (confirmationPhrase.trim() != wipeConfirmationPhrase) {
       throw ArgumentError('Confirmation phrase did not match.');
@@ -80,7 +120,6 @@ class PrivateDataService {
     await clearLocalArchiveData();
   }
 
-  /// Clears local journal data and archive-derived caches after UI confirmation.
   Future<void> clearLocalArchiveData() async {
     await _performLocalArchiveWipe();
   }
@@ -94,12 +133,13 @@ class PrivateDataService {
       }
     }
 
-    await _journal.file.writeAsString('[]');
-    await _purgeTempRecordings();
+    await _journal.clearAll();
+    await TempRecordingCleanup.purgeTempRecordings(
+      tempDir: await _tempDirProvider(),
+    );
     await _clearArchiveCaches();
   }
 
-  /// Export user-owned reflection data — sanitized, no sync ids or audio paths.
   Future<ArchiveExportPayload> buildSanitizedExport() async {
     final all = await _journal.loadAll();
     final entries = all.map(_sanitizedEntry).toList();
@@ -131,18 +171,6 @@ class PrivateDataService {
     };
   }
 
-  Future<void> _purgeTempRecordings() async {
-    final temp = await _tempDirProvider();
-    if (!temp.existsSync()) return;
-    for (final entity in temp.listSync()) {
-      if (entity is! File) continue;
-      final name = entity.path.split(Platform.pathSeparator).last;
-      if (name.startsWith('vm_rec_') && name.endsWith('.m4a')) {
-        await _deleteFileIfExists(entity.path);
-      }
-    }
-  }
-
   Future<void> _clearArchiveCaches() async {
     final prefs = _prefs;
     if (prefs == null) return;
@@ -150,17 +178,23 @@ class PrivateDataService {
     const cacheKeys = [
       'archiveCollections',
       'archivePacks',
-      'archiveSynthesisMonthly',
+      'archiveMonthlyReviews',
+      'archiveMilestoneReviews',
+      'archiveDeepDiveNarratives',
+      'archiveHistorianReports',
       'archiveSynthesisMeta',
       'archiveThreads',
-      'offlineSyncJourney',
-      'pinnedEvidence',
-      'factLedger',
-      'actionItems',
-      'archive_insight_feedback',
+      'offline_sync_journey_v1',
+      'archiveFacts',
+      'archiveActionItems',
       'archiveInsightFeedbackRecords',
       'archiveReviewRitual',
       'archive_workspace_hints_dismissed',
+      'archiveDailyChangeState',
+      'archiveWatchlistItems',
+      'archiveReturnLastSeenSnapshot',
+      'archiveChangeTimelineMetrics',
+      'archiveActivationFunnel',
     ];
     for (final key in cacheKeys) {
       await prefs.writeMap(key, {});

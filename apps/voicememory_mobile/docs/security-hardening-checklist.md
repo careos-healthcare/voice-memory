@@ -54,21 +54,33 @@ Use this checklist when adding features that touch user journal text, AI calls, 
 
 ## Private data at rest
 
-- [ ] `PrivateStorageAudit.logAuditReport()` reviewed in debug — journal/prefs are plaintext JSON today.
+- [ ] `PrivateStorageAudit.logAuditReport()` reviewed in debug — journal file is AES-256-GCM encrypted; prefs remain plaintext JSON.
+- [ ] Journal encryption key stored in `flutter_secure_storage` via `PrivateDataEncryptionKeyStore` — never in SharedPreferences.
 - [ ] Small secrets use `EncryptedPrivateStore` / `flutter_secure_storage` only.
 - [ ] Entry delete uses `PrivateDataService.deleteEntrySecurely()` — removes local audio files.
-- [ ] Wipe uses typed confirmation (`DELETE MY ARCHIVE`) — clears journal, drafts, temp audio, insight caches.
+- [ ] Wipe uses typed confirmation (`DELETE MY ARCHIVE`) — clears encrypted journal, drafts, temp audio, insight caches.
 - [ ] Export uses `PrivateDataService.buildSanitizedExport()` — no internal ids or audio paths.
 - [ ] App lock enabled with 2-minute background re-lock.
 - [ ] Emergency wipe available from lock screen without PIN (double confirmation).
 - [ ] `Hide ArchiveMe in app switcher` setting obscures snapshots on background.
 
-## Consumer privacy copy rules
+### Encryption status (honest)
+
+| Data | Encrypted at rest |
+|------|-------------------|
+| App lock PIN hash / salt | Yes (secure storage) |
+| Session cookie / device id | Yes (secure storage) |
+| Journal file (`journal_entries.enc`) | Yes (AES-256-GCM) |
+| Mobile prefs / archive metadata | No (plaintext JSON) |
+| Temp voice recordings (`vm_rec_*`) | No |
+| Entitlements cache | No (billing tier only) |
+
+### Consumer privacy copy rules
 
 - [ ] Use `PrivacyCopyPolicy` constants for allowed promises (`privateByDefault`, `nothingSentUnlessChosen`, `exportDeleteAnytime`, `lockArchiveMe`) — do not paraphrase into stronger claims.
-- [ ] Do not claim all journal data is encrypted until bulk journal encryption is implemented.
+- [ ] Do not claim all journal data is encrypted until bulk journal encryption is implemented — **journal file is encrypted; prefs/metadata are not**.
 - [ ] Say **private by default**, not **impossible to access**.
-- [ ] Say **nothing is sent unless you choose cloud/sync/transcription**, not **nothing ever leaves your device**.
+- [ ] Say **some features send audio or text for transcription or analysis when used**, not **nothing ever leaves your device**.
 - [ ] Say **delete local archive**, not **delete from every server** unless backend delete exists.
 - [ ] Avoid **never sent**, **100% secure**, **military grade**, **unhackable**, and **anonymous** in consumer privacy copy unless the feature is truly implemented and scoped.
 - [ ] Run `flutter test test/privacy_copy_policy_test.dart` before shipping trust/privacy copy changes.

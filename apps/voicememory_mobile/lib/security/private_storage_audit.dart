@@ -28,10 +28,10 @@ abstract class PrivateStorageAudit {
   static List<PrivateStorageAuditReport> knownStores() => const [
     PrivateStorageAuditReport(
       store: 'JournalStore',
-      backend: 'json_file',
+      backend: 'encrypted_json_file',
       sensitive: true,
-      encrypted: false,
-      notes: 'journal_entries.json in app documents — plaintext JSON',
+      encrypted: true,
+      notes: 'journal_entries.enc — AES-256-GCM; key in flutter_secure_storage',
     ),
     PrivateStorageAuditReport(
       store: 'MobilePrefsStore',
@@ -77,10 +77,10 @@ abstract class PrivateStorageAudit {
     ),
     PrivateStorageAuditReport(
       store: 'OfflineDrafts',
-      backend: 'json_file',
+      backend: 'encrypted_json_file',
       sensitive: true,
-      encrypted: false,
-      notes: '[draft] entries in journal + localAudioPath',
+      encrypted: true,
+      notes: '[draft] entries in encrypted journal + localAudioPath (audio plaintext)',
     ),
     PrivateStorageAuditReport(
       store: 'ArchiveFeatureStores',

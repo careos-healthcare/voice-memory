@@ -23,7 +23,12 @@ Last reviewed: keep this date current at submission time.
 ## 2. Local storage
 - Reflections, pattern memory, progress, next action, habit proof, weekly recap,
   first-loop and return-day state, and the reminders-enabled flag are stored
-  locally (SharedPreferences-backed store + local journal file).
+  locally (SharedPreferences-backed store + encrypted journal file).
+- **Journal file** (`journal_entries.enc`): AES-256-GCM encrypted; key in
+  `flutter_secure_storage`.
+- **Mobile prefs** (`mobile_prefs.json`): plaintext JSON — archive metadata and
+  cached insights.
+- **Temp voice recordings** (`vm_rec_*`): plaintext files under system temp.
 - In **trial / local-only mode** there is no cloud sync, billing, push, or login.
 
 ## 3. Account / auth status

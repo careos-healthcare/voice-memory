@@ -5,14 +5,20 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'package:voicememory_mobile/storage/private_data_encryption_key_store.dart';
 
 void main() {
   late Directory tempDir;
   late JournalStore store;
+  late InMemoryPrivateDataEncryptionKeyStore keyStore;
 
   setUp(() async {
     tempDir = Directory.systemTemp.createTempSync('vm_journal_');
-    store = await JournalStore.open('${tempDir.path}/entries.json');
+    keyStore = InMemoryPrivateDataEncryptionKeyStore();
+    store = await JournalStore.open(
+      '${tempDir.path}/entries.json',
+      keyStore: keyStore,
+    );
   });
 
   Reflection sampleReflection() => const Reflection(
