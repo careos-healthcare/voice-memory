@@ -45,6 +45,18 @@ abstract final class CapacityLoopCopy {
   static String costEvidenceOnScreen(int count) =>
       '$count saved moment${count == 1 ? '' : 's'} had a later cost';
 
+  static String outcomeMarkedCount(int count) =>
+      'Outcome marked on $count moment${count == 1 ? '' : 's'}.';
+
+  static String outcomesMarkedAfterPause(int count) =>
+      'You marked $count outcome${count == 1 ? '' : 's'} after pausing.';
+
+  static const outcomeStrengthenPrompt =
+      'Mark what happened after a pause to strengthen this loop.';
+
+  static const patternMayHaveChanged =
+      'Some moments show the pattern may have changed.';
+
   static const saveYesMomentCta = 'Save a yes moment';
   static const saveYesMomentShortCta = 'Save yes moment';
   static const reviewLoopCta = 'Review the loop';
