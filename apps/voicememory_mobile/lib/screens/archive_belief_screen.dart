@@ -137,6 +137,8 @@ import '../widgets/capacity_loop_card.dart';
 import '../widgets/capacity_cost_later_card.dart';
 import '../widgets/capacity_decision_outcome_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
+import '../widgets/capacity_weekly_review_card.dart';
+import '../features/capacity_loop/capacity_weekly_review_engine.dart';
 import '../features/capacity_loop/capacity_loop_engine.dart';
 import '../features/capacity_loop/capacity_cost_engine.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
@@ -2021,6 +2023,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           capacityCostCheckin.showOnArchiveHome,
       costRecords: CapacityCostStore.cached,
     );
+    final capacityWeeklyReview =
+        const CapacityWeeklyReviewEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      costRecords: CapacityCostStore.cached,
+      outcomeRecords: CapacityDecisionOutcomeStore.cached,
+      pendingDecisionOutcome: capacityDecisionOutcome.showOnArchiveHome,
+      pendingCostCheckin: capacityCostCheckin.showOnArchiveHome,
+      beforeYesPauseOnHome: beforeYesPause.showOnArchiveHome,
+    );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
     final reviewRitualResult = const ReviewRitualEngine().build(
@@ -2066,6 +2079,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           !capacityDecisionOutcome.showOnArchiveHome,
       beforeYouSayYesPauseVisible: !ScreenshotMode.enabled &&
           beforeYesPause.showOnArchiveHome,
+      capacityWeeklyReviewVisible: !ScreenshotMode.enabled &&
+          capacityWeeklyReview.showOnArchiveHome,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
       archiveCalendarVisible:
@@ -2320,6 +2335,53 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               BeforeYesCopy.recordRouteWithPrompt(BeforeYesCopy.recordPrompt),
             ),
             onAlreadySaidYes: () => context.push(CapacityLoopCopy.recordRoute),
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityWeeklyReview:
+        return [
+          CapacityWeeklyReviewCard(
+            result: const CapacityWeeklyReviewEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+              costRecords: CapacityCostStore.cached,
+              outcomeRecords: CapacityDecisionOutcomeStore.cached,
+              pendingDecisionOutcome: const CapacityDecisionOutcomeEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityDecisionOutcomeStore.cached,
+                  )
+                  .showOnArchiveHome,
+              pendingCostCheckin: const CapacityCostEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityCostStore.cached,
+                    outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                  )
+                  .showOnArchiveHome,
+              beforeYesPauseOnHome: const BeforeYesPauseEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    capacityLoopHasCard: const CapacityLoopEngine()
+                        .buildFromJournal(
+                          entries: _entries,
+                          capacityLoopActive: _capacityLoopActive,
+                          capacityCohortActive: _capacityCohortActive,
+                          costRecords: CapacityCostStore.cached,
+                          outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                        )
+                        .hasCard,
+                    costLaterCheckinVisible: false,
+                    costRecords: CapacityCostStore.cached,
+                  )
+                  .showOnArchiveHome,
+            ),
           ),
         ];
       case ArchiveHomeSectionId.thenVsNow:

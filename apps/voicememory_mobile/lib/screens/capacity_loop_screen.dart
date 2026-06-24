@@ -13,6 +13,9 @@ import '../features/capacity_loop/capacity_cost_store.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
+import '../features/capacity_loop/capacity_weekly_review_copy.dart';
+import '../features/capacity_loop/capacity_weekly_review_engine.dart';
+import '../features/capacity_loop/capacity_weekly_review_models.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -43,6 +46,7 @@ class CapacityLoopScreen extends StatefulWidget {
 class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   CapacityLoopResult? _result;
   BeforeYesPauseResult? _beforeYesPause;
+  CapacityWeeklyReviewResult? _weeklyReview;
   bool _loading = true;
 
   @override
@@ -101,6 +105,13 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         capacityLoopHasCard: _result!.hasCard,
         costLaterCheckinVisible: false,
         costRecords: CapacityCostStore.cached,
+      );
+      _weeklyReview = const CapacityWeeklyReviewEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        costRecords: CapacityCostStore.cached,
+        outcomeRecords: CapacityDecisionOutcomeStore.cached,
       );
       _loading = false;
     });
@@ -194,6 +205,14 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
               BeforeYesCopy.recordRouteWithPrompt(BeforeYesCopy.recordPrompt),
             ),
             child: Text(_beforeYesPause!.pauseCtaLabel),
+          ),
+        ],
+        if (_weeklyReview?.showOnCapacityLoop == true) ...[
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('capacity_loop_screen_weekly_review_button'),
+            onPressed: () => context.push(CapacityWeeklyReviewCopy.route),
+            child: Text(_weeklyReview!.primaryCtaLabel),
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
