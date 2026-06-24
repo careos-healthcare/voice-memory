@@ -46,6 +46,7 @@ abstract class SensitiveRoutes {
     '/capacity-loop',
     '/capacity-weekly-review',
     '/capacity-boundary-response',
+    '/capacity-beta-signals',
     '/archive-calendar',
     '/review-ritual',
     '/milestone-share-cards',

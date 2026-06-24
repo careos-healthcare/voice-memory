@@ -9,6 +9,7 @@ import '../features/share/archive_share_actions.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
+import '../widgets/capacity_beta_signal_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Local beta tester invite scripts — copy only, no uploads.
@@ -203,6 +204,8 @@ class _BetaInvitePackScreenState extends State<BetaInvitePackScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: AppSpacing.lg),
+            const CapacityBetaSignalCard(),
             const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
