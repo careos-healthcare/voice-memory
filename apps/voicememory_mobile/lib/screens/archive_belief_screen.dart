@@ -138,6 +138,7 @@ import '../widgets/capacity_cost_later_card.dart';
 import '../widgets/capacity_decision_outcome_card.dart';
 import '../widgets/capacity_pull_reason_card.dart';
 import '../widgets/capacity_three_moment_card.dart';
+import '../widgets/capacity_activation_fit_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../widgets/capacity_weekly_review_card.dart';
 import '../widgets/capacity_boundary_response_card.dart';
@@ -152,6 +153,8 @@ import '../features/capacity_loop/capacity_decision_outcome_store.dart';
 import '../features/capacity_loop/capacity_pull_reason_engine.dart';
 import '../features/capacity_loop/capacity_pull_reason_store.dart';
 import '../features/capacity_loop/capacity_three_moment_engine.dart';
+import '../features/capacity_loop/capacity_activation_fit_engine.dart';
+import '../features/capacity_loop/capacity_activation_fit_store.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/capacity_loop_copy.dart';
@@ -531,6 +534,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
     await CapacityPullReasonStore.ensureLoaded();
+    await CapacityActivationFitStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
@@ -2039,6 +2043,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       records: CapacityCostStore.cached,
       outcomeRecords: CapacityDecisionOutcomeStore.cached,
     );
+    final capacityActivationFit =
+        const CapacityActivationFitEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      pendingPullReasonOnHome: capacityPullReason.showOnArchiveHome,
+      pendingDecisionOutcomeOnHome: capacityDecisionOutcome.showOnArchiveHome,
+      pendingCostCheckinOnHome: capacityCostCheckin.showOnArchiveHome,
+      threeMomentActivationOnHome: capacityThreeMoment.showOnArchiveHome,
+    );
     final beforeYesPause = const BeforeYesPauseEngine().buildFromJournal(
       entries: _entries,
       capacityLoopActive: _capacityLoopActive,
@@ -2127,12 +2141,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           capacityCostCheckin.showOnArchiveHome &&
           !capacityDecisionOutcome.showOnArchiveHome &&
           !capacityPullReason.showOnArchiveHome,
+      capacityActivationFitVisible: !ScreenshotMode.enabled &&
+          capacityActivationFit.hasCard &&
+          capacityActivationFit.showOnArchiveHome,
       beforeYouSayYesPauseVisible: !ScreenshotMode.enabled &&
-          beforeYesPause.showOnArchiveHome,
+          beforeYesPause.showOnArchiveHome &&
+          !capacityActivationFit.showOnArchiveHome,
       capacityWeeklyReviewVisible: !ScreenshotMode.enabled &&
-          capacityWeeklyReview.showOnArchiveHome,
+          capacityWeeklyReview.showOnArchiveHome &&
+          !capacityActivationFit.showOnArchiveHome,
       capacityBoundaryResponseVisible: !ScreenshotMode.enabled &&
-          capacityBoundaryResponse.showOnArchiveHome,
+          capacityBoundaryResponse.showOnArchiveHome &&
+          !capacityActivationFit.showOnArchiveHome,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
       archiveCalendarVisible:
@@ -2374,6 +2394,54 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               capacityCohortActive: _capacityCohortActive,
               records: CapacityCostStore.cached,
               outcomeRecords: CapacityDecisionOutcomeStore.cached,
+            ),
+            onSaved: () {
+              if (!mounted) return;
+              setState(() {});
+            },
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityActivationFit:
+        return [
+          CapacityActivationFitCard(
+            compact: true,
+            result: const CapacityActivationFitEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+              pendingPullReasonOnHome: const CapacityPullReasonEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityPullReasonStore.cached,
+                  )
+                  .showOnArchiveHome,
+              pendingDecisionOutcomeOnHome:
+                  const CapacityDecisionOutcomeEngine()
+                      .buildFromJournal(
+                        entries: _entries,
+                        capacityLoopActive: _capacityLoopActive,
+                        capacityCohortActive: _capacityCohortActive,
+                        records: CapacityDecisionOutcomeStore.cached,
+                      )
+                      .showOnArchiveHome,
+              pendingCostCheckinOnHome: const CapacityCostEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityCostStore.cached,
+                    outcomeRecords: CapacityDecisionOutcomeStore.cached,
+                  )
+                  .showOnArchiveHome,
+              threeMomentActivationOnHome:
+                  const CapacityThreeMomentEngine().buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                  )
+                  .showOnArchiveHome,
             ),
             onSaved: () {
               if (!mounted) return;
