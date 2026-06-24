@@ -135,9 +135,13 @@ import '../widgets/archive_clarity_progress_card.dart';
 import '../widgets/then_vs_now_card.dart';
 import '../widgets/capacity_loop_card.dart';
 import '../widgets/capacity_cost_later_card.dart';
+import '../widgets/before_you_say_yes_card.dart';
 import '../features/capacity_loop/capacity_loop_engine.dart';
 import '../features/capacity_loop/capacity_cost_engine.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
+import '../features/capacity_loop/before_yes_engine.dart';
+import '../features/capacity_loop/before_yes_copy.dart';
+import '../features/capacity_loop/capacity_loop_copy.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
@@ -1995,6 +1999,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       capacityCohortActive: _capacityCohortActive,
       records: CapacityCostStore.cached,
     );
+    final beforeYesPause = const BeforeYesPauseEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      capacityLoopHasCard: capacityLoop.hasCard,
+      costLaterCheckinVisible: capacityCostCheckin.hasCard &&
+          capacityCostCheckin.showOnArchiveHome,
+      costRecords: CapacityCostStore.cached,
+    );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
     final reviewRitualResult = const ReviewRitualEngine().build(
@@ -2034,6 +2047,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       capacityCostLaterCheckinVisible: !ScreenshotMode.enabled &&
           capacityCostCheckin.hasCard &&
           capacityCostCheckin.showOnArchiveHome,
+      beforeYouSayYesPauseVisible: !ScreenshotMode.enabled &&
+          beforeYesPause.showOnArchiveHome,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
       archiveCalendarVisible:
@@ -2237,6 +2252,38 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               if (!mounted) return;
               setState(() {});
             },
+          ),
+        ];
+      case ArchiveHomeSectionId.beforeYouSayYesPause:
+        return [
+          BeforeYouSayYesCard(
+            compact: true,
+            result: const BeforeYesPauseEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+              capacityLoopHasCard: const CapacityLoopEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    costRecords: CapacityCostStore.cached,
+                  )
+                  .hasCard,
+              costLaterCheckinVisible: const CapacityCostEngine()
+                  .buildFromJournal(
+                    entries: _entries,
+                    capacityLoopActive: _capacityLoopActive,
+                    capacityCohortActive: _capacityCohortActive,
+                    records: CapacityCostStore.cached,
+                  )
+                  .showOnArchiveHome,
+              costRecords: CapacityCostStore.cached,
+            ),
+            onPauseBeforeYes: () => context.push(
+              BeforeYesCopy.recordRouteWithPrompt(BeforeYesCopy.recordPrompt),
+            ),
+            onAlreadySaidYes: () => context.push(CapacityLoopCopy.recordRoute),
           ),
         ];
       case ArchiveHomeSectionId.thenVsNow:

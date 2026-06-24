@@ -10,6 +10,8 @@ import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
+import '../features/capacity_loop/before_yes_copy.dart';
+import '../features/capacity_loop/before_yes_engine.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -39,6 +41,7 @@ class CapacityLoopScreen extends StatefulWidget {
 
 class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
   CapacityLoopResult? _result;
+  BeforeYesPauseResult? _beforeYesPause;
   bool _loading = true;
 
   @override
@@ -86,6 +89,14 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         entries: entries,
         capacityLoopActive: loopActive,
         capacityCohortActive: cohortActive,
+        costRecords: CapacityCostStore.cached,
+      );
+      _beforeYesPause = const BeforeYesPauseEngine().buildFromJournal(
+        entries: entries,
+        capacityLoopActive: loopActive,
+        capacityCohortActive: cohortActive,
+        capacityLoopHasCard: _result!.hasCard,
+        costLaterCheckinVisible: false,
         costRecords: CapacityCostStore.cached,
       );
       _loading = false;
@@ -154,6 +165,23 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
             key: const Key('capacity_loop_screen_cost_later')),
         _section(context, result.watchNextLabel, result.watchNext,
             key: const Key('capacity_loop_screen_watch_next')),
+        if (_beforeYesPause?.showOnCapacityLoop == true) ...[
+          const SizedBox(height: AppSpacing.sm),
+          _section(
+            context,
+            _beforeYesPause!.loopSectionTitle,
+            _beforeYesPause!.loopSectionBody,
+            key: const Key('capacity_loop_screen_before_next_yes'),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton(
+            key: const Key('capacity_loop_screen_before_yes_button'),
+            onPressed: () => context.push(
+              BeforeYesCopy.recordRouteWithPrompt(BeforeYesCopy.recordPrompt),
+            ),
+            child: Text(_beforeYesPause!.pauseCtaLabel),
+          ),
+        ],
         const SizedBox(height: AppSpacing.lg),
         FilledButton(
           key: const Key('capacity_loop_screen_primary_button'),
