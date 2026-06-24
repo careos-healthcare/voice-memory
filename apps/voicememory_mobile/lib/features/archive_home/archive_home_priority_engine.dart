@@ -14,6 +14,7 @@ class ArchiveHomePriorityEngine {
     ArchiveHomeSectionId.capacityDecisionOutcome,
     ArchiveHomeSectionId.capacityCostLaterCheckin,
     ArchiveHomeSectionId.beforeYouSayYesPause,
+    ArchiveHomeSectionId.capacityWeeklyReview,
     ArchiveHomeSectionId.archiveClarityProgress,
     ArchiveHomeSectionId.thenVsNow,
     ArchiveHomeSectionId.archiveCalendar,
@@ -46,6 +47,8 @@ class ArchiveHomePriorityEngine {
           input.capacityCostLaterCheckinVisible,
         ArchiveHomeSectionId.beforeYouSayYesPause =>
           input.beforeYouSayYesPauseVisible,
+        ArchiveHomeSectionId.capacityWeeklyReview =>
+          input.capacityWeeklyReviewVisible,
         ArchiveHomeSectionId.thenVsNow => input.thenVsNowVisible,
         ArchiveHomeSectionId.archiveCalendar => input.archiveCalendarVisible,
         ArchiveHomeSectionId.reviewRitual => input.reviewRitualVisible,
@@ -73,6 +76,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.capacityDecisionOutcome,
           ArchiveHomeSectionId.capacityCostLaterCheckin,
           ArchiveHomeSectionId.beforeYouSayYesPause,
+          ArchiveHomeSectionId.capacityWeeklyReview,
           ArchiveHomeSectionId.archiveClarityProgress,
           ArchiveHomeSectionId.thenVsNow,
           ArchiveHomeSectionId.archiveCalendar,

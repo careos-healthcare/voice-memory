@@ -1,0 +1,155 @@
+import '../beta_feedback/beta_feedback_engine.dart';
+import '../../models/journal_entry.dart';
+import '../demo/sample_archive_mode.dart';
+import 'capacity_cost_models.dart';
+import 'capacity_cost_store.dart';
+import 'capacity_decision_outcome_models.dart';
+import 'capacity_decision_outcome_store.dart';
+import 'capacity_loop_engine.dart';
+import 'capacity_loop_gates.dart';
+import 'capacity_weekly_review_copy.dart';
+import 'capacity_weekly_review_gates.dart';
+import 'capacity_weekly_review_models.dart';
+
+/// Builds capacity weekly review from local loop evidence — no journal text.
+class CapacityWeeklyReviewEngine {
+  const CapacityWeeklyReviewEngine({
+    this.loopEngine = const CapacityLoopEngine(),
+  });
+
+  final CapacityLoopEngine loopEngine;
+
+  CapacityWeeklyReviewResult build(CapacityWeeklyReviewInput input) {
+    if (input.sampleMode) {
+      return CapacityWeeklyReviewResult.hidden;
+    }
+
+    final gateInput = CapacityWeeklyReviewGateInput(
+      sampleMode: false,
+      realSavedMomentCount: input.realSavedMomentCount,
+      capacityEvidenceCount: input.capacityEvidenceCount,
+      capacityWedgeActive: input.capacityWedgeActive,
+      capacityMomentCount: input.capacityMomentCount,
+      outcomeOrCostRecordCount:
+          input.outcomeRecordedCount + input.laterCostRecordedCount,
+    );
+
+    if (!CapacityWeeklyReviewGates.shouldBuildReview(gateInput)) {
+      return CapacityWeeklyReviewResult.hidden;
+    }
+
+    final momentCount = input.capacityMomentCount > 0
+        ? input.capacityMomentCount
+        : input.capacityEvidenceCount;
+    final whatRepeated = input.capacityEvidenceCount >=
+            CapacityLoopGates.minRealMomentsForFullCard
+        ? CapacityWeeklyReviewCopy.whatRepeatedStrong
+        : CapacityWeeklyReviewCopy.whatRepeatedForming;
+    final whatChanged = _whatChanged(input);
+    final laterCostSection = input.laterCostRecordedCount > 0
+        ? CapacityWeeklyReviewCopy.laterCostRecordedLine(
+            input.laterCostRecordedCount,
+          )
+        : CapacityWeeklyReviewCopy.laterCostForming;
+
+    final showOnArchiveHome = CapacityWeeklyReviewGates.showOnArchiveHome(
+      hasReview: true,
+      sampleMode: false,
+      pendingDecisionOutcome: input.pendingDecisionOutcome,
+      pendingCostCheckin: input.pendingCostCheckin,
+      beforeYesPauseOnHome: input.beforeYesPauseOnHome,
+    );
+    final showOnCapacityLoop = CapacityWeeklyReviewGates.showOnCapacityLoop(
+      hasReview: true,
+      sampleMode: false,
+    );
+
+    return CapacityWeeklyReviewResult(
+      hasReview: true,
+      showOnArchiveHome: showOnArchiveHome,
+      showOnCapacityLoop: showOnCapacityLoop,
+      title: CapacityWeeklyReviewCopy.title,
+      subtitle: CapacityWeeklyReviewCopy.subtitle,
+      evidenceCountLabel:
+          CapacityWeeklyReviewCopy.evidenceCountLabel(momentCount),
+      outcomeLine: input.outcomeRecordedCount > 0
+          ? CapacityWeeklyReviewCopy.outcomesMarkedLine(
+              input.outcomeRecordedCount,
+            )
+          : '',
+      laterCostLine: input.laterCostRecordedCount > 0
+          ? CapacityWeeklyReviewCopy.laterCostRecordedLine(
+              input.laterCostRecordedCount,
+            )
+          : '',
+      whatRepeated: whatRepeated,
+      whatChanged: whatChanged,
+      laterCostSection: laterCostSection,
+      watchNext: CapacityWeeklyReviewCopy.watchNextBody,
+      primaryCtaLabel: CapacityWeeklyReviewCopy.reviewThisWeekCta,
+      secondaryCtaLabel: CapacityWeeklyReviewCopy.saveNextYesMomentCta,
+      primaryRoute: CapacityWeeklyReviewCopy.route,
+      secondaryRoute: CapacityWeeklyReviewCopy.recordRoute,
+      cardSummary: whatChanged,
+    );
+  }
+
+  CapacityWeeklyReviewResult buildFromJournal({
+    required List<JournalEntry> entries,
+    required bool capacityLoopActive,
+    required bool capacityCohortActive,
+    bool sampleMode = false,
+    List<CapacityCostRecord>? costRecords,
+    List<CapacityDecisionOutcomeRecord>? outcomeRecords,
+    bool pendingDecisionOutcome = false,
+    bool pendingCostCheckin = false,
+    bool beforeYesPauseOnHome = false,
+  }) {
+    if (sampleMode) return CapacityWeeklyReviewResult.hidden;
+
+    final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
+    final realSavedCount = BetaFeedbackEngine.realEntryCountFor(realEntries);
+    final capacityMomentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final capacityEvidenceCount = loopEngine.countCapacityEvidence(realEntries);
+    final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
+    final costs = costRecords ?? CapacityCostStore.cached;
+    final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(outcomes);
+    final costCount = CapacityCostStore.countWithLaterCost(costs);
+    final answeredOutcomes =
+        outcomes.where((record) => record.hasOutcome).toList();
+    final hasPatternChange =
+        CapacityDecisionOutcomeStore.hasAnyPatternChange(outcomes);
+    final allYes = answeredOutcomes.isNotEmpty &&
+        answeredOutcomes.every(
+          (record) => record.outcomeId == CapacityDecisionOutcomeIds.saidYes,
+        );
+
+    return build(
+      CapacityWeeklyReviewInput(
+        sampleMode: false,
+        realSavedMomentCount: realSavedCount,
+        capacityWedgeActive: capacityLoopActive || capacityCohortActive,
+        capacityMomentCount: capacityMomentCount,
+        capacityEvidenceCount: capacityEvidenceCount,
+        outcomeRecordedCount: outcomeCount,
+        laterCostRecordedCount: costCount,
+        hasPatternChangeOutcomes: hasPatternChange,
+        allAnsweredOutcomesAreYes: allYes,
+        hasAnsweredOutcomes: answeredOutcomes.isNotEmpty,
+        pendingDecisionOutcome: pendingDecisionOutcome,
+        pendingCostCheckin: pendingCostCheckin,
+        beforeYesPauseOnHome: beforeYesPauseOnHome,
+      ),
+    );
+  }
+
+  String _whatChanged(CapacityWeeklyReviewInput input) {
+    if (input.hasPatternChangeOutcomes) {
+      return CapacityWeeklyReviewCopy.patternMayHaveChanged;
+    }
+    if (input.hasAnsweredOutcomes && input.allAnsweredOutcomesAreYes) {
+      return CapacityWeeklyReviewCopy.patternMostlyRepeating;
+    }
+    return CapacityWeeklyReviewCopy.patternForming;
+  }
+}

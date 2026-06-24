@@ -219,6 +219,7 @@ void main() {
           capacityDecisionOutcomeVisible: false,
           capacityCostLaterCheckinVisible: false,
           beforeYouSayYesPauseVisible: false,
+          capacityWeeklyReviewVisible: false,
           thenVsNowVisible: false,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,
