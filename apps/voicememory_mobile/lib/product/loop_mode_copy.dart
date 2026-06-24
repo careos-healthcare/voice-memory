@@ -9,12 +9,12 @@ abstract class LoopModeCopy {
   static const String onboardingSkip = 'Not sure yet';
 
   // ——— capacity_yes handoff ———
-  static const String capacityHandoffTitle = 'Catch your first yes';
+  static const String capacityHandoffTitle = 'See why you keep saying yes.';
   static const String capacityHandoffBody =
-      'Record a moment where you agreed, helped, or took something on before checking whether you had room.';
+      'When did you say yes before checking whether you had room? One honest save is enough to start.';
   static const String capacityHandoffPrompt =
-      'When did you say yes before checking your capacity?';
-  static const String capacityHandoffCta = 'Record this moment';
+      'When did you say yes before checking whether you had room?';
+  static const String capacityHandoffCta = 'Save one moment';
 
   // ——— Interpretation unsupported ———
   static const String capacityUnsupportedTitle =

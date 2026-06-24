@@ -45,16 +45,16 @@ abstract class LoopAcquisitionCopy {
 
   static const capacityYes = LoopAcquisitionVariant(
     id: 'capacity_yes',
-    headline: 'Catch the moment you say yes before checking capacity.',
+    headline: 'See why you keep saying yes.',
     subheadline:
-        'ArchiveMe helps you record short moments and test whether your yes-before-capacity loop keeps repeating.',
+        'ArchiveMe helps overcommitted professionals save real moments and spot the repeated pattern over time.',
     bullets: [
-      'Spot when you agree before checking your room',
-      'See what the yes seemed to cost',
-      'Build a 3-moment evidence trail',
-      'Review whether the loop is getting clearer',
+      'Save one moment when you said yes before checking capacity',
+      'After a few saves, see what keeps repeating',
+      'Private on this device — your words, your archive',
+      'Build private evidence before the next yes',
     ],
-    cta: 'Start the yes-before-capacity loop',
+    cta: 'Save one moment',
     cohortRoutePath: '/start/capacity-yes',
   );
 
@@ -62,7 +62,7 @@ abstract class LoopAcquisitionCopy {
     id: 'generic',
     headline: 'Catch the loop where doing more never feels like enough.',
     subheadline:
-        'Record short moments. ArchiveMe helps you test whether pressure, productivity, and enoughness keep repeating.',
+        'Record short moments. ArchiveMe helps you test whether pressure and enoughness keep repeating.',
     bullets: [],
     cta: 'Start with one moment',
     cohortRoutePath: '/start/prove-enough',

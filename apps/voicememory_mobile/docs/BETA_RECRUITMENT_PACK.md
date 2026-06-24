@@ -118,4 +118,4 @@ Calm, specific, honest scripts for recruiting TestFlight beta testers. No hype, 
 
 Beta Invite Pack screen (`/beta-invite-pack`) includes copy scripts and tester task. Beta success checklist: save 3 real moments, return once, review what repeated, tell us if it fits.
 
-**Capacity yes wedge pack:** [CAPACITY_YES_100K_WEDGE_PLAN.md](./CAPACITY_YES_100K_WEDGE_PLAN.md)
+**Capacity yes wedge pack:** [CAPACITY_YES_100K_WEDGE_PLAN.md](./CAPACITY_YES_100K_WEDGE_PLAN.md) · [CAPACITY_YES_POSITIONING_ONE_PAGER.md](./CAPACITY_YES_POSITIONING_ONE_PAGER.md)

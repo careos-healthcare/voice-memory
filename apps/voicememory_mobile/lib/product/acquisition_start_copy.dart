@@ -2,10 +2,14 @@
 abstract class AcquisitionStartCopy {
   AcquisitionStartCopy._();
 
-  static const String capacityTitle =
-      'Catch the moment you say yes before checking capacity';
+  static const String capacityTitle = 'See why you keep saying yes.';
   static const String capacityBody =
-      'Record a short moment. ArchiveMe will help you test whether this yes-before-capacity loop keeps repeating.';
+      'Save one real moment where you said yes before checking capacity. '
+      'After a few moments, ArchiveMe helps show what repeated. '
+      'Private on this device. Not therapy. Not coaching. '
+      'A private evidence archive.';
+  static const String capacityStartCta = 'Save one moment';
+
   static const String proveTitle =
       'Catch the moment you do more to feel enough';
   static const String proveBody =
