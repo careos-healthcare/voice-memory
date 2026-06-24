@@ -9,6 +9,7 @@ import '../features/capacity_loop/capacity_loop_models.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
+import '../features/capacity_loop/capacity_cost_store.dart';
 import '../services/app_services.dart';
 import '../services/journal_service.dart';
 import '../theme/app_colors.dart';
@@ -69,6 +70,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
       return;
     }
 
+    await CapacityCostStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -84,6 +86,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         entries: entries,
         capacityLoopActive: loopActive,
         capacityCohortActive: cohortActive,
+        costRecords: CapacityCostStore.cached,
       );
       _loading = false;
     });
@@ -127,6 +130,17 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
           Text(
             result.evidenceCountLabel,
             key: const Key('capacity_loop_screen_evidence'),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+        if (result.costEvidenceLabel.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            result.costEvidenceLabel,
+            key: const Key('capacity_loop_screen_cost_evidence'),
             style: ArchiveMobileTypography.explanationBody(
               context,
               color: AppColors.textSecondary,

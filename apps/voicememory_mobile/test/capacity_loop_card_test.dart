@@ -121,6 +121,7 @@ CapacityLoopResult _fullResult({int count = 3}) => CapacityLoopResult(
       costLaterLabel: CapacityLoopCopy.loopDiagramCostLater,
       repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
       watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
+      costEvidenceLabel: '',
     );
 
 void main() {
@@ -386,6 +387,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           capacityLoopVisible: true,
+          capacityCostLaterCheckinVisible: false,
           thenVsNowVisible: false,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,
