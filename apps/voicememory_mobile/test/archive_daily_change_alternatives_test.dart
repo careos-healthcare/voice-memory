@@ -211,15 +211,12 @@ void main() {
         result.responseType,
         ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
       );
-      expect(
-        result.changeLine,
-        contains('appeared more than once'),
-      );
+      expect(result.changeLine, ArchiveDailyChangeCopy.urgencyWithLaterCostLine);
       expect(result.changeLine, contains('later cost'));
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDelayAnswer);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDelayBeforeReplying);
       expect(
         result.alternativeNextMove,
-        ArchiveDailyChangeCopy.bodyDelayBeforeReplying,
+        ArchiveDailyChangeCopy.altUrgency,
       );
     });
 
@@ -250,9 +247,9 @@ void main() {
         result.responseType,
         ArchiveDailyChangeResponseType.repeatedPullWithSaidYes,
       );
-      expect(result.changeLine, contains('kept saying yes'));
-      expect(result.changeLine, contains('feeling responsible'));
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelCheckCapacity);
+      expect(result.changeLine, ArchiveDailyChangeCopy.responsibilityWithSaidYesLine);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelCheckCapacityBeforeAnswering);
+      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.altResponsibility);
     });
 
     test('delayed/no outcome produces pattern changed copy', () {
@@ -282,8 +279,8 @@ void main() {
         ArchiveDailyChangeResponseType.patternInterrupted,
       );
       expect(result.changeLine, ArchiveDailyChangeCopy.patternInterruptedLine);
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDefaultPause);
-      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.bodyUsePauseAgain);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelDelayBeforeReplying);
+      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.altUrgency);
     });
 
     test('fewer than 3 moments produces still forming copy', () {
@@ -299,36 +296,41 @@ void main() {
         weeklyReviewAvailable: false,
       );
 
-      expect(result.responseType, ArchiveDailyChangeResponseType.stillForming);
-      expect(result.changeLine, ArchiveDailyChangeCopy.stillFormingLine);
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelSaveOneMore);
+      expect(result.responseType, ArchiveDailyChangeResponseType.waitingForNextMoment);
+      expect(result.changeLine, ArchiveDailyChangeCopy.waitingForNextMomentLine);
+      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelMarkPullFirst);
     });
 
-    test('fit/partly response produces marked loop as fitting copy', () {
+    test('fit/partly response produces partly fitting copy when new moment added', () {
       final entries = [
         _capacityEntry('real_0'),
-        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 11)),
-        _capacityEntry('real_2', createdAt: DateTime(2026, 6, 16, 12)),
+        _capacityEntry('real_1', createdAt: DateTime(2026, 6, 16, 13)),
       ];
-      final result = engine.buildFromJournal(
-        entries: entries,
-        capacityLoopActive: true,
-        capacityCohortActive: false,
-        state: ArchiveDailyChangeState.empty,
-        pullReasonRecords: [
-          _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
-          _pullReason('real_1', [CapacityPullReasonIds.soundedUrgent]),
-        ],
-        costRecords: const [],
-        outcomeRecords: const [],
-        boundarySelection: null,
-        activationFitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
-        weeklyReviewAvailable: false,
+      final result = engine.build(
+        ArchiveDailyChangeInput(
+          sampleMode: false,
+          capacityWedgeActive: true,
+          realSavedMomentCount: 2,
+          capacityMomentCount: 2,
+          capacityEvidenceCount: 2,
+          mostCommonPullReasonId: CapacityPullReasonIds.soundedUrgent,
+          pullReasonRecordCount: 1,
+          state: ArchiveDailyChangeState.empty,
+          entries: entries,
+          pullReasonRecords: [
+            _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
+          ],
+          costRecords: const [],
+          outcomeRecords: const [],
+          boundarySelection: null,
+          activationFitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
+          weeklyReviewAvailable: false,
+        ),
       );
 
-      expect(result.responseType, ArchiveDailyChangeResponseType.fitConfirmed);
-      expect(result.changeLine, ArchiveDailyChangeCopy.fitConfirmedLine);
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelWatchPull);
+      expect(result.responseType, ArchiveDailyChangeResponseType.fitPartlyNewMoment);
+      expect(result.changeLine, ArchiveDailyChangeCopy.fitPartlyNewMomentLine);
+      expect(result.alternativeLabel, isNotEmpty);
     });
 
     test('selected boundary response is preferred in alternative', () {

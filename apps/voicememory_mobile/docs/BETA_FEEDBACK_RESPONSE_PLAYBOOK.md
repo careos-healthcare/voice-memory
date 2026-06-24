@@ -18,7 +18,7 @@ RevenueCat should only be finished after return + willingness-to-pay signal. Do 
 
 | Beta feedback | Likely product problem | What to change | What not to change | Success signal |
 | --- | --- | --- | --- | --- |
-| User does not understand the app | First-session promise too broad | Tighten onboarding: **See why you keep saying yes.** **Save 3 yes moments.** **Review your yes loop.** Do not add more explanation. | Do not add backend work or new archive features | User saves first yes moment without asking what the app is for |
+| User does not understand the app | First-session promise too broad | Tighten onboarding: **Catch the yes before it costs you.** **Save a yes moment.** **See what pulled you in.** **Review what changed.** Do not add more explanation. | Do not add backend work or new archive features | User saves first yes moment without asking what the app is for |
 | User does not save first moment | First save path blocked | Fix record/start flow. CTA **Save yes moment**. Prompt: *What are you about to agree to, and what makes it hard to pause?* Reduce competing cards before first save. | Do not enable RevenueCat or payments | User saves first yes moment in first session |
 | User saves once but not 3 times | Activation drop-off | Show **N of 3 yes moments saved**. Explain: *Three real moments are enough to start seeing what repeats.* One clear CTA back to Record. | Do not enable payments while fixing activation | User saves 3 yes moments and reviews the yes loop |
 | User says loop is repetitive | Daily change feels generic | Sharpen daily change. Combine pull reason + outcome + later cost. Avoid repeating the same line. | Do not add AI or transcript analysis | Return users say daily change feels specific |

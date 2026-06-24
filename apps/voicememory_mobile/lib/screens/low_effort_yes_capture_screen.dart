@@ -181,7 +181,7 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           child: CapacityReturnTriggerCard(
             result: returnTriggerResult,
-            onSecondary: _dismissAfterReturnTrigger,
+            onPrimaryDismiss: _dismissAfterReturnTrigger,
           ),
         ),
       );

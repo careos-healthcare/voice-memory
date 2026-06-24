@@ -13,6 +13,7 @@ class CapacityReturnTriggerCard extends StatelessWidget {
   const CapacityReturnTriggerCard({
     super.key,
     required this.result,
+    this.onPrimaryDismiss,
     this.onSecondary,
     this.sampleMode = false,
   });
@@ -20,11 +21,13 @@ class CapacityReturnTriggerCard extends StatelessWidget {
   const CapacityReturnTriggerCard.test({
     super.key,
     required this.result,
+    this.onPrimaryDismiss,
     this.onSecondary,
     this.sampleMode = false,
   });
 
   final CapacityReturnTriggerResult result;
+  final VoidCallback? onPrimaryDismiss;
   final VoidCallback? onSecondary;
   final bool sampleMode;
 
@@ -61,7 +64,15 @@ class CapacityReturnTriggerCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('capacity_return_trigger_card_primary_button'),
-            onPressed: () => context.push(result.primaryRoute),
+            onPressed: () {
+              if (result.primaryDismisses) {
+                onPrimaryDismiss?.call();
+                return;
+              }
+              if (result.primaryRoute.isNotEmpty) {
+                context.push(result.primaryRoute);
+              }
+            },
             child: Text(result.primaryCtaLabel),
           ),
           if (result.showSecondary) ...[
@@ -69,13 +80,11 @@ class CapacityReturnTriggerCard extends StatelessWidget {
             OutlinedButton(
               key: const Key('capacity_return_trigger_card_secondary_button'),
               onPressed: () {
-                if (onSecondary != null) {
-                  onSecondary!();
-                  return;
-                }
                 if (result.secondaryRoute.isNotEmpty) {
                   context.push(result.secondaryRoute);
+                  return;
                 }
+                onSecondary?.call();
               },
               child: Text(result.secondaryCtaLabel),
             ),

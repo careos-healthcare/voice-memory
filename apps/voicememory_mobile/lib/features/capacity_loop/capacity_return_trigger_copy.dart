@@ -4,23 +4,24 @@ abstract final class CapacityReturnTriggerCopy {
 
   static const activationTarget = 3;
 
-  static const completionTitle = 'Next time this happens';
+  static const completionTitle =
+      'Good — now wait for the next real yes moment';
   static const completionBody =
-      'When you feel pulled to say yes again, save that moment too. '
-      'Three real moments are enough to start seeing what repeats.';
-  static const completionPrimaryCta = 'Save another yes moment';
-  static const completionSecondaryCta = 'Done for now';
+      'Do not force another entry. Come back when you feel the pull to agree again. '
+      'That second moment is what starts making the pattern clearer.';
+  static const completionPrimaryCta = 'Done for now';
+  static const completionSecondaryCta = 'Save another yes moment';
 
-  static const archiveHomeTitle = 'Come back for the next yes moment';
+  static const archiveHomeTitle = 'Waiting for the next yes moment';
   static String archiveHomeBody(int saved, {required int target}) =>
-      'You have $saved of $target yes moments saved. '
-      'The next real moment will make your yes loop clearer.';
+      'You have $saved of $target saved. '
+      'Come back when the next real request pulls you toward yes.';
 
   static const archiveHomePrimaryCta = 'Save yes moment';
   static const archiveHomeReviewCta = 'Review what I have';
 
   static const recordProgressLine =
-      'Next goal: save the next real yes moment.';
+      'Use this when a real yes moment happens again.';
 
   static const betaMissionHint =
       'Come back when the next yes moment happens.';

@@ -9,9 +9,10 @@ abstract class LoopModeCopy {
   static const String onboardingSkip = 'Not sure yet';
 
   // ——— capacity_yes handoff ———
-  static const String capacityHandoffTitle = 'See why you keep saying yes.';
+  static const String capacityHandoffTitle =
+      'Catch the yes before it costs you.';
   static const String capacityHandoffBody =
-      'Save real moments where you felt pulled to agree. After 3 moments, ArchiveMe helps you review what repeated.';
+      'ArchiveMe helps you spot why you keep agreeing before checking your capacity.';
   static const String capacityHandoffPrompt =
       'What are you about to agree to, and what makes it hard to pause?';
   static const String capacityHandoffCta = 'Save yes moment';

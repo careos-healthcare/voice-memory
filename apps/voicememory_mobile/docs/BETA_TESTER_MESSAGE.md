@@ -10,7 +10,7 @@ Hi — I'm testing ArchiveMe with a small group before wider launch.
 
 **This test starts with one pattern: saying yes when you have no capacity.**
 
-You'll see: **See why you keep saying yes.**
+You'll see: **Catch the yes before it costs you.**
 
 **Use it for 7 days.**
 

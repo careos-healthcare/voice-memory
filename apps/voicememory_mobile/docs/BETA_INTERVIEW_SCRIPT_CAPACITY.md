@@ -15,7 +15,7 @@
 
 1. **What did you think the app was for in the first 30 seconds?**
 
-2. **Did "See why you keep saying yes" make sense?**
+2. **Did "Catch the yes before it costs you" make sense?**
 
 3. **Did you save a real yes moment?**
 

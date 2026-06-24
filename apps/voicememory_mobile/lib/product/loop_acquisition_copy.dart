@@ -45,14 +45,13 @@ abstract class LoopAcquisitionCopy {
 
   static const capacityYes = LoopAcquisitionVariant(
     id: 'capacity_yes',
-    headline: 'See why you keep saying yes.',
+    headline: 'Catch the yes before it costs you.',
     subheadline:
-        'Save real moments where you felt pulled to agree. After 3 moments, see what keeps repeating.',
+        'ArchiveMe helps you spot why you keep agreeing before checking your capacity.',
     bullets: [
-      'Save your first yes moment in under a minute',
-      'Reach 3 yes moments to review your yes loop',
-      'Private archive on this device — your words stay here',
-      'Tell us if the loop fits after 3 moments',
+      'Save a yes moment',
+      'See what pulled you in',
+      'Review what changed',
     ],
     cta: 'Save yes moment',
     cohortRoutePath: '/start/capacity-yes',

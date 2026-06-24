@@ -53,6 +53,9 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
     await AcquisitionCohortCoordinator.markStartScreenViewed(widget.cohortId);
   }
 
+  bool get _isCapacityStart =>
+      widget.cohortId == AcquisitionCohortId.capacityYesDirect;
+
   String get _title {
     switch (widget.cohortId) {
       case AcquisitionCohortId.capacityYesDirect:
@@ -107,9 +110,28 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
     context.go('/onboarding-loop');
   }
 
+  void _showHowItWorks() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AcquisitionStartCopy.capacityHowItWorksCta),
+        content: Text(
+          AcquisitionStartCopy.capacityHowItWorksBody,
+          style: ArchiveMobileTypography.explanationBody(context),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final showSecondary = widget.cohortId.usesFastPath;
+    final showChooseAnother = widget.cohortId.usesFastPath && !_isCapacityStart;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
@@ -122,19 +144,65 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
               const Spacer(flex: 1),
               Text(
                 _title,
+                key: const Key('loop_start_title'),
                 style: ArchiveMobileTypography.responsivePageTitle(context),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
                 _body,
+                key: const Key('loop_start_body'),
                 style: ArchiveMobileTypography.explanationBody(context),
               ),
+              if (_isCapacityStart) ...[
+                const SizedBox(height: AppSpacing.md),
+                for (var i = 0; i < AcquisitionStartCopy.capacitySteps.length; i++)
+                  Padding(
+                    key: Key('loop_start_capacity_step_$i'),
+                    padding: EdgeInsets.only(top: i == 0 ? 0 : AppSpacing.xs),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${i + 1}.',
+                          style: ArchiveMobileTypography.body(context).copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Expanded(
+                          child: Text(
+                            AcquisitionStartCopy.capacitySteps[i],
+                            style: ArchiveMobileTypography.body(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  AcquisitionStartCopy.capacityProductLine,
+                  key: const Key('loop_start_capacity_product_line'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
               const Spacer(flex: 2),
               FilledButton(
+                key: const Key('loop_start_primary_button'),
                 onPressed: _busy ? null : _startLoop,
                 child: Text(_primaryCta),
               ),
-              if (showSecondary) ...[
+              if (_isCapacityStart) ...[
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton(
+                  key: const Key('loop_start_how_it_works_button'),
+                  onPressed: _busy ? null : _showHowItWorks,
+                  child: const Text(AcquisitionStartCopy.capacityHowItWorksCta),
+                ),
+              ] else if (showChooseAnother) ...[
                 const SizedBox(height: AppSpacing.sm),
                 OutlinedButton(
                   onPressed: _busy ? null : _chooseAnotherLoop,

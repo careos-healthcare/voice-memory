@@ -4,6 +4,7 @@ import '../capacity_loop/capacity_boundary_response_models.dart';
 import '../capacity_loop/capacity_cost_models.dart';
 import '../capacity_loop/capacity_decision_outcome_models.dart';
 import '../capacity_loop/capacity_pull_reason_models.dart';
+import '../capacity_loop/quick_capture_friction_models.dart';
 
 /// Fixed change kinds for recent-activity detection — metadata only.
 enum ArchiveDailyChangeKind {
@@ -21,6 +22,9 @@ enum ArchiveDailyChangeResponseType {
   repeatedPullWithSaidYes,
   patternInterrupted,
   fitConfirmed,
+  fitPartlyNewMoment,
+  quickCaptureStillWork,
+  waitingForNextMoment,
   noPullReasonYet,
   stillForming,
   recentChange,
@@ -86,6 +90,7 @@ class ArchiveDailyChangeInput {
     required this.boundarySelection,
     required this.activationFitRecord,
     required this.weeklyReviewAvailable,
+    this.quickCaptureFrictionRecord,
   });
 
   final bool sampleMode;
@@ -103,6 +108,7 @@ class ArchiveDailyChangeInput {
   final CapacityBoundaryResponseSelection? boundarySelection;
   final CapacityActivationFitRecord? activationFitRecord;
   final bool weeklyReviewAvailable;
+  final QuickCaptureFrictionRecord? quickCaptureFrictionRecord;
 }
 
 /// Result for Archive Home, capacity loop, and weekly review surfaces.

@@ -63,7 +63,7 @@ void main() {
     });
 
     test('contains core promise and beta mission', () {
-      expect(plan, contains('See why you keep saying yes'));
+      expect(plan, contains('Catch the yes before it costs you'));
       expect(plan, contains('Save 3 yes moments'));
       expect(plan, contains('Review your yes loop'));
       expect(plan, contains('Tell us if it fits'));
@@ -90,7 +90,7 @@ void main() {
       expect(message, contains('Save 3 real moments'));
       expect(message, contains('Then review your yes loop and tell me if it fits'));
       expect(message, contains('Skip anything that does not apply'));
-      expect(message, contains('See why you keep saying yes'));
+      expect(message, contains('Catch the yes before it costs you'));
     });
   });
 
@@ -101,7 +101,7 @@ void main() {
 
     test('contains 10 interview questions', () {
       expect(script, contains('What did you think the app was for in the first 30 seconds'));
-      expect(script, contains('See why you keep saying yes'));
+      expect(script, contains('Catch the yes before it costs you'));
       expect(script, contains('Did you save a real yes moment'));
       expect(script, contains('What stopped you if not'));
       expect(script, contains('Did the 3-moment path feel clear'));

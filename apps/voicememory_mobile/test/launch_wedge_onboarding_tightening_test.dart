@@ -17,7 +17,10 @@ import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/product/testflight_invite_copy.dart';
 
 const _requiredPhrases = [
-  'See why you keep saying yes',
+  'Catch the yes before it costs you',
+  'Save a yes moment',
+  'See what pulled you in',
+  'Review what changed',
   'Save 3 yes moments',
   'Review your yes loop',
   'Does this feel accurate',
@@ -133,15 +136,18 @@ void main() {
     });
 
     test('acquisition start uses headline and save yes moment CTA', () {
-      expect(AcquisitionStartCopy.capacityTitle, 'See why you keep saying yes.');
+      expect(
+        AcquisitionStartCopy.capacityTitle,
+        'Catch the yes before it costs you.',
+      );
       expect(AcquisitionStartCopy.capacityStartCta, 'Save yes moment');
       expect(
         AcquisitionStartCopy.capacityBody.toLowerCase(),
-        contains('pulled to agree'),
+        contains('keep agreeing'),
       );
       expect(
-        AcquisitionStartCopy.capacityBody.toLowerCase(),
-        contains('after 3 moments'),
+        AcquisitionStartCopy.capacitySteps,
+        contains('Save a yes moment'),
       );
     });
 
