@@ -137,6 +137,7 @@ import '../widgets/capacity_loop_card.dart';
 import '../widgets/capacity_cost_later_card.dart';
 import '../widgets/capacity_decision_outcome_card.dart';
 import '../widgets/capacity_pull_reason_card.dart';
+import '../widgets/capacity_three_moment_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../widgets/capacity_weekly_review_card.dart';
 import '../widgets/capacity_boundary_response_card.dart';
@@ -150,6 +151,7 @@ import '../features/capacity_loop/capacity_decision_outcome_engine.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
 import '../features/capacity_loop/capacity_pull_reason_engine.dart';
 import '../features/capacity_loop/capacity_pull_reason_store.dart';
+import '../features/capacity_loop/capacity_three_moment_engine.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/capacity_loop_copy.dart';
@@ -2009,6 +2011,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       outcomeRecords: CapacityDecisionOutcomeStore.cached,
       pullReasonRecords: CapacityPullReasonStore.cached,
     );
+    final capacityThreeMoment =
+        const CapacityThreeMomentEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      sampleMode: ScreenshotMode.enabled,
+    );
     final capacityPullReason =
         const CapacityPullReasonEngine().buildFromJournal(
       entries: _entries,
@@ -2099,9 +2108,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       firstWeekPathVisible: !ScreenshotMode.enabled && realSavedCount < 7,
       dailyArchiveExerciseVisible: !ScreenshotMode.enabled,
       archiveClarityProgressVisible: !ScreenshotMode.enabled,
+      capacityThreeMomentActivationVisible: !ScreenshotMode.enabled &&
+          capacityThreeMoment.hasCard &&
+          capacityThreeMoment.showOnArchiveHome,
       capacityLoopVisible: !ScreenshotMode.enabled &&
           capacityLoop.hasCard &&
-          capacityLoop.showOnArchiveHome,
+          capacityLoop.showOnArchiveHome &&
+          !capacityThreeMoment.showOnArchiveHome,
       capacityPullReasonVisible: !ScreenshotMode.enabled &&
           capacityPullReason.hasCard &&
           capacityPullReason.showOnArchiveHome,
@@ -2293,6 +2306,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             onPrimaryAction: _goToRecord,
             sampleMode: ScreenshotMode.enabled,
             weeklyReviewAvailable: weeklyReview?.hasEnoughEvidence ?? false,
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityThreeMomentActivation:
+        return [
+          CapacityThreeMomentCard(
+            result: const CapacityThreeMomentEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+            ),
           ),
         ];
       case ArchiveHomeSectionId.capacityLoop:

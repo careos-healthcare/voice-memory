@@ -188,6 +188,7 @@ import '../features/capacity_loop/capacity_boundary_response_copy.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../product/loop_mode_copy.dart';
 import '../features/capacity_loop/capacity_loop_gates.dart';
+import '../features/capacity_loop/capacity_three_moment_engine.dart';
 import '../features/retention/next_evidence_reminder_service.dart';
 import '../features/retention/reminder_pre_prompt_coordinator.dart';
 import '../features/retention/return_reason_capture_coordinator.dart';
@@ -3582,6 +3583,41 @@ class _RecordScreenState extends State<RecordScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                      Builder(
+                        builder: (context) {
+                          final threeMoment =
+                              const CapacityThreeMomentEngine().buildFromJournal(
+                            entries: _journalEntries,
+                            capacityLoopActive:
+                                _activeLoop?.isCapacityYes ?? false,
+                            capacityCohortActive: false,
+                            sampleMode: ScreenshotMode.enabled,
+                          );
+                          final progressLine =
+                              CapacityThreeMomentEngine.recordProgressLine(
+                            threeMoment,
+                          );
+                          if (progressLine.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Column(
+                            children: [
+                              Text(
+                                progressLine,
+                                key: const Key(
+                                  'record_screen_capacity_three_moment_progress',
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: VoiceMemoryColors.textSecondary,
+                                  height: 1.5,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                            ],
+                          );
+                        },
+                      ),
                     ],
                     if (_showDefaultBoundaryPauseOnRecord(ui)) ...[
                       Text(

@@ -1,4 +1,5 @@
 import 'beta_invite_models.dart';
+import '../capacity_loop/capacity_three_moment_copy.dart';
 
 /// Copy for beta tester invite packs — crisp, local-only recruitment scripts.
 abstract final class BetaInviteCopy {
@@ -46,6 +47,8 @@ abstract final class BetaInviteCopy {
   static const variantJournalingUpgradeTitle = 'Journaling upgrade';
   static const variantFounderCreatorTitle = 'Founder / creator';
   static const variantPrivateArchiveTitle = 'Private archive';
+
+  static const capacityYesBetaTaskLine = CapacityThreeMomentCopy.betaTaskLine;
 
   static const testerTask =
       'Save 3 moments. After the third, open Archive and answer whether '
@@ -179,6 +182,7 @@ $privacyReminder
         testerTask,
         reportBackPrompt,
         betaSuccessChecklist,
+        capacityYesBetaTaskLine,
         ...BetaInviteVariantId.values.map(shortInvite),
         ...BetaInviteVariantId.values.map(longInvite),
       ];
