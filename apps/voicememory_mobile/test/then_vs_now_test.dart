@@ -200,6 +200,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           capacityLoopVisible: false,
+          capacityCostLaterCheckinVisible: false,
           thenVsNowVisible: true,
           archiveCalendarVisible: false,
           reviewRitualVisible: false,

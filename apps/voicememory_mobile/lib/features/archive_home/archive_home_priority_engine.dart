@@ -11,6 +11,7 @@ class ArchiveHomePriorityEngine {
     ArchiveHomeSectionId.firstWeekPath,
     ArchiveHomeSectionId.dailyArchiveExercise,
     ArchiveHomeSectionId.capacityLoop,
+    ArchiveHomeSectionId.capacityCostLaterCheckin,
     ArchiveHomeSectionId.archiveClarityProgress,
     ArchiveHomeSectionId.thenVsNow,
     ArchiveHomeSectionId.archiveCalendar,
@@ -37,6 +38,8 @@ class ArchiveHomePriorityEngine {
         ArchiveHomeSectionId.archiveClarityProgress =>
           input.archiveClarityProgressVisible,
         ArchiveHomeSectionId.capacityLoop => input.capacityLoopVisible,
+        ArchiveHomeSectionId.capacityCostLaterCheckin =>
+          input.capacityCostLaterCheckinVisible,
         ArchiveHomeSectionId.thenVsNow => input.thenVsNowVisible,
         ArchiveHomeSectionId.archiveCalendar => input.archiveCalendarVisible,
         ArchiveHomeSectionId.reviewRitual => input.reviewRitualVisible,
@@ -61,6 +64,7 @@ class ArchiveHomePriorityEngine {
           ArchiveHomeSectionId.firstWeekPath,
           ArchiveHomeSectionId.dailyArchiveExercise,
           ArchiveHomeSectionId.capacityLoop,
+          ArchiveHomeSectionId.capacityCostLaterCheckin,
           ArchiveHomeSectionId.archiveClarityProgress,
           ArchiveHomeSectionId.thenVsNow,
           ArchiveHomeSectionId.archiveCalendar,

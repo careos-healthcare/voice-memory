@@ -37,6 +37,14 @@ abstract final class CapacityLoopCopy {
   static const costLaterUnavailable =
       'Cost later is not clear yet — save another moment after you agree.';
 
+  static String costLaterRecordedCount(int count) =>
+      'Later cost recorded on $count moment${count == 1 ? '' : 's'}.';
+  static const costLaterStrengthenPrompt =
+      'Add a later-cost check-in to strengthen this loop.';
+
+  static String costEvidenceOnScreen(int count) =>
+      '$count saved moment${count == 1 ? '' : 's'} had a later cost';
+
   static const saveYesMomentCta = 'Save a yes moment';
   static const saveYesMomentShortCta = 'Save yes moment';
   static const reviewLoopCta = 'Review the loop';

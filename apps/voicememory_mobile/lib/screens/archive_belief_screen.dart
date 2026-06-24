@@ -134,7 +134,10 @@ import '../widgets/daily_archive_exercise_card.dart';
 import '../widgets/archive_clarity_progress_card.dart';
 import '../widgets/then_vs_now_card.dart';
 import '../widgets/capacity_loop_card.dart';
+import '../widgets/capacity_cost_later_card.dart';
 import '../features/capacity_loop/capacity_loop_engine.dart';
+import '../features/capacity_loop/capacity_cost_engine.dart';
+import '../features/capacity_loop/capacity_cost_store.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
@@ -508,6 +511,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProValuePreviewDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
     await ReviewRitualStore.ensureLoaded();
+    await CapacityCostStore.ensureLoaded();
     final isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
     final recordReturnPro = await RecordReturnProStore.instance().load();
     final entries = await AppServices.instance.journal.loadAll();
@@ -1983,6 +1987,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       entries: _entries,
       capacityLoopActive: _capacityLoopActive,
       capacityCohortActive: _capacityCohortActive,
+      costRecords: CapacityCostStore.cached,
+    );
+    final capacityCostCheckin = const CapacityCostEngine().buildFromJournal(
+      entries: _entries,
+      capacityLoopActive: _capacityLoopActive,
+      capacityCohortActive: _capacityCohortActive,
+      records: CapacityCostStore.cached,
     );
     final archiveCalendar =
         const ArchiveCalendarEngine().buildFromJournal(entries: _entries);
@@ -2020,6 +2031,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       capacityLoopVisible: !ScreenshotMode.enabled &&
           capacityLoop.hasCard &&
           capacityLoop.showOnArchiveHome,
+      capacityCostLaterCheckinVisible: !ScreenshotMode.enabled &&
+          capacityCostCheckin.hasCard &&
+          capacityCostCheckin.showOnArchiveHome,
       thenVsNowVisible:
           !ScreenshotMode.enabled && thenNow.hasCard && thenNow.showOnArchiveHome,
       archiveCalendarVisible:
@@ -2203,10 +2217,26 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               entries: _entries,
               capacityLoopActive: _capacityLoopActive,
               capacityCohortActive: _capacityCohortActive,
+              costRecords: CapacityCostStore.cached,
             ),
             capacityLoopActive: _capacityLoopActive,
             capacityCohortActive: _capacityCohortActive,
             onPrimaryAction: _goToRecord,
+          ),
+        ];
+      case ArchiveHomeSectionId.capacityCostLaterCheckin:
+        return [
+          CapacityCostLaterCard(
+            result: const CapacityCostEngine().buildFromJournal(
+              entries: _entries,
+              capacityLoopActive: _capacityLoopActive,
+              capacityCohortActive: _capacityCohortActive,
+              records: CapacityCostStore.cached,
+            ),
+            onSaved: () {
+              if (!mounted) return;
+              setState(() {});
+            },
           ),
         ];
       case ArchiveHomeSectionId.thenVsNow:

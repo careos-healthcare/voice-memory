@@ -9,6 +9,8 @@ class CapacityLoopInput {
     this.topRecurringTheme,
     this.costSignalCount = 0,
     this.triggerSignalCount = 0,
+    this.costCheckinRecordedCount = 0,
+    this.hasPendingCostCheckin = false,
   });
 
   final int realSavedMomentCount;
@@ -19,6 +21,8 @@ class CapacityLoopInput {
   final String? topRecurringTheme;
   final int costSignalCount;
   final int triggerSignalCount;
+  final int costCheckinRecordedCount;
+  final bool hasPendingCostCheckin;
 
   bool get capacityWedgeActive => capacityLoopActive || capacityCohortActive;
 }
@@ -45,6 +49,7 @@ class CapacityLoopResult {
     required this.costLaterLabel,
     required this.repeatedLabel,
     required this.watchNextLabel,
+    this.costEvidenceLabel = '',
   });
 
   static const empty = CapacityLoopResult(
@@ -67,6 +72,7 @@ class CapacityLoopResult {
     costLaterLabel: '',
     repeatedLabel: '',
     watchNextLabel: '',
+    costEvidenceLabel: '',
   );
 
   final bool hasCard;
@@ -88,4 +94,5 @@ class CapacityLoopResult {
   final String costLaterLabel;
   final String repeatedLabel;
   final String watchNextLabel;
+  final String costEvidenceLabel;
 }
