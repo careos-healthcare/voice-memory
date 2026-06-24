@@ -4,6 +4,9 @@ import 'capacity_loop_engine.dart';
 import 'capacity_three_moment_copy.dart';
 import 'capacity_three_moment_gates.dart';
 import 'capacity_three_moment_models.dart';
+import 'low_effort_yes_capture_copy.dart';
+import 'low_effort_yes_capture_engine.dart';
+import 'low_effort_yes_capture_models.dart';
 
 /// Builds capacity 3-moment activation from local entry counts — no storage.
 class CapacityThreeMomentEngine {
@@ -30,6 +33,13 @@ class CapacityThreeMomentEngine {
     final target = CapacityThreeMomentGates.activationTarget;
     final atTarget = count >= target;
     final hasCard = true;
+    final quickCapture = const LowEffortYesCaptureEngine().build(
+      LowEffortYesCaptureInput(
+        capacityWedgeActive: input.capacityWedgeActive,
+        sampleMode: input.sampleMode,
+        screenshotMode: false,
+      ),
+    );
 
     return CapacityThreeMomentResult(
       hasCard: hasCard,
@@ -59,6 +69,8 @@ class CapacityThreeMomentEngine {
       primaryRoute: atTarget
           ? CapacityThreeMomentCopy.loopRoute
           : CapacityThreeMomentCopy.recordRoute,
+      showQuickSaveSecondary: !atTarget && quickCapture.showCard,
+      quickSaveRoute: LowEffortYesCaptureCopy.route,
       capacityMomentCount: count,
       activationTarget: target,
     );

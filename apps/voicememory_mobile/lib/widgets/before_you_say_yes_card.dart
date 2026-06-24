@@ -4,6 +4,7 @@ import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
+import '../features/capacity_loop/low_effort_yes_capture_copy.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
@@ -15,6 +16,7 @@ class BeforeYouSayYesCard extends StatelessWidget {
     required this.result,
     required this.onPauseBeforeYes,
     required this.onAlreadySaidYes,
+    this.onQuickSave,
     this.compact = false,
     this.sampleMode = false,
   });
@@ -24,6 +26,7 @@ class BeforeYouSayYesCard extends StatelessWidget {
     required this.result,
     required this.onPauseBeforeYes,
     required this.onAlreadySaidYes,
+    this.onQuickSave,
     this.compact = false,
     this.sampleMode = false,
   });
@@ -31,6 +34,7 @@ class BeforeYouSayYesCard extends StatelessWidget {
   final BeforeYesPauseResult result;
   final VoidCallback onPauseBeforeYes;
   final VoidCallback onAlreadySaidYes;
+  final VoidCallback? onQuickSave;
   final bool compact;
   final bool sampleMode;
 
@@ -84,6 +88,14 @@ class BeforeYouSayYesCard extends StatelessWidget {
             onPressed: onAlreadySaidYes,
             child: Text(result.alreadyYesCtaLabel),
           ),
+          if (onQuickSave != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('before_you_say_yes_quick_save_button'),
+              onPressed: onQuickSave,
+              child: const Text(LowEffortYesCaptureCopy.quickSaveCta),
+            ),
+          ],
         ],
       ),
     );

@@ -14,6 +14,7 @@ import 'capacity_loop_copy.dart';
 import 'capacity_pull_reason_engine.dart';
 import 'capacity_loop_gates.dart';
 import 'capacity_loop_models.dart';
+import 'low_effort_yes_capture_engine.dart';
 
 /// Builds the capacity yes loop card from local counts and safe theme signals.
 class CapacityLoopEngine {
@@ -105,8 +106,8 @@ class CapacityLoopEngine {
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realCount = BetaFeedbackEngine.realEntryCountFor(realEntries);
+    final capacityCount = _countCapacityEvidence(realEntries);
     final eligible = ArchiveEvidenceGuard.eligibleEntries(realEntries);
-    final capacityCount = _countCapacityEvidence(eligible);
     final theme = _topRecurringTheme(eligible);
     final costCount = _countCostSignals(eligible);
     final records = costRecords ?? CapacityCostStore.cached;
@@ -143,12 +144,17 @@ class CapacityLoopEngine {
 
   /// Ordered capacity-related entry ids — oldest first.
   List<String> eligibleCapacityEntryIds(List<JournalEntry> entries) {
-    final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
+    final realEntries = SampleArchiveMode.excludeSampleEntries(entries)
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final eligible = ArchiveEvidenceGuard.eligibleEntries(realEntries);
+    final eligibleIds = {for (final entry in eligible) entry.id};
     final loop = const LoopModeEngine().activate(LoopModeIds.capacityYes);
     return [
-      for (final entry in eligible)
-        if (_entryMatchesCapacity(entry, loop)) entry.id,
+      for (final entry in realEntries)
+        if (LowEffortYesCaptureEngine.isQuickCaptureEntry(entry) ||
+            (eligibleIds.contains(entry.id) &&
+                _entryMatchesCapacity(entry, loop)))
+          entry.id,
     ];
   }
 
@@ -198,9 +204,7 @@ class CapacityLoopEngine {
 
   int countCapacityEvidence(List<JournalEntry> entries) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
-    return _countCapacityEvidence(
-      ArchiveEvidenceGuard.eligibleEntries(realEntries),
-    );
+    return _countCapacityEvidence(realEntries);
   }
 
   static CapacityLoopResult _formingCard(
@@ -328,16 +332,25 @@ class CapacityLoopEngine {
     return lines.join(' ');
   }
 
-  int _countCapacityEvidence(List<JournalEntry> eligible) {
+  int _countCapacityEvidence(List<JournalEntry> entries) {
     final loop = const LoopModeEngine().activate(LoopModeIds.capacityYes);
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligibleIds = {for (final entry in eligible) entry.id};
     var count = 0;
-    for (final entry in eligible) {
-      if (_entryMatchesCapacity(entry, loop)) count++;
+    for (final entry in entries) {
+      if (LowEffortYesCaptureEngine.isQuickCaptureEntry(entry) ||
+          (eligibleIds.contains(entry.id) &&
+              _entryMatchesCapacity(entry, loop))) {
+        count++;
+      }
     }
     return count;
   }
 
   bool _entryMatchesCapacity(JournalEntry entry, LoopMode loop) {
+    if (LowEffortYesCaptureEngine.isQuickCaptureEntry(entry)) {
+      return true;
+    }
     final lower = entry.transcript.toLowerCase();
     if (const LoopModeEngine().textSupports(loop, entry.transcript)) {
       return true;

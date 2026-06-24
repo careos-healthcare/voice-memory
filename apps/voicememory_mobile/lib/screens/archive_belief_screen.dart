@@ -166,6 +166,9 @@ import '../features/capacity_loop/capacity_launch_wedge_gates.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/capacity_loop_copy.dart';
+import '../features/capacity_loop/low_effort_yes_capture_copy.dart';
+import '../features/capacity_loop/low_effort_yes_capture_engine.dart';
+import '../features/capacity_loop/low_effort_yes_capture_models.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
@@ -2558,6 +2561,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               BeforeYesCopy.recordRouteWithPrompt(BeforeYesCopy.recordPrompt),
             ),
             onAlreadySaidYes: () => context.push(CapacityLoopCopy.recordRoute),
+            onQuickSave: () => context.push(LowEffortYesCaptureCopy.route),
           ),
         ];
       case ArchiveHomeSectionId.capacityWeeklyReview:

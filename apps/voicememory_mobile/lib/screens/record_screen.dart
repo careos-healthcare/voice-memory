@@ -184,11 +184,15 @@ import '../widgets/record/loop_mode_first_handoff_card.dart';
 import '../widgets/before_you_say_yes_card.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
+import '../features/capacity_loop/low_effort_yes_capture_copy.dart';
 import '../features/capacity_loop/capacity_boundary_response_copy.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../product/loop_mode_copy.dart';
 import '../features/capacity_loop/capacity_loop_gates.dart';
 import '../features/capacity_loop/capacity_three_moment_engine.dart';
+import '../features/capacity_loop/low_effort_yes_capture_engine.dart';
+import '../features/capacity_loop/low_effort_yes_capture_models.dart';
+import '../widgets/low_effort_yes_capture_card.dart';
 import '../features/retention/next_evidence_reminder_service.dart';
 import '../features/retention/reminder_pre_prompt_coordinator.dart';
 import '../features/retention/return_reason_capture_coordinator.dart';
@@ -3581,6 +3585,19 @@ class _RecordScreenState extends State<RecordScreen> {
                             _onRecordPressed(source: 'capacity_loop'),
                           );
                         },
+                        onQuickSave: () => context.push(
+                          LowEffortYesCaptureCopy.route,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      LowEffortYesCaptureCard(
+                        result: const LowEffortYesCaptureEngine().build(
+                          const LowEffortYesCaptureInput(
+                            capacityWedgeActive: true,
+                            sampleMode: false,
+                            screenshotMode: false,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Builder(

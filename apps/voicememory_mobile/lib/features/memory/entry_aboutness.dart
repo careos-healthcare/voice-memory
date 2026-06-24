@@ -119,9 +119,11 @@ abstract class EntryAboutnessSession {
         pinnedAt: entry.pinnedAt,
         isArchived: entry.isArchived,
         archivedAt: entry.archivedAt,
-        entryAboutness: aboutness,
-        memorySurfacing: entry.memorySurfacing,
-      );
+    entryAboutness: aboutness,
+    memorySurfacing: entry.memorySurfacing,
+    preserveOriginal: entry.preserveOriginal,
+    captureContextTag: entry.captureContextTag,
+  );
 
   static void resetAfterSave() {
     selected = EntryAboutness.aboutMe;
