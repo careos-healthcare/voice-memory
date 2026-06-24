@@ -39,6 +39,7 @@ import '../screens/capacity_loop_screen.dart';
 import '../screens/capacity_weekly_review_screen.dart';
 import '../screens/capacity_boundary_response_screen.dart';
 import '../screens/capacity_beta_signal_screen.dart';
+import '../screens/capacity_beta_mission_screen.dart';
 import '../screens/archive_calendar_screen.dart';
 import '../screens/review_ritual_screen.dart';
 import '../screens/milestone_share_cards_screen.dart';
@@ -206,6 +207,7 @@ final GoRouter appRouter = GoRouter(
         path != '/capacity-weekly-review' &&
         path != '/capacity-boundary-response' &&
         path != '/capacity-beta-signals' &&
+        path != '/capacity-beta-mission' &&
         path != '/archive-calendar' &&
         path != '/review-ritual' &&
         path != '/milestone-share-cards' &&
@@ -788,6 +790,11 @@ final GoRouter appRouter = GoRouter(
       path: '/capacity-boundary-response',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const CapacityBoundaryResponseScreen(),
+    ),
+    GoRoute(
+      path: '/capacity-beta-mission',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const CapacityBetaMissionScreen(),
     ),
     GoRoute(
       path: '/capacity-beta-signals',

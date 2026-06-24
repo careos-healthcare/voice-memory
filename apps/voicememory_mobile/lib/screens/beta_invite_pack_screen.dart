@@ -10,6 +10,10 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/voicememory_cards.dart';
 import '../widgets/capacity_beta_signal_card.dart';
+import '../widgets/capacity_beta_mission_card.dart';
+import '../features/capacity_loop/capacity_beta_mission_copy.dart';
+import '../features/capacity_loop/capacity_beta_mission_engine.dart';
+import '../features/capacity_loop/capacity_beta_mission_models.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Local beta tester invite scripts — copy only, no uploads.
@@ -202,6 +206,25 @@ class _BetaInvitePackScreenState extends State<BetaInvitePackScreen> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            CapacityBetaMissionCard(
+              result: const CapacityBetaMissionEngine().build(
+                const CapacityBetaMissionInput(
+                  sampleMode: false,
+                  capacityWedgeActive: true,
+                  capacityMomentCount: 0,
+                  activationTarget: 3,
+                  pullReasonRecordCount: 0,
+                  outcomeRecordCount: 0,
+                  laterCostRecordCount: 0,
+                  weeklyReviewAvailable: false,
+                  boundaryResponseSelected: false,
+                  activationFitComplete: false,
+                  proInterestCaptured: false,
+                  missionRecord: CapacityBetaMissionRecord.empty,
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
