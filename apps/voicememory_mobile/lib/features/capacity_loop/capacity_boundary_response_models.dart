@@ -117,6 +117,8 @@ class CapacityBoundaryResponseInput {
     required this.pendingCostCheckin,
     required this.beforeYesPauseOnHome,
     required this.weeklyReviewOnHome,
+    required this.pendingPullReasonOnHome,
+    this.mostCommonPullReasonId,
     this.selection,
   });
 
@@ -130,6 +132,8 @@ class CapacityBoundaryResponseInput {
   final bool pendingCostCheckin;
   final bool beforeYesPauseOnHome;
   final bool weeklyReviewOnHome;
+  final bool pendingPullReasonOnHome;
+  final String? mostCommonPullReasonId;
   final CapacityBoundaryResponseSelection? selection;
 
   CapacityBoundaryResponseInput copyWith({
@@ -151,6 +155,8 @@ class CapacityBoundaryResponseInput {
         pendingCostCheckin: pendingCostCheckin,
         beforeYesPauseOnHome: beforeYesPauseOnHome,
         weeklyReviewOnHome: weeklyReviewOnHome,
+        pendingPullReasonOnHome: pendingPullReasonOnHome,
+        mostCommonPullReasonId: mostCommonPullReasonId,
         selection: selection ?? this.selection,
       );
 }
@@ -173,6 +179,7 @@ class CapacityBoundaryResponseResult {
     required this.secondaryCtaLabel,
     required this.primaryRoute,
     required this.cardSummary,
+    this.recommendedResponseNote = '',
   });
 
   final bool hasFeature;
@@ -190,6 +197,7 @@ class CapacityBoundaryResponseResult {
   final String secondaryCtaLabel;
   final String primaryRoute;
   final String cardSummary;
+  final String recommendedResponseNote;
 
   bool get hasSelection => selectedResponseText.isNotEmpty;
 
@@ -209,5 +217,6 @@ class CapacityBoundaryResponseResult {
     secondaryCtaLabel: '',
     primaryRoute: '',
     cardSummary: '',
+    recommendedResponseNote: '',
   );
 }

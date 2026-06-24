@@ -33,6 +33,8 @@ class CapacityWeeklyReviewInput {
     required this.pendingDecisionOutcome,
     required this.pendingCostCheckin,
     required this.beforeYesPauseOnHome,
+    required this.pendingPullReasonOnHome,
+    this.pullReasonSummary = '',
   });
 
   final bool sampleMode;
@@ -48,6 +50,8 @@ class CapacityWeeklyReviewInput {
   final bool pendingDecisionOutcome;
   final bool pendingCostCheckin;
   final bool beforeYesPauseOnHome;
+  final bool pendingPullReasonOnHome;
+  final String pullReasonSummary;
 }
 
 /// Card / screen result — no private journal text.
@@ -64,6 +68,7 @@ class CapacityWeeklyReviewResult {
     required this.whatRepeated,
     required this.whatChanged,
     required this.laterCostSection,
+    required this.whatPulledYouIn,
     required this.watchNext,
     required this.primaryCtaLabel,
     required this.secondaryCtaLabel,
@@ -84,6 +89,7 @@ class CapacityWeeklyReviewResult {
     whatRepeated: '',
     whatChanged: '',
     laterCostSection: '',
+    whatPulledYouIn: '',
     watchNext: '',
     primaryCtaLabel: '',
     secondaryCtaLabel: '',
@@ -103,6 +109,7 @@ class CapacityWeeklyReviewResult {
   final String whatRepeated;
   final String whatChanged;
   final String laterCostSection;
+  final String whatPulledYouIn;
   final String watchNext;
   final String primaryCtaLabel;
   final String secondaryCtaLabel;

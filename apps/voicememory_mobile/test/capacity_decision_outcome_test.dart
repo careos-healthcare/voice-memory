@@ -7,8 +7,11 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outc
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_store.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_engine.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_copy.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_models.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -127,8 +130,15 @@ void main() {
       expect(result.hasCard, isFalse);
     });
 
-    test('appears for capacity-yes user after capacity yes moment', () {
+    test('appears for capacity-yes user after pull reason recorded', () {
       final entries = [_capacityEntry('real_0')];
+      CapacityPullReasonStore.seedForTest([CapacityPullReasonRecord(
+        sourceEntryId: 'real_0',
+        reasonIds: const [CapacityPullReasonIds.soundedUrgent],
+        status: CapacityPullReasonStatus.answered,
+        createdAt: DateTime(2026, 6, 12),
+        updatedAt: DateTime(2026, 6, 12),
+      )]);
       final result = outcomeEngine.buildFromJournal(
         entries: entries,
         capacityLoopActive: true,
@@ -138,6 +148,18 @@ void main() {
       expect(result.hasCard, isTrue);
       expect(result.title, 'What did you choose?');
       expect(result.pendingEntryId, 'real_0');
+    });
+
+    test('hidden until pull reason answered or skipped', () {
+      CapacityPullReasonStore.seedForTest(const []);
+      final entries = [_capacityEntry('real_0')];
+      final result = outcomeEngine.buildFromJournal(
+        entries: entries,
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+        records: const [],
+      );
+      expect(result.hasCard, isFalse);
     });
 
     test('hidden in ScreenshotMode', () {
@@ -248,17 +270,19 @@ void main() {
 
     test('loop strengthen prompt when no outcomes recorded', () {
       CapacityDecisionOutcomeStore.seedForTest(const []);
+      CapacityPullReasonStore.seedForTest(const []);
 
       final result = loopEngine.buildFromJournal(
         entries: [_capacityEntry('real_0'), _capacityEntry('real_1')],
         capacityLoopActive: true,
         capacityCohortActive: false,
         outcomeRecords: const [],
+        pullReasonRecords: const [],
       );
 
       expect(
-        result.costLater,
-        contains(CapacityLoopCopy.outcomeStrengthenPrompt),
+        result.pullReasonSummary,
+        contains(CapacityPullReasonCopy.loopStrengthenPrompt),
       );
     });
 
@@ -328,6 +352,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           capacityLoopVisible: true,
+          capacityPullReasonVisible: false,
           capacityDecisionOutcomeVisible: true,
           capacityCostLaterCheckinVisible: true,
           beforeYouSayYesPauseVisible: false,

@@ -19,12 +19,14 @@ abstract final class CapacityWeeklyReviewGates {
   static bool showOnArchiveHome({
     required bool hasReview,
     required bool sampleMode,
+    required bool pendingPullReason,
     required bool pendingDecisionOutcome,
     required bool pendingCostCheckin,
     required bool beforeYesPauseOnHome,
   }) =>
       hasReview &&
       !sampleMode &&
+      !pendingPullReason &&
       !pendingDecisionOutcome &&
       !pendingCostCheckin &&
       !beforeYesPauseOnHome;

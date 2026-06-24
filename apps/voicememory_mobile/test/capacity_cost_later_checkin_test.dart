@@ -10,6 +10,8 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_copy.dar
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_copy.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_store.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -301,6 +303,7 @@ void main() {
     test('strengthen prompt when pending check-in and no records', () {
       CapacityCostStore.seedForTest(const []);
       CapacityDecisionOutcomeStore.seedForTest(const []);
+      CapacityPullReasonStore.seedForTest(const []);
 
       final result = loopEngine.buildFromJournal(
         entries: [
@@ -312,11 +315,12 @@ void main() {
         capacityCohortActive: false,
         costRecords: const [],
         outcomeRecords: const [],
+        pullReasonRecords: const [],
       );
 
       expect(
-        result.costLater,
-        contains(CapacityLoopCopy.outcomeStrengthenPrompt),
+        result.pullReasonSummary,
+        contains(CapacityPullReasonCopy.loopStrengthenPrompt),
       );
     });
   });

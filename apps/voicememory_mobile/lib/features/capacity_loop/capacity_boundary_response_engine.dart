@@ -5,6 +5,9 @@ import 'capacity_cost_models.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_store.dart';
+import 'capacity_pull_reason_copy.dart';
+import 'capacity_pull_reason_models.dart';
+import 'capacity_pull_reason_store.dart';
 import 'capacity_boundary_response_copy.dart';
 import 'capacity_boundary_response_models.dart';
 import 'capacity_boundary_response_store.dart';
@@ -34,6 +37,7 @@ class CapacityBoundaryResponseEngine {
   static bool showOnArchiveHome({
     required bool hasFeature,
     required bool sampleMode,
+    required bool pendingPullReason,
     required bool pendingDecisionOutcome,
     required bool pendingCostCheckin,
     required bool beforeYesPauseOnHome,
@@ -41,6 +45,7 @@ class CapacityBoundaryResponseEngine {
   }) =>
       hasFeature &&
       !sampleMode &&
+      !pendingPullReason &&
       !pendingDecisionOutcome &&
       !pendingCostCheckin &&
       !beforeYesPauseOnHome &&
@@ -97,6 +102,7 @@ class CapacityBoundaryResponseEngine {
     final showOnArchiveHome = CapacityBoundaryResponseEngine.showOnArchiveHome(
       hasFeature: true,
       sampleMode: false,
+      pendingPullReason: input.pendingPullReasonOnHome,
       pendingDecisionOutcome: input.pendingDecisionOutcome,
       pendingCostCheckin: input.pendingCostCheckin,
       beforeYesPauseOnHome: input.beforeYesPauseOnHome,
@@ -119,6 +125,11 @@ class CapacityBoundaryResponseEngine {
       hasSelection: selectedText.isNotEmpty,
     );
 
+    final recommendedNote =
+        input.mostCommonPullReasonId == CapacityPullReasonIds.soundedUrgent
+            ? CapacityPullReasonCopy.boundaryUrgentFitNote
+            : '';
+
     return CapacityBoundaryResponseResult(
       hasFeature: true,
       showOnArchiveHome: showOnArchiveHome,
@@ -135,6 +146,7 @@ class CapacityBoundaryResponseEngine {
       secondaryCtaLabel: CapacityBoundaryResponseCopy.useNextTimeCta,
       primaryRoute: CapacityBoundaryResponseCopy.route,
       cardSummary: cardSummary,
+      recommendedResponseNote: recommendedNote,
     );
   }
 
@@ -150,6 +162,8 @@ class CapacityBoundaryResponseEngine {
     bool pendingCostCheckin = false,
     bool beforeYesPauseOnHome = false,
     bool weeklyReviewOnHome = false,
+    bool pendingPullReasonOnHome = false,
+    List<CapacityPullReasonRecord>? pullReasonRecords,
   }) {
     if (sampleMode) return CapacityBoundaryResponseResult.hidden;
 
@@ -165,6 +179,9 @@ class CapacityBoundaryResponseEngine {
             CapacityCostStore.countWithLaterCost(costs);
     final storedSelection = selection ?? CapacityBoundaryResponseStore.cached;
 
+    final pullReasons = pullReasonRecords ?? CapacityPullReasonStore.cached;
+    final mostCommonPull = CapacityPullReasonStore.mostCommonReasonId(pullReasons);
+
     return build(
       CapacityBoundaryResponseInput(
         sampleMode: false,
@@ -177,6 +194,8 @@ class CapacityBoundaryResponseEngine {
         pendingCostCheckin: pendingCostCheckin,
         beforeYesPauseOnHome: beforeYesPauseOnHome,
         weeklyReviewOnHome: weeklyReviewOnHome,
+        pendingPullReasonOnHome: pendingPullReasonOnHome,
+        mostCommonPullReasonId: mostCommonPull,
         selection: storedSelection,
       ),
     );

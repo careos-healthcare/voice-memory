@@ -11,6 +11,7 @@ import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
+import '../features/capacity_loop/capacity_pull_reason_store.dart';
 import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/capacity_weekly_review_copy.dart';
@@ -85,6 +86,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
 
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
+    await CapacityPullReasonStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
@@ -103,6 +105,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         capacityCohortActive: cohortActive,
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
+        pullReasonRecords: CapacityPullReasonStore.cached,
       );
       _beforeYesPause = const BeforeYesPauseEngine().buildFromJournal(
         entries: entries,
@@ -118,6 +121,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         capacityCohortActive: cohortActive,
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
+        pullReasonRecords: CapacityPullReasonStore.cached,
       );
       _boundaryResponse =
           const CapacityBoundaryResponseEngine().buildFromJournal(
@@ -126,6 +130,7 @@ class _CapacityLoopScreenState extends State<CapacityLoopScreen> {
         capacityCohortActive: cohortActive,
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
+        pullReasonRecords: CapacityPullReasonStore.cached,
       );
       _loading = false;
     });

@@ -7,6 +7,7 @@ import '../features/acquisition/acquisition_cohort_coordinator.dart';
 import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
+import '../features/capacity_loop/capacity_pull_reason_store.dart';
 import '../features/capacity_loop/capacity_weekly_review_copy.dart';
 import '../features/capacity_loop/capacity_weekly_review_engine.dart';
 import '../features/capacity_loop/capacity_weekly_review_models.dart';
@@ -74,6 +75,7 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
 
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
+    await CapacityPullReasonStore.ensureLoaded();
     await CapacityBoundaryResponseStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
@@ -106,6 +108,9 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
       pendingCostCheckin: false,
       beforeYesPauseOnHome: false,
       weeklyReviewOnHome: false,
+      pendingPullReasonOnHome: false,
+      mostCommonPullReasonId:
+          CapacityPullReasonStore.mostCommonReasonId(CapacityPullReasonStore.cached),
       selection: CapacityBoundaryResponseStore.cached,
     );
     setState(() {
@@ -116,6 +121,7 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
         capacityCohortActive: cohortActive,
         costRecords: CapacityCostStore.cached,
         outcomeRecords: CapacityDecisionOutcomeStore.cached,
+        pullReasonRecords: CapacityPullReasonStore.cached,
       );
       _boundaryResponse =
           const CapacityBoundaryResponseEngine().build(boundaryInput);
@@ -224,6 +230,13 @@ class _CapacityWeeklyReviewScreenState extends State<CapacityWeeklyReviewScreen>
           result.laterCostSection,
           key: const Key('capacity_weekly_review_screen_later_cost'),
         ),
+        if (result.whatPulledYouIn.isNotEmpty)
+          _section(
+            context,
+            CapacityWeeklyReviewCopy.sectionWhatPulledYouIn,
+            result.whatPulledYouIn,
+            key: const Key('capacity_weekly_review_screen_what_pulled_you_in'),
+          ),
         _section(
           context,
           CapacityWeeklyReviewCopy.sectionWatchNext,

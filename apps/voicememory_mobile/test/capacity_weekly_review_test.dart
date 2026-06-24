@@ -99,6 +99,7 @@ CapacityWeeklyReviewResult _visibleResult() =>
         pendingDecisionOutcome: false,
         pendingCostCheckin: false,
         beforeYesPauseOnHome: false,
+        pendingPullReasonOnHome: false,
       ),
     );
 
@@ -154,11 +155,23 @@ void main() {
       );
     });
 
-    test('archive home suppresses when pending outcome/cost exists', () {
+    test('archive home suppresses when pending pull reason/outcome/cost exists', () {
       expect(
         CapacityWeeklyReviewGates.showOnArchiveHome(
           hasReview: true,
           sampleMode: false,
+          pendingPullReason: true,
+          pendingDecisionOutcome: false,
+          pendingCostCheckin: false,
+          beforeYesPauseOnHome: false,
+        ),
+        isFalse,
+      );
+      expect(
+        CapacityWeeklyReviewGates.showOnArchiveHome(
+          hasReview: true,
+          sampleMode: false,
+          pendingPullReason: false,
           pendingDecisionOutcome: true,
           pendingCostCheckin: false,
           beforeYesPauseOnHome: false,
@@ -169,6 +182,7 @@ void main() {
         CapacityWeeklyReviewGates.showOnArchiveHome(
           hasReview: true,
           sampleMode: false,
+          pendingPullReason: false,
           pendingDecisionOutcome: false,
           pendingCostCheckin: true,
           beforeYesPauseOnHome: false,
@@ -204,6 +218,7 @@ void main() {
           pendingDecisionOutcome: false,
           pendingCostCheckin: false,
           beforeYesPauseOnHome: false,
+          pendingPullReasonOnHome: false,
         ),
       );
       expect(result.hasReview, isFalse);
@@ -360,6 +375,7 @@ void main() {
           dailyArchiveExerciseVisible: true,
           archiveClarityProgressVisible: true,
           capacityLoopVisible: true,
+          capacityPullReasonVisible: false,
           capacityDecisionOutcomeVisible: false,
           capacityCostLaterCheckinVisible: false,
           beforeYouSayYesPauseVisible: false,

@@ -4,6 +4,7 @@ import 'capacity_decision_outcome_copy.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_decision_outcome_store.dart';
 import 'capacity_loop_engine.dart';
+import 'capacity_pull_reason_store.dart';
 
 /// Builds decision outcome visibility and pending targets — local only.
 class CapacityDecisionOutcomeEngine {
@@ -82,6 +83,7 @@ class CapacityDecisionOutcomeEngine {
     if (eligible.isEmpty) return null;
 
     for (final id in eligible.reversed) {
+      if (!CapacityPullReasonStore.hasRecordFor(id)) continue;
       if (!CapacityDecisionOutcomeStore.hasRecordFor(id, records)) return id;
     }
     return null;

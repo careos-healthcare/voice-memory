@@ -5,6 +5,9 @@ import 'capacity_cost_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_decision_outcome_store.dart';
+import 'capacity_pull_reason_engine.dart';
+import 'capacity_pull_reason_models.dart';
+import 'capacity_pull_reason_store.dart';
 import 'capacity_loop_engine.dart';
 import 'capacity_loop_gates.dart';
 import 'capacity_weekly_review_copy.dart';
@@ -55,6 +58,7 @@ class CapacityWeeklyReviewEngine {
     final showOnArchiveHome = CapacityWeeklyReviewGates.showOnArchiveHome(
       hasReview: true,
       sampleMode: false,
+      pendingPullReason: input.pendingPullReasonOnHome,
       pendingDecisionOutcome: input.pendingDecisionOutcome,
       pendingCostCheckin: input.pendingCostCheckin,
       beforeYesPauseOnHome: input.beforeYesPauseOnHome,
@@ -85,6 +89,7 @@ class CapacityWeeklyReviewEngine {
       whatRepeated: whatRepeated,
       whatChanged: whatChanged,
       laterCostSection: laterCostSection,
+      whatPulledYouIn: input.pullReasonSummary,
       watchNext: CapacityWeeklyReviewCopy.watchNextBody,
       primaryCtaLabel: CapacityWeeklyReviewCopy.reviewThisWeekCta,
       secondaryCtaLabel: CapacityWeeklyReviewCopy.saveNextYesMomentCta,
@@ -104,6 +109,8 @@ class CapacityWeeklyReviewEngine {
     bool pendingDecisionOutcome = false,
     bool pendingCostCheckin = false,
     bool beforeYesPauseOnHome = false,
+    bool pendingPullReasonOnHome = false,
+    List<CapacityPullReasonRecord>? pullReasonRecords,
   }) {
     if (sampleMode) return CapacityWeeklyReviewResult.hidden;
 
@@ -124,6 +131,8 @@ class CapacityWeeklyReviewEngine {
           (record) => record.outcomeId == CapacityDecisionOutcomeIds.saidYes,
         );
 
+    final pullReasons = pullReasonRecords ?? CapacityPullReasonStore.cached;
+
     return build(
       CapacityWeeklyReviewInput(
         sampleMode: false,
@@ -139,6 +148,9 @@ class CapacityWeeklyReviewEngine {
         pendingDecisionOutcome: pendingDecisionOutcome,
         pendingCostCheckin: pendingCostCheckin,
         beforeYesPauseOnHome: beforeYesPauseOnHome,
+        pendingPullReasonOnHome: pendingPullReasonOnHome,
+        pullReasonSummary:
+            CapacityPullReasonEngine.weeklyPullSummary(pullReasons),
       ),
     );
   }

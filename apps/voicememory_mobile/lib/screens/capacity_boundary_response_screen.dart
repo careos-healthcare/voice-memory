@@ -10,6 +10,7 @@ import '../features/capacity_loop/capacity_boundary_response_models.dart';
 import '../features/capacity_loop/capacity_boundary_response_store.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
 import '../features/capacity_loop/capacity_decision_outcome_store.dart';
+import '../features/capacity_loop/capacity_pull_reason_store.dart';
 import '../features/demo/sample_archive_mode.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../models/journal_entry.dart';
@@ -75,6 +76,7 @@ class _CapacityBoundaryResponseScreenState
     await CapacityBoundaryResponseStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
+    await CapacityPullReasonStore.ensureLoaded();
     final journal = widget.journalService ?? AppServices.instance.journal;
     final entries = await journal.loadAll();
     final loop = await LoopModeCoordinator.loadActive();
@@ -121,6 +123,9 @@ class _CapacityBoundaryResponseScreenState
       pendingCostCheckin: false,
       beforeYesPauseOnHome: false,
       weeklyReviewOnHome: false,
+      pendingPullReasonOnHome: false,
+      mostCommonPullReasonId:
+          CapacityPullReasonStore.mostCommonReasonId(CapacityPullReasonStore.cached),
       selection: CapacityBoundaryResponseStore.cached,
     );
   }
