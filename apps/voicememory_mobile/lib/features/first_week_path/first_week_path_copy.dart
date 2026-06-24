@@ -63,7 +63,7 @@ abstract final class FirstWeekPathCopy {
   static const day3Next =
       'Open beta feedback and mark whether this was useful.';
 
-  static const day4Reward = 'ArchiveMe knows what to watch next.';
+  static const day4Reward = 'You can see what to watch next.';
   static const day4Next = 'Add one moment around that theme.';
 
   static const day5Reward = 'Your evidence is getting stronger.';

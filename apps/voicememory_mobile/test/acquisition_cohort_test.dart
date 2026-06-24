@@ -133,7 +133,7 @@ void main() {
 
       expect(find.text(AcquisitionStartCopy.capacityTitle), findsOneWidget);
       expect(find.text(AcquisitionStartCopy.capacityBody), findsOneWidget);
-      expect(find.text(AcquisitionStartCopy.startLoopCta), findsOneWidget);
+      expect(find.text(AcquisitionStartCopy.capacityStartCta), findsOneWidget);
     });
 
     testWidgets('prove start screen copy', (tester) async {

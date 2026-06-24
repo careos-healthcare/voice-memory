@@ -78,6 +78,9 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
   }
 
   String get _primaryCta {
+    if (widget.cohortId == AcquisitionCohortId.capacityYesDirect) {
+      return AcquisitionStartCopy.capacityStartCta;
+    }
     return widget.cohortId == AcquisitionCohortId.genericArchive ||
             widget.cohortId == AcquisitionCohortId.unknown
         ? AcquisitionStartCopy.startGenericCta

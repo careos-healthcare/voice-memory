@@ -53,11 +53,12 @@ abstract final class BetaInviteCopy {
 
   static const betaSuccessChecklist =
       'Beta success means: save 3 real moments, return once, review what '
-      'repeated, tell us if it fits.';
+      'repeated, tell us if it fits, and say whether you would pay to keep '
+      'this archive.';
 
   static const reportBackPrompt =
       'Did you understand the app? Did it show anything useful by entry 3? '
-      'Would deeper long-term evidence history be worth paying for later?';
+      'Would you pay to keep a long-term archive of this pattern?';
 
   static String variantTitle(BetaInviteVariantId id) => switch (id) {
         BetaInviteVariantId.general => variantGeneralTitle,
