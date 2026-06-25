@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_review/archive_range_review_model.dart';
 import 'package:voicememory_mobile/features/archive_review/archive_range_review_store.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 ArchiveRangeReview _review(String id) => ArchiveRangeReview(
@@ -18,10 +21,25 @@ ArchiveRangeReview _review(String id) => ArchiveRangeReview(
   keyMomentIds: const ['m1', 'm2'],
 );
 
+Future<void> _deleteJournalArtifacts(String journalPath) async {
+  for (final path in [
+    journalPath,
+    JournalStore.encryptedPathFor(journalPath),
+  ]) {
+    final file = File(path);
+    if (await file.exists()) await file.delete();
+  }
+}
+
 Future<ArchiveRangeReviewStore> _store(String stamp) async {
+  final dir = Directory.systemTemp.createTempSync('vm_arr_$stamp');
+  final journalPath = '${dir.path}/journal.json';
+  final prefsPath = '${dir.path}/prefs.json';
+  await _deleteJournalArtifacts(journalPath);
   await AppServices.resetForTest(
-    journalPath: '/tmp/vm_arr_journal_$stamp.json',
-    prefsPath: '/tmp/vm_arr_prefs_$stamp.json',
+    journalPath: journalPath,
+    prefsPath: prefsPath,
+    skipRevenueCat: true,
   );
   return ArchiveRangeReviewStore(AppServices.instance.prefs);
 }

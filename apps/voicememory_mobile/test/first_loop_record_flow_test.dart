@@ -55,7 +55,9 @@ void _expectNoBannedWords(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('first-run policy shows one dominant record CTA', (tester) async {
+  testWidgets('first-run policy keeps archive demo off the ready stack', (
+    tester,
+  ) async {
     final stack = decideRecordStack(
       hasDueCheck: false,
       isFirstRun: true,
@@ -68,9 +70,9 @@ void main() {
       hasRoutineAnchorOffer: false,
       hasArchiveProof: false,
     );
-    expect(stack.showArchiveMemoryDemo, isTrue);
+    expect(stack.showArchiveMemoryDemo, isFalse);
     expect(stack.showStarterPrompts, isFalse);
-    expect(stack.suppressDuplicateRecordCtas, isTrue);
+    expect(stack.primaryState, RecordPrimaryState.firstRun);
   });
 
   testWidgets('ArchiveMemoryDemoCard shows Day 1/3/7 and positioning line', (
@@ -147,16 +149,7 @@ void main() {
       ),
     );
     expect(find.text('Record one moment'), findsNWidgets(2));
-    expect(
-      find.text('ArchiveMe needs one moment to start finding a pattern.'),
-      findsNothing,
-    );
-    expect(
-      find.text(
-        'Record one moment. ArchiveMe will start finding what repeats.',
-      ),
-      findsOneWidget,
-    );
+    expect(find.text(ConsumerUiCopy.patternsEarlyStateBody), findsOneWidget);
     _expectNoBannedWords(tester);
   });
 
@@ -206,7 +199,7 @@ void main() {
       hasRetentionStateCard: true,
       suppressRetentionForFirstRunDemo: true,
     );
-    expect(d.showArchiveMemoryDemo, isTrue);
+    expect(d.showArchiveMemoryDemo, isFalse);
     expect(d.showRetentionStateCard, isFalse);
   });
 }

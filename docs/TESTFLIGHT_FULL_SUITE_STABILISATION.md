@@ -107,10 +107,45 @@ Top failing files in original log: `record_screen_framing_copy_test` (16), `tran
 
 ## Test / build results (pass 1)
 
+## Test / build results (pass 3 — 2026-06-15)
+
+| Check | Result |
+|-------|--------|
+| Full `flutter test --concurrency=4` | **6254 passed / 71 failed** (~4m07s) — was 6206/107 |
+| `flutter build ios --release --no-codesign` | **Pass** — `Runner.app` (49.5MB) |
+| `flutter build apk --debug` | **Pass** — `app-debug.apk` |
+| iOS placeholder warnings | **None** |
+
+### Remaining failures before this pass
+
+107 failures (pass 2), dominated by copy drift, beta surface gates, privacy/storage test IO, purchase-intent placement, and async widget timeouts.
+
+### Clusters fixed (pass 3)
+
+| Cluster | Files / notes |
+|---------|----------------|
+| A — Copy / positioning | `capacity_yes_wedge_sharpening_test`, `first_three_journey_engine_test`, `warm_archive_copy_test`, `living_archive_copy_test`, `archive_paywall_stats_test`, `first_archive_state_test` |
+| B — Beta surface gates | `record_screen_overflow_test`, `first_loop_record_flow_test`, `first_recording_sample_test`, `start_here_recording_test`, `analysis_fallback_payoff_test`, `archive_home_priority_test` |
+| C — Privacy / storage | `privacy_data_controls_test`, `archive_privacy_controls_card_test`, `pro_interest_test`, `beta_feedback_test`, `archive_range_review_store_test` |
+| D — Purchase intent | `purchase_intent_return_cue_test` — cue suppressed at 0–1 entries; shows after comparison seed (≥2) with pending intent |
+| Docs / guardrails | `docs/BETA_SURFACE_AREA_GUARDRAIL.md`, `test/beta_surface_area_guardrail_test.dart`, `docs/DEPENDENCY_MAINTENANCE_PLAN.md` deferral table + tests |
+
+### Intentionally parked (~71 remaining)
+
+Historical / advanced surfaces not on the beta path: `audience_wedge_test` (5), `pattern_map_screen_test` (4), `belief_distance_test` (4), theory/engine depth tests, pressure-insights pro gates, PNG export (manual-only when env unset). Next pass should triage these without adding first-run cards.
+
+### Why no dependency upgrades
+
+Per `DEPENDENCY_MAINTENANCE_PLAN.md`: upgrades deferred during TestFlight unless crash, store rejection, or critical security advisory. No such blocker confirmed; builds pass on current constraints.
+
+### Why no product features
+
+This pass is stabilisation + guardrails only — no new dashboards, guided paths, payments, or RevenueCat enablement.
+
 ## Dependency upgrades
 
 **Deferred** until post-beta maintenance branch. No dependency bumps in this stabilisation branch.
 
 ## Remaining work
 
-Per-file triage for the ~107 remaining failures. Prefer updating tests when copy changed intentionally; fix app only when behavior regressed. Next clusters: `purchase_intent_return_cue_test`, `record_screen_overflow_test`, `consumer_copy_banned_words_test`, `first_loop_record_flow_test`.
+Triage ~71 remaining failures — prefer test updates when copy/gates changed intentionally; fix app only on regression. Top files: `audience_wedge_test`, `pattern_map_screen_test`, `belief_distance_test`, `view_archive_after_save_test`.

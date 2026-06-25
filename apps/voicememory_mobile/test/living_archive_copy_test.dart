@@ -25,7 +25,7 @@ void main() {
   test('confidence headline uses warm reflective phrasing', () {
     expect(
       LivingArchiveCopy.confidenceChangeHeadline(61, 73),
-      'The archive feels more certain about this than before.',
+      'ArchiveMe feels more certain about this than before.',
     );
   });
 

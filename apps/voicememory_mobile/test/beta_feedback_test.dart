@@ -159,7 +159,10 @@ void main() {
       tempDir = await Directory.systemTemp.createTemp('beta_feedback_test_');
       prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       store = BetaFeedbackStore(prefs);
-      journalStore = await JournalStore.open('${tempDir.path}/journal.json');
+      journalStore = await JournalStore.open(
+        '${tempDir.path}/journal.json',
+        encryptAtRest: false,
+      );
       await BetaFeedbackStore.resetForTest();
     });
 

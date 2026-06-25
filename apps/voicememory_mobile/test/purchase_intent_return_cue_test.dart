@@ -9,6 +9,8 @@ import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/purchase_intent_return_cue.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/models/journal_entry.dart';
+import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -303,6 +305,7 @@ void main() {
       capturedArgs = null;
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -349,17 +352,73 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
+    Future<void> pumpUntilPurchaseCue(WidgetTester tester) async {
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (find.byKey(const Key('purchase_intent_return_cue')).evaluate().isNotEmpty) {
+          return;
+        }
+      }
+    }
+
     Future<void> seedPendingIntent() async {
       await PurchaseIntentStore(
         prefs: prefs,
       ).recordPurchaseStarted(source: 'value_moment', plan: 'yearly');
     }
 
-    testWidgets('cue appears after a purchase start without completion', (
+    Future<void> seedComparisonEntries() async {
+      await AppServices.instance.journalStore.save(
+        JournalEntry(
+          id: 'e1',
+          createdAt: DateTime(2026, 6, 10),
+          transcript: 'First saved moment with enough transcript length here.',
+          durationSeconds: 20,
+          reflection: const Reflection(
+            mood: 'thoughtful',
+            emotionalIntensity: 2,
+            recurringThemes: ['work'],
+            exactLanguagePattern: '',
+            concreteObservation: 'Observation.',
+            repeatedSignal: '',
+          ),
+        ),
+      );
+      await AppServices.instance.journalStore.save(
+        JournalEntry(
+          id: 'e2',
+          createdAt: DateTime(2026, 6, 11),
+          transcript: 'Second saved moment with enough transcript length here.',
+          durationSeconds: 20,
+          reflection: const Reflection(
+            mood: 'thoughtful',
+            emotionalIntensity: 2,
+            recurringThemes: ['work'],
+            exactLanguagePattern: '',
+            concreteObservation: 'Observation.',
+            repeatedSignal: '',
+          ),
+        ),
+      );
+    }
+
+    testWidgets('cue suppressed at zero entries even with pending intent', (
       tester,
     ) async {
       await tester.runAsync(seedPendingIntent);
       await pumpRecordScreen(tester);
+      expect(find.byKey(const Key('purchase_intent_return_cue')), findsNothing);
+    });
+
+    testWidgets('cue appears after purchase start without completion', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await seedPendingIntent();
+        await seedComparisonEntries();
+      });
+      await pumpRecordScreen(tester);
+      await pumpUntilPurchaseCue(tester);
       expect(
         find.byKey(const Key('purchase_intent_return_cue')),
         findsOneWidget,
@@ -391,8 +450,12 @@ void main() {
     testWidgets('dismiss hides the cue for the rest of the session', (
       tester,
     ) async {
-      await tester.runAsync(seedPendingIntent);
+      await tester.runAsync(() async {
+        await seedPendingIntent();
+        await seedComparisonEntries();
+      });
       await pumpRecordScreen(tester);
+      await pumpUntilPurchaseCue(tester);
       await tester.ensureVisible(
         find.byKey(const Key('purchase_intent_return_cue_dismiss')),
       );
@@ -413,8 +476,12 @@ void main() {
     });
 
     testWidgets('CTA routes to the existing paywall', (tester) async {
-      await tester.runAsync(seedPendingIntent);
+      await tester.runAsync(() async {
+        await seedPendingIntent();
+        await seedComparisonEntries();
+      });
       await pumpRecordScreen(tester);
+      await pumpUntilPurchaseCue(tester);
       await tester.ensureVisible(
         find.byKey(const Key('purchase_intent_return_cue_cta')),
       );

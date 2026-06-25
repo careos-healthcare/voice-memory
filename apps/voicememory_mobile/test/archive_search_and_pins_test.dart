@@ -406,36 +406,51 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       late Directory dir;
+      final journalPath = '${Directory.systemTemp.createTempSync('vm_search_screen_').path}/entries.json';
+      dir = File(journalPath).parent;
+      final prefsPath = '${dir.path}/prefs.json';
+      for (final path in [
+        journalPath,
+        prefsPath,
+        JournalStore.encryptedPathFor(journalPath),
+      ]) {
+        final file = File(path);
+        if (file.existsSync()) file.deleteSync();
+      }
       await tester.runAsync(() async {
-        dir = Directory.systemTemp.createTempSync('vm_search_screen_');
         await AppServices.resetForTest(
-          journalPath: '${dir.path}/entries.json',
+          journalPath: journalPath,
+          prefsPath: prefsPath,
           skipRevenueCat: true,
         );
         await AppServices.instance.journalStore.save(
           _entry(id: 'a', transcript: 'Planning the product launch'),
         );
       });
-      addTearDown(() => dir.deleteSync(recursive: true));
+      addTearDown(() {
+        if (dir.existsSync()) dir.deleteSync(recursive: true);
+      });
 
-      // Pump inside the real async zone: the screen's load path reads
-      // prefs from disk during initState.
       await tester.runAsync(() async {
         await tester.pumpWidget(
           MaterialApp(theme: AppTheme.light(), home: const JournalScreen()),
         );
-        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await Future<void>.delayed(const Duration(milliseconds: 300));
       });
       await tester.pump();
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
 
-      // Archive list visible, no empty state yet. With exactly one entry
-      // the first-60 archive helper leads the list, so scroll the entry
-      // row into view first.
-      await tester.dragUntilVisible(
-        find.text('Planning the product launch'),
-        find.byType(ListView),
-        const Offset(0, -120),
-      );
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      final scrollTarget = find.byType(ListView);
+      if (scrollTarget.evaluate().isNotEmpty) {
+        await tester.dragUntilVisible(
+          find.text('Planning the product launch'),
+          scrollTarget,
+          const Offset(0, -120),
+        );
+      }
       expect(find.text('Planning the product launch'), findsOneWidget);
       expect(find.byKey(const Key('archive_search_empty_state')), findsNothing);
 

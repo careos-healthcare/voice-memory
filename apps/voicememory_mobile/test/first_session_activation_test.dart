@@ -26,6 +26,7 @@ import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
@@ -386,12 +387,15 @@ void main() {
       tester,
     ) async {
       await tester.runAsync(() async {
-        final dir = Directory('test/tmp/first_session');
+        final dir = Directory('test/tmp/first_session_pressure_win');
         if (!await dir.exists()) await dir.create(recursive: true);
         final journalPath = '${dir.path}/journal.json';
         final prefsPath = '${dir.path}/prefs.json';
-        // Start from a clean archive so first-win detection is deterministic.
-        for (final path in [journalPath, prefsPath]) {
+        for (final path in [
+          journalPath,
+          prefsPath,
+          JournalStore.encryptedPathFor(journalPath),
+        ]) {
           final file = File(path);
           if (await file.exists()) await file.delete();
         }
@@ -427,9 +431,10 @@ void main() {
 
       await tester.runAsync(() async {
         await tester.tap(find.byKey(const Key('pressure_quick_save_cta')));
-        await Future<void>.delayed(const Duration(milliseconds: 150));
+        await Future<void>.delayed(const Duration(milliseconds: 300));
       });
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
       // First win replaces the generic quick-save success.
       expect(find.byKey(const Key('pressure_first_win_card')), findsOneWidget);
@@ -440,7 +445,8 @@ void main() {
       );
 
       await tester.tap(find.byKey(const Key('pressure_first_win_cta')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
       expect(find.text('INSIGHTS_MARKER'), findsOneWidget);
     });
   });

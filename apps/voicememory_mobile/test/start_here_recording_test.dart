@@ -28,12 +28,12 @@ JournalEntry _entry(String id) {
 void main() {
   group('StartHereCatalog', () {
     test('includes four Start Here options', () {
-      expect(StartHereCatalog.sectionTitle, 'Start Here');
+      expect(StartHereCatalog.sectionTitle, 'Try saying one of these');
       expect(StartHereCatalog.prompts, hasLength(4));
       expect(StartHereCatalog.prompts.first, 'What happened today?');
       expect(
         StartHereCatalog.continueBuildingArchive,
-        'Continue building your archive.',
+        'Keep adding reflections to sharpen your patterns.',
       );
     });
   });
@@ -87,7 +87,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('start_here_section')), findsOneWidget);
-      expect(find.text('Start Here'), findsOneWidget);
+      expect(find.text('Try saying one of these'), findsOneWidget);
       for (final prompt in StartHereCatalog.prompts) {
         expect(find.text(prompt), findsOneWidget);
       }
@@ -131,7 +131,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Start Here'), findsNothing);
+      expect(find.text('Try saying one of these'), findsNothing);
       expect(
         find.byKey(const Key('start_here_continue_message')),
         findsOneWidget,

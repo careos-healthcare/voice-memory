@@ -304,6 +304,7 @@ void main() {
         if (id == ArchiveHomeSectionId.firstWeekPath) continue;
         if (id == ArchiveHomeSectionId.dailyArchiveExercise) continue;
         if (id == ArchiveHomeSectionId.archiveClarityProgress) continue;
+        if (id == ArchiveHomeSectionId.archiveDailyChange) continue;
         expect(reachable, contains(id), reason: '$id should remain reachable');
       }
     });

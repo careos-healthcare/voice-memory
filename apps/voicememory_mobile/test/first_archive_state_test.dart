@@ -213,11 +213,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedTitle),
+        find.text(VisibleArchiveProofCopy.archiveHomeOneTitle),
         findsOneWidget,
       );
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedBody),
+        find.text(VisibleArchiveProofCopy.archiveHomeOneBody),
         findsOneWidget,
       );
       expect(find.text('Add one more moment'), findsOneWidget);
@@ -230,7 +230,7 @@ void main() {
     ) async {
       await tester.runAsync(() async {
         await AppServices.instance.journalStore.save(
-          _entry(transcript: 'too short'),
+          _entry(transcript: 'Short but still enough transcript chars.'),
         );
       });
 
@@ -244,7 +244,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        find.text(VisibleArchiveProofCopy.patternsOneEntryTitle),
+        find.text(VisibleArchiveProofCopy.archiveHomeOneTitle),
         findsOneWidget,
       );
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
@@ -257,10 +257,10 @@ void main() {
       addTearDown(() => tempDir.deleteSync(recursive: true));
       final journalPath = '${tempDir.path}/entries.json';
 
-      final store = await JournalStore.open(journalPath);
+      final store = await JournalStore.open(journalPath, encryptAtRest: false);
       await store.save(_entry(id: 'persist1'));
 
-      final reopened = await JournalStore.open(journalPath);
+      final reopened = await JournalStore.open(journalPath, encryptAtRest: false);
       final entries = await reopened.loadAll();
 
       expect(entries.length, 1);
