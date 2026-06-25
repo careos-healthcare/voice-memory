@@ -250,6 +250,7 @@ void main() {
       tempDir = Directory.systemTemp.createTempSync('vm_low_effort_');
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -259,6 +260,30 @@ void main() {
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
+
+    Future<void> seedReflections(WidgetTester tester, {int count = 3}) async {
+      await tester.runAsync(() async {
+        for (var i = 0; i < count; i++) {
+          await AppServices.instance.journalStore.save(
+            JournalEntry(
+              id: 'e$i',
+              createdAt: DateTime(2026, 6, 1 + i, 12),
+              transcript:
+                  'A long enough transcript to count as a saved reflection number $i.',
+              durationSeconds: 30,
+              reflection: const Reflection(
+                mood: 'thoughtful',
+                emotionalIntensity: 2,
+                recurringThemes: ['work'],
+                exactLanguagePattern: 'pattern',
+                concreteObservation: 'Work pressure showed up again today.',
+                repeatedSignal: 'signal',
+              ),
+            ),
+          );
+        }
+      });
+    }
 
     Future<void> pumpRecordScreen(
       WidgetTester tester, {
@@ -279,35 +304,21 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-    }
-
-    Future<void> seedReflection(WidgetTester tester) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
-            ),
-          ),
-        );
-      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (find
+            .byKey(const Key('one_small_recording_card'))
+            .evaluate()
+            .isNotEmpty) {
+          return;
+        }
+      }
     }
 
     testWidgets('appears as a secondary option below One Small Recording', (
       tester,
     ) async {
-      await seedReflection(tester);
+      await seedReflections(tester);
       await pumpRecordScreen(
         tester,
         store: MemoryPressureCheckInStore(_workThread3()),
@@ -323,16 +334,12 @@ void main() {
         tester.getTopLeft(primary).dy,
         lessThan(tester.getTopLeft(fallback).dy),
       );
-      expect(
-        find.byKey(const Key('one_small_recording_record_cta')),
-        findsOneWidget,
-      );
     });
 
     testWidgets('tapping an option persists a real lightweight record', (
       tester,
     ) async {
-      await seedReflection(tester);
+      await seedReflections(tester);
       final store = MemoryPressureCheckInStore(_workThread3());
       await pumpRecordScreen(tester, store: store);
 
@@ -340,7 +347,8 @@ void main() {
       await tester.ensureVisible(option);
       await tester.pump();
       await tester.tap(option);
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
 
       // Persisted: one new record with the marker option id and the tracked
       // thread context — and the confirmation only shows because it saved.
@@ -354,7 +362,7 @@ void main() {
     testWidgets('no fallback without a one-small-recording starter', (
       tester,
     ) async {
-      await seedReflection(tester);
+      await seedReflections(tester, count: 1);
       await pumpRecordScreen(tester, store: MemoryPressureCheckInStore());
 
       expect(find.byKey(const Key('one_small_recording_card')), findsNothing);

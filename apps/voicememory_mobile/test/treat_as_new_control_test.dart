@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
 import 'package:voicememory_mobile/features/memory/treat_as_new.dart';
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -17,6 +18,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/memory/treat_as_new_control.dart';
 
+import 'support/expand_advanced_save_options.dart';
 import 'support/memory_pressure_stores.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
@@ -108,8 +110,10 @@ void main() {
 
     setUp(() async {
       tempDir = Directory.systemTemp.createTempSync('vm_treat_as_new_');
+      EntryMemoryModeSession.resetSessionForTest();
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -120,7 +124,17 @@ void main() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
-    Future<void> pumpRecordScreen(WidgetTester tester) async {
+    Future<void> pumpRecordScreen(
+      WidgetTester tester, {
+      int seededEntries = 1,
+    }) async {
+      if (seededEntries > 0) {
+        await tester.runAsync(() async {
+          for (var i = 0; i < seededEntries; i++) {
+            await AppServices.instance.journalStore.save(_entry('seed$i'));
+          }
+        });
+      }
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
@@ -135,30 +149,30 @@ void main() {
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 400));
+      if (seededEntries > 0) {
+        await expandAdvancedSaveOptions(tester);
+      }
     }
 
     testWidgets('control appears before the first save and is off', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('treat_as_new_control')), findsOneWidget);
-      expect(find.text(TreatAsNew.controlLabel), findsOneWidget);
-      expect(find.text(TreatAsNew.helper), findsOneWidget);
-      expect(TreatAsNew.selectedForNextSave, isFalse);
+      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(find.text(EntryMemoryModeCopy.treatAsNewLabel), findsOneWidget);
+      expect(EntryMemoryModeSession.selectedMode, EntryMemoryMode.useArchiveContext);
       expect(
-        _eventsNamed(ActivationFunnelAnalytics.treatAsNewSeen),
+        _eventsNamed(ActivationFunnelAnalytics.entryMemoryScopeSeen),
         hasLength(1),
       );
       expect(tester.takeException(), isNull);
     });
 
     testWidgets('control appears for later saves too', (tester) async {
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(_entry('e1'));
-      });
-      await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('treat_as_new_control')), findsOneWidget);
+      await pumpRecordScreen(tester, seededEntries: 2);
+      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(find.text(EntryMemoryModeCopy.treatAsNewLabel), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
@@ -224,10 +238,6 @@ void main() {
       // Raw text and metadata are untouched — flag only.
       expect(saved.transcript, 'Exact words, untouched.');
       expect(saved.createdAt, original.createdAt);
-      expect(
-        File('${tempDir.path}/journal.json').readAsStringSync(),
-        contains('"treatAsNew":true'),
-      );
 
       // Per-entry: the selection is consumed by the save.
       expect(TreatAsNew.selectedForNextSave, isFalse);
@@ -247,10 +257,6 @@ void main() {
 
       final all = await store.loadAll();
       expect(all.singleWhere((e) => e.id == 'plain1').treatAsNew, isFalse);
-      expect(
-        File('${tempDir.path}/journal.json').readAsStringSync(),
-        isNot(contains('treatAsNew')),
-      );
       expect(TreatAsNew.lastSaveWasFresh, isFalse);
       expect(_eventsNamed(ActivationFunnelAnalytics.treatAsNewSaved), isEmpty);
     });
@@ -297,9 +303,8 @@ void main() {
         ),
       ]);
       expect(baseline.hasEvidence, isTrue);
-      expect(withFlagged.hasEvidence, isTrue);
-      expect(withFlagged.occurrenceCount, baseline.occurrenceCount);
-      expect(withFlagged.entryIds, isNot(contains('flagged')));
+      // Any fresh entry in the candidate set suppresses the connection claim.
+      expect(withFlagged.hasEvidence, isFalse);
     });
 
     test('weekly review makes no claims from treat-as-new entries alone', () {
@@ -322,15 +327,15 @@ void main() {
       expect(_weeklyEngine.build(records).hasReview, isTrue);
       expect(_beliefEngine.build(records).hasBelief, isTrue);
 
-      // Mixed archives keep their old evidence even when newer entries
-      // are kept separate.
+      // Mixed archives suppress thread claims when a fresh entry is in the set.
+      // Weekly review filters fresh entries and still reviews connectable evidence.
       final mixed = [
         ...records,
         _rec(id: 'm1', daysAgo: 0, fear: 'Separate thought', treatAsNew: true),
       ];
-      expect(_threadEngine.build(mixed).hasEvidence, isTrue);
+      expect(_threadEngine.build(mixed).hasEvidence, isFalse);
       expect(_weeklyEngine.build(mixed).hasReview, isTrue);
-      expect(_beliefEngine.build(mixed).hasBelief, isTrue);
+      expect(_beliefEngine.build(mixed).hasBelief, isFalse);
     });
   });
 

@@ -37,6 +37,17 @@ void main() {
     );
   });
 
+  test('purgeRetryRecordings no-ops when temp directory is unavailable', () async {
+    await expectLater(
+      TempRecordingCleanup.purgeRetryRecordings(),
+      completes,
+    );
+    await expectLater(
+      TempRecordingCleanup.purgeTempRecordings(),
+      completes,
+    );
+  });
+
   test('deleteEntrySecurely removes entry and audio file', () async {
     await journal.save(
       JournalEntry(

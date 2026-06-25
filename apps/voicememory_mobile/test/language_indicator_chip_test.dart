@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/language/language_model.dart';
 import 'package:voicememory_mobile/features/language/localized_copy.dart';
 import 'package:voicememory_mobile/widgets/language/language_indicator_chip.dart';
+
+String _chipLabel(String code) =>
+    '${localized('languageLabelPrefix', code)}: ${languageDisplayName(code)}';
 
 void main() {
   testWidgets('non-English language chip appears', (tester) async {
@@ -17,7 +21,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Language: Spanish'), findsOneWidget);
+    expect(find.text(_chipLabel('es')), findsOneWidget);
   });
 
   testWidgets('tapping the chip opens the language override sheet', (
@@ -36,14 +40,22 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Language: Gujarati'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text(_chipLabel('gu')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Reflection language'), findsOneWidget);
-    expect(find.text('Use detected language'), findsOneWidget);
+    expect(
+      find.text(localized('reflectionLanguageTitle', 'gu')),
+      findsOneWidget,
+    );
+    expect(
+      find.text(localized('useDetectedLanguage', 'gu')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.text('English'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(selected, 'en');
   });
@@ -51,15 +63,15 @@ void main() {
   testWidgets('manual language override updates UI copy', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: _LanguageHarness()));
 
-    // Spanish copy is shown initially.
     expect(find.text(localized('useThisTomorrow', 'es')), findsOneWidget);
 
-    await tester.tap(find.text('Language: Spanish'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text(_chipLabel('es')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('English'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
-    // After overriding to English, the copy updates.
     expect(find.text(localized('useThisTomorrow', 'en')), findsOneWidget);
     expect(find.text(localized('useThisTomorrow', 'es')), findsNothing);
   });

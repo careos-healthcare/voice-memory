@@ -13,6 +13,15 @@ import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_mo
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 
 void main() {
+  setUp(() async {
+    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+    await AppServices.resetForTest(
+      journalPath: '/tmp/vm_compelling_ui_journal_$stamp.json',
+      prefsPath: '/tmp/vm_compelling_ui_prefs_$stamp.json',
+      skipRevenueCat: true,
+    );
+  });
+
   testWidgets('compelling preview shows question, why, and example', (
     tester,
   ) async {
@@ -100,13 +109,15 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(find.text('Direct'));
-    await tester.pump();
-
     expect(
       find.text('Did you say yes before checking what you needed?'),
       findsOneWidget,
     );
+
+    await tester.tap(find.text('Gentle'));
+    await tester.pump();
+
+    expect(find.text('Did this pattern show up again?'), findsOneWidget);
   });
 
   testWidgets('result card use tomorrow passes selected question', (
@@ -147,6 +158,7 @@ void main() {
     await AppServices.resetForTest(
       journalPath: '/tmp/vm_compelling_metrics_journal_$stamp.json',
       prefsPath: '/tmp/vm_compelling_metrics_prefs_$stamp.json',
+      skipRevenueCat: true,
     );
     ActivationTracker.trackCompellingCheckAccepted();
     await Future<void>.delayed(const Duration(milliseconds: 200));

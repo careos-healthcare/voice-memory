@@ -376,10 +376,10 @@ void main() {
         lastCaptureAnalysisSucceeded: false,
       );
 
-      expect(find.byKey(const Key('second_session_payoff_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
       expect(find.text('ArchiveMe has two moments to compare.'), findsOneWidget);
       expect(find.textContaining('No clear repeat yet'), findsOneWidget);
-      expect(find.text('Deeper analysis can run later. This moment is already saved.'), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedPatternWords);
     });

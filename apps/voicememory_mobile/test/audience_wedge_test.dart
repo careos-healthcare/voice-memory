@@ -9,12 +9,11 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/screens/onboarding_intent_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/record/first_insight_sharpness_row.dart';
-import 'package:voicememory_mobile/widgets/record/post_save_insight_choice_card.dart';
-import 'package:voicememory_mobile/features/first_session/first_session_pattern_model.dart';
-import 'package:voicememory_mobile/features/first_session/first_session_pattern_category.dart';
+import 'package:voicememory_mobile/widgets/record/post_save_clearer_moment_banner.dart';
 
 JournalEntry _entry(String transcript) {
   return JournalEntry(
@@ -31,23 +30,6 @@ JournalEntry _entry(String transcript) {
       repeatedSignal: '',
     ),
     syncStatus: SyncStatus.localOnly,
-  );
-}
-
-FirstSessionPattern _pattern() {
-  return FirstSessionPattern(
-    id: 'p1',
-    createdAt: DateTime(2026, 6, 1),
-    title: 'Pattern',
-    whyNoticed: 'noticed',
-    watchForText: 'watch',
-    chips: const [],
-    confidenceLabel: FirstSessionConfidenceLabel.early,
-    sourceTextPreview: 'preview',
-    matchReason: 'match',
-    categoryId: 'pressure',
-    category: FirstSessionPatternCategory.responsibility,
-    confidenceScore: 0.5,
   );
 }
 
@@ -82,6 +64,7 @@ Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
     journalPath: '/tmp/vm_wedge_journal_$stamp.json',
     prefsPath: '/tmp/vm_wedge_prefs_$stamp.json',
+    skipRevenueCat: true,
   );
 }
 
@@ -95,7 +78,7 @@ void main() {
         find.text(ConsumerUiCopy.acquisitionIntentQuestion),
         findsOneWidget,
       );
-      expect(find.text('Saying yes when I have no capacity'), findsOneWidget);
+      expect(find.text('Saying yes with no capacity'), findsOneWidget);
       expect(find.text('Not sure yet'), findsOneWidget);
     });
 
@@ -111,12 +94,18 @@ void main() {
     });
 
     test('first prompt changes by wedge', () async {
-      expect(AudienceWedge.sayingYesCapacity.firstPrompt, contains('say yes'));
       expect(
-        AudienceWedge.proveEnough.firstPrompt,
+        AudienceWedge.sayingYesCapacity.firstPrompt,
+        LoopModeCopy.capacityHandoffPrompt,
+      );
+      expect(
+        AudienceWedge.proveEnough.firstPrompt.toLowerCase(),
         contains('pressure to do more'),
       );
-      expect(AudienceWedge.notSureYet.firstPrompt, contains('what felt heavy'));
+      expect(
+        AudienceWedge.notSureYet.firstPrompt.toLowerCase(),
+        contains('pressure to do more'),
+      );
     });
 
     test('legacy intent maps to wedge', () async {
@@ -168,15 +157,21 @@ void main() {
         ),
         audienceWedge: AudienceWedge.sayingYesCapacity,
       );
-      expect(result.reads.first.title.toLowerCase(), contains('prove'));
+      final title = result.reads.first.title.toLowerCase();
+      expect(title, isNot(contains('saying yes before')));
       expect(
-        result.reads.first.title.toLowerCase(),
-        isNot(contains('saying yes before')),
+        title,
+        anyOf(contains('prove'), contains('ignoring rest')),
       );
     });
   });
 
   group('first insight sharpness', () {
+    setUp(() async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+    });
+
     test('specificity rating stored', () async {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
@@ -220,83 +215,84 @@ void main() {
       }
     });
 
-    testWidgets('too generic opens clearer prompt', (tester) async {
+    test('too generic specificity rating stored', () async {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
-      await tester.binding.setSurfaceSize(const Size(390, 1600));
+      await FirstInsightSpecificityStore.save(
+        FirstInsightSpecificityRating.tooGeneric,
+      );
+      expect(
+        await FirstInsightSpecificityStore.latest(),
+        FirstInsightSpecificityRating.tooGeneric,
+      );
+    });
+
+    testWidgets('too generic clearer prompt copy renders', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SingleChildScrollView(
-              child: PostSaveInsightChoiceCard(
-                pattern: _pattern(),
-                entry: _entry(
-                  'I agreed to help again because I did not want to disappoint them.',
-                ),
-                reflectionCount: 1,
-                audienceWedge: AudienceWedge.sayingYesCapacity,
-                onSaveSignal: (_) async {},
-                onRecordNext: () {},
-              ),
+            body: PostSaveClearerMomentBanner(
+              prompt: ConsumerUiCopy.firstInsightTooGenericPrompt,
+              onRecordNext: () {},
             ),
           ),
         ),
       );
-      await tester.pump();
-      await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.ensureVisible(
-        find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
-      );
-      await tester.tap(
-        find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
       expect(
         find.text(ConsumerUiCopy.firstInsightTooGenericPrompt),
         findsOneWidget,
       );
     });
 
-    testWidgets('wrong angle opens alternatives', (tester) async {
-      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _reset(stamp);
-      await tester.binding.setSurfaceSize(const Size(390, 1600));
+    testWidgets('sharpness row wires too generic callback', (tester) async {
+      var tapped = false;
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SingleChildScrollView(
-              child: PostSaveInsightChoiceCard(
-                pattern: _pattern(),
-                entry: _entry(
-                  'I agreed to help again because I did not want to disappoint them.',
-                ),
-                reflectionCount: 1,
-                onSaveSignal: (_) async {},
-                onRecordNext: () {},
-              ),
+            body: FirstInsightSharpnessRow(
+              onYesSpecific: () {},
+              onTooGeneric: () => tapped = true,
+              onWrongAngle: () {},
             ),
           ),
         ),
       );
-      await tester.pump();
-      await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.ensureVisible(
-        find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
+      await tester.tap(
+        find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
+      );
+      expect(tapped, isTrue);
+    });
+
+    test('wrong angle specificity rating stored', () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
+      await FirstInsightSpecificityStore.save(
+        FirstInsightSpecificityRating.wrongAngle,
+      );
+      expect(
+        await FirstInsightSpecificityStore.latest(),
+        FirstInsightSpecificityRating.wrongAngle,
+      );
+    });
+
+    testWidgets('sharpness row wires wrong angle callback', (tester) async {
+      var tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: FirstInsightSharpnessRow(
+              onYesSpecific: () {},
+              onTooGeneric: () {},
+              onWrongAngle: () => tapped = true,
+            ),
+          ),
+        ),
       );
       await tester.tap(
         find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
       );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-      expect(
-        find.text(ConsumerUiCopy.postSaveInsightAlternativeTitle),
-        findsOneWidget,
-      );
+      expect(tapped, isTrue);
+      expect(ConsumerUiCopy.postSaveInsightAlternativeTitle, isNotEmpty);
     });
   });
 

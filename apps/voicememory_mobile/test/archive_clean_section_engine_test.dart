@@ -72,6 +72,7 @@ void main() {
         ArchiveCleanSectionType.today,
         ArchiveCleanSectionType.thisWeek,
         ArchiveCleanSectionType.thisPattern,
+        ArchiveCleanSectionType.reviewPeriod,
         ArchiveCleanSectionType.askArchive,
         ArchiveCleanSectionType.olderMoments,
       ]);

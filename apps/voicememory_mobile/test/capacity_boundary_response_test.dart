@@ -16,6 +16,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capacity_boundary_response_card.dart';
 
@@ -95,10 +96,26 @@ void _expectNoBannedCopy(Iterable<String> visible) {
   }
 }
 
+Future<void> _deleteJournalArtifacts(String journalPath) async {
+  for (final path in [
+    journalPath,
+    JournalStore.encryptedPathFor(journalPath),
+  ]) {
+    final file = File(path);
+    if (await file.exists()) await file.delete();
+  }
+}
+
 Future<void> _resetStore(String stamp) async {
+  final journalPath = '/tmp/vm_capacity_boundary_journal_$stamp.json';
+  final prefsPath = '/tmp/vm_capacity_boundary_prefs_$stamp.json';
+  await _deleteJournalArtifacts(journalPath);
+  final prefsFile = File(prefsPath);
+  if (await prefsFile.exists()) await prefsFile.delete();
   await AppServices.resetForTest(
-    journalPath: '/tmp/vm_capacity_boundary_journal_$stamp.json',
-    prefsPath: '/tmp/vm_capacity_boundary_prefs_$stamp.json',
+    journalPath: journalPath,
+    prefsPath: prefsPath,
+    skipRevenueCat: true,
   );
   CapacityBoundaryResponseStore.resetForTest();
 }
@@ -331,6 +348,10 @@ void main() {
   });
 
   group('CapacityBoundaryResponsePicker copy action', () {
+    setUp(() async {
+      await _resetStore('picker');
+    });
+
     testWidgets('copy action does not include private transcript text',
         (tester) async {
       final calls = <MethodCall>[];
@@ -369,7 +390,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
 
       expect(
         find.byKey(const Key('capacity_boundary_response_copy_button')),

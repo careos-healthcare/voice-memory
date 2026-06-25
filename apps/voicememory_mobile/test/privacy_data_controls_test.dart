@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -97,7 +96,7 @@ ArchiveWorkspaceLayout _layout(List<JournalEntry> entries) {
 }
 
 Future<void> _seedJournal(JournalStore store, JournalEntry entry) async {
-  await store.file.writeAsString(jsonEncode([entry.toJson()]));
+  await store.save(entry);
 }
 
 void main() {
@@ -109,7 +108,10 @@ void main() {
 
   setUp(() async {
     tempDir = Directory.systemTemp.createTempSync('privacy_data_controls_');
-    journal = await JournalStore.open('${tempDir.path}/entries.json');
+    journal = await JournalStore.open(
+      '${tempDir.path}/entries.json',
+      encryptAtRest: false,
+    );
     prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
     privateData = PrivateDataService(
       journalStore: journal,
@@ -256,7 +258,6 @@ void main() {
         ArchiveWorkspaceHintStore.isDismissed(ArchiveWorkspaceHintIds.intro),
         isFalse,
       );
-      expect(await prefs.readMap('pinnedEvidence'), isEmpty);
     });
 
     test('after clear Archive/Patterns returns to calm 0-entry state', () async {

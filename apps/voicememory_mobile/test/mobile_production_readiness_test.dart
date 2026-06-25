@@ -331,7 +331,10 @@ void main() {
         if (dir.existsSync()) dir.deleteSync(recursive: true);
       });
 
-      final store = await JournalStore.open('${dir.path}/entries.json');
+      final store = await JournalStore.open(
+        '${dir.path}/entries.json',
+        encryptAtRest: false,
+      );
       await store.save(
         _voiceEntry(
           id: 'e1',
@@ -344,7 +347,10 @@ void main() {
         tagId: CaptureContextTagIds.decision,
       );
 
-      final reloaded = await JournalStore.open('${dir.path}/entries.json');
+      final reloaded = await JournalStore.open(
+        '${dir.path}/entries.json',
+        encryptAtRest: false,
+      );
       final loaded = await reloaded.getById('e1');
       expect(loaded?.captureContextTag, CaptureContextTagIds.decision);
     });

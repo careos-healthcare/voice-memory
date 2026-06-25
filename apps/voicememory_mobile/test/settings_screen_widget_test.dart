@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/config/developer_settings_gate.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
+import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 
 void main() {
   tearDown(() {
@@ -23,9 +24,13 @@ void main() {
 
     expect(find.text('Privacy'), findsOneWidget);
     expect(find.text('Restore purchases'), findsOneWidget);
-    await tester.drag(find.byType(ListView), const Offset(0, -400));
+    await tester.dragUntilVisible(
+      find.text(PrivacyDataControlsCopy.exportArchiveTitle),
+      find.byType(ListView),
+      const Offset(0, -300),
+    );
     await tester.pump();
-    expect(find.text('Export reflections'), findsOneWidget);
+    expect(find.text(PrivacyDataControlsCopy.exportArchiveTitle), findsOneWidget);
     expect(find.text('Developer'), findsNothing);
     expect(find.text('RevenueCat verification'), findsNothing);
     expect(find.text('API base URL'), findsNothing);

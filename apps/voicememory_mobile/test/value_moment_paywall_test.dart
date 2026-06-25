@@ -6,6 +6,11 @@ import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/value_moment_paywall_trigger.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
+import 'package:voicememory_mobile/features/memory/current_intent_signal.dart';
+import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
+import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart';
+import 'package:voicememory_mobile/features/memory/memory_priority_governance.dart';
+import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/billing/value_moment_pro_bridge.dart';
@@ -18,6 +23,7 @@ PressureCheckInRecord _record({
   String optionId = 'could_not_stop',
   List<String> contextIds = const [],
   String? fear,
+  String transcript = 'pressure moment',
 }) {
   return PressureCheckInRecord(
     entryId: id,
@@ -25,7 +31,7 @@ PressureCheckInRecord _record({
     optionId: optionId,
     contextIds: contextIds,
     fear: fear,
-    transcript: 'pressure moment',
+    transcript: transcript,
   );
 }
 
@@ -46,6 +52,31 @@ List<PressureCheckInRecord> _workThread2() => [
 List<PressureCheckInRecord> _checkingBelief2() => [
   _record(id: 'd0', daysAgo: 4, fear: 'I have to keep checking messages'),
   _record(id: 'd1', daysAgo: 0, fear: 'Checking messages again tonight'),
+];
+
+/// Enough archive depth for governance, without a 3-entry thread return.
+List<PressureCheckInRecord> _checkingBeliefForPaywall() => [
+  _record(
+    id: 'd0',
+    daysAgo: 4,
+    optionId: 'could_not_stop',
+    fear: 'I have to keep checking messages',
+    transcript: 'work pressure note a',
+  ),
+  _record(
+    id: 'd1',
+    daysAgo: 0,
+    optionId: 'guilty_resting',
+    fear: 'Checking messages again tonight',
+    transcript: 'home pressure note b',
+  ),
+  _record(
+    id: 'd2',
+    daysAgo: 10,
+    optionId: 'had_to_prove_enough',
+    fear: 'Unrelated note about lunch plans tomorrow',
+    transcript: 'lunch plans note c',
+  ),
 ];
 
 /// Three recent unconnected entries → a weekly review, nothing else.
@@ -69,7 +100,14 @@ String _bridgeCopy() => [
 void main() {
   const trigger = ValueMomentPaywallTrigger();
 
-  setUp(ValueMomentPaywallTrigger.resetSessionForTest);
+  setUp(() {
+    ValueMomentPaywallTrigger.resetSessionForTest();
+    MemoryScopePolicy.resetForTest();
+    MemoryGovernancePolicy.resetForTest();
+    MemoryPriorityGovernance.resetForTest();
+    CurrentIntentSignal.resetSessionForTest();
+    EntryMemoryModeSession.selectedMode = EntryMemoryMode.useArchiveContext;
+  });
 
   group('Value moment trigger — eligibility', () {
     test('no bridge before the first save', () {
@@ -119,7 +157,7 @@ void main() {
 
     test('belief distance uses the belief-specific body', () {
       final bridge = trigger.build(
-        _checkingBelief2(),
+        _checkingBeliefForPaywall(),
         isPro: false,
         now: _base,
       );

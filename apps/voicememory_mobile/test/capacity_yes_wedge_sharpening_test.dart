@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/acquisition/audience_wedge_model.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_copy.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
+import 'package:voicememory_mobile/product/archive_positioning_copy.dart';
 import 'package:voicememory_mobile/product/loop_acquisition_copy.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 
@@ -103,26 +104,29 @@ void main() {
 
   group('Capacity yes in-app wedge copy', () {
     test('acquisition start copy matches headline and promise', () {
-      expect(AcquisitionStartCopy.capacityTitle, 'See why you keep saying yes.');
+      expect(
+        AcquisitionStartCopy.capacityTitle,
+        ArchivePositioningCopy.firstUseTitle,
+      );
+      expect(
+        AcquisitionStartCopy.capacityBody,
+        ArchivePositioningCopy.firstUseBody,
+      );
       expect(
         AcquisitionStartCopy.capacityBody.toLowerCase(),
         contains('save one real moment'),
       );
       expect(
         AcquisitionStartCopy.capacityBody.toLowerCase(),
-        contains('what repeated'),
+        contains('see what it connects'),
       );
-      expect(
-        AcquisitionStartCopy.capacityBody.toLowerCase(),
-        contains('private on this device'),
-      );
-      expect(AcquisitionStartCopy.capacityStartCta, 'Save yes moment');
+      expect(AcquisitionStartCopy.capacityStartCta, 'Save first moment');
     });
 
     test('loop acquisition capacity variant aligned', () {
       final v = LoopAcquisitionCopy.capacityYes;
-      expect(v.headline, 'See why you keep saying yes.');
-      expect(v.subheadline.toLowerCase(), contains('pulled to agree'));
+      expect(v.headline, ArchivePositioningCopy.wedgeHeadline);
+      expect(v.subheadline.toLowerCase(), contains('agreeing'));
       expect(v.cta, 'Save yes moment');
     });
 

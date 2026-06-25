@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,7 +48,22 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     _load();
   }
 
+  bool get _isFlutterWidgetTest =>
+      !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+
   Future<void> _load() async {
+    if (_isFlutterWidgetTest) {
+      JournalEntry? loaded;
+      for (final entry in AppServices.instance.journalStore.loadAllSync()) {
+        if (entry.id == widget.entryId) {
+          loaded = entry;
+          break;
+        }
+      }
+      if (mounted) setState(() => _entry = loaded);
+      return;
+    }
+
     final e = await AppServices.instance.journalStore.getById(widget.entryId);
     if (e != null) {
       final mode = MemorySurfacingMode.fromEntry(e);

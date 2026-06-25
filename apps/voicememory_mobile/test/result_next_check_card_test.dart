@@ -232,7 +232,7 @@ void main() {
 
     expect(find.text('Make the next check more concrete'), findsOneWidget);
     expect(
-      find.text('What was the exact moment this showed up?'),
+      find.text('What exact moment did this show up?'),
       findsOneWidget,
     );
   });

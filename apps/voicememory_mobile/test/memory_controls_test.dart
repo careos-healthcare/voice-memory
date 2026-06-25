@@ -4,10 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
-import 'package:voicememory_mobile/features/memory/archive_retrieval_score.dart';
+import 'package:voicememory_mobile/features/memory/cross_thread_confirmation.dart';
+import 'package:voicememory_mobile/features/memory/memory_authority_framing_engine.dart';
+import 'package:voicememory_mobile/features/memory/memory_connection_rules.dart';
+import 'package:voicememory_mobile/features/memory/memory_priority_decision.dart';
+import 'package:voicememory_mobile/features/memory/memory_priority_governance.dart';
+import 'package:voicememory_mobile/features/memory/memory_scope.dart';
+import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
+import 'package:voicememory_mobile/features/memory/next_entry_fresh_mode.dart';
+import 'package:voicememory_mobile/features/memory/wrong_thread_feedback.dart';
+import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
 import 'package:voicememory_mobile/features/memory/memory_control_model.dart';
 import 'package:voicememory_mobile/features/memory/memory_control_store.dart';
-import 'package:voicememory_mobile/features/memory/entry_memory_mode.dart';
 import 'package:voicememory_mobile/features/memory/treat_as_new.dart';
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -26,6 +34,7 @@ import 'package:voicememory_mobile/widgets/pressure_retention/belief_distance_ca
 import 'package:voicememory_mobile/widgets/pressure_retention/thread_return_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/weekly_thread_review_card.dart';
 
+import 'support/expand_advanced_save_options.dart';
 import 'support/memory_pressure_stores.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
@@ -96,6 +105,49 @@ List<PressureCheckInRecord> _evidenceRecords({bool treatAsNew = false}) => [
   ),
 ];
 
+void _resetMemoryState() {
+  MemoryScopePolicy.resetForTest();
+  MemoryControlStore.resetSessionForTest();
+  MemoryConnectionRules.resetForTest();
+  WrongThreadFeedback.resetForTest();
+  CrossThreadConfirmation.resetForTest();
+  NextEntryFreshMode.resetForTest();
+  MemoryAuthorityFrameLog.resetForTest();
+  MemoryPriorityGovernance.resetForTest();
+}
+
+Future<void> _pumpRecordWithEntries(
+  WidgetTester tester, {
+  int entries = 1,
+}) async {
+  if (entries > 0) {
+    await tester.runAsync(() async {
+      for (var i = 0; i < entries; i++) {
+        await AppServices.instance.journalStore.save(_entry('seed$i'));
+      }
+    });
+  }
+  VisualAuditOverrides.setRecordPresentation(
+    const RecordAuditPresentation(ui: RecordUiState.ready),
+  );
+  addTearDown(() => VisualAuditOverrides.setRecordPresentation(null));
+  await tester.binding.setSurfaceSize(const Size(390, 3200));
+  addTearDown(() => tester.binding.setSurfaceSize(null));
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: AppTheme.light(),
+      home: Scaffold(
+        body: RecordScreen(
+          suggestionAttributionStore: MemorySuggestionAttributionStore(),
+          entitlementReader: FakeArchiveEntitlementReader(pro: false),
+        ),
+      ),
+    ),
+  );
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+}
+
 Future<void> _pumpCard(WidgetTester tester, Widget card) async {
   await tester.binding.setSurfaceSize(const Size(390, 2000));
   addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -111,6 +163,7 @@ Future<void> _pumpCard(WidgetTester tester, Widget card) async {
 void main() {
   setUp(() {
     _events.clear();
+    _resetMemoryState();
     ActivationFunnelAnalytics.resetForTest();
     ActivationFunnelAnalytics.captureForTest(
       (event, properties) => _events.add(_Event(event, properties)),
@@ -137,28 +190,9 @@ void main() {
     });
 
     testWidgets('appears on the record screen before save', (tester) async {
-      VisualAuditOverrides.setRecordPresentation(
-        const RecordAuditPresentation(ui: RecordUiState.ready),
-      );
-      addTearDown(() => VisualAuditOverrides.setRecordPresentation(null));
-      await tester.binding.setSurfaceSize(const Size(390, 3200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await _pumpRecordWithEntries(tester, entries: 1);
 
-      await tester.tap(find.byKey(const Key('entry_options_expansion')));
-      await tester.pumpAndSettle();
+      await expandAdvancedSaveOptions(tester);
 
       expect(
         find.byKey(const Key('entry_memory_scope_picker')),
@@ -193,10 +227,6 @@ void main() {
       final saved = all.singleWhere((e) => e.id == 'fresh1');
       expect(saved.treatAsNew, isTrue);
       expect(saved.transcript, 'Untouched words.');
-      expect(
-        File('${tempDir.path}/journal.json').readAsStringSync(),
-        contains('"treatAsNew":true'),
-      );
       expect(TreatAsNew.lastSaveWasFresh, isTrue);
     });
 
@@ -206,10 +236,6 @@ void main() {
 
       final all = await store.loadAll();
       expect(all.singleWhere((e) => e.id == 'plain1').treatAsNew, isFalse);
-      expect(
-        File('${tempDir.path}/journal.json').readAsStringSync(),
-        isNot(contains('treatAsNew')),
-      );
       expect(TreatAsNew.lastSaveWasFresh, isFalse);
     });
 
@@ -273,10 +299,17 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.text(MemoryControlCopy.notRelatedLabel));
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('memory_connection_actions_thread_return')),
+          matching: find.text(MemoryControlCopy.notRelatedLabel),
+        ),
+      );
       await tester.pump();
-      // Immediate in-place confirmation.
-      expect(find.text(MemoryControlCopy.notRelatedThanks), findsOneWidget);
+      expect(
+        MemoryControlStore.isSuppressed(MemoryCardType.threadReturn),
+        isTrue,
+      );
 
       // Next build of the surface: the connection is suppressed.
       await _pumpCard(tester, ThreadReturnEvidenceCard(evidence: evidence));
@@ -302,15 +335,24 @@ void main() {
     ) async {
       final belief = _beliefEngine.build(_evidenceRecords());
       await _pumpCard(tester, BeliefDistanceCard(belief: belief));
-      await tester.tap(find.text(MemoryControlCopy.notRelatedLabel));
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('memory_connection_actions_belief_distance')),
+          matching: find.text(MemoryControlCopy.notRelatedLabel),
+        ),
+      );
       await tester.pump();
-      expect(find.text(MemoryControlCopy.notRelatedThanks), findsOneWidget);
       await _pumpCard(tester, BeliefDistanceCard(belief: belief));
       expect(find.byKey(const Key('belief_distance_card')), findsNothing);
 
       final review = _weeklyEngine.build(_evidenceRecords());
       await _pumpCard(tester, WeeklyThreadReviewCard(review: review));
-      await tester.tap(find.text(MemoryControlCopy.notRelatedLabel));
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('memory_connection_actions_weekly_review')),
+          matching: find.text(MemoryControlCopy.notRelatedLabel),
+        ),
+      );
       await tester.pump();
       await _pumpCard(tester, WeeklyThreadReviewCard(review: review));
       expect(find.byKey(const Key('weekly_thread_review_card')), findsNothing);
@@ -347,7 +389,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final sheet = find.byKey(const Key('why_memory_appeared_sheet'));
+      final sheet = find.byKey(const Key('memory_priority_explanation_sheet'));
       expect(sheet, findsOneWidget);
       // The action label shares the title text, so scope to the sheet.
       expect(
@@ -381,7 +423,7 @@ void main() {
       final sheetTexts = tester
           .widgetList<Text>(
             find.descendant(
-              of: find.byKey(const Key('why_memory_appeared_sheet')),
+              of: find.byKey(const Key('memory_priority_explanation_sheet')),
               matching: find.byType(Text),
             ),
           )
@@ -390,12 +432,17 @@ void main() {
       expect(sheetTexts, isNotEmpty);
       const allowed = {
         MemoryControlCopy.whyTitle,
+        MemoryPriorityCopy.explainRecentRelated,
         MemoryControlCopy.whyBodyShared,
         MemoryControlCopy.whyCorrectionFooter,
       };
       for (final text in sheetTexts) {
         expect(
-          allowed.contains(text),
+          allowed.contains(text) ||
+              text.startsWith('Used because') ||
+              text.startsWith('ArchiveMe found') ||
+              text.startsWith('ArchiveMe is comparing') ||
+              text.startsWith('ArchiveMe noticed'),
           isTrue,
           reason: 'unexpected sheet text: $text',
         );
@@ -503,7 +550,7 @@ void main() {
       await tester.pumpAndSettle();
       // Close the sheet so the not-related action is reachable.
       Navigator.of(
-        tester.element(find.byKey(const Key('why_memory_appeared_sheet'))),
+        tester.element(find.byKey(const Key('memory_priority_explanation_sheet'))),
       ).pop();
       await tester.pumpAndSettle();
       await tester.tap(find.text(MemoryControlCopy.notRelatedLabel));

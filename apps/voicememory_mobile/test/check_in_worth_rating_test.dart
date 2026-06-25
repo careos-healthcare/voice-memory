@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/trial/hook_diagnosis_model.dart';
 import 'package:voicememory_mobile/features/trial/hook_diagnosis_store.dart';
-import 'package:voicememory_mobile/features/trial/hook_diagnosis_tracker.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
 Future<void> _reset(String stamp) async {
@@ -17,20 +16,34 @@ void main() {
     await _reset(stamp);
     final store = HookDiagnosisStore(AppServices.instance.prefs);
 
-    HookDiagnosisTracker.trackCheckInQuestionRated(
-      checkInId: 'tci_a',
-      rating: HookDiagnosisRating.yes,
+    // Append sequentially — concurrent unawaited appends race on read-modify-write.
+    await store.append(
+      HookDiagnosisEvent(
+        id: 'hd_a',
+        createdAt: DateTime(2026, 6, 12),
+        type: HookDiagnosisEventType.checkInQuestionRated,
+        checkInId: 'tci_a',
+        rating: HookDiagnosisRating.yes,
+      ),
     );
-    HookDiagnosisTracker.trackCheckInQuestionRated(
-      checkInId: 'tci_b',
-      rating: HookDiagnosisRating.sortOf,
+    await store.append(
+      HookDiagnosisEvent(
+        id: 'hd_b',
+        createdAt: DateTime(2026, 6, 12, 1),
+        type: HookDiagnosisEventType.checkInQuestionRated,
+        checkInId: 'tci_b',
+        rating: HookDiagnosisRating.sortOf,
+      ),
     );
-    HookDiagnosisTracker.trackCheckInQuestionRated(
-      checkInId: 'tci_c',
-      rating: HookDiagnosisRating.notReally,
+    await store.append(
+      HookDiagnosisEvent(
+        id: 'hd_c',
+        createdAt: DateTime(2026, 6, 12, 2),
+        type: HookDiagnosisEventType.checkInQuestionRated,
+        checkInId: 'tci_c',
+        rating: HookDiagnosisRating.notReally,
+      ),
     );
-
-    await Future<void>.delayed(const Duration(milliseconds: 150));
 
     final events = await store.loadAll();
     expect(events, hasLength(3));

@@ -89,7 +89,7 @@ void main() {
     testWidgets('shows primary capture actions when collapsed', (tester) async {
       await pumpRecordScreen(tester, entries: 1);
 
-      expect(find.text(ConsumerUiCopy.startRecording), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(
         find.text(CaptureEntryActions.logPressureMomentLabel),

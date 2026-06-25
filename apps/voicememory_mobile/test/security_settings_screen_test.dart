@@ -108,7 +108,7 @@ void main() {
       expect(find.text(ArchivePrivacyControlsCopy.exportTitle), findsOneWidget);
       expect(find.text(ArchivePrivacyControlsCopy.deleteTitle), findsOneWidget);
       expect(
-        find.textContaining('Nothing is sent unless you choose'),
+        find.text(ArchivePrivacyControlsCopy.cloudSubtitle),
         findsOneWidget,
       );
     });

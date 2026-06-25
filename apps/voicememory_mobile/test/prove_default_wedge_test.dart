@@ -99,9 +99,12 @@ void main() {
     });
 
     test('capacity handoff copy unchanged', () {
-      expect(LoopModeCopy.capacityHandoffTitle, 'See why you keep saying yes.');
+      expect(
+        LoopModeCopy.capacityHandoffTitle,
+        'Catch the yes before it costs you.',
+      );
       expect(LoopModeCopy.capacityHandoffCta, 'Save yes moment');
-      expect(LoopModeCopy.capacityHandoffPrompt, contains('say yes'));
+      expect(LoopModeCopy.capacityHandoffPrompt, contains('agree'));
     });
 
     test('prove handoff copy is default shape', () {

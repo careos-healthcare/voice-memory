@@ -22,6 +22,9 @@ import 'package:voicememory_mobile/theme/app_spacing.dart';
 /// Output default: `~/Desktop/upload12/screenshots/onboarding-{1..4}.png`
 void main() {
   testWidgets('export belief-first onboarding pages as PNG', (tester) async {
+    // Manual asset export — skip in automated full-suite runs.
+    if (Platform.environment['ARCHIVEME_RUN_PNG_EXPORT'] != 'true') return;
+
     const logicalSize = Size(393, 852);
     await tester.binding.setSurfaceSize(logicalSize);
     addTearDown(() => tester.binding.setSurfaceSize(null));

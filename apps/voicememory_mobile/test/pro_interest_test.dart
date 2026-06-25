@@ -135,7 +135,10 @@ void main() {
       tempDir = await Directory.systemTemp.createTemp('pro_interest_test_');
       prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       store = ProInterestStore(prefs);
-      journalStore = await JournalStore.open('${tempDir.path}/journal.json');
+      journalStore = await JournalStore.open(
+        '${tempDir.path}/journal.json',
+        encryptAtRest: false,
+      );
       await ProInterestStore.resetForTest();
     });
 

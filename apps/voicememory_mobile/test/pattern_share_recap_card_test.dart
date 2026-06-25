@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/pattern_memory/pattern_share_recap_model.dart';
+import 'package:voicememory_mobile/features/share/archive_share_actions.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_share_recap_card.dart';
 
 PatternShareRecap _recap() => PatternShareRecap(
@@ -78,6 +79,6 @@ void main() {
     await tester.pump();
 
     expect(clipboardText, recap.plainText);
-    expect(find.text('Recap copied.'), findsOneWidget);
+    expect(find.text(ArchiveShareActions.copyConfirmation), findsOneWidget);
   });
 }

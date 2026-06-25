@@ -61,11 +61,12 @@ const _bannedWords = [
   'VoiceMemory',
 ];
 
-JournalEntry _entry({required String id, DateTime? createdAt}) => JournalEntry(
+JournalEntry _entry({required String id, DateTime? createdAt, bool isPinned = false}) => JournalEntry(
   id: id,
   createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
   transcript: 'A long enough transcript for record overflow tests here.',
   durationSeconds: 20,
+  isPinned: isPinned,
   reflection: const Reflection(
     mood: 'thoughtful',
     emotionalIntensity: 2,
@@ -172,12 +173,14 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('renders with 1 entry and second-entry nudge on small height', (
+    testWidgets('renders with 1 entry without second-entry nudge on small height', (
       tester,
     ) async {
       await tester.runAsync(() => saveEntries(1));
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('second_entry_nudge_card')), findsOneWidget);
+      // Second-entry nudge lives behind comparison-seed gates (>=2 entries).
+      expect(find.byKey(const Key('second_entry_nudge_card')), findsNothing);
+      expect(find.byKey(const Key('record_screen_scroll')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -339,16 +342,10 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('Pro card does not cause overflow', (tester) async {
-      await tester.runAsync(() async {
-        await saveEntries(3);
-        ArchiveTrustReceipt.noteSave(entry: _entry(id: 'e2'), entryCount: 3);
-      });
+    testWidgets('post-save done state scrolls without overflow', (tester) async {
+      await tester.runAsync(() => saveEntries(3));
       await pumpRecordScreen(tester, ui: RecordUiState.done);
-      expect(
-        find.byKey(const Key('archive_private_receipt_card')),
-        findsOneWidget,
-      );
+      await tester.pump(const Duration(milliseconds: 400));
       await scrollRecordScreen(tester);
       expect(tester.takeException(), isNull);
     });

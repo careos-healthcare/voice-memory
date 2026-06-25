@@ -4,7 +4,7 @@ Dependency upgrades are **deferred during TestFlight beta** unless a security fi
 
 ## Policy
 
-- **Do not upgrade before TestFlight** unless required to fix a crash, store rejection, or critical security advisory.
+- **Dependency upgrades are deferred during TestFlight** unless required to fix a crash, App Store rejection, Play Store rejection, or critical security advisory.
 - **Schedule a dedicated upgrade branch** after beta feedback (target: 2–4 weeks post–first cohort).
 - **Never combine** dependency upgrades with positioning, onboarding, or beta-readiness copy branches.
 - Each upgrade branch must run: full focused test suite, iOS release `--no-codesign`, Android debug APK, and physical-device smoke on 2 devices.
@@ -13,15 +13,19 @@ Dependency upgrades are **deferred during TestFlight beta** unless a security fi
 
 From `flutter pub outdated` (snapshot — re-run before any upgrade branch):
 
-| Package | Current constraint | Risk if stale | Upgrade priority |
-|---------|-------------------|---------------|------------------|
-| `go_router` | 14.x | Medium — routing API drift | After beta |
-| `purchases_flutter` (RevenueCat) | 8.x | Low while payments disabled | Before paid launch only |
-| `firebase_*` | 3.x / 11.x | Medium — analytics/messaging | After beta, test push + analytics |
-| `record` | 6.x | Medium — microphone capture | After beta, test record flow |
-| `flutter_local_notifications` | 21.x | Low unless push changes | After beta |
-| `flutter_secure_storage` | 9.x | Low — encryption key store works | After beta, test journal migration |
-| `share_plus` / `package_info_plus` | older majors | Low | Batch with other UI deps |
+| Package | Current constraint | Risk if stale | Upgrade branch / timing |
+|---------|-------------------|---------------|-------------------------|
+| `go_router` | 14.x | Medium — routing API drift | **post-beta routing branch** |
+| `purchases_flutter` (RevenueCat) | 8.x | Low while payments disabled | **RevenueCat readiness branch only after paid-intent proof** |
+| `firebase_*` | 3.x / 11.x | Medium — analytics/messaging | **post-beta infra maintenance branch** |
+| `record` | 6.x | Medium — microphone capture | **post-beta audio QA branch** |
+| `flutter_secure_storage` | 9.x | Low — encryption key store works | **post-beta privacy hardening branch** |
+| `flutter_local_notifications` | 21.x | Low unless push changes | **local review ritual branch only** |
+| `share_plus` / `package_info_plus` | older majors | Low | **post-beta share/export QA branch** |
+
+### Deferred upgrade rule (TestFlight)
+
+Dependency upgrades are deferred during TestFlight unless required for **crash**, **App Store rejection**, **Play Store rejection**, or **critical security advisory**.
 
 ## Risk levels
 

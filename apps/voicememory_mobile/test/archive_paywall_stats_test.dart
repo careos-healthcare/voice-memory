@@ -79,8 +79,8 @@ void main() {
       ),
     );
     final text = stats.subheadlineFor(ArchivePaywallVariant.b);
-    expect(text, contains('tracking patterns'));
-    expect(text, contains('what changed'));
+    expect(text, contains('patterns keep returning'));
+    expect(text, contains('Pro keeps key moments'));
   });
 
   test('variant B pre-cta lists patterns theories contradictions', () {

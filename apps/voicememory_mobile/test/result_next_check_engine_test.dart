@@ -11,7 +11,7 @@ void main() {
       expect(next.type, ResultNextCheckType.repeatBefore);
       expect(next.title, 'Check what happens before it starts');
       expect(next.nextQuestion, 'What happens right before it shows up?');
-      expect(next.exampleMoment, 'I noticed it started before I said yes.');
+      expect(next.exampleMoment, 'It started before I answered.');
       expect(next.ctaLabel, 'Use this tomorrow');
     }
   });
@@ -59,18 +59,19 @@ void main() {
       notUsefulReason: 'already_knew_this',
     );
     expect(next.type, ResultNextCheckType.repeatBefore);
-    expect(next.whyUseful, contains('The value is not that it happened once.'));
-    expect(next.whyUseful, contains('whether it keeps happening or changes'));
+    expect(
+      next.whyUseful,
+      contains('This is useful because it makes tomorrow\u2019s check specific.'),
+    );
   });
 
-  test('confusing keeps result type but adds simple-answer guidance', () {
+  test('confusing keeps result type with compelling why copy', () {
     final next = ResultNextCheckEngine.build(
       resultHint: 'heavier',
       notUsefulReason: 'confusing',
     );
     expect(next.type, ResultNextCheckType.reduceHeavier);
-    expect(next.whyUseful, contains('Keep tomorrow'));
-    expect(next.whyUseful, contains('lighter, heavier, or different'));
+    expect(next.nextQuestion, 'What made it heavier?');
   });
 
   test('tooGeneric feedback gently prefers a concrete next check', () {
@@ -96,7 +97,10 @@ void main() {
       feedback: ArchiveFeedbackType.alreadyKnew,
     );
     expect(next.type, ResultNextCheckType.repeatBefore);
-    expect(next.whyUseful, contains('whether it keeps happening or changes'));
+    expect(
+      next.whyUseful,
+      contains('This is useful because it makes tomorrow\u2019s check specific.'),
+    );
   });
 
   test('useful and notMe feedback keep the current style', () {

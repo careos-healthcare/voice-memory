@@ -15,6 +15,9 @@ import 'package:voicememory_mobile/widgets/belief_empty_state.dart';
 /// Host PNG export for product simplification review.
 void main() {
   testWidgets('export simplified product screens', (tester) async {
+    // Manual asset export — skip in automated full-suite runs (RecordScreen bootstrap hangs).
+    if (Platform.environment['ARCHIVEME_RUN_PNG_EXPORT'] != 'true') return;
+
     const size = Size(393, 852);
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));

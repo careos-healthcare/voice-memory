@@ -280,16 +280,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    testWidgets('sample appears at zero entries in the first-session area', (
+    testWidgets('legacy sample card hidden on Record under beta gates', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
       expect(
         find.byKey(const Key('first_recording_sample_card')),
-        findsOneWidget,
+        findsNothing,
       );
-      // It sits alongside (never instead of) the first-save rescue.
-      expect(find.byKey(const Key('first_save_rescue_card')), findsOneWidget);
+      expect(find.byKey(const Key('record_screen_scroll')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -305,23 +304,14 @@ void main() {
       expect(find.text(FirstRecordingSample.title), findsNothing);
     });
 
-    testWidgets('CTA seeds the existing recording flow with the starter line', (
+    testWidgets('record screen keeps standard capture path without legacy sample', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
-      final cta = find.byKey(const Key('first_recording_sample_cta'));
-      await tester.ensureVisible(cta);
-      await tester.pump();
-      await tester.tap(cta);
-      await tester.pump();
-
-      // The starter line now renders in the existing recording-flow
-      // surfaces (selected prompt + "Try saying" helper area) — no new
-      // screen, no new flow.
-      expect(find.text(FirstRecordingSample.sample), findsAtLeastNWidgets(1));
+      expect(find.byType(CaptureEntryActions), findsOneWidget);
       expect(
-        eventsNamed(ActivationFunnelAnalytics.firstRecordingSampleTapped),
-        hasLength(1),
+        find.byKey(const Key('first_recording_sample_card')),
+        findsNothing,
       );
       expect(tester.takeException(), isNull);
     });

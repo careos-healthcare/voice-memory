@@ -332,6 +332,9 @@ bool _archiveAllowed(String value) {
   if (lower.contains('ask my archive')) return true;
   if (lower.contains('your archive')) return true;
   if (lower.contains('clean up archive')) return true;
+  if (lower == 'view archive') return true;
+  if (lower == 'start my archive') return true;
+  if (lower.contains('archive this signal')) return true;
   return false;
 }
 

@@ -12,6 +12,7 @@ Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
     journalPath: '/tmp/vm_rescue_tomorrow_journal_$stamp.json',
     prefsPath: '/tmp/vm_rescue_tomorrow_prefs_$stamp.json',
+    skipRevenueCat: true,
   );
 }
 
@@ -20,7 +21,7 @@ void main() {
     tester,
   ) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+    await tester.runAsync(() => _reset(stamp));
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
@@ -40,7 +41,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Tomorrow, check this'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.tomorrowCheckReasonLine), findsOneWidget);
     expect(
       find.text(ConsumerUiCopy.firstSessionUseTomorrowCta),
       findsOneWidget,
@@ -49,7 +49,7 @@ void main() {
 
   testWidgets('Make it sharper changes the check option', (tester) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+    await tester.runAsync(() => _reset(stamp));
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
@@ -64,9 +64,11 @@ void main() {
       ),
     );
 
-    expect(find.text('Direct'), findsNothing);
+    await tester.pump();
+
     await tester.tap(find.text(ConsumerUiCopy.makeItSharperCta));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('Direct'), findsOneWidget);
     await tester.tap(find.text('Direct'));

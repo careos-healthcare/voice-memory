@@ -225,6 +225,32 @@ void main() {
     });
   });
 
+  group('Dependency maintenance deferral', () {
+    test('plan says no upgrades before TestFlight unless crash/store/security blocker', () {
+      final lower = dependency.toLowerCase();
+      expect(lower, contains('deferred during testflight'));
+      expect(lower, contains('crash'));
+      expect(lower, contains('app store rejection'));
+      expect(lower, contains('critical security'));
+    });
+
+    test('RevenueCat upgrade tied to RevenueCat readiness branch', () {
+      expect(
+        dependency.toLowerCase(),
+        contains('revenuecat readiness branch'),
+      );
+      expect(dependency.toLowerCase(), contains('paid-intent proof'));
+    });
+
+    test('notification upgrade tied to local review ritual branch', () {
+      expect(dependency.toLowerCase(), contains('local review ritual branch'));
+    });
+
+    test('record upgrade tied to audio QA branch', () {
+      expect(dependency.toLowerCase(), contains('post-beta audio qa branch'));
+    });
+  });
+
   group('Guardrails', () {
     test('roadmap passes banned phrase scan', () {
       _expectNoBannedCopy(roadmap);

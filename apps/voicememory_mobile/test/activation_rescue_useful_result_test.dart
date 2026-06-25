@@ -13,6 +13,7 @@ Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
     journalPath: '/tmp/vm_rescue_useful_journal_$stamp.json',
     prefsPath: '/tmp/vm_rescue_useful_prefs_$stamp.json',
+    skipRevenueCat: true,
   );
 }
 
@@ -33,7 +34,7 @@ void main() {
     tester,
   ) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+    await tester.runAsync(() => _reset(stamp));
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -64,7 +65,7 @@ void main() {
 
   testWidgets('weak input shows Early read nudge', (tester) async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+    await tester.runAsync(() => _reset(stamp));
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

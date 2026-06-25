@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/security/archive_privacy_controls_copy.dart';
+import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/widgets/security/archive_data_flow_sheet.dart';
 import 'package:voicememory_mobile/widgets/security/archive_privacy_controls_card.dart';
 
@@ -35,7 +36,7 @@ void main() {
     expect(find.text(ArchivePrivacyControlsCopy.exportTitle), findsOneWidget);
     expect(find.text(ArchivePrivacyControlsCopy.deleteTitle), findsOneWidget);
     expect(
-      find.textContaining('Nothing is sent unless you choose'),
+      find.textContaining(PrivacyCopyPolicy.transcriptionAnalysisWhenUsed),
       findsOneWidget,
     );
   });
@@ -88,7 +89,7 @@ void main() {
 
     expect(find.byKey(const Key('archive_data_flow_title')), findsOneWidget);
     expect(
-      find.textContaining('stored locally on this device'),
+      find.textContaining(PrivacyCopyPolicy.journalEncryptedAtRest),
       findsOneWidget,
     );
     expect(

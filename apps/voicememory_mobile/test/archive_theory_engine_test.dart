@@ -22,6 +22,12 @@ JournalEntry _entry(String id, String transcript, DateTime at) {
   );
 }
 
+JournalEntry _supportingEntry(String id, DateTime at) => _entry(
+  id,
+  'I avoid difficult conversations at work because conflict feels overwhelming.',
+  at,
+);
+
 void main() {
   const engine = ArchiveTheoryEngine();
 
@@ -46,16 +52,9 @@ void main() {
 
   test('builds theory with evidence and counter counts', () {
     final entries = [
-      _entry(
-        'a',
-        'I avoid difficult conversations at work because conflict feels overwhelming.',
-        DateTime.utc(2026, 1, 5),
-      ),
-      _entry(
-        'b',
-        'I avoid difficult conversations again when tension rises at home.',
-        DateTime.utc(2026, 2, 5),
-      ),
+      _supportingEntry('a', DateTime.utc(2026, 1, 5)),
+      _supportingEntry('b', DateTime.utc(2026, 2, 5)),
+      _supportingEntry('c', DateTime.utc(2026, 2, 20)),
       for (var i = 0; i < 8; i++)
         _entry(
           'u$i',
@@ -70,19 +69,17 @@ void main() {
     );
 
     expect(theory, isNotNull);
-    expect(theory!.evidenceCount, greaterThanOrEqualTo(2));
+    expect(theory!.evidenceCount, greaterThanOrEqualTo(3));
     expect(theory.counterEvidenceCount, greaterThanOrEqualTo(0));
     expect(theory.confidencePercent, inInclusiveRange(0, 100));
   });
 
   test('isConfident false below threshold shows strengthening copy', () {
     final entries = [
-      _entry(
-        'only',
-        'I avoid difficult conversations once at work today only mention.',
-        DateTime.utc(2026, 1, 1),
-      ),
-      for (var i = 0; i < 12; i++)
+      _supportingEntry('one', DateTime.utc(2026, 1, 1)),
+      _supportingEntry('two', DateTime.utc(2026, 1, 8)),
+      _supportingEntry('three', DateTime.utc(2026, 1, 15)),
+      for (var i = 0; i < 15; i++)
         _entry(
           'x$i',
           'Completely different transcript about weather sports music travel food.',
@@ -93,15 +90,13 @@ void main() {
     final theory = engine.build(
       entries: entries,
       statement: 'I avoid difficult conversations at work and home.',
-      maxContradictionScore: 75,
     );
 
     expect(theory, isNotNull);
-    if (theory!.confidencePercent < ArchiveTheoryEngine.confidentThreshold) {
-      expect(theory.isConfident, isFalse);
-      expect(theory.missingEvidenceMessage, isNotEmpty);
-      expect(theory.strengthenEvidenceLines, isNotEmpty);
-    }
+    expect(theory!.isConfident, isFalse);
+    expect(theory.confidencePercent, lessThan(60));
+    expect(theory.missingEvidenceMessage, isNotEmpty);
+    expect(theory.strengthenEvidenceLines, isNotEmpty);
   });
 
   test('confident threshold is 60', () {
@@ -110,11 +105,9 @@ void main() {
 
   test('low support yields not confident with strengthen lines', () {
     final entries = [
-      _entry(
-        'one',
-        'I avoid difficult conversations at work once in January only.',
-        DateTime.utc(2026, 1, 1),
-      ),
+      _supportingEntry('one', DateTime.utc(2026, 1, 1)),
+      _supportingEntry('two', DateTime.utc(2026, 1, 8)),
+      _supportingEntry('three', DateTime.utc(2026, 1, 15)),
       for (var i = 0; i < 15; i++)
         _entry(
           'o$i',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 
@@ -17,16 +18,22 @@ void main() {
         home: const Scaffold(body: IntentionalEmptyArchiveView()),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
 
-    expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.patternsEarlyStateBody), findsOneWidget);
     expect(
-      find.text('ArchiveMe connects moments that keep showing up'),
+      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewTitle),
       findsOneWidget,
     );
-    expect(find.textContaining('No judgement'), findsOneWidget);
-    expect(find.text(ConsumerUiCopy.patternsEmptyCta), findsOneWidget);
+    expect(
+      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBody),
+      findsOneWidget,
+    );
+    expect(
+      find.text(VisibleArchiveProofCopy.patternsEmptyPreviewCta),
+      findsOneWidget,
+    );
+    expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsOneWidget);
     expect(find.textContaining('freedom, but I keep choosing'), findsNothing);
     expect(find.textContaining('VoiceMemory'), findsNothing);
     expect(find.textContaining('Your archive is ready'), findsNothing);

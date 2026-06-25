@@ -96,7 +96,10 @@ void main() {
 
     setUp(() async {
       tmp = await Directory.systemTemp.createTemp('manual_context_tag_edit_');
-      store = await JournalStore.open('${tmp.path}/entries.json');
+      store = await JournalStore.open(
+        '${tmp.path}/entries.json',
+        encryptAtRest: false,
+      );
     });
 
     test('untagged entry can receive a context tag', () async {
@@ -158,7 +161,10 @@ void main() {
         tagId: CaptureContextTagIds.decision,
       );
 
-      final reloaded = await JournalStore.open('${tmp.path}/entries.json');
+      final reloaded = await JournalStore.open(
+        '${tmp.path}/entries.json',
+        encryptAtRest: false,
+      );
       final loaded = await reloaded.getById('e1');
       expect(loaded?.captureContextTag, CaptureContextTagIds.decision);
     });
@@ -317,7 +323,10 @@ void main() {
 
     setUp(() async {
       tmp = await Directory.systemTemp.createTemp('manual_context_tag_cancel_');
-      store = await JournalStore.open('${tmp.path}/entries.json');
+      store = await JournalStore.open(
+        '${tmp.path}/entries.json',
+        encryptAtRest: false,
+      );
     });
 
     test('cancel action leaves journal tag unchanged', () async {
@@ -401,7 +410,10 @@ void main() {
 
     setUp(() async {
       tmp = await Directory.systemTemp.createTemp('manual_context_tag_ui_');
-      store = await JournalStore.open('${tmp.path}/entries.json');
+      store = await JournalStore.open(
+        '${tmp.path}/entries.json',
+        encryptAtRest: false,
+      );
     });
 
     testWidgets('shows no context tag for untagged entry', (tester) async {

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/billing/suggestion_attribution_event.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/aha/aha_moment_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -12,6 +13,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/daily_return_suggestions_card.dart';
 
@@ -36,7 +38,6 @@ PressureCheckInRecord _record({
   );
 }
 
-/// Repeated evidence: "deadline" written twice, work x3, evening x2.
 List<PressureCheckInRecord> _richRecords() => [
   _record(
     id: 'a',
@@ -53,6 +54,28 @@ List<PressureCheckInRecord> _richRecords() => [
   _record(id: 'c', daysAgo: 1, contextIds: const ['work', 'evening']),
   _record(id: 'd', daysAgo: 0, optionId: 'guilty_resting'),
 ];
+
+JournalEntry _journalEntry(String id) => JournalEntry(
+      id: id,
+      createdAt: DateTime(2026, 6, 1, 12).add(Duration(days: id.hashCode % 3)),
+      transcript:
+          'A long enough transcript to count as a saved reflection for $id.',
+      durationSeconds: 30,
+      reflection: const Reflection(
+        mood: 'thoughtful',
+        emotionalIntensity: 2,
+        recurringThemes: ['work'],
+        exactLanguagePattern: 'pattern',
+        concreteObservation: 'Work pressure showed up again today.',
+        repeatedSignal: 'signal',
+      ),
+    );
+
+Future<void> _seedJournalForSuggestions(int count) async {
+  for (var i = 0; i < count; i++) {
+    await AppServices.instance.journalStore.save(_journalEntry('e$i'));
+  }
+}
 
 const _bannedCopy = [
   'need to',
@@ -550,8 +573,18 @@ void main() {
 
     setUp(() async {
       tempDir = Directory.systemTemp.createTempSync('vm_daily_suggestions_');
+      final journalPath = '${tempDir.path}/journal.json';
+      for (final path in [
+        journalPath,
+        JournalStore.encryptedPathFor(journalPath),
+      ]) {
+        final file = File(path);
+        if (file.existsSync()) file.deleteSync();
+      }
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: journalPath,
+        prefsPath: '${tempDir.path}/prefs.json',
+        skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -560,6 +593,7 @@ void main() {
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
+      AhaMomentStore.resetForTest();
     });
 
     Future<void> pumpRecordScreen(
@@ -569,46 +603,33 @@ void main() {
     }) async {
       await tester.binding.setSurfaceSize(const Size(390, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              pressureCheckInStore: store,
-              suggestionAttributionStore:
-                  suggestionStore ?? MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                pressureCheckInStore: store,
+                suggestionAttributionStore:
+                    suggestionStore ?? MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
     }
 
     testWidgets('shows suggestions when pressure evidence exists', (
       tester,
     ) async {
       await tester.runAsync(() async {
-        // A saved reflection puts the screen past first-run so the prompt
-        // area (and suggestion card) renders.
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
-            ),
-          ),
-        );
+        // Suggestions load only after three saved reflections.
+        await _seedJournalForSuggestions(3);
       });
 
       await pumpRecordScreen(
@@ -635,23 +656,7 @@ void main() {
 
     testWidgets('records seen and tap attribution events', (tester) async {
       await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
-            ),
-          ),
-        );
+        await _seedJournalForSuggestions(3);
       });
 
       final suggestionStore = MemorySuggestionAttributionStore();
@@ -660,6 +665,8 @@ void main() {
         store: MemoryPressureCheckInStore(_richRecords()),
         suggestionStore: suggestionStore,
       );
+
+      expect(find.text('Worth checking today'), findsOneWidget);
 
       expect(
         suggestionStore.recorded.map((e) => e.type),

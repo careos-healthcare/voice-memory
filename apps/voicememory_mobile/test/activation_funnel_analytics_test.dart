@@ -9,6 +9,8 @@ import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart
 import 'package:voicememory_mobile/features/first_session/two_day_activation_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_engine.dart';
+import 'package:voicememory_mobile/features/memory/memory_connection_rules.dart';
+import 'package:voicememory_mobile/features/memory/memory_control_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -43,6 +45,7 @@ PressureCheckInRecord _record({
   String optionId = 'could_not_stop',
   List<String> contextIds = const [],
   String? fear,
+  String archiveThreadId = 'belief-thread',
 }) {
   return PressureCheckInRecord(
     entryId: id,
@@ -51,6 +54,7 @@ PressureCheckInRecord _record({
     contextIds: contextIds,
     fear: fear,
     transcript: 'pressure moment transcript text',
+    archiveThreadId: archiveThreadId,
   );
 }
 
@@ -509,10 +513,15 @@ void main() {
         records,
         now: _base,
       );
-      final belief = const BeliefDistanceEngine().build([
-        _record(id: 'b0', daysAgo: 4, fear: 'I have to keep checking messages'),
-        _record(id: 'b1', daysAgo: 0, fear: 'Checking messages again tonight'),
-      ]);
+      MemoryConnectionRules.resetForTest();
+      MemoryConnectionRules.keepConnected(MemoryCardType.beliefDistance);
+      final belief = const BeliefDistanceEngine().build(
+        [
+          _record(id: 'b0', daysAgo: 4, fear: 'I have to keep checking messages'),
+          _record(id: 'b1', daysAgo: 0, fear: 'Checking messages again tonight'),
+        ],
+        entryCount: 2,
+      );
       await pumpCard(
         tester,
         Column(

@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/router/developer_route_guard.dart';
 import 'package:voicememory_mobile/screens/archive_belief_screen.dart';
@@ -40,6 +41,17 @@ Future<void> _resetServices() async {
     prefsPath: '${dir.path}/prefs.json',
     skipRevenueCat: true,
   );
+}
+
+Future<void> _pumpUntil(
+  WidgetTester tester,
+  Finder finder, {
+  int maxFrames = 50,
+}) async {
+  for (var i = 0; i < maxFrames; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (finder.evaluate().isNotEmpty) return;
+  }
 }
 
 Future<void> _pumpEmptyPatterns(WidgetTester tester) async {
@@ -127,14 +139,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedTitle),
+        find.text(VisibleArchiveProofCopy.archiveHomeOneTitle),
         findsOneWidget,
       );
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedBody),
+        find.text(VisibleArchiveProofCopy.archiveHomeOneBody),
         findsOneWidget,
       );
-      expect(find.text('Add another moment'), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
@@ -146,10 +158,19 @@ void main() {
       tester,
     ) async {
       await _pumpEmptyPatterns(tester);
+      await _pumpUntil(
+        tester,
+        find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle),
+      );
 
-      expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.patternsEmptyCta), findsOneWidget);
-      expect(find.text('Record one moment'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.archiveHomeRecordCta),
+        findsWidgets,
+      );
       expect(find.text('Record first moment'), findsNothing);
       expect(find.byType(PatternsFirstArchiveView), findsNothing);
     });
@@ -182,7 +203,7 @@ void main() {
         find.text(ConsumerUiCopy.patternsFirstEntrySavedHelper),
         findsOneWidget,
       );
-      expect(find.text('Add another moment'), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.text('Record one moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);

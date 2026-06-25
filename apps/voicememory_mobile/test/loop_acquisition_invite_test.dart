@@ -55,9 +55,9 @@ void main() {
 
     test('capacity variant includes required fields', () {
       final v = LoopAcquisitionCopy.capacityYes;
-      expect(v.headline, contains('See why you keep saying yes'));
-      expect(v.subheadline, contains('pulled to agree'));
-      expect(v.bullets, hasLength(4));
+      expect(v.headline, contains('Catch the yes before it costs you'));
+      expect(v.subheadline, contains('before checking your capacity'));
+      expect(v.bullets, hasLength(3));
       expect(v.cta, 'Save yes moment');
     });
 
