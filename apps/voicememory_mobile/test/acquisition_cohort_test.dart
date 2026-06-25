@@ -19,6 +19,7 @@ Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
     journalPath: '/tmp/vm_acq_journal_$stamp.json',
     prefsPath: '/tmp/vm_acq_prefs_$stamp.json',
+    skipRevenueCat: true,
   );
 }
 
@@ -374,7 +375,7 @@ void main() {
 
     testWidgets('no cohort does not crash on teaser render', (tester) async {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _reset(stamp);
+      await tester.runAsync(() => _reset(stamp));
 
       await tester.pumpWidget(
         MaterialApp(

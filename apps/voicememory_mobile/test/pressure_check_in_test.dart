@@ -25,11 +25,11 @@ Future<_Stores> _openStores(String stamp) async {
   }
   final journalPath = '${dir.path}/journal_$stamp.json';
   final prefsPath = '${dir.path}/prefs_$stamp.json';
-  for (final path in [journalPath, prefsPath]) {
+  for (final path in [journalPath, prefsPath, '${journalPath.replaceFirst(RegExp(r'\.json$'), '.enc')}']) {
     final file = File(path);
     if (await file.exists()) await file.delete();
   }
-  final journal = await JournalStore.open(journalPath);
+  final journal = await JournalStore.open(journalPath, encryptAtRest: false);
   final prefs = await MobilePrefsStore.open(prefsPath);
   return (
     journal: journal,
@@ -90,20 +90,42 @@ void main() {
     });
 
     testWidgets('payoff still appears after quick save', (tester) async {
+      late PressureCheckInService service;
       await tester.runAsync(() async {
         final dir = Directory('test/tmp/pressure_check_in');
         if (!await dir.exists()) await dir.create(recursive: true);
+        final journalPath = '${dir.path}/payoff_widget_journal.json';
+        final prefsPath = '${dir.path}/payoff_widget_prefs.json';
+        for (final path in [
+          journalPath,
+          prefsPath,
+          JournalStore.encryptedPathFor(journalPath),
+        ]) {
+          final file = File(path);
+          if (await file.exists()) await file.delete();
+        }
         await AppServices.resetForTest(
-          journalPath: '${dir.path}/payoff_journal.json',
-          prefsPath: '${dir.path}/payoff_prefs.json',
+          journalPath: journalPath,
+          prefsPath: prefsPath,
           skipRevenueCat: true,
+        );
+        service = PressureCheckInService(
+          journalStore: AppServices.instance.journalStore,
+          store: PressureCheckInStore.forPrefs(AppServices.instance.prefs),
+        );
+        // Prior pressure save — UI save should hit the quick-success path.
+        await service.save(
+          option: PressureCheckInOption.hadToProveEnough,
+          now: DateTime(2026, 5, 30),
         );
       });
 
       await tester.binding.setSurfaceSize(const Size(390, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(const MaterialApp(home: PressureCheckInScreen()));
+      await tester.pumpWidget(
+        MaterialApp(home: PressureCheckInScreen(service: service)),
+      );
       await tester.pump();
 
       await tester.tap(find.text("I couldn't stop even though I wanted to"));
@@ -111,9 +133,10 @@ void main() {
 
       await tester.runAsync(() async {
         await tester.tap(find.byKey(const Key('pressure_quick_save_cta')));
-        await Future<void>.delayed(const Duration(milliseconds: 150));
+        await Future<void>.delayed(const Duration(milliseconds: 300));
       });
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
       expect(
         find.byKey(const Key('pressure_quick_save_success')),

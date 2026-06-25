@@ -61,15 +61,51 @@ Top failing files in original log: `record_screen_framing_copy_test` (16), `tran
 - zsh / markdown noise from ad-hoc log greps
 - PNG export tests when `ARCHIVEME_RUN_PNG_EXPORT` is unset (manual-only)
 
-## Test / build results
+## What was fixed (pass 2 — 2026-06-25)
+
+### App code
+
+- **`PinnedEvidenceScreen._load`**: when a test injects `store`, skip `AppServices.instance.journalStore.loadAll()` so pinned widget tests do not hang on unrelated journal IO.
+
+### Tests — priority batch (pressure / treat-as-new / pins)
+
+- **`pressure_check_in_test.dart`**: plaintext journal via `encryptAtRest: false`; pre-seed pressure store for quick-save payoff path; `AppServices.resetForTest` + bounded pumps (no `pumpAndSettle`).
+- **`treat_as_new_control_test`**: `EntryMemoryMode` picker expectations; engine exclusion aligned with weekly vs thread vs belief fresh-entry gates.
+- **`archive_search_and_pins_test.dart`**: encrypted journal reopen uses `encryptAtRest: false`; reopen after unpin; bounded search empty-state pumps.
+
+### Tests — timeout / async clusters
+
+- **`activation_rescue_useful_result_test.dart`**: `skipRevenueCat: true`; `_reset` inside `tester.runAsync`.
+- **`activation_rescue_tomorrow_check_test.dart`**: same; removed obsolete `tomorrowCheckReasonLine` assertion (UI uses `CompellingCheckPreview`).
+- **`account_privacy_controls_test.dart`**: replace `pumpAndSettle` with bounded pumps; journal `loadAll` in `runAsync` after wipe dialog.
+- **`audience_wedge_test.dart`**: A/B pattern with `alternativePatterns`; sharpness widget tests without blocking `_reset`; bounded pumps.
+- **`acquisition_cohort_test.dart`**: `skipRevenueCat: true`; `runAsync` for widget `_reset`.
+- **`first_three_journey_engine_test.dart`**: session-2 title expects “two moments to compare” (not legacy “starting to compare”).
+
+## Test / build results (pass 2)
 
 | Check | Result |
 |-------|--------|
-| Focused stabilisation tests (degraded voice, next-check, recap, roadmap, beta simplification, memory controls, entry detail, positioning) | **95 passed** |
-| Full `flutter test` | **6184 passed / 129 failed** (~23m50s) — down from ~6166/147 pre-round-2; remaining clusters are copy/gate drift (purchase intent cue, pinned evidence, privacy receipts, ArchiveMe vs “The archive” wording) |
+| Focused batch (pressure + treat-as-new + archive pins) | **45 passed / 0 failed** |
+| Focused timeout cluster (useful result, tomorrow check, audience sharpness ×2, account delete, acq teaser) | **6 passed / 0 failed** |
+| Full `flutter test --concurrency=4` | **6206 passed / 107 failed** (~4m20s) — was 6184/129 |
 | `flutter build ios --release --no-codesign` | **Pass** — `Runner.app` (49.5MB) |
 | `flutter build apk --debug` | **Pass** — `app-debug.apk` |
 | iOS placeholder warnings | **None** |
+
+## Remaining failure clusters (107)
+
+| Cluster | Examples | Notes |
+|---------|----------|-------|
+| Copy / gate drift | `purchase_intent_return_cue_test`, `first_loop_record_flow_test`, `first_recording_sample_test`, `view_archive_after_save_test` | Cards/CTAs moved or renamed during beta simplification |
+| Record screen overflow / samples | `record_screen_overflow_test`, `start_here_recording_test` | Missing nudge/sample cards under new empty-gate policy |
+| ArchiveMe wording | `first_archive_state_test`, `warm_archive_copy_test` | “The archive” → “ArchiveMe” |
+| Consumer copy banned-word sweep | `consumer_copy_banned_words_test` | Intentional product copy vs test denylist — review case-by-case |
+| Belief / theory engines | `belief_distance_test`, `archive_theory_engine_test` | Engine gate expectations |
+| Privacy receipts | `privacy_data_controls_test` | Missing `archive_private_receipt_card` under new gate order |
+| Partial audience wedge | `audience_wedge_test` (5) | Non-sharpness paths still need pattern/reset alignment |
+
+## Test / build results (pass 1)
 
 ## Dependency upgrades
 
@@ -77,4 +113,4 @@ Top failing files in original log: `record_screen_framing_copy_test` (16), `tran
 
 ## Remaining work
 
-Per-file triage may still be needed for copy/gate drift clusters: `pressure_check_in_test`, `transcription_pipeline_test`, `purchase_intent_return_cue_test`, `record_screen_overflow_test`, and others. Prefer updating tests when copy changed intentionally; fix app when behavior regressed.
+Per-file triage for the ~107 remaining failures. Prefer updating tests when copy changed intentionally; fix app only when behavior regressed. Next clusters: `purchase_intent_return_cue_test`, `record_screen_overflow_test`, `consumer_copy_banned_words_test`, `first_loop_record_flow_test`.

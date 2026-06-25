@@ -38,16 +38,26 @@ FirstSessionPattern _pattern() {
   return FirstSessionPattern(
     id: 'p1',
     createdAt: DateTime(2026, 6, 1),
-    title: 'Pattern',
-    whyNoticed: 'noticed',
-    watchForText: 'watch',
-    chips: const [],
+    title: 'Taking responsibility before asking for help',
+    whyNoticed: 'You mentioned pressure or responsibility.',
+    watchForText: 'whether you take responsibility before asking for help',
+    chips: const ['saying yes fast', 'pressure'],
     confidenceLabel: FirstSessionConfidenceLabel.early,
-    sourceTextPreview: 'preview',
-    matchReason: 'match',
-    categoryId: 'pressure',
+    sourceTextPreview: 'I said yes again.',
+    matchReason: 'Your words pointed toward pressure in this moment.',
+    confidenceScore: 0.55,
+    categoryId: 'responsibility',
     category: FirstSessionPatternCategory.responsibility,
-    confidenceScore: 0.5,
+    alternativePatterns: const [
+      FirstSessionPatternAlternative(
+        title: 'Fear of disappointing someone',
+        whyNoticed: 'You mentioned not wanting to disappoint someone.',
+        watchForText: 'whether fear of disappointing someone shows up again',
+        chips: ['disappoint'],
+        confidenceScore: 0.4,
+        categoryId: 'relationship',
+      ),
+    ],
   );
 }
 
@@ -82,6 +92,7 @@ Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(
     journalPath: '/tmp/vm_wedge_journal_$stamp.json',
     prefsPath: '/tmp/vm_wedge_prefs_$stamp.json',
+    skipRevenueCat: true,
   );
 }
 
@@ -221,8 +232,6 @@ void main() {
     });
 
     testWidgets('too generic opens clearer prompt', (tester) async {
-      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _reset(stamp);
       await tester.binding.setSurfaceSize(const Size(390, 1600));
       await tester.pumpWidget(
         MaterialApp(
@@ -231,7 +240,7 @@ void main() {
               child: PostSaveInsightChoiceCard(
                 pattern: _pattern(),
                 entry: _entry(
-                  'I agreed to help again because I did not want to disappoint them.',
+                  'I said yes to help again because I did not want to disappoint them and now I feel pressure.',
                 ),
                 reflectionCount: 1,
                 audienceWedge: AudienceWedge.sayingYesCapacity,
@@ -245,7 +254,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.ensureVisible(
         find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
       );
@@ -253,7 +262,7 @@ void main() {
         find.text(ConsumerUiCopy.firstInsightSharpnessTooGeneric),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 400));
       expect(
         find.text(ConsumerUiCopy.firstInsightTooGenericPrompt),
         findsOneWidget,
@@ -261,8 +270,6 @@ void main() {
     });
 
     testWidgets('wrong angle opens alternatives', (tester) async {
-      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _reset(stamp);
       await tester.binding.setSurfaceSize(const Size(390, 1600));
       await tester.pumpWidget(
         MaterialApp(
@@ -271,7 +278,7 @@ void main() {
               child: PostSaveInsightChoiceCard(
                 pattern: _pattern(),
                 entry: _entry(
-                  'I agreed to help again because I did not want to disappoint them.',
+                  'I said yes to help again because I did not want to disappoint them and now I feel pressure.',
                 ),
                 reflectionCount: 1,
                 onSaveSignal: (_) async {},
@@ -284,7 +291,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.text(ConsumerUiCopy.postSaveInsightAbFeelsCloserA));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 400));
       await tester.ensureVisible(
         find.text(ConsumerUiCopy.firstInsightSharpnessWrongAngle),
       );

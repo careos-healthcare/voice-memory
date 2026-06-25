@@ -94,6 +94,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
   }
 
+  Future<void> settleUi(WidgetTester tester) async {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+  }
+
   group('Account privacy controls section', () {
     testWidgets('shows Privacy and control section title', (tester) async {
       await pumpAccount(tester);
@@ -157,7 +162,8 @@ void main() {
       await pumpAccount(tester);
 
       await tester.tap(find.byKey(const Key('account_privacy_delete_row')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
       expect(
         find.text(SecuritySettingsCopy.wipeConfirmTitle),
@@ -169,18 +175,21 @@ void main() {
       );
 
       await tester.tap(find.byKey(const Key('wipe_archive_cancel')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
-      final entries = await AppServices.instance.journalStore.loadAll();
-      expect(entries, hasLength(1));
-      expect(entries.first.id, 'keep-me');
+      await tester.runAsync(() async {
+        final entries = await AppServices.instance.journalStore.loadAll();
+        expect(entries, hasLength(1));
+        expect(entries.first.id, 'keep-me');
+      });
     });
 
     testWidgets('export route is reachable from Account', (tester) async {
       await pumpAccount(tester);
 
       await tester.tap(find.byKey(const Key('account_privacy_export_row')));
-      await tester.pumpAndSettle();
+      await settleUi(tester);
 
       expect(find.text('Export'), findsOneWidget);
       expect(
@@ -193,7 +202,7 @@ void main() {
       await pumpAccount(tester);
 
       await tester.tap(find.byKey(const Key('account_privacy_lock_row')));
-      await tester.pumpAndSettle();
+      await settleUi(tester);
 
       expect(find.text('SECURITY_SETTINGS_MARKER'), findsOneWidget);
     });
@@ -202,7 +211,7 @@ void main() {
       await pumpAccount(tester);
 
       await tester.tap(find.byKey(const Key('account_privacy_security_row')));
-      await tester.pumpAndSettle();
+      await settleUi(tester);
 
       expect(find.text('SECURITY_SETTINGS_MARKER'), findsOneWidget);
     });
@@ -217,17 +226,21 @@ void main() {
       await pumpAccount(tester);
 
       await tester.tap(find.byKey(const Key('account_privacy_delete_row')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
       await tester.tap(find.byKey(const Key('wipe_archive_confirm')));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
-      final entries = await AppServices.instance.journalStore.loadAll();
-      expect(entries, hasLength(1));
-      expect(
-        PrivateDataService.wipeConfirmationPhrase,
-        'DELETE MY ARCHIVE',
-      );
+      await tester.runAsync(() async {
+        final entries = await AppServices.instance.journalStore.loadAll();
+        expect(entries, hasLength(1));
+        expect(
+          PrivateDataService.wipeConfirmationPhrase,
+          'DELETE MY ARCHIVE',
+        );
+      });
     });
   });
 }

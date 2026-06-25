@@ -79,11 +79,15 @@ class _PinnedEvidenceScreenState extends State<PinnedEvidenceScreen> {
 
   Future<void> _load() async {
     final pinned = await _store.pinnedEntries();
-    final entries = await AppServices.instance.journalStore.loadAll();
+    var activeEntryCount = pinned.where((e) => !e.isArchived).length;
+    if (widget.store == null && AppServices.isInitialized) {
+      final entries = await AppServices.instance.journalStore.loadAll();
+      activeEntryCount = entries.where((e) => !e.isArchived).length;
+    }
     if (!mounted) return;
     setState(() {
       _pinned = pinned;
-      _activeEntryCount = entries.where((e) => !e.isArchived).length;
+      _activeEntryCount = activeEntryCount;
       _loading = false;
     });
   }

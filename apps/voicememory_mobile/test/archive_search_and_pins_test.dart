@@ -443,7 +443,8 @@ void main() {
         find.byKey(const Key('archive_search_bar')),
         'zzz-no-match',
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
       expect(
         find.byKey(const Key('archive_search_empty_state')),
@@ -580,7 +581,10 @@ void main() {
   group('Pins / Saved Evidence', () {
     Future<(JournalStore, PinnedEvidenceStore, Directory)> openStores() async {
       final dir = Directory.systemTemp.createTempSync('vm_pins_');
-      final journal = await JournalStore.open('${dir.path}/entries.json');
+      final journal = await JournalStore.open(
+        '${dir.path}/entries.json',
+        encryptAtRest: false,
+      );
       return (journal, PinnedEvidenceStore.forStore(journal), dir);
     }
 
@@ -597,14 +601,21 @@ void main() {
       expect(pinned.treatAsNew, isFalse);
       expect(pinned.connectionApproved, isFalse);
 
-      final reopened = await JournalStore.open('${dir.path}/entries.json');
+      final reopened = await JournalStore.open(
+        '${dir.path}/entries.json',
+        encryptAtRest: false,
+      );
       final reloaded = await reopened.getById('a');
       expect(reloaded!.isPinned, isTrue);
       expect(reloaded.pinnedAt, _base);
 
       // Unpin clears both fields and persists too.
       await pins.setPinned('a', false);
-      final unpinned = await reopened.getById('a');
+      final afterUnpin = await JournalStore.open(
+        '${dir.path}/entries.json',
+        encryptAtRest: false,
+      );
+      final unpinned = await afterUnpin.getById('a');
       expect(unpinned!.isPinned, isFalse);
       expect(unpinned.pinnedAt, isNull);
     });
