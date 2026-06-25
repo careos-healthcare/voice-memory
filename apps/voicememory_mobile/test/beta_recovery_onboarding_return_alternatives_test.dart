@@ -17,6 +17,7 @@ import 'package:voicememory_mobile/features/capacity_loop/quick_capture_friction
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
+import 'package:voicememory_mobile/product/archive_positioning_copy.dart';
 import 'package:voicememory_mobile/product/loop_acquisition_copy.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 
@@ -123,10 +124,10 @@ void main() {
   const threeMomentEngine = CapacityThreeMomentEngine();
 
   group('Beta recovery onboarding promise', () {
-    test('headline includes Catch the yes before it costs you', () {
+    test('headline leads with private mind map', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
-        'Catch the yes before it costs you.',
+        ArchivePositioningCopy.firstUseTitle,
       );
       expect(
         LoopAcquisitionCopy.capacityYes.headline,
@@ -138,15 +139,20 @@ void main() {
       );
     });
 
-    test('explains save moment, see pull, review change', () {
-      expect(AcquisitionStartCopy.capacitySteps, [
-        'Save a yes moment',
-        'See what pulled you in',
-        'Review what changed',
+    test('how it works explains save mark pull come back review', () {
+      expect(AcquisitionStartCopy.capacityHowItWorksSteps, [
+        'Save a real moment',
+        'Mark what pulled you in',
+        'Come back when it happens again',
+        'After 3 moments, review what repeats',
       ]);
       expect(
         LoopAcquisitionCopy.capacityYes.bullets,
-        AcquisitionStartCopy.capacitySteps,
+        [
+          'Save a yes moment',
+          'See what pulled you in',
+          'Review what changed',
+        ],
       );
     });
 
@@ -154,8 +160,9 @@ void main() {
       final visible = [
         AcquisitionStartCopy.capacityTitle,
         AcquisitionStartCopy.capacityBody,
-        ...AcquisitionStartCopy.capacitySteps,
-        AcquisitionStartCopy.capacityProductLine,
+        ...AcquisitionStartCopy.capacityHowItWorksSteps,
+        AcquisitionStartCopy.capacityFirstPathLabel,
+        AcquisitionStartCopy.capacityFirstPathHeadline,
         LoopAcquisitionCopy.capacityYes.headline,
         LoopAcquisitionCopy.capacityYes.subheadline,
         ...LoopAcquisitionCopy.capacityYes.bullets,
@@ -166,16 +173,12 @@ void main() {
       }
     });
 
-    test('includes product line and CTAs', () {
+    test('includes first-use body and CTAs', () {
       expect(
-        AcquisitionStartCopy.capacityProductLine.toLowerCase(),
-        allOf(
-          contains('patterns'),
-          contains('changes'),
-          contains('next things to watch'),
-        ),
+        AcquisitionStartCopy.capacityBody,
+        ArchivePositioningCopy.firstUseBody,
       );
-      expect(AcquisitionStartCopy.capacityStartCta, 'Save yes moment');
+      expect(AcquisitionStartCopy.capacityStartCta, 'Save a yes moment');
       expect(AcquisitionStartCopy.capacityHowItWorksCta, 'How it works');
     });
   });
@@ -209,8 +212,8 @@ void main() {
       );
       expect(one.title, 'Waiting for the next yes moment');
       expect(
-        one.body.toLowerCase(),
-        contains('come back when the next real request pulls you toward yes'),
+        one.body,
+        CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
       );
 
       final integrated = threeMomentEngine.build(

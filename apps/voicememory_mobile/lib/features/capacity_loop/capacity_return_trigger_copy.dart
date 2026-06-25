@@ -13,11 +13,19 @@ abstract final class CapacityReturnTriggerCopy {
   static const completionSecondaryCta = 'Save another yes moment';
 
   static const archiveHomeTitle = 'Waiting for the next yes moment';
-  static String archiveHomeBody(int saved, {required int target}) =>
-      'You have $saved of $target saved. '
-      'Come back when the next real request pulls you toward yes.';
 
-  static const archiveHomePrimaryCta = 'Save yes moment';
+  static String archiveHomeBody(int saved, {required int target}) {
+    if (saved == 1) {
+      return 'You saved the first moment. Now wait for the next real one.';
+    }
+    if (saved == 2) {
+      return 'One more real moment will make the pattern clearer.';
+    }
+    return 'You have $saved of $target saved. '
+        'Come back when the next real request pulls you toward yes.';
+  }
+
+  static const archiveHomePrimaryCta = 'Save next yes moment';
   static const archiveHomeReviewCta = 'Review what I have';
 
   static const recordProgressLine =

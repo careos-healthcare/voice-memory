@@ -20,6 +20,9 @@ Paid launch is **not ready** until store billing, RevenueCat, physical QA, and b
 - [ ] ≥3 users complete or view **weekly review** or **Then vs Now**
 - [ ] ≥3 users say archive showed something **useful**
 - [ ] ≥2 users express **willingness to pay** (yes / maybe with reason)
+- [ ] **Paid launch requires 2–3 clear paid-intent users** — not one “maybe” response
+- [ ] **RevenueCat readiness comes after return + willingness-to-pay evidence**
+- [ ] **Do not enable paid launch from one maybe-paid user**
 - [ ] No privacy blockers (share/calendar/milestone surfaces)
 - [ ] Sandbox **purchase + restore** verified after RevenueCat configured
 

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_engine.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_models.dart';
+import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigger_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_models.dart';
@@ -187,9 +188,13 @@ void main() {
         capacityCohortActive: false,
       );
       expect(one.title, 'Waiting for the next yes moment');
-      expect(one.subtitle, contains('1 of 3'));
+      expect(
+        one.subtitle,
+        CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
+      );
       expect(one.progressLabel, isEmpty);
       expect(one.showReviewSecondary, isTrue);
+      expect(one.showQuickSaveSecondary, isFalse);
 
       final two = engine.buildFromJournal(
         entries: [
@@ -199,8 +204,12 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(two.subtitle, contains('2 of 3'));
+      expect(
+        two.subtitle,
+        CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3),
+      );
       expect(two.progressLabel, isEmpty);
+      expect(two.showQuickSaveSecondary, isFalse);
     });
 
     test('switches CTA to review loop at 3/3', () {

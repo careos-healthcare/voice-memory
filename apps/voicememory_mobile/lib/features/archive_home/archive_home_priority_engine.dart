@@ -1,10 +1,11 @@
+import 'archive_home_card_priority.dart';
 import 'archive_home_priority_models.dart';
 
 /// Deterministic Archive Home priority stack — local, no persistence.
 class ArchiveHomePriorityEngine {
   const ArchiveHomePriorityEngine();
 
-  static const _primaryCardLimit = 3;
+  static const _defaultPrimaryCardLimit = 3;
 
   /// Sticky-loop surfaces in product order (#129–#136).
   static const stickyLoopSequence = [
@@ -29,10 +30,12 @@ class ArchiveHomePriorityEngine {
   /// Returns visible sticky-loop sections in canonical order.
   static List<ArchiveHomeSectionId> stickyLoopSections(
     ArchiveHomePriorityInput input,
-  ) =>
-      stickyLoopSequence
-          .where((id) => _isStickyLoopVisible(input, id))
-          .toList();
+  ) {
+    final visible = stickyLoopSequence
+        .where((id) => _isStickyLoopVisible(input, id))
+        .toList();
+    return ArchiveHomeCardPriority.stickyLoopSectionsForInput(input, visible);
+  }
 
   static bool _isStickyLoopVisible(
     ArchiveHomePriorityInput input,
@@ -116,11 +119,14 @@ class ArchiveHomePriorityEngine {
     final hidden = _hiddenForStage(input);
     final ranked = _rankedOrder(input).where((id) => !hidden.contains(id)).toList();
 
+    final primaryCardLimit = ArchiveHomeCardPriority.primaryCardLimit(
+      calmCapacityActivationMode: input.calmCapacityActivationMode,
+    );
     final primary = <ArchiveHomeSectionId>[ArchiveHomeSectionId.archiveSummary];
     var addedCards = 0;
     for (final id in ranked) {
       if (id == ArchiveHomeSectionId.archiveSummary) continue;
-      if (addedCards >= _primaryCardLimit) break;
+      if (addedCards >= primaryCardLimit) break;
       primary.add(id);
       addedCards++;
     }
@@ -256,7 +262,8 @@ class ArchiveHomePriorityEngine {
     if (input.savedEntryCount <= 0) {
       return [
         ArchiveHomeSectionId.archiveSummary,
-        if (input.archiveDailyChangeVisible)
+        if (input.archiveDailyChangeVisible &&
+          !input.calmCapacityActivationMode)
           ArchiveHomeSectionId.archiveDailyChange,
         ...stickyLoopSections(input),
         ArchiveHomeSectionId.sampleArchive,
@@ -267,7 +274,8 @@ class ArchiveHomePriorityEngine {
 
     return [
       ArchiveHomeSectionId.archiveSummary,
-      if (input.archiveDailyChangeVisible)
+      if (input.archiveDailyChangeVisible &&
+          !input.calmCapacityActivationMode)
         ArchiveHomeSectionId.archiveDailyChange,
       ...stickyLoopSections(input),
       ..._betaGrowthSections(input),

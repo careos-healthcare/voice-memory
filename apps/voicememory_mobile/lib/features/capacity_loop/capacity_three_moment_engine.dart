@@ -87,7 +87,7 @@ class CapacityThreeMomentEngine {
       primaryRoute: atTarget
           ? CapacityThreeMomentCopy.loopRoute
           : CapacityThreeMomentCopy.recordRoute,
-      showQuickSaveSecondary: !atTarget && quickCapture.showCard,
+      showQuickSaveSecondary: !atTarget && !useReturnTrigger && quickCapture.showCard,
       quickSaveRoute: LowEffortYesCaptureCopy.route,
       showReviewSecondary: useReturnTrigger && returnTrigger.showSecondary,
       reviewSecondaryLabel: returnTrigger.secondaryCtaLabel,

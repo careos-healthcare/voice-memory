@@ -125,18 +125,14 @@ void main() {
       expect(generic, contains('mind map'));
     });
 
-    test('capacity surfaces retain wedge headline', () {
+    test('capacity start uses umbrella headline', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
-        ArchivePositioningCopy.wedgeHeadline,
+        ArchivePositioningCopy.firstUseTitle,
       );
       expect(
-        LoopAcquisitionCopy.capacityYes.headline,
         ArchivePositioningCopy.wedgeHeadline,
-      );
-      expect(
-        LoopModeCopy.capacityHandoffTitle,
-        ArchivePositioningCopy.wedgeHeadline,
+        'Catch the yes before it costs you.',
       );
     });
 
@@ -151,11 +147,7 @@ void main() {
       );
     });
 
-    test('capacity start includes first-path context and timing flex', () {
-      expect(
-        AcquisitionStartCopy.capacityPathContext,
-        ArchivePositioningCopy.capacityPathContext,
-      );
+    test('capacity start includes timing flex line', () {
       expect(
         AcquisitionStartCopy.capacityTimingFlex,
         ArchivePositioningCopy.capacityTimingFlex,

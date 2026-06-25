@@ -10,7 +10,6 @@ import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/loop_mode/loop_mode_model.dart';
 import '../product/acquisition_start_copy.dart';
-import '../product/archive_positioning_copy.dart';
 import '../router/onboarding_gate.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
@@ -112,18 +111,57 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
   }
 
   void _showHowItWorks() {
+    final steps = AcquisitionStartCopy.capacityHowItWorksSteps;
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AcquisitionStartCopy.capacityHowItWorksCta),
-        content: Text(
-          AcquisitionStartCopy.capacityHowItWorksBody,
-          style: ArchiveMobileTypography.explanationBody(context),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var i = 0; i < steps.length; i++)
+              Padding(
+                padding: EdgeInsets.only(top: i == 0 ? 0 : AppSpacing.sm),
+                child: Text(
+                  '${i + 1}. ${steps[i]}',
+                  style: ArchiveMobileTypography.explanationBody(context),
+                ),
+              ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _capacityFirstPathCard(BuildContext context) {
+    return Container(
+      key: const Key('loop_start_capacity_first_path_card'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.borderSubtle),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AcquisitionStartCopy.capacityFirstPathLabel,
+            style: ArchiveMobileTypography.body(context).copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            AcquisitionStartCopy.capacityFirstPathHeadline,
+            style: ArchiveMobileTypography.explanationBody(context),
           ),
         ],
       ),
@@ -168,59 +206,12 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
                 ),
               ],
               if (_isCapacityStart) ...[
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  AcquisitionStartCopy.capacityPathContext,
-                  key: const Key('loop_start_capacity_path_context'),
-                  style: ArchiveMobileTypography.explanationBody(
-                    context,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                const SizedBox(height: AppSpacing.md),
+                _capacityFirstPathCard(context),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   AcquisitionStartCopy.capacityTimingFlex,
                   key: const Key('loop_start_capacity_timing_flex'),
-                  style: ArchiveMobileTypography.explanationBody(
-                    context,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  AcquisitionStartCopy.capacityFirstPathLine,
-                  key: const Key('loop_start_capacity_first_path_line'),
-                  style: ArchiveMobileTypography.explanationBody(context),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                for (var i = 0; i < AcquisitionStartCopy.capacitySteps.length; i++)
-                  Padding(
-                    key: Key('loop_start_capacity_step_$i'),
-                    padding: EdgeInsets.only(top: i == 0 ? 0 : AppSpacing.xs),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${i + 1}.',
-                          style: ArchiveMobileTypography.body(context).copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        Expanded(
-                          child: Text(
-                            AcquisitionStartCopy.capacitySteps[i],
-                            style: ArchiveMobileTypography.body(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  AcquisitionStartCopy.capacityProductLine,
-                  key: const Key('loop_start_capacity_product_line'),
                   style: ArchiveMobileTypography.explanationBody(
                     context,
                     color: AppColors.textSecondary,
