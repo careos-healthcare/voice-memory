@@ -14,48 +14,118 @@ import '../features/referral/invited_user_welcome.dart';
 import '../models/journal_entry.dart';
 import '../models/sync_status.dart';
 import '../services/activation_funnel_analytics.dart';
+import 'encrypted_json_file_store.dart';
+import 'private_data_encryption_key_store.dart';
+import 'secure_storage.dart';
 
-/// Durable JSON journal file on device.
+/// Durable journal file on device — encrypted at rest when [encryptAtRest] is enabled.
 class JournalStore {
-  JournalStore({required this.file});
+  JournalStore({
+    required this.file,
+    EncryptedJsonFileStore? encryptedStore,
+    File? plaintextLegacyFile,
+    bool encryptAtRest = false,
+  }) : _encrypted = encryptedStore,
+       _plaintextLegacy = plaintextLegacyFile,
+       _encryptAtRest = encryptAtRest;
 
+  /// Primary on-disk file — encrypted envelope when [encryptAtRest] is true.
   final File file;
 
-  static Future<JournalStore> open(String filePath) async {
-    final file = File(filePath);
-    if (!await file.parent.exists()) {
-      await file.parent.create(recursive: true);
+  final EncryptedJsonFileStore? _encrypted;
+  final File? _plaintextLegacy;
+  final bool _encryptAtRest;
+
+  List<JournalEntry>? _cache;
+
+  static String encryptedPathFor(String legacyJsonPath) {
+    if (legacyJsonPath.endsWith('.json')) {
+      return legacyJsonPath.replaceFirst(RegExp(r'\.json$'), '.enc');
     }
-    if (!await file.exists()) {
-      await file.writeAsString('[]');
-    }
-    return JournalStore(file: file);
+    return '$legacyJsonPath.enc';
   }
 
-  Future<List<JournalEntry>> loadAll() async => loadAllSync();
+  static Future<JournalStore> open(
+    String filePath, {
+    PrivateDataEncryptionKeyStore? keyStore,
+    bool encryptAtRest = true,
+    SecureStorageService? secureStorage,
+  }) async {
+    final legacyFile = File(filePath);
+    if (!await legacyFile.parent.exists()) {
+      await legacyFile.parent.create(recursive: true);
+    }
 
-  /// Same as [loadAll] but synchronous — for instant empty-archive UI on cold open.
+    if (!encryptAtRest) {
+      if (!await legacyFile.exists()) {
+        await legacyFile.writeAsString('[]');
+      }
+      final store = JournalStore(file: legacyFile, encryptAtRest: false);
+      store._cache = store._decodeEntries(await legacyFile.readAsString());
+      return store;
+    }
+
+    final resolvedKeyStore = keyStore ?? _defaultKeyStore(secureStorage);
+    final encryptedFile = File(encryptedPathFor(filePath));
+    final encryptedStore = EncryptedJsonFileStore(
+      file: encryptedFile,
+      keyStore: resolvedKeyStore,
+    );
+
+    await encryptedStore.ensureKey();
+    await encryptedStore.migrateFromPlaintextFile(legacyFile);
+
+    if (!await encryptedFile.exists()) {
+      await encryptedStore.writeJson([]);
+    }
+
+    final store = JournalStore(
+      file: encryptedFile,
+      encryptedStore: encryptedStore,
+      plaintextLegacyFile: legacyFile,
+      encryptAtRest: true,
+    );
+    store._cache = await store._loadEntriesFromEncrypted();
+    return store;
+  }
+
+  Future<List<JournalEntry>> loadAll() async {
+    if (_encryptAtRest && _encrypted != null) {
+      _cache = await _loadEntriesFromEncrypted();
+      return List<JournalEntry>.from(_cache!);
+    }
+    return loadAllSync();
+  }
+
+  /// Same as [loadAll] but synchronous — uses the in-memory cache after [open].
   List<JournalEntry> loadAllSync() {
-    // Creator demo mode: safe demo entries only — the real journal file
-    // is never read.
     if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
-    if (!file.existsSync()) return [];
-    final raw = file.readAsStringSync();
+    if (_cache != null) {
+      return List<JournalEntry>.from(_cache!);
+    }
+
+    final source = _encryptAtRest ? file : (_plaintextLegacy ?? file);
+    if (!source.existsSync()) return [];
+    final raw = source.readAsStringSync();
     if (raw.trim().isEmpty) return [];
-    final list = jsonDecode(raw) as List<dynamic>;
-    final entries = list
-        .map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
-        .toList();
-    entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return entries;
+    _cache = _decodeEntries(raw);
+    return List<JournalEntry>.from(_cache!);
+  }
+
+  Future<void> clearAll() async {
+    if (CreatorDemoMode.isActive) return;
+    _cache = const [];
+    if (_encrypted != null) {
+      await _encrypted!.writeJson([]);
+      return;
+    }
+    await file.writeAsString('[]');
   }
 
   Future<void> save(
     JournalEntry entry, {
     String first25Source = 'journal_save',
   }) async {
-    // Creator demo mode: never write demo (or new) entries into the real
-    // journal file, and never fire first-save funnel hooks.
     if (CreatorDemoMode.isActive) return;
     final all = await loadAll();
     final isNew = !all.any((e) => e.id == entry.id);
@@ -68,15 +138,12 @@ class JournalStore {
     }
     final next = [toPersist, ...all.where((e) => e.id != entry.id)];
     await _writeAll(next);
-    // Funnel: the very first successful save in this archive.
     if (isNew && next.length == 1) {
       ActivationFunnelAnalytics.track(
         ActivationFunnelAnalytics.firstRecordingSaved,
         entryCount: 1,
         oncePerSession: true,
       );
-      // Attribute the first save to the rescue card when its CTA started
-      // this recording. Counts only — never recording content.
       if (FirstSaveRescue.startedFromRescueThisSession) {
         FirstSaveRescue.startedFromRescueThisSession = false;
         ActivationFunnelAnalytics.track(
@@ -85,8 +152,6 @@ class JournalStore {
           oncePerSession: true,
         );
       }
-      // Attribute the first save to the starter sentence when its CTA
-      // seeded this recording. Counts only — never recording content.
       if (FirstRecordingSample.startedFromSampleThisSession) {
         FirstRecordingSample.startedFromSampleThisSession = false;
         ActivationFunnelAnalytics.track(
@@ -95,11 +160,7 @@ class JournalStore {
           oncePerSession: true,
         );
       }
-      // Invited funnel mirror: the very first save of an invited user.
-      // Silent without a first-touch invite attribution.
       InviteFunnelMetrics.firstSave();
-      // Attribute the first save to the invited-user welcome when its CTA
-      // started this recording. Stable source id and counts only.
       if (InvitedUserWelcome.startedFromWelcomeThisSession) {
         InvitedUserWelcome.startedFromWelcomeThisSession = false;
         ActivationFunnelAnalytics.track(
@@ -119,14 +180,12 @@ class JournalStore {
 
   Future<void> update(JournalEntry entry) async => save(entry);
 
-  /// Updates or clears the optional local context tag on a saved entry.
   Future<void> updateCaptureContextTag(String id, {String? tagId}) async {
     final entry = await getById(id);
     if (entry == null) return;
     await save(CaptureContextTags.updateTag(entry, tagId));
   }
 
-  /// Copy with memory metadata only — id, text, and timestamps untouched.
   static JournalEntry _withMemoryFlags(
     JournalEntry entry, {
     bool? treatAsNew,
@@ -159,7 +218,6 @@ class JournalStore {
     captureContextTag: captureContextTag ?? entry.captureContextTag,
   );
 
-  /// Completed reflections (non-empty transcript).
   Future<List<JournalEntry>> loadEligible() async {
     final all = await loadAll();
     return all
@@ -214,7 +272,6 @@ class JournalStore {
     );
   }
 
-  /// Merge remote entries — newer updatedAt wins per id.
   Future<void> mergeRemote(List<JournalEntry> remote) async {
     final local = await loadAll();
     final byId = {for (final e in local) e.id: e};
@@ -229,7 +286,6 @@ class JournalStore {
           reflection: r.reflection,
           syncStatus: SyncStatus.synced,
           localAudioPath: existing?.localAudioPath,
-          // Local memory metadata survives a remote merge.
           treatAsNew: r.treatAsNew || (existing?.treatAsNew ?? false),
           connectionApproved:
               r.connectionApproved || (existing?.connectionApproved ?? false),
@@ -276,9 +332,39 @@ class JournalStore {
   }
 
   Future<void> _writeAll(List<JournalEntry> entries) async {
-    // Creator demo mode: the real journal file is never touched.
     if (CreatorDemoMode.isActive) return;
-    final encoded = jsonEncode(entries.map((e) => e.toJson()).toList());
-    await file.writeAsString(encoded);
+    _cache = List<JournalEntry>.from(entries);
+    final encoded = entries.map((e) => e.toJson()).toList();
+    if (_encrypted != null) {
+      await _encrypted!.writeJson(encoded);
+      return;
+    }
+    await file.writeAsString(jsonEncode(encoded));
+  }
+
+  Future<List<JournalEntry>> _loadEntriesFromEncrypted() async {
+    if (_encrypted == null) return [];
+    final decoded = await _encrypted!.readJson();
+    if (decoded == null) return [];
+    return _decodeEntries(jsonEncode(decoded));
+  }
+
+  List<JournalEntry> _decodeEntries(String raw) {
+    if (raw.trim().isEmpty) return [];
+    final list = jsonDecode(raw) as List<dynamic>;
+    final entries = list
+        .map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
+        .toList();
+    entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return entries;
+  }
+
+  static PrivateDataEncryptionKeyStore _defaultKeyStore(
+    SecureStorageService? secureStorage,
+  ) {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      return InMemoryPrivateDataEncryptionKeyStore();
+    }
+    return SecurePrivateDataEncryptionKeyStore(secure: secureStorage);
   }
 }

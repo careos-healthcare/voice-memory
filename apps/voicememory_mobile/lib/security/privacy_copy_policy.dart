@@ -12,6 +12,14 @@ abstract class PrivacyCopyPolicy {
   static const String exportDeleteAnytime =
       'You can export or delete your local archive at any time.';
 
+  static const String deleteLocalArchive = 'Delete local archive';
+
+  static const String transcriptionAnalysisWhenUsed =
+      'Some features send audio or text for transcription or analysis when you use them.';
+
+  static const String journalEncryptedAtRest =
+      'Your journal file on this device is encrypted.';
+
   static const String lockArchiveMe = 'Protect this archive';
 
   /// Calm first-run / legal disclaimer — no encryption or therapy claims.
@@ -48,6 +56,7 @@ abstract class PrivacyCopyPolicy {
     RegExp(r'encrypt(?:ed)?\s+(?:a\s+)?backup', caseSensitive: false),
     RegExp(r'encrypted before it is', caseSensitive: false),
     RegExp(r'encrypted sync', caseSensitive: false),
+    RegExp(r'journal file on this device is encrypted', caseSensitive: false),
   ];
 
   static final RegExp _neverSentPattern = RegExp(

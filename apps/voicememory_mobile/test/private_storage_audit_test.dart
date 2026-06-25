@@ -8,9 +8,10 @@ void main() {
     expect(stores.map((s) => s.store), contains('SecureStorageService'));
   });
 
-  test('flags sensitive plaintext backends', () {
+  test('flags sensitive plaintext backends excluding encrypted journal', () {
     final plaintext = PrivateStorageAudit.sensitivePlaintextStores();
-    expect(plaintext.any((s) => s.store == 'JournalStore'), isTrue);
+    expect(plaintext.any((s) => s.store == 'JournalStore'), isFalse);
+    expect(plaintext.any((s) => s.store == 'MobilePrefsStore'), isTrue);
     expect(plaintext.every((s) => !s.encrypted), isTrue);
   });
 
