@@ -116,12 +116,16 @@ class _MemoryConnectionActionsRowState
 
   @override
   Widget build(BuildContext context) {
-    if (_thanksLine != null) {
+    final thanksLine = _thanksLine ??
+        (MemoryControlStore.isSuppressed(widget.cardType)
+            ? MemoryControlCopy.notRelatedThanks
+            : null);
+    if (thanksLine != null) {
       return Padding(
         key: Key('memory_connection_thanks_${widget.cardType.id}'),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Text(
-          _thanksLine!,
+          thanksLine,
           style: ArchiveMobileTypography.responsiveHelper(
             context,
           ).copyWith(color: AppColors.textSecondary),

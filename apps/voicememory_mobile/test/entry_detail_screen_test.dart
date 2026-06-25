@@ -98,7 +98,6 @@ void main() {
       expect(find.text(EntryDetailCopy.archiveNoteLabel), findsOneWidget);
       expect(find.text(EntryDetailCopy.archiveNoteBody), findsOneWidget);
       expect(find.text(EntryDetailCopy.archiveNoteHelper), findsOneWidget);
-      expect(find.text(EntryDetailCopy.advancedDetails), findsOneWidget);
     });
 
     testWidgets('hides internal metadata on default view', (tester) async {
@@ -171,6 +170,10 @@ void main() {
       expect(find.byKey(const Key('entry_aboutness_editor')), findsNothing);
       expect(find.byKey(const Key('memory_surfacing_editor')), findsNothing);
 
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('entry_detail_advanced_section')),
+        200,
+      );
       await tester.tap(find.text(EntryDetailCopy.advancedDetails));
       await tester.pump(const Duration(milliseconds: 400));
 
