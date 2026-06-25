@@ -66,6 +66,7 @@ class ArchiveHomePriorityInput {
     required this.archiveCalendarVisible,
     required this.reviewRitualVisible,
     required this.milestoneShareVisible,
+    this.calmCapacityActivationMode = false,
   });
 
   final int savedEntryCount;
@@ -93,6 +94,7 @@ class ArchiveHomePriorityInput {
   final bool archiveCalendarVisible;
   final bool reviewRitualVisible;
   final bool milestoneShareVisible;
+  final bool calmCapacityActivationMode;
 }
 
 /// Ordered Archive Home layout plan — primary first, then optional collapse.

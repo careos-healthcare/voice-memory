@@ -504,11 +504,9 @@ void main() {
   });
 
   group('ArchiveDailyChangeStore', () {
-    setUp(() async {
-      await _resetStore('store');
-    });
-
     test('persists lastSeenAt and dismissedAt only', () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _resetStore(stamp);
       final seenAt = DateTime(2026, 6, 16, 12).toUtc();
       await ArchiveDailyChangeStore.instance().markSeen(seenAt);
       expect(ArchiveDailyChangeStore.cached.lastSeenAt, seenAt);

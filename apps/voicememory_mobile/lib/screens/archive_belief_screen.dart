@@ -2155,7 +2155,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       showEmptySample: _showEmpty,
       archiveDailyChangeVisible: !ScreenshotMode.enabled &&
           archiveDailyChange.hasFeature &&
-          archiveDailyChange.showOnArchiveHome,
+          archiveDailyChange.showOnArchiveHome &&
+          !earlyCapacityWedgeSession,
       firstWeekPathVisible: !ScreenshotMode.enabled &&
           realSavedCount < 7 &&
           !earlyCapacityWedgeSession,
@@ -2203,6 +2204,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       reviewRitualVisible:
           !ScreenshotMode.enabled && reviewRitualResult.showOnArchiveHome,
       milestoneShareVisible: milestoneShareVisible,
+      calmCapacityActivationMode: earlyCapacityWedgeSession,
     );
   }
 

@@ -164,6 +164,11 @@ class ArchiveDailyChangeEngine {
           record.hasOutcome &&
           record.outcomeId == CapacityDecisionOutcomeIds.saidYes,
     );
+    final hasDelayed = input.outcomeRecords.any(
+      (record) =>
+          record.hasOutcome &&
+          record.outcomeId == CapacityDecisionOutcomeIds.delayed,
+    );
     final hasPatternChange = input.outcomeRecords.any(
       (record) => record.showsPatternChange,
     );
@@ -199,6 +204,20 @@ class ArchiveDailyChangeEngine {
         alternativeLabel: alternative.label,
         alternativeBody: alternative.body,
         watchNextLine: ArchiveDailyChangeCopy.watchNextForPullReason(pullId),
+        repeatedLine: _repeatedLine(pullId),
+      );
+    }
+
+    if (pullId == CapacityPullReasonIds.feltResponsible &&
+        pullCount >= 2 &&
+        hasDelayed) {
+      final alternative = _resolveAlternative(input, pullId);
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.patternInterrupted,
+        changeLine: ArchiveDailyChangeCopy.responsibilityRepeatedDelayedLine,
+        alternativeLabel: alternative.label,
+        alternativeBody: alternative.body,
+        watchNextLine: ArchiveDailyChangeCopy.watchAnswerBeforeCapacity,
         repeatedLine: _repeatedLine(pullId),
       );
     }

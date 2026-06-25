@@ -29,10 +29,13 @@ abstract final class ArchiveDailyChangeCopy {
   static const labelSaveOneMore = labelSaveMomentOnly;
 
   static const urgencyWithLaterCostLine =
-      'Urgency keeps showing up, and one of those yes moments later cost you time or energy.';
+      'Urgency keeps appearing with later cost.';
+
+  static const responsibilityRepeatedDelayedLine =
+      'Responsibility showed up again, but this time you delayed the answer.';
 
   static const responsibilityWithSaidYesLine =
-      'Feeling responsible is becoming the pull to watch. You marked yes again when that was present.';
+      'Responsibility showed up again when you marked yes.';
 
   static String repeatedPullWithLaterCostLine(String pullShortLabel) =>
       pullShortLabel == 'urgency'
@@ -58,10 +61,10 @@ abstract final class ArchiveDailyChangeCopy {
       'You marked the yes loop as fitting what you noticed.';
 
   static const fitPartlyNewMomentLine =
-      'You marked the loop as partly fitting. This new moment gives it more evidence.';
+      'You marked this loop as partly fitting. The new moment adds evidence, but it is not settled yet.';
 
   static const quickCaptureStillWorkLine =
-      'Quick save still felt like work. The next version should reduce steps, not add more reflection.';
+      'Quick save still felt like work. Next time, save only the pull.';
 
   static const noPullReasonLine =
       'You saved the moment, but the pull is still unclear.';
@@ -75,18 +78,17 @@ abstract final class ArchiveDailyChangeCopy {
   static const changeYesLoopReady =
       'Your yes loop has enough evidence to review.';
 
-  static const altUrgency =
-      'Do not answer immediately. Use: ‘I cannot answer properly right now — I will come back to you.’';
+  static const altUrgency = 'Delay before replying.';
   static const altResponsibility =
-      'Check your actual capacity before accepting responsibility.';
+      'Check capacity before accepting responsibility.';
   static const altDisappointment =
       'Use: ‘I want to help, but I need to check what I can realistically do.’';
   static const altSqueezeItIn =
       'Ask what would need to move before saying yes.';
   static const altOpportunity =
-      'Delay the answer long enough to check whether this opportunity displaces something important.';
+      'Check what this opportunity would displace.';
   static const altAnsweredTooQuickly =
-      'Pause before replying. Do not answer in the first moment.';
+      'Do not answer in the first moment.';
   static const altQuickCaptureStillWork =
       'Save only the pull. Skip the rest.';
 
@@ -194,6 +196,7 @@ abstract final class ArchiveDailyChangeCopy {
         labelReviewLoop,
         labelWatchPull,
         urgencyWithLaterCostLine,
+        responsibilityRepeatedDelayedLine,
         responsibilityWithSaidYesLine,
         repeatedPullWithLaterCostLine('urgency'),
         repeatedPullWithSaidYesLine('feeling responsible'),

@@ -115,8 +115,10 @@ void main() {
         surface: CapacityReturnTriggerSurface.archiveHome,
       );
       expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle);
-      expect(one.body, contains('1 of 3'));
-      expect(one.body.toLowerCase(), contains('next real request'));
+      expect(
+        one.body,
+        CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
+      );
 
       final two = engine.buildFromJournal(
         entries: [
@@ -127,8 +129,10 @@ void main() {
         capacityCohortActive: false,
         surface: CapacityReturnTriggerSurface.archiveHome,
       );
-      expect(two.body, contains('2 of 3'));
-      expect(two.body.toLowerCase(), contains('next real request'));
+      expect(
+        two.body,
+        CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3),
+      );
     });
 
     test('hides archive home return trigger at 3/3', () {
@@ -248,11 +252,14 @@ void main() {
         capacityCohortActive: false,
       );
       expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle);
-      expect(one.subtitle, contains('1 of 3'));
+      expect(
+        one.subtitle,
+        CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
+      );
       expect(one.progressLabel, isEmpty);
       expect(one.showReviewSecondary, isTrue);
       expect(one.reviewSecondaryLabel, CapacityReturnTriggerCopy.archiveHomeReviewCta);
-      expect(one.showQuickSaveSecondary, isTrue);
+      expect(one.showQuickSaveSecondary, isFalse);
     });
 
     test('at 3/3 review loop CTA and no archive home card', () {
@@ -430,15 +437,22 @@ void main() {
   });
 
   group('Quick capture and record remain available', () {
-    test('quick save secondary still on 3-moment card under target', () {
-      final result = threeMomentEngine.buildFromJournal(
+    test('quick save secondary on 3-moment card at 0/3 only', () {
+      final zero = threeMomentEngine.buildFromJournal(
+        entries: const [],
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+      );
+      expect(zero.showQuickSaveSecondary, isTrue);
+
+      final one = threeMomentEngine.buildFromJournal(
         entries: [_capacityEntry('real_0')],
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(result.showQuickSaveSecondary, isTrue);
-      expect(result.quickSaveRoute, LowEffortYesCaptureCopy.route);
-      expect(result.primaryRoute, CapacityReturnTriggerCopy.recordRoute);
+      expect(one.showQuickSaveSecondary, isFalse);
+      expect(one.quickSaveRoute, LowEffortYesCaptureCopy.route);
+      expect(one.primaryRoute, CapacityReturnTriggerCopy.recordRoute);
     });
   });
 }

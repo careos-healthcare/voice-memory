@@ -4,25 +4,18 @@ import 'archive_positioning_copy.dart';
 abstract class AcquisitionStartCopy {
   AcquisitionStartCopy._();
 
-  static const String capacityTitle = ArchivePositioningCopy.wedgeHeadline;
-  static const String capacityPathContext =
-      ArchivePositioningCopy.capacityPathContext;
+  static const String capacityTitle = ArchivePositioningCopy.firstUseTitle;
+  static const String capacityBody = ArchivePositioningCopy.firstUseBody;
+  static const String capacityFirstPathLabel =
+      ArchivePositioningCopy.firstPathLabel;
+  static const String capacityFirstPathHeadline =
+      ArchivePositioningCopy.firstPathHeadline;
   static const String capacityTimingFlex =
       ArchivePositioningCopy.capacityTimingFlex;
-  static const String capacityBody =
-      'ArchiveMe helps you spot why you keep agreeing before checking your capacity.';
-  static const List<String> capacitySteps = [
-    'Save a yes moment',
-    'See what pulled you in',
-    'Review what changed',
-  ];
-  static const String capacityProductLine = ArchivePositioningCopy.umbrellaBody;
-  static const String capacityFirstPathLine =
-      ArchivePositioningCopy.firstPathIntro;
-  static const String capacityStartCta = 'Save yes moment';
-  static const String capacityHowItWorksCta = 'How it works';
-  static const String capacityHowItWorksBody =
-      ArchivePositioningCopy.yesCaptureModesIntro;
+  static const String capacityStartCta = ArchivePositioningCopy.firstUseCta;
+  static const String capacityHowItWorksCta = ArchivePositioningCopy.howItWorksCta;
+  static const List<String> capacityHowItWorksSteps =
+      ArchivePositioningCopy.howItWorksSteps;
 
   static const String proveTitle =
       'Catch the moment you do more to feel enough';
@@ -39,14 +32,12 @@ abstract class AcquisitionStartCopy {
 
   static List<String> capacityVisibleStrings() => [
         capacityTitle,
-        capacityPathContext,
-        capacityTimingFlex,
-        capacityFirstPathLine,
         capacityBody,
-        ...capacitySteps,
-        capacityProductLine,
+        capacityFirstPathLabel,
+        capacityFirstPathHeadline,
+        capacityTimingFlex,
         capacityStartCta,
         capacityHowItWorksCta,
-        capacityHowItWorksBody,
+        ...capacityHowItWorksSteps,
       ];
 }

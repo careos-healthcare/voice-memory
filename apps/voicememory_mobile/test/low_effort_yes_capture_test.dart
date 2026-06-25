@@ -358,14 +358,37 @@ void main() {
   });
 
   group('CapacityThreeMoment quick capture path', () {
-    test('3-moment activation exposes quick save under target', () {
-      final result = threeMomentEngine.buildFromJournal(
+    test('3-moment activation exposes quick save at 0/3 only', () {
+      final zero = threeMomentEngine.buildFromJournal(
         entries: const [],
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(result.showQuickSaveSecondary, isTrue);
-      expect(result.quickSaveRoute, LowEffortYesCaptureCopy.route);
+      expect(zero.showQuickSaveSecondary, isTrue);
+      expect(zero.quickSaveRoute, LowEffortYesCaptureCopy.route);
+
+      final one = threeMomentEngine.buildFromJournal(
+        entries: [
+          JournalEntry(
+            id: 'real_0',
+            createdAt: DateTime(2026, 6, 12, 12),
+            transcript: 'I felt pulled to agree again.',
+            durationSeconds: 30,
+            localAudioPath: '/tmp/real_0.m4a',
+            reflection: const Reflection(
+              mood: 'neutral',
+              emotionalIntensity: 2,
+              recurringThemes: ['work'],
+              exactLanguagePattern: '',
+              concreteObservation: 'Work pressure showed up in this moment.',
+              repeatedSignal: '',
+            ),
+          ),
+        ],
+        capacityLoopActive: true,
+        capacityCohortActive: false,
+      );
+      expect(one.showQuickSaveSecondary, isFalse);
     });
 
     test('3-moment activation hides quick save at target', () {
