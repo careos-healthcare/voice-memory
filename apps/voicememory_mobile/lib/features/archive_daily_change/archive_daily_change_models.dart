@@ -28,6 +28,7 @@ enum ArchiveDailyChangeResponseType {
   noPullReasonYet,
   stillForming,
   recentChange,
+  boundaryResponseSelected,
 }
 
 /// Local last-seen state — timestamps only.

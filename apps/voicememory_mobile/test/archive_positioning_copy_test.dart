@@ -125,10 +125,14 @@ void main() {
       expect(generic, contains('mind map'));
     });
 
-    test('capacity start uses umbrella headline', () {
+    test('capacity start uses simpler fallback headline', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
         ArchivePositioningCopy.firstUseTitle,
+      );
+      expect(
+        AcquisitionStartCopy.capacityTitle,
+        contains('Map the moments that keep repeating'),
       );
       expect(
         ArchivePositioningCopy.wedgeHeadline,
@@ -150,7 +154,7 @@ void main() {
     test('capacity start includes timing flex line', () {
       expect(
         AcquisitionStartCopy.capacityTimingFlex,
-        ArchivePositioningCopy.capacityTimingFlex,
+        ArchivePositioningCopy.firstUseTimingMicro,
       );
     });
   });

@@ -100,13 +100,13 @@ class CapacityReturnTriggerEngine {
 
     return CapacityReturnTriggerResult(
       showCard: true,
-      title: CapacityReturnTriggerCopy.archiveHomeTitle,
+      title: CapacityReturnTriggerCopy.archiveHomeTitle(count),
       body: CapacityReturnTriggerCopy.archiveHomeBody(count, target: target),
       primaryCtaLabel: CapacityReturnTriggerCopy.archiveHomePrimaryCta,
-      primaryRoute: CapacityReturnTriggerCopy.recordRoute,
-      primaryDismisses: false,
-      secondaryCtaLabel: CapacityReturnTriggerCopy.archiveHomeReviewCta,
-      secondaryRoute: CapacityReturnTriggerCopy.loopRoute,
+      primaryRoute: '',
+      primaryDismisses: true,
+      secondaryCtaLabel: CapacityReturnTriggerCopy.archiveHomeSecondaryCta(count),
+      secondaryRoute: CapacityReturnTriggerCopy.recordRoute,
       showSecondary: true,
       recordProgressLine: '',
       betaMissionHint: '',

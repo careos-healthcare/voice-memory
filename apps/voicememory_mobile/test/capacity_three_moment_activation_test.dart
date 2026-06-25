@@ -70,11 +70,14 @@ CapacityThreeMomentResult _visibleResult({
       primaryRoute: count >= 3
           ? CapacityThreeMomentCopy.loopRoute
           : CapacityThreeMomentCopy.recordRoute,
+      primaryDismisses: count >= 1 && count < 3,
       showQuickSaveSecondary: count < 3,
       quickSaveRoute: '/quick-yes-capture',
       showReviewSecondary: count >= 1 && count < 3,
-      reviewSecondaryLabel: 'Review what I have',
-      reviewSecondaryRoute: '/capacity-loop',
+      reviewSecondaryLabel: count == 2
+          ? 'Save next yes moment'
+          : 'Save another',
+      reviewSecondaryRoute: '/record',
       capacityMomentCount: count,
       activationTarget: 3,
     );
@@ -187,7 +190,7 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(one.title, 'Waiting for the next yes moment');
+      expect(one.title, 'First moment saved.');
       expect(
         one.subtitle,
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
@@ -273,7 +276,7 @@ void main() {
       expect(find.byKey(const Key('capacity_three_moment_card_hidden')), findsOneWidget);
     });
 
-    testWidgets('routes to Record when under 3', (tester) async {
+    testWidgets('secondary routes to Record when under 3 at 1/3', (tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -291,7 +294,7 @@ void main() {
       );
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.tap(find.byKey(const Key('capacity_three_moment_card_primary_button')));
+      await tester.tap(find.byKey(const Key('capacity_three_moment_card_review_button')));
       await tester.pumpAndSettle();
 
       expect(find.text('record screen'), findsOneWidget);

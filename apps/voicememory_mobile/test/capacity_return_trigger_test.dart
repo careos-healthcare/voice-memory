@@ -114,7 +114,7 @@ void main() {
         capacityCohortActive: false,
         surface: CapacityReturnTriggerSurface.archiveHome,
       );
-      expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle);
+      expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle(1));
       expect(
         one.body,
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
@@ -251,14 +251,14 @@ void main() {
         capacityLoopActive: true,
         capacityCohortActive: false,
       );
-      expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle);
+      expect(one.title, CapacityReturnTriggerCopy.archiveHomeTitle(1));
       expect(
         one.subtitle,
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
       );
       expect(one.progressLabel, isEmpty);
       expect(one.showReviewSecondary, isTrue);
-      expect(one.reviewSecondaryLabel, CapacityReturnTriggerCopy.archiveHomeReviewCta);
+      expect(one.reviewSecondaryLabel, CapacityReturnTriggerCopy.archiveHomeSecondaryCta(1));
       expect(one.showQuickSaveSecondary, isFalse);
     });
 
@@ -452,7 +452,9 @@ void main() {
       );
       expect(one.showQuickSaveSecondary, isFalse);
       expect(one.quickSaveRoute, LowEffortYesCaptureCopy.route);
-      expect(one.primaryRoute, CapacityReturnTriggerCopy.recordRoute);
+      expect(one.primaryRoute, isEmpty);
+      expect(one.primaryDismisses, isTrue);
+      expect(one.reviewSecondaryRoute, CapacityReturnTriggerCopy.recordRoute);
     });
   });
 }

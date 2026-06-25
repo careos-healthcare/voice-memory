@@ -6,12 +6,11 @@ abstract class AcquisitionStartCopy {
 
   static const String capacityTitle = ArchivePositioningCopy.firstUseTitle;
   static const String capacityBody = ArchivePositioningCopy.firstUseBody;
-  static const String capacityFirstPathLabel =
-      ArchivePositioningCopy.firstPathLabel;
+  static const String capacityFirstPathLabel = 'First path';
   static const String capacityFirstPathHeadline =
-      ArchivePositioningCopy.firstPathHeadline;
+      ArchivePositioningCopy.firstUseFirstPath;
   static const String capacityTimingFlex =
-      ArchivePositioningCopy.capacityTimingFlex;
+      ArchivePositioningCopy.firstUseTimingMicro;
   static const String capacityStartCta = ArchivePositioningCopy.firstUseCta;
   static const String capacityHowItWorksCta = ArchivePositioningCopy.howItWorksCta;
   static const List<String> capacityHowItWorksSteps =
