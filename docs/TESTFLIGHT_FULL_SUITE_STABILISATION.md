@@ -66,7 +66,7 @@ Top failing files in original log: `record_screen_framing_copy_test` (16), `tran
 | Check | Result |
 |-------|--------|
 | Focused stabilisation tests (degraded voice, next-check, recap, roadmap, beta simplification, memory controls, entry detail, positioning) | **95 passed** |
-| Full `flutter test` | See `/tmp/archiveme_full_test_after_stabilisation.log` (run in progress at doc write; prior partial: **6166 passed / ~145 failed**) |
+| Full `flutter test` | **6184 passed / 129 failed** (~23m50s) — down from ~6166/147 pre-round-2; remaining clusters are copy/gate drift (purchase intent cue, pinned evidence, privacy receipts, ArchiveMe vs “The archive” wording) |
 | `flutter build ios --release --no-codesign` | **Pass** — `Runner.app` (49.5MB) |
 | `flutter build apk --debug` | **Pass** — `app-debug.apk` |
 | iOS placeholder warnings | **None** |
