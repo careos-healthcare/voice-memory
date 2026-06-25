@@ -6,11 +6,11 @@ abstract final class BeforeYesCopy {
 
   static const recordRoute = '/record';
 
-  static const title = ArchivePositioningCopy.beforeYesCaptureLabel;
+  static const title = ArchivePositioningCopy.beforeLabel;
   static const body =
-      '${ArchivePositioningCopy.beforeYesCaptureBody}. Your archive can help you see what keeps pulling you in.';
+      '${ArchivePositioningCopy.beforeBody} Your archive can help you see what keeps pulling you in.';
   static const pauseCta = 'Pause before yes';
-  static const alreadyYesCta = ArchivePositioningCopy.afterYesCaptureLabel;
+  static const alreadyYesCta = ArchivePositioningCopy.afterLabel;
   static const recordPrompt =
       'What are you about to agree to, and what makes it hard to pause?';
 

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/capacity_loop/before_yes_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_copy.dart';
+import 'package:voicememory_mobile/features/demo/sample_archive_copy.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
 import 'package:voicememory_mobile/product/archive_positioning_copy.dart';
 import 'package:voicememory_mobile/product/loop_acquisition_copy.dart';
@@ -53,14 +54,14 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('ArchivePositioningCopy constants', () {
-    test('umbrella headline says private mind map of what keeps repeating', () {
+    test('umbrella headline contains private mind map in your life', () {
       expect(
         ArchivePositioningCopy.umbrellaHeadline,
-        'A private mind map of what keeps repeating.',
+        contains('private mind map of what keeps repeating in your life'),
       );
     });
 
-    test('product body says patterns, changes, next things to watch', () {
+    test('product body contains patterns, changes, next things to watch', () {
       expect(
         ArchivePositioningCopy.umbrellaBody.toLowerCase(),
         allOf(
@@ -71,32 +72,31 @@ void main() {
       );
     });
 
-    test('capacity path remains available', () {
+    test('first guided path says saying yes when you have no capacity', () {
       expect(
-        ArchivePositioningCopy.capacityPathHeadline,
-        'Saying yes when you have no capacity',
+        ArchivePositioningCopy.firstPathIntro.toLowerCase(),
+        contains('saying yes when you have no capacity'),
       );
+    });
+
+    test('capacity wedge still says Catch the yes before it costs you', () {
       expect(
-        ArchivePositioningCopy.capacityWedgeHeadline,
+        ArchivePositioningCopy.wedgeHeadline,
         'Catch the yes before it costs you.',
       );
     });
 
-    test('copy supports before, after, and later yes capture', () {
-      expect(ArchivePositioningCopy.yesCaptureModeLabels, [
-        'Before yes',
-        'After yes',
-        'Later cost',
+    test('before, after, and later copy exists', () {
+      expect(ArchivePositioningCopy.yesCaptureTimingLabels, [
+        'Before',
+        'After',
+        'Later',
       ]);
-      expect(ArchivePositioningCopy.yesCaptureModeBodies, [
-        'I am about to say yes',
-        'I just said yes',
-        'That yes cost me something',
+      expect(ArchivePositioningCopy.yesCaptureTimingBodies, [
+        'I am about to say yes.',
+        'I just said yes.',
+        'That yes cost me something.',
       ]);
-      expect(
-        ArchivePositioningCopy.yesCaptureModesIntro.toLowerCase(),
-        allOf(contains('before'), contains('after'), contains('later')),
-      );
     });
   });
 
@@ -111,12 +111,12 @@ void main() {
         ArchivePositioningCopy.umbrellaBody,
       );
       expect(
-        AcquisitionStartCopy.startGenericCta,
-        ArchivePositioningCopy.genericCta,
+        AcquisitionStartCopy.genericFirstPathLine,
+        ArchivePositioningCopy.firstPathIntro,
       );
     });
 
-    test('generic surfaces do not make the app only about yes', () {
+    test('public surfaces do not imply the app is only about saying yes', () {
       final generic = [
         AcquisitionStartCopy.genericTitle,
         AcquisitionStartCopy.genericBody,
@@ -125,47 +125,63 @@ void main() {
       expect(generic, contains('mind map'));
     });
 
-    test('capacity surfaces still include Catch the yes before it costs you', () {
+    test('capacity surfaces retain wedge headline', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
-        ArchivePositioningCopy.capacityWedgeHeadline,
+        ArchivePositioningCopy.wedgeHeadline,
       );
       expect(
         LoopAcquisitionCopy.capacityYes.headline,
-        ArchivePositioningCopy.capacityWedgeHeadline,
+        ArchivePositioningCopy.wedgeHeadline,
       );
       expect(
         LoopModeCopy.capacityHandoffTitle,
-        ArchivePositioningCopy.capacityWedgeHeadline,
+        ArchivePositioningCopy.wedgeHeadline,
       );
     });
 
-    test('capacity start includes first-path context line', () {
+    test('capacity surfaces do not require opening app before every decision', () {
+      expect(
+        AcquisitionStartCopy.capacityTimingFlex.toLowerCase(),
+        isNot(contains('before every decision')),
+      );
+      expect(
+        AcquisitionStartCopy.capacityTimingFlex.toLowerCase(),
+        allOf(contains('before'), contains('after'), contains('later')),
+      );
+    });
+
+    test('capacity start includes first-path context and timing flex', () {
       expect(
         AcquisitionStartCopy.capacityPathContext,
         ArchivePositioningCopy.capacityPathContext,
       );
       expect(
-        AcquisitionStartCopy.capacityPathContext.toLowerCase(),
-        contains('first path'),
+        AcquisitionStartCopy.capacityTimingFlex,
+        ArchivePositioningCopy.capacityTimingFlex,
       );
     });
   });
 
   group('Capture mode wiring', () {
     test('before yes flow uses positioning labels', () {
-      expect(BeforeYesCopy.title, ArchivePositioningCopy.beforeYesCaptureLabel);
+      expect(BeforeYesCopy.title, ArchivePositioningCopy.beforeLabel);
       expect(
         BeforeYesCopy.body,
-        contains(ArchivePositioningCopy.beforeYesCaptureBody),
+        contains(ArchivePositioningCopy.beforeBody),
       );
     });
 
-    test('quick yes capture uses positioning label', () {
+    test('quick yes capture includes timing flexibility copy', () {
       expect(
-        LowEffortYesCaptureCopy.title,
-        ArchivePositioningCopy.quickYesMoment,
+        LowEffortYesCaptureCopy.corePromise,
+        ArchivePositioningCopy.quickCaptureTimingFlex,
       );
+      expect(
+        LowEffortYesCaptureCopy.body,
+        contains(ArchivePositioningCopy.quickCaptureTimingFlex),
+      );
+      expect(LowEffortYesCaptureCopy.timingIds(), hasLength(3));
     });
 
     test('later cost flow remains available', () {
@@ -184,13 +200,9 @@ void main() {
     for (final path in ArchivePositioningCopy.publicSurfacePaths) {
       test('$path avoids banned positioning language', () {
         expect(File(path).existsSync(), isTrue, reason: 'missing $path');
-        final snippets = _positiveCopySnippets(path);
+        final snippets = _visibleStringsForSurface(path);
+        expect(snippets, isNotEmpty, reason: 'expected positioning snippets in $path');
         _expectNoBannedCopy(snippets);
-        if (path.endsWith('.md')) {
-          for (final snippet in snippets) {
-            expect(snippet.toLowerCase(), isNot(contains('digital mind map')));
-          }
-        }
       });
     }
   });
@@ -204,17 +216,50 @@ void main() {
   });
 }
 
-List<String> _positiveCopySnippets(String path) {
+List<String> _visibleStringsForSurface(String path) {
+  switch (path) {
+    case 'lib/product/archive_positioning_copy.dart':
+      return ArchivePositioningCopy.allVisibleStrings();
+    case 'lib/product/acquisition_start_copy.dart':
+      return [
+        ...AcquisitionStartCopy.capacityVisibleStrings(),
+        AcquisitionStartCopy.genericTitle,
+        AcquisitionStartCopy.genericBody,
+        AcquisitionStartCopy.genericFirstPathLine,
+      ];
+    case 'lib/screens/about_screen.dart':
+      return [
+        ArchivePositioningCopy.umbrellaHeadline,
+        ArchivePositioningCopy.umbrellaBody,
+        ArchivePositioningCopy.firstPathIntro,
+      ];
+    case 'lib/screens/loop_start_screen.dart':
+      return AcquisitionStartCopy.capacityVisibleStrings();
+    case 'lib/features/demo/sample_archive_copy.dart':
+      return [
+        SampleArchiveCopy.emptyStateSubtitle,
+        SampleArchiveCopy.emptyStateTitle,
+      ];
+    default:
+      return _positiveDocSnippets(path);
+  }
+}
+
+List<String> _positiveDocSnippets(String path) {
   final source = File(path).readAsStringSync();
+  final positiveSection = source.split('## Do not include').first;
   return [
     ArchivePositioningCopy.umbrellaHeadline,
+    ArchivePositioningCopy.umbrellaShort,
     ArchivePositioningCopy.umbrellaBody,
-    ArchivePositioningCopy.capacityWedgeHeadline,
+    ArchivePositioningCopy.firstPathIntro,
+    ArchivePositioningCopy.wedgeHeadline,
     ArchivePositioningCopy.capacityPathContext,
+    ArchivePositioningCopy.capacityTimingFlex,
     ArchivePositioningCopy.yesCaptureModesIntro,
-    ArchivePositioningCopy.capacityPathBody,
-    ArchivePositioningCopy.beforeYesCaptureLabel,
-    ArchivePositioningCopy.afterYesCaptureLabel,
-    ArchivePositioningCopy.laterCostCaptureLabel,
-  ].where((line) => source.contains(line)).toList();
+    ArchivePositioningCopy.beforeBody,
+    ArchivePositioningCopy.afterBody,
+    ArchivePositioningCopy.laterBody,
+    ArchivePositioningCopy.mapLine,
+  ].where((line) => positiveSection.contains(line)).toList();
 }

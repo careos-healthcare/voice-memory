@@ -2,7 +2,17 @@
 
 Commercial wedge sharpening before RevenueCat setup. See [CAPACITY_YES_100K_WEDGE_PLAN.md](./CAPACITY_YES_100K_WEDGE_PLAN.md).
 
-## Final recommended wording
+## Public umbrella (broader than the wedge)
+
+| Field | Copy |
+| --- | --- |
+| **Umbrella** | A private mind map of what keeps repeating in your life. |
+| **Product promise** | Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch. |
+| **First guided path** | Start with one pattern — saying yes when you have no capacity. |
+| **Capacity wedge** | Catch the yes before it costs you. |
+| **Capture timing** | Before / after / later — users do not need to open ArchiveMe before every decision. |
+
+## Final recommended wedge wording
 
 | Field | Copy |
 | --- | --- |

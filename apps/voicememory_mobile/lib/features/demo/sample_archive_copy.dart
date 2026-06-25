@@ -6,7 +6,8 @@ abstract final class SampleArchiveCopy {
 
   static const emptyStateTitle = 'See a sample archive';
   static const emptyStateSubtitle =
-      'Explore how ArchiveMe builds a private pattern map before adding your own moments.';
+      'Explore how ArchiveMe builds a private pattern map before adding your own moments. '
+      '${ArchivePositioningCopy.mapLine}';
 
   static const settingsTitle = 'View sample archive';
   static const settingsSubtitle =

@@ -6,7 +6,7 @@ ArchiveMe
 
 ## Subtitle
 
-A private mind map of what keeps repeating.
+A private mind map of what keeps repeating in your life.
 
 ## Short description
 
@@ -14,9 +14,11 @@ Save real moments. See patterns, changes, and next things to watch.
 
 ## Long description
 
-ArchiveMe is a private mind map of what keeps repeating.
+ArchiveMe is a private mind map of what keeps repeating in your life.
 
 Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch.
+
+Start with one pattern — saying yes when you have no capacity. Catch the yes before it costs you — before, after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
 
 Record one moment about what happened today. ArchiveMe connects it across days and weeks so repeating patterns become easier to notice.
 
@@ -26,17 +28,11 @@ Come back tomorrow to compare: did it show up again, feel lighter, feel heavier,
 
 Over time, ArchiveMe builds your archive with key moments, a pattern map, and what it remembers across weeks and months.
 
-**Start with one pattern:** saying yes when you have no capacity. Catch the yes before it costs you — before, after, or when the cost shows up later.
-
 ArchiveMe is built for useful reflection over time — not endless note-taking.
-
-## Keywords
-
-pattern, reflection, memory, moments, routine, check-in, compare, repeat
 
 ## Privacy note
 
-Your reflections are personal. Keep store copy privacy-safe and do not overclaim processing, sharing, or outcomes.
+Your reflections are personal. The journal file on this device is encrypted. Archive metadata and prefs remain in plaintext JSON. Some features send audio or text for transcription or analysis when you use them. Do not claim everything stays on device.
 
 ## Release identity (listing prep)
 

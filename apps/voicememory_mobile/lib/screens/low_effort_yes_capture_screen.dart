@@ -46,6 +46,7 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
   bool _capacityWedgeActive = false;
   String? _selectedPullReasonId;
   String? _selectedOutcomeId;
+  String? _selectedTimingId;
   bool _saving = false;
 
   @override
@@ -86,12 +87,19 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
 
   Future<void> _save() async {
     final pullReasonId = _selectedPullReasonId;
-    if (pullReasonId == null || pullReasonId.isEmpty) return;
+    final timingId = _selectedTimingId;
+    if (pullReasonId == null ||
+        pullReasonId.isEmpty ||
+        timingId == null ||
+        timingId.isEmpty) {
+      return;
+    }
     setState(() => _saving = true);
     final saveResult = await widget.engine.saveQuickCapture(
       journal: AppServices.instance.journalStore,
       request: LowEffortYesCaptureSaveRequest(
         pullReasonId: pullReasonId,
+        timingId: timingId,
         outcomeId: _selectedOutcomeId,
       ),
     );
@@ -206,6 +214,29 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
+              result.timingSectionTitle,
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final id in result.timingIds)
+                  ChoiceChip(
+                    key: Key('low_effort_yes_capture_timing_$id'),
+                    label: Text(LowEffortYesCaptureCopy.labelForTiming(id)),
+                    selected: _selectedTimingId == id,
+                    onSelected: _saving
+                        ? null
+                        : (selected) => setState(
+                            () => _selectedTimingId = selected ? id : null,
+                          ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
               result.pullSectionTitle,
               style: ArchiveMobileTypography.cardLabel(context),
             ),
@@ -245,7 +276,12 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               key: const Key('low_effort_yes_capture_save_button'),
-              onPressed: _saving || _selectedPullReasonId == null ? null : _save,
+              onPressed:
+                  _saving ||
+                      _selectedPullReasonId == null ||
+                      _selectedTimingId == null
+                  ? null
+                  : _save,
               child: Text(result.primaryCtaLabel),
             ),
             const SizedBox(height: AppSpacing.xs),

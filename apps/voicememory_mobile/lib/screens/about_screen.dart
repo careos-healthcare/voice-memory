@@ -79,6 +79,11 @@ class _AboutScreenState extends State<AboutScreen> {
             ArchivePositioningCopy.umbrellaBody,
             style: const TextStyle(color: AppTheme.muted, height: 1.45),
           ),
+          const SizedBox(height: 8),
+          Text(
+            ArchivePositioningCopy.firstPathIntro,
+            style: const TextStyle(color: AppTheme.muted, height: 1.45),
+          ),
           const SizedBox(height: 24),
           GestureDetector(
             onTap: _onVersionTap,

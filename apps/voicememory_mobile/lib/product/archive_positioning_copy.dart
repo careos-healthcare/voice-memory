@@ -4,65 +4,80 @@ abstract final class ArchivePositioningCopy {
 
   // ——— Public umbrella ———
   static const umbrellaHeadline =
+      'A private mind map of what keeps repeating in your life.';
+  static const umbrellaShort =
       'A private mind map of what keeps repeating.';
   static const umbrellaBody =
       'Save real moments. ArchiveMe connects them into patterns, changes, '
       'and next things to watch.';
 
   // ——— First guided path (capacity yes) ———
-  static const capacityPathLabel = 'Start with one pattern';
-  static const capacityPathHeadline = 'Saying yes when you have no capacity';
-  static const capacityPathBody =
-      'Use the first path to catch the yes before it costs you — before, '
-      'after, or when the cost shows up later.';
+  static const firstPathLabel = 'Start with one pattern';
+  static const firstPathHeadline = 'Saying yes when you have no capacity';
+  static const firstPathIntro =
+      'Start with one pattern — saying yes when you have no capacity.';
+  static const firstPathBody =
+      'Use this first path before you agree, right after you agree, or when '
+      'the cost shows up later.';
   static const capacityPathContext =
       'This is the first path in your private pattern map.';
-  static const capacityWedgeHeadline = 'Catch the yes before it costs you.';
+  static const capacityTimingFlex =
+      'You can save it before you agree, right after, or when the cost shows '
+      'up later.';
+  static const wedgeHeadline = 'Catch the yes before it costs you.';
   static const capacityCta = 'Start with yes moments';
+  static const mapLine = 'Every saved moment adds to the same pattern map.';
 
   // ——— Generic CTAs ———
   static const genericCta = 'Start your map';
   static const recordAnyMoment = 'Record any moment';
   static const quickYesMoment = 'Quick yes moment';
+  static const quickCaptureTimingFlex =
+      'Use this before, after, or when the cost shows up later.';
 
   // ——— Before / after / later yes capture ———
-  static const beforeYesCaptureLabel = 'Before yes';
-  static const beforeYesCaptureBody = 'I am about to say yes';
-  static const afterYesCaptureLabel = 'After yes';
-  static const afterYesCaptureBody = 'I just said yes';
-  static const laterCostCaptureLabel = 'Later cost';
-  static const laterCostCaptureBody = 'That yes cost me something';
+  static const beforeLabel = 'Before';
+  static const beforeBody = 'I am about to say yes.';
+  static const afterLabel = 'After';
+  static const afterBody = 'I just said yes.';
+  static const laterLabel = 'Later';
+  static const laterBody = 'That yes cost me something.';
   static const yesCaptureModesIntro =
       'Save before you agree, right after, or when the cost shows up later — '
       'all feed the same pattern map.';
 
-  static const List<String> yesCaptureModeLabels = [
-    beforeYesCaptureLabel,
-    afterYesCaptureLabel,
-    laterCostCaptureLabel,
+  static const List<String> yesCaptureTimingLabels = [
+    beforeLabel,
+    afterLabel,
+    laterLabel,
   ];
 
-  static const List<String> yesCaptureModeBodies = [
-    beforeYesCaptureBody,
-    afterYesCaptureBody,
-    laterCostCaptureBody,
+  static const List<String> yesCaptureTimingBodies = [
+    beforeBody,
+    afterBody,
+    laterBody,
   ];
 
   static List<String> allVisibleStrings() => [
         umbrellaHeadline,
+        umbrellaShort,
         umbrellaBody,
-        capacityPathLabel,
-        capacityPathHeadline,
-        capacityPathBody,
+        firstPathLabel,
+        firstPathHeadline,
+        firstPathIntro,
+        firstPathBody,
         capacityPathContext,
-        capacityWedgeHeadline,
+        capacityTimingFlex,
+        wedgeHeadline,
         capacityCta,
         genericCta,
         recordAnyMoment,
         quickYesMoment,
+        quickCaptureTimingFlex,
+        mapLine,
         yesCaptureModesIntro,
-        ...yesCaptureModeLabels,
-        ...yesCaptureModeBodies,
+        ...yesCaptureTimingLabels,
+        ...yesCaptureTimingBodies,
       ];
 
   /// Public/general surfaces scanned by positioning tests.
@@ -75,5 +90,7 @@ abstract final class ArchivePositioningCopy {
     'docs/APP_STORE_COPY.md',
     'docs/PLAY_STORE_COPY.md',
     'docs/BETA_TESTER_MESSAGE.md',
+    'docs/CAPACITY_YES_POSITIONING_ONE_PAGER.md',
+    'docs/CAPACITY_YES_LANDING_PAGE_COPY.md',
   ];
 }
