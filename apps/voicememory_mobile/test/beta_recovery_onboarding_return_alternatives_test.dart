@@ -168,8 +168,12 @@ void main() {
 
     test('includes product line and CTAs', () {
       expect(
-        AcquisitionStartCopy.capacityProductLine,
-        contains('private archive for patterns that repeat'),
+        AcquisitionStartCopy.capacityProductLine.toLowerCase(),
+        allOf(
+          contains('patterns'),
+          contains('changes'),
+          contains('next things to watch'),
+        ),
       );
       expect(AcquisitionStartCopy.capacityStartCta, 'Save yes moment');
       expect(AcquisitionStartCopy.capacityHowItWorksCta, 'How it works');

@@ -12,6 +12,7 @@ const _consumerFacingSources = [
   'lib/product/loop_acquisition_copy.dart',
   'lib/product/testflight_invite_copy.dart',
   'lib/product/acquisition_start_copy.dart',
+  'lib/product/archive_positioning_copy.dart',
   'lib/billing/archive_paywall_copy.dart',
   'lib/billing/subscription_copy.dart',
   'lib/billing/archive_paywall_plans.dart',

@@ -6,11 +6,13 @@ ArchiveMe
 
 ## Short description (≤80 characters)
 
-Record moments. See what repeats across days and weeks.
+A private mind map of what keeps repeating.
 
 ## Full description
 
-ArchiveMe remembers what keeps repeating and helps you choose what to check next.
+ArchiveMe is a private mind map of what keeps repeating.
+
+Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch.
 
 **Record one moment**
 Say what happened today. One sentence is enough.
@@ -21,8 +23,11 @@ After each moment, ArchiveMe gives you one useful thing to check next.
 **Come back to compare**
 See whether the pattern showed up, felt lighter, felt heavier, or changed.
 
-**Build your archive**
+**Build your pattern map**
 Over time, ArchiveMe shows key moments, a pattern map, and what it remembers.
+
+**Start with one pattern**
+Saying yes when you have no capacity — catch the yes before it costs you, before, after, or when the cost shows up later.
 
 ArchiveMe is for pattern memory over time — not therapy, diagnosis, or wellness coaching.
 

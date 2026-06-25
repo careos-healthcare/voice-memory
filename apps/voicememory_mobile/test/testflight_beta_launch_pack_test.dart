@@ -78,7 +78,7 @@ void main() {
     test('contains required tester wording', () {
       expect(
         message,
-        contains('ArchiveMe is a private archive for patterns that repeat'),
+        contains('ArchiveMe is a private mind map of what keeps repeating'),
       );
       expect(
         message,

@@ -1,8 +1,13 @@
+import 'archive_positioning_copy.dart';
+
 /// Loop-specific acquisition start screen copy — no banned language.
 abstract class AcquisitionStartCopy {
   AcquisitionStartCopy._();
 
-  static const String capacityTitle = 'Catch the yes before it costs you.';
+  static const String capacityTitle =
+      ArchivePositioningCopy.capacityWedgeHeadline;
+  static const String capacityPathContext =
+      ArchivePositioningCopy.capacityPathContext;
   static const String capacityBody =
       'ArchiveMe helps you spot why you keep agreeing before checking your capacity.';
   static const List<String> capacitySteps = [
@@ -10,28 +15,26 @@ abstract class AcquisitionStartCopy {
     'See what pulled you in',
     'Review what changed',
   ];
-  static const String capacityProductLine =
-      'ArchiveMe is a private archive for patterns that repeat.';
+  static const String capacityProductLine = ArchivePositioningCopy.umbrellaBody;
   static const String capacityStartCta = 'Save yes moment';
   static const String capacityHowItWorksCta = 'How it works';
   static const String capacityHowItWorksBody =
-      'Save real yes moments when they happen. Mark what pulled you toward yes. '
-      'After a few moments, review what keeps repeating — privately on this device.';
+      ArchivePositioningCopy.yesCaptureModesIntro;
 
   static const String proveTitle =
       'Catch the moment you do more to feel enough';
   static const String proveBody =
       'Record a short moment. ArchiveMe will help you test whether the proving-enough loop keeps repeating.';
-  static const String genericTitle = 'ArchiveMe remembers what keeps repeating';
-  static const String genericBody =
-      'Record short moments. ArchiveMe looks for loops that repeat, change, or fade.';
+  static const String genericTitle = ArchivePositioningCopy.umbrellaHeadline;
+  static const String genericBody = ArchivePositioningCopy.umbrellaBody;
 
   static const String startLoopCta = 'Start this loop';
-  static const String startGenericCta = 'Start';
+  static const String startGenericCta = ArchivePositioningCopy.genericCta;
   static const String chooseAnotherLoop = 'Choose another loop';
 
   static List<String> capacityVisibleStrings() => [
         capacityTitle,
+        capacityPathContext,
         capacityBody,
         ...capacitySteps,
         capacityProductLine,

@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
+import 'package:voicememory_mobile/product/archive_positioning_copy.dart';
 import 'package:voicememory_mobile/product/loop_acquisition_copy.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/product/testflight_invite_copy.dart';
@@ -24,7 +25,8 @@ const _requiredPhrases = [
   'Save 3 yes moments',
   'Review your yes loop',
   'Does this feel accurate',
-  'private archive',
+  'private pattern map',
+  'pattern map',
   'pulled to agree',
   'later cost',
   'default yes pause',
@@ -70,6 +72,7 @@ JournalEntry _capacityEntry(String id) => JournalEntry(
 
 Iterable<String> _launchWedgeUserFacingCopy() sync* {
   yield* AcquisitionStartCopy.capacityVisibleStrings();
+  yield ArchivePositioningCopy.umbrellaHeadline;
   yield* CapacityThreeMomentCopy.allVisibleStrings();
   yield CapacityLoopCopy.title;
   yield CapacityLoopCopy.subtitle;

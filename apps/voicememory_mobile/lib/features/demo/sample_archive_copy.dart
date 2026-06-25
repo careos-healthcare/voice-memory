@@ -1,10 +1,12 @@
+import '../../product/archive_positioning_copy.dart';
+
 /// Guided tour copy for the sample archive — example data only.
 abstract final class SampleArchiveCopy {
   SampleArchiveCopy._();
 
   static const emptyStateTitle = 'See a sample archive';
   static const emptyStateSubtitle =
-      'Explore how ArchiveMe works before adding your own moments.';
+      'Explore how ArchiveMe builds a private pattern map before adding your own moments.';
 
   static const settingsTitle = 'View sample archive';
   static const settingsSubtitle =

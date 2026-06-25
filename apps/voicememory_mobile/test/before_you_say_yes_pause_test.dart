@@ -178,9 +178,9 @@ void main() {
       expect(result.showOnRecord, isFalse);
     });
 
-    test('prompt includes Before you say yes', () {
+    test('prompt includes Before yes', () {
       final result = _visibleResult();
-      expect(result.title, 'Before you say yes');
+      expect(result.title, 'Before yes');
       expect(result.recordPrompt, contains('about to agree'));
     });
 
@@ -230,9 +230,9 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Before you say yes'), findsOneWidget);
+      expect(find.text('Before yes'), findsOneWidget);
       expect(find.text('Pause before yes'), findsOneWidget);
-      expect(find.text('I already said yes'), findsOneWidget);
+      expect(find.text('After yes'), findsOneWidget);
       expect(find.textContaining(_privateSnippet), findsNothing);
     });
 

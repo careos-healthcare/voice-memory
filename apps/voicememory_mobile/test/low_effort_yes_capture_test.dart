@@ -99,7 +99,7 @@ void main() {
         ),
       );
       expect(result.showCard, isTrue);
-      expect(result.title, 'Save this in 10 seconds');
+      expect(result.title, 'Quick yes moment');
       expect(result.body, contains('No need to explain everything'));
     });
 
@@ -128,7 +128,7 @@ void main() {
     test('copy includes required strings', () {
       expect(
         LowEffortYesCaptureCopy.allVisibleStrings(),
-        contains('Save this in 10 seconds'),
+        contains('Quick yes moment'),
       );
       expect(
         LowEffortYesCaptureCopy.allVisibleStrings().any(
@@ -256,7 +256,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('low_effort_yes_capture_card')), findsOneWidget);
-      expect(find.text('Save this in 10 seconds'), findsOneWidget);
+      expect(find.text('Quick yes moment'), findsOneWidget);
       expect(find.textContaining('No need to explain everything'), findsOneWidget);
     });
 

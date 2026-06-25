@@ -1,3 +1,4 @@
+import '../../product/archive_positioning_copy.dart';
 import 'capacity_decision_outcome_copy.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_pull_reason_copy.dart';
@@ -13,7 +14,7 @@ abstract final class LowEffortYesCaptureCopy {
 
   static const corePromise = 'Save the moment in 10 seconds.';
 
-  static const title = 'Save this in 10 seconds';
+  static const title = ArchivePositioningCopy.quickYesMoment;
   static const body =
       'No need to explain everything. Mark what pulled you toward yes, then add a note only if you want.';
   static const pullSectionTitle = 'What pulled you toward yes?';

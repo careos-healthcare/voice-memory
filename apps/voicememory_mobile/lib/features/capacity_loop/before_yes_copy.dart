@@ -1,14 +1,16 @@
+import '../../product/archive_positioning_copy.dart';
+
 /// Copy for the before-you-say-yes pause flow — capacity-specific, no journal text.
 abstract final class BeforeYesCopy {
   BeforeYesCopy._();
 
   static const recordRoute = '/record';
 
-  static const title = 'Before you say yes';
+  static const title = ArchivePositioningCopy.beforeYesCaptureLabel;
   static const body =
-      'Save the moment before agreeing. Your archive can help you see what keeps pulling you in.';
+      '${ArchivePositioningCopy.beforeYesCaptureBody}. Your archive can help you see what keeps pulling you in.';
   static const pauseCta = 'Pause before yes';
-  static const alreadyYesCta = 'I already said yes';
+  static const alreadyYesCta = ArchivePositioningCopy.afterYesCaptureLabel;
   static const recordPrompt =
       'What are you about to agree to, and what makes it hard to pause?';
 
