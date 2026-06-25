@@ -106,34 +106,35 @@ void main() {
     expect(find.text(ConsumerUiCopy.viewPatternsCta), findsOneWidget);
   });
 
-  testWidgets('post-save shows saved privately on device for local save', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Column(
-            children: [
-              Text(CaptureSaveMessages.savedPrivatelyOnDevice),
-              TodayNoticedPostSaveCard(
-                loop: TomorrowReturnLoop(
-                  noticedToday: ConsumerUiCopy.savedPrivatelyOnDevice,
-                  comeBackTomorrow: 'Come back tomorrow.',
-                  watchForNextTime: ConsumerUiCopy.tomorrowNoticePrompt,
-                  generatedAt: _testDay,
+  testWidgets(
+    'post-save hides Today noticed card when noticed copy is system-only',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                Text(CaptureSaveMessages.savedPrivatelyOnDevice),
+                TodayNoticedPostSaveCard(
+                  loop: TomorrowReturnLoop(
+                    noticedToday: ConsumerUiCopy.savedPrivatelyOnDevice,
+                    comeBackTomorrow: 'Come back tomorrow.',
+                    watchForNextTime: ConsumerUiCopy.tomorrowNoticePrompt,
+                    generatedAt: _testDay,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNWidgets(2));
-    expect(find.text(ConsumerUiCopy.todayArchiveMeNoticed), findsOneWidget);
-    expect(find.textContaining('Cloud processing pending'), findsNothing);
-    expect(find.textContaining('Today VoiceMemory noticed'), findsNothing);
-  });
+      expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.todayArchiveMeNoticed), findsNothing);
+      expect(find.textContaining('Cloud processing pending'), findsNothing);
+      expect(find.textContaining('Today VoiceMemory noticed'), findsNothing);
+    },
+  );
 
   testWidgets('today noticed card hidden for system observation leak', (
     tester,

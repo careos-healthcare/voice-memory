@@ -19,15 +19,15 @@ import 'package:voicememory_mobile/product/testflight_invite_copy.dart';
 
 const _requiredPhrases = [
   'Catch the yes before it costs you',
+  'Map the moments that keep repeating',
   'Save a yes moment',
   'See what pulled you in',
   'Review what changed',
   'Save 3 yes moments',
   'Review your yes loop',
   'Does this feel accurate',
-  'private pattern map',
-  'pattern map',
-  'pulled to agree',
+  'private mind map',
+  'before checking your capacity',
   'later cost',
   'default yes pause',
 ];
@@ -138,19 +138,22 @@ void main() {
       _expectNoForbidden(_launchWedgeUserFacingCopy());
     });
 
-    test('acquisition start uses headline and save yes moment CTA', () {
+    test('acquisition start uses first-use headline and save CTA', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
-        'Catch the yes before it costs you.',
+        ArchivePositioningCopy.firstUseTitle,
       );
-      expect(AcquisitionStartCopy.capacityStartCta, 'Save yes moment');
+      expect(
+        AcquisitionStartCopy.capacityStartCta,
+        ArchivePositioningCopy.firstUseCta,
+      );
       expect(
         AcquisitionStartCopy.capacityBody.toLowerCase(),
-        contains('keep agreeing'),
+        contains('real moment'),
       );
       expect(
-        AcquisitionStartCopy.capacitySteps,
-        contains('Save a yes moment'),
+        AcquisitionStartCopy.capacityHowItWorksSteps,
+        contains('Save a real moment'),
       );
     });
 

@@ -847,13 +847,18 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
     });
 
-    testWidgets('one entry ready shows Today card without hiding record CTA', (
+    testWidgets('one entry ready shows daily exercise without Today card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      expect(find.byKey(const Key('returning_user_today_card')), findsOneWidget);
-      expect(find.text('Add one more moment.'), findsOneWidget);
+      // Daily archive exercise owns the one-entry return prompt now; the
+      // separate Today card stays suppressed to avoid duplicate CTAs.
+      expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 

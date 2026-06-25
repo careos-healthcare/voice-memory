@@ -283,7 +283,10 @@ void main() {
     test('flag is applied at save time and persists on disk', () async {
       final tempDir = Directory.systemTemp.createTempSync('vm_regression_');
       addTearDown(() => tempDir.deleteSync(recursive: true));
-      final store = await JournalStore.open('${tempDir.path}/entries.json');
+      final store = await JournalStore.open(
+        '${tempDir.path}/entries.json',
+        encryptAtRest: false,
+      );
 
       KeepExactDetails.selectedForNextSave = true;
       await store.save(_entry(id: 'k1'));
@@ -292,7 +295,10 @@ void main() {
       expect(KeepExactDetails.selectedForNextSave, isFalse);
       expect(KeepExactDetails.lastSaveKeptExact, isTrue);
 
-      final reopened = await JournalStore.open('${tempDir.path}/entries.json');
+      final reopened = await JournalStore.open(
+        '${tempDir.path}/entries.json',
+        encryptAtRest: false,
+      );
       final reloaded = await reopened.getById('k1');
       expect(reloaded!.keepExactDetails, isTrue);
       // Stored normally: text untouched, still loadable/searchable.

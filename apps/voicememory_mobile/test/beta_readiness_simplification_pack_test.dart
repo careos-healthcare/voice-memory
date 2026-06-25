@@ -403,7 +403,7 @@ void main() {
     test('dependency maintenance plan exists', () {
       expect(File('docs/DEPENDENCY_MAINTENANCE_PLAN.md').existsSync(), isTrue);
       final doc = File('docs/DEPENDENCY_MAINTENANCE_PLAN.md').readAsStringSync();
-      expect(doc.toLowerCase(), contains('do not upgrade before testflight'));
+      expect(doc.toLowerCase(), contains('deferred during testflight'));
     });
   });
 

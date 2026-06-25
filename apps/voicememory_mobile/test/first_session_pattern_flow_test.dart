@@ -288,7 +288,7 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.text('Direct'));
+      await tester.tap(find.text('Direct').first);
       await tester.pump();
       await tester.tap(find.text(ConsumerUiCopy.firstSessionUseTomorrowCta));
       await tester.pump();

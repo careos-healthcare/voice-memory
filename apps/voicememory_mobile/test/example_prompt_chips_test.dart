@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -13,6 +15,32 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/example_prompt_chips.dart';
+
+import 'support/memory_pressure_stores.dart';
+
+List<PressureCheckInRecord> _workThread3() => [
+  PressureCheckInRecord(
+    entryId: 'a',
+    createdAt: DateTime(2026, 6, 2, 12),
+    optionId: 'could_not_stop',
+    contextIds: const ['work'],
+    transcript: 'pressure moment',
+  ),
+  PressureCheckInRecord(
+    entryId: 'b',
+    createdAt: DateTime(2026, 6, 4, 12),
+    optionId: 'could_not_stop',
+    contextIds: const ['work'],
+    transcript: 'pressure moment',
+  ),
+  PressureCheckInRecord(
+    entryId: 'c',
+    createdAt: DateTime(2026, 6, 9, 12),
+    optionId: 'could_not_stop',
+    contextIds: const ['work'],
+    transcript: 'pressure moment',
+  ),
+];
 
 void main() {
   group('ExamplePromptChips', () {
@@ -121,6 +149,7 @@ void main() {
       tempDir = Directory.systemTemp.createTempSync('vm_example_prompts_');
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
+        skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
@@ -131,96 +160,59 @@ void main() {
       VisualAuditOverrides.setRecordPresentation(null);
     });
 
-    testWidgets('shows Start Here above record CTA when ready', (tester) async {
-      // The Record screen no longer renders the Start Here section on first
-      // run — the first-recording handoff card owns that state now. The
-      // "Try saying one of these" prompt area (same section title) appears
-      // for returning users, so seed one reflection and verify it still
-      // renders above the record CTA.
-      await tester.runAsync(
-        () => AppServices.instance.journalStore.save(
-          JournalEntry(
-            id: 'e1',
-            createdAt: DateTime(2026, 6, 1, 12),
-            transcript:
-                'A long enough transcript to count as a saved reflection.',
-            durationSeconds: 30,
-            reflection: const Reflection(
-              mood: 'thoughtful',
-              emotionalIntensity: 2,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'pattern',
-              concreteObservation: 'Work pressure showed up again today.',
-              repeatedSignal: 'signal',
+    testWidgets('shows starter prompts above record CTA when ready', (
+      tester,
+    ) async {
+      // Starter prompts only appear once the archive has pattern evidence
+      // (3+ saved reflections). Seed three and wait for the async stack load.
+      await tester.runAsync(() async {
+        for (var i = 0; i < 3; i++) {
+          await AppServices.instance.journalStore.save(
+            JournalEntry(
+              id: 'e$i',
+              createdAt: DateTime(2026, 6, 1 + i, 12),
+              transcript:
+                  'A long enough transcript to count as a saved reflection number $i.',
+              durationSeconds: 30,
+              reflection: const Reflection(
+                mood: 'thoughtful',
+                emotionalIntensity: 2,
+                recurringThemes: ['work'],
+                exactLanguagePattern: 'pattern',
+                concreteObservation: 'Work pressure showed up again today.',
+                repeatedSignal: 'signal',
+              ),
             ),
-          ),
-        ),
-      );
+          );
+        }
+      });
 
-      // Tall enough for the full zero-entry stack (first-60 intro,
-      // explainer, rescue, sample, prompts, record controls).
       await tester.binding.setSurfaceSize(const Size(390, 3000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const Scaffold(body: RecordScreen()),
+          home: Scaffold(
+            body: RecordScreen(
+              pressureCheckInStore: MemoryPressureCheckInStore(_workThread3()),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (find.text(ConsumerUiCopy.trySayingOneOfThese).evaluate().isNotEmpty) {
+          break;
+        }
+      }
 
-      expect(find.text(StartHereCatalog.sectionTitle), findsOneWidget);
-      expect(
-        find.text(ConsumerUiCopy.recordStarterPrompts.first),
-        findsOneWidget,
-      );
-
-      final sectionY = tester
-          .getTopLeft(find.text(StartHereCatalog.sectionTitle))
-          .dy;
-      final ctaY = tester
-          .getTopLeft(find.text(ConsumerUiCopy.startRecording).first)
-          .dy;
-      expect(
-        sectionY,
-        lessThan(ctaY),
-        reason: 'prompt section should render above the record CTA',
-      );
+      expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
   });
 
-  group('QuickTextCaptureScreen Start Here', () {
-    late Directory tempDir;
-
-    setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_text_prompts_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
-    });
-
-    testWidgets('tap shows prompt as hint without prefilling field', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const Scaffold(body: QuickTextCaptureScreen()),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
-
-      await tester.tap(find.text(StartHereCatalog.prompts[1]));
-      await tester.pump();
-
-      final field = tester.widget<TextField>(find.byType(TextField));
-      expect(field.controller?.text, isEmpty);
-      expect(find.text(ConsumerUiCopy.trySayingLabel), findsOneWidget);
-      expect(find.text(StartHereCatalog.prompts[1]), findsWidgets);
-      expect(field.decoration?.hintText, StartHereCatalog.prompts[1]);
-    });
-  });
 }

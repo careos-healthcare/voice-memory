@@ -132,7 +132,7 @@ Top failing files in original log: `record_screen_framing_copy_test` (16), `tran
 
 ### Intentionally parked (~71 remaining)
 
-Historical / advanced surfaces not on the beta path: `audience_wedge_test` (5), `pattern_map_screen_test` (4), `belief_distance_test` (4), theory/engine depth tests, pressure-insights pro gates, PNG export (manual-only when env unset). Next pass should triage these without adding first-run cards.
+Resolved in pass 4 — see pass 4 section below.
 
 ### Why no dependency upgrades
 
@@ -142,10 +142,50 @@ Per `DEPENDENCY_MAINTENANCE_PLAN.md`: upgrades deferred during TestFlight unless
 
 This pass is stabilisation + guardrails only — no new dashboards, guided paths, payments, or RevenueCat enablement.
 
+## Test / build results (pass 4 — 2026-06-15)
+
+| Check | Result |
+|-------|--------|
+| Starting full suite (pass 3 end) | **6254 passed / 71 failed** |
+| Focused top 5 (`audience_wedge`, `pattern_map_screen`, `belief_distance`, `view_archive_after_save`, `language_indicator_chip`) | **60 passed / 0 failed** |
+| Full `flutter test --concurrency=4` | **6335 passed / 0 failed** (~4m07s) |
+| `flutter build ios --release --no-codesign` | **Pass** — `Runner.app` (49.5MB) |
+| `flutter build apk --debug` | **Pass** — `app-debug.apk` |
+| iOS placeholder warnings | **None** |
+| Dependency upgrades | **Avoided** (per maintenance plan) |
+
+### Top clusters targeted (pass 4)
+
+1. `audience_wedge_test.dart` — sharpness/post-save integration hangs
+2. `pattern_map_screen_test.dart` — entitlement gates + empty copy drift
+3. `belief_distance_test.dart` — belief thread setup + engine import
+4. `view_archive_after_save_test.dart` — zero-entry archive empty copy
+5. `language_indicator_chip_test.dart` — already green; kept in focused batch
+
+### Clusters fixed (pass 4)
+
+| Cluster | Files / notes |
+|---------|----------------|
+| A — Top 5 widget/integration | `audience_wedge_test`, `pattern_map_screen_test`, `belief_distance_test`, `view_archive_after_save_test` |
+| B — Copy / positioning drift | `launch_wedge_onboarding_tightening_test`, `loop_acquisition_invite_test`, `post_save_copy_test`, `subscription_review_preview_test`, `post_save_copy_test`, `beta_readiness_simplification_pack_test`, `intentional_empty_archive_widget_test`, `archive_evolution_timeline_screen_test` |
+| C — Async / storage | `check_in_worth_rating_test` (sequential hook-diagnosis append), `acquisition_cohort_test` (metric store path), journal IO tests with `encryptAtRest: false` |
+| D — Record / activation | `record_advanced_save_options_test`, `first_session_pattern_flow_test`, `activation_funnel_analytics_test`, `activation_rescue_tomorrow_check_test`, `acquisition_cohort_test` |
+| E — Engine / archive depth | `archive_clean_section_engine_test`, `archive_theory_engine_test`, `key_moments_memory_limit_test`, `settings_screen_widget_test` |
+| F — PNG export (manual-only) | `export_subscription_review_preview_png_test` — skip unless `ARCHIVEME_RUN_PNG_EXPORT=true` |
+| G — Production-safe app fixes | `AppServices.resetForTest` clears encrypted sidecars; `trial_reset_service` uses `journalStore.clearAll()`; `app_store_submission_copy` build **39** |
+
+### Intentionally parked (pass 4)
+
+**None.** All 71 starting failures were fixed or aligned to intentional copy/gates. No tests parked off the beta path in this pass.
+
+### Decision
+
+**Ready to merge PR #170.** Full suite green; iOS release and Android debug builds pass; no placeholder warnings; dependency upgrades avoided.
+
 ## Dependency upgrades
 
 **Deferred** until post-beta maintenance branch. No dependency bumps in this stabilisation branch.
 
 ## Remaining work
 
-Triage ~71 remaining failures — prefer test updates when copy/gates changed intentionally; fix app only on regression. Top files: `audience_wedge_test`, `pattern_map_screen_test`, `belief_distance_test`, `view_archive_after_save_test`.
+None for full-suite stabilisation — **6335 passed / 0 failed** (pass 4). Merge PR #170 and proceed to TestFlight submission checklist.

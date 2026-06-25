@@ -93,7 +93,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(ConsumerUiCopy.patternMemoryGrowingTitle), findsOneWidget);
+    expect(find.text('See your archive timeline'), findsOneWidget);
     expect(find.text('Use this check'), findsNothing);
   });
 }

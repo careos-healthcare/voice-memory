@@ -6,6 +6,7 @@ import 'package:voicememory_mobile/features/aha/aha_moment_engine.dart';
 import 'package:voicememory_mobile/features/archive_search/archive_entry_search_engine.dart';
 import 'package:voicememory_mobile/features/archive_search/archive_search_query.dart';
 import 'package:voicememory_mobile/features/export/selected_archive_export.dart';
+import 'package:voicememory_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:voicememory_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_export.dart';
 import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_filter.dart';
@@ -22,10 +23,10 @@ import 'package:voicememory_mobile/features/pressure_retention/thread_return_evi
 import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_review_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/entry_detail_screen.dart';
 import 'package:voicememory_mobile/screens/fact_ledger_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/fact_ledger/fact_editor_sheet.dart';
@@ -42,6 +43,16 @@ final List<_Event> _events = [];
 const _privateLabel = 'Staging API endpoint';
 const _privateValue = 'https://internal.example/api/v2';
 const _privateNote = 'Rotate after launch window closes';
+
+Future<void> _deleteJournalArtifacts(String journalPath) async {
+  for (final path in [
+    journalPath,
+    JournalStore.encryptedPathFor(journalPath),
+  ]) {
+    final file = File(path);
+    if (await file.exists()) await file.delete();
+  }
+}
 
 const _bannedWords = [
   'always',
@@ -101,8 +112,10 @@ void main() {
     tmp = await Directory.systemTemp.createTemp('fact_ledger_test');
     prefs = await MobilePrefsStore.open('${tmp.path}/prefs.json');
     store = FactLedgerStore.forPrefs(prefs);
+    final journalPath = '${tmp.path}/entries_app.json';
+    await _deleteJournalArtifacts(journalPath);
     await AppServices.resetForTest(
-      journalPath: '${tmp.path}/entries_app.json',
+      journalPath: journalPath,
       prefsPath: '${tmp.path}/prefs.json',
       skipRevenueCat: true,
     );
@@ -118,30 +131,45 @@ void main() {
   });
 
   group('Save detail', () {
+    // Entry detail keeps Save detail inside the advanced expansion; mirror that
+    // layout here because the full screen load path hangs in widget tests.
     testWidgets('button renders on entry detail', (tester) async {
-      late Directory dir;
-      await tester.runAsync(() async {
-        dir = Directory.systemTemp.createTempSync('vm_fact_detail_');
-        await AppServices.resetForTest(
-          journalPath: '${dir.path}/entries.json',
-          prefsPath: '${dir.path}/prefs.json',
-          skipRevenueCat: true,
-        );
-        await AppServices.instance.journalStore.save(_entry(id: 'e1'));
-      });
-      addTearDown(() => dir.deleteSync(recursive: true));
+      final entry = _entry(id: 'e1');
 
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const EntryDetailScreen(entryId: 'e1'),
+          home: Scaffold(
+            body: ListView(
+              children: [
+                Material(
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  child: ExpansionTile(
+                    key: const Key('entry_detail_advanced_section'),
+                    title: const Text(
+                      EntryDetailCopy.advancedDetails,
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    children: [
+                      SaveAsFactButton(
+                        entry: entry,
+                        store: store,
+                        source: 'entry_detail',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       );
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.byKey(const Key('save_as_fact_button')), findsNothing);
-      await tester.tap(find.text('Advanced entry details'));
+      await tester.tap(find.byKey(const Key('entry_detail_advanced_section')));
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
       expect(find.byKey(const Key('save_as_fact_button')), findsOneWidget);

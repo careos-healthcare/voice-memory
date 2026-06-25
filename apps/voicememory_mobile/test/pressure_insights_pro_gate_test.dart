@@ -56,11 +56,12 @@ Future<void> _pumpScreen(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
 }
 
 void main() {
-  final now = DateTime(2026, 6, 8, 12);
+  final now = DateTime.now();
 
   List<PressureCheckInRecord> sampleRecords() => [
     _record(id: 'a', createdAt: now),
@@ -143,9 +144,10 @@ void main() {
 
       // The pattern reveal card adds height; scroll the question into view.
       await tester.ensureVisible(find.text('Where does this repeat?'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.tap(find.text('Where does this repeat?'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.byKey(const Key('ask_the_archive_answer')), findsOneWidget);
     });

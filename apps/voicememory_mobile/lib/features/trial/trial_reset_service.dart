@@ -36,7 +36,7 @@ class TrialResetService {
     final services = AppServices.instance;
     final prefs = services.prefs;
 
-    await services.journalStore.file.writeAsString('[]');
+    await services.journalStore.clearAll();
 
     final watchStore = WatchForStore(prefs);
     await watchStore.writePending(null);

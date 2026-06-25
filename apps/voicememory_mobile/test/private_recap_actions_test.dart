@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/export/private_recap_model.dart';
+import 'package:voicememory_mobile/features/share/archive_share_actions.dart';
 import 'package:voicememory_mobile/widgets/export/private_recap_actions.dart';
 
 const _recap = PrivateRecap(
@@ -29,7 +30,7 @@ Future<void> _pump(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  await tester.pump();
 }
 
 void main() {
@@ -62,7 +63,7 @@ void main() {
     await tester.pump();
 
     expect(copied, _recap);
-    expect(find.text('Copied your recap.'), findsOneWidget);
+    expect(find.text(ArchiveShareActions.copyConfirmation), findsOneWidget);
   });
 
   testWidgets('Share fallback to copy shows the copied confirmation', (
@@ -73,7 +74,7 @@ void main() {
     await tester.tap(find.text('Share'));
     await tester.pump();
 
-    expect(find.text('Copied your recap.'), findsOneWidget);
+    expect(find.text(ArchiveShareActions.shareFallbackMessage), findsOneWidget);
   });
 
   testWidgets('Save fires the handler and confirms', (tester) async {

@@ -244,6 +244,10 @@ void main() {
       await AcquisitionCohortCoordinator.assignForTrial(
         AcquisitionCohortId.capacityYesDirect,
       );
+      // Mirror invite-metric tests: coordinator fires async; await store path.
+      await RetentionMetricsTracker.track(
+        RetentionMetricsTracker.cohortAssigned,
+      );
 
       final count = await RetentionMetricsStore.instance().count(
         RetentionMetricsTracker.cohortAssigned,

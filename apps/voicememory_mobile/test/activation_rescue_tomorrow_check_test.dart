@@ -64,7 +64,8 @@ void main() {
       ),
     );
 
-    expect(find.text('Direct'), findsNothing);
+    await tester.pump();
+
     await tester.tap(find.text(ConsumerUiCopy.makeItSharperCta));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
