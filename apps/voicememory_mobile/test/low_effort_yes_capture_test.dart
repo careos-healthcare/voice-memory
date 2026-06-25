@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_
 import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_models.dart';
+import 'package:voicememory_mobile/features/capacity_loop/yes_capture_timing.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -99,8 +100,9 @@ void main() {
         ),
       );
       expect(result.showCard, isTrue);
-      expect(result.title, 'Save this in 10 seconds');
-      expect(result.body, contains('No need to explain everything'));
+      expect(result.title, 'Quick yes moment');
+      expect(result.timingIds, LowEffortYesCaptureCopy.timingIds());
+      expect(result.timingSectionTitle, 'When is this moment?');
     });
 
     test('quick save hidden in ScreenshotMode', () {
@@ -128,7 +130,7 @@ void main() {
     test('copy includes required strings', () {
       expect(
         LowEffortYesCaptureCopy.allVisibleStrings(),
-        contains('Save this in 10 seconds'),
+        contains('Quick yes moment'),
       );
       expect(
         LowEffortYesCaptureCopy.allVisibleStrings().any(
@@ -154,6 +156,7 @@ void main() {
         journal: AppServices.instance.journalStore,
         request: const LowEffortYesCaptureSaveRequest(
           pullReasonId: CapacityPullReasonIds.soundedUrgent,
+          timingId: YesCaptureTimingIds.beforeYes,
           outcomeId: CapacityDecisionOutcomeIds.saidYes,
         ),
       );
@@ -172,6 +175,7 @@ void main() {
         journal: AppServices.instance.journalStore,
         request: const LowEffortYesCaptureSaveRequest(
           pullReasonId: CapacityPullReasonIds.feltResponsible,
+          timingId: YesCaptureTimingIds.afterYes,
           outcomeId: CapacityDecisionOutcomeIds.delayed,
         ),
       );
@@ -190,6 +194,7 @@ void main() {
         journal: AppServices.instance.journalStore,
         request: const LowEffortYesCaptureSaveRequest(
           pullReasonId: CapacityPullReasonIds.wantedOpportunity,
+          timingId: YesCaptureTimingIds.laterCost,
         ),
       );
 
@@ -197,7 +202,12 @@ void main() {
       expect(entries, hasLength(1));
       final entry = entries.first;
       expect(entry.transcript, isEmpty);
-      expect(entry.captureContextTag, LowEffortYesCaptureIds.contextTag);
+      expect(
+        entry.captureContextTag,
+        LowEffortYesCaptureIds.contextTagForTiming(
+          YesCaptureTimingIds.laterCost,
+        ),
+      );
       expect(
         loopEngine.eligibleCapacityEntryIds(entries),
         contains(entry.id),
@@ -212,6 +222,7 @@ void main() {
         journal: AppServices.instance.journalStore,
         request: const LowEffortYesCaptureSaveRequest(
           pullReasonId: CapacityPullReasonIds.somethingElse,
+          timingId: YesCaptureTimingIds.beforeYes,
         ),
       );
 
@@ -256,7 +267,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('low_effort_yes_capture_card')), findsOneWidget);
-      expect(find.text('Save this in 10 seconds'), findsOneWidget);
+      expect(find.text('Quick yes moment'), findsOneWidget);
       expect(find.textContaining('No need to explain everything'), findsOneWidget);
     });
 

@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../config/app_config.dart';
+import '../product/archive_positioning_copy.dart';
 import '../config/developer_settings_gate.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
@@ -70,7 +71,17 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'A private voice archive for beliefs, patterns, and change over time.',
+            ArchivePositioningCopy.umbrellaHeadline,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            ArchivePositioningCopy.umbrellaBody,
+            style: const TextStyle(color: AppTheme.muted, height: 1.45),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            ArchivePositioningCopy.firstPathIntro,
             style: const TextStyle(color: AppTheme.muted, height: 1.45),
           ),
           const SizedBox(height: 24),

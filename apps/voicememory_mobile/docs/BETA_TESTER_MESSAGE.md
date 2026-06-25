@@ -6,11 +6,15 @@ Short message Chirag can send to TestFlight testers. Copy/paste and add the Test
 
 Hi — I'm testing ArchiveMe with a small group before wider launch.
 
-**ArchiveMe is a private archive for patterns that repeat.**
+**ArchiveMe is a private mind map of what keeps repeating in your life.**
 
-**This test starts with one pattern: saying yes when you have no capacity.**
+Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch.
+
+**Start with one pattern — saying yes when you have no capacity.**
 
 You'll see: **Catch the yes before it costs you.**
+
+You can save before you agree, right after, or when the cost shows up later. You do not need to open ArchiveMe before every decision.
 
 **Use it for 7 days.**
 

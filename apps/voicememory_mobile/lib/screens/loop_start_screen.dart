@@ -10,6 +10,7 @@ import '../features/acquisition/acquisition_cohort_model.dart';
 import '../features/loop_mode/loop_mode_coordinator.dart';
 import '../features/loop_mode/loop_mode_model.dart';
 import '../product/acquisition_start_copy.dart';
+import '../product/archive_positioning_copy.dart';
 import '../router/onboarding_gate.dart';
 import '../services/app_services.dart';
 import '../theme/app_colors.dart';
@@ -153,7 +154,44 @@ class _LoopStartScreenState extends State<LoopStartScreen> {
                 key: const Key('loop_start_body'),
                 style: ArchiveMobileTypography.explanationBody(context),
               ),
+              if (!_isCapacityStart &&
+                  (widget.cohortId == AcquisitionCohortId.genericArchive ||
+                      widget.cohortId == AcquisitionCohortId.unknown)) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  AcquisitionStartCopy.genericFirstPathLine,
+                  key: const Key('loop_start_generic_first_path_line'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
               if (_isCapacityStart) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  AcquisitionStartCopy.capacityPathContext,
+                  key: const Key('loop_start_capacity_path_context'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  AcquisitionStartCopy.capacityTimingFlex,
+                  key: const Key('loop_start_capacity_timing_flex'),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  AcquisitionStartCopy.capacityFirstPathLine,
+                  key: const Key('loop_start_capacity_first_path_line'),
+                  style: ArchiveMobileTypography.explanationBody(context),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 for (var i = 0; i < AcquisitionStartCopy.capacitySteps.length; i++)
                   Padding(

@@ -5,6 +5,7 @@ import 'capacity_decision_outcome_store.dart';
 import 'capacity_pull_reason_store.dart';
 import 'low_effort_yes_capture_copy.dart';
 import 'low_effort_yes_capture_models.dart';
+import 'yes_capture_timing.dart';
 
 /// Builds low-effort yes capture visibility and saves fixed local markers.
 class LowEffortYesCaptureEngine {
@@ -24,6 +25,8 @@ class LowEffortYesCaptureEngine {
       primaryCtaLabel: LowEffortYesCaptureCopy.quickSaveCta,
       secondaryCtaLabel: LowEffortYesCaptureCopy.recordInsteadCta,
       optionalVoiceNoteLabel: LowEffortYesCaptureCopy.optionalVoiceNoteCta,
+      timingSectionTitle: LowEffortYesCaptureCopy.timingSectionTitle,
+      timingIds: LowEffortYesCaptureCopy.timingIds(),
       pullReasonIds: LowEffortYesCaptureCopy.pullReasonIds(),
       decisionOutcomeIds: LowEffortYesCaptureCopy.decisionOutcomeIds(),
     );
@@ -33,7 +36,7 @@ class LowEffortYesCaptureEngine {
       input.capacityWedgeActive && !input.sampleMode && !input.screenshotMode;
 
   static bool isQuickCaptureEntry(JournalEntry entry) =>
-      entry.captureContextTag == LowEffortYesCaptureIds.contextTag;
+      LowEffortYesCaptureIds.matchesContextTag(entry.captureContextTag);
 
   Future<LowEffortYesCaptureSaveResult> saveQuickCapture({
     required JournalStore journal,
@@ -44,6 +47,10 @@ class LowEffortYesCaptureEngine {
     final pullStore = pullReasonStore ?? CapacityPullReasonStore.instance();
     final decisionStore =
         outcomeStore ?? CapacityDecisionOutcomeStore.instance();
+    final timingId = request.timingId.trim();
+    if (!YesCaptureTimingIds.all.contains(timingId)) {
+      throw ArgumentError.value(timingId, 'timingId', 'unsupported timing id');
+    }
     final entryId = _newEntryId();
     final entry = JournalEntry(
       id: entryId,
@@ -58,7 +65,7 @@ class LowEffortYesCaptureEngine {
         concreteObservation: LowEffortYesCaptureCopy.entryObservation,
         repeatedSignal: '',
       ),
-      captureContextTag: LowEffortYesCaptureIds.contextTag,
+      captureContextTag: LowEffortYesCaptureIds.contextTagForTiming(timingId),
     );
 
     await journal.save(entry, first25Source: LowEffortYesCaptureIds.saveSource);

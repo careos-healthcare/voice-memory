@@ -78,12 +78,12 @@ void main() {
     test('contains required tester wording', () {
       expect(
         message,
-        contains('ArchiveMe is a private archive for patterns that repeat'),
+        contains('private mind map of what keeps repeating in your life'),
       );
       expect(
         message,
         contains(
-          'This test starts with one pattern: saying yes when you have no capacity',
+          'Start with one pattern — saying yes when you have no capacity',
         ),
       );
       expect(message, contains('Use it for 7 days'));

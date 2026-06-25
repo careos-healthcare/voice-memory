@@ -1,8 +1,20 @@
 # ArchiveMe — Capacity Yes Landing Page Copy
 
-For overcommitted professionals — private evidence archive for repeated overcommitment patterns. No wellness scores. No generic journaling pitch.
+For overcommitted professionals — private pattern map with a capacity-yes first path. No wellness scores. No generic journaling pitch.
 
-## Hero headline variants
+## Public umbrella (lead with this)
+
+**Headline:** A private mind map of what keeps repeating in your life.
+
+**Product promise:** Save real moments. ArchiveMe connects them into patterns, changes, and next things to watch.
+
+**First path:** Start with one pattern — saying yes when you have no capacity.
+
+**Wedge CTA:** Catch the yes before it costs you.
+
+**Timing:** Save before you agree, right after, or when the cost shows up later. No need to open the app before every decision.
+
+## Hero headline variants (wedge-specific)
 
 1. **See why you keep saying yes.**
 2. **A private archive for overcommitment patterns.**
@@ -42,10 +54,12 @@ For overcommitted professionals — private evidence archive for repeated overco
 
 ## Privacy promise
 
-- Entries stay on your device unless you export
+- Journal file on this device is encrypted; archive metadata and prefs remain plaintext JSON
+- Some features send audio or text for transcription or analysis when you use them
 - Share and milestone cards use counts and fixed copy only
 - Optional app lock (PIN / biometrics) protects the archive on this device
 - No account required to save your first moments
+- Do not claim everything stays on device
 
 ## CTA variants
 

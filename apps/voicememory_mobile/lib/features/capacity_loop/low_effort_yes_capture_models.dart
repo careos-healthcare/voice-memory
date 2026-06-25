@@ -4,6 +4,13 @@ abstract final class LowEffortYesCaptureIds {
 
   static const contextTag = 'quick_yes_capture';
   static const saveSource = 'quick_yes_capture';
+
+  static String contextTagForTiming(String timingId) => '$contextTag:$timingId';
+
+  static bool matchesContextTag(String? tag) {
+    if (tag == null || tag.isEmpty) return false;
+    return tag == contextTag || tag.startsWith('$contextTag:');
+  }
 }
 
 /// Engine input — local flags only.
@@ -30,6 +37,8 @@ class LowEffortYesCaptureResult {
     required this.primaryCtaLabel,
     required this.secondaryCtaLabel,
     required this.optionalVoiceNoteLabel,
+    required this.timingSectionTitle,
+    required this.timingIds,
     required this.pullReasonIds,
     required this.decisionOutcomeIds,
   });
@@ -43,6 +52,8 @@ class LowEffortYesCaptureResult {
     primaryCtaLabel: '',
     secondaryCtaLabel: '',
     optionalVoiceNoteLabel: '',
+    timingSectionTitle: '',
+    timingIds: [],
     pullReasonIds: [],
     decisionOutcomeIds: [],
   );
@@ -55,6 +66,8 @@ class LowEffortYesCaptureResult {
   final String primaryCtaLabel;
   final String secondaryCtaLabel;
   final String optionalVoiceNoteLabel;
+  final String timingSectionTitle;
+  final List<String> timingIds;
   final List<String> pullReasonIds;
   final List<String> decisionOutcomeIds;
 }
@@ -63,10 +76,12 @@ class LowEffortYesCaptureResult {
 class LowEffortYesCaptureSaveRequest {
   const LowEffortYesCaptureSaveRequest({
     required this.pullReasonId,
+    required this.timingId,
     this.outcomeId,
   });
 
   final String pullReasonId;
+  final String timingId;
   final String? outcomeId;
 }
 
