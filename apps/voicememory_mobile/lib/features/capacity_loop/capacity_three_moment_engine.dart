@@ -83,10 +83,15 @@ class CapacityThreeMomentEngine {
       emptyBody: count <= 0 ? CapacityThreeMomentCopy.emptyBody : '',
       primaryCtaLabel: atTarget
           ? CapacityThreeMomentCopy.reviewLoopCta
-          : CapacityThreeMomentCopy.saveYesMomentCta,
+          : useReturnTrigger
+              ? returnTrigger.primaryCtaLabel
+              : CapacityThreeMomentCopy.saveYesMomentCta,
       primaryRoute: atTarget
           ? CapacityThreeMomentCopy.loopRoute
-          : CapacityThreeMomentCopy.recordRoute,
+          : useReturnTrigger
+              ? returnTrigger.primaryRoute
+              : CapacityThreeMomentCopy.recordRoute,
+      primaryDismisses: useReturnTrigger && returnTrigger.primaryDismisses,
       showQuickSaveSecondary: !atTarget && !useReturnTrigger && quickCapture.showCard,
       quickSaveRoute: LowEffortYesCaptureCopy.route,
       showReviewSecondary: useReturnTrigger && returnTrigger.showSecondary,

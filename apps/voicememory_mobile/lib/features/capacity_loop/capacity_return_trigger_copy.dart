@@ -4,19 +4,23 @@ abstract final class CapacityReturnTriggerCopy {
 
   static const activationTarget = 3;
 
-  static const completionTitle =
-      'Good — now wait for the next real yes moment';
+  static const completionTitle = 'First moment saved.';
   static const completionBody =
-      'Do not force another entry. Come back when you feel the pull to agree again. '
-      'That second moment is what starts making the pattern clearer.';
+      'Now wait for the next real one. Do not force it — come back when the '
+      'pull shows up again.';
   static const completionPrimaryCta = 'Done for now';
-  static const completionSecondaryCta = 'Save another yes moment';
+  static const completionSecondaryCta = 'Save another';
 
-  static const archiveHomeTitle = 'Waiting for the next yes moment';
+  static String archiveHomeTitle(int saved) {
+    if (saved == 1) return 'First moment saved.';
+    if (saved == 2) return 'Two moments saved.';
+    return 'Waiting for the next yes moment';
+  }
 
   static String archiveHomeBody(int saved, {required int target}) {
     if (saved == 1) {
-      return 'You saved the first moment. Now wait for the next real one.';
+      return 'Now wait for the next real one. Do not force it — come back '
+          'when the pull shows up again.';
     }
     if (saved == 2) {
       return 'One more real moment will make the pattern clearer.';
@@ -25,7 +29,14 @@ abstract final class CapacityReturnTriggerCopy {
         'Come back when the next real request pulls you toward yes.';
   }
 
-  static const archiveHomePrimaryCta = 'Save next yes moment';
+  static const archiveHomePrimaryCta = 'Done for now';
+
+  static String archiveHomeSecondaryCta(int saved) {
+    if (saved == 1) return 'Save another';
+    if (saved == 2) return 'Save next yes moment';
+    return 'Save next yes moment';
+  }
+
   static const archiveHomeReviewCta = 'Review what I have';
 
   static const recordProgressLine =
@@ -42,10 +53,13 @@ abstract final class CapacityReturnTriggerCopy {
         completionBody,
         completionPrimaryCta,
         completionSecondaryCta,
-        archiveHomeTitle,
+        archiveHomeTitle(1),
+        archiveHomeTitle(2),
         archiveHomeBody(1, target: activationTarget),
         archiveHomeBody(2, target: activationTarget),
         archiveHomePrimaryCta,
+        archiveHomeSecondaryCta(1),
+        archiveHomeSecondaryCta(2),
         archiveHomeReviewCta,
         recordProgressLine,
         betaMissionHint,

@@ -12,44 +12,58 @@ abstract final class ArchiveDailyChangeCopy {
   static const weeklySectionTitle = 'Next alternative to try';
 
   static const labelDelayBeforeReplying = 'Delay before replying';
-  static const labelCheckCapacityBeforeAnswering =
-      'Check capacity before answering';
-  static const labelUseDefaultPause = 'Use your default pause';
+  static const labelCheckCapacityFirst = 'Check capacity first';
+  static const labelNameTheLimit = 'Name the limit';
+  static const labelMoveSomethingFirst = 'Move something first';
+  static const labelCheckTradeOff = 'Check the trade-off';
+  static const labelPauseFirstAnswer = 'Pause the first answer';
+  static const labelSaveOnlyPull = 'Save only the pull';
   static const labelMarkPullFirst = 'Mark the pull first';
-  static const labelSaveMomentOnly =
-      'Save only the moment, not the full story';
+  static const labelUseDefaultPause = 'Use your default pause';
   static const labelReviewLoop = 'Review the loop';
   static const labelWatchPull = 'Watch for the same pull';
 
   // Legacy label aliases kept for tests that reference old names.
+  static const labelCheckCapacityBeforeAnswering = labelCheckCapacityFirst;
   static const labelDelayAnswer = labelDelayBeforeReplying;
-  static const labelCheckCapacity = labelCheckCapacityBeforeAnswering;
+  static const labelCheckCapacity = labelCheckCapacityFirst;
   static const labelDefaultPause = labelUseDefaultPause;
   static const labelMarkPull = labelMarkPullFirst;
-  static const labelSaveOneMore = labelSaveMomentOnly;
+  static const labelSaveMomentOnly = labelSaveOnlyPull;
+  static const labelSaveOneMore = labelSaveOnlyPull;
 
-  static const urgencyWithLaterCostLine =
-      'Urgency keeps appearing with later cost.';
+  static const repeatedPullNewOutcomeLine =
+      'Responsibility showed up again, but the outcome changed.';
 
-  static const responsibilityRepeatedDelayedLine =
-      'Responsibility showed up again, but this time you delayed the answer.';
+  static const samePullSameOutcomeLine =
+      'The same pull led to the same answer again.';
 
-  static const responsibilityWithSaidYesLine =
-      'Responsibility showed up again when you marked yes.';
+  static const samePullLaterCostLine =
+      'The pull repeated, and the later cost repeated too.';
+
+  static const fitPartlyNewMomentLine =
+      'This still only partly fits. The new moment adds evidence, but the '
+      'pattern is not settled.';
+
+  static const quickCaptureStillWorkLine =
+      'The next useful step is less reflection, not more. Save only the pull.';
+
+  static const boundaryResponseSelectedLine =
+      'Your next move is already chosen: use your pause response before '
+      'answering.';
+
+  // Legacy aliases for gradual migration in tests.
+  static const responsibilityRepeatedDelayedLine = repeatedPullNewOutcomeLine;
+  static const urgencyWithLaterCostLine = samePullLaterCostLine;
+  static const responsibilityWithSaidYesLine = samePullSameOutcomeLine;
 
   static String repeatedPullWithLaterCostLine(String pullShortLabel) =>
-      pullShortLabel == 'urgency'
-          ? urgencyWithLaterCostLine
-          : '${_capitalize(pullShortLabel)} has appeared more than once, '
-              'and at least one yes moment had a later cost.';
+      samePullLaterCostLine;
 
   static String repeatedPullWithSaidYesLine(String pullShortLabel) =>
-      pullShortLabel == 'feeling responsible'
-          ? responsibilityWithSaidYesLine
-          : 'You kept saying yes when $pullShortLabel was the pull.';
+      samePullSameOutcomeLine;
 
-  static const patternInterruptedLine =
-      'You marked at least one moment where the pattern changed.';
+  static const patternInterruptedLine = repeatedPullNewOutcomeLine;
 
   static const stillFormingLine =
       'Your yes loop is still forming. One more real moment will make this clearer.';
@@ -60,12 +74,6 @@ abstract final class ArchiveDailyChangeCopy {
   static const fitConfirmedLine =
       'You marked the yes loop as fitting what you noticed.';
 
-  static const fitPartlyNewMomentLine =
-      'You marked this loop as partly fitting. The new moment adds evidence, but it is not settled yet.';
-
-  static const quickCaptureStillWorkLine =
-      'Quick save still felt like work. Next time, save only the pull.';
-
   static const noPullReasonLine =
       'You saved the moment, but the pull is still unclear.';
 
@@ -73,24 +81,27 @@ abstract final class ArchiveDailyChangeCopy {
       'You added another yes moment. This may be worth comparing with earlier saves.';
   static const changeLaterCost =
       'You marked a later cost on one moment.';
-  static const changeBoundarySelected =
-      'You chose a default pause line.';
+  static const changeBoundarySelected = boundaryResponseSelectedLine;
   static const changeYesLoopReady =
       'Your yes loop has enough evidence to review.';
 
-  static const altUrgency = 'Delay before replying.';
+  static const altUrgency =
+      'Do not answer immediately. Use: ‘I cannot answer properly right now — '
+      'I will come back to you.’';
   static const altResponsibility =
-      'Check capacity before accepting responsibility.';
+      'Check your actual capacity before accepting responsibility.';
   static const altDisappointment =
       'Use: ‘I want to help, but I need to check what I can realistically do.’';
   static const altSqueezeItIn =
       'Ask what would need to move before saying yes.';
   static const altOpportunity =
-      'Check what this opportunity would displace.';
+      'Check what this opportunity would displace before accepting.';
   static const altAnsweredTooQuickly =
       'Do not answer in the first moment.';
   static const altQuickCaptureStillWork =
-      'Save only the pull. Skip the rest.';
+      'Skip the full story. Save only what pulled you toward yes.';
+  static const altSomethingElse =
+      'Save the moment first. Name the pull later.';
 
   static const bodyDelayBeforeReplying =
       'Delay the answer before replying.';
@@ -127,15 +138,11 @@ abstract final class ArchiveDailyChangeCopy {
   }) =>
       switch (type) {
         ArchiveDailyChangeResponseType.repeatedPullWithLaterCost =>
-          repeatedPullWithLaterCostLine(
-            pullShortLabel ?? 'A repeated pull',
-          ),
+          samePullLaterCostLine,
         ArchiveDailyChangeResponseType.repeatedPullWithSaidYes =>
-          repeatedPullWithSaidYesLine(
-            pullShortLabel ?? 'a repeated pull',
-          ),
+          samePullSameOutcomeLine,
         ArchiveDailyChangeResponseType.patternInterrupted =>
-          patternInterruptedLine,
+          repeatedPullNewOutcomeLine,
         ArchiveDailyChangeResponseType.stillForming => stillFormingLine,
         ArchiveDailyChangeResponseType.waitingForNextMoment =>
           waitingForNextMomentLine,
@@ -146,17 +153,18 @@ abstract final class ArchiveDailyChangeCopy {
           quickCaptureStillWorkLine,
         ArchiveDailyChangeResponseType.noPullReasonYet => noPullReasonLine,
         ArchiveDailyChangeResponseType.recentChange => changeNewYesMoment,
+        ArchiveDailyChangeResponseType.boundaryResponseSelected =>
+          boundaryResponseSelectedLine,
       };
 
   static String alternativeLabelForPull(String? pullId) => switch (pullId) {
         CapacityPullReasonIds.soundedUrgent => labelDelayBeforeReplying,
-        CapacityPullReasonIds.feltResponsible =>
-          labelCheckCapacityBeforeAnswering,
-        CapacityPullReasonIds.avoidDisappoint => labelUseDefaultPause,
-        CapacityPullReasonIds.squeezeItIn =>
-          labelCheckCapacityBeforeAnswering,
-        CapacityPullReasonIds.wantedOpportunity => labelDelayBeforeReplying,
-        CapacityPullReasonIds.answeredTooQuickly => labelDelayBeforeReplying,
+        CapacityPullReasonIds.feltResponsible => labelCheckCapacityFirst,
+        CapacityPullReasonIds.avoidDisappoint => labelNameTheLimit,
+        CapacityPullReasonIds.squeezeItIn => labelMoveSomethingFirst,
+        CapacityPullReasonIds.wantedOpportunity => labelCheckTradeOff,
+        CapacityPullReasonIds.answeredTooQuickly => labelPauseFirstAnswer,
+        CapacityPullReasonIds.somethingElse => labelMarkPullFirst,
         _ => labelMarkPullFirst,
       };
 
@@ -167,7 +175,8 @@ abstract final class ArchiveDailyChangeCopy {
         CapacityPullReasonIds.squeezeItIn => altSqueezeItIn,
         CapacityPullReasonIds.wantedOpportunity => altOpportunity,
         CapacityPullReasonIds.answeredTooQuickly => altAnsweredTooQuickly,
-        _ => bodyBeforeReplyingTemplate,
+        CapacityPullReasonIds.somethingElse => altSomethingElse,
+        _ => altSomethingElse,
       };
 
   static String watchNextForPullReason(String? reasonId) => switch (reasonId) {
@@ -178,34 +187,32 @@ abstract final class ArchiveDailyChangeCopy {
         _ => watchHardToDelay,
       };
 
-  static String _capitalize(String input) {
-    if (input.isEmpty) return input;
-    return '${input[0].toUpperCase()}${input.substring(1)}';
-  }
-
   static List<String> allVisibleStrings() => [
         title,
         alternativeSectionTitle,
         loopSectionTitle,
         weeklySectionTitle,
         labelDelayBeforeReplying,
-        labelCheckCapacityBeforeAnswering,
-        labelUseDefaultPause,
+        labelCheckCapacityFirst,
+        labelNameTheLimit,
+        labelMoveSomethingFirst,
+        labelCheckTradeOff,
+        labelPauseFirstAnswer,
+        labelSaveOnlyPull,
         labelMarkPullFirst,
-        labelSaveMomentOnly,
+        labelUseDefaultPause,
         labelReviewLoop,
         labelWatchPull,
-        urgencyWithLaterCostLine,
-        responsibilityRepeatedDelayedLine,
-        responsibilityWithSaidYesLine,
-        repeatedPullWithLaterCostLine('urgency'),
-        repeatedPullWithSaidYesLine('feeling responsible'),
+        repeatedPullNewOutcomeLine,
+        samePullSameOutcomeLine,
+        samePullLaterCostLine,
         patternInterruptedLine,
         stillFormingLine,
         waitingForNextMomentLine,
         fitConfirmedLine,
         fitPartlyNewMomentLine,
         quickCaptureStillWorkLine,
+        boundaryResponseSelectedLine,
         noPullReasonLine,
         changeNewYesMoment,
         changeLaterCost,
@@ -218,6 +225,7 @@ abstract final class ArchiveDailyChangeCopy {
         altOpportunity,
         altAnsweredTooQuickly,
         altQuickCaptureStillWork,
+        altSomethingElse,
         bodyDelayBeforeReplying,
         bodyUrgencyCheckCapacity,
         bodyUsePauseAgain,

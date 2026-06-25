@@ -189,10 +189,25 @@ class ArchiveDailyChangeEngine {
       return _SharpenedResponse(
         type: ArchiveDailyChangeResponseType.quickCaptureStillWork,
         changeLine: ArchiveDailyChangeCopy.quickCaptureStillWorkLine,
-        alternativeLabel: ArchiveDailyChangeCopy.labelSaveMomentOnly,
+        alternativeLabel: ArchiveDailyChangeCopy.labelSaveOnlyPull,
         alternativeBody: ArchiveDailyChangeCopy.altQuickCaptureStillWork,
         watchNextLine: ArchiveDailyChangeCopy.watchHardToDelay,
         repeatedLine: '',
+      );
+    }
+
+    final boundarySelectedRecently = input.boundarySelection != null &&
+        input.boundarySelection!.hasSelection &&
+        _isAfter(input.boundarySelection!.selectedAt, since);
+    if (boundarySelectedRecently) {
+      final alternative = _resolveAlternative(input, pullId);
+      return _SharpenedResponse(
+        type: ArchiveDailyChangeResponseType.boundaryResponseSelected,
+        changeLine: ArchiveDailyChangeCopy.boundaryResponseSelectedLine,
+        alternativeLabel: alternative.label,
+        alternativeBody: alternative.body,
+        watchNextLine: ArchiveDailyChangeCopy.watchAnswerBeforeCapacity,
+        repeatedLine: _repeatedLine(pullId),
       );
     }
 
@@ -214,28 +229,10 @@ class ArchiveDailyChangeEngine {
       final alternative = _resolveAlternative(input, pullId);
       return _SharpenedResponse(
         type: ArchiveDailyChangeResponseType.patternInterrupted,
-        changeLine: ArchiveDailyChangeCopy.responsibilityRepeatedDelayedLine,
+        changeLine: ArchiveDailyChangeCopy.repeatedPullNewOutcomeLine,
         alternativeLabel: alternative.label,
         alternativeBody: alternative.body,
         watchNextLine: ArchiveDailyChangeCopy.watchAnswerBeforeCapacity,
-        repeatedLine: _repeatedLine(pullId),
-      );
-    }
-
-    if (pullId != null &&
-        pullCount >= 2 &&
-        hasLaterCost &&
-        pullId == CapacityPullReasonIds.soundedUrgent) {
-      final alternative = _resolveAlternative(
-        input,
-        CapacityPullReasonIds.soundedUrgent,
-      );
-      return _SharpenedResponse(
-        type: ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
-        changeLine: ArchiveDailyChangeCopy.urgencyWithLaterCostLine,
-        alternativeLabel: alternative.label,
-        alternativeBody: alternative.body,
-        watchNextLine: ArchiveDailyChangeCopy.watchUrgentResponsible,
         repeatedLine: _repeatedLine(pullId),
       );
     }
@@ -244,9 +241,7 @@ class ArchiveDailyChangeEngine {
       final alternative = _resolveAlternative(input, pullId);
       return _SharpenedResponse(
         type: ArchiveDailyChangeResponseType.repeatedPullWithLaterCost,
-        changeLine: ArchiveDailyChangeCopy.repeatedPullWithLaterCostLine(
-          pullShort,
-        ),
+        changeLine: ArchiveDailyChangeCopy.samePullLaterCostLine,
         alternativeLabel: alternative.label,
         alternativeBody: alternative.body,
         watchNextLine: ArchiveDailyChangeCopy.watchNextForPullReason(pullId),
@@ -258,7 +253,7 @@ class ArchiveDailyChangeEngine {
       final alternative = _resolveAlternative(input, pullId);
       return _SharpenedResponse(
         type: ArchiveDailyChangeResponseType.repeatedPullWithSaidYes,
-        changeLine: ArchiveDailyChangeCopy.repeatedPullWithSaidYesLine(pullShort),
+        changeLine: ArchiveDailyChangeCopy.samePullSameOutcomeLine,
         alternativeLabel: alternative.label,
         alternativeBody: alternative.body,
         watchNextLine: ArchiveDailyChangeCopy.watchSamePullMayRepeat,
@@ -337,11 +332,11 @@ class ArchiveDailyChangeEngine {
     final changeLine = switch (change?.kind) {
       ArchiveDailyChangeKind.laterCost => ArchiveDailyChangeCopy.changeLaterCost,
       ArchiveDailyChangeKind.boundarySelected =>
-        ArchiveDailyChangeCopy.changeBoundarySelected,
+        ArchiveDailyChangeCopy.boundaryResponseSelectedLine,
       ArchiveDailyChangeKind.yesLoopReady =>
         ArchiveDailyChangeCopy.changeYesLoopReady,
       ArchiveDailyChangeKind.urgencyPull =>
-        ArchiveDailyChangeCopy.urgencyWithLaterCostLine,
+        ArchiveDailyChangeCopy.samePullLaterCostLine,
       _ => ArchiveDailyChangeCopy.changeNewYesMoment,
     };
 

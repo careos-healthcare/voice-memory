@@ -124,10 +124,14 @@ void main() {
   const threeMomentEngine = CapacityThreeMomentEngine();
 
   group('Beta recovery onboarding promise', () {
-    test('headline leads with private mind map', () {
+    test('headline uses simpler fallback copy', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
         ArchivePositioningCopy.firstUseTitle,
+      );
+      expect(
+        AcquisitionStartCopy.capacityTitle,
+        contains('Map the moments that keep repeating'),
       );
       expect(
         LoopAcquisitionCopy.capacityYes.headline,
@@ -139,12 +143,12 @@ void main() {
       );
     });
 
-    test('how it works explains save mark pull come back review', () {
+    test('how it works explains save choose pull come back review', () {
       expect(AcquisitionStartCopy.capacityHowItWorksSteps, [
         'Save a real moment',
-        'Mark what pulled you in',
+        'Choose what pulled you in',
         'Come back when it happens again',
-        'After 3 moments, review what repeats',
+        'Review what repeated',
       ]);
       expect(
         LoopAcquisitionCopy.capacityYes.bullets,
@@ -178,13 +182,13 @@ void main() {
         AcquisitionStartCopy.capacityBody,
         ArchivePositioningCopy.firstUseBody,
       );
-      expect(AcquisitionStartCopy.capacityStartCta, 'Save a yes moment');
-      expect(AcquisitionStartCopy.capacityHowItWorksCta, 'How it works');
+      expect(AcquisitionStartCopy.capacityStartCta, 'Save first moment');
+      expect(AcquisitionStartCopy.capacityHowItWorksCta, 'See how it works');
     });
   });
 
   group('Beta recovery return trigger copy', () {
-    test('first-save completion says wait for next real yes moment', () {
+    test('first-save completion says first moment saved', () {
       final result = returnEngine.build(
         const CapacityReturnTriggerInput(
           sampleMode: false,
@@ -194,9 +198,9 @@ void main() {
           surface: CapacityReturnTriggerSurface.completion,
         ),
       );
-      expect(result.title.toLowerCase(), contains('wait for the next real yes moment'));
+      expect(result.title, 'First moment saved.');
       expect(result.primaryCtaLabel, 'Done for now');
-      expect(result.secondaryCtaLabel, 'Save another yes moment');
+      expect(result.secondaryCtaLabel, 'Save another');
       expect(result.primaryDismisses, isTrue);
     });
 
@@ -210,7 +214,7 @@ void main() {
           surface: CapacityReturnTriggerSurface.archiveHome,
         ),
       );
-      expect(one.title, 'Waiting for the next yes moment');
+      expect(one.title, 'First moment saved.');
       expect(
         one.body,
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),

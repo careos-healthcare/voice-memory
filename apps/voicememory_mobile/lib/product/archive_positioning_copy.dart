@@ -29,17 +29,21 @@ abstract final class ArchivePositioningCopy {
   static const mapLine = 'Every saved moment adds to the same pattern map.';
 
   // ——— First-use onboarding (capacity start) ———
-  static const firstUseTitle = umbrellaHeadline;
+  static const firstUseTitle = 'Map the moments that keep repeating.';
   static const firstUseBody =
-      'Start with one real moment. ArchiveMe helps connect it into patterns, '
-      'changes, and next things to watch.';
-  static const firstUseCta = 'Save a yes moment';
-  static const howItWorksCta = 'How it works';
+      'Save one real moment. ArchiveMe helps you see what it connects to '
+      'over time.';
+  static const firstUseFirstPath =
+      'Start with saying yes when you have no capacity.';
+  static const firstUseTimingMicro =
+      'You can save it before, after, or when the cost shows up later.';
+  static const firstUseCta = 'Save first moment';
+  static const howItWorksCta = 'See how it works';
   static const List<String> howItWorksSteps = [
     'Save a real moment',
-    'Mark what pulled you in',
+    'Choose what pulled you in',
     'Come back when it happens again',
-    'After 3 moments, review what repeats',
+    'Review what repeated',
   ];
 
   // ——— Generic CTAs ———
@@ -90,6 +94,8 @@ abstract final class ArchivePositioningCopy {
         quickCaptureTimingFlex,
         firstUseTitle,
         firstUseBody,
+        firstUseFirstPath,
+        firstUseTimingMicro,
         firstUseCta,
         howItWorksCta,
         ...howItWorksSteps,

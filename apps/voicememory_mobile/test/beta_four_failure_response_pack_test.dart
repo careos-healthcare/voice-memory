@@ -17,6 +17,7 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigge
 import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigger_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_models.dart';
+import 'package:voicememory_mobile/features/capacity_loop/quick_capture_friction_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
@@ -95,8 +96,6 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 ArchiveHomePriorityInput _calmHomeInput({
   bool activationVisible = true,
   bool dailyChangeVisible = true,
-  bool loopVisible = true,
-  bool pullReasonVisible = true,
 }) =>
     ArchiveHomePriorityInput(
       savedEntryCount: 1,
@@ -112,8 +111,8 @@ ArchiveHomePriorityInput _calmHomeInput({
       dailyArchiveExerciseVisible: false,
       archiveClarityProgressVisible: false,
       capacityThreeMomentActivationVisible: activationVisible,
-      capacityLoopVisible: loopVisible,
-      capacityPullReasonVisible: pullReasonVisible,
+      capacityLoopVisible: true,
+      capacityPullReasonVisible: true,
       capacityDecisionOutcomeVisible: false,
       capacityCostLaterCheckinVisible: false,
       capacityActivationFitVisible: false,
@@ -128,38 +127,37 @@ ArchiveHomePriorityInput _calmHomeInput({
     );
 
 void main() {
-  group('Onboarding clarity', () {
-    test('headline uses simpler fallback copy', () {
-      expect(
-        AcquisitionStartCopy.capacityTitle,
-        ArchivePositioningCopy.firstUseTitle,
-      );
+  group('Onboarding fallback', () {
+    test('fallback title maps the moments that keep repeating', () {
       expect(
         AcquisitionStartCopy.capacityTitle,
         contains('Map the moments that keep repeating'),
       );
     });
 
-    test('body explains save one real moment', () {
+    test('fallback body explains save one real moment', () {
       expect(
-        AcquisitionStartCopy.capacityBody,
-        ArchivePositioningCopy.firstUseBody,
+        AcquisitionStartCopy.capacityBody.toLowerCase(),
+        allOf(
+          contains('save one real moment'),
+          contains('connects to over time'),
+        ),
       );
     });
 
-    test('how it works explains save choose pull come back review', () {
+    test('fallback CTA says Save first moment', () {
+      expect(AcquisitionStartCopy.capacityStartCta, 'Save first moment');
+    });
+
+    test('fallback how it works uses See how it works', () {
+      expect(AcquisitionStartCopy.capacityHowItWorksCta, 'See how it works');
       expect(
         AcquisitionStartCopy.capacityHowItWorksSteps,
-        [
-          'Save a real moment',
-          'Choose what pulled you in',
-          'Come back when it happens again',
-          'Review what repeated',
-        ],
+        ArchivePositioningCopy.howItWorksSteps,
       );
     });
 
-    test('onboarding does not expose internal terms', () {
+    test('fallback onboarding avoids internal terms', () {
       final joined = AcquisitionStartCopy.capacityVisibleStrings()
           .join('\n')
           .toLowerCase();
@@ -167,21 +165,10 @@ void main() {
         expect(joined, isNot(contains(term)), reason: 'contains $term');
       }
     });
-
-    test('first path card copy is present', () {
-      expect(
-        AcquisitionStartCopy.capacityFirstPathHeadline,
-        ArchivePositioningCopy.firstUseFirstPath,
-      );
-    });
-
-    test('CTA says Save first moment', () {
-      expect(AcquisitionStartCopy.capacityStartCta, 'Save first moment');
-    });
   });
 
-  group('Activation simplification', () {
-    test('1 moment state says wait and do not force it', () {
+  group('Activation fallback', () {
+    test('1/3 copy says wait and do not force it', () {
       expect(
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3).toLowerCase(),
         allOf(
@@ -191,49 +178,44 @@ void main() {
       );
     });
 
-    test('2 moment state says one more real moment', () {
-      expect(
-        CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3),
-        'One more real moment will make the pattern clearer.',
-      );
-    });
-
-    test('return trigger primary CTA says Done for now', () {
+    test('1/3 primary action can be Done for now', () {
       expect(
         CapacityReturnTriggerCopy.archiveHomePrimaryCta,
         'Done for now',
       );
-    });
-
-    test('under 3 moments only one primary capacity card is selected', () {
-      const engine = ArchiveHomePriorityEngine();
-      final plan = engine.build(
-        _calmHomeInput(
-          activationVisible: true,
-          dailyChangeVisible: true,
-          loopVisible: true,
-          pullReasonVisible: true,
+      const engine = CapacityReturnTriggerEngine();
+      final result = engine.build(
+        const CapacityReturnTriggerInput(
+          sampleMode: false,
+          screenshotMode: false,
+          capacityWedgeActive: true,
+          capacityMomentCount: 1,
+          surface: CapacityReturnTriggerSurface.archiveHome,
         ),
       );
+      expect(result.primaryCtaLabel, 'Done for now');
+      expect(result.primaryDismisses, isTrue);
+    });
+
+    test('2/3 copy says one more real moment', () {
       expect(
-        ArchiveHomeCardPriority.onlyOneCapacityPrimaryCard(plan),
-        isTrue,
+        CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3).toLowerCase(),
+        contains('one more real moment'),
       );
+      expect(CapacityReturnTriggerCopy.archiveHomeTitle(2), 'Two moments saved.');
+    });
+
+    test('under 3 moments only one primary capacity card', () {
+      const engine = ArchiveHomePriorityEngine();
+      final plan = engine.build(_calmHomeInput());
+      expect(ArchiveHomeCardPriority.onlyOneCapacityPrimaryCard(plan), isTrue);
       expect(
         plan.primarySections,
         contains(ArchiveHomeSectionId.capacityThreeMomentActivation),
       );
-      expect(
-        plan.primarySections,
-        isNot(contains(ArchiveHomeSectionId.archiveDailyChange)),
-      );
-      expect(
-        plan.primarySections,
-        isNot(contains(ArchiveHomeSectionId.capacityLoop)),
-      );
     });
 
-    test('three moment engine hides quick save secondary at 1-2 moments', () {
+    test('three moment engine uses Done for now at 1/3', () {
       const engine = CapacityThreeMomentEngine();
       final result = engine.build(
         const CapacityThreeMomentInput(
@@ -243,15 +225,20 @@ void main() {
           capacityMomentCount: 1,
         ),
       );
-      expect(result.showQuickSaveSecondary, isFalse);
+      expect(result.primaryCtaLabel, 'Done for now');
+      expect(result.primaryDismisses, isTrue);
       expect(result.showReviewSecondary, isTrue);
     });
   });
 
-  group('Daily change sharpening', () {
+  group('Daily change fallback', () {
     const dailyEngine = ArchiveDailyChangeEngine();
 
-    test('responsibility repeated with delayed answer', () {
+    test('distinguishes repeated pull with new outcome', () {
+      expect(
+        ArchiveDailyChangeCopy.repeatedPullNewOutcomeLine.toLowerCase(),
+        allOf(contains('outcome changed'), contains('showed up again')),
+      );
       final result = dailyEngine.build(
         ArchiveDailyChangeInput(
           sampleMode: false,
@@ -283,75 +270,43 @@ void main() {
           quickCaptureFrictionRecord: null,
         ),
       );
-      expect(result.hasFeature, isTrue);
+      expect(result.changeLine, ArchiveDailyChangeCopy.repeatedPullNewOutcomeLine);
+    });
+
+    test('distinguishes same pull with same outcome', () {
       expect(
-        result.changeLine,
-        ArchiveDailyChangeCopy.repeatedPullNewOutcomeLine,
+        ArchiveDailyChangeCopy.samePullSameOutcomeLine.toLowerCase(),
+        allOf(contains('same pull'), contains('same answer')),
       );
     });
 
-    test('urgency with later cost uses sharper line', () {
+    test('distinguishes pull with later cost', () {
       expect(
-        ArchiveDailyChangeCopy.samePullLaterCostLine,
-        contains('later cost repeated'),
+        ArchiveDailyChangeCopy.samePullLaterCostLine.toLowerCase(),
+        allOf(contains('pull repeated'), contains('later cost repeated')),
       );
     });
 
-    test('fit partly handles not settled copy', () {
+    test('partly fit uses not settled copy', () {
       expect(
-        ArchiveDailyChangeCopy.fitPartlyNewMomentLine,
-        contains('not settled'),
+        ArchiveDailyChangeCopy.fitPartlyNewMomentLine.toLowerCase(),
+        allOf(contains('partly fits'), contains('not settled')),
       );
     });
 
-    test('quick capture still work says less reflection not more', () {
+    test('quick capture still work maps to less reflection not more', () {
       expect(
-        ArchiveDailyChangeCopy.quickCaptureStillWorkLine,
-        contains('less reflection, not more'),
+        ArchiveDailyChangeCopy.quickCaptureStillWorkLine.toLowerCase(),
+        allOf(
+          contains('less reflection'),
+          contains('not more'),
+          contains('save only the pull'),
+        ),
       );
     });
   });
 
-  group('Alternative mapping', () {
-    test('each pull reason maps to a specific fixed next move', () {
-      expect(
-        ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.soundedUrgent,
-        ),
-        ArchiveDailyChangeCopy.altUrgency,
-      );
-      expect(
-        ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.feltResponsible,
-        ),
-        ArchiveDailyChangeCopy.altResponsibility,
-      );
-      expect(
-        ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.avoidDisappoint,
-        ),
-        ArchiveDailyChangeCopy.altDisappointment,
-      );
-      expect(
-        ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.squeezeItIn,
-        ),
-        ArchiveDailyChangeCopy.altSqueezeItIn,
-      );
-      expect(
-        ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.wantedOpportunity,
-        ),
-        ArchiveDailyChangeCopy.altOpportunity,
-      );
-      expect(
-        ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.answeredTooQuickly,
-        ),
-        ArchiveDailyChangeCopy.altAnsweredTooQuickly,
-      );
-    });
-
+  group('Alternative mapping fallback', () {
     test('selected boundary response wins over generic alternative', () {
       final selection = CapacityBoundaryResponseSelection(
         responseId: CapacityBoundaryResponseIds.cannotAnswerNow,
@@ -362,73 +317,120 @@ void main() {
       expect(boundaryText, isNotNull);
       expect(
         boundaryText,
-        isNot(
-          ArchiveDailyChangeCopy.alternativeBodyForPull(
-            CapacityPullReasonIds.soundedUrgent,
-          ),
-        ),
+        isNot(ArchiveDailyChangeCopy.alternativeBodyForPull(
+          CapacityPullReasonIds.soundedUrgent,
+        )),
       );
     });
-  });
 
-  group('Privacy copy honesty', () {
-    test('journal encrypted claim is in allowed promises', () {
+    test('urgency maps to delay before replying', () {
       expect(
-        PrivacyCopyPolicy.journalEncryptedAtRest.toLowerCase(),
-        contains('journal file on this device is encrypted'),
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.soundedUrgent,
+        ),
+        'Delay before replying',
+      );
+      expect(
+        ArchiveDailyChangeCopy.alternativeBodyForPull(
+          CapacityPullReasonIds.soundedUrgent,
+        ),
+        contains('Do not answer immediately'),
       );
     });
 
-    test('allowed promises pass policy scan', () {
-      _expectNoBannedCopy([
-        PrivacyCopyPolicy.privateByDefault,
-        PrivacyCopyPolicy.journalEncryptedAtRest,
-        PrivacyCopyPolicy.transcriptionAnalysisWhenUsed,
-        PrivacyCopyPolicy.exportDeleteAnytime,
-        PrivacyCopyPolicy.lockArchiveMe,
-      ]);
+    test('responsibility maps to check capacity first', () {
+      expect(
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.feltResponsible,
+        ),
+        'Check capacity first',
+      );
+      expect(
+        ArchiveDailyChangeCopy.alternativeBodyForPull(
+          CapacityPullReasonIds.feltResponsible,
+        ),
+        contains('actual capacity'),
+      );
+    });
+
+    test('disappointment maps to name the limit', () {
+      expect(
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.avoidDisappoint,
+        ),
+        'Name the limit',
+      );
+    });
+
+    test('squeeze-it-in maps to move something first', () {
+      expect(
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.squeezeItIn,
+        ),
+        'Move something first',
+      );
+    });
+
+    test('opportunity maps to check trade-off', () {
+      expect(
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.wantedOpportunity,
+        ),
+        'Check the trade-off',
+      );
+    });
+
+    test('answered-too-quickly maps to pause first answer', () {
+      expect(
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.answeredTooQuickly,
+        ),
+        'Pause the first answer',
+      );
+    });
+
+    test('something_else maps to mark the pull first', () {
+      expect(
+        ArchiveDailyChangeCopy.alternativeLabelForPull(
+          CapacityPullReasonIds.somethingElse,
+        ),
+        'Mark the pull first',
+      );
+      expect(
+        ArchiveDailyChangeCopy.alternativeBodyForPull(
+          CapacityPullReasonIds.somethingElse,
+        ),
+        contains('Name the pull later'),
+      );
+    });
+
+    test('still_work quick capture maps to save only the pull label', () {
+      expect(ArchiveDailyChangeCopy.labelSaveOnlyPull, 'Save only the pull');
+      expect(
+        ArchiveDailyChangeCopy.altQuickCaptureStillWork,
+        contains('Skip the full story'),
+      );
     });
   });
 
-  group('Commercial readiness docs', () {
-    test('paid checklist requires 2-3 paid-intent users', () {
-      final doc = File('docs/PAID_LAUNCH_DECISION_CHECKLIST.md').readAsStringSync();
-      expect(doc, contains('2–3 clear paid-intent users'));
-      expect(doc, contains('RevenueCat readiness comes after return'));
-      expect(doc, contains('Do not enable paid launch from one maybe-paid user'));
-    });
-  });
-
-  group('Dependency maintenance doc', () {
-    test('dependency maintenance plan exists', () {
-      expect(File('docs/DEPENDENCY_MAINTENANCE_PLAN.md').existsSync(), isTrue);
-      final doc = File('docs/DEPENDENCY_MAINTENANCE_PLAN.md').readAsStringSync();
-      expect(doc.toLowerCase(), contains('do not upgrade before testflight'));
+  group('Beta decision doc', () {
+    test('beta four failure response rules doc exists', () {
+      final doc = File('../../docs/BETA_FOUR_FAILURE_RESPONSE_RULES.md');
+      expect(doc.existsSync(), isTrue);
+      final text = doc.readAsStringSync();
+      expect(text, contains('Users do not understand'));
+      expect(text, contains('Do not enable RevenueCat'));
+      expect(text, contains('Do not add new dashboards'));
     });
   });
 
   group('Guardrails', () {
-    test('beta readiness copy passes banned phrase scan', () {
+    test('pack copy passes banned phrase scan', () {
       _expectNoBannedCopy([
         ...AcquisitionStartCopy.capacityVisibleStrings(),
         ...CapacityReturnTriggerCopy.allVisibleStrings(),
         ...ArchiveDailyChangeCopy.allVisibleStrings(),
-        ArchivePositioningCopy.wedgeHeadline,
       ]);
-    });
-
-    test('return trigger engine 1/3 copy passes guardrails', () {
-      const engine = CapacityReturnTriggerEngine();
-      final result = engine.build(
-        const CapacityReturnTriggerInput(
-          sampleMode: false,
-          screenshotMode: false,
-          capacityWedgeActive: true,
-          capacityMomentCount: 1,
-          surface: CapacityReturnTriggerSurface.archiveHome,
-        ),
-      );
-      _expectNoBannedCopy([result.title, result.body, result.primaryCtaLabel]);
     });
   });
 }

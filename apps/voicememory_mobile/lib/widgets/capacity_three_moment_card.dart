@@ -14,16 +14,19 @@ class CapacityThreeMomentCard extends StatelessWidget {
   const CapacityThreeMomentCard({
     super.key,
     required this.result,
+    this.onPrimaryDismiss,
     this.sampleMode = false,
   });
 
   const CapacityThreeMomentCard.test({
     super.key,
     required this.result,
+    this.onPrimaryDismiss,
     this.sampleMode = false,
   });
 
   final CapacityThreeMomentResult result;
+  final VoidCallback? onPrimaryDismiss;
   final bool sampleMode;
 
   @override
@@ -82,7 +85,15 @@ class CapacityThreeMomentCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('capacity_three_moment_card_primary_button'),
-            onPressed: () => context.push(result.primaryRoute),
+            onPressed: () {
+              if (result.primaryDismisses) {
+                onPrimaryDismiss?.call();
+                return;
+              }
+              if (result.primaryRoute.isNotEmpty) {
+                context.push(result.primaryRoute);
+              }
+            },
             child: Text(result.primaryCtaLabel),
           ),
           if (result.showQuickSaveSecondary) ...[
