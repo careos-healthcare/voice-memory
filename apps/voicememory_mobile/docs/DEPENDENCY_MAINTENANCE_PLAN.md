@@ -43,6 +43,7 @@ From `flutter pub outdated` (snapshot — re-run before any upgrade branch):
 
 ## Related docs
 
+- [POST_BETA_RESPONSE_ROADMAP.md](../../docs/POST_BETA_RESPONSE_ROADMAP.md) — do not upgrade until post-beta branch selection
 - [PAID_LAUNCH_DECISION_CHECKLIST.md](./PAID_LAUNCH_DECISION_CHECKLIST.md)
 - [TESTFLIGHT_MANUAL_QA.md](./TESTFLIGHT_MANUAL_QA.md)
 - [VALIDATION.md](../VALIDATION.md)

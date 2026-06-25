@@ -33,6 +33,10 @@ Focused fallback rules for the four remaining beta failure modes after the Beta 
 - Do not overclaim encryption.
 - Do not expose private transcript text in user-visible copy.
 
+## Related docs
+
+- [POST_BETA_RESPONSE_ROADMAP.md](./POST_BETA_RESPONSE_ROADMAP.md) — evidence-based branches 1–10 after TestFlight; branches 1–4 covered below in beta
+
 ## Current fallback pack
 
 This document tracks the **Beta Four Failure Response Pack** fallbacks:
