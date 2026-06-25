@@ -61,7 +61,14 @@ Track in a simple spreadsheet or notes — no backend analytics required for thi
 - Generic productivity or coaching positioning
 - Streaks, scores, or guilt-based retention
 
+## After beta: response branches
+
+Use [POST_BETA_RESPONSE_ROADMAP.md](../../docs/POST_BETA_RESPONSE_ROADMAP.md) to pick **one** post-beta branch from cohort evidence. Do not build all branches at once. Branches 1–4 have in-beta fallbacks in [BETA_FOUR_FAILURE_RESPONSE_RULES.md](../../docs/BETA_FOUR_FAILURE_RESPONSE_RULES.md); branches 5–10 open only when interviews or scorecard data support them.
+
 ## Related docs
+
+- [POST_BETA_RESPONSE_ROADMAP.md](../../docs/POST_BETA_RESPONSE_ROADMAP.md) — post-beta branch decision matrix
+- [BETA_FOUR_FAILURE_RESPONSE_RULES.md](../../docs/BETA_FOUR_FAILURE_RESPONSE_RULES.md) — in-beta fallbacks for confusion, activation, daily change, alternatives
 
 - [BETA_TESTER_MESSAGE.md](./BETA_TESTER_MESSAGE.md) — message to send testers
 - [BETA_INTERVIEW_SCRIPT_CAPACITY.md](./BETA_INTERVIEW_SCRIPT_CAPACITY.md) — 10-question follow-up script

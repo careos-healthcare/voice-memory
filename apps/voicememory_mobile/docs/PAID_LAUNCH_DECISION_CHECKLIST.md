@@ -66,6 +66,7 @@ All prerequisites pass **and** all beta evidence gates pass **and** sandbox purc
 
 ## Related docs
 
+- [POST_BETA_RESPONSE_ROADMAP.md](../../docs/POST_BETA_RESPONSE_ROADMAP.md) — branch `revenuecat-readiness-post-beta` after 2–3 paid-intent users
 - [WEDGE_RETENTION_ACQUISITION_PLAN.md](./WEDGE_RETENTION_ACQUISITION_PLAN.md)
 - [CAPACITY_YES_100K_WEDGE_PLAN.md](./CAPACITY_YES_100K_WEDGE_PLAN.md)
 - [CAPACITY_YES_POSITIONING_ONE_PAGER.md](./CAPACITY_YES_POSITIONING_ONE_PAGER.md)
