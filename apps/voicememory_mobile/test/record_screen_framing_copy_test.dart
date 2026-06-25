@@ -871,13 +871,16 @@ void main() {
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
     });
 
-    testWidgets('one entry ready shows next-moment prompt with record CTA', (
+    testWidgets('one entry ready hides next-moment prompt when daily exercise shows', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      expect(find.byKey(const Key('next_moment_prompt_card')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.secondMomentWhyLine), findsOneWidget);
+      expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsOneWidget,
+      );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 

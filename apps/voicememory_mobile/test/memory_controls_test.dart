@@ -26,6 +26,7 @@ import 'package:voicememory_mobile/widgets/pressure_retention/belief_distance_ca
 import 'package:voicememory_mobile/widgets/pressure_retention/thread_return_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/weekly_thread_review_card.dart';
 
+import 'support/expand_advanced_save_options.dart';
 import 'support/memory_pressure_stores.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
@@ -157,8 +158,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      await tester.tap(find.byKey(const Key('entry_options_expansion')));
-      await tester.pumpAndSettle();
+      await expandAdvancedSaveOptions(tester);
 
       expect(
         find.byKey(const Key('entry_memory_scope_picker')),

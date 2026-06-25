@@ -20,6 +20,7 @@ import '../features/offline_sync/offline_sync_journey_store.dart';
 import '../features/memory_resurfacing/memory_resurfacing_service.dart';
 import '../features/belief_evolution/belief_evolution_service.dart';
 import '../features/archive_agreement/archive_agreement_service.dart';
+import '../features/beta_feedback/beta_feedback_store.dart';
 import '../push/fcm_service.dart';
 import '../config/app_config.dart';
 import '../config/trial_mode.dart';
@@ -301,5 +302,6 @@ class AppServices {
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
     _instance = s;
     _initialized = true;
+    await BetaFeedbackStore.resetForTest();
   }
 }

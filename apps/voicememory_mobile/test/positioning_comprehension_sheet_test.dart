@@ -15,7 +15,10 @@ Future<void> _reset(String stamp) async {
 Future<void> _openSheet(WidgetTester tester) async {
   await tester.tap(find.text('Open'));
   await tester.pump();
-  await tester.pump(const Duration(milliseconds: 400));
+  await tester.runAsync(() async {
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+  });
+  await tester.pump();
 }
 
 void main() {
@@ -47,10 +50,14 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Submit'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
 
-    expect(await store.hasAnswered(), isTrue);
-    final all = await store.loadAll();
-    expect(all.first.answer, PositioningComprehensionAnswer.archiveMemory);
+    PositioningComprehensionAnswer? savedAnswer;
+    await tester.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(await store.hasAnswered(), isTrue);
+      final all = await store.loadAll();
+      savedAnswer = all.first.answer;
+    });
+    expect(savedAnswer, PositioningComprehensionAnswer.archiveMemory);
   });
 }

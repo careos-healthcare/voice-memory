@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
 import '../models/journal_entry.dart';
 import '../storage/app_storage_paths.dart';
 import '../storage/journal_store.dart';
@@ -39,9 +42,21 @@ class ArchiveExportPayload {
 abstract class TempRecordingCleanup {
   TempRecordingCleanup._();
 
+  static Future<Directory?> _resolveTempDirectory(Directory? tempDir) async {
+    if (tempDir != null) return tempDir;
+    try {
+      WidgetsFlutterBinding.ensureInitialized();
+      return await AppStoragePaths.temporaryDirectory();
+    } on MissingPluginException {
+      return null;
+    } on PlatformException {
+      return null;
+    }
+  }
+
   static Future<void> purgeRetryRecordings({Directory? tempDir}) async {
-    final temp = tempDir ?? await AppStoragePaths.temporaryDirectory();
-    if (!temp.existsSync()) return;
+    final temp = await _resolveTempDirectory(tempDir);
+    if (temp == null || !temp.existsSync()) return;
     for (final entity in temp.listSync()) {
       if (entity is! File) continue;
       final name = entity.path.split(Platform.pathSeparator).last;
@@ -57,8 +72,8 @@ abstract class TempRecordingCleanup {
     Directory? tempDir,
     Set<String> preservePaths = const {},
   }) async {
-    final temp = tempDir ?? await AppStoragePaths.temporaryDirectory();
-    if (!temp.existsSync()) return;
+    final temp = await _resolveTempDirectory(tempDir);
+    if (temp == null || !temp.existsSync()) return;
     for (final entity in temp.listSync()) {
       if (entity is! File) continue;
       final name = entity.path.split(Platform.pathSeparator).last;
