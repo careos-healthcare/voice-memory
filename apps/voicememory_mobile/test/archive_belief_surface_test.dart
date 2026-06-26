@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_model.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_heuristics.dart';
 import 'package:voicememory_mobile/features/archive_memory/archive_evolution_model.dart';
+import 'package:voicememory_mobile/features/archive_beliefs/archive_belief_models.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_change_timeline_metrics_store.dart';

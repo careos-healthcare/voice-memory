@@ -128,11 +128,11 @@ void main() {
       _expectNoBannedCopy([AppStoreSubmissionCopy.privacyExplanationBody]);
     });
 
-    test('build number remains 0.2.0+40', () {
+    test('build number remains 0.2.0+42', () {
       final pubspec = File('pubspec.yaml').readAsStringSync();
       expect(pubspec, contains('version: ${AppStoreSubmissionCopy.expectedVersionLine}'));
       expect(AppStoreSubmissionCopy.expectedVersion, '0.2.0');
-      expect(AppStoreSubmissionCopy.expectedBuildNumber, 40);
+      expect(AppStoreSubmissionCopy.expectedBuildNumber, 42);
     });
 
     test('support URL matches app config', () {

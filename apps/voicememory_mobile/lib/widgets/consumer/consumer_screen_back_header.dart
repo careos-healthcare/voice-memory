@@ -15,10 +15,9 @@ class ConsumerScreenBackHeader extends StatelessWidget {
   final String fallbackRoute;
   final bool showLabel;
 
-  void _onBack(BuildContext context) {
-    if (context.canPop()) {
-      context.pop();
-    } else {
+  Future<void> _onBack(BuildContext context) async {
+    final popped = await Navigator.maybePop(context);
+    if (!popped && context.mounted) {
       context.go(fallbackRoute);
     }
   }
@@ -28,6 +27,7 @@ class ConsumerScreenBackHeader extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: TextButton.icon(
+        key: const Key('consumer_screen_back_header'),
         style: TextButton.styleFrom(
           foregroundColor: AppColors.textSecondary,
           padding: EdgeInsets.zero,

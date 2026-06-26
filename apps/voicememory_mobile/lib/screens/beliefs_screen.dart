@@ -17,6 +17,7 @@ import '../theme/app_spacing.dart';
 import '../theme/voicememory_typography.dart';
 import '../widgets/archive_belief_summary_card.dart';
 import '../widgets/belief_empty_state.dart';
+import '../widgets/consumer/consumer_screen_back_header.dart';
 
 /// Beliefs tab — what the archive currently believes and why.
 class BeliefsScreen extends StatefulWidget {
@@ -74,28 +75,63 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
     });
   }
 
+  Widget _backHeader() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ConsumerScreenBackHeader(fallbackRoute: '/archive-belief'),
+        SizedBox(height: AppSpacing.sm),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
-        body: Center(child: CircularProgressIndicator()),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: ArchiveMobileSpacing.pagePadding.copyWith(
+                  bottom: 0,
+                ),
+                child: _backHeader(),
+              ),
+              const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
     if (isIntentionalEmptyArchive(_entries)) {
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
-        body: RefreshIndicator(
-          onRefresh: _load,
-          child: const CustomScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: BeliefEmptyState(fillViewport: true),
-              ),
-            ],
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: ArchiveMobileSpacing.pagePadding.copyWith(
+                      bottom: 0,
+                    ),
+                    child: _backHeader(),
+                  ),
+                ),
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: BeliefEmptyState(fillViewport: true),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -110,6 +146,7 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
           child: ListView(
             padding: ArchiveMobileSpacing.pagePadding,
             children: [
+              _backHeader(),
               Text(
                 ConsumerUiCopy.allPatternsTitle,
                 style: VoiceMemoryTypography.headlineStyle(),
