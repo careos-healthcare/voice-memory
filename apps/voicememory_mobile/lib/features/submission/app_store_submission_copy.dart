@@ -6,8 +6,8 @@ abstract final class AppStoreSubmissionCopy {
   AppStoreSubmissionCopy._();
 
   static const expectedVersion = '0.2.0';
-  static const expectedBuildNumber = 39;
-  static const expectedVersionLine = '0.2.0+39';
+  static const expectedBuildNumber = 40;
+  static const expectedVersionLine = '0.2.0+40';
 
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 
