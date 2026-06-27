@@ -9,6 +9,7 @@ import '../config/force_screenshot_repeat_card.dart';
 import '../config/screenshot_sample_data.dart';
 import '../design/empty_archive_experience.dart';
 import '../features/archive_evidence/archive_belief_correction_store.dart';
+import '../features/archive_thought_map/archive_thought_map_engine.dart';
 import '../features/archive_evidence/archive_belief_thread_engine.dart';
 import '../features/archive_evidence/archive_belief_thread_model.dart';
 import '../features/archive_evidence/archive_intelligence_tier.dart';
@@ -189,6 +190,7 @@ import '../features/archive_home/archive_home_priority_models.dart';
 import '../widgets/archive_home_more_tools_section.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/patterns_mind_map_forming_card.dart';
+import '../widgets/patterns/patterns_thought_map_preview_card.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
 import '../widgets/patterns/return_streak_card.dart';
@@ -1951,6 +1953,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     ];
   }
 
+  List<Widget> _buildThoughtMapPreviewWidgets() {
+    final preview = const ArchiveThoughtMapEngine().build(
+      _entries,
+      tier: _archiveIntelligenceTier,
+    );
+    if (!preview.shouldShow) return const [];
+    return [
+      PatternsThoughtMapPreviewCard(preview: preview),
+      const SizedBox(height: AppSpacing.lg),
+    ];
+  }
+
   ArchiveHomeSummary _archiveHomeSummary() =>
       ArchiveHomeSummaryEngine.build(entries: _entries);
 
@@ -3069,6 +3083,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ),
       const SizedBox(height: AppSpacing.sm),
       ..._archiveHomeCommandCenterWidgets(),
+      ..._buildThoughtMapPreviewWidgets(),
     ];
     if (_signalArchiveSnapshot != null &&
         (_signalArchiveSnapshot!.hasActiveSignal ||
@@ -3293,6 +3308,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
                 ..._archiveHomeCommandCenterWidgets(),
+                ..._buildThoughtMapPreviewWidgets(),
                 if (!_suppressEarlyArchiveBeliefProof)
                   ..._buildArchiveBeliefProofWidgets(),
                 if (!archiveHome.suppressDuplicatePayoffCards &&
