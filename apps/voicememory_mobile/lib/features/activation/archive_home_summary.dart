@@ -192,10 +192,10 @@ abstract final class ArchiveHomeSummaryEngine {
         whatChangedLine: payoff?.whatChangedLine,
         evidenceRows: payoff?.evidenceRows ?? const [],
         nextActionLine: _nextActionLine(entries) ?? payoff?.primaryCta,
-        primaryCta: VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta,
-        secondaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
-        primaryAction: ArchiveHomeAction.viewEvidence,
-        secondaryAction: ArchiveHomeAction.addMoment,
+        primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
+        secondaryCta: VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta,
+        primaryAction: ArchiveHomeAction.addMoment,
+        secondaryAction: ArchiveHomeAction.viewEvidence,
         suppressDuplicatePayoffCards: true,
       );
     }

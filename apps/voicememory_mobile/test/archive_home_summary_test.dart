@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/activation/archive_home_summary.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
@@ -152,12 +153,14 @@ void main() {
       _expectNoBannedCopy([summary.title, summary.body, summary.footnoteLine!]);
     });
 
-    test('4 entries shows belief-updated copy and view evidence action', () {
+    test('4 entries shows belief-updated copy and add moment primary action', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
       expect(summary.stage, ArchiveHomeStage.four);
       expect(summary.title, 'Your archive updated its belief.');
-      expect(summary.primaryCta, 'View evidence');
-      expect(summary.primaryAction, ArchiveHomeAction.viewEvidence);
+      expect(summary.primaryCta, 'Add one more moment');
+      expect(summary.primaryAction, ArchiveHomeAction.addMoment);
+      expect(summary.secondaryCta, 'View evidence');
+      expect(summary.secondaryAction, ArchiveHomeAction.viewEvidence);
       expect(summary.currentBeliefLine, isNotEmpty);
       expect(summary.evidenceRows.length, greaterThanOrEqualTo(2));
       expect(summary.suppressDuplicatePayoffCards, isTrue);
@@ -310,6 +313,93 @@ void main() {
       expect(find.byKey(const Key('post_save_view_archive_cta')), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.text(summary.title), findsOneWidget);
+    });
+
+    testWidgets('four-entry summary Add one more moment routes to record', (
+      tester,
+    ) async {
+      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
+      var recordOpened = false;
+      var evidenceOpened = false;
+
+      final router = GoRouter(
+        initialLocation: '/patterns',
+        routes: [
+          GoRoute(
+            path: '/patterns',
+            builder: (context, state) => Scaffold(
+              body: SingleChildScrollView(
+                child: ArchiveHomeSummaryCard(
+                  summary: summary,
+                  onPrimary: () {
+                    recordOpened = true;
+                    context.go('/record');
+                  },
+                  onSecondary: () {
+                    evidenceOpened = true;
+                    context.push('/belief-evidence');
+                  },
+                ),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/record',
+            builder: (context, state) =>
+                const Scaffold(body: Text('RECORD_SCREEN')),
+          ),
+          GoRoute(
+            path: '/belief-evidence',
+            builder: (context, state) =>
+                const Scaffold(body: Text('EVIDENCE_SCREEN')),
+          ),
+        ],
+      );
+
+      await tester.binding.setSurfaceSize(const Size(390, 1600));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('archive_home_summary_primary_cta')));
+      await tester.pumpAndSettle();
+      expect(recordOpened, isTrue);
+      expect(evidenceOpened, isFalse);
+      expect(find.text('RECORD_SCREEN'), findsOneWidget);
+
+      recordOpened = false;
+      router.go('/patterns');
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('archive_home_summary_secondary_cta')));
+      await tester.pumpAndSettle();
+      expect(evidenceOpened, isTrue);
+      expect(recordOpened, isFalse);
+      expect(find.text('EVIDENCE_SCREEN'), findsOneWidget);
+    });
+
+    testWidgets('four-entry post-save nudge always labels add moment CTA', (
+      tester,
+    ) async {
+      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: PostSaveArchiveHomeNudgeCard(
+              summary: summary,
+              onViewArchive: () {},
+              onAddMoment: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('View evidence'), findsNothing);
     });
   });
 }

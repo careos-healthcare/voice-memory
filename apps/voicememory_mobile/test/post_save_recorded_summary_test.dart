@@ -350,7 +350,54 @@ void main() {
       expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsNothing);
     });
 
-    testWidgets('second grounded capacity entry shows What this added and tomorrow check', (
+    testWidgets('low-signal Test save shows neutral state without repeat claims', (
+      tester,
+    ) async {
+      final prior = _entry(
+        id: 'a',
+        createdAt: DateTime(2026, 6, 1, 12),
+        transcript:
+            'I had no capacity but I said yes again to the extra meeting today.',
+      );
+      final latest = _entry(
+        id: 'b',
+        createdAt: DateTime(2026, 6, 2, 12),
+        transcript: 'Test',
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: PostSaveRecordedSummaryCard(
+              entry: latest,
+              allEntries: [latest, prior],
+              onAddMoreDetail: () {},
+              onBackToRecord: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+      expect(find.text('Test'), findsOneWidget);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.lowSignalWhatThisAddedBody),
+        findsOneWidget,
+      );
+      expect(find.text(PostSaveRecordedSummaryCopy.lowSignalPrompt), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.lowSignalAddDetailCta), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.lowSignalBackToRecordCta), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsNothing);
+      expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsNothing);
+      expect(find.textContaining('Both moments mention'), findsNothing);
+      expect(find.textContaining('Your archive updated its belief'), findsNothing);
+      expect(find.textContaining('said yes'), findsNothing);
+      expect(find.textContaining('capacity'), findsNothing);
+    });
+
+    testWidgets('meaningful latest save still shows repeat connection', (
       tester,
     ) async {
       final entries = [

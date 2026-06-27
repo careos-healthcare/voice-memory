@@ -85,10 +85,10 @@ abstract final class ReturningUserTodayEngine {
         stage: ReturningUserTodayStage.four,
         title: VisibleArchiveProofCopy.returningUserFourTitle,
         body: VisibleArchiveProofCopy.returningUserFourBody,
-        primaryCta: VisibleArchiveProofCopy.returningUserViewEvidenceCta,
-        secondaryCta: VisibleArchiveProofCopy.returningUserAddMomentCta,
-        primaryAction: ReturningUserTodayAction.viewEvidence,
-        secondaryAction: ReturningUserTodayAction.addMoment,
+        primaryCta: VisibleArchiveProofCopy.returningUserAddMomentCta,
+        secondaryCta: VisibleArchiveProofCopy.returningUserViewEvidenceCta,
+        primaryAction: ReturningUserTodayAction.addMoment,
+        secondaryAction: ReturningUserTodayAction.viewEvidence,
       );
     }
 

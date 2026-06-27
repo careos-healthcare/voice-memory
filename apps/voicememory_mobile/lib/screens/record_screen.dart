@@ -16,6 +16,7 @@ import '../theme/app_colors.dart';
 import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
 import '../features/timeline/timeline_entry_display.dart';
+import '../features/archive_evidence/archive_entry_signal_guard.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/voice_capture/analysis_fallback_payoff.dart';
 import '../features/activation/second_session_payoff.dart';
@@ -3114,10 +3115,15 @@ class _RecordScreenState extends State<RecordScreen> {
     context.go('/archive-belief');
   }
 
+  void _goToRecordTab() {
+    _resetPostSaveToReady();
+    context.go('/record');
+  }
+
   void _handleReturningUserTodayAction(ReturningUserTodayAction action) {
     switch (action) {
       case ReturningUserTodayAction.addMoment:
-        unawaited(_onRecordPressed(source: 'returning_today'));
+        _goToRecordTab();
       case ReturningUserTodayAction.viewArchive:
         context.go('/archive-belief');
       case ReturningUserTodayAction.viewEvidence:
@@ -3130,7 +3136,7 @@ class _RecordScreenState extends State<RecordScreen> {
   void _handleNextMomentPromptAction(NextMomentPromptAction action) {
     switch (action) {
       case NextMomentPromptAction.addMoment:
-        unawaited(_onRecordPressed(source: 'next_moment_prompt'));
+        _goToRecordTab();
       case NextMomentPromptAction.viewEvidence:
         context.push(BeliefEvidenceNavigation.route);
       case NextMomentPromptAction.viewReview:
@@ -3237,40 +3243,48 @@ class _RecordScreenState extends State<RecordScreen> {
                     : _journalEntries,
               ),
         );
+    final suppressLatestSaveArchiveInsight = ui == RecordUiState.done &&
+        ArchiveEntrySignalGuard.newestEntryIsLowSignal(entriesAfterSave);
     final analysisFallbackPayoff = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? AnalysisFallbackPayoffEngine.build(
             entries: entriesAfterSave,
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
     final secondSessionPayoff = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? SecondSessionPayoffEngine.build(
             entries: entriesAfterSave,
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
     final thirdEntryBeliefPayoff = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? ThirdEntryBeliefPayoffEngine.build(
             entries: entriesAfterSave,
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? BeliefUpdatePayoffEngine.build(
             entries: entriesAfterSave,
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
     final beliefHistoryTimeline = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? BeliefHistoryTimelineEngine.build(entries: entriesAfterSave)
         : null;
     final weeklyArchiveReview = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? WeeklyArchiveReviewEngine.build(entries: entriesAfterSave)
         : null;
     final journalShareProof = ui == RecordUiState.done &&
@@ -3284,6 +3298,7 @@ class _RecordScreenState extends State<RecordScreen> {
         : _shareableProof;
     final returnLoopPayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight &&
             thirdEntryBeliefPayoff == null &&
             beliefUpdatePayoff == null
         ? DayTwoReturnLoopPayoffEngine.build(
@@ -3293,7 +3308,8 @@ class _RecordScreenState extends State<RecordScreen> {
           )
         : null;
     final archiveHomePostSave = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
         ? ArchiveHomeSummaryEngine.build(entries: entriesAfterSave)
         : null;
     final suppressArchiveHomeDuplicatePayoffs =
@@ -4099,15 +4115,31 @@ class _RecordScreenState extends State<RecordScreen> {
                                 : null,
                             showSilentInputWarning: _lastCaptureLikelySilentInput,
                             showAnalysisPendingNote: false,
-                            mirror: const DailyMirrorEngine().build(
-                              entriesAfterSave,
-                            ),
+                            mirror: suppressLatestSaveArchiveInsight
+                                ? null
+                                : const DailyMirrorEngine().build(
+                                    entriesAfterSave,
+                                  ),
+                            onAddMoreDetail: suppressLatestSaveArchiveInsight
+                                ? () => unawaited(
+                                      navigateToTypeInsteadCapture(
+                                        context,
+                                        onSaved: _finishSuccessfulCapture,
+                                      ),
+                                    )
+                                : null,
+                            onBackToRecord: suppressLatestSaveArchiveInsight
+                                ? _resetPostSaveToReady
+                                : null,
                           ),
                           SavedMomentQualityCard(
                             transcript: entriesAfterSave.first.transcript,
                           ),
                           Builder(
                             builder: (context) {
+                              if (suppressLatestSaveArchiveInsight) {
+                                return const SizedBox.shrink();
+                              }
                               final returnTrigger =
                                   const CapacityReturnTriggerEngine()
                                       .buildFromJournal(
@@ -4139,8 +4171,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           const SizedBox(height: 16),
                           BeliefUpdatePayoffCard(
                             payoff: beliefUpdatePayoff,
-                            onAddAnother: () =>
-                                unawaited(_onRecordPressed(source: 'main')),
+                            onAddAnother: _goToRecordTab,
                             onViewEvidence: () =>
                                 context.push(BeliefEvidenceNavigation.route),
                           ),
@@ -4160,8 +4191,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             onViewFullReview: () => context.push(
                               WeeklyArchiveReviewNavigation.route,
                             ),
-                            onAddAnother: () =>
-                                unawaited(_onRecordPressed(source: 'main')),
+                            onAddAnother: _goToRecordTab,
                           ),
                         ],
                         if (thirdEntryBeliefPayoff != null &&
@@ -4169,8 +4199,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           const SizedBox(height: 16),
                           ThirdEntryBeliefPayoffCard(
                             payoff: thirdEntryBeliefPayoff,
-                            onAddAnother: () =>
-                                unawaited(_onRecordPressed(source: 'main')),
+                            onAddAnother: _goToRecordTab,
                             onViewArchive: () => context.go('/archive-belief'),
                           ),
                         ],
@@ -4179,8 +4208,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           const SizedBox(height: 16),
                           SecondSessionPayoffCard(
                             payoff: secondSessionPayoff,
-                            onAddAnother: () =>
-                                unawaited(_onRecordPressed(source: 'main')),
+                            onAddAnother: _goToRecordTab,
                             onViewArchive: () => context.go('/archive-belief'),
                           ),
                         ],
@@ -4191,8 +4219,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           PostSaveArchiveHomeNudgeCard(
                             summary: archiveHomePostSave,
                             onViewArchive: () => context.go('/archive-belief'),
-                            onAddMoment: () =>
-                                unawaited(_onRecordPressed(source: 'main')),
+                            onAddMoment: _goToRecordTab,
                           ),
                         ],
                         if (analysisFallbackPayoff != null &&

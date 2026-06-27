@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_correction_store.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_display_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_thought_map/archive_thought_map_copy.dart';
@@ -452,6 +453,56 @@ void main() {
 
       expect(find.text(ArchiveThoughtMapCopy.nodeEvidenceFallback), findsOneWidget);
       expect(find.text(ArchiveThoughtMapCopy.patternSignalDisclaimer), findsOneWidget);
+    });
+
+    testWidgets('Record another moment routes to record not evidence', (
+      tester,
+    ) async {
+      var recordOpened = false;
+      final router = GoRouter(
+        initialLocation: '/patterns',
+        routes: [
+          GoRoute(
+            path: '/patterns',
+            builder: (context, state) => Scaffold(
+              body: SingleChildScrollView(
+                child: PatternsThoughtMapPreviewCard(preview: _preview()),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/record',
+            builder: (context, state) {
+              recordOpened = true;
+              return const Scaffold(body: Text('RECORD_SCREEN'));
+            },
+          ),
+          GoRoute(
+            path: '/belief-evidence',
+            builder: (context, state) =>
+                const Scaffold(body: Text('EVIDENCE_SCREEN')),
+          ),
+        ],
+      );
+
+      await tester.binding.setSurfaceSize(const Size(402, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_trigger')));
+      await tester.pumpAndSettle();
+      final recordCta =
+          find.byKey(const Key('patterns_thought_map_record_another_moment'));
+      await tester.ensureVisible(recordCta);
+      await tester.tap(recordCta);
+      await tester.pumpAndSettle();
+
+      expect(recordOpened, isTrue);
+      expect(find.text('RECORD_SCREEN'), findsOneWidget);
+      expect(find.text('EVIDENCE_SCREEN'), findsNothing);
     });
   });
 }

@@ -53,7 +53,7 @@ class PostSaveArchiveHomeNudgeCard extends StatelessWidget {
           TextButton(
             key: const Key('post_save_add_moment_cta'),
             onPressed: onAddMoment,
-            child: Text(summary.primaryCta ?? VisibleArchiveProofCopy.firstSavePrimaryCta),
+            child: const Text(VisibleArchiveProofCopy.firstSavePrimaryCta),
           ),
         ],
       ),

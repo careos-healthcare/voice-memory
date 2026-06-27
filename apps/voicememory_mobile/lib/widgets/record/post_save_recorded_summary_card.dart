@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/voice_capture/audio/audio_debug_actions.dart';
 import '../../design/archive_mobile_typography.dart';
+import '../../features/archive_evidence/archive_entry_signal_guard.dart';
 import '../../features/post_save/post_save_recorded_summary_copy.dart';
 import '../../features/record/daily_mirror_engine.dart';
 import '../../features/record/daily_mirror_model.dart';
@@ -24,6 +25,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     this.showAnalysisPendingNote = false,
     this.degradedBodyCopy,
     this.showSilentInputWarning = false,
+    this.onAddMoreDetail,
+    this.onBackToRecord,
   });
 
   final JournalEntry entry;
@@ -32,9 +35,13 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
   final bool showAnalysisPendingNote;
   final String? degradedBodyCopy;
   final bool showSilentInputWarning;
+  final VoidCallback? onAddMoreDetail;
+  final VoidCallback? onBackToRecord;
 
   List<JournalEntry> get _entries =>
       allEntries.isNotEmpty ? allEntries : [entry];
+
+  bool get _isLowSignal => ArchiveEntrySignalGuard.isLowSignalEntry(entry);
 
   DailyMirrorResult get _mirror =>
       mirror ?? const DailyMirrorEngine().build(_entries);
@@ -56,7 +63,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     }
 
     final summary = postSaveRecordedSummary(entry);
-    final result = _mirror;
+    final result = _isLowSignal ? null : _mirror;
     final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textSecondary,
       fontWeight: FontWeight.w600,
@@ -90,7 +97,47 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
             key: const Key('post_save_recorded_summary_body'),
             style: bodyStyle,
           ),
-          if (result.stage == DailyMirrorStage.possibleLoop &&
+          if (_isLowSignal) ...[
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              PostSaveRecordedSummaryCopy.whatThisAddedTitle,
+              key: const Key('post_save_low_signal_what_this_added_title'),
+              style: ArchiveMobileTypography.responsiveSectionTitle(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              PostSaveRecordedSummaryCopy.lowSignalWhatThisAddedBody,
+              key: const Key('post_save_low_signal_what_this_added_body'),
+              style: bodyStyle,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              PostSaveRecordedSummaryCopy.lowSignalPrompt,
+              key: const Key('post_save_low_signal_prompt'),
+              style: footnoteStyle,
+            ),
+            if (onAddMoreDetail != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              FilledButton(
+                key: const Key('post_save_low_signal_add_detail_cta'),
+                onPressed: onAddMoreDetail,
+                child: const Text(
+                  PostSaveRecordedSummaryCopy.lowSignalAddDetailCta,
+                ),
+              ),
+            ],
+            if (onBackToRecord != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              OutlinedButton(
+                key: const Key('post_save_low_signal_back_to_record_cta'),
+                onPressed: onBackToRecord,
+                child: const Text(
+                  PostSaveRecordedSummaryCopy.lowSignalBackToRecordCta,
+                ),
+              ),
+            ],
+          ] else if (result != null &&
+              result.stage == DailyMirrorStage.possibleLoop &&
               result.hasGroundedEvidence) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
@@ -130,7 +177,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
                 style: bodyStyle,
               ),
             ],
-          ] else if (result.stage == DailyMirrorStage.whatChanged &&
+          ] else if (result != null &&
+              result.stage == DailyMirrorStage.whatChanged &&
               result.hasChange) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
@@ -180,7 +228,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               key: const Key('post_save_first_entry_footnote'),
               style: footnoteStyle,
             ),
-          ] else if (!result.hasGroundedEvidence &&
+          ] else if (result != null &&
+              !result.hasGroundedEvidence &&
               !result.hasChange &&
               _hasHeardText) ...[
             const SizedBox(height: AppSpacing.sm),

@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../../product/consumer_copy_guard.dart';
+import '../archive_evidence/archive_entry_signal_guard.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import 'daily_mirror_copy.dart';
 import 'daily_mirror_model.dart';
@@ -49,6 +50,11 @@ class DailyMirrorEngine {
   ];
 
   DailyMirrorResult build(List<JournalEntry> entries) {
+    final newest = ArchiveEntrySignalGuard.newestEntry(entries);
+    if (newest != null && ArchiveEntrySignalGuard.isLowSignalEntry(newest)) {
+      return _lowSignalSave(newest);
+    }
+
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     final count = eligible.length;
 
@@ -103,6 +109,19 @@ class DailyMirrorEngine {
       hasChange: false,
       evidenceTerms: const [],
       evidenceEntryIds: [eligible.last.id],
+    );
+  }
+
+  DailyMirrorResult _lowSignalSave(JournalEntry entry) {
+    return DailyMirrorResult(
+      stage: DailyMirrorStage.heardFirstMoment,
+      heroTitle: DailyMirrorCopy.heardHeroTitle,
+      heroBody: DailyMirrorCopy.heardHeroBody,
+      primaryCta: DailyMirrorCopy.heardPrimaryCta,
+      hasGroundedEvidence: false,
+      hasChange: false,
+      evidenceTerms: const [],
+      evidenceEntryIds: [entry.id],
     );
   }
 

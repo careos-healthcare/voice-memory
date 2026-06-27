@@ -20,6 +20,13 @@ abstract class PostSaveRecordedSummaryCopy {
   static const String safeNoGuessing =
       'ArchiveMe will only show a pattern when your own words support it.';
 
+  static const String lowSignalWhatThisAddedBody =
+      'This was saved, but it does not add enough detail for ArchiveMe to connect it yet.';
+  static const String lowSignalPrompt =
+      'Add one real moment with a little more detail when you\'re ready.';
+  static const String lowSignalAddDetailCta = 'Add more detail';
+  static const String lowSignalBackToRecordCta = 'Back to Record';
+
   static const List<String> all = [
     listeningTitle,
     listeningBody,
@@ -30,5 +37,9 @@ abstract class PostSaveRecordedSummaryCopy {
     firstEntryFootnote,
     safeSavedPrivately,
     safeNoGuessing,
+    lowSignalWhatThisAddedBody,
+    lowSignalPrompt,
+    lowSignalAddDetailCta,
+    lowSignalBackToRecordCta,
   ];
 }

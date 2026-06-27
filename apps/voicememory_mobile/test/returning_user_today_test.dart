@@ -134,13 +134,14 @@ void main() {
       _expectNoBannedCopy([model.title, model.body]);
     });
 
-    test('4 entries shows belief-updated copy and view evidence CTA', () {
+    test('4 entries shows belief-updated copy and add moment primary CTA', () {
       final model = ReturningUserTodayEngine.build(entries: _entries(4));
       expect(model!.stage, ReturningUserTodayStage.four);
       expect(model.title, 'Your archive updated its belief.');
-      expect(model.primaryCta, 'View evidence');
-      expect(model.primaryAction, ReturningUserTodayAction.viewEvidence);
-      expect(model.secondaryAction, ReturningUserTodayAction.addMoment);
+      expect(model.primaryCta, 'Add one more moment');
+      expect(model.primaryAction, ReturningUserTodayAction.addMoment);
+      expect(model.secondaryCta, 'View evidence');
+      expect(model.secondaryAction, ReturningUserTodayAction.viewEvidence);
       _expectNoBannedCopy([model.title, model.body]);
     });
 
@@ -195,7 +196,7 @@ void main() {
       expect(secondaryTapped, isTrue);
     });
 
-    testWidgets('four entries shows view evidence as primary CTA', (tester) async {
+    testWidgets('four entries shows add moment as primary CTA', (tester) async {
       final model = ReturningUserTodayEngine.build(entries: _entries(4))!;
 
       await tester.pumpWidget(
@@ -212,6 +213,10 @@ void main() {
       );
       await tester.pump();
 
+      expect(
+        find.text(VisibleArchiveProofCopy.returningUserAddMomentCta),
+        findsOneWidget,
+      );
       expect(
         find.text(VisibleArchiveProofCopy.returningUserViewEvidenceCta),
         findsOneWidget,

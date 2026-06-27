@@ -286,6 +286,76 @@ void main() {
   });
 
   group('View evidence navigation', () {
+    testWidgets('Add one more moment routes to record not evidence', (
+      tester,
+    ) async {
+      const payoff = BeliefUpdatePayoff(
+        title: BeliefUpdatePayoffCopy.title,
+        body: BeliefUpdatePayoffCopy.bodyChanged,
+        currentBelief: VisibleArchiveProofCopy.beliefUpdateWorkBelief,
+        evidenceRows: ['snippet one', 'snippet two'],
+        whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeNewContext,
+        beliefChanged: true,
+        evidenceWeak: false,
+        primaryCta: 'Add one more moment',
+        secondaryCta: 'View evidence',
+      );
+
+      var recordOpened = false;
+      var evidenceOpened = false;
+      final router = GoRouter(
+        initialLocation: '/start',
+        routes: [
+          GoRoute(
+            path: '/start',
+            builder: (context, state) => Scaffold(
+              body: SingleChildScrollView(
+                child: BeliefUpdatePayoffCard(
+                  payoff: payoff,
+                  onAddAnother: () {
+                    recordOpened = true;
+                    context.go('/record');
+                  },
+                  onViewEvidence: () {
+                    evidenceOpened = true;
+                    context.push(BeliefEvidenceNavigation.route);
+                  },
+                ),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/record',
+            builder: (context, state) =>
+                const Scaffold(body: Text('RECORD_SCREEN')),
+          ),
+          GoRoute(
+            path: BeliefEvidenceNavigation.route,
+            builder: (context, state) => BeliefEvidenceScreen(
+              previewTrail: _trailFromEntries(_fourDistinctWorkEntries()),
+            ),
+          ),
+        ],
+      );
+
+      await tester.binding.setSurfaceSize(const Size(390, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      );
+      await tester.pumpAndSettle();
+
+      final addCta = find.byKey(const Key('belief_update_payoff_add_cta'));
+      await tester.ensureVisible(addCta);
+      await tester.tap(addCta);
+      await tester.pumpAndSettle();
+
+      expect(recordOpened, isTrue);
+      expect(evidenceOpened, isFalse);
+      expect(find.text('RECORD_SCREEN'), findsOneWidget);
+      expect(find.byKey(const Key('belief_evidence_trail_card')), findsNothing);
+    });
+
     testWidgets('View evidence CTA pushes belief evidence route', (
       tester,
     ) async {
@@ -344,6 +414,79 @@ void main() {
       expect(evidenceOpened, isTrue);
       expect(find.byKey(const Key('belief_evidence_trail_card')), findsOneWidget);
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
+    });
+
+    testWidgets('Add one more moment and View evidence use different routes', (
+      tester,
+    ) async {
+      const payoff = BeliefUpdatePayoff(
+        title: BeliefUpdatePayoffCopy.title,
+        body: BeliefUpdatePayoffCopy.bodyStillBuilding,
+        currentBelief: VisibleArchiveProofCopy.beliefUpdateWorkBelief,
+        evidenceRows: ['snippet one', 'snippet two'],
+        whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeEasierCompare,
+        beliefChanged: false,
+        evidenceWeak: true,
+        primaryCta: 'Add one more moment',
+        secondaryCta: 'View evidence',
+      );
+
+      String? lastRoute;
+      final router = GoRouter(
+        initialLocation: '/start',
+        routes: [
+          GoRoute(
+            path: '/start',
+            builder: (context, state) => Scaffold(
+              body: SingleChildScrollView(
+                child: BeliefUpdatePayoffCard(
+                  payoff: payoff,
+                  onAddAnother: () {
+                    lastRoute = '/record';
+                    context.go('/record');
+                  },
+                  onViewEvidence: () {
+                    lastRoute = BeliefEvidenceNavigation.route;
+                    context.push(BeliefEvidenceNavigation.route);
+                  },
+                ),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/record',
+            builder: (context, state) =>
+                const Scaffold(body: Text('RECORD_SCREEN')),
+          ),
+          GoRoute(
+            path: BeliefEvidenceNavigation.route,
+            builder: (context, state) => const Scaffold(
+              body: Text('EVIDENCE_SCREEN'),
+            ),
+          ),
+        ],
+      );
+
+      await tester.binding.setSurfaceSize(const Size(390, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('belief_update_payoff_add_cta')));
+      await tester.pumpAndSettle();
+      expect(lastRoute, '/record');
+
+      router.go('/start');
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.byKey(const Key('belief_update_payoff_view_evidence_cta')),
+      );
+      await tester.pumpAndSettle();
+      expect(lastRoute, BeliefEvidenceNavigation.route);
+      expect(lastRoute, isNot('/record'));
     });
 
     test('belief evidence route constant is stable', () {
