@@ -188,6 +188,7 @@ import '../features/archive_home/archive_home_priority_engine.dart';
 import '../features/archive_home/archive_home_priority_models.dart';
 import '../widgets/archive_home_more_tools_section.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
+import '../widgets/patterns/patterns_mind_map_forming_card.dart';
 import '../widgets/patterns/change_summary_card.dart';
 import '../widgets/patterns/return_comparison_card.dart';
 import '../widgets/patterns/return_streak_card.dart';
@@ -914,7 +915,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool get _showEmpty {
     if (ScreenshotMode.patternsFirstSessionPreview) return false;
     if (ScreenshotMode.enabled) return false;
-    return _entries.isEmpty;
+    return isIntentionalEmptyArchive(_entries);
   }
 
   bool get _showFirstArchive =>
@@ -1393,7 +1394,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       const SizedBox(height: AppSpacing.sm),
       ArchiveHeroBeliefCard(
         belief: strongest,
-        reflectionsAnalysed: _beliefs!.stats.reflectionsAnalysed,
+        reflectionsAnalysed:
+            _beliefs?.stats.reflectionsAnalysed ?? _entries.length,
       ),
       const SizedBox(height: AppSpacing.lg),
       if (_commitmentState == TomorrowCommitmentDisplayState.hidden)
@@ -3202,11 +3204,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _load,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: ArchiveMobileSpacing.pagePadding,
-              children: _archiveHomeCommandCenterWidgets(),
-            ),
+            child: const PatternsEmptyView(fillViewport: true),
           ),
         ),
       );
@@ -3529,7 +3527,33 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
     }
 
-    final strongest = _strongest!;
+    if (isIntentionalEmptyArchive(_entries)) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: const PatternsEmptyView(fillViewport: true),
+          ),
+        ),
+      );
+    }
+
+    final strongest = _strongest;
+    if (strongest == null) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: const SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: PatternsMindMapFormingCard(),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,

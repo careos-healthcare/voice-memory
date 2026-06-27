@@ -158,7 +158,6 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   @override
   Widget build(BuildContext context) {
     final length = _controller.text.length;
-    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return PopScope(
       canPop: !_saving,
@@ -177,11 +176,27 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
+              const horizontalPadding = 24.0;
+              const topPadding = 16.0;
+              const bottomPadding = 24.0;
+              // Body already shrinks above the keyboard (resizeToAvoidBottomInset).
+              // Do not subtract viewInsets.bottom again — that double-counts and
+              // produces negative minHeight on small Android layouts.
+              final minScrollBodyHeight = (constraints.maxHeight -
+                      topPadding -
+                      bottomPadding)
+                  .clamp(0.0, double.infinity);
+
               return SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(24, 16, 24, bottomInset + 24),
+                padding: const EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  topPadding,
+                  horizontalPadding,
+                  bottomPadding,
+                ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight - bottomInset - 16,
+                    minHeight: minScrollBodyHeight,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

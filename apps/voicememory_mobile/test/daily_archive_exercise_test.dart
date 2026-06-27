@@ -34,6 +34,16 @@ const _bannedWords = [
   'voice memory',
 ];
 
+const _recordBannedWords = [
+  ..._bannedWords,
+  'exercise',
+  'challenge',
+  'coach',
+  'brain scan',
+  'brain mapping',
+  "today's exercise",
+];
+
 DailyArchiveExerciseInput _input({
   int realSavedMomentCount = 0,
   bool hasWatchTheme = false,
@@ -71,10 +81,13 @@ List<JournalEntry> _realEntries(int count) => List.generate(
       (i) => _entry('real_$i'),
     );
 
-void _expectNoBannedCopy(Iterable<String> visible) {
+void _expectNoBannedCopy(
+  Iterable<String> visible, {
+  List<String> banned = _bannedWords,
+}) {
   for (final text in visible) {
     final lower = text.toLowerCase();
-    for (final word in _bannedWords) {
+    for (final word in banned) {
       expect(
         lower,
         isNot(contains(word)),
@@ -156,7 +169,64 @@ void main() {
       final copy =
           DailyArchiveExerciseCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
-      _expectNoBannedCopy(DailyArchiveExerciseCopy.allVisibleStrings);
+      expect(copy, contains("today's map prompt"));
+      _expectNoBannedCopy(
+        DailyArchiveExerciseCopy.allVisibleStrings,
+        banned: [..._bannedWords, 'exercise', 'archive exercise'],
+      );
+    });
+
+    test('record tab map prompt copy avoids exercise and clinical language', () {
+      _expectNoBannedCopy(
+        DailyArchiveExerciseCopy.recordVisibleStrings,
+        banned: _recordBannedWords,
+      );
+    });
+
+    test('adaptive prompts match mind-map framing', () {
+      expect(
+        engine.build(_input()).prompt,
+        DailyArchiveExerciseCopy.firstMomentPrompt,
+      );
+      expect(
+        engine.build(_input(realSavedMomentCount: 2)).prompt,
+        DailyArchiveExerciseCopy.comparisonPrompt,
+      );
+      expect(
+        engine.build(_input(realSavedMomentCount: 4, hasWatchTheme: true)).prompt,
+        DailyArchiveExerciseCopy.watchThemePrompt,
+      );
+      final rotatingBase = _input(
+        realSavedMomentCount: 4,
+        betaFeedbackCaptured: true,
+      );
+      expect(
+        engine.build(DailyArchiveExerciseInput(
+          realSavedMomentCount: rotatingBase.realSavedMomentCount,
+          hasWatchTheme: rotatingBase.hasWatchTheme,
+          betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
+          dayIndex: 0,
+        )).prompt,
+        DailyArchiveExerciseCopy.patternRepeatedPrompt,
+      );
+      expect(
+        engine.build(DailyArchiveExerciseInput(
+          realSavedMomentCount: rotatingBase.realSavedMomentCount,
+          hasWatchTheme: rotatingBase.hasWatchTheme,
+          betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
+          dayIndex: 1,
+        )).prompt,
+        DailyArchiveExerciseCopy.feltDifferentPrompt,
+      );
+      expect(
+        engine.build(DailyArchiveExerciseInput(
+          realSavedMomentCount: rotatingBase.realSavedMomentCount,
+          hasWatchTheme: rotatingBase.hasWatchTheme,
+          betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
+          dayIndex: 2,
+        )).prompt,
+        DailyArchiveExerciseCopy.checkConcernPrompt,
+      );
     });
 
     test('engine does not include raw journal text in output', () {
@@ -251,6 +321,12 @@ void main() {
         find.byKey(const Key('daily_archive_exercise_record_card')),
         findsOneWidget,
       );
+      expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsOneWidget);
+      expect(
+        find.text(DailyArchiveExerciseCopy.firstMomentPrompt),
+        findsOneWidget,
+      );
+      expect(find.text(DailyArchiveExerciseCopy.saveMomentCta), findsOneWidget);
       await tester.tap(
         find.byKey(const Key('daily_archive_exercise_record_primary_button')),
       );

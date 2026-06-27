@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
@@ -49,7 +50,7 @@ JournalEntry _usableVoiceEntry() => JournalEntry(
 
 void main() {
   group('RecordCtaPolicy', () {
-    test('first-use mic ready shows Record one moment + Type instead', () {
+    test('first-use mic ready shows Save one moment + Type instead', () {
       final policy = RecordCtaPolicy.resolve(
         ui: RecordUiState.ready,
         entryCount: 0,
@@ -61,7 +62,7 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.firstUse);
-      expect(policy.primaryLabel, ConsumerUiCopy.recordOneMomentCta);
+      expect(policy.primaryLabel, VisibleArchiveProofCopy.firstUseCaptureCta);
       expect(policy.secondaryLabels, [EmptyArchiveCopy.typeInsteadCta]);
       expect(policy.action, RecordCtaAction.startRecording);
       expect(policy.micPermissionState, MicrophonePermissionState.granted);

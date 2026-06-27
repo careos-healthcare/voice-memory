@@ -15,7 +15,10 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 
 /// iPhone 17 Pro logical size — tight enough to reproduce fallback overflow.
 const _iphone17Pro = Size(402, 874);
+/// Huawei LYA-L29 class logical width with a short usable body when keyboard open.
+const _smallAndroid = Size(360, 640);
 const _keyboardInset = EdgeInsets.only(bottom: 336);
+const _largeKeyboardInset = EdgeInsets.only(bottom: 400);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
       id: id,
@@ -193,6 +196,45 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(saveButton, findsOneWidget);
     });
+
+    testWidgets(
+      'type a thought with keyboard inset on small Android does not crash',
+      (tester) async {
+        await pumpScreen(
+          tester,
+          surfaceSize: _smallAndroid,
+          viewInsets: _largeKeyboardInset,
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('Type a thought'), findsOneWidget);
+        expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+        expect(find.byType(AppBar), findsOneWidget);
+        expect(saveButton, findsOneWidget);
+
+        await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -160));
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'type a thought with keyboard inset on iPhone size does not crash',
+      (tester) async {
+        await pumpScreen(
+          tester,
+          surfaceSize: _iphone17Pro,
+          viewInsets: _keyboardInset,
+        );
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('Type a thought'), findsOneWidget);
+        expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+        expect(find.byType(AppBar), findsOneWidget);
+      },
+    );
 
     testWidgets('voice fallback shows compact prompt chips only', (
       tester,

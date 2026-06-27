@@ -21,6 +21,10 @@ abstract class RecordScreenFramingCopy {
       PrivacyCopyPolicy.personalNotMedicalDisclaimer;
   static const String firstRunPrivacyLink = 'How it works';
 
+  /// Low-friction pressure wedge under the first-use capture block.
+  static const String firstUsePressureMomentLink =
+      'Or start with: a pressure moment';
+
   /// One saved moment — calm started state, no pattern claims.
   static const String archiveStartedTitle = 'Archive started';
   static const String archiveStartedBody =

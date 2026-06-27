@@ -297,6 +297,7 @@ import '../widgets/record/low_effort_check_in_card.dart';
 import '../widgets/record/one_small_recording_card.dart';
 import '../widgets/record/daily_mirror_record_card.dart';
 import '../widgets/record/microphone_permission_blocked_panel.dart';
+import '../widgets/record/record_first_use_capture_section.dart';
 import '../widgets/record/record_top_archive_promise_hero.dart';
 import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
@@ -3343,6 +3344,17 @@ class _RecordScreenState extends State<RecordScreen> {
       ),
     );
 
+    final firstUseSimplifiedRecord = ui == RecordUiState.ready &&
+        RecordEmptyArchiveGates.showFirstUseSimplifiedRecord(
+          loaded: _journalEntryCountReady,
+          entryCount: _journalEntryCount,
+        );
+    final readyCapturePolicy = _recordCtaPolicy(
+      ui,
+      micPhase: policyMic,
+      userDeniedThisSession: policyUserDenied,
+    );
+
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
     return ColoredBox(
@@ -3384,10 +3396,25 @@ class _RecordScreenState extends State<RecordScreen> {
                       const RecordTopArchivePromiseHero(),
                       const SizedBox(height: 16),
                     ],
+                    if (dailyArchiveExercise != null &&
+                        dailyArchiveExercise.showOnRecord &&
+                        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
+                          loaded: _journalEntryCountReady,
+                          entryCount: _journalEntryCount,
+                        )) ...[
+                      DailyArchiveExerciseRecordCard(
+                        exercise: dailyArchiveExercise,
+                        onPrimary: () => _handleDailyArchiveExerciseAction(
+                          dailyArchiveExercise.primaryRoute,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         _journalEntryCount == 0 &&
-                        _showFirstRunPrivacyReassurance) ...[
+                        _showFirstRunPrivacyReassurance &&
+                        !firstUseSimplifiedRecord) ...[
                       const RecordFirstRunPrivacyReassurance(),
                       const SizedBox(height: 12),
                     ],
@@ -3408,14 +3435,22 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (ui == RecordUiState.ready) ...[
+                    if (firstUseSimplifiedRecord) ...[
+                      RecordFirstUseCaptureSection(
+                        onRecord: () =>
+                            unawaited(_onRecordPressed(source: 'main')),
+                        recordButtonLabel: readyCapturePolicy.primaryLabel,
+                        typeCapturePrompt: _selectedPromptLine,
+                        onTextThoughtSaved: _finishSuccessfulCapture,
+                        onLogPressureMoment: () =>
+                            context.push('/pressure-check-in'),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (ui == RecordUiState.ready && !firstUseSimplifiedRecord) ...[
                       Builder(
                         builder: (context) {
-                          final readyPolicy = _recordCtaPolicy(
-                            ui,
-                            micPhase: policyMic,
-                            userDeniedThisSession: policyUserDenied,
-                          );
+                          final readyPolicy = readyCapturePolicy;
                           if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
                             return const SizedBox.shrink();
                           }
@@ -3461,18 +3496,12 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (dailyArchiveExercise != null &&
-                        dailyArchiveExercise.showOnRecord) ...[
-                      DailyArchiveExerciseRecordCard(
-                        exercise: dailyArchiveExercise,
-                        onPrimary: () => _handleDailyArchiveExerciseAction(
-                          dailyArchiveExercise.primaryRoute,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
                     if (todaysOneQuestion != null &&
-                        todaysOneQuestion.showOnRecord) ...[
+                        todaysOneQuestion.showOnRecord &&
+                        RecordEmptyArchiveGates.showTodaysQuestionOnRecord(
+                          loaded: _journalEntryCountReady,
+                          entryCount: _journalEntryCount,
+                        )) ...[
                       TodaysOneQuestionCard(
                         question: todaysOneQuestion,
                         onPrimary: () =>
@@ -5137,7 +5166,13 @@ class _RecordScreenState extends State<RecordScreen> {
         actions.add(const SizedBox(height: 8));
       }
       final readyPolicy = policyForUi();
-      if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
+      final firstUseSimplifiedRecord =
+          RecordEmptyArchiveGates.showFirstUseSimplifiedRecord(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+      );
+      if (!_shouldPromoteMicCaptureActions(readyPolicy) &&
+          !firstUseSimplifiedRecord) {
         actions.add(
           _buildCaptureEntryActions(
             context: context,

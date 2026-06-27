@@ -4,7 +4,7 @@ import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
 import 'patterns_empty_archive_preview_card.dart';
 
-/// Zero-entry Patterns screen — preview promise and one CTA.
+/// Zero-entry Patterns screen — mind-map preview and two capture actions.
 class PatternsEmptyView extends StatelessWidget {
   const PatternsEmptyView({super.key, this.fillViewport = false});
 

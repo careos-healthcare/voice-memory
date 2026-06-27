@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,9 +9,13 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Zero-entry Patterns preview — product promise, not a conclusion.
+/// Zero-entry Patterns tab — one clear preview of what the mind map will show.
 class PatternsEmptyArchivePreviewCard extends StatelessWidget {
   const PatternsEmptyArchivePreviewCard({super.key});
+
+  Future<void> _typeInstead(BuildContext context) async {
+    await context.push('/quick-capture');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,42 +36,51 @@ class PatternsEmptyArchivePreviewCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            VisibleArchiveProofCopy.patternsEmptyPreviewBadge,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            VisibleArchiveProofCopy.patternsEmptyPreviewTitle,
+            VisibleArchiveProofCopy.patternsMindMapEmptyTitle,
+            key: const Key('patterns_mind_map_empty_title'),
             style: ArchiveMobileTypography.responsivePageTitle(context),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            VisibleArchiveProofCopy.patternsEmptyPreviewBody,
+            VisibleArchiveProofCopy.patternsMindMapEmptyBody,
+            key: const Key('patterns_mind_map_empty_body'),
             style: ArchiveMobileTypography.explanationBody(context),
           ),
           const SizedBox(height: AppSpacing.md),
           _PreviewRow(
-            label: 'Current belief',
-            value: VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
+            label: VisibleArchiveProofCopy.patternsMindMapPreviewPatternsLabel,
+            value: VisibleArchiveProofCopy.patternsMindMapPreviewPatternsValue,
           ),
           const SizedBox(height: AppSpacing.sm),
           _PreviewRow(
-            label: 'Evidence',
-            value: VisibleArchiveProofCopy.patternsEmptyPreviewEvidenceRow,
+            label: VisibleArchiveProofCopy.patternsMindMapPreviewChangesLabel,
+            value: VisibleArchiveProofCopy.patternsMindMapPreviewChangesValue,
           ),
           const SizedBox(height: AppSpacing.sm),
           _PreviewRow(
-            label: 'What changed',
-            value: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
+            label: VisibleArchiveProofCopy.patternsMindMapPreviewWatchLabel,
+            value: VisibleArchiveProofCopy.patternsMindMapPreviewWatchValue,
           ),
           const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            onPressed: () => context.go('/record'),
-            child: Text(VisibleArchiveProofCopy.patternsEmptyPreviewCta),
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: FilledButton(
+              key: const Key('patterns_mind_map_empty_primary_cta'),
+              onPressed: () => context.go('/record'),
+              child: Text(VisibleArchiveProofCopy.patternsMindMapEmptyPrimaryCta),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              key: const Key('patterns_mind_map_empty_type_instead_cta'),
+              onPressed: () => unawaited(_typeInstead(context)),
+              icon: const Icon(Icons.keyboard_outlined),
+              label: Text(VisibleArchiveProofCopy.typeInsteadCta),
+            ),
           ),
         ],
       ),

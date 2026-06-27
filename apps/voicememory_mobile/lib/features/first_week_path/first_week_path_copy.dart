@@ -12,9 +12,9 @@ abstract final class FirstWeekPathCopy {
   static const screenTitle = 'First week path';
   static const cardLabel = 'First week path';
 
-  static const startTitle = 'Start your first week';
+  static const startTitle = 'Start your mind map';
   static const startBody =
-      'Save seven moments over your first week to build a useful archive loop with ArchiveMe.';
+      'Save a few real moments so ArchiveMe can start connecting what repeats.';
   static const saveFirstMomentCta = 'Save first moment';
   static const saveMomentCta = 'Save a moment';
   static const openBetaFeedbackCta = 'Open beta feedback';

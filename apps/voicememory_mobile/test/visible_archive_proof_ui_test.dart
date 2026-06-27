@@ -77,7 +77,7 @@ void main() {
       expect(find.textContaining('pattern found'), findsNothing);
     });
 
-    testWidgets('patterns zero-entry shows preview without conclusion', (
+    testWidgets('patterns zero-entry shows mind-map preview without belief rows', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -92,14 +92,15 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(VisibleArchiveProofCopy.patternsEmptyPreviewTitle),
+        find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
         findsOneWidget,
       );
       expect(
-        find.text(VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow),
+        find.text(VisibleArchiveProofCopy.patternsMindMapEmptyBody),
         findsOneWidget,
       );
-      expect(find.textContaining('Not enough evidence yet'), findsOneWidget);
+      expect(find.text('Current belief'), findsNothing);
+      expect(find.textContaining('Not enough evidence yet'), findsNothing);
       expect(find.textContaining('pattern found'), findsNothing);
     });
 

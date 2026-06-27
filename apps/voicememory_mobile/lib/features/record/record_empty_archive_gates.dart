@@ -110,4 +110,25 @@ abstract class RecordEmptyArchiveGates {
     required int entryCount,
   }) =>
       loaded && hasComparisonSeed(entryCount);
+
+  /// Zero-entry Record tab — one hero + one capture block, no competing cards.
+  static bool showFirstUseSimplifiedRecord({
+    required bool loaded,
+    required int entryCount,
+  }) =>
+      loaded && hasNoEntries(entryCount);
+
+  /// Daily map prompt on Record — zero through returning users.
+  static bool showDailyArchiveExerciseOnRecord({
+    required bool loaded,
+    required int entryCount,
+  }) =>
+      loaded;
+
+  /// Today's one question on Record — after the first save.
+  static bool showTodaysQuestionOnRecord({
+    required bool loaded,
+    required int entryCount,
+  }) =>
+      loaded && !hasNoEntries(entryCount);
 }

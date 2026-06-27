@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_gates.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
@@ -154,10 +155,10 @@ void main() {
       expect(find.textContaining('What brought you back'), findsNothing);
     });
 
-    testWidgets('shows a clear Record one moment path', (tester) async {
+    testWidgets('shows a clear Save one moment path', (tester) async {
       await pumpEmptyRecord(tester);
-      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
-      expect(find.text(DailyMirrorCopy.emptyPrimaryCta), findsWidgets);
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(DailyMirrorCopy.emptyPrimaryCta), findsNothing);
     });
   });
 

@@ -6,6 +6,7 @@ import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.d
 import 'package:voicememory_mobile/features/archive_clarity/archive_clarity_copy.dart';
 import 'package:voicememory_mobile/features/archive_clarity/archive_clarity_engine.dart';
 import 'package:voicememory_mobile/features/archive_clarity/archive_clarity_models.dart';
+import 'package:voicememory_mobile/features/archive_home/archive_home_priority_copy.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_engine.dart';
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_models.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
@@ -14,6 +15,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_clarity_progress_card.dart';
+import 'package:voicememory_mobile/widgets/archive_home_more_tools_section.dart';
 
 const _bannedWords = [
   'diagnosis',
@@ -275,6 +277,44 @@ void main() {
 
       expect(find.byKey(const Key('archive_clarity_progress_card')), findsOneWidget);
       expect(find.text(ArchiveClarityCopy.stageComparisonForming), findsOneWidget);
+    });
+  });
+
+  group('More archive tools', () {
+    testWidgets('expands secondary tools when the card is tapped', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: ArchiveHomeMoreToolsSection(
+              children: const [
+                Text('Secondary archive tool'),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('more_archive_tools_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('more_archive_tools_expanded_content')),
+        findsNothing,
+      );
+      expect(find.text('Secondary archive tool'), findsNothing);
+
+      await tester.tap(find.text(ArchiveHomePriorityCopy.moreArchiveToolsTitle));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(
+        find.byKey(const Key('more_archive_tools_expanded_content')),
+        findsOneWidget,
+      );
+      expect(find.text('Secondary archive tool'), findsOneWidget);
+      expect(find.byIcon(Icons.expand_more), findsOneWidget);
     });
   });
 

@@ -261,21 +261,18 @@ void main() {
       expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsNothing);
     });
 
-    testWidgets('entry count 0 shows first-run privacy reassurance', (
+    testWidgets('entry count 0 shows How it works inside capture block', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
       expect(
-        find.text(RecordScreenFramingCopy.firstRunPrivacyTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.textContaining('not therapy'),
-        findsOneWidget,
-      );
-      expect(
         find.byKey(const Key('record_first_run_privacy_reassurance')),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
+      expect(
+        find.text(RecordScreenFramingCopy.firstRunPrivacyLink),
         findsOneWidget,
       );
     });
@@ -293,6 +290,25 @@ void main() {
         find.textContaining('Nothing is sent unless you choose'),
         findsNothing,
       );
+    });
+
+    testWidgets('entry count 0 shows map prompt and hides todays question', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester);
+
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsOneWidget,
+      );
+      expect(find.text("Today's map prompt"), findsOneWidget);
+      expect(
+        find.textContaining('private mind map'),
+        findsOneWidget,
+      );
+      expect(find.text("Today's exercise"), findsNothing);
+      expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
+      expect(find.text("Today's one question"), findsNothing);
     });
 
     testWidgets('entry count 0 exposes record_empty_gate debug marker when loaded', (
@@ -667,7 +683,7 @@ void main() {
       }
     }
 
-    testWidgets('first-use shows one voice-start CTA: Record one moment', (
+    testWidgets('first-use shows one voice-start CTA: Save one moment', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
@@ -676,10 +692,15 @@ void main() {
         find.byKey(const Key('record_top_archive_promise_hero')),
         findsOneWidget,
       );
-      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
+      expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
+      expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsNWidgets(2));
+      expect(find.byKey(const Key('daily_archive_exercise_record_primary_button')), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
+      expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
     });
 
     testWidgets('simulator deniedCanAskAgain with recorder access shows Record moment', (
@@ -844,19 +865,25 @@ void main() {
       await pumpRecordScreen(tester);
 
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsWidgets);
+      expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsNWidgets(2));
     });
 
-    testWidgets('one entry ready shows daily exercise without Today card', (
+    testWidgets('one entry ready shows map prompt without Today card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      // Daily archive exercise owns the one-entry return prompt now; the
+      // Daily map prompt owns the one-entry return nudge now; the
       // separate Today card stays suppressed to avoid duplicate CTAs.
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
       expect(
         find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsOneWidget,
+      );
+      expect(find.text("Today's map prompt"), findsOneWidget);
+      expect(
+        find.textContaining('ArchiveMe can start seeing what connects'),
         findsOneWidget,
       );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
@@ -876,7 +903,7 @@ void main() {
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
     });
 
-    testWidgets('one entry ready hides next-moment prompt when daily exercise shows', (
+    testWidgets('one entry ready hides next-moment prompt when map prompt shows', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
@@ -886,6 +913,7 @@ void main() {
         find.byKey(const Key('daily_archive_exercise_record_card')),
         findsOneWidget,
       );
+      expect(find.text("Today's map prompt"), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 

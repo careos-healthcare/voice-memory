@@ -121,6 +121,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
               OutlinedButton(
+                key: const Key('account_open_settings_button'),
                 onPressed: () => context.push('/settings'),
                 child: Text(ConsumerUiCopy.settings),
               ),

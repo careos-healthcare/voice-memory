@@ -13,6 +13,9 @@ abstract final class VisibleArchiveProofCopy {
   /// Shared label for typed capture — no microphone required (Apple review path).
   static const typeInsteadCta = 'Type instead';
 
+  /// Primary voice/permission CTA on Record when the archive is still empty.
+  static const firstUseCaptureCta = 'Save one moment';
+
   // Record screen top hero (zero entries) — matches Archive Home empty promise.
   static const recordHeroTitle = 'Your archive starts with one moment.';
 
@@ -48,12 +51,34 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSavePrimaryCta = 'Add one more moment';
   static const firstSaveViewArchiveCta = 'View archive';
 
-  // Patterns zero-entry preview.
-  static const patternsEmptyPreviewTitle = 'What ArchiveMe will show over time';
+  // Patterns zero-entry — mind map preview (Patterns tab).
+  static const patternsMindMapEmptyTitle = 'Your mind map will appear here';
 
-  static const patternsEmptyPreviewBody =
-      'Once you record a few moments, ArchiveMe compares your own words and '
-      'shows what keeps returning, what changes, and the evidence behind it.';
+  static const patternsMindMapEmptyBody =
+      'Save a few real moments. ArchiveMe will connect them into patterns, '
+      'changes, and things to watch.';
+
+  static const patternsMindMapPreviewPatternsLabel = 'Patterns';
+  static const patternsMindMapPreviewPatternsValue = 'What keeps coming back';
+  static const patternsMindMapPreviewChangesLabel = 'Changes';
+  static const patternsMindMapPreviewChangesValue =
+      'What gets stronger, softer, or disappears';
+  static const patternsMindMapPreviewWatchLabel = 'Next to watch';
+  static const patternsMindMapPreviewWatchValue =
+      'What to notice the next time it happens';
+  static const patternsMindMapEmptyPrimaryCta = 'Save your first moment';
+
+  // Patterns tab — entries saved but no named belief yet.
+  static const patternsMindMapFormingTitle = 'Your mind map is still forming';
+  static const patternsMindMapFormingBody =
+      'ArchiveMe needs a little more usable evidence before it can name a '
+      'pattern.';
+  static const patternsMindMapFormingPrimaryCta = 'Save another moment';
+
+  /// Legacy aliases — prefer [patternsMindMapEmpty*] for zero-entry Patterns UI.
+  static const patternsEmptyPreviewTitle = patternsMindMapEmptyTitle;
+
+  static const patternsEmptyPreviewBody = patternsMindMapEmptyBody;
 
   static const patternsEmptyPreviewBadge =
       'Preview — not a conclusion yet';
@@ -64,7 +89,7 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsEmptyPreviewChangedRow =
       'Whether the same thread gets lighter, stronger, or disappears';
 
-  static const patternsEmptyPreviewCta = 'Record one moment';
+  static const patternsEmptyPreviewCta = patternsMindMapEmptyPrimaryCta;
 
   // Patterns one-entry state.
   static const patternsOneEntryTitle =

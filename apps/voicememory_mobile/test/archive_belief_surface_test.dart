@@ -12,6 +12,9 @@ import 'package:voicememory_mobile/features/archive_proof/archive_demo_preview_r
 import 'package:voicememory_mobile/features/archive_proof/archive_display_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_paid_value_proof_source.dart';
 import 'package:voicememory_mobile/features/patterns/patterns_stack_policy.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/screens/belief_detail_screen.dart';
+import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -296,6 +299,39 @@ void main() {
         ),
         isTrue,
       );
+    });
+  });
+
+  group('Pattern screen back navigation', () {
+    ArchiveBeliefCardModel _detailBelief() => ArchiveBeliefCardModel(
+          id: 'belief-test',
+          statement: 'Work pressure keeps showing up before you agree.',
+          confidencePercent: 72,
+          evidenceSummary: 'Appeared in 3 reflections.',
+          whyExplanation:
+              'ArchiveMe noticed this topic repeating across months of reflections.',
+          section: ArchiveBeliefSection.hiddenPattern,
+          conclusion: 'This pattern appears consistently in what you record.',
+        );
+
+    testWidgets('BeliefDetailScreen shows back control and pattern copy', (
+      tester,
+    ) async {
+      final belief = _detailBelief();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: BeliefDetailScreen(belief: belief),
+        ),
+      );
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('consumer_screen_back_header')), findsOneWidget);
+      expect(find.text('Back'), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.labelWhy), findsOneWidget);
+      expect(find.text(belief.statement), findsOneWidget);
+      expect(find.text(belief.whyExplanation), findsOneWidget);
     });
   });
 }

@@ -26,9 +26,9 @@ abstract class ConsumerUiCopy {
   static const String patternsEarlyStateBody =
       'Record short moments. ArchiveMe looks for loops where pressure, productivity, and enoughness keep repeating.';
   static const String onboardingPositioningHeadline =
-      'Notice the pressure loops that keep repeating';
+      'Build a private mind map of what keeps repeating';
   static const String onboardingPositioningBody =
-      'Three quick steps. Then you start seeing what comes back.';
+      'Save real moments. ArchiveMe connects them into patterns, changes, and things to watch.';
 
   // ——— Launch onboarding (promise + 3 steps) ———
   static const String onboardingStep1Title = 'Record one small moment';
@@ -172,7 +172,9 @@ abstract class ConsumerUiCopy {
   static const String patternsRecordCta = 'Record another moment';
 
   static const String patternsEmptyPageTitle =
-      'What ArchiveMe will show over time';
+      'Your mind map will appear here';
+  static const String patternsEmptyPageBody =
+      'Save a few real moments. ArchiveMe will connect them into patterns, changes, and things to watch.';
   static const String patternsFirstEntrySavedTitle =
       'Your archive has one piece of evidence.';
   static const String patternsFirstEntrySavedBody =
@@ -194,7 +196,7 @@ abstract class ConsumerUiCopy {
   static const String patternsEmptySubtitle = patternsEarlyStateBody;
   static const String patternsHeroCardTitle = patternsEmptyPageTitle;
   static const String patternsHeroCardBody = patternsEarlyStateBody;
-  static const String patternsEmptyCta = 'Record one moment';
+  static const String patternsEmptyCta = 'Save your first moment';
   static const String patternsExamplesLead =
       'Examples of patterns you may notice later';
   static const List<String> patternsScreenshotExamples = [

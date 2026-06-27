@@ -154,23 +154,24 @@ void main() {
   });
 
   group('Patterns tab empty vs first-save state', () {
-    testWidgets('zero entries shows first-moment onboarding copy only', (
+    testWidgets('zero entries shows mind-map empty state only', (
       tester,
     ) async {
       await _pumpEmptyPatterns(tester);
       await _pumpUntil(
         tester,
-        find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle),
+        find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
       );
 
       expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle),
+        find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
         findsOneWidget,
       );
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeRecordCta),
-        findsWidgets,
-      );
+      expect(find.textContaining('Save a few real moments'), findsOneWidget);
+      expect(find.text('Save your first moment'), findsOneWidget);
+      expect(find.text('Type instead'), findsOneWidget);
+      expect(find.text('Current belief'), findsNothing);
+      expect(find.text('Start your first week'), findsNothing);
       expect(find.text('Record first moment'), findsNothing);
       expect(find.byType(PatternsFirstArchiveView), findsNothing);
     });

@@ -11,6 +11,25 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 3}) async {
 }
 
 void main() {
+  testWidgets('welcome screen uses mind-map positioning copy', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await _pumpFrames(tester, frames: 5);
+
+    expect(
+      find.text('Build a private mind map of what keeps repeating'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Save real moments'), findsOneWidget);
+    expect(
+      find.textContaining('ArchiveMe connects them into patterns'),
+      findsOneWidget,
+    );
+    expect(find.text('Notice the pressure loops that keep repeating'), findsNothing);
+    expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
+  });
+
   testWidgets('launch onboarding shows promise and three loop steps', (
     tester,
   ) async {

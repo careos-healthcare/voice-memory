@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
@@ -599,6 +600,37 @@ void main() {
       }
     }
 
+    test('empty-archive gates hide competing Record cards at count 0', () {
+      expect(
+        RecordEmptyArchiveGates.showFirstUseSimplifiedRecord(
+          loaded: true,
+          entryCount: 0,
+        ),
+        isTrue,
+      );
+      expect(
+        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
+          loaded: true,
+          entryCount: 0,
+        ),
+        isTrue,
+      );
+      expect(
+        RecordEmptyArchiveGates.showTodaysQuestionOnRecord(
+          loaded: true,
+          entryCount: 0,
+        ),
+        isFalse,
+      );
+      expect(
+        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
+          loaded: true,
+          entryCount: 1,
+        ),
+        isTrue,
+      );
+    });
+
     test('empty-archive gates retire legacy onboarding on the record screen', () {
       expect(
         RecordEmptyArchiveGates.showLegacyEmptyOnboarding(
@@ -630,11 +662,21 @@ void main() {
 
       expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
+      expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsOneWidget);
+      expect(find.text("Today's map prompt"), findsOneWidget);
+      expect(find.textContaining('private mind map'), findsOneWidget);
+      expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
+      expect(find.text("Today's exercise"), findsNothing);
+      expect(find.text("Today's one question"), findsNothing);
       expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsNWidgets(2));
+      expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
+      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
+      expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

@@ -8,10 +8,14 @@ import '../features/pressure_retention/start_here_save_receipt_model.dart';
 import '../services/capture_pipeline_service.dart';
 import '../design/empty_archive_experience.dart';
 import '../product/consumer_ui_copy.dart';
+import '../record/record_screen_framing_copy.dart';
 import '../services/activation_funnel_analytics.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 
 /// Primary voice capture + secondary typed capture — same labels everywhere.
+enum CapturePressureMomentPresentation { button, textLink, none }
+
 class CaptureEntryActions extends StatelessWidget {
   const CaptureEntryActions({
     super.key,
@@ -23,6 +27,8 @@ class CaptureEntryActions extends StatelessWidget {
     this.onLogPressureMoment,
     this.onTextThoughtSaved,
     this.underRecordHelper,
+    this.pressureMomentPresentation = CapturePressureMomentPresentation.button,
+    this.onHowItWorks,
   });
 
   final VoidCallback onRecord;
@@ -42,6 +48,9 @@ class CaptureEntryActions extends StatelessWidget {
 
   /// Called after a typed thought saves successfully (Record post-save flow).
   final Future<void> Function(CapturePipelineResult result)? onTextThoughtSaved;
+
+  final CapturePressureMomentPresentation pressureMomentPresentation;
+  final VoidCallback? onHowItWorks;
 
   static const logPressureMomentLabel = 'Log pressure moment';
 
@@ -90,7 +99,9 @@ class CaptureEntryActions extends StatelessWidget {
             ),
             child: const Text(EmptyArchiveCopy.typeInsteadCta),
           ),
-          if (onLogPressureMoment != null)
+          if (onLogPressureMoment != null &&
+              pressureMomentPresentation ==
+                  CapturePressureMomentPresentation.button)
             TextButton(
               onPressed: onLogPressureMoment,
               style: TextButton.styleFrom(
@@ -146,7 +157,54 @@ class CaptureEntryActions extends StatelessWidget {
             label: const Text(EmptyArchiveCopy.typeInsteadCta),
           ),
         ),
-        if (onLogPressureMoment != null) ...[
+        if (onHowItWorks != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Align(
+            alignment: Alignment.center,
+            child: TextButton(
+              key: const Key('capture_how_it_works_link'),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: AppColors.textSecondary,
+              ),
+              onPressed: onHowItWorks,
+              child: Text(
+                RecordScreenFramingCopy.firstRunPrivacyLink,
+                style: const TextStyle(
+                  fontSize: 13,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ],
+        if (onLogPressureMoment != null &&
+            pressureMomentPresentation ==
+                CapturePressureMomentPresentation.textLink) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: const Key('capture_pressure_moment_link'),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: AppColors.textSecondary,
+              ),
+              onPressed: onLogPressureMoment,
+              child: Text(
+                RecordScreenFramingCopy.firstUsePressureMomentLink,
+                style: const TextStyle(fontSize: 13),
+              ),
+            ),
+          ),
+        ],
+        if (onLogPressureMoment != null &&
+            pressureMomentPresentation ==
+                CapturePressureMomentPresentation.button) ...[
           const SizedBox(height: 8),
           SizedBox(
             height: 48,

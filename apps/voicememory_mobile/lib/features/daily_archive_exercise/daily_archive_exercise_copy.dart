@@ -1,4 +1,4 @@
-/// Calm, evidence-based copy for the daily archive exercise.
+/// Calm, mind-map prompt copy for the daily Record tab nudge.
 abstract final class DailyArchiveExerciseCopy {
   DailyArchiveExerciseCopy._();
 
@@ -7,51 +7,73 @@ abstract final class DailyArchiveExerciseCopy {
   static const betaFeedbackRoute = '/beta-feedback';
   static const archiveHomeRoute = '/archive-belief';
 
-  static const screenTitle = 'Daily archive exercise';
-  static const cardLabel = "Today's archive exercise";
-  static const recordLabel = "Today's exercise";
+  static const recordLabel = "Today's map prompt";
+  static const screenTitle = recordLabel;
+  static const cardLabel = recordLabel;
 
-  static const saveMomentCta = 'Save a moment';
-  static const openExerciseCta = 'Open exercise';
+  static const saveMomentCta = 'Save one moment';
+  static const openExerciseCta = 'Open prompt';
   static const openBetaFeedbackCta = 'Open beta feedback';
-  static const viewFullExerciseCta = 'View full exercise';
+  static const viewFullExerciseCta = 'View full prompt';
 
-  static const screenshotTitle = 'Daily archive exercise (sample)';
+  static const screenshotTitle = "Today's map prompt (sample)";
   static const screenshotPrompt =
       'ArchiveMe suggests one useful evidence-based action each day. Example only — no private data.';
 
   static const firstMomentPrompt =
-      'Save one useful moment your future archive can compare.';
+      'Add one real moment to your private mind map.';
   static const comparisonPrompt =
-      'Save one moment where a familiar pattern nearly repeated.';
-  static const watchThemePrompt = 'Add one example of your current watch theme.';
+      'Add another moment so ArchiveMe can start seeing what connects.';
+  static const watchThemePrompt =
+      'Record what happened just before this showed up again.';
   static const betaFeedbackPrompt =
       'Open beta feedback and mark whether your archive has been useful so far.';
   static const patternRepeatedPrompt =
-      'Save one moment where a familiar pattern nearly repeated.';
+      'Record what happened just before this showed up again.';
   static const feltDifferentPrompt =
-      'Record one moment that felt different from usual.';
+      'Record what felt different this time.';
   static const checkConcernPrompt =
-      'Check whether yesterday\'s concern showed up again.';
+      'Map the moment before you said yes.';
   static const saveUsefulPrompt =
-      'Save one useful moment your future archive can compare.';
+      'Add one real moment to your private mind map.';
 
   static const firstMomentHint =
-      'Start with one concrete moment ArchiveMe can build on.';
+      'One concrete moment is enough to start your private map.';
   static const comparisonHint =
-      'A second or third moment helps ArchiveMe compare over time.';
+      'A few real moments help ArchiveMe notice what connects.';
   static const watchThemeHint =
-      'Add evidence around what you are already watching.';
+      'Capture what was happening when this thread showed up again.';
   static const betaFeedbackHint =
       'Your feedback stays on this device only.';
   static const varietyHint =
-      'One small moment today keeps your archive useful tomorrow.';
+      'One useful moment keeps your private mind map clearer.';
 
-  static const firstMomentTitle = 'Start your archive';
-  static const comparisonTitle = 'Build comparison material';
-  static const watchThemeTitle = 'Add watch-theme evidence';
+  static const firstMomentTitle = "Today's map prompt";
+  static const comparisonTitle = "Today's map prompt";
+  static const watchThemeTitle = "Today's map prompt";
   static const betaFeedbackTitle = 'Share local beta feedback';
-  static const varietyTitle = 'One useful action today';
+  static const varietyTitle = "Today's map prompt";
+
+  /// Strings shown on the Record tab daily map prompt card.
+  static List<String> get recordVisibleStrings => [
+        recordLabel,
+        saveMomentCta,
+        firstMomentPrompt,
+        comparisonPrompt,
+        watchThemePrompt,
+        patternRepeatedPrompt,
+        feltDifferentPrompt,
+        checkConcernPrompt,
+        saveUsefulPrompt,
+        firstMomentHint,
+        comparisonHint,
+        watchThemeHint,
+        varietyHint,
+        firstMomentTitle,
+        comparisonTitle,
+        watchThemeTitle,
+        varietyTitle,
+      ];
 
   static List<String> get allVisibleStrings => [
         screenTitle,
