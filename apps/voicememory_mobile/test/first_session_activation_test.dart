@@ -13,6 +13,7 @@ import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/features/first_session/two_day_activation_engine.dart';
 import 'package:voicememory_mobile/features/referral/invite_attribution.dart';
 import 'package:voicememory_mobile/features/referral/invite_funnel_metrics.dart';
@@ -680,16 +681,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('one entry ready shows archive started without legacy cards', (
+    testWidgets('one entry ready stays capture-first without daily mirror card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      expect(find.text(DailyMirrorCopy.heardHeroTitle), findsOneWidget);
+      expect(find.text(DailyMirrorCopy.heardHeroTitle), findsNothing);
       expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

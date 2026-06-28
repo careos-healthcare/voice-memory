@@ -18,11 +18,16 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
     required this.onSelectPrompt,
     this.selectedPrompt,
     this.onSuggestionTap,
+    this.startHereOnly = false,
   });
 
   final DailyReturnSuggestionSet suggestionSet;
   final ValueChanged<String> onSelectPrompt;
   final String? selectedPrompt;
+
+  /// When true, renders only the single "Start here today" pick — no
+  /// "Worth checking today" list heading or secondary rows.
+  final bool startHereOnly;
 
   /// Optional tap detail for local attribution — which suggestion was tapped
   /// and whether it was the primary "Start here today" pick.
@@ -34,6 +39,26 @@ class DailyReturnSuggestionsCard extends StatelessWidget {
     if (!suggestionSet.hasSuggestions) return const SizedBox.shrink();
     final recommended = suggestionSet.recommendedSuggestion!;
     final others = suggestionSet.otherSuggestions;
+
+    if (startHereOnly) {
+      return Container(
+        key: const Key('start_here_today_card'),
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        decoration: VoiceMemoryCards.flat(
+          background: AppColors.backgroundSecondary,
+        ),
+        child: _PrimaryRecommendation(
+          suggestion: recommended,
+          reason: suggestionSet.recommendationReason,
+          selected: selectedPrompt == recommended.prompt,
+          onTap: () {
+            onSuggestionTap?.call(recommended, true);
+            onSelectPrompt(recommended.prompt);
+          },
+        ),
+      );
+    }
 
     return Container(
       key: const Key('daily_return_suggestions_card'),
