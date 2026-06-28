@@ -128,7 +128,7 @@ void main() {
       _expectNoBannedCopy([AppStoreSubmissionCopy.privacyExplanationBody]);
     });
 
-    test('build number remains 0.2.0+45', () {
+    test('build number remains 0.2.0+46', () {
       final pubspec = File('pubspec.yaml').readAsStringSync();
       expect(pubspec, contains('version: ${AppStoreSubmissionCopy.expectedVersionLine}'));
       expect(AppStoreSubmissionCopy.expectedVersion, '0.2.0');
