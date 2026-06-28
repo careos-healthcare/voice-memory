@@ -6,6 +6,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/activation/belief_update_payoff.dart';
 import 'package:voicememory_mobile/features/activation/third_entry_belief_payoff.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/analysis_fallback_payoff.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -85,7 +86,32 @@ List<JournalEntry> _fourRepeatCapacityEntries() => [
       ),
     ];
 
-List<JournalEntry> _fourDistinctWorkEntries() => _fourRepeatCapacityEntries();
+List<JournalEntry> _fourDistinctWorkEntries() => [
+      _voiceEntry(
+        id: 'e1',
+        transcript:
+            'I felt pressure at work before saying yes again even when I was tired.',
+        createdAt: DateTime(2026, 6, 9, 12),
+      ),
+      _voiceEntry(
+        id: 'e2',
+        transcript:
+            'Work kept pulling me back after I wanted to stop for the day at the office.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _voiceEntry(
+        id: 'e3',
+        transcript:
+            'I noticed the same hurry showing up before I answered anyone at work.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _voiceEntry(
+        id: 'e4',
+        transcript:
+            'The deadline pressure returned again during the morning meeting at work.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
 
 const _bannedCertaintyWords = [
   'you always',
@@ -358,7 +384,7 @@ void main() {
       }
     }
 
-    testWidgets('three repeated entries show belief-starting via archive home nudge', (
+    testWidgets('three repeated entries show one primary discovery result', (
       tester,
     ) async {
       await pumpDoneState(
@@ -366,47 +392,56 @@ void main() {
         entriesAfterSave: _threeRepeatCapacityEntries(),
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
-      expect(
-        find.text('ArchiveMe is starting to form a belief.'),
-        findsOneWidget,
-      );
-      expect(find.text('Your archive updated its belief.'), findsNothing);
+      expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
+      expect(find.byKey(const Key('weekly_archive_review_compact_card')), findsNothing);
+      expect(find.byKey(const Key('weekly_archive_review_card')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text('View evidence'), findsOneWidget);
+      expect(find.text('View Patterns'), findsOneWidget);
     });
 
-    testWidgets('four entries show belief update card', (tester) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: _fourDistinctWorkEntries(),
-      );
-
-      expect(find.byKey(const Key('belief_update_payoff_card')), findsOneWidget);
-      expect(find.text('Your archive updated its belief.'), findsWidgets);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
-      expect(find.text('Add one more moment'), findsWidgets);
-      expect(find.text('View evidence'), findsWidgets);
-      _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
-    });
-
-    testWidgets('analysis unavailable still shows belief update card', (
+    testWidgets('four repeat entries show discovery without belief card', (
       tester,
     ) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: _fourDistinctWorkEntries(),
-        lastCaptureAnalysisSucceeded: false,
+        entriesAfterSave: _fourRepeatCapacityEntries(),
       );
 
-      expect(find.byKey(const Key('belief_update_payoff_card')), findsOneWidget);
-      expect(
-        find.textContaining('Deeper analysis can run later'),
-        findsOneWidget,
+      expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
+      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
+      expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+    });
+
+    testWidgets('four repeat entries prefer discovery over belief card', (
+      tester,
+    ) async {
+      await pumpDoneState(
+        tester,
+        entriesAfterSave: _fourRepeatCapacityEntries(),
       );
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
+
+      expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
+      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
+      expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+    });
+
+    testWidgets('focused actions route to record and evidence', (tester) async {
+      await pumpDoneState(
+        tester,
+        entriesAfterSave: _fourRepeatCapacityEntries(),
+      );
+
+      expect(find.byKey(const Key('post_save_add_one_more_moment_cta')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_view_evidence_cta')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_view_patterns_cta')), findsOneWidget);
     });
   });
 }

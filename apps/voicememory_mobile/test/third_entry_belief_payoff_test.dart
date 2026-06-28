@@ -14,6 +14,7 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/third_entry_belief_payoff_card.dart';
 
 JournalEntry _voiceEntry({
@@ -358,7 +359,7 @@ void main() {
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
     });
 
-    testWidgets('two entries shows second-session comparison payoff', (
+    testWidgets('two entries stay focused without duplicate payoff cards', (
       tester,
     ) async {
       await pumpDoneState(
@@ -377,15 +378,14 @@ void main() {
         ],
       );
 
-      expect(
-        find.text('ArchiveMe has two moments to compare.'),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       _expectNoBannedCopy(_visibleText(tester), _bannedTwoEntryWords);
     });
 
-    testWidgets('three repeated entries show payoff via archive home nudge', (
+    testWidgets('three repeated entries show one primary discovery result', (
       tester,
     ) async {
       await pumpDoneState(
@@ -393,18 +393,15 @@ void main() {
         entriesAfterSave: _threeRepeatCapacityEntries(),
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(
-        find.text('ArchiveMe is starting to form a belief.'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('not a conclusion'), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
 
-    testWidgets('analysis unavailable still nudges Archive Home at third entry', (
+    testWidgets('analysis unavailable still keeps focused post-save at third entry', (
       tester,
     ) async {
       await pumpDoneState(
@@ -413,12 +410,9 @@ void main() {
         lastCaptureAnalysisSucceeded: false,
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(
-        find.text('ArchiveMe is starting to form a belief.'),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
   });

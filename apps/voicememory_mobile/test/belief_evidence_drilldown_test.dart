@@ -50,32 +50,34 @@ JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
       ),
     );
 
-List<JournalEntry> _fourDistinctWorkEntries() => [
+List<JournalEntry> _fourRepeatCapacityEntries() => [
       _voiceEntry(
         id: 'e1',
         transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
+            'I had no capacity but I said yes again to the extra meeting today.',
+        createdAt: DateTime(2026, 6, 10, 12),
       ),
       _voiceEntry(
         id: 'e2',
         transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
+            'Same thing — said yes when I had no capacity for one more thing.',
+        createdAt: DateTime(2026, 6, 11, 12),
       ),
       _voiceEntry(
         id: 'e3',
         transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
+            'I said yes again even though I had no capacity for one more ask.',
+        createdAt: DateTime(2026, 6, 12, 12),
       ),
       _voiceEntry(
         id: 'e4',
         transcript:
-            'The deadline pressure returned, but I caught it earlier this time.',
-        createdAt: DateTime(2026, 6, 12, 12),
+            'The same yes-with-no-capacity pattern showed up again at work today.',
+        createdAt: DateTime(2026, 6, 13, 12),
       ),
     ];
+
+List<JournalEntry> _fourDistinctWorkEntries() => _fourRepeatCapacityEntries();
 
 const _bannedWords = [
   'you always',

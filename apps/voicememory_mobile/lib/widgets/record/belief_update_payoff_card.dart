@@ -16,11 +16,13 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
     required this.payoff,
     required this.onAddAnother,
     required this.onViewEvidence,
+    this.showInlineActions = true,
   });
 
   final BeliefUpdatePayoff payoff;
   final VoidCallback onAddAnother;
   final VoidCallback onViewEvidence;
+  final bool showInlineActions;
 
   @override
   Widget build(BuildContext context) {
@@ -129,18 +131,20 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
               style: footnoteStyle,
             ),
           ],
-          const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            key: const Key('belief_update_payoff_add_cta'),
-            onPressed: onAddAnother,
-            child: Text(payoff.primaryCta),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          OutlinedButton(
-            key: const Key('belief_update_payoff_view_evidence_cta'),
-            onPressed: onViewEvidence,
-            child: Text(payoff.secondaryCta),
-          ),
+          if (showInlineActions) ...[
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(
+              key: const Key('belief_update_payoff_add_cta'),
+              onPressed: onAddAnother,
+              child: Text(payoff.primaryCta),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('belief_update_payoff_view_evidence_cta'),
+              onPressed: onViewEvidence,
+              child: Text(payoff.secondaryCta),
+            ),
+          ],
         ],
       ),
     );

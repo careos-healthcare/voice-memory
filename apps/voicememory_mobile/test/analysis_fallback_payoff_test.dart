@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/analysis_fallback_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
 
@@ -281,13 +282,10 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsOneWidget);
-      expect(find.text(AnalysisFallbackPayoffCopy.title), findsOneWidget);
-      expect(find.text(AnalysisFallbackPayoffCopy.bodyOneEntry), findsOneWidget);
-      expect(
-        find.text(AnalysisFallbackPayoffCopy.deferredFootnote),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       _expectNoBannedCopy(_visibleText(tester), _bannedAiSuccessWords);
     });
 
@@ -356,7 +354,7 @@ void main() {
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
 
-    testWidgets('two entries with analysis unavailable use second-session payoff', (
+    testWidgets('two entries with analysis unavailable stay focused on record screen', (
       tester,
     ) async {
       await pumpDoneState(
@@ -376,10 +374,10 @@ void main() {
         lastCaptureAnalysisSucceeded: false,
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
-      expect(find.text('ArchiveMe has two moments to compare.'), findsOneWidget);
-      expect(find.textContaining('No clear repeat yet'), findsOneWidget);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedPatternWords);
     });

@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/second_session_payoff_card.dart';
 
 JournalEntry _voiceEntry({
@@ -268,7 +269,7 @@ void main() {
       }
     }
 
-    testWidgets('two entries post-save shows comparison payoff card', (
+    testWidgets('two entries post-save stays focused without duplicate payoff cards', (
       tester,
     ) async {
       await pumpTwoEntryDone(
@@ -287,20 +288,16 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
       expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
-      expect(
-        find.text('ArchiveMe has two moments to compare.'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('No clear repeat yet'), findsOneWidget);
-      expect(find.text('Add one more moment'), findsWidgets);
-      expect(find.text('View archive'), findsWidgets);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('post_save_add_one_more_moment_cta')), findsOneWidget);
+      expect(find.text('View Patterns'), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
 
-    testWidgets('grounded two entries uses may be related copy on record screen', (
+    testWidgets('grounded two entries keep one primary result on record screen', (
       tester,
     ) async {
       await pumpTwoEntryDone(
@@ -321,8 +318,9 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
-      expect(find.textContaining('may be related'), findsOneWidget);
+      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
+      expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
+      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.textContaining('pattern found'), findsNothing);
     });
 

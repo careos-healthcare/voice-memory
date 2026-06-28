@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../features/voice_capture/audio/audio_debug_actions.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_evidence/archive_entry_signal_guard.dart';
+import '../../features/post_save/post_save_archive_hierarchy.dart';
 import '../../features/post_save/post_save_recorded_summary_copy.dart';
 import '../../features/record/daily_mirror_engine.dart';
 import '../../features/record/daily_mirror_model.dart';
@@ -27,11 +28,13 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     this.showSilentInputWarning = false,
     this.onAddMoreDetail,
     this.onBackToRecord,
+    this.primaryArchiveResult,
   });
 
   final JournalEntry entry;
   final List<JournalEntry> allEntries;
   final DailyMirrorResult? mirror;
+  final PostSavePrimaryArchiveKind? primaryArchiveResult;
   final bool showAnalysisPendingNote;
   final String? degradedBodyCopy;
   final bool showSilentInputWarning;
@@ -51,6 +54,9 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
   bool get _isDegraded => postSaveIsDegradedVoiceCapture(entry);
 
   bool get _hasHeardText => postSaveHasHeardText(entry);
+
+  bool _shows(PostSavePrimaryArchiveKind kind) =>
+      primaryArchiveResult == null || primaryArchiveResult == kind;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +103,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
             key: const Key('post_save_recorded_summary_body'),
             style: bodyStyle,
           ),
-          if (_isLowSignal) ...[
+          if (_isLowSignal && _shows(PostSavePrimaryArchiveKind.lowSignal)) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
               PostSaveRecordedSummaryCopy.whatThisAddedTitle,
@@ -136,7 +142,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
                 ),
               ),
             ],
-          ] else if (result != null &&
+          ] else if (_shows(PostSavePrimaryArchiveKind.discovery) &&
+              result != null &&
               result.stage == DailyMirrorStage.possibleLoop &&
               result.hasGroundedEvidence) ...[
             const SizedBox(height: AppSpacing.md),
@@ -177,7 +184,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
                 style: bodyStyle,
               ),
             ],
-          ] else if (result != null &&
+          ] else if (_shows(PostSavePrimaryArchiveKind.discovery) &&
+              result != null &&
               result.stage == DailyMirrorStage.whatChanged &&
               result.hasChange) ...[
             const SizedBox(height: AppSpacing.md),
@@ -213,7 +221,9 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
                 style: bodyStyle,
               ),
             ],
-          ] else if (_isFirstSavedEntry && _hasHeardText) ...[
+          ] else if (_shows(PostSavePrimaryArchiveKind.firstEntryFootnote) &&
+              _isFirstSavedEntry &&
+              _hasHeardText) ...[
             const SizedBox(height: AppSpacing.sm),
             if (showAnalysisPendingNote) ...[
               Text(
@@ -228,7 +238,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               key: const Key('post_save_first_entry_footnote'),
               style: footnoteStyle,
             ),
-          ] else if (result != null &&
+          ] else if (_shows(PostSavePrimaryArchiveKind.savedPrivately) &&
+              result != null &&
               !result.hasGroundedEvidence &&
               !result.hasChange &&
               _hasHeardText) ...[

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_archive_hierarchy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_engine.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
@@ -605,6 +606,49 @@ void main() {
         lessThan(tester.getTopLeft(doneCard).dy),
       );
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
+    });
+
+    testWidgets('belief update primary hides inline discovery sections', (
+      tester,
+    ) async {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'e2',
+          transcript:
+              'Same thing — said yes when I had no capacity for one more thing.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'e3',
+          transcript:
+              'I said yes again even though I had no capacity for one more ask.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: PostSaveRecordedSummaryCard(
+              entry: entries.last,
+              allEntries: entries,
+              primaryArchiveResult: PostSavePrimaryArchiveKind.beliefUpdate,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
+      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsNothing);
     });
   });
 }

@@ -18,12 +18,10 @@ import '../theme/voicememory_typography.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/archive_evidence/archive_entry_signal_guard.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
-import '../features/voice_capture/analysis_fallback_payoff.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
 import '../features/activation/belief_update_payoff.dart';
 import '../features/activation/belief_evidence_trail.dart';
-import '../features/activation/belief_history_timeline.dart';
 import '../features/activation/weekly_archive_review.dart';
 import '../features/activation/day_two_return_loop_payoff.dart';
 import '../features/voice_capture/voice_capture_post_save.dart';
@@ -284,13 +282,10 @@ import '../widgets/billing/value_moment_pro_bridge.dart';
 import '../widgets/pressure_retention/archive_proof_counter_card.dart';
 import '../widgets/pressure_retention/shareable_archive_proof_card.dart';
 import '../widgets/record/done_for_today_receipt_card.dart';
-import '../widgets/record/analysis_fallback_payoff_card.dart';
-import '../widgets/record/second_session_payoff_card.dart';
-import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
-import '../widgets/archive/belief_history_timeline_card.dart';
-import '../widgets/archive/weekly_archive_review_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
+import '../features/post_save/post_save_archive_hierarchy.dart';
+import '../widgets/record/post_save_focused_actions_bar.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
 import '../widgets/record/capture_context_tag_card.dart';
@@ -337,9 +332,7 @@ import '../features/beta_feedback/beta_feedback_store.dart';
 import '../widgets/record/daily_archive_exercise_record_card.dart';
 import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
-import '../features/activation/archive_home_summary.dart';
 import '../features/activation/capture_context_tags.dart';
-import '../widgets/archive/post_save_archive_home_nudge_card.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
@@ -3245,14 +3238,6 @@ class _RecordScreenState extends State<RecordScreen> {
         );
     final suppressLatestSaveArchiveInsight = ui == RecordUiState.done &&
         ArchiveEntrySignalGuard.newestEntryIsLowSignal(entriesAfterSave);
-    final analysisFallbackPayoff = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? AnalysisFallbackPayoffEngine.build(
-            entries: entriesAfterSave,
-            analysisSucceeded: lastCaptureAnalysisSucceeded,
-          )
-        : null;
     final secondSessionPayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3276,11 +3261,6 @@ class _RecordScreenState extends State<RecordScreen> {
             entries: entriesAfterSave,
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
-        : null;
-    final beliefHistoryTimeline = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? BeliefHistoryTimelineEngine.build(entries: entriesAfterSave)
         : null;
     final weeklyArchiveReview = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
@@ -3307,13 +3287,20 @@ class _RecordScreenState extends State<RecordScreen> {
                 _offerDayTwoReminder && !_recordReturnCueVisible,
           )
         : null;
-    final archiveHomePostSave = ui == RecordUiState.done &&
+    final postSaveDailyMirror = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
-        ? ArchiveHomeSummaryEngine.build(entries: entriesAfterSave)
+        ? const DailyMirrorEngine().build(entriesAfterSave)
         : null;
-    final suppressArchiveHomeDuplicatePayoffs =
-        archiveHomePostSave?.suppressDuplicatePayoffCards ?? false;
+    final postSaveArchiveHierarchy = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? PostSaveArchiveHierarchy.resolve(
+            entries: entriesAfterSave,
+            suppressLatestSaveArchiveInsight: suppressLatestSaveArchiveInsight,
+            beliefUpdatePayoff: beliefUpdatePayoff,
+            mirror: postSaveDailyMirror,
+          )
+        : null;
     final returningUserToday = ui == RecordUiState.ready &&
             _journalEntryCountReady
         ? ReturningUserTodayEngine.build(entries: _journalEntries)
@@ -4115,11 +4102,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                 : null,
                             showSilentInputWarning: _lastCaptureLikelySilentInput,
                             showAnalysisPendingNote: false,
-                            mirror: suppressLatestSaveArchiveInsight
-                                ? null
-                                : const DailyMirrorEngine().build(
-                                    entriesAfterSave,
-                                  ),
+                            mirror: postSaveDailyMirror,
+                            primaryArchiveResult: postSaveArchiveHierarchy?.kind,
                             onAddMoreDetail: suppressLatestSaveArchiveInsight
                                 ? () => unawaited(
                                       navigateToTypeInsteadCapture(
@@ -4132,102 +4116,65 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ? _resetPostSaveToReady
                                 : null,
                           ),
-                          SavedMomentQualityCard(
-                            transcript: entriesAfterSave.first.transcript,
-                          ),
-                          Builder(
-                            builder: (context) {
-                              if (suppressLatestSaveArchiveInsight) {
-                                return const SizedBox.shrink();
-                              }
-                              final returnTrigger =
-                                  const CapacityReturnTriggerEngine()
-                                      .buildFromJournal(
-                                entries: entriesAfterSave,
-                                capacityLoopActive:
-                                    _activeLoop?.isCapacityYes ?? false,
-                                capacityCohortActive: false,
-                                surface:
-                                    CapacityReturnTriggerSurface.completion,
-                                sampleMode: false,
-                                screenshotMode: ScreenshotMode.enabled,
-                              );
-                              if (!returnTrigger.showCard) {
-                                return const SizedBox.shrink();
-                              }
-                              return Column(
-                                children: [
-                                  const SizedBox(height: 16),
-                                  CapacityReturnTriggerCard(
-                                    result: returnTrigger,
-                                    onPrimaryDismiss: _resetPostSaveToReady,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
+                          if (postSaveArchiveHierarchy?.showMomentQualityCoach ??
+                              true)
+                            SavedMomentQualityCard(
+                              transcript: entriesAfterSave.first.transcript,
+                            ),
+                          if (postSaveArchiveHierarchy?.showMomentQualityCoach ??
+                              true)
+                            Builder(
+                              builder: (context) {
+                                if (suppressLatestSaveArchiveInsight) {
+                                  return const SizedBox.shrink();
+                                }
+                                final returnTrigger =
+                                    const CapacityReturnTriggerEngine()
+                                        .buildFromJournal(
+                                  entries: entriesAfterSave,
+                                  capacityLoopActive:
+                                      _activeLoop?.isCapacityYes ?? false,
+                                  capacityCohortActive: false,
+                                  surface:
+                                      CapacityReturnTriggerSurface.completion,
+                                  sampleMode: false,
+                                  screenshotMode: ScreenshotMode.enabled,
+                                );
+                                if (!returnTrigger.showCard) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 16),
+                                    CapacityReturnTriggerCard(
+                                      result: returnTrigger,
+                                      onPrimaryDismiss: _resetPostSaveToReady,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                         ],
-                        if (beliefUpdatePayoff != null) ...[
+                        if (postSaveArchiveHierarchy?.showBeliefUpdateCard ==
+                                true &&
+                            beliefUpdatePayoff != null) ...[
                           const SizedBox(height: 16),
                           BeliefUpdatePayoffCard(
                             payoff: beliefUpdatePayoff,
+                            showInlineActions: false,
                             onAddAnother: _goToRecordTab,
                             onViewEvidence: () =>
                                 context.push(BeliefEvidenceNavigation.route),
                           ),
                         ],
-                        if (beliefHistoryTimeline != null) ...[
+                        if (postSaveArchiveHierarchy != null &&
+                            !suppressNoisyFirstSaveCards) ...[
                           const SizedBox(height: 16),
-                          BeliefHistoryTimelineCard(
-                            timeline: beliefHistoryTimeline,
-                          ),
-                        ],
-                        if (weeklyArchiveReview != null &&
-                            weeklyArchiveReview.hasEnoughEvidence) ...[
-                          const SizedBox(height: 16),
-                          WeeklyArchiveReviewCard(
-                            review: weeklyArchiveReview,
-                            compact: true,
-                            onViewFullReview: () => context.push(
-                              WeeklyArchiveReviewNavigation.route,
-                            ),
-                            onAddAnother: _goToRecordTab,
-                          ),
-                        ],
-                        if (thirdEntryBeliefPayoff != null &&
-                            !suppressArchiveHomeDuplicatePayoffs) ...[
-                          const SizedBox(height: 16),
-                          ThirdEntryBeliefPayoffCard(
-                            payoff: thirdEntryBeliefPayoff,
-                            onAddAnother: _goToRecordTab,
-                            onViewArchive: () => context.go('/archive-belief'),
-                          ),
-                        ],
-                        if (secondSessionPayoff != null &&
-                            !suppressArchiveHomeDuplicatePayoffs) ...[
-                          const SizedBox(height: 16),
-                          SecondSessionPayoffCard(
-                            payoff: secondSessionPayoff,
-                            onAddAnother: _goToRecordTab,
-                            onViewArchive: () => context.go('/archive-belief'),
-                          ),
-                        ],
-                        if (archiveHomePostSave != null &&
-                            suppressArchiveHomeDuplicatePayoffs &&
-                            !_recordReturnProJustSaved) ...[
-                          const SizedBox(height: 16),
-                          PostSaveArchiveHomeNudgeCard(
-                            summary: archiveHomePostSave,
-                            onViewArchive: () => context.go('/archive-belief'),
-                            onAddMoment: _goToRecordTab,
-                          ),
-                        ],
-                        if (analysisFallbackPayoff != null &&
-                            thirdEntryBeliefPayoff == null &&
-                            beliefUpdatePayoff == null) ...[
-                          const SizedBox(height: 16),
-                          AnalysisFallbackPayoffCard(
-                            payoff: analysisFallbackPayoff,
+                          PostSaveFocusedActionsBar(
+                            onViewEvidence: () =>
+                                context.push(BeliefEvidenceNavigation.route),
+                            onViewPatterns: () => context.go('/archive-belief'),
+                            onAddOneMoreMoment: _goToRecordTab,
                           ),
                         ],
                         if (returnLoopPayoff != null) ...[
