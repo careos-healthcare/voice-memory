@@ -3341,8 +3341,12 @@ class _RecordScreenState extends State<RecordScreen> {
             dailyArchiveExercise: dailyArchiveExercise,
             returningUserToday: returningUserToday,
             todaysOneQuestion: todaysOneQuestion,
+            hasStartHereSuggestion: _dailyReturnSuggestions.hasSuggestions,
           )
         : const RecordHomeSurfacePolicy();
+    final showArchiveProgressCards = ui == RecordUiState.ready
+        ? recordHomeSurface.showArchiveProgressCards
+        : _canShowArchiveProgressCards;
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3440,39 +3444,6 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (firstUseSimplifiedRecord) ...[
-                      RecordFirstUseCaptureSection(
-                        onRecord: () =>
-                            unawaited(_onRecordPressed(source: 'main')),
-                        recordButtonLabel: readyCapturePolicy.primaryLabel,
-                        typeCapturePrompt: _selectedPromptLine,
-                        onTextThoughtSaved: _finishSuccessfulCapture,
-                        onLogPressureMoment: () =>
-                            context.push('/pressure-check-in'),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    if (ui == RecordUiState.ready && !firstUseSimplifiedRecord) ...[
-                      Builder(
-                        builder: (context) {
-                          final readyPolicy = readyCapturePolicy;
-                          if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
-                            return const SizedBox.shrink();
-                          }
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _buildCaptureEntryActions(
-                                context: context,
-                                selectedPrompt: _selectedPromptLine,
-                                policy: readyPolicy,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
                     if (recordHomeSurface.showReturningUserToday &&
                         returningUserToday != null) ...[
                       ReturningUserTodayCard(
@@ -3511,10 +3482,58 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (firstUseSimplifiedRecord) ...[
+                      RecordFirstUseCaptureSection(
+                        onRecord: () =>
+                            unawaited(_onRecordPressed(source: 'main')),
+                        recordButtonLabel: readyCapturePolicy.primaryLabel,
+                        typeCapturePrompt: _selectedPromptLine,
+                        onTextThoughtSaved: _finishSuccessfulCapture,
+                        onLogPressureMoment: () =>
+                            context.push('/pressure-check-in'),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (ui == RecordUiState.ready && !firstUseSimplifiedRecord) ...[
+                      Builder(
+                        builder: (context) {
+                          final readyPolicy = readyCapturePolicy;
+                          if (!_shouldPromoteMicCaptureActions(readyPolicy)) {
+                            return const SizedBox.shrink();
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _buildCaptureEntryActions(
+                                context: context,
+                                selectedPrompt: _selectedPromptLine,
+                                policy: readyPolicy,
+                              ),
+                              const SizedBox(height: 12),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                    if (ui == RecordUiState.ready &&
+                        recordHomeSurface.showStartHereTodayPrompt &&
+                        _dailyReturnSuggestions.hasSuggestions) ...[
+                      DailyReturnSuggestionsCard(
+                        startHereOnly: true,
+                        suggestionSet: _dailyReturnSuggestions,
+                        selectedPrompt: _selectedPromptLine,
+                        onSuggestionTap: _onDailySuggestionTapped,
+                        onSelectPrompt: (p) {
+                          ActivationTracker.trackActivationStarterPromptSelected();
+                          setState(() => _selectedPromptLine = p);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
                     // carries the first-open promise without a second competing card.
                     if (ui == RecordUiState.ready &&
-                        _showDailyMirrorCard &&
+                        recordHomeSurface.showDailyMirrorCard &&
                         !(_journalEntryCountReady && _journalEntryCount == 0)) ...[
                       DailyMirrorRecordCard(
                         mirror: _dailyMirror,
@@ -3538,15 +3557,19 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 16),
                     ],
                     if ((_showCurrentObjectiveOnRecord &&
-                            stack.showCurrentObjectiveCard &&
+                            (ui == RecordUiState.ready
+                                ? recordHomeSurface.showCurrentObjectiveCard
+                                : stack.showCurrentObjectiveCard) &&
                             !_shouldHideCompetingRecordCtas(ui)) ||
                         (ScreenshotMode.enabled &&
                             ScreenshotMode.objective != null)) ...[
                       _currentObjectiveWidget(stack)!,
                       const SizedBox(height: 16),
                     ],
-                    if (stack.showRetentionStateCard &&
-                        _canShowArchiveProgressCards) ...[
+                    if ((ui == RecordUiState.ready
+                            ? recordHomeSurface.showRetentionStateCard
+                            : stack.showRetentionStateCard) &&
+                        showArchiveProgressCards) ...[
                       _retentionCardWidget(stack)!,
                       const SizedBox(height: 16),
                     ],
@@ -3590,7 +3613,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 16),
                     ],
                     if (stack.showReturnDayJourneyCard &&
-                        _canShowArchiveProgressCards &&
+                        showArchiveProgressCards &&
                         _signalJourney != null &&
                         ui == RecordUiState.ready) ...[
                       ReturnDayJourneyCard(
@@ -3727,7 +3750,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       const SizedBox(height: 12),
                     ] else if (!_shouldHideCompetingRecordCtas(ui) &&
                         _activeLoop != null &&
-                        _canShowArchiveProgressCards &&
+                        showArchiveProgressCards &&
                         _postSavePattern == null &&
                         !stack.showReturnDayJourneyCard) ...[
                       LoopModeProgressCard(
@@ -3833,7 +3856,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
-                          _showArchiveContextPrompts &&
+                          recordHomeSurface.showNextEvidencePrompt &&
                           _nextEvidencePrompt != null) ...[
                         const SizedBox(height: 12),
                         Container(
@@ -3865,7 +3888,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           stack.showActivePatternThread &&
                           _activePatternThread != null) ...[
                         const SizedBox(height: 12),
@@ -3880,7 +3903,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           stack.showFirstThreeJourney &&
                           _firstThreeJourney != null &&
                           _firstThreeJourney!.showOnRecord &&
@@ -3889,7 +3912,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         FirstThreeJourneyCard(model: _firstThreeJourney!),
                       ],
                       if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           _postSavePattern == null &&
                           !stack.showReturnDayJourneyCard &&
                           _showRetentionJourneyCards &&
@@ -3902,7 +3925,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           compact: true,
                         ),
                       ] else if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           _postSavePattern == null &&
                           _showRetentionJourneyCards &&
                           _signalJourney != null &&
@@ -3948,7 +3971,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           },
                         ),
                       ] else if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           _postSavePattern == null &&
                           _showRetentionJourneyCards &&
                           _signalJourney != null &&
@@ -3966,7 +3989,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           onViewPattern: () => context.go('/archive-belief'),
                         ),
                       ] else if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           _postSavePattern == null &&
                           _showRetentionJourneyCards &&
                           _signalArchiveSnapshot?.hasActiveSignal == true) ...[
@@ -3977,7 +4000,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
-                          _canShowArchiveProgressCards &&
+                          showArchiveProgressCards &&
                           stack.showPendingWatchFor &&
                           _pendingWatchForToday != null) ...[
                         const SizedBox(height: 12),
@@ -3992,8 +4015,9 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                       ],
                       if (ui == RecordUiState.ready &&
+                          recordHomeSurface.showOneSmallRecordingCard &&
                           stack.showStarterPrompts &&
-                          _showArchiveContextPrompts) ...[
+                          recordHomeSurface.showWorthCheckingToday) ...[
                         if (_oneSmallRecording.hasRecording) ...[
                           const SizedBox(height: 12),
                           OneSmallRecordingCard(
@@ -4014,12 +4038,11 @@ class _RecordScreenState extends State<RecordScreen> {
                               );
                             },
                           ),
-                          // Secondary one-tap fallback: contributes a real
-                          // entry on days a full recording feels like too much.
                           const SizedBox(height: 8),
                           LowEffortCheckInCard(onSelect: _saveLowEffortCheckIn),
                         ],
-                        if (_dailyReturnSuggestions.hasSuggestions) ...[
+                        if (_dailyReturnSuggestions.hasSuggestions &&
+                            recordHomeSurface.showWorthCheckingToday) ...[
                           const SizedBox(height: 12),
                           DailyReturnSuggestionsCard(
                             suggestionSet: _dailyReturnSuggestions,
@@ -4031,36 +4054,34 @@ class _RecordScreenState extends State<RecordScreen> {
                             },
                           ),
                         ],
-                        const SizedBox(height: 12),
-                        ConsumerRecordPromptsSection(
-                          selectedPrompt: _selectedPromptLine,
-                          personalPrompts: _personalReturnPrompts,
-                          // One clear primary action when a one-small-recording
-                          // exists — generic prompts stay, but step back.
-                          deemphasized: _oneSmallRecording.hasRecording,
-                          onSelectPrompt: (p) {
-                            ActivationTracker.trackActivationStarterPromptSelected();
-                            // Generic prompt picked — the next save is no
-                            // longer suggestion-sourced, so no receipt.
-                            _pendingSuggestionSource = null;
-                            _pendingTappedSuggestion = null;
-                            setState(() => _selectedPromptLine = p);
-                          },
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Say it plainly. ArchiveMe looks for patterns, '
-                          'not judgment.',
-                          style: VoiceMemoryTypography.metadataStyle(
-                            color: AppColors.textSecondary,
-                          ).copyWith(fontSize: 12, height: 1.4),
-                        ),
-                        const SizedBox(height: 6),
-                        QuickHelpButton(
-                          languageCode: _languageCode,
-                          patternTitle: _activePatternThread?.title,
-                          onStartRecording: () => _onRecordPressed(source: 'main'),
-                        ),
+                        if (recordHomeSurface.showTrySayingPrompts) ...[
+                          const SizedBox(height: 12),
+                          ConsumerRecordPromptsSection(
+                            selectedPrompt: _selectedPromptLine,
+                            personalPrompts: _personalReturnPrompts,
+                            deemphasized: _oneSmallRecording.hasRecording,
+                            onSelectPrompt: (p) {
+                              ActivationTracker.trackActivationStarterPromptSelected();
+                              _pendingSuggestionSource = null;
+                              _pendingTappedSuggestion = null;
+                              setState(() => _selectedPromptLine = p);
+                            },
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Say it plainly. ArchiveMe looks for patterns, '
+                            'not judgment.',
+                            style: VoiceMemoryTypography.metadataStyle(
+                              color: AppColors.textSecondary,
+                            ).copyWith(fontSize: 12, height: 1.4),
+                          ),
+                          const SizedBox(height: 6),
+                          QuickHelpButton(
+                            languageCode: _languageCode,
+                            patternTitle: _activePatternThread?.title,
+                            onStartRecording: () => _onRecordPressed(source: 'main'),
+                          ),
+                        ],
                       ],
                       if (ui == RecordUiState.done &&
                           entriesAfterSave.isNotEmpty) ...[
@@ -4842,6 +4863,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           stack.suppressDuplicateRecordCtas,
                       policyMicPhase: policyMic,
                       policyUserDenied: policyUserDenied,
+                      recordHomeSurface: recordHomeSurface,
                     ),
                   ],
                 ),
@@ -4930,6 +4952,8 @@ class _RecordScreenState extends State<RecordScreen> {
     required bool suppressDuplicateRecordCtas,
     RecordingPhase? policyMicPhase,
     bool? policyUserDenied,
+    RecordHomeSurfacePolicy recordHomeSurface =
+        const RecordHomeSurfacePolicy(),
   }) {
     RecordCtaPolicyResolution policyForUi() => _recordCtaPolicy(
       ui,
@@ -5104,7 +5128,7 @@ class _RecordScreenState extends State<RecordScreen> {
           entryCount: _journalEntryCount,
           hasWeeklyReview: _hasWeeklyReviewForContinuity,
         );
-        if (continuityLoop.show) {
+        if (continuityLoop.show && recordHomeSurface.showDaySevenContinuity) {
           actions.add(
             DaySevenContinuityCard(
               loop: continuityLoop,
@@ -5126,16 +5150,18 @@ class _RecordScreenState extends State<RecordScreen> {
             ),
           );
         }
-        actions.add(
-          EntryDirectionStarters(
-            selectedPrompt: _selectedPromptLine,
-            onSelect: (prompt) {
-              ActivationTracker.trackActivationStarterPromptSelected();
-              setState(() => _selectedPromptLine = prompt);
-            },
-          ),
-        );
-        actions.add(const SizedBox(height: 8));
+        if (recordHomeSurface.showEntryDirectionStarters) {
+          actions.add(
+            EntryDirectionStarters(
+              selectedPrompt: _selectedPromptLine,
+              onSelect: (prompt) {
+                ActivationTracker.trackActivationStarterPromptSelected();
+                setState(() => _selectedPromptLine = prompt);
+              },
+            ),
+          );
+          actions.add(const SizedBox(height: 8));
+        }
       }
       final readyPolicy = policyForUi();
       final firstUseSimplifiedRecord =
@@ -5153,7 +5179,8 @@ class _RecordScreenState extends State<RecordScreen> {
           ),
         );
       }
-      if (ReturnRitualGates.showOnRecord(
+      if (recordHomeSurface.showReturnRitual &&
+          ReturnRitualGates.showOnRecord(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
         isPostSave: _isPostSaveSurface,
@@ -5166,7 +5193,8 @@ class _RecordScreenState extends State<RecordScreen> {
           ),
         );
       }
-      if (ArchiveReturnChangesGates.showOnRecord(
+      if (recordHomeSurface.showArchiveReturnChanges &&
+          ArchiveReturnChangesGates.showOnRecord(
         loaded: _journalEntryCountLoaded,
         entryCount: _journalEntryCount,
         isPostSave: _isPostSaveSurface,
@@ -5180,7 +5208,8 @@ class _RecordScreenState extends State<RecordScreen> {
           ),
         );
       }
-      if (ArchiveDepthGates.showCompactOnRecord(
+      if (recordHomeSurface.showArchiveDepth &&
+          ArchiveDepthGates.showCompactOnRecord(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
         isPostSave: _isPostSaveSurface,
@@ -5197,7 +5226,9 @@ class _RecordScreenState extends State<RecordScreen> {
         actions.add(CleanSlatePromptSection(entryCount: _journalEntryCount));
         actions.add(EntryOptionsSection(entryCount: _journalEntryCount));
       }
-      if (_purchaseIntentCue != null && _showBottomRetentionCards) {
+      if (_purchaseIntentCue != null &&
+          _showBottomRetentionCards &&
+          recordHomeSurface.showProBridge) {
         actions.add(
           Padding(
             padding: const EdgeInsets.only(top: 12),

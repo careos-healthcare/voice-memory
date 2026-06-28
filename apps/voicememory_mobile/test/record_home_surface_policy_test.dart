@@ -70,7 +70,9 @@ void main() {
       expect(policy.showReturningUserToday, isFalse);
       expect(policy.showNextMomentPrompt, isFalse);
       expect(policy.showTodaysOneQuestion, isFalse);
+      expect(policy.showStartHereTodayPrompt, isFalse);
       expect(policy.guidanceCardCount, 1);
+      expect(policy.totalGuidanceCardCount, 1);
     });
 
     test('never shows archive review and todays question together', () {
@@ -101,7 +103,7 @@ void main() {
       );
 
       expect(policy.showNextMomentPrompt, isFalse);
-      expect(policy.showReturningUserToday, isTrue);
+      expect(policy.showReturningUserToday, isFalse);
     });
 
     test('shows todays question only when map and archive review are absent', () {
@@ -117,6 +119,67 @@ void main() {
 
       expect(policy.showTodaysOneQuestion, isTrue);
       expect(policy.guidanceCardCount, 1);
+    });
+
+    test('shows start here only when no top guidance card is available', () {
+      final policy = RecordHomeSurfacePolicy.resolve(
+        isReady: true,
+        loaded: true,
+        entryCount: 10,
+        screenshotMode: false,
+        dailyArchiveExercise: null,
+        returningUserToday: null,
+        todaysOneQuestion: null,
+        hasStartHereSuggestion: true,
+      );
+
+      expect(policy.showStartHereTodayPrompt, isTrue);
+      expect(policy.guidanceCardCount, 0);
+      expect(policy.totalGuidanceCardCount, 1);
+    });
+
+    test('hides start here when map prompt wins', () {
+      final policy = RecordHomeSurfacePolicy.resolve(
+        isReady: true,
+        loaded: true,
+        entryCount: 10,
+        screenshotMode: false,
+        dailyArchiveExercise: _mapExercise,
+        returningUserToday: null,
+        todaysOneQuestion: null,
+        hasStartHereSuggestion: true,
+      );
+
+      expect(policy.showDailyMapPrompt, isTrue);
+      expect(policy.showStartHereTodayPrompt, isFalse);
+      expect(policy.totalGuidanceCardCount, 1);
+    });
+
+    test('at 10+ entries hides archive review and pro surfaces on Record', () {
+      final policy = RecordHomeSurfacePolicy.resolve(
+        isReady: true,
+        loaded: true,
+        entryCount: 12,
+        screenshotMode: false,
+        dailyArchiveExercise: _mapExercise,
+        returningUserToday: _returningReviewReady,
+        todaysOneQuestion: _todaysQuestion,
+        hasStartHereSuggestion: true,
+      );
+
+      expect(policy.showDailyMirrorCard, isFalse);
+      expect(policy.showWorthCheckingToday, isFalse);
+      expect(policy.showTrySayingPrompts, isFalse);
+      expect(policy.showOneSmallRecordingCard, isFalse);
+      expect(policy.showDaySevenContinuity, isFalse);
+      expect(policy.showArchiveReturnChanges, isFalse);
+      expect(policy.showArchiveDepth, isFalse);
+      expect(policy.showReturnRitual, isFalse);
+      expect(policy.showEntryDirectionStarters, isFalse);
+      expect(policy.showProBridge, isFalse);
+      expect(policy.showArchiveProgressCards, isFalse);
+      expect(policy.showCurrentObjectiveCard, isFalse);
+      expect(policy.showRetentionStateCard, isFalse);
     });
   });
 }

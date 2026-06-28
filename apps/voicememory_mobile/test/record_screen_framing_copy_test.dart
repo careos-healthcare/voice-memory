@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/archive_depth/archive_depth_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
+import 'package:voicememory_mobile/features/pressure_retention/personal_return_prompt_model.dart';
+import 'package:voicememory_mobile/features/return_changes/archive_return_changes_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -363,15 +367,16 @@ void main() {
       expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
     });
 
-    testWidgets('entry count 1 shows Archive started without duplicate record CTA', (
+    testWidgets('entry count 1 stays capture-first without daily mirror card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      expect(find.text(DailyMirrorCopy.heardHeroTitle), findsOneWidget);
-      expect(find.text(DailyMirrorCopy.heardHeroBody), findsOneWidget);
-      expect(find.text(DailyMirrorCopy.heardPrimaryCta), findsNothing);
+      expect(find.text(DailyMirrorCopy.heardHeroTitle), findsNothing);
+      expect(find.text(DailyMirrorCopy.heardHeroBody), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
       _expectNoBannedFirstImpressionCopy(tester);
@@ -398,7 +403,7 @@ void main() {
       expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
     });
 
-    testWidgets('entry count 2 shows early compare not starting to notice', (
+    testWidgets('entry count 2 stays capture-first without daily mirror cards', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 2);
@@ -408,18 +413,14 @@ void main() {
         findsNothing,
       );
       expect(find.text(FirstThreeSessionCopy.journeyStep2), findsNothing);
-      expect(
-        find.byKey(const Key('early_behavior_loop_card')).evaluate().isNotEmpty ||
-            find.byKey(const Key('early_specific_insight_card')).evaluate().isNotEmpty ||
-            find
-                .byKey(const Key('record_archive_weak_compare_card'))
-                .evaluate()
-                .isNotEmpty,
-        isTrue,
-      );
+      expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
+      expect(find.byKey(const Key('early_specific_insight_card')), findsNothing);
+      expect(find.byKey(const Key('record_archive_weak_compare_card')), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
+      expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
     });
 
-    testWidgets('entry count 2 with shared words prefers behaviour loop card', (
+    testWidgets('entry count 2 with shared words hides mirror cards on Record', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -468,15 +469,12 @@ void main() {
       });
       await pumpRecordScreen(tester);
 
-      expect(
-        find.byKey(const Key('early_behavior_loop_card')).evaluate().isNotEmpty ||
-            find.byKey(const Key('early_specific_insight_card')).evaluate().isNotEmpty,
-        isTrue,
-      );
-      expect(find.textContaining('capacity'), findsWidgets);
+      expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
+      expect(find.byKey(const Key('early_specific_insight_card')), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
     });
 
-    testWidgets('entry count 2 with unrelated entries shows weak compare', (
+    testWidgets('entry count 2 with unrelated entries hides weak compare on Record', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -507,15 +505,16 @@ void main() {
       });
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_archive_weak_compare_card')), findsOneWidget);
-      expect(find.text(DailyMirrorCopy.weakStartedHeroBody), findsOneWidget);
-      expect(find.text(DailyMirrorCopy.weakStartedFootnote), findsOneWidget);
+      expect(find.byKey(const Key('record_archive_weak_compare_card')), findsNothing);
+      expect(find.text(DailyMirrorCopy.weakStartedHeroBody), findsNothing);
+      expect(find.text(DailyMirrorCopy.weakStartedFootnote), findsNothing);
       expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
       expect(find.byKey(const Key('early_specific_insight_card')), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
     });
 
     testWidgets(
-      'entry count 3 can still show One small recording when evidence exists',
+      'entry count 3 hides One small recording on Record ready state',
       (tester) async {
         await pumpRecordScreen(
           tester,
@@ -524,13 +523,9 @@ void main() {
           waitForOneSmallRecordingCard: true,
         );
 
-        expect(find.byKey(const Key('one_small_recording_card')), findsOneWidget);
-        expect(find.text('One small recording'), findsOneWidget);
-        final expectedPrompt = const OneSmallRecordingEngine().build(
-          _workThread3(),
-          entryCount: 3,
-        ).prompt;
-        expect(find.text(expectedPrompt), findsOneWidget);
+        expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
+        expect(find.text('One small recording'), findsNothing);
+        expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
       },
     );
 
@@ -767,7 +762,7 @@ void main() {
     });
 
     testWidgets(
-      'deniedCanAskAgain hides Record this on starter card and promotes Allow microphone',
+      'deniedCanAskAgain promotes capture CTAs without starter card on Record',
       (tester) async {
         await pumpRecordScreen(
           tester,
@@ -778,7 +773,7 @@ void main() {
           waitForOneSmallRecordingCard: true,
         );
 
-        expect(find.byKey(const Key('one_small_recording_card')), findsOneWidget);
+        expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
         expect(find.text(OneSmallRecording.recordCtaLabel), findsNothing);
         expect(find.text(MicrophonePermissionCopy.allowMicrophoneCta), findsNothing);
         expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
@@ -965,6 +960,44 @@ void main() {
       final hasTodaysQuestion = find.byKey(const Key('todays_one_question_card')).evaluate().isNotEmpty;
 
       expect(hasArchiveReview && hasTodaysQuestion, isFalse);
+    });
+
+    testWidgets('ten plus entries stay capture-first with at most one guidance card', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 12);
+
+      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
+      expect(find.text('Type instead'), findsOneWidget);
+
+      expect(find.text(DailyReturnSuggestionSet.heading), findsNothing);
+      expect(find.text(ConsumerUiCopy.trySayingOneOfThese), findsNothing);
+      expect(
+        find.text(PersonalReturnPromptSet.personalizedLabel),
+        findsNothing,
+      );
+      expect(
+        find.text(ArchiveReturnChangesCopy.weeklyReviewTitle),
+        findsNothing,
+      );
+      expect(find.text(ArchiveDepthCopy.cardTitle), findsNothing);
+      expect(find.text(ArchiveReturnChangesCopy.reviewChangesButton), findsNothing);
+      expect(find.text(ArchiveReturnChangesCopy.viewEvidenceMapButton), findsNothing);
+      expect(find.text(ArchiveReturnChangesCopy.markSeenButton), findsNothing);
+      expect(
+        find.text(ArchiveReturnChangesCopy.proPreviewLink),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('early_behavior_loop_card')), findsNothing);
+
+      final guidanceCards = [
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        find.byKey(const Key('returning_user_today_card')),
+        find.byKey(const Key('todays_one_question_card')),
+        find.byKey(const Key('start_here_today_card')),
+      ].map((f) => f.evaluate().length).fold<int>(0, (a, b) => a + b);
+
+      expect(guidanceCards, lessThanOrEqualTo(1));
     });
   });
 }
