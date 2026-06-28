@@ -285,6 +285,7 @@ import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
 import '../features/post_save/post_save_archive_hierarchy.dart';
+import '../features/record/record_home_surface_policy.dart';
 import '../widgets/record/post_save_focused_actions_bar.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
 import '../widgets/record/post_save_listening_card.dart';
@@ -3330,13 +3331,18 @@ class _RecordScreenState extends State<RecordScreen> {
             ).hasEnoughEvidence,
           )
         : null;
-    final suppressDuplicateRecordPrompts =
-        !ScreenshotMode.enabled &&
-        _journalEntryCountReady &&
-        _journalEntryCount > 0 &&
-        _journalEntryCount < 7 &&
-        (dailyArchiveExercise?.showOnRecord == true ||
-            todaysOneQuestion?.showOnRecord == true);
+    final recordHomeSurface = ui == RecordUiState.ready &&
+            _journalEntryCountReady
+        ? RecordHomeSurfacePolicy.resolve(
+            isReady: true,
+            loaded: _journalEntryCountReady,
+            entryCount: _journalEntryCount,
+            screenshotMode: ScreenshotMode.enabled,
+            dailyArchiveExercise: dailyArchiveExercise,
+            returningUserToday: returningUserToday,
+            todaysOneQuestion: todaysOneQuestion,
+          )
+        : const RecordHomeSurfacePolicy();
 
     _logRecordEmptyGate('build');
     _maybeLogRecordCtaPolicy(
@@ -3399,12 +3405,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       const RecordTopArchivePromiseHero(),
                       const SizedBox(height: 16),
                     ],
-                    if (dailyArchiveExercise != null &&
-                        dailyArchiveExercise.showOnRecord &&
-                        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
-                          loaded: _journalEntryCountReady,
-                          entryCount: _journalEntryCount,
-                        )) ...[
+                    if (recordHomeSurface.showDailyMapPrompt &&
+                        dailyArchiveExercise != null) ...[
                       DailyArchiveExerciseRecordCard(
                         exercise: dailyArchiveExercise,
                         onPrimary: () => _handleDailyArchiveExerciseAction(
@@ -3471,8 +3473,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         },
                       ),
                     ],
-                    if (returningUserToday != null &&
-                        !suppressDuplicateRecordPrompts) ...[
+                    if (recordHomeSurface.showReturningUserToday &&
+                        returningUserToday != null) ...[
                       ReturningUserTodayCard(
                         model: returningUserToday,
                         onPrimary: () => _handleReturningUserTodayAction(
@@ -3484,8 +3486,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (nextMomentPrompt != null &&
-                        !suppressDuplicateRecordPrompts) ...[
+                    if (recordHomeSurface.showNextMomentPrompt &&
+                        nextMomentPrompt != null) ...[
                       NextMomentPromptCard(
                         prompt: nextMomentPrompt,
                         onPrimary: () => _handleNextMomentPromptAction(
@@ -3499,12 +3501,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (todaysOneQuestion != null &&
-                        todaysOneQuestion.showOnRecord &&
-                        RecordEmptyArchiveGates.showTodaysQuestionOnRecord(
-                          loaded: _journalEntryCountReady,
-                          entryCount: _journalEntryCount,
-                        )) ...[
+                    if (recordHomeSurface.showTodaysOneQuestion &&
+                        todaysOneQuestion != null) ...[
                       TodaysOneQuestionCard(
                         question: todaysOneQuestion,
                         onPrimary: () =>

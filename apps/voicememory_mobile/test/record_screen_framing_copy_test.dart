@@ -938,5 +938,33 @@ void main() {
 
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
     });
+
+    testWidgets('five entries show map prompt without archive review stack', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 5);
+
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsOneWidget);
+      expect(find.text("Today's map prompt"), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.returningUserFivePlusTitle), findsNothing);
+      expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
+      expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
+      expect(find.text(VisibleArchiveProofCopy.nextMomentPromptSectionLabel), findsNothing);
+      expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
+      expect(find.text("Today's one question"), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+    });
+
+    testWidgets('ready state never stacks archive review with todays question', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 5);
+
+      final hasArchiveReview =
+          find.text(VisibleArchiveProofCopy.returningUserFivePlusTitle).evaluate().isNotEmpty;
+      final hasTodaysQuestion = find.byKey(const Key('todays_one_question_card')).evaluate().isNotEmpty;
+
+      expect(hasArchiveReview && hasTodaysQuestion, isFalse);
+    });
   });
 }

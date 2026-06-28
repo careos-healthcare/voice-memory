@@ -131,4 +131,11 @@ abstract class RecordEmptyArchiveGates {
     required int entryCount,
   }) =>
       loaded && !hasNoEntries(entryCount);
+
+  /// Review/evidence next-step prompts belong on Patterns, not Record.
+  static bool showNextMomentPromptOnRecord({
+    required bool loaded,
+    required int entryCount,
+  }) =>
+      false;
 }
