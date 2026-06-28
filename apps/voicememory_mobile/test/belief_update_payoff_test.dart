@@ -6,6 +6,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/activation/belief_update_payoff.dart';
 import 'package:voicememory_mobile/features/activation/third_entry_belief_payoff.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/analysis_fallback_payoff.dart';
@@ -401,8 +402,8 @@ void main() {
       expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
       expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
-      expect(find.text('View evidence'), findsOneWidget);
-      expect(find.text('View Patterns'), findsOneWidget);
+      expect(find.text(PostSaveFocusedActionsCopy.viewEvidence), findsOneWidget);
+      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
     });
 
     testWidgets('four repeat entries show discovery without belief card', (
