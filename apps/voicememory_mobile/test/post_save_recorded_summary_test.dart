@@ -413,6 +413,12 @@ void main() {
           transcript:
               'Same thing — said yes when I had no capacity for one more thing.',
         ),
+        _entry(
+          id: 'c',
+          createdAt: DateTime(2026, 6, 3, 12),
+          transcript:
+              'I said yes again even though I had no capacity for one more ask.',
+        ),
       ];
 
       await tester.pumpWidget(

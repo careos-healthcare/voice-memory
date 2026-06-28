@@ -1,6 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../../product/consumer_copy_guard.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_repeat_phrase_sanitizer.dart';
 import 'early_specific_insight_copy.dart';
 import 'early_specific_insight_model.dart';
 
@@ -143,11 +144,14 @@ class EarlySpecificInsightEngine {
         .where((e) => e.value.length >= 2)
         .where((e) => !_isGenericPhrase(e.key))
         .where((e) => !_isWeakNgram(e.key))
+        .where((e) => !ArchiveRepeatPhraseSanitizer.isLowQuality(e.key))
         .map((e) => MapEntry(e.key, e.value.length * e.key.split(' ').length))
         .toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    return ranked.take(maxPhrases).map((e) => e.key).toList();
+    return ArchiveRepeatPhraseSanitizer.dedupeNearIdentical(
+      ranked.take(maxPhrases * 2).map((e) => e.key).toList(),
+    ).take(maxPhrases).toList();
   }
 
   Iterable<String> _phrasesIn(String text) sync* {
@@ -182,6 +186,7 @@ class EarlySpecificInsightEngine {
   }
 
   bool _isWeakNgram(String phrase) {
+    if (ArchiveRepeatPhraseSanitizer.isLowQuality(phrase)) return true;
     final words = phrase.split(' ');
     if (words.length < 2) return true;
     if (_stopWords.contains(words.first) && !_priorityPhrases.contains(phrase)) {
@@ -190,51 +195,25 @@ class EarlySpecificInsightEngine {
     if (_stopWords.contains(words.last) && words.last.length <= 3) {
       return true;
     }
-    return false;
+    return ArchiveRepeatPhraseSanitizer.endsWithConnector(phrase);
   }
 
   String _patternLine(String primary, String? secondary, List<String> texts) {
-    final blob = texts.join(' ').toLowerCase();
-    if (blob.contains('no capacity') || blob.contains('said yes')) {
-      return 'Both moments mention saying yes when you had no capacity.';
-    }
-    if (blob.contains('work pressure') || primary.contains('work pressure')) {
-      return 'Both moments mention work pressure showing up in what you said.';
-    }
-
-    final primaryDisplay = _displayPhrase(primary);
-    if (secondary == null || secondary == primary) {
-      if (primary.contains('said yes') && primary.contains('capacity')) {
-        return 'Both moments mention saying yes when you had no capacity.';
-      }
-      if (primary.contains('said yes')) {
-        return 'Both moments mention saying yes when you had no capacity.';
-      }
-      if (primary.contains('no capacity')) {
-        return 'Both moments mention saying yes when you had no capacity.';
-      }
-      return 'Both moments mention $primaryDisplay.';
-    }
-
-    final secondaryDisplay = _displayPhrase(secondary);
-    return 'Both moments mention $primaryDisplay and $secondaryDisplay.';
+    final shared = ArchiveRepeatPhraseSanitizer.dedupeNearIdentical([
+      primary,
+      if (secondary != null) secondary,
+    ]);
+    final lowerConfidence = shared.isEmpty ||
+        shared.every(ArchiveRepeatPhraseSanitizer.isLowQuality);
+    return ArchiveRepeatPhraseSanitizer.buildRepeatSummary(
+      texts: texts,
+      sharedPhrases: shared,
+      lowerConfidence: lowerConfidence,
+    );
   }
 
   String _displayPhrase(String phrase) {
-    if (phrase.contains('said yes') && phrase.contains('no capacity')) {
-      return 'saying yes when you had no capacity';
-    }
-    if (phrase == 'said yes' || phrase == 'said yes again') {
-      return 'saying yes when you had no capacity';
-    }
-    if (phrase == 'no capacity') {
-      return 'saying yes when you had no capacity';
-    }
-    if (phrase.contains('work') &&
-        (phrase.contains('pressure') || phrase.contains('deadline'))) {
-      return 'work pressure showing up in what you said';
-    }
-    return phrase;
+    return ArchiveRepeatPhraseSanitizer.sanitize(phrase);
   }
 
   List<String> _evidenceQuotes(List<String> texts, List<String> phrases) {
@@ -252,11 +231,7 @@ class EarlySpecificInsightEngine {
   }
 
   String _evidenceLine(List<String> quotes) {
-    if (quotes.isEmpty) return '';
-    if (quotes.length == 1) {
-      return "You used the words '${quotes.first}'.";
-    }
-    return "You used the words '${quotes.first}' and '${quotes[1]}'.";
+    return ArchiveRepeatPhraseSanitizer.buildEvidenceLine(quotes);
   }
 
   String? _quoteAround(String text, String phrase) {
@@ -268,6 +243,9 @@ class EarlySpecificInsightEngine {
 
   String _nextQuestion(String primary, String? secondary, List<String> texts) {
     final blob = '${primary} ${secondary ?? ''} ${texts.join(' ')}'.toLowerCase();
+    if (blob.contains('wanted to say no') || blob.contains('want to say no')) {
+      return 'Tomorrow, notice the moment before you agree to something.';
+    }
     if (blob.contains('said yes') ||
         blob.contains('no capacity') ||
         blob.contains('before you agree')) {

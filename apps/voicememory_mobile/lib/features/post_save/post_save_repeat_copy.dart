@@ -196,7 +196,9 @@ abstract class PostSaveRepeatCopy {
   }
 
   static bool _isGeneratedPhraseLine(String line) =>
-      line.startsWith('Both moments mention');
+      line.startsWith('Both moments mention') ||
+      line.startsWith('Both moments point to') ||
+      line.startsWith('These moments may be connected');
 
   static String _phraseFromGeneratedLine(String line) {
     final match = RegExp(
@@ -241,8 +243,9 @@ abstract class PostSaveRepeatCopy {
   static String? _safeEvidenceLine(String? line) {
     final trimmed = line?.trim() ?? '';
     if (trimmed.isEmpty) return null;
-    if (trimmed.startsWith('You used the words')) {
-      final quotes = RegExp(r"'([^']+)'")
+    if (trimmed.startsWith('You used the words') ||
+        trimmed.startsWith('Your words:')) {
+      final quotes = RegExp(r'''["']([^"']+)["']''')
           .allMatches(trimmed)
           .map((m) => m.group(1)!.trim())
           .where((q) => q.isNotEmpty)
@@ -257,6 +260,8 @@ abstract class PostSaveRepeatCopy {
   static bool _looksAwkward(String text) {
     final lower = text.toLowerCase();
     if (lower.contains('both moments mention')) return true;
+    if (lower.contains(' and to ') && lower.contains(' but')) return true;
+    if (RegExp(r'\b(and|but|to|with|because)\.$').hasMatch(lower)) return true;
     if (RegExp(r"\b(is test|test to see)\b").hasMatch(lower)) return true;
     return false;
   }

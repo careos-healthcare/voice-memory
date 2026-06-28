@@ -63,7 +63,7 @@ void main() {
       expect(insight.title, EarlySpecificInsightCopy.sharpTitle);
       expect(
         insight.oneLinePattern,
-        'Both moments mention saying yes when you had no capacity.',
+        'Both moments point to pressure around saying yes when you had no capacity.',
       );
       expect(insight.evidenceLine, contains('no capacity'));
       expect(insight.evidenceLine, contains('said yes'));
@@ -116,7 +116,7 @@ void main() {
       expect(insight.shouldShow, isTrue);
       expect(
         insight.oneLinePattern,
-        'Both moments mention work pressure showing up in what you said.',
+        'Both moments point to work pressure showing up in what you said.',
       );
       expect(insight.evidenceLine.toLowerCase(), contains('work pressure'));
       expect(insight.confidenceLabel, 'Early signal — based on 3 moments');
@@ -172,8 +172,8 @@ void main() {
         ),
       ]);
 
-      expect(insight.evidenceLine, startsWith('You used the words'));
-      expect(insight.evidenceLine, contains('\''));
+      expect(insight.evidenceLine, startsWith('Your words:'));
+      expect(insight.evidenceLine, contains('"'));
     });
 
     test('next question is specific not generic', () {
