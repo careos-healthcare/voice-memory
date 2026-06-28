@@ -1,6 +1,8 @@
 import '../../models/journal_entry.dart';
+import '../timeline/timeline_entry_display.dart';
 import 'first_session_pattern_category.dart';
 import 'first_session_pattern_model.dart';
+import '../archive_evidence/archive_pattern_copy_guard.dart';
 
 /// Builds the first named pattern from a user's first saved reflection.
 class FirstSessionPatternEngine {
@@ -684,22 +686,21 @@ class FirstSessionPatternEngine {
   }
 
   String _entryBlob(JournalEntry entry) {
-    final transcript = entry.transcript.trim();
-    if (transcript.isNotEmpty) return transcript;
-    final obs = entry.reflection.concreteObservation.trim();
-    final signal = entry.reflection.repeatedSignal.trim();
-    final pattern = entry.reflection.exactLanguagePattern.trim();
-    return [obs, signal, pattern].where((s) => s.isNotEmpty).join(' ');
+    final display = resolveEntryDisplayText(entry);
+    if (display.text.isNotEmpty &&
+        !ArchivePatternCopyGuard.isBlockedPatternText(display.text)) {
+      return display.text;
+    }
+    return '';
   }
 
   String _preview(JournalEntry entry) {
-    final obs = entry.reflection.concreteObservation.trim();
-    if (obs.isNotEmpty) {
-      return obs.length > 96 ? '${obs.substring(0, 93)}…' : obs;
+    final display = resolveEntryDisplayText(entry);
+    final text = display.text.trim();
+    if (text.isEmpty || ArchivePatternCopyGuard.isBlockedPatternText(text)) {
+      return '';
     }
-    final t = entry.transcript.trim();
-    if (t.isEmpty) return '';
-    return t.length > 96 ? '${t.substring(0, 93)}…' : t;
+    return text.length > 96 ? '${text.substring(0, 93)}…' : text;
   }
 
   static const List<FirstSessionPatternCategory> _scoringCategories = [

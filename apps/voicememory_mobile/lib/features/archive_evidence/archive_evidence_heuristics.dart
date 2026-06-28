@@ -1,6 +1,8 @@
 import '../../models/journal_entry.dart';
+import '../timeline/timeline_entry_display.dart';
 import 'archive_evidence_guard.dart';
 import 'archive_intelligence_tier.dart';
+import 'archive_pattern_copy_guard.dart';
 
 /// Humble confidence band for Pro surfaces — never diagnostic.
 enum ArchiveConfidenceBand {
@@ -135,7 +137,16 @@ class ArchiveEvidenceHeuristics {
         ? eligible.sublist(eligible.length - windowSize)
         : eligible;
 
-    final texts = window.map((e) => e.transcript.toLowerCase()).toList();
+    final texts = window
+        .map((e) => resolveEntryDisplayText(e).text.trim().toLowerCase())
+        .where(
+          (t) =>
+              t.length >= ArchiveEvidenceGuard.minimumTranscriptChars &&
+              !ArchivePatternCopyGuard.isBlockedPatternText(t),
+        )
+        .toList();
+    if (texts.length < 2) return ArchiveEvidenceAnalysis.empty;
+
     final allText = texts.join(' ');
 
     final pressureHits = _pressurePhrases.entries
@@ -340,8 +351,9 @@ class ArchiveEvidenceHeuristics {
   List<String> _evidenceSnippets(List<JournalEntry> window) {
     final snippets = <String>[];
     for (final entry in window.reversed) {
-      final t = entry.transcript.trim();
+      final t = resolveEntryDisplayText(entry).text.trim();
       if (t.length < 20) continue;
+      if (ArchivePatternCopyGuard.isBlockedPatternText(t)) continue;
       final snippet = t.length <= 96 ? t : '${t.substring(0, 93)}…';
       snippets.add(snippet);
       if (snippets.length >= 3) break;
@@ -369,9 +381,13 @@ class ArchiveEvidenceHeuristics {
     final repeated = counts.entries
         .where((e) => e.value >= 2)
         .map((e) => e.key)
+        .where((word) => !ArchivePatternCopyGuard.isBlockedPatternText(word))
         .toList()
       ..sort((a, b) => b.length.compareTo(a.length));
-    return repeated.isNotEmpty ? repeated.first : null;
+    if (repeated.isEmpty) return null;
+    final phrase = repeated.first;
+    if (ArchivePatternCopyGuard.isBlockedPatternText(phrase)) return null;
+    return phrase;
   }
 
   double _sharedTokenOverlap(String a, String b) {
@@ -391,7 +407,8 @@ class ArchiveEvidenceHeuristics {
 
   String? _fallbackPressure(List<JournalEntry> window) {
     for (final entry in window.reversed) {
-      final lower = entry.transcript.toLowerCase();
+      final lower = resolveEntryDisplayText(entry).text.toLowerCase();
+      if (ArchivePatternCopyGuard.isBlockedPatternText(lower)) continue;
       for (final key in _pressurePhrases.keys) {
         if (lower.contains(key)) return _pressurePhrases[key];
       }

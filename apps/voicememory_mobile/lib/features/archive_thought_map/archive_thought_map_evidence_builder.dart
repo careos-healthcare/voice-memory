@@ -1,6 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_belief_thread_model.dart';
 import '../archive_evidence/archive_evidence_heuristics.dart';
+import '../archive_evidence/archive_pattern_copy_guard.dart';
+import '../timeline/timeline_entry_display.dart';
 import 'archive_thought_map_models.dart';
 
 /// Attaches local saved-moment evidence to thought map nodes — no invented text.
@@ -53,7 +55,8 @@ abstract final class ArchiveThoughtMapEvidenceBuilder {
         : eligible;
 
     bool matches(JournalEntry entry, bool Function(String lower) test) {
-      final lower = entry.transcript.toLowerCase();
+      final lower = resolveEntryDisplayText(entry).text.toLowerCase();
+      if (ArchivePatternCopyGuard.isBlockedPatternText(lower)) return false;
       return lower.trim().length >= minExcerptLength && test(lower);
     }
 
@@ -143,7 +146,14 @@ abstract final class ArchiveThoughtMapEvidenceBuilder {
   }
 
   static ArchiveThoughtMapEvidenceSnippet _snippetFromEntry(JournalEntry entry) {
-    final trimmed = entry.transcript.trim();
+    final trimmed = resolveEntryDisplayText(entry).text.trim();
+    if (ArchivePatternCopyGuard.isBlockedPatternText(trimmed)) {
+      return ArchiveThoughtMapEvidenceSnippet(
+        entryId: entry.id,
+        excerpt: '',
+        savedAt: entry.createdAt,
+      );
+    }
     final excerpt = trimmed.length <= maxExcerptLength
         ? trimmed
         : '${trimmed.substring(0, maxExcerptLength - 1).trim()}…';

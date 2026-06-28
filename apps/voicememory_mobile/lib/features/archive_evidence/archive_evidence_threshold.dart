@@ -1,8 +1,10 @@
 import '../../models/journal_entry.dart';
+import '../timeline/timeline_entry_display.dart';
 import 'archive_belief_correction_store.dart';
 import 'archive_entry_signal_guard.dart';
 import 'archive_evidence_guard.dart';
 import 'archive_evidence_heuristics.dart';
+import 'archive_pattern_copy_guard.dart';
 
 /// Safe, non-numeric stage labels for archive pattern surfaces.
 enum ArchivePatternStage {
@@ -224,10 +226,22 @@ abstract final class ArchiveEvidenceThreshold {
   ) {
     if (analysis.possibleRepeat) return true;
     if (analysis.repeatedPressurePhrases.length >= 2) return true;
+
+    final texts = meaningful
+        .map((e) => resolveEntryDisplayText(e).text.trim().toLowerCase())
+        .where(
+          (t) =>
+              t.isNotEmpty && !ArchivePatternCopyGuard.isBlockedPatternText(t),
+        )
+        .toList();
+    if (_entriesSharingRepeatSignal(texts) >= minSharedThemeEntries) {
+      return true;
+    }
+
     if (meaningful.length >= 2) {
-      final texts = meaningful.map((e) => e.transcript.toLowerCase()).toList();
-      for (var i = 1; i < texts.length; i++) {
-        if (_sharedTokenOverlap(texts[i - 1], texts[i]) >= 0.35) {
+      final rawTexts = meaningful.map((e) => e.transcript.toLowerCase()).toList();
+      for (var i = 1; i < rawTexts.length; i++) {
+        if (_sharedTokenOverlap(rawTexts[i - 1], rawTexts[i]) >= 0.35) {
           return true;
         }
       }
@@ -239,45 +253,84 @@ abstract final class ArchiveEvidenceThreshold {
     List<JournalEntry> meaningful,
     ArchiveEvidenceAnalysis analysis,
   ) {
-    if (analysis.repeatedPressurePhrases.isNotEmpty) {
-      final phrase = analysis.repeatedPressurePhrases.first;
-      final needle = phrase.split(' ').last;
-      return meaningful
-          .where((e) => e.transcript.toLowerCase().contains(needle))
-          .length
-          .clamp(0, meaningful.length);
-    }
-
-    final themes = meaningful
-        .map((e) => _detectContext(e.transcript.toLowerCase()))
-        .whereType<String>()
+    final texts = meaningful
+        .map((e) => resolveEntryDisplayText(e).text.trim().toLowerCase())
+        .where(
+          (t) =>
+              t.isNotEmpty && !ArchivePatternCopyGuard.isBlockedPatternText(t),
+        )
         .toList();
-    if (themes.isEmpty) return 0;
+    if (texts.isEmpty) return 0;
 
-    final counts = <String, int>{};
-    for (final theme in themes) {
-      counts[theme] = (counts[theme] ?? 0) + 1;
+    final themeCounts = <String, int>{};
+    for (final text in texts) {
+      final theme = _detectContext(text);
+      if (theme != null) {
+        themeCounts[theme] = (themeCounts[theme] ?? 0) + 1;
+      }
     }
-    return counts.values.fold(0, (a, b) => a > b ? a : b);
+    final themeMax =
+        themeCounts.values.fold(0, (a, b) => a > b ? a : b);
+
+    final repeatMax = _entriesSharingRepeatSignal(texts);
+    return [themeMax, repeatMax].reduce((a, b) => a > b ? a : b);
+  }
+
+  static int _entriesSharingRepeatSignal(List<String> texts) {
+    if (texts.length < 2) return texts.length;
+
+    final wordCounts = <String, int>{};
+    for (final text in texts) {
+      for (final word in text
+          .replaceAll(RegExp(r'[^a-z0-9\s]'), ' ')
+          .split(RegExp(r'\s+'))
+          .where((w) => w.length > 4)
+          .toSet()) {
+        wordCounts[word] = (wordCounts[word] ?? 0) + 1;
+      }
+    }
+
+    final sharedWords = wordCounts.entries
+        .where((e) => e.value >= minSharedThemeEntries)
+        .map((e) => e.key)
+        .toList()
+      ..sort((a, b) => b.length.compareTo(a.length));
+
+    for (final word in sharedWords) {
+      final count = texts.where((t) => t.contains(word)).length;
+      if (count >= minSharedThemeEntries) return count;
+    }
+
+    var bestCluster = 0;
+    for (final anchor in texts) {
+      final cluster = texts
+          .where((other) => _sharedTokenOverlap(anchor, other) >= 0.25)
+          .length;
+      if (cluster > bestCluster) bestCluster = cluster;
+    }
+    return bestCluster;
   }
 
   static List<String> _collectSnippets(
     List<JournalEntry> meaningful,
     Iterable<String> attachedSnippets,
   ) {
-    final snippets = <String>{};
+    final snippets = <String>[];
     for (final raw in attachedSnippets) {
       final trimmed = raw.trim();
-      if (trimmed.length >= minSnippetChars) snippets.add(trimmed);
-    }
-    for (final entry in meaningful.reversed) {
-      final trimmed = entry.transcript.trim();
-      if (trimmed.length >= minSnippetChars) {
-        snippets.add(trimmed.length <= 96 ? trimmed : '${trimmed.substring(0, 95)}…');
-      }
+      if (trimmed.length < minSnippetChars) continue;
+      if (ArchivePatternCopyGuard.isBlockedPatternText(trimmed)) continue;
+      snippets.add(trimmed);
       if (snippets.length >= minEvidenceSnippets) break;
     }
-    return snippets.toList();
+    for (final entry in meaningful.reversed) {
+      final trimmed = resolveEntryDisplayText(entry).text.trim();
+      if (trimmed.length < minSnippetChars) continue;
+      if (ArchivePatternCopyGuard.isBlockedPatternText(trimmed)) continue;
+      snippets.add(trimmed.length <= 96 ? trimmed : '${trimmed.substring(0, 95)}…');
+      if (snippets.length >= minEvidenceSnippets) break;
+    }
+    return snippets;
   }
 
   static String? _detectContext(String text) {

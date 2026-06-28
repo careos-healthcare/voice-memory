@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../timeline/timeline_entry_display.dart';
+import 'archive_pattern_copy_guard.dart';
 
 /// Detects saved moments too thin to support archive/belief/repeat claims.
 abstract final class ArchiveEntrySignalGuard {
@@ -40,6 +41,7 @@ abstract final class ArchiveEntrySignalGuard {
   static bool isLowSignalText(String? raw) {
     final normalized = _normalize(raw);
     if (normalized.isEmpty) return true;
+    if (ArchivePatternCopyGuard.isBlockedPatternText(normalized)) return true;
     if (_meaningfulCharacterCount(normalized) < minMeaningfulCharacters) {
       return true;
     }

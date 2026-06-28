@@ -1,4 +1,5 @@
 import '../../product/consumer_copy_guard.dart';
+import '../archive_evidence/archive_pattern_copy_guard.dart';
 
 /// Guards user-facing archive belief / timeline copy from overclaiming.
 abstract final class ArchiveDisplayCopyGuard {
@@ -20,7 +21,9 @@ abstract final class ArchiveDisplayCopyGuard {
   static String? sanitize(String? text) {
     if (text == null) return null;
     final trimmed = text.trim();
-    if (trimmed.isEmpty || ConsumerCopyGuard.isSystemObservation(trimmed)) {
+    if (trimmed.isEmpty ||
+        ConsumerCopyGuard.isSystemObservation(trimmed) ||
+        ArchivePatternCopyGuard.isBlockedPatternText(trimmed)) {
       return null;
     }
     final lower = trimmed.toLowerCase();

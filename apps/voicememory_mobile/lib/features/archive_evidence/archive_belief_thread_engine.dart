@@ -3,12 +3,14 @@ import '../../models/journal_entry.dart';
 import '../activation/first_three_session_gates.dart';
 import '../first_session/first_session_pattern_engine.dart';
 import '../retention/second_session_signal_engine.dart';
+import '../timeline/timeline_entry_display.dart';
 import 'archive_belief_thread_copy.dart';
 import 'archive_belief_thread_model.dart';
 import 'archive_evidence_guard.dart';
 import 'archive_evidence_heuristics.dart';
 import 'archive_evidence_threshold.dart';
 import 'archive_intelligence_tier.dart';
+import 'archive_pattern_copy_guard.dart';
 
 /// Builds the archive belief thread card from local journal evidence only.
 class ArchiveBeliefThreadEngine {
@@ -59,7 +61,8 @@ class ArchiveBeliefThreadEngine {
       analysis: analysis,
       attachedSnippets: analysis.evidenceSnippets,
     );
-    if (!threshold.canNameThread) {
+    if (eligible.length >= ArchiveEvidenceThreshold.minMeaningfulEntries &&
+        !threshold.canNameThread) {
       return ArchiveBeliefThread.insufficient;
     }
 
@@ -94,16 +97,25 @@ class ArchiveBeliefThreadEngine {
           ? analysis.whatFadedLine
           : null,
       confidenceBand: analysis.confidenceBand,
-      evidenceSnippets: analysis.evidenceSnippets.isNotEmpty
-          ? analysis.evidenceSnippets
-          : ArchiveEvidenceThreshold.meaningfulEntries(entries)
-              .take(3)
-              .map((e) {
-                final t = e.transcript.trim();
-                return t.length <= 96 ? t : '${t.substring(0, 95)}…';
-              })
-              .where((s) => s.length >= ArchiveEvidenceThreshold.minSnippetChars)
-              .toList(),
+      evidenceSnippets: tier == ArchiveIntelligenceTier.proMax
+          ? (analysis.evidenceSnippets.isNotEmpty
+              ? analysis.evidenceSnippets
+              : ArchiveEvidenceThreshold.meaningfulEntries(entries)
+                  .take(3)
+                  .map((e) {
+                    final t = resolveEntryDisplayText(e).text.trim();
+                    if (ArchivePatternCopyGuard.isBlockedPatternText(t)) {
+                      return '';
+                    }
+                    return t.length <= 96 ? t : '${t.substring(0, 95)}…';
+                  })
+                  .where(
+                    (s) =>
+                        s.length >= ArchiveEvidenceThreshold.minSnippetChars &&
+                        !ArchivePatternCopyGuard.isBlockedPatternText(s),
+                  )
+                  .toList())
+          : const [],
       isProDepth: tier == ArchiveIntelligenceTier.proMax,
     );
   }

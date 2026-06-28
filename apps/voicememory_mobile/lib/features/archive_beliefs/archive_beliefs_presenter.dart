@@ -1,4 +1,6 @@
 import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_pattern_copy_guard.dart';
+import '../timeline/timeline_entry_display.dart';
 import '../archive_theory/theory_ranking_models.dart';
 import '../archive_v1/archive_v1_models.dart';
 import '../belief_lifecycle/belief_lifecycle_models.dart';
@@ -83,7 +85,7 @@ class ArchiveBeliefsPresenter {
 
     _addThemePatterns(entries, cards);
 
-    final deduped = _dedupe(cards);
+    final deduped = _dedupe(cards.where(_isValidCard).toList());
     final sorted = [...deduped]
       ..sort((a, b) => b.confidencePercent.compareTo(a.confidencePercent));
 
@@ -207,6 +209,22 @@ class ArchiveBeliefsPresenter {
     }
   }
 
+  static bool _isValidCard(ArchiveBeliefCardModel card) {
+    if (!ArchivePatternCopyGuard.isValidPatternCandidate(card.statement)) {
+      return false;
+    }
+    if (!ArchivePatternCopyGuard.isValidPatternCandidate(card.whyExplanation)) {
+      return false;
+    }
+    final conclusion = card.conclusion;
+    if (conclusion != null &&
+        conclusion.trim().isNotEmpty &&
+        !ArchivePatternCopyGuard.isValidPatternCandidate(conclusion)) {
+      return false;
+    }
+    return true;
+  }
+
   static List<ArchiveBeliefCardModel> _dedupe(
     List<ArchiveBeliefCardModel> cards,
   ) {
@@ -250,19 +268,21 @@ class ArchiveBeliefsPresenter {
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return sorted.take(4).map((e) {
       final r = e.reflection;
-      final text = r.concreteObservation.trim().isNotEmpty
-          ? r.concreteObservation
+      final resolution = resolveEntryDisplayText(e);
+      final text = resolution.text.trim().isNotEmpty
+          ? resolution.text
           : (r.repeatedSignal.trim().isNotEmpty
                 ? r.repeatedSignal
-                : (e.transcript.trim().isNotEmpty
-                      ? e.transcript
-                      : 'Reflection captured.'));
+                : 'Reflection captured.');
+      if (ArchivePatternCopyGuard.isBlockedPatternText(text)) {
+        return null;
+      }
       final quote = text.length > 120 ? '${text.substring(0, 117)}…' : text;
       return BeliefEvidenceQuote(
         periodLabel: _monthYear(e.createdAt),
         quote: '"$quote"',
       );
-    }).toList();
+    }).whereType<BeliefEvidenceQuote>().toList();
   }
 
   static String _idFor(String statement) =>
@@ -308,10 +328,13 @@ class ArchiveBeliefsPresenter {
   static List<String> potentialSignalsFromEntry(JournalEntry entry) {
     final themes = entry.reflection.recurringThemes;
     if (themes.isNotEmpty) {
-      return themes.take(4).map(_titleCase).toList();
+      return ArchivePatternCopyGuard.filterCandidates(
+        themes.take(4).map(_titleCase),
+      );
     }
-    final obs = entry.reflection.concreteObservation.trim();
-    if (obs.length > 12) {
+    final obs = resolveEntryDisplayText(entry).text.trim();
+    if (obs.length > 12 &&
+        ArchivePatternCopyGuard.isValidPatternCandidate(obs)) {
       return [obs.length > 48 ? '${obs.substring(0, 45)}…' : obs];
     }
     return const [];

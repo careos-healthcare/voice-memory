@@ -1,6 +1,11 @@
+import 'archive_pattern_copy_guard.dart';
+
 /// Cleans and humanizes repeated phrase copy for archive repeat surfaces.
 abstract final class ArchiveRepeatPhraseSanitizer {
   ArchiveRepeatPhraseSanitizer._();
+
+  static bool _isBlocked(String phrase) =>
+      ArchivePatternCopyGuard.isBlockedPatternText(phrase);
 
   static const _trailingConnectors = {
     'and',
@@ -56,6 +61,7 @@ abstract final class ArchiveRepeatPhraseSanitizer {
   /// True when a phrase is too fragmentary for a summary line.
   static bool isLowQuality(String phrase) {
     final cleaned = sanitize(phrase);
+    if (_isBlocked(cleaned)) return true;
     if (cleaned.length < 5) return true;
 
     final words = cleaned.split(' ').where((w) => w.isNotEmpty).toList();
@@ -151,7 +157,7 @@ abstract final class ArchiveRepeatPhraseSanitizer {
   static String buildEvidenceLine(List<String> quotes) {
     final cleaned = quotes
         .map((q) => q.trim())
-        .where((q) => q.isNotEmpty)
+        .where((q) => q.isNotEmpty && !_isBlocked(q))
         .map((q) => q.replaceAll(RegExp(r'\s+'), ' '))
         .toList();
     if (cleaned.isEmpty) return '';

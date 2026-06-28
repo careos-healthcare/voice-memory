@@ -1,4 +1,5 @@
 import 'archive_insight.dart';
+import '../archive_evidence/archive_pattern_copy_guard.dart';
 
 /// Thresholds and rejection rules — no generic AI fluff.
 abstract class InsightQualityRules {
@@ -25,6 +26,12 @@ abstract class InsightQualityRules {
     final blob = '${insight.title} ${insight.summary}'.toLowerCase();
     for (final banned in rejectedGenericPhrases) {
       if (blob.contains(banned)) return false;
+    }
+    if (ArchivePatternCopyGuard.isBlockedPatternText(insight.title)) {
+      return false;
+    }
+    if (ArchivePatternCopyGuard.isBlockedPatternText(insight.summary)) {
+      return false;
     }
     return !_looksGeneric(blob);
   }

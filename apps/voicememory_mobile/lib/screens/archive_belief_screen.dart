@@ -3074,6 +3074,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     final belief = engine.build(_entries, tier: _archiveIntelligenceTier);
     final archiveHome = _archiveHomeSummary();
     final workspaceLayout = _archiveWorkspaceLayout();
+    final suppressFormingStackDuplicates =
+        archiveHome.title == ArchiveEvidenceThreshold.formingTitle;
     final widgets = <Widget>[
       QuickHelpButton(
         alignment: Alignment.centerRight,
@@ -3083,7 +3085,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ),
       const SizedBox(height: AppSpacing.sm),
       ..._archiveHomeCommandCenterWidgets(),
-      ..._buildThoughtMapPreviewWidgets(),
+      if (!suppressFormingStackDuplicates) ..._buildThoughtMapPreviewWidgets(),
     ];
     if (_signalArchiveSnapshot != null &&
         (_signalArchiveSnapshot!.hasActiveSignal ||
@@ -3098,7 +3100,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         widgets.add(const SizedBox(height: AppSpacing.lg));
       }
     }
-    widgets.addAll(_buildArchiveBeliefProofWidgets());
+    widgets.addAll(
+      suppressFormingStackDuplicates
+          ? const <Widget>[]
+          : _buildArchiveBeliefProofWidgets(),
+    );
     final beliefUpdatePayoff =
         ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 4
             ? BeliefUpdatePayoffEngine.build(entries: _entries)
