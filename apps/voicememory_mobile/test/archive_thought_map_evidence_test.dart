@@ -113,10 +113,43 @@ void main() {
         contains(ArchiveThoughtMapConnector.because),
       );
       expect(preview.savedMomentCount, 3);
+      expect(preview.stageLabel, isNotNull);
+      expect(preview.stageLabel, isNot(contains('%')));
       expect(
         ArchiveThoughtMapCopy.evidenceLine(preview.savedMomentCount),
         'Built from 3 saved moments',
       );
+    });
+
+    test('three unrelated entries stay hidden until threshold met', () {
+      final preview = engine.build([
+        _entry(
+          id: 'w',
+          transcript:
+              'Work deadline stress piled up and I stayed late finishing slides.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'h',
+          transcript:
+              'Health worry kept me up — doctor appointment next week feels heavy.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'f',
+          transcript:
+              'Family tension at dinner — partner and I talked past each other.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ]);
+      expect(preview.shouldShow, isFalse);
+    });
+
+    test('named thread nodes include at least two snippets total', () {
+      final preview = _preview();
+      final snippetCount = preview.nodes
+          .fold<int>(0, (sum, node) => sum + node.snippets.length);
+      expect(snippetCount, greaterThanOrEqualTo(2));
     });
 
     test('change line uses safe summary tag when available', () {

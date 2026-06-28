@@ -50,6 +50,14 @@ class ThirdEntryBeliefPayoffCard extends StatelessWidget {
             key: const Key('third_entry_belief_payoff_title'),
             style: titleStyle,
           ),
+          if (payoff.stageLabel case final stage?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              stage,
+              key: const Key('third_entry_belief_payoff_stage_label'),
+              style: labelStyle,
+            ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           Text(
             payoff.bodyIntro,

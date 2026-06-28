@@ -476,7 +476,7 @@ class _OhWowCandidate {
 extension ArchiveConfidenceBandCopy on ArchiveConfidenceBand {
   String get label => switch (this) {
     ArchiveConfidenceBand.earlySignal => 'Early signal',
-    ArchiveConfidenceBand.returningThread => 'Returning thread',
-    ArchiveConfidenceBand.strongerEvidence => 'Stronger evidence',
+    ArchiveConfidenceBand.returningThread => 'Repeated thread',
+    ArchiveConfidenceBand.strongerEvidence => 'Strong pattern',
   };
 }

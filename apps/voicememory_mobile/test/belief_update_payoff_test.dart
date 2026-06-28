@@ -54,32 +54,38 @@ JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
       ),
     );
 
-List<JournalEntry> _fourDistinctWorkEntries() => [
+List<JournalEntry> _threeRepeatCapacityEntries() => [
       _voiceEntry(
         id: 'e1',
         transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
+            'I had no capacity but I said yes again to the extra meeting today.',
+        createdAt: DateTime(2026, 6, 10, 12),
       ),
       _voiceEntry(
         id: 'e2',
         transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
+            'Same thing — said yes when I had no capacity for one more thing.',
+        createdAt: DateTime(2026, 6, 11, 12),
       ),
       _voiceEntry(
         id: 'e3',
         transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The deadline pressure returned, but I caught it earlier this time.',
+            'I said yes again even though I had no capacity for one more ask.',
         createdAt: DateTime(2026, 6, 12, 12),
       ),
     ];
+
+List<JournalEntry> _fourRepeatCapacityEntries() => [
+      ..._threeRepeatCapacityEntries(),
+      _voiceEntry(
+        id: 'e4',
+        transcript:
+            'The same yes-with-no-capacity pattern showed up again at work today.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourDistinctWorkEntries() => _fourRepeatCapacityEntries();
 
 const _bannedCertaintyWords = [
   'you always',
@@ -167,23 +173,7 @@ void main() {
       );
       expect(
         ThirdEntryBeliefPayoffEngine.build(
-          entries: [
-            _voiceEntry(
-              id: 'e1',
-              transcript:
-                  'I felt pressure before saying yes again even when I was tired.',
-            ),
-            _voiceEntry(
-              id: 'e2',
-              transcript:
-                  'Work kept pulling me back after I wanted to stop for the day.',
-            ),
-            _voiceEntry(
-              id: 'e3',
-              transcript:
-                  'I noticed the same hurry showing up before I answered anyone.',
-            ),
-          ],
+          entries: _threeRepeatCapacityEntries(),
         ),
         isNotNull,
       );
@@ -368,12 +358,12 @@ void main() {
       }
     }
 
-    testWidgets('three entries show belief-starting not belief-updated', (
+    testWidgets('three repeated entries show belief-starting via archive home nudge', (
       tester,
     ) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: _fourDistinctWorkEntries().sublist(0, 3),
+        entriesAfterSave: _threeRepeatCapacityEntries(),
       );
 
       expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);

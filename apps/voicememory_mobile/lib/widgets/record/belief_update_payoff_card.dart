@@ -65,6 +65,14 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
             key: const Key('belief_update_payoff_title'),
             style: titleStyle,
           ),
+          if (payoff.stageLabel case final stage?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              stage,
+              key: const Key('belief_update_payoff_stage_label'),
+              style: labelStyle,
+            ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           Text(
             adaptedBody,

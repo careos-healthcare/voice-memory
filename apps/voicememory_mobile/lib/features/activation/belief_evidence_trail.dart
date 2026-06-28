@@ -59,6 +59,7 @@ class BeliefEvidenceTrail {
     this.insufficientBody,
     this.footnoteLine,
     this.historyTimeline,
+    this.stageLabel,
   });
 
   final bool hasEnoughEvidence;
@@ -74,6 +75,7 @@ class BeliefEvidenceTrail {
   final String? insufficientBody;
   final String? footnoteLine;
   final BeliefHistoryTimeline? historyTimeline;
+  final String? stageLabel;
 
   factory BeliefEvidenceTrail.insufficient() {
     return const BeliefEvidenceTrail(
@@ -116,6 +118,7 @@ abstract final class BeliefEvidenceTrailEngine {
       primaryCta: BeliefEvidenceTrailCopy.primaryCta,
       footnoteLine: payoff.footnoteLine,
       historyTimeline: historyTimeline,
+      stageLabel: payoff.stageLabel,
     );
   }
 }

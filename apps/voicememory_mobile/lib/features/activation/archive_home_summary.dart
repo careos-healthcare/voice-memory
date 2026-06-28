@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_threshold.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../pressure_retention/shareable_archive_proof_engine.dart';
 import 'belief_update_payoff.dart';
@@ -161,6 +162,22 @@ abstract final class ArchiveHomeSummaryEngine {
 
     if (eligibleCount == 3) {
       final payoff = ThirdEntryBeliefPayoffEngine.build(entries: entries);
+      if (payoff == null) {
+        return ArchiveHomeSummary(
+          stage: ArchiveHomeStage.three,
+          title: ArchiveEvidenceThreshold.formingTitle,
+          body: ArchiveEvidenceThreshold.formingBody,
+          footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
+          currentBeliefLine: VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
+          whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
+          nextActionLine: VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
+          primaryCta: VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
+          secondaryCta: VisibleArchiveProofCopy.typeInsteadCta,
+          primaryAction: ArchiveHomeAction.addMoment,
+          secondaryAction: ArchiveHomeAction.typeInstead,
+          suppressDuplicatePayoffCards: true,
+        );
+      }
       return ArchiveHomeSummary(
         stage: ArchiveHomeStage.three,
         title: payoff?.title ?? VisibleArchiveProofCopy.threeEntryBeliefTitle,
@@ -184,6 +201,22 @@ abstract final class ArchiveHomeSummaryEngine {
 
     if (eligibleCount == 4) {
       final payoff = BeliefUpdatePayoffEngine.build(entries: entries);
+      if (payoff == null) {
+        return ArchiveHomeSummary(
+          stage: ArchiveHomeStage.four,
+          title: ArchiveEvidenceThreshold.formingTitle,
+          body: ArchiveEvidenceThreshold.formingBody,
+          footnoteLine: VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
+          currentBeliefLine: VisibleArchiveProofCopy.patternsEmptyPreviewBeliefRow,
+          whatChangedLine: VisibleArchiveProofCopy.patternsEmptyPreviewChangedRow,
+          nextActionLine: VisibleArchiveProofCopy.patternsMindMapFormingPrimaryCta,
+          primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
+          secondaryCta: VisibleArchiveProofCopy.typeInsteadCta,
+          primaryAction: ArchiveHomeAction.addMoment,
+          secondaryAction: ArchiveHomeAction.typeInstead,
+          suppressDuplicatePayoffCards: true,
+        );
+      }
       return ArchiveHomeSummary(
         stage: ArchiveHomeStage.four,
         title: payoff?.title ?? VisibleArchiveProofCopy.beliefUpdateTitle,

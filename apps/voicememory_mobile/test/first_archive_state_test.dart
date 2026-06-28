@@ -335,7 +335,7 @@ void main() {
         if (formingTitle.evaluate().isNotEmpty) {
           expect(
             find.textContaining(
-              'ArchiveMe needs a little more usable evidence',
+              'ArchiveMe needs more usable moments before it can name this thread',
             ),
             findsOneWidget,
           );
@@ -375,7 +375,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.textContaining('ArchiveMe needs a little more usable evidence'),
+        find.textContaining('ArchiveMe needs more usable moments before it can name this thread'),
         findsOneWidget,
       );
       expect(

@@ -71,8 +71,7 @@ abstract final class VisibleArchiveProofCopy {
   // Patterns tab — entries saved but no named belief yet.
   static const patternsMindMapFormingTitle = 'Your mind map is still forming';
   static const patternsMindMapFormingBody =
-      'ArchiveMe needs a little more usable evidence before it can name a '
-      'pattern.';
+      'ArchiveMe needs more usable moments before it can name this thread.';
   static const patternsMindMapFormingPrimaryCta = 'Save another moment';
 
   /// Legacy aliases — prefer [patternsMindMapEmpty*] for zero-entry Patterns UI.

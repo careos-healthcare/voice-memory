@@ -1,5 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_heuristics.dart';
+import '../archive_evidence/archive_evidence_threshold.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import '../voice_capture/voice_capture_copy.dart';
@@ -42,6 +44,7 @@ class ThirdEntryBeliefPayoff {
     this.thinEvidenceNote,
     this.thinEvidenceAction,
     this.footnoteLine,
+    this.stageLabel,
   });
 
   final String title;
@@ -54,6 +57,7 @@ class ThirdEntryBeliefPayoff {
   final String? thinEvidenceNote;
   final String? thinEvidenceAction;
   final String? footnoteLine;
+  final String? stageLabel;
 }
 
 /// Deterministic third-entry belief payoff — no invented diagnoses or certainty.
@@ -62,6 +66,8 @@ abstract final class ThirdEntryBeliefPayoffEngine {
 
   static const _maxSnippetLength = 80;
   static const _minDistinctSnippetLength = 36;
+
+  static const _heuristics = ArchiveEvidenceHeuristics();
 
   /// Returns null unless exactly three eligible entries exist.
   static ThirdEntryBeliefPayoff? build({
@@ -73,6 +79,13 @@ abstract final class ThirdEntryBeliefPayoffEngine {
 
     final evidenceRows = _evidenceRows(eligible);
     final evidenceThin = _isEvidenceThin(eligible, evidenceRows);
+    final analysis = _heuristics.analyze(entries);
+    final threshold = ArchiveEvidenceThreshold.evaluate(
+      entries,
+      analysis: analysis,
+      attachedSnippets: evidenceRows,
+    );
+    if (!threshold.canNameThread) return null;
 
     return ThirdEntryBeliefPayoff(
       title: ThirdEntryBeliefPayoffCopy.title,
@@ -89,6 +102,7 @@ abstract final class ThirdEntryBeliefPayoffEngine {
       footnoteLine: analysisSucceeded
           ? null
           : ThirdEntryBeliefPayoffCopy.analysisDeferredFootnote,
+      stageLabel: threshold.stage.label,
     );
   }
 

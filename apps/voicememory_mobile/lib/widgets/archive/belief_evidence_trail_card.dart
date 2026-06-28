@@ -102,6 +102,14 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
+          if (trail.stageLabel case final stage?) ...[
+            Text(
+              stage,
+              key: const Key('belief_evidence_trail_stage_label'),
+              style: labelStyle,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           Text(
             BeliefEvidenceTrailCopy.currentBeliefLabel,
             key: const Key('belief_evidence_trail_belief_label'),

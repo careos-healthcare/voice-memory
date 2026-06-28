@@ -2,6 +2,7 @@ import '../../models/journal_entry.dart';
 import '../../product/consumer_copy_guard.dart';
 import '../archive_evidence/archive_entry_signal_guard.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_threshold.dart';
 import 'daily_mirror_copy.dart';
 import 'daily_mirror_model.dart';
 import 'daily_mirror_stage.dart';
@@ -68,10 +69,14 @@ class DailyMirrorEngine {
 
     final loop = _groundedLoop(eligible);
     if (loop != null) {
+      final threshold = ArchiveEvidenceThreshold.evaluate(entries);
+      if (!threshold.canNameThread) {
+        return _weakStarted(eligible);
+      }
       if (count >= 4) {
         return loop;
       }
-      if (count >= 2 && count <= 3) {
+      if (count >= 3) {
         return loop;
       }
     }

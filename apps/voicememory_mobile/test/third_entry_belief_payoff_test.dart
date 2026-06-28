@@ -54,6 +54,27 @@ JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
       ),
     );
 
+List<JournalEntry> _threeRepeatCapacityEntries() => [
+      _voiceEntry(
+        id: 'e1',
+        transcript:
+            'I had no capacity but I said yes again to the extra meeting today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _voiceEntry(
+        id: 'e2',
+        transcript:
+            'Same thing — said yes when I had no capacity for one more thing.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _voiceEntry(
+        id: 'e3',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
 const _bannedOneEntryWords = [
   'loop',
   'repeat',
@@ -133,26 +154,7 @@ void main() {
 
     test('three usable entries shows cautious belief framing', () {
       final payoff = ThirdEntryBeliefPayoffEngine.build(
-        entries: [
-          _voiceEntry(
-            id: 'e1',
-            transcript:
-                'I felt pressure before saying yes again even when I was tired.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript:
-                'Work kept pulling me back after I wanted to stop for the day.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e3',
-            transcript:
-                'I noticed the same hurry showing up before I answered anyone.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
+        entries: _threeRepeatCapacityEntries(),
       );
 
       expect(payoff, isNotNull);
@@ -208,7 +210,7 @@ void main() {
 
     test('duplicate entries mark evidence as thin', () {
       const shared =
-          'I felt pressure before saying yes again even when I was tired.';
+          'I had no capacity but I said yes again to the extra meeting today.';
       final payoff = ThirdEntryBeliefPayoffEngine.build(
         entries: [
           _voiceEntry(id: 'e1', transcript: shared, createdAt: DateTime(2026, 6, 10)),
@@ -216,7 +218,7 @@ void main() {
           _voiceEntry(
             id: 'e3',
             transcript:
-                'I noticed the same hurry showing up before I answered anyone.',
+                'I said yes again even though I had no capacity for one more ask.',
             createdAt: DateTime(2026, 6, 12),
           ),
         ],
@@ -230,26 +232,7 @@ void main() {
 
     test('analysis unavailable still allows local third-entry payoff', () {
       final payoff = ThirdEntryBeliefPayoffEngine.build(
-        entries: [
-          _voiceEntry(
-            id: 'e1',
-            transcript:
-                'I felt pressure before saying yes again even when I was tired.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript:
-                'Work kept pulling me back after I wanted to stop for the day.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e3',
-            transcript:
-                'I noticed the same hurry showing up before I answered anyone.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
+        entries: _threeRepeatCapacityEntries(),
         analysisSucceeded: false,
       );
 
@@ -257,23 +240,7 @@ void main() {
       expect(payoff!.footnoteLine, contains('Deeper analysis can run later'));
       expect(
         AnalysisFallbackPayoffEngine.build(
-          entries: [
-            _voiceEntry(
-              id: 'e1',
-              transcript:
-                  'I felt pressure before saying yes again even when I was tired.',
-            ),
-            _voiceEntry(
-              id: 'e2',
-              transcript:
-                  'Work kept pulling me back after I wanted to stop for the day.',
-            ),
-            _voiceEntry(
-              id: 'e3',
-              transcript:
-                  'I noticed the same hurry showing up before I answered anyone.',
-            ),
-          ],
+          entries: _threeRepeatCapacityEntries(),
           analysisSucceeded: false,
         ),
         isNull,
@@ -418,31 +385,12 @@ void main() {
       _expectNoBannedCopy(_visibleText(tester), _bannedTwoEntryWords);
     });
 
-    testWidgets('three entries post-save nudges Archive Home instead of duplicate payoff', (
+    testWidgets('three repeated entries show payoff via archive home nudge', (
       tester,
     ) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript:
-                'I felt pressure before saying yes again even when I was tired.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript:
-                'Work kept pulling me back after I wanted to stop for the day.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e3',
-            transcript:
-                'I noticed the same hurry showing up before I answered anyone.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
+        entriesAfterSave: _threeRepeatCapacityEntries(),
       );
 
       expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsOneWidget);
@@ -461,26 +409,7 @@ void main() {
     ) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript:
-                'I felt pressure before saying yes again even when I was tired.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript:
-                'Work kept pulling me back after I wanted to stop for the day.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e3',
-            transcript:
-                'I noticed the same hurry showing up before I answered anyone.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
+        entriesAfterSave: _threeRepeatCapacityEntries(),
         lastCaptureAnalysisSucceeded: false,
       );
 

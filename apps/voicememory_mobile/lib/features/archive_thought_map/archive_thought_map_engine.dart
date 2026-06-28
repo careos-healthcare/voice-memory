@@ -4,6 +4,7 @@ import '../archive_evidence/archive_belief_thread_engine.dart';
 import '../archive_evidence/archive_belief_thread_model.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_heuristics.dart';
+import '../archive_evidence/archive_evidence_threshold.dart';
 import '../archive_evidence/archive_intelligence_tier.dart';
 import '../first_session/first_session_pattern_engine.dart';
 import 'archive_thought_map_copy.dart';
@@ -35,13 +36,27 @@ class ArchiveThoughtMapEngine {
     }
 
     final analysis = _heuristics.analyze(entries, tier: tier);
-    final savedCount = ArchiveEvidenceGuard.eligibleReflectionCount(entries);
     final nodes = _buildNodes(thread, analysis, entries);
-    if (nodes.length < 3) {
+    final attachedSnippets = nodes
+        .expand((node) => node.snippets.map((s) => s.excerpt))
+        .toList();
+    final threshold = ArchiveEvidenceThreshold.evaluate(
+      entries,
+      suggestionId: thread.suggestionId,
+      analysis: analysis,
+      attachedSnippets: attachedSnippets,
+    );
+    if (!threshold.canNameThread) {
       return ArchiveThoughtMapPreview.hidden;
     }
 
-    final capped = nodes.take(5).toList();
+    final evidenceNodes = nodes.where((n) => n.snippets.isNotEmpty).toList();
+    if (evidenceNodes.length < 3) {
+      return ArchiveThoughtMapPreview.hidden;
+    }
+
+    final savedCount = ArchiveEvidenceThreshold.meaningfulEntryCount(entries);
+    final capped = evidenceNodes.take(5).toList();
     final generatedTitle = _threadTitle(thread);
     return ArchiveThoughtMapPreview(
       shouldShow: true,
@@ -54,6 +69,7 @@ class ArchiveThoughtMapEngine {
       savedMomentCount: savedCount,
       changeLine: _changeLine(thread.whatChanged, analysis),
       suggestionId: thread.suggestionId,
+      stageLabel: threshold.stage.label,
     );
   }
 

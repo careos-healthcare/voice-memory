@@ -1,6 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_heuristics.dart';
+import '../archive_evidence/archive_evidence_threshold.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import '../voice_capture/voice_capture_copy.dart';
@@ -42,6 +43,7 @@ class BeliefUpdatePayoff {
     required this.primaryCta,
     required this.secondaryCta,
     this.footnoteLine,
+    this.stageLabel,
   });
 
   final String title;
@@ -54,6 +56,7 @@ class BeliefUpdatePayoff {
   final String primaryCta;
   final String secondaryCta;
   final String? footnoteLine;
+  final String? stageLabel;
 }
 
 /// Deterministic belief-update payoff — grounded in saved words only.
@@ -78,6 +81,13 @@ abstract final class BeliefUpdatePayoffEngine {
 
     final evidenceRows = _evidenceRows(eligible);
     if (evidenceRows.length < 2) return null;
+
+    final threshold = ArchiveEvidenceThreshold.evaluate(
+      entries,
+      analysis: analysis,
+      attachedSnippets: evidenceRows,
+    );
+    if (!threshold.canNameThread) return null;
 
     final evidenceWeak = _isEvidenceWeak(eligible, evidenceRows);
     final beliefChanged = _beliefChanged(
@@ -105,6 +115,7 @@ abstract final class BeliefUpdatePayoffEngine {
       secondaryCta: BeliefUpdatePayoffCopy.secondaryCta,
       footnoteLine:
           analysisSucceeded ? null : BeliefUpdatePayoffCopy.analysisDeferredFootnote,
+      stageLabel: threshold.stage.label,
     );
   }
 

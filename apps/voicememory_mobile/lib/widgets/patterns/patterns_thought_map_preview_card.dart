@@ -156,6 +156,17 @@ class _PatternsThoughtMapPreviewCardState
               color: AppColors.textSecondary,
             ),
           ),
+          if (preview.stageLabel case final stage?) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              '${ArchiveThoughtMapCopy.stageLabelPrefix} $stage',
+              key: const Key('patterns_thought_map_stage_label'),
+              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           if (_renaming) ...[
             TextField(

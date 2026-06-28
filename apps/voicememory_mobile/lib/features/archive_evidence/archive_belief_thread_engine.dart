@@ -1,12 +1,13 @@
 import '../../config/archive_differentiation_preview.dart';
 import '../../models/journal_entry.dart';
 import '../activation/first_three_session_gates.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
 import '../first_session/first_session_pattern_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import 'archive_belief_thread_copy.dart';
 import 'archive_belief_thread_model.dart';
+import 'archive_evidence_guard.dart';
 import 'archive_evidence_heuristics.dart';
+import 'archive_evidence_threshold.dart';
 import 'archive_intelligence_tier.dart';
 
 /// Builds the archive belief thread card from local journal evidence only.
@@ -52,6 +53,16 @@ class ArchiveBeliefThreadEngine {
         ? analysis.beliefLine
         : _beliefFallback(comparison, eligible.last);
 
+    final threshold = ArchiveEvidenceThreshold.evaluate(
+      entries,
+      suggestionId: _suggestionId(belief),
+      analysis: analysis,
+      attachedSnippets: analysis.evidenceSnippets,
+    );
+    if (!threshold.canNameThread) {
+      return ArchiveBeliefThread.insufficient;
+    }
+
     final whatChanged = analysis.whatChangedLine?.trim().isNotEmpty == true
         ? analysis.whatChangedLine!.trim()
         : (comparison.whatChanged?.trim().isNotEmpty == true
@@ -83,7 +94,16 @@ class ArchiveBeliefThreadEngine {
           ? analysis.whatFadedLine
           : null,
       confidenceBand: analysis.confidenceBand,
-      evidenceSnippets: analysis.evidenceSnippets,
+      evidenceSnippets: analysis.evidenceSnippets.isNotEmpty
+          ? analysis.evidenceSnippets
+          : ArchiveEvidenceThreshold.meaningfulEntries(entries)
+              .take(3)
+              .map((e) {
+                final t = e.transcript.trim();
+                return t.length <= 96 ? t : '${t.substring(0, 95)}…';
+              })
+              .where((s) => s.length >= ArchiveEvidenceThreshold.minSnippetChars)
+              .toList(),
       isProDepth: tier == ArchiveIntelligenceTier.proMax,
     );
   }

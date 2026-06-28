@@ -5,6 +5,7 @@ abstract final class ArchiveThoughtMapCopy {
   ArchiveThoughtMapCopy._();
 
   static const sectionTitle = 'Thought map preview';
+  static const stageLabelPrefix = 'Signal:';
 
   static const triggerLabel = 'Trigger';
   static const thoughtLabel = 'Thought';
@@ -84,6 +85,7 @@ abstract final class ArchiveThoughtMapCopy {
 
   static List<String> get allVisibleStrings => [
         sectionTitle,
+        stageLabelPrefix,
         triggerLabel,
         thoughtLabel,
         behaviourLabel,

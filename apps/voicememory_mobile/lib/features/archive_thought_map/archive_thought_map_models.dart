@@ -58,6 +58,7 @@ class ArchiveThoughtMapPreview {
     required this.savedMomentCount,
     required this.suggestionId,
     this.changeLine,
+    this.stageLabel,
   });
 
   final bool shouldShow;
@@ -66,6 +67,7 @@ class ArchiveThoughtMapPreview {
   final List<ArchiveThoughtMapConnector> connectors;
   final int savedMomentCount;
   final String? changeLine;
+  final String? stageLabel;
   final String suggestionId;
 
   static const hidden = ArchiveThoughtMapPreview(
