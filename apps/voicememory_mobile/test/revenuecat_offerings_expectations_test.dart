@@ -63,6 +63,13 @@ void main() {
       );
     });
 
+    test('paywall load always logs final purchase availability decision', () {
+      final paywallSource = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      expect(paywallSource, contains('RevenueCatOfferingsDebugLog.paywallLoadStarted'));
+      expect(paywallSource, contains('rc.fetchOfferings()'));
+      expect(paywallSource, contains('RevenueCatOfferingsDebugLog.paywallLoadResult'));
+    });
+
     test('paywall restore path does not gate on package availability', () {
       final paywallSource = File('lib/screens/paywall_screen.dart').readAsStringSync();
       final restoreStart = paywallSource.indexOf('Future<void> _restore()');
@@ -81,7 +88,10 @@ void main() {
       final logSource = File(
         'lib/billing/revenuecat_offerings_debug_log.dart',
       ).readAsStringSync();
+      expect(logSource, contains('ARCHIVEME_RC_PAYWALL_LOAD'));
+      expect(logSource, contains('ARCHIVEME_RC_FETCH'));
       expect(logSource, contains('ARCHIVEME_RC_OFFERINGS'));
+      expect(logSource, contains('ARCHIVEME_RC_OFFERING_IDS'));
       expect(logSource, contains('ARCHIVEME_RC_PACKAGE'));
       expect(logSource, contains('ARCHIVEME_RC_ENTITLEMENTS'));
       expect(logSource, contains('ARCHIVEME_RC_PAYWALL'));

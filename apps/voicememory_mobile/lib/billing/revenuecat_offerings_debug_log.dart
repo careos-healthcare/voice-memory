@@ -7,13 +7,57 @@ import 'revenuecat_service.dart';
 ///
 /// Never shown in consumer UI — grep device logs for `ARCHIVEME_RC_`.
 abstract final class RevenueCatOfferingsDebugLog {
+  static void _log(String message) {
+    if (!kDebugMode) return;
+    debugPrint(message);
+  }
+
+  static void paywallLoadStarted({
+    required bool billingConfigured,
+    required bool appServicesInitialized,
+    required bool screenshotMode,
+  }) {
+    _log(
+      'ARCHIVEME_RC_PAYWALL_LOAD started billingConfigured=$billingConfigured '
+      'appServicesInitialized=$appServicesInitialized screenshotMode=$screenshotMode',
+    );
+  }
+
+  static void fetchOfferingsStarted({required bool billingConfigured}) {
+    _log(
+      'ARCHIVEME_RC_FETCH started billingConfigured=$billingConfigured',
+    );
+  }
+
+  static void fetchOfferingsFinished({
+    required Offerings? offerings,
+    String? error,
+  }) {
+    if (offerings == null) {
+      _log(
+        'ARCHIVEME_RC_FETCH finished loaded=false error=${error ?? 'null_offerings'}',
+      );
+      offeringsSnapshot(offerings: null, error: error);
+      return;
+    }
+    _log(
+      'ARCHIVEME_RC_FETCH finished loaded=true offeringCount=${offerings.all.length} '
+      'currentOfferingId=${offerings.current?.identifier ?? 'null'} '
+      'packageCount=${offerings.current?.availablePackages.length ?? 0}',
+    );
+    offeringsSnapshot(offerings: offerings, error: error);
+  }
+
+  static void paywallLoadEarlyExit({required String reason}) {
+    _log('ARCHIVEME_RC_PAYWALL_LOAD earlyExit reason=$reason');
+  }
+
   static void offeringsSnapshot({
     required Offerings? offerings,
     String? error,
   }) {
-    if (!kDebugMode) return;
     if (offerings == null) {
-      debugPrint(
+      _log(
         'ARCHIVEME_RC_OFFERINGS loaded=false error=${error ?? 'null_offerings'}',
       );
       return;
@@ -23,19 +67,20 @@ abstract final class RevenueCatOfferingsDebugLog {
     final current = offerings.current;
     final packages = current?.availablePackages ?? const <Package>[];
 
-    debugPrint(
+    _log(
       'ARCHIVEME_RC_OFFERINGS loaded=true offeringCount=${all.length} '
-      'requested=current currentOfferingId=${current?.identifier ?? 'null'}',
+      'requested=current currentOfferingId=${current?.identifier ?? 'null'} '
+      'packageCount=${packages.length}',
     );
 
     if (all.isNotEmpty) {
-      debugPrint(
-        'ARCHIVEME_RC_OFFERING_IDS ${all.keys.join(',')}',
-      );
+      _log('ARCHIVEME_RC_OFFERING_IDS ${all.keys.join(',')}');
+    } else {
+      _log('ARCHIVEME_RC_OFFERING_IDS none');
     }
 
     if (packages.isEmpty) {
-      debugPrint(
+      _log(
         'ARCHIVEME_RC_PACKAGES currentOffering=${current?.identifier ?? 'null'} '
         'packageCount=0 '
         'hint=Mark an offering Current in RevenueCat and attach monthly/annual packages',
@@ -44,7 +89,7 @@ abstract final class RevenueCatOfferingsDebugLog {
     }
 
     for (final pkg in packages) {
-      debugPrint(
+      _log(
         'ARCHIVEME_RC_PACKAGE '
         'offering=${current?.identifier} '
         'packageId=${pkg.identifier} '
@@ -58,14 +103,12 @@ abstract final class RevenueCatOfferingsDebugLog {
     required CustomerInfo info,
     required String source,
   }) {
-    if (!kDebugMode) return;
-
     final activeKeys = info.entitlements.active.keys.toList()..sort();
     final allKeys = info.entitlements.all.keys.toList()..sort();
     final pro = info.entitlements.active[RevenueCatService.proEntitlementId];
     final proActive = pro != null && pro.isActive;
 
-    debugPrint(
+    _log(
       'ARCHIVEME_RC_ENTITLEMENTS source=$source '
       'expected=${RevenueCatService.proEntitlementId} '
       'proActive=$proActive '
@@ -84,21 +127,20 @@ abstract final class RevenueCatOfferingsDebugLog {
     required bool annualPackageFound,
     required bool purchasePlansAvailable,
     required bool showingUnavailable,
+    required String reason,
     String? error,
   }) {
-    if (!kDebugMode) return;
-
-    debugPrint(
+    _log(
       'ARCHIVEME_RC_PAYWALL billingConfigured=$billingConfigured '
       'offeringsLoaded=$offeringsLoaded offeringCount=$offeringCount '
       'currentOfferingId=${currentOfferingId ?? 'null'} packageCount=$packageCount '
       'monthlyPackageFound=$monthlyPackageFound annualPackageFound=$annualPackageFound '
       'purchasePlansAvailable=$purchasePlansAvailable showingUnavailable=$showingUnavailable '
-      'error=${error ?? 'none'}',
+      'reason=$reason error=${error ?? 'none'}',
     );
 
     if (billingConfigured && showingUnavailable) {
-      debugPrint(
+      _log(
         'ARCHIVEME_RC_PAYWALL_UNAVAILABLE '
         'billing is configured but purchase UI is unavailable — '
         'check RevenueCat Current offering, package types (monthly/annual), '

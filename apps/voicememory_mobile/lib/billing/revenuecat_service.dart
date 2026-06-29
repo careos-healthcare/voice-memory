@@ -171,33 +171,42 @@ class RevenueCatService implements StoreBillingPort {
       'RevenueCat diagnostics: configured=$_configured offerings=${all.length} '
       'packages=${packages.length} current=${current?.identifier}',
     );
-
-    if (kDebugMode) {
-      RevenueCatOfferingsDebugLog.offeringsSnapshot(
-        offerings: offerings,
-        error: error,
-      );
-    }
   }
 
   Future<Offerings?> fetchOfferings() async {
     if (!_configured) {
-      _recordOfferings(null);
+      RevenueCatOfferingsDebugLog.fetchOfferingsStarted(
+        billingConfigured: false,
+      );
+      _recordOfferings(null, error: 'revenuecat_not_configured');
+      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
+        offerings: null,
+        error: 'revenuecat_not_configured',
+      );
       return null;
     }
+    RevenueCatOfferingsDebugLog.fetchOfferingsStarted(billingConfigured: true);
     try {
       final offerings = await withBillingTimeout(
         Purchases.getOfferings(),
         label: 'fetchOfferings',
       );
-      _recordOfferings(
-        offerings,
-        error: offerings == null ? 'fetchOfferings timeout or null response' : null,
+      final fetchError = offerings == null
+          ? 'fetchOfferings timeout or null response'
+          : null;
+      _recordOfferings(offerings, error: fetchError);
+      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
+        offerings: offerings,
+        error: fetchError,
       );
       return offerings;
     } catch (e) {
       debugPrint('RevenueCat fetchOfferings: $e');
       _recordOfferings(null, error: e.toString());
+      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
+        offerings: null,
+        error: e.toString(),
+      );
       return null;
     }
   }
