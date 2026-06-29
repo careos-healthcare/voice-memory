@@ -188,12 +188,10 @@ abstract final class WeeklyArchiveReviewEngine {
 
     final belief = weekAnalysis.beliefLine.trim();
     if (belief.contains('say yes') || belief.contains('capacity')) {
-      return 'Pressure around saying yes may be the strongest thread in your '
-          'recent moments.';
+      return VisibleArchiveProofCopy.weeklyArchiveReviewStrongestThreadSayYes;
     }
     if (belief.contains('behind')) {
-      return 'Pressure around not falling behind may be the strongest thread '
-          'in your recent moments.';
+      return VisibleArchiveProofCopy.weeklyArchiveReviewStrongestThreadBehind;
     }
     if (belief.startsWith('You may ')) {
       final rest = belief.substring(8).replaceAll(RegExp(r'\.$'), '');

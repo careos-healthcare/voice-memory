@@ -185,12 +185,10 @@ abstract final class BeliefUpdatePayoffEngine {
 
     final belief = analysis.beliefLine.trim();
     if (belief.contains('say yes') || belief.contains('capacity')) {
-      return 'Your archive is beginning to associate this with pressure '
-          'around saying yes.';
+      return VisibleArchiveProofCopy.beliefUpdateSayYesBelief;
     }
     if (belief.contains('behind')) {
-      return 'Your archive is beginning to associate this with pressure '
-          'around not falling behind.';
+      return VisibleArchiveProofCopy.beliefUpdateBehindBelief;
     }
     if (belief.startsWith('You may ')) {
       final rest = belief.substring(8).replaceAll(RegExp(r'\.$'), '');

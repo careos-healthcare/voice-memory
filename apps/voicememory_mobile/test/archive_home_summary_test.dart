@@ -142,7 +142,7 @@ void main() {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
       expect(summary.stage, ArchiveHomeStage.three);
       expect(summary.title, 'ArchiveMe is starting to form a belief.');
-      expect(summary.body, contains('not a conclusion'));
+      expect(summary.body, contains('saved words suggest so far'));
       expect(
         summary.currentBeliefLine,
         VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,
@@ -156,7 +156,7 @@ void main() {
     test('4 entries shows belief-updated copy and add moment primary action', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(4));
       expect(summary.stage, ArchiveHomeStage.four);
-      expect(summary.title, 'Your archive updated its belief.');
+      expect(summary.title, VisibleArchiveProofCopy.beliefUpdateTitle);
       expect(summary.primaryCta, 'Add one more moment');
       expect(summary.primaryAction, ArchiveHomeAction.addMoment);
       expect(summary.secondaryCta, 'View evidence');
@@ -214,7 +214,7 @@ void main() {
         _expectNoBannedCopy(visible);
       }
       final three = ArchiveHomeSummaryEngine.build(entries: _entries(3));
-      expect(three.body.toLowerCase(), contains('not a conclusion'));
+      expect(three.body.toLowerCase(), contains('saved words suggest so far'));
     });
   });
 
@@ -240,7 +240,7 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('archive_home_summary_card')), findsOneWidget);
-      expect(find.text('Current belief'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.archiveHomeBeliefLabel), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence from your archive'), findsOneWidget);
       expect(find.text('What to add next'), findsOneWidget);

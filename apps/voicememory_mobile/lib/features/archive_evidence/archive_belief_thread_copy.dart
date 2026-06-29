@@ -4,7 +4,7 @@ abstract class ArchiveBeliefThreadCopy {
 
   static const String threadTitle =
       'Your archive is starting to show a thread.';
-  static const String currentBeliefLabel = 'Current belief';
+  static const String currentBeliefLabel = 'What this may be pointing to';
   static const String evidenceLabel = 'Evidence';
   static const String whatChangedLabel = 'What changed';
   static const String whatToTestLabel = 'What to test';

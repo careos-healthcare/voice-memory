@@ -141,11 +141,11 @@ abstract final class VisibleArchiveProofCopy {
       'ArchiveMe is starting to form a belief.';
 
   static const threeEntryBeliefCurrentBeliefLine =
-      'Still forming — not a conclusion yet';
+      'Still forming — a draft pattern, not a final answer';
 
   static const threeEntryBeliefBodyIntro =
-      'This is not a conclusion yet. It is the first version of what your '
-      'archive can compare.';
+      'This is only what your saved words suggest so far. '
+      'ArchiveMe will keep comparing as you add moments.';
 
   static const threeEntryBeliefBodySource =
       'ArchiveMe is using your saved words, not guessing.';
@@ -163,7 +163,7 @@ abstract final class VisibleArchiveProofCopy {
   static const threeEntryBeliefViewArchiveCta = firstSaveViewArchiveCta;
 
   // Four-plus entry belief update — cautious evolution hook.
-  static const beliefUpdateTitle = 'Your archive updated its belief.';
+  static const beliefUpdateTitle = 'Your archive noticed something.';
 
   static const beliefUpdateBodyChanged =
       'Something shifted in your saved words.';
@@ -171,7 +171,8 @@ abstract final class VisibleArchiveProofCopy {
   static const beliefUpdateBodyStillBuilding =
       'Your archive is still building evidence.';
 
-  static const beliefUpdateCurrentBeliefLabel = 'Current belief';
+  static const beliefUpdateCurrentBeliefLabel =
+      'What this may be pointing to';
 
   static const beliefUpdateEvidenceLabel = 'Evidence';
 
@@ -191,7 +192,13 @@ abstract final class VisibleArchiveProofCopy {
       'saved moments.';
 
   static const beliefUpdateWorkBelief =
-      'Your archive is beginning to associate this with pressure around work.';
+      'Your archive is starting to notice pressure around work.';
+
+  static const beliefUpdateSayYesBelief =
+      'Your archive is starting to connect pressure with agreeing too quickly.';
+
+  static const beliefUpdateBehindBelief =
+      'Your archive is starting to connect pressure with not falling behind.';
 
   static const beliefUpdatePrimaryCta = firstSavePrimaryCta;
 
@@ -200,7 +207,8 @@ abstract final class VisibleArchiveProofCopy {
   // Belief evidence drilldown — proof trail behind belief updates.
   static const beliefEvidenceTrailTitle = 'Evidence behind this belief';
 
-  static const beliefEvidenceNotConclusion = 'This is not a conclusion.';
+  static const beliefEvidenceNotConclusion =
+      'This is only what your saved words suggest so far.';
 
   static const beliefEvidenceSourceLine =
       'ArchiveMe is using your saved words, not guessing.';
@@ -208,7 +216,8 @@ abstract final class VisibleArchiveProofCopy {
   static const beliefEvidenceInsufficientBody =
       'Your archive needs more moments before it can show an evidence trail.';
 
-  static const beliefEvidenceCurrentBeliefLabel = 'Current belief';
+  static const beliefEvidenceCurrentBeliefLabel =
+      'What this may be pointing to';
 
   static const beliefEvidenceWhatChangedLabel = 'What changed';
 
@@ -243,7 +252,8 @@ abstract final class VisibleArchiveProofCopy {
 
   static const beliefHistoryEarlierBeliefLabel = 'Earlier belief';
 
-  static const beliefHistoryCurrentBeliefLabel = 'Current belief';
+  static const beliefHistoryCurrentBeliefLabel =
+      'What this may be pointing to';
 
   static const beliefHistoryWhatChangedLabel = 'What changed';
 
@@ -267,7 +277,8 @@ abstract final class VisibleArchiveProofCopy {
   static const weeklyArchiveReviewSubtitle =
       'What your saved words are starting to show.';
 
-  static const weeklyArchiveReviewNotConclusion = 'This is not a conclusion.';
+  static const weeklyArchiveReviewNotConclusion =
+      'This is a draft pattern, not a final answer.';
 
   static const weeklyArchiveReviewSourceLine =
       'ArchiveMe is using your saved words, not guessing.';
@@ -301,10 +312,16 @@ abstract final class VisibleArchiveProofCopy {
   static const weeklyArchiveReviewViewFullCta = 'View review';
 
   static const weeklyArchiveReviewStrongestThreadWork =
-      'Pressure around work may be the strongest thread in your recent moments.';
+      'Pressure at work keeps showing up in your recent moments.';
 
   static const weeklyArchiveReviewStrongestThreadDefault =
-      'Similar pressure may be the strongest thread in your recent moments.';
+      'Similar pressure keeps returning in your recent moments.';
+
+  static const weeklyArchiveReviewStrongestThreadSayYes =
+      'Saying yes when part of you meant no.';
+
+  static const weeklyArchiveReviewStrongestThreadBehind =
+      'Trying not to fall behind may be doing more of the driving.';
 
   static const weeklyArchiveReviewWhatChangedDefault =
       'Your latest moments may be widening what your archive can compare.';
@@ -377,7 +394,7 @@ abstract final class VisibleArchiveProofCopy {
 
   static const archiveHomeOneTitle = 'Your archive has one piece of evidence.';
 
-  static const archiveHomeBeliefLabel = 'Current belief';
+  static const archiveHomeBeliefLabel = 'Pattern your archive is watching';
 
   static const archiveHomeWhatChangedLabel = 'What changed';
 
@@ -413,7 +430,7 @@ abstract final class VisibleArchiveProofCopy {
   static const returningUserThreeBody =
       'Add one more moment to test whether the evidence holds.';
 
-  static const returningUserFourTitle = 'Your archive updated its belief.';
+  static const returningUserFourTitle = 'Your archive noticed something.';
 
   static const returningUserFourBody =
       'Review what changed, then add another moment when it shows up again.';
@@ -455,7 +472,7 @@ abstract final class VisibleArchiveProofCopy {
       'Add the moment that would change the evidence.';
 
   static const nextMomentFourBody =
-      'Your archive updated its belief. '
+      'Your archive noticed something. '
       'Save the next moment when this shows up in a new context.';
 
   static const nextMomentFivePlusTitle = 'Help your archive review the week.';
@@ -506,7 +523,8 @@ abstract final class VisibleArchiveProofCopy {
   static const insightFeedbackWhySource =
       'ArchiveMe is using your saved words, not guessing.';
 
-  static const insightFeedbackWhyNotConclusion = 'This is not a conclusion.';
+  static const insightFeedbackWhyNotConclusion =
+      'This is only what your saved words suggest so far.';
 
   static const insightFeedbackWhyHide =
       'You can hide this if it does not feel useful.';

@@ -256,7 +256,7 @@ void main() {
         }
         if (count == 3) {
           expect(layout.evidenceQuality.show, isTrue);
-          expect(home.body.toLowerCase(), contains('not a conclusion'));
+          expect(home.body.toLowerCase(), contains('saved words suggest so far'));
         }
         expect(home.title.toLowerCase(), isNot(contains('voicememory')));
       }

@@ -179,7 +179,7 @@ void main() {
       );
 
       expect(payoff!.footnoteLine, isNotNull);
-      expect(payoff.footnoteLine, contains('Deeper analysis can run later'));
+      expect(payoff.footnoteLine, contains('This moment is saved'));
     });
   });
 

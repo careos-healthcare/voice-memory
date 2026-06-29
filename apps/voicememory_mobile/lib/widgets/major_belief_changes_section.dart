@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../design/warm_archive_copy.dart';
 import '../features/archive_evidence/archive_evidence.dart';
+import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/belief_shift/belief_shift_engine.dart';
 import '../features/belief_shift/belief_shift_models.dart';
 import '../models/journal_entry.dart';
@@ -137,9 +138,9 @@ class _BeliefShiftCard extends StatelessWidget {
               const SizedBox(height: 12),
               const Icon(Icons.arrow_downward, size: 18, color: AppTheme.muted),
               const SizedBox(height: 12),
-              const Text(
-                'Current belief',
-                style: TextStyle(
+              Text(
+                VisibleArchiveProofCopy.beliefHistoryCurrentBeliefLabel,
+                style: const TextStyle(
                   fontSize: 10,
                   letterSpacing: 0.6,
                   color: AppTheme.muted,

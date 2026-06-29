@@ -278,7 +278,7 @@ void main() {
       );
 
       expect(payoff, isNotNull);
-      expect(payoff!.footnoteLine, contains('Deeper analysis can run later'));
+      expect(payoff!.footnoteLine, contains('This moment is saved'));
       expect(
         AnalysisFallbackPayoffEngine.build(
           entries: _fourDistinctWorkEntries(),
@@ -325,8 +325,8 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('belief_update_payoff_card')), findsOneWidget);
-      expect(find.text('Your archive updated its belief.'), findsOneWidget);
-      expect(find.text('Current belief'), findsOneWidget);
+      expect(find.text(BeliefUpdatePayoffCopy.title), findsOneWidget);
+      expect(find.text(BeliefUpdatePayoffCopy.currentBeliefLabel), findsOneWidget);
       expect(find.text('Evidence'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);

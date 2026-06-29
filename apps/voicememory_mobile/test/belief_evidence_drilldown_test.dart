@@ -131,7 +131,7 @@ void main() {
     test('four usable entries includes belief, evidence, and source copy', () {
       final trail = _trailFromEntries(_fourDistinctWorkEntries());
       expect(trail.hasEnoughEvidence, isTrue);
-      expect(trail.notConclusionLine, 'This is not a conclusion.');
+      expect(trail.notConclusionLine, VisibleArchiveProofCopy.beliefEvidenceNotConclusion);
       expect(
         trail.sourceLine,
         'ArchiveMe is using your saved words, not guessing.',
@@ -212,12 +212,12 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('belief_evidence_trail_card')), findsOneWidget);
-      expect(find.text('This is not a conclusion.'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.beliefEvidenceNotConclusion), findsOneWidget);
       expect(
         find.text('ArchiveMe is using your saved words, not guessing.'),
         findsOneWidget,
       );
-      expect(find.text('Current belief'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.beliefEvidenceCurrentBeliefLabel), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence from your archive'), findsOneWidget);
       expect(find.byKey(const Key('belief_evidence_trail_add_next_label')), findsOneWidget);
@@ -265,7 +265,7 @@ void main() {
 
       expect(find.byKey(const Key('belief_evidence_screen_title')), findsOneWidget);
       expect(find.text('Evidence behind this belief'), findsWidgets);
-      expect(find.text('Current belief'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.beliefEvidenceCurrentBeliefLabel), findsOneWidget);
       expect(find.byKey(const Key('belief_evidence_trail_add_cta')), findsOneWidget);
       _expectNoBannedCopy(_visibleText(tester));
     });

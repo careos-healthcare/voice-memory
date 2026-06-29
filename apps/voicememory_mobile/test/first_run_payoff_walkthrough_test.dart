@@ -230,7 +230,7 @@ void main() {
 
       expect(home.stage, ArchiveHomeStage.three);
       expect(home.title, VisibleArchiveProofCopy.threeEntryBeliefTitle);
-      expect(home.body.toLowerCase(), contains('not a conclusion'));
+      expect(home.body.toLowerCase(), contains('saved words suggest so far'));
       expect(
         home.currentBeliefLine,
         VisibleArchiveProofCopy.threeEntryBeliefCurrentBeliefLine,

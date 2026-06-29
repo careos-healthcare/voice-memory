@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/activation/belief_evidence_trail.dart';
 import 'package:voicememory_mobile/features/activation/weekly_archive_review.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/weekly_archive_review_screen.dart';
@@ -154,7 +155,7 @@ void main() {
       expect(review.whatChangedLine, isNotEmpty);
       expect(review.evidenceRows.length, greaterThanOrEqualTo(2));
       expect(review.nextActionLine, isNotEmpty);
-      expect(review.notConclusionLine, 'This is not a conclusion.');
+      expect(review.notConclusionLine, VisibleArchiveProofCopy.weeklyArchiveReviewNotConclusion);
       expect(
         review.sourceLine,
         'ArchiveMe is using your saved words, not guessing.',

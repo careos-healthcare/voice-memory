@@ -137,7 +137,7 @@ void main() {
     test('4 entries shows belief-updated copy and add moment primary CTA', () {
       final model = ReturningUserTodayEngine.build(entries: _entries(4));
       expect(model!.stage, ReturningUserTodayStage.four);
-      expect(model.title, 'Your archive updated its belief.');
+      expect(model.title, VisibleArchiveProofCopy.returningUserFourTitle);
       expect(model.primaryCta, 'Add one more moment');
       expect(model.primaryAction, ReturningUserTodayAction.addMoment);
       expect(model.secondaryCta, 'View evidence');

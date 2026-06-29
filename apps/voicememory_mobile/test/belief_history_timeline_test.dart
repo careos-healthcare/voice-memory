@@ -240,7 +240,7 @@ void main() {
       expect(find.byKey(const Key('belief_history_timeline_card')), findsOneWidget);
       expect(find.text('Your archive belief changed.'), findsOneWidget);
       expect(find.text('Earlier belief'), findsOneWidget);
-      expect(find.text('Current belief'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.beliefHistoryCurrentBeliefLabel), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence that changed it'), findsOneWidget);
       expect(find.byKey(const Key('belief_history_timeline_evidence_0')), findsOneWidget);

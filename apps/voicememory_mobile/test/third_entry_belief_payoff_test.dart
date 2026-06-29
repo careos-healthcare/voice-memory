@@ -160,7 +160,7 @@ void main() {
 
       expect(payoff, isNotNull);
       expect(payoff!.title, VisibleArchiveProofCopy.threeEntryBeliefTitle);
-      expect(payoff.bodyIntro, contains('not a conclusion yet'));
+      expect(payoff.bodyIntro, contains('saved words suggest so far'));
       expect(payoff.bodySource, contains('saved words'));
       expect(payoff.evidenceRows.length, 3);
       expect(payoff.evidenceThin, isFalse);
@@ -238,7 +238,7 @@ void main() {
       );
 
       expect(payoff, isNotNull);
-      expect(payoff!.footnoteLine, contains('Deeper analysis can run later'));
+      expect(payoff!.footnoteLine, contains('This moment is saved'));
       expect(
         AnalysisFallbackPayoffEngine.build(
           entries: _threeRepeatCapacityEntries(),
@@ -285,8 +285,8 @@ void main() {
         find.text('ArchiveMe is starting to form a belief.'),
         findsOneWidget,
       );
-      expect(find.textContaining('not a conclusion yet'), findsOneWidget);
-      expect(find.textContaining('saved words'), findsOneWidget);
+      expect(find.textContaining('saved words suggest so far'), findsOneWidget);
+      expect(find.text(ThirdEntryBeliefPayoffCopy.bodySource), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.byKey(const Key('third_entry_belief_payoff_evidence_0')), findsOneWidget);

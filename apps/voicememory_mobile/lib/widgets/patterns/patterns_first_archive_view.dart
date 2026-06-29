@@ -73,7 +73,7 @@ class PatternsFirstArchiveView extends StatelessWidget {
               ),
               SizedBox(height: gap),
               _PreviewRow(
-                label: 'Current belief',
+                label: VisibleArchiveProofCopy.archiveHomeBeliefLabel,
                 value: VisibleArchiveProofCopy.patternsOneEntryBeliefRow,
               ),
               SizedBox(height: gap),

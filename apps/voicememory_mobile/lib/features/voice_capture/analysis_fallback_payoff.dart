@@ -1,6 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
+import 'voice_capture_copy.dart';
 import 'voice_capture_quality.dart';
 
 /// User-facing copy when transcription succeeded but backend analysis failed.
@@ -36,8 +37,7 @@ abstract final class AnalysisFallbackPayoffCopy {
   static const nextActionTwoEntries =
       'Add one more moment when this comes up again.';
 
-  static const deferredFootnote =
-      'Deeper analysis can run later. This moment is already saved.';
+  static const deferredFootnote = VoiceCaptureCopy.analysisUnavailableNote;
 }
 
 /// Cautious local payoff when analysis is unavailable but transcript exists.
