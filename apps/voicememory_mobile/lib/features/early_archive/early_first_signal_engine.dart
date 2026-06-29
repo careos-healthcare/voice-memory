@@ -23,6 +23,21 @@ class EarlyFirstSignalEvidenceRow {
   final String snippet;
 }
 
+/// Lightweight next-observation prompt after a confirmed 3-entry repeat.
+class EarlyFirstSignalReturnPrompt {
+  const EarlyFirstSignalReturnPrompt({
+    required this.title,
+    required this.body,
+    required this.cta,
+    required this.guidedRecordPrompt,
+  });
+
+  final String title;
+  final String body;
+  final String cta;
+  final String guidedRecordPrompt;
+}
+
 /// User-facing early archive card — deterministic, no invented patterns.
 class EarlyFirstSignalModel {
   const EarlyFirstSignalModel({
@@ -33,6 +48,7 @@ class EarlyFirstSignalModel {
     this.evidenceHeading,
     this.evidenceRows = const [],
     this.secondaryCta,
+    this.returnPrompt,
   });
 
   final EarlyFirstSignalKind kind;
@@ -42,6 +58,7 @@ class EarlyFirstSignalModel {
   final String? evidenceHeading;
   final List<EarlyFirstSignalEvidenceRow> evidenceRows;
   final String? secondaryCta;
+  final EarlyFirstSignalReturnPrompt? returnPrompt;
 
   bool get showsPatternLanguage =>
       kind == EarlyFirstSignalKind.twoEntryFirstSignal ||
@@ -120,6 +137,12 @@ abstract final class EarlyFirstSignalEngine {
         evidenceRows: _evidenceRows(eligible),
         primaryCta: EarlyFirstSignalCopy.recordWhatHappensNextCta,
         secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
+        returnPrompt: const EarlyFirstSignalReturnPrompt(
+          title: EarlyFirstSignalCopy.returnPromptTitle,
+          body: EarlyFirstSignalCopy.returnPromptBody,
+          cta: EarlyFirstSignalCopy.recordTriggerNextTimeCta,
+          guidedRecordPrompt: EarlyFirstSignalCopy.recordTriggerGuidedPrompt,
+        ),
       );
     }
 

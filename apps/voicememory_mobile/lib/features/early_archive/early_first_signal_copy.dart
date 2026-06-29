@@ -42,4 +42,16 @@ abstract final class EarlyFirstSignalCopy {
   static const recordWhatHappensNextCta = 'Record what happens next';
 
   static const viewEvidenceCta = 'View evidence';
+
+  // After a confirmed 3-entry repeat — one specific next observation.
+  static const returnPromptTitle = 'Watch for what happens right before this.';
+
+  static const returnPromptBody =
+      'Next time it comes up, record the trigger, not just the feeling.';
+
+  static const recordTriggerNextTimeCta = 'Record the trigger next time';
+
+  /// Prefilled Record prompt when the user taps the return CTA.
+  static const recordTriggerGuidedPrompt =
+      'What happened right before this came up?';
 }

@@ -16,6 +16,7 @@ import '../features/archive_evidence/archive_intelligence_tier.dart';
 import '../features/archive_evidence/archive_intelligence_tier_resolver.dart';
 import '../features/archive_evidence/archive_evidence.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
+import '../features/early_archive/early_first_signal_record_routes.dart';
 import '../features/onboarding/record_return_pro_store.dart';
 import '../features/archive_beliefs/archive_belief_models.dart';
 import '../features/archive_beliefs/archive_beliefs_presenter.dart';
@@ -3322,6 +3323,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     onPrimary: _goToRecord,
                     onViewEvidence: signal.showsConfirmedRepeat
                         ? () => context.push(BeliefEvidenceNavigation.route)
+                        : null,
+                    onReturnPrompt: signal.returnPrompt != null
+                        ? () => context.go(
+                              EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(),
+                            )
                         : null,
                   ),
                   const SizedBox(height: AppSpacing.lg),

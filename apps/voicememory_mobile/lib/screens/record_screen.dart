@@ -3552,6 +3552,12 @@ class _RecordScreenState extends State<RecordScreen> {
                                     BeliefEvidenceNavigation.route,
                                   )
                               : null,
+                          onReturnPrompt: signal.returnPrompt != null
+                              ? () => setState(
+                                    () => _selectedPromptLine =
+                                        signal.returnPrompt!.guidedRecordPrompt,
+                                  )
+                              : null,
                         ),
                         const SizedBox(height: 12),
                       ],

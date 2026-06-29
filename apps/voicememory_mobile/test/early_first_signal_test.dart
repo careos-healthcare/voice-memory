@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_record_routes.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -209,6 +210,14 @@ void main() {
       expect(model.primaryCta, EarlyFirstSignalCopy.recordWhatHappensNextCta);
       expect(model.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
       expect(model.showsConfirmedRepeat, isTrue);
+      expect(model.returnPrompt, isNotNull);
+      expect(model.returnPrompt!.title, EarlyFirstSignalCopy.returnPromptTitle);
+      expect(model.returnPrompt!.body, EarlyFirstSignalCopy.returnPromptBody);
+      expect(model.returnPrompt!.cta, EarlyFirstSignalCopy.recordTriggerNextTimeCta);
+      expect(
+        model.returnPrompt!.guidedRecordPrompt,
+        EarlyFirstSignalCopy.recordTriggerGuidedPrompt,
+      );
     });
 
     test('three unrelated entries do not show confirmed repeat', () {
@@ -237,6 +246,36 @@ void main() {
       );
     });
 
+    test('one and two entry models omit return prompt', () {
+      final one = EarlyFirstSignalEngine.build(
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript: 'I felt pressure before saying yes again today.',
+          ),
+        ],
+      );
+      expect(one!.returnPrompt, isNull);
+
+      final two = EarlyFirstSignalEngine.build(
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript:
+                'I said yes again even though I was already tired from work today.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          _entry(
+            id: 'e2',
+            transcript:
+                'I took responsibility again before asking anyone for help today.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+        ],
+      );
+      expect(two!.returnPrompt, isNull);
+    });
+
     test('two related entries stay first signal not confirmed repeat', () {
       final entries = [
         _entry(
@@ -257,6 +296,18 @@ void main() {
       expect(model!.kind, EarlyFirstSignalKind.twoEntryFirstSignal);
       expect(model.showsConfirmedRepeat, isFalse);
       expect(model.title, isNot(EarlyFirstSignalCopy.threeEntryConfirmedTitle));
+      expect(model.returnPrompt, isNull);
+    });
+
+    test('return prompt record route prefills guided trigger capture', () {
+      final route = EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt();
+      expect(
+        route,
+        contains(
+          Uri.encodeComponent(EarlyFirstSignalCopy.recordTriggerGuidedPrompt),
+        ),
+      );
+      expect(route, startsWith('/record?prompt='));
     });
   });
 
@@ -342,10 +393,12 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EarlyFirstSignalCard(
-              signal: model!,
-              onPrimary: () {},
-              onViewEvidence: () {},
+            body: SingleChildScrollView(
+              child: EarlyFirstSignalCard(
+                signal: model!,
+                onPrimary: () {},
+                onViewEvidence: () {},
+              ),
             ),
           ),
         ),
@@ -364,6 +417,68 @@ void main() {
       );
       expect(find.text('Jun 10'), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.viewEvidenceCta), findsOneWidget);
+      expect(find.byKey(const Key('confirmed_repeat_return_prompt')), findsNothing);
+    });
+
+    testWidgets('renders return prompt for confirmed repeat and fires CTA', (
+      tester,
+    ) async {
+      final model = EarlyFirstSignalEngine.build(
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          _entry(
+            id: 'e2',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          _entry(
+            id: 'e3',
+            transcript:
+                'I said yes again even though I had no capacity for one more ask.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+        ],
+      );
+
+      var returnPromptTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: EarlyFirstSignalCard(
+                signal: model!,
+                onPrimary: () {},
+                onViewEvidence: () {},
+                onReturnPrompt: () => returnPromptTapped = true,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('confirmed_repeat_return_prompt')), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.returnPromptTitle), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.returnPromptBody), findsOneWidget);
+      expect(
+        find.text(EarlyFirstSignalCopy.recordTriggerNextTimeCta),
+        findsOneWidget,
+      );
+
+      await tester.ensureVisible(
+        find.byKey(const Key('confirmed_repeat_return_prompt_cta')),
+      );
+      await tester.tap(find.byKey(const Key('confirmed_repeat_return_prompt_cta')));
+      await tester.pump();
+
+      expect(returnPromptTapped, isTrue);
     });
   });
 }

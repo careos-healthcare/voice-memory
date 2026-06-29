@@ -13,11 +13,13 @@ class EarlyFirstSignalCard extends StatelessWidget {
     required this.signal,
     required this.onPrimary,
     this.onViewEvidence,
+    this.onReturnPrompt,
   });
 
   final EarlyFirstSignalModel signal;
   final VoidCallback onPrimary;
   final VoidCallback? onViewEvidence;
+  final VoidCallback? onReturnPrompt;
 
   @override
   Widget build(BuildContext context) {
@@ -29,65 +31,129 @@ class EarlyFirstSignalCard extends StatelessWidget {
       height: 1.4,
     );
     final timestampStyle = ArchiveMobileTypography.cardLabel(context);
+    final returnPrompt = signal.returnPrompt;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          key: ValueKey('early_first_signal_card_${signal.kind.name}'),
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                signal.title,
+                key: const Key('early_first_signal_title'),
+                style: ArchiveMobileTypography.responsiveSectionTitle(context),
+              ),
+              for (final line in signal.lines) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  line,
+                  key: ValueKey('early_first_signal_line_$line'),
+                  style: bodyStyle,
+                ),
+              ],
+              if (signal.evidenceRows.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                for (final row in signal.evidenceRows)
+                  Padding(
+                    key: ValueKey('early_first_signal_evidence_${row.timestampLabel}'),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(row.timestampLabel, style: timestampStyle),
+                        const SizedBox(height: 2),
+                        Text(row.snippet, style: evidenceStyle),
+                      ],
+                    ),
+                  ),
+              ],
+              const SizedBox(height: AppSpacing.md),
+              FilledButton(
+                key: const Key('early_first_signal_primary_cta'),
+                onPressed: onPrimary,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.accentPrimary,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(signal.primaryCta),
+              ),
+              if (signal.secondaryCta != null && onViewEvidence != null) ...[
+                const SizedBox(height: AppSpacing.xs),
+                OutlinedButton(
+                  key: const Key('early_first_signal_view_evidence_cta'),
+                  onPressed: onViewEvidence,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.accentPrimary,
+                  ),
+                  child: Text(signal.secondaryCta!),
+                ),
+              ],
+            ],
+          ),
+        ),
+        if (returnPrompt != null && onReturnPrompt != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          _ConfirmedRepeatReturnPromptSection(
+            prompt: returnPrompt,
+            onCta: onReturnPrompt!,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ConfirmedRepeatReturnPromptSection extends StatelessWidget {
+  const _ConfirmedRepeatReturnPromptSection({
+    required this.prompt,
+    required this.onCta,
+  });
+
+  final EarlyFirstSignalReturnPrompt prompt;
+  final VoidCallback onCta;
+
+  @override
+  Widget build(BuildContext context) {
+    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
+      color: AppColors.textSecondary,
+    );
 
     return Container(
-      key: ValueKey('early_first_signal_card_${signal.kind.name}'),
+      key: const Key('confirmed_repeat_return_prompt'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(background: Colors.white),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            signal.title,
-            key: const Key('early_first_signal_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
-          ),
-          for (final line in signal.lines) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              line,
-              key: ValueKey('early_first_signal_line_$line'),
-              style: bodyStyle,
+            prompt.title,
+            key: const Key('confirmed_repeat_return_prompt_title'),
+            style: ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
+              fontSize: 17,
             ),
-          ],
-          if (signal.evidenceRows.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            for (final row in signal.evidenceRows)
-              Padding(
-                key: ValueKey('early_first_signal_evidence_${row.timestampLabel}'),
-                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(row.timestampLabel, style: timestampStyle),
-                    const SizedBox(height: 2),
-                    Text(row.snippet, style: evidenceStyle),
-                  ],
-                ),
-              ),
-          ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            prompt.body,
+            key: const Key('confirmed_repeat_return_prompt_body'),
+            style: bodyStyle,
+          ),
           const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            key: const Key('early_first_signal_primary_cta'),
-            onPressed: onPrimary,
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.accentPrimary,
-              foregroundColor: Colors.white,
+          OutlinedButton(
+            key: const Key('confirmed_repeat_return_prompt_cta'),
+            onPressed: onCta,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.accentPrimary,
             ),
-            child: Text(signal.primaryCta),
+            child: Text(prompt.cta),
           ),
-          if (signal.secondaryCta != null && onViewEvidence != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            OutlinedButton(
-              key: const Key('early_first_signal_view_evidence_cta'),
-              onPressed: onViewEvidence,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.accentPrimary,
-              ),
-              child: Text(signal.secondaryCta!),
-            ),
-          ],
         ],
       ),
     );
