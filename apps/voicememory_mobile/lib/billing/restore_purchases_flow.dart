@@ -1,4 +1,5 @@
 import '../models/entitlement.dart';
+import 'billing_async_guard.dart';
 import 'billing_service.dart';
 import 'restore_purchases_copy.dart';
 import 'revenuecat_service.dart';
@@ -71,6 +72,11 @@ class RestorePurchasesFlow {
             ? RestorePurchasesOutcome.restored
             : RestorePurchasesOutcome.noPurchase,
         entitlements: ent,
+      );
+    } on BillingOperationException catch (e) {
+      return RestorePurchasesResult(
+        outcome: RestorePurchasesOutcome.unavailable,
+        error: e,
       );
     } catch (e) {
       return RestorePurchasesResult(

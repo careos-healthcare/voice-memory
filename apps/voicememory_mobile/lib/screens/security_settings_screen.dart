@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/account_auth.dart';
+import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
@@ -27,11 +28,19 @@ import '../security/sensitive_screen_guard.dart';
 /// render; nothing here makes encryption or sync claims, and no archive
 /// content appears.
 class SecuritySettingsScreen extends StatefulWidget {
-  const SecuritySettingsScreen({super.key, this.appLock, this.auth});
+  const SecuritySettingsScreen({
+    super.key,
+    this.appLock,
+    this.auth,
+    this.restoreFlow,
+  });
 
   /// Injectable for tests; default to the app-wide services.
   final AppLockService? appLock;
   final AuthService? auth;
+
+  /// Injectable restore flow for tests; defaults to live billing.
+  final RestorePurchasesFlow? restoreFlow;
 
   @override
   State<SecuritySettingsScreen> createState() => _SecuritySettingsScreenState();
@@ -47,6 +56,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   bool _signedIn = false;
   bool _busy = false;
   bool _restoreBusy = false;
+  String? _restoreFeedback;
   RestorePurchasesFlow? _restoreFlow;
   bool _hideInAppSwitcher = false;
   bool _wipeBusy = false;
@@ -147,21 +157,30 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
     }
   }
 
+  RestorePurchasesFlow get _effectiveRestoreFlow =>
+      widget.restoreFlow ??
+      (_restoreFlow ??= RestorePurchasesFlow(
+        billing: AppServices.instance.billing,
+      ));
+
   Future<void> _restorePurchases() async {
-    final flow = _restoreFlow ??= RestorePurchasesFlow(
-      billing: AppServices.instance.billing,
-    );
+    final flow = _effectiveRestoreFlow;
     if (flow.isBusy || _restoreBusy) return;
 
-    setState(() => _restoreBusy = true);
+    setState(() {
+      _restoreBusy = true;
+      _restoreFeedback = null;
+    });
     try {
       final result = await flow.restore();
       if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.userMessage)),
-      );
+      final message = RestorePurchasesFeedback.messageFor(result);
+      if (message != null) {
+        setState(() => _restoreFeedback = message);
+        RestorePurchasesFeedback.showSnackBar(context, result);
+      }
     } finally {
       if (mounted) setState(() => _restoreBusy = false);
     }
@@ -339,6 +358,20 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
         title: ConsumerUiCopy.restorePurchases,
         onTap: _restoreBusy ? null : _restorePurchases,
       ),
+      if (_restoreFeedback != null)
+        Padding(
+          key: const Key('security_restore_feedback'),
+          padding: const EdgeInsets.only(
+            top: AppSpacing.xs,
+            bottom: AppSpacing.sm,
+          ),
+          child: Text(
+            _restoreFeedback!,
+            style: ArchiveMobileTypography.listSubtitle(context).copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
       _tile(
         key: const Key('security_delete'),
         title: ConsumerUiCopy.deleteAccount,

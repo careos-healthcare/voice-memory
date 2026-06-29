@@ -21,6 +21,7 @@ import '../design/archive_responsive_layout.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/activation/activation_tracker.dart';
 import '../billing/restore_purchases_copy.dart';
+import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../billing/revenuecat_service.dart';
 import '../billing/revenuecat_offerings_debug_log.dart';
@@ -250,93 +251,144 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Future<void> _load() async {
     if (!mounted) return;
+
+    RevenueCatOfferingsDebugLog.paywallLoadStarted(
+      billingConfigured: _billingReady,
+      appServicesInitialized: AppServices.isInitialized,
+      screenshotMode: ScreenshotMode.enabled,
+    );
+
     setState(() {
       _loading = true;
       _error = null;
     });
 
-    if (!_billingReady && !ScreenshotMode.enabled) {
-      _trackPaywallSeen(PremiumEntitlements.free());
-      setState(() {
-        _loading = false;
-        _entitlements = PremiumEntitlements.free();
-        _offerings = null;
-        _error = ConsumerUiCopy.paywallBillingNotConfigured;
-      });
-      return;
-    }
-    if (ScreenshotMode.enabled) {
-      setState(() {
-        _loading = false;
-        _entitlements = PremiumEntitlements.free();
-        _offerings = null;
-        _error = null;
-      });
-      return;
-    }
-
-    final rc = RevenueCatService.instance;
     Offerings? offerings;
     PremiumEntitlements entitlements = PremiumEntitlements.free();
     String? error;
+    String loadReason = 'completed';
+    var billingConfigured = _billingReady;
+    var monthly = null as Package?;
+    var yearly = null as Package?;
+    var selected = _selected;
 
     try {
-      offerings = await rc.fetchOfferings().timeout(
-        _loadTimeout,
-        onTimeout: () => null,
-      );
-      entitlements = await AppServices.instance.billing
-          .loadEntitlements(forceRefresh: true)
-          .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
-    } on TimeoutException {
-      error = 'Loading timed out. Please try again in a moment.';
-      entitlements = rc.latestEntitlements;
-    } catch (e) {
-      error = userFacingErrorMessage(
-        e,
-        fallback: 'Could not load subscription details.',
-      );
-      entitlements = rc.latestEntitlements;
-    }
-
-    if (!mounted) return;
-    _trackPaywallSeen(entitlements);
-
-    final monthly = _packageFor(_PaywallPlan.monthly, offerings);
-    final yearly = _packageFor(_PaywallPlan.yearly, offerings);
-    var selected = _selected;
-    if (yearly == null && monthly != null) {
-      selected = _PaywallPlan.monthly;
-    } else if (yearly != null) {
-      selected = _PaywallPlan.yearly;
-    }
-
-    setState(() {
-      _offerings = offerings;
-      _entitlements = entitlements;
-      _loading = false;
-      _selected = selected;
-      _error = error;
-      if (!_hasPackagesIn(offerings) && error == null) {
-        _error = SubscriptionCopy.paywallNoOfferings;
+      if (!billingConfigured && !ScreenshotMode.enabled) {
+        if (AppServices.isInitialized) {
+          await RevenueCatService.instance.initialize();
+          billingConfigured = RevenueCatService.instance.isConfigured;
+        }
+        if (!billingConfigured) {
+          loadReason = 'billing_not_configured';
+          RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(
+            reason: loadReason,
+          );
+          _trackPaywallSeen(PremiumEntitlements.free());
+          if (!mounted) return;
+          setState(() {
+            _loading = false;
+            _entitlements = PremiumEntitlements.free();
+            _offerings = null;
+            _error = ConsumerUiCopy.paywallBillingNotConfigured;
+          });
+          return;
+        }
       }
-    });
-    final purchasePlansAvailable =
-        _billingReady && _hasPackagesIn(offerings);
-    RevenueCatOfferingsDebugLog.paywallLoadResult(
-      billingConfigured: _billingReady,
-      offeringsLoaded: offerings != null,
-      offeringCount: offerings?.all.length ?? 0,
-      currentOfferingId: offerings?.current?.identifier,
-      packageCount: offerings?.current?.availablePackages.length ?? 0,
-      monthlyPackageFound: monthly != null,
-      annualPackageFound: yearly != null,
-      purchasePlansAvailable: purchasePlansAvailable,
-      showingUnavailable: !purchasePlansAvailable && entitlements.isPro != true,
-      error: error ?? (_hasPackagesIn(offerings) ? null : SubscriptionCopy.paywallNoOfferings),
-    );
-    if (_hasPackagesIn(offerings) && entitlements.isPro == false) {
-      _trackPlansShown();
+
+      if (ScreenshotMode.enabled) {
+        loadReason = 'screenshot_mode';
+        RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
+        if (!mounted) return;
+        setState(() {
+          _loading = false;
+          _entitlements = PremiumEntitlements.free();
+          _offerings = null;
+          _error = null;
+        });
+        return;
+      }
+
+      final rc = RevenueCatService.instance;
+
+      try {
+        offerings = await rc.fetchOfferings().timeout(
+          _loadTimeout,
+          onTimeout: () {
+            RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
+              offerings: null,
+              error: 'paywall_fetchOfferings_timeout_${_loadTimeout.inSeconds}s',
+            );
+            return null;
+          },
+        );
+        entitlements = await AppServices.instance.billing
+            .loadEntitlements(forceRefresh: true)
+            .timeout(_loadTimeout, onTimeout: () => PremiumEntitlements.free());
+      } on TimeoutException {
+        loadReason = 'load_timeout';
+        error = 'Loading timed out. Please try again in a moment.';
+        entitlements = rc.latestEntitlements;
+        RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
+      } catch (e) {
+        loadReason = 'load_error';
+        error = userFacingErrorMessage(
+          e,
+          fallback: 'Could not load subscription details.',
+        );
+        entitlements = rc.latestEntitlements;
+        RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
+      }
+
+      if (!mounted) {
+        loadReason = 'widget_unmounted_before_render';
+        return;
+      }
+
+      _trackPaywallSeen(entitlements);
+
+      monthly = _packageFor(_PaywallPlan.monthly, offerings);
+      yearly = _packageFor(_PaywallPlan.yearly, offerings);
+      if (yearly == null && monthly != null) {
+        selected = _PaywallPlan.monthly;
+      } else if (yearly != null) {
+        selected = _PaywallPlan.yearly;
+      }
+
+      if (!_hasPackagesIn(offerings) && error == null) {
+        loadReason = 'no_packages_in_current_offering';
+        error = SubscriptionCopy.paywallNoOfferings;
+      } else if (_hasPackagesIn(offerings)) {
+        loadReason = 'plans_available';
+      }
+
+      setState(() {
+        _offerings = offerings;
+        _entitlements = entitlements;
+        _loading = false;
+        _selected = selected;
+        _error = error;
+      });
+
+      if (_hasPackagesIn(offerings) && entitlements.isPro == false) {
+        _trackPlansShown();
+      }
+    } finally {
+      final purchasePlansAvailable =
+          billingConfigured && _hasPackagesIn(offerings);
+      RevenueCatOfferingsDebugLog.paywallLoadResult(
+        billingConfigured: billingConfigured,
+        offeringsLoaded: offerings != null,
+        offeringCount: offerings?.all.length ?? 0,
+        currentOfferingId: offerings?.current?.identifier,
+        packageCount: offerings?.current?.availablePackages.length ?? 0,
+        monthlyPackageFound: monthly != null,
+        annualPackageFound: yearly != null,
+        purchasePlansAvailable: purchasePlansAvailable,
+        showingUnavailable:
+            !purchasePlansAvailable && entitlements.isPro != true,
+        reason: loadReason,
+        error: error,
+      );
     }
   }
 
@@ -475,11 +527,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         _recordAttribution(PaywallAttributionEventType.restoreCompleted);
         await _load();
       }
-      if (result.userMessage.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result.userMessage)),
-        );
-      }
+      RestorePurchasesFeedback.showSnackBar(context, result);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

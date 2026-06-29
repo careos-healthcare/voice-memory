@@ -42,7 +42,8 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
       if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
         return;
       }
-      if (result.outcome == RestorePurchasesOutcome.error) {
+      if (result.outcome == RestorePurchasesOutcome.error ||
+          result.outcome == RestorePurchasesOutcome.unavailable) {
         final evidence = await RestoreProductionEvidence.toJson(success: false);
         setState(() {
           _evidenceJson = evidence;

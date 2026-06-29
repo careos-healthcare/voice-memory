@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/billing/billing_async_guard.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
+import 'package:voicememory_mobile/billing/restore_purchases_feedback.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/billing/store_billing_port.dart';
@@ -157,6 +159,41 @@ void main() {
       expect(result.userMessage, RestorePurchasesCopy.restoreError);
     });
 
+    test('restore timeout maps to billing unavailable copy', () async {
+      store = _FakeStoreBilling(
+        restoreError: BillingOperationException(
+          'Billing operation timed out (restorePurchases)',
+        ),
+      );
+      final harness = await _openBillingHarness(store);
+      tempDir = harness.dir;
+      flow = RestorePurchasesFlow(
+        billing: harness.billing,
+        isBillingConfigured: () => store.configured,
+      );
+
+      final result = await flow.restore();
+
+      expect(result.outcome, RestorePurchasesOutcome.unavailable);
+      expect(result.userMessage, RestorePurchasesCopy.billingUnavailable);
+      expect(
+        result.userMessage,
+        'We could not check purchases right now. Please try again.',
+      );
+      expect(result.userMessage, isNot(contains('Plans are not available')));
+    });
+
+    test('restore outcomes never use plans unavailable copy', () async {
+      expect(
+        RestorePurchasesCopy.billingUnavailable,
+        isNot(contains('Plans are not available yet')),
+      );
+      expect(
+        RestorePurchasesCopy.restoreError,
+        isNot(contains('Plans are not available yet')),
+      );
+    });
+
     test('missing RevenueCat API key shows unavailable without crashing', () async {
       store = _FakeStoreBilling(configured: false);
       flow = RestorePurchasesFlow(
@@ -260,5 +297,28 @@ void main() {
     final rc = RevenueCatService.instance;
     await rc.initialize();
     expect(rc.isConfigured, isFalse);
+  });
+
+  group('RestorePurchasesFeedback', () {
+    test('timeout outcome surfaces restore-specific copy', () {
+      const result = RestorePurchasesResult(
+        outcome: RestorePurchasesOutcome.unavailable,
+      );
+      expect(
+        RestorePurchasesFeedback.messageFor(result),
+        RestorePurchasesCopy.billingUnavailable,
+      );
+      expect(
+        RestorePurchasesFeedback.messageFor(result),
+        isNot(contains('Plans are not available yet')),
+      );
+    });
+
+    test('skipped busy is the only silent outcome', () {
+      const result = RestorePurchasesResult(
+        outcome: RestorePurchasesOutcome.skippedBusy,
+      );
+      expect(RestorePurchasesFeedback.messageFor(result), isNull);
+    });
   });
 }

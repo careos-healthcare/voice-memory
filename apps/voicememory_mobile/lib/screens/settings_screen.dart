@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
@@ -100,9 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.userMessage)),
-      );
+      RestorePurchasesFeedback.showSnackBar(context, result);
     } finally {
       if (mounted) setState(() => _restoreBusy = false);
     }
