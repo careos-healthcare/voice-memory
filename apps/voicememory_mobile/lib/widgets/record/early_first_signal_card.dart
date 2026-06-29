@@ -6,21 +6,32 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Early archive card for 1–2 saved moments — receipt or cautious first signal.
+/// Early archive card for 1–3 saved moments — receipt, first signal, or confirmation.
 class EarlyFirstSignalCard extends StatelessWidget {
   const EarlyFirstSignalCard({
     super.key,
     required this.signal,
     required this.onPrimary,
+    this.onViewEvidence,
   });
 
   final EarlyFirstSignalModel signal;
   final VoidCallback onPrimary;
+  final VoidCallback? onViewEvidence;
 
   @override
   Widget build(BuildContext context) {
+    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
+      color: AppColors.textSecondary,
+    );
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+      color: AppColors.textPrimary,
+      height: 1.4,
+    );
+    final timestampStyle = ArchiveMobileTypography.cardLabel(context);
+
     return Container(
-      key: const Key('early_first_signal_card'),
+      key: ValueKey('early_first_signal_card_${signal.kind.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
@@ -37,10 +48,24 @@ class EarlyFirstSignalCard extends StatelessWidget {
             Text(
               line,
               key: ValueKey('early_first_signal_line_$line'),
-              style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: bodyStyle,
             ),
+          ],
+          if (signal.evidenceRows.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            for (final row in signal.evidenceRows)
+              Padding(
+                key: ValueKey('early_first_signal_evidence_${row.timestampLabel}'),
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(row.timestampLabel, style: timestampStyle),
+                    const SizedBox(height: 2),
+                    Text(row.snippet, style: evidenceStyle),
+                  ],
+                ),
+              ),
           ],
           const SizedBox(height: AppSpacing.md),
           FilledButton(
@@ -52,6 +77,17 @@ class EarlyFirstSignalCard extends StatelessWidget {
             ),
             child: Text(signal.primaryCta),
           ),
+          if (signal.secondaryCta != null && onViewEvidence != null) ...[
+            const SizedBox(height: AppSpacing.xs),
+            OutlinedButton(
+              key: const Key('early_first_signal_view_evidence_cta'),
+              onPressed: onViewEvidence,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.accentPrimary,
+              ),
+              child: Text(signal.secondaryCta!),
+            ),
+          ],
         ],
       ),
     );

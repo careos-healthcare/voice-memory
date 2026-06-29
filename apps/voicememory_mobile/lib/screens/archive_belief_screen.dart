@@ -3320,6 +3320,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   EarlyFirstSignalCard(
                     signal: signal,
                     onPrimary: _goToRecord,
+                    onViewEvidence: signal.showsConfirmedRepeat
+                        ? () => context.push(BeliefEvidenceNavigation.route)
+                        : null,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
@@ -3364,7 +3367,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
-                    thirdEntryBeliefPayoff != null) ...[
+                    thirdEntryBeliefPayoff != null &&
+                    earlyFirstSignal?.kind !=
+                        EarlyFirstSignalKind.threeEntryConfirmedRepeat) ...[
                   ThirdEntryBeliefPayoffCard(
                     payoff: thirdEntryBeliefPayoff,
                     onAddAnother: _goToRecord,

@@ -3547,6 +3547,11 @@ class _RecordScreenState extends State<RecordScreen> {
                           signal: signal,
                           onPrimary: () =>
                               unawaited(_onRecordPressed(source: 'main')),
+                          onViewEvidence: signal.showsConfirmedRepeat
+                              ? () => context.push(
+                                    BeliefEvidenceNavigation.route,
+                                  )
+                              : null,
                         ),
                         const SizedBox(height: 12),
                       ],

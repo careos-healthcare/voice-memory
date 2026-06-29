@@ -27,15 +27,13 @@ abstract class RecordEmptyArchiveGates {
   }) =>
       loaded && hasOneEntry(entryCount);
 
-  /// Early receipt / first-signal card on Record — 1–2 entries, ready state only.
+  /// Early receipt / first-signal / confirmed-repeat card — 1–3 entries, ready only.
   static bool showEarlyFirstSignalCard({
     required bool loaded,
     required int entryCount,
     required bool isPostSave,
   }) =>
-      loaded &&
-      !isPostSave &&
-      (hasOneEntry(entryCount) || entryCount == 2);
+      loaded && !isPostSave && entryCount >= 1 && entryCount <= 3;
 
   /// "Ready to record" status — only after comparison seed exists.
   static bool showReadyToRecordStatus({

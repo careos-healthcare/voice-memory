@@ -49,26 +49,20 @@ void main() {
       );
     });
 
-    test('shown at one and two entries when not post-save', () {
-      expect(
-        RecordEmptyArchiveGates.showEarlyFirstSignalCard(
-          loaded: true,
-          entryCount: 1,
-          isPostSave: false,
-        ),
-        isTrue,
-      );
-      expect(
-        RecordEmptyArchiveGates.showEarlyFirstSignalCard(
-          loaded: true,
-          entryCount: 2,
-          isPostSave: false,
-        ),
-        isTrue,
-      );
+    test('shown at one through three entries when not post-save', () {
+      for (final count in [1, 2, 3]) {
+        expect(
+          RecordEmptyArchiveGates.showEarlyFirstSignalCard(
+            loaded: true,
+            entryCount: count,
+            isPostSave: false,
+          ),
+          isTrue,
+        );
+      }
     });
 
-    test('hidden during post-save and after two entries', () {
+    test('hidden during post-save and after three entries', () {
       expect(
         RecordEmptyArchiveGates.showEarlyFirstSignalCard(
           loaded: true,
@@ -80,7 +74,7 @@ void main() {
       expect(
         RecordEmptyArchiveGates.showEarlyFirstSignalCard(
           loaded: true,
-          entryCount: 3,
+          entryCount: 4,
           isPostSave: false,
         ),
         isFalse,
@@ -176,6 +170,93 @@ void main() {
         model.lines,
         contains(EarlyFirstSignalCopy.twoEntryConfirmRepeat),
       );
+      expect(model.showsConfirmedRepeat, isFalse);
+    });
+
+    test('three related entries show confirmed repeat with evidence', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'e2',
+          transcript:
+              'Same thing — said yes when I had no capacity for one more thing.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'e3',
+          transcript:
+              'I said yes again even though I had no capacity for one more ask.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+
+      expect(EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(entries), isTrue);
+
+      final model = EarlyFirstSignalEngine.build(entries: entries);
+      expect(model!.kind, EarlyFirstSignalKind.threeEntryConfirmedRepeat);
+      expect(model.title, EarlyFirstSignalCopy.threeEntryConfirmedTitle);
+      expect(
+        model.lines,
+        contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
+      );
+      expect(model.lines, contains(EarlyFirstSignalCopy.evidenceHeading));
+      expect(model.evidenceRows.length, 3);
+      expect(model.primaryCta, EarlyFirstSignalCopy.recordWhatHappensNextCta);
+      expect(model.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
+      expect(model.showsConfirmedRepeat, isTrue);
+    });
+
+    test('three unrelated entries do not show confirmed repeat', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript: 'A quiet moment about lunch with a friend today.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'e2',
+          transcript: 'Another unrelated note about errands this afternoon.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'e3',
+          transcript: 'Weather was nice on my walk through the park today.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+
+      expect(EarlyFirstSignalEngine.build(entries: entries), isNull);
+      expect(
+        '${entries.map((e) => e.transcript).join(' ')}',
+        isNot(contains('confirmed repeat')),
+      );
+    });
+
+    test('two related entries stay first signal not confirmed repeat', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript:
+              'I said yes again even though I was already tired from work today.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'e2',
+          transcript:
+              'I took responsibility again before asking anyone for help today.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+
+      final model = EarlyFirstSignalEngine.build(entries: entries);
+      expect(model!.kind, EarlyFirstSignalKind.twoEntryFirstSignal);
+      expect(model.showsConfirmedRepeat, isFalse);
+      expect(model.title, isNot(EarlyFirstSignalCopy.threeEntryConfirmedTitle));
     });
   });
 
@@ -212,7 +293,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('early_first_signal_card')), findsOneWidget);
+      expect(
+        find.byKey(
+          const Key('early_first_signal_card_twoEntryFirstSignal'),
+        ),
+        findsOneWidget,
+      );
       expect(
         find.text(EarlyFirstSignalCopy.twoEntryPatternStartTitle),
         findsOneWidget,
@@ -225,6 +311,59 @@ void main() {
         find.text(EarlyFirstSignalCopy.notEnoughEvidence),
         findsOneWidget,
       );
+    });
+
+    testWidgets('renders confirmed repeat with evidence and view CTA', (
+      tester,
+    ) async {
+      final model = EarlyFirstSignalEngine.build(
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          _entry(
+            id: 'e2',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          _entry(
+            id: 'e3',
+            transcript:
+                'I said yes again even though I had no capacity for one more ask.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyFirstSignalCard(
+              signal: model!,
+              onPrimary: () {},
+              onViewEvidence: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(
+          const Key('early_first_signal_card_threeEntryConfirmedRepeat'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlyFirstSignalCopy.threeEntryConfirmedTitle),
+        findsOneWidget,
+      );
+      expect(find.text('Jun 10'), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.viewEvidenceCta), findsOneWidget);
     });
   });
 }

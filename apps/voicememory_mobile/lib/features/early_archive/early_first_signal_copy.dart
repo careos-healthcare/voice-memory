@@ -1,4 +1,4 @@
-/// Early archive copy — 1–2 entries, before a belief is earned.
+/// Early archive copy — 1–3 entries, before a belief is earned.
 abstract final class EarlyFirstSignalCopy {
   static const notEnoughEvidence = 'Not enough evidence yet.';
 
@@ -30,4 +30,16 @@ abstract final class EarlyFirstSignalCopy {
 
   static const twoEntryConfirmRepeat =
       'Record one more moment like this to confirm whether it repeats.';
+
+  // Three related moments — grounded confirmation, still evidence-led.
+  static const threeEntryConfirmedTitle = 'This is now a confirmed repeat.';
+
+  static const threeEntrySeenThreeTimes =
+      'ArchiveMe has seen this come back across 3 moments.';
+
+  static const evidenceHeading = "Here's the evidence.";
+
+  static const recordWhatHappensNextCta = 'Record what happens next';
+
+  static const viewEvidenceCta = 'View evidence';
 }
