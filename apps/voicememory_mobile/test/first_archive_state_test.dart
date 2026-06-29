@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.da
 import 'package:voicememory_mobile/features/archive_home/archive_home_priority_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/archive_belief_screen.dart';
@@ -66,14 +67,14 @@ void main() {
       );
     });
 
-    test('one-entry copy confirms save and second entry value', () {
+    test('one-entry copy confirms heard receipt without pattern claim', () {
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedTitle,
-        'Your archive has one piece of evidence.',
+        EarlyFirstSignalCopy.oneEntryTitle,
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedBody,
-        'Add one more moment and ArchiveMe can start comparing your own words.',
+        EarlyFirstSignalCopy.oneEntryBody,
       );
       expect(ConsumerUiCopy.patternsFirstEntrySavedCta, 'Add one more moment');
     });

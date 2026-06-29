@@ -1,3 +1,5 @@
+import '../early_archive/early_first_signal_copy.dart';
+
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
@@ -91,11 +93,9 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsEmptyPreviewCta = patternsMindMapEmptyPrimaryCta;
 
   // Patterns one-entry state.
-  static const patternsOneEntryTitle =
-      'Your archive has one piece of evidence.';
+  static const patternsOneEntryTitle = EarlyFirstSignalCopy.oneEntryTitle;
 
-  static const patternsOneEntryBody =
-      'Add one more moment and ArchiveMe can start comparing your own words.';
+  static const patternsOneEntryBody = EarlyFirstSignalCopy.oneEntryBody;
 
   static const patternsOneEntryBeliefRow = 'Not enough evidence yet';
   static const patternsOneEntryEvidenceRow = '1 saved moment';
@@ -397,7 +397,7 @@ abstract final class VisibleArchiveProofCopy {
 
   static const archiveHomeTypeInsteadCta = typeInsteadCta;
 
-  static const archiveHomeOneTitle = 'Your archive has one piece of evidence.';
+  static const archiveHomeOneTitle = EarlyFirstSignalCopy.oneEntryTitle;
 
   static const archiveHomeBeliefLabel = 'Pattern your archive is watching';
 

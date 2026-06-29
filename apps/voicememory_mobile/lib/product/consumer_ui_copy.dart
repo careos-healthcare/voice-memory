@@ -1,3 +1,5 @@
+import '../features/early_archive/early_first_signal_copy.dart';
+
 /// Consumer-facing UI copy — calm, human, App Store-ready.
 abstract class ConsumerUiCopy {
   ConsumerUiCopy._();
@@ -176,9 +178,9 @@ abstract class ConsumerUiCopy {
   static const String patternsEmptyPageBody =
       'Save a few real moments. ArchiveMe will connect them into patterns, changes, and things to watch.';
   static const String patternsFirstEntrySavedTitle =
-      'Your archive has one piece of evidence.';
+      EarlyFirstSignalCopy.oneEntryTitle;
   static const String patternsFirstEntrySavedBody =
-      'Add one more moment and ArchiveMe can start comparing your own words.';
+      EarlyFirstSignalCopy.oneEntryBody;
   static const String patternsFirstEntrySavedHelper =
       'Preview — not a conclusion yet';
   static const String patternsFirstEntrySavedCta = 'Add one more moment';

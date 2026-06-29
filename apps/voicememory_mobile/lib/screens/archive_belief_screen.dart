@@ -15,6 +15,7 @@ import '../features/archive_evidence/archive_belief_thread_model.dart';
 import '../features/archive_evidence/archive_intelligence_tier.dart';
 import '../features/archive_evidence/archive_intelligence_tier_resolver.dart';
 import '../features/archive_evidence/archive_evidence.dart';
+import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/onboarding/record_return_pro_store.dart';
 import '../features/archive_beliefs/archive_belief_models.dart';
 import '../features/archive_beliefs/archive_beliefs_presenter.dart';
@@ -256,6 +257,7 @@ import '../widgets/signal/signal_journey_card.dart';
 import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
+import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
@@ -3282,6 +3284,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               FirstThreeSessionGates.minEntriesForRepeatSurface
           ? SecondSessionPayoffEngine.build(entries: _entries)
           : null;
+      final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _entries);
       final groundedSecondSessionRepeat =
           _entries.length > FirstThreeSessionGates.minEntriesForRepeatSurface &&
           const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
@@ -3313,6 +3316,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
+                if (earlyFirstSignal case final signal?) ...[
+                  EarlyFirstSignalCard(
+                    signal: signal,
+                    onPrimary: _goToRecord,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 ..._archiveHomeCommandCenterWidgets(),
                 ..._buildThoughtMapPreviewWidgets(),
                 if (!_suppressEarlyArchiveBeliefProof)
@@ -3368,7 +3378,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
-                    secondSessionPayoff != null) ...[
+                    secondSessionPayoff != null &&
+                    earlyFirstSignal?.kind !=
+                        EarlyFirstSignalKind.twoEntryFirstSignal) ...[
                   SecondSessionPayoffCard(
                     payoff: secondSessionPayoff,
                     onAddAnother: _goToRecord,

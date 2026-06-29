@@ -168,10 +168,12 @@ import '../widgets/record/todays_watch_for_card.dart';
 import '../widgets/record/watch_for_tomorrow_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
+import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
+import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/record/record_empty_archive_gates.dart';
 import '../features/return_ritual/return_ritual_gates.dart';
 import '../features/acquisition/audience_wedge_model.dart';
@@ -3529,6 +3531,25 @@ class _RecordScreenState extends State<RecordScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                    ],
+                    if (ui == RecordUiState.ready &&
+                        _journalEntryCountReady &&
+                        RecordEmptyArchiveGates.showEarlyFirstSignalCard(
+                          loaded: _journalEntryCountReady,
+                          entryCount: _journalEntryCount,
+                          isPostSave: _isPostSaveSurface,
+                        )) ...[
+                      if (EarlyFirstSignalEngine.build(
+                            entries: _journalEntries,
+                          )
+                          case final signal?) ...[
+                        EarlyFirstSignalCard(
+                          signal: signal,
+                          onPrimary: () =>
+                              unawaited(_onRecordPressed(source: 'main')),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                     ],
                     // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
                     // carries the first-open promise without a second competing card.
