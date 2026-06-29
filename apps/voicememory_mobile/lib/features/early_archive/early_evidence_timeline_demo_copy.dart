@@ -8,10 +8,10 @@ abstract final class EarlyEvidenceTimelineDemoCopy {
 
   static const hideSample = 'Hide sample';
 
-  static const title = 'Example: your archive building evidence';
+  static const title = 'Example: evidence building over time';
 
   static const subtitle =
-      'This is a sample of what ArchiveMe can show once patterns repeat.';
+      'Sample — what your archive can show when something repeats.';
 
   static const repeatConfirmedTitle = 'Repeat confirmed';
 

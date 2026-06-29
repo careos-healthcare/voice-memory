@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_milestone_store.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_why_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_feedback_analytics.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_feedback_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_feedback_models.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_insight_feedback_store.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_service.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_session.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_store.dart';
+import 'package:voicememory_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_proof_analytics.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_demo.dart';
@@ -23,7 +36,10 @@ import 'package:voicememory_mobile/widgets/patterns/patterns_empty_view.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_change_notice_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payoff_card.dart';
+import 'package:voicememory_mobile/widgets/record/early_archive_insight_feedback_row.dart';
+import 'package:voicememory_mobile/widgets/record/early_archive_return_reminder_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_evidence_timeline_card.dart';
+import 'package:voicememory_mobile/widgets/record/early_archive_insight_why_section.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
 JournalEntry _entry({
@@ -124,6 +140,47 @@ List<JournalEntry> _fiveEntriesWithHelpfulActionCapture() => [
         createdAt: DateTime(2026, 6, 14, 12),
       ),
     ];
+
+List<JournalEntry> _threeCheckingUncertaintyEntries() => [
+      _entry(
+        id: 'e1',
+        transcript:
+            'I kept checking my phone when things felt uncertain today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript:
+            'Same checking came back when everything still felt uncertain.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript:
+            'I was checking again because things felt uncertain about the decision.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _fiveEntriesWithWaitingHelpfulAction() => [
+      ..._fourEntriesWithSofterRelatedReturn(),
+      _entry(
+        id: 'e5',
+        transcript:
+            'I waited two minutes before responding and that helped me stop.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
+
+void _expectNoDiagnosticLanguage(String joined) {
+  final lower = joined.toLowerCase();
+  expect(lower, isNot(contains('you have anxiety')));
+  expect(lower, isNot(contains('proves you')));
+  expect(lower, isNot(contains('confirmed trigger')));
+  expect(lower, isNot(contains('you fixed')));
+  expect(lower, isNot(contains('healed')));
+  expect(lower, isNot(contains('pattern was detected')));
+}
 
 void main() {
   setUp(() {
@@ -239,13 +296,13 @@ void main() {
         _entry(
           id: 'e1',
           transcript:
-              'I said yes again even though I was already tired from work today.',
+              'I had no capacity but I said yes again to the extra meeting today.',
           createdAt: DateTime(2026, 6, 11, 12),
         ),
         _entry(
           id: 'e2',
           transcript:
-              'I took responsibility again before asking anyone for help today.',
+              'Same thing — said yes when I had no capacity for one more thing.',
           createdAt: DateTime(2026, 6, 12, 12),
         ),
       ];
@@ -258,8 +315,11 @@ void main() {
       final model = EarlyFirstSignalEngine.build(entries: entries);
       expect(model!.kind, EarlyFirstSignalKind.twoEntryFirstSignal);
       expect(model.title, EarlyFirstSignalCopy.twoEntryPatternStartTitle);
-      expect(model.lines, contains(EarlyFirstSignalCopy.twoEntryNoticedAgain));
       expect(model.lines, contains(EarlyFirstSignalCopy.notEnoughEvidence));
+      expect(
+        model.lines.first,
+        contains('saying yes before checking capacity'),
+      );
       expect(
         model.lines,
         contains(EarlyFirstSignalCopy.twoEntryConfirmRepeat),
@@ -296,9 +356,13 @@ void main() {
       expect(model.title, EarlyFirstSignalCopy.threeEntryConfirmedTitle);
       expect(
         model.lines,
-        contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
+        contains(EarlyFirstSignalCopy.evidenceHeading),
       );
-      expect(model.lines, contains(EarlyFirstSignalCopy.evidenceHeading));
+      expect(
+        model.lines.first,
+        contains('keeps coming back around'),
+      );
+      expect(model.lines.first, contains('saying yes'));
       expect(model.evidenceRows.length, 3);
       expect(model.primaryCta, EarlyFirstSignalCopy.recordWhatHappensNextCta);
       expect(model.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
@@ -448,7 +512,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(EarlyFirstSignalCopy.twoEntryNoticedAgain),
+        find.textContaining('showing up again'),
         findsOneWidget,
       );
       expect(
@@ -592,14 +656,15 @@ void main() {
 
       expect(payoff, isNotNull);
       expect(payoff!.title, EarlyFirstSignalCopy.triggerPayoffTitle);
-      expect(payoff.body, EarlyFirstSignalCopy.triggerPayoffBody);
+      expect(payoff.body, contains('trigger seems to be'));
+      expect(payoff.body, contains('stronger evidence'));
       expect(
-        payoff.evidenceLines,
-        contains(EarlyFirstSignalCopy.triggerPayoffRepeatEvidence),
+        payoff.evidenceLines.first,
+        contains('keeps coming back'),
       );
       expect(
-        payoff.evidenceLines,
-        contains(EarlyFirstSignalCopy.triggerPayoffTriggerEvidence),
+        payoff.evidenceLines.last,
+        contains('trigger seems to be'),
       );
       expect(payoff.primaryCta, EarlyFirstSignalCopy.triggerPayoffPrimaryCta);
       expect(payoff.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
@@ -649,7 +714,7 @@ void main() {
         ...payoff.evidenceLines,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('captured once'));
+      expect(joined, contains('seems'));
       expect(joined, isNot(contains('confirmed trigger')));
     });
   });
@@ -694,14 +759,15 @@ void main() {
 
       expect(notice, isNotNull);
       expect(notice!.title, EarlyFirstSignalCopy.changeNoticeTitle);
-      expect(notice.body, EarlyFirstSignalCopy.changeNoticeBody);
+      expect(notice.body, contains('came back'));
+      expect(notice.body, contains('less urgent'));
       expect(
-        notice.evidenceLines,
-        contains(EarlyFirstSignalCopy.changeNoticeRepeatEvidence),
+        notice.evidenceLines.first,
+        contains('keeps coming back'),
       );
       expect(
-        notice.evidenceLines,
-        contains(EarlyFirstSignalCopy.changeNoticeChangeEvidence),
+        notice.evidenceLines.last,
+        contains('less urgent'),
       );
       expect(notice.primaryCta, EarlyFirstSignalCopy.recordWhatHelpedCta);
       expect(notice.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
@@ -736,7 +802,7 @@ void main() {
         ...notice.evidenceLines,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('may have been softer'));
+      expect(joined, contains('less urgent'));
       expect(joined, isNot(contains('fixed')));
       expect(joined, isNot(contains('healed')));
     });
@@ -801,18 +867,10 @@ void main() {
 
       expect(payoff, isNotNull);
       expect(payoff!.title, EarlyFirstSignalCopy.helpfulActionPayoffTitle);
-      expect(payoff.body, EarlyFirstSignalCopy.helpfulActionPayoffBody);
+      expect(payoff.body, anyOf(contains('may have helped'), contains('may have softened')));
       expect(
-        payoff.evidenceLines,
-        contains(EarlyFirstSignalCopy.helpfulActionRepeatEvidence),
-      );
-      expect(
-        payoff.evidenceLines,
-        contains(EarlyFirstSignalCopy.helpfulActionChangeEvidence),
-      );
-      expect(
-        payoff.evidenceLines,
-        contains(EarlyFirstSignalCopy.helpfulActionCapturedEvidence),
+        payoff.evidenceLines.last,
+        anyOf(contains('may have helped'), contains('may have softened')),
       );
       expect(payoff.primaryCta, EarlyFirstSignalCopy.triggerPayoffPrimaryCta);
       expect(payoff.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
@@ -833,7 +891,7 @@ void main() {
       );
     });
 
-    test('copy says captured once not confirmed', () {
+    test('copy avoids confirmed helpful language', () {
       final payoff = EarlyFirstSignalEngine.buildHelpfulActionPayoff(
         entries: _fiveEntriesWithHelpfulActionCapture(),
         savedFromHelpfulActionPrompt: true,
@@ -845,10 +903,13 @@ void main() {
         ...payoff.evidenceLines,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('captured once'));
-      expect(joined, contains('may have softened'));
+      expect(
+        joined,
+        anyOf(contains('may have helped'), contains('may have softened')),
+      );
       expect(joined, isNot(contains('confirmed helpful')));
       expect(joined, isNot(contains('proven')));
+      _expectNoDiagnosticLanguage(joined);
     });
 
     test('trigger payoff takes priority over helpful-action capture', () {
@@ -925,11 +986,12 @@ void main() {
 
       expect(timeline, isNotNull);
       expect(timeline!.title, EarlyEvidenceTimelineCopy.title);
-      expect(timeline.subtitle, EarlyEvidenceTimelineCopy.subtitle);
+      expect(timeline.subtitle, contains('tracking'));
+      expect(timeline.subtitle, contains('saying yes'));
       expect(timeline.items.length, 1);
       expect(timeline.items.single.kind, EarlyEvidenceTimelineItemKind.repeatConfirmed);
       expect(timeline.items.single.title, EarlyEvidenceTimelineCopy.repeatConfirmedTitle);
-      expect(timeline.items.single.body, EarlyEvidenceTimelineCopy.repeatConfirmedBody);
+      expect(timeline.items.single.body, contains('keeps coming back'));
     });
 
     test('trigger capture adds trigger captured item', () {
@@ -978,7 +1040,7 @@ void main() {
       );
       expect(
         timeline.items.last.body,
-        EarlyEvidenceTimelineCopy.helpfulActionBody,
+        anyOf(contains('may have helped'), contains('may have softened')),
       );
     });
 
@@ -1038,7 +1100,10 @@ void main() {
       ].join(' ').toLowerCase();
 
       expect(joined, contains('may help'));
-      expect(joined, contains('may have helped'));
+      expect(
+        joined,
+        anyOf(contains('may have helped'), contains('may have softened')),
+      );
       expect(joined, isNot(contains('proven')));
       expect(joined, isNot(contains('fixed')));
       expect(joined, isNot(contains('healed')));
@@ -1088,13 +1153,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Your archive is building evidence.'), findsOneWidget);
-      expect(
-        find.text(
-          'ArchiveMe is tracking what repeats, what starts it, and what may help '
-          'it soften.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.textContaining('tracking'), findsOneWidget);
       expect(find.byKey(const Key('early_evidence_timeline_chip_trail')), findsOneWidget);
       expect(find.text('Repeat'), findsWidgets);
       expect(find.text('Change'), findsWidgets);
@@ -1356,13 +1415,11 @@ void main() {
       expect(find.byKey(const Key('early_evidence_demo_section')), findsOneWidget);
       expect(find.text('Sample'), findsOneWidget);
       expect(
-        find.text('Example: your archive building evidence'),
+        find.text(EarlyEvidenceTimelineDemoCopy.title),
         findsOneWidget,
       );
       expect(
-        find.text(
-          'This is a sample of what ArchiveMe can show once patterns repeat.',
-        ),
+        find.text(EarlyEvidenceTimelineDemoCopy.subtitle),
         findsOneWidget,
       );
     });
@@ -1463,6 +1520,639 @@ void main() {
       expect(joined, isNot(contains('said yes')));
     });
   });
+
+  group('EarlyArchiveInsightQualityEngine', () {
+    test('checking uncertainty entries produce specific repeat summary', () {
+      final insight = EarlyArchiveInsightQualityEngine.build(
+        entries: _threeCheckingUncertaintyEntries(),
+      );
+
+      expect(insight.repeatSummary, isNotNull);
+      expect(
+        insight.repeatSummary,
+        contains('checking when things feel uncertain'),
+      );
+      _expectNoDiagnosticLanguage(insight.repeatSummary!);
+    });
+
+    test('trigger capture entry produces cautious trigger summary', () {
+      final insight = EarlyArchiveInsightQualityEngine.build(
+        entries: _fourEntriesWithTriggerCapture(),
+      );
+
+      expect(insight.triggerSummary, isNotNull);
+      expect(insight.triggerSummary, contains('trigger seems to be'));
+      _expectNoDiagnosticLanguage(insight.triggerSummary!);
+    });
+
+    test('softer entry produces less urgent style copy', () {
+      final insight = EarlyArchiveInsightQualityEngine.build(
+        entries: _fourEntriesWithSofterRelatedReturn(),
+      );
+
+      expect(insight.softeningSummary, isNotNull);
+      expect(insight.softeningSummary!.toLowerCase(), contains('less urgent'));
+      _expectNoDiagnosticLanguage(insight.softeningSummary!);
+    });
+
+    test('helpful action entry produces may have helped summary', () {
+      final insight = EarlyArchiveInsightQualityEngine.build(
+        entries: _fiveEntriesWithWaitingHelpfulAction(),
+      );
+
+      expect(insight.helpfulActionSummary, isNotNull);
+      expect(
+        insight.helpfulActionSummary,
+        anyOf(contains('may have helped'), contains('may have softened')),
+      );
+      _expectNoDiagnosticLanguage(insight.helpfulActionSummary!);
+    });
+
+    test('unrelated entries fall back without fake insight', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript: 'A quiet moment about lunch with a friend today.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'e2',
+          transcript: 'Another unrelated note about errands this afternoon.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'e3',
+          transcript: 'Weather was nice on my walk through the park today.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+
+      final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
+      expect(insight.repeatSummary, isNull);
+      expect(EarlyEvidenceTimelineEngine.build(entries: entries), isNull);
+    });
+
+    test('integrated summaries avoid diagnostic and overclaim language', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+      );
+      final joined = [
+        timeline!.subtitle,
+        for (final item in timeline.items) '${item.title} ${item.body}',
+      ].join(' ');
+
+      _expectNoDiagnosticLanguage(joined);
+      expect(joined.toLowerCase(), isNot(contains('proves')));
+    });
+  });
+
+  group('EarlyArchiveInsightFeedback', () {
+    late List<({String event, Map<String, Object> properties})> captured;
+
+    setUp(() async {
+      await AppServices.resetForTest(
+        journalPath: '/tmp/vm_early_feedback_journal.json',
+        prefsPath: '/tmp/vm_early_feedback_prefs.json',
+      );
+      captured = [];
+      ActivationFunnelAnalytics.resetForTest();
+      await EarlyArchiveInsightFeedbackStore.resetForTest();
+      ActivationFunnelAnalytics.captureForTest(
+        (event, properties) => captured.add((event: event, properties: properties)),
+      );
+    });
+
+    tearDown(ActivationFunnelAnalytics.resetForTest);
+
+    testWidgets('feedback row renders on timeline card', (tester) async {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineCard(
+              timeline: timeline!,
+              analyticsSurface: 'patterns',
+              entryCount: 3,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('early_archive_insight_feedback_row_timeline')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_archive_insight_feedback_feels_right')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_archive_insight_feedback_not_quite')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_archive_insight_feedback_wrong_pattern')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('feedback row renders on confirmed repeat card', (tester) async {
+      final model = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: EarlyFirstSignalCard(
+                signal: model!,
+                onPrimary: _noop,
+                analyticsSurface: 'patterns',
+                entryCount: 3,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(
+        find.byKey(
+          const Key('early_archive_insight_feedback_row_confirmedRepeat'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    test('analytics records safe metadata without private text', () {
+      EarlyArchiveInsightFeedbackAnalytics.record(
+        insightType: EarlyArchiveInsightType.timeline,
+        value: EarlyArchiveInsightFeedbackValue.feelsRight,
+        entryCount: 3,
+        surface: 'patterns',
+      );
+
+      expect(captured, hasLength(1));
+      expect(
+        captured.single.event,
+        EarlyArchiveInsightFeedbackAnalytics.feedbackEvent,
+      );
+      expect(captured.single.properties['entry_count'], 3);
+      expect(captured.single.properties['source'], 'patterns');
+      expect(captured.single.properties['stage'], 'timeline');
+      expect(captured.single.properties['reason'], 'feels_right');
+
+      final joined = captured.single.properties.values
+          .map((value) => value.toString())
+          .join(' ')
+          .toLowerCase();
+      expect(joined, isNot(contains('transcript')));
+      expect(joined, isNot(contains('said yes')));
+    });
+
+    testWidgets('wrong pattern shows uncertainty acknowledgement', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyArchiveInsightFeedbackRow(
+              insightType: EarlyArchiveInsightType.confirmedRepeat,
+              surface: 'record',
+              entryCount: 3,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.tap(
+        find.byKey(const Key('early_archive_insight_feedback_wrong_pattern')),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(EarlyArchiveInsightFeedbackCopy.wrongPatternAcknowledgement),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('early_archive_insight_feedback_ack_wrongPattern'),
+        ),
+        findsOneWidget,
+      );
+      expect(captured, hasLength(1));
+      expect(captured.single.properties['reason'], 'wrong_pattern');
+    });
+
+    testWidgets('demo timeline does not show feedback row', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineCard(
+              timeline: EarlyEvidenceTimelineDemo.timeline,
+              isSample: true,
+              analyticsSurface: 'patterns',
+              entryCount: 0,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('early_archive_insight_feedback_row_timeline')), findsNothing);
+    });
+  });
+
+  group('EarlyArchiveInsightWhy', () {
+    test('engine returns grounded repeat reasons for confirmed repeat', () {
+      final reasons = EarlyArchiveInsightQualityEngine.whyReasonsFor(
+        insightType: EarlyArchiveInsightType.confirmedRepeat,
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      expect(reasons, isNotEmpty);
+      expect(reasons.first, 'Seen across 3 entries.');
+      expect(
+        reasons.any((reason) => reason.contains('Similar wording appeared around')),
+        isTrue,
+      );
+      _expectNoDiagnosticLanguage(reasons.join(' '));
+    });
+
+    test('engine hides trigger reason without trigger evidence', () {
+      final reasons = EarlyArchiveInsightQualityEngine.whyReasonsFor(
+        insightType: EarlyArchiveInsightType.triggerPayoff,
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      expect(reasons, isEmpty);
+    });
+
+    test('engine adds trigger reason when trigger evidence exists', () {
+      final reasons = EarlyArchiveInsightQualityEngine.whyReasonsFor(
+        insightType: EarlyArchiveInsightType.triggerPayoff,
+        entries: _fourEntriesWithTriggerCapture(),
+      );
+
+      expect(reasons, contains(EarlyArchiveInsightWhyCopy.triggerInLaterEntry));
+      _expectNoDiagnosticLanguage(reasons.join(' '));
+    });
+
+    test('timeline reasons include softening and helpful when present', () {
+      final reasons = EarlyArchiveInsightQualityEngine.whyReasonsFor(
+        insightType: EarlyArchiveInsightType.timeline,
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+      );
+
+      expect(reasons, contains(EarlyArchiveInsightWhyCopy.latestLessUrgent));
+      expect(reasons, contains(EarlyArchiveInsightWhyCopy.helpfulActionOnce));
+      _expectNoDiagnosticLanguage(reasons.join(' '));
+    });
+
+    test('softening notice reasons stay hidden without softening evidence', () {
+      final reasons = EarlyArchiveInsightQualityEngine.whyReasonsFor(
+        insightType: EarlyArchiveInsightType.softeningNotice,
+        entries: _fourEntriesWithNormalRelatedReturn(),
+      );
+
+      expect(reasons, isEmpty);
+    });
+
+    testWidgets('why link appears on confirmed repeat card', (tester) async {
+      final model = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: EarlyFirstSignalCard(
+                signal: model!,
+                onPrimary: _noop,
+                analyticsSurface: 'patterns',
+                entryCount: 3,
+                entriesForWhy: _threeRelatedRepeatEntries(),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(EarlyArchiveInsightWhyCopy.linkLabel), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_archive_insight_why_link_confirmedRepeat')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_archive_insight_why_reason_confirmedRepeat_0')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('expanding why shows grounded evidence reasons', (tester) async {
+      final entries = _fourEntriesWithSofterRelatedReturn();
+      final timeline = EarlyEvidenceTimelineEngine.build(entries: entries);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineCard(
+              timeline: timeline!,
+              analyticsSurface: 'patterns',
+              entryCount: 4,
+              entriesForWhy: entries,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.byKey(const Key('early_archive_insight_why_link_timeline')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(EarlyArchiveInsightWhyCopy.latestLessUrgent),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Seen across'), findsOneWidget);
+      _expectNoDiagnosticLanguage(
+        tester
+            .widgetList<Text>(find.byType(Text))
+            .map((widget) => widget.data ?? '')
+            .join(' '),
+      );
+    });
+
+    testWidgets('why link hidden without entriesForWhy', (tester) async {
+      final model = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: EarlyFirstSignalCard(
+                signal: model!,
+                onPrimary: _noop,
+                analyticsSurface: 'patterns',
+                entryCount: 3,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(EarlyArchiveInsightWhyCopy.linkLabel), findsNothing);
+    });
+
+    testWidgets('trigger payoff shows why when trigger evidence exists', (tester) async {
+      final payoff = EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+        entries: _fourEntriesWithTriggerCapture(),
+        savedFromTriggerPrompt: true,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatTriggerPayoffCard(
+              payoff: payoff!,
+              onKeepWatching: () {},
+              onViewEvidence: () {},
+              analyticsSurface: 'record',
+              entryCount: 4,
+              entriesForWhy: _fourEntriesWithTriggerCapture(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(EarlyArchiveInsightWhyCopy.linkLabel), findsOneWidget);
+    });
+
+    testWidgets('helpful action payoff expands helpful reason', (tester) async {
+      final payoff = EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+        savedFromHelpfulActionPrompt: true,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatHelpfulActionPayoffCard(
+              payoff: payoff!,
+              onKeepWatching: () {},
+              onViewEvidence: () {},
+              analyticsSurface: 'record',
+              entryCount: 5,
+              entriesForWhy: _fiveEntriesWithHelpfulActionCapture(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(
+        find.byKey(const Key('early_archive_insight_why_link_helpfulActionPayoff')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(EarlyArchiveInsightWhyCopy.helpfulActionOnce),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('EarlyArchiveReturnReminder', () {
+    tearDown(() {
+      EarlyArchiveReturnReminderSession.resetForTest();
+      CheckInReminderService.resetBackendForTest();
+    });
+
+    test('gates allow reminder after confirmed repeat / timeline', () {
+      final entries = _threeRelatedRepeatEntries();
+      expect(
+        EarlyArchiveReturnReminderGates.eligible(
+          entryCount: 3,
+          entries: entries,
+          hasRealTimeline: true,
+        ),
+        isTrue,
+      );
+      expect(
+        EarlyArchiveReturnReminderGates.eligible(
+          entryCount: 3,
+          entries: entries,
+          hasRealTimeline: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('gates block reminder before confirmed repeat', () {
+      final twoEntries = _threeRelatedRepeatEntries().sublist(0, 2);
+      expect(
+        EarlyArchiveReturnReminderGates.eligible(
+          entryCount: 2,
+          entries: twoEntries,
+          hasRealTimeline: false,
+        ),
+        isFalse,
+      );
+      expect(
+        EarlyArchiveReturnReminderGates.eligible(
+          entryCount: 1,
+          entries: twoEntries.sublist(0, 1),
+          hasRealTimeline: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('not now hides reminder for the day', () async {
+      await AppServices.resetForTest(
+        journalPath: '/tmp/vm_return_reminder_journal.json',
+        prefsPath: '/tmp/vm_return_reminder_prefs.json',
+      );
+      await EarlyArchiveReturnReminderStore.resetForTest(
+        AppServices.instance.prefs,
+      );
+
+      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isTrue);
+      await EarlyArchiveReturnReminderStore.instance().markNotNow();
+      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+    });
+
+    test('session dismiss hides reminder until reset', () async {
+      await AppServices.resetForTest(
+        journalPath: '/tmp/vm_return_reminder_session_journal.json',
+        prefsPath: '/tmp/vm_return_reminder_session_prefs.json',
+      );
+      await EarlyArchiveReturnReminderStore.resetForTest(
+        AppServices.instance.prefs,
+      );
+
+      EarlyArchiveReturnReminderSession.dismiss();
+      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+    });
+
+    testWidgets('reminder card shows calm copy and actions', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyArchiveReturnReminderCard(
+              source: 'patterns',
+              onDismiss: _noop,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(EarlyArchiveReturnReminderCopy.title), findsOneWidget);
+      expect(find.text(EarlyArchiveReturnReminderCopy.body), findsOneWidget);
+      expect(find.text(EarlyArchiveReturnReminderCopy.primaryCta), findsOneWidget);
+      expect(find.text(EarlyArchiveReturnReminderCopy.secondaryCta), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_archive_return_reminder_card_patterns')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('only one reminder with timeline card in column', (tester) async {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                EarlyEvidenceTimelineCard(timeline: timeline!),
+                EarlyArchiveReturnReminderCard(
+                  source: 'patterns',
+                  onDismiss: _noop,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('early_evidence_timeline_card_full')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_archive_return_reminder_card_patterns')),
+        findsOneWidget,
+      );
+      expect(find.text(EarlyArchiveReturnReminderCopy.title), findsOneWidget);
+    });
+
+    test('schedule uses existing reminder backend safely', () async {
+      await AppServices.resetForTest(
+        journalPath: '/tmp/vm_return_reminder_schedule_journal.json',
+        prefsPath: '/tmp/vm_return_reminder_schedule_prefs.json',
+      );
+      await EarlyArchiveReturnReminderStore.resetForTest(
+        AppServices.instance.prefs,
+      );
+
+      final backend = _ReturnReminderFakeBackend();
+      CheckInReminderService.setBackendForTest(backend);
+
+      final outcome = await EarlyArchiveReturnReminderService.schedule();
+      expect(outcome, ReminderScheduleOutcome.scheduled);
+      expect(backend.scheduleCalls, 1);
+      expect(backend.lastTitle, EarlyArchiveReturnReminderCopy.title);
+      expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+    });
+  });
+}
+
+class _ReturnReminderFakeBackend implements CheckInReminderBackend {
+  int scheduleCalls = 0;
+  String? lastTitle;
+
+  @override
+  bool get isAvailable => true;
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<bool> requestPermission() async => true;
+
+  @override
+  Future<void> schedule({
+    required String checkInId,
+    required String title,
+    required String body,
+    required DateTime when,
+    required String payload,
+  }) async {
+    scheduleCalls++;
+    lastTitle = title;
+  }
+
+  @override
+  Future<void> cancel(String checkInId) async {}
+
+  @override
+  Future<void> clearAll() async {}
 }
 
 void _noop() {}

@@ -1,4 +1,6 @@
 import '../../models/journal_entry.dart';
+import 'early_archive_insight_quality_copy.dart';
+import 'early_archive_insight_quality_engine.dart';
 import 'early_evidence_timeline_copy.dart';
 import 'early_first_signal_engine.dart';
 
@@ -53,11 +55,18 @@ abstract final class EarlyEvidenceTimelineEngine {
       return null;
     }
 
+    final insight = EarlyArchiveInsightQualityEngine.build(
+      entries: entries,
+      triggerCapturedMilestone: triggerCapturedMilestone,
+      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+    );
+
     final items = <EarlyEvidenceTimelineItem>[
-      const EarlyEvidenceTimelineItem(
+      EarlyEvidenceTimelineItem(
         kind: EarlyEvidenceTimelineItemKind.repeatConfirmed,
         title: EarlyEvidenceTimelineCopy.repeatConfirmedTitle,
-        body: EarlyEvidenceTimelineCopy.repeatConfirmedBody,
+        body: insight.repeatSummary ??
+            EarlyArchiveInsightQualityCopy.timelineRepeatFallback,
       ),
     ];
 
@@ -66,20 +75,22 @@ abstract final class EarlyEvidenceTimelineEngine {
       milestoneMarked: triggerCapturedMilestone,
     )) {
       items.add(
-        const EarlyEvidenceTimelineItem(
+        EarlyEvidenceTimelineItem(
           kind: EarlyEvidenceTimelineItemKind.triggerCaptured,
           title: EarlyEvidenceTimelineCopy.triggerCapturedTitle,
-          body: EarlyEvidenceTimelineCopy.triggerCapturedBody,
+          body: insight.triggerSummary ??
+              EarlyArchiveInsightQualityCopy.triggerFallback,
         ),
       );
     }
 
     if (EarlyFirstSignalEngine.hasSofteningReturnEvidence(entries)) {
       items.add(
-        const EarlyEvidenceTimelineItem(
+        EarlyEvidenceTimelineItem(
           kind: EarlyEvidenceTimelineItemKind.softerReturn,
           title: EarlyEvidenceTimelineCopy.softerReturnTitle,
-          body: EarlyEvidenceTimelineCopy.softerReturnBody,
+          body: insight.softeningSummary ??
+              EarlyArchiveInsightQualityCopy.softeningFallback,
         ),
       );
     }
@@ -89,17 +100,19 @@ abstract final class EarlyEvidenceTimelineEngine {
       milestoneMarked: helpfulActionCapturedMilestone,
     )) {
       items.add(
-        const EarlyEvidenceTimelineItem(
+        EarlyEvidenceTimelineItem(
           kind: EarlyEvidenceTimelineItemKind.helpfulAction,
           title: EarlyEvidenceTimelineCopy.helpfulActionTitle,
-          body: EarlyEvidenceTimelineCopy.helpfulActionBody,
+          body: insight.helpfulActionSummary ??
+              EarlyArchiveInsightQualityCopy.helpfulActionFallback,
         ),
       );
     }
 
     return EarlyEvidenceTimeline(
       title: EarlyEvidenceTimelineCopy.title,
-      subtitle: EarlyEvidenceTimelineCopy.subtitle,
+      subtitle: insight.timelineSubtitle ??
+          EarlyArchiveInsightQualityCopy.timelineSubtitleFallback,
       items: items,
     );
   }

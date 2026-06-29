@@ -3,6 +3,8 @@ import '../activation/first_three_journey_engine.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../timeline/timeline_entry_display.dart';
+import 'early_archive_insight_quality_copy.dart';
+import 'early_archive_insight_quality_engine.dart';
 import 'early_first_signal_copy.dart';
 
 enum EarlyFirstSignalKind {
@@ -265,6 +267,8 @@ abstract final class EarlyFirstSignalEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty) return null;
 
+    final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
+
     if (eligible.length == 1) {
       return const EarlyFirstSignalModel(
         kind: EarlyFirstSignalKind.oneEntryReceipt,
@@ -279,11 +283,12 @@ abstract final class EarlyFirstSignalEngine {
 
     if (eligible.length == 2) {
       if (_signalEngine.hasGroundedRepeatMatch(eligible)) {
-        return const EarlyFirstSignalModel(
+        return EarlyFirstSignalModel(
           kind: EarlyFirstSignalKind.twoEntryFirstSignal,
           title: EarlyFirstSignalCopy.twoEntryPatternStartTitle,
           lines: [
-            EarlyFirstSignalCopy.twoEntryNoticedAgain,
+            insight.twoEntryRepeatSummary ??
+                EarlyArchiveInsightQualityCopy.twoEntryRepeatFallback,
             EarlyFirstSignalCopy.notEnoughEvidence,
             EarlyFirstSignalCopy.twoEntryConfirmRepeat,
           ],
@@ -302,13 +307,19 @@ abstract final class EarlyFirstSignalEngine {
     if (eligible.length == 3 &&
         (_journeyEngine.hasRepeatMatch(entries: eligible) ||
             hasConfirmedRepeatAcrossThree(eligible))) {
+      final summaryLines = <String>[
+        insight.repeatSummary ?? EarlyArchiveInsightQualityCopy.repeatFallback,
+      ];
+      if (insight.beliefEvidenceSummary != null &&
+          insight.beliefEvidenceSummary != insight.repeatSummary) {
+        summaryLines.add(insight.beliefEvidenceSummary!);
+      }
+      summaryLines.add(EarlyFirstSignalCopy.evidenceHeading);
+
       return EarlyFirstSignalModel(
         kind: EarlyFirstSignalKind.threeEntryConfirmedRepeat,
         title: EarlyFirstSignalCopy.threeEntryConfirmedTitle,
-        lines: [
-          EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
-          EarlyFirstSignalCopy.evidenceHeading,
-        ],
+        lines: summaryLines,
         evidenceRows: _evidenceRows(eligible),
         primaryCta: EarlyFirstSignalCopy.recordWhatHappensNextCta,
         secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
@@ -337,12 +348,16 @@ abstract final class EarlyFirstSignalEngine {
     final priorThree = eligible.sublist(0, 3);
     if (!hasConfirmedRepeatAcrossThree(priorThree)) return null;
 
-    return const ConfirmedRepeatTriggerPayoff(
+    final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
+
+    return ConfirmedRepeatTriggerPayoff(
       title: EarlyFirstSignalCopy.triggerPayoffTitle,
-      body: EarlyFirstSignalCopy.triggerPayoffBody,
+      body: insight.triggerSummary != null
+          ? '${insight.triggerSummary!} That gives ArchiveMe stronger evidence for what starts this loop.'
+          : EarlyArchiveInsightQualityCopy.triggerPayoffBodyFallback,
       evidenceLines: [
-        EarlyFirstSignalCopy.triggerPayoffRepeatEvidence,
-        EarlyFirstSignalCopy.triggerPayoffTriggerEvidence,
+        insight.repeatSummary ?? EarlyFirstSignalCopy.triggerPayoffRepeatEvidence,
+        insight.triggerSummary ?? EarlyFirstSignalCopy.triggerPayoffTriggerEvidence,
       ],
       primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
@@ -365,12 +380,16 @@ abstract final class EarlyFirstSignalEngine {
       return null;
     }
 
-    return const ConfirmedRepeatChangeNotice(
+    final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
+
+    return ConfirmedRepeatChangeNotice(
       title: EarlyFirstSignalCopy.changeNoticeTitle,
-      body: EarlyFirstSignalCopy.changeNoticeBody,
+      body: insight.softeningSummary ??
+          EarlyArchiveInsightQualityCopy.changeNoticeBodyFallback,
       evidenceLines: [
-        EarlyFirstSignalCopy.changeNoticeRepeatEvidence,
-        EarlyFirstSignalCopy.changeNoticeChangeEvidence,
+        insight.repeatSummary ?? EarlyFirstSignalCopy.changeNoticeRepeatEvidence,
+        _softeningEvidenceLine(insight.softeningSummary) ??
+            EarlyFirstSignalCopy.changeNoticeChangeEvidence,
       ],
       primaryCta: EarlyFirstSignalCopy.recordWhatHelpedCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
@@ -392,13 +411,19 @@ abstract final class EarlyFirstSignalEngine {
     final beforeHelpful = eligible.sublist(0, eligible.length - 1);
     if (buildChangeNotice(entries: beforeHelpful) == null) return null;
 
-    return const ConfirmedRepeatHelpfulActionPayoff(
+    final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
+
+    return ConfirmedRepeatHelpfulActionPayoff(
       title: EarlyFirstSignalCopy.helpfulActionPayoffTitle,
-      body: EarlyFirstSignalCopy.helpfulActionPayoffBody,
+      body: insight.helpfulActionSummary ??
+          EarlyArchiveInsightQualityCopy.helpfulActionPayoffBodyFallback,
       evidenceLines: [
-        EarlyFirstSignalCopy.helpfulActionRepeatEvidence,
-        EarlyFirstSignalCopy.helpfulActionChangeEvidence,
-        EarlyFirstSignalCopy.helpfulActionCapturedEvidence,
+        insight.repeatSummary ??
+            EarlyFirstSignalCopy.helpfulActionRepeatEvidence,
+        _softeningEvidenceLine(insight.softeningSummary) ??
+            EarlyFirstSignalCopy.helpfulActionChangeEvidence,
+        insight.helpfulActionSummary ??
+            EarlyFirstSignalCopy.helpfulActionCapturedEvidence,
       ],
       primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
@@ -421,6 +446,21 @@ abstract final class EarlyFirstSignalEngine {
     }
     if (rows.length <= 3) return rows;
     return rows.sublist(rows.length - 3);
+  }
+
+  static String? _softeningEvidenceLine(String? softeningSummary) {
+    if (softeningSummary == null) return null;
+    final lower = softeningSummary.toLowerCase();
+    if (lower.contains('less urgent')) {
+      return 'Change: it sounded less urgent.';
+    }
+    if (lower.contains('easier to stop')) {
+      return 'Change: it seemed easier to stop.';
+    }
+    if (lower.contains('calmer')) {
+      return 'Change: it sounded calmer.';
+    }
+    return null;
   }
 
   static String _entryText(JournalEntry entry) {

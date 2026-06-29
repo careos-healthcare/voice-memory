@@ -11,7 +11,8 @@ abstract class RecordScreenFramingCopy {
 
   /// True empty archive — count 0 only.
   static const String emptyArchiveTitle = 'Your archive is empty';
-  static const String emptyArchiveBody = 'Record one moment to begin.';
+  static const String emptyArchiveBody =
+      'Record short moments. ArchiveMe watches what repeats.';
   static const String emptyArchiveFootnote =
       'Nothing is analysed until you save something.';
 

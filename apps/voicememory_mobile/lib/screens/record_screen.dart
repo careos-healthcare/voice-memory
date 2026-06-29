@@ -173,6 +173,7 @@ import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
+import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
@@ -180,6 +181,8 @@ import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
+import '../features/early_archive/early_archive_return_reminder_gates.dart';
+import '../features/early_archive/early_archive_return_reminder_store.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
@@ -449,6 +452,8 @@ class _RecordScreenState extends State<RecordScreen> {
   bool _savedFromHelpfulAction = false;
   bool _earlyEvidenceTriggerCaptured = false;
   bool _earlyEvidenceHelpfulCaptured = false;
+  bool _earlyReturnReminderOffer = false;
+  bool _earlyReturnReminderHidden = false;
   bool _lastCaptureAnalysisSucceeded = true;
   bool _lastCaptureLowQualityTranscript = false;
   bool _lastCaptureLikelySilentInput = false;
@@ -1158,10 +1163,13 @@ class _RecordScreenState extends State<RecordScreen> {
         await EarlyEvidenceMilestoneStore.instance().readTriggerCaptured();
     final helpful =
         await EarlyEvidenceMilestoneStore.instance().readHelpfulActionCaptured();
+    final earlyReturnReminderOffer =
+        await EarlyArchiveReturnReminderStore.instance().shouldOffer();
     if (!mounted) return;
     setState(() {
       _earlyEvidenceTriggerCaptured = trigger;
       _earlyEvidenceHelpfulCaptured = helpful;
+      _earlyReturnReminderOffer = earlyReturnReminderOffer;
     });
   }
 
@@ -3371,6 +3379,30 @@ class _RecordScreenState extends State<RecordScreen> {
         confirmedRepeatTriggerPayoff != null ||
         confirmedRepeatHelpfulActionPayoff != null ||
         confirmedRepeatChangeNotice != null;
+    final earlyFirstSignalOnRecord = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !showEarlyEvidenceTimeline
+        ? EarlyFirstSignalEngine.build(entries: _journalEntries)
+        : null;
+    final showEarlyReturnReminder = ui == RecordUiState.ready &&
+        _journalEntryCountReady &&
+        !_isPostSaveSurface &&
+        _earlyReturnReminderOffer &&
+        !_earlyReturnReminderHidden &&
+        !suppressEarlyRepeatPayoffCompetitors &&
+        EarlyArchiveReturnReminderGates.eligible(
+          entryCount: _journalEntryCount,
+          entries: _journalEntries,
+          hasRealTimeline: showEarlyEvidenceTimeline ||
+              EarlyEvidenceTimelineEngine.build(
+                    entries: _journalEntries,
+                    triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+                    helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+                  ) !=
+                  null,
+        ) &&
+        (showEarlyEvidenceTimeline ||
+            (earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false));
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3663,6 +3695,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           showPrimaryCta: !_shouldHideCardRecordButtons(ui),
                           analyticsSurface: 'record',
                           entryCount: _journalEntryCount,
+                          entriesForWhy: _journalEntries,
                           onPrimary: () =>
                               unawaited(_onRecordPressed(source: 'main')),
                           onViewEvidence: signal.showsConfirmedRepeat
@@ -3689,6 +3722,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         compact: true,
                         analyticsSurface: 'record',
                         entryCount: _journalEntryCount,
+                        entriesForWhy: _journalEntries,
                         onRecordWhatHelped:
                             earlyEvidenceTimeline.showsSofterReturn &&
                                 !earlyEvidenceTimeline.showsHelpfulAction
@@ -3720,6 +3754,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           notice: notice,
                           analyticsSurface: 'record',
                           entryCount: _journalEntryCount,
+                          entriesForWhy: _journalEntries,
                           onRecordWhatHelped: () {
                             ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                             setState(
@@ -3733,6 +3768,14 @@ class _RecordScreenState extends State<RecordScreen> {
                         ),
                         const SizedBox(height: 12),
                       ],
+                    ],
+                    if (showEarlyReturnReminder) ...[
+                      EarlyArchiveReturnReminderCard(
+                        source: 'record',
+                        onDismiss: () =>
+                            setState(() => _earlyReturnReminderHidden = true),
+                      ),
+                      const SizedBox(height: 12),
                     ],
                     // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
                     // carries the first-open promise without a second competing card.
@@ -4345,6 +4388,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               payoff: confirmedRepeatTriggerPayoff,
                               analyticsSurface: 'record',
                               entryCount: entriesAfterSave.length,
+                              entriesForWhy: entriesAfterSave,
                               onKeepWatching: _resetPostSaveToReady,
                               onViewEvidence: () => context.push(
                                 BeliefEvidenceNavigation.route,
@@ -4357,6 +4401,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               payoff: confirmedRepeatHelpfulActionPayoff,
                               analyticsSurface: 'record',
                               entryCount: entriesAfterSave.length,
+                              entriesForWhy: entriesAfterSave,
                               onKeepWatching: _resetPostSaveToReady,
                               onViewEvidence: () => context.push(
                                 BeliefEvidenceNavigation.route,
@@ -4369,6 +4414,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               notice: confirmedRepeatChangeNotice,
                               analyticsSurface: 'record',
                               entryCount: entriesAfterSave.length,
+                              entriesForWhy: entriesAfterSave,
                               onRecordWhatHelped: () {
                                 ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                                 setState(

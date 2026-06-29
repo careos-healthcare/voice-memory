@@ -39,18 +39,17 @@ abstract class EmptyArchiveCopy {
 
   static const String intentionalEmptyLongTermRecord =
       'Patterns emerge when you record ordinary moments over time.';
-  static const String intentionalEmptyPatternsOverTime =
-      'ArchiveMe compares moments to see what repeats and what changes.';
+  static const intentionalEmptyPatternsOverTime =
+      'Your archive shows what keeps repeating and what changes.';
   static const String intentionalEmptyFutureIntro =
-      'As you add more moments, ArchiveMe can show:';
+      'As you add more moments, your archive can show:';
   static const List<String> intentionalEmptyFutureQuotes = [
-    'What keeps showing up',
-    'What changed between days',
-    'What to check next',
-    'What may be forming',
+    'What keeps repeating',
+    'What changed',
+    'What may have helped',
   ];
   static const String intentionalEmptyClosing =
-      'Start with one honest moment. The rest follows.';
+      'Start with one short moment.';
 }
 
 /// Max width for intentional empty copy — readable on tablets.

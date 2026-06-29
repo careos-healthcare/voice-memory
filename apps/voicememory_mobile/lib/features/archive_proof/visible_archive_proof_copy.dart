@@ -3,14 +3,17 @@ import '../early_archive/early_first_signal_copy.dart';
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
-  static const firstRunBuildingLine =
-      'ArchiveMe is building from your saved words.';
+  static const firstRunBuildingLine = 'Record short moments.';
 
-  static const firstRunCompareLine =
-      'It needs more than one moment to compare.';
+  static const firstRunCompareLine = 'ArchiveMe watches what repeats.';
 
-  static const firstRunBeliefsNotConclusionsLine =
-      'Beliefs are not conclusions.';
+  static const firstRunEvidenceLine =
+      'When something comes back, your archive starts building evidence.';
+
+  static const firstRunOverTimeLine =
+      'Over time, it can show what started it, what changed, and what helped.';
+
+  static const firstRunBeliefsNotConclusionsLine = firstRunOverTimeLine;
 
   /// Shared label for typed capture — no microphone required (Apple review path).
   static const typeInsteadCta = 'Type instead';
@@ -19,11 +22,11 @@ abstract final class VisibleArchiveProofCopy {
   static const firstUseCaptureCta = 'Save one moment';
 
   // Record screen top hero (zero entries) — matches Archive Home empty promise.
-  static const recordHeroTitle = 'Your archive starts with one moment.';
+  static const recordHeroTitle =
+      'Your archive shows what keeps repeating and what changes.';
 
   static const recordHeroBody =
-      '$firstRunBuildingLine $firstRunCompareLine Record one honest moment to '
-      'begin your private archive.';
+      '$firstRunBuildingLine $firstRunCompareLine $firstRunEvidenceLine';
 
   static const recordHeroChipReturned = 'What returned';
   static const recordHeroChipSoftened = 'What softened';
@@ -33,7 +36,8 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveTitle = 'Your archive has started.';
 
   static const firstSaveBody =
-      '$firstRunBuildingLine $firstRunCompareLine';
+      'No pattern yet — just one piece of evidence from your own words. '
+      'A second moment lets ArchiveMe start comparing.';
 
   static const firstSaveSecondary =
       'No conclusion yet — just one moment saved so far.';
@@ -57,17 +61,14 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsMindMapEmptyTitle = 'Your mind map will appear here';
 
   static const patternsMindMapEmptyBody =
-      'Save a few real moments. ArchiveMe will connect them into patterns, '
-      'changes, and things to watch.';
+      '$firstRunEvidenceLine $firstRunOverTimeLine';
 
   static const patternsMindMapPreviewPatternsLabel = 'Patterns';
-  static const patternsMindMapPreviewPatternsValue = 'What keeps coming back';
+  static const patternsMindMapPreviewPatternsValue = 'What keeps repeating';
   static const patternsMindMapPreviewChangesLabel = 'Changes';
-  static const patternsMindMapPreviewChangesValue =
-      'What gets stronger, softer, or disappears';
+  static const patternsMindMapPreviewChangesValue = 'What changed';
   static const patternsMindMapPreviewWatchLabel = 'Next to watch';
-  static const patternsMindMapPreviewWatchValue =
-      'What to notice the next time it happens';
+  static const patternsMindMapPreviewWatchValue = 'What may have helped';
   static const patternsMindMapEmptyPrimaryCta = 'Save your first moment';
 
   // Patterns tab — entries saved but no named belief yet.
@@ -100,7 +101,7 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsOneEntryBeliefRow = 'Not enough evidence yet';
   static const patternsOneEntryEvidenceRow = '1 saved moment';
   static const patternsOneEntryChangedRow =
-      'A second moment can show whether the same thread returns.';
+      'A second moment shows whether the same thread returns.';
 
   static const patternsOneEntryCta = 'Add one more moment';
 
@@ -384,14 +385,11 @@ abstract final class VisibleArchiveProofCopy {
       'ArchiveMe — your private evidence-based life archive.';
 
   // Archive Home command center — one surface across the entry ladder.
-  static const archiveHomeEmptyTitle = 'Your archive starts with one moment.';
+  static const archiveHomeEmptyTitle = recordHeroTitle;
 
-  static const archiveHomeEmptyBody =
-      '$firstRunBuildingLine $firstRunCompareLine Record one honest moment to '
-      'begin your private archive.';
+  static const archiveHomeEmptyBody = recordHeroBody;
 
-  static const archiveHomeOneBody =
-      '$firstRunBuildingLine $firstRunCompareLine';
+  static const archiveHomeOneBody = firstSaveBody;
 
   static const archiveHomeRecordCta = 'Record a moment';
 

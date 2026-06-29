@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
 import '../../features/early_archive/early_archive_proof_analytics.dart';
+import '../../features/early_archive/early_archive_insight_feedback_models.dart';
+import '../../features/early_archive/early_archive_insight_quality_engine.dart';
 import '../../features/early_archive/early_evidence_timeline_engine.dart';
 import '../../features/early_archive/early_first_signal_copy.dart';
+import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'early_archive_insight_feedback_row.dart';
+import 'early_archive_insight_why_section.dart';
 
 /// Sequential early evidence timeline — repeat, trigger, softening, helpful action.
 class EarlyEvidenceTimelineCard extends StatelessWidget {
@@ -19,6 +24,7 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
     this.analyticsSurface,
     this.entryCount,
     this.isSample = false,
+    this.entriesForWhy,
   });
 
   final EarlyEvidenceTimeline timeline;
@@ -27,6 +33,7 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
   final String? analyticsSurface;
   final int? entryCount;
   final bool isSample;
+  final List<JournalEntry>? entriesForWhy;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
   static const Color _railColor = Color(0xFF6B8F71);
@@ -55,6 +62,12 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
     final padding = compact
         ? const EdgeInsets.all(AppSpacing.sm)
         : ArchiveResponsiveLayout.cardInsets(context);
+    final whyReasons = !isSample && entriesForWhy != null
+        ? EarlyArchiveInsightQualityEngine.whyReasonsFor(
+            insightType: EarlyArchiveInsightType.timeline,
+            entries: entriesForWhy!,
+          )
+        : const <String>[];
 
     return Container(
       key: Key('early_evidence_timeline_card_${compact ? 'compact' : 'full'}'),
@@ -78,6 +91,17 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
             items: timeline.items,
             compact: compact,
           ),
+          if (!isSample && surface != null && count != null) ...[
+            EarlyArchiveInsightWhySection(
+              reasons: whyReasons,
+              insightKey: 'timeline',
+            ),
+            EarlyArchiveInsightFeedbackRow(
+              insightType: EarlyArchiveInsightType.timeline,
+              surface: surface!,
+              entryCount: count!,
+            ),
+          ],
           if (onRecordWhatHelped != null &&
               timeline.showsSofterReturn &&
               !timeline.showsHelpfulAction) ...[

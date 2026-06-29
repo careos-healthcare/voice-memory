@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/early_archive/early_archive_proof_analytics.dart';
+import '../../features/early_archive/early_archive_insight_feedback_models.dart';
+import '../../features/early_archive/early_archive_insight_quality_engine.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
+import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'early_archive_insight_feedback_row.dart';
+import 'early_archive_insight_why_section.dart';
 
 /// Grounded change notice after a confirmed repeat returns softer.
 class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
@@ -16,6 +21,7 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
     required this.onViewEvidence,
     this.analyticsSurface,
     this.entryCount,
+    this.entriesForWhy,
   });
 
   final ConfirmedRepeatChangeNotice notice;
@@ -23,6 +29,7 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
   final VoidCallback onViewEvidence;
   final String? analyticsSurface;
   final int? entryCount;
+  final List<JournalEntry>? entriesForWhy;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +50,12 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
       color: AppColors.textPrimary,
       height: 1.4,
     );
+    final whyReasons = entriesForWhy != null
+        ? EarlyArchiveInsightQualityEngine.whyReasonsFor(
+            insightType: EarlyArchiveInsightType.softeningNotice,
+            entries: entriesForWhy!,
+          )
+        : const <String>[];
 
     return Container(
       key: const Key('confirmed_repeat_change_notice_card'),
@@ -110,6 +123,17 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
             ),
             child: Text(notice.secondaryCta),
           ),
+          if (surface != null && count != null) ...[
+            EarlyArchiveInsightWhySection(
+              reasons: whyReasons,
+              insightKey: 'softeningNotice',
+            ),
+            EarlyArchiveInsightFeedbackRow(
+              insightType: EarlyArchiveInsightType.softeningNotice,
+              surface: surface!,
+              entryCount: count!,
+            ),
+          ],
         ],
       ),
     );

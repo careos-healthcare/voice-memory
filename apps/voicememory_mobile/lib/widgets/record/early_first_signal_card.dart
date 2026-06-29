@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/early_archive/early_archive_proof_analytics.dart';
+import '../../features/early_archive/early_archive_insight_feedback_models.dart';
+import '../../features/early_archive/early_archive_insight_quality_engine.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
+import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'early_archive_insight_feedback_row.dart';
+import 'early_archive_insight_why_section.dart';
 
 /// Early archive card for 1–3 saved moments — receipt, first signal, or confirmation.
 class EarlyFirstSignalCard extends StatelessWidget {
@@ -18,6 +23,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
     this.showPrimaryCta = true,
     this.analyticsSurface,
     this.entryCount,
+    this.entriesForWhy,
   });
 
   final EarlyFirstSignalModel signal;
@@ -27,6 +33,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
   final bool showPrimaryCta;
   final String? analyticsSurface;
   final int? entryCount;
+  final List<JournalEntry>? entriesForWhy;
 
   void _trackSeen() {
     final surface = analyticsSurface;
@@ -86,6 +93,12 @@ class EarlyFirstSignalCard extends StatelessWidget {
     );
     final timestampStyle = ArchiveMobileTypography.cardLabel(context);
     final returnPrompt = signal.returnPrompt;
+    final whyReasons = signal.showsConfirmedRepeat && entriesForWhy != null
+        ? EarlyArchiveInsightQualityEngine.whyReasonsFor(
+            insightType: EarlyArchiveInsightType.confirmedRepeat,
+            entries: entriesForWhy!,
+          )
+        : const <String>[];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -151,6 +164,19 @@ class EarlyFirstSignalCard extends StatelessWidget {
                     foregroundColor: AppColors.accentPrimary,
                   ),
                   child: Text(signal.secondaryCta!),
+                ),
+              ],
+              if (signal.showsConfirmedRepeat &&
+                  analyticsSurface != null &&
+                  entryCount != null) ...[
+                EarlyArchiveInsightWhySection(
+                  reasons: whyReasons,
+                  insightKey: 'confirmedRepeat',
+                ),
+                EarlyArchiveInsightFeedbackRow(
+                  insightType: EarlyArchiveInsightType.confirmedRepeat,
+                  surface: analyticsSurface!,
+                  entryCount: entryCount!,
                 ),
               ],
             ],

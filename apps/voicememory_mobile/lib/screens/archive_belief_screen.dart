@@ -18,6 +18,8 @@ import '../features/archive_evidence/archive_evidence.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_demo.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
+import '../features/early_archive/early_archive_return_reminder_gates.dart';
+import '../features/early_archive/early_archive_return_reminder_store.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_record_routes.dart';
@@ -267,6 +269,7 @@ import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
+import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
@@ -341,6 +344,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool _earlyEvidenceTriggerCaptured = false;
   bool _earlyEvidenceHelpfulCaptured = false;
   bool _earlyEvidenceDemoVisible = false;
+  bool _earlyReturnReminderOffer = false;
+  bool _earlyReturnReminderHidden = false;
   static const _tierResolver = ArchiveIntelligenceTierResolver();
 
   ArchiveIntelligenceTier get _archiveIntelligenceTier =>
@@ -712,6 +717,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         await EarlyEvidenceMilestoneStore.instance().readTriggerCaptured();
     final earlyHelpfulCaptured =
         await EarlyEvidenceMilestoneStore.instance().readHelpfulActionCaptured();
+    final earlyReturnReminderOffer =
+        await EarlyArchiveReturnReminderStore.instance().shouldOffer();
     final hasRealEarlyEvidenceTimeline =
         EarlyEvidenceTimelineEngine.build(
           entries: entries,
@@ -766,6 +773,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _compressionGroups = compressionGroups;
       _earlyEvidenceTriggerCaptured = earlyTriggerCaptured;
       _earlyEvidenceHelpfulCaptured = earlyHelpfulCaptured;
+      _earlyReturnReminderOffer = earlyReturnReminderOffer;
       if (hasRealEarlyEvidenceTimeline) {
         _earlyEvidenceDemoVisible = false;
       }
@@ -2987,6 +2995,30 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
   }
 
+  List<Widget> _earlyReturnReminderWidgets({
+    required bool hasRealTimeline,
+    required bool earlyProofActive,
+  }) {
+    if (!_earlyReturnReminderOffer || _earlyReturnReminderHidden) {
+      return const [];
+    }
+    if (!earlyProofActive) return const [];
+    if (!EarlyArchiveReturnReminderGates.eligible(
+      entryCount: _entries.length,
+      entries: _entries,
+      hasRealTimeline: hasRealTimeline,
+    )) {
+      return const [];
+    }
+    return [
+      EarlyArchiveReturnReminderCard(
+        source: 'patterns',
+        onDismiss: () => setState(() => _earlyReturnReminderHidden = true),
+      ),
+      const SizedBox(height: AppSpacing.lg),
+    ];
+  }
+
   List<Widget> _earlyEvidenceDemoWidgets() {
     final hasRealTimeline = EarlyEvidenceTimelineEngine.build(
           entries: _entries,
@@ -3437,6 +3469,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     timeline: earlyEvidenceTimeline!,
                     analyticsSurface: 'patterns',
                     entryCount: _entries.length,
+                    entriesForWhy: _entries,
                     onRecordWhatHelped:
                         earlyEvidenceTimeline.showsSofterReturn &&
                             !earlyEvidenceTimeline.showsHelpfulAction
@@ -3457,6 +3490,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     signal: earlyFirstSignal!,
                     analyticsSurface: 'patterns',
                     entryCount: _entries.length,
+                    entriesForWhy: _entries,
                     onPrimary: _goToRecord,
                     onViewEvidence: earlyFirstSignal!.showsConfirmedRepeat
                         ? () => context.push(BeliefEvidenceNavigation.route)
@@ -3480,6 +3514,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     notice: confirmedRepeatChangeNotice!,
                     analyticsSurface: 'patterns',
                     entryCount: _entries.length,
+                    entriesForWhy: _entries,
                     onRecordWhatHelped: () {
                       ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                       context.go(
@@ -3493,6 +3528,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                ..._earlyReturnReminderWidgets(
+                  hasRealTimeline: showEarlyEvidenceTimeline,
+                  earlyProofActive: showEarlyEvidenceTimeline ||
+                      (earlyFirstSignal?.showsConfirmedRepeat ?? false),
+                ),
                 if (!suppressArchiveHomeEarlyProofDuplicate)
                   ..._archiveHomeCommandCenterWidgets(),
                 ..._buildThoughtMapPreviewWidgets(),

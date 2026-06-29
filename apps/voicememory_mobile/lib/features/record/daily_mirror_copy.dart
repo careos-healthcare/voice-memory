@@ -2,11 +2,12 @@
 abstract class DailyMirrorCopy {
   DailyMirrorCopy._();
 
-  static const String emptyTitle = 'Notice what keeps repeating';
+  static const String emptyTitle = 'Record short moments';
   static const String emptySubtitle =
-      'ArchiveMe helps you notice what keeps repeating in your own words.';
+      'ArchiveMe watches what repeats across your own words.';
   static const String emptyCardTitle = 'Your archive is empty';
-  static const String emptyCardBody = 'Record one moment to begin.';
+  static const String emptyCardBody =
+      'Record short moments. ArchiveMe watches what repeats.';
   static const String emptyPrimaryCta = 'Record one moment';
 
   static const String heardHeroTitle = 'Archive started';

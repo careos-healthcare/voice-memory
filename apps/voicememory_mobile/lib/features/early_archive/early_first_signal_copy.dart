@@ -8,11 +8,11 @@ abstract final class EarlyFirstSignalCopy {
       'Record one more moment like this to confirm whether it repeats.';
 
   // One saved moment — heard, not a pattern.
-  static const oneEntryTitle = 'ArchiveMe heard this moment.';
+  static const oneEntryTitle = 'Your first moment is saved.';
 
   static const oneEntryBody =
-      'Your first moment is saved. There is not a pattern yet — just one '
-      'piece of evidence from your own words.';
+      'No pattern yet — just one piece of evidence from your own words. '
+      'When something comes back, your archive starts building evidence.';
 
   // Two moments, no grounded repeat — do not force a pattern.
   static const twoEntryNoPatternTitle = 'Two moments saved.';

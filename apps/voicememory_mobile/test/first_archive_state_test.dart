@@ -63,7 +63,7 @@ void main() {
       expect(ConsumerUiCopy.patternsEmptyCta, 'Save your first moment');
       expect(
         ConsumerUiCopy.patternsEmptyPageBody,
-        contains('Save a few real moments'),
+        contains('When something comes back'),
       );
     });
 
@@ -100,7 +100,7 @@ void main() {
         find.text('Your mind map will appear here'),
         findsOneWidget,
       );
-      expect(find.textContaining('Save a few real moments'), findsOneWidget);
+      expect(find.textContaining('When something comes back'), findsOneWidget);
       expect(find.text('Patterns'), findsOneWidget);
       expect(find.text('Changes'), findsOneWidget);
       expect(find.text('Next to watch'), findsOneWidget);
@@ -255,7 +255,7 @@ void main() {
         find.text('Your mind map will appear here'),
         findsOneWidget,
       );
-      expect(find.textContaining('Save a few real moments'), findsOneWidget);
+      expect(find.textContaining('When something comes back'), findsOneWidget);
       expect(find.text('Save your first moment'), findsOneWidget);
       expect(find.text('Type instead'), findsOneWidget);
       expect(find.text('Current belief'), findsNothing);

@@ -1,3 +1,4 @@
+import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 
 /// Consumer-facing UI copy — calm, human, App Store-ready.
@@ -26,7 +27,7 @@ abstract class ConsumerUiCopy {
   static const String archiveTimelineSubtitle =
       'See how this has changed over time.';
   static const String patternsEarlyStateBody =
-      'Record short moments. ArchiveMe looks for loops where pressure, productivity, and enoughness keep repeating.';
+      'Record short moments. ArchiveMe watches what repeats.';
   static const String onboardingPositioningHeadline =
       'Build a private mind map of what keeps repeating';
   static const String onboardingPositioningBody =
@@ -134,23 +135,23 @@ abstract class ConsumerUiCopy {
   static const String firstRecordPositioningLine =
       'Each moment helps ArchiveMe remember the pattern.';
   static const String archiveMemoryDemoTitle =
-      'ArchiveMe remembers what repeats';
+      'How ArchiveMe builds evidence';
   static const List<String> archiveMemoryDemoRows = [
     'Day 1: “I said yes before checking what I needed.”',
     'Day 3: “It showed up again before a work message.”',
     'Day 7: “It felt lighter after I paused.”',
   ];
   static const String archiveMemoryDemoRememberLine =
-      'ArchiveMe remembers: You often carry pressure before saying yes.';
+      'ArchiveMe watches what repeats — from your own words.';
   static const String archiveMemoryDemoCta = recordOneMomentCta;
   static const String archiveMemoryPreviewTitle =
-      'What ArchiveMe will remember';
+      'What your archive will show';
   static const String archiveMemoryPreviewBody =
-      'After a few moments, ArchiveMe will show what repeats, what changes, and what helps.';
+      'Over time, ArchiveMe can show what keeps repeating, what changed, and what helped.';
   static const List<String> archiveMemoryPreviewBullets = [
-    'What keeps showing up',
-    'What feels lighter or heavier',
-    'What to check next',
+    'What keeps repeating',
+    'What changed',
+    'What may have helped',
   ];
   static const String archiveMemoryPreviewCta = 'Record one moment';
 
@@ -176,7 +177,7 @@ abstract class ConsumerUiCopy {
   static const String patternsEmptyPageTitle =
       'Your mind map will appear here';
   static const String patternsEmptyPageBody =
-      'Save a few real moments. ArchiveMe will connect them into patterns, changes, and things to watch.';
+      VisibleArchiveProofCopy.patternsMindMapEmptyBody;
   static const String patternsFirstEntrySavedTitle =
       EarlyFirstSignalCopy.oneEntryTitle;
   static const String patternsFirstEntrySavedBody =
