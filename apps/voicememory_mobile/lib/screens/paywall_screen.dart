@@ -20,6 +20,8 @@ import '../billing/suggestion_attribution_store.dart';
 import '../design/archive_responsive_layout.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/activation/activation_tracker.dart';
+import '../billing/restore_purchases_copy.dart';
+import '../billing/restore_purchases_flow.dart';
 import '../billing/revenuecat_service.dart';
 import '../billing/subscription_copy.dart';
 import '../product/consumer_ui_copy.dart';
@@ -79,6 +81,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   PremiumEntitlements? _entitlements;
   bool _loading = true;
   bool _busy = false;
+  RestorePurchasesFlow? _restoreFlow;
   bool _paywallSeenTracked = false;
   String? _error;
   _PaywallPlan _selected = _PaywallPlan.yearly;
@@ -407,39 +410,32 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Future<void> _restore() async {
     _recordAttribution(PaywallAttributionEventType.restoreStarted);
-    if (!_billingReady) {
+
+    if (!_billingReady || !AppServices.isInitialized) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(SubscriptionCopy.temporarilyUnavailable)),
+        SnackBar(content: Text(RestorePurchasesCopy.billingUnavailable)),
       );
       return;
     }
 
+    final flow = _restoreFlow ??= RestorePurchasesFlow(
+      billing: AppServices.instance.billing,
+    );
+    if (flow.isBusy || _busy) return;
+
     setState(() => _busy = true);
     ActivationTracker.trackRestoreTapped();
     try {
-      final ent = await AppServices.instance.billing.restoreNative();
-      if (!mounted) return;
-      if (ent.isPro) {
-        _recordAttribution(PaywallAttributionEventType.restoreCompleted);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$_entitlementLabel restored.')));
-        await _load();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No active subscription found for this account.'),
-          ),
-        );
+      final result = await flow.restore();
+      if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
+        return;
       }
-    } catch (e) {
-      if (!mounted) return;
+      if (result.outcome == RestorePurchasesOutcome.restored) {
+        _recordAttribution(PaywallAttributionEventType.restoreCompleted);
+        await _load();
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            userFacingErrorMessage(e, fallback: 'Restore failed. Try again.'),
-          ),
-        ),
+        SnackBar(content: Text(result.userMessage)),
       );
     } finally {
       if (mounted) setState(() => _busy = false);

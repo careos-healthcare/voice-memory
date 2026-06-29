@@ -8,14 +8,14 @@ import '../api/api_exceptions.dart';
 import '../models/entitlement.dart';
 import '../storage/entitlement_cache.dart';
 import 'billing_async_guard.dart';
-import 'revenuecat_service.dart';
+import 'store_billing_port.dart';
 
 class BillingService {
   BillingService(this._api, this._cache, this._revenueCat);
 
   final ApiClient _api;
   final EntitlementCache _cache;
-  final RevenueCatService _revenueCat;
+  final StoreBillingPort _revenueCat;
 
   PremiumEntitlements? _memory;
   StreamSubscription<PremiumEntitlements>? _rcSub;
@@ -93,19 +93,7 @@ class BillingService {
       }
 
       _memory = _merge(serverEnt, storeEnt);
-      if (_memory!.isPro) {
-        try {
-          await _cache.save(_memory!);
-        } catch (e) {
-          debugPrint('Billing: cache save skipped — $e');
-        }
-      } else if (_revenueCat.isConfigured) {
-        try {
-          await _cache.clear();
-        } catch (e) {
-          debugPrint('Billing: cache clear skipped — $e');
-        }
-      }
+      await _persistEntitlements(_memory!);
       return _memory!;
     } catch (e, st) {
       debugPrint('Billing: loadEntitlements failed — free tier: $e');
@@ -118,14 +106,32 @@ class BillingService {
   Future<PremiumEntitlements> purchaseNative(Package package) async {
     final ent = await _revenueCat.purchasePackage(package);
     _memory = ent;
-    await _cache.save(ent);
+    await _persistEntitlements(ent);
     return ent;
   }
 
+  /// Restore via RevenueCat, refresh entitlements, and update local cache.
   Future<PremiumEntitlements> restoreNative() async {
-    final ent = await _revenueCat.restorePurchases();
-    _memory = ent;
-    await _cache.save(ent);
-    return ent;
+    final restored = await _revenueCat.restorePurchases();
+    _memory = restored;
+    await _persistEntitlements(restored);
+    if (_revenueCat.isConfigured) {
+      _memory = await loadEntitlements(forceRefresh: true);
+    }
+    return _memory!;
+  }
+
+  Future<void> _persistEntitlements(PremiumEntitlements ent) async {
+    try {
+      if (ent.isPro) {
+        await _cache.save(ent);
+      } else if (_revenueCat.isConfigured) {
+        await _cache.clear();
+      } else {
+        await _cache.save(ent);
+      }
+    } catch (e) {
+      debugPrint('Billing: cache persist skipped — $e');
+    }
   }
 }

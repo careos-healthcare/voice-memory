@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../api/api_error_message.dart';
+import '../billing/restore_purchases_copy.dart';
+import '../billing/restore_purchases_flow.dart';
 import '../billing/revenuecat_service.dart';
 import '../billing/restore_production_evidence.dart';
-import '../billing/subscription_copy.dart';
 import '../models/entitlement.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
@@ -20,17 +20,37 @@ class RestorePurchasesScreen extends StatefulWidget {
 
 class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
   bool _busy = false;
+  RestorePurchasesFlow? _restoreFlow;
   PremiumEntitlements? _result;
   String? _evidenceJson;
+  String? _inlineMessage;
 
   Future<void> _restore() async {
+    final flow = _restoreFlow ??= RestorePurchasesFlow(
+      billing: AppServices.instance.billing,
+    );
+    if (flow.isBusy || _busy) return;
+
     setState(() {
       _busy = true;
       _result = null;
       _evidenceJson = null;
+      _inlineMessage = null;
     });
     try {
-      final ent = await AppServices.instance.billing.restoreNative();
+      final result = await flow.restore();
+      if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
+        return;
+      }
+      if (result.outcome == RestorePurchasesOutcome.error) {
+        final evidence = await RestoreProductionEvidence.toJson(success: false);
+        setState(() {
+          _evidenceJson = evidence;
+          _inlineMessage = result.userMessage;
+        });
+        return;
+      }
+      final ent = result.entitlements ?? PremiumEntitlements.free();
       final evidence = await RestoreProductionEvidence.toJson(
         success: true,
         entitlements: ent,
@@ -39,19 +59,10 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
         setState(() {
           _result = ent;
           _evidenceJson = evidence;
+          _inlineMessage = result.outcome == RestorePurchasesOutcome.restored
+              ? RestorePurchasesCopy.restoreScreenSuccess
+              : RestorePurchasesCopy.noActivePurchase;
         });
-      }
-    } catch (e) {
-      final evidence = await RestoreProductionEvidence.toJson(success: false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              userFacingErrorMessage(e, fallback: 'Restore failed. Try again.'),
-            ),
-          ),
-        );
-        setState(() => _evidenceJson = evidence);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -64,18 +75,18 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
     final subscriptionsAvailable = RevenueCatService.instance.isConfigured;
 
     return PushedScreenShell(
-      title: 'Restore Purchases',
+      title: RestorePurchasesCopy.restoreScreenTitle,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
         children: [
           if (!subscriptionsAvailable) ...[
-            const Text(
-              SubscriptionCopy.temporarilyUnavailable,
-              style: TextStyle(color: AppTheme.foreground, height: 1.45),
+            Text(
+              RestorePurchasesCopy.billingUnavailable,
+              style: const TextStyle(color: AppTheme.foreground, height: 1.45),
             ),
           ] else ...[
             const Text(
-              'Restore a subscription you already bought on this Apple or Google account.',
+              RestorePurchasesCopy.restoreScreenBody,
               style: TextStyle(color: AppTheme.muted, height: 1.45),
             ),
             const SizedBox(height: 24),
@@ -87,15 +98,21 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
                       height: 22,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Restore'),
+                  : Text(RestorePurchasesCopy.restorePurchases),
             ),
           ],
-          if (result != null) ...[
+          if (_inlineMessage != null) ...[
+            const SizedBox(height: 24),
+            Text(
+              _inlineMessage!,
+              style: const TextStyle(color: AppTheme.muted),
+            ),
+          ] else if (result != null) ...[
             const SizedBox(height: 24),
             Text(
               result.isPro
-                  ? 'Your subscription is active again on this device.'
-                  : 'Restore finished — no active subscription found.',
+                  ? RestorePurchasesCopy.restoreScreenSuccess
+                  : RestorePurchasesCopy.noActivePurchase,
               style: const TextStyle(color: AppTheme.muted),
             ),
           ],

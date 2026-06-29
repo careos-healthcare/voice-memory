@@ -8,9 +8,10 @@ import '../config/app_config.dart';
 import '../models/entitlement.dart';
 import 'billing_async_guard.dart';
 import 'revenuecat_diagnostics.dart';
+import 'store_billing_port.dart';
 
 /// Native store billing via RevenueCat — no browser checkout.
-class RevenueCatService {
+class RevenueCatService implements StoreBillingPort {
   RevenueCatService._();
 
   static final RevenueCatService instance = RevenueCatService._();
@@ -24,11 +25,14 @@ class RevenueCatService {
   PremiumEntitlements _latest = PremiumEntitlements.free();
   RevenueCatDiagnostics _diagnostics = RevenueCatDiagnostics.initial();
 
+  @override
   Stream<PremiumEntitlements> get entitlementStream =>
       _entitlementController.stream;
 
+  @override
   PremiumEntitlements get latestEntitlements => _latest;
 
+  @override
   bool get isConfigured => _configured;
 
   RevenueCatDiagnostics get diagnostics => _diagnostics;
@@ -183,6 +187,7 @@ class RevenueCatService {
     }
   }
 
+  @override
   Future<PremiumEntitlements> purchasePackage(Package package) async {
     if (!_configured) {
       throw StateError('RevenueCat not configured');
@@ -193,16 +198,39 @@ class RevenueCatService {
     return mapped;
   }
 
+  @override
   Future<PremiumEntitlements> restorePurchases() async {
     if (!_configured) {
       throw StateError('RevenueCat not configured');
     }
-    final info = await Purchases.restorePurchases();
+    final info = await withBillingTimeoutRequired(
+      Purchases.restorePurchases(),
+      label: 'restorePurchases',
+    );
     final mapped = _mapCustomerInfo(info);
     _emit(mapped);
     return mapped;
   }
 
+  /// iOS StoreKit sync — refreshes local receipt state before reading entitlements.
+  Future<PremiumEntitlements> syncAndRefreshEntitlements() async {
+    if (!_configured) {
+      final free = PremiumEntitlements.free();
+      _emit(free);
+      return free;
+    }
+    try {
+      await withBillingTimeoutRequired(
+        Purchases.syncPurchases(),
+        label: 'syncPurchases',
+      );
+    } catch (e) {
+      debugPrint('RevenueCat syncPurchases: $e');
+    }
+    return refreshEntitlements();
+  }
+
+  @override
   Future<PremiumEntitlements> refreshEntitlements() async {
     if (!_configured) {
       final free = PremiumEntitlements.free();

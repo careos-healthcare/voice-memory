@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../api/api_error_message.dart';
-import '../billing/revenuecat_service.dart';
-import '../billing/subscription_copy.dart';
+import '../billing/restore_purchases_flow.dart';
 import '../config/developer_settings_gate.dart';
 import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
@@ -38,6 +36,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   PackageInfo? _packageInfo;
   bool _restoreBusy = false;
+  RestorePurchasesFlow? _restoreFlow;
   bool _remindersEnabled = false;
   bool _remindersBusy = false;
   @override
@@ -90,37 +89,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _restorePurchases() async {
-    if (!RevenueCatService.instance.isConfigured) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(SubscriptionCopy.temporarilyUnavailable),
-          ),
-        );
-      }
-      return;
-    }
+    final flow = _restoreFlow ??= RestorePurchasesFlow(
+      billing: AppServices.instance.billing,
+    );
+    if (flow.isBusy || _restoreBusy) return;
+
     setState(() => _restoreBusy = true);
     try {
-      final ent = await AppServices.instance.billing.restoreNative();
-      if (!mounted) return;
+      final result = await flow.restore();
+      if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ent.isPro
-                ? 'Subscription restored.'
-                : 'No active subscription found for this account.',
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            userFacingErrorMessage(e, fallback: 'Restore failed. Try again.'),
-          ),
-        ),
+        SnackBar(content: Text(result.userMessage)),
       );
     } finally {
       if (mounted) setState(() => _restoreBusy = false);
