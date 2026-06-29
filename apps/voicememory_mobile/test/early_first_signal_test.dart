@@ -15,6 +15,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_change_notice_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payoff_card.dart';
+import 'package:voicememory_mobile/widgets/record/early_evidence_timeline_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
 JournalEntry _entry({
@@ -1058,6 +1059,69 @@ void main() {
         ),
         isFalse,
       );
+    });
+  });
+
+  group('EarlyEvidenceTimelineCard', () {
+    testWidgets('full card shows chip trail and evidence chain labels', (
+      tester,
+    ) async {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineCard(timeline: timeline!),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Your archive is building evidence.'), findsOneWidget);
+      expect(
+        find.text(
+          'ArchiveMe is tracking what repeats, what starts it, and what may help '
+          'it soften.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('early_evidence_timeline_chip_trail')), findsOneWidget);
+      expect(find.text('Repeat'), findsWidgets);
+      expect(find.text('Change'), findsWidgets);
+      expect(find.text('Helped'), findsWidgets);
+      expect(find.text('Repeat confirmed'), findsOneWidget);
+      expect(find.text('Helpful action captured'), findsOneWidget);
+    });
+
+    testWidgets('compact card hides subtitle and chip trail', (tester) async {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fourEntriesWithSofterRelatedReturn(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineCard(
+              timeline: timeline!,
+              compact: true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('early_evidence_timeline_chip_trail')), findsNothing);
+      expect(
+        find.text(
+          'ArchiveMe is tracking what repeats, what starts it, and what may help '
+          'it soften.',
+        ),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('early_evidence_timeline_row_chip_softerReturn')), findsOneWidget);
+      expect(find.text('Change'), findsOneWidget);
     });
   });
 }
