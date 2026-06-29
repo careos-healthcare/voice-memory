@@ -8,6 +8,7 @@ import '../config/app_config.dart';
 import '../models/entitlement.dart';
 import 'billing_async_guard.dart';
 import 'revenuecat_diagnostics.dart';
+import 'revenuecat_offerings_debug_log.dart';
 import 'store_billing_port.dart';
 
 /// Native store billing via RevenueCat — no browser checkout.
@@ -130,6 +131,10 @@ class RevenueCatService implements StoreBillingPort {
   }
 
   PremiumEntitlements _mapCustomerInfo(CustomerInfo info) {
+    RevenueCatOfferingsDebugLog.entitlementsMapped(
+      info: info,
+      source: 'mapCustomerInfo',
+    );
     final active = info.entitlements.active;
     final pro = active[proEntitlementId];
     final isPro = pro != null && pro.isActive;
@@ -166,6 +171,13 @@ class RevenueCatService implements StoreBillingPort {
       'RevenueCat diagnostics: configured=$_configured offerings=${all.length} '
       'packages=${packages.length} current=${current?.identifier}',
     );
+
+    if (kDebugMode) {
+      RevenueCatOfferingsDebugLog.offeringsSnapshot(
+        offerings: offerings,
+        error: error,
+      );
+    }
   }
 
   Future<Offerings?> fetchOfferings() async {
@@ -178,7 +190,10 @@ class RevenueCatService implements StoreBillingPort {
         Purchases.getOfferings(),
         label: 'fetchOfferings',
       );
-      _recordOfferings(offerings);
+      _recordOfferings(
+        offerings,
+        error: offerings == null ? 'fetchOfferings timeout or null response' : null,
+      );
       return offerings;
     } catch (e) {
       debugPrint('RevenueCat fetchOfferings: $e');

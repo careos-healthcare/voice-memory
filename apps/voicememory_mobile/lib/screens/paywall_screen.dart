@@ -23,6 +23,7 @@ import '../features/activation/activation_tracker.dart';
 import '../billing/restore_purchases_copy.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../billing/revenuecat_service.dart';
+import '../billing/revenuecat_offerings_debug_log.dart';
 import '../billing/subscription_copy.dart';
 import '../product/consumer_ui_copy.dart';
 import '../features/first25/first25_user_metrics.dart';
@@ -320,6 +321,20 @@ class _PaywallScreenState extends State<PaywallScreen> {
         _error = SubscriptionCopy.paywallNoOfferings;
       }
     });
+    final purchasePlansAvailable =
+        _billingReady && _hasPackagesIn(offerings);
+    RevenueCatOfferingsDebugLog.paywallLoadResult(
+      billingConfigured: _billingReady,
+      offeringsLoaded: offerings != null,
+      offeringCount: offerings?.all.length ?? 0,
+      currentOfferingId: offerings?.current?.identifier,
+      packageCount: offerings?.current?.availablePackages.length ?? 0,
+      monthlyPackageFound: monthly != null,
+      annualPackageFound: yearly != null,
+      purchasePlansAvailable: purchasePlansAvailable,
+      showingUnavailable: !purchasePlansAvailable && entitlements.isPro != true,
+      error: error ?? (_hasPackagesIn(offerings) ? null : SubscriptionCopy.paywallNoOfferings),
+    );
     if (_hasPackagesIn(offerings) && entitlements.isPro == false) {
       _trackPlansShown();
     }
