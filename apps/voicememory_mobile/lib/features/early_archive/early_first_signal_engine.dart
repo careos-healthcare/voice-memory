@@ -68,6 +68,23 @@ class EarlyFirstSignalModel {
       kind == EarlyFirstSignalKind.threeEntryConfirmedRepeat;
 }
 
+/// Post-save payoff after capturing the trigger from the return prompt.
+class ConfirmedRepeatTriggerPayoff {
+  const ConfirmedRepeatTriggerPayoff({
+    required this.title,
+    required this.body,
+    required this.evidenceLines,
+    required this.primaryCta,
+    required this.secondaryCta,
+  });
+
+  final String title;
+  final String body;
+  final List<String> evidenceLines;
+  final String primaryCta;
+  final String secondaryCta;
+}
+
 abstract final class EarlyFirstSignalEngine {
   EarlyFirstSignalEngine._();
 
@@ -147,6 +164,31 @@ abstract final class EarlyFirstSignalEngine {
     }
 
     return null;
+  }
+
+  /// Payoff after saving from the confirmed-repeat trigger guided prompt.
+  static ConfirmedRepeatTriggerPayoff? buildTriggerCapturePayoff({
+    required List<JournalEntry> entries,
+    required bool savedFromTriggerPrompt,
+  }) {
+    if (!savedFromTriggerPrompt) return null;
+
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 4) return null;
+
+    final priorThree = eligible.sublist(0, 3);
+    if (!hasConfirmedRepeatAcrossThree(priorThree)) return null;
+
+    return const ConfirmedRepeatTriggerPayoff(
+      title: EarlyFirstSignalCopy.triggerPayoffTitle,
+      body: EarlyFirstSignalCopy.triggerPayoffBody,
+      evidenceLines: [
+        EarlyFirstSignalCopy.triggerPayoffRepeatEvidence,
+        EarlyFirstSignalCopy.triggerPayoffTriggerEvidence,
+      ],
+      primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
+      secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
+    );
   }
 
   static List<EarlyFirstSignalEvidenceRow> _evidenceRows(

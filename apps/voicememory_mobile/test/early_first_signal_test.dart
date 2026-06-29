@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_trigger_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_record_routes.dart';
@@ -7,6 +8,7 @@ import 'package:voicememory_mobile/features/record/record_empty_archive_gates.da
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
 JournalEntry _entry({
@@ -37,7 +39,39 @@ const _bannedStrongBelief = [
   'working hypothesis',
 ];
 
+List<JournalEntry> _threeRelatedRepeatEntries() => [
+      _entry(
+        id: 'e1',
+        transcript:
+            'I had no capacity but I said yes again to the extra meeting today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript:
+            'Same thing — said yes when I had no capacity for one more thing.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourEntriesWithTriggerCapture() => [
+      ..._threeRelatedRepeatEntries(),
+      _entry(
+        id: 'e4',
+        transcript:
+            'The extra ask came in right before I said yes again without checking capacity.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+    ];
+
 void main() {
+  setUp(ConfirmedRepeatTriggerCapture.resetSessionForTest);
   group('RecordEmptyArchiveGates.showEarlyFirstSignalCard', () {
     test('hidden at zero entries', () {
       expect(
@@ -479,6 +513,117 @@ void main() {
       await tester.pump();
 
       expect(returnPromptTapped, isTrue);
+    });
+  });
+
+  group('ConfirmedRepeatTriggerCapture payoff', () {
+    test('saving from trigger guided prompt shows trigger payoff', () {
+      ConfirmedRepeatTriggerCapture.armForNextSave();
+      expect(
+        ConfirmedRepeatTriggerCapture.resolveSave(
+          capturePrompt: EarlyFirstSignalCopy.recordTriggerGuidedPrompt,
+        ),
+        isTrue,
+      );
+
+      final payoff = EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+        entries: _fourEntriesWithTriggerCapture(),
+        savedFromTriggerPrompt: true,
+      );
+
+      expect(payoff, isNotNull);
+      expect(payoff!.title, EarlyFirstSignalCopy.triggerPayoffTitle);
+      expect(payoff.body, EarlyFirstSignalCopy.triggerPayoffBody);
+      expect(
+        payoff.evidenceLines,
+        contains(EarlyFirstSignalCopy.triggerPayoffRepeatEvidence),
+      );
+      expect(
+        payoff.evidenceLines,
+        contains(EarlyFirstSignalCopy.triggerPayoffTriggerEvidence),
+      );
+      expect(payoff.primaryCta, EarlyFirstSignalCopy.triggerPayoffPrimaryCta);
+      expect(payoff.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
+    });
+
+    test('normal fourth entry save does not show trigger payoff', () {
+      expect(
+        ConfirmedRepeatTriggerCapture.resolveSave(capturePrompt: null),
+        isFalse,
+      );
+
+      final payoff = EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+        entries: _fourEntriesWithTriggerCapture(),
+        savedFromTriggerPrompt: false,
+      );
+
+      expect(payoff, isNull);
+    });
+
+    test('armed save without trigger prompt does not show payoff', () {
+      ConfirmedRepeatTriggerCapture.armForNextSave();
+      expect(
+        ConfirmedRepeatTriggerCapture.resolveSave(
+          capturePrompt: 'Some other recording prompt entirely.',
+        ),
+        isFalse,
+      );
+
+      expect(
+        EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+          entries: _fourEntriesWithTriggerCapture(),
+          savedFromTriggerPrompt: false,
+        ),
+        isNull,
+      );
+    });
+
+    test('copy says captured once not confirmed trigger', () {
+      final payoff = EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+        entries: _fourEntriesWithTriggerCapture(),
+        savedFromTriggerPrompt: true,
+      );
+
+      final joined = [
+        payoff!.title,
+        payoff.body,
+        ...payoff.evidenceLines,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('captured once'));
+      expect(joined, isNot(contains('confirmed trigger')));
+    });
+  });
+
+  group('ConfirmedRepeatTriggerPayoffCard', () {
+    testWidgets('view evidence CTA routes via callback', (tester) async {
+      final payoff = EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+        entries: _fourEntriesWithTriggerCapture(),
+        savedFromTriggerPrompt: true,
+      );
+
+      var viewEvidenceTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatTriggerPayoffCard(
+              payoff: payoff!,
+              onKeepWatching: () {},
+              onViewEvidence: () => viewEvidenceTapped = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(
+        find.byKey(const Key('confirmed_repeat_trigger_payoff_view_evidence_cta')),
+      );
+      await tester.pump();
+
+      expect(viewEvidenceTapped, isTrue);
+      expect(find.text(EarlyFirstSignalCopy.viewEvidenceCta), findsOneWidget);
     });
   });
 }

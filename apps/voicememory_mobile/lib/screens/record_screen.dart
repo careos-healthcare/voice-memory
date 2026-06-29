@@ -169,11 +169,13 @@ import '../widgets/record/watch_for_tomorrow_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
+import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
+import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/record/record_empty_archive_gates.dart';
 import '../features/return_ritual/return_ritual_gates.dart';
 import '../features/acquisition/audience_wedge_model.dart';
@@ -436,6 +438,7 @@ class _RecordScreenState extends State<RecordScreen> {
   String? _defaultBoundaryPauseLabel;
   String? _postSaveFollowUp;
   bool _showPostSaveLoop = false;
+  bool _savedFromConfirmedRepeatTrigger = false;
   bool _lastCaptureAnalysisSucceeded = true;
   bool _lastCaptureLowQualityTranscript = false;
   bool _lastCaptureLikelySilentInput = false;
@@ -561,6 +564,7 @@ class _RecordScreenState extends State<RecordScreen> {
     final seed = widget.initialPrompt?.trim();
     if (seed != null && seed.isNotEmpty) {
       _selectedPromptLine = seed;
+      ConfirmedRepeatTriggerCapture.armIfTriggerPrompt(seed);
     }
     if (ScreenshotMode.enabled) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1932,6 +1936,7 @@ class _RecordScreenState extends State<RecordScreen> {
           EntryAboutnessSession.clearSaveReceipt();
           MemorySurfacingSession.clearSaveReceipts();
           PreserveOriginalSession.clearSaveReceipt();
+          ConfirmedRepeatTriggerCapture.clearSaveReceipt();
         });
         await _beginRecording();
       case RecordCtaAction.requestPermission:
@@ -2222,6 +2227,9 @@ class _RecordScreenState extends State<RecordScreen> {
   Future<void> _finishSuccessfulCapture(
     CapturePipelineResult pipelineResult,
   ) async {
+    final savedFromTriggerPrompt = ConfirmedRepeatTriggerCapture.resolveSave(
+      capturePrompt: _selectedPromptLine,
+    );
     final all = await AppServices.instance.journal.loadAll();
     final movement = ArchiveMovementEngine.build(
       all,
@@ -2370,6 +2378,12 @@ class _RecordScreenState extends State<RecordScreen> {
       _lastCaptureAnalysisSucceeded = pipelineResult.analysisSucceeded;
       _lastCaptureLowQualityTranscript = pipelineResult.lowQualityTranscript;
       _postSaveFollowUp = null;
+      _savedFromConfirmedRepeatTrigger =
+          EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+                entries: all,
+                savedFromTriggerPrompt: savedFromTriggerPrompt,
+              ) !=
+              null;
     });
 
     unawaited(_handleSuggestionAttributionAfterSave(all.length));
@@ -3257,6 +3271,14 @@ class _RecordScreenState extends State<RecordScreen> {
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
+    final confirmedRepeatTriggerPayoff = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty &&
+            _savedFromConfirmedRepeatTrigger
+        ? EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+            entries: entriesAfterSave,
+            savedFromTriggerPrompt: true,
+          )
+        : null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3553,10 +3575,13 @@ class _RecordScreenState extends State<RecordScreen> {
                                   )
                               : null,
                           onReturnPrompt: signal.returnPrompt != null
-                              ? () => setState(
+                              ? () {
+                                  ConfirmedRepeatTriggerCapture.armForNextSave();
+                                  setState(
                                     () => _selectedPromptLine =
                                         signal.returnPrompt!.guidedRecordPrompt,
-                                  )
+                                  );
+                                }
                               : null,
                         ),
                         const SizedBox(height: 12),
@@ -4167,6 +4192,16 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ? _resetPostSaveToReady
                                 : null,
                           ),
+                          if (confirmedRepeatTriggerPayoff != null) ...[
+                            const SizedBox(height: 16),
+                            ConfirmedRepeatTriggerPayoffCard(
+                              payoff: confirmedRepeatTriggerPayoff,
+                              onKeepWatching: _resetPostSaveToReady,
+                              onViewEvidence: () => context.push(
+                                BeliefEvidenceNavigation.route,
+                              ),
+                            ),
+                          ],
                           if (postSaveArchiveHierarchy?.showMomentQualityCoach ??
                               true)
                             SavedMomentQualityCard(
@@ -4923,6 +4958,8 @@ class _RecordScreenState extends State<RecordScreen> {
       _instantReflectionResponse = null;
       _immediateDiscovery = null;
       _immediateDiscoveryLoading = false;
+      _savedFromConfirmedRepeatTrigger = false;
+      ConfirmedRepeatTriggerCapture.clearSaveReceipt();
       _ui = _uiForMicPhase(_mic);
     });
   }

@@ -54,4 +54,18 @@ abstract final class EarlyFirstSignalCopy {
   /// Prefilled Record prompt when the user taps the return CTA.
   static const recordTriggerGuidedPrompt =
       'What happened right before this came up?';
+
+  // Payoff after saving from the confirmed-repeat trigger prompt.
+  static const triggerPayoffTitle =
+      'Now your archive has the repeat and the trigger.';
+
+  static const triggerPayoffBody =
+      'You recorded what happened right before it. That gives ArchiveMe '
+      'stronger evidence for what starts this loop.';
+
+  static const triggerPayoffRepeatEvidence = 'Repeat: seen across 3 moments.';
+
+  static const triggerPayoffTriggerEvidence = 'Trigger: captured once.';
+
+  static const triggerPayoffPrimaryCta = 'Keep watching this';
 }
