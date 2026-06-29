@@ -8,6 +8,7 @@ void main() {
     for (final label in [
       'ConsumerUiCopy.privacy',
       'ConsumerUiCopy.termsOfUse',
+      'TestFlightFeedbackCopy.settingsTitle',
       'ConsumerUiCopy.restorePurchases',
       'PrivacyDataControlsSection',
       'ConsumerUiCopy.deleteAccount',

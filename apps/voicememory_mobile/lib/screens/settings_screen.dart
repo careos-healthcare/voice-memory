@@ -10,6 +10,9 @@ import '../design/archive_responsive_layout.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
 import '../features/support/support_feedback_copy.dart';
+import '../features/support/testflight_feedback_analytics.dart';
+import '../features/support/testflight_feedback_copy.dart';
+import '../features/support/testflight_feedback_launcher.dart';
 import '../features/archive_packs/archive_pack.dart';
 import '../features/action_items/archive_action_item.dart';
 import '../features/fact_ledger/archive_fact.dart';
@@ -89,6 +92,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _sendTestFlightFeedback() async {
+    TestFlightFeedbackAnalytics.tapped(surface: 'settings');
+    final opened = await TestFlightFeedbackLauncher.openFeedbackEmail();
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(TestFlightFeedbackCopy.emailFallbackMessage),
+        ),
+      );
+    }
+  }
+
   Future<void> _restorePurchases() async {
     final flow = _restoreFlow ??= RestorePurchasesFlow(
       billing: AppServices.instance.billing,
@@ -155,6 +170,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/support-feedback'),
+            ),
+            ListTile(
+              key: const Key('settings_testflight_feedback_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                TestFlightFeedbackCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                TestFlightFeedbackCopy.settingsCta,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _sendTestFlightFeedback,
             ),
             ListTile(
               key: const Key('settings_pro_value_preview_tile'),
