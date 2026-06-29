@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/record/record_empty_archive_gates.da
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/widgets/record/confirmed_repeat_change_notice_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
@@ -66,6 +67,36 @@ List<JournalEntry> _fourEntriesWithTriggerCapture() => [
         id: 'e4',
         transcript:
             'The extra ask came in right before I said yes again without checking capacity.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourEntriesWithSofterRelatedReturn() => [
+      ..._threeRelatedRepeatEntries(),
+      _entry(
+        id: 'e4',
+        transcript:
+            'Same yes pattern came back but it felt less urgent and easier to stop this time.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourEntriesWithNormalRelatedReturn() => [
+      ..._threeRelatedRepeatEntries(),
+      _entry(
+        id: 'e4',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask today.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourEntriesWithUnrelatedSofterEntry() => [
+      ..._threeRelatedRepeatEntries(),
+      _entry(
+        id: 'e4',
+        transcript:
+            'Weather was nice on my walk through the park and felt calmer outside.',
         createdAt: DateTime(2026, 6, 13, 12),
       ),
     ];
@@ -624,6 +655,104 @@ void main() {
 
       expect(viewEvidenceTapped, isTrue);
       expect(find.text(EarlyFirstSignalCopy.viewEvidenceCta), findsOneWidget);
+    });
+  });
+
+  group('ConfirmedRepeatChangeNotice', () {
+    test('confirmed repeat plus softer later entry shows change noticed card', () {
+      final notice = EarlyFirstSignalEngine.buildChangeNotice(
+        entries: _fourEntriesWithSofterRelatedReturn(),
+      );
+
+      expect(notice, isNotNull);
+      expect(notice!.title, EarlyFirstSignalCopy.changeNoticeTitle);
+      expect(notice.body, EarlyFirstSignalCopy.changeNoticeBody);
+      expect(
+        notice.evidenceLines,
+        contains(EarlyFirstSignalCopy.changeNoticeRepeatEvidence),
+      );
+      expect(
+        notice.evidenceLines,
+        contains(EarlyFirstSignalCopy.changeNoticeChangeEvidence),
+      );
+      expect(notice.primaryCta, EarlyFirstSignalCopy.recordWhatHelpedCta);
+      expect(notice.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
+    });
+
+    test('confirmed repeat plus normal later entry does not show change card', () {
+      expect(
+        EarlyFirstSignalEngine.buildChangeNotice(
+          entries: _fourEntriesWithNormalRelatedReturn(),
+        ),
+        isNull,
+      );
+    });
+
+    test('unrelated softer entry does not show change noticed card', () {
+      expect(
+        EarlyFirstSignalEngine.buildChangeNotice(
+          entries: _fourEntriesWithUnrelatedSofterEntry(),
+        ),
+        isNull,
+      );
+    });
+
+    test('copy uses cautious may have been softer language', () {
+      final notice = EarlyFirstSignalEngine.buildChangeNotice(
+        entries: _fourEntriesWithSofterRelatedReturn(),
+      );
+
+      final joined = [
+        notice!.title,
+        notice.body,
+        ...notice.evidenceLines,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('may have been softer'));
+      expect(joined, isNot(contains('fixed')));
+      expect(joined, isNot(contains('healed')));
+    });
+
+    test('record what helped CTA route prefills guided prompt', () {
+      final route = EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt();
+      expect(
+        route,
+        contains(
+          Uri.encodeComponent(EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt),
+        ),
+      );
+      expect(route, startsWith('/record?prompt='));
+    });
+  });
+
+  group('ConfirmedRepeatChangeNoticeCard', () {
+    testWidgets('record what helped CTA fires callback', (tester) async {
+      final notice = EarlyFirstSignalEngine.buildChangeNotice(
+        entries: _fourEntriesWithSofterRelatedReturn(),
+      );
+
+      var recordWhatHelpedTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatChangeNoticeCard(
+              notice: notice!,
+              onRecordWhatHelped: () => recordWhatHelpedTapped = true,
+              onViewEvidence: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(
+        find.byKey(const Key('confirmed_repeat_change_notice_primary_cta')),
+      );
+      await tester.pump();
+
+      expect(recordWhatHelpedTapped, isTrue);
+      expect(find.text(EarlyFirstSignalCopy.recordWhatHelpedCta), findsOneWidget);
     });
   });
 }

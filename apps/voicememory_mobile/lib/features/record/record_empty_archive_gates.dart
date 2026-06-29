@@ -35,6 +35,14 @@ abstract class RecordEmptyArchiveGates {
   }) =>
       loaded && !isPostSave && entryCount >= 1 && entryCount <= 3;
 
+  /// Softer repeat change notice — after a confirmed repeat, 4+ entries, ready only.
+  static bool showConfirmedRepeatChangeNoticeCard({
+    required bool loaded,
+    required int entryCount,
+    required bool isPostSave,
+  }) =>
+      loaded && !isPostSave && entryCount >= 4;
+
   /// "Ready to record" status — only after comparison seed exists.
   static bool showReadyToRecordStatus({
     required bool loaded,

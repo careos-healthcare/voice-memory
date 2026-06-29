@@ -12,4 +12,11 @@ abstract final class EarlyFirstSignalRecordRoutes {
     );
     return '$recordRoute?prompt=$encoded${autostart ? '&autostart=1' : ''}';
   }
+
+  static String routeWithWhatHelpedPrompt({bool autostart = false}) {
+    final encoded = Uri.encodeComponent(
+      EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+    );
+    return '$recordRoute?prompt=$encoded${autostart ? '&autostart=1' : ''}';
+  }
 }

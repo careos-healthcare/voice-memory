@@ -85,12 +85,59 @@ class ConfirmedRepeatTriggerPayoff {
   final String secondaryCta;
 }
 
+/// Grounded change notice when a later repeat entry sounds softer.
+class ConfirmedRepeatChangeNotice {
+  const ConfirmedRepeatChangeNotice({
+    required this.title,
+    required this.body,
+    required this.evidenceLines,
+    required this.primaryCta,
+    required this.secondaryCta,
+    required this.guidedRecordPrompt,
+  });
+
+  final String title;
+  final String body;
+  final List<String> evidenceLines;
+  final String primaryCta;
+  final String secondaryCta;
+  final String guidedRecordPrompt;
+}
+
 abstract final class EarlyFirstSignalEngine {
   EarlyFirstSignalEngine._();
 
   static const _signalEngine = SecondSessionSignalEngine();
   static const _journeyEngine = FirstThreeJourneyEngine();
   static const _maxSnippetLength = 72;
+
+  static const _softeningPhrases = [
+    'easier',
+    'calmer',
+    'less urgent',
+    'stopped sooner',
+    'did not spiral',
+    "didn't spiral",
+    'handled it better',
+    'not as strong',
+    'easier to stop',
+  ];
+
+  /// True when entry text contains cautious softening language from the user.
+  static bool hasSofteningLanguage(String text) {
+    final lower = text.toLowerCase();
+    for (final phrase in _softeningPhrases) {
+      if (lower.contains(phrase)) return true;
+    }
+    return false;
+  }
+
+  /// True when the archive already has a confirmed repeat foundation.
+  static bool hasConfirmedRepeatFoundation(List<JournalEntry> entries) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 3) return false;
+    return hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3));
+  }
 
   /// True when three eligible moments form a grounded repeat chain.
   static bool hasConfirmedRepeatAcrossThree(List<JournalEntry> entries) {
@@ -188,6 +235,35 @@ abstract final class EarlyFirstSignalEngine {
       ],
       primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
+    );
+  }
+
+  /// Change notice when a later related entry sounds softer than before.
+  static ConfirmedRepeatChangeNotice? buildChangeNotice({
+    required List<JournalEntry> entries,
+  }) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 4) return null;
+    if (!hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3))) return null;
+
+    final latestText = _entryText(eligible.last);
+    if (!hasSofteningLanguage(latestText)) return null;
+    if (!_signalEngine.hasGroundedRepeatMatch(
+      eligible.sublist(eligible.length - 2),
+    )) {
+      return null;
+    }
+
+    return const ConfirmedRepeatChangeNotice(
+      title: EarlyFirstSignalCopy.changeNoticeTitle,
+      body: EarlyFirstSignalCopy.changeNoticeBody,
+      evidenceLines: [
+        EarlyFirstSignalCopy.changeNoticeRepeatEvidence,
+        EarlyFirstSignalCopy.changeNoticeChangeEvidence,
+      ],
+      primaryCta: EarlyFirstSignalCopy.recordWhatHelpedCta,
+      secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
+      guidedRecordPrompt: EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
     );
   }
 

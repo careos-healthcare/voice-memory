@@ -260,6 +260,7 @@ import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
+import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
@@ -3287,6 +3288,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ? SecondSessionPayoffEngine.build(entries: _entries)
           : null;
       final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _entries);
+      final confirmedRepeatChangeNotice =
+          EarlyFirstSignalEngine.buildChangeNotice(entries: _entries);
       final groundedSecondSessionRepeat =
           _entries.length > FirstThreeSessionGates.minEntriesForRepeatSurface &&
           const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
@@ -3333,6 +3336,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                             );
                           }
                         : null,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (confirmedRepeatChangeNotice case final notice?) ...[
+                  ConfirmedRepeatChangeNoticeCard(
+                    notice: notice,
+                    onRecordWhatHelped: () => context.go(
+                      EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(),
+                    ),
+                    onViewEvidence: () =>
+                        context.push(BeliefEvidenceNavigation.route),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],

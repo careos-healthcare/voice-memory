@@ -1,4 +1,4 @@
-/// Early archive copy — 1–3 entries, before a belief is earned.
+/// Early archive copy — first entries through confirmed-repeat follow-ups.
 abstract final class EarlyFirstSignalCopy {
   static const notEnoughEvidence = 'Not enough evidence yet.';
 
@@ -68,4 +68,20 @@ abstract final class EarlyFirstSignalCopy {
   static const triggerPayoffTriggerEvidence = 'Trigger: captured once.';
 
   static const triggerPayoffPrimaryCta = 'Keep watching this';
+
+  // After a confirmed repeat returns with softening language in a later entry.
+  static const changeNoticeTitle = 'Something changed this time.';
+
+  static const changeNoticeBody =
+      'The same loop came back, but your archive noticed it may have been softer.';
+
+  static const changeNoticeRepeatEvidence = 'Repeat: already confirmed.';
+
+  static const changeNoticeChangeEvidence =
+      'Change: this entry sounded less urgent.';
+
+  static const recordWhatHelpedCta = 'Record what helped';
+
+  static const recordWhatHelpedGuidedPrompt =
+      'What helped you handle it differently this time?';
 }

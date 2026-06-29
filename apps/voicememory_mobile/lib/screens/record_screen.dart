@@ -170,6 +170,7 @@ import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
+import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
@@ -3279,6 +3280,11 @@ class _RecordScreenState extends State<RecordScreen> {
             savedFromTriggerPrompt: true,
           )
         : null;
+    final confirmedRepeatChangeNotice = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty &&
+            !_savedFromConfirmedRepeatTrigger
+        ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
+        : null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3583,6 +3589,29 @@ class _RecordScreenState extends State<RecordScreen> {
                                   );
                                 }
                               : null,
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                    ],
+                    if (ui == RecordUiState.ready &&
+                        _journalEntryCountReady &&
+                        RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
+                          loaded: _journalEntryCountReady,
+                          entryCount: _journalEntryCount,
+                          isPostSave: _isPostSaveSurface,
+                        )) ...[
+                      if (EarlyFirstSignalEngine.buildChangeNotice(
+                            entries: _journalEntries,
+                          )
+                          case final notice?) ...[
+                        ConfirmedRepeatChangeNoticeCard(
+                          notice: notice,
+                          onRecordWhatHelped: () => setState(
+                            () => _selectedPromptLine = notice.guidedRecordPrompt,
+                          ),
+                          onViewEvidence: () => context.push(
+                            BeliefEvidenceNavigation.route,
+                          ),
                         ),
                         const SizedBox(height: 12),
                       ],
@@ -4197,6 +4226,23 @@ class _RecordScreenState extends State<RecordScreen> {
                             ConfirmedRepeatTriggerPayoffCard(
                               payoff: confirmedRepeatTriggerPayoff,
                               onKeepWatching: _resetPostSaveToReady,
+                              onViewEvidence: () => context.push(
+                                BeliefEvidenceNavigation.route,
+                              ),
+                            ),
+                          ],
+                          if (confirmedRepeatChangeNotice != null) ...[
+                            const SizedBox(height: 16),
+                            ConfirmedRepeatChangeNoticeCard(
+                              notice: confirmedRepeatChangeNotice,
+                              onRecordWhatHelped: () {
+                                setState(
+                                  () => _selectedPromptLine =
+                                      confirmedRepeatChangeNotice
+                                          .guidedRecordPrompt,
+                                );
+                                _resetPostSaveToReady();
+                              },
                               onViewEvidence: () => context.push(
                                 BeliefEvidenceNavigation.route,
                               ),
