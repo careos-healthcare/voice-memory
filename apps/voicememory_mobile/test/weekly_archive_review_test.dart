@@ -197,7 +197,7 @@ void main() {
       );
       expect(review.hasEnoughEvidence, isTrue);
       expect(review.evidenceWeak, isTrue);
-      expect(review.uncertaintyLine, 'The evidence is still thin.');
+      expect(review.uncertaintyLine, VisibleArchiveProofCopy.weeklyArchiveReviewStillThin);
     });
 
     test('route constant is stable', () {

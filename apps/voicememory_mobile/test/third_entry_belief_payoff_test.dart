@@ -227,7 +227,7 @@ void main() {
 
       expect(payoff, isNotNull);
       expect(payoff!.evidenceThin, isTrue);
-      expect(payoff.thinEvidenceNote, contains('still thin'));
+      expect(payoff.thinEvidenceNote, contains('distinct moment'));
       expect(payoff.thinEvidenceAction, contains('Add one more moment'));
     });
 

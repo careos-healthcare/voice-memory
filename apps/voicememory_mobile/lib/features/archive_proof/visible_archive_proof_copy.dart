@@ -153,7 +153,7 @@ abstract final class VisibleArchiveProofCopy {
   static const threeEntryBeliefEvidenceLabel = 'Evidence from your archive';
 
   static const threeEntryBeliefEvidenceThin =
-      'The evidence is still thin.';
+      'ArchiveMe can compare this more clearly with one more distinct moment.';
 
   static const threeEntryBeliefEvidenceThinAction =
       'Add one more moment to make this clearer.';
@@ -169,7 +169,7 @@ abstract final class VisibleArchiveProofCopy {
       'Something shifted in your saved words.';
 
   static const beliefUpdateBodyStillBuilding =
-      'Your archive is still building evidence.';
+      'A repeated thread is starting to stand out.';
 
   static const beliefUpdateCurrentBeliefLabel =
       'What this may be pointing to';
@@ -185,7 +185,8 @@ abstract final class VisibleArchiveProofCopy {
       'The same feeling appeared again, but with different words.';
 
   static const beliefUpdateChangeEasierCompare =
-      'The evidence is still thin, but it is becoming easier to compare.';
+      'This is appearing in more than one moment, so ArchiveMe can compare '
+      'it more clearly.';
 
   static const beliefUpdateDefaultBelief =
       'Your archive is beginning to notice similar pressure across your '
@@ -225,7 +226,8 @@ abstract final class VisibleArchiveProofCopy {
 
   static const beliefEvidenceStillUncertainLabel = 'Still uncertain';
 
-  static const beliefEvidenceStillThin = 'The evidence is still thin.';
+  static const beliefEvidenceStillThin =
+      'More distinct saved moments would make this easier to compare.';
 
   static const beliefEvidenceAddNextLabel = 'Add one more moment';
 
@@ -269,7 +271,8 @@ abstract final class VisibleArchiveProofCopy {
       'A newer moment may have widened what your archive can compare.';
 
   static const beliefHistoryWhatChangedStillThin =
-      'The evidence is still thin, but it is becoming easier to compare.';
+      'This is appearing in more than one moment, so ArchiveMe can compare '
+      'it more clearly.';
 
   // Five-plus entry weekly archive review — summary retention hook.
   static const weeklyArchiveReviewTitle = 'Your archive review';
@@ -297,7 +300,8 @@ abstract final class VisibleArchiveProofCopy {
 
   static const weeklyArchiveReviewAddNextLabel = 'What to add next';
 
-  static const weeklyArchiveReviewStillThin = 'The evidence is still thin.';
+  static const weeklyArchiveReviewStillThin =
+      'More distinct saved moments would make this easier to compare.';
 
   static const weeklyArchiveReviewNextDefault =
       'Add one more moment when this shows up again.';
@@ -327,7 +331,8 @@ abstract final class VisibleArchiveProofCopy {
       'Your latest moments may be widening what your archive can compare.';
 
   static const weeklyArchiveReviewWhatChangedStillThin =
-      'The evidence is still thin, but it is becoming easier to compare.';
+      'This is appearing in more than one moment, so ArchiveMe can compare '
+      'it more clearly.';
 
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
   static const returnLoopOneEntryBody =
@@ -509,7 +514,8 @@ abstract final class VisibleArchiveProofCopy {
       'holds across more than one example.';
 
   static const correctionNextThinEvidenceSuffix =
-      'The evidence is still thin, so one more saved moment helps.';
+      'One more distinct saved moment would help ArchiveMe compare this more '
+      'clearly.';
 
   // Archive insight feedback — local trust controls on belief/review surfaces.
   static const insightFeedbackFeelsRight = 'Feels right';
