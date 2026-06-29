@@ -171,12 +171,14 @@ import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
+import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
+import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/record/record_empty_archive_gates.dart';
 import '../features/return_ritual/return_ritual_gates.dart';
 import '../features/acquisition/audience_wedge_model.dart';
@@ -440,6 +442,7 @@ class _RecordScreenState extends State<RecordScreen> {
   String? _postSaveFollowUp;
   bool _showPostSaveLoop = false;
   bool _savedFromConfirmedRepeatTrigger = false;
+  bool _savedFromHelpfulAction = false;
   bool _lastCaptureAnalysisSucceeded = true;
   bool _lastCaptureLowQualityTranscript = false;
   bool _lastCaptureLikelySilentInput = false;
@@ -566,6 +569,7 @@ class _RecordScreenState extends State<RecordScreen> {
     if (seed != null && seed.isNotEmpty) {
       _selectedPromptLine = seed;
       ConfirmedRepeatTriggerCapture.armIfTriggerPrompt(seed);
+      ConfirmedRepeatHelpfulActionCapture.armIfHelpfulPrompt(seed);
     }
     if (ScreenshotMode.enabled) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1938,6 +1942,7 @@ class _RecordScreenState extends State<RecordScreen> {
           MemorySurfacingSession.clearSaveReceipts();
           PreserveOriginalSession.clearSaveReceipt();
           ConfirmedRepeatTriggerCapture.clearSaveReceipt();
+          ConfirmedRepeatHelpfulActionCapture.clearSaveReceipt();
         });
         await _beginRecording();
       case RecordCtaAction.requestPermission:
@@ -2231,6 +2236,11 @@ class _RecordScreenState extends State<RecordScreen> {
     final savedFromTriggerPrompt = ConfirmedRepeatTriggerCapture.resolveSave(
       capturePrompt: _selectedPromptLine,
     );
+    final savedFromHelpfulActionPrompt = savedFromTriggerPrompt
+        ? false
+        : ConfirmedRepeatHelpfulActionCapture.resolveSave(
+            capturePrompt: _selectedPromptLine,
+          );
     final all = await AppServices.instance.journal.loadAll();
     final movement = ArchiveMovementEngine.build(
       all,
@@ -2383,6 +2393,12 @@ class _RecordScreenState extends State<RecordScreen> {
           EarlyFirstSignalEngine.buildTriggerCapturePayoff(
                 entries: all,
                 savedFromTriggerPrompt: savedFromTriggerPrompt,
+              ) !=
+              null;
+      _savedFromHelpfulAction = !savedFromTriggerPrompt &&
+          EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+                entries: all,
+                savedFromHelpfulActionPrompt: savedFromHelpfulActionPrompt,
               ) !=
               null;
     });
@@ -3280,9 +3296,18 @@ class _RecordScreenState extends State<RecordScreen> {
             savedFromTriggerPrompt: true,
           )
         : null;
+    final confirmedRepeatHelpfulActionPayoff = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty &&
+            _savedFromHelpfulAction
+        ? EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+            entries: entriesAfterSave,
+            savedFromHelpfulActionPrompt: true,
+          )
+        : null;
     final confirmedRepeatChangeNotice = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
-            !_savedFromConfirmedRepeatTrigger
+            !_savedFromConfirmedRepeatTrigger &&
+            !_savedFromHelpfulAction
         ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
         : null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
@@ -3606,9 +3631,13 @@ class _RecordScreenState extends State<RecordScreen> {
                           case final notice?) ...[
                         ConfirmedRepeatChangeNoticeCard(
                           notice: notice,
-                          onRecordWhatHelped: () => setState(
-                            () => _selectedPromptLine = notice.guidedRecordPrompt,
-                          ),
+                          onRecordWhatHelped: () {
+                            ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+                            setState(
+                              () => _selectedPromptLine =
+                                  notice.guidedRecordPrompt,
+                            );
+                          },
                           onViewEvidence: () => context.push(
                             BeliefEvidenceNavigation.route,
                           ),
@@ -4231,11 +4260,22 @@ class _RecordScreenState extends State<RecordScreen> {
                               ),
                             ),
                           ],
+                          if (confirmedRepeatHelpfulActionPayoff != null) ...[
+                            const SizedBox(height: 16),
+                            ConfirmedRepeatHelpfulActionPayoffCard(
+                              payoff: confirmedRepeatHelpfulActionPayoff,
+                              onKeepWatching: _resetPostSaveToReady,
+                              onViewEvidence: () => context.push(
+                                BeliefEvidenceNavigation.route,
+                              ),
+                            ),
+                          ],
                           if (confirmedRepeatChangeNotice != null) ...[
                             const SizedBox(height: 16),
                             ConfirmedRepeatChangeNoticeCard(
                               notice: confirmedRepeatChangeNotice,
                               onRecordWhatHelped: () {
+                                ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                                 setState(
                                   () => _selectedPromptLine =
                                       confirmedRepeatChangeNotice
@@ -5005,7 +5045,9 @@ class _RecordScreenState extends State<RecordScreen> {
       _immediateDiscovery = null;
       _immediateDiscoveryLoading = false;
       _savedFromConfirmedRepeatTrigger = false;
+      _savedFromHelpfulAction = false;
       ConfirmedRepeatTriggerCapture.clearSaveReceipt();
+      ConfirmedRepeatHelpfulActionCapture.clearSaveReceipt();
       _ui = _uiForMicPhase(_mic);
     });
   }

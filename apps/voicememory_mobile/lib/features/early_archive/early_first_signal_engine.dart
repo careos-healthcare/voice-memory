@@ -104,6 +104,23 @@ class ConfirmedRepeatChangeNotice {
   final String guidedRecordPrompt;
 }
 
+/// Post-save payoff after capturing what helped from the change notice.
+class ConfirmedRepeatHelpfulActionPayoff {
+  const ConfirmedRepeatHelpfulActionPayoff({
+    required this.title,
+    required this.body,
+    required this.evidenceLines,
+    required this.primaryCta,
+    required this.secondaryCta,
+  });
+
+  final String title;
+  final String body;
+  final List<String> evidenceLines;
+  final String primaryCta;
+  final String secondaryCta;
+}
+
 abstract final class EarlyFirstSignalEngine {
   EarlyFirstSignalEngine._();
 
@@ -264,6 +281,33 @@ abstract final class EarlyFirstSignalEngine {
       primaryCta: EarlyFirstSignalCopy.recordWhatHelpedCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
       guidedRecordPrompt: EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+    );
+  }
+
+  /// Payoff after saving from the helpful-action guided prompt.
+  static ConfirmedRepeatHelpfulActionPayoff? buildHelpfulActionPayoff({
+    required List<JournalEntry> entries,
+    required bool savedFromHelpfulActionPrompt,
+  }) {
+    if (!savedFromHelpfulActionPrompt) return null;
+
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 5) return null;
+    if (!hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3))) return null;
+
+    final beforeHelpful = eligible.sublist(0, eligible.length - 1);
+    if (buildChangeNotice(entries: beforeHelpful) == null) return null;
+
+    return const ConfirmedRepeatHelpfulActionPayoff(
+      title: EarlyFirstSignalCopy.helpfulActionPayoffTitle,
+      body: EarlyFirstSignalCopy.helpfulActionPayoffBody,
+      evidenceLines: [
+        EarlyFirstSignalCopy.helpfulActionRepeatEvidence,
+        EarlyFirstSignalCopy.helpfulActionChangeEvidence,
+        EarlyFirstSignalCopy.helpfulActionCapturedEvidence,
+      ],
+      primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
+      secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
     );
   }
 

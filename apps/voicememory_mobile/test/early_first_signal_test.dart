@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_trigger_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
@@ -9,6 +10,7 @@ import 'package:voicememory_mobile/features/retention/second_session_signal_engi
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_change_notice_card.dart';
+import 'package:voicememory_mobile/widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
@@ -101,8 +103,21 @@ List<JournalEntry> _fourEntriesWithUnrelatedSofterEntry() => [
       ),
     ];
 
+List<JournalEntry> _fiveEntriesWithHelpfulActionCapture() => [
+      ..._fourEntriesWithSofterRelatedReturn(),
+      _entry(
+        id: 'e5',
+        transcript:
+            'I paused before saying yes and asked for help, which made it easier to stop.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
+
 void main() {
-  setUp(ConfirmedRepeatTriggerCapture.resetSessionForTest);
+  setUp(() {
+    ConfirmedRepeatTriggerCapture.resetSessionForTest();
+    ConfirmedRepeatHelpfulActionCapture.resetSessionForTest();
+  });
   group('RecordEmptyArchiveGates.showEarlyFirstSignalCard', () {
     test('hidden at zero entries', () {
       expect(
@@ -753,6 +768,139 @@ void main() {
 
       expect(recordWhatHelpedTapped, isTrue);
       expect(find.text(EarlyFirstSignalCopy.recordWhatHelpedCta), findsOneWidget);
+    });
+  });
+
+  group('ConfirmedRepeatHelpfulActionCapture payoff', () {
+    test('saving from what helped prompt shows helpful-action payoff', () {
+      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+      expect(
+        ConfirmedRepeatHelpfulActionCapture.resolveSave(
+          capturePrompt: EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+        ),
+        isTrue,
+      );
+
+      final payoff = EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+        savedFromHelpfulActionPrompt: true,
+      );
+
+      expect(payoff, isNotNull);
+      expect(payoff!.title, EarlyFirstSignalCopy.helpfulActionPayoffTitle);
+      expect(payoff.body, EarlyFirstSignalCopy.helpfulActionPayoffBody);
+      expect(
+        payoff.evidenceLines,
+        contains(EarlyFirstSignalCopy.helpfulActionRepeatEvidence),
+      );
+      expect(
+        payoff.evidenceLines,
+        contains(EarlyFirstSignalCopy.helpfulActionChangeEvidence),
+      );
+      expect(
+        payoff.evidenceLines,
+        contains(EarlyFirstSignalCopy.helpfulActionCapturedEvidence),
+      );
+      expect(payoff.primaryCta, EarlyFirstSignalCopy.triggerPayoffPrimaryCta);
+      expect(payoff.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
+    });
+
+    test('normal save after softening does not show helpful-action payoff', () {
+      expect(
+        ConfirmedRepeatHelpfulActionCapture.resolveSave(capturePrompt: null),
+        isFalse,
+      );
+
+      expect(
+        EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+          entries: _fourEntriesWithSofterRelatedReturn(),
+          savedFromHelpfulActionPrompt: false,
+        ),
+        isNull,
+      );
+    });
+
+    test('copy says captured once not confirmed', () {
+      final payoff = EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+        savedFromHelpfulActionPrompt: true,
+      );
+
+      final joined = [
+        payoff!.title,
+        payoff.body,
+        ...payoff.evidenceLines,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('captured once'));
+      expect(joined, contains('may have softened'));
+      expect(joined, isNot(contains('confirmed helpful')));
+      expect(joined, isNot(contains('proven')));
+    });
+
+    test('trigger payoff takes priority over helpful-action capture', () {
+      ConfirmedRepeatTriggerCapture.armForNextSave();
+      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+
+      final triggerSaved = ConfirmedRepeatTriggerCapture.resolveSave(
+        capturePrompt: EarlyFirstSignalCopy.recordTriggerGuidedPrompt,
+      );
+      final helpfulSaved = triggerSaved
+          ? false
+          : ConfirmedRepeatHelpfulActionCapture.resolveSave(
+              capturePrompt: EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+            );
+
+      expect(triggerSaved, isTrue);
+      expect(helpfulSaved, isFalse);
+
+      expect(
+        EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+          entries: _fourEntriesWithTriggerCapture(),
+          savedFromTriggerPrompt: true,
+        ),
+        isNotNull,
+      );
+      expect(
+        EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+          entries: _fiveEntriesWithHelpfulActionCapture(),
+          savedFromHelpfulActionPrompt: false,
+        ),
+        isNull,
+      );
+    });
+  });
+
+  group('ConfirmedRepeatHelpfulActionPayoffCard', () {
+    testWidgets('view evidence CTA fires callback', (tester) async {
+      final payoff = EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+        savedFromHelpfulActionPrompt: true,
+      );
+
+      var viewEvidenceTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatHelpfulActionPayoffCard(
+              payoff: payoff!,
+              onKeepWatching: () {},
+              onViewEvidence: () => viewEvidenceTapped = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(
+        find.byKey(
+          const Key('confirmed_repeat_helpful_action_payoff_view_evidence_cta'),
+        ),
+      );
+      await tester.pump();
+
+      expect(viewEvidenceTapped, isTrue);
     });
   });
 }

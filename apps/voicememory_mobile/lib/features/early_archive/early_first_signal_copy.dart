@@ -84,4 +84,17 @@ abstract final class EarlyFirstSignalCopy {
 
   static const recordWhatHelpedGuidedPrompt =
       'What helped you handle it differently this time?';
+
+  // Payoff after saving from the helpful-action guided prompt.
+  static const helpfulActionPayoffTitle = 'ArchiveMe saved what helped.';
+
+  static const helpfulActionPayoffBody =
+      'You recorded something that may have softened the loop. Your archive '
+      'can now watch whether it helps again.';
+
+  static const helpfulActionRepeatEvidence = 'Repeat: already confirmed.';
+
+  static const helpfulActionChangeEvidence = 'Change: sounded softer once.';
+
+  static const helpfulActionCapturedEvidence = 'Helpful action: captured once.';
 }
