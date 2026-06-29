@@ -43,6 +43,14 @@ abstract class RecordEmptyArchiveGates {
   }) =>
       loaded && !isPostSave && entryCount >= 4;
 
+  /// Compact early evidence timeline on Record — Patterns is the full view.
+  static bool showEarlyEvidenceTimelineCompact({
+    required bool loaded,
+    required int entryCount,
+    required bool isPostSave,
+  }) =>
+      loaded && !isPostSave && entryCount >= 4;
+
   /// "Ready to record" status — only after comparison seed exists.
   static bool showReadyToRecordStatus({
     required bool loaded,

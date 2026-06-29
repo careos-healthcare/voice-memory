@@ -172,11 +172,15 @@ import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
+import '../widgets/record/early_evidence_timeline_card.dart';
 import '../widgets/record/consumer_record_prompts_section.dart';
 import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
+import '../features/early_archive/early_first_signal_copy.dart';
+import '../features/early_archive/early_evidence_timeline_engine.dart';
+import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/record/record_empty_archive_gates.dart';
@@ -443,6 +447,8 @@ class _RecordScreenState extends State<RecordScreen> {
   bool _showPostSaveLoop = false;
   bool _savedFromConfirmedRepeatTrigger = false;
   bool _savedFromHelpfulAction = false;
+  bool _earlyEvidenceTriggerCaptured = false;
+  bool _earlyEvidenceHelpfulCaptured = false;
   bool _lastCaptureAnalysisSucceeded = true;
   bool _lastCaptureLowQualityTranscript = false;
   bool _lastCaptureLikelySilentInput = false;
@@ -1144,6 +1150,19 @@ class _RecordScreenState extends State<RecordScreen> {
       hasWatchTheme: watchItems.isNotEmpty,
       betaFeedbackCaptured: BetaFeedbackStore.cached.hasResponse,
     );
+    unawaited(_loadEarlyEvidenceMilestones());
+  }
+
+  Future<void> _loadEarlyEvidenceMilestones() async {
+    final trigger =
+        await EarlyEvidenceMilestoneStore.instance().readTriggerCaptured();
+    final helpful =
+        await EarlyEvidenceMilestoneStore.instance().readHelpfulActionCaptured();
+    if (!mounted) return;
+    setState(() {
+      _earlyEvidenceTriggerCaptured = trigger;
+      _earlyEvidenceHelpfulCaptured = helpful;
+    });
   }
 
   void _applyLoadedJournalEntryCount(
@@ -2403,6 +2422,17 @@ class _RecordScreenState extends State<RecordScreen> {
               null;
     });
 
+    if (_savedFromConfirmedRepeatTrigger) {
+      unawaited(EarlyEvidenceMilestoneStore.instance().markTriggerCaptured());
+      if (mounted) setState(() => _earlyEvidenceTriggerCaptured = true);
+    }
+    if (_savedFromHelpfulAction) {
+      unawaited(
+        EarlyEvidenceMilestoneStore.instance().markHelpfulActionCaptured(),
+      );
+      if (mounted) setState(() => _earlyEvidenceHelpfulCaptured = true);
+    }
+
     unawaited(_handleSuggestionAttributionAfterSave(all.length));
     unawaited(_buildDoneForTodayReceipt());
 
@@ -3310,6 +3340,20 @@ class _RecordScreenState extends State<RecordScreen> {
             !_savedFromHelpfulAction
         ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
         : null;
+    final earlyEvidenceTimeline = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
+              loaded: _journalEntryCountReady,
+              entryCount: _journalEntryCount,
+              isPostSave: _isPostSaveSurface,
+            )
+        ? EarlyEvidenceTimelineEngine.build(
+            entries: _journalEntries,
+            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          )
+        : null;
+    final showEarlyEvidenceTimeline = earlyEvidenceTimeline != null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3591,7 +3635,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           loaded: _journalEntryCountReady,
                           entryCount: _journalEntryCount,
                           isPostSave: _isPostSaveSurface,
-                        )) ...[
+                        ) &&
+                        !showEarlyEvidenceTimeline) ...[
                       if (EarlyFirstSignalEngine.build(
                             entries: _journalEntries,
                           )
@@ -3618,13 +3663,33 @@ class _RecordScreenState extends State<RecordScreen> {
                         const SizedBox(height: 12),
                       ],
                     ],
+                    if (showEarlyEvidenceTimeline) ...[
+                      EarlyEvidenceTimelineCard(
+                        timeline: earlyEvidenceTimeline!,
+                        compact: true,
+                        onRecordWhatHelped:
+                            earlyEvidenceTimeline.showsSofterReturn &&
+                                !earlyEvidenceTimeline.showsHelpfulAction
+                            ? () {
+                                ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+                                setState(
+                                  () => _selectedPromptLine =
+                                      EarlyFirstSignalCopy
+                                          .recordWhatHelpedGuidedPrompt,
+                                );
+                              }
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
                           loaded: _journalEntryCountReady,
                           entryCount: _journalEntryCount,
                           isPostSave: _isPostSaveSurface,
-                        )) ...[
+                        ) &&
+                        !showEarlyEvidenceTimeline) ...[
                       if (EarlyFirstSignalEngine.buildChangeNotice(
                             entries: _journalEntries,
                           )

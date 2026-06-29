@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/early_archive/early_evidence_milestone_store.dart';
+import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_trigger_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
@@ -117,6 +120,7 @@ void main() {
   setUp(() {
     ConfirmedRepeatTriggerCapture.resetSessionForTest();
     ConfirmedRepeatHelpfulActionCapture.resetSessionForTest();
+    EarlyEvidenceMilestoneStore.resetForTest();
   });
   group('RecordEmptyArchiveGates.showEarlyFirstSignalCard', () {
     test('hidden at zero entries', () {
@@ -901,6 +905,159 @@ void main() {
       await tester.pump();
 
       expect(viewEvidenceTapped, isTrue);
+    });
+  });
+
+  group('EarlyEvidenceTimelineEngine', () {
+    test('three related entries show only repeat confirmed', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+
+      expect(timeline, isNotNull);
+      expect(timeline!.title, EarlyEvidenceTimelineCopy.title);
+      expect(timeline.subtitle, EarlyEvidenceTimelineCopy.subtitle);
+      expect(timeline.items.length, 1);
+      expect(timeline.items.single.kind, EarlyEvidenceTimelineItemKind.repeatConfirmed);
+      expect(timeline.items.single.title, EarlyEvidenceTimelineCopy.repeatConfirmedTitle);
+      expect(timeline.items.single.body, EarlyEvidenceTimelineCopy.repeatConfirmedBody);
+    });
+
+    test('trigger capture adds trigger captured item', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fourEntriesWithTriggerCapture(),
+      );
+
+      expect(timeline!.items.map((item) => item.kind), [
+        EarlyEvidenceTimelineItemKind.repeatConfirmed,
+        EarlyEvidenceTimelineItemKind.triggerCaptured,
+      ]);
+      expect(
+        timeline.items[1].title,
+        EarlyEvidenceTimelineCopy.triggerCapturedTitle,
+      );
+    });
+
+    test('softer later entry adds softer return noticed item', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fourEntriesWithSofterRelatedReturn(),
+      );
+
+      expect(timeline!.items.map((item) => item.kind), [
+        EarlyEvidenceTimelineItemKind.repeatConfirmed,
+        EarlyEvidenceTimelineItemKind.softerReturn,
+      ]);
+      expect(
+        timeline.items.last.title,
+        EarlyEvidenceTimelineCopy.softerReturnTitle,
+      );
+    });
+
+    test('helpful action capture adds helpful action captured item', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+      );
+
+      expect(timeline!.items.map((item) => item.kind), [
+        EarlyEvidenceTimelineItemKind.repeatConfirmed,
+        EarlyEvidenceTimelineItemKind.softerReturn,
+        EarlyEvidenceTimelineItemKind.helpfulAction,
+      ]);
+      expect(
+        timeline.items.last.title,
+        EarlyEvidenceTimelineCopy.helpfulActionTitle,
+      );
+      expect(
+        timeline.items.last.body,
+        EarlyEvidenceTimelineCopy.helpfulActionBody,
+      );
+    });
+
+    test('unsupported items stay hidden', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fourEntriesWithNormalRelatedReturn(),
+      );
+
+      expect(timeline!.items.map((item) => item.kind), [
+        EarlyEvidenceTimelineItemKind.repeatConfirmed,
+      ]);
+      expect(
+        timeline.items.any(
+          (item) => item.kind == EarlyEvidenceTimelineItemKind.triggerCaptured,
+        ),
+        isFalse,
+      );
+      expect(
+        timeline.items.any(
+          (item) => item.kind == EarlyEvidenceTimelineItemKind.softerReturn,
+        ),
+        isFalse,
+      );
+    });
+
+    test('unrelated entries do not create fake timeline items', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript: 'A quiet moment about lunch with a friend today.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'e2',
+          transcript: 'Another unrelated note about errands this afternoon.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'e3',
+          transcript: 'Weather was nice on my walk through the park today.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+
+      expect(EarlyEvidenceTimelineEngine.build(entries: entries), isNull);
+    });
+
+    test('timeline copy uses cautious language', () {
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fiveEntriesWithHelpfulActionCapture(),
+      );
+
+      final joined = [
+        timeline!.title,
+        timeline.subtitle,
+        for (final item in timeline.items) '${item.title} ${item.body}',
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('may help'));
+      expect(joined, contains('may have helped'));
+      expect(joined, isNot(contains('proven')));
+      expect(joined, isNot(contains('fixed')));
+      expect(joined, isNot(contains('healed')));
+    });
+
+    test('trigger payoff priority test still passes with timeline milestones', () {
+      EarlyEvidenceMilestoneStore.useTestFlags = true;
+      EarlyEvidenceMilestoneStore.testTriggerCaptured = true;
+      EarlyEvidenceMilestoneStore.testHelpfulActionCaptured = true;
+
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: _fourEntriesWithTriggerCapture(),
+        triggerCapturedMilestone: true,
+        helpfulActionCapturedMilestone: true,
+      );
+
+      expect(
+        timeline!.items.any(
+          (item) => item.kind == EarlyEvidenceTimelineItemKind.triggerCaptured,
+        ),
+        isTrue,
+      );
+      expect(
+        timeline.items.any(
+          (item) => item.kind == EarlyEvidenceTimelineItemKind.helpfulAction,
+        ),
+        isFalse,
+      );
     });
   });
 }

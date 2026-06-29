@@ -140,6 +140,23 @@ abstract final class EarlyFirstSignalEngine {
     'easier to stop',
   ];
 
+  static const _triggerCapturePhrases = [
+    'right before',
+    'before i said',
+    'before this',
+    'before it came',
+    'happened right before',
+    'what happened before',
+  ];
+
+  static const _helpfulActionPhrases = [
+    'helped',
+    'asked for help',
+    'paused before',
+    'made it easier',
+    'what helped',
+  ];
+
   /// True when entry text contains cautious softening language from the user.
   static bool hasSofteningLanguage(String text) {
     final lower = text.toLowerCase();
@@ -147,6 +164,83 @@ abstract final class EarlyFirstSignalEngine {
       if (lower.contains(phrase)) return true;
     }
     return false;
+  }
+
+  static bool hasTriggerCaptureLanguage(String text) {
+    final lower = text.toLowerCase();
+    for (final phrase in _triggerCapturePhrases) {
+      if (lower.contains(phrase)) return true;
+    }
+    return false;
+  }
+
+  static bool hasHelpfulActionLanguage(String text) {
+    final lower = text.toLowerCase();
+    for (final phrase in _helpfulActionPhrases) {
+      if (lower.contains(phrase)) return true;
+    }
+    return false;
+  }
+
+  /// True when a later eligible entry shows a grounded, softer repeat return.
+  static bool hasSofteningReturnEvidence(List<JournalEntry> entries) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 4) return false;
+    if (!hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3))) return false;
+
+    for (var i = 3; i < eligible.length; i++) {
+      final pair = eligible.sublist(i - 1, i + 1);
+      if (pair.length < 2) continue;
+      if (!_signalEngine.hasGroundedRepeatMatch(pair)) continue;
+      if (hasSofteningLanguage(_entryText(eligible[i]))) return true;
+    }
+    return false;
+  }
+
+  /// True when trigger capture is supported by a milestone or entry evidence.
+  static bool hasTriggerCaptureEvidence({
+    required List<JournalEntry> entries,
+    bool milestoneMarked = false,
+  }) {
+    if (milestoneMarked) return true;
+
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 4) return false;
+    if (!hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3))) return false;
+
+    for (var i = 3; i < eligible.length; i++) {
+      final pair = eligible.sublist(i - 1, i + 1);
+      if (pair.length < 2) continue;
+      if (!_signalEngine.hasGroundedRepeatMatch(pair)) continue;
+      if (hasTriggerCaptureLanguage(_entryText(eligible[i]))) return true;
+    }
+    return false;
+  }
+
+  /// True when helpful-action capture is supported by a milestone or entries.
+  static bool hasHelpfulActionEvidence({
+    required List<JournalEntry> entries,
+    bool milestoneMarked = false,
+  }) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 3) return false;
+    if (!hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3))) return false;
+
+    final hasSofteningContext = hasSofteningReturnEvidence(entries) ||
+        buildChangeNotice(entries: entries) != null;
+    if (!hasSofteningContext) return false;
+
+    if (milestoneMarked) return true;
+
+    if (eligible.length < 5) return false;
+
+    final beforeLatest = eligible.sublist(0, eligible.length - 1);
+    if (!hasSofteningReturnEvidence(beforeLatest) &&
+        buildChangeNotice(entries: beforeLatest) == null) {
+      return false;
+    }
+
+    return hasHelpfulActionLanguage(_entryText(eligible.last));
   }
 
   /// True when the archive already has a confirmed repeat foundation.

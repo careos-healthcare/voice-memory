@@ -15,6 +15,8 @@ import '../features/archive_evidence/archive_belief_thread_model.dart';
 import '../features/archive_evidence/archive_intelligence_tier.dart';
 import '../features/archive_evidence/archive_intelligence_tier_resolver.dart';
 import '../features/archive_evidence/archive_evidence.dart';
+import '../features/early_archive/early_evidence_timeline_engine.dart';
+import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_record_routes.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
@@ -262,6 +264,7 @@ import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
+import '../widgets/record/early_evidence_timeline_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
@@ -332,6 +335,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool _reloadScheduled = false;
   bool _archiveIsPro = false;
   bool _proBridgeResolved = false;
+  bool _earlyEvidenceTriggerCaptured = false;
+  bool _earlyEvidenceHelpfulCaptured = false;
   static const _tierResolver = ArchiveIntelligenceTierResolver();
 
   ArchiveIntelligenceTier get _archiveIntelligenceTier =>
@@ -699,6 +704,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       archiveTimeline: archiveTimeline,
     );
 
+    final earlyTriggerCaptured =
+        await EarlyEvidenceMilestoneStore.instance().readTriggerCaptured();
+    final earlyHelpfulCaptured =
+        await EarlyEvidenceMilestoneStore.instance().readHelpfulActionCaptured();
+
     if (!mounted) return;
     setState(() {
       _archiveIsPro = isPro;
@@ -743,6 +753,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _keyMoments = keyMoments;
       _rangeReview = rangeReview;
       _compressionGroups = compressionGroups;
+      _earlyEvidenceTriggerCaptured = earlyTriggerCaptured;
+      _earlyEvidenceHelpfulCaptured = earlyHelpfulCaptured;
       _loading = false;
     });
     await _refreshArchiveReturnChanges(entries);
@@ -3291,6 +3303,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _entries);
       final confirmedRepeatChangeNotice =
           EarlyFirstSignalEngine.buildChangeNotice(entries: _entries);
+      final earlyEvidenceTimeline = EarlyEvidenceTimelineEngine.build(
+        entries: _entries,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+      );
+      final showEarlyEvidenceTimeline = earlyEvidenceTimeline != null;
       final groundedSecondSessionRepeat =
           _entries.length > FirstThreeSessionGates.minEntriesForRepeatSurface &&
           const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
@@ -3322,14 +3340,30 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
-                if (earlyFirstSignal case final signal?) ...[
+                if (showEarlyEvidenceTimeline) ...[
+                  EarlyEvidenceTimelineCard(
+                    timeline: earlyEvidenceTimeline!,
+                    onRecordWhatHelped:
+                        earlyEvidenceTimeline.showsSofterReturn &&
+                            !earlyEvidenceTimeline.showsHelpfulAction
+                        ? () {
+                            ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+                            context.go(
+                              EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(),
+                            );
+                          }
+                        : null,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (!showEarlyEvidenceTimeline && earlyFirstSignal != null) ...[
                   EarlyFirstSignalCard(
-                    signal: signal,
+                    signal: earlyFirstSignal!,
                     onPrimary: _goToRecord,
-                    onViewEvidence: signal.showsConfirmedRepeat
+                    onViewEvidence: earlyFirstSignal!.showsConfirmedRepeat
                         ? () => context.push(BeliefEvidenceNavigation.route)
                         : null,
-                    onReturnPrompt: signal.returnPrompt != null
+                    onReturnPrompt: earlyFirstSignal!.returnPrompt != null
                         ? () {
                             ConfirmedRepeatTriggerCapture.armForNextSave();
                             context.go(
@@ -3340,9 +3374,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (confirmedRepeatChangeNotice case final notice?) ...[
+                if (!showEarlyEvidenceTimeline &&
+                    confirmedRepeatChangeNotice != null) ...[
                   ConfirmedRepeatChangeNoticeCard(
-                    notice: notice,
+                    notice: confirmedRepeatChangeNotice!,
                     onRecordWhatHelped: () {
                       ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                       context.go(
@@ -3396,6 +3431,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ],
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     thirdEntryBeliefPayoff != null &&
+                    !showEarlyEvidenceTimeline &&
                     earlyFirstSignal?.kind !=
                         EarlyFirstSignalKind.threeEntryConfirmedRepeat) ...[
                   ThirdEntryBeliefPayoffCard(
