@@ -168,7 +168,7 @@ void main() {
 
       expect(result.outcome, RestorePurchasesOutcome.unavailable);
       expect(store.restoreCalls, 0);
-      expect(result.userMessage, RestorePurchasesCopy.billingUnavailable);
+      expect(result.userMessage, RestorePurchasesCopy.restoreError);
     });
 
     test('restore button cannot be double tapped while loading', () async {

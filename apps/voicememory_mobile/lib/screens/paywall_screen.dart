@@ -46,6 +46,9 @@ class PaywallScreen extends StatefulWidget {
     this.suggestionAttributionStore,
     this.objectionStore,
     this.purchaseIntentStore,
+    this.restoreFlow,
+    this.billingConfiguredForRestore,
+    this.billingReadyOverride,
   });
 
   /// Trigger-specific preview copy when opened from a memory limit gate.
@@ -62,6 +65,15 @@ class PaywallScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live prefs-backed store.
   final PurchaseIntentStore? purchaseIntentStore;
+
+  /// Injectable restore flow for tests; defaults to live [RestorePurchasesFlow].
+  final RestorePurchasesFlow? restoreFlow;
+
+  /// Override RevenueCat configured check for restore-only tests.
+  final bool Function()? billingConfiguredForRestore;
+
+  /// Override billing configured for purchase UI tests (offerings still load live).
+  final bool Function()? billingReadyOverride;
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -90,7 +102,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// that captures a reason can never render its own follow-up.
   PaywallRejectionReason? _objectionFollowUpReason;
 
-  bool get _billingReady => RevenueCatService.instance.isConfigured;
+  bool get _billingReady =>
+      widget.billingReadyOverride?.call() ??
+      RevenueCatService.instance.isConfigured;
+
+  bool get _restoreBillingReady =>
+      widget.billingConfiguredForRestore?.call() ?? _billingReady;
+
+  bool get _purchasePlansAvailable => _billingReady && _hasPackages;
 
   /// Source-aware copy variant, when the opener passed a [PaywallSource].
   PaywallSourceCopy? get _sourceCopy {
@@ -408,19 +427,26 @@ class _PaywallScreenState extends State<PaywallScreen> {
     }
   }
 
+  RestorePurchasesFlow get _effectiveRestoreFlow =>
+      widget.restoreFlow ??
+      (_restoreFlow ??= RestorePurchasesFlow(
+        billing: AppServices.instance.billing,
+        isBillingConfigured: () => _restoreBillingReady,
+      ));
+
   Future<void> _restore() async {
     _recordAttribution(PaywallAttributionEventType.restoreStarted);
 
-    if (!_billingReady || !AppServices.isInitialized) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(RestorePurchasesCopy.billingUnavailable)),
-      );
+    if (!AppServices.isInitialized) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(RestorePurchasesCopy.restoreError)),
+        );
+      }
       return;
     }
 
-    final flow = _restoreFlow ??= RestorePurchasesFlow(
-      billing: AppServices.instance.billing,
-    );
+    final flow = _effectiveRestoreFlow;
     if (flow.isBusy || _busy) return;
 
     setState(() => _busy = true);
@@ -434,9 +460,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
         _recordAttribution(PaywallAttributionEventType.restoreCompleted);
         await _load();
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.userMessage)),
-      );
+      if (result.userMessage.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.userMessage)),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -506,7 +534,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             _proActiveBody()
           else if (ScreenshotMode.enabled)
             _screenshotPaywallBody()
-          else if (!_billingReady || !_hasPackages)
+          else if (!_purchasePlansAvailable)
             _unavailableBody()
           else
             _paywallBody(),

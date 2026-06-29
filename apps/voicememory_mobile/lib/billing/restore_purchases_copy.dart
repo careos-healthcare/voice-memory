@@ -12,7 +12,8 @@ abstract final class RestorePurchasesCopy {
   static const restoreError =
       'We could not check purchases right now. Please try again.';
 
-  static const billingUnavailable = ConsumerUiCopy.plansUnavailable;
+  /// Restore-specific — never the new-purchase "plans unavailable" copy.
+  static const billingUnavailable = restoreError;
 
   static const restoreScreenTitle = 'Restore purchases';
 
