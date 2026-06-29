@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -14,15 +15,68 @@ class EarlyFirstSignalCard extends StatelessWidget {
     required this.onPrimary,
     this.onViewEvidence,
     this.onReturnPrompt,
+    this.showPrimaryCta = true,
+    this.analyticsSurface,
+    this.entryCount,
   });
 
   final EarlyFirstSignalModel signal;
   final VoidCallback onPrimary;
   final VoidCallback? onViewEvidence;
   final VoidCallback? onReturnPrompt;
+  final bool showPrimaryCta;
+  final String? analyticsSurface;
+  final int? entryCount;
+
+  void _trackSeen() {
+    final surface = analyticsSurface;
+    final count = entryCount;
+    if (surface == null || count == null) return;
+    switch (signal.kind) {
+      case EarlyFirstSignalKind.oneEntryReceipt:
+        EarlyArchiveProofAnalytics.heardReceiptSeen(
+          entryCount: count,
+          surface: surface,
+        );
+      case EarlyFirstSignalKind.twoEntryFirstSignal:
+        EarlyArchiveProofAnalytics.possiblePatternSeen(
+          entryCount: count,
+          surface: surface,
+        );
+      case EarlyFirstSignalKind.threeEntryConfirmedRepeat:
+        EarlyArchiveProofAnalytics.confirmedRepeatSeen(
+          entryCount: count,
+          surface: surface,
+        );
+      case EarlyFirstSignalKind.twoEntryNoPattern:
+        break;
+    }
+  }
+
+  void _trackViewEvidence() {
+    final surface = analyticsSurface;
+    final count = entryCount;
+    if (surface == null || count == null) return;
+    EarlyArchiveProofAnalytics.timelineViewEvidenceTapped(
+      entryCount: count,
+      surface: surface,
+      hasRealTimeline: EarlyArchiveProofAnalytics.realTimelineSeenThisSession,
+    );
+  }
+
+  void _trackTriggerPrompt() {
+    final surface = analyticsSurface;
+    final count = entryCount;
+    if (surface == null || count == null) return;
+    EarlyArchiveProofAnalytics.triggerPromptTapped(
+      entryCount: count,
+      surface: surface,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    _trackSeen();
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textSecondary,
     );
@@ -73,21 +127,26 @@ class EarlyFirstSignalCard extends StatelessWidget {
                     ),
                   ),
               ],
-              const SizedBox(height: AppSpacing.md),
-              FilledButton(
-                key: const Key('early_first_signal_primary_cta'),
-                onPressed: onPrimary,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.accentPrimary,
-                  foregroundColor: Colors.white,
+              if (showPrimaryCta) ...[
+                const SizedBox(height: AppSpacing.md),
+                FilledButton(
+                  key: const Key('early_first_signal_primary_cta'),
+                  onPressed: onPrimary,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.accentPrimary,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text(signal.primaryCta),
                 ),
-                child: Text(signal.primaryCta),
-              ),
+              ],
               if (signal.secondaryCta != null && onViewEvidence != null) ...[
                 const SizedBox(height: AppSpacing.xs),
                 OutlinedButton(
                   key: const Key('early_first_signal_view_evidence_cta'),
-                  onPressed: onViewEvidence,
+                  onPressed: () {
+                    _trackViewEvidence();
+                    onViewEvidence!();
+                  },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.accentPrimary,
                   ),
@@ -101,7 +160,10 @@ class EarlyFirstSignalCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           _ConfirmedRepeatReturnPromptSection(
             prompt: returnPrompt,
-            onCta: onReturnPrompt!,
+            onCta: () {
+              _trackTriggerPrompt();
+              onReturnPrompt!();
+            },
           ),
         ],
       ],

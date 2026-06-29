@@ -567,6 +567,8 @@ abstract class ActivationFunnelAnalytics {
   static const Set<String> allowedPropertyKeys = {
     'entry_count',
     'has_connected_thread',
+    'has_real_timeline',
+    'milestone_count',
     'source',
     'stage',
     'card_type',
@@ -954,6 +956,8 @@ abstract class ActivationFunnelAnalytics {
     String event, {
     int? entryCount,
     bool? hasConnectedThread,
+    bool? hasRealTimeline,
+    int? milestoneCount,
     String? source,
     String? stage,
     String? cardType,
@@ -1007,6 +1011,9 @@ abstract class ActivationFunnelAnalytics {
       if (entryCount != null) 'entry_count': entryCount,
       if (hasConnectedThread != null)
         'has_connected_thread': hasConnectedThread ? 1 : 0,
+      if (hasRealTimeline != null)
+        'has_real_timeline': hasRealTimeline ? 1 : 0,
+      if (milestoneCount != null) 'milestone_count': milestoneCount,
       if (source != null && _safeValue.hasMatch(source)) 'source': source,
       if (stage != null && _safeValue.hasMatch(stage)) 'stage': stage,
       if (cardType != null && _safeValue.hasMatch(cardType))

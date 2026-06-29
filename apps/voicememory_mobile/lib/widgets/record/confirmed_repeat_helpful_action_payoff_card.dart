@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -13,14 +14,26 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
     required this.payoff,
     required this.onKeepWatching,
     required this.onViewEvidence,
+    this.analyticsSurface,
+    this.entryCount,
   });
 
   final ConfirmedRepeatHelpfulActionPayoff payoff;
   final VoidCallback onKeepWatching;
   final VoidCallback onViewEvidence;
+  final String? analyticsSurface;
+  final int? entryCount;
 
   @override
   Widget build(BuildContext context) {
+    final surface = analyticsSurface;
+    final count = entryCount;
+    if (surface != null && count != null) {
+      EarlyArchiveProofAnalytics.helpfulActionPayoffSeen(
+        entryCount: count,
+        surface: surface,
+      );
+    }
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textSecondary,
@@ -77,7 +90,17 @@ class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
             key: const Key(
               'confirmed_repeat_helpful_action_payoff_view_evidence_cta',
             ),
-            onPressed: onViewEvidence,
+            onPressed: () {
+              if (surface != null && count != null) {
+                EarlyArchiveProofAnalytics.timelineViewEvidenceTapped(
+                  entryCount: count,
+                  surface: surface,
+                  hasRealTimeline:
+                      EarlyArchiveProofAnalytics.realTimelineSeenThisSession,
+                );
+              }
+              onViewEvidence();
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.accentPrimary,
             ),

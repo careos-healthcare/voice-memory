@@ -15,6 +15,8 @@ import '../features/archive_evidence/archive_belief_thread_model.dart';
 import '../features/archive_evidence/archive_intelligence_tier.dart';
 import '../features/archive_evidence/archive_intelligence_tier_resolver.dart';
 import '../features/archive_evidence/archive_evidence.dart';
+import '../features/early_archive/early_archive_proof_analytics.dart';
+import '../features/early_archive/early_evidence_timeline_demo.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
@@ -194,6 +196,7 @@ import '../features/beta_feedback/beta_feedback_engine.dart';
 import '../features/archive_home/archive_home_priority_engine.dart';
 import '../features/archive_home/archive_home_priority_models.dart';
 import '../widgets/archive_home_more_tools_section.dart';
+import '../widgets/patterns/early_evidence_timeline_demo_section.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/patterns_mind_map_forming_card.dart';
 import '../widgets/patterns/patterns_thought_map_preview_card.dart';
@@ -337,6 +340,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool _proBridgeResolved = false;
   bool _earlyEvidenceTriggerCaptured = false;
   bool _earlyEvidenceHelpfulCaptured = false;
+  bool _earlyEvidenceDemoVisible = false;
   static const _tierResolver = ArchiveIntelligenceTierResolver();
 
   ArchiveIntelligenceTier get _archiveIntelligenceTier =>
@@ -708,6 +712,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         await EarlyEvidenceMilestoneStore.instance().readTriggerCaptured();
     final earlyHelpfulCaptured =
         await EarlyEvidenceMilestoneStore.instance().readHelpfulActionCaptured();
+    final hasRealEarlyEvidenceTimeline =
+        EarlyEvidenceTimelineEngine.build(
+          entries: entries,
+          triggerCapturedMilestone: earlyTriggerCaptured,
+          helpfulActionCapturedMilestone: earlyHelpfulCaptured,
+        ) !=
+        null;
 
     if (!mounted) return;
     setState(() {
@@ -755,6 +766,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _compressionGroups = compressionGroups;
       _earlyEvidenceTriggerCaptured = earlyTriggerCaptured;
       _earlyEvidenceHelpfulCaptured = earlyHelpfulCaptured;
+      if (hasRealEarlyEvidenceTimeline) {
+        _earlyEvidenceDemoVisible = false;
+      }
       _loading = false;
     });
     await _refreshArchiveReturnChanges(entries);
@@ -999,6 +1013,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       weeklyRecap: _weeklyRecap,
     );
   }
+
+  /// Confirmed-repeat early proof (3–5 entries) — timeline and capture CTAs.
+  bool get _patternsEarlyArchiveProofStack {
+    if (_entries.length < FirstThreeSessionGates.minEntriesForUsefulArchive) {
+      return false;
+    }
+    if (_entries.length > 5) return false;
+    return EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_entries);
+  }
+
+  bool get _usesPatternsEarlyProofScaffold =>
+      _patternsFirstThreeStack || _patternsEarlyArchiveProofStack;
 
   bool get _suppressEarlyArchiveBeliefProof {
     if (!_patternsFirstThreeStack) return false;
@@ -1919,7 +1945,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     )) {
       widgets.add(
         ArchiveIntelligenceProBridgeCard(
-          onSeePro: () => context.push('/subscription'),
+          onSeePro: () {
+            EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
+              source: 'patterns_pro_bridge',
+            );
+            context.push('/subscription');
+          },
           onNotNow: () async {
             await RecordReturnProStore.instance().markProBridgeResolved();
             if (!mounted) return;
@@ -2956,6 +2987,51 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
   }
 
+  List<Widget> _earlyEvidenceDemoWidgets() {
+    final hasRealTimeline = EarlyEvidenceTimelineEngine.build(
+          entries: _entries,
+          triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        ) !=
+        null;
+    if (!EarlyEvidenceTimelineDemo.canShowCta(
+      entryCount: _entries.length,
+      hasRealTimeline: hasRealTimeline,
+    )) {
+      return const [];
+    }
+
+    if (_earlyEvidenceDemoVisible) {
+      return [
+        EarlyEvidenceTimelineDemoSection(
+          entryCount: _entries.length,
+          surface: 'patterns',
+          onHide: () {
+            EarlyArchiveProofAnalytics.demoHidden(
+              entryCount: _entries.length,
+              surface: 'patterns',
+            );
+            setState(() => _earlyEvidenceDemoVisible = false);
+          },
+        ),
+      ];
+    }
+
+    return [
+      EarlyEvidenceTimelineDemoCta(
+        entryCount: _entries.length,
+        surface: 'patterns',
+        onTap: () {
+          EarlyArchiveProofAnalytics.demoOpened(
+            entryCount: _entries.length,
+            surface: 'patterns',
+          );
+          setState(() => _earlyEvidenceDemoVisible = true);
+        },
+      ),
+    ];
+  }
+
   List<Widget> _archiveHomeCommandCenterWidgets() {
     final summary = _archiveHomeSummary();
     final shareProof = summary.showShareProof
@@ -3243,13 +3319,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _load,
-            child: const PatternsEmptyView(fillViewport: true),
+            child: PatternsEmptyView(
+              fillViewport: true,
+              footer: [
+                const SizedBox(height: AppSpacing.lg),
+                ..._earlyEvidenceDemoWidgets(),
+                const SizedBox(height: AppSpacing.md),
+              ],
+            ),
           ),
         ),
       );
     }
 
     if (_showFirstArchive) {
+      final demoWidgets = _earlyEvidenceDemoWidgets();
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
@@ -3258,14 +3342,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
-              children: _archiveHomeCommandCenterWidgets(),
+              children: [
+                ..._archiveHomeCommandCenterWidgets(),
+                if (demoWidgets.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  ...demoWidgets,
+                ],
+              ],
             ),
           ),
         ),
       );
     }
 
-    if (_patternsFirstThreeStack) {
+    if (_usesPatternsEarlyProofScaffold) {
       final journey =
           _firstThreeJourney ??
           const FirstThreeJourneyEngine().build(
@@ -3309,6 +3399,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
       );
       final showEarlyEvidenceTimeline = earlyEvidenceTimeline != null;
+      final suppressArchiveHomeEarlyProofDuplicate =
+          showEarlyEvidenceTimeline || earlyFirstSignal != null;
       final groundedSecondSessionRepeat =
           _entries.length > FirstThreeSessionGates.minEntriesForRepeatSurface &&
           const SecondSessionSignalEngine().hasGroundedRepeatMatch(_entries);
@@ -3343,13 +3435,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 if (showEarlyEvidenceTimeline) ...[
                   EarlyEvidenceTimelineCard(
                     timeline: earlyEvidenceTimeline!,
+                    analyticsSurface: 'patterns',
+                    entryCount: _entries.length,
                     onRecordWhatHelped:
                         earlyEvidenceTimeline.showsSofterReturn &&
                             !earlyEvidenceTimeline.showsHelpfulAction
                         ? () {
                             ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                             context.go(
-                              EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(),
+                              EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(
+                                autostart: true,
+                              ),
                             );
                           }
                         : null,
@@ -3359,6 +3455,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 if (!showEarlyEvidenceTimeline && earlyFirstSignal != null) ...[
                   EarlyFirstSignalCard(
                     signal: earlyFirstSignal!,
+                    analyticsSurface: 'patterns',
+                    entryCount: _entries.length,
                     onPrimary: _goToRecord,
                     onViewEvidence: earlyFirstSignal!.showsConfirmedRepeat
                         ? () => context.push(BeliefEvidenceNavigation.route)
@@ -3367,7 +3465,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         ? () {
                             ConfirmedRepeatTriggerCapture.armForNextSave();
                             context.go(
-                              EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(),
+                              EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(
+                                autostart: true,
+                              ),
                             );
                           }
                         : null,
@@ -3378,10 +3478,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     confirmedRepeatChangeNotice != null) ...[
                   ConfirmedRepeatChangeNoticeCard(
                     notice: confirmedRepeatChangeNotice!,
+                    analyticsSurface: 'patterns',
+                    entryCount: _entries.length,
                     onRecordWhatHelped: () {
                       ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                       context.go(
-                        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(),
+                        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(
+                          autostart: true,
+                        ),
                       );
                     },
                     onViewEvidence: () =>
@@ -3389,7 +3493,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                ..._archiveHomeCommandCenterWidgets(),
+                if (!suppressArchiveHomeEarlyProofDuplicate)
+                  ..._archiveHomeCommandCenterWidgets(),
                 ..._buildThoughtMapPreviewWidgets(),
                 if (!_suppressEarlyArchiveBeliefProof)
                   ..._buildArchiveBeliefProofWidgets(),

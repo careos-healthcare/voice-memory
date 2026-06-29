@@ -6,17 +6,27 @@ import 'patterns_empty_archive_preview_card.dart';
 
 /// Zero-entry Patterns screen — mind-map preview and two capture actions.
 class PatternsEmptyView extends StatelessWidget {
-  const PatternsEmptyView({super.key, this.fillViewport = false});
+  const PatternsEmptyView({
+    super.key,
+    this.fillViewport = false,
+    this.footer = const [],
+  });
 
   final bool fillViewport;
+  final List<Widget> footer;
 
   @override
   Widget build(BuildContext context) {
-    final content = const Column(
+    final gap = ArchiveResponsiveLayout.gap(context);
+    final content = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        PatternsEmptyArchivePreviewCard(),
+        const PatternsEmptyArchivePreviewCard(),
+        if (footer.isNotEmpty) ...[
+          SizedBox(height: gap),
+          ...footer,
+        ],
       ],
     );
 

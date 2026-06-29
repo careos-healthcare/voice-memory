@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
+import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_evidence_timeline_engine.dart';
 import '../../features/early_archive/early_first_signal_copy.dart';
 import '../../theme/app_colors.dart';
@@ -15,11 +16,17 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
     required this.timeline,
     this.compact = false,
     this.onRecordWhatHelped,
+    this.analyticsSurface,
+    this.entryCount,
+    this.isSample = false,
   });
 
   final EarlyEvidenceTimeline timeline;
   final bool compact;
   final VoidCallback? onRecordWhatHelped;
+  final String? analyticsSurface;
+  final int? entryCount;
+  final bool isSample;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
   static const Color _railColor = Color(0xFF6B8F71);
@@ -33,6 +40,17 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final surface = analyticsSurface;
+    final count = entryCount;
+    if (!isSample && surface != null && count != null) {
+      EarlyArchiveProofAnalytics.timelineSeen(
+        entryCount: count,
+        surface: surface,
+        milestoneCount: timeline.items.length,
+        hasRealTimeline: true,
+        compact: compact,
+      );
+    }
     final gap = compact ? AppSpacing.sm : ArchiveResponsiveLayout.gap(context);
     final padding = compact
         ? const EdgeInsets.all(AppSpacing.sm)
@@ -66,7 +84,15 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
             SizedBox(height: gap),
             OutlinedButton(
               key: const Key('early_evidence_timeline_record_what_helped_cta'),
-              onPressed: onRecordWhatHelped,
+              onPressed: () {
+                if (surface != null && count != null) {
+                  EarlyArchiveProofAnalytics.helpfulActionPromptTapped(
+                    entryCount: count,
+                    surface: surface,
+                  );
+                }
+                onRecordWhatHelped!();
+              },
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.accentPrimary,
               ),

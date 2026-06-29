@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -13,14 +14,26 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
     required this.notice,
     required this.onRecordWhatHelped,
     required this.onViewEvidence,
+    this.analyticsSurface,
+    this.entryCount,
   });
 
   final ConfirmedRepeatChangeNotice notice;
   final VoidCallback onRecordWhatHelped;
   final VoidCallback onViewEvidence;
+  final String? analyticsSurface;
+  final int? entryCount;
 
   @override
   Widget build(BuildContext context) {
+    final surface = analyticsSurface;
+    final count = entryCount;
+    if (surface != null && count != null) {
+      EarlyArchiveProofAnalytics.softeningNoticeSeen(
+        entryCount: count,
+        surface: surface,
+      );
+    }
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textSecondary,
@@ -63,7 +76,15 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           FilledButton(
             key: const Key('confirmed_repeat_change_notice_primary_cta'),
-            onPressed: onRecordWhatHelped,
+            onPressed: () {
+              if (surface != null && count != null) {
+                EarlyArchiveProofAnalytics.helpfulActionPromptTapped(
+                  entryCount: count,
+                  surface: surface,
+                );
+              }
+              onRecordWhatHelped();
+            },
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.accentPrimary,
               foregroundColor: Colors.white,
@@ -73,7 +94,17 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           OutlinedButton(
             key: const Key('confirmed_repeat_change_notice_view_evidence_cta'),
-            onPressed: onViewEvidence,
+            onPressed: () {
+              if (surface != null && count != null) {
+                EarlyArchiveProofAnalytics.timelineViewEvidenceTapped(
+                  entryCount: count,
+                  surface: surface,
+                  hasRealTimeline:
+                      EarlyArchiveProofAnalytics.realTimelineSeenThisSession,
+                );
+              }
+              onViewEvidence();
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.accentPrimary,
             ),

@@ -27,6 +27,7 @@ import '../billing/revenuecat_service.dart';
 import '../billing/revenuecat_offerings_debug_log.dart';
 import '../billing/subscription_copy.dart';
 import '../product/consumer_ui_copy.dart';
+import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/first25/first25_user_metrics.dart';
 import '../models/entitlement.dart';
 import '../services/activation_funnel_analytics.dart';
@@ -401,6 +402,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
       ActivationTracker.trackProValuePreviewShown(preview.typeId);
     }
     First25UserMetrics.trackPaywallSeen(surface: 'paywall_screen');
+    EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
+      source: 'paywall_screen',
+    );
   }
 
   void _trackPlansShown() {

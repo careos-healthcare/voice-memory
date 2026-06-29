@@ -2726,12 +2726,25 @@ class _RecordScreenState extends State<RecordScreen> {
         entryCount: _journalEntryCount,
       );
 
+  bool get _suppressRecordRetentionForEarlyProof {
+    if (!_journalEntryCountReady || _isPostSaveSurface) return false;
+    if (!RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isPostSave: false,
+    )) {
+      return false;
+    }
+    return EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_journalEntries);
+  }
+
   bool get _showBottomRetentionCards =>
-      !_applyEmptyArchiveGates ||
+      !_suppressRecordRetentionForEarlyProof &&
+      (!_applyEmptyArchiveGates ||
       RecordEmptyArchiveGates.showBottomRetentionCards(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
-      );
+      ));
 
   bool get _showAhaMomentCards =>
       !_applyEmptyArchiveGates ||
@@ -3354,6 +3367,10 @@ class _RecordScreenState extends State<RecordScreen> {
           )
         : null;
     final showEarlyEvidenceTimeline = earlyEvidenceTimeline != null;
+    final suppressEarlyRepeatPayoffCompetitors =
+        confirmedRepeatTriggerPayoff != null ||
+        confirmedRepeatHelpfulActionPayoff != null ||
+        confirmedRepeatChangeNotice != null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3444,7 +3461,7 @@ class _RecordScreenState extends State<RecordScreen> {
           )
         : const RecordHomeSurfacePolicy();
     final showArchiveProgressCards = ui == RecordUiState.ready
-        ? recordHomeSurface.showArchiveProgressCards
+        ? recordHomeSurface.showArchiveProgressCards && !showEarlyEvidenceTimeline
         : _canShowArchiveProgressCards;
 
     _logRecordEmptyGate('build');
@@ -3643,6 +3660,9 @@ class _RecordScreenState extends State<RecordScreen> {
                           case final signal?) ...[
                         EarlyFirstSignalCard(
                           signal: signal,
+                          showPrimaryCta: !_shouldHideCardRecordButtons(ui),
+                          analyticsSurface: 'record',
+                          entryCount: _journalEntryCount,
                           onPrimary: () =>
                               unawaited(_onRecordPressed(source: 'main')),
                           onViewEvidence: signal.showsConfirmedRepeat
@@ -3667,6 +3687,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       EarlyEvidenceTimelineCard(
                         timeline: earlyEvidenceTimeline!,
                         compact: true,
+                        analyticsSurface: 'record',
+                        entryCount: _journalEntryCount,
                         onRecordWhatHelped:
                             earlyEvidenceTimeline.showsSofterReturn &&
                                 !earlyEvidenceTimeline.showsHelpfulAction
@@ -3696,6 +3718,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           case final notice?) ...[
                         ConfirmedRepeatChangeNoticeCard(
                           notice: notice,
+                          analyticsSurface: 'record',
+                          entryCount: _journalEntryCount,
                           onRecordWhatHelped: () {
                             ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                             setState(
@@ -4319,6 +4343,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             const SizedBox(height: 16),
                             ConfirmedRepeatTriggerPayoffCard(
                               payoff: confirmedRepeatTriggerPayoff,
+                              analyticsSurface: 'record',
+                              entryCount: entriesAfterSave.length,
                               onKeepWatching: _resetPostSaveToReady,
                               onViewEvidence: () => context.push(
                                 BeliefEvidenceNavigation.route,
@@ -4329,6 +4355,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             const SizedBox(height: 16),
                             ConfirmedRepeatHelpfulActionPayoffCard(
                               payoff: confirmedRepeatHelpfulActionPayoff,
+                              analyticsSurface: 'record',
+                              entryCount: entriesAfterSave.length,
                               onKeepWatching: _resetPostSaveToReady,
                               onViewEvidence: () => context.push(
                                 BeliefEvidenceNavigation.route,
@@ -4339,6 +4367,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             const SizedBox(height: 16),
                             ConfirmedRepeatChangeNoticeCard(
                               notice: confirmedRepeatChangeNotice,
+                              analyticsSurface: 'record',
+                              entryCount: entriesAfterSave.length,
                               onRecordWhatHelped: () {
                                 ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                                 setState(
@@ -4405,7 +4435,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                         ],
                         if (postSaveArchiveHierarchy != null &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !suppressEarlyRepeatPayoffCompetitors) ...[
                           const SizedBox(height: 16),
                           PostSaveFocusedActionsBar(
                             onViewEvidence: () =>
@@ -4816,7 +4847,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             _tomorrowReturnLoop != null &&
                             !_returnDayJustClosed &&
                             !suppressNoisyFirstSaveCards &&
-                            !suppressEarlyPatternClaimCards) ...[
+                            !suppressEarlyPatternClaimCards &&
+                            !suppressEarlyRepeatPayoffCompetitors) ...[
                           if (_secondSessionComparison?.hasEnoughData == true &&
                               secondSessionPayoff == null) ...[
                             const SizedBox(height: 12),

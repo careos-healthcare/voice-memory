@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_milestone_store.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_proof_analytics.dart';
+import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_demo.dart';
+import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_demo_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_trigger_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_record_routes.dart';
+import 'package:voicememory_mobile/features/first_session/first_session_coordinator.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
+import 'package:voicememory_mobile/widgets/patterns/early_evidence_timeline_demo_section.dart';
+import 'package:voicememory_mobile/widgets/patterns/patterns_empty_view.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_change_notice_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_trigger_payoff_card.dart';
@@ -1124,4 +1132,337 @@ void main() {
       expect(find.text('Change'), findsOneWidget);
     });
   });
+
+  group('EarlyFirstSignalRecordRoutes', () {
+    test('trigger and helpful routes support autostart for Patterns handoff', () {
+      expect(
+        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+        contains('autostart=1'),
+      );
+      expect(
+        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+        contains(Uri.encodeComponent(EarlyFirstSignalCopy.recordTriggerGuidedPrompt)),
+      );
+      expect(
+        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
+        contains('autostart=1'),
+      );
+      expect(
+        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
+        contains(
+          Uri.encodeComponent(EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt),
+        ),
+      );
+    });
+  });
+
+  group('FirstUserJourney hardening', () {
+    setUp(() async {
+      await AppServices.resetForTest(
+        journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
+        prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+        skipRevenueCat: true,
+      );
+    });
+
+    Future<void> saveRelatedRepeatEntries() async {
+      for (final entry in _threeRelatedRepeatEntries()) {
+        await AppServices.instance.journalStore.save(entry);
+      }
+    }
+
+    test('three related entries show timeline on Patterns not duplicate early card', () async {
+      await saveRelatedRepeatEntries();
+
+      final loaded = await AppServices.instance.journalStore.loadAll();
+      expect(loaded.length, 3);
+
+      final timeline = EarlyEvidenceTimelineEngine.build(
+        entries: loaded,
+      );
+      expect(timeline, isNotNull);
+
+      final earlySignal = EarlyFirstSignalEngine.build(
+        entries: loaded,
+      );
+      expect(earlySignal?.kind, EarlyFirstSignalKind.threeEntryConfirmedRepeat);
+      expect(EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(loaded), isTrue);
+    });
+
+    test('patterns early proof scaffold eligible at three confirmed entries', () {
+      final entries = _threeRelatedRepeatEntries();
+      expect(
+        FirstSessionCoordinator.shouldShowMinimalPatterns(
+          reflectionCount: entries.length,
+        ),
+        isFalse,
+      );
+      expect(entries.length >= 3 && entries.length <= 5, isTrue);
+      expect(EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries), isTrue);
+      expect(EarlyEvidenceTimelineEngine.build(entries: entries), isNotNull);
+    });
+
+    test('Record compact timeline gate keeps early signal card at three entries', () {
+      expect(
+        RecordEmptyArchiveGates.showEarlyFirstSignalCard(
+          loaded: true,
+          entryCount: 3,
+          isPostSave: false,
+        ),
+        isTrue,
+      );
+      expect(
+        RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
+          loaded: true,
+          entryCount: 3,
+          isPostSave: false,
+        ),
+        isFalse,
+      );
+      expect(
+        RecordEmptyArchiveGates.showEarlyEvidenceTimelineCompact(
+          loaded: true,
+          entryCount: 4,
+          isPostSave: false,
+        ),
+        isTrue,
+      );
+    });
+  });
+
+  group('EarlyEvidenceTimelineDemo', () {
+    test('can show CTA on empty and one entry only', () {
+      expect(
+        EarlyEvidenceTimelineDemo.canShowCta(
+          entryCount: 0,
+          hasRealTimeline: false,
+        ),
+        isTrue,
+      );
+      expect(
+        EarlyEvidenceTimelineDemo.canShowCta(
+          entryCount: 1,
+          hasRealTimeline: false,
+        ),
+        isTrue,
+      );
+      expect(
+        EarlyEvidenceTimelineDemo.canShowCta(
+          entryCount: 2,
+          hasRealTimeline: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('real timeline takes priority over demo CTA', () {
+      expect(
+        EarlyEvidenceTimelineDemo.canShowCta(
+          entryCount: 0,
+          hasRealTimeline: true,
+        ),
+        isFalse,
+      );
+      expect(
+        EarlyEvidenceTimelineDemo.canShowCta(
+          entryCount: 1,
+          hasRealTimeline: true,
+        ),
+        isFalse,
+      );
+
+      final realTimeline = EarlyEvidenceTimelineEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      expect(realTimeline, isNotNull);
+      expect(
+        EarlyEvidenceTimelineDemo.canShowCta(
+          entryCount: 3,
+          hasRealTimeline: realTimeline != null,
+        ),
+        isFalse,
+      );
+    });
+
+    test('sample timeline uses example copy and all four items', () {
+      final timeline = EarlyEvidenceTimelineDemo.timeline;
+
+      expect(timeline.title, EarlyEvidenceTimelineDemoCopy.title);
+      expect(timeline.title.toLowerCase(), contains('example'));
+      expect(timeline.subtitle.toLowerCase(), contains('sample'));
+      expect(timeline.items, hasLength(4));
+      expect(
+        timeline.items.map((item) => item.kind),
+        [
+          EarlyEvidenceTimelineItemKind.repeatConfirmed,
+          EarlyEvidenceTimelineItemKind.triggerCaptured,
+          EarlyEvidenceTimelineItemKind.softerReturn,
+          EarlyEvidenceTimelineItemKind.helpfulAction,
+        ],
+      );
+    });
+
+    testWidgets('empty Patterns footer shows demo CTA', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: PatternsEmptyView(
+              footer: [
+                EarlyEvidenceTimelineDemoCta(
+                  onTap: _noop,
+                  entryCount: 0,
+                  surface: 'patterns',
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('See how ArchiveMe works'), findsOneWidget);
+      expect(find.byKey(const Key('early_evidence_demo_cta')), findsOneWidget);
+    });
+
+    testWidgets('tapping demo CTA shows labelled sample timeline', (tester) async {
+      var demoVisible = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              return Scaffold(
+                body: demoVisible
+                    ? EarlyEvidenceTimelineDemoSection(
+                        onHide: () => setState(() => demoVisible = false),
+                        entryCount: 0,
+                        surface: 'patterns',
+                      )
+                    : EarlyEvidenceTimelineDemoCta(
+                        onTap: () => setState(() => demoVisible = true),
+                        entryCount: 0,
+                        surface: 'patterns',
+                      ),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.byKey(const Key('early_evidence_demo_cta')));
+      await tester.pump();
+
+      expect(find.byKey(const Key('early_evidence_demo_section')), findsOneWidget);
+      expect(find.text('Sample'), findsOneWidget);
+      expect(
+        find.text('Example: your archive building evidence'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'This is a sample of what ArchiveMe can show once patterns repeat.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    test('demo preview does not write journal entries', () async {
+      await AppServices.resetForTest(
+        journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
+        prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+        skipRevenueCat: true,
+      );
+
+      expect(await AppServices.instance.journalStore.loadAll(), isEmpty);
+
+      // Showing demo is static — no save side effects.
+      expect(EarlyEvidenceTimelineDemo.timeline.items, isNotEmpty);
+
+      expect(await AppServices.instance.journalStore.loadAll(), isEmpty);
+    });
+  });
+
+  group('EarlyArchiveProofAnalytics', () {
+    late List<({String event, Map<String, Object> properties})> captured;
+
+    setUp(() {
+      captured = [];
+      ActivationFunnelAnalytics.resetForTest();
+      EarlyArchiveProofAnalytics.resetForTest();
+      ActivationFunnelAnalytics.captureForTest(
+        (event, properties) => captured.add((event: event, properties: properties)),
+      );
+    });
+
+    tearDown(ActivationFunnelAnalytics.resetForTest);
+
+    List<String> eventsNamed(String name) =>
+        captured.where((e) => e.event == name).map((e) => e.event).toList();
+
+    testWidgets('demo CTA seen dedupes on rebuild', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineDemoCta(
+              onTap: () {},
+              entryCount: 0,
+              surface: 'patterns',
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyEvidenceTimelineDemoCta(
+              onTap: () {},
+              entryCount: 0,
+              surface: 'patterns',
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(eventsNamed(EarlyArchiveProofAnalytics.demoCtaSeenEvent), hasLength(1));
+      expect(captured.single.properties['entry_count'], 0);
+      expect(captured.single.properties['source'], 'patterns');
+    });
+
+    test('timeline seen marks session for pro after timeline', () {
+      EarlyArchiveProofAnalytics.timelineSeen(
+        entryCount: 4,
+        surface: 'patterns',
+        milestoneCount: 2,
+        hasRealTimeline: true,
+      );
+      expect(EarlyArchiveProofAnalytics.realTimelineSeenThisSession, isTrue);
+
+      EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
+        source: 'paywall_screen',
+      );
+      expect(
+        eventsNamed(EarlyArchiveProofAnalytics.proScreenOpenedAfterTimelineEvent),
+        hasLength(1),
+      );
+    });
+
+    test('payloads omit transcript-like content', () {
+      EarlyArchiveProofAnalytics.confirmedRepeatSeen(
+        entryCount: 3,
+        surface: 'patterns',
+      );
+      final joined = captured
+          .expand((e) => e.properties.values)
+          .map((v) => v.toString())
+          .join(' ')
+          .toLowerCase();
+      expect(joined, isNot(contains('transcript')));
+      expect(joined, isNot(contains('said yes')));
+    });
+  });
 }
+
+void _noop() {}
