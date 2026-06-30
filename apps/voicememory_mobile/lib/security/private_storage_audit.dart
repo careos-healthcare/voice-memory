@@ -73,7 +73,8 @@ abstract class PrivateStorageAudit {
       backend: 'temp_file',
       sensitive: true,
       encrypted: false,
-      notes: 'vm_rec_*.m4a under system temp; paths referenced on entries',
+      notes:
+          'vm_rec_*.m4a under system temp; released after successful save; stale orphans purged on startup; retained for offline draft retry',
     ),
     PrivateStorageAuditReport(
       store: 'OfflineDrafts',

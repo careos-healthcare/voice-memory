@@ -74,14 +74,32 @@ On sign-in, `GuestFirstAuth.registerDeviceAfterSignIn()` runs **`syncNow()`**, w
 
 | Store | Path / backend | Encrypted | User namespaced |
 | --- | --- | --- | --- |
-| JournalStore | `journal_entries.enc` | Yes (AES-256-GCM; key in secure storage) | **No** |
+| JournalStore | `journal_entries.enc` | **Yes** (AES-256-GCM; key in secure storage) | **No** |
 | MobilePrefsStore | `mobile_prefs.json` | No | **No** |
-| EntitlementCache | `entitlements.json` | No | **No** |
-| SecureStorageService | flutter_secure_storage | Yes | Device-scoped |
+| EntitlementCache | `entitlements.json` | No (billing tier only) | **No** |
+| SecureStorageService | flutter_secure_storage | **Yes** | Device-scoped |
+| AppLockStore | flutter_secure_storage | **Yes** (PIN hash + salt) | Device-scoped |
 | Voice temp files | `vm_rec_*.m4a` / `.wav` | No | **No** |
 | CaptureTokenCache | In-memory only | N/A | N/A |
+| OfflineDrafts | encrypted journal + `localAudioPath` | Journal **yes**; audio file **no** | **No** |
 
-**Audit helper:** `lib/security/private_storage_audit.dart`
+**Audit helper:** `lib/security/private_storage_audit.dart` (`sensitivePlaintextCount` counts store backends, not individual files).
+
+### Temp voice audio — highest-priority local plaintext risk
+
+Voice capture writes short-lived `vm_rec_*.m4a` files under the system temp directory. They are **not encrypted at rest**.
+
+**Mitigations (2026-06-15):**
+
+1. **After successful save** — when transcription produced usable text (`TempRecordingCleanup.releaseTempAudioIfSafe`), the temp file is deleted and `localAudioPath` is cleared from the journal entry.
+2. **On app startup** — `TempRecordingCleanup.purgeStaleOnStartup` removes unreferenced orphans older than one hour and always removes leftover `vm_rec_retry_*` silence-retry files.
+3. **Offline / degraded drafts** — when transcription failed or the entry is still a `[draft]`, temp audio is **retained** so the user can retry or type a fallback. This is an intentional, documented temporary plaintext risk until retry completes.
+
+**Files:** `lib/security/private_data_service.dart` (`TempRecordingCleanup`), `lib/services/capture_pipeline_service.dart`, `lib/services/app_services.dart`
+
+### Remaining plaintext stores (audit count unchanged)
+
+`sensitivePlaintextCount` remains **4**: `MobilePrefsStore`, `VoiceRecordings` (mitigated, not encrypted), `CaptureTokenCache` (in-memory), `ArchiveFeatureStores`. Journal text, session/auth, and app-lock data are encrypted in secure storage.
 
 ### Feature stores (prefs-backed, device-global)
 
@@ -226,6 +244,7 @@ Transcripts and journal bodies are sent to backend for transcribe, analyze, jour
 - Passwordless email OTP; no password storage
 - Session cookie in secure storage; sign-out clears cookie
 - Journal encrypted at rest; encryption key in secure storage
+- Session cookie, device id, and app-lock credentials in secure storage (flutter_secure_storage)
 - Optional PIN/biometric app lock (hashed PIN only)
 - HTTPS-only API in release builds
 - Capture token attestation for AI routes (memory-only token)
@@ -233,6 +252,7 @@ Transcripts and journal bodies are sent to backend for transcribe, analyze, jour
 - Creator demo mode blocks sync
 - User-initiated local archive wipe in Security settings
 - Entitlement cache cleared on auth change (2026-06-15 fix)
+- Temp voice recording cleanup on successful save and startup orphan sweep (2026-06-15)
 - Documented access-protection audit for TestFlight
 
 ---
@@ -316,7 +336,9 @@ Transcripts and journal bodies are sent to backend for transcribe, analyze, jour
 | Change | File | Reason |
 | --- | --- | --- |
 | Clear entitlement cache on sign-out / before sign-in | `lib/billing/billing_service.dart`, `lib/services/auth_service.dart`, `lib/services/app_services.dart` | Prevent stale Pro across account switch in same app session |
+| Temp voice recording cleanup | `lib/security/private_data_service.dart`, `lib/services/capture_pipeline_service.dart`, `lib/services/app_services.dart` | Reduce plaintext temp audio exposure; retain only for offline draft retry |
 | Auth isolation unit test | `test/security_auth_isolation_test.dart` | Verify cache reset |
+| Temp recording cleanup tests | `test/temp_recording_cleanup_test.dart` | Verify stale purge vs draft retention |
 | This document | `docs/SECURITY_AUDIT_NOTES.md` | Audit record |
 
 No changes to RevenueCat purchase, restore, offerings, or paywall purchase flows.

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../features/voice_capture/voice_capture_quality.dart';
 import '../models/journal_entry.dart';
 import '../storage/app_storage_paths.dart';
 import '../storage/journal_store.dart';
@@ -42,6 +43,15 @@ class ArchiveExportPayload {
 abstract class TempRecordingCleanup {
   TempRecordingCleanup._();
 
+  /// Unreferenced `vm_rec_*` files older than this are removed on startup.
+  static const Duration staleOrphanMaxAge = Duration(hours: 1);
+
+  static bool isTempRecordingPath(String path) {
+    final name = path.split(Platform.pathSeparator).last;
+    return name.startsWith('vm_rec_') &&
+        (name.endsWith('.m4a') || name.endsWith('.wav'));
+  }
+
   static Future<Directory?> _resolveTempDirectory(Directory? tempDir) async {
     if (tempDir != null) return tempDir;
     try {
@@ -76,15 +86,121 @@ abstract class TempRecordingCleanup {
     if (temp == null || !temp.existsSync()) return;
     for (final entity in temp.listSync()) {
       if (entity is! File) continue;
-      final name = entity.path.split(Platform.pathSeparator).last;
-      final isTempRecording =
-          name.startsWith('vm_rec_') &&
-          (name.endsWith('.m4a') || name.endsWith('.wav'));
-      if (!isTempRecording) continue;
+      if (!isTempRecordingPath(entity.path)) continue;
       if (preservePaths.contains(entity.path)) continue;
       try {
         if (entity.existsSync()) await entity.delete();
       } catch (_) {}
+    }
+  }
+
+  /// Paths still needed for offline draft retry or degraded voice capture.
+  static Future<Set<String>> preservePathsForOfflineRetry(
+    JournalStore journal,
+  ) async {
+    final entries = await journal.loadAll();
+    final preserve = <String>{};
+    for (final entry in entries) {
+      final path = entry.localAudioPath?.trim();
+      if (path == null || path.isEmpty || !isTempRecordingPath(path)) continue;
+      if (VoiceCaptureQuality.isDegradedVoiceCapture(entry)) {
+        preserve.add(path);
+      }
+    }
+    return preserve;
+  }
+
+  /// Deletes temp audio after a successful save when transcript is usable.
+  /// Offline / degraded drafts keep audio for retry or typed fallback.
+  static Future<JournalEntry> releaseTempAudioIfSafe(
+    JournalEntry entry,
+    JournalStore journal, {
+    String first25Source = 'temp_audio_released',
+  }) async {
+    if (VoiceCaptureQuality.isDegradedVoiceCapture(entry)) return entry;
+    final path = entry.localAudioPath?.trim();
+    if (path == null || path.isEmpty || !isTempRecordingPath(path)) {
+      return entry;
+    }
+
+    await _deleteFileIfExists(path);
+    final cleared = _entryWithoutLocalAudioPath(entry);
+    await journal.save(cleared, first25Source: first25Source);
+    return cleared;
+  }
+
+  /// Startup sweep: release transcribed temp audio, then purge stale orphans.
+  static Future<void> purgeStaleOnStartup({
+    required JournalStore journalStore,
+    Directory? tempDir,
+    Duration orphanMaxAge = staleOrphanMaxAge,
+    DateTime Function()? clock,
+  }) async {
+    final now = clock ?? DateTime.now;
+    final entries = await journalStore.loadAll();
+    for (final entry in entries) {
+      await releaseTempAudioIfSafe(
+        entry,
+        journalStore,
+        first25Source: 'startup_temp_audio_released',
+      );
+    }
+
+    final preserve = await preservePathsForOfflineRetry(journalStore);
+    final temp = await _resolveTempDirectory(tempDir);
+    if (temp == null || !temp.existsSync()) return;
+
+    for (final entity in temp.listSync()) {
+      if (entity is! File) continue;
+      if (!isTempRecordingPath(entity.path)) continue;
+      if (preserve.contains(entity.path)) continue;
+
+      try {
+        final name = entity.path.split(Platform.pathSeparator).last;
+        if (name.startsWith('vm_rec_retry_')) {
+          if (entity.existsSync()) await entity.delete();
+          continue;
+        }
+        final age = now().difference(entity.statSync().modified);
+        if (age >= orphanMaxAge && entity.existsSync()) {
+          await entity.delete();
+        }
+      } catch (_) {}
+    }
+  }
+
+  static JournalEntry _entryWithoutLocalAudioPath(JournalEntry entry) =>
+      JournalEntry(
+        id: entry.id,
+        createdAt: entry.createdAt,
+        transcript: entry.transcript,
+        durationSeconds: entry.durationSeconds,
+        reflection: entry.reflection,
+        syncStatus: entry.syncStatus,
+        treatAsNew: entry.treatAsNew,
+        connectionApproved: entry.connectionApproved,
+        keepExactDetails: entry.keepExactDetails,
+        keepSeparate: entry.keepSeparate,
+        archiveThreadId: entry.archiveThreadId,
+        archivePackId: entry.archivePackId,
+        isPinned: entry.isPinned,
+        pinnedAt: entry.pinnedAt,
+        isArchived: entry.isArchived,
+        archivedAt: entry.archivedAt,
+        entryAboutness: entry.entryAboutness,
+        memorySurfacing: entry.memorySurfacing,
+        preserveOriginal: entry.preserveOriginal,
+        captureContextTag: entry.captureContextTag,
+      );
+
+  static Future<bool> _deleteFileIfExists(String path) async {
+    try {
+      final file = File(path);
+      if (!file.existsSync()) return false;
+      await file.delete();
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 }

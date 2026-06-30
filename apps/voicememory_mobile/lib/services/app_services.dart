@@ -14,6 +14,7 @@ import '../storage/mobile_prefs_store.dart';
 import '../storage/secure_storage.dart';
 import '../storage/session_cookie_store.dart';
 import '../auth/guest_first_auth.dart';
+import '../security/private_data_service.dart';
 import '../features/native_push/native_push_service.dart';
 import '../features/native_push/native_push_verification.dart';
 import '../features/offline_sync/offline_sync_journey_store.dart';
@@ -99,6 +100,9 @@ class AppServices {
       tokenCache: s.tokenCache,
     );
     s.journalStore = await JournalStore.open('$base/journal_entries.json');
+    await TempRecordingCleanup.purgeStaleOnStartup(
+      journalStore: s.journalStore,
+    );
     s.prefs = await MobilePrefsStore.open('$base/mobile_prefs.json');
     s.entitlementCache = await EntitlementCache.open('$base/entitlements.json');
     s.pipeline = CapturePipelineService(
@@ -184,6 +188,9 @@ class AppServices {
       tokenCache: s.tokenCache,
     );
     s.journalStore = await JournalStore.open('$base/journal_entries.json');
+    await TempRecordingCleanup.purgeStaleOnStartup(
+      journalStore: s.journalStore,
+    );
     s.prefs = await MobilePrefsStore.open('$base/mobile_prefs.json');
     s.entitlementCache = await EntitlementCache.open('$base/entitlements.json');
     s.pipeline = CapturePipelineService(

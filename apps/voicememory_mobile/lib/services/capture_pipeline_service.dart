@@ -559,8 +559,10 @@ class CapturePipelineService {
   }) async {
     await _journalStore.save(entry, first25Source: first25Source);
     await TempRecordingCleanup.purgeRetryRecordings();
-    final reloaded = await _journalStore.getById(entry.id);
-    final saved = reloaded ?? entry;
+    final saved = await TempRecordingCleanup.releaseTempAudioIfSafe(
+      entry,
+      _journalStore,
+    );
     _logSavedEntryReloaded(saved);
     return saved;
   }
