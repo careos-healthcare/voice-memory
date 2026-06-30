@@ -153,7 +153,7 @@ void main() {
       expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Your archive is empty');
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'Record one moment to begin.',
+        'Record short moments. ArchiveMe watches what repeats.',
       );
       expect(
         RecordScreenFramingCopy.archiveStartedTitle,

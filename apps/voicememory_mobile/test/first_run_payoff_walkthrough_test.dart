@@ -134,8 +134,8 @@ void main() {
       await tester.pump();
 
       expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
-      expect(find.textContaining('private archive'), findsOneWidget);
-      expect(find.textContaining('compare'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.recordHeroBody), findsOneWidget);
+      expect(find.textContaining('repeating'), findsOneWidget);
       expect(find.text(RecordScreenFramingCopy.firstRunPrivacyTitle), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
@@ -272,7 +272,7 @@ void main() {
       const archiveMeStrings = [
         VisibleArchiveProofCopy.recordHeroBody,
         VisibleArchiveProofCopy.archiveHomeEmptyBody,
-        VisibleArchiveProofCopy.firstSaveBody,
+        VisibleArchiveProofCopy.firstSaveSecondary,
         PrivacyDataControlsCopy.dataStaysOnDeviceBody,
       ];
       for (final text in archiveMeStrings) {

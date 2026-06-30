@@ -321,11 +321,8 @@ void main() {
       await tester.pump();
 
       expect(find.text('Your archive has started.'), findsOneWidget);
-      expect(
-        find.textContaining('more than one moment to compare'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('No conclusion yet'), findsOneWidget);
+      expect(find.textContaining('No pattern yet'), findsOneWidget);
+      expect(find.textContaining('second moment'), findsOneWidget);
       expect(
         eventsNamed(ActivationFunnelAnalytics.firstSaveEvidenceSeen),
         isNotEmpty,
@@ -386,7 +383,9 @@ void main() {
           .map((w) => w.data ?? '')
           .join(' ')
           .toLowerCase();
-      expect(text, isNot(contains('pattern')));
+      final withoutAllowedNoPattern =
+          text.replaceAll('no pattern yet', '');
+      expect(withoutAllowedNoPattern, isNot(contains('pattern')));
       expect(text, isNot(contains('changed')));
       expect(text, isNot(contains('returned')));
       expect(text, isNot(contains('faded')));

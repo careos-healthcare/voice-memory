@@ -212,11 +212,9 @@ void main() {
       await tester.pump();
 
       expect(find.text('Your archive has started.'), findsOneWidget);
-      expect(
-        find.textContaining('saved words'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('No conclusion yet'), findsOneWidget);
+      expect(find.textContaining('your own words'), findsOneWidget);
+      expect(find.textContaining('No pattern yet'), findsOneWidget);
+      expect(find.textContaining('second moment'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
