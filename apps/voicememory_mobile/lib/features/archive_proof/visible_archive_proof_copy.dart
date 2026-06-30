@@ -36,11 +36,10 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveTitle = 'Your archive has started.';
 
   static const firstSaveBody =
-      'No pattern yet — just one piece of evidence from your own words. '
-      'A second moment lets ArchiveMe start comparing.';
+      'No pattern yet — just one piece of evidence from your own words.';
 
   static const firstSaveSecondary =
-      'No conclusion yet — just one moment saved so far.';
+      'A second moment lets ArchiveMe start comparing.';
 
   static const firstSaveReturnTomorrowBody =
       'Come back tomorrow to see whether this moment shows up again. '

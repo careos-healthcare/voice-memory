@@ -349,6 +349,7 @@ import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
 import '../features/activation/capture_context_tags.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
+import '../widgets/record/first_entry_saved_receipt_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
 import '../widgets/onboarding/record_once_intro_card.dart';
@@ -3305,10 +3306,21 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     final suppressPostResultNextCheckCompetitors =
         stack.suppressDuplicateUseTomorrowCtas;
+    final auditPresentation = VisualAuditOverrides.active
+        ? VisualAuditOverrides.peekRecordPresentation()
+        : null;
+    final justSavedFirstEntry =
+        _recordReturnProJustSaved ||
+        (auditPresentation?.justSavedFirst ?? false);
+    final postSaveEntryCount = entriesAfterSave.isNotEmpty
+        ? entriesAfterSave.length
+        : _journalEntryCount;
     final suppressNoisyFirstSaveCards =
         FirstThreeSessionGates.suppressNoisyPostSaveCards(
-          justSavedFirst: _recordReturnProJustSaved,
-          entryCount: _journalEntryCount,
+          justSavedFirst: justSavedFirstEntry,
+          entryCount: ui == RecordUiState.done && justSavedFirstEntry
+              ? postSaveEntryCount
+              : _journalEntryCount,
         );
     final suppressEarlyPatternClaimCards =
         FirstThreeSessionGates.suppressEarlyPatternClaimCards(
@@ -4491,7 +4503,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             onAddOneMoreMoment: _goToRecordTab,
                           ),
                         ],
-                        if (returnLoopPayoff != null) ...[
+                        if (returnLoopPayoff != null &&
+                            !suppressNoisyFirstSaveCards) ...[
                           const SizedBox(height: 16),
                           DayTwoReturnLoopCard(
                             payoff: returnLoopPayoff,
@@ -4542,11 +4555,18 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         // Record → Return → Pro: evidence, return cue,
                         // Pro bridge — after the save succeeded, never blocking.
-                        if (_recordReturnProJustSaved) ...[
+                        if (justSavedFirstEntry && entriesAfterSave.isNotEmpty) ...[
+                          if (!VoiceCaptureQuality.isDegradedVoiceCapture(
+                            entriesAfterSave.first,
+                          )) ...[
+                            const SizedBox(height: 16),
+                            const FirstEntrySavedReceiptCard(),
+                          ],
                           const SizedBox(height: 16),
                           FirstSaveEvidenceCard(
                             onViewArchive: () => context.go('/archive-belief'),
-                            onRecordAnother: () => unawaited(_onRecordPressed(source: 'main')),
+                            onRecordAnother: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
                           ),
                           if (_recordReturnCueVisible &&
                               _journalEntryCount != 1 &&
@@ -4697,7 +4717,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                 setState(() => _showEvidenceContextTag = false),
                           ),
                         ],
-                        if (stack.showInputQualityCoach) ...[
+                        if (stack.showInputQualityCoach &&
+                            !suppressNoisyFirstSaveCards) ...[
                           const SizedBox(height: 16),
                           InputQualityCoachCard(
                             result: _inputQuality!,

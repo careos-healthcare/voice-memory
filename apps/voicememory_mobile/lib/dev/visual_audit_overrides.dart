@@ -44,6 +44,7 @@ class RecordAuditPresentation {
     this.syncNote,
     this.stageLabel,
     this.degradedVoicePostSave = false,
+    this.justSavedFirst = false,
     this.entriesAfterSave,
     this.micPhase,
     this.userDeniedThisSession,
@@ -56,6 +57,8 @@ class RecordAuditPresentation {
   final String? syncNote;
   final String? stageLabel;
   final bool degradedVoicePostSave;
+  /// When true with [entriesAfterSave], simulates first-save post-save UI.
+  final bool justSavedFirst;
   final List<JournalEntry>? entriesAfterSave;
   final RecordingPhase? micPhase;
   final bool? userDeniedThisSession;

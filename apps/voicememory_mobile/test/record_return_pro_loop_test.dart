@@ -104,11 +104,11 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('more than one moment to compare'),
+        contains('No pattern yet'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('No conclusion yet'),
+        contains('second moment'),
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,

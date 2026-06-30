@@ -9,6 +9,7 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/personal_return_prompt_model.dart';
 import 'package:voicememory_mobile/features/return_changes/archive_return_changes_copy.dart';
+import 'package:voicememory_mobile/features/activation/day_two_return_loop_payoff.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
@@ -25,6 +26,7 @@ import 'package:voicememory_mobile/features/voice_capture/microphone_permission_
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
+import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -652,11 +654,23 @@ void main() {
       }
       final auditEntriesAfterSave = degradedVoicePostSave && entryCount > 0
           ? List.generate(entryCount, (i) => _degradedVoiceEntry(id: 'v$i'))
-          : null;
+          : (ui == RecordUiState.done && entryCount > 0
+              ? List.generate(
+                  entryCount,
+                  (i) => _entry(
+                    id: 'e$i',
+                    createdAt: DateTime(2026, 6, 1 + i, 12),
+                  ),
+                )
+              : null);
       VisualAuditOverrides.setRecordPresentation(
         RecordAuditPresentation(
           ui: ui,
           degradedVoicePostSave: degradedVoicePostSave,
+          justSavedFirst:
+              ui == RecordUiState.done &&
+              entryCount == 1 &&
+              !degradedVoicePostSave,
           entriesAfterSave: auditEntriesAfterSave,
           micPhase: micPhase,
           userDeniedThisSession: userDeniedThisSession,
@@ -749,6 +763,25 @@ void main() {
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
     });
 
+    testWidgets('first-entry post-save shows focused receipt and archive card', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester, entryCount: 1, ui: RecordUiState.done);
+
+      expect(find.text(VoiceCaptureCopy.recordingSavedTitle), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.evidenceBody), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.evidenceSecondLine), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.evidenceViewArchive), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(EarlyArchiveReturnReminderCopy.title), findsNothing);
+      expect(find.text(DayTwoReturnLoopPayoffCopy.oneEntryBody), findsNothing);
+      expect(find.text(ConsumerUiCopy.makeResultMoreUsefulCta), findsNothing);
+      expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
+      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
+    });
+
     testWidgets('post-save success shows Done and Record another only', (
       tester,
     ) async {
@@ -756,6 +789,8 @@ void main() {
 
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.text(DayTwoReturnLoopPayoffCopy.oneEntryBody), findsNothing);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);

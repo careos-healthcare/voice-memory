@@ -95,7 +95,7 @@ void main() {
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('one moment saved'),
+        contains('second moment'),
       );
       _expectNoBannedOneEntryCopy([
         RecordReturnProCopy.evidenceBody,

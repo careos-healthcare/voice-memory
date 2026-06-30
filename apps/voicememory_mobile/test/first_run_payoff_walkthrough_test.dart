@@ -184,7 +184,7 @@ void main() {
 
       expect(find.text(VisibleArchiveProofCopy.firstSaveTitle), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveSecondary), findsOneWidget);
-      expect(find.textContaining('No conclusion yet'), findsOneWidget);
+      expect(find.textContaining('second moment'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
         VisibleArchiveProofCopy.firstSaveTitle,

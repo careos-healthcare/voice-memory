@@ -11,6 +11,7 @@ abstract final class EarlyArchiveReturnReminderGates {
     required List<JournalEntry> entries,
     required bool hasRealTimeline,
   }) {
+    if (entryCount <= 1) return false;
     if (entryCount < 3) return false;
     if (hasRealTimeline) return true;
     return EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);

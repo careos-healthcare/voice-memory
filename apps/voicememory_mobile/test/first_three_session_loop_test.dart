@@ -70,15 +70,11 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('saved words'),
-      );
-      expect(
-        RecordReturnProCopy.evidenceBody,
-        contains('compare'),
+        contains('No pattern yet'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('No conclusion yet'),
+        contains('second moment'),
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,

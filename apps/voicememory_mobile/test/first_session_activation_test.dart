@@ -12,6 +12,7 @@ import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.d
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/features/first_session/two_day_activation_engine.dart';
@@ -704,6 +705,9 @@ void main() {
         RecordAuditPresentation(
           ui: RecordUiState.done,
           entriesAfterSave: entriesAfterSave,
+          justSavedFirst:
+              entriesAfterSave.length == 1 &&
+              !VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.first),
           degradedVoicePostSave: degradedVoicePostSave,
           lastCaptureAnalysisSucceeded: !degradedVoicePostSave,
         ),
@@ -730,17 +734,16 @@ void main() {
       }
     }
 
-    testWidgets('first save post-save shows return loop without competing cards', (
+    testWidgets('first save post-save shows focused archive started stack', (
       tester,
     ) async {
       await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
 
-      expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
-      expect(
-        find.textContaining(VisibleArchiveProofCopy.returnLoopOneEntryBody),
-        findsOneWidget,
-      );
-      expect(find.text(VisibleArchiveProofCopy.returnLoopPrimaryCta), findsWidgets);
+      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
+      expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
+      expect(find.text('Add one more moment'), findsOneWidget);
+      expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
@@ -759,6 +762,7 @@ void main() {
       expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
+      expect(find.byKey(const Key('first_save_archive_started_card')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -768,7 +772,7 @@ void main() {
       await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
 
       expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsNothing);
-      expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
