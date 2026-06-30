@@ -7,6 +7,9 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/features/onboarding/first_60_second_state.dart';
 import 'package:voicememory_mobile/features/onboarding/first_save_loop_state.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
+import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
+import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_trend.dart';
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -135,6 +138,113 @@ void main() {
         isTrue,
       );
     });
+
+    test('change-over-time proof counts as archive proof', () {
+      expect(
+        PaywallTimingGates.hasArchiveProofFromEntries(
+          entries: _unrelatedTwoEntries,
+          hasChangeOverTimeProof: true,
+        ),
+        isTrue,
+      );
+    });
+  });
+
+  group('PaywallTimingGates.showPostProofProBridge', () {
+    test('does not show before first repeat proof', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 1,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: false,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 2,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: false,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('shows after confirmed repeat proof', () {
+      final proof = PaywallTimingGates.hasArchiveProofFromEntries(
+        entries: _confirmedThreeEntries,
+      );
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: proof,
+          viewingConfirmedRepeatOrTimeline: true,
+          hasChangeOverTimeProof: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('shows after change-over-time proof even without timeline visible', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: true,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('respects resolved and Pro user flags', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: true,
+          isPro: false,
+          hasArchiveProof: true,
+          viewingConfirmedRepeatOrTimeline: true,
+          hasChangeOverTimeProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: false,
+          isPro: true,
+          hasArchiveProof: true,
+          viewingConfirmedRepeatOrTimeline: true,
+          hasChangeOverTimeProof: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('change-over-time proof alone does not bypass entry count gate', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 1,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: true,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: true,
+        ),
+        isFalse,
+      );
+    });
   });
 
   group('PaywallTimingGates.showSoftProBridge', () {
@@ -224,15 +334,29 @@ void main() {
   });
 
   group('Post-proof bridge copy', () {
-    test('strongest bridge uses evidence-first copy', () {
+    test('strongest bridge uses change-over-time copy', () {
       expect(
         ArchiveBeliefThreadCopy.proKeepsThread,
-        'ArchiveMe has enough evidence to show what keeps repeating.',
+        'Track how this changes over time.',
       );
       expect(
         ArchiveBeliefThreadCopy.proBridgeBody,
-        'Pro keeps the full timeline and tracks how it changes.',
+        'ArchiveMe has found the repeat. Pro keeps the full evidence timeline '
+        'and shows whether it gets stronger, softer, or changes.',
       );
+      expect(ArchiveBeliefThreadCopy.proBridgeCta, 'See Pro');
+    });
+
+    test('bridge copy avoids hard lock language', () {
+      final haystack = [
+        ArchiveBeliefThreadCopy.proKeepsThread,
+        ArchiveBeliefThreadCopy.proBridgeBody,
+        ArchiveBeliefThreadCopy.proBridgeCta,
+        ArchiveBeliefThreadCopy.proBridgeSecondary,
+      ].join(' ').toLowerCase();
+      expect(haystack, isNot(contains('upgrade required')));
+      expect(haystack, isNot(contains('feature locked')));
+      expect(haystack, isNot(contains('must pay')));
     });
 
     testWidgets('archive intelligence bridge renders post-proof copy', (
@@ -251,17 +375,50 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(
-          'ArchiveMe has enough evidence to show what keeps repeating.',
-        ),
+        find.text('Track how this changes over time.'),
         findsOneWidget,
       );
       expect(
-        find.text('Pro keeps the full timeline and tracks how it changes.'),
+        find.text(
+          'ArchiveMe has found the repeat. Pro keeps the full evidence timeline '
+          'and shows whether it gets stronger, softer, or changes.',
+        ),
         findsOneWidget,
       );
+      expect(find.text('See Pro'), findsOneWidget);
       expect(find.byKey(const Key('archive_intelligence_pro_bridge_card')),
           findsOneWidget);
+    });
+  });
+
+  group('Change-over-time proof and Pro bridge', () {
+    test('answered repeat return check counts as change-over-time proof', () {
+      final records = [
+        RepeatReturnCheckRecord(
+          entryId: 'e4',
+          choice: RepeatReturnCheckChoice.stronger,
+          entryCountAtCapture: 4,
+          createdAt: DateTime(2026, 6, 13),
+        ),
+      ];
+      expect(RepeatReturnCheckTrendEngine.hasAnsweredCheck(records), isTrue);
+      expect(
+        PaywallTimingGates.hasArchiveProofFromEntries(
+          entries: _unrelatedTwoEntries,
+          hasChangeOverTimeProof: true,
+        ),
+        isTrue,
+      );
+    });
+  });
+
+  group('Restore purchases safety', () {
+    test('restore copy remains visible and billing logic untouched', () {
+      expect(RestorePurchasesCopy.restorePurchases, isNotEmpty);
+      expect(
+        RestorePurchasesCopy.restorePurchases.toLowerCase(),
+        contains('restore'),
+      );
     });
   });
 }

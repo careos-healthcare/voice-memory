@@ -15,6 +15,28 @@ abstract class PaywallTimingGates {
   }) =>
       entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
 
+  /// Pro bridge after confirmed repeat, evidence timeline, or change-over-time
+  /// proof — never on first save, never blocking recording.
+  static bool showPostProofProBridge({
+    required int entryCount,
+    required bool resolved,
+    required bool isPro,
+    required bool hasArchiveProof,
+    required bool viewingConfirmedRepeatOrTimeline,
+    required bool hasChangeOverTimeProof,
+  }) {
+    final proofSeen = hasArchiveProof || hasChangeOverTimeProof;
+    if (!showSoftProBridge(
+      entryCount: entryCount,
+      resolved: resolved,
+      isPro: isPro,
+      hasArchiveProof: proofSeen,
+    )) {
+      return false;
+    }
+    return viewingConfirmedRepeatOrTimeline || hasChangeOverTimeProof;
+  }
+
   /// True when the archive has shown confirmed repeat, timeline, belief, or
   /// grounded pattern insight — not merely a second unrelated save.
   static bool hasArchiveProofFromEntries({
@@ -24,7 +46,9 @@ abstract class PaywallTimingGates {
     bool hasBeliefProof = false,
     bool hasWeeklyReview = false,
     bool hasOhWowMoment = false,
+    bool hasChangeOverTimeProof = false,
   }) {
+    if (hasChangeOverTimeProof) return true;
     if (entries.isEmpty) return false;
 
     final earlySignal = EarlyFirstSignalEngine.build(entries: entries);

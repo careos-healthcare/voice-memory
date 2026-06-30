@@ -25,14 +25,14 @@ abstract class ArchiveBeliefThreadCopy {
   static const String supportingEvidenceLabel = 'Supporting evidence';
   static const String confidenceLabel = 'Signal strength';
 
-  static const String proKeepsThread =
-      'ArchiveMe has enough evidence to show what keeps repeating.';
+  static const String proKeepsThread = 'Track how this changes over time.';
   static const String proDeeperHistory =
       'See deeper history and saved evidence.';
   static const String proReviewChanges =
       'Review how this changed across your archive.';
   static const String proBridgeBody =
-      'Pro keeps the full timeline and tracks how it changes.';
+      'ArchiveMe has found the repeat. Pro keeps the full evidence timeline '
+      'and shows whether it gets stronger, softer, or changes.';
   static const String proBridgeCta = 'See Pro';
   static const String proBridgeSecondary = 'Not now';
 

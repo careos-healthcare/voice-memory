@@ -1926,8 +1926,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     required ArchiveBeliefThread belief,
     required WeeklyWhatChangedReview weekly,
     required ArchiveOhWowMoment ohWow,
+    bool suppressWhenPostProofShown = false,
   }) {
-    if (_archiveIsPro || _proBridgeResolved) return false;
+    if (suppressWhenPostProofShown || _archiveIsPro || _proBridgeResolved) {
+      return false;
+    }
     return FirstThreeSessionGates.showSoftProBridge(
       entryCount: _entries.length,
       resolved: _proBridgeResolved,
@@ -1945,6 +1948,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     required ArchiveBeliefThread belief,
     required WeeklyWhatChangedReview weekly,
     required ArchiveOhWowMoment ohWow,
+    bool suppressWhenPostProofShown = false,
   }) {
     final widgets = <Widget>[];
     if (ohWow.hasMoment &&
@@ -1963,6 +1967,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       belief: belief,
       weekly: weekly,
       ohWow: ohWow,
+      suppressWhenPostProofShown: suppressWhenPostProofShown,
     )) {
       widgets.add(
         ArchiveIntelligenceProBridgeCard(
@@ -3453,6 +3458,23 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         isPostSave: false,
         records: RepeatReturnCheckStore.cached,
       );
+      final hasChangeOverTimeProof = repeatReturnChangeProof != null;
+      final patternsPostProofArchiveProof =
+          PaywallTimingGates.hasArchiveProofFromEntries(
+        entries: _entries,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        hasChangeOverTimeProof: hasChangeOverTimeProof,
+      );
+      final showPatternsPostProofProBridge =
+          PaywallTimingGates.showPostProofProBridge(
+        entryCount: _entries.length,
+        resolved: _proBridgeResolved,
+        isPro: _archiveIsPro,
+        hasArchiveProof: patternsPostProofArchiveProof,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        hasChangeOverTimeProof: hasChangeOverTimeProof,
+      );
       final suppressConfirmedRepeatInlineFeedback =
           ConfirmedRepeatBetaFeedbackGates.suppressInlineAccuracyFeedback(
         state: ConfirmedRepeatBetaFeedbackStore.cached,
@@ -3551,6 +3573,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     viewingConfirmedRepeat: viewingConfirmedRepeatOnPatterns,
                     isRecording: false,
                     onChanged: () => setState(() {}),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (showPatternsPostProofProBridge) ...[
+                  ArchiveIntelligenceProBridgeCard(
+                    onSeePro: () {
+                      EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
+                        source: 'patterns_post_proof_bridge',
+                      );
+                      context.push('/subscription');
+                    },
+                    onNotNow: () async {
+                      await RecordReturnProStore.instance().markProBridgeResolved();
+                      if (!mounted) return;
+                      setState(() => _proBridgeResolved = true);
+                    },
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
@@ -3690,6 +3728,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   belief: archiveBeliefThread,
                   weekly: weeklyWhatChanged,
                   ohWow: ohWowMoment,
+                  suppressWhenPostProofShown: showPatternsPostProofProBridge,
                 ),
                 if (!archiveHome.suppressDuplicatePayoffCards &&
                     _firstLoopPhase != null &&

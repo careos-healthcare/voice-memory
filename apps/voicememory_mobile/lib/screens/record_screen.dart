@@ -3486,23 +3486,26 @@ class _RecordScreenState extends State<RecordScreen> {
             records: RepeatReturnCheckStore.cached,
           )
         : null;
+    final hasChangeOverTimeProof = repeatReturnChangeProof != null;
     final postProofArchiveProof = PaywallTimingGates.hasArchiveProofFromEntries(
       entries: _journalEntries,
       triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
       helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+      hasChangeOverTimeProof: hasChangeOverTimeProof,
     );
     final showPostProofProBridge = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
         _recordReturnProState != null &&
-        FirstThreeSessionGates.showSoftProBridge(
+        PaywallTimingGates.showPostProofProBridge(
           entryCount: _journalEntryCount,
           resolved: _recordReturnProState!.proBridgeResolved,
           isPro: _recordReturnProIsPro,
           hasArchiveProof: postProofArchiveProof,
-        ) &&
-        (showEarlyEvidenceTimeline ||
-            (earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false));
+          viewingConfirmedRepeatOrTimeline: showEarlyEvidenceTimeline ||
+              (earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false),
+          hasChangeOverTimeProof: hasChangeOverTimeProof,
+        );
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
