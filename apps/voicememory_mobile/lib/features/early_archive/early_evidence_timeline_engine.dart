@@ -1,4 +1,5 @@
 import '../../models/journal_entry.dart';
+import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'early_archive_insight_quality_copy.dart';
 import 'early_archive_insight_quality_engine.dart';
 import 'early_evidence_timeline_copy.dart';
@@ -28,11 +29,13 @@ class EarlyEvidenceTimeline {
     required this.title,
     required this.subtitle,
     required this.items,
+    this.evidencePhrases = const [],
   });
 
   final String title;
   final String subtitle;
   final List<EarlyEvidenceTimelineItem> items;
+  final List<String> evidencePhrases;
 
   bool get showsSofterReturn => items.any(
         (item) => item.kind == EarlyEvidenceTimelineItemKind.softerReturn,
@@ -60,6 +63,7 @@ abstract final class EarlyEvidenceTimelineEngine {
       triggerCapturedMilestone: triggerCapturedMilestone,
       helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
     );
+    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(entries);
 
     final items = <EarlyEvidenceTimelineItem>[
       EarlyEvidenceTimelineItem(
@@ -114,6 +118,7 @@ abstract final class EarlyEvidenceTimelineEngine {
       subtitle: insight.timelineSubtitle ??
           EarlyArchiveInsightQualityCopy.timelineSubtitleFallback,
       items: items,
+      evidencePhrases: evidence.phrases,
     );
   }
 }

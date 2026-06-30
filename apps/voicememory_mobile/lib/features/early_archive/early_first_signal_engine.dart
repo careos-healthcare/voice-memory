@@ -3,6 +3,7 @@ import '../activation/first_three_journey_engine.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../timeline/timeline_entry_display.dart';
+import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'early_archive_insight_quality_copy.dart';
 import 'early_archive_insight_quality_engine.dart';
 import 'early_first_signal_copy.dart';
@@ -49,6 +50,8 @@ class EarlyFirstSignalModel {
     required this.primaryCta,
     this.evidenceHeading,
     this.evidenceRows = const [],
+    this.evidencePhrases = const [],
+    this.evidenceSupportLine,
     this.secondaryCta,
     this.returnPrompt,
   });
@@ -59,6 +62,8 @@ class EarlyFirstSignalModel {
   final String primaryCta;
   final String? evidenceHeading;
   final List<EarlyFirstSignalEvidenceRow> evidenceRows;
+  final List<String> evidencePhrases;
+  final String? evidenceSupportLine;
   final String? secondaryCta;
   final EarlyFirstSignalReturnPrompt? returnPrompt;
 
@@ -297,16 +302,29 @@ abstract final class EarlyFirstSignalEngine {
     if (eligible.length == 3 &&
         (_journeyEngine.hasRepeatMatch(entries: eligible) ||
             hasConfirmedRepeatAcrossThree(eligible))) {
+      final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(eligible);
+      final isStrong = evidence.isStrong;
+
       final summaryLines = <String>[
-        EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
-        EarlyFirstSignalCopy.evidenceHeading,
+        if (isStrong)
+          EarlyFirstSignalCopy.threeEntrySeenThreeTimes
+        else
+          EarlyFirstSignalCopy.threeEntryFormingBody,
       ];
 
       return EarlyFirstSignalModel(
         kind: EarlyFirstSignalKind.threeEntryConfirmedRepeat,
-        title: EarlyFirstSignalCopy.threeEntryConfirmedTitle,
+        title: isStrong
+            ? EarlyFirstSignalCopy.threeEntryConfirmedTitle
+            : EarlyFirstSignalCopy.threeEntryFormingTitle,
         lines: summaryLines,
-        evidenceRows: _evidenceRows(eligible),
+        evidenceHeading: evidence.phrases.isNotEmpty
+            ? EarlyFirstSignalCopy.evidenceHeading
+            : null,
+        evidencePhrases: evidence.phrases,
+        evidenceSupportLine: isStrong && evidence.phrases.isNotEmpty
+            ? EarlyFirstSignalCopy.evidenceSupportLine
+            : null,
         primaryCta: EarlyFirstSignalCopy.recordWhatHappensNextCta,
         secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
         returnPrompt: const EarlyFirstSignalReturnPrompt(

@@ -43,7 +43,22 @@ abstract final class EarlyFirstSignalCopy {
   static const threeEntrySeenThreeTimes =
       'ArchiveMe has seen this across 3 moments.';
 
-  static const evidenceHeading = "Here's the evidence.";
+  static const evidenceHeading = 'Evidence from your words:';
+
+  static const evidenceSupportLine =
+      'That is why ArchiveMe is watching this repeat.';
+
+  static const threeEntryFormingTitle = 'The repeat is forming.';
+
+  static const threeEntryFormingBody =
+      'The repeat is forming, but the evidence is still broad.';
+
+  static const threeEntryNeedsMoreBody =
+      'ArchiveMe has seen a possible repeat, but it needs one more specific '
+      'moment before naming it clearly.';
+
+  /// Legacy alias — prefer [evidenceHeading].
+  static const legacyEvidenceHeading = "Here's the evidence.";
 
   static const recordWhatHappensNextCta = 'Record what happens next';
 

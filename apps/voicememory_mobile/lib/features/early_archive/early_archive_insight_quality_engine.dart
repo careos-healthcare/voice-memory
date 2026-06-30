@@ -5,6 +5,7 @@ import '../archive_evidence/archive_pattern_copy_guard.dart';
 import '../first_session/first_session_pattern_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../timeline/timeline_entry_display.dart';
+import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'early_archive_insight_feedback_models.dart';
 import 'early_archive_insight_quality_copy.dart';
 import 'early_archive_insight_summary.dart';
@@ -158,7 +159,7 @@ abstract final class EarlyArchiveInsightQualityEngine {
     if (eligible.isEmpty) return EarlyArchiveInsightSummary.empty;
 
     final repeatTheme = _repeatTheme(eligible);
-    final cleanedTheme = _cleanTheme(repeatTheme);
+    final cleanedTheme = _cleanTheme(repeatTheme, entries: eligible);
     final repeatSummary = cleanedTheme == null
         ? null
         : _sanitize('This keeps coming back around $cleanedTheme.');
@@ -221,6 +222,27 @@ abstract final class EarlyArchiveInsightQualityEngine {
   static String? _repeatTheme(List<JournalEntry> eligible) {
     if (!_hasGroundedRepeat(eligible)) return null;
 
+    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(eligible);
+    if (evidence.isStrong && evidence.phrases.isNotEmpty) {
+      final primary = evidence.phrases.first.toLowerCase();
+      for (final entry in _repeatThemePhrases.entries) {
+        if (primary.contains(entry.key) ||
+            entry.key.split(' ').every(primary.contains)) {
+          final hits = eligible
+              .map((e) => _entryText(e).toLowerCase())
+              .where((t) => t.contains(entry.key))
+              .length;
+          if (hits >= 2) return entry.value;
+        }
+      }
+      if (!ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+        label: primary,
+        entries: eligible,
+      )) {
+        return primary;
+      }
+    }
+
     final texts = eligible
         .map((e) => _entryText(e).toLowerCase())
         .where(
@@ -242,7 +264,10 @@ abstract final class EarlyArchiveInsightQualityEngine {
 
     if (eligible.length >= 2) {
       final pattern = _patternEngine.build(eligible.last);
-      final watchFor = _cleanTheme(pattern.watchForText.trim());
+      final watchFor = _cleanTheme(
+        pattern.watchForText.trim(),
+        entries: eligible,
+      );
       if (watchFor != null && watchFor.isNotEmpty) {
         return watchFor;
       }
@@ -309,10 +334,17 @@ abstract final class EarlyArchiveInsightQualityEngine {
     return null;
   }
 
-  static String? _cleanTheme(String? theme) {
+  static String? _cleanTheme(String? theme, {List<JournalEntry>? entries}) {
     if (theme == null) return null;
     var cleaned = theme.trim();
     if (cleaned.isEmpty || ArchivePatternCopyGuard.isBlockedPatternText(cleaned)) {
+      return null;
+    }
+    if (entries != null &&
+        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+          label: cleaned,
+          entries: entries,
+        )) {
       return null;
     }
     if (cleaned.startsWith('whether ')) {
@@ -618,9 +650,17 @@ abstract final class EarlyArchiveInsightQualityEngine {
     if (repeatCount >= 2) {
       reasons.add(EarlyArchiveInsightWhyCopy.seenAcrossEntries(repeatCount));
     }
-    final topics = _topicLabels(eligible);
-    if (topics.isNotEmpty) {
-      reasons.add(EarlyArchiveInsightWhyCopy.similarWordingAround(topics));
+    final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(eligible);
+    if (evidence.phrases.isNotEmpty) {
+      _addUniqueReason(
+        reasons,
+        EarlyArchiveInsightWhyCopy.evidenceFromYourWords(evidence.phrases),
+      );
+    } else {
+      final topics = _topicLabels(eligible);
+      if (topics.isNotEmpty) {
+        reasons.add(EarlyArchiveInsightWhyCopy.similarWordingAround(topics));
+      }
     }
     return reasons;
   }

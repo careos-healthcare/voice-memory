@@ -130,7 +130,42 @@ class EarlyFirstSignalCard extends StatelessWidget {
                   style: bodyStyle,
                 ),
               ],
-              if (signal.evidenceRows.isNotEmpty) ...[
+              if (signal.evidenceHeading != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  signal.evidenceHeading!,
+                  key: const Key('early_first_signal_evidence_heading'),
+                  style: ArchiveMobileTypography.cardLabel(context),
+                ),
+              ],
+              if (signal.evidencePhrases.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.xs),
+                Wrap(
+                  key: const Key('early_first_signal_evidence_phrases'),
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    for (final phrase in signal.evidencePhrases)
+                      Chip(
+                        key: ValueKey('early_first_signal_evidence_phrase_$phrase'),
+                        label: Text(phrase),
+                        backgroundColor: const Color(0xFFF4F7F4),
+                        side: BorderSide.none,
+                        visualDensity: VisualDensity.compact,
+                        labelStyle: evidenceStyle,
+                      ),
+                  ],
+                ),
+              ],
+              if (signal.evidenceSupportLine != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  signal.evidenceSupportLine!,
+                  key: const Key('early_first_signal_evidence_support'),
+                  style: bodyStyle,
+                ),
+              ],
+              if (signal.evidencePhrases.isEmpty && signal.evidenceRows.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.sm),
                 for (final row in signal.evidenceRows)
                   Padding(

@@ -15,6 +15,17 @@ abstract final class EarlyArchiveInsightWhyCopy {
     return 'Similar wording appeared around ${labels.join(' / ')}.';
   }
 
+  static String evidenceFromYourWords(Iterable<String> phrases) {
+    final labels = phrases.toList();
+    if (labels.isEmpty) {
+      return 'Similar wording appeared across recent entries.';
+    }
+    if (labels.length == 1) {
+      return 'Your words repeated "${labels.first}".';
+    }
+    return 'Your words repeated ${labels.map((p) => '"$p"').join(', ')}.';
+  }
+
   static const latestLessUrgent = 'The latest entry sounded less urgent.';
 
   static const helpfulActionOnce = 'A helpful action was captured once.';

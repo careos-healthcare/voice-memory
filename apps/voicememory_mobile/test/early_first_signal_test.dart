@@ -351,11 +351,11 @@ void main() {
         model.lines,
         contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
       );
-      expect(
-        model.lines,
-        contains(EarlyFirstSignalCopy.evidenceHeading),
-      );
-      expect(model.evidenceRows.length, 3);
+      expect(model.evidenceHeading, EarlyFirstSignalCopy.evidenceHeading);
+      expect(model.evidencePhrases.length, greaterThanOrEqualTo(2));
+      expect(model.evidencePhrases.length, lessThanOrEqualTo(3));
+      expect(model.evidenceSupportLine, EarlyFirstSignalCopy.evidenceSupportLine);
+      expect(model.evidenceRows, isEmpty);
       expect(model.primaryCta, EarlyFirstSignalCopy.recordWhatHappensNextCta);
       expect(model.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
       expect(model.showsConfirmedRepeat, isTrue);
@@ -564,7 +564,9 @@ void main() {
         find.text(EarlyFirstSignalCopy.threeEntryConfirmedTitle),
         findsOneWidget,
       );
-      expect(find.text('Jun 10'), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.evidenceHeading), findsOneWidget);
+      expect(find.byKey(const Key('early_first_signal_evidence_phrases')), findsOneWidget);
+      expect(find.text('Jun 10'), findsNothing);
       expect(find.text(EarlyFirstSignalCopy.viewEvidenceCta), findsOneWidget);
       expect(find.byKey(const Key('confirmed_repeat_return_prompt')), findsNothing);
     });
@@ -1771,7 +1773,7 @@ void main() {
       expect(reasons, isNotEmpty);
       expect(reasons.first, 'Seen across 3 entries.');
       expect(
-        reasons.any((reason) => reason.contains('Similar wording appeared around')),
+        reasons.any((reason) => reason.contains('Your words repeated')),
         isTrue,
       );
       _expectNoDiagnosticLanguage(reasons.join(' '));
@@ -1856,11 +1858,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EarlyEvidenceTimelineCard(
-              timeline: timeline!,
-              analyticsSurface: 'patterns',
-              entryCount: 4,
-              entriesForWhy: entries,
+            body: SingleChildScrollView(
+              child: EarlyEvidenceTimelineCard(
+                timeline: timeline!,
+                analyticsSurface: 'patterns',
+                entryCount: 4,
+                entriesForWhy: entries,
+              ),
             ),
           ),
         ),
@@ -2072,14 +2076,16 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: Column(
-              children: [
-                EarlyEvidenceTimelineCard(timeline: timeline!),
-                EarlyArchiveReturnReminderCard(
-                  source: 'patterns',
-                  onDismiss: _noop,
-                ),
-              ],
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  EarlyEvidenceTimelineCard(timeline: timeline!),
+                  EarlyArchiveReturnReminderCard(
+                    source: 'patterns',
+                    onDismiss: _noop,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

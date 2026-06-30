@@ -82,6 +82,34 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
             subtitle: compact ? null : timeline.subtitle,
             compact: compact,
           ),
+          if (timeline.evidencePhrases.isNotEmpty) ...[
+            SizedBox(height: gap),
+            Text(
+              EarlyFirstSignalCopy.evidenceHeading,
+              key: const Key('early_evidence_timeline_evidence_heading'),
+              style: ArchiveMobileTypography.cardLabel(context),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Wrap(
+              key: const Key('early_evidence_timeline_evidence_phrases'),
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final phrase in timeline.evidencePhrases)
+                  Chip(
+                    key: ValueKey('early_evidence_timeline_evidence_phrase_$phrase'),
+                    label: Text(phrase),
+                    backgroundColor: const Color(0xFFF4F7F4),
+                    side: BorderSide.none,
+                    visualDensity: VisualDensity.compact,
+                    labelStyle: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                      color: AppColors.textPrimary,
+                      height: 1.4,
+                    ),
+                  ),
+              ],
+            ),
+          ],
           if (!compact) ...[
             SizedBox(height: gap),
             _MilestoneChipTrail(items: timeline.items),
