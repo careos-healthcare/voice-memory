@@ -24,6 +24,8 @@ import '../features/early_archive/early_archive_return_reminder_store.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_record_routes.dart';
+import '../features/early_archive/confirmed_repeat_why_matters_gates.dart';
+import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/onboarding/record_return_pro_store.dart';
@@ -128,6 +130,7 @@ import '../widgets/pro_interest_link_card.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_gates.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
@@ -275,6 +278,7 @@ import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
+import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
@@ -573,6 +577,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProValuePreviewDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
+    await ConfirmedRepeatWhyMattersStore.ensureLoaded();
     await RepeatReturnCheckStore.ensureLoaded();
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
@@ -3475,6 +3480,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
         hasChangeOverTimeProof: hasChangeOverTimeProof,
       );
+      final proofSurfaceLayout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: !showEarlyEvidenceTimeline &&
+            (earlyFirstSignal?.showsConfirmedRepeat ?? false),
+        timelineVisible: showEarlyEvidenceTimeline,
+        changeProofVisible: repeatReturnChangeProof != null,
+        proBridgeVisible: showPatternsPostProofProBridge,
+        whyMattersVisible: ConfirmedRepeatWhyMattersGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeat: viewingConfirmedRepeatOnPatterns,
+          entryCount: _entries.length,
+          isReady: true,
+          isRecording: false,
+          dismissed: ConfirmedRepeatWhyMattersStore.cachedDismissed,
+        ),
+      );
+      final showConfirmedRepeatWhyMatters = proofSurfaceLayout.whyMattersVisible;
       final suppressConfirmedRepeatInlineFeedback =
           ConfirmedRepeatBetaFeedbackGates.suppressInlineAccuracyFeedback(
         state: ConfirmedRepeatBetaFeedbackStore.cached,
@@ -3515,6 +3536,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 if (showEarlyEvidenceTimeline) ...[
                   EarlyEvidenceTimelineCard(
                     timeline: earlyEvidenceTimeline!,
+                    nearbyConfirmedRepeat: proofSurfaceLayout.timelineNearby,
+                    suppressEvidencePhrases:
+                        proofSurfaceLayout.suppressTimelineEvidencePhrases,
                     analyticsSurface: 'patterns',
                     entryCount: _entries.length,
                     entriesForWhy: _entries,
@@ -3557,6 +3581,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                if (showConfirmedRepeatWhyMatters) ...[
+                  ConfirmedRepeatWhyMattersCard(
+                    onDismissed: () => setState(() {}),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (repeatReturnChangeProof != null) ...[
                   RepeatReturnCheckChangeProofCard(
                     proof: repeatReturnChangeProof,
@@ -3578,6 +3608,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ],
                 if (showPatternsPostProofProBridge) ...[
                   ArchiveIntelligenceProBridgeCard(
+                    compact: proofSurfaceLayout.proBridgeCompact,
                     onSeePro: () {
                       EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
                         source: 'patterns_post_proof_bridge',

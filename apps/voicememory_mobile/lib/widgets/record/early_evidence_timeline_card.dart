@@ -5,6 +5,7 @@ import '../../design/archive_responsive_layout.dart';
 import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_archive_insight_feedback_models.dart';
 import '../../features/early_archive/early_archive_insight_quality_engine.dart';
+import '../../features/early_archive/early_evidence_timeline_copy.dart';
 import '../../features/early_archive/early_evidence_timeline_engine.dart';
 import '../../features/early_archive/early_first_signal_copy.dart';
 import '../../models/journal_entry.dart';
@@ -20,6 +21,8 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
     super.key,
     required this.timeline,
     this.compact = false,
+    this.nearbyConfirmedRepeat = false,
+    this.suppressEvidencePhrases = false,
     this.onRecordWhatHelped,
     this.analyticsSurface,
     this.entryCount,
@@ -29,6 +32,8 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
 
   final EarlyEvidenceTimeline timeline;
   final bool compact;
+  final bool nearbyConfirmedRepeat;
+  final bool suppressEvidencePhrases;
   final VoidCallback? onRecordWhatHelped;
   final String? analyticsSurface;
   final int? entryCount;
@@ -68,6 +73,15 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
             entries: entriesForWhy!,
           )
         : const <String>[];
+    final displayTitle = nearbyConfirmedRepeat
+        ? EarlyEvidenceTimelineCopy.nearbyTitle
+        : timeline.title;
+    final displaySubtitle = nearbyConfirmedRepeat
+        ? EarlyEvidenceTimelineCopy.nearbySubtitle
+        : (compact ? null : timeline.subtitle);
+    final visibleEvidencePhrases = suppressEvidencePhrases
+        ? const <String>[]
+        : timeline.evidencePhrases;
 
     return Container(
       key: Key('early_evidence_timeline_card_${compact ? 'compact' : 'full'}'),
@@ -78,11 +92,11 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _HeaderSection(
-            title: timeline.title,
-            subtitle: compact ? null : timeline.subtitle,
+            title: displayTitle,
+            subtitle: displaySubtitle,
             compact: compact,
           ),
-          if (timeline.evidencePhrases.isNotEmpty) ...[
+          if (visibleEvidencePhrases.isNotEmpty) ...[
             SizedBox(height: gap),
             Text(
               EarlyFirstSignalCopy.evidenceHeading,
@@ -95,7 +109,7 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
               children: [
-                for (final phrase in timeline.evidencePhrases)
+                for (final phrase in visibleEvidencePhrases)
                   Chip(
                     key: ValueKey('early_evidence_timeline_evidence_phrase_$phrase'),
                     label: Text(phrase),
@@ -118,6 +132,7 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
           _EvidenceChain(
             items: timeline.items,
             compact: compact,
+            nearbyConfirmedRepeat: nearbyConfirmedRepeat,
           ),
           if (!isSample && surface != null && count != null) ...[
             EarlyArchiveInsightWhySection(
@@ -291,10 +306,20 @@ class _EvidenceChain extends StatelessWidget {
   const _EvidenceChain({
     required this.items,
     required this.compact,
+    required this.nearbyConfirmedRepeat,
   });
 
   final List<EarlyEvidenceTimelineItem> items;
   final bool compact;
+  final bool nearbyConfirmedRepeat;
+
+  String _itemBody(EarlyEvidenceTimelineItem item) {
+    if (nearbyConfirmedRepeat &&
+        item.kind == EarlyEvidenceTimelineItemKind.repeatConfirmed) {
+      return '';
+    }
+    return item.body;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -392,14 +417,16 @@ class _EvidenceChain extends StatelessWidget {
                           ),
                           style: itemTitleStyle,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          items[i].body,
-                          key: Key(
-                            'early_evidence_timeline_item_body_${items[i].kind.name}',
+                        if (_itemBody(items[i]).isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            _itemBody(items[i]),
+                            key: Key(
+                              'early_evidence_timeline_item_body_${items[i].kind.name}',
+                            ),
+                            style: itemBodyStyle,
                           ),
-                          style: itemBodyStyle,
-                        ),
+                        ],
                       ],
                     ),
                   ),

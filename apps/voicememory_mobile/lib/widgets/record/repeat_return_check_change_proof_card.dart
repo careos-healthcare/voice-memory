@@ -62,12 +62,14 @@ class RepeatReturnCheckChangeProofCard extends StatelessWidget {
             key: const Key('repeat_return_check_change_proof_body'),
             style: bodyStyle,
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            proof.supportLine,
-            key: const Key('repeat_return_check_change_proof_support'),
-            style: supportStyle,
-          ),
+          if (proof.supportLine != null && proof.supportLine!.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              proof.supportLine!,
+              key: const Key('repeat_return_check_change_proof_support'),
+              style: supportStyle,
+            ),
+          ],
           if (showRecordNextCta && onRecordNext != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Align(

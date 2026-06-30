@@ -98,7 +98,6 @@ RepeatReturnCheckChangeProof _proofForChoice(RepeatReturnCheckChoice choice) {
   return RepeatReturnCheckChangeProof(
     title: RepeatReturnCheckCopy.changeProofTitle,
     body: RepeatReturnCheckTrendEngine.bodyForChoice(choice),
-    supportLine: RepeatReturnCheckCopy.changeProofSupportLine,
     latestChoice: choice,
   );
 }
@@ -332,7 +331,7 @@ void main() {
       expect(proof, isNotNull);
       expect(proof!.body, RepeatReturnCheckCopy.trendGettingLouder);
       expect(proof.title, RepeatReturnCheckCopy.changeProofTitle);
-      expect(proof.supportLine, RepeatReturnCheckCopy.changeProofSupportLine);
+      expect(proof.supportLine, isNull);
     });
 
     test('softer response shows softer than before copy', () {
@@ -432,7 +431,7 @@ void main() {
       expect(find.byKey(const Key('repeat_return_check_change_proof_card')), findsOneWidget);
       expect(find.text(RepeatReturnCheckCopy.changeProofTitle), findsOneWidget);
       expect(find.text(RepeatReturnCheckCopy.trendGettingLouder), findsOneWidget);
-      expect(find.text(RepeatReturnCheckCopy.changeProofSupportLine), findsOneWidget);
+      expect(find.text(RepeatReturnCheckCopy.changeProofSupportLine), findsNothing);
       expect(find.text(RepeatReturnCheckCopy.changeProofRecordNextCta), findsOneWidget);
     });
 

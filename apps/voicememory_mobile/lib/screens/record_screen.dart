@@ -172,6 +172,7 @@ import '../widgets/record/watch_for_tomorrow_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
+import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
@@ -185,10 +186,13 @@ import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
+import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/early_archive/early_archive_return_reminder_gates.dart';
 import '../features/early_archive/early_archive_return_reminder_store.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
+import '../features/early_archive/confirmed_repeat_why_matters_gates.dart';
+import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/record/record_empty_archive_gates.dart';
 import '../features/return_ritual/return_ritual_gates.dart';
@@ -348,11 +352,14 @@ import '../features/daily_archive_exercise/daily_archive_exercise_copy.dart';
 import '../features/daily_archive_exercise/daily_archive_exercise_engine.dart';
 import '../features/archive_watchlist/archive_watchlist_store.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
+import '../features/beta/archive_beta_mission_gates.dart';
+import '../features/beta/archive_beta_mission_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_gates.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../widgets/beta/archive_beta_mission_card.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 import '../widgets/record/repeat_return_check_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
@@ -575,6 +582,16 @@ class _RecordScreenState extends State<RecordScreen> {
     _loadRecordReturnProState();
     unawaited(
       ConfirmedRepeatBetaFeedbackStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      ArchiveBetaMissionStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      ConfirmedRepeatWhyMattersStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -3506,6 +3523,22 @@ class _RecordScreenState extends State<RecordScreen> {
               (earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false),
           hasChangeOverTimeProof: hasChangeOverTimeProof,
         );
+    final proofSurfaceLayout = ArchiveProofSurfaceLayout(
+      confirmedRepeatCardVisible:
+          earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false,
+      timelineVisible: showEarlyEvidenceTimeline,
+      changeProofVisible: repeatReturnChangeProof != null,
+      proBridgeVisible: showPostProofProBridge,
+      whyMattersVisible: ConfirmedRepeatWhyMattersGates.shouldShow(
+        loaded: _journalEntryCountReady,
+        viewingConfirmedRepeat: viewingConfirmedRepeatOnRecord,
+        entryCount: _journalEntryCount,
+        isReady: ui == RecordUiState.ready,
+        isRecording: ui == RecordUiState.recording,
+        dismissed: ConfirmedRepeatWhyMattersStore.cachedDismissed,
+      ),
+    );
+    final showConfirmedRepeatWhyMatters = proofSurfaceLayout.whyMattersVisible;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3618,6 +3651,20 @@ class _RecordScreenState extends State<RecordScreen> {
       micPhase: policyMic,
       userDeniedThisSession: policyUserDenied,
     );
+    final showArchiveBetaMission = ArchiveBetaMissionGates.shouldShow(
+      dismissed: ArchiveBetaMissionStore.cachedDismissed,
+      ui: ui,
+      entryCountLoaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isRecording: ui == RecordUiState.recording,
+    );
+    final showArchiveBetaMissionStartCta =
+        ArchiveBetaMissionGates.showMissionStartCta(
+      policy: readyCapturePolicy,
+      hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
+      promoteMicCaptureActions:
+          _shouldPromoteMicCaptureActions(readyCapturePolicy),
+    );
 
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
@@ -3659,6 +3706,16 @@ class _RecordScreenState extends State<RecordScreen> {
                         _journalEntryCount == 0) ...[
                       const RecordTopArchivePromiseHero(),
                       const SizedBox(height: 16),
+                    ],
+                    if (showArchiveBetaMission) ...[
+                      ArchiveBetaMissionCard(
+                        showStartCta: showArchiveBetaMissionStartCta,
+                        onStart: () => unawaited(
+                          _onRecordPressed(source: 'beta_mission'),
+                        ),
+                        onDismissed: () => setState(() {}),
+                      ),
+                      const SizedBox(height: 12),
                     ],
                     if (recordHomeSurface.showDailyMapPrompt &&
                         dailyArchiveExercise != null) ...[
@@ -3829,6 +3886,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       EarlyEvidenceTimelineCard(
                         timeline: earlyEvidenceTimeline!,
                         compact: true,
+                        nearbyConfirmedRepeat: proofSurfaceLayout.timelineNearby,
+                        suppressEvidencePhrases:
+                            proofSurfaceLayout.suppressTimelineEvidencePhrases,
                         analyticsSurface: 'record',
                         entryCount: _journalEntryCount,
                         entriesForWhy: _journalEntries,
@@ -3844,6 +3904,12 @@ class _RecordScreenState extends State<RecordScreen> {
                                 );
                               }
                             : null,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showConfirmedRepeatWhyMatters) ...[
+                      ConfirmedRepeatWhyMattersCard(
+                        onDismissed: () => setState(() {}),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -3869,6 +3935,7 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (showPostProofProBridge) ...[
                       ArchiveIntelligenceProBridgeCard(
+                        compact: proofSurfaceLayout.proBridgeCompact,
                         onSeePro: () {
                           EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
                             source: 'record_post_proof_bridge',

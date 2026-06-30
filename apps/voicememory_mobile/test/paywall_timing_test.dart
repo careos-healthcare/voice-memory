@@ -180,9 +180,31 @@ void main() {
       final proof = PaywallTimingGates.hasArchiveProofFromEntries(
         entries: _confirmedThreeEntries,
       );
+      expect(proof, isTrue);
       expect(
         PaywallTimingGates.showPostProofProBridge(
           entryCount: 4,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: proof,
+          viewingConfirmedRepeatOrTimeline: true,
+          hasChangeOverTimeProof: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('shows at three-entry confirmed repeat with evidence phrases', () {
+      final signal = EarlyFirstSignalEngine.build(entries: _confirmedThreeEntries);
+      final proof = PaywallTimingGates.hasArchiveProofFromEntries(
+        entries: _confirmedThreeEntries,
+      );
+      expect(signal?.showsConfirmedRepeat, isTrue);
+      expect(signal?.evidencePhrases, isNotEmpty);
+      expect(proof, isTrue);
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 3,
           resolved: false,
           isPro: false,
           hasArchiveProof: proof,
@@ -334,29 +356,65 @@ void main() {
   });
 
   group('Post-proof bridge copy', () {
-    test('strongest bridge uses change-over-time copy', () {
+    test('strongest bridge ties Pro to repeat proof and change tracking', () {
       expect(
         ArchiveBeliefThreadCopy.proKeepsThread,
-        'Track how this changes over time.',
+        'Keep the full evidence trail',
       );
       expect(
         ArchiveBeliefThreadCopy.proBridgeBody,
-        'ArchiveMe has found the repeat. Pro keeps the full evidence timeline '
-        'and shows whether it gets stronger, softer, or changes.',
+        'ArchiveMe has found a repeat in your own words. Pro keeps tracking '
+        'whether it gets stronger, softer, or changes over time.',
       );
       expect(ArchiveBeliefThreadCopy.proBridgeCta, 'See Pro');
+      expect(ArchiveBeliefThreadCopy.proBridgeSecondary, 'Not now');
     });
 
     test('bridge copy avoids hard lock language', () {
       final haystack = [
         ArchiveBeliefThreadCopy.proKeepsThread,
         ArchiveBeliefThreadCopy.proBridgeBody,
+        ArchiveBeliefThreadCopy.proNearbyTitle,
+        ArchiveBeliefThreadCopy.proNearbyBridgeBody,
         ArchiveBeliefThreadCopy.proBridgeCta,
         ArchiveBeliefThreadCopy.proBridgeSecondary,
       ].join(' ').toLowerCase();
       expect(haystack, isNot(contains('upgrade required')));
       expect(haystack, isNot(contains('feature locked')));
       expect(haystack, isNot(contains('must pay')));
+      expect(haystack, isNot(contains('hard lock')));
+    });
+
+    testWidgets('compact pro bridge shortens copy when change proof is visible', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ArchiveIntelligenceProBridgeCard(
+              compact: true,
+              onSeePro: () {},
+              onNotNow: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text(ArchiveBeliefThreadCopy.proNearbyTitle), findsOneWidget);
+      expect(find.text(ArchiveBeliefThreadCopy.proNearbyBridgeBody), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_intelligence_pro_bridge_card_compact')),
+        findsOneWidget,
+      );
+      expect(
+        ArchiveBeliefThreadCopy.proNearbyBridgeBody.toLowerCase(),
+        isNot(contains('stronger')),
+      );
+      expect(
+        ArchiveBeliefThreadCopy.proNearbyBridgeBody.toLowerCase(),
+        isNot(contains('softer')),
+      );
     });
 
     testWidgets('archive intelligence bridge renders post-proof copy', (
@@ -375,17 +433,15 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Track how this changes over time.'),
+        find.text(ArchiveBeliefThreadCopy.proKeepsThread),
         findsOneWidget,
       );
       expect(
-        find.text(
-          'ArchiveMe has found the repeat. Pro keeps the full evidence timeline '
-          'and shows whether it gets stronger, softer, or changes.',
-        ),
+        find.text(ArchiveBeliefThreadCopy.proBridgeBody),
         findsOneWidget,
       );
-      expect(find.text('See Pro'), findsOneWidget);
+      expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
+      expect(find.text(ArchiveBeliefThreadCopy.proBridgeSecondary), findsOneWidget);
       expect(find.byKey(const Key('archive_intelligence_pro_bridge_card')),
           findsOneWidget);
     });

@@ -6,19 +6,18 @@ class RepeatReturnCheckChangeProof {
   const RepeatReturnCheckChangeProof({
     required this.title,
     required this.body,
-    required this.supportLine,
     required this.latestChoice,
+    this.supportLine,
   });
 
   final String title;
   final String body;
-  final String supportLine;
+  final String? supportLine;
   final RepeatReturnCheckChoice latestChoice;
 
   static const fromCopy = RepeatReturnCheckChangeProof(
     title: RepeatReturnCheckCopy.changeProofTitle,
     body: '',
-    supportLine: RepeatReturnCheckCopy.changeProofSupportLine,
     latestChoice: RepeatReturnCheckChoice.same,
   );
 }

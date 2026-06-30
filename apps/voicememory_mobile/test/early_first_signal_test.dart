@@ -19,6 +19,9 @@ import 'package:voicememory_mobile/features/early_archive/early_archive_proof_an
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_demo.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_demo_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_store.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_trigger_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
@@ -40,6 +43,10 @@ import 'package:voicememory_mobile/widgets/record/early_archive_insight_feedback
 import 'package:voicememory_mobile/widgets/record/early_archive_return_reminder_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_evidence_timeline_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_archive_insight_why_section.dart';
+import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
+import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
+import 'package:voicememory_mobile/widgets/record/confirmed_repeat_why_matters_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
 JournalEntry _entry({
@@ -2117,6 +2124,167 @@ void main() {
       expect(backend.scheduleCalls, 1);
       expect(backend.lastTitle, EarlyArchiveReturnReminderCopy.title);
       expect(await EarlyArchiveReturnReminderStore.instance().shouldOffer(), isFalse);
+    });
+  });
+
+  group('ConfirmedRepeatWhyMatters', () {
+    setUp(() async {
+      await AppServices.resetForTest(
+        journalPath:
+            '${DateTime.now().microsecondsSinceEpoch}_why_matters_journal.json',
+        prefsPath:
+            '${DateTime.now().microsecondsSinceEpoch}_why_matters_prefs.json',
+        skipRevenueCat: true,
+      );
+      await ConfirmedRepeatWhyMattersStore.resetForTest();
+    });
+
+    test('copy avoids therapy and diagnostic language', () {
+      final lines = [
+        ConfirmedRepeatWhyMattersCopy.title,
+        ConfirmedRepeatWhyMattersCopy.body,
+        ConfirmedRepeatWhyMattersCopy.hideCta,
+      ];
+      final copy = lines.join(' ');
+      _expectNoDiagnosticLanguage(copy);
+      for (final line in lines) {
+        for (final reason in PrivacyCopyPolicy.violationsInLiteral(line)) {
+          fail('"$line": $reason');
+        }
+      }
+      expect(copy.toLowerCase(), isNot(contains('diagnose')));
+      expect(copy.toLowerCase(), isNot(contains('therapy')));
+      expect(copy.toLowerCase(), isNot(contains('heal')));
+      expect(copy.toLowerCase(), isNot(contains('treat')));
+    });
+
+    test('gates hide before confirmed repeat and while recording', () {
+      expect(
+        ConfirmedRepeatWhyMattersGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeat: true,
+          entryCount: 2,
+          isReady: true,
+          isRecording: false,
+          dismissed: false,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatWhyMattersGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeat: false,
+          entryCount: 3,
+          isReady: true,
+          isRecording: false,
+          dismissed: false,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatWhyMattersGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeat: true,
+          entryCount: 3,
+          isReady: true,
+          isRecording: true,
+          dismissed: false,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatWhyMattersGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeat: true,
+          entryCount: 3,
+          isReady: true,
+          isRecording: false,
+          dismissed: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('proof stack includes why matters without duplicating proof phrases', () {
+      final confirmed = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: true,
+        timelineVisible: false,
+        changeProofVisible: false,
+        proBridgeVisible: false,
+        whyMattersVisible: true,
+      );
+      final blocks = ArchiveProofSurfaceCopy.patternsStack(
+        layout: layout,
+        confirmedRepeat: confirmed,
+      );
+      final joined = blocks.join('\n');
+
+      expect(blocks, contains(ConfirmedRepeatWhyMattersCopy.title));
+      expect(blocks, contains(ConfirmedRepeatWhyMattersCopy.body));
+      expect(
+        ArchiveProofCopyDedup.phrasesWithinLimit(
+          copyBlocks: blocks,
+          onceOnlyPhrases: [
+            EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
+            EarlyFirstSignalCopy.evidenceHeading,
+            ConfirmedRepeatWhyMattersCopy.title,
+          ],
+        ),
+        isTrue,
+      );
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          joined,
+          EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
+        ),
+        1,
+      );
+      expect(
+        ConfirmedRepeatWhyMattersCopy.body,
+        isNot(contains(EarlyFirstSignalCopy.evidenceHeading)),
+      );
+    });
+
+    testWidgets('card renders below proof copy and dismiss persists', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatWhyMattersCard.test(
+              store: ConfirmedRepeatWhyMattersStore(
+                AppServices.instance.prefs,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('confirmed_repeat_why_matters_card')),
+        findsOneWidget,
+      );
+      expect(find.text(ConfirmedRepeatWhyMattersCopy.title), findsOneWidget);
+      expect(find.text(ConfirmedRepeatWhyMattersCopy.body), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.evidenceHeading), findsNothing);
+      expect(find.byKey(const Key('early_first_signal_primary_cta')), findsNothing);
+
+      await tester.tap(find.text(ConfirmedRepeatWhyMattersCopy.hideCta));
+      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await ConfirmedRepeatWhyMattersStore.ensureLoaded();
+      });
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('confirmed_repeat_why_matters_card_hidden')),
+        findsOneWidget,
+      );
+      expect(ConfirmedRepeatWhyMattersStore.cachedDismissed, isTrue);
     });
   });
 }

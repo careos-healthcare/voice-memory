@@ -17,7 +17,7 @@ abstract final class RepeatReturnCheckCopy {
   static const trendSofterThanBefore = 'The repeat is softer than before.';
   static const trendSteady = 'The repeat feels about the same as last time.';
 
-  static const changeProofTitle = 'ArchiveMe is tracking this now.';
+  static const changeProofTitle = 'This is changing over time.';
 
   static const changeProofSupportLine =
       'Each return check helps ArchiveMe see whether this pattern is changing.';

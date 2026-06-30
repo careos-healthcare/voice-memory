@@ -58,7 +58,6 @@ abstract final class RepeatReturnCheckEngine {
     return RepeatReturnCheckChangeProof(
       title: RepeatReturnCheckCopy.changeProofTitle,
       body: body,
-      supportLine: RepeatReturnCheckCopy.changeProofSupportLine,
       latestChoice: latestChoice,
     );
   }
