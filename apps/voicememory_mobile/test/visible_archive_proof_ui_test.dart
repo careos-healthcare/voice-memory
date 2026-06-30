@@ -13,6 +13,14 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 
 void main() {
   group('Visible archive proof UI', () {
+    test('first-run promise uses three scannable steps', () {
+      expect(VisibleArchiveProofCopy.firstRunPromiseSteps, [
+        'Record short moments',
+        'ArchiveMe spots what repeats',
+        'See whether it changes',
+      ]);
+    });
+
     test('first save copy is cautious and does not claim a pattern', () {
       expect(
         FirstThreeSessionCopy.session1Title,
@@ -20,11 +28,11 @@ void main() {
       );
       expect(
         FirstThreeSessionCopy.session1Body,
-        contains('saved words'),
+        contains('first piece of evidence'),
       );
       expect(
         FirstThreeSessionCopy.session1EnoughForToday,
-        contains('No conclusion yet'),
+        contains('compare what repeats'),
       );
       expect(
         FirstThreeSessionCopy.session1Title.toLowerCase(),
@@ -46,13 +54,11 @@ void main() {
         find.byKey(const Key('record_top_archive_promise_hero')),
         findsOneWidget,
       );
-      expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.recordHeroBody), findsOneWidget);
-      expect(
-        find.text(VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine),
-        findsOneWidget,
-      );
-      expect(find.text(VisibleArchiveProofCopy.archiveHomeEmptyTitle), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsNothing);
+      for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
+        expect(find.text(step), findsOneWidget);
+      }
+      expect(find.text(VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine), findsNothing);
       expect(find.textContaining('pattern found'), findsNothing);
     });
 

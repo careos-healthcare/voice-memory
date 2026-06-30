@@ -11,6 +11,8 @@ import 'package:voicememory_mobile/features/pressure_retention/personal_return_p
 import 'package:voicememory_mobile/features/return_changes/archive_return_changes_copy.dart';
 import 'package:voicememory_mobile/features/activation/day_two_return_loop_payoff.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
+import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
@@ -153,7 +155,7 @@ void main() {
       expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Your archive is empty');
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'Record short moments. ArchiveMe watches what repeats.',
+        'Record short moments. ArchiveMe spots what repeats.',
       );
       expect(
         RecordScreenFramingCopy.archiveStartedTitle,
@@ -161,7 +163,7 @@ void main() {
       );
       expect(
         RecordScreenFramingCopy.archiveStartedBody,
-        'Add one more moment so ArchiveMe can begin comparing.',
+        'ArchiveMe needs a second moment before it can compare what repeats.',
       );
     });
 
@@ -256,12 +258,15 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 shows archive promise hero not generic framing', (
+    testWidgets('entry count 0 shows three-step promise not generic framing', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
       expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
+      for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
+        expect(find.text(step), findsOneWidget);
+      }
       expect(find.text(RecordScreenFramingCopy.title), findsNothing);
       expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
       expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsNothing);
@@ -298,20 +303,16 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 shows map prompt and hides todays question', (
+    testWidgets('entry count 0 hides daily map so capture stays the only primary path', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
       expect(
         find.byKey(const Key('daily_archive_exercise_record_card')),
-        findsOneWidget,
+        findsNothing,
       );
-      expect(find.text("Today's map prompt"), findsOneWidget);
-      expect(
-        find.textContaining('private mind map'),
-        findsOneWidget,
-      );
+      expect(find.text("Today's map prompt"), findsNothing);
       expect(find.text("Today's exercise"), findsNothing);
       expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
       expect(find.text("Today's one question"), findsNothing);
@@ -717,8 +718,8 @@ void main() {
       );
       expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsNWidgets(2));
-      expect(find.byKey(const Key('daily_archive_exercise_record_primary_button')), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_exercise_record_primary_button')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
@@ -769,6 +770,7 @@ void main() {
       await pumpRecordScreen(tester, entryCount: 1, ui: RecordUiState.done);
 
       expect(find.text(VoiceCaptureCopy.recordingSavedTitle), findsOneWidget);
+      expect(find.text(VoiceCaptureCopy.firstSaveReceiptNote), findsOneWidget);
       expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
       expect(find.text(RecordReturnProCopy.evidenceBody), findsOneWidget);
       expect(find.text(RecordReturnProCopy.evidenceSecondLine), findsOneWidget);
@@ -910,26 +912,19 @@ void main() {
 
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsNWidgets(2));
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
     });
 
-    testWidgets('one entry ready shows map prompt without Today card', (
+    testWidgets('one entry ready shows retention prompt without map clutter', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
-      // Daily map prompt owns the one-entry return nudge now; the
-      // separate Today card stays suppressed to avoid duplicate CTAs.
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
-      expect(
-        find.byKey(const Key('daily_archive_exercise_record_card')),
-        findsOneWidget,
-      );
-      expect(find.text("Today's map prompt"), findsOneWidget);
-      expect(
-        find.textContaining('ArchiveMe can start seeing what connects'),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.oneEntryBody), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
@@ -947,17 +942,14 @@ void main() {
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
     });
 
-    testWidgets('one entry ready hides next-moment prompt when map prompt shows', (
+    testWidgets('one entry ready hides next-moment prompt card', (
       tester,
     ) async {
       await pumpRecordScreen(tester, entryCount: 1);
 
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
-      expect(
-        find.byKey(const Key('daily_archive_exercise_record_card')),
-        findsOneWidget,
-      );
-      expect(find.text("Today's map prompt"), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 

@@ -166,6 +166,10 @@ void main() {
     expect(ScreenshotMode.archiveReviewPreview, isFalse);
   });
 
+  test('archive me demo preview is inert when screenshot mode is off', () {
+    expect(ScreenshotMode.archiveMeDemoPreview, isFalse);
+  });
+
   test('archive review sample has six moments this week', () {
     expect(ScreenshotSampleData.archiveReviewMomentsSample.length, 6);
     final review = buildArchiveRangeReview(

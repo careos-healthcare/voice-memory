@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import '../../services/product_analytics.dart';
+import '../beta/beta_activation_loop_tracker.dart';
 import 'first25_recording_retention.dart';
 
 /// First 25 users — product funnel events (Firebase Analytics).
@@ -73,8 +76,9 @@ abstract class First25UserMetrics {
   static Future<void> trackPaywallSeen({
     required String surface,
     String? variant,
-  }) {
-    return ProductAnalytics.trackStrings(paywallSeen, {
+  }) async {
+    await BetaActivationLoopTracker.trackPaywallSeen();
+    await ProductAnalytics.trackStrings(paywallSeen, {
       'surface': surface,
       if (variant != null) 'variant': variant,
     });
@@ -89,8 +93,9 @@ abstract class First25UserMetrics {
   static Future<void> trackPaywallStarted({
     required String surface,
     String? period,
-  }) {
-    return ProductAnalytics.trackStrings(paywallStarted, {
+  }) async {
+    await BetaActivationLoopTracker.trackPurchaseTapped();
+    await ProductAnalytics.trackStrings(paywallStarted, {
       'surface': surface,
       if (period != null) 'period': period,
     });

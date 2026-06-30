@@ -10,6 +10,8 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -615,6 +617,13 @@ void main() {
           loaded: true,
           entryCount: 0,
         ),
+        isFalse,
+      );
+      expect(
+        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
+          loaded: true,
+          entryCount: 4,
+        ),
         isTrue,
       );
       expect(
@@ -628,6 +637,13 @@ void main() {
         RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
           loaded: true,
           entryCount: 1,
+        ),
+        isFalse,
+      );
+      expect(
+        RecordEmptyArchiveGates.showDailyArchiveExerciseOnRecord(
+          loaded: true,
+          entryCount: 4,
         ),
         isTrue,
       );
@@ -663,11 +679,13 @@ void main() {
       await pumpRecordScreen(tester);
 
       expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
+      for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
+        expect(find.text(step), findsOneWidget);
+      }
       expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsOneWidget);
-      expect(find.text("Today's map prompt"), findsOneWidget);
-      expect(find.textContaining('private mind map'), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(find.text("Today's map prompt"), findsNothing);
+      expect(find.textContaining('private mind map'), findsNothing);
       expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
       expect(find.text("Today's exercise"), findsNothing);
       expect(find.text("Today's one question"), findsNothing);
@@ -675,7 +693,7 @@ void main() {
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsNWidgets(2));
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
@@ -691,6 +709,11 @@ void main() {
       expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.oneEntryBody), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.addMomentCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
       expect(tester.takeException(), isNull);

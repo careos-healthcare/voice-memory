@@ -212,7 +212,9 @@ void main() {
     await waitForRecordFirstUse(tester);
 
     expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
-    expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
+    for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
+      expect(find.text(step), findsOneWidget);
+    }
     expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
     expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
     expect(find.byType(CaptureEntryActions), findsOneWidget);
@@ -227,9 +229,9 @@ void main() {
     expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
     expect(find.text(RecordScreenFramingCopy.firstRunPrivacyLink), findsOneWidget);
 
-    expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsOneWidget);
-    expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsOneWidget);
-    expect(find.textContaining('private mind map'), findsOneWidget);
+    expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsNothing);
+    expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+    expect(find.textContaining('private mind map'), findsNothing);
     expect(find.text("Today's exercise"), findsNothing);
     expect(find.text(TodaysQuestionCopy.eyebrow), findsNothing);
     expect(find.byKey(const Key('todays_one_question_card')), findsNothing);

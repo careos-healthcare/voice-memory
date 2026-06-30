@@ -4,38 +4,44 @@ abstract final class EarlyFirstSignalCopy {
 
   static const addMomentCta = 'Add one more moment';
 
+  static const confirmRepeatCta = 'Add one more to confirm';
+
   static const recordSimilarMomentCta =
       'Record one more moment like this to confirm whether it repeats.';
 
-  // One saved moment — heard, not a pattern.
-  static const oneEntryTitle = 'Your first moment is saved.';
+  // One saved moment — ready state, not a pattern yet.
+  static const oneEntryTitle = 'Add one more moment.';
 
   static const oneEntryBody =
-      'No pattern yet — just one piece of evidence from your own words. '
-      'When something comes back, your archive starts building evidence.';
+      'ArchiveMe needs a second moment before it can compare what repeats.';
 
   // Two moments, no grounded repeat — do not force a pattern.
-  static const twoEntryNoPatternTitle = 'Two moments saved.';
+  static const twoEntryNoPatternTitle = 'Keep adding moments.';
 
   static const twoEntryNoPatternBody =
-      'No clear repeat yet. One more moment will make it easier to see '
-      'whether the same thread returns.';
+      'ArchiveMe has two pieces of evidence, but not enough to call a repeat yet.';
 
   // Two moments with a grounded repeat — cautious first signal only.
-  static const twoEntryPatternStartTitle =
-      'This may be the start of a pattern.';
+  static const twoEntryRelatedTitle =
+      'One more will confirm whether this repeats.';
 
-  static const twoEntryNoticedAgain =
-      'ArchiveMe noticed this came up again.';
+  static const twoEntryRelatedBody =
+      'ArchiveMe has seen this twice. A third moment makes the pattern clearer.';
 
-  static const twoEntryConfirmRepeat =
-      'Record one more moment like this to confirm whether it repeats.';
+  /// Legacy alias — prefer [twoEntryRelatedTitle].
+  static const twoEntryPatternStartTitle = twoEntryRelatedTitle;
+
+  /// Legacy alias — prefer [twoEntryRelatedBody].
+  static const twoEntryNoticedAgain = twoEntryRelatedBody;
+
+  /// Legacy alias — prefer [confirmRepeatCta].
+  static const twoEntryConfirmRepeat = confirmRepeatCta;
 
   // Three related moments — grounded confirmation, still evidence-led.
   static const threeEntryConfirmedTitle = 'This is now a confirmed repeat.';
 
   static const threeEntrySeenThreeTimes =
-      'ArchiveMe has seen this come back across 3 moments.';
+      'ArchiveMe has seen this across 3 moments.';
 
   static const evidenceHeading = "Here's the evidence.";
 

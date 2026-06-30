@@ -6,6 +6,7 @@ import '../config/app_config.dart';
 import '../config/developer_settings_gate.dart';
 import '../config/trial_mode.dart';
 import '../features/activation/activation_tracker.dart';
+import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/objective/current_objective_widget_refresh_service.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../router/onboarding_gate.dart';
@@ -21,6 +22,7 @@ Future<void> completeArchiveMeStartup() async {
   PrivateStorageAudit.logAuditReport();
   await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
   await CheckInReminderService.ensureInitialized();
+  unawaited(BetaActivationLoopTracker.trackAppOpened());
   if (TrialMode.enabled) {
     onboardingGate.markComplete();
     await ActivationTracker.trackTrialAppOpened();

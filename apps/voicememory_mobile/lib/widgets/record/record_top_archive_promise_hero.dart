@@ -6,12 +6,22 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Dominant top-of-screen product promise on Record (zero entries).
+/// Three-step visual promise on Record before the first save — scannable in seconds.
 class RecordTopArchivePromiseHero extends StatelessWidget {
   const RecordTopArchivePromiseHero({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final stepStyle = ArchiveMobileTypography.listTitle(context).copyWith(
+      fontSize: 15,
+      height: 1.35,
+    );
+    final numberStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+      color: AppColors.accentPrimary,
+      fontWeight: FontWeight.w700,
+      fontSize: 13,
+    );
+
     return Container(
       key: const Key('record_top_archive_promise_hero'),
       width: double.infinity,
@@ -28,22 +38,33 @@ class RecordTopArchivePromiseHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            VisibleArchiveProofCopy.recordHeroTitle,
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            VisibleArchiveProofCopy.recordHeroBody,
-            style: ArchiveMobileTypography.explanationBody(context),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
+          for (var i = 0; i < VisibleArchiveProofCopy.firstRunPromiseSteps.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  key: Key('record_promise_step_badge_$i'),
+                  width: 24,
+                  height: 24,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.accentPrimary.withValues(alpha: 0.12),
+                  ),
+                  child: Text('${i + 1}', style: numberStyle),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    VisibleArchiveProofCopy.firstRunPromiseSteps[i],
+                    key: Key('record_promise_step_$i'),
+                    style: stepStyle,
+                  ),
+                ),
+              ],
             ),
-          ),
+          ],
         ],
       ),
     );

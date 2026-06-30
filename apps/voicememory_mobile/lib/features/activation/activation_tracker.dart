@@ -9,6 +9,7 @@ import '../../services/product_analytics.dart';
 import 'activation_events_store.dart';
 import 'first_pattern_correction_store.dart';
 import '../quality/first_insight_specificity_store.dart';
+import '../beta/beta_activation_loop_tracker.dart';
 import '../acquisition/acquisition_cohort_coordinator.dart';
 import '../loop_mode/loop_mode_coordinator.dart';
 import '../loop_mode/loop_mode_model.dart';
@@ -384,6 +385,7 @@ abstract class ActivationTracker {
   static Future<void> trackFirstReflectionSaved() async {
     await _incrementEvent(firstReflectionSaved);
     _trackAnalytics(firstReflectionSaved, {});
+    unawaited(BetaActivationLoopTracker.trackFirstMomentSaved());
     unawaited(AcquisitionCohortCoordinator.markFirstMomentRecorded());
     unawaited(_trackProveFirstMomentIfActive());
   }
@@ -408,11 +410,13 @@ abstract class ActivationTracker {
   static Future<void> trackSecondReflectionSaved() async {
     await _incrementEvent(secondReflectionSaved);
     _trackAnalytics(secondReflectionSaved, {});
+    unawaited(BetaActivationLoopTracker.trackSecondMomentSaved());
   }
 
   static Future<void> trackThirdReflectionSaved() async {
     await _incrementEvent(thirdReflectionSaved);
     _trackAnalytics(thirdReflectionSaved, {});
+    unawaited(BetaActivationLoopTracker.trackThirdMomentSaved());
   }
 
   static Future<void> trackReturnedNextDayOnce() async {
@@ -1073,6 +1077,7 @@ abstract class ActivationTracker {
   // --- Billing / paywall metrics ---
   static void trackPaywallShown() {
     unawaited(_safe(() => _incrementEvent(paywallShown)));
+    unawaited(BetaActivationLoopTracker.trackPaywallSeen());
   }
 
   static void trackPaywallTriggerShown() {
@@ -1105,6 +1110,7 @@ abstract class ActivationTracker {
 
   static void trackRestoreTapped() {
     unawaited(_safe(() => _incrementEvent(restoreTapped)));
+    unawaited(BetaActivationLoopTracker.trackRestoreTapped());
   }
 
   static void trackArchiveRangeReviewShown() {

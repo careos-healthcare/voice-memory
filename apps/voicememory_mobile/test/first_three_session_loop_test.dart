@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/first_three_journey_engine.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/activation/third_session_archive_usefulness_engine.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
@@ -70,11 +73,11 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('No pattern yet'),
+        contains('first piece of evidence'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('second moment'),
+        contains('compare what repeats'),
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
@@ -175,6 +178,7 @@ void main() {
           entryCount: 1,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -183,6 +187,16 @@ void main() {
           entryCount: 2,
           resolved: false,
           isPro: false,
+          hasArchiveProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        FirstThreeSessionGates.showSoftProBridge(
+          entryCount: 2,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: true,
         ),
         isTrue,
       );
@@ -191,6 +205,7 @@ void main() {
           entryCount: 1,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -212,9 +227,8 @@ void main() {
       await tester.pump();
 
       expect(find.text('Your archive has started.'), findsOneWidget);
-      expect(find.textContaining('your own words'), findsOneWidget);
-      expect(find.textContaining('No pattern yet'), findsOneWidget);
-      expect(find.textContaining('second moment'), findsOneWidget);
+      expect(find.textContaining('first piece of evidence'), findsOneWidget);
+      expect(find.textContaining('compare what repeats'), findsOneWidget);
       expect(find.text('View archive'), findsOneWidget);
       expect(find.text('Add one more moment'), findsOneWidget);
       expect(find.text('Your pressure loop'), findsNothing);
@@ -437,6 +451,100 @@ void main() {
       expect(model.title, FirstThreeSessionCopy.session3Title);
       expect(model.completed, isTrue);
       expect(model.journeyStepIndex, 2);
+    });
+  });
+
+  group('First-three retention loop copy', () {
+    test('entry 0 primary capture CTA is Save one moment', () {
+      expect(VisibleArchiveProofCopy.firstUseCaptureCta, 'Save one moment');
+      expect(RecordReturnProCopy.recordOnceCta, 'Record one moment');
+    });
+
+    test('one entry ready explains second moment without pattern claim', () {
+      final model = EarlyFirstSignalEngine.build(
+        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+      );
+      expect(model!.kind, EarlyFirstSignalKind.oneEntryReceipt);
+      expect(model.title, EarlyFirstSignalCopy.oneEntryTitle);
+      expect(model.lines.single, EarlyFirstSignalCopy.oneEntryBody);
+      expect(
+        FirstThreeSessionGates.showEarlyFirstSignalCardPrimaryCta(model.kind),
+        isFalse,
+      );
+    });
+
+    test('two related entries use confirm-the-repeat copy and CTA', () {
+      final entries = [
+        _entry(
+          '1',
+          'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+      ];
+      final model = EarlyFirstSignalEngine.build(entries: entries);
+      expect(model!.kind, EarlyFirstSignalKind.twoEntryFirstSignal);
+      expect(model.title, EarlyFirstSignalCopy.twoEntryRelatedTitle);
+      expect(model.lines.single, EarlyFirstSignalCopy.twoEntryRelatedBody);
+      expect(model.primaryCta, EarlyFirstSignalCopy.confirmRepeatCta);
+    });
+
+    test('two unrelated entries do not claim a repeat', () {
+      final entries = [
+        _entry('1', 'A quiet moment about lunch with a friend today.'),
+        _entry('2', 'Another unrelated note about errands this afternoon.'),
+      ];
+      final model = EarlyFirstSignalEngine.build(entries: entries);
+      expect(model!.kind, EarlyFirstSignalKind.twoEntryNoPattern);
+      expect(
+        '${model.title} ${model.lines.single}'.toLowerCase(),
+        isNot(contains('confirmed repeat')),
+      );
+      expect(
+        FirstThreeSessionGates.showEarlyFirstSignalCardPrimaryCta(model.kind),
+        isFalse,
+      );
+    });
+
+    test('three related entries show confirmed repeat payoff', () {
+      final entries = [
+        _entry(
+          '1',
+          'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+        _entry(
+          '3',
+          'I said yes again even though I had no capacity for one more ask.',
+        ),
+      ];
+      final model = EarlyFirstSignalEngine.build(entries: entries);
+      expect(model!.kind, EarlyFirstSignalKind.threeEntryConfirmedRepeat);
+      expect(model.title, EarlyFirstSignalCopy.threeEntryConfirmedTitle);
+      expect(
+        model.lines,
+        contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
+      );
+    });
+
+    test('daily map prompt suppressed during first-three loop', () {
+      expect(
+        FirstThreeSessionGates.suppressDailyMapPromptOnRecord(1),
+        isTrue,
+      );
+      expect(
+        FirstThreeSessionGates.suppressDailyMapPromptOnRecord(3),
+        isTrue,
+      );
+      expect(
+        FirstThreeSessionGates.suppressDailyMapPromptOnRecord(4),
+        isFalse,
+      );
     });
   });
 }

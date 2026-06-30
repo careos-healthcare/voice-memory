@@ -16,6 +16,7 @@ abstract class ArchiveBetaDebugGate {
     'debug_export_loop_map_validation',
     'debug_export_paid_intent_feedback',
     'debug_export_beta_evidence',
+    'debug_clear_beta_activation_loop',
     'debug_export_activation_funnel',
     'debug_clear_beta_evidence',
     'debug_copy_launch_readiness',

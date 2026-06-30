@@ -24,6 +24,7 @@ import '../features/memory/archive_thread.dart';
 import '../features/memory/archive_thread_store.dart';
 import '../features/onboarding/record_return_pro_state.dart';
 import '../features/onboarding/record_return_pro_store.dart';
+import '../features/activation/paywall_timing_gates.dart';
 import '../features/retention/repeat_recording_nudge_state.dart';
 import '../features/retention/repeat_recording_nudge_store.dart';
 import '../features/aha/aha_moment_candidate.dart';
@@ -287,6 +288,9 @@ class _JournalScreenState extends State<JournalScreen> {
           entryCount: activeEntries.length,
           resolved: _recordReturnProState!.proBridgeResolved,
           isPro: _isPro,
+          hasArchiveProof: PaywallTimingGates.hasArchiveProofFromEntries(
+            entries: activeEntries,
+          ),
         );
     final showSecondEntryNudge =
         !searching &&

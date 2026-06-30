@@ -142,12 +142,12 @@ abstract class RecordEmptyArchiveGates {
   }) =>
       loaded && hasNoEntries(entryCount);
 
-  /// Daily map prompt on Record — zero through returning users.
+  /// Daily map prompt on Record — after first-three activation only.
   static bool showDailyArchiveExerciseOnRecord({
     required bool loaded,
     required int entryCount,
   }) =>
-      loaded;
+      loaded && entryCount >= 4;
 
   /// Today's one question on Record — after the first save.
   static bool showTodaysQuestionOnRecord({

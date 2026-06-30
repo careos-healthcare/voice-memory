@@ -3,9 +3,19 @@ import '../early_archive/early_first_signal_copy.dart';
 /// Visible first-run / proof-layer copy — cautious, evidence-based.
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
+  static const firstRunPromiseStep1 = 'Record short moments';
+  static const firstRunPromiseStep2 = 'ArchiveMe spots what repeats';
+  static const firstRunPromiseStep3 = 'See whether it changes';
+
+  static const firstRunPromiseSteps = [
+    firstRunPromiseStep1,
+    firstRunPromiseStep2,
+    firstRunPromiseStep3,
+  ];
+
   static const firstRunBuildingLine = 'Record short moments.';
 
-  static const firstRunCompareLine = 'ArchiveMe watches what repeats.';
+  static const firstRunCompareLine = 'ArchiveMe spots what repeats.';
 
   static const firstRunEvidenceLine =
       'When something comes back, your archive starts building evidence.';
@@ -21,12 +31,11 @@ abstract final class VisibleArchiveProofCopy {
   /// Primary voice/permission CTA on Record when the archive is still empty.
   static const firstUseCaptureCta = 'Save one moment';
 
-  // Record screen top hero (zero entries) — matches Archive Home empty promise.
-  static const recordHeroTitle =
-      'Your archive shows what keeps repeating and what changes.';
+  /// Archive Home empty title — Record uses [firstRunPromiseSteps] instead.
+  static const recordHeroTitle = 'How ArchiveMe works';
 
   static const recordHeroBody =
-      '$firstRunBuildingLine $firstRunCompareLine $firstRunEvidenceLine';
+      '$firstRunPromiseStep1. $firstRunPromiseStep2. $firstRunPromiseStep3.';
 
   static const recordHeroChipReturned = 'What returned';
   static const recordHeroChipSoftened = 'What softened';
@@ -35,11 +44,10 @@ abstract final class VisibleArchiveProofCopy {
   // First save on Record screen.
   static const firstSaveTitle = 'Your archive has started.';
 
-  static const firstSaveBody =
-      'No pattern yet — just one piece of evidence from your own words.';
+  static const firstSaveBody = 'This is the first piece of evidence.';
 
   static const firstSaveSecondary =
-      'A second moment lets ArchiveMe start comparing.';
+      'One more moment lets ArchiveMe compare what repeats.';
 
   static const firstSaveReturnTomorrowBody =
       'Come back tomorrow to see whether this moment shows up again. '
@@ -338,8 +346,13 @@ abstract final class VisibleArchiveProofCopy {
   static const returnLoopOneEntryBody =
       'Come back when this shows up again.';
 
-  static const returnLoopTwoEntryBody =
-      'One more moment can make the thread clearer.';
+  static const returnLoopTwoEntryRelatedBody =
+      'One more will confirm whether this repeats.';
+
+  static const returnLoopTwoEntryUnrelatedBody =
+      'ArchiveMe needs one more moment before it can compare clearly.';
+
+  static const returnLoopTwoEntryBody = returnLoopTwoEntryRelatedBody;
 
   static const returnLoopThreeEntryBody =
       'Your archive is starting a cautious belief. '

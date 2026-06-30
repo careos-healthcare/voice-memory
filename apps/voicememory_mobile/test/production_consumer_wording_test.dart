@@ -99,11 +99,27 @@ void main() {
 
     test('Pro bridge gates wait until repeat value', () {
       expect(
-        First60Gates.showProBridge(entryCount: 1, resolved: false),
+        First60Gates.showProBridge(
+          entryCount: 1,
+          resolved: false,
+          hasArchiveProof: true,
+        ),
         isFalse,
       );
       expect(
-        First60Gates.showProBridge(entryCount: 2, resolved: false),
+        First60Gates.showProBridge(
+          entryCount: 2,
+          resolved: false,
+          hasArchiveProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        First60Gates.showProBridge(
+          entryCount: 2,
+          resolved: false,
+          hasArchiveProof: true,
+        ),
         isTrue,
       );
       expect(
@@ -111,6 +127,7 @@ void main() {
           entryCount: 1,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -119,6 +136,7 @@ void main() {
           entryCount: 2,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isTrue,
       );

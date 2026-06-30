@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 
+import '../config/archive_me_demo_state.dart';
 import '../config/creator_demo_mode.dart';
 import '../push/firebase_bootstrap.dart';
 
@@ -20,7 +21,7 @@ class ProductAnalytics {
     if (_initialized) return;
     _initialized = true;
     // Creator demo mode: no production analytics collection at all.
-    if (CreatorDemoMode.isActive) return;
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     if (!FirebaseBootstrap.isInitialized) return;
     try {
       _analytics = FirebaseAnalytics.instance;
@@ -41,7 +42,7 @@ class ProductAnalytics {
     final sanitized = _sanitizeParameters(parameters);
     // Creator demo mode: events are demo-marked in the debug log only and
     // never sent to production analytics.
-    if (CreatorDemoMode.isActive) {
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) {
       demoSuppressedCount += 1;
       if (kDebugMode) {
         debugPrint('analytics(demo, not sent):$event $sanitized');

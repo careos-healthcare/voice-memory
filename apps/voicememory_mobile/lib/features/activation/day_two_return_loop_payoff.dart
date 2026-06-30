@@ -1,10 +1,17 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
+import '../retention/second_session_signal_engine.dart';
 
 /// User-facing copy for the day-two / return loop payoff.
 abstract final class DayTwoReturnLoopPayoffCopy {
   static const oneEntryBody = VisibleArchiveProofCopy.returnLoopOneEntryBody;
+
+  static const twoEntryRelatedBody =
+      VisibleArchiveProofCopy.returnLoopTwoEntryRelatedBody;
+
+  static const twoEntryUnrelatedBody =
+      VisibleArchiveProofCopy.returnLoopTwoEntryUnrelatedBody;
 
   static const twoEntryBody = VisibleArchiveProofCopy.returnLoopTwoEntryBody;
 
@@ -36,6 +43,8 @@ class DayTwoReturnLoopPayoff {
 abstract final class DayTwoReturnLoopPayoffEngine {
   DayTwoReturnLoopPayoffEngine._();
 
+  static const _signalEngine = SecondSessionSignalEngine();
+
   /// Returns null when there are no usable entries or more than three.
   static DayTwoReturnLoopPayoff? build({
     required List<JournalEntry> entries,
@@ -50,7 +59,9 @@ abstract final class DayTwoReturnLoopPayoffEngine {
           offerReminder: reminderAvailable,
         ),
       2 => DayTwoReturnLoopPayoff(
-          body: DayTwoReturnLoopPayoffCopy.twoEntryBody,
+          body: _signalEngine.hasGroundedRepeatMatch(eligible)
+              ? DayTwoReturnLoopPayoffCopy.twoEntryRelatedBody
+              : DayTwoReturnLoopPayoffCopy.twoEntryUnrelatedBody,
           primaryCta: DayTwoReturnLoopPayoffCopy.primaryCta,
           secondaryCta: DayTwoReturnLoopPayoffCopy.secondaryCta,
           eligibleEntryCount: 2,

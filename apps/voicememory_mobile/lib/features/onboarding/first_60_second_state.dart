@@ -115,12 +115,13 @@ abstract class First60Gates {
     required bool resolved,
   }) => entryCount == 1 && justSaved && !resolved;
 
-  /// Pro bridge: only after a second entry or repeat value — never before
-  /// recording, never at zero or one entry, and never again once answered.
+  /// Pro bridge: only after archive proof — never before recording, never at
+  /// zero or one entry, and never again once answered.
   static bool showProBridge({
     required int entryCount,
     required bool resolved,
-  }) => entryCount >= 2 && !resolved;
+    required bool hasArchiveProof,
+  }) => entryCount >= 2 && hasArchiveProof && !resolved;
 
   /// Archive helper: exactly one active entry in the archive view.
   static bool showArchiveHelper({required int entryCount}) => entryCount == 1;

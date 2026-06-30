@@ -39,11 +39,16 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry({String id = 'e1', DateTime? createdAt}) {
+JournalEntry _entry({
+  String id = 'e1',
+  DateTime? createdAt,
+  String transcript =
+      'A long enough transcript to count as a saved reflection.',
+}) {
   return JournalEntry(
     id: id,
     createdAt: createdAt ?? DateTime(2026, 6, 11, 12),
-    transcript: 'A long enough transcript to count as a saved reflection.',
+    transcript: transcript,
     durationSeconds: 30,
     reflection: const Reflection(
       mood: 'thoughtful',
@@ -250,21 +255,45 @@ void main() {
       );
     });
 
-    test('Pro bridge appears only after second entry or archive repeat value', () {
+    test('Pro bridge appears only after archive proof', () {
       expect(
-        First60Gates.showProBridge(entryCount: 0, resolved: false),
+        First60Gates.showProBridge(
+          entryCount: 0,
+          resolved: false,
+          hasArchiveProof: true,
+        ),
         isFalse,
       );
       expect(
-        First60Gates.showProBridge(entryCount: 1, resolved: false),
+        First60Gates.showProBridge(
+          entryCount: 1,
+          resolved: false,
+          hasArchiveProof: true,
+        ),
         isFalse,
       );
       expect(
-        First60Gates.showProBridge(entryCount: 2, resolved: false),
+        First60Gates.showProBridge(
+          entryCount: 2,
+          resolved: false,
+          hasArchiveProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        First60Gates.showProBridge(
+          entryCount: 2,
+          resolved: false,
+          hasArchiveProof: true,
+        ),
         isTrue,
       );
       expect(
-        First60Gates.showProBridge(entryCount: 2, resolved: true),
+        First60Gates.showProBridge(
+          entryCount: 2,
+          resolved: true,
+          hasArchiveProof: true,
+        ),
         isFalse,
       );
     });
@@ -786,9 +815,20 @@ void main() {
       tester,
     ) async {
       await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(_entry(id: 'a'));
         await AppServices.instance.journalStore.save(
-          _entry(id: 'b', createdAt: DateTime(2026, 6, 12, 9)),
+          _entry(
+            id: 'a',
+            transcript:
+                'I said yes again even though I was already tired from work today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            createdAt: DateTime(2026, 6, 12, 9),
+            transcript:
+                'I took responsibility again before asking anyone for help today.',
+          ),
         );
       });
       await pumpJournal(tester);

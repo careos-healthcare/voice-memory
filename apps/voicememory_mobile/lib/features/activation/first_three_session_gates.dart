@@ -1,9 +1,28 @@
+import '../early_archive/early_first_signal_engine.dart';
+import 'paywall_timing_gates.dart';
+
 /// Visibility gates for the first-three-session product loop.
 abstract class FirstThreeSessionGates {
   FirstThreeSessionGates._();
 
   static const int minEntriesForRepeatSurface = 2;
   static const int minEntriesForUsefulArchive = 3;
+
+  /// First-three loop owns Record at counts 1–3 — hide competing map prompts.
+  static bool suppressDailyMapPromptOnRecord(int entryCount) =>
+      entryCount >= 1 && entryCount <= minEntriesForUsefulArchive;
+
+  /// Card CTAs that duplicate the capture bar stay off at 1–2 until repeat is clearer.
+  static bool showEarlyFirstSignalCardPrimaryCta(EarlyFirstSignalKind kind) {
+    switch (kind) {
+      case EarlyFirstSignalKind.oneEntryReceipt:
+      case EarlyFirstSignalKind.twoEntryNoPattern:
+        return false;
+      case EarlyFirstSignalKind.twoEntryFirstSignal:
+      case EarlyFirstSignalKind.threeEntryConfirmedRepeat:
+        return true;
+    }
+  }
 
   /// Hide noisy post-save cards while the first-save confirmation is showing.
   static bool suppressNoisyPostSaveCards({
@@ -31,6 +50,12 @@ abstract class FirstThreeSessionGates {
     required int entryCount,
     required bool resolved,
     required bool isPro,
+    required bool hasArchiveProof,
   }) =>
-      entryCount >= minEntriesForRepeatSurface && !resolved && !isPro;
+      PaywallTimingGates.showSoftProBridge(
+        entryCount: entryCount,
+        resolved: resolved,
+        isPro: isPro,
+        hasArchiveProof: hasArchiveProof,
+      );
 }

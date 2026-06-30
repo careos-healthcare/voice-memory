@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import '../config/archive_me_demo_state.dart';
+import '../features/demo/archive_me_demo_archive.dart';
 import '../config/creator_demo_mode.dart';
 import '../features/activation/capture_context_tags.dart';
 import '../features/first25/first25_journal_hooks.dart';
@@ -90,6 +92,12 @@ class JournalStore {
   }
 
   Future<List<JournalEntry>> loadAll() async {
+    if (ArchiveMeDemoState.isActive) {
+      return ArchiveMeDemoArchive.journalEntries();
+    }
+    if (CreatorDemoMode.isActive) {
+      return CreatorDemoMode.demoJournalEntries();
+    }
     if (_encryptAtRest && _encrypted != null) {
       _cache = await _loadEntriesFromEncrypted();
       return List<JournalEntry>.from(_cache!);
@@ -99,6 +107,9 @@ class JournalStore {
 
   /// Same as [loadAll] but synchronous — uses the in-memory cache after [open].
   List<JournalEntry> loadAllSync() {
+    if (ArchiveMeDemoState.isActive) {
+      return ArchiveMeDemoArchive.journalEntries();
+    }
     if (CreatorDemoMode.isActive) return CreatorDemoMode.demoJournalEntries();
     if (_cache != null) {
       return List<JournalEntry>.from(_cache!);
@@ -113,7 +124,7 @@ class JournalStore {
   }
 
   Future<void> clearAll() async {
-    if (CreatorDemoMode.isActive) return;
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = const [];
     if (_encrypted != null) {
       await _encrypted!.writeJson([]);
@@ -126,7 +137,7 @@ class JournalStore {
     JournalEntry entry, {
     String first25Source = 'journal_save',
   }) async {
-    if (CreatorDemoMode.isActive) return;
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     final all = await loadAll();
     final isNew = !all.any((e) => e.id == entry.id);
     var toPersist = entry;
@@ -332,7 +343,7 @@ class JournalStore {
   }
 
   Future<void> _writeAll(List<JournalEntry> entries) async {
-    if (CreatorDemoMode.isActive) return;
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = List<JournalEntry>.from(entries);
     final encoded = entries.map((e) => e.toJson()).toList();
     if (_encrypted != null) {

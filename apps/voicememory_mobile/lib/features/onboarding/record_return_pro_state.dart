@@ -110,13 +110,15 @@ abstract class RecordReturnProGates {
     required bool resolved,
   }) => entryCount == 1 && justSaved && !resolved;
 
-  /// Pro bridge: after a second entry when change can show — never at zero
-  /// or one entry, never again once resolved.
+  /// Pro bridge: after archive proof — never at zero or one entry, never on
+  /// first save alone, never again once resolved.
   static bool showProBridge({
     required int entryCount,
     required bool resolved,
     required bool isPro,
-  }) => entryCount >= 2 && !resolved && !isPro;
+    required bool hasArchiveProof,
+  }) =>
+      entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
 
   /// Archive value card: exactly one active entry.
   static bool showArchiveValue({required int entryCount}) => entryCount == 1;

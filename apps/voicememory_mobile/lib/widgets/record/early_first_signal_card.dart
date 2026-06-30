@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/beta/beta_activation_loop_tracker.dart';
 import '../../features/early_archive/early_archive_proof_analytics.dart';
 import '../../features/early_archive/early_archive_insight_feedback_models.dart';
 import '../../features/early_archive/early_archive_insight_quality_engine.dart';
@@ -24,6 +27,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
     this.analyticsSurface,
     this.entryCount,
     this.entriesForWhy,
+    this.showInsightFeedback = true,
   });
 
   final EarlyFirstSignalModel signal;
@@ -34,6 +38,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
   final String? analyticsSurface;
   final int? entryCount;
   final List<JournalEntry>? entriesForWhy;
+  final bool showInsightFeedback;
 
   void _trackSeen() {
     final surface = analyticsSurface;
@@ -56,6 +61,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
           surface: surface,
         );
       case EarlyFirstSignalKind.twoEntryNoPattern:
+        unawaited(BetaActivationLoopTracker.trackTwoEntryUnrelatedSeen());
         break;
     }
   }
@@ -167,6 +173,7 @@ class EarlyFirstSignalCard extends StatelessWidget {
                 ),
               ],
               if (signal.showsConfirmedRepeat &&
+                  showInsightFeedback &&
                   analyticsSurface != null &&
                   entryCount != null) ...[
                 EarlyArchiveInsightWhySection(

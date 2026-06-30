@@ -462,6 +462,16 @@ abstract class ScreenshotMode {
 
   static bool get archiveReviewPreview => enabled && archiveReviewRaw;
 
+  /// Clean confirmed-repeat demo archive — compile with
+  /// `--dart-define=VOICE_MEMORY_SCREENSHOT_DEMO=confirmed_repeat`.
+  static const String demoRaw = String.fromEnvironment(
+    'VOICE_MEMORY_SCREENSHOT_DEMO',
+    defaultValue: '',
+  );
+
+  static bool get archiveMeDemoPreview =>
+      enabled && demoRaw.trim().toLowerCase() == 'confirmed_repeat';
+
   /// True when a result-focused preview wants the completed check-in card.
   static bool get completedCheckInPreview =>
       resultNextCheckPreview ||

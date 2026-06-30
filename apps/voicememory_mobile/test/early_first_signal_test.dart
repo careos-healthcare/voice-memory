@@ -251,7 +251,7 @@ void main() {
       expect(model, isNotNull);
       expect(model!.kind, EarlyFirstSignalKind.oneEntryReceipt);
       expect(model.title, EarlyFirstSignalCopy.oneEntryTitle);
-      expect(model.lines, contains(EarlyFirstSignalCopy.notEnoughEvidence));
+      expect(model.lines.single, EarlyFirstSignalCopy.oneEntryBody);
       expect(model.showsPatternLanguage, isFalse);
       for (final banned in _bannedStrongBelief) {
         expect(
@@ -314,16 +314,9 @@ void main() {
 
       final model = EarlyFirstSignalEngine.build(entries: entries);
       expect(model!.kind, EarlyFirstSignalKind.twoEntryFirstSignal);
-      expect(model.title, EarlyFirstSignalCopy.twoEntryPatternStartTitle);
-      expect(model.lines, contains(EarlyFirstSignalCopy.notEnoughEvidence));
-      expect(
-        model.lines.first,
-        contains('saying yes before checking capacity'),
-      );
-      expect(
-        model.lines,
-        contains(EarlyFirstSignalCopy.twoEntryConfirmRepeat),
-      );
+      expect(model.title, EarlyFirstSignalCopy.twoEntryRelatedTitle);
+      expect(model.lines.single, EarlyFirstSignalCopy.twoEntryRelatedBody);
+      expect(model.primaryCta, EarlyFirstSignalCopy.confirmRepeatCta);
       expect(model.showsConfirmedRepeat, isFalse);
     });
 
@@ -356,13 +349,12 @@ void main() {
       expect(model.title, EarlyFirstSignalCopy.threeEntryConfirmedTitle);
       expect(
         model.lines,
-        contains(EarlyFirstSignalCopy.evidenceHeading),
+        contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
       );
       expect(
-        model.lines.first,
-        contains('keeps coming back around'),
+        model.lines,
+        contains(EarlyFirstSignalCopy.evidenceHeading),
       );
-      expect(model.lines.first, contains('saying yes'));
       expect(model.evidenceRows.length, 3);
       expect(model.primaryCta, EarlyFirstSignalCopy.recordWhatHappensNextCta);
       expect(model.secondaryCta, EarlyFirstSignalCopy.viewEvidenceCta);
@@ -508,15 +500,15 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(EarlyFirstSignalCopy.twoEntryPatternStartTitle),
+        find.text(EarlyFirstSignalCopy.twoEntryRelatedTitle),
         findsOneWidget,
       );
       expect(
-        find.textContaining('showing up again'),
+        find.text(EarlyFirstSignalCopy.twoEntryRelatedBody),
         findsOneWidget,
       );
       expect(
-        find.text(EarlyFirstSignalCopy.notEnoughEvidence),
+        find.text(EarlyFirstSignalCopy.confirmRepeatCta),
         findsOneWidget,
       );
     });

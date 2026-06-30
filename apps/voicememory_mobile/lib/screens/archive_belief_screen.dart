@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../design/archive_mobile_spacing.dart';
+import '../config/archive_me_demo_state.dart';
 import '../config/screenshot_mode.dart';
 import '../config/force_screenshot_repeat_card.dart';
 import '../config/screenshot_sample_data.dart';
@@ -125,6 +126,11 @@ import '../widgets/return_ritual_card.dart';
 import '../widgets/beta_feedback_card.dart';
 import '../widgets/pro_interest_link_card.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
+import '../features/beta/confirmed_repeat_beta_feedback_gates.dart';
+import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/repeat_return_check/repeat_return_check_engine.dart';
+import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 import '../widgets/pro_value_preview_card.dart';
 import '../features/pro/pro_value_preview_dismiss_store.dart';
 import '../features/pro/pro_value_preview_gates.dart';
@@ -222,6 +228,7 @@ import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../features/activation/first_three_session_gates.dart';
+import '../features/activation/paywall_timing_gates.dart';
 import '../features/archive_evidence/archive_evidence_guard.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
@@ -271,6 +278,7 @@ import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
+import '../widgets/record/repeat_return_check_change_proof_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
@@ -358,7 +366,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _loading = false;
       return;
     }
-    if (ScreenshotMode.enabled) {
+    if (ScreenshotMode.enabled && !ArchiveMeDemoState.isActive) {
       _applyScreenshotSample();
       unawaited(_refreshCompressionGroups());
       return;
@@ -556,7 +564,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   }
 
   Future<void> _load() async {
-    if (ScreenshotMode.enabled) {
+    if (ScreenshotMode.enabled && !ArchiveMeDemoState.isActive) {
       _applyScreenshotSample();
       return;
     }
@@ -564,6 +572,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ArchiveWorkspaceHintStore.ensureLoaded();
     await ProValuePreviewDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
+    await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
+    await RepeatReturnCheckStore.ensureLoaded();
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
@@ -1918,14 +1928,17 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     required ArchiveOhWowMoment ohWow,
   }) {
     if (_archiveIsPro || _proBridgeResolved) return false;
-    if (!FirstThreeSessionGates.showSoftProBridge(
+    return FirstThreeSessionGates.showSoftProBridge(
       entryCount: _entries.length,
       resolved: _proBridgeResolved,
       isPro: _archiveIsPro,
-    )) {
-      return false;
-    }
-    return belief.hasEnoughData || weekly.hasReview || ohWow.hasMoment;
+      hasArchiveProof: PaywallTimingGates.hasArchiveProofFromEntries(
+        entries: _entries,
+        hasBeliefProof: belief.hasEnoughData,
+        hasWeeklyReview: weekly.hasReview,
+        hasOhWowMoment: ohWow.hasMoment,
+      ),
+    );
   }
 
   List<Widget> _buildArchiveIntelligenceWidgets({
@@ -3431,6 +3444,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
       );
       final showEarlyEvidenceTimeline = earlyEvidenceTimeline != null;
+      final viewingConfirmedRepeatOnPatterns = showEarlyEvidenceTimeline ||
+          (earlyFirstSignal?.showsConfirmedRepeat ?? false);
+      final repeatReturnChangeProof = RepeatReturnCheckEngine.changeProofForReady(
+        entryCount: _entries.length,
+        viewingConfirmedRepeat: viewingConfirmedRepeatOnPatterns,
+        isRecording: false,
+        isPostSave: false,
+        records: RepeatReturnCheckStore.cached,
+      );
+      final suppressConfirmedRepeatInlineFeedback =
+          ConfirmedRepeatBetaFeedbackGates.suppressInlineAccuracyFeedback(
+        state: ConfirmedRepeatBetaFeedbackStore.cached,
+      );
       final suppressArchiveHomeEarlyProofDuplicate =
           showEarlyEvidenceTimeline || earlyFirstSignal != null;
       final groundedSecondSessionRepeat =
@@ -3488,6 +3514,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 if (!showEarlyEvidenceTimeline && earlyFirstSignal != null) ...[
                   EarlyFirstSignalCard(
                     signal: earlyFirstSignal!,
+                    showInsightFeedback: !suppressConfirmedRepeatInlineFeedback,
                     analyticsSurface: 'patterns',
                     entryCount: _entries.length,
                     entriesForWhy: _entries,
@@ -3505,6 +3532,25 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                             );
                           }
                         : null,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (repeatReturnChangeProof != null) ...[
+                  RepeatReturnCheckChangeProofCard(
+                    proof: repeatReturnChangeProof,
+                    entryCount: _entries.length,
+                    surface: 'patterns',
+                    onRecordNext: _goToRecord,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (viewingConfirmedRepeatOnPatterns) ...[
+                  ConfirmedRepeatBetaFeedbackCard(
+                    entryCount: _entries.length,
+                    surface: 'patterns',
+                    viewingConfirmedRepeat: viewingConfirmedRepeatOnPatterns,
+                    isRecording: false,
+                    onChanged: () => setState(() {}),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],

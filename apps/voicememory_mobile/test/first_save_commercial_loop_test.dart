@@ -217,6 +217,7 @@ void main() {
           entryCount: 0,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -225,6 +226,7 @@ void main() {
           entryCount: 1,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -233,6 +235,16 @@ void main() {
           entryCount: 2,
           resolved: false,
           isPro: false,
+          hasArchiveProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        FirstSaveLoopGates.showProBridge(
+          entryCount: 2,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: true,
         ),
         isTrue,
       );
@@ -241,6 +253,7 @@ void main() {
           entryCount: 2,
           resolved: true,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -414,6 +427,7 @@ void main() {
         entryCount: 0,
         resolved: false,
         isPro: false,
+        hasArchiveProof: true,
       ),
       isFalse,
     );

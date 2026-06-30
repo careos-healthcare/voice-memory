@@ -267,32 +267,22 @@ abstract final class EarlyFirstSignalEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty) return null;
 
-    final insight = EarlyArchiveInsightQualityEngine.build(entries: entries);
-
     if (eligible.length == 1) {
       return const EarlyFirstSignalModel(
         kind: EarlyFirstSignalKind.oneEntryReceipt,
         title: EarlyFirstSignalCopy.oneEntryTitle,
-        lines: [
-          EarlyFirstSignalCopy.oneEntryBody,
-          EarlyFirstSignalCopy.notEnoughEvidence,
-        ],
+        lines: [EarlyFirstSignalCopy.oneEntryBody],
         primaryCta: EarlyFirstSignalCopy.addMomentCta,
       );
     }
 
     if (eligible.length == 2) {
       if (_signalEngine.hasGroundedRepeatMatch(eligible)) {
-        return EarlyFirstSignalModel(
+        return const EarlyFirstSignalModel(
           kind: EarlyFirstSignalKind.twoEntryFirstSignal,
-          title: EarlyFirstSignalCopy.twoEntryPatternStartTitle,
-          lines: [
-            insight.twoEntryRepeatSummary ??
-                EarlyArchiveInsightQualityCopy.twoEntryRepeatFallback,
-            EarlyFirstSignalCopy.notEnoughEvidence,
-            EarlyFirstSignalCopy.twoEntryConfirmRepeat,
-          ],
-          primaryCta: EarlyFirstSignalCopy.addMomentCta,
+          title: EarlyFirstSignalCopy.twoEntryRelatedTitle,
+          lines: [EarlyFirstSignalCopy.twoEntryRelatedBody],
+          primaryCta: EarlyFirstSignalCopy.confirmRepeatCta,
         );
       }
 
@@ -308,13 +298,9 @@ abstract final class EarlyFirstSignalEngine {
         (_journeyEngine.hasRepeatMatch(entries: eligible) ||
             hasConfirmedRepeatAcrossThree(eligible))) {
       final summaryLines = <String>[
-        insight.repeatSummary ?? EarlyArchiveInsightQualityCopy.repeatFallback,
+        EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
+        EarlyFirstSignalCopy.evidenceHeading,
       ];
-      if (insight.beliefEvidenceSummary != null &&
-          insight.beliefEvidenceSummary != insight.repeatSummary) {
-        summaryLines.add(insight.beliefEvidenceSummary!);
-      }
-      summaryLines.add(EarlyFirstSignalCopy.evidenceHeading);
 
       return EarlyFirstSignalModel(
         kind: EarlyFirstSignalKind.threeEntryConfirmedRepeat,

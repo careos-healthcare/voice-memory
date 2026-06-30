@@ -22,8 +22,11 @@ import '../features/memory_resurfacing/memory_resurfacing_service.dart';
 import '../features/belief_evolution/belief_evolution_service.dart';
 import '../features/archive_agreement/archive_agreement_service.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
+import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/repeat_return_check/repeat_return_check_store.dart';
 import '../push/fcm_service.dart';
 import '../config/app_config.dart';
+import '../config/archive_me_demo_state.dart';
 import '../config/trial_mode.dart';
 import 'auth_service.dart';
 import '../billing/billing_service.dart';
@@ -326,5 +329,8 @@ class AppServices {
     _instance = s;
     _initialized = true;
     await BetaFeedbackStore.resetForTest();
+    await ConfirmedRepeatBetaFeedbackStore.resetForTest();
+    ArchiveMeDemoState.resetForTest();
+    await RepeatReturnCheckStore.resetForTest();
   }
 }

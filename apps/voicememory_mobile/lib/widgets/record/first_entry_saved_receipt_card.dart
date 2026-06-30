@@ -30,7 +30,7 @@ class FirstEntrySavedReceiptCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            VoiceCaptureCopy.analysisUnavailableNote,
+            VoiceCaptureCopy.firstSaveReceiptNote,
             key: const Key('first_entry_saved_receipt_body'),
             style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
               color: AppColors.textPrimary,

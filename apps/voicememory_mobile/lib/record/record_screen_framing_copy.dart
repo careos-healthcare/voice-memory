@@ -12,7 +12,7 @@ abstract class RecordScreenFramingCopy {
   /// True empty archive — count 0 only.
   static const String emptyArchiveTitle = 'Your archive is empty';
   static const String emptyArchiveBody =
-      'Record short moments. ArchiveMe watches what repeats.';
+      'Record short moments. ArchiveMe spots what repeats.';
   static const String emptyArchiveFootnote =
       'Nothing is analysed until you save something.';
 
@@ -29,7 +29,7 @@ abstract class RecordScreenFramingCopy {
   /// One saved moment — calm started state, no pattern claims.
   static const String archiveStartedTitle = 'Archive started';
   static const String archiveStartedBody =
-      'Add one more moment so ArchiveMe can begin comparing.';
+      'ArchiveMe needs a second moment before it can compare what repeats.';
   static const String archiveStartedCta = 'Add one more moment';
 
   /// Two–three entries without a grounded repeat yet.

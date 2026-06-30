@@ -1,9 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/app_config.dart';
+import '../config/archive_me_demo_state.dart';
 import '../config/developer_settings_gate.dart';
+import '../features/beta/beta_activation_loop_counts.dart';
+import '../features/beta/beta_activation_loop_tracker.dart';
+import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/debug/archive_beta_debug_gate.dart';
 import '../push/firebase_options.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
@@ -22,6 +28,9 @@ class _DeveloperDiagnosticsScreenState
     extends State<DeveloperDiagnosticsScreen> {
   String _health = '…';
   int _entryCount = 0;
+  BetaActivationLoopCounts _betaLoopCounts = const BetaActivationLoopCounts();
+  String _confirmedRepeatBetaFeedbackSummary = 'Not captured yet';
+  bool _archiveMeDemoActive = false;
   bool _loading = true;
 
   @override
@@ -37,10 +46,20 @@ class _DeveloperDiagnosticsScreenState
     try {
       final h = await AppServices.instance.api.health();
       final entries = await AppServices.instance.journalStore.loadAll();
+      final betaCounts = await BetaActivationLoopTracker.readCounts();
+      await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
+      final confirmedRepeatFeedback =
+          ConfirmedRepeatBetaFeedbackStore.cached;
       if (mounted) {
         setState(() {
           _health = h['status']?.toString() ?? 'ok';
           _entryCount = entries.length;
+          _betaLoopCounts = betaCounts;
+          _confirmedRepeatBetaFeedbackSummary =
+              confirmedRepeatFeedback.completed
+                  ? confirmedRepeatFeedback.toReviewSummary()
+                  : 'Not captured yet';
+          _archiveMeDemoActive = ArchiveMeDemoState.isActive;
           _loading = false;
         });
       }
@@ -63,6 +82,10 @@ class _DeveloperDiagnosticsScreenState
       'Local journal entries: $_entryCount',
       'Debug token: ${AppConfig.internalDebugToken.isNotEmpty ? "set" : "not set"}',
       'Firebase define: ${FirebaseOptionsConfig.isConfigured ? "yes" : "no"}',
+      '',
+      _betaLoopCounts.toSummaryText(),
+      '',
+      'First confirmed-repeat feedback: $_confirmedRepeatBetaFeedbackSummary',
     ];
     await Clipboard.setData(ClipboardData(text: lines.join('\n')));
     if (mounted) {
@@ -125,6 +148,89 @@ class _DeveloperDiagnosticsScreenState
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/trial-control'),
           ),
+          if (ArchiveBetaDebugGate.showLoopDebugControls) ...[
+            const SizedBox(height: 24),
+            Text(
+              'ArchiveMe demo archive',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Synthetic 3-moment confirmed-repeat archive for screenshots. '
+              'Debug builds only — never writes real journal data.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.muted,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            _row(
+              'Demo archive active',
+              _loading ? '…' : (_archiveMeDemoActive ? 'yes' : 'no'),
+            ),
+            SwitchListTile(
+              key: const Key('debug_archive_me_demo_toggle'),
+              title: const Text('Use demo archive'),
+              subtitle: const Text(
+                '3 synthetic moments with confirmed repeat and belief proof',
+              ),
+              value: _archiveMeDemoActive,
+              onChanged: _loading
+                  ? null
+                  : (enabled) {
+                      ArchiveMeDemoState.setDebugSessionEnabled(enabled);
+                      setState(() => _archiveMeDemoActive = enabled);
+                    },
+            ),
+            OutlinedButton(
+              key: const Key('debug_reset_archive_me_demo'),
+              onPressed: _loading
+                  ? null
+                  : () {
+                      ArchiveMeDemoState.resetDebugSession();
+                      setState(() => _archiveMeDemoActive = false);
+                    },
+              child: const Text('Reset demo archive'),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Beta activation loop',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Local counts for the first-three-entry loop. Debug builds only.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.muted,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            for (final entry in BetaActivationLoopCounts.fieldLabels.entries)
+              _row(
+                entry.value,
+                _loading
+                    ? '…'
+                    : '${_betaLoopCounts.valueForField(entry.key)}',
+              ),
+            _row(
+              'First confirmed-repeat feedback',
+              _loading ? '…' : _confirmedRepeatBetaFeedbackSummary,
+            ),
+            OutlinedButton(
+              key: const Key('debug_clear_beta_activation_loop'),
+              onPressed: _loading
+                  ? null
+                  : () async {
+                      await BetaActivationLoopTracker.clearCounts();
+                      BetaActivationLoopTracker.resetSessionForTest();
+                      await _refresh();
+                    },
+              child: const Text('Clear beta loop counts'),
+            ),
+          ],
           const SizedBox(height: 12),
           FilledButton(
             onPressed: _copySummary,

@@ -1,6 +1,7 @@
 import '../api/api_client.dart';
 import '../api/api_exceptions.dart';
 import '../config/app_config.dart';
+import '../config/archive_me_demo_state.dart';
 import '../config/creator_demo_mode.dart';
 import '../product/consumer_ui_copy.dart';
 import '../storage/journal_store.dart';
@@ -36,7 +37,7 @@ class SyncService {
   Future<SyncResult> syncNow() async {
     // Creator demo mode: nothing syncs — no backend call is ever made and
     // no demo content can reach an account.
-    if (CreatorDemoMode.isActive) {
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) {
       return const SyncResult(
         cloudSyncSucceeded: false,
         message: 'Your moments stay on this device.',

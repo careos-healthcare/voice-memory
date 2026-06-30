@@ -104,11 +104,11 @@ void main() {
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
       expect(
         RecordReturnProCopy.evidenceBody,
-        contains('No pattern yet'),
+        contains('first piece of evidence'),
       );
       expect(
         RecordReturnProCopy.evidenceSecondLine,
-        contains('second moment'),
+        contains('compare what repeats'),
       );
       expect(
         RecordReturnProCopy.evidenceThirdLine,
@@ -252,6 +252,7 @@ void main() {
           entryCount: 0,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -260,6 +261,7 @@ void main() {
           entryCount: 1,
           resolved: false,
           isPro: true,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -268,6 +270,7 @@ void main() {
           entryCount: 1,
           resolved: false,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );
@@ -276,6 +279,16 @@ void main() {
           entryCount: 2,
           resolved: false,
           isPro: false,
+          hasArchiveProof: false,
+        ),
+        isFalse,
+      );
+      expect(
+        RecordReturnProGates.showProBridge(
+          entryCount: 2,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: true,
         ),
         isTrue,
       );
@@ -321,8 +334,8 @@ void main() {
       await tester.pump();
 
       expect(find.text('Your archive has started.'), findsOneWidget);
-      expect(find.textContaining('No pattern yet'), findsOneWidget);
-      expect(find.textContaining('second moment'), findsOneWidget);
+      expect(find.textContaining('first piece of evidence'), findsOneWidget);
+      expect(find.textContaining('compare what repeats'), findsOneWidget);
       expect(
         eventsNamed(ActivationFunnelAnalytics.firstSaveEvidenceSeen),
         isNotEmpty,
@@ -517,6 +530,7 @@ void main() {
           entryCount: 1,
           resolved: loaded.proBridgeResolved,
           isPro: false,
+          hasArchiveProof: true,
         ),
         isFalse,
       );

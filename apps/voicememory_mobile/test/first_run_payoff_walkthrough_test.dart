@@ -133,15 +133,13 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.recordHeroBody), findsOneWidget);
-      expect(find.textContaining('repeating'), findsOneWidget);
+      expect(find.text(VisibleArchiveProofCopy.recordHeroTitle), findsNothing);
+      for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
+        expect(find.text(step), findsOneWidget);
+      }
       expect(find.text(RecordScreenFramingCopy.firstRunPrivacyTitle), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
-      _expectNoBannedCopy([
-        VisibleArchiveProofCopy.recordHeroTitle,
-        VisibleArchiveProofCopy.recordHeroBody,
-      ]);
+      _expectNoBannedCopy(VisibleArchiveProofCopy.firstRunPromiseSteps);
     });
 
     testWidgets('Type Instead path is available without microphone', (tester) async {
@@ -184,7 +182,7 @@ void main() {
 
       expect(find.text(VisibleArchiveProofCopy.firstSaveTitle), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstSaveSecondary), findsOneWidget);
-      expect(find.textContaining('second moment'), findsOneWidget);
+      expect(find.textContaining('compare what repeats'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
         VisibleArchiveProofCopy.firstSaveTitle,

@@ -31,6 +31,10 @@ abstract class VoiceCaptureCopy {
   static const String analysisUnavailableNote =
       'This moment is saved. ArchiveMe will compare it with future entries.';
 
+  /// First-save receipt on Record — progression toward moment two.
+  static const String firstSaveReceiptNote =
+      'This is the first piece of evidence. One more moment lets ArchiveMe compare what repeats.';
+
   /// Legacy alias — prefer [analysisUnavailableNote] for deferred analysis copy.
   static const String analysisDeferredFootnote = analysisUnavailableNote;
 

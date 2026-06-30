@@ -155,10 +155,12 @@ void main() {
       expect(find.textContaining('What brought you back'), findsNothing);
     });
 
-    testWidgets('shows a clear Save one moment path', (tester) async {
+    testWidgets('shows a clear Save one moment path without competing capture CTAs', (tester) async {
       await pumpEmptyRecord(tester);
       expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.text(DailyMirrorCopy.emptyPrimaryCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
     });
   });
 

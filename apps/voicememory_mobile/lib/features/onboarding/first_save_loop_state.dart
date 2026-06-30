@@ -38,10 +38,12 @@ abstract class FirstSaveLoopGates {
     required int entryCount,
     required bool resolved,
     required bool isPro,
+    required bool hasArchiveProof,
   }) => RecordReturnProGates.showProBridge(
     entryCount: entryCount,
     resolved: resolved,
     isPro: isPro,
+    hasArchiveProof: hasArchiveProof,
   );
 
   static bool showArchiveValue({required int entryCount}) =>
