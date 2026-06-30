@@ -121,6 +121,17 @@ class BillingService {
     return _memory!;
   }
 
+  /// Clears in-memory and on-disk entitlement cache after sign-out or account
+  /// switch so the next session cannot inherit the prior user's Pro state.
+  Future<void> resetCachedEntitlementsForAuthChange() async {
+    _memory = null;
+    try {
+      await _cache.clear();
+    } catch (e) {
+      debugPrint('Billing: entitlement cache clear skipped — $e');
+    }
+  }
+
   Future<void> _persistEntitlements(PremiumEntitlements ent) async {
     try {
       if (ent.isPro) {

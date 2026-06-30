@@ -109,11 +109,6 @@ class AppServices {
     s.recording = RecordingService();
     s.journal = JournalService(s.journalStore);
     s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
-    s.auth.onSignedIn = () => GuestFirstAuth(
-      s.prefs,
-      attest: s.attest,
-      sync: s.sync,
-    ).registerDeviceAfterSignIn();
     await s.auth.loadPersistedSession();
     await GuestFirstAuth(
       s.prefs,
@@ -153,6 +148,22 @@ class AppServices {
     s.archiveAgreement = ArchiveAgreementService.fromPrefs(s.prefs);
     s.sync = SyncService(s.api, s.journalStore, s.prefs);
     s.paywall = ValueMomentPaywallLogic(s.prefs);
+
+    Future<void> resetEntitlementsForAuthChange() async {
+      await s.billing.resetCachedEntitlementsForAuthChange();
+    }
+
+    s.auth.onSignedOut = resetEntitlementsForAuthChange;
+    s.auth.onSignedIn = () async {
+      await resetEntitlementsForAuthChange();
+      await s.billing.loadEntitlements(forceRefresh: true);
+      await GuestFirstAuth(
+        s.prefs,
+        attest: s.attest,
+        sync: s.sync,
+      ).registerDeviceAfterSignIn();
+    };
+
     _instance = s;
     _initialized = true;
   }

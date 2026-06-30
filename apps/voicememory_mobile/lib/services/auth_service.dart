@@ -15,6 +15,7 @@ class AuthService {
   final SessionCookieStore _cookies;
 
   Future<void> Function()? onSignedIn;
+  Future<void> Function()? onSignedOut;
 
   UserSession? _cached;
 
@@ -79,6 +80,7 @@ class AuthService {
     _cached = null;
     _api.setSessionCookie(null);
     await _cookies.clear();
+    await onSignedOut?.call();
     ActivationFunnelAnalytics.track(
       ActivationFunnelAnalytics.accountSignout,
       method: AccountAuth.method,
