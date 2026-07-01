@@ -38,6 +38,10 @@ import '../features/early_archive/positive_pattern_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
+import '../features/early_archive/daily_return_reason_analytics.dart';
+import '../features/early_archive/daily_return_reason_engine.dart';
+import '../features/early_archive/daily_return_reason_gates.dart';
+import '../features/early_archive/daily_return_reason_model.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/onboarding/record_return_pro_store.dart';
@@ -294,6 +298,7 @@ import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/positive_pattern_card.dart';
 import '../widgets/record/archive_summary_card.dart';
+import '../widgets/record/daily_return_reason_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
@@ -1157,6 +1162,34 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     context.go(
       EarlyFirstSignalRecordRoutes.routeWithPrompt(
         prompt: recordNext.guidedRecordPrompt,
+        autostart: true,
+      ),
+    );
+  }
+
+  void _handleDailyReturnReason(DailyReturnReasonResult reason) {
+    DailyReturnReasonAnalytics.recordTapped(
+      kind: reason.kind,
+      surface: 'patterns',
+      entryCount: _entries.length,
+    );
+    if (reason.needsTriggerCapture) {
+      ConfirmedRepeatTriggerCapture.armForNextSave();
+      context.go(
+        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+      );
+      return;
+    }
+    if (reason.needsResultCapture) {
+      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+      context.go(
+        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
+      );
+      return;
+    }
+    context.go(
+      EarlyFirstSignalRecordRoutes.routeWithPrompt(
+        prompt: reason.guidedRecordPrompt,
         autostart: true,
       ),
     );
@@ -3569,6 +3602,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
+      final dailyReturnReasonCandidate = DailyReturnReasonEngine.build(
+        entries: _entries,
+        changeProof: repeatReturnChangeProof,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
       final hasChangeOverTimeProof = repeatReturnChangeProof != null;
       final patternsPostProofArchiveProof =
           PaywallTimingGates.hasArchiveProofFromEntries(
@@ -3626,6 +3667,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
       final showArchiveSummary = proofSurfaceLayout.archiveSummaryVisible;
       final archiveSummary = showArchiveSummary ? archiveSummaryCandidate : null;
+      final showDailyReturnReason = DailyReturnReasonGates.shouldShow(
+        loaded: true,
+        entryCount: _entries.length,
+        isReady: true,
+        isRecording: false,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        hasReason: dailyReturnReasonCandidate != null,
+      );
+      final dailyReturnReason =
+          showDailyReturnReason ? dailyReturnReasonCandidate : null;
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -3726,6 +3777,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     onRecordNext: () => _handleArchiveSummaryRecordNext(
                       archiveSummary,
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (showDailyReturnReason && dailyReturnReason != null) ...[
+                  DailyReturnReasonCard(
+                    reason: dailyReturnReason,
+                    showRecordCta: true,
+                    onRecord: () => _handleDailyReturnReason(dailyReturnReason),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
