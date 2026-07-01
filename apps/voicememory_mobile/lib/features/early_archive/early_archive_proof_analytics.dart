@@ -40,6 +40,7 @@ abstract final class EarlyArchiveProofAnalytics {
   static const String firstWeekLoopSeenEvent = 'first_week_loop_seen';
   static const String firstWeekLoopRecordTappedEvent =
       'first_week_loop_record_tapped';
+  static const String returnCheckPayoffSeenEvent = 'return_check_payoff_seen';
 
   static bool _realTimelineSeenThisSession = false;
 
@@ -315,6 +316,24 @@ abstract final class EarlyArchiveProofAnalytics {
     );
   }
 
+  static void returnCheckPayoffSeen({
+    required int entryCount,
+    required String comparisonState,
+    required bool hasPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      returnCheckPayoffSeenEvent,
+      entryCount: entryCount,
+      source: 'record',
+      comparisonState: comparisonState,
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+      oncePerSession: true,
+      sessionStage: 'return_check_payoff',
+    );
+  }
+
   static void _track(
     String event, {
     int? entryCount,
@@ -324,6 +343,7 @@ abstract final class EarlyArchiveProofAnalytics {
     bool? hasRealTimeline,
     bool? hasPhrase,
     bool? hasConfirmedRepeat,
+    String? comparisonState,
     String? relationState,
     int? phraseCount,
     bool? hasStrongEvidence,
@@ -339,6 +359,7 @@ abstract final class EarlyArchiveProofAnalytics {
       hasRealTimeline: hasRealTimeline,
       hasPhrase: hasPhrase,
       hasConfirmedRepeat: hasConfirmedRepeat,
+      comparisonState: comparisonState,
       relationState: relationState,
       phraseCount: phraseCount,
       hasStrongEvidence: hasStrongEvidence,

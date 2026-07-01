@@ -16,6 +16,8 @@ import 'package:voicememory_mobile/features/early_archive/first_proof_moment_cop
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/return_check_payoff_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
@@ -395,6 +397,37 @@ void main() {
         ArchiveProofCopyDedup.countPhrase(
           blocks.join('\n'),
           FirstWeekLoopCopy.title,
+        ),
+        1,
+      );
+    });
+
+    test('return check payoff stays distinct from archive summary copy', () {
+      final payoff = ReturnCheckPayoffEngine.build(
+        entries: _threeRelatedRepeatEntries()
+          ..add(
+            _entry(
+              id: 'e4',
+              transcript:
+                  'I said yes again even though I had no capacity for one more ask today.',
+              createdAt: DateTime(2026, 6, 13, 12),
+            ),
+          ),
+        returnChecks: const [],
+      );
+      expect(payoff, isNotNull);
+
+      final blocks = [
+        payoff!.title,
+        payoff.body,
+        payoff.footer,
+        payoff.evidenceLabel,
+      ];
+      expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          blocks.join('\n'),
+          ReturnCheckPayoffCopy.unknownTitle,
         ),
         1,
       );

@@ -176,6 +176,7 @@ import '../widgets/record/early_repeat_progress_card.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
+import '../widgets/record/return_check_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
@@ -199,6 +200,8 @@ import '../features/early_archive/first_proof_moment_engine.dart';
 import '../features/early_archive/first_proof_moment_gates.dart';
 import '../features/early_archive/first_week_loop_engine.dart';
 import '../features/early_archive/first_week_loop_gates.dart';
+import '../features/early_archive/return_check_payoff_engine.dart';
+import '../features/early_archive/return_check_payoff_gates.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
@@ -4003,8 +4006,25 @@ class _RecordScreenState extends State<RecordScreen> {
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       moment: firstProofMomentCandidate,
     );
+    final returnCheckPayoffCandidate = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? ReturnCheckPayoffEngine.build(
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+          )
+        : null;
+    final showReturnCheckPayoff = ReturnCheckPayoffGates.shouldShow(
+      isPostSaveDone: ui == RecordUiState.done,
+      entryCount: postSaveEntryCount,
+      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      showFirstProofMoment: showFirstProofMoment,
+      payoff: returnCheckPayoffCandidate,
+    );
     final showArchiveSummaryOnRecord =
-        recordProofStack.showArchiveSummary && !showFirstProofMoment;
+        recordProofStack.showArchiveSummary &&
+            !showFirstProofMoment &&
+            !showReturnCheckPayoff;
     final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
         ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
         : null;
@@ -5272,7 +5292,8 @@ class _RecordScreenState extends State<RecordScreen> {
                               ),
                             ),
                           ],
-                          if (repeatReturnCheckOffer != null) ...[
+                          if (repeatReturnCheckOffer != null &&
+                              !showReturnCheckPayoff) ...[
                             const SizedBox(height: 12),
                             RepeatReturnCheckCard(
                               entryId: repeatReturnCheckOffer.entryId,
@@ -5325,7 +5346,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         if (postSaveArchiveHierarchy?.showBeliefUpdateCard ==
                                 true &&
                             beliefUpdatePayoff != null &&
-                            !showFirstProofMoment) ...[
+                            !showFirstProofMoment &&
+                            !showReturnCheckPayoff) ...[
                           const SizedBox(height: 16),
                           BeliefUpdatePayoffCard(
                             payoff: beliefUpdatePayoff,
@@ -5338,7 +5360,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         if (postSaveArchiveHierarchy != null &&
                             !suppressNoisyFirstSaveCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
-                            !showFirstProofMoment) ...[
+                            !showFirstProofMoment &&
+                            !showReturnCheckPayoff) ...[
                           const SizedBox(height: 16),
                           PostSaveFocusedActionsBar(
                             onViewEvidence: () =>
@@ -5761,7 +5784,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             !suppressNoisyFirstSaveCards &&
                             !suppressEarlyPatternClaimCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
-                            !showFirstProofMoment) ...[
+                            !showFirstProofMoment &&
+                            !showReturnCheckPayoff) ...[
                           if (_secondSessionComparison?.hasEnoughData == true &&
                               secondSessionPayoff == null) ...[
                             const SizedBox(height: 12),
@@ -6020,6 +6044,14 @@ class _RecordScreenState extends State<RecordScreen> {
                         firstProofMomentCandidate != null) ...[
                       FirstProofMomentCard(
                         moment: firstProofMomentCandidate,
+                        entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (showReturnCheckPayoff &&
+                        returnCheckPayoffCandidate != null) ...[
+                      ReturnCheckPayoffCard(
+                        payoff: returnCheckPayoffCandidate,
                         entryCount: postSaveEntryCount,
                       ),
                       const SizedBox(height: 16),
