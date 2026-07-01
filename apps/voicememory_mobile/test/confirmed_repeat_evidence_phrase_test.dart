@@ -296,6 +296,55 @@ void main() {
         _expectNoDiagnosticLanguage(phrase);
       }
     });
+
+    test('singleEntryConcretePhrase returns short grounded phrase', () {
+      final entry = _entry(
+        id: 'e1',
+        transcript:
+            'I had no capacity but I said yes again to the extra meeting today.',
+      );
+      final phrase =
+          ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(entry);
+
+      expect(phrase, isNotNull);
+      expect(entry.transcript.toLowerCase(), contains(phrase!.toLowerCase()));
+      expect(phrase.split(RegExp(r'\s+')).length, lessThanOrEqualTo(6));
+      expect(
+        ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(phrase),
+        isFalse,
+      );
+    });
+
+    test('singleEntryConcretePhrase skips abstract-only moments', () {
+      final phrase = ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
+        _entry(
+          id: 'e1',
+          transcript: 'A quiet moment about lunch with a friend today.',
+        ),
+      );
+
+      expect(phrase, isNull);
+    });
+
+    test('sharedConcretePhrase returns repeat phrase for two related entries', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          id: 'e2',
+          transcript:
+              'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+      ];
+      final phrase =
+          ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+
+      expect(phrase, isNotNull);
+      expect(phrase!.toLowerCase(), contains('said yes'));
+    });
   });
 
   group('EarlyFirstSignalEngine confirmed repeat copy', () {

@@ -127,6 +127,72 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     );
   }
 
+  /// First concrete phrase from one moment — for next-moment guidance at entry 1.
+  static String? singleEntryConcretePhrase(JournalEntry entry) {
+    final text = _entryText(entry);
+    if (text.isEmpty) return null;
+
+    final lower = text.toLowerCase();
+    String? bestPattern;
+    var bestPatternScore = -1;
+    for (final pattern in _concreteActionPatterns) {
+      if (!lower.contains(pattern)) continue;
+      final display = _displayFromEntries([text], pattern);
+      if (display == null) continue;
+      if (!_isConcretePhrase(display) || _isAbstractOnlyPhrase(display)) continue;
+      if (usesUngroundedGenericLabel(label: display, entries: [entry])) {
+        continue;
+      }
+      final score = _phraseScore(display);
+      if (score > bestPatternScore) {
+        bestPatternScore = score;
+        bestPattern = display;
+      }
+    }
+    if (bestPattern != null) return bestPattern;
+
+    final candidates = <String, int>{};
+    for (final phrase in _phrasesIn(text)) {
+      if (_isWeakPhrase(phrase)) continue;
+      if (!_isConcretePhrase(phrase)) continue;
+      if (_isAbstractOnlyPhrase(phrase)) continue;
+      if (ArchiveRepeatPhraseSanitizer.isLowQuality(phrase)) continue;
+      final display = _displayFromEntries([text], phrase);
+      if (display == null) continue;
+      if (usesUngroundedGenericLabel(label: display, entries: [entry])) {
+        continue;
+      }
+      final key = display.toLowerCase();
+      final score = _phraseScore(display);
+      final existing = candidates[key];
+      if (existing == null || score > existing) {
+        candidates[key] = score;
+      }
+    }
+    if (candidates.isEmpty) return null;
+
+    final ranked = candidates.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    for (final entry in ranked) {
+      final display = _displayFromEntries([text], entry.key);
+      if (display != null) return display;
+    }
+    return null;
+  }
+
+  /// Shared concrete phrase across two moments — for next-moment guidance at entry 2.
+  static String? sharedConcretePhrase(List<JournalEntry> entries) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.length < 2) return null;
+
+    for (final phrase in extract(eligible).phrases) {
+      if (!_isConcretePhrase(phrase) || _isAbstractOnlyPhrase(phrase)) continue;
+      if (usesUngroundedGenericLabel(label: phrase, entries: eligible)) continue;
+      return phrase;
+    }
+    return null;
+  }
+
   /// True when a label uses generic psychology language not present in entries.
   static bool usesUngroundedGenericLabel({
     required String label,

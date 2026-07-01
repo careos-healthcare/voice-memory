@@ -1036,7 +1036,14 @@ void main() {
         findsNothing,
       );
       expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
+      expect(
+        find.byKey(const Key('early_repeat_progress_next_moment_cue_label')),
+        findsOneWidget,
+      );
+      expect(find.text(EarlyRepeatProgressCopy.oneMomentCueLabel), findsOneWidget);
+      expect(find.text(EarlyRepeatProgressCopy.oneMomentCueFooter), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
     });
 
     testWidgets('post-save done state hides returning-user Today card', (
@@ -1102,6 +1109,8 @@ void main() {
         find.text(EarlyRepeatProgressCopy.twoRelatedProgress),
         findsOneWidget,
       );
+      expect(find.text(EarlyRepeatProgressCopy.twoRelatedCueLabel), findsOneWidget);
+      expect(find.text(EarlyRepeatProgressCopy.twoRelatedCueFooter), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
@@ -1141,6 +1150,8 @@ void main() {
         find.text(EarlyRepeatProgressCopy.twoRelatedProgress),
         findsNothing,
       );
+      expect(find.text(EarlyRepeatProgressCopy.twoUnrelatedCueLabel), findsOneWidget);
+      expect(find.text(EarlyRepeatProgressCopy.twoUnrelatedCueFooter), findsOneWidget);
     });
 
     testWidgets('three confirmed-repeat entries hide early progress card', (

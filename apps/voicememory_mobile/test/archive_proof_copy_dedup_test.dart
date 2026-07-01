@@ -9,6 +9,8 @@ import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
@@ -251,6 +253,55 @@ void main() {
       expect(
         blocks.where((block) => block == PositivePatternCopy.title),
         hasLength(1),
+      );
+    });
+
+    test('early repeat progress cue does not duplicate progress card copy', () {
+      final progress = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+          _entry(
+            id: 'e2',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        ],
+      );
+      expect(progress, isNotNull);
+
+      expect(progress!.nextMomentCue.body, isNot(equals(progress.title)));
+      expect(progress.nextMomentCue.body, isNot(equals(progress.progressLabel)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          [
+            progress.title,
+            progress.body,
+            progress.progressLabel,
+            progress.nextMomentCue.label,
+            progress.nextMomentCue.body,
+            progress.nextMomentCue.footer,
+          ].join('\n'),
+          EarlyRepeatProgressCopy.twoRelatedTitle,
+        ),
+        1,
+      );
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          [
+            progress.title,
+            progress.body,
+            progress.progressLabel,
+            progress.nextMomentCue.label,
+            progress.nextMomentCue.body,
+            progress.nextMomentCue.footer,
+          ].join('\n'),
+          EarlyRepeatProgressCopy.twoRelatedProgress,
+        ),
+        1,
       );
     });
   });
