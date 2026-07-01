@@ -177,6 +177,7 @@ import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/positive_pattern_card.dart';
 import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/daily_return_reason_card.dart';
+import '../widgets/record/weekly_archive_review_card.dart' as week_review;
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
@@ -213,6 +214,10 @@ import '../features/early_archive/daily_return_reason_analytics.dart';
 import '../features/early_archive/daily_return_reason_engine.dart';
 import '../features/early_archive/daily_return_reason_gates.dart';
 import '../features/early_archive/daily_return_reason_model.dart';
+import '../features/early_archive/weekly_archive_review_analytics.dart';
+import '../features/early_archive/weekly_archive_review_engine.dart';
+import '../features/early_archive/weekly_archive_review_gates.dart';
+import '../features/early_archive/weekly_archive_review_model.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/record/record_empty_archive_gates.dart';
 import '../features/return_ritual/return_ritual_gates.dart';
@@ -1617,6 +1622,18 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     setState(() => _selectedPromptLine = reason.guidedRecordPrompt);
     unawaited(_onRecordPressed(source: 'daily_return_reason'));
+  }
+
+  void _handleWeeklyArchiveWeekReview(WeeklyArchiveWeekReviewResult review) {
+    WeeklyArchiveWeekReviewAnalytics.recordTapped(
+      surface: 'record',
+      entryCount: _journalEntryCount,
+      hasRepeat: review.hasRepeat,
+      hasChange: review.hasChange,
+      hasPositivePattern: review.hasPositivePattern,
+    );
+    setState(() => _selectedPromptLine = review.guidedRecordPrompt);
+    unawaited(_onRecordPressed(source: 'weekly_archive_review'));
   }
 
   /// Resolves the commercial-loop Pro bridge once.
@@ -3699,6 +3716,27 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     final dailyReturnReason =
         showDailyReturnReason ? dailyReturnReasonCandidate : null;
+    final weeklyArchiveWeekReview = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? WeeklyArchiveWeekReviewEngine.build(
+            entries: _journalEntries,
+            confirmedRepeat: earlyFirstSignalOnRecord,
+            changeProof: repeatReturnChangeProof,
+            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+            returnChecks: RepeatReturnCheckStore.cached,
+            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+          )
+        : null;
+    final showWeeklyArchiveWeekReview = WeeklyArchiveWeekReviewGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      entries: _journalEntries,
+      returnChecks: RepeatReturnCheckStore.cached,
+    );
     final showConfirmedRepeatWhyMatters =
         proofSurfaceLayout.effectiveWhyMattersVisible;
     final showConfirmedRepeatThoughtMap =
@@ -3854,6 +3892,13 @@ class _RecordScreenState extends State<RecordScreen> {
         );
     final showDailyReturnReasonRecordCta = showDailyReturnReason &&
         DailyReturnReasonGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
+          promoteMicCaptureActions:
+              _shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showWeeklyArchiveWeekReviewRecordCta = showWeeklyArchiveWeekReview &&
+        WeeklyArchiveWeekReviewGates.showRecordCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
           promoteMicCaptureActions:
@@ -4117,6 +4162,17 @@ class _RecordScreenState extends State<RecordScreen> {
                         showRecordCta: showDailyReturnReasonRecordCta,
                         onRecord: () => _handleDailyReturnReason(
                           dailyReturnReason,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showWeeklyArchiveWeekReview &&
+                        weeklyArchiveWeekReview != null) ...[
+                      week_review.WeeklyArchiveWeekReviewCard(
+                        review: weeklyArchiveWeekReview,
+                        showRecordCta: showWeeklyArchiveWeekReviewRecordCta,
+                        onRecord: () => _handleWeeklyArchiveWeekReview(
+                          weeklyArchiveWeekReview,
                         ),
                       ),
                       const SizedBox(height: 12),
