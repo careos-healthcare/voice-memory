@@ -2,8 +2,8 @@ import '../archive_evidence/archive_belief_thread_copy.dart';
 import '../early_archive/early_evidence_timeline_copy.dart';
 import '../early_archive/early_first_signal_copy.dart';
 import '../early_archive/early_first_signal_engine.dart';
+import '../repeat_return_check/pattern_changed_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
-import '../repeat_return_check/repeat_return_check_copy.dart';
 import 'archive_proof_surface_layout.dart';
 import 'archive_summary_copy.dart';
 import 'confirmed_repeat_thought_map_copy.dart';
@@ -21,12 +21,14 @@ abstract final class ArchiveProofSurfaceCopy {
     EarlyFirstSignalModel? confirmedRepeat,
     EarlyEvidenceTimeline? timeline,
     RepeatReturnCheckChangeProof? changeProof,
+    PatternChangedResult? patternChanged,
   }) =>
       _stack(
         layout: layout,
         confirmedRepeat: confirmedRepeat,
         timeline: timeline,
         changeProof: changeProof,
+        patternChanged: patternChanged,
       );
 
   static List<String> patternsStack({
@@ -34,12 +36,14 @@ abstract final class ArchiveProofSurfaceCopy {
     EarlyFirstSignalModel? confirmedRepeat,
     EarlyEvidenceTimeline? timeline,
     RepeatReturnCheckChangeProof? changeProof,
+    PatternChangedResult? patternChanged,
   }) =>
       _stack(
         layout: layout,
         confirmedRepeat: confirmedRepeat,
         timeline: timeline,
         changeProof: changeProof,
+        patternChanged: patternChanged,
       );
 
   static List<String> _stack({
@@ -47,6 +51,7 @@ abstract final class ArchiveProofSurfaceCopy {
     EarlyFirstSignalModel? confirmedRepeat,
     EarlyEvidenceTimeline? timeline,
     RepeatReturnCheckChangeProof? changeProof,
+    PatternChangedResult? patternChanged,
   }) {
     final blocks = <String>[];
 
@@ -86,7 +91,10 @@ abstract final class ArchiveProofSurfaceCopy {
       }
     }
 
-    if (layout.changeProofVisible && changeProof != null) {
+    if (layout.effectivePatternChangedVisible && patternChanged != null) {
+      blocks.add(patternChanged.title);
+      blocks.add(patternChanged.body);
+    } else if (layout.changeProofVisible && changeProof != null) {
       if (!layout.archiveSummaryVisible) {
         blocks.add(changeProof.title);
         blocks.add(changeProof.body);

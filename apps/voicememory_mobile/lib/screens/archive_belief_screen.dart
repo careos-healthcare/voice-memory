@@ -155,6 +155,10 @@ import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../features/repeat_return_check/pattern_changed_analytics.dart';
+import '../features/repeat_return_check/pattern_changed_engine.dart';
+import '../features/repeat_return_check/pattern_changed_gates.dart';
+import '../features/repeat_return_check/pattern_changed_store.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 import '../widgets/pro_value_preview_card.dart';
 import '../features/pro/pro_value_preview_dismiss_store.dart';
@@ -310,6 +314,7 @@ import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
+import '../widgets/record/pattern_changed_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
@@ -607,6 +612,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ConfirmedRepeatWhyMattersStore.ensureLoaded();
     await ConfirmedRepeatThoughtMapStore.ensureLoaded();
     await RepeatReturnCheckStore.ensureLoaded();
+    await PatternChangedStore.ensureLoaded();
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
     await CapacityDecisionOutcomeStore.ensureLoaded();
@@ -1233,6 +1239,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         autostart: true,
       ),
     );
+  }
+
+  void _handlePatternChangedRecord(PatternChangedResult result) {
+    PatternChangedAnalytics.recordTapped(
+      surface: 'patterns',
+      entryCount: _entries.length,
+      changeType: result.type,
+    );
+    _goToRecord();
   }
 
   Future<void> _shareArchiveProofSafely() async {
@@ -3612,6 +3627,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         isPostSave: false,
         records: RepeatReturnCheckStore.cached,
       );
+      final patternChangedCandidate = PatternChangedEngine.build(
+        changeProof: repeatReturnChangeProof,
+        records: RepeatReturnCheckStore.cached,
+      );
+      final patternChangedDismissed = patternChangedCandidate != null &&
+          PatternChangedStore.isDismissed(
+            entryId: patternChangedCandidate.entryId,
+            type: patternChangedCandidate.type,
+          );
       final confirmedRepeatThoughtMap = ConfirmedRepeatThoughtMapEngine.build(
         entries: _entries,
         triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
@@ -3711,6 +3735,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           hasPositivePattern: positiveReinforcement != null,
         ),
         positivePatternVisible: false,
+        patternChangedVisible: PatternChangedGates.shouldShow(
+          loaded: true,
+          entryCount: _entries.length,
+          isReady: true,
+          isRecording: false,
+          isPostSave: false,
+          viewingConfirmedRepeat: viewingConfirmedRepeatOnPatterns,
+          patternChanged: patternChangedCandidate,
+          dismissed: patternChangedDismissed,
+        ),
         archiveSummaryVisible: ArchiveSummaryGates.shouldShow(
           loaded: true,
           entryCount: _entries.length,
@@ -3774,6 +3808,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           proofSurfaceLayout.effectiveThoughtMapVisible;
       final showPositiveReinforcement =
           proofSurfaceLayout.effectivePositiveReinforcementVisible;
+      final showPatternChanged =
+          proofSurfaceLayout.effectivePatternChangedVisible;
       final showThoughtMapRecordCta = showConfirmedRepeatThoughtMap &&
           confirmedRepeatThoughtMap?.firstMissingSection != null;
       final suppressConfirmedRepeatInlineFeedback =
@@ -3919,7 +3955,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (proofSurfaceLayout.effectiveChangeProofVisible &&
+                if (showPatternChanged && patternChangedCandidate != null) ...[
+                  PatternChangedCard(
+                    result: patternChangedCandidate,
+                    entryCount: _entries.length,
+                    surface: 'patterns',
+                    onRecord: () => _handlePatternChangedRecord(
+                      patternChangedCandidate,
+                    ),
+                    onDismissed: () => setState(() {}),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ] else if (proofSurfaceLayout.effectiveChangeProofVisible &&
                     repeatReturnChangeProof != null) ...[
                   RepeatReturnCheckChangeProofCard(
                     proof: repeatReturnChangeProof,

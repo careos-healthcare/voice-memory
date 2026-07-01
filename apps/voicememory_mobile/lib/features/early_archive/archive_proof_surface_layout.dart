@@ -9,6 +9,7 @@ class ArchiveProofSurfaceLayout {
     this.thoughtMapVisible = false,
     this.positivePatternVisible = false,
     this.positiveReinforcementVisible = false,
+    this.patternChangedVisible = false,
     this.archiveSummaryVisible = false,
   });
 
@@ -20,6 +21,7 @@ class ArchiveProofSurfaceLayout {
   final bool thoughtMapVisible;
   final bool positivePatternVisible;
   final bool positiveReinforcementVisible;
+  final bool patternChangedVisible;
   final bool archiveSummaryVisible;
 
   /// Supporting cards fold into Archive Summary when it is visible.
@@ -38,7 +40,12 @@ class ArchiveProofSurfaceLayout {
       !positiveReinforcementVisible;
 
   bool get effectiveChangeProofVisible =>
-      changeProofVisible && !archiveSummaryVisible;
+      changeProofVisible &&
+      !archiveSummaryVisible &&
+      !patternChangedVisible;
+
+  bool get effectivePatternChangedVisible =>
+      patternChangedVisible && !archiveSummaryVisible;
 
   /// Timeline uses shorter nearby copy when confirmed repeat context is active.
   bool get timelineNearby =>
@@ -48,7 +55,7 @@ class ArchiveProofSurfaceLayout {
   bool get suppressTimelineEvidencePhrases => confirmedRepeatCardVisible;
 
   /// Pro bridge shortens when change-over-time proof is already visible.
-  bool get proBridgeCompact => changeProofVisible;
+  bool get proBridgeCompact => changeProofVisible || patternChangedVisible;
 }
 
 /// Counts repeated proof phrases across visible copy blocks (tests + guards).

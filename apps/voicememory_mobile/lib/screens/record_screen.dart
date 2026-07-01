@@ -386,10 +386,15 @@ import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../features/repeat_return_check/pattern_changed_analytics.dart';
+import '../features/repeat_return_check/pattern_changed_engine.dart';
+import '../features/repeat_return_check/pattern_changed_gates.dart';
+import '../features/repeat_return_check/pattern_changed_store.dart';
 import '../widgets/beta/archive_beta_mission_card.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 import '../widgets/record/repeat_return_check_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
+import '../widgets/record/pattern_changed_card.dart';
 import '../widgets/record/daily_archive_exercise_record_card.dart';
 import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
@@ -629,6 +634,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       RepeatReturnCheckStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      PatternChangedStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -1602,6 +1612,15 @@ class _RecordScreenState extends State<RecordScreen> {
       () => _selectedPromptLine = reinforcement.guidedRecordPrompt,
     );
     unawaited(_onRecordPressed(source: 'positive_reinforcement'));
+  }
+
+  void _handlePatternChangedRecord(PatternChangedResult result) {
+    PatternChangedAnalytics.recordTapped(
+      surface: 'record',
+      entryCount: _journalEntryCount,
+      changeType: result.type,
+    );
+    unawaited(_onRecordPressed(source: 'pattern_changed'));
   }
 
   void _handleArchiveSummaryRecordNext(ArchiveSummaryResult summary) {
@@ -3612,6 +3631,19 @@ class _RecordScreenState extends State<RecordScreen> {
             records: RepeatReturnCheckStore.cached,
           )
         : null;
+    final patternChangedCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? PatternChangedEngine.build(
+            changeProof: repeatReturnChangeProof,
+            records: RepeatReturnCheckStore.cached,
+          )
+        : null;
+    final patternChangedDismissed = patternChangedCandidate != null &&
+        PatternChangedStore.isDismissed(
+          entryId: patternChangedCandidate.entryId,
+          type: patternChangedCandidate.type,
+        );
     final confirmedRepeatThoughtMap = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
@@ -3736,6 +3768,16 @@ class _RecordScreenState extends State<RecordScreen> {
         hasPositivePattern: positiveReinforcement != null,
       ),
       positivePatternVisible: false,
+      patternChangedVisible: PatternChangedGates.shouldShow(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+        isReady: ui == RecordUiState.ready,
+        isRecording: ui == RecordUiState.recording,
+        isPostSave: _isPostSaveSurface,
+        viewingConfirmedRepeat: viewingConfirmedRepeatOnRecord,
+        patternChanged: patternChangedCandidate,
+        dismissed: patternChangedDismissed,
+      ),
       archiveSummaryVisible: ArchiveSummaryGates.shouldShow(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
@@ -3807,6 +3849,8 @@ class _RecordScreenState extends State<RecordScreen> {
         proofSurfaceLayout.effectiveThoughtMapVisible;
     final showPositiveReinforcement =
         proofSurfaceLayout.effectivePositiveReinforcementVisible;
+    final showPatternChanged =
+        proofSurfaceLayout.effectivePatternChangedVisible;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3949,6 +3993,14 @@ class _RecordScreenState extends State<RecordScreen> {
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
           isCompletion: positiveReinforcement.isCompletion,
+        );
+    final showPatternChangedRecordCta = showPatternChanged &&
+        patternChangedCandidate != null &&
+        PatternChangedGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
+          promoteMicCaptureActions:
+              _shouldPromoteMicCaptureActions(readyCapturePolicy),
         );
     final showArchiveSummaryRecordCta = showArchiveSummary &&
         ArchiveSummaryGates.showRecordNextCta(
@@ -4273,7 +4325,19 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (proofSurfaceLayout.effectiveChangeProofVisible &&
+                    if (showPatternChanged && patternChangedCandidate != null) ...[
+                      PatternChangedCard(
+                        result: patternChangedCandidate,
+                        entryCount: _journalEntryCount,
+                        surface: 'record',
+                        showRecordCta: showPatternChangedRecordCta,
+                        onRecord: () => _handlePatternChangedRecord(
+                          patternChangedCandidate,
+                        ),
+                        onDismissed: () => setState(() {}),
+                      ),
+                      const SizedBox(height: 12),
+                    ] else if (proofSurfaceLayout.effectiveChangeProofVisible &&
                         repeatReturnChangeProof != null) ...[
                       RepeatReturnCheckChangeProofCard(
                         proof: repeatReturnChangeProof,
