@@ -207,6 +207,8 @@ import '../features/early_archive/positive_pattern_engine.dart';
 import '../features/early_archive/positive_reinforcement_analytics.dart';
 import '../features/early_archive/positive_reinforcement_engine.dart';
 import '../features/early_archive/positive_reinforcement_gates.dart';
+import '../features/early_archive/private_archive_report_engine.dart';
+import '../features/early_archive/private_archive_report_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
@@ -395,6 +397,7 @@ import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 import '../widgets/record/repeat_return_check_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
 import '../widgets/record/pattern_changed_card.dart';
+import '../widgets/record/private_archive_report_card.dart';
 import '../widgets/record/daily_archive_exercise_record_card.dart';
 import '../features/activation/returning_user_today.dart';
 import '../widgets/record/returning_user_today_card.dart';
@@ -3843,6 +3846,28 @@ class _RecordScreenState extends State<RecordScreen> {
       entries: _journalEntries,
       returnChecks: RepeatReturnCheckStore.cached,
     );
+    final privateArchiveReportCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? PrivateArchiveReportEngine.build(
+            entries: _journalEntries,
+            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+            returnChecks: RepeatReturnCheckStore.cached,
+            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+            isRecording: ui == RecordUiState.recording,
+            isPostSave: _isPostSaveSurface,
+          )
+        : null;
+    final showPrivateArchiveReport = PrivateArchiveReportGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+      report: privateArchiveReportCandidate,
+    );
     final showConfirmedRepeatWhyMatters =
         proofSurfaceLayout.effectiveWhyMattersVisible;
     final showConfirmedRepeatThoughtMap =
@@ -4294,6 +4319,16 @@ class _RecordScreenState extends State<RecordScreen> {
                         onRecord: () => _handleWeeklyArchiveWeekReview(
                           weeklyArchiveWeekReview,
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showPrivateArchiveReport &&
+                        privateArchiveReportCandidate != null) ...[
+                      PrivateArchiveReportCard(
+                        report: privateArchiveReportCandidate,
+                        entryCount: _journalEntryCount,
+                        surface: 'record',
+                        isPro: _recordReturnProIsPro,
                       ),
                       const SizedBox(height: 12),
                     ],

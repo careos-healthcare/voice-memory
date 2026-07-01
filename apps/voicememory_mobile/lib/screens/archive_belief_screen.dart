@@ -35,6 +35,8 @@ import '../features/early_archive/positive_pattern_engine.dart';
 import '../features/early_archive/positive_reinforcement_analytics.dart';
 import '../features/early_archive/positive_reinforcement_engine.dart';
 import '../features/early_archive/positive_reinforcement_gates.dart';
+import '../features/early_archive/private_archive_report_engine.dart';
+import '../features/early_archive/private_archive_report_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
@@ -315,6 +317,7 @@ import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
 import '../widgets/record/pattern_changed_card.dart';
+import '../widgets/record/private_archive_report_card.dart';
 import '../widgets/record/second_session_payoff_card.dart';
 import '../widgets/record/third_entry_belief_payoff_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
@@ -3802,6 +3805,22 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         returnChecks: RepeatReturnCheckStore.cached,
       );
+      final privateArchiveReportCandidate = PrivateArchiveReportEngine.build(
+        entries: _entries,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final showPrivateArchiveReport = PrivateArchiveReportGates.shouldShow(
+        loaded: true,
+        entryCount: _entries.length,
+        isReady: true,
+        isRecording: false,
+        isPostSave: false,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        report: privateArchiveReportCandidate,
+      );
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -3924,6 +3943,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     onRecord: () => _handleWeeklyArchiveWeekReview(
                       weeklyArchiveWeekReview,
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (showPrivateArchiveReport &&
+                    privateArchiveReportCandidate != null) ...[
+                  PrivateArchiveReportCard(
+                    report: privateArchiveReportCandidate,
+                    entryCount: _entries.length,
+                    surface: 'patterns',
+                    isPro: _archiveIsPro,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
