@@ -3894,7 +3894,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (viewingConfirmedRepeatOnPatterns) ...[
+                if (viewingConfirmedRepeatOnPatterns &&
+                    _entries.length >=
+                        ConfirmedRepeatBetaFeedbackGates.minEntryCount) ...[
                   ConfirmedRepeatBetaFeedbackCard(
                     entryCount: _entries.length,
                     surface: 'patterns',

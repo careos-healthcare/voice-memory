@@ -3595,6 +3595,7 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     final showConfirmedRepeatBetaFeedback = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
+        _journalEntryCount >= ConfirmedRepeatBetaFeedbackGates.minEntryCount &&
         viewingConfirmedRepeatOnRecord;
     final repeatReturnChangeProof = ui == RecordUiState.ready &&
             _journalEntryCountReady &&

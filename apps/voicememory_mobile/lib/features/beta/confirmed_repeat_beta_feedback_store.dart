@@ -4,12 +4,11 @@ import '../../services/app_services.dart';
 import '../../storage/mobile_prefs_store.dart';
 import 'confirmed_repeat_beta_feedback_models.dart';
 
-/// Local-only first confirmed-repeat beta feedback — never uploads journal text.
+/// Local-only confirmed-repeat beta feedback — never uploads journal text.
 class ConfirmedRepeatBetaFeedbackStore {
   ConfirmedRepeatBetaFeedbackStore(this._prefs);
 
   static const _prefsKey = 'confirmedRepeatBetaFeedback_v1';
-  static const maxNoteLength = 240;
 
   final MobilePrefsStore _prefs;
 
@@ -33,10 +32,7 @@ class ConfirmedRepeatBetaFeedbackStore {
   }
 
   Future<void> save(ConfirmedRepeatBetaFeedbackState state) async {
-    final next = state.copyWith(
-      note: _trimNote(state.note),
-      updatedAt: DateTime.now().toUtc(),
-    );
+    final next = state.copyWith(updatedAt: DateTime.now().toUtc());
     await _prefs.writeMap(_prefsKey, next.toJson());
     _cached = next;
     _loaded = true;
@@ -49,23 +45,17 @@ class ConfirmedRepeatBetaFeedbackStore {
 
   Future<void> saveResponse({
     required ConfirmedRepeatBetaFeedbackChoice choice,
-    String? note,
+    ConfirmedRepeatBetaFeedbackReason? reason,
   }) async {
     final current = await load();
     await save(
       current.copyWith(
         choice: choice,
-        note: _trimNote(note),
+        reason: reason,
+        clearNote: true,
         dismissed: false,
       ),
     );
-  }
-
-  static String? _trimNote(String? note) {
-    final trimmed = note?.trim();
-    if (trimmed == null || trimmed.isEmpty) return null;
-    if (trimmed.length <= maxNoteLength) return trimmed;
-    return trimmed.substring(0, maxNoteLength);
   }
 
   @visibleForTesting

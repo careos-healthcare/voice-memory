@@ -1,53 +1,68 @@
-import '../../services/activation_funnel_analytics.dart';
+import 'package:flutter/foundation.dart';
+
 import 'confirmed_repeat_beta_feedback_models.dart';
 
-/// Safe analytics for first confirmed-repeat beta feedback — metadata only.
+/// Safe analytics for confirmed-repeat beta feedback — metadata only.
 abstract final class ConfirmedRepeatBetaFeedbackAnalytics {
   ConfirmedRepeatBetaFeedbackAnalytics._();
 
-  static const String choiceEvent = 'confirmed_repeat_beta_feedback';
-  static const String dismissedEvent = 'confirmed_repeat_beta_feedback_dismissed';
-  static const String noteSavedEvent = 'confirmed_repeat_beta_feedback_note_saved';
+  static const answerEvent = 'confirmed_repeat_beta_feedback';
+  static const dismissedEvent = 'confirmed_repeat_beta_feedback_dismissed';
 
-  static void recordChoice({
-    required ConfirmedRepeatBetaFeedbackChoice choice,
-    required int entryCount,
+  @visibleForTesting
+  static void Function(String event, Map<String, Object> properties)?
+      captureForTest;
+
+  static void recordAnswer({
     required String surface,
+    required int entryCount,
+    required ConfirmedRepeatBetaFeedbackChoice answer,
+    ConfirmedRepeatBetaFeedbackReason? reason,
   }) {
-    ActivationFunnelAnalytics.track(
-      choiceEvent,
+    _emit(
+      answerEvent,
+      surface: surface,
       entryCount: entryCount,
-      source: surface,
-      stage: 'confirmed_repeat',
-      reason: choice.analyticsReason,
+      answer: answer.analyticsAnswer,
+      reason: reason?.analyticsReason,
     );
   }
 
   static void recordDismissed({
-    required int entryCount,
     required String surface,
+    required int entryCount,
   }) {
-    ActivationFunnelAnalytics.track(
+    _emit(
       dismissedEvent,
+      surface: surface,
       entryCount: entryCount,
-      source: surface,
-      stage: 'confirmed_repeat',
     );
   }
 
-  static void recordNoteSaved({
-    required ConfirmedRepeatBetaFeedbackChoice choice,
-    required int entryCount,
+  static void _emit(
+    String event, {
     required String surface,
-    required bool hasNote,
+    required int entryCount,
+    String? answer,
+    String? reason,
   }) {
-    ActivationFunnelAnalytics.track(
-      noteSavedEvent,
-      entryCount: entryCount,
-      source: surface,
-      stage: 'confirmed_repeat',
-      reason: choice.analyticsReason,
-      method: hasNote ? 'has_note' : 'no_note',
-    );
+    final props = <String, Object>{
+      'surface': surface,
+      'entry_count': entryCount,
+      if (answer != null) 'answer': answer,
+      if (reason != null) 'reason': reason,
+    };
+    captureForTest?.call(event, props);
+    if (kDebugMode) {
+      debugPrint(
+        'ARCHIVEME_CONFIRMED_REPEAT_BETA event=$event surface=$surface '
+        'entry_count=$entryCount answer=$answer reason=$reason',
+      );
+    }
+  }
+
+  @visibleForTesting
+  static void resetForTest() {
+    captureForTest = null;
   }
 }

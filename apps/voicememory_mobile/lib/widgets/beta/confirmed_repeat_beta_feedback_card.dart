@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
@@ -10,8 +12,8 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// One-time beta feedback after the first confirmed repeat — dismissible,
-/// never blocks recording, optional note stored locally only.
+/// One-time beta feedback after confirmed repeat — dismissible, never blocks
+/// recording, structured follow-up stored locally only.
 class ConfirmedRepeatBetaFeedbackCard extends StatefulWidget {
   const ConfirmedRepeatBetaFeedbackCard({
     super.key,
@@ -57,9 +59,8 @@ class _ConfirmedRepeatBetaFeedbackCardState
   ConfirmedRepeatBetaFeedbackState _state =
       ConfirmedRepeatBetaFeedbackState.empty;
   ConfirmedRepeatBetaFeedbackChoice? _pendingChoice;
-  final _noteController = TextEditingController();
   bool _loading = true;
-  bool _showNoteStep = false;
+  bool _showFollowUpStep = false;
 
   @override
   void initState() {
@@ -82,17 +83,11 @@ class _ConfirmedRepeatBetaFeedbackCardState
     });
   }
 
-  @override
-  void dispose() {
-    _noteController.dispose();
-    super.dispose();
-  }
-
   Future<void> _dismiss() async {
     _store ??= widget.store ?? ConfirmedRepeatBetaFeedbackStore.instance();
     ConfirmedRepeatBetaFeedbackAnalytics.recordDismissed(
-      entryCount: widget.entryCount,
       surface: widget.surface,
+      entryCount: widget.entryCount,
     );
     await _store!.dismiss();
     if (!mounted) return;
@@ -100,37 +95,42 @@ class _ConfirmedRepeatBetaFeedbackCardState
     widget.onChanged?.call();
   }
 
-  void _selectChoice(ConfirmedRepeatBetaFeedbackChoice choice) {
-    ConfirmedRepeatBetaFeedbackAnalytics.recordChoice(
-      choice: choice,
-      entryCount: widget.entryCount,
-      surface: widget.surface,
-    );
-    setState(() {
-      _pendingChoice = choice;
-      _showNoteStep = true;
-    });
-  }
-
-  Future<void> _saveNote({required bool includeNote}) async {
-    final choice = _pendingChoice;
-    if (choice == null) return;
+  Future<void> _saveResponse({
+    required ConfirmedRepeatBetaFeedbackChoice choice,
+    ConfirmedRepeatBetaFeedbackReason? reason,
+  }) async {
     _store ??= widget.store ?? ConfirmedRepeatBetaFeedbackStore.instance();
-    final note = includeNote ? _noteController.text : null;
-    await _store!.saveResponse(choice: choice, note: note);
-    ConfirmedRepeatBetaFeedbackAnalytics.recordNoteSaved(
-      choice: choice,
-      entryCount: widget.entryCount,
+    await _store!.saveResponse(choice: choice, reason: reason);
+    ConfirmedRepeatBetaFeedbackAnalytics.recordAnswer(
       surface: widget.surface,
-      hasNote: note?.trim().isNotEmpty == true,
+      entryCount: widget.entryCount,
+      answer: choice,
+      reason: reason,
     );
     if (!mounted) return;
     setState(() {
       _state = ConfirmedRepeatBetaFeedbackStore.cached;
-      _showNoteStep = false;
+      _showFollowUpStep = false;
       _pendingChoice = null;
     });
     widget.onChanged?.call();
+  }
+
+  void _selectChoice(ConfirmedRepeatBetaFeedbackChoice choice) {
+    if (!choice.showsFollowUp) {
+      unawaited(_saveResponse(choice: choice));
+      return;
+    }
+    setState(() {
+      _pendingChoice = choice;
+      _showFollowUpStep = true;
+    });
+  }
+
+  Future<void> _selectReason(ConfirmedRepeatBetaFeedbackReason reason) async {
+    final choice = _pendingChoice;
+    if (choice == null) return;
+    await _saveResponse(choice: choice, reason: reason);
   }
 
   @override
@@ -163,16 +163,13 @@ class _ConfirmedRepeatBetaFeedbackCardState
     if (!ConfirmedRepeatBetaFeedbackGates.shouldShow(
       viewingConfirmedRepeat: widget.viewingConfirmedRepeat,
       isRecording: widget.isRecording,
+      entryCount: widget.entryCount,
       state: _state,
     )) {
       return const SizedBox.shrink(
         key: Key('confirmed_repeat_beta_feedback_hidden'),
       );
     }
-
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
 
     return Container(
       key: const Key('confirmed_repeat_beta_feedback_card'),
@@ -187,8 +184,8 @@ class _ConfirmedRepeatBetaFeedbackCardState
             children: [
               Expanded(
                 child: Text(
-                  _showNoteStep
-                      ? ConfirmedRepeatBetaFeedbackCopy.notePrompt
+                  _showFollowUpStep
+                      ? ConfirmedRepeatBetaFeedbackCopy.followUpPrompt
                       : ConfirmedRepeatBetaFeedbackCopy.prompt,
                   key: const Key('confirmed_repeat_beta_feedback_title'),
                   style: ArchiveMobileTypography.listTitle(context),
@@ -209,7 +206,7 @@ class _ConfirmedRepeatBetaFeedbackCardState
               ),
             ],
           ),
-          if (!_showNoteStep) ...[
+          if (!_showFollowUpStep) ...[
             const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.xs,
@@ -222,53 +219,35 @@ class _ConfirmedRepeatBetaFeedbackCardState
                   child: const Text(ConfirmedRepeatBetaFeedbackCopy.yes),
                 ),
                 OutlinedButton(
+                  key: const Key('confirmed_repeat_beta_feedback_somewhat'),
+                  onPressed: () => _selectChoice(
+                    ConfirmedRepeatBetaFeedbackChoice.somewhat,
+                  ),
+                  child: const Text(ConfirmedRepeatBetaFeedbackCopy.somewhat),
+                ),
+                OutlinedButton(
                   key: const Key('confirmed_repeat_beta_feedback_not_really'),
                   onPressed: () => _selectChoice(
                     ConfirmedRepeatBetaFeedbackChoice.notReally,
                   ),
                   child: const Text(ConfirmedRepeatBetaFeedbackCopy.notReally),
                 ),
-                OutlinedButton(
-                  key: const Key('confirmed_repeat_beta_feedback_need_more'),
-                  onPressed: () => _selectChoice(
-                    ConfirmedRepeatBetaFeedbackChoice.needMore,
-                  ),
-                  child: const Text(ConfirmedRepeatBetaFeedbackCopy.needMore),
-                ),
               ],
             ),
           ] else ...[
             const SizedBox(height: AppSpacing.sm),
-            TextField(
-              key: const Key('confirmed_repeat_beta_feedback_note_field'),
-              controller: _noteController,
-              maxLines: 3,
-              maxLength: ConfirmedRepeatBetaFeedbackStore.maxNoteLength,
-              decoration: InputDecoration(
-                hintText: ConfirmedRepeatBetaFeedbackCopy.noteHint,
-                hintStyle: bodyStyle,
-                border: const OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    key: const Key('confirmed_repeat_beta_feedback_skip_note'),
-                    onPressed: () => _saveNote(includeNote: false),
-                    child: const Text(ConfirmedRepeatBetaFeedbackCopy.skipNote),
+                for (final reason in ConfirmedRepeatBetaFeedbackReason.values)
+                  OutlinedButton(
+                    key: Key(
+                      'confirmed_repeat_beta_feedback_reason_${reason.name}',
+                    ),
+                    onPressed: () => _selectReason(reason),
+                    child: Text(reason.label),
                   ),
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Expanded(
-                  child: FilledButton(
-                    key: const Key('confirmed_repeat_beta_feedback_save_note'),
-                    onPressed: () => _saveNote(includeNote: true),
-                    child: const Text(ConfirmedRepeatBetaFeedbackCopy.saveNote),
-                  ),
-                ),
               ],
             ),
           ],

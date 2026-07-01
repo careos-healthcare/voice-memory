@@ -7,7 +7,7 @@ import 'package:voicememory_mobile/features/beta/confirmed_repeat_beta_feedback_
 import 'package:voicememory_mobile/features/beta/confirmed_repeat_beta_feedback_gates.dart';
 import 'package:voicememory_mobile/features/beta/confirmed_repeat_beta_feedback_models.dart';
 import 'package:voicememory_mobile/features/beta/confirmed_repeat_beta_feedback_store.dart';
-import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
+import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/beta/confirmed_repeat_beta_feedback_card.dart';
@@ -26,16 +26,16 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-void main() {
-  late List<({String event, Map<String, Object> properties})> captured;
+void _expectNoDiagnosticLanguage(String copy) {
+  final lower = copy.toLowerCase();
+  expect(lower, isNot(contains('diagnosis')));
+  expect(lower, isNot(contains('therapy')));
+  expect(lower, isNot(contains('disorder')));
+}
 
+void main() {
   setUp(() async {
-    captured = [];
-    ActivationFunnelAnalytics.resetForTest();
-    ActivationFunnelAnalytics.captureForTest(
-      (event, properties) =>
-          captured.add((event: event, properties: properties)),
-    );
+    ConfirmedRepeatBetaFeedbackAnalytics.resetForTest();
     await AppServices.resetForTest(
       journalPath:
           '${DateTime.now().microsecondsSinceEpoch}_confirmed_repeat_beta.json',
@@ -45,30 +45,49 @@ void main() {
     await ConfirmedRepeatBetaFeedbackStore.resetForTest();
   });
 
-  tearDown(ActivationFunnelAnalytics.resetForTest);
-
   group('ConfirmedRepeatBetaFeedbackGates', () {
-    test('shows only while viewing confirmed repeat and not recording', () {
-      expect(
-        ConfirmedRepeatBetaFeedbackGates.shouldShow(
-          viewingConfirmedRepeat: true,
-          isRecording: false,
-          state: ConfirmedRepeatBetaFeedbackState.empty,
-        ),
-        isTrue,
-      );
+    test('hidden before confirmed repeat', () {
       expect(
         ConfirmedRepeatBetaFeedbackGates.shouldShow(
           viewingConfirmedRepeat: false,
           isRecording: false,
+          entryCount: 3,
           state: ConfirmedRepeatBetaFeedbackState.empty,
         ),
         isFalse,
       );
+    });
+
+    test('hidden before entry count 3', () {
+      expect(
+        ConfirmedRepeatBetaFeedbackGates.shouldShow(
+          viewingConfirmedRepeat: true,
+          isRecording: false,
+          entryCount: 2,
+          state: ConfirmedRepeatBetaFeedbackState.empty,
+        ),
+        isFalse,
+      );
+    });
+
+    test('visible after confirmed repeat with enough entries', () {
+      expect(
+        ConfirmedRepeatBetaFeedbackGates.shouldShow(
+          viewingConfirmedRepeat: true,
+          isRecording: false,
+          entryCount: 3,
+          state: ConfirmedRepeatBetaFeedbackState.empty,
+        ),
+        isTrue,
+      );
+    });
+
+    test('hidden while recording', () {
       expect(
         ConfirmedRepeatBetaFeedbackGates.shouldShow(
           viewingConfirmedRepeat: true,
           isRecording: true,
+          entryCount: 3,
           state: ConfirmedRepeatBetaFeedbackState.empty,
         ),
         isFalse,
@@ -80,6 +99,7 @@ void main() {
         ConfirmedRepeatBetaFeedbackGates.shouldShow(
           viewingConfirmedRepeat: true,
           isRecording: false,
+          entryCount: 3,
           state: const ConfirmedRepeatBetaFeedbackState(
             choice: ConfirmedRepeatBetaFeedbackChoice.yes,
           ),
@@ -90,6 +110,7 @@ void main() {
         ConfirmedRepeatBetaFeedbackGates.shouldShow(
           viewingConfirmedRepeat: true,
           isRecording: false,
+          entryCount: 3,
           state: const ConfirmedRepeatBetaFeedbackState(dismissed: true),
         ),
         isFalse,
@@ -98,22 +119,22 @@ void main() {
   });
 
   group('ConfirmedRepeatBetaFeedbackStore', () {
-    test('persists choice and optional note locally', () async {
+    test('persists choice and follow-up reason locally', () async {
       final prefs = _MemoryPrefs();
       final store = ConfirmedRepeatBetaFeedbackStore(prefs);
 
       await store.saveResponse(
         choice: ConfirmedRepeatBetaFeedbackChoice.notReally,
-        note: 'The overlap felt too broad.',
+        reason: ConfirmedRepeatBetaFeedbackReason.wrongPattern,
       );
 
       final loaded = await store.load();
       expect(loaded.choice, ConfirmedRepeatBetaFeedbackChoice.notReally);
-      expect(loaded.note, 'The overlap felt too broad.');
+      expect(loaded.reason, ConfirmedRepeatBetaFeedbackReason.wrongPattern);
       expect(loaded.completed, isTrue);
     });
 
-    test('dismiss marks completed without a choice', () async {
+    test('dismiss persists without a choice', () async {
       final prefs = _MemoryPrefs();
       final store = ConfirmedRepeatBetaFeedbackStore(prefs);
 
@@ -123,10 +144,29 @@ void main() {
       expect(loaded.choice, isNull);
       expect(loaded.completed, isTrue);
     });
+
+    test('migrates legacy needMore choice to somewhat', () {
+      final migrated = ConfirmedRepeatBetaFeedbackState.fromJson({
+        'choice': 'needMore',
+        'dismissed': false,
+      });
+      expect(migrated.choice, ConfirmedRepeatBetaFeedbackChoice.somewhat);
+    });
+  });
+
+  group('ConfirmedRepeatBetaFeedbackCopy', () {
+    test('no hard or therapy language', () {
+      _expectNoDiagnosticLanguage(ConfirmedRepeatBetaFeedbackCopy.all.join(' '));
+      for (final line in ConfirmedRepeatBetaFeedbackCopy.all) {
+        for (final reason in PrivacyCopyPolicy.violationsInLiteral(line)) {
+          fail('"$line": $reason');
+        }
+      }
+    });
   });
 
   group('ConfirmedRepeatBetaFeedbackCard', () {
-    testWidgets('renders prompt and choice buttons', (tester) async {
+    testWidgets('renders prompt and answer buttons', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -141,49 +181,132 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Did this feel true?'), findsOneWidget);
-      expect(find.text('Yes'), findsOneWidget);
-      expect(find.text('Not really'), findsOneWidget);
-      expect(find.text('I need to add more'), findsOneWidget);
+      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.prompt), findsOneWidget);
+      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.yes), findsOneWidget);
+      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.somewhat), findsOneWidget);
+      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.notReally), findsOneWidget);
     });
 
-    testWidgets('shows optional note step after choice', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ConfirmedRepeatBetaFeedbackCard.test(
-              entryCount: 3,
-              surface: 'record',
-              viewingConfirmedRepeat: true,
-              isRecording: false,
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      await tester.tap(find.byKey(const Key('confirmed_repeat_beta_feedback_yes')));
-      await tester.pump();
-
-      expect(
-        find.text('What made it useful or wrong?'),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const Key('confirmed_repeat_beta_feedback_note_field')),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('saves response locally and thanks user', (tester) async {
+    testWidgets('yes answer stores safe metadata', (tester) async {
       final prefs = _MemoryPrefs();
       final store = ConfirmedRepeatBetaFeedbackStore(prefs);
+      Map<String, Object>? captured;
+
+      ConfirmedRepeatBetaFeedbackAnalytics.captureForTest = (event, props) {
+        captured = props;
+      };
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ConfirmedRepeatBetaFeedbackCard.test(
               entryCount: 3,
+              surface: 'record',
+              viewingConfirmedRepeat: true,
+              isRecording: false,
+              store: store,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const Key('confirmed_repeat_beta_feedback_yes')));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      });
+      await tester.pump();
+
+      expect(captured, isNotNull);
+      expect(captured!['surface'], 'record');
+      expect(captured!['entry_count'], 3);
+      expect(captured!['answer'], 'yes');
+      expect(captured!.containsKey('reason'), isFalse);
+      expect(captured!.containsKey('transcript'), isFalse);
+
+      final loaded = await store.load();
+      expect(loaded.choice, ConfirmedRepeatBetaFeedbackChoice.yes);
+      expect(loaded.reason, isNull);
+    });
+
+    testWidgets('somewhat answer shows follow-up', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatBetaFeedbackCard.test(
+              entryCount: 3,
+              surface: 'record',
+              viewingConfirmedRepeat: true,
+              isRecording: false,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(
+        find.byKey(const Key('confirmed_repeat_beta_feedback_somewhat')),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.followUpPrompt),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.tooGeneric),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.wrongPattern),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('not really answer shows follow-up', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatBetaFeedbackCard.test(
+              entryCount: 3,
+              surface: 'patterns',
+              viewingConfirmedRepeat: true,
+              isRecording: false,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(
+        find.byKey(const Key('confirmed_repeat_beta_feedback_not_really')),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.followUpPrompt),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ConfirmedRepeatBetaFeedbackCopy.repeatedTooMuch),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('follow-up reasons stored without transcript text', (tester) async {
+      final prefs = _MemoryPrefs();
+      final store = ConfirmedRepeatBetaFeedbackStore(prefs);
+      Map<String, Object>? captured;
+
+      ConfirmedRepeatBetaFeedbackAnalytics.captureForTest = (event, props) {
+        captured = props;
+      };
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatBetaFeedbackCard.test(
+              entryCount: 4,
               surface: 'patterns',
               viewingConfirmedRepeat: true,
               isRecording: false,
@@ -194,28 +317,31 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('confirmed_repeat_beta_feedback_need_more')));
-      await tester.pump();
-      await tester.enterText(
-        find.byKey(const Key('confirmed_repeat_beta_feedback_note_field')),
-        'Need one more honest moment before I trust it.',
+      await tester.tap(
+        find.byKey(const Key('confirmed_repeat_beta_feedback_somewhat')),
       );
+      await tester.pump();
       await tester.runAsync(() async {
-        await tester.tap(find.byKey(const Key('confirmed_repeat_beta_feedback_save_note')));
+        await tester.tap(
+          find.byKey(
+            const Key('confirmed_repeat_beta_feedback_reason_tooGeneric'),
+          ),
+        );
         await Future<void>.delayed(const Duration(milliseconds: 50));
       });
       await tester.pump();
 
-      expect(
-        find.text(ConfirmedRepeatBetaFeedbackCopy.thanks),
-        findsOneWidget,
-      );
+      expect(captured, isNotNull);
+      expect(captured!['answer'], 'somewhat');
+      expect(captured!['reason'], 'too_generic');
+      expect(captured!.containsKey('transcript'), isFalse);
+
       final loaded = await store.load();
-      expect(loaded.choice, ConfirmedRepeatBetaFeedbackChoice.needMore);
-      expect(loaded.note, 'Need one more honest moment before I trust it.');
+      expect(loaded.choice, ConfirmedRepeatBetaFeedbackChoice.somewhat);
+      expect(loaded.reason, ConfirmedRepeatBetaFeedbackReason.tooGeneric);
     });
 
-    testWidgets('dismiss hides card without saving a choice', (tester) async {
+    testWidgets('dismiss persists and hides card', (tester) async {
       final prefs = _MemoryPrefs();
       final store = ConfirmedRepeatBetaFeedbackStore(prefs);
 
@@ -249,6 +375,39 @@ void main() {
       expect(loaded.choice, isNull);
     });
 
+    testWidgets('does not block recording', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                ConfirmedRepeatBetaFeedbackCard.test(
+                  entryCount: 3,
+                  surface: 'record',
+                  viewingConfirmedRepeat: true,
+                  isRecording: false,
+                ),
+                FilledButton(
+                  key: const Key('record_primary_cta'),
+                  onPressed: () {},
+                  child: const Text('Record moment'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('confirmed_repeat_beta_feedback_card')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('record_primary_cta')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('record_primary_cta')));
+      await tester.pump();
+    });
+
     testWidgets('hidden while recording', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -264,7 +423,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('Did this feel true?'), findsNothing);
+      expect(find.text(ConfirmedRepeatBetaFeedbackCopy.prompt), findsNothing);
     });
   });
 
@@ -284,32 +443,6 @@ void main() {
         ),
         isFalse,
       );
-    });
-  });
-
-  group('Analytics privacy', () {
-    test('records metadata only — never note or transcript text', () {
-      ConfirmedRepeatBetaFeedbackAnalytics.recordChoice(
-        choice: ConfirmedRepeatBetaFeedbackChoice.yes,
-        entryCount: 3,
-        surface: 'record',
-      );
-      ConfirmedRepeatBetaFeedbackAnalytics.recordNoteSaved(
-        choice: ConfirmedRepeatBetaFeedbackChoice.yes,
-        entryCount: 3,
-        surface: 'record',
-        hasNote: true,
-      );
-
-      expect(captured, hasLength(2));
-      for (final event in captured) {
-        final payload = '${event.event} ${event.properties}'.toLowerCase();
-        expect(payload, isNot(contains('transcript')));
-        expect(payload, isNot(contains('said yes')));
-        expect(payload, isNot(contains('useful or wrong')));
-      }
-      expect(captured.first.properties['reason'], 'yes');
-      expect(captured.last.properties['method'], 'has_note');
     });
   });
 }
