@@ -151,6 +151,25 @@ void main() {
       );
     });
 
+    test('first-use prompt copy is concrete and not diagnostic', () {
+      expect(RecordFirstUsePromptCopy.title, 'Record one real moment');
+      expect(
+        RecordFirstUsePromptCopy.body,
+        contains('what your mind said'),
+      );
+      expect(RecordFirstUsePromptCopy.examples, hasLength(4));
+      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds'));
+      for (final copy in [
+        RecordFirstUsePromptCopy.title,
+        RecordFirstUsePromptCopy.body,
+        RecordFirstUsePromptCopy.footer,
+        ...RecordFirstUsePromptCopy.examples,
+      ]) {
+        expect(copy.toLowerCase(), isNot(contains('therapy')));
+        expect(copy.toLowerCase(), isNot(contains('diagnosis')));
+      }
+    });
+
     test('empty and started copy match the clean first-load spec', () {
       expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Your archive is empty');
       expect(
@@ -725,6 +744,51 @@ void main() {
       expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
       expect(find.text(ConsumerUiCopy.postSaveRecordAnother), findsNothing);
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
+    });
+
+    testWidgets('first-use prompt appears at entryCount 0 with examples', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester);
+
+      expect(find.byKey(const Key('record_first_use_prompt_block')), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.title), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.body), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
+      for (final example in RecordFirstUsePromptCopy.examples) {
+        expect(find.text(example), findsOneWidget);
+      }
+      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+    });
+
+    testWidgets('first-use prompt hides after first entry', (tester) async {
+      await pumpRecordScreen(tester, entryCount: 1);
+
+      expect(find.byKey(const Key('record_first_use_prompt_block')), findsNothing);
+      expect(find.byKey(const Key('record_first_use_capture_section')), findsNothing);
+      expect(find.text(RecordFirstUsePromptCopy.title), findsNothing);
+    });
+
+    testWidgets('first-use keeps single Record CTA with prompt block', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester);
+
+      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.startRecording), findsNothing);
+    });
+
+    testWidgets('first-use does not show legacy generic framing copy', (
+      tester,
+    ) async {
+      await pumpRecordScreen(tester);
+
+      expect(find.text(RecordScreenFramingCopy.title), findsNothing);
+      expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
+      _expectNoBannedFirstImpressionCopy(tester);
     });
 
     testWidgets('simulator deniedCanAskAgain with recorder access shows Record moment', (

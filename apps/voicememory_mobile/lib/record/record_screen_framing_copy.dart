@@ -49,3 +49,24 @@ abstract class RecordScreenFramingCopy {
     'starting to notice',
   ];
 }
+
+/// Concrete first-use recording guidance inside the capture block.
+abstract final class RecordFirstUsePromptCopy {
+  RecordFirstUsePromptCopy._();
+
+  static const title = 'Record one real moment';
+
+  static const body =
+      'Say what happened, what your mind said, or what you did next. It can be messy — ArchiveMe only needs one real moment to start.';
+
+  static const examplesHeading = 'Examples';
+
+  static const examples = [
+    'I checked again even though I knew it was fine',
+    'I avoided the message',
+    'I paused before replying',
+    'I felt calmer after walking outside',
+  ];
+
+  static const footer = 'Short is fine. Ten seconds is enough.';
+}

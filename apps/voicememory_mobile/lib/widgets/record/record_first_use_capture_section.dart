@@ -5,6 +5,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../capture_entry_actions.dart';
 import '../security/archive_data_flow_sheet.dart';
+import 'record_first_use_prompt_block.dart';
 
 /// Single first-use capture block on Record — one primary path, no competing cards.
 class RecordFirstUseCaptureSection extends StatelessWidget {
@@ -32,15 +33,22 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: VoiceMemoryCards.standard(),
-      child: CaptureEntryActions(
-        onRecord: onRecord,
-        recordButtonKey: recordButtonKey,
-        recordButtonLabel: recordButtonLabel,
-        typeCapturePrompt: typeCapturePrompt,
-        onTextThoughtSaved: onTextThoughtSaved,
-        onLogPressureMoment: onLogPressureMoment,
-        pressureMomentPresentation: CapturePressureMomentPresentation.textLink,
-        onHowItWorks: () => showArchiveDataFlowSheet(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const RecordFirstUsePromptBlock(),
+          const SizedBox(height: AppSpacing.md),
+          CaptureEntryActions(
+            onRecord: onRecord,
+            recordButtonKey: recordButtonKey,
+            recordButtonLabel: recordButtonLabel,
+            typeCapturePrompt: typeCapturePrompt,
+            onTextThoughtSaved: onTextThoughtSaved,
+            onLogPressureMoment: onLogPressureMoment,
+            pressureMomentPresentation: CapturePressureMomentPresentation.textLink,
+            onHowItWorks: () => showArchiveDataFlowSheet(context),
+          ),
+        ],
       ),
     );
   }
