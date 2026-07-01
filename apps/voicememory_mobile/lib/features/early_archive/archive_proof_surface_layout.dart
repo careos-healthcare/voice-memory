@@ -47,6 +47,17 @@ class ArchiveProofSurfaceLayout {
   bool get effectivePatternChangedVisible =>
       patternChangedVisible && !archiveSummaryVisible;
 
+  /// Confirmed-repeat card folds into Archive Summary when both qualify.
+  bool get effectiveConfirmedRepeatCardVisible =>
+      confirmedRepeatCardVisible && !archiveSummaryVisible;
+
+  /// Full timeline stays on Patterns; Record folds it into Archive Summary.
+  bool recordTimelineVisible({required bool surfaceIsRecord}) =>
+      timelineVisible && !(surfaceIsRecord && archiveSummaryVisible);
+
+  /// Pattern-changed celebration stays visible on Record above Archive Summary.
+  bool get recordPatternChangedVisible => patternChangedVisible;
+
   /// Timeline uses shorter nearby copy when confirmed repeat context is active.
   bool get timelineNearby =>
       confirmedRepeatCardVisible || (timelineVisible && changeProofVisible);

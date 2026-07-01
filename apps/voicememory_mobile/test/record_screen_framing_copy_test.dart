@@ -12,7 +12,12 @@ import 'package:voicememory_mobile/features/return_changes/archive_return_change
 import 'package:voicememory_mobile/features/activation/day_two_return_loop_payoff.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
@@ -59,6 +64,35 @@ JournalEntry _entry({
     repeatedSignal: '',
   ),
 );
+
+List<JournalEntry> _confirmedRepeatJournalEntries(int count) {
+  final transcripts = [
+    'I had no capacity but I said yes again to the extra meeting today.',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    'I said yes again even though I had no capacity for one more ask.',
+    'I said yes again even though I had no capacity for one more ask today.',
+    'Same pressure — said yes again before I checked whether I had capacity.',
+  ];
+  return List.generate(
+    count,
+    (i) => _entry(
+      id: 'repeat_$i',
+      transcript: transcripts[i % transcripts.length],
+      createdAt: DateTime(2026, 6, 10 + i, 12),
+    ),
+  );
+}
+
+Future<void> seedConfirmedRepeatEntries(
+  WidgetTester tester,
+  int count,
+) async {
+  await tester.runAsync(() async {
+    for (final entry in _confirmedRepeatJournalEntries(count)) {
+      await AppServices.instance.journalStore.save(entry);
+    }
+  });
+}
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
       id: id,
@@ -1089,6 +1123,95 @@ void main() {
       ].map((f) => f.evaluate().length).fold<int>(0, (a, b) => a + b);
 
       expect(guidanceCards, lessThanOrEqualTo(1));
+    });
+
+    testWidgets('five confirmed-repeat entries show archive summary only', (
+      tester,
+    ) async {
+      await seedConfirmedRepeatEntries(tester, 5);
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('archive_summary_card')), findsOneWidget);
+      expect(find.text(ArchiveSummaryCopy.title), findsOneWidget);
+      expect(
+        find.byKey(const Key('confirmed_repeat_thought_map_card')),
+        findsNothing,
+      );
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.title), findsNothing);
+      expect(
+        find.byKey(const Key('weekly_archive_week_review_card')),
+        findsNothing,
+      );
+      expect(find.text(WeeklyArchiveWeekReviewCopy.title), findsNothing);
+      expect(find.byKey(const Key('private_archive_report_card')), findsNothing);
+      expect(find.text(PrivateArchiveReportCopy.title), findsNothing);
+      expect(
+        find.text(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
+        findsNothing,
+      );
+    });
+
+    testWidgets('five confirmed-repeat entries cap proof cards below recorder', (
+      tester,
+    ) async {
+      await seedConfirmedRepeatEntries(tester, 5);
+      await tester.binding.setSurfaceSize(const Size(390, 3200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      final proofCards = [
+        find.byKey(const Key('archive_summary_card')),
+        find.byKey(const Key('daily_return_reason_card')),
+        find.byKey(const Key('pattern_changed_card')),
+        find.byKey(const Key('repeat_return_check_change_proof_card')),
+        find.byKey(const Key('confirmed_repeat_thought_map_card')),
+        find.byKey(const Key('positive_reinforcement_card')),
+        find.byKey(const Key('weekly_archive_week_review_card')),
+        find.byKey(const Key('private_archive_report_card')),
+        find.byKey(const Key('early_evidence_timeline_card')),
+        find.byKey(const Key('early_first_signal_card_threeEntryConfirmedRepeat')),
+      ]
+          .map((finder) => finder.evaluate().length)
+          .fold<int>(0, (total, count) => total + count);
+
+      expect(proofCards, lessThanOrEqualTo(3));
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
   });
 }

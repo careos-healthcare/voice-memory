@@ -192,6 +192,7 @@ import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
 import '../features/early_archive/archive_proof_surface_layout.dart';
+import '../features/early_archive/record_proof_stack_policy.dart';
 import '../features/early_archive/early_archive_return_reminder_gates.dart';
 import '../features/early_archive/early_archive_return_reminder_store.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
@@ -3874,8 +3875,55 @@ class _RecordScreenState extends State<RecordScreen> {
         proofSurfaceLayout.effectiveThoughtMapVisible;
     final showPositiveReinforcement =
         proofSurfaceLayout.effectivePositiveReinforcementVisible;
-    final showPatternChanged =
-        proofSurfaceLayout.effectivePatternChangedVisible;
+    final recordProofStack = RecordProofStackPolicy.decide(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isPostSave: _isPostSaveSurface,
+      isRecording: ui == RecordUiState.recording,
+      archiveSummaryVisible: showArchiveSummary,
+      hasEarlyFirstSignal: EarlyFirstSignalEngine.build(
+            entries: _journalEntries,
+          ) !=
+          null,
+      hasEarlyEvidenceTimeline: showEarlyEvidenceTimeline,
+      patternChangedVisible: PatternChangedGates.shouldShow(
+        loaded: _journalEntryCountReady,
+        entryCount: _journalEntryCount,
+        isReady: ui == RecordUiState.ready,
+        isRecording: ui == RecordUiState.recording,
+        isPostSave: _isPostSaveSurface,
+        viewingConfirmedRepeat: viewingConfirmedRepeatOnRecord,
+        patternChanged: patternChangedCandidate,
+        dismissed: patternChangedDismissed,
+      ),
+      dailyReturnReasonEligible: showDailyReturnReason,
+      weeklyReviewEligible: showWeeklyArchiveWeekReview,
+      privateReportEligible: showPrivateArchiveReport,
+      whyMattersEligible: showConfirmedRepeatWhyMatters,
+      thoughtMapEligible: showConfirmedRepeatThoughtMap,
+      positiveReinforcementEligible: showPositiveReinforcement,
+      changeProofEligible: repeatReturnChangeProof != null,
+      proBridgeEligible: showPostProofProBridge,
+    );
+    final showPatternChanged = recordProofStack.showPatternChanged;
+    final showEarlyEvidenceTimelineOnRecord =
+        recordProofStack.showEarlyEvidenceTimeline;
+    final showWeeklyArchiveWeekReviewOnRecord =
+        recordProofStack.showWeeklyArchiveWeekReview;
+    final showPrivateArchiveReportOnRecord =
+        recordProofStack.showPrivateArchiveReport;
+    final showDailyReturnReasonOnRecord =
+        recordProofStack.showDailyReturnReason;
+    final showPostProofProBridgeOnRecord = recordProofStack.showProBridge;
+    final showConfirmedRepeatWhyMattersOnRecord =
+        recordProofStack.showConfirmedRepeatWhyMatters;
+    final showConfirmedRepeatThoughtMapOnRecord =
+        recordProofStack.showConfirmedRepeatThoughtMap;
+    final showPositiveReinforcementOnRecord =
+        recordProofStack.showPositiveReinforcement;
+    final showChangeProofOnRecord = recordProofStack.showChangeProof;
+    final showArchiveSummaryOnRecord = recordProofStack.showArchiveSummary;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -4002,7 +4050,7 @@ class _RecordScreenState extends State<RecordScreen> {
       promoteMicCaptureActions:
           _shouldPromoteMicCaptureActions(readyCapturePolicy),
     );
-    final showThoughtMapRecordCta = showConfirmedRepeatThoughtMap &&
+    final showThoughtMapRecordCta = showConfirmedRepeatThoughtMapOnRecord &&
         confirmedRepeatThoughtMap?.firstMissingSection != null &&
         ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
           policy: readyCapturePolicy,
@@ -4010,7 +4058,7 @@ class _RecordScreenState extends State<RecordScreen> {
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
         );
-    final showPositiveReinforcementRecordCta = showPositiveReinforcement &&
+    final showPositiveReinforcementRecordCta = showPositiveReinforcementOnRecord &&
         positiveReinforcement != null &&
         PositiveReinforcementGates.showRecordAgainCta(
           policy: readyCapturePolicy,
@@ -4027,21 +4075,22 @@ class _RecordScreenState extends State<RecordScreen> {
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
         );
-    final showArchiveSummaryRecordCta = showArchiveSummary &&
+    final showArchiveSummaryRecordCta = showArchiveSummaryOnRecord &&
         ArchiveSummaryGates.showRecordNextCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
         );
-    final showDailyReturnReasonRecordCta = showDailyReturnReason &&
+    final showDailyReturnReasonRecordCta = showDailyReturnReasonOnRecord &&
         DailyReturnReasonGates.showRecordCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
         );
-    final showWeeklyArchiveWeekReviewRecordCta = showWeeklyArchiveWeekReview &&
+    final showWeeklyArchiveWeekReviewRecordCta =
+        showWeeklyArchiveWeekReviewOnRecord &&
         WeeklyArchiveWeekReviewGates.showRecordCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
@@ -4223,12 +4272,8 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
-                        RecordEmptyArchiveGates.showEarlyFirstSignalCard(
-                          loaded: _journalEntryCountReady,
-                          entryCount: _journalEntryCount,
-                          isPostSave: _isPostSaveSurface,
-                        ) &&
-                        !showEarlyEvidenceTimeline) ...[
+                        recordProofStack.showEarlyFirstSignalCard &&
+                        !showEarlyEvidenceTimelineOnRecord) ...[
                       if (EarlyFirstSignalEngine.build(
                             entries: _journalEntries,
                           )
@@ -4265,7 +4310,42 @@ class _RecordScreenState extends State<RecordScreen> {
                         const SizedBox(height: 12),
                       ],
                     ],
-                    if (showEarlyEvidenceTimeline) ...[
+                    if (showPatternChanged && patternChangedCandidate != null) ...[
+                      PatternChangedCard(
+                        result: patternChangedCandidate,
+                        entryCount: _journalEntryCount,
+                        surface: 'record',
+                        showRecordCta: showPatternChangedRecordCta,
+                        onRecord: () => _handlePatternChangedRecord(
+                          patternChangedCandidate,
+                        ),
+                        onDismissed: () => setState(() {}),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showArchiveSummaryOnRecord && archiveSummary != null) ...[
+                      ArchiveSummaryCard(
+                        summary: archiveSummary,
+                        showRecordNextCta: showArchiveSummaryRecordCta,
+                        watching: archiveWatching,
+                        onRecordNext: () => _handleArchiveSummaryRecordNext(
+                          archiveSummary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showDailyReturnReasonOnRecord &&
+                        dailyReturnReason != null) ...[
+                      DailyReturnReasonCard(
+                        reason: dailyReturnReason,
+                        showRecordCta: showDailyReturnReasonRecordCta,
+                        onRecord: () => _handleDailyReturnReason(
+                          dailyReturnReason,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showEarlyEvidenceTimelineOnRecord) ...[
                       EarlyEvidenceTimelineCard(
                         timeline: earlyEvidenceTimeline!,
                         compact: true,
@@ -4290,28 +4370,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showArchiveSummary && archiveSummary != null) ...[
-                      ArchiveSummaryCard(
-                        summary: archiveSummary,
-                        showRecordNextCta: showArchiveSummaryRecordCta,
-                        watching: archiveWatching,
-                        onRecordNext: () => _handleArchiveSummaryRecordNext(
-                          archiveSummary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    if (showDailyReturnReason && dailyReturnReason != null) ...[
-                      DailyReturnReasonCard(
-                        reason: dailyReturnReason,
-                        showRecordCta: showDailyReturnReasonRecordCta,
-                        onRecord: () => _handleDailyReturnReason(
-                          dailyReturnReason,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    if (showWeeklyArchiveWeekReview &&
+                    if (showWeeklyArchiveWeekReviewOnRecord &&
                         weeklyArchiveWeekReview != null) ...[
                       week_review.WeeklyArchiveWeekReviewCard(
                         review: weeklyArchiveWeekReview,
@@ -4322,7 +4381,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPrivateArchiveReport &&
+                    if (showPrivateArchiveReportOnRecord &&
                         privateArchiveReportCandidate != null) ...[
                       PrivateArchiveReportCard(
                         report: privateArchiveReportCandidate,
@@ -4332,13 +4391,13 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showConfirmedRepeatWhyMatters) ...[
+                    if (showConfirmedRepeatWhyMattersOnRecord) ...[
                       ConfirmedRepeatWhyMattersCard(
                         onDismissed: () => setState(() {}),
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showConfirmedRepeatThoughtMap &&
+                    if (showConfirmedRepeatThoughtMapOnRecord &&
                         confirmedRepeatThoughtMap != null) ...[
                       ConfirmedRepeatThoughtMapCard(
                         result: confirmedRepeatThoughtMap,
@@ -4349,7 +4408,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPositiveReinforcement &&
+                    if (showPositiveReinforcementOnRecord &&
                         positiveReinforcement != null) ...[
                       PositiveReinforcementCard(
                         reinforcement: positiveReinforcement,
@@ -4360,19 +4419,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPatternChanged && patternChangedCandidate != null) ...[
-                      PatternChangedCard(
-                        result: patternChangedCandidate,
-                        entryCount: _journalEntryCount,
-                        surface: 'record',
-                        showRecordCta: showPatternChangedRecordCta,
-                        onRecord: () => _handlePatternChangedRecord(
-                          patternChangedCandidate,
-                        ),
-                        onDismissed: () => setState(() {}),
-                      ),
-                      const SizedBox(height: 12),
-                    ] else if (proofSurfaceLayout.effectiveChangeProofVisible &&
+                    if (showChangeProofOnRecord &&
                         repeatReturnChangeProof != null) ...[
                       RepeatReturnCheckChangeProofCard(
                         proof: repeatReturnChangeProof,
@@ -4383,7 +4430,8 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showConfirmedRepeatBetaFeedback) ...[
+                    if (showConfirmedRepeatBetaFeedback &&
+                        !showArchiveSummaryOnRecord) ...[
                       ConfirmedRepeatBetaFeedbackCard(
                         entryCount: _journalEntryCount,
                         surface: 'record',
@@ -4393,7 +4441,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPostProofProBridge) ...[
+                    if (showPostProofProBridgeOnRecord) ...[
                       ArchiveIntelligenceProBridgeCard(
                         compact: proofSurfaceLayout.proBridgeCompact,
                         onSeePro: () {
@@ -4416,7 +4464,8 @@ class _RecordScreenState extends State<RecordScreen> {
                           entryCount: _journalEntryCount,
                           isPostSave: _isPostSaveSurface,
                         ) &&
-                        !showEarlyEvidenceTimeline) ...[
+                        !showEarlyEvidenceTimelineOnRecord &&
+                        !showArchiveSummaryOnRecord) ...[
                       if (EarlyFirstSignalEngine.buildChangeNotice(
                             entries: _journalEntries,
                           )

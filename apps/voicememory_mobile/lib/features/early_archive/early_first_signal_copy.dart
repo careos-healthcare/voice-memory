@@ -48,10 +48,10 @@ abstract final class EarlyFirstSignalCopy {
   static const evidenceSupportLine =
       'That is why ArchiveMe is watching this repeat.';
 
-  static const threeEntryFormingTitle = 'The repeat is forming.';
+  static const threeEntryFormingTitle = 'A repeat may be forming.';
 
   static const threeEntryFormingBody =
-      'The repeat is forming, but the evidence is still broad.';
+      'ArchiveMe needs one more concrete moment before it names this clearly.';
 
   static const threeEntryNeedsMoreBody =
       'ArchiveMe has seen a possible repeat, but it needs one more specific '

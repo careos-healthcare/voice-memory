@@ -480,6 +480,7 @@ void main() {
       expect(layout.effectiveThoughtMapVisible, isFalse);
       expect(layout.effectivePositivePatternVisible, isFalse);
       expect(layout.effectiveChangeProofVisible, isFalse);
+      expect(layout.effectiveConfirmedRepeatCardVisible, isFalse);
     });
   });
 }

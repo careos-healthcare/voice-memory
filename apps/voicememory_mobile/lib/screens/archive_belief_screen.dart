@@ -3892,7 +3892,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (!showEarlyEvidenceTimeline && earlyFirstSignal != null) ...[
+                if (!showEarlyEvidenceTimeline &&
+                    earlyFirstSignal != null &&
+                    proofSurfaceLayout.effectiveConfirmedRepeatCardVisible) ...[
                   EarlyFirstSignalCard(
                     signal: earlyFirstSignal!,
                     showInsightFeedback: !suppressConfirmedRepeatInlineFeedback,

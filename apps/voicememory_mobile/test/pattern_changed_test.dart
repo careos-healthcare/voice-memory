@@ -374,6 +374,20 @@ void main() {
       );
     });
 
+    test('record layout keeps pattern changed above folded summary copy', () {
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: false,
+        timelineVisible: false,
+        changeProofVisible: true,
+        proBridgeVisible: false,
+        patternChangedVisible: true,
+        archiveSummaryVisible: true,
+      );
+
+      expect(layout.recordPatternChangedVisible, isTrue);
+      expect(layout.effectivePatternChangedVisible, isFalse);
+    });
+
     test('folds into Archive Summary without duplicate pattern changed card', () {
       final layout = ArchiveProofSurfaceLayout(
         confirmedRepeatCardVisible: false,

@@ -8,8 +8,11 @@ import 'archive_proof_surface_layout.dart';
 import 'archive_summary_copy.dart';
 import 'confirmed_repeat_thought_map_copy.dart';
 import 'confirmed_repeat_why_matters_copy.dart';
+import 'daily_return_reason_copy.dart';
 import 'positive_pattern_copy.dart';
 import 'positive_reinforcement_copy.dart';
+import 'private_archive_report_copy.dart';
+import 'weekly_archive_review_copy.dart';
 import 'early_evidence_timeline_engine.dart';
 
 /// Resolves de-duplicated visible copy for proof stacks (tests + policy).
@@ -22,6 +25,11 @@ abstract final class ArchiveProofSurfaceCopy {
     EarlyEvidenceTimeline? timeline,
     RepeatReturnCheckChangeProof? changeProof,
     PatternChangedResult? patternChanged,
+    bool showArchiveSummary = false,
+    bool showDailyReturnReason = false,
+    bool showWeeklyReview = false,
+    bool showPrivateReport = false,
+    bool showPatternChanged = false,
   }) =>
       _stack(
         layout: layout,
@@ -29,6 +37,12 @@ abstract final class ArchiveProofSurfaceCopy {
         timeline: timeline,
         changeProof: changeProof,
         patternChanged: patternChanged,
+        surfaceIsRecord: true,
+        showArchiveSummary: showArchiveSummary,
+        showDailyReturnReason: showDailyReturnReason,
+        showWeeklyReview: showWeeklyReview,
+        showPrivateReport: showPrivateReport,
+        showPatternChanged: showPatternChanged,
       );
 
   static List<String> patternsStack({
@@ -52,10 +66,24 @@ abstract final class ArchiveProofSurfaceCopy {
     EarlyEvidenceTimeline? timeline,
     RepeatReturnCheckChangeProof? changeProof,
     PatternChangedResult? patternChanged,
+    bool surfaceIsRecord = false,
+    bool showArchiveSummary = false,
+    bool showDailyReturnReason = false,
+    bool showWeeklyReview = false,
+    bool showPrivateReport = false,
+    bool showPatternChanged = false,
   }) {
     final blocks = <String>[];
+    final summaryVisible =
+        showArchiveSummary || (layout.archiveSummaryVisible && !surfaceIsRecord);
+    final patternChangedVisible = surfaceIsRecord
+        ? showPatternChanged
+        : layout.effectivePatternChangedVisible;
+    final timelineVisible = layout.recordTimelineVisible(
+      surfaceIsRecord: surfaceIsRecord,
+    );
 
-    if (layout.confirmedRepeatCardVisible && confirmedRepeat != null) {
+    if (layout.effectiveConfirmedRepeatCardVisible && confirmedRepeat != null) {
       blocks.add(confirmedRepeat.title);
       blocks.addAll(confirmedRepeat.lines);
       if (confirmedRepeat.evidenceHeading != null) {
@@ -67,7 +95,7 @@ abstract final class ArchiveProofSurfaceCopy {
       }
     }
 
-    if (layout.timelineVisible && timeline != null) {
+    if (timelineVisible && timeline != null) {
       blocks.add(
         layout.timelineNearby
             ? EarlyEvidenceTimelineCopy.nearbyTitle
@@ -91,17 +119,40 @@ abstract final class ArchiveProofSurfaceCopy {
       }
     }
 
-    if (layout.effectivePatternChangedVisible && patternChanged != null) {
+    if (patternChangedVisible && patternChanged != null) {
       blocks.add(patternChanged.title);
       blocks.add(patternChanged.body);
-    } else if (layout.changeProofVisible && changeProof != null) {
-      if (!layout.archiveSummaryVisible) {
+    } else if (layout.effectiveChangeProofVisible && changeProof != null) {
+      if (!summaryVisible) {
         blocks.add(changeProof.title);
         blocks.add(changeProof.body);
         if (changeProof.supportLine != null) {
           blocks.add(changeProof.supportLine!);
         }
       }
+    }
+
+    if (summaryVisible) {
+      blocks.add(ArchiveSummaryCopy.title);
+      blocks.add(ArchiveSummaryCopy.keepsRepeatingLabel);
+      if (layout.thoughtMapVisible || summaryVisible) {
+        blocks.add(ArchiveSummaryCopy.loopFormingLabel);
+      }
+      blocks.add(ArchiveSummaryCopy.changingLabel);
+      blocks.add(ArchiveSummaryCopy.whatHelpsLabel);
+      blocks.add(ArchiveSummaryCopy.recordNextLabel);
+    }
+
+    if (showDailyReturnReason) {
+      blocks.add(DailyReturnReasonCopy.title);
+    }
+
+    if (showWeeklyReview && surfaceIsRecord) {
+      blocks.add(WeeklyArchiveWeekReviewCopy.title);
+    }
+
+    if (showPrivateReport && surfaceIsRecord) {
+      blocks.add(PrivateArchiveReportCopy.title);
     }
 
     if (layout.proBridgeVisible) {
@@ -132,17 +183,6 @@ abstract final class ArchiveProofSurfaceCopy {
     } else if (layout.effectivePositivePatternVisible) {
       blocks.add(PositivePatternCopy.title);
       blocks.add(PositivePatternCopy.body);
-    }
-
-    if (layout.archiveSummaryVisible) {
-      blocks.add(ArchiveSummaryCopy.title);
-      blocks.add(ArchiveSummaryCopy.keepsRepeatingLabel);
-      if (layout.thoughtMapVisible || layout.archiveSummaryVisible) {
-        blocks.add(ArchiveSummaryCopy.loopFormingLabel);
-      }
-      blocks.add(ArchiveSummaryCopy.changingLabel);
-      blocks.add(ArchiveSummaryCopy.whatHelpsLabel);
-      blocks.add(ArchiveSummaryCopy.recordNextLabel);
     }
 
     return blocks.where((block) => block.trim().isNotEmpty).toList();

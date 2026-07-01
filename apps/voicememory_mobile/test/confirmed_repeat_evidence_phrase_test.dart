@@ -67,6 +67,88 @@ List<JournalEntry> _threeCheckingUncertaintyEntries() => [
       ),
     ];
 
+List<JournalEntry> _threeCheckingAgainEntries() => [
+      _entry(
+        id: 'e1',
+        transcript: 'I checked again even though I knew it was fine.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript: 'Same thing — I checked again before sending the update.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript: 'I checked again after lunch and still felt unsettled.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _threeWalkedOutsideEntries() => [
+      _entry(
+        id: 'e1',
+        transcript: 'I walked outside before replying and felt calmer.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript: 'Same day I walked outside again before the hard email.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript: 'I walked outside when it got loud in my head.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _threeWeakPhraseConfirmedEntries() => [
+      _entry(
+        id: 'e1',
+        transcript:
+            'I said yes again even though I was already tired from work today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript:
+            'I took responsibility again before asking anyone for help today.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript:
+            'I agreed to help again before checking whether I had capacity today.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _threeStressOnlyEntries() => [
+      _entry(
+        id: 'e1',
+        transcript: 'Work stress was high today at the office.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript: 'More work stress came back this afternoon.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript: 'The stress at work showed up again tonight.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+void _expectNoDiagnosticLanguage(String copy) {
+  final lower = copy.toLowerCase();
+  expect(lower, isNot(contains('diagnosis')));
+  expect(lower, isNot(contains('therapy')));
+  expect(lower, isNot(contains('disorder')));
+}
+
 void main() {
   group('ConfirmedRepeatEvidencePhraseEngine', () {
     test('extracts 2–3 grounded phrases from related entries', () {
@@ -78,12 +160,88 @@ void main() {
       expect(result.phrases.length, greaterThanOrEqualTo(2));
       expect(result.phrases.length, lessThanOrEqualTo(3));
       expect(
+        result.phrases.any((p) => p.toLowerCase().contains('said yes')),
+        isTrue,
+      );
+      expect(
         result.phrases.every((phrase) {
           final words = phrase.split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
-          return words.length >= 2 && words.length <= 8;
+          return words.length >= 2 && words.length <= 6;
         }),
         isTrue,
       );
+    });
+
+    test('prefers concrete action phrases over generic labels', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeCheckingAgainEntries(),
+      );
+
+      expect(result.isStrong, isTrue);
+      expect(
+        result.phrases.any((p) => p.toLowerCase().contains('checked again')),
+        isTrue,
+      );
+      expect(
+        result.phrases.every(
+          (p) => !ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(p),
+        ),
+        isTrue,
+      );
+    });
+
+    test('extracts walked outside as concrete repeated action', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeWalkedOutsideEntries(),
+      );
+
+      expect(result.isStrong, isTrue);
+      expect(
+        result.phrases.any((p) => p.toLowerCase().contains('walked outside')),
+        isTrue,
+      );
+    });
+
+    test('blocks ungrounded generic labels in summaries', () {
+      expect(
+        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+          label: 'avoidance keeps showing up',
+          entries: _threeRelatedRepeatEntries(),
+        ),
+        isTrue,
+      );
+      expect(
+        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+          label: 'stress keeps building',
+          entries: _threeRelatedRepeatEntries(),
+        ),
+        isTrue,
+      );
+    });
+
+    test('allows generic labels when user explicitly wrote them', () {
+      expect(
+        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+          label: 'stress keeps building',
+          entries: _threeStressOnlyEntries(),
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+          label: 'checking when things feel uncertain',
+          entries: _threeCheckingUncertaintyEntries(),
+        ),
+        isFalse,
+      );
+    });
+
+    test('weak abstract-only entries are not strong evidence', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeStressOnlyEntries(),
+      );
+
+      expect(result.isStrong, isFalse);
     });
 
     test('dedupes near-identical phrases', () {
@@ -123,18 +281,20 @@ void main() {
     test('softens ungrounded generic labels', () {
       expect(
         ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
-          label: 'avoidance keeps showing up',
+          label: 'confidence keeps dropping',
           entries: _threeRelatedRepeatEntries(),
         ),
         isTrue,
       );
-      expect(
-        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
-          label: 'checking when things feel uncertain',
-          entries: _threeCheckingUncertaintyEntries(),
-        ),
-        isFalse,
+    });
+
+    test('no therapy or diagnosis language in extracted phrases', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeRelatedRepeatEntries(),
       );
+      for (final phrase in result.phrases) {
+        _expectNoDiagnosticLanguage(phrase);
+      }
     });
   });
 
@@ -149,8 +309,28 @@ void main() {
       expect(model.lines.single, EarlyFirstSignalCopy.threeEntrySeenThreeTimes);
       expect(model.evidenceHeading, EarlyFirstSignalCopy.evidenceHeading);
       expect(model.evidencePhrases.length, greaterThanOrEqualTo(2));
+      expect(model.evidencePhrases, contains('said yes again'));
       expect(model.evidenceSupportLine, EarlyFirstSignalCopy.evidenceSupportLine);
       expect(model.evidenceRows, isEmpty);
+      _expectNoDiagnosticLanguage(model.title);
+      for (final line in model.lines) {
+        _expectNoDiagnosticLanguage(line);
+      }
+    });
+
+    test('weak abstract entries downgrade to forming copy', () {
+      final model =
+          EarlyFirstSignalEngine.build(entries: _threeWeakPhraseConfirmedEntries());
+      expect(model, isNotNull);
+      expect(model!.title, EarlyFirstSignalCopy.threeEntryFormingTitle);
+      expect(model.lines.single, EarlyFirstSignalCopy.threeEntryFormingBody);
+      expect(model.evidenceSupportLine, isNull);
+      expect(
+        EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(
+          _threeWeakPhraseConfirmedEntries(),
+        ),
+        isTrue,
+      );
     });
 
     test('weak phrase extraction uses forming copy without overclaiming', () {

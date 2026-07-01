@@ -22,7 +22,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
   ConfirmedRepeatEvidencePhraseEngine._();
 
   static const minWords = 2;
-  static const maxWords = 8;
+  static const maxWords = 6;
   static const minPhrasesForStrong = 2;
   static const maxPhrases = 3;
 
@@ -34,6 +34,44 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     'anxiety',
     'self-sabotage',
     'self sabotage',
+    'stress',
+    'confidence',
+  };
+
+  static const _concreteActionPatterns = [
+    'said yes again',
+    'said yes when',
+    'said yes',
+    'checked again',
+    'checking again',
+    'avoided the message',
+    'avoided the',
+    'avoided replying',
+    'paused before replying',
+    'paused before',
+    'walked outside',
+    "couldn't stop thinking",
+    'couldnt stop thinking',
+    'put it off',
+    'asked for reassurance',
+    'no capacity',
+    'checking my phone',
+    'going back to it',
+  ];
+
+  static const _actionVerbHints = {
+    'asked',
+    'avoided',
+    'checked',
+    'checking',
+    'kept',
+    'paused',
+    'put',
+    'replied',
+    'said',
+    'stopped',
+    'walked',
+    'thinking',
   };
 
   static const _stopWords = {
@@ -71,21 +109,6 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     'your',
   };
 
-  static const _priorityPhrases = [
-    'said yes again',
-    'said yes when',
-    'said yes',
-    'no capacity',
-    'checking again',
-    'checking my phone',
-    'felt uncertain',
-    'feel uncertain',
-    'not feeling done',
-    'going back to it',
-    'work pressure',
-    'overthinking',
-  ];
-
   static ConfirmedRepeatEvidenceResult extract(List<JournalEntry> entries) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 2) return ConfirmedRepeatEvidenceResult.empty;
@@ -97,9 +120,10 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     if (texts.length < 2) return ConfirmedRepeatEvidenceResult.empty;
 
     final phrases = _extractPhrases(texts);
+    final isStrong = _isStrongEvidence(phrases);
     return ConfirmedRepeatEvidenceResult(
       phrases: phrases,
-      isStrong: phrases.length >= minPhrasesForStrong,
+      isStrong: isStrong,
     );
   }
 
@@ -121,14 +145,37 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     return false;
   }
 
+  static bool isConcretePhrase(String phrase) => _isConcretePhrase(phrase);
+
+  static bool isAbstractOnlyPhrase(String phrase) => _isAbstractOnlyPhrase(phrase);
+
+  static bool _isStrongEvidence(List<String> phrases) {
+    if (phrases.isEmpty) return false;
+    if (phrases.every(_isAbstractOnlyPhrase)) return false;
+    if (!phrases.any(_isConcretePhrase)) return false;
+    if (phrases.length >= minPhrasesForStrong) return true;
+    // One repeated concrete action phrase across entries is enough.
+    return true;
+  }
+
   static List<String> _extractPhrases(List<String> texts) {
     final lowerTexts = texts.map((t) => t.toLowerCase()).toList();
-    final candidates = <String>[];
+    final candidates = <String, int>{};
 
-    for (final phrase in _priorityPhrases) {
+    void addCandidate(String phrase, {required int bonus}) {
+      final display = _displayFromEntries(texts, phrase);
+      if (display == null) return;
+      final key = display.toLowerCase();
+      final score = bonus + _phraseScore(display);
+      final existing = candidates[key];
+      if (existing == null || score > existing) {
+        candidates[key] = score;
+      }
+    }
+
+    for (final phrase in _concreteActionPatterns) {
       if (lowerTexts.where((t) => t.contains(phrase)).length >= 2) {
-        final display = _displayFromEntries(texts, phrase);
-        if (display != null) candidates.add(display);
+        addCandidate(phrase, bonus: 20);
       }
     }
 
@@ -139,35 +186,22 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
       }
     }
 
-    final ranked = ngramCounts.entries
-        .where((e) => e.value.length >= 2)
-        .where((e) => !_isGenericPhrase(e.key))
-        .where((e) => !ArchiveRepeatPhraseSanitizer.isLowQuality(e.key))
-        .map(
-          (e) => MapEntry(
-            e.key,
-            e.value.length * e.key.split(' ').length,
-          ),
-        )
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    for (final entry in ranked) {
-      final display = _displayFromEntries(texts, entry.key);
-      if (display == null) continue;
-      if (candidates.any((c) => c.toLowerCase() == display.toLowerCase())) {
-        continue;
-      }
-      candidates.add(display);
+    for (final entry in ngramCounts.entries) {
+      if (entry.value.length < 2) continue;
+      if (_isWeakPhrase(entry.key)) continue;
+      if (ArchiveRepeatPhraseSanitizer.isLowQuality(entry.key)) continue;
+      addCandidate(
+        entry.key,
+        bonus: entry.value.length * entry.key.split(' ').length,
+      );
     }
 
-    final deduped = ArchiveRepeatPhraseSanitizer.dedupeNearIdentical(
-      candidates.map((p) => p.toLowerCase()).toList(),
-    );
+    final ranked = candidates.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     final kept = <String>[];
-    for (final normalized in deduped) {
-      final display = _displayFromEntries(texts, normalized);
+    for (final entry in ranked) {
+      final display = _displayFromEntries(texts, entry.key);
       if (display == null) continue;
       if (kept.any((k) => k.toLowerCase() == display.toLowerCase())) continue;
       kept.add(display);
@@ -175,6 +209,16 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     }
 
     return kept;
+  }
+
+  static int _phraseScore(String phrase) {
+    var score = 0;
+    if (_isConcretePhrase(phrase)) score += 12;
+    if (_isAbstractOnlyPhrase(phrase)) score -= 10;
+    final words = phrase.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+    if (words >= 2 && words <= 4) score += 4;
+    if (words > 6) score -= 6;
+    return score;
   }
 
   static Iterable<String> _phrasesIn(String text) sync* {
@@ -198,17 +242,56 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
         .toList();
   }
 
-  static bool _isGenericPhrase(String phrase) {
+  static bool _isWeakPhrase(String phrase) {
+    if (_isAbstractOnlyPhrase(phrase)) return true;
     final lower = phrase.toLowerCase();
     if (lower.length < 5) return true;
     final words = lower.split(' ');
     if (words.every(_stopWords.contains)) return true;
-    const genericOnly = {'work', 'today', 'moment', 'thing', 'things', 'time'};
+    const genericOnly = {'work', 'today', 'moment', 'thing', 'things', 'time', 'busy'};
     if (words.length == 1 && genericOnly.contains(words.single)) return true;
-    for (final term in bannedGenericLabels) {
-      if (lower.contains(term)) return true;
-    }
     return false;
+  }
+
+  static bool _isConcretePhrase(String phrase) {
+    final lower = phrase.toLowerCase();
+    for (final pattern in _concreteActionPatterns) {
+      if (lower.contains(pattern)) return true;
+    }
+    final words = lower.split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
+    return words.any(_actionVerbHints.contains);
+  }
+
+  static bool _isAbstractOnlyPhrase(String phrase) {
+    final lower = phrase.toLowerCase();
+    final words = lower.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    if (words.isEmpty) return true;
+
+    if (words.length == 1 && bannedGenericLabels.contains(words.single)) {
+      return true;
+    }
+
+    if (_isConcretePhrase(phrase)) return false;
+
+    final hasAbstract = bannedGenericLabels.any(lower.contains);
+    if (!hasAbstract) {
+      const vagueOnly = {
+        'busy',
+        'stretched',
+        'thin',
+        'felt',
+        'feeling',
+        'work',
+        'office',
+        'day',
+        'again',
+      };
+      return words.every(
+        (word) => vagueOnly.contains(word) || _stopWords.contains(word),
+      );
+    }
+
+    return true;
   }
 
   static String? _displayFromEntries(List<String> texts, String phraseLower) {
@@ -225,7 +308,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
       final slice = text.substring(index, end).trim();
       final wordCount = slice.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
       if (wordCount < minWords || wordCount > maxWords) continue;
-      if (_isGenericPhrase(slice)) continue;
+      if (_isWeakPhrase(slice)) continue;
       return slice;
     }
     return null;
