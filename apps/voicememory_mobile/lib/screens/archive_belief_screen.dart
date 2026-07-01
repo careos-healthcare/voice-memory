@@ -3641,14 +3641,36 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
         hasChangeOverTimeProof: hasChangeOverTimeProof,
       );
+      final archiveSummaryVisibleForProGate = ArchiveSummaryGates.shouldShow(
+        loaded: true,
+        entryCount: _entries.length,
+        isReady: true,
+        isRecording: false,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        hasSummary: archiveSummaryCandidate != null,
+      );
+      final weeklyArchiveReviewVisibleForProGate =
+          WeeklyArchiveWeekReviewGates.shouldShow(
+        loaded: true,
+        entryCount: _entries.length,
+        isReady: true,
+        isRecording: false,
+        entries: _entries,
+        returnChecks: RepeatReturnCheckStore.cached,
+      );
+      final hasConfirmedRepeatForProGate = viewingConfirmedRepeatOnPatterns &&
+          ((earlyFirstSignal?.showsConfirmedRepeat ?? false) ||
+              showEarlyEvidenceTimeline);
       final showPatternsPostProofProBridge =
           PaywallTimingGates.showPostProofProBridge(
         entryCount: _entries.length,
         resolved: _proBridgeResolved,
         isPro: _archiveIsPro,
         hasArchiveProof: patternsPostProofArchiveProof,
-        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        viewingConfirmedRepeatOrTimeline: hasConfirmedRepeatForProGate,
         hasChangeOverTimeProof: hasChangeOverTimeProof,
+        hasArchiveSummary: archiveSummaryVisibleForProGate,
+        hasWeeklyArchiveReview: weeklyArchiveReviewVisibleForProGate,
       );
       final proofSurfaceLayout = ArchiveProofSurfaceLayout(
         confirmedRepeatCardVisible: !showEarlyEvidenceTimeline &&

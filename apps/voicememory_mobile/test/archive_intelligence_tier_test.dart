@@ -228,6 +228,8 @@ void main() {
   group('Archive intelligence copy safety', () {
     test('pro bridge avoids hard paywall language', () {
       final haystack = [
+        ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         ArchiveBeliefThreadCopy.proBridgeBody,
         ArchiveBeliefThreadCopy.proBridgeCta,
         ArchiveBeliefThreadCopy.proBridgeSecondary,

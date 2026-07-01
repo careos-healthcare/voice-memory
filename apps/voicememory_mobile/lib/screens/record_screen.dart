@@ -3656,6 +3656,28 @@ class _RecordScreenState extends State<RecordScreen> {
       helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
       hasChangeOverTimeProof: hasChangeOverTimeProof,
     );
+    final archiveSummaryVisibleForProGate = ArchiveSummaryGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+      hasSummary: archiveSummaryCandidate != null,
+    );
+    final weeklyArchiveReviewVisibleForProGate = ui == RecordUiState.ready &&
+        _journalEntryCountReady &&
+        !_isPostSaveSurface &&
+        WeeklyArchiveWeekReviewGates.shouldShow(
+          loaded: _journalEntryCountReady,
+          entryCount: _journalEntryCount,
+          isReady: ui == RecordUiState.ready,
+          isRecording: ui == RecordUiState.recording,
+          entries: _journalEntries,
+          returnChecks: RepeatReturnCheckStore.cached,
+        );
+    final hasConfirmedRepeatForProGate = viewingConfirmedRepeatOnRecord &&
+        ((earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false) ||
+            showEarlyEvidenceTimeline);
     final showPostProofProBridge = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
@@ -3665,9 +3687,11 @@ class _RecordScreenState extends State<RecordScreen> {
           resolved: _recordReturnProState!.proBridgeResolved,
           isPro: _recordReturnProIsPro,
           hasArchiveProof: postProofArchiveProof,
-          viewingConfirmedRepeatOrTimeline: showEarlyEvidenceTimeline ||
-              (earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false),
+          viewingConfirmedRepeatOrTimeline: hasConfirmedRepeatForProGate,
           hasChangeOverTimeProof: hasChangeOverTimeProof,
+          isPostSave: _isPostSaveSurface,
+          hasArchiveSummary: archiveSummaryVisibleForProGate,
+          hasWeeklyArchiveReview: weeklyArchiveReviewVisibleForProGate,
         );
     final proofSurfaceLayout = ArchiveProofSurfaceLayout(
       confirmedRepeatCardVisible:

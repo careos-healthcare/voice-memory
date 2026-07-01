@@ -6,7 +6,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Soft Pro continuity bridge after archive value appears — never blocks insight.
+/// Soft Pro boundary for full archive history — never blocks insight or recording.
 class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
   const ArchiveIntelligenceProBridgeCard({
     super.key,
@@ -21,18 +21,11 @@ class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = compact
-        ? ArchiveBeliefThreadCopy.proNearbyTitle
-        : ArchiveBeliefThreadCopy.proKeepsThread;
-    final body = compact
-        ? ArchiveBeliefThreadCopy.proNearbyBridgeBody
-        : ArchiveBeliefThreadCopy.proBridgeBody;
-
     return Container(
       key: Key(
         compact
             ? 'archive_intelligence_pro_bridge_card_compact'
-            : 'archive_intelligence_pro_bridge_card',
+            : 'full_archive_history_pro_boundary_card',
       ),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -41,14 +34,14 @@ class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            title,
-            key: const Key('archive_intelligence_pro_bridge_title'),
+            ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
+            key: const Key('full_archive_history_pro_title'),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            body,
-            key: const Key('archive_intelligence_pro_bridge_body'),
+            ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+            key: const Key('full_archive_history_pro_body'),
             style: ArchiveMobileTypography.body(
               context,
             ).copyWith(color: AppColors.textPrimary),

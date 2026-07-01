@@ -215,14 +215,15 @@ void main() {
       );
     });
 
-    test('shows after change-over-time proof even without timeline visible', () {
+    test('shows after change-over-time proof when confirmed repeat is visible',
+        () {
       expect(
         PaywallTimingGates.showPostProofProBridge(
           entryCount: 4,
           resolved: false,
           isPro: false,
           hasArchiveProof: true,
-          viewingConfirmedRepeatOrTimeline: false,
+          viewingConfirmedRepeatOrTimeline: true,
           hasChangeOverTimeProof: true,
         ),
         isTrue,
@@ -249,6 +250,20 @@ void main() {
           hasArchiveProof: true,
           viewingConfirmedRepeatOrTimeline: true,
           hasChangeOverTimeProof: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('change-over-time proof alone does not show without value surfaces', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: true,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: true,
         ),
         isFalse,
       );
@@ -355,27 +370,25 @@ void main() {
     });
   });
 
-  group('Post-proof bridge copy', () {
-    test('strongest bridge ties Pro to repeat proof and change tracking', () {
+  group('Full archive history Pro boundary copy', () {
+    test('boundary ties Pro to full history without blocking free proof', () {
       expect(
-        ArchiveBeliefThreadCopy.proKeepsThread,
-        'Keep the full evidence trail',
+        ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
+        'Full archive history',
       );
       expect(
-        ArchiveBeliefThreadCopy.proBridgeBody,
-        'ArchiveMe has found a repeat in your own words. Pro keeps tracking '
-        'whether it gets stronger, softer, or changes over time.',
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+        'ArchiveMe can show the first proof for free. Pro keeps the full evidence '
+        'trail, weekly reviews, and long-term changes.',
       );
       expect(ArchiveBeliefThreadCopy.proBridgeCta, 'See Pro');
       expect(ArchiveBeliefThreadCopy.proBridgeSecondary, 'Not now');
     });
 
-    test('bridge copy avoids hard lock language', () {
+    test('boundary copy avoids hard lock language', () {
       final haystack = [
-        ArchiveBeliefThreadCopy.proKeepsThread,
-        ArchiveBeliefThreadCopy.proBridgeBody,
-        ArchiveBeliefThreadCopy.proNearbyTitle,
-        ArchiveBeliefThreadCopy.proNearbyBridgeBody,
+        ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         ArchiveBeliefThreadCopy.proBridgeCta,
         ArchiveBeliefThreadCopy.proBridgeSecondary,
       ].join(' ').toLowerCase();
@@ -385,7 +398,37 @@ void main() {
       expect(haystack, isNot(contains('hard lock')));
     });
 
-    testWidgets('compact pro bridge shortens copy when change proof is visible', (
+    testWidgets('full archive history boundary renders on Record-style surface',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ArchiveIntelligenceProBridgeCard(
+              onSeePro: () {},
+              onNotNow: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryBody),
+        findsOneWidget,
+      );
+      expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
+      expect(find.text(ArchiveBeliefThreadCopy.proBridgeSecondary), findsOneWidget);
+      expect(
+        find.byKey(const Key('full_archive_history_pro_boundary_card')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('compact flag still renders full archive history copy', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -401,49 +444,18 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(ArchiveBeliefThreadCopy.proNearbyTitle), findsOneWidget);
-      expect(find.text(ArchiveBeliefThreadCopy.proNearbyBridgeBody), findsOneWidget);
+      expect(
+        find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryBody),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('archive_intelligence_pro_bridge_card_compact')),
         findsOneWidget,
       );
-      expect(
-        ArchiveBeliefThreadCopy.proNearbyBridgeBody.toLowerCase(),
-        isNot(contains('stronger')),
-      );
-      expect(
-        ArchiveBeliefThreadCopy.proNearbyBridgeBody.toLowerCase(),
-        isNot(contains('softer')),
-      );
-    });
-
-    testWidgets('archive intelligence bridge renders post-proof copy', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ArchiveIntelligenceProBridgeCard(
-              onSeePro: () {},
-              onNotNow: () {},
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(
-        find.text(ArchiveBeliefThreadCopy.proKeepsThread),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ArchiveBeliefThreadCopy.proBridgeBody),
-        findsOneWidget,
-      );
-      expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
-      expect(find.text(ArchiveBeliefThreadCopy.proBridgeSecondary), findsOneWidget);
-      expect(find.byKey(const Key('archive_intelligence_pro_bridge_card')),
-          findsOneWidget);
     });
   });
 

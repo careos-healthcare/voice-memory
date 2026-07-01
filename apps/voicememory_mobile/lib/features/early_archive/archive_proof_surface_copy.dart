@@ -96,16 +96,8 @@ abstract final class ArchiveProofSurfaceCopy {
     }
 
     if (layout.proBridgeVisible) {
-      blocks.add(
-        layout.proBridgeCompact
-            ? ArchiveBeliefThreadCopy.proNearbyTitle
-            : ArchiveBeliefThreadCopy.proKeepsThread,
-      );
-      blocks.add(
-        layout.proBridgeCompact
-            ? ArchiveBeliefThreadCopy.proNearbyBridgeBody
-            : ArchiveBeliefThreadCopy.proBridgeBody,
-      );
+      blocks.add(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle);
+      blocks.add(ArchiveBeliefThreadCopy.fullArchiveHistoryBody);
     }
 
     if (layout.whyMattersVisible && !layout.archiveSummaryVisible) {

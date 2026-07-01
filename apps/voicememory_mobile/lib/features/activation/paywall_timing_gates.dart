@@ -6,6 +6,8 @@ import '../early_archive/early_first_signal_engine.dart';
 abstract class PaywallTimingGates {
   PaywallTimingGates._();
 
+  static const minFullArchiveHistoryEntryCount = 3;
+
   /// Soft Pro bridge: never on first save, never without archive proof.
   static bool showSoftProBridge({
     required int entryCount,
@@ -15,8 +17,24 @@ abstract class PaywallTimingGates {
   }) =>
       entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
 
-  /// Pro bridge after confirmed repeat, evidence timeline, or change-over-time
-  /// proof — never on first save, never blocking recording.
+  /// Full archive history Pro boundary — after confirmed repeat, Archive Summary,
+  /// or Weekly Review; never on first save; never before entry count 3.
+  static bool showFullArchiveHistoryProBoundary({
+    required int entryCount,
+    required bool resolved,
+    required bool isPro,
+    required bool isPostSave,
+    required bool hasConfirmedRepeat,
+    required bool hasArchiveSummary,
+    required bool hasWeeklyArchiveReview,
+  }) {
+    if (isPro || resolved || isPostSave) return false;
+    if (entryCount < minFullArchiveHistoryEntryCount) return false;
+    return hasConfirmedRepeat || hasArchiveSummary || hasWeeklyArchiveReview;
+  }
+
+  /// Pro bridge after confirmed repeat, Archive Summary, or weekly review —
+  /// never on first save, never blocking recording.
   static bool showPostProofProBridge({
     required int entryCount,
     required bool resolved,
@@ -24,18 +42,30 @@ abstract class PaywallTimingGates {
     required bool hasArchiveProof,
     required bool viewingConfirmedRepeatOrTimeline,
     required bool hasChangeOverTimeProof,
-  }) {
-    final proofSeen = hasArchiveProof || hasChangeOverTimeProof;
-    if (!showSoftProBridge(
-      entryCount: entryCount,
-      resolved: resolved,
-      isPro: isPro,
-      hasArchiveProof: proofSeen,
-    )) {
-      return false;
-    }
-    return viewingConfirmedRepeatOrTimeline || hasChangeOverTimeProof;
-  }
+    bool isPostSave = false,
+    bool hasArchiveSummary = false,
+    bool hasWeeklyArchiveReview = false,
+  }) =>
+      showFullArchiveHistoryProBoundary(
+        entryCount: entryCount,
+        resolved: resolved,
+        isPro: isPro,
+        isPostSave: isPostSave,
+        hasConfirmedRepeat: viewingConfirmedRepeatOrTimeline &&
+            (hasConfirmedRepeatProof(
+                  hasArchiveProof: hasArchiveProof,
+                  hasChangeOverTimeProof: hasChangeOverTimeProof,
+                ) ||
+                hasArchiveProof),
+        hasArchiveSummary: hasArchiveSummary,
+        hasWeeklyArchiveReview: hasWeeklyArchiveReview,
+      );
+
+  static bool hasConfirmedRepeatProof({
+    required bool hasArchiveProof,
+    required bool hasChangeOverTimeProof,
+  }) =>
+      hasArchiveProof || hasChangeOverTimeProof;
 
   /// True when the archive has shown confirmed repeat, timeline, belief, or
   /// grounded pattern insight — not merely a second unrelated save.

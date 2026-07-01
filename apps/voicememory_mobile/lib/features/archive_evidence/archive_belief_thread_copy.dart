@@ -27,6 +27,10 @@ abstract class ArchiveBeliefThreadCopy {
 
   static const String proKeepsThread = 'Keep the full evidence trail';
   static const String proNearbyTitle = 'Keep the full evidence trail';
+  static const String fullArchiveHistoryTitle = 'Full archive history';
+  static const String fullArchiveHistoryBody =
+      'ArchiveMe can show the first proof for free. Pro keeps the full evidence '
+      'trail, weekly reviews, and long-term changes.';
   static const String proDeeperHistory =
       'See deeper history and saved evidence.';
   static const String proReviewChanges =
@@ -90,6 +94,8 @@ abstract class ArchiveBeliefThreadCopy {
     confidenceLabel,
     proKeepsThread,
     proNearbyTitle,
+    fullArchiveHistoryTitle,
+    fullArchiveHistoryBody,
     proDeeperHistory,
     proReviewChanges,
     proBridgeBody,

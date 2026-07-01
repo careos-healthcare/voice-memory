@@ -143,8 +143,8 @@ void main() {
       expect(blocks, contains(RepeatReturnCheckCopy.changeProofTitle));
       expect(blocks, contains(RepeatReturnCheckCopy.trendGettingLouder));
       expect(blocks, isNot(contains(RepeatReturnCheckCopy.changeProofSupportLine)));
-      expect(blocks, contains(ArchiveBeliefThreadCopy.proNearbyTitle));
-      expect(blocks, contains(ArchiveBeliefThreadCopy.proNearbyBridgeBody));
+      expect(blocks, contains(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle));
+      expect(blocks, contains(ArchiveBeliefThreadCopy.fullArchiveHistoryBody));
     });
 
     test('patterns stack with confirmed repeat hides timeline evidence heading', () {
