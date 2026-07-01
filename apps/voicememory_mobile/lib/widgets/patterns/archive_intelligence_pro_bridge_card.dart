@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../../features/beta/beta_activation_loop_tracker.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_evidence/archive_belief_thread_copy.dart';
 import '../../theme/app_colors.dart';
@@ -21,6 +24,9 @@ class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!compact) {
+      unawaited(BetaActivationLoopTracker.trackProBoundarySeen());
+    }
     return Container(
       key: Key(
         compact

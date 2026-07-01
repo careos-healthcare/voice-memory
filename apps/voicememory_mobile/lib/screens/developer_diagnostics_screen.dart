@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 import '../config/app_config.dart';
 import '../config/archive_me_demo_state.dart';
 import '../config/developer_settings_gate.dart';
+import '../features/activation/activation_dropoff_review_engine.dart';
 import '../features/beta/beta_activation_loop_counts.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/debug/archive_beta_debug_gate.dart';
+import '../widgets/debug/activation_dropoff_review_card.dart';
 import '../push/firebase_options.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
@@ -193,6 +195,15 @@ class _DeveloperDiagnosticsScreenState
                     },
               child: const Text('Reset demo archive'),
             ),
+            const SizedBox(height: 24),
+            if (_loading)
+              const Text('…')
+            else
+              ActivationDropoffReviewCard(
+                review: ActivationDropoffReviewEngine.build(
+                  betaCounts: _betaLoopCounts,
+                ),
+              ),
             const SizedBox(height: 24),
             Text(
               'Beta activation loop',

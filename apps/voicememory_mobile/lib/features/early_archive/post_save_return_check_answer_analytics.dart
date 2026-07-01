@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import '../beta/beta_activation_loop_tracker.dart';
 import 'early_archive_proof_analytics.dart';
 import 'post_save_return_check_answer_model.dart';
 
@@ -23,6 +26,7 @@ abstract final class PostSaveReturnCheckAnswerAnalytics {
     required bool hasPhrase,
     required bool hasConfirmedRepeat,
   }) {
+    unawaited(BetaActivationLoopTracker.trackReturnCheckAnswered());
     EarlyArchiveProofAnalytics.postSaveReturnCheckAnswerTapped(
       entryCount: entryCount,
       answer: answer.analyticsValue,

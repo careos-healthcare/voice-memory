@@ -11,10 +11,13 @@ abstract class BetaActivationLoopTracker {
   static const _sessionDedupeKeys = <String>{
     'appOpened',
     'recordScreenSeen',
+    'firstUsePromptSeen',
     'oneEntryReturnScreenSeen',
     'twoEntryRelatedSeen',
     'twoEntryUnrelatedSeen',
     'confirmedRepeatSeen',
+    'returnedAfterFirstProof',
+    'proBoundarySeen',
     'paywallSeen',
   };
 
@@ -30,6 +33,9 @@ abstract class BetaActivationLoopTracker {
 
   static Future<void> trackRecordScreenSeen() =>
       _increment('recordScreenSeen', sessionDedupe: true);
+
+  static Future<void> trackFirstUsePromptSeen() =>
+      _increment('firstUsePromptSeen', sessionDedupe: true);
 
   static Future<void> trackFirstMomentSaved() =>
       _increment('firstMomentSaved');
@@ -51,6 +57,18 @@ abstract class BetaActivationLoopTracker {
 
   static Future<void> trackConfirmedRepeatSeen() =>
       _increment('confirmedRepeatSeen', sessionDedupe: true);
+
+  static Future<void> trackReturnedAfterFirstProof() =>
+      _increment('returnedAfterFirstProof', sessionDedupe: true);
+
+  static Future<void> trackFourthMomentSaved() =>
+      _increment('fourthMomentSaved');
+
+  static Future<void> trackReturnCheckAnswered() =>
+      _increment('returnCheckAnswered');
+
+  static Future<void> trackProBoundarySeen() =>
+      _increment('proBoundarySeen', sessionDedupe: true);
 
   static Future<void> trackPaywallSeen() =>
       _increment('paywallSeen', sessionDedupe: true);

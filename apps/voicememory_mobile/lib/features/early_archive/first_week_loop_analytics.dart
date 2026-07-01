@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import '../beta/beta_activation_loop_tracker.dart';
 import 'early_archive_proof_analytics.dart';
 
 /// Safe metadata analytics for the first-week loop — no journal text.
@@ -9,6 +12,7 @@ abstract final class FirstWeekLoopAnalytics {
     required bool hasPhrase,
     required bool hasConfirmedRepeat,
   }) {
+    unawaited(BetaActivationLoopTracker.trackReturnedAfterFirstProof());
     EarlyArchiveProofAnalytics.firstWeekLoopSeen(
       entryCount: entryCount,
       hasPhrase: hasPhrase,

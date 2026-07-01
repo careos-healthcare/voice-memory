@@ -328,6 +328,7 @@ abstract class ActivationTracker {
   static const _firstReflectionFlagKey = 'trial_first_reflection_logged';
   static const _secondReflectionFlagKey = 'trial_second_reflection_logged';
   static const _thirdReflectionFlagKey = 'trial_third_reflection_logged';
+  static const _fourthReflectionFlagKey = 'trial_fourth_reflection_logged';
 
   static ActivationEventsStore _events() =>
       ActivationEventsStore(AppServices.instance.prefs);
@@ -379,6 +380,11 @@ abstract class ActivationTracker {
       await prefs.writeBool(_thirdReflectionFlagKey, true);
       await trackThirdReflectionSaved();
       trackThirdMomentRecorded();
+    }
+    if (eligibleCount >= 4 &&
+        await prefs.readBool(_fourthReflectionFlagKey) != true) {
+      await prefs.writeBool(_fourthReflectionFlagKey, true);
+      unawaited(BetaActivationLoopTracker.trackFourthMomentSaved());
     }
   }
 

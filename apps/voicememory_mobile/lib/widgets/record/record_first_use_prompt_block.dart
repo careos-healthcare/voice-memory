@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../../features/beta/beta_activation_loop_tracker.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../record/record_screen_framing_copy.dart';
 import '../../theme/app_colors.dart';
@@ -11,6 +14,7 @@ class RecordFirstUsePromptBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    unawaited(BetaActivationLoopTracker.trackFirstUsePromptSeen());
     final titleStyle = ArchiveMobileTypography.listTitle(context);
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textPrimary,
