@@ -210,6 +210,8 @@ import '../features/early_archive/positive_pattern_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
+import '../features/early_archive/archive_watching_engine.dart';
+import '../features/early_archive/archive_watching_gates.dart';
 import '../features/early_archive/daily_return_reason_analytics.dart';
 import '../features/early_archive/daily_return_reason_engine.dart';
 import '../features/early_archive/daily_return_reason_gates.dart';
@@ -3716,6 +3718,29 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     final dailyReturnReason =
         showDailyReturnReason ? dailyReturnReasonCandidate : null;
+    final archiveWatchingCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? ArchiveWatchingEngine.build(
+            entries: _journalEntries,
+            changeProof: repeatReturnChangeProof,
+            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+            returnChecks: RepeatReturnCheckStore.cached,
+            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+          )
+        : null;
+    final archiveWatching = ArchiveWatchingGates.shouldShow(
+          loaded: _journalEntryCountReady,
+          entryCount: _journalEntryCount,
+          isReady: ui == RecordUiState.ready,
+          isRecording: ui == RecordUiState.recording,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+          archiveSummaryVisible: showArchiveSummary,
+          hasWatching: archiveWatchingCandidate != null,
+        )
+        ? archiveWatchingCandidate
+        : null;
     final weeklyArchiveWeekReview = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
@@ -4150,6 +4175,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ArchiveSummaryCard(
                         summary: archiveSummary,
                         showRecordNextCta: showArchiveSummaryRecordCta,
+                        watching: archiveWatching,
                         onRecordNext: () => _handleArchiveSummaryRecordNext(
                           archiveSummary,
                         ),

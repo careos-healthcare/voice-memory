@@ -38,6 +38,8 @@ import '../features/early_archive/positive_pattern_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
+import '../features/early_archive/archive_watching_engine.dart';
+import '../features/early_archive/archive_watching_gates.dart';
 import '../features/early_archive/daily_return_reason_analytics.dart';
 import '../features/early_archive/daily_return_reason_engine.dart';
 import '../features/early_archive/daily_return_reason_gates.dart';
@@ -3698,6 +3700,25 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       );
       final dailyReturnReason =
           showDailyReturnReason ? dailyReturnReasonCandidate : null;
+      final archiveWatchingCandidate = ArchiveWatchingEngine.build(
+        entries: _entries,
+        changeProof: repeatReturnChangeProof,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final archiveWatching = ArchiveWatchingGates.shouldShow(
+            loaded: true,
+            entryCount: _entries.length,
+            isReady: true,
+            isRecording: false,
+            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+            archiveSummaryVisible: showArchiveSummary,
+            hasWatching: archiveWatchingCandidate != null,
+          )
+          ? archiveWatchingCandidate
+          : null;
       final weeklyArchiveWeekReview = WeeklyArchiveWeekReviewEngine.build(
         entries: _entries,
         confirmedRepeat: earlyFirstSignal,
@@ -3812,6 +3833,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ArchiveSummaryCard(
                     summary: archiveSummary,
                     showRecordNextCta: true,
+                    watching: archiveWatching,
                     onRecordNext: () => _handleArchiveSummaryRecordNext(
                       archiveSummary,
                     ),

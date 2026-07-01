@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/early_archive/archive_summary_copy.dart';
 import '../../features/early_archive/archive_summary_model.dart';
+import '../../features/early_archive/archive_watching_engine.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'archive_watching_micro_state.dart';
 
 /// Unified archive overview — one surface for repeat, loop, change, and help.
 class ArchiveSummaryCard extends StatelessWidget {
@@ -13,11 +15,13 @@ class ArchiveSummaryCard extends StatelessWidget {
     super.key,
     required this.summary,
     required this.showRecordNextCta,
+    this.watching,
     this.onRecordNext,
   });
 
   final ArchiveSummaryResult summary;
   final bool showRecordNextCta;
+  final ArchiveWatchingResult? watching;
   final VoidCallback? onRecordNext;
 
   @override
@@ -137,6 +141,7 @@ class ArchiveSummaryCard extends StatelessWidget {
               style: secondaryStyle,
             ),
           ),
+          if (watching != null) ArchiveWatchingMicroState(watching: watching!),
           if (showRecordNextCta && onRecordNext != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Align(
