@@ -16,6 +16,7 @@ import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.d
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
@@ -1020,9 +1021,21 @@ void main() {
 
       expect(find.byKey(const Key('returning_user_today_card')), findsNothing);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
-      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsOneWidget);
-      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsOneWidget);
-      expect(find.text(EarlyFirstSignalCopy.oneEntryBody), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_repeat_progress_card_oneMoment')),
+        findsOneWidget,
+      );
+      expect(find.text(EarlyRepeatProgressCopy.oneMomentTitle), findsOneWidget);
+      expect(find.text(EarlyRepeatProgressCopy.oneMomentBody), findsOneWidget);
+      expect(
+        find.text(EarlyRepeatProgressCopy.oneMomentProgress),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_first_signal_card_oneEntryReceipt')),
+        findsNothing,
+      );
+      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
@@ -1047,8 +1060,118 @@ void main() {
 
       expect(find.byKey(const Key('next_moment_prompt_card')), findsNothing);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
-      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_repeat_progress_card_oneMoment')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_first_signal_card_oneEntryReceipt')),
+        findsNothing,
+      );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+    });
+
+    testWidgets('two related entries show repeat progress without extra CTA', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            createdAt: DateTime(2026, 6, 1, 12),
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            createdAt: DateTime(2026, 6, 2, 12),
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        );
+      });
+      await pumpRecordScreen(tester);
+
+      expect(
+        find.byKey(const Key('early_repeat_progress_card_twoRelated')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlyRepeatProgressCopy.twoRelatedProgress),
+        findsOneWidget,
+      );
+      expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+    });
+
+    testWidgets('two unrelated entries do not claim repeat forming', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            transcript: 'Another unrelated note about errands this afternoon.',
+          ),
+        );
+      });
+      await pumpRecordScreen(tester);
+
+      expect(
+        find.byKey(const Key('early_repeat_progress_card_twoUnrelated')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlyRepeatProgressCopy.twoUnrelatedTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlyRepeatProgressCopy.twoRelatedTitle),
+        findsNothing,
+      );
+      expect(
+        find.text(EarlyRepeatProgressCopy.twoRelatedProgress),
+        findsNothing,
+      );
+    });
+
+    testWidgets('three confirmed-repeat entries hide early progress card', (
+      tester,
+    ) async {
+      await seedConfirmedRepeatEntries(tester, 3);
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('early_repeat_progress_card_oneMoment')), findsNothing);
+      expect(find.byKey(const Key('early_repeat_progress_card_twoRelated')), findsNothing);
+      expect(find.byKey(const Key('early_repeat_progress_card_twoUnrelated')), findsNothing);
+      expect(find.byKey(const Key('archive_summary_card')), findsOneWidget);
     });
 
     testWidgets('post-save done state hides next-moment prompt card', (

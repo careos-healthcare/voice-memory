@@ -172,6 +172,7 @@ import '../widgets/record/watch_for_tomorrow_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
+import '../widgets/record/early_repeat_progress_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
@@ -188,6 +189,7 @@ import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
+import '../features/early_archive/early_repeat_progress_engine.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
@@ -3957,6 +3959,9 @@ class _RecordScreenState extends State<RecordScreen> {
         recordProofStack.showPositiveReinforcement;
     final showChangeProofOnRecord = recordProofStack.showChangeProof;
     final showArchiveSummaryOnRecord = recordProofStack.showArchiveSummary;
+    final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
+        ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
+        : null;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -4301,6 +4306,13 @@ class _RecordScreenState extends State<RecordScreen> {
                           setState(() => _selectedPromptLine = p);
                         },
                       ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (ui == RecordUiState.ready &&
+                        _journalEntryCountReady &&
+                        recordProofStack.showEarlyRepeatProgress &&
+                        earlyRepeatProgress != null) ...[
+                      EarlyRepeatProgressCard(progress: earlyRepeatProgress),
                       const SizedBox(height: 12),
                     ],
                     if (ui == RecordUiState.ready &&

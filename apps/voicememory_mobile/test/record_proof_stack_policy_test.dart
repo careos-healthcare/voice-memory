@@ -90,7 +90,8 @@ void main() {
         proBridgeEligible: true,
       );
 
-      expect(decision.showEarlyFirstSignalCard, isTrue);
+      expect(decision.showEarlyRepeatProgress, isTrue);
+      expect(decision.showEarlyFirstSignalCard, isFalse);
       expect(decision.showArchiveSummary, isFalse);
       expect(decision.showPatternChanged, isFalse);
       expect(decision.proofCardCount, lessThanOrEqualTo(1));

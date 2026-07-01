@@ -3,6 +3,7 @@ import '../record/record_empty_archive_gates.dart';
 /// Which archive proof / guidance cards may appear below the recorder on Record.
 class RecordProofStackDecision {
   const RecordProofStackDecision({
+    required this.showEarlyRepeatProgress,
     required this.showEarlyFirstSignalCard,
     required this.showEarlyEvidenceTimeline,
     required this.showPatternChanged,
@@ -18,6 +19,7 @@ class RecordProofStackDecision {
     required this.proofCardCount,
   });
 
+  final bool showEarlyRepeatProgress;
   final bool showEarlyFirstSignalCard;
   final bool showEarlyEvidenceTimeline;
   final bool showPatternChanged;
@@ -35,6 +37,7 @@ class RecordProofStackDecision {
   final int proofCardCount;
 
   static const empty = RecordProofStackDecision(
+    showEarlyRepeatProgress: false,
     showEarlyFirstSignalCard: false,
     showEarlyEvidenceTimeline: false,
     showPatternChanged: false,
@@ -83,16 +86,16 @@ abstract final class RecordProofStackPolicy {
 
     final useSummaryOverview = archiveSummaryVisible && entryCount >= 3;
 
-    // Entry 1–2: one early proof card only.
+    // Entry 1–2: one early progress card only — not the legacy receipt card.
     if (entryCount >= 1 && entryCount <= 2) {
-      final showEarlyFirstSignal = hasEarlyFirstSignal &&
-          RecordEmptyArchiveGates.showEarlyFirstSignalCard(
-            loaded: loaded,
-            entryCount: entryCount,
-            isPostSave: isPostSave,
-          );
+      final showProgress = RecordEmptyArchiveGates.showEarlyFirstSignalCard(
+        loaded: loaded,
+        entryCount: entryCount,
+        isPostSave: isPostSave,
+      );
       return RecordProofStackDecision(
-        showEarlyFirstSignalCard: showEarlyFirstSignal,
+        showEarlyRepeatProgress: showProgress,
+        showEarlyFirstSignalCard: false,
         showEarlyEvidenceTimeline: false,
         showPatternChanged: false,
         showArchiveSummary: false,
@@ -104,7 +107,7 @@ abstract final class RecordProofStackPolicy {
         showPositiveReinforcement: false,
         showChangeProof: false,
         showProBridge: false,
-        proofCardCount: showEarlyFirstSignal ? 1 : 0,
+        proofCardCount: showProgress ? 1 : 0,
       );
     }
 
@@ -149,7 +152,9 @@ abstract final class RecordProofStackPolicy {
     }
 
     return RecordProofStackDecision(
-      showEarlyFirstSignalCard: false,
+      showEarlyRepeatProgress: false,
+      showEarlyFirstSignalCard:
+          entryCount == 3 && hasEarlyFirstSignal && !useSummaryOverview,
       showEarlyEvidenceTimeline:
           hasEarlyEvidenceTimeline && !useSummaryOverview,
       showPatternChanged: showPatternChanged,

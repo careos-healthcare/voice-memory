@@ -6,6 +6,8 @@ import 'package:voicememory_mobile/features/activation/first_three_session_gates
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_engine.dart';
 import 'package:voicememory_mobile/features/activation/third_session_archive_usefulness_engine.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
@@ -529,6 +531,41 @@ void main() {
       expect(
         model.lines,
         contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes),
+      );
+      expect(EarlyRepeatProgressEngine.build(entries: entries), isNull);
+    });
+
+    test('early repeat progress copy tracks first-three loop', () {
+      final one = EarlyRepeatProgressEngine.build(
+        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+      );
+      expect(one!.progressLabel, EarlyRepeatProgressCopy.oneMomentProgress);
+
+      final related = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry(
+            '1',
+            'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+          _entry(
+            '2',
+            'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        ],
+      );
+      expect(related!.progressLabel, EarlyRepeatProgressCopy.twoRelatedProgress);
+      expect(related.claimsRepeatForming, isTrue);
+
+      final unrelated = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry('1', 'A quiet moment about lunch with a friend today.'),
+          _entry('2', 'Another unrelated note about errands this afternoon.'),
+        ],
+      );
+      expect(unrelated!.claimsRepeatForming, isFalse);
+      expect(
+        unrelated.progressLabel,
+        isNot(contains('first repeat proof')),
       );
     });
 
