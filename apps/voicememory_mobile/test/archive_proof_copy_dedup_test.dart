@@ -9,8 +9,15 @@ import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
@@ -300,6 +307,94 @@ void main() {
             progress.nextMomentCue.footer,
           ].join('\n'),
           EarlyRepeatProgressCopy.twoRelatedProgress,
+        ),
+        1,
+      );
+    });
+
+    test('post-save handoff stays distinct from ready progress card copy', () {
+      final entries = [
+        _entry(
+          id: 'e1',
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          id: 'e2',
+          transcript:
+              'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+      ];
+      final handoff = PostSaveReturnHandoffEngine.build(entries: entries);
+      final progress = EarlyRepeatProgressEngine.build(entries: entries);
+      expect(handoff, isNotNull);
+      expect(progress, isNotNull);
+
+      expect(handoff!.title, isNot(equals(progress!.title)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          [
+            handoff.title,
+            handoff.body,
+            handoff.footer,
+            progress.title,
+            progress.body,
+            progress.progressLabel,
+          ].join('\n'),
+          PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle,
+        ),
+        1,
+      );
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          [
+            handoff.title,
+            handoff.body,
+            handoff.footer,
+            progress.title,
+            progress.body,
+            progress.progressLabel,
+          ].join('\n'),
+          EarlyRepeatProgressCopy.twoRelatedTitle,
+        ),
+        1,
+      );
+    });
+
+    test('first proof moment stays distinct from archive summary copy', () {
+      final entries = _threeRelatedRepeatEntries();
+      final moment = FirstProofMomentEngine.build(entries: entries);
+      expect(moment, isNotNull);
+
+      final blocks = [
+        moment!.title,
+        moment.body,
+        moment.footer,
+        moment.whyLine,
+      ];
+      expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          blocks.join('\n'),
+          FirstProofMomentCopy.title,
+        ),
+        1,
+      );
+    });
+
+    test('first week loop stays distinct from archive summary copy', () {
+      final loop = FirstWeekLoopEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        returnChecks: const [],
+      );
+      expect(loop, isNotNull);
+
+      final blocks = [loop!.title, loop.body, loop.footer, loop.label];
+      expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          blocks.join('\n'),
+          FirstWeekLoopCopy.title,
         ),
         1,
       );

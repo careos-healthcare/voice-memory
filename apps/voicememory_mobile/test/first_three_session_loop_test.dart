@@ -8,6 +8,12 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_cop
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_engine.dart';
 import 'package:voicememory_mobile/features/activation/third_session_archive_usefulness_engine.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/retention/second_session_signal_engine.dart';
@@ -567,6 +573,69 @@ void main() {
         unrelated.progressLabel,
         isNot(contains('first repeat proof')),
       );
+    });
+
+    test('post-save handoff mirrors first-three loop without progress card copy', () {
+      final entries = [
+        _entry(
+          '1',
+          'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+      ];
+      final handoff = PostSaveReturnHandoffEngine.build(entries: entries);
+      final progress = EarlyRepeatProgressEngine.build(entries: entries);
+
+      expect(handoff!.title, PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle);
+      expect(progress!.title, EarlyRepeatProgressCopy.twoRelatedTitle);
+      expect(handoff.body, isNot(equals(progress.body)));
+    });
+
+    test('first proof moment is the third-save emotional payoff', () {
+      final entries = [
+        _entry(
+          '1',
+          'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+        _entry(
+          '3',
+          'I said yes again even though I had no capacity for one more ask.',
+        ),
+      ];
+      final moment = FirstProofMomentEngine.build(entries: entries);
+      expect(moment!.title, FirstProofMomentCopy.title);
+      expect(EarlyRepeatProgressEngine.build(entries: entries.sublist(0, 2)), isNotNull);
+      expect(PostSaveReturnHandoffEngine.build(entries: entries.sublist(0, 2)), isNotNull);
+    });
+
+    test('first week loop follows first proof on ready state', () {
+      final entries = [
+        _entry(
+          '1',
+          'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+        _entry(
+          '3',
+          'I said yes again even though I had no capacity for one more ask.',
+        ),
+      ];
+      final loop = FirstWeekLoopEngine.build(
+        entries: entries,
+        returnChecks: const [],
+      );
+      expect(loop!.title, FirstWeekLoopCopy.title);
+      expect(loop.body, isNot(equals(FirstProofMomentCopy.title)));
     });
 
     test('daily map prompt suppressed during first-three loop', () {

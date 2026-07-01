@@ -173,6 +173,9 @@ import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/early_repeat_progress_card.dart';
+import '../widgets/record/post_save_return_handoff_card.dart';
+import '../widgets/record/first_proof_moment_card.dart';
+import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
@@ -190,6 +193,12 @@ import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_repeat_progress_engine.dart';
+import '../features/early_archive/post_save_return_handoff_engine.dart';
+import '../features/early_archive/post_save_return_handoff_gates.dart';
+import '../features/early_archive/first_proof_moment_engine.dart';
+import '../features/early_archive/first_proof_moment_gates.dart';
+import '../features/early_archive/first_week_loop_engine.dart';
+import '../features/early_archive/first_week_loop_gates.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
@@ -3910,6 +3919,19 @@ class _RecordScreenState extends State<RecordScreen> {
         proofSurfaceLayout.effectiveThoughtMapVisible;
     final showPositiveReinforcement =
         proofSurfaceLayout.effectivePositiveReinforcementVisible;
+    final firstWeekLoopCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? FirstWeekLoopEngine.build(
+            entries: _journalEntries,
+            returnChecks: RepeatReturnCheckStore.cached,
+          )
+        : null;
+    final firstWeekLoopProGated = FirstWeekLoopGates.isProRequirementGated(
+      valueMomentProBridgeVisible:
+          _valueMomentBridge != null && _valueMomentBridge!.show,
+      purchaseIntentReturnCueVisible: _purchaseIntentCue != null,
+    );
     final recordProofStack = RecordProofStackPolicy.decide(
       loaded: _journalEntryCountReady,
       entryCount: _journalEntryCount,
@@ -3939,6 +3961,8 @@ class _RecordScreenState extends State<RecordScreen> {
       thoughtMapEligible: showConfirmedRepeatThoughtMap,
       positiveReinforcementEligible: showPositiveReinforcement,
       changeProofEligible: repeatReturnChangeProof != null,
+      firstWeekLoopEligible: firstWeekLoopCandidate != null &&
+          !firstWeekLoopProGated,
       proBridgeEligible: showPostProofProBridge,
     );
     final showPatternChanged = recordProofStack.showPatternChanged;
@@ -3958,10 +3982,43 @@ class _RecordScreenState extends State<RecordScreen> {
     final showPositiveReinforcementOnRecord =
         recordProofStack.showPositiveReinforcement;
     final showChangeProofOnRecord = recordProofStack.showChangeProof;
-    final showArchiveSummaryOnRecord = recordProofStack.showArchiveSummary;
+    final showFirstWeekLoopOnRecord = FirstWeekLoopGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isProRequirementGated: firstWeekLoopProGated,
+      policyAllows: recordProofStack.showFirstWeekLoop,
+      loop: firstWeekLoopCandidate,
+    );
+    final firstProofMomentCandidate = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? FirstProofMomentEngine.build(entries: entriesAfterSave)
+        : null;
+    final showFirstProofMoment = FirstProofMomentGates.shouldShow(
+      isPostSaveDone: ui == RecordUiState.done,
+      entryCount: postSaveEntryCount,
+      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      moment: firstProofMomentCandidate,
+    );
+    final showArchiveSummaryOnRecord =
+        recordProofStack.showArchiveSummary && !showFirstProofMoment;
     final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
         ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
         : null;
+    final postSaveReturnHandoffCandidate = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? PostSaveReturnHandoffEngine.build(entries: entriesAfterSave)
+        : null;
+    final showPostSaveReturnHandoff = PostSaveReturnHandoffGates.shouldShow(
+      isPostSaveDone: ui == RecordUiState.done,
+      entryCount: postSaveEntryCount,
+      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      handoff: postSaveReturnHandoffCandidate,
+    );
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -4122,6 +4179,14 @@ class _RecordScreenState extends State<RecordScreen> {
         );
     final showDailyReturnReasonRecordCta = showDailyReturnReasonOnRecord &&
         DailyReturnReasonGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
+          promoteMicCaptureActions:
+              _shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showFirstWeekLoopRecordCta = showFirstWeekLoopOnRecord &&
+        firstWeekLoopCandidate != null &&
+        FirstWeekLoopGates.showRecordCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
           promoteMicCaptureActions:
@@ -4368,7 +4433,9 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showArchiveSummaryOnRecord && archiveSummary != null) ...[
+                    if (showArchiveSummaryOnRecord &&
+                        ui == RecordUiState.ready &&
+                        archiveSummary != null) ...[
                       ArchiveSummaryCard(
                         summary: archiveSummary,
                         showRecordNextCta: showArchiveSummaryRecordCta,
@@ -4483,6 +4550,17 @@ class _RecordScreenState extends State<RecordScreen> {
                         viewingConfirmedRepeat: viewingConfirmedRepeatOnRecord,
                         isRecording: ui == RecordUiState.recording,
                         onChanged: () => setState(() {}),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showFirstWeekLoopOnRecord &&
+                        firstWeekLoopCandidate != null) ...[
+                      FirstWeekLoopCard(
+                        loop: firstWeekLoopCandidate,
+                        entryCount: _journalEntryCount,
+                        showRecordCta: showFirstWeekLoopRecordCta,
+                        onRecord: () =>
+                            unawaited(_onRecordPressed(source: 'first_week_loop')),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -5246,7 +5324,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         if (postSaveArchiveHierarchy?.showBeliefUpdateCard ==
                                 true &&
-                            beliefUpdatePayoff != null) ...[
+                            beliefUpdatePayoff != null &&
+                            !showFirstProofMoment) ...[
                           const SizedBox(height: 16),
                           BeliefUpdatePayoffCard(
                             payoff: beliefUpdatePayoff,
@@ -5258,7 +5337,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         if (postSaveArchiveHierarchy != null &&
                             !suppressNoisyFirstSaveCards &&
-                            !suppressEarlyRepeatPayoffCompetitors) ...[
+                            !suppressEarlyRepeatPayoffCompetitors &&
+                            !showFirstProofMoment) ...[
                           const SizedBox(height: 16),
                           PostSaveFocusedActionsBar(
                             onViewEvidence: () =>
@@ -5680,7 +5760,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             !_returnDayJustClosed &&
                             !suppressNoisyFirstSaveCards &&
                             !suppressEarlyPatternClaimCards &&
-                            !suppressEarlyRepeatPayoffCompetitors) ...[
+                            !suppressEarlyRepeatPayoffCompetitors &&
+                            !showFirstProofMoment) ...[
                           if (_secondSessionComparison?.hasEnoughData == true &&
                               secondSessionPayoff == null) ...[
                             const SizedBox(height: 12),
@@ -5935,6 +6016,22 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                     ],
                     const SizedBox(height: 8),
+                    if (showFirstProofMoment &&
+                        firstProofMomentCandidate != null) ...[
+                      FirstProofMomentCard(
+                        moment: firstProofMomentCandidate,
+                        entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (showPostSaveReturnHandoff &&
+                        postSaveReturnHandoffCandidate != null) ...[
+                      PostSaveReturnHandoffCard(
+                        handoff: postSaveReturnHandoffCandidate,
+                        entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     ..._buildBottomActions(
                       context,
                       ui: ui,

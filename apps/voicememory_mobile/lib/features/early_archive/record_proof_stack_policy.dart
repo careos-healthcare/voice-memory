@@ -15,6 +15,7 @@ class RecordProofStackDecision {
     required this.showConfirmedRepeatThoughtMap,
     required this.showPositiveReinforcement,
     required this.showChangeProof,
+    required this.showFirstWeekLoop,
     required this.showProBridge,
     required this.proofCardCount,
   });
@@ -31,6 +32,7 @@ class RecordProofStackDecision {
   final bool showConfirmedRepeatThoughtMap;
   final bool showPositiveReinforcement;
   final bool showChangeProof;
+  final bool showFirstWeekLoop;
   final bool showProBridge;
 
   /// Proof / guidance cards rendered below the recorder (excludes beta feedback).
@@ -49,6 +51,7 @@ class RecordProofStackDecision {
     showConfirmedRepeatThoughtMap: false,
     showPositiveReinforcement: false,
     showChangeProof: false,
+    showFirstWeekLoop: false,
     showProBridge: false,
     proofCardCount: 0,
   );
@@ -78,6 +81,7 @@ abstract final class RecordProofStackPolicy {
     required bool thoughtMapEligible,
     required bool positiveReinforcementEligible,
     required bool changeProofEligible,
+    required bool firstWeekLoopEligible,
     required bool proBridgeEligible,
   }) {
     if (!loaded || !isReady || isRecording || isPostSave) {
@@ -106,6 +110,7 @@ abstract final class RecordProofStackPolicy {
         showConfirmedRepeatThoughtMap: false,
         showPositiveReinforcement: false,
         showChangeProof: false,
+        showFirstWeekLoop: false,
         showProBridge: false,
         proofCardCount: showProgress ? 1 : 0,
       );
@@ -120,7 +125,11 @@ abstract final class RecordProofStackPolicy {
     var showArchiveSummary = useSummaryOverview;
     var showDailyReturnReason =
         dailyReturnReasonEligible && !useSummaryOverview;
+    var showFirstWeekLoop = firstWeekLoopEligible;
     var showProBridge = proBridgeEligible;
+    var dailyReturnCompetesForCap = dailyReturnReasonEligible &&
+        useSummaryOverview &&
+        firstWeekLoopEligible;
 
     if (useSummaryOverview) {
       showDailyReturnReason = false;
@@ -130,25 +139,33 @@ abstract final class RecordProofStackPolicy {
     if (showPatternChanged) count++;
     if (showArchiveSummary) count++;
     if (showDailyReturnReason) count++;
+    if (dailyReturnCompetesForCap) count++;
+    if (showFirstWeekLoop) count++;
     if (showProBridge) count++;
 
     // Never more than three proof cards below the recorder.
     while (count > maxProofCardsAtThreePlus) {
       if (showProBridge) {
         showProBridge = false;
+        count--;
+      } else if (showFirstWeekLoop && showPatternChanged) {
+        showFirstWeekLoop = false;
+        count--;
       } else if (showDailyReturnReason) {
         showDailyReturnReason = false;
+        count--;
+      } else if (dailyReturnCompetesForCap) {
+        dailyReturnCompetesForCap = false;
+        count--;
+      } else if (showFirstWeekLoop) {
+        showFirstWeekLoop = false;
+        count--;
       } else if (showPatternChanged && showArchiveSummary) {
         showPatternChanged = false;
+        count--;
       } else {
         break;
       }
-      count = _countVisible(
-        showPatternChanged: showPatternChanged,
-        showArchiveSummary: showArchiveSummary,
-        showDailyReturnReason: showDailyReturnReason,
-        showProBridge: showProBridge,
-      );
     }
 
     return RecordProofStackDecision(
@@ -173,8 +190,15 @@ abstract final class RecordProofStackPolicy {
       showChangeProof: changeProofEligible &&
           !useSummaryOverview &&
           !showPatternChanged,
+      showFirstWeekLoop: showFirstWeekLoop,
       showProBridge: showProBridge,
-      proofCardCount: count,
+      proofCardCount: _countVisible(
+        showPatternChanged: showPatternChanged,
+        showArchiveSummary: showArchiveSummary,
+        showDailyReturnReason: showDailyReturnReason,
+        showFirstWeekLoop: showFirstWeekLoop,
+        showProBridge: showProBridge,
+      ),
     );
   }
 
@@ -182,10 +206,12 @@ abstract final class RecordProofStackPolicy {
     required bool showPatternChanged,
     required bool showArchiveSummary,
     required bool showDailyReturnReason,
+    required bool showFirstWeekLoop,
     required bool showProBridge,
   }) =>
       (showPatternChanged ? 1 : 0) +
       (showArchiveSummary ? 1 : 0) +
       (showDailyReturnReason ? 1 : 0) +
+      (showFirstWeekLoop ? 1 : 0) +
       (showProBridge ? 1 : 0);
 }

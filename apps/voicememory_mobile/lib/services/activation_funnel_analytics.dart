@@ -568,7 +568,12 @@ abstract class ActivationFunnelAnalytics {
     'entry_count',
     'has_connected_thread',
     'has_real_timeline',
+    'has_phrase',
+    'has_confirmed_repeat',
+    'has_strong_evidence',
     'milestone_count',
+    'phrase_count',
+    'relation_state',
     'source',
     'stage',
     'card_type',
@@ -943,6 +948,12 @@ abstract class ActivationFunnelAnalytics {
     'blocked',
   };
 
+  static const Set<String> allowedRelationStateValues = {
+    'one_moment',
+    'two_related',
+    'two_unrelated',
+  };
+
   /// Stable-id shape for string values — user text never matches this.
   static final RegExp _safeValue = RegExp(r'^[a-z0-9_]{1,40}$');
 
@@ -957,7 +968,12 @@ abstract class ActivationFunnelAnalytics {
     int? entryCount,
     bool? hasConnectedThread,
     bool? hasRealTimeline,
+    bool? hasPhrase,
+    bool? hasConfirmedRepeat,
+    int? phraseCount,
+    bool? hasStrongEvidence,
     int? milestoneCount,
+    String? relationState,
     String? source,
     String? stage,
     String? cardType,
@@ -1013,7 +1029,16 @@ abstract class ActivationFunnelAnalytics {
         'has_connected_thread': hasConnectedThread ? 1 : 0,
       if (hasRealTimeline != null)
         'has_real_timeline': hasRealTimeline ? 1 : 0,
+      if (hasPhrase != null) 'has_phrase': hasPhrase ? 1 : 0,
+      if (hasConfirmedRepeat != null)
+        'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
+      if (phraseCount != null) 'phrase_count': phraseCount,
+      if (hasStrongEvidence != null)
+        'has_strong_evidence': hasStrongEvidence ? 1 : 0,
       if (milestoneCount != null) 'milestone_count': milestoneCount,
+      if (relationState != null &&
+          allowedRelationStateValues.contains(relationState))
+        'relation_state': relationState,
       if (source != null && _safeValue.hasMatch(source)) 'source': source,
       if (stage != null && _safeValue.hasMatch(stage)) 'stage': stage,
       if (cardType != null && _safeValue.hasMatch(cardType))

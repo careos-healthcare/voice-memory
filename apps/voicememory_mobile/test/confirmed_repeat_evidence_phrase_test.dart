@@ -3,6 +3,10 @@ import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_evide
 import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
@@ -409,6 +413,36 @@ void main() {
         expect(model.lines.single, EarlyFirstSignalCopy.threeEntryFormingBody);
         expect(model.evidenceSupportLine, isNull);
       }
+    });
+  });
+
+  group('FirstProofMomentEngine phrase reuse', () {
+    test('related third save uses extracted phrases for proof moment', () {
+      final moment = FirstProofMomentEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      expect(moment!.title, FirstProofMomentCopy.title);
+      expect(moment.evidencePhrases, isNotEmpty);
+      for (final phrase in moment.evidencePhrases) {
+        expect(
+          _threeRelatedRepeatEntries()
+              .map((e) => e.transcript.toLowerCase())
+              .join(' '),
+          contains(phrase.toLowerCase()),
+        );
+      }
+    });
+  });
+
+  group('FirstWeekLoopEngine phrase reuse', () {
+    test('ready state loop uses shared concrete phrase when available', () {
+      final loop = FirstWeekLoopEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        returnChecks: const [],
+      );
+      expect(loop!.title, FirstWeekLoopCopy.title);
+      expect(loop.usesPhraseBody, isTrue);
+      expect(loop.body.toLowerCase(), contains('said yes'));
     });
   });
 

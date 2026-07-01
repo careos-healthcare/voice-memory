@@ -87,6 +87,7 @@ void main() {
         thoughtMapEligible: true,
         positiveReinforcementEligible: true,
         changeProofEligible: true,
+        firstWeekLoopEligible: false,
         proBridgeEligible: true,
       );
 
@@ -115,6 +116,7 @@ void main() {
         thoughtMapEligible: true,
         positiveReinforcementEligible: true,
         changeProofEligible: true,
+        firstWeekLoopEligible: false,
         proBridgeEligible: true,
       );
 
@@ -147,6 +149,7 @@ void main() {
         thoughtMapEligible: false,
         positiveReinforcementEligible: false,
         changeProofEligible: true,
+        firstWeekLoopEligible: false,
         proBridgeEligible: false,
       );
 
@@ -173,6 +176,7 @@ void main() {
         thoughtMapEligible: false,
         positiveReinforcementEligible: false,
         changeProofEligible: false,
+        firstWeekLoopEligible: false,
         proBridgeEligible: true,
       );
 
@@ -181,6 +185,62 @@ void main() {
       expect(decision.showArchiveSummary, isTrue);
       expect(decision.showProBridge, isTrue);
       expect(decision.showDailyReturnReason, isFalse);
+    });
+
+    test('drops pro bridge before first week loop when cap exceeded', () {
+      final decision = RecordProofStackPolicy.decide(
+        loaded: true,
+        entryCount: 5,
+        isReady: true,
+        isPostSave: false,
+        isRecording: false,
+        archiveSummaryVisible: true,
+        hasEarlyFirstSignal: false,
+        hasEarlyEvidenceTimeline: false,
+        patternChangedVisible: true,
+        dailyReturnReasonEligible: false,
+        weeklyReviewEligible: false,
+        privateReportEligible: false,
+        whyMattersEligible: false,
+        thoughtMapEligible: false,
+        positiveReinforcementEligible: false,
+        changeProofEligible: false,
+        firstWeekLoopEligible: true,
+        proBridgeEligible: true,
+      );
+
+      expect(decision.showFirstWeekLoop, isTrue);
+      expect(decision.showProBridge, isFalse);
+      expect(decision.proofCardCount, 3);
+    });
+
+    test('drops first week loop when pattern changed keeps cap', () {
+      final decision = RecordProofStackPolicy.decide(
+        loaded: true,
+        entryCount: 5,
+        isReady: true,
+        isPostSave: false,
+        isRecording: false,
+        archiveSummaryVisible: true,
+        hasEarlyFirstSignal: false,
+        hasEarlyEvidenceTimeline: false,
+        patternChangedVisible: true,
+        dailyReturnReasonEligible: true,
+        weeklyReviewEligible: false,
+        privateReportEligible: false,
+        whyMattersEligible: false,
+        thoughtMapEligible: false,
+        positiveReinforcementEligible: false,
+        changeProofEligible: false,
+        firstWeekLoopEligible: true,
+        proBridgeEligible: true,
+      );
+
+      expect(decision.showPatternChanged, isTrue);
+      expect(decision.showArchiveSummary, isTrue);
+      expect(decision.showFirstWeekLoop, isFalse);
+      expect(decision.showProBridge, isFalse);
+      expect(decision.proofCardCount, lessThanOrEqualTo(3));
     });
   });
 
@@ -244,6 +304,7 @@ void main() {
         thoughtMapEligible: true,
         positiveReinforcementEligible: true,
         changeProofEligible: true,
+        firstWeekLoopEligible: false,
         proBridgeEligible: true,
       );
 

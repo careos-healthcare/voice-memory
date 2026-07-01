@@ -34,6 +34,12 @@ abstract final class EarlyArchiveProofAnalytics {
       'early_archive_timeline_view_evidence_tapped';
   static const String proScreenOpenedAfterTimelineEvent =
       'pro_screen_opened_after_timeline';
+  static const String postSaveReturnHandoffSeenEvent =
+      'post_save_return_handoff_seen';
+  static const String firstProofMomentSeenEvent = 'first_proof_moment_seen';
+  static const String firstWeekLoopSeenEvent = 'first_week_loop_seen';
+  static const String firstWeekLoopRecordTappedEvent =
+      'first_week_loop_record_tapped';
 
   static bool _realTimelineSeenThisSession = false;
 
@@ -245,6 +251,70 @@ abstract final class EarlyArchiveProofAnalytics {
     );
   }
 
+  static void postSaveReturnHandoffSeen({
+    required int entryCount,
+    required String stage,
+    required bool hasPhrase,
+    required String relationState,
+  }) {
+    _track(
+      postSaveReturnHandoffSeenEvent,
+      entryCount: entryCount,
+      source: 'record',
+      stage: stage,
+      hasPhrase: hasPhrase,
+      relationState: relationState,
+      oncePerSession: true,
+      sessionStage: stage,
+    );
+  }
+
+  static void firstProofMomentSeen({
+    required int entryCount,
+    required int phraseCount,
+    required bool hasStrongEvidence,
+  }) {
+    _track(
+      firstProofMomentSeenEvent,
+      entryCount: entryCount,
+      source: 'record',
+      phraseCount: phraseCount,
+      hasStrongEvidence: hasStrongEvidence,
+      oncePerSession: true,
+      sessionStage: 'first_proof_moment',
+    );
+  }
+
+  static void firstWeekLoopSeen({
+    required int entryCount,
+    required bool hasPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      firstWeekLoopSeenEvent,
+      entryCount: entryCount,
+      source: 'record',
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+      oncePerSession: true,
+      sessionStage: 'first_week_loop',
+    );
+  }
+
+  static void firstWeekLoopRecordTapped({
+    required int entryCount,
+    required bool hasPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      firstWeekLoopRecordTappedEvent,
+      entryCount: entryCount,
+      source: 'record',
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+    );
+  }
+
   static void _track(
     String event, {
     int? entryCount,
@@ -252,6 +322,11 @@ abstract final class EarlyArchiveProofAnalytics {
     String? stage,
     int? milestoneCount,
     bool? hasRealTimeline,
+    bool? hasPhrase,
+    bool? hasConfirmedRepeat,
+    String? relationState,
+    int? phraseCount,
+    bool? hasStrongEvidence,
     bool oncePerSession = false,
     String? sessionStage,
   }) {
@@ -262,6 +337,11 @@ abstract final class EarlyArchiveProofAnalytics {
       stage: stage ?? sessionStage,
       milestoneCount: milestoneCount,
       hasRealTimeline: hasRealTimeline,
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+      relationState: relationState,
+      phraseCount: phraseCount,
+      hasStrongEvidence: hasStrongEvidence,
       oncePerSession: oncePerSession,
     );
   }

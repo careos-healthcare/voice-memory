@@ -17,6 +17,9 @@ import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thoug
 import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
@@ -881,6 +884,330 @@ void main() {
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsOneWidget);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveReturnHandoffCopy.afterFirstSaveTitle),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('early_repeat_progress_card_oneMoment')), findsNothing);
+    });
+
+    testWidgets('entry 1 post-save with phrase shows phrase in handoff', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'e0',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+        );
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          justSavedFirst: true,
+          entriesAfterSave: [
+            _entry(
+              id: 'e0',
+              transcript:
+                  'I had no capacity but I said yes again to the extra meeting today.',
+            ),
+          ],
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.textContaining('said yes again'), findsOneWidget);
+      expect(
+        find.text(PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback),
+        findsNothing,
+      );
+    });
+
+    testWidgets('entry 2 related post-save shows first proof handoff', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        );
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: [
+            _entry(
+              id: 'a',
+              transcript:
+                  'I had no capacity but I said yes again to the extra meeting today.',
+            ),
+            _entry(
+              id: 'b',
+              transcript:
+                  'Same thing — said yes when I had no capacity for one more thing.',
+            ),
+          ],
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(
+        find.text(PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle),
+        findsOneWidget,
+      );
+      expect(find.text(EarlyRepeatProgressCopy.twoRelatedTitle), findsNothing);
+    });
+
+    testWidgets('entry 2 unrelated post-save does not claim repeat', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            transcript: 'Another unrelated note about errands this afternoon.',
+          ),
+        );
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: [
+            _entry(
+              id: 'a',
+              transcript: 'A quiet moment about lunch with a friend today.',
+            ),
+            _entry(
+              id: 'b',
+              transcript: 'Another unrelated note about errands this afternoon.',
+            ),
+          ],
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(
+        find.text(PostSaveReturnHandoffCopy.afterSecondSaveUnrelatedTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle),
+        findsNothing,
+      );
+    });
+
+    testWidgets('entry 3 post-save hides return handoff', (tester) async {
+      await seedConfirmedRepeatEntries(tester, 3);
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: _confirmedRepeatJournalEntries(3),
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveUnrelated')),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('archive_summary_card')), findsNothing);
+      expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+    });
+
+    testWidgets('third related post-save shows evidence chips', (tester) async {
+      await seedConfirmedRepeatEntries(tester, 3);
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: _confirmedRepeatJournalEntries(3),
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('first_proof_moment_evidence_phrases')), findsOneWidget);
+      expect(find.textContaining('said yes'), findsWidgets);
+    });
+
+    testWidgets('third unrelated post-save hides first proof moment', (tester) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(id: 'a', transcript: 'A quiet moment about lunch with a friend today.'),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(id: 'b', transcript: 'Another unrelated note about errands this afternoon.'),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(id: 'c', transcript: 'A calm evening walk before bed tonight.'),
+        );
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: [
+            _entry(id: 'a', transcript: 'A quiet moment about lunch with a friend today.'),
+            _entry(id: 'b', transcript: 'Another unrelated note about errands this afternoon.'),
+            _entry(id: 'c', transcript: 'A calm evening walk before bed tonight.'),
+          ],
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('first_proof_moment_card')), findsNothing);
+    });
+
+    testWidgets('degraded third save hides first proof moment', (tester) async {
+      await pumpRecordScreen(
+        tester,
+        entryCount: 3,
+        ui: RecordUiState.done,
+        degradedVoicePostSave: true,
+      );
+
+      expect(find.byKey(const Key('first_proof_moment_card')), findsNothing);
     });
 
     testWidgets('post-save success shows Done and Record another only', (
@@ -983,6 +1310,7 @@ void main() {
       expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
+      expect(find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')), findsNothing);
       expect(find.text(RecordReturnProCopy.evidenceTitle), findsNothing);
       expect(find.text(ConsumerUiCopy.viewPatternsCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsNothing);
@@ -1183,6 +1511,70 @@ void main() {
       expect(find.byKey(const Key('early_repeat_progress_card_twoRelated')), findsNothing);
       expect(find.byKey(const Key('early_repeat_progress_card_twoUnrelated')), findsNothing);
       expect(find.byKey(const Key('archive_summary_card')), findsOneWidget);
+    });
+
+    testWidgets('three confirmed-repeat ready state shows first week loop', (
+      tester,
+    ) async {
+      await seedConfirmedRepeatEntries(tester, 3);
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('first_week_loop_card')), findsOneWidget);
+      expect(find.text(FirstWeekLoopCopy.title), findsOneWidget);
+    });
+
+    testWidgets('first proof post-save does not show first week loop card', (
+      tester,
+    ) async {
+      await seedConfirmedRepeatEntries(tester, 3);
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: _confirmedRepeatJournalEntries(3),
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_week_loop_card')), findsNothing);
     });
 
     testWidgets('post-save done state hides next-moment prompt card', (
