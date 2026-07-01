@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/positive_pattern_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
@@ -193,6 +195,61 @@ void main() {
       );
       expect(
         blocks.where((block) => block == ConfirmedRepeatWhyMattersCopy.title),
+        hasLength(1),
+      );
+    });
+
+    test('thought map copy stays distinct from proof phrases', () {
+      final confirmed = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: true,
+        timelineVisible: false,
+        changeProofVisible: false,
+        proBridgeVisible: false,
+        whyMattersVisible: false,
+        thoughtMapVisible: true,
+      );
+      final blocks = ArchiveProofSurfaceCopy.patternsStack(
+        layout: layout,
+        confirmedRepeat: confirmed,
+      );
+
+      expect(blocks, contains(ConfirmedRepeatThoughtMapCopy.title));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          blocks.join('\n'),
+          EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
+        ),
+        1,
+      );
+      expect(
+        blocks.where((block) => block == ConfirmedRepeatThoughtMapCopy.title),
+        hasLength(1),
+      );
+    });
+
+    test('positive pattern copy stays distinct from confirmed repeat proof', () {
+      final confirmed = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: true,
+        timelineVisible: false,
+        changeProofVisible: false,
+        proBridgeVisible: false,
+        positivePatternVisible: true,
+      );
+      final blocks = ArchiveProofSurfaceCopy.patternsStack(
+        layout: layout,
+        confirmedRepeat: confirmed,
+      );
+
+      expect(blocks, contains(PositivePatternCopy.title));
+      expect(blocks, contains(PositivePatternCopy.body));
+      expect(
+        blocks.where((block) => block == PositivePatternCopy.title),
         hasLength(1),
       );
     });

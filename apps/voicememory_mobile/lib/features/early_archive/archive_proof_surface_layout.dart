@@ -6,6 +6,9 @@ class ArchiveProofSurfaceLayout {
     required this.changeProofVisible,
     required this.proBridgeVisible,
     this.whyMattersVisible = false,
+    this.thoughtMapVisible = false,
+    this.positivePatternVisible = false,
+    this.archiveSummaryVisible = false,
   });
 
   final bool confirmedRepeatCardVisible;
@@ -13,6 +16,22 @@ class ArchiveProofSurfaceLayout {
   final bool changeProofVisible;
   final bool proBridgeVisible;
   final bool whyMattersVisible;
+  final bool thoughtMapVisible;
+  final bool positivePatternVisible;
+  final bool archiveSummaryVisible;
+
+  /// Supporting cards fold into Archive Summary when it is visible.
+  bool get effectiveWhyMattersVisible =>
+      whyMattersVisible && !archiveSummaryVisible;
+
+  bool get effectiveThoughtMapVisible =>
+      thoughtMapVisible && !archiveSummaryVisible;
+
+  bool get effectivePositivePatternVisible =>
+      positivePatternVisible && !archiveSummaryVisible;
+
+  bool get effectiveChangeProofVisible =>
+      changeProofVisible && !archiveSummaryVisible;
 
   /// Timeline uses shorter nearby copy when confirmed repeat context is active.
   bool get timelineNearby =>

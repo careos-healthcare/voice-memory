@@ -22,6 +22,16 @@ import 'package:voicememory_mobile/features/early_archive/early_evidence_timelin
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_gates.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_store.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_analytics.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_models.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_store.dart';
+import 'package:voicememory_mobile/features/beta/archive_beta_mission_gates.dart';
+import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
+import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_trigger_capture.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
@@ -47,6 +57,7 @@ import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/widgets/record/confirmed_repeat_why_matters_card.dart';
+import 'package:voicememory_mobile/widgets/record/confirmed_repeat_thought_map_card.dart';
 import 'package:voicememory_mobile/widgets/record/early_first_signal_card.dart';
 
 JournalEntry _entry({
@@ -2285,6 +2296,246 @@ void main() {
         findsOneWidget,
       );
       expect(ConfirmedRepeatWhyMattersStore.cachedDismissed, isTrue);
+    });
+  });
+
+  group('ConfirmedRepeatThoughtMap', () {
+    setUp(() async {
+      await AppServices.resetForTest(
+        journalPath:
+            '${DateTime.now().microsecondsSinceEpoch}_thought_map_journal.json',
+        prefsPath:
+            '${DateTime.now().microsecondsSinceEpoch}_thought_map_prefs.json',
+        skipRevenueCat: true,
+      );
+      await ConfirmedRepeatThoughtMapStore.resetForTest();
+      ConfirmedRepeatThoughtMapAnalytics.resetForTest();
+    });
+
+    test('copy avoids therapy and diagnostic language', () {
+      final lines = [
+        ConfirmedRepeatThoughtMapCopy.title,
+        ConfirmedRepeatThoughtMapCopy.triggerLabel,
+        ConfirmedRepeatThoughtMapCopy.triggerQuestion,
+        ConfirmedRepeatThoughtMapCopy.triggerUnknown,
+        ConfirmedRepeatThoughtMapCopy.thoughtLabel,
+        ConfirmedRepeatThoughtMapCopy.thoughtQuestion,
+        ConfirmedRepeatThoughtMapCopy.thoughtUnknown,
+        ConfirmedRepeatThoughtMapCopy.actionLabel,
+        ConfirmedRepeatThoughtMapCopy.actionQuestion,
+        ConfirmedRepeatThoughtMapCopy.actionUnknown,
+        ConfirmedRepeatThoughtMapCopy.resultLabel,
+        ConfirmedRepeatThoughtMapCopy.resultQuestion,
+        ConfirmedRepeatThoughtMapCopy.resultUnknown,
+        ConfirmedRepeatThoughtMapCopy.recordMissingPieceCta,
+      ];
+      final copy = lines.join(' ');
+      _expectNoDiagnosticLanguage(copy);
+      for (final line in lines) {
+        for (final reason in PrivacyCopyPolicy.violationsInLiteral(line)) {
+          fail('"$line": $reason');
+        }
+      }
+      expect(copy.toLowerCase(), isNot(contains('diagnose')));
+      expect(copy.toLowerCase(), isNot(contains('therapy')));
+      expect(copy.toLowerCase(), isNot(contains('heal')));
+      expect(copy.toLowerCase(), isNot(contains('treat')));
+    });
+
+    test('gates hide before confirmed repeat and while recording', () {
+      expect(
+        ConfirmedRepeatThoughtMapGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeatOrTimeline: true,
+          entryCount: 2,
+          isReady: true,
+          isRecording: false,
+          hasThoughtMap: true,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatThoughtMapGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeatOrTimeline: false,
+          entryCount: 3,
+          isReady: true,
+          isRecording: false,
+          hasThoughtMap: true,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatThoughtMapGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeatOrTimeline: true,
+          entryCount: 3,
+          isReady: true,
+          isRecording: true,
+          hasThoughtMap: true,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatThoughtMapGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeatOrTimeline: true,
+          entryCount: 3,
+          isReady: true,
+          isRecording: false,
+          hasThoughtMap: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('engine returns null without confirmed repeat foundation', () {
+      expect(
+        ConfirmedRepeatThoughtMapEngine.build(
+          entries: _threeRelatedRepeatEntries().sublist(0, 2),
+        ),
+        isNull,
+      );
+    });
+
+    test('engine uses evidence phrases and honest prompts for unknowns', () {
+      final map = ConfirmedRepeatThoughtMapEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      expect(map, isNotNull);
+      expect(map!.title, ConfirmedRepeatThoughtMapCopy.title);
+
+      final trigger = map.sections.firstWhere(
+        (section) => section.id == ThoughtMapSectionId.trigger,
+      );
+      final thought = map.sections.firstWhere(
+        (section) => section.id == ThoughtMapSectionId.thought,
+      );
+      expect(trigger.isKnown, isFalse);
+      expect(trigger.displayText, ConfirmedRepeatThoughtMapCopy.triggerUnknown);
+      expect(thought.isKnown, isTrue);
+      expect(thought.displayText, contains('"'));
+      expect(map.firstMissingSection, ThoughtMapSectionId.trigger);
+    });
+
+    test('engine fills trigger when milestone captured', () {
+      final map = ConfirmedRepeatThoughtMapEngine.build(
+        entries: _fourEntriesWithTriggerCapture(),
+        triggerCapturedMilestone: true,
+      );
+      expect(map, isNotNull);
+      final trigger = map!.sections.firstWhere(
+        (section) => section.id == ThoughtMapSectionId.trigger,
+      );
+      expect(trigger.isKnown, isTrue);
+    });
+
+    test('record missing piece CTA hides when capture primary is visible', () {
+      expect(
+        ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
+          policy: const RecordCtaPolicyResolution(
+            state: RecordCtaPolicyState.returning,
+            primaryLabel: ConsumerUiCopy.recordMomentCta,
+            showMainBottomCta: true,
+            action: RecordCtaAction.startRecording,
+          ),
+          hideCardRecordButtons: true,
+          promoteMicCaptureActions: false,
+        ),
+        isFalse,
+      );
+      expect(
+        ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
+          policy: const RecordCtaPolicyResolution(
+            state: RecordCtaPolicyState.returning,
+            primaryLabel: 'Continue',
+            showMainBottomCta: false,
+            action: RecordCtaAction.startRecording,
+          ),
+          hideCardRecordButtons: false,
+          promoteMicCaptureActions: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('analytics omits transcript text', () {
+      Map<String, Object>? captured;
+      ConfirmedRepeatThoughtMapAnalytics.captureForTest = (event, props) {
+        captured = props;
+      };
+      ConfirmedRepeatThoughtMapAnalytics.recordMissingPieceTapped(
+        section: ThoughtMapSectionId.trigger,
+        surface: 'record',
+        entryCount: 3,
+      );
+      expect(captured, isNotNull);
+      expect(captured!.keys, containsAll(['section', 'surface', 'entry_count']));
+      expect(captured!.keys, isNot(contains('transcript')));
+      expect(captured!.values.whereType<String>(), everyElement(isNot(contains('said yes'))));
+    });
+
+    test('store persists section id only', () async {
+      await ConfirmedRepeatThoughtMapStore.instance().markMissingPieceTarget(
+        ThoughtMapSectionId.action,
+      );
+      expect(
+        ConfirmedRepeatThoughtMapStore.cachedLastMissingSection,
+        ThoughtMapSectionId.action.name,
+      );
+    });
+
+    testWidgets('card renders loop sections and subtle record CTA', (tester) async {
+      final map = ConfirmedRepeatThoughtMapEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      expect(map, isNotNull);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ConfirmedRepeatThoughtMapCard(
+              result: map!,
+              showRecordMissingPieceCta: true,
+              onRecordMissingPiece: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.title), findsOneWidget);
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.triggerLabel), findsOneWidget);
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.thoughtLabel), findsOneWidget);
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.actionLabel), findsOneWidget);
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.resultLabel), findsOneWidget);
+      expect(find.text(ConfirmedRepeatThoughtMapCopy.triggerUnknown), findsOneWidget);
+      expect(
+        find.text(ConfirmedRepeatThoughtMapCopy.recordMissingPieceCta),
+        findsOneWidget,
+      );
+    });
+
+    test('proof stack keeps thought map title distinct', () {
+      final confirmed = EarlyFirstSignalEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: true,
+        timelineVisible: false,
+        changeProofVisible: false,
+        proBridgeVisible: false,
+        whyMattersVisible: true,
+        thoughtMapVisible: true,
+      );
+      final blocks = ArchiveProofSurfaceCopy.patternsStack(
+        layout: layout,
+        confirmedRepeat: confirmed,
+      );
+      expect(blocks, contains(ConfirmedRepeatThoughtMapCopy.title));
+      expect(
+        blocks.where((block) => block == ConfirmedRepeatThoughtMapCopy.title),
+        hasLength(1),
+      );
     });
   });
 }

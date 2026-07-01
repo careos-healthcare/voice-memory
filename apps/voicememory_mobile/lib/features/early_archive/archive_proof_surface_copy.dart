@@ -5,7 +5,10 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_copy.dart';
 import 'archive_proof_surface_layout.dart';
+import 'archive_summary_copy.dart';
+import 'confirmed_repeat_thought_map_copy.dart';
 import 'confirmed_repeat_why_matters_copy.dart';
+import 'positive_pattern_copy.dart';
 import 'early_evidence_timeline_engine.dart';
 
 /// Resolves de-duplicated visible copy for proof stacks (tests + policy).
@@ -83,10 +86,12 @@ abstract final class ArchiveProofSurfaceCopy {
     }
 
     if (layout.changeProofVisible && changeProof != null) {
-      blocks.add(changeProof.title);
-      blocks.add(changeProof.body);
-      if (changeProof.supportLine != null) {
-        blocks.add(changeProof.supportLine!);
+      if (!layout.archiveSummaryVisible) {
+        blocks.add(changeProof.title);
+        blocks.add(changeProof.body);
+        if (changeProof.supportLine != null) {
+          blocks.add(changeProof.supportLine!);
+        }
       }
     }
 
@@ -103,9 +108,37 @@ abstract final class ArchiveProofSurfaceCopy {
       );
     }
 
-    if (layout.whyMattersVisible) {
+    if (layout.whyMattersVisible && !layout.archiveSummaryVisible) {
       blocks.add(ConfirmedRepeatWhyMattersCopy.title);
       blocks.add(ConfirmedRepeatWhyMattersCopy.body);
+    }
+
+    if (layout.thoughtMapVisible && !layout.archiveSummaryVisible) {
+      blocks.add(ConfirmedRepeatThoughtMapCopy.title);
+      for (final label in [
+        ConfirmedRepeatThoughtMapCopy.triggerLabel,
+        ConfirmedRepeatThoughtMapCopy.thoughtLabel,
+        ConfirmedRepeatThoughtMapCopy.actionLabel,
+        ConfirmedRepeatThoughtMapCopy.resultLabel,
+      ]) {
+        blocks.add(label);
+      }
+    }
+
+    if (layout.positivePatternVisible && !layout.archiveSummaryVisible) {
+      blocks.add(PositivePatternCopy.title);
+      blocks.add(PositivePatternCopy.body);
+    }
+
+    if (layout.archiveSummaryVisible) {
+      blocks.add(ArchiveSummaryCopy.title);
+      blocks.add(ArchiveSummaryCopy.keepsRepeatingLabel);
+      if (layout.thoughtMapVisible || layout.archiveSummaryVisible) {
+        blocks.add(ArchiveSummaryCopy.loopFormingLabel);
+      }
+      blocks.add(ArchiveSummaryCopy.changingLabel);
+      blocks.add(ArchiveSummaryCopy.whatHelpsLabel);
+      blocks.add(ArchiveSummaryCopy.recordNextLabel);
     }
 
     return blocks.where((block) => block.trim().isNotEmpty).toList();

@@ -19,4 +19,12 @@ abstract final class EarlyFirstSignalRecordRoutes {
     );
     return '$recordRoute?prompt=$encoded${autostart ? '&autostart=1' : ''}';
   }
+
+  static String routeWithPrompt({
+    required String prompt,
+    bool autostart = false,
+  }) {
+    final encoded = Uri.encodeComponent(prompt);
+    return '$recordRoute?prompt=$encoded${autostart ? '&autostart=1' : ''}';
+  }
 }

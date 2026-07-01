@@ -26,6 +26,18 @@ import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_record_routes.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_gates.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
+import '../features/early_archive/confirmed_repeat_thought_map_analytics.dart';
+import '../features/early_archive/confirmed_repeat_thought_map_engine.dart';
+import '../features/early_archive/confirmed_repeat_thought_map_gates.dart';
+import '../features/early_archive/confirmed_repeat_thought_map_models.dart';
+import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
+import '../features/early_archive/positive_pattern_analytics.dart';
+import '../features/early_archive/positive_pattern_copy.dart';
+import '../features/early_archive/positive_pattern_engine.dart';
+import '../features/early_archive/positive_pattern_gates.dart';
+import '../features/early_archive/archive_summary_engine.dart';
+import '../features/early_archive/archive_summary_gates.dart';
+import '../features/early_archive/archive_summary_model.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/onboarding/record_return_pro_store.dart';
@@ -279,6 +291,9 @@ import '../widgets/signal/signal_review_card.dart';
 import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
+import '../widgets/record/confirmed_repeat_thought_map_card.dart';
+import '../widgets/record/positive_pattern_card.dart';
+import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
@@ -578,6 +593,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatWhyMattersStore.ensureLoaded();
+    await ConfirmedRepeatThoughtMapStore.ensureLoaded();
     await RepeatReturnCheckStore.ensureLoaded();
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
@@ -1085,6 +1101,79 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   }
 
   void _goToRecord() => context.go('/record');
+
+  void _handleThoughtMapMissingPiece(ThoughtMapResult map) {
+    final missing = map.sections.where((section) => !section.isKnown);
+    if (missing.isEmpty) return;
+    final section = missing.first;
+    ConfirmedRepeatThoughtMapAnalytics.recordMissingPieceTapped(
+      section: section.id,
+      surface: 'patterns',
+      entryCount: _entries.length,
+    );
+    unawaited(
+      ConfirmedRepeatThoughtMapStore.instance().markMissingPieceTarget(
+        section.id,
+      ),
+    );
+    if (section.id == ThoughtMapSectionId.trigger) {
+      ConfirmedRepeatTriggerCapture.armForNextSave();
+      context.go(
+        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+      );
+      return;
+    }
+    if (section.id == ThoughtMapSectionId.result) {
+      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+      context.go(
+        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
+      );
+      return;
+    }
+    context.go(
+      EarlyFirstSignalRecordRoutes.routeWithPrompt(
+        prompt: section.guidedRecordPrompt,
+        autostart: true,
+      ),
+    );
+  }
+
+  void _handleArchiveSummaryRecordNext(ArchiveSummaryResult summary) {
+    final recordNext = summary.recordNext;
+    if (recordNext.needsTriggerCapture) {
+      ConfirmedRepeatTriggerCapture.armForNextSave();
+      context.go(
+        EarlyFirstSignalRecordRoutes.routeWithTriggerPrompt(autostart: true),
+      );
+      return;
+    }
+    if (recordNext.needsResultCapture) {
+      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+      context.go(
+        EarlyFirstSignalRecordRoutes.routeWithWhatHelpedPrompt(autostart: true),
+      );
+      return;
+    }
+    context.go(
+      EarlyFirstSignalRecordRoutes.routeWithPrompt(
+        prompt: recordNext.guidedRecordPrompt,
+        autostart: true,
+      ),
+    );
+  }
+
+  void _handlePositivePatternRecordAgain() {
+    PositivePatternAnalytics.recordAgainTapped(
+      surface: 'patterns',
+      entryCount: _entries.length,
+    );
+    context.go(
+      EarlyFirstSignalRecordRoutes.routeWithPrompt(
+        prompt: PositivePatternCopy.guidedRecordPrompt,
+        autostart: true,
+      ),
+    );
+  }
 
   Future<void> _shareArchiveProofSafely() async {
     final proof =
@@ -3463,6 +3552,23 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         isPostSave: false,
         records: RepeatReturnCheckStore.cached,
       );
+      final confirmedRepeatThoughtMap = ConfirmedRepeatThoughtMapEngine.build(
+        entries: _entries,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        returnChecks: RepeatReturnCheckStore.cached,
+      );
+      final positivePattern = PositivePatternEngine.build(entries: _entries);
+      final archiveSummaryCandidate = ArchiveSummaryEngine.build(
+        entries: _entries,
+        confirmedRepeat: earlyFirstSignal,
+        timeline: earlyEvidenceTimeline,
+        changeProof: repeatReturnChangeProof,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
       final hasChangeOverTimeProof = repeatReturnChangeProof != null;
       final patternsPostProofArchiveProof =
           PaywallTimingGates.hasArchiveProofFromEntries(
@@ -3494,8 +3600,40 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           isRecording: false,
           dismissed: ConfirmedRepeatWhyMattersStore.cachedDismissed,
         ),
+        thoughtMapVisible: ConfirmedRepeatThoughtMapGates.shouldShow(
+          loaded: true,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+          entryCount: _entries.length,
+          isReady: true,
+          isRecording: false,
+          hasThoughtMap: confirmedRepeatThoughtMap != null,
+        ),
+        positivePatternVisible: PositivePatternGates.shouldShow(
+          loaded: true,
+          entryCount: _entries.length,
+          isReady: true,
+          isRecording: false,
+          hasPositivePattern: positivePattern != null,
+        ),
+        archiveSummaryVisible: ArchiveSummaryGates.shouldShow(
+          loaded: true,
+          entryCount: _entries.length,
+          isReady: true,
+          isRecording: false,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+          hasSummary: archiveSummaryCandidate != null,
+        ),
       );
-      final showConfirmedRepeatWhyMatters = proofSurfaceLayout.whyMattersVisible;
+      final showArchiveSummary = proofSurfaceLayout.archiveSummaryVisible;
+      final archiveSummary = showArchiveSummary ? archiveSummaryCandidate : null;
+      final showConfirmedRepeatWhyMatters =
+          proofSurfaceLayout.effectiveWhyMattersVisible;
+      final showConfirmedRepeatThoughtMap =
+          proofSurfaceLayout.effectiveThoughtMapVisible;
+      final showPositivePattern =
+          proofSurfaceLayout.effectivePositivePatternVisible;
+      final showThoughtMapRecordCta = showConfirmedRepeatThoughtMap &&
+          confirmedRepeatThoughtMap?.firstMissingSection != null;
       final suppressConfirmedRepeatInlineFeedback =
           ConfirmedRepeatBetaFeedbackGates.suppressInlineAccuracyFeedback(
         state: ConfirmedRepeatBetaFeedbackStore.cached,
@@ -3581,13 +3719,43 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                if (showArchiveSummary && archiveSummary != null) ...[
+                  ArchiveSummaryCard(
+                    summary: archiveSummary,
+                    showRecordNextCta: true,
+                    onRecordNext: () => _handleArchiveSummaryRecordNext(
+                      archiveSummary,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (showConfirmedRepeatWhyMatters) ...[
                   ConfirmedRepeatWhyMattersCard(
                     onDismissed: () => setState(() {}),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (repeatReturnChangeProof != null) ...[
+                if (showConfirmedRepeatThoughtMap &&
+                    confirmedRepeatThoughtMap != null) ...[
+                  ConfirmedRepeatThoughtMapCard(
+                    result: confirmedRepeatThoughtMap,
+                    showRecordMissingPieceCta: showThoughtMapRecordCta,
+                    onRecordMissingPiece: () => _handleThoughtMapMissingPiece(
+                      confirmedRepeatThoughtMap,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (showPositivePattern && positivePattern != null) ...[
+                  PositivePatternCard(
+                    result: positivePattern,
+                    showRecordAgainCta: true,
+                    onRecordAgain: _handlePositivePatternRecordAgain,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (proofSurfaceLayout.effectiveChangeProofVisible &&
+                    repeatReturnChangeProof != null) ...[
                   RepeatReturnCheckChangeProofCard(
                     proof: repeatReturnChangeProof,
                     entryCount: _entries.length,

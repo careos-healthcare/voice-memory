@@ -23,6 +23,7 @@ import '../features/belief_evolution/belief_evolution_service.dart';
 import '../features/archive_agreement/archive_agreement_service.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
+import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta/archive_beta_mission_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
@@ -336,6 +337,7 @@ class AppServices {
     ArchiveBetaMissionGate.enabledOverride = false;
     await ArchiveBetaMissionStore.resetForTest();
     await ConfirmedRepeatWhyMattersStore.resetForTest();
+    await ConfirmedRepeatThoughtMapStore.resetForTest();
     ArchiveMeDemoState.resetForTest();
     await RepeatReturnCheckStore.resetForTest();
   }
