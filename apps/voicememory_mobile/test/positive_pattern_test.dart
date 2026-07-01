@@ -306,7 +306,7 @@ void main() {
   });
 
   group('PositivePattern proof dedup', () {
-    test('title stays distinct from confirmed repeat proof', () {
+    test('reinforcement replaces standalone positive pattern title', () {
       final confirmed = EarlyFirstSignalEngine.build(
         entries: _threeRelatedRepeatEntries(),
       );
@@ -315,18 +315,15 @@ void main() {
         timelineVisible: false,
         changeProofVisible: false,
         proBridgeVisible: false,
-        positivePatternVisible: true,
+        positiveReinforcementVisible: true,
+        positivePatternVisible: false,
       );
       final blocks = ArchiveProofSurfaceCopy.patternsStack(
         layout: layout,
         confirmedRepeat: confirmed,
       );
-      expect(blocks, contains(PositivePatternCopy.title));
       expect(blocks, contains(EarlyFirstSignalCopy.threeEntrySeenThreeTimes));
-      expect(
-        blocks.where((block) => block == PositivePatternCopy.title),
-        hasLength(1),
-      );
+      expect(blocks, isNot(contains(PositivePatternCopy.title)));
     });
   });
 }

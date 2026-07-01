@@ -31,10 +31,10 @@ import '../features/early_archive/confirmed_repeat_thought_map_engine.dart';
 import '../features/early_archive/confirmed_repeat_thought_map_gates.dart';
 import '../features/early_archive/confirmed_repeat_thought_map_models.dart';
 import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
-import '../features/early_archive/positive_pattern_analytics.dart';
-import '../features/early_archive/positive_pattern_copy.dart';
 import '../features/early_archive/positive_pattern_engine.dart';
-import '../features/early_archive/positive_pattern_gates.dart';
+import '../features/early_archive/positive_reinforcement_analytics.dart';
+import '../features/early_archive/positive_reinforcement_engine.dart';
+import '../features/early_archive/positive_reinforcement_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
@@ -302,7 +302,7 @@ import '../widgets/record/second_session_comparison_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
-import '../widgets/record/positive_pattern_card.dart';
+import '../widgets/record/positive_reinforcement_card.dart';
 import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/daily_return_reason_card.dart';
 import '../widgets/record/weekly_archive_review_card.dart' as week_review;
@@ -1218,14 +1218,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
   }
 
-  void _handlePositivePatternRecordAgain() {
-    PositivePatternAnalytics.recordAgainTapped(
+  void _handlePositiveReinforcementRecordAgain(
+    PositiveReinforcementResult reinforcement,
+  ) {
+    PositiveReinforcementAnalytics.recordTapped(
       surface: 'patterns',
       entryCount: _entries.length,
+      helpfulPatternRecorded: true,
     );
+    ConfirmedRepeatHelpfulActionCapture.armForNextSave();
     context.go(
       EarlyFirstSignalRecordRoutes.routeWithPrompt(
-        prompt: PositivePatternCopy.guidedRecordPrompt,
+        prompt: reinforcement.guidedRecordPrompt,
         autostart: true,
       ),
     );
@@ -3615,6 +3619,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
       );
       final positivePattern = PositivePatternEngine.build(entries: _entries);
+      final positiveReinforcement = PositiveReinforcementEngine.build(
+        positivePattern: positivePattern,
+        entries: _entries,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+      );
       final archiveSummaryCandidate = ArchiveSummaryEngine.build(
         entries: _entries,
         confirmedRepeat: earlyFirstSignal,
@@ -3694,13 +3703,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           isRecording: false,
           hasThoughtMap: confirmedRepeatThoughtMap != null,
         ),
-        positivePatternVisible: PositivePatternGates.shouldShow(
+        positiveReinforcementVisible: PositiveReinforcementGates.shouldShow(
           loaded: true,
           entryCount: _entries.length,
           isReady: true,
           isRecording: false,
-          hasPositivePattern: positivePattern != null,
+          hasPositivePattern: positiveReinforcement != null,
         ),
+        positivePatternVisible: false,
         archiveSummaryVisible: ArchiveSummaryGates.shouldShow(
           loaded: true,
           entryCount: _entries.length,
@@ -3762,8 +3772,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
           proofSurfaceLayout.effectiveThoughtMapVisible;
-      final showPositivePattern =
-          proofSurfaceLayout.effectivePositivePatternVisible;
+      final showPositiveReinforcement =
+          proofSurfaceLayout.effectivePositiveReinforcementVisible;
       final showThoughtMapRecordCta = showConfirmedRepeatThoughtMap &&
           confirmedRepeatThoughtMap?.firstMissingSection != null;
       final suppressConfirmedRepeatInlineFeedback =
@@ -3898,11 +3908,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (showPositivePattern && positivePattern != null) ...[
-                  PositivePatternCard(
-                    result: positivePattern,
-                    showRecordAgainCta: true,
-                    onRecordAgain: _handlePositivePatternRecordAgain,
+                if (showPositiveReinforcement &&
+                    positiveReinforcement != null) ...[
+                  PositiveReinforcementCard(
+                    reinforcement: positiveReinforcement,
+                    showRecordAgainCta: !positiveReinforcement.isCompletion,
+                    onRecordAgain: () => _handlePositiveReinforcementRecordAgain(
+                      positiveReinforcement,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],

@@ -8,6 +8,7 @@ class ArchiveProofSurfaceLayout {
     this.whyMattersVisible = false,
     this.thoughtMapVisible = false,
     this.positivePatternVisible = false,
+    this.positiveReinforcementVisible = false,
     this.archiveSummaryVisible = false,
   });
 
@@ -18,6 +19,7 @@ class ArchiveProofSurfaceLayout {
   final bool whyMattersVisible;
   final bool thoughtMapVisible;
   final bool positivePatternVisible;
+  final bool positiveReinforcementVisible;
   final bool archiveSummaryVisible;
 
   /// Supporting cards fold into Archive Summary when it is visible.
@@ -27,8 +29,13 @@ class ArchiveProofSurfaceLayout {
   bool get effectiveThoughtMapVisible =>
       thoughtMapVisible && !archiveSummaryVisible;
 
+  bool get effectivePositiveReinforcementVisible =>
+      positiveReinforcementVisible && !archiveSummaryVisible;
+
   bool get effectivePositivePatternVisible =>
-      positivePatternVisible && !archiveSummaryVisible;
+      positivePatternVisible &&
+      !archiveSummaryVisible &&
+      !positiveReinforcementVisible;
 
   bool get effectiveChangeProofVisible =>
       changeProofVisible && !archiveSummaryVisible;

@@ -174,7 +174,7 @@ import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
-import '../widgets/record/positive_pattern_card.dart';
+import '../widgets/record/positive_reinforcement_card.dart';
 import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/daily_return_reason_card.dart';
 import '../widgets/record/weekly_archive_review_card.dart' as week_review;
@@ -203,10 +203,10 @@ import '../features/early_archive/confirmed_repeat_thought_map_models.dart';
 import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_gates.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
-import '../features/early_archive/positive_pattern_analytics.dart';
-import '../features/early_archive/positive_pattern_copy.dart';
 import '../features/early_archive/positive_pattern_engine.dart';
-import '../features/early_archive/positive_pattern_gates.dart';
+import '../features/early_archive/positive_reinforcement_analytics.dart';
+import '../features/early_archive/positive_reinforcement_engine.dart';
+import '../features/early_archive/positive_reinforcement_gates.dart';
 import '../features/early_archive/archive_summary_engine.dart';
 import '../features/early_archive/archive_summary_gates.dart';
 import '../features/early_archive/archive_summary_model.dart';
@@ -1589,15 +1589,19 @@ class _RecordScreenState extends State<RecordScreen> {
     unawaited(_onRecordPressed(source: 'thought_map'));
   }
 
-  void _handlePositivePatternRecordAgain() {
-    PositivePatternAnalytics.recordAgainTapped(
+  void _handlePositiveReinforcementRecordAgain(
+    PositiveReinforcementResult reinforcement,
+  ) {
+    PositiveReinforcementAnalytics.recordTapped(
       surface: 'record',
       entryCount: _journalEntryCount,
+      helpfulPatternRecorded: true,
     );
+    ConfirmedRepeatHelpfulActionCapture.armForNextSave();
     setState(
-      () => _selectedPromptLine = PositivePatternCopy.guidedRecordPrompt,
+      () => _selectedPromptLine = reinforcement.guidedRecordPrompt,
     );
-    unawaited(_onRecordPressed(source: 'positive_pattern'));
+    unawaited(_onRecordPressed(source: 'positive_reinforcement'));
   }
 
   void _handleArchiveSummaryRecordNext(ArchiveSummaryResult summary) {
@@ -3623,6 +3627,15 @@ class _RecordScreenState extends State<RecordScreen> {
             !_isPostSaveSurface
         ? PositivePatternEngine.build(entries: _journalEntries)
         : null;
+    final positiveReinforcement = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? PositiveReinforcementEngine.build(
+            positivePattern: positivePattern,
+            entries: _journalEntries,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          )
+        : null;
     final archiveSummaryCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
@@ -3715,13 +3728,14 @@ class _RecordScreenState extends State<RecordScreen> {
         isRecording: ui == RecordUiState.recording,
         hasThoughtMap: confirmedRepeatThoughtMap != null,
       ),
-      positivePatternVisible: PositivePatternGates.shouldShow(
+      positiveReinforcementVisible: PositiveReinforcementGates.shouldShow(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
         isReady: ui == RecordUiState.ready,
         isRecording: ui == RecordUiState.recording,
-        hasPositivePattern: positivePattern != null,
+        hasPositivePattern: positiveReinforcement != null,
       ),
+      positivePatternVisible: false,
       archiveSummaryVisible: ArchiveSummaryGates.shouldShow(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
@@ -3791,7 +3805,8 @@ class _RecordScreenState extends State<RecordScreen> {
         proofSurfaceLayout.effectiveWhyMattersVisible;
     final showConfirmedRepeatThoughtMap =
         proofSurfaceLayout.effectiveThoughtMapVisible;
-    final showPositivePattern = proofSurfaceLayout.effectivePositivePatternVisible;
+    final showPositiveReinforcement =
+        proofSurfaceLayout.effectivePositiveReinforcementVisible;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -3926,12 +3941,14 @@ class _RecordScreenState extends State<RecordScreen> {
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
         );
-    final showPositivePatternRecordCta = showPositivePattern &&
-        PositivePatternGates.showRecordAgainCta(
+    final showPositiveReinforcementRecordCta = showPositiveReinforcement &&
+        positiveReinforcement != null &&
+        PositiveReinforcementGates.showRecordAgainCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
           promoteMicCaptureActions:
               _shouldPromoteMicCaptureActions(readyCapturePolicy),
+          isCompletion: positiveReinforcement.isCompletion,
         );
     final showArchiveSummaryRecordCta = showArchiveSummary &&
         ArchiveSummaryGates.showRecordNextCta(
@@ -4245,11 +4262,14 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPositivePattern && positivePattern != null) ...[
-                      PositivePatternCard(
-                        result: positivePattern,
-                        showRecordAgainCta: showPositivePatternRecordCta,
-                        onRecordAgain: _handlePositivePatternRecordAgain,
+                    if (showPositiveReinforcement &&
+                        positiveReinforcement != null) ...[
+                      PositiveReinforcementCard(
+                        reinforcement: positiveReinforcement,
+                        showRecordAgainCta: showPositiveReinforcementRecordCta,
+                        onRecordAgain: () => _handlePositiveReinforcementRecordAgain(
+                          positiveReinforcement,
+                        ),
                       ),
                       const SizedBox(height: 12),
                     ],

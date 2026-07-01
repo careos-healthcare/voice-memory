@@ -9,6 +9,7 @@ import 'archive_summary_copy.dart';
 import 'confirmed_repeat_thought_map_copy.dart';
 import 'confirmed_repeat_why_matters_copy.dart';
 import 'positive_pattern_copy.dart';
+import 'positive_reinforcement_copy.dart';
 import 'early_evidence_timeline_engine.dart';
 
 /// Resolves de-duplicated visible copy for proof stacks (tests + policy).
@@ -117,7 +118,10 @@ abstract final class ArchiveProofSurfaceCopy {
       }
     }
 
-    if (layout.positivePatternVisible && !layout.archiveSummaryVisible) {
+    if (layout.effectivePositiveReinforcementVisible) {
+      blocks.add(PositiveReinforcementCopy.title);
+      blocks.add(PositiveReinforcementCopy.body);
+    } else if (layout.effectivePositivePatternVisible) {
       blocks.add(PositivePatternCopy.title);
       blocks.add(PositivePatternCopy.body);
     }
