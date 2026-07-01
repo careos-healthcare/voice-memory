@@ -93,6 +93,7 @@ abstract final class PatternChangedEngine {
       RepeatReturnCheckChoice.softer => PatternChangedType.softer,
       RepeatReturnCheckChoice.stronger => PatternChangedType.stronger,
       RepeatReturnCheckChoice.same => null,
+      RepeatReturnCheckChoice.changed => PatternChangedType.changed,
     };
   }
 

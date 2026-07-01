@@ -20,6 +20,7 @@ abstract final class RepeatReturnCheckTrendEngine {
         RepeatReturnCheckChoice.stronger => RepeatReturnCheckCopy.trendGettingLouder,
         RepeatReturnCheckChoice.softer => RepeatReturnCheckCopy.trendSofterThanBefore,
         RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
+        RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.trendSteady,
       };
 
   /// Compares the two most recent answers when available; otherwise maps the
@@ -37,7 +38,11 @@ abstract final class RepeatReturnCheckTrendEngine {
 
   static String? latestTrendCopy(List<RepeatReturnCheckRecord> records) {
     final choices = records
-        .where((record) => record.choice != null)
+        .where(
+          (record) =>
+              record.choice != null &&
+              record.choice != RepeatReturnCheckChoice.changed,
+        )
         .map((record) => record.choice!)
         .toList();
     if (choices.length < 2) return null;

@@ -57,11 +57,11 @@ class RepeatReturnCheckStore {
       record,
       ..._cached.where((existing) => existing.entryId != record.entryId),
     ]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    _cached = records;
+    _loaded = true;
     await _prefs.writeJsonMap(_prefsKey, {
       'records': records.map((item) => item.toJson()).toList(),
     });
-    _cached = records;
-    _loaded = true;
   }
 
   Future<void> saveChoice({

@@ -7,6 +7,7 @@ abstract final class RepeatReturnCheckCopy {
   static const stronger = 'Stronger';
   static const same = 'About the same';
   static const softer = 'Softer';
+  static const changed = 'Different';
 
   static const saved =
       'Saved. ArchiveMe will use this to track whether the repeat is changing.';

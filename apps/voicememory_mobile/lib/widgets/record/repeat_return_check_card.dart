@@ -190,7 +190,7 @@ class _RepeatReturnCheckCardState extends State<RepeatReturnCheckCard> {
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,
             children: [
-              for (final choice in RepeatReturnCheckChoice.values)
+              for (final choice in RepeatReturnCheckChoice.legacyOfferChoices)
                 OutlinedButton(
                   key: Key('repeat_return_check_${choice.name}'),
                   onPressed: () => _select(choice),

@@ -77,6 +77,10 @@ abstract final class ReturnCheckPayoffEngine {
       return ReturnCheckPayoffComparisonState.unknown;
     }
 
+    if (latestChoice == RepeatReturnCheckChoice.changed) {
+      return ReturnCheckPayoffComparisonState.changed;
+    }
+
     final orderedRecords = [
       if (latestRecord != null) latestRecord,
       ...returnChecks.where((record) => record.entryId != latestEntryId),
@@ -108,6 +112,8 @@ abstract final class ReturnCheckPayoffEngine {
       RepeatReturnCheckChoice.stronger =>
         ReturnCheckPayoffComparisonState.stronger,
       RepeatReturnCheckChoice.same => ReturnCheckPayoffComparisonState.same,
+      RepeatReturnCheckChoice.changed =>
+        ReturnCheckPayoffComparisonState.changed,
     };
   }
 

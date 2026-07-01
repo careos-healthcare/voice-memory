@@ -18,6 +18,8 @@ import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.d
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
@@ -413,7 +415,14 @@ void main() {
               createdAt: DateTime(2026, 6, 13, 12),
             ),
           ),
-        returnChecks: const [],
+        returnChecks: [
+          RepeatReturnCheckRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+            entryCountAtCapture: 4,
+            createdAt: DateTime(2026, 6, 13, 12),
+          ),
+        ],
       );
       expect(payoff, isNotNull);
 
@@ -427,7 +436,33 @@ void main() {
       expect(
         ArchiveProofCopyDedup.countPhrase(
           blocks.join('\n'),
-          ReturnCheckPayoffCopy.unknownTitle,
+          ReturnCheckPayoffCopy.softerTitle,
+        ),
+        1,
+      );
+    });
+
+    test('post save return check answer stays distinct from archive summary copy', () {
+      final answer = PostSaveReturnCheckAnswerEngine.build(
+        entries: _threeRelatedRepeatEntries()
+          ..add(
+            _entry(
+              id: 'e4',
+              transcript:
+                  'I said yes again even though I had no capacity for one more ask today.',
+              createdAt: DateTime(2026, 6, 13, 12),
+            ),
+          ),
+        returnChecks: const [],
+      );
+      expect(answer, isNotNull);
+
+      final blocks = [answer!.label, answer.title, answer.body, answer.footer];
+      expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          blocks.join('\n'),
+          PostSaveReturnCheckAnswerCopy.title,
         ),
         1,
       );

@@ -3,18 +3,21 @@ import 'repeat_return_check_copy.dart';
 enum RepeatReturnCheckChoice {
   stronger,
   same,
-  softer;
+  softer,
+  changed;
 
   String get analyticsReason => switch (this) {
         RepeatReturnCheckChoice.stronger => 'stronger',
         RepeatReturnCheckChoice.same => 'same',
         RepeatReturnCheckChoice.softer => 'softer',
+        RepeatReturnCheckChoice.changed => 'changed',
       };
 
   String get label => switch (this) {
         RepeatReturnCheckChoice.stronger => RepeatReturnCheckCopy.stronger,
         RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.same,
         RepeatReturnCheckChoice.softer => RepeatReturnCheckCopy.softer,
+        RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.changed,
       };
 
   /// Ordinal for trend comparison — higher means the repeat felt more intense.
@@ -22,7 +25,15 @@ enum RepeatReturnCheckChoice {
         RepeatReturnCheckChoice.softer => 0,
         RepeatReturnCheckChoice.same => 1,
         RepeatReturnCheckChoice.stronger => 2,
+        RepeatReturnCheckChoice.changed => 1,
       };
+
+  /// Choices offered on the legacy repeat return check card.
+  static const legacyOfferChoices = [
+    RepeatReturnCheckChoice.softer,
+    RepeatReturnCheckChoice.stronger,
+    RepeatReturnCheckChoice.same,
+  ];
 }
 
 class RepeatReturnCheckRecord {

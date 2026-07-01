@@ -145,6 +145,8 @@ abstract final class WeeklyArchiveWeekReviewEngine {
         RepeatReturnCheckChoice.same => WeeklyArchiveWeekReviewCopy.changedSame,
         RepeatReturnCheckChoice.softer =>
           WeeklyArchiveWeekReviewCopy.changedSofter,
+        RepeatReturnCheckChoice.changed =>
+          WeeklyArchiveWeekReviewCopy.changedFallback,
       };
 
   static ({String line, bool isFallback}) _helpedSection(

@@ -177,6 +177,7 @@ import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/return_check_payoff_card.dart';
+import '../widgets/record/post_save_return_check_answer_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
@@ -202,6 +203,8 @@ import '../features/early_archive/first_week_loop_engine.dart';
 import '../features/early_archive/first_week_loop_gates.dart';
 import '../features/early_archive/return_check_payoff_engine.dart';
 import '../features/early_archive/return_check_payoff_gates.dart';
+import '../features/early_archive/post_save_return_check_answer_engine.dart';
+import '../features/early_archive/post_save_return_check_answer_gates.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
@@ -4013,18 +4016,35 @@ class _RecordScreenState extends State<RecordScreen> {
             returnChecks: RepeatReturnCheckStore.cached,
           )
         : null;
+    final postSaveReturnCheckAnswerCandidate = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? PostSaveReturnCheckAnswerEngine.build(
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+          )
+        : null;
+    final showPostSaveReturnCheckAnswer = PostSaveReturnCheckAnswerGates.shouldShow(
+      isPostSaveDone: ui == RecordUiState.done,
+      entryCount: postSaveEntryCount,
+      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      showFirstProofMoment: showFirstProofMoment,
+      answer: postSaveReturnCheckAnswerCandidate,
+    );
     final showReturnCheckPayoff = ReturnCheckPayoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
       isDegradedPostSave: entriesAfterSave.isNotEmpty &&
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       showFirstProofMoment: showFirstProofMoment,
+      showPostSaveReturnCheckAnswer: showPostSaveReturnCheckAnswer,
       payoff: returnCheckPayoffCandidate,
     );
     final showArchiveSummaryOnRecord =
         recordProofStack.showArchiveSummary &&
             !showFirstProofMoment &&
-            !showReturnCheckPayoff;
+            !showReturnCheckPayoff &&
+            !showPostSaveReturnCheckAnswer;
     final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
         ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
         : null;
@@ -5293,7 +5313,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             ),
                           ],
                           if (repeatReturnCheckOffer != null &&
-                              !showReturnCheckPayoff) ...[
+                              !showReturnCheckPayoff &&
+                              !showPostSaveReturnCheckAnswer) ...[
                             const SizedBox(height: 12),
                             RepeatReturnCheckCard(
                               entryId: repeatReturnCheckOffer.entryId,
@@ -5347,7 +5368,8 @@ class _RecordScreenState extends State<RecordScreen> {
                                 true &&
                             beliefUpdatePayoff != null &&
                             !showFirstProofMoment &&
-                            !showReturnCheckPayoff) ...[
+                            !showReturnCheckPayoff &&
+                            !showPostSaveReturnCheckAnswer) ...[
                           const SizedBox(height: 16),
                           BeliefUpdatePayoffCard(
                             payoff: beliefUpdatePayoff,
@@ -5361,7 +5383,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             !suppressNoisyFirstSaveCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
-                            !showReturnCheckPayoff) ...[
+                            !showReturnCheckPayoff &&
+                            !showPostSaveReturnCheckAnswer) ...[
                           const SizedBox(height: 16),
                           PostSaveFocusedActionsBar(
                             onViewEvidence: () =>
@@ -5785,7 +5808,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             !suppressEarlyPatternClaimCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
-                            !showReturnCheckPayoff) ...[
+                            !showReturnCheckPayoff &&
+                            !showPostSaveReturnCheckAnswer) ...[
                           if (_secondSessionComparison?.hasEnoughData == true &&
                               secondSessionPayoff == null) ...[
                             const SizedBox(height: 12),
@@ -6045,6 +6069,19 @@ class _RecordScreenState extends State<RecordScreen> {
                       FirstProofMomentCard(
                         moment: firstProofMomentCandidate,
                         entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (showPostSaveReturnCheckAnswer &&
+                        postSaveReturnCheckAnswerCandidate != null) ...[
+                      PostSaveReturnCheckAnswerCard(
+                        key: ValueKey(
+                          postSaveReturnCheckAnswerCandidate.entryId,
+                        ),
+                        answer: postSaveReturnCheckAnswerCandidate,
+                        onChanged: () {
+                          if (mounted) setState(() {});
+                        },
                       ),
                       const SizedBox(height: 16),
                     ],

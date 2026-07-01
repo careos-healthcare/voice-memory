@@ -41,6 +41,10 @@ abstract final class EarlyArchiveProofAnalytics {
   static const String firstWeekLoopRecordTappedEvent =
       'first_week_loop_record_tapped';
   static const String returnCheckPayoffSeenEvent = 'return_check_payoff_seen';
+  static const String postSaveReturnCheckAnswerSeenEvent =
+      'post_save_return_check_answer_seen';
+  static const String postSaveReturnCheckAnswerTappedEvent =
+      'post_save_return_check_answer_tapped';
 
   static bool _realTimelineSeenThisSession = false;
 
@@ -334,6 +338,38 @@ abstract final class EarlyArchiveProofAnalytics {
     );
   }
 
+  static void postSaveReturnCheckAnswerSeen({
+    required int entryCount,
+    required bool hasPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      postSaveReturnCheckAnswerSeenEvent,
+      entryCount: entryCount,
+      source: 'record',
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+      oncePerSession: true,
+      sessionStage: 'post_save_return_check_answer',
+    );
+  }
+
+  static void postSaveReturnCheckAnswerTapped({
+    required int entryCount,
+    required String answer,
+    required bool hasPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      postSaveReturnCheckAnswerTappedEvent,
+      entryCount: entryCount,
+      source: 'record',
+      answer: answer,
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+    );
+  }
+
   static void _track(
     String event, {
     int? entryCount,
@@ -345,6 +381,7 @@ abstract final class EarlyArchiveProofAnalytics {
     bool? hasConfirmedRepeat,
     String? comparisonState,
     String? relationState,
+    String? answer,
     int? phraseCount,
     bool? hasStrongEvidence,
     bool oncePerSession = false,
@@ -361,6 +398,7 @@ abstract final class EarlyArchiveProofAnalytics {
       hasConfirmedRepeat: hasConfirmedRepeat,
       comparisonState: comparisonState,
       relationState: relationState,
+      answer: answer,
       phraseCount: phraseCount,
       hasStrongEvidence: hasStrongEvidence,
       oncePerSession: oncePerSession,

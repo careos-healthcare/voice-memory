@@ -9,11 +9,14 @@ abstract final class ReturnCheckPayoffGates {
     required int entryCount,
     required bool isDegradedPostSave,
     required bool showFirstProofMoment,
+    required bool showPostSaveReturnCheckAnswer,
     ReturnCheckPayoff? payoff,
   }) =>
       isPostSaveDone &&
       !isDegradedPostSave &&
       entryCount >= 4 &&
       !showFirstProofMoment &&
-      payoff != null;
+      payoff != null &&
+      !(showPostSaveReturnCheckAnswer &&
+          payoff.state == ReturnCheckPayoffComparisonState.unknown);
 }

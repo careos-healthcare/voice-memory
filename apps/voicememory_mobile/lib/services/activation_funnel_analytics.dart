@@ -571,6 +571,7 @@ abstract class ActivationFunnelAnalytics {
     'has_phrase',
     'has_confirmed_repeat',
     'comparison_state',
+    'answer',
     'has_strong_evidence',
     'milestone_count',
     'phrase_count',
@@ -976,6 +977,7 @@ abstract class ActivationFunnelAnalytics {
     bool? hasStrongEvidence,
     int? milestoneCount,
     String? relationState,
+    String? answer,
     String? source,
     String? stage,
     String? cardType,
@@ -1036,6 +1038,7 @@ abstract class ActivationFunnelAnalytics {
         'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
       if (comparisonState != null && _safeValue.hasMatch(comparisonState))
         'comparison_state': comparisonState,
+      if (answer != null && _safeValue.hasMatch(answer)) 'answer': answer,
       if (phraseCount != null) 'phrase_count': phraseCount,
       if (hasStrongEvidence != null)
         'has_strong_evidence': hasStrongEvidence ? 1 : 0,

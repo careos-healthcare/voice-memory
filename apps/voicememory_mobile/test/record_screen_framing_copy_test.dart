@@ -19,6 +19,7 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_cop
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
@@ -1578,7 +1579,7 @@ void main() {
       expect(find.byKey(const Key('first_week_loop_card')), findsNothing);
     });
 
-    testWidgets('fourth related post-save shows return check payoff', (
+    testWidgets('fourth related post-save shows return check answer question', (
       tester,
     ) async {
       await seedConfirmedRepeatEntries(tester, 4);
@@ -1609,12 +1610,65 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('return_check_payoff_card_unknown')), findsOneWidget);
-      expect(find.text(ReturnCheckPayoffCopy.unknownTitle), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_return_check_answer_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PostSaveReturnCheckAnswerCopy.title),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('return_check_payoff_card_unknown')), findsNothing);
       expect(find.byKey(const Key('repeat_return_check_card')), findsNothing);
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+    });
+
+    testWidgets('tapping softer on return check answer shows softer payoff', (
+      tester,
+    ) async {
+      await seedConfirmedRepeatEntries(tester, 4);
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: _confirmedRepeatJournalEntries(4),
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      await tester.runAsync(() async {
+        await tester.tap(
+          find.byKey(const Key('post_save_return_check_answer_softer')),
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('post_save_return_check_answer_card')), findsNothing);
+      expect(find.byKey(const Key('return_check_payoff_card_softer')), findsOneWidget);
+      expect(find.text(ReturnCheckPayoffCopy.softerTitle), findsOneWidget);
     });
 
     testWidgets('post-save done state hides next-moment prompt card', (

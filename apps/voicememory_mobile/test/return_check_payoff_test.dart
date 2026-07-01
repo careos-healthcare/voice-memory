@@ -235,6 +235,7 @@ void main() {
           entryCount: 4,
           isDegradedPostSave: false,
           showFirstProofMoment: false,
+          showPostSaveReturnCheckAnswer: false,
           payoff: payoff,
         ),
         isFalse,
@@ -245,6 +246,7 @@ void main() {
           entryCount: 4,
           isDegradedPostSave: true,
           showFirstProofMoment: false,
+          showPostSaveReturnCheckAnswer: false,
           payoff: payoff,
         ),
         isFalse,
@@ -269,6 +271,32 @@ void main() {
           entryCount: 4,
           isDegradedPostSave: false,
           showFirstProofMoment: true,
+          showPostSaveReturnCheckAnswer: false,
+          payoff: payoff,
+        ),
+        isFalse,
+      );
+    });
+
+    test('hidden when answer question is visible and payoff is unknown', () {
+      const payoff = ReturnCheckPayoff(
+        state: ReturnCheckPayoffComparisonState.unknown,
+        title: ReturnCheckPayoffCopy.unknownTitle,
+        body: ReturnCheckPayoffCopy.unknownBody,
+        evidenceLabel: ReturnCheckPayoffCopy.evidenceLabel,
+        footer: ReturnCheckPayoffCopy.unknownFooter,
+        hasPhrase: false,
+        hasConfirmedRepeat: true,
+        usesPhraseBody: false,
+      );
+
+      expect(
+        ReturnCheckPayoffGates.shouldShow(
+          isPostSaveDone: true,
+          entryCount: 4,
+          isDegradedPostSave: false,
+          showFirstProofMoment: false,
+          showPostSaveReturnCheckAnswer: true,
           payoff: payoff,
         ),
         isFalse,
