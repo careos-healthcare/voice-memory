@@ -3697,6 +3697,29 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       final hasConfirmedRepeatForProGate = viewingConfirmedRepeatOnPatterns &&
           ((earlyFirstSignal?.showsConfirmedRepeat ?? false) ||
               showEarlyEvidenceTimeline);
+      final privateArchiveReportForProGate = PrivateArchiveReportEngine.build(
+        entries: _entries,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final privateArchiveReportPreviewForProGate =
+          privateArchiveReportForProGate != null &&
+              PrivateArchiveReportGates.shouldShow(
+                loaded: true,
+                entryCount: _entries.length,
+                isReady: true,
+                isRecording: false,
+                isPostSave: false,
+                viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+                report: privateArchiveReportForProGate,
+              ) &&
+              PrivateArchiveReportGates.showPreviewNote(isPro: _archiveIsPro);
+      final patternChangedForProGate = patternChangedCandidate != null &&
+          viewingConfirmedRepeatOnPatterns &&
+          _entries.length >
+              FirstThreeSessionGates.minEntriesForUsefulArchive;
       final showPatternsPostProofProBridge =
           PaywallTimingGates.showPostProofProBridge(
         entryCount: _entries.length,
@@ -3707,6 +3730,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         hasChangeOverTimeProof: hasChangeOverTimeProof,
         hasArchiveSummary: archiveSummaryVisibleForProGate,
         hasWeeklyArchiveReview: weeklyArchiveReviewVisibleForProGate,
+        hasPatternChanged: patternChangedForProGate,
+        hasPrivateArchiveReportPreview: privateArchiveReportPreviewForProGate,
       );
       final proofSurfaceLayout = ArchiveProofSurfaceLayout(
         confirmedRepeatCardVisible: !showEarlyEvidenceTimeline &&

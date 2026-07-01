@@ -230,6 +230,36 @@ void main() {
       );
     });
 
+    test('shows after private report preview when no other surfaces', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 3,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: false,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: false,
+          hasPrivateArchiveReportPreview: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('shows after pattern changed when no other surfaces', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: false,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: false,
+          hasPatternChanged: true,
+        ),
+        isTrue,
+      );
+    });
+
     test('respects resolved and Pro user flags', () {
       expect(
         PaywallTimingGates.showPostProofProBridge(
@@ -371,24 +401,33 @@ void main() {
   });
 
   group('Full archive history Pro boundary copy', () {
-    test('boundary ties Pro to full history without blocking free proof', () {
+    test('boundary ties Pro to continuity without blocking free proof', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
-        'Full archive history',
+        'Keep the full archive',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        'ArchiveMe can show the first proof for free. Pro keeps the full evidence '
-        'trail, weekly reviews, and long-term changes.',
+        contains('first repeat for free'),
+      );
+      expect(
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
+        containsAll([
+          'Full archive history',
+          'Weekly archive reviews',
+          'Pattern change tracking',
+          'Private archive reports',
+        ]),
       );
       expect(ArchiveBeliefThreadCopy.proBridgeCta, 'See Pro');
       expect(ArchiveBeliefThreadCopy.proBridgeSecondary, 'Not now');
     });
 
-    test('boundary copy avoids hard lock language', () {
+    test('boundary copy avoids hard lock and medical language', () {
       final haystack = [
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+        ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         ArchiveBeliefThreadCopy.proBridgeCta,
         ArchiveBeliefThreadCopy.proBridgeSecondary,
       ].join(' ').toLowerCase();
@@ -396,6 +435,9 @@ void main() {
       expect(haystack, isNot(contains('feature locked')));
       expect(haystack, isNot(contains('must pay')));
       expect(haystack, isNot(contains('hard lock')));
+      expect(haystack, isNot(contains('unlock your healing')));
+      expect(haystack, isNot(contains('therapy')));
+      expect(haystack, isNot(contains('diagnosis')));
     });
 
     testWidgets('full archive history boundary renders on Record-style surface',
@@ -420,6 +462,9 @@ void main() {
         find.text(ArchiveBeliefThreadCopy.fullArchiveHistoryBody),
         findsOneWidget,
       );
+      for (final bullet in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) {
+        expect(find.text(bullet), findsOneWidget);
+      }
       expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.proBridgeSecondary), findsOneWidget);
       expect(

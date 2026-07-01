@@ -18,7 +18,7 @@ abstract class PaywallTimingGates {
       entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
 
   /// Full archive history Pro boundary — after confirmed repeat, Archive Summary,
-  /// or Weekly Review; never on first save; never before entry count 3.
+  /// Weekly Review, Private Report preview, or Pattern Changed; never on first save.
   static bool showFullArchiveHistoryProBoundary({
     required int entryCount,
     required bool resolved,
@@ -27,14 +27,19 @@ abstract class PaywallTimingGates {
     required bool hasConfirmedRepeat,
     required bool hasArchiveSummary,
     required bool hasWeeklyArchiveReview,
+    bool hasPatternChanged = false,
+    bool hasPrivateArchiveReportPreview = false,
   }) {
     if (isPro || resolved || isPostSave) return false;
     if (entryCount < minFullArchiveHistoryEntryCount) return false;
-    return hasConfirmedRepeat || hasArchiveSummary || hasWeeklyArchiveReview;
+    return hasConfirmedRepeat ||
+        hasArchiveSummary ||
+        hasWeeklyArchiveReview ||
+        hasPatternChanged ||
+        hasPrivateArchiveReportPreview;
   }
 
-  /// Pro bridge after confirmed repeat, Archive Summary, or weekly review —
-  /// never on first save, never blocking recording.
+  /// Pro bridge after a real value surface — never on first save, never blocking recording.
   static bool showPostProofProBridge({
     required int entryCount,
     required bool resolved,
@@ -45,6 +50,8 @@ abstract class PaywallTimingGates {
     bool isPostSave = false,
     bool hasArchiveSummary = false,
     bool hasWeeklyArchiveReview = false,
+    bool hasPatternChanged = false,
+    bool hasPrivateArchiveReportPreview = false,
   }) =>
       showFullArchiveHistoryProBoundary(
         entryCount: entryCount,
@@ -59,6 +66,8 @@ abstract class PaywallTimingGates {
                 hasArchiveProof),
         hasArchiveSummary: hasArchiveSummary,
         hasWeeklyArchiveReview: hasWeeklyArchiveReview,
+        hasPatternChanged: hasPatternChanged,
+        hasPrivateArchiveReportPreview: hasPrivateArchiveReportPreview,
       );
 
   static bool hasConfirmedRepeatProof({

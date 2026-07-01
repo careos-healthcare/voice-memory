@@ -27,10 +27,17 @@ abstract class ArchiveBeliefThreadCopy {
 
   static const String proKeepsThread = 'Keep the full evidence trail';
   static const String proNearbyTitle = 'Keep the full evidence trail';
-  static const String fullArchiveHistoryTitle = 'Full archive history';
+  static const String fullArchiveHistoryTitle = 'Keep the full archive';
   static const String fullArchiveHistoryBody =
-      'ArchiveMe can show the first proof for free. Pro keeps the full evidence '
-      'trail, weekly reviews, and long-term changes.';
+      'ArchiveMe can show your first repeat for free. Pro keeps the full evidence '
+      'history, weekly reviews, private reports, and whether patterns get '
+      'stronger, softer, or change over time.';
+  static const List<String> fullArchiveHistoryBullets = [
+    'Full archive history',
+    'Weekly archive reviews',
+    'Pattern change tracking',
+    'Private archive reports',
+  ];
   static const String proDeeperHistory =
       'See deeper history and saved evidence.';
   static const String proReviewChanges =
@@ -96,6 +103,7 @@ abstract class ArchiveBeliefThreadCopy {
     proNearbyTitle,
     fullArchiveHistoryTitle,
     fullArchiveHistoryBody,
+    ...fullArchiveHistoryBullets,
     proDeeperHistory,
     proReviewChanges,
     proBridgeBody,

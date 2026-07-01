@@ -3727,6 +3727,37 @@ class _RecordScreenState extends State<RecordScreen> {
     final hasConfirmedRepeatForProGate = viewingConfirmedRepeatOnRecord &&
         ((earlyFirstSignalOnRecord?.showsConfirmedRepeat ?? false) ||
             showEarlyEvidenceTimeline);
+    final privateArchiveReportForProGate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? PrivateArchiveReportEngine.build(
+            entries: _journalEntries,
+            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+            returnChecks: RepeatReturnCheckStore.cached,
+            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+            isRecording: ui == RecordUiState.recording,
+            isPostSave: _isPostSaveSurface,
+          )
+        : null;
+    final privateArchiveReportPreviewForProGate =
+        privateArchiveReportForProGate != null &&
+            PrivateArchiveReportGates.shouldShow(
+              loaded: _journalEntryCountReady,
+              entryCount: _journalEntryCount,
+              isReady: ui == RecordUiState.ready,
+              isRecording: ui == RecordUiState.recording,
+              isPostSave: _isPostSaveSurface,
+              viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+              report: privateArchiveReportForProGate,
+            ) &&
+            PrivateArchiveReportGates.showPreviewNote(
+              isPro: _recordReturnProIsPro,
+            );
+    final patternChangedForProGate = patternChangedCandidate != null &&
+        viewingConfirmedRepeatOnRecord &&
+        _journalEntryCount >
+            FirstThreeSessionGates.minEntriesForUsefulArchive;
     final showPostProofProBridge = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
@@ -3741,6 +3772,8 @@ class _RecordScreenState extends State<RecordScreen> {
           isPostSave: _isPostSaveSurface,
           hasArchiveSummary: archiveSummaryVisibleForProGate,
           hasWeeklyArchiveReview: weeklyArchiveReviewVisibleForProGate,
+          hasPatternChanged: patternChangedForProGate,
+          hasPrivateArchiveReportPreview: privateArchiveReportPreviewForProGate,
         );
     final proofSurfaceLayout = ArchiveProofSurfaceLayout(
       confirmedRepeatCardVisible:

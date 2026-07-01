@@ -158,6 +158,7 @@ abstract final class ArchiveProofSurfaceCopy {
     if (layout.proBridgeVisible) {
       blocks.add(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle);
       blocks.add(ArchiveBeliefThreadCopy.fullArchiveHistoryBody);
+      blocks.addAll(ArchiveBeliefThreadCopy.fullArchiveHistoryBullets);
     }
 
     if (layout.whyMattersVisible && !layout.archiveSummaryVisible) {

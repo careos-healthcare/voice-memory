@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/activation/paywall_timing_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_analytics.dart';
@@ -327,6 +329,62 @@ void main() {
 
       expect(copiedText, contains(PrivateArchiveReportCopy.title));
       expect(copiedText, contains(PrivateArchiveReportCopy.whatKeepsRepeatingHeading));
+    });
+  });
+
+  group('Private archive report Pro boundary', () {
+    test('preview qualifies Pro boundary after entry 3', () {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        viewingConfirmedRepeatOrTimeline: true,
+      );
+      expect(report, isNotNull);
+      expect(
+        PrivateArchiveReportGates.shouldShow(
+          loaded: true,
+          entryCount: 3,
+          isReady: true,
+          isRecording: false,
+          isPostSave: false,
+          viewingConfirmedRepeatOrTimeline: true,
+          report: report,
+        ),
+        isTrue,
+      );
+      expect(PrivateArchiveReportGates.showPreviewNote(isPro: false), isTrue);
+      expect(
+        PaywallTimingGates.showFullArchiveHistoryProBoundary(
+          entryCount: 3,
+          resolved: false,
+          isPro: false,
+          isPostSave: false,
+          hasConfirmedRepeat: false,
+          hasArchiveSummary: false,
+          hasWeeklyArchiveReview: false,
+          hasPrivateArchiveReportPreview: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('free confirmed repeat proof remains available without Pro', () {
+      expect(
+        EarlyFirstSignalEngine.build(entries: _threeRelatedRepeatEntries())
+            ?.showsConfirmedRepeat,
+        isTrue,
+      );
+      expect(
+        PaywallTimingGates.showFullArchiveHistoryProBoundary(
+          entryCount: 3,
+          resolved: false,
+          isPro: false,
+          isPostSave: false,
+          hasConfirmedRepeat: true,
+          hasArchiveSummary: false,
+          hasWeeklyArchiveReview: false,
+        ),
+        isTrue,
+      );
     });
   });
 
