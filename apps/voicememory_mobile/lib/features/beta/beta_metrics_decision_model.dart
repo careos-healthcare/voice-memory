@@ -90,16 +90,22 @@ class BetaMetricsDecisionReport {
     required this.summary,
     required this.primaryBottleneck,
     required this.rows,
+    this.coreValueFeedbackLabel,
+    this.coreValueFeedbackAnswer,
   });
 
   final String title;
   final String summary;
   final BetaMetricsDecisionBottleneck primaryBottleneck;
   final List<BetaMetricsDecisionRow> rows;
+  final String? coreValueFeedbackLabel;
+  final String? coreValueFeedbackAnswer;
 
   List<String> get visibleCopyBlocks => [
         title,
         summary,
+        if (coreValueFeedbackLabel != null) coreValueFeedbackLabel!,
+        if (coreValueFeedbackAnswer != null) coreValueFeedbackAnswer!,
         for (final row in rows) ...[
           row.metricName,
           row.currentValue,

@@ -58,6 +58,27 @@ class BetaMetricsDecisionCard extends StatelessWidget {
             _RowTile(row: row),
             const SizedBox(height: 10),
           ],
+          if (report.coreValueFeedbackLabel != null &&
+              report.coreValueFeedbackAnswer != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              report.coreValueFeedbackLabel!,
+              key: const Key('beta_metrics_decision_core_value_feedback_label'),
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              report.coreValueFeedbackAnswer!,
+              key: const Key('beta_metrics_decision_core_value_feedback_answer'),
+              style: const TextStyle(
+                color: AppTheme.muted,
+                fontSize: 13,
+                height: 1.4,
+              ),
+            ),
+          ],
         ],
       ),
     );

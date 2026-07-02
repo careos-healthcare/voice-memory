@@ -2,6 +2,7 @@ import '../activation/activation_dropoff_review_engine.dart';
 import 'beta_activation_loop_counts.dart';
 import 'beta_metrics_decision_copy.dart';
 import 'beta_metrics_decision_model.dart';
+import 'core_value_feedback_store.dart';
 
 /// Translates local beta counters into a product diagnosis — read-only.
 abstract final class BetaMetricsDecisionEngine {
@@ -44,6 +45,8 @@ abstract final class BetaMetricsDecisionEngine {
       summary: _summaryFor(bottleneck),
       primaryBottleneck: bottleneck,
       rows: rows,
+      coreValueFeedbackLabel: BetaMetricsDecisionCopy.coreValueFeedbackLabel,
+      coreValueFeedbackAnswer: CoreValueFeedbackStore.cached.diagnosticsSummary,
     );
   }
 

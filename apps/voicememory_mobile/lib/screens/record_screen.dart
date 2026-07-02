@@ -411,6 +411,9 @@ import '../features/beta/tester_mission_gates.dart';
 import '../features/beta/tester_mission_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_gates.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/beta/core_value_feedback_gates.dart';
+import '../features/beta/core_value_feedback_model.dart';
+import '../features/beta/core_value_feedback_store.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
@@ -421,6 +424,7 @@ import '../features/repeat_return_check/pattern_changed_gates.dart';
 import '../features/repeat_return_check/pattern_changed_store.dart';
 import '../widgets/beta/tester_mission_card.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
+import '../widgets/beta/core_value_feedback_card.dart';
 import '../widgets/record/repeat_return_check_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
 import '../widgets/record/pattern_changed_card.dart';
@@ -649,6 +653,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       TesterMissionStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      CoreValueFeedbackStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4081,6 +4090,24 @@ class _RecordScreenState extends State<RecordScreen> {
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       moment: firstProofMomentCandidate,
     );
+    final postSaveHasConfirmedRepeat =
+        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entriesAfterSave);
+    final postSaveHasFirstProof = CoreValueFeedbackGates.hasFirstProof(
+      entryCount: postSaveEntryCount,
+      hasConfirmedRepeatFoundation: postSaveHasConfirmedRepeat,
+    );
+    final postSaveDegraded = entriesAfterSave.isNotEmpty &&
+        VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last);
+    final showCoreValueFeedbackOnRecordPostFirstProof =
+        CoreValueFeedbackGates.shouldShowOnRecordPostFirstProof(
+      showFirstProofMoment: showFirstProofMoment,
+      isPostSaveDone: ui == RecordUiState.done,
+      entryCount: postSaveEntryCount,
+      hasConfirmedRepeatFoundation: postSaveHasConfirmedRepeat,
+      isRecording: ui == RecordUiState.recording,
+      isDegradedPostSave: postSaveDegraded,
+      isProPaywallVisible: false,
+    );
     final returnCheckPayoffCandidate = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
         ? ReturnCheckPayoffEngine.build(
@@ -6183,6 +6210,18 @@ class _RecordScreenState extends State<RecordScreen> {
                       FirstProofMomentCard(
                         moment: firstProofMomentCandidate,
                         entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (showCoreValueFeedbackOnRecordPostFirstProof) ...[
+                      CoreValueFeedbackCard(
+                        source: CoreValueFeedbackSource.recordPostFirstProof,
+                        entryCount: postSaveEntryCount,
+                        hasConfirmedRepeat: postSaveHasConfirmedRepeat,
+                        hasFirstProof: postSaveHasFirstProof,
+                        onChanged: () {
+                          if (mounted) setState(() {});
+                        },
                       ),
                       const SizedBox(height: 16),
                     ],

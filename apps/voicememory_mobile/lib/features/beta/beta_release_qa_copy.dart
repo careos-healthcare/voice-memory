@@ -67,4 +67,6 @@ abstract final class BetaReleaseQaCopy {
 
   static const coreValueQuestion =
       'Did ArchiveMe show something repeating in your own words that was worth tracking?';
+
+  static const coreValueFeedbackLabel = 'Core value feedback';
 }

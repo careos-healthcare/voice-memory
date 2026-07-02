@@ -154,6 +154,9 @@ import '../widgets/pro_interest_link_card.dart';
 import '../features/beta_feedback/beta_feedback_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_gates.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/beta/core_value_feedback_gates.dart';
+import '../features/beta/core_value_feedback_model.dart';
+import '../features/beta/core_value_feedback_store.dart';
 import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
@@ -163,6 +166,7 @@ import '../features/repeat_return_check/pattern_changed_engine.dart';
 import '../features/repeat_return_check/pattern_changed_gates.dart';
 import '../features/repeat_return_check/pattern_changed_store.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
+import '../widgets/beta/core_value_feedback_card.dart';
 import '../widgets/pro_value_preview_card.dart';
 import '../features/pro/pro_value_preview_dismiss_store.dart';
 import '../features/pro/pro_value_preview_gates.dart';
@@ -623,6 +627,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProValuePreviewDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
+    await CoreValueFeedbackStore.ensureLoaded();
     await ConfirmedRepeatWhyMattersStore.ensureLoaded();
     await ConfirmedRepeatThoughtMapStore.ensureLoaded();
     await RepeatReturnCheckStore.ensureLoaded();
@@ -3884,6 +3889,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         hasPrivateArchiveReportPreview: privateArchiveReportPreviewForProGate,
         hasReturnCheckAnswered: hasReturnCheckAnsweredForProGate,
       );
+      final patternsHasConfirmedRepeat =
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_entries);
+      final patternsHasFirstProof = CoreValueFeedbackGates.hasFirstProof(
+        entryCount: _entries.length,
+        hasConfirmedRepeatFoundation: patternsHasConfirmedRepeat,
+      );
+      final showCoreValueFeedbackOnPatterns =
+          CoreValueFeedbackGates.shouldShowOnPatternsArchive(
+        showArchiveCurrentBelief: showArchiveCurrentBelief,
+        archiveBeliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+        entryCount: _entries.length,
+        entries: _entries,
+        isRecording: false,
+        isProPaywallVisible: showPatternsPostProofProBridge,
+      );
       final proofSurfaceLayout = ArchiveProofSurfaceLayout(
         confirmedRepeatCardVisible: !showEarlyEvidenceTimeline &&
             (earlyFirstSignal?.showsConfirmedRepeat ?? false),
@@ -4109,6 +4129,16 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                       ),
                     ),
                     onDismissed: () => setState(() {}),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showCoreValueFeedbackOnPatterns) ...[
+                  CoreValueFeedbackCard(
+                    source: CoreValueFeedbackSource.patternsArchive,
+                    entryCount: _entries.length,
+                    hasConfirmedRepeat: patternsHasConfirmedRepeat,
+                    hasFirstProof: patternsHasFirstProof,
+                    onChanged: () => setState(() {}),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],

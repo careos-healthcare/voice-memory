@@ -10,6 +10,7 @@ import '../debug/archive_beta_debug_gate.dart';
 import 'archive_beta_mission_gate.dart';
 import 'beta_release_qa_copy.dart';
 import 'beta_release_qa_model.dart';
+import 'core_value_feedback_store.dart';
 import 'tester_mission_copy.dart';
 
 /// Read-only beta build readiness checks — no network, purchases, or restores.
@@ -55,6 +56,8 @@ abstract final class BetaReleaseQaEngine {
       manualChecklistSteps: BetaReleaseQaCopy.manualChecklistSteps,
       coreValueQuestionTitle: BetaReleaseQaCopy.coreValueQuestionTitle,
       coreValueQuestion: BetaReleaseQaCopy.coreValueQuestion,
+      coreValueFeedbackLabel: BetaReleaseQaCopy.coreValueFeedbackLabel,
+      coreValueFeedbackAnswer: CoreValueFeedbackStore.cached.diagnosticsSummary,
     );
   }
 

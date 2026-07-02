@@ -97,6 +97,24 @@ class BetaReleaseQaCard extends StatelessWidget {
               height: 1.4,
             ),
           ),
+          const SizedBox(height: 12),
+          Text(
+            report.coreValueFeedbackLabel,
+            key: const Key('beta_release_qa_core_value_feedback_label'),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            report.coreValueFeedbackAnswer,
+            key: const Key('beta_release_qa_core_value_feedback_answer'),
+            style: const TextStyle(
+              color: AppTheme.muted,
+              fontSize: 13,
+              height: 1.4,
+            ),
+          ),
         ],
       ),
     );

@@ -10,6 +10,7 @@ import '../features/activation/activation_dropoff_review_engine.dart';
 import '../features/beta/beta_activation_loop_counts.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
+import '../features/beta/core_value_feedback_store.dart';
 import '../features/debug/archive_beta_debug_gate.dart';
 import '../features/beta/beta_metrics_decision_engine.dart';
 import '../features/beta/beta_release_qa_engine.dart';
@@ -54,6 +55,7 @@ class _DeveloperDiagnosticsScreenState
       final entries = await AppServices.instance.journalStore.loadAll();
       final betaCounts = await BetaActivationLoopTracker.readCounts();
       await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
+      await CoreValueFeedbackStore.ensureLoaded();
       final confirmedRepeatFeedback =
           ConfirmedRepeatBetaFeedbackStore.cached;
       if (mounted) {
@@ -92,6 +94,7 @@ class _DeveloperDiagnosticsScreenState
       _betaLoopCounts.toSummaryText(),
       '',
       'First confirmed-repeat feedback: $_confirmedRepeatBetaFeedbackSummary',
+      'Core value feedback: ${CoreValueFeedbackStore.cached.diagnosticsSummary}',
     ];
     await Clipboard.setData(ClipboardData(text: lines.join('\n')));
     if (mounted) {

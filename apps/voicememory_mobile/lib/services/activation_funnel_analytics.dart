@@ -973,6 +973,7 @@ abstract class ActivationFunnelAnalytics {
     bool? hasPhrase,
     bool? hasActionPhrase,
     bool? hasConfirmedRepeat,
+    bool? hasFirstProof,
     String? comparisonState,
     int? phraseCount,
     bool? hasStrongEvidence,
@@ -1039,6 +1040,7 @@ abstract class ActivationFunnelAnalytics {
         'has_action_phrase': hasActionPhrase ? 1 : 0,
       if (hasConfirmedRepeat != null)
         'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
+      if (hasFirstProof != null) 'has_first_proof': hasFirstProof ? 1 : 0,
       if (comparisonState != null && _safeValue.hasMatch(comparisonState))
         'comparison_state': comparisonState,
       if (answer != null && _safeValue.hasMatch(answer)) 'answer': answer,

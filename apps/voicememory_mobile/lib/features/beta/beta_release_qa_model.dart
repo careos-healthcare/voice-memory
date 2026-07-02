@@ -51,6 +51,8 @@ class BetaReleaseQaReport {
     required this.manualChecklistSteps,
     required this.coreValueQuestionTitle,
     required this.coreValueQuestion,
+    required this.coreValueFeedbackLabel,
+    required this.coreValueFeedbackAnswer,
   });
 
   final String title;
@@ -61,6 +63,8 @@ class BetaReleaseQaReport {
   final List<String> manualChecklistSteps;
   final String coreValueQuestionTitle;
   final String coreValueQuestion;
+  final String coreValueFeedbackLabel;
+  final String coreValueFeedbackAnswer;
 
   List<String> get visibleCopyBlocks => [
         title,
@@ -74,5 +78,7 @@ class BetaReleaseQaReport {
         ...manualChecklistSteps,
         coreValueQuestionTitle,
         coreValueQuestion,
+        coreValueFeedbackLabel,
+        coreValueFeedbackAnswer,
       ];
 }
