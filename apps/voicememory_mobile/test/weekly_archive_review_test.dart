@@ -643,6 +643,25 @@ void main() {
         expect(joined, contains('what changed'));
       });
 
+      test('section labels describe evidence not prescriptions', () {
+        expect(
+          WeeklyArchiveWeekReviewCopy.repeatedLabel,
+          'What repeated this week',
+        );
+        expect(
+          WeeklyArchiveWeekReviewCopy.changedLabel,
+          'What changed this week',
+        );
+        expect(
+          WeeklyArchiveWeekReviewCopy.nextToWatchLabel,
+          'What ArchiveMe is watching next',
+        );
+        expect(
+          WeeklyArchiveWeekReviewCopy.nextToWatchLabel.toLowerCase(),
+          isNot(contains('you should')),
+        );
+      });
+
       test('helpful evidence is framed as noticed not advice', () {
         expect(
           WeeklyArchiveWeekReviewCopy.helpedPrefix.toLowerCase(),

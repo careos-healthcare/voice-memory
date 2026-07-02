@@ -3,6 +3,7 @@ import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface
 import 'package:voicememory_mobile/features/archive_proof/archive_current_belief_engine.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_current_belief_gates.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_display_copy_guard.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -83,6 +84,29 @@ void main() {
       expect(haystack, isNot(contains('diagnosis')));
       expect(haystack, isNot(contains('about you')));
       expect(haystack, isNot(contains('you always')));
+    });
+
+    test('uses provisional evidence language not conclusions', () {
+      final copy = [
+        ArchiveBeliefSurfaceCopy.headline,
+        ArchiveBeliefSurfaceCopy.evidenceLabel,
+        ArchiveBeliefSurfaceCopy.watchingLabel,
+        ArchiveBeliefSurfaceCopy.watchingFallback,
+        ArchiveBeliefSurfaceCopy.previewBadge,
+      ].join(' ').toLowerCase();
+
+      expect(copy, contains('based on these moments'));
+      expect(copy, contains('still watching'));
+      expect(copy, contains('evidence'));
+      expect(copy, isNot(contains('this means')));
+      for (final line in [
+        ArchiveBeliefSurfaceCopy.headline,
+        ArchiveBeliefSurfaceCopy.evidenceLabel,
+        ArchiveBeliefSurfaceCopy.watchingLabel,
+        ArchiveBeliefSurfaceCopy.previewBadge,
+      ]) {
+        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
+      }
     });
   });
 

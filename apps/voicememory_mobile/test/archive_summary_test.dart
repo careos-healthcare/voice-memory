@@ -288,9 +288,10 @@ void main() {
       expect(summary, isNotNull);
       expect(
         summary!.whatHelpsLine,
-        contains(ArchiveSummaryCopy.whatHelpsPrefix),
+        contains('A helpful action appeared'),
       );
       expect(summary.whatHelpsLine.toLowerCase(), contains('walked outside'));
+      expect(summary.whatHelpsLine.toLowerCase(), contains('watching'));
       expect(summary.whatHelpsIsFallback, isFalse);
     });
 
@@ -427,10 +428,10 @@ void main() {
 
       final joined = [
         ArchiveSummaryCopy.whatHelpsLabel,
-        ArchiveSummaryCopy.whatHelpsPrefix,
+        ArchiveSummaryCopy.whatHelpsWithPhrase('walked outside'),
         ArchiveSummaryCopy.changingFallback,
       ].join(' ').toLowerCase();
-      expect(joined, contains('noticed'));
+      expect(joined, contains('helpful action appeared'));
       expect(joined, contains('watching'));
       expect(joined, isNot(contains('you should')));
     });

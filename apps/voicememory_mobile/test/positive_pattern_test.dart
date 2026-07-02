@@ -104,7 +104,8 @@ void main() {
       final result = PositivePatternEngine.build(entries: _threeWalkEntries());
       expect(result, isNotNull);
       expect(result!.title, PositivePatternCopy.title);
-      expect(result.body, PositivePatternCopy.body);
+      expect(result.body, contains('A helpful action appeared'));
+      expect(result.body, contains('watching'));
       expect(result.evidencePhrases, isNotEmpty);
       expect(
         result.evidencePhrases.join(' ').toLowerCase(),

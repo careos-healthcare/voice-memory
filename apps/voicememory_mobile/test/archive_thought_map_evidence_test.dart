@@ -171,6 +171,21 @@ void main() {
       }
     });
 
+    test('thought map uses watching framing not advice labels', () {
+      expect(
+        ArchiveThoughtMapCopy.alternativeLabel,
+        'What ArchiveMe is watching next',
+      );
+      expect(
+        ArchiveThoughtMapCopy.alternativeLabel.toLowerCase(),
+        isNot(contains('what to try')),
+      );
+      expect(
+        ArchiveThoughtMapCopy.whyNodeAppearsTitle.toLowerCase(),
+        contains('evidence'),
+      );
+    });
+
     test('thought map evidence copy avoids coaching advice', () {
       final joined = [
         ArchiveThoughtMapCopy.whyNodeAppearsTitle,

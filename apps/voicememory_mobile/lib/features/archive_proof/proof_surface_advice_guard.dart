@@ -1,6 +1,8 @@
+import '../archive_evidence/archive_belief_thread_copy.dart';
 import '../early_archive/archive_summary_copy.dart';
 import '../early_archive/confirmed_repeat_thought_map_copy.dart';
 import '../early_archive/first_proof_moment_copy.dart';
+import '../early_archive/first_week_loop_copy.dart';
 import '../early_archive/positive_pattern_copy.dart';
 import '../early_archive/positive_reinforcement_copy.dart';
 import '../early_archive/private_archive_report_copy.dart';
@@ -8,6 +10,7 @@ import '../early_archive/return_check_payoff_copy.dart';
 import '../early_archive/weekly_archive_review_copy.dart';
 import '../archive_thought_map/archive_thought_map_copy.dart';
 import '../repeat_return_check/pattern_changed_copy.dart';
+import 'archive_belief_surface_copy.dart';
 
 /// Guards main proof surfaces from coaching / advice language.
 abstract final class ProofSurfaceAdviceGuard {
@@ -16,17 +19,24 @@ abstract final class ProofSurfaceAdviceGuard {
   static const bannedAdvicePhrases = [
     'you should',
     'you need to',
+    'you must',
     'try this',
     'try to',
     'try repeating',
     'try watching',
+    'try doing',
     'this means you are',
+    'this means',
     'the reason is',
     'your problem is',
     'you have a tendency',
     'mental health',
     'therapy',
     'diagnosis',
+    'coach',
+    'coaching plan',
+    'recommendations',
+    'what to try',
   ];
 
   static Iterable<String> violationsIn(String text) sync* {
@@ -59,6 +69,11 @@ abstract final class ProofSurfaceAdviceGuard {
         ArchiveSummaryCopy.whatHelpsLabel,
         ArchiveSummaryCopy.whatHelpsFallback,
         ArchiveSummaryCopy.whatHelpsPrefix,
+        ArchiveSummaryCopy.whatHelpsWithPhrase('walked outside'),
+        FirstWeekLoopCopy.title,
+        FirstWeekLoopCopy.bodyFallback,
+        FirstWeekLoopCopy.footer,
+        FirstWeekLoopCopy.bodyWithPhrase('said yes again'),
         ReturnCheckPayoffCopy.evidenceLabel,
         ReturnCheckPayoffCopy.softerTitle,
         ReturnCheckPayoffCopy.softerBodyFallback,
@@ -82,9 +97,21 @@ abstract final class ProofSurfaceAdviceGuard {
         PatternChangedCopy.strongerTitle,
         PatternChangedCopy.strongerBody,
         PrivateArchiveReportCopy.intro,
+        PrivateArchiveReportCopy.evidenceNotAdviceLine,
         PrivateArchiveReportCopy.previewProNote,
         PrivateArchiveReportCopy.whatHelpedHeading,
         PrivateArchiveReportCopy.recordNextHeading,
+        ArchiveBeliefSurfaceCopy.headline,
+        ArchiveBeliefSurfaceCopy.evidenceLabel,
+        ArchiveBeliefSurfaceCopy.watchingLabel,
+        ArchiveBeliefSurfaceCopy.previewBadge,
+        ArchiveBeliefSurfaceCopy.beliefFallback,
+        ArchiveBeliefSurfaceCopy.watchingFallback,
+        ArchiveBeliefThreadCopy.proBridgeBody,
+        ArchiveBeliefThreadCopy.whyPro,
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+        ArchiveBeliefThreadCopy.whatToTestLabel,
+        ArchiveBeliefThreadCopy.weeklyWhatToTestNext,
         WeeklyArchiveWeekReviewCopy.promise,
         WeeklyArchiveWeekReviewCopy.helpedLabel,
         WeeklyArchiveWeekReviewCopy.helpedPrefix,
@@ -96,6 +123,7 @@ abstract final class ProofSurfaceAdviceGuard {
         ConfirmedRepeatThoughtMapCopy.resultUnknown,
         PositivePatternCopy.title,
         PositivePatternCopy.body,
+        PositivePatternCopy.bodyWithPhrase('walked outside'),
         PositiveReinforcementCopy.title,
         PositiveReinforcementCopy.body,
         PositiveReinforcementCopy.completionTitle,

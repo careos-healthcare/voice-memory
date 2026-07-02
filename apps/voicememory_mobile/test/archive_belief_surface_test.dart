@@ -4,6 +4,7 @@ import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thre
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_heuristics.dart';
 import 'package:voicememory_mobile/features/archive_memory/archive_evolution_model.dart';
 import 'package:voicememory_mobile/features/archive_beliefs/archive_belief_models.dart';
+import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_change_timeline_metrics_store.dart';
@@ -11,6 +12,7 @@ import 'package:voicememory_mobile/features/archive_proof/archive_demo_preview_c
 import 'package:voicememory_mobile/features/archive_proof/archive_demo_preview_resolver.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_display_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_paid_value_proof_source.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/patterns/patterns_stack_policy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/belief_detail_screen.dart';
@@ -74,6 +76,36 @@ void main() {
         ),
         isTrue,
       );
+    });
+
+    test('belief surface copy stays evidence-based not advisory', () {
+      final surfaceCopy = [
+        ArchiveBeliefSurfaceCopy.headline,
+        ArchiveBeliefSurfaceCopy.evidenceLabel,
+        ArchiveBeliefSurfaceCopy.watchingLabel,
+        ArchiveBeliefSurfaceCopy.previewBadge,
+      ].join(' ').toLowerCase();
+
+      expect(surfaceCopy, contains('evidence'));
+      expect(surfaceCopy, contains('still watching'));
+      expect(surfaceCopy, isNot(contains('you should')));
+      expect(surfaceCopy, isNot(contains('this means')));
+
+      final proBridgeCopy = [
+        ArchiveBeliefThreadCopy.proBridgeBody,
+        ArchiveBeliefThreadCopy.whyPro,
+      ].join(' ').toLowerCase();
+      expect(proBridgeCopy, contains('evidence'));
+      expect(proBridgeCopy, isNot(contains('coaching plan')));
+      expect(proBridgeCopy, isNot(contains('you should')));
+
+      for (final line in [
+        ArchiveBeliefSurfaceCopy.previewBadge,
+        ArchiveBeliefThreadCopy.proBridgeBody,
+        ArchiveBeliefThreadCopy.whyPro,
+      ]) {
+        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
+      }
     });
   });
 

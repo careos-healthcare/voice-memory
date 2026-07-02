@@ -309,19 +309,26 @@ void main() {
       );
       expect(
         PrivateArchiveReportCopy.intro.toLowerCase(),
-        contains('what changed'),
+        contains('what your archive noticed'),
+      );
+      expect(
+        PrivateArchiveReportCopy.evidenceNotAdviceLine.toLowerCase(),
+        contains('evidence'),
       );
     });
 
     test('private report is evidence summary not coaching report', () {
       final joined = [
         PrivateArchiveReportCopy.intro,
+        PrivateArchiveReportCopy.evidenceNotAdviceLine,
         PrivateArchiveReportCopy.previewProNote,
         PrivateArchiveReportCopy.whatHelpedHeading,
         PrivateArchiveReportCopy.recordNextHeading,
       ].join(' ').toLowerCase();
 
       expect(joined, contains('evidence'));
+      expect(joined, contains('what your archive noticed'));
+      expect(joined, isNot(contains('recommendations')));
       expect(joined, isNot(contains('you should')));
       expect(joined, isNot(contains('try this')));
       expect(joined, isNot(contains('your problem is')));

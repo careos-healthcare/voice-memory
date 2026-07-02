@@ -529,7 +529,8 @@ abstract class ConsumerUiCopy {
       'That gives ArchiveMe better evidence to watch.';
   static const String secondSessionWhatRepeated = 'What repeated';
   static const String secondSessionWhatChanged = 'What changed';
-  static const String secondSessionWhatToTestNext = 'What to test next';
+  static const String secondSessionWhatToTestNext =
+      'What ArchiveMe is watching next';
   static const String secondSessionNotTheSame = 'Not the same';
   static const String secondSessionNeedMoreMoments =
       'ArchiveMe needs one more moment to compare this properly.';

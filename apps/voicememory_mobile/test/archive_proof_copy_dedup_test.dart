@@ -652,16 +652,20 @@ void main() {
     });
 
     test('helpful action copy is evidence-based not prescriptive', () {
+      final phraseBody = PositivePatternCopy.bodyWithPhrase('walked outside');
       final joined = [
         PositivePatternCopy.title,
-        PositivePatternCopy.body,
+        phraseBody,
         PositiveReinforcementCopy.title,
         PositiveReinforcementCopy.body,
         PositiveReinforcementCopy.completionBody,
+        ArchiveSummaryCopy.whatHelpsWithPhrase('walked outside'),
       ].join(' ').toLowerCase();
 
+      expect(joined, contains('a helpful action appeared'));
       expect(joined, contains('noticed'));
       expect(joined, contains('words'));
+      expect(joined, contains('watching'));
       expect(joined, isNot(contains('try repeating')));
       expect(joined, isNot(contains('try watching')));
       expect(joined, isNot(contains('you should')));

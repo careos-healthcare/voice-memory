@@ -232,6 +232,8 @@ void main() {
       expect(joined, isNot(contains('you should')));
       expect(joined, isNot(contains('try repeating')));
       expect(joined, contains('noticed'));
+      expect(joined, contains('earlier'));
+      expect(joined, contains('this time'));
     });
 
     test('no therapy or diagnosis language', () {

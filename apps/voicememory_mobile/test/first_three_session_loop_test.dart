@@ -327,7 +327,7 @@ void main() {
       expect(find.text('ArchiveMe found a possible repeat'), findsOneWidget);
       expect(find.text('What repeated'), findsOneWidget);
       expect(find.text('What changed'), findsWidgets);
-      expect(find.text('What to test next'), findsOneWidget);
+      expect(find.text('What ArchiveMe is watching next'), findsOneWidget);
     });
   });
 
