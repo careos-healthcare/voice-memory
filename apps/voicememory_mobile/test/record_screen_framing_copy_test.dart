@@ -231,10 +231,15 @@ void main() {
     });
 
     test('empty and started copy match the clean first-load spec', () {
-      expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Your archive is empty');
+      expect(RecordScreenFramingCopy.emptyArchiveTitle,
+          'Your archive starts with one real moment.');
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'Record short moments. ArchiveMe tracks repeated evidence from your own words.',
+        'Three short moments unlock your first proof. No need to explain everything.',
+      );
+      expect(
+        RecordScreenFramingCopy.emptyArchiveFootnote,
+        'Ten seconds is enough.',
       );
       expect(
         RecordScreenFramingCopy.archiveStartedTitle,
@@ -813,10 +818,10 @@ void main() {
 
       expect(find.byKey(const Key('record_first_use_prompt_block')), findsOneWidget);
       expect(find.byKey(const Key('archive_journey_explainer_card_compact')), findsOneWidget);
-      expect(find.text(RecordFirstUsePromptCopy.title), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.title), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.body), findsNothing);
-      expect(find.text(ArchiveJourneyCopy.step1Body), findsOneWidget);
-      expect(find.text(ArchiveJourneyCopy.step3Title), findsOneWidget);
+      expect(find.text(ArchiveJourneyCopy.compactHelper), findsOneWidget);
+      expect(find.text(ArchiveJourneyCopy.step3Body), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
       expect(find.textContaining('1 of 3'), findsOneWidget);

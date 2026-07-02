@@ -309,17 +309,16 @@ void main() {
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        'Your first repeat is free. Pro keeps the evidence history from your own '
-        'words — not conversation history — so ArchiveMe can show whether patterns '
-        'get stronger, softer, or change over time.',
+        'Your first repeat is free. Pro keeps the evidence timeline, private report, '
+        'and weekly reviews so ArchiveMe can show what changes over time.',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         containsAll([
-          'Full evidence timeline over time',
-          'Pattern change tracking',
-          'Weekly archive reviews',
-          'Private archive reports',
+          'Full evidence timeline',
+          'Private archive report',
+          'Weekly reviews',
+          'Change tracking over time',
         ]),
       );
       expect(ArchiveBeliefThreadCopy.whyPro, isNotEmpty);

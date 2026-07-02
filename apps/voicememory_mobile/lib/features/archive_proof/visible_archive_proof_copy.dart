@@ -67,11 +67,12 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveViewArchiveCta = 'View archive';
 
   // Patterns zero-entry — mind map preview (Patterns tab).
-  static const patternsMindMapEmptyTitle = 'Your evidence archive starts here';
+  static const patternsMindMapEmptyTitle =
+      'Your archive starts with one real moment.';
 
   static const patternsMindMapEmptyBody =
-      'Save moments in your own words. ArchiveMe builds an evidence trail of '
-      'what repeats — not a chat history.';
+      'Patterns appear after ArchiveMe has something to compare. Save short moments '
+      'in your own words — ten seconds is enough.';
 
   static const patternsMindMapPreviewPatternsLabel = 'Patterns';
   static const patternsMindMapPreviewPatternsValue = 'What keeps repeating';
@@ -82,9 +83,9 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsMindMapEmptyPrimaryCta = 'Save your first moment';
 
   // Patterns tab — entries saved but no named belief yet.
-  static const patternsMindMapFormingTitle = 'Your mind map is still forming';
+  static const patternsMindMapFormingTitle = 'Patterns are still forming';
   static const patternsMindMapFormingBody =
-      'ArchiveMe needs more usable moments before it can name this thread.';
+      'ArchiveMe needs a few more moments before it can compare what repeats.';
   static const patternsMindMapFormingPrimaryCta = 'Save another moment';
 
   /// Legacy aliases — prefer [patternsMindMapEmpty*] for zero-entry Patterns UI.

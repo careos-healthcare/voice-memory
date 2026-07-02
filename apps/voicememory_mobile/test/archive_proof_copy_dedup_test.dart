@@ -599,8 +599,8 @@ void main() {
         ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('stronger'));
-      expect(joined, contains('softer'));
+      expect(joined, contains('change tracking'));
+      expect(joined, contains('what changes'));
       expect(joined, contains('over time'));
       expect(joined, contains('evidence'));
     });
@@ -687,10 +687,10 @@ void main() {
       }
     });
 
-    test('first-use prompt says no prompt needed and ten seconds is enough', () {
+    test('first-use prompt says no need to explain and ten seconds is enough', () {
       expect(
         RecordFirstUsePromptCopy.body.toLowerCase(),
-        contains('no prompt needed'),
+        contains('no need to explain everything'),
       );
       expect(
         RecordFirstUsePromptCopy.footer,

@@ -5,8 +5,8 @@ abstract final class WeeklyArchiveWeekReviewCopy {
   static const title = 'This week in your archive';
 
   static const promise =
-      'Free shows what repeated this week. Pro keeps weekly reviews to compare '
-      'stronger, softer, and what changed over time.';
+      'Your first repeat is free. Pro keeps weekly reviews to compare what repeated '
+      'and changed over time.';
 
   static const repeatedLabel = 'What repeated this week';
   static const repeatedFallback = 'No clear repeat yet.';

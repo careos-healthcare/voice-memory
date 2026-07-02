@@ -58,7 +58,7 @@ void main() {
     test('zero-entry copy uses mind-map preview', () {
       expect(
         ConsumerUiCopy.patternsEmptyPageTitle,
-        'Your mind map will appear here',
+        'Your archive starts with one real moment.',
       );
       expect(ConsumerUiCopy.patternsEmptyCta, 'Save your first moment');
       expect(
@@ -97,7 +97,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Your mind map will appear here'),
+        find.text('Your archive starts with one real moment.'),
         findsOneWidget,
       );
       expect(find.textContaining('When something comes back'), findsOneWidget);
@@ -252,7 +252,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        find.text('Your mind map will appear here'),
+        find.text('Your archive starts with one real moment.'),
         findsOneWidget,
       );
       expect(find.textContaining('When something comes back'), findsOneWidget);

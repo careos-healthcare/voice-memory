@@ -10,11 +10,11 @@ abstract class RecordScreenFramingCopy {
   static const String helperLine = '';
 
   /// True empty archive — count 0 only.
-  static const String emptyArchiveTitle = 'Your archive is empty';
+  static const String emptyArchiveTitle =
+      'Your archive starts with one real moment.';
   static const String emptyArchiveBody =
-      'Record short moments. ArchiveMe tracks repeated evidence from your own words.';
-  static const String emptyArchiveFootnote =
-      'Nothing is analysed until you save something.';
+      'Three short moments unlock your first proof. No need to explain everything.';
+  static const String emptyArchiveFootnote = 'Ten seconds is enough.';
 
   /// First-run privacy reassurance — count 0 only, under the empty archive card.
   static const String firstRunPrivacyTitle = 'Before you record';
@@ -57,8 +57,8 @@ abstract final class RecordFirstUsePromptCopy {
   static const title = 'Record one real moment';
 
   static const body =
-      'Three short moments unlock your first proof. No prompt needed — just say '
-      'what happened, what your mind said, or what you did next.';
+      'Three short moments unlock your first proof. No need to explain everything — '
+      'just say what happened, what your mind said, or what you did next.';
 
   static const examplesHeading = 'Examples';
 

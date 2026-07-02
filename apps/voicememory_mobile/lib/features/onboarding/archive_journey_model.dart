@@ -51,9 +51,24 @@ class ArchiveJourneyExplainer {
     body: ArchiveJourneyCopy.step5Body,
   );
 
+  static const compactStep1 = ArchiveJourneyStep(
+    title: ArchiveJourneyCopy.compactStep1Title,
+    body: '',
+  );
+
+  static const compactStep2 = ArchiveJourneyStep(
+    title: ArchiveJourneyCopy.compactStep2Title,
+    body: '',
+  );
+
+  static const compactStep3 = ArchiveJourneyStep(
+    title: ArchiveJourneyCopy.compactStep3Title,
+    body: '',
+  );
+
   static ArchiveJourneyExplainer compact() => const ArchiveJourneyExplainer(
         title: ArchiveJourneyCopy.title,
-        steps: [step1, step2, step3],
+        steps: [compactStep1, compactStep2, compactStep3],
         variant: ArchiveJourneyExplainerVariant.compact,
       );
 

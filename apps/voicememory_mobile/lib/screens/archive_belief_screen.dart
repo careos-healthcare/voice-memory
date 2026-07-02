@@ -2209,7 +2209,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ),
         onDismissed: () => setState(() {}),
       ),
-      const SizedBox(height: AppSpacing.lg),
+      const SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
     ];
   }
 
@@ -2247,7 +2247,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entryCount: _entries.length,
         source: 'patterns',
       ),
-      const SizedBox(height: AppSpacing.lg),
+      const SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
     ];
   }
 
@@ -2283,7 +2283,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         result: candidate!,
         entryCount: _entries.length,
       ),
-      const SizedBox(height: AppSpacing.lg),
+      const SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
     ];
   }
 
@@ -4110,7 +4110,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     ),
                     onDismissed: () => setState(() {}),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 ..._buildWhatChangedSinceLastTimeWidgets(),
                 if (showPatternChanged && patternChangedCandidate != null) ...[
@@ -4123,7 +4123,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     ),
                     onDismissed: () => setState(() {}),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ] else if (proofSurfaceLayout.effectiveChangeProofVisible &&
                     repeatReturnChangeProof != null) ...[
                   RepeatReturnCheckChangeProofCard(
@@ -4141,7 +4141,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     timeline: archiveChangeTimelineCandidate,
                     entryCount: _entries.length,
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showArchiveSummary && archiveSummary != null) ...[
                   ArchiveSummaryCard(
@@ -4184,7 +4184,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                         ? null
                         : () => context.push('/subscription'),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showConfirmedRepeatWhyMatters) ...[
                   ConfirmedRepeatWhyMattersCard(
@@ -4241,7 +4241,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                       setState(() => _proBridgeResolved = true);
                     },
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (!showEarlyEvidenceTimeline &&
                     confirmedRepeatChangeNotice != null) ...[

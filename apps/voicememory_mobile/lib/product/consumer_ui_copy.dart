@@ -27,7 +27,7 @@ abstract class ConsumerUiCopy {
   static const String archiveTimelineSubtitle =
       'See how this has changed over time.';
   static const String patternsEarlyStateBody =
-      'Record short moments. ArchiveMe tracks repeated evidence from your words.';
+      'Patterns appear after ArchiveMe has something to compare.';
   static const String onboardingPositioningHeadline =
       'Build a private evidence archive of what keeps repeating';
   static const String onboardingPositioningBody =
@@ -175,7 +175,7 @@ abstract class ConsumerUiCopy {
   static const String patternsRecordCta = 'Record another moment';
 
   static const String patternsEmptyPageTitle =
-      'Your mind map will appear here';
+      'Your archive starts with one real moment.';
   static const String patternsEmptyPageBody =
       VisibleArchiveProofCopy.patternsMindMapEmptyBody;
   static const String patternsFirstEntrySavedTitle =
@@ -621,12 +621,13 @@ abstract class ConsumerUiCopy {
   static const String narrativeShifting = 'This pattern is shifting';
 
   // ——— Legacy empty / progress surfaces (still reachable) ———
-  static const String progressEmptyTitle = 'Start with one reflection';
+  static const String progressEmptyTitle =
+      'Your archive starts with one real moment.';
   static const String progressEmptyBody =
-      'Each moment helps ArchiveMe notice what keeps repeating.';
+      'Three short moments unlock your first proof.';
   static const String needMoreReflectionsTitle = 'A few more moments help';
   static const String needMoreReflectionsBody =
-      'Keep recording. Patterns get clearer with more reflections.';
+      'ArchiveMe needs similar moments before it can compare what repeats.';
   static const String searchIdleTitle = 'Search your reflections';
   static const String searchIdleBody =
       'Find moments and themes after you add reflections.';

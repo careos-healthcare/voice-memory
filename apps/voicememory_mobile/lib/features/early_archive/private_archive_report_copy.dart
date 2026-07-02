@@ -27,7 +27,7 @@ abstract final class PrivateArchiveReportCopy {
   static const previewTitle = 'Your private archive report is forming';
 
   static const previewBody =
-      'Free shows your first repeat. Pro keeps the full report: what repeated, '
+      'Your first repeat is free. Pro keeps the full report: what repeated, '
       'what softened, what got louder, what helped, and what changed.';
 
   static const previewProCta = 'See Pro';

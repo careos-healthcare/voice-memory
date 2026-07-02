@@ -44,7 +44,7 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
             hideLeadCopy: showArchiveJourneyExplainer,
           ),
           if (showArchiveJourneyExplainer) ...[
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.xs),
             ArchiveJourneyExplainerCard(
               explainer: ArchiveJourneyExplainer.compact(),
             ),

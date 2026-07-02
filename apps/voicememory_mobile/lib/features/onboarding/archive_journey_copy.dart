@@ -27,5 +27,13 @@ abstract final class ArchiveJourneyCopy {
   static const step5Body =
       'Pro keeps the evidence timeline, private report, and weekly reviews.';
 
+  /// Compact Record explainer — short step labels only.
+  static const compactStep1Title = 'Record';
+  static const compactStep2Title = 'Return';
+  static const compactStep3Title = 'First proof';
+
+  static const compactHelper =
+      'Ten seconds is enough. Three moments unlock first proof.';
+
   static const aboutSectionLabel = 'Archive journey';
 }

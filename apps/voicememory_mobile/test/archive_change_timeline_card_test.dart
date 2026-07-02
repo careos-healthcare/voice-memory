@@ -446,7 +446,7 @@ void main() {
     test('full archive history mentions evidence timeline', () {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
-        contains('Full evidence timeline over time'),
+        contains('Full evidence timeline'),
       );
       final joined = [
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,

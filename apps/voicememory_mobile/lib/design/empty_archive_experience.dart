@@ -23,7 +23,8 @@ abstract class EmptyArchiveCopy {
   static const String recordThoughtCta = ConsumerUiCopy.patternsEmptyCta;
   static const String typeInsteadCta = VisibleArchiveProofCopy.typeInsteadCta;
 
-  static const String firstRecordingTitle = 'No recordings yet';
+  static const String firstRecordingTitle =
+      'Your archive starts with one real moment.';
   static const String firstRecordingBody = intentionalEmptyOpening;
 
   static const String progressEmptyTitle = ConsumerUiCopy.progressEmptyTitle;

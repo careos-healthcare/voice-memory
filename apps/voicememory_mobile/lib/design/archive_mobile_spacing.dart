@@ -13,6 +13,9 @@ class ArchiveMobileSpacing {
   static const double lg = AppSpacing.lg;
   static const double xl = AppSpacing.xl;
 
+  /// Vertical gap between primary proof-stack cards on Patterns / Archive.
+  static const double proofStackCardGap = md;
+
   /// Default mobile page padding — prefer [pagePaddingFor] on wide layouts.
   static const EdgeInsets pagePadding = EdgeInsets.fromLTRB(20, 12, 20, 24);
 

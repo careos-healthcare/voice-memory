@@ -5,7 +5,12 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/archive_journey_explainer_gates.dart';
 import 'package:voicememory_mobile/features/onboarding/archive_journey_model.dart';
+import 'package:voicememory_mobile/design/empty_archive_experience.dart';
+import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/widgets/onboarding/archive_journey_explainer_card.dart';
@@ -134,10 +139,14 @@ void main() {
       ]);
     });
 
-    test('compact journey shows first three steps only', () {
+    test('compact journey shows three short step labels only', () {
       final explainer = ArchiveJourneyExplainer.compact();
       expect(explainer.steps, hasLength(3));
-      expect(explainer.steps.last.title, ArchiveJourneyCopy.step3Title);
+      expect(explainer.steps.map((step) => step.title).toList(), [
+        ArchiveJourneyCopy.compactStep1Title,
+        ArchiveJourneyCopy.compactStep2Title,
+        ArchiveJourneyCopy.compactStep3Title,
+      ]);
     });
 
     test('pro step mentions full archive evidence timeline private report weekly reviews',
@@ -191,8 +200,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ArchiveJourneyCopy.title), findsOneWidget);
-      expect(find.text(ArchiveJourneyCopy.step1Title), findsOneWidget);
-      expect(find.text(ArchiveJourneyCopy.step3Title), findsOneWidget);
+      expect(find.text('1. ${ArchiveJourneyCopy.compactStep1Title}'), findsOneWidget);
+      expect(find.text('2. ${ArchiveJourneyCopy.compactStep2Title}'), findsOneWidget);
+      expect(find.text('3. ${ArchiveJourneyCopy.compactStep3Title}'), findsOneWidget);
+      expect(find.text(ArchiveJourneyCopy.compactHelper), findsOneWidget);
       expect(find.text(ArchiveJourneyCopy.step5Title), findsNothing);
       expect(find.byType(FilledButton), findsNothing);
       expect(find.byType(OutlinedButton), findsNothing);
@@ -283,6 +294,83 @@ void main() {
       );
       expect(find.text(ArchiveJourneyCopy.step4Title), findsOneWidget);
       expect(find.text(ArchiveJourneyCopy.step5Body), findsOneWidget);
+    });
+  });
+
+  group('Product intuition empty state copy', () {
+    const bannedPhrases = [
+      'no data',
+      'nothing here',
+      'start journaling',
+      'ask ai',
+      'complete your entry',
+    ];
+
+    final emptyStateCopy = [
+      RecordScreenFramingCopy.emptyArchiveTitle,
+      RecordScreenFramingCopy.emptyArchiveBody,
+      RecordFirstUsePromptCopy.body,
+      VisibleArchiveProofCopy.patternsMindMapEmptyTitle,
+      VisibleArchiveProofCopy.patternsMindMapEmptyBody,
+      ConsumerUiCopy.patternsEmptyPageTitle,
+      ConsumerUiCopy.patternsEarlyStateBody,
+      EmptyArchiveCopy.firstRecordingTitle,
+      ConsumerUiCopy.progressEmptyTitle,
+      ConsumerUiCopy.progressEmptyBody,
+    ];
+
+    test('empty states avoid dead generic copy', () {
+      for (final line in emptyStateCopy) {
+        final lower = line.toLowerCase();
+        for (final banned in bannedPhrases) {
+          expect(lower, isNot(contains(banned)), reason: '$line contains $banned');
+        }
+        expect(lower, isNot(contains('chat')));
+        expect(lower, isNot(equals('empty')));
+      }
+    });
+
+    test('empty states use guided evidence-first language', () {
+      expect(
+        RecordScreenFramingCopy.emptyArchiveTitle,
+        'Your archive starts with one real moment.',
+      );
+      expect(
+        VisibleArchiveProofCopy.patternsMindMapEmptyBody,
+        contains('Patterns appear after ArchiveMe has something to compare'),
+      );
+      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
+    });
+  });
+
+  group('Pro value preview copy', () {
+    test('pro preview mentions first repeat free and full archive value', () {
+      expect(
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+        allOf(
+          contains('Your first repeat is free'),
+          contains('evidence timeline'),
+          contains('private report'),
+          contains('weekly reviews'),
+        ),
+      );
+      expect(
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
+        containsAll([
+          'Full evidence timeline',
+          'Private archive report',
+          'Weekly reviews',
+          'Change tracking over time',
+        ]),
+      );
+      expect(
+        ArchiveBeliefThreadCopy.whyPro,
+        'ArchiveMe becomes more useful as the evidence trail grows.',
+      );
+      expect(
+        PrivateArchiveReportCopy.previewBody.toLowerCase(),
+        contains('your first repeat is free'),
+      );
     });
   });
 }
