@@ -45,6 +45,8 @@ abstract final class EarlyArchiveProofAnalytics {
       'post_save_return_check_answer_seen';
   static const String postSaveReturnCheckAnswerTappedEvent =
       'post_save_return_check_answer_tapped';
+  static const String whatChangedSinceLastTimeSeenEvent =
+      'what_changed_since_last_time_seen';
 
   static bool _realTimelineSeenThisSession = false;
 
@@ -367,6 +369,24 @@ abstract final class EarlyArchiveProofAnalytics {
       answer: answer,
       hasPhrase: hasPhrase,
       hasConfirmedRepeat: hasConfirmedRepeat,
+    );
+  }
+
+  static void whatChangedSinceLastTimeSeen({
+    required int entryCount,
+    required String comparisonState,
+    required bool hasPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      whatChangedSinceLastTimeSeenEvent,
+      entryCount: entryCount,
+      source: 'patterns',
+      comparisonState: comparisonState,
+      hasPhrase: hasPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+      oncePerSession: true,
+      sessionStage: 'what_changed_since_last_time',
     );
   }
 

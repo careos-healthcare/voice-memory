@@ -249,11 +249,14 @@ import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/activation/third_session_archive_usefulness_card.dart';
 import '../features/archive_proof/archive_belief_surface.dart';
 import '../features/archive_proof/archive_current_belief_gates.dart';
+import '../features/early_archive/what_changed_since_last_time_engine.dart';
+import '../features/early_archive/what_changed_since_last_time_gates.dart';
 import '../features/archive_proof/archive_change_timeline_metrics_store.dart';
 import '../features/archive_proof/archive_paid_value_proof_source.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../widgets/patterns/archive_belief_surface_card.dart';
+import '../widgets/patterns/what_changed_since_last_time_card.dart';
 import '../widgets/patterns/archive_paid_value_proof_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
@@ -2204,6 +2207,42 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     ];
   }
 
+  List<Widget> _buildWhatChangedSinceLastTimeWidgets() {
+    final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _entries);
+    final timeline = EarlyEvidenceTimelineEngine.build(
+      entries: _entries,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+    );
+    final viewingConfirmedRepeatOrTimeline =
+        timeline != null || (earlyFirstSignal?.showsConfirmedRepeat ?? false);
+    final candidate = WhatChangedSinceLastTimeEngine.build(
+      entries: _entries,
+      returnChecks: RepeatReturnCheckStore.cached,
+    );
+    if (!WhatChangedSinceLastTimeGates.shouldShow(
+      loaded: true,
+      entryCount: _entries.length,
+      isReady: true,
+      isRecording: false,
+      isPostSave: false,
+      isDegradedPostSave: false,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
+      hasConfirmedRepeatFoundation:
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_entries),
+      result: candidate,
+    )) {
+      return const [];
+    }
+    return [
+      WhatChangedSinceLastTimeCard(
+        result: candidate!,
+        entryCount: _entries.length,
+      ),
+      const SizedBox(height: AppSpacing.lg),
+    ];
+  }
+
   List<Widget> _buildThoughtMapPreviewWidgets() {
     final preview = const ArchiveThoughtMapEngine().build(
       _entries,
@@ -3425,6 +3464,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           ? const <Widget>[]
           : _buildArchiveBeliefProofWidgets(),
     );
+    widgets.addAll(_buildWhatChangedSinceLastTimeWidgets());
     final beliefUpdatePayoff =
         ArchiveEvidenceGuard.eligibleReflectionCount(_entries) >= 4
             ? BeliefUpdatePayoffEngine.build(entries: _entries)
@@ -3992,6 +4032,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
+                ..._buildWhatChangedSinceLastTimeWidgets(),
                 if (showArchiveSummary && archiveSummary != null) ...[
                   ArchiveSummaryCard(
                     summary: archiveSummary,
