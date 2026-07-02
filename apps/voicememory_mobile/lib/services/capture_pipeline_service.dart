@@ -629,7 +629,7 @@ class CapturePipelineService {
       );
     } catch (e) {
       throw CapturePipelineFailure(
-        'Could not save this recording on your device. Try again.',
+        VoiceCaptureCopy.saveFailed,
         savedDraft: false,
       );
     }
@@ -772,7 +772,7 @@ class CapturePipelineService {
       );
     } catch (e) {
       throw CapturePipelineFailure(
-        'Could not save this thought on your device. Try again.',
+        VoiceCaptureCopy.saveFailed,
         savedDraft: false,
       );
     }

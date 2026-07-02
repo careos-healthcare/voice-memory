@@ -131,7 +131,9 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       debugPrint('thought_save_failed');
       if (!mounted) return;
       setState(() {
-        _error = e.message;
+        _error = e.message.contains('Enter')
+            ? e.message
+            : VoiceCaptureCopy.saveFailed;
         _saving = false;
       });
       return;
@@ -139,7 +141,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       debugPrint('thought_save_failed');
       if (!mounted) return;
       setState(() {
-        _error = 'Could not save this thought. Try again.';
+        _error = VoiceCaptureCopy.saveFailed;
         _saving = false;
       });
       return;

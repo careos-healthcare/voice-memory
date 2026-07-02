@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../config/app_config.dart';
 import '../../config/developer_settings_gate.dart';
+import '../../features/trust/trust_reliability_copy.dart';
 import '../../record/record_screen_framing_copy.dart';
 import '../../router/developer_route_guard.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
@@ -9,7 +10,10 @@ import '../early_archive/early_evidence_timeline_copy.dart';
 import '../early_archive/first_proof_moment_copy.dart';
 import '../early_archive/private_archive_report_copy.dart';
 import '../onboarding/archive_journey_copy.dart';
+import '../voice_capture/microphone_permission_copy.dart';
+import '../voice_capture/voice_capture_copy.dart';
 import '../../billing/restore_purchases_copy.dart';
+import '../../security/privacy_data_controls_copy.dart';
 import 'archive_beta_mission_gate.dart';
 import 'core_value_feedback_copy.dart';
 import 'release_candidate_smoke_copy.dart';
@@ -37,6 +41,11 @@ abstract final class ReleaseCandidateSmokeEngine {
       _proRouteRow(),
       _restorePurchasesRouteRow(),
       _developerDiagnosticsLockedRow(),
+      _microphonePermissionCopyRow(),
+      _saveFailureCopyRow(),
+      _privacySupportLinkRow(),
+      _resetArchiveControlRow(),
+      _reportCopyRow(),
     ];
 
     final readyForTestFlight = rows.every(
@@ -229,6 +238,67 @@ abstract final class ReleaseCandidateSmokeEngine {
       id: ReleaseCandidateSmokeRowId.developerDiagnosticsLocked,
       label: ReleaseCandidateSmokeCopy.rowDeveloperDiagnosticsLocked,
       status: ReleaseCandidateSmokeStatus.checkManually,
+    );
+  }
+
+  static ReleaseCandidateSmokeRow _microphonePermissionCopyRow() {
+    final available = MicrophonePermissionCopy.neededTitle.isNotEmpty &&
+        MicrophonePermissionCopy.deniedBody.isNotEmpty;
+    return ReleaseCandidateSmokeRow(
+      id: ReleaseCandidateSmokeRowId.microphonePermissionCopy,
+      label: ReleaseCandidateSmokeCopy.rowMicrophonePermissionCopy,
+      status: available
+          ? ReleaseCandidateSmokeStatus.ready
+          : ReleaseCandidateSmokeStatus.missing,
+    );
+  }
+
+  static ReleaseCandidateSmokeRow _saveFailureCopyRow() {
+    final available = VoiceCaptureCopy.saveFailed.isNotEmpty &&
+        VoiceCaptureCopy.recordingFailed.isNotEmpty;
+    return ReleaseCandidateSmokeRow(
+      id: ReleaseCandidateSmokeRowId.saveFailureCopy,
+      label: ReleaseCandidateSmokeCopy.rowSaveFailureCopy,
+      status: available
+          ? ReleaseCandidateSmokeStatus.ready
+          : ReleaseCandidateSmokeStatus.missing,
+    );
+  }
+
+  static ReleaseCandidateSmokeRow _privacySupportLinkRow() {
+    final available = AppConfig.supportUrl.contains('archiveme-support') &&
+        TrustReliabilityCopy.sectionTitle.isNotEmpty;
+    return ReleaseCandidateSmokeRow(
+      id: ReleaseCandidateSmokeRowId.privacySupportLink,
+      label: ReleaseCandidateSmokeCopy.rowPrivacySupportLink,
+      status: available
+          ? ReleaseCandidateSmokeStatus.ready
+          : ReleaseCandidateSmokeStatus.missing,
+    );
+  }
+
+  static ReleaseCandidateSmokeRow _resetArchiveControlRow() {
+    final available =
+        PrivacyDataControlsCopy.clearLocalArchiveTitle.isNotEmpty &&
+            PrivacyDataControlsCopy.clearLocalArchiveConfirmTitle.isNotEmpty;
+    return ReleaseCandidateSmokeRow(
+      id: ReleaseCandidateSmokeRowId.resetArchiveControl,
+      label: ReleaseCandidateSmokeCopy.rowResetArchiveControl,
+      status: available
+          ? ReleaseCandidateSmokeStatus.ready
+          : ReleaseCandidateSmokeStatus.checkManually,
+    );
+  }
+
+  static ReleaseCandidateSmokeRow _reportCopyRow() {
+    final available = PrivateArchiveReportCopy.copyReportCta.isNotEmpty &&
+        PrivateArchiveReportCopy.copyReportHelper.isNotEmpty;
+    return ReleaseCandidateSmokeRow(
+      id: ReleaseCandidateSmokeRowId.reportCopy,
+      label: ReleaseCandidateSmokeCopy.rowReportCopy,
+      status: available
+          ? ReleaseCandidateSmokeStatus.ready
+          : ReleaseCandidateSmokeStatus.missing,
     );
   }
 

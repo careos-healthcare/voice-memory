@@ -133,10 +133,13 @@ void main() {
     });
 
     test('recovery copy matches first-session spec', () {
-      expect(VoiceCaptureCopy.degradedRecoveryTitle, 'We recorded your audio.');
+      expect(
+        VoiceCaptureCopy.degradedRecoveryTitle,
+        VoiceCaptureCopy.recordingSavedTitle,
+      );
       expect(
         VoiceCaptureCopy.degradedRecoveryBody,
-        contains('transcript was not clear enough'),
+        VoiceCaptureCopy.transcriptUnavailable,
       );
       expect(VoiceCaptureCopy.typeWhatYouSaid, 'Type what you said');
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');

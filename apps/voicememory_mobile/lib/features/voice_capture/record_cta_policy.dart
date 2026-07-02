@@ -150,8 +150,10 @@ abstract class RecordCtaPolicy {
       return RecordCtaPolicyResolution(
         state: RecordCtaPolicyState.error,
         primaryLabel: ConsumerUiCopy.recordAnotherCta,
+        secondaryLabels: [EmptyArchiveCopy.typeInsteadCta],
         showMainBottomCta: true,
         hideCardRecordCtas: true,
+        showTypeInsteadSecondary: true,
         micPhase: micPhase,
         micPermissionState: micPermissionState,
       );

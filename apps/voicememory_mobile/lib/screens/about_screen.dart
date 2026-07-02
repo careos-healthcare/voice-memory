@@ -11,6 +11,7 @@ import '../theme/app_theme.dart';
 import '../features/onboarding/archive_journey_copy.dart';
 import '../features/onboarding/archive_journey_model.dart';
 import '../widgets/onboarding/archive_journey_explainer_card.dart';
+import '../widgets/about/privacy_trust_section.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -96,6 +97,8 @@ class _AboutScreenState extends State<AboutScreen> {
           ArchiveJourneyExplainerCard(
             explainer: ArchiveJourneyExplainer.full(),
           ),
+          const SizedBox(height: 24),
+          const PrivacyTrustSection(),
           const SizedBox(height: 24),
           GestureDetector(
             onTap: _onVersionTap,

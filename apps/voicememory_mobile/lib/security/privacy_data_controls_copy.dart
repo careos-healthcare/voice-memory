@@ -20,13 +20,13 @@ abstract final class PrivacyDataControlsCopy {
   static const viewSampleArchiveSubtitle =
       'Example data only — your private archive stays untouched.';
 
-  static const clearLocalArchiveTitle = 'Clear local archive';
+  static const clearLocalArchiveTitle = 'Reset archive';
   static const clearLocalArchiveSubtitle =
-      'Remove saved moments and local archive insights from this device.';
+      'Remove saved moments and archive evidence from this device.';
 
-  static const clearLocalArchiveConfirmTitle = 'Clear local archive?';
+  static const clearLocalArchiveConfirmTitle = 'Reset your archive?';
   static const clearLocalArchiveConfirmBody =
-      'This removes saved moments and local archive insights from this device. '
+      'This removes saved moments and archive evidence from this device. '
       'This cannot be undone.';
 
   static const resetDismissedTipsTitle = 'Reset dismissed tips';
@@ -38,7 +38,7 @@ abstract final class PrivacyDataControlsCopy {
       'Archive workspace hints will appear again the next time you open Patterns.';
 
   static const cancel = 'Cancel';
-  static const clearArchiveConfirm = 'Clear archive';
+  static const clearArchiveConfirm = 'Reset archive';
   static const resetTipsConfirm = 'Reset tips';
 
   static const clearArchiveDone = 'Local archive cleared.';

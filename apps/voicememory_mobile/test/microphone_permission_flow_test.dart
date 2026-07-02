@@ -964,7 +964,7 @@ void main() {
 
       expect(find.text(MicrophonePermissionCopy.deniedTitle), findsOneWidget);
       expect(
-        find.textContaining('Turn it on in Settings, or type instead'),
+        find.textContaining('Turn it on in Settings, or use text if available'),
         findsOneWidget,
       );
       expect(find.text(MicrophonePermissionCopy.openSettingsCta), findsOneWidget);

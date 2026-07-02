@@ -2405,7 +2405,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (!mounted) return;
       setState(() {
         _ui = RecordUiState.error;
-        _error = e.message;
+        _error = VoiceCaptureCopy.recordingFailed;
       });
     } catch (e, st) {
       _ignoreStaleMicRefreshAfterGrant = false;
@@ -2416,8 +2416,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (!mounted) return;
       setState(() {
         _ui = RecordUiState.error;
-        _error =
-            'Could not start recording. Check microphone permission and try again.';
+        _error = VoiceCaptureCopy.recordingFailed;
       });
     }
   }
@@ -2466,19 +2465,19 @@ class _RecordScreenState extends State<RecordScreen> {
       }
       setState(() {
         _ui = RecordUiState.error;
-        _error = e.message;
+        _error = VoiceCaptureCopy.saveFailed;
         _localSaveTitle = null;
         _syncNote = null;
       });
     } on RecordingException catch (e) {
       setState(() {
         _ui = RecordUiState.error;
-        _error = e.message;
+        _error = VoiceCaptureCopy.recordingFailed;
       });
     } catch (e) {
       setState(() {
         _ui = RecordUiState.error;
-        _error = 'Something went wrong while saving. Try again.';
+        _error = VoiceCaptureCopy.saveFailed;
         _localSaveTitle = null;
         _syncNote = null;
       });

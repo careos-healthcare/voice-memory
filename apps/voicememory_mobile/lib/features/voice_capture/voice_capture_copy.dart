@@ -2,6 +2,15 @@
 abstract class VoiceCaptureCopy {
   VoiceCaptureCopy._();
 
+  static const String recordingFailed =
+      'Recording did not start. Try again, or save a short text moment.';
+
+  static const String saveFailed =
+      'That moment was not saved. Please try again.';
+
+  static const String transcriptUnavailable =
+      'ArchiveMe saved the moment, but the transcript may need another try.';
+
   static const String notEnoughAudio =
       'We could not hear enough audio. Try again closer to the microphone.';
 
@@ -22,9 +31,8 @@ abstract class VoiceCaptureCopy {
 
   static const String recordAgainCta = 'Record again';
 
-  /// Legacy combined line — prefer [savedPrivatelySuccess] + [transcriptionFailedIssue].
-  static const String transcriptionFailedDegraded =
-      'Recording saved, but ArchiveMe could not turn it into text on this device.';
+  /// Legacy combined line — prefer [transcriptUnavailable].
+  static const String transcriptionFailedDegraded = transcriptUnavailable;
 
   static const String recordingSavedTitle = 'Recording saved.';
 
@@ -40,13 +48,14 @@ abstract class VoiceCaptureCopy {
 
   static const String typeWhatYouSaid = 'Type what you said';
 
-  static const String degradedRecoveryTitle = 'We recorded your audio.';
+  static const String degradedRecoveryTitle = recordingSavedTitle;
 
-  static const String degradedRecoveryBody =
-      'The transcript was not clear enough. Add a short note so this moment '
-      'is useful in your archive.';
+  static const String degradedRecoveryBody = transcriptUnavailable;
 
   static const List<String> all = [
+    recordingFailed,
+    saveFailed,
+    transcriptUnavailable,
     notEnoughAudio,
     transcriptionFailedTitle,
     savedPrivatelySuccess,

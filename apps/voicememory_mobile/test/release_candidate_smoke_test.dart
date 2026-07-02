@@ -21,7 +21,7 @@ void main() {
       ReleaseCandidateSmokeEngine.developerDiagnosticsLockedOverride = true;
 
       final report = ReleaseCandidateSmokeEngine.build();
-      expect(report.rows, hasLength(12));
+      expect(report.rows, hasLength(17));
       expect(report.rows.map((row) => row.label).toList(), [
         ReleaseCandidateSmokeCopy.rowFirstLaunchRecord,
         ReleaseCandidateSmokeCopy.rowFirstUseCapture,
@@ -35,6 +35,11 @@ void main() {
         ReleaseCandidateSmokeCopy.rowProRoute,
         ReleaseCandidateSmokeCopy.rowRestorePurchasesRoute,
         ReleaseCandidateSmokeCopy.rowDeveloperDiagnosticsLocked,
+        ReleaseCandidateSmokeCopy.rowMicrophonePermissionCopy,
+        ReleaseCandidateSmokeCopy.rowSaveFailureCopy,
+        ReleaseCandidateSmokeCopy.rowPrivacySupportLink,
+        ReleaseCandidateSmokeCopy.rowResetArchiveControl,
+        ReleaseCandidateSmokeCopy.rowReportCopy,
       ]);
     });
 

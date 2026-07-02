@@ -38,6 +38,9 @@ abstract final class BetaReportExportCopy {
 
   static const copyButtonLabel = 'Copy beta report';
 
+  static const copyHelper =
+      'Only report text is copied — not audio or user content.';
+
   static const copiedConfirmation = 'Beta report copied.';
 
   static const manualQuestions = [

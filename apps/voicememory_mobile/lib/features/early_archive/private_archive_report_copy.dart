@@ -32,7 +32,9 @@ abstract final class PrivateArchiveReportCopy {
 
   static const previewProCta = 'See Pro';
 
-  static const copyReportCta = 'Copy report';
+  static const copyReportCta = 'Copy private report';
+
+  static const copyReportHelper = 'Only report text is copied — not audio.';
 
   static const sharePrivatelyCta = 'Share privately';
 

@@ -41,6 +41,17 @@ abstract final class ReleaseCandidateSmokeCopy {
   static const rowDeveloperDiagnosticsLocked =
       'Developer diagnostics locked in production';
 
+  static const rowMicrophonePermissionCopy =
+      'Microphone permission copy available';
+
+  static const rowSaveFailureCopy = 'Save failure copy available';
+
+  static const rowPrivacySupportLink = 'Privacy/support link available';
+
+  static const rowResetArchiveControl = 'Reset/archive control available';
+
+  static const rowReportCopy = 'Report copy available';
+
   static const recordRoute = '/record';
 
   static const patternsRoute = '/archive-belief';

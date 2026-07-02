@@ -63,7 +63,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     if (_isDegraded) {
       return _DegradedTranscriptionCard(
         entry: entry,
-        bodyCopy: degradedBodyCopy ?? VoiceCaptureCopy.transcriptionFailedIssue,
+        bodyCopy: degradedBodyCopy ?? VoiceCaptureCopy.transcriptUnavailable,
         showSilentInputWarning: showSilentInputWarning,
       );
     }
@@ -312,7 +312,8 @@ class _DegradedTranscriptionCard extends StatelessWidget {
             key: const Key('post_save_degraded_recovery_body'),
             style: bodyStyle,
           ),
-          if (bodyCopy != VoiceCaptureCopy.transcriptionFailedIssue) ...[
+          if (bodyCopy != VoiceCaptureCopy.degradedRecoveryBody &&
+              bodyCopy != VoiceCaptureCopy.transcriptionFailedIssue) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
               bodyCopy,

@@ -158,6 +158,11 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
               child: Text(PrivateArchiveReportCopy.copyReportCta),
             ),
           ),
+          Text(
+            PrivateArchiveReportCopy.copyReportHelper,
+            key: const Key('private_archive_report_copy_helper'),
+            style: previewStyle,
+          ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(

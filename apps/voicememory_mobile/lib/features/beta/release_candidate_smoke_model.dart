@@ -13,6 +13,11 @@ enum ReleaseCandidateSmokeRowId {
   proRoute,
   restorePurchasesRoute,
   developerDiagnosticsLocked,
+  microphonePermissionCopy,
+  saveFailureCopy,
+  privacySupportLink,
+  resetArchiveControl,
+  reportCopy,
 }
 
 enum ReleaseCandidateSmokeStatus {
