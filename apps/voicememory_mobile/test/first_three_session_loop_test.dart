@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/first_three_journey_engine.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_copy.dart';
 import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
+import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
@@ -678,6 +679,32 @@ void main() {
         EarlyFirstSignalCopy.threeEntrySeenThreeTimes.toLowerCase(),
         isNot(contains('chat history')),
       );
+    });
+
+    test('early loop copy stays low-effort not chatbot prompting', () {
+      final joined = [
+        PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback,
+        PostSaveReturnHandoffCopy.afterFirstSaveFooter,
+        EarlyRepeatProgressCopy.oneMomentBody,
+        FirstWeekLoopCopy.bodyFallback,
+      ].join(' ').toLowerCase();
+
+      expect(joined, anyOf(contains('short'), contains('ten seconds')));
+      expect(joined, contains('compare'));
+      expect(joined, isNot(contains('ask ai')));
+      expect(joined, isNot(contains('journal every day')));
+
+      for (final line in [
+        PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback,
+        EarlyRepeatProgressCopy.oneMomentBody,
+        FirstWeekLoopCopy.bodyFallback,
+      ]) {
+        expect(LowEffortCaptureCopyGuard.passes(line), isTrue, reason: line);
+      }
+    });
+
+    test('record capture CTA stays capture-first', () {
+      expect(VisibleArchiveProofCopy.firstUseCaptureCta, 'Save one moment');
     });
   });
 }

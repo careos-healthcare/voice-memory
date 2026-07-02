@@ -460,16 +460,29 @@ void main() {
         FirstWeekLoopCopy.bodyFallback,
         FirstWeekLoopCopy.footer,
         FirstWeekLoopCopy.bodyWithPhrase('said yes again'),
+        FirstWeekLoopCopy.title,
       ].join(' ').toLowerCase();
 
       expect(joined, contains('first proof'));
+      expect(joined, contains('short moment'));
+      expect(joined, contains('compare'));
       expect(joined, contains('stronger'));
       expect(joined, contains('softer'));
       expect(joined, contains('about the same'));
-      expect(joined, contains('what changed'));
-      expect(joined, contains('when it returns'));
+      expect(joined, anyOf(contains('comes back'), contains('when it happens')));
       expect(joined, isNot(contains('you are')));
       expect(joined, isNot(contains('you should')));
+    });
+
+    test('post-proof return copy is low-effort', () {
+      expect(
+        FirstWeekLoopCopy.bodyWithPhrase('said yes again').toLowerCase(),
+        contains('short moment'),
+      );
+      expect(
+        FirstWeekLoopCopy.bodyWithPhrase('said yes again').toLowerCase(),
+        contains('compare'),
+      );
     });
   });
 

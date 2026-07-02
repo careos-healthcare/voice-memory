@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
+import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/early_archive/positive_reinforcement_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/positive_pattern_copy.dart';
@@ -498,7 +499,7 @@ void main() {
       );
     });
 
-    test('tester mission step two stays distinct from early repeat progress', () {
+    test('tester mission step two shares low-effort guidance with early repeat progress', () {
       final mission = TesterMissionEngine.build(
         entryCount: 1,
         entries: [
@@ -520,7 +521,9 @@ void main() {
         ],
       );
       expect(progress, isNotNull);
-      expect(mission.body, isNot(equals(progress!.body)));
+      expect(mission.body, equals(progress!.body));
+      expect(mission.title, isNot(equals(progress.title)));
+      expect(mission.stepLabel, TesterMissionCopy.entry1StepLabel);
       expect(
         ArchiveProofCopyDedup.countPhrase(
           [
@@ -669,6 +672,27 @@ void main() {
       expect(joined, isNot(contains('try repeating')));
       expect(joined, isNot(contains('try watching')));
       expect(joined, isNot(contains('you should')));
+    });
+  });
+
+  group('Low-effort capture', () {
+    test('main capture surfaces avoid chatbot and journaling friction', () {
+      for (final line in LowEffortCaptureCopyGuard.mainCaptureCopyBlocks()) {
+        for (final violation in LowEffortCaptureCopyGuard.violationsIn(line)) {
+          fail('"$line" contains banned friction phrase "$violation"');
+        }
+      }
+    });
+
+    test('first-use prompt says no prompt needed and ten seconds is enough', () {
+      expect(
+        RecordFirstUsePromptCopy.body.toLowerCase(),
+        contains('no prompt needed'),
+      );
+      expect(
+        RecordFirstUsePromptCopy.footer,
+        contains('Ten seconds is enough'),
+      );
     });
   });
 }

@@ -5,13 +5,13 @@ abstract final class TesterMissionCopy {
   static const title = 'Test mission';
 
   static const entry0Body =
-      '3-moment proof test. Record one real moment — ten seconds is enough.';
+      '3-moment proof test. Record one real moment — no need to explain everything.';
   static const entry0StepLabel = 'Step 1 of 3';
   static const entry0Footer =
-      'Come back when something similar happens.';
+      'Come back when something similar happens. Ten seconds is enough.';
 
   static const entry1Body =
-      'Your next task: record moment 2 when something similar happens.';
+      'Record moment 2 when something similar happens. Short is fine.';
   static const entry1StepLabel = 'Step 2 of 3';
   static const entry1Footer =
       'Similar moments let ArchiveMe compare.';

@@ -5,7 +5,8 @@ abstract final class FirstWeekLoopCopy {
   static const title = 'Record when this comes back';
 
   static const bodyFallback =
-      'ArchiveMe tracks what happens when this comes back. Record the next return so ArchiveMe can compare stronger, softer, or about the same since your first proof.';
+      'Next time this comes back, record a short moment. ArchiveMe compares it '
+      'with your first proof and tracks stronger, softer, or about the same.';
 
   static const label = 'First week loop';
 
@@ -15,5 +16,6 @@ abstract final class FirstWeekLoopCopy {
   static const recordCta = 'Record when it happens';
 
   static String bodyWithPhrase(String phrase) =>
-      'Next time something like “$phrase” happens, record it. ArchiveMe will compare it with your first proof and track what changed.';
+      'Next time something like “$phrase” comes back, record a short moment. '
+      'ArchiveMe will compare it with your first proof.';
 }

@@ -5,7 +5,7 @@ abstract final class PostSaveReturnHandoffCopy {
   static const afterFirstSaveTitle = 'Come back when something similar happens';
 
   static const afterFirstSaveBodyFallback =
-      'Record the second moment when something similar happens. ArchiveMe needs something to compare.';
+      'No need to explain everything. Record a short moment when something similar happens.';
 
   static const afterFirstSaveFooter =
       '1 of 3 · Ten seconds is enough.';

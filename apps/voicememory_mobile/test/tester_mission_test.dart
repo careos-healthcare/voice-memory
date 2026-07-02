@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_analytics.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
@@ -293,6 +294,33 @@ void main() {
 
       for (final word in blocked) {
         expect(corpus, isNot(contains(word)));
+      }
+    });
+
+    test('explains 3-moment proof without journaling-forever language', () {
+      final joined = [
+        TesterMissionCopy.entry0Body,
+        TesterMissionCopy.entry0Footer,
+        TesterMissionCopy.entry1Body,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('3-moment'));
+      expect(joined, contains('real moment'));
+      expect(joined, anyOf(contains('short is fine'), contains('ten seconds')));
+      expect(joined, isNot(contains('journal forever')));
+      expect(joined, isNot(contains('journal every day')));
+    });
+
+    test('avoids chatbot and high-friction capture language', () {
+      for (final line in [
+        TesterMissionCopy.entry0Body,
+        TesterMissionCopy.entry0Footer,
+        TesterMissionCopy.entry1Body,
+        TesterMissionCopy.entry1Footer,
+      ]) {
+        for (final violation in LowEffortCaptureCopyGuard.violationsIn(line)) {
+          fail('"$line" contains banned friction phrase "$violation"');
+        }
       }
     });
   });

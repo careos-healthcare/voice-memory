@@ -6,6 +6,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface_copy.dart';
+import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/personal_return_prompt_model.dart';
@@ -198,6 +199,11 @@ void main() {
         RecordFirstUsePromptCopy.body,
         contains('first proof'),
       );
+      expect(
+        RecordFirstUsePromptCopy.body.toLowerCase(),
+        anyOf(contains('no prompt needed'), contains('no need to explain')),
+      );
+      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
       expect(RecordFirstUsePromptCopy.footer, contains('1 of 3'));
       expect(RecordFirstUsePromptCopy.examples, hasLength(4));
       for (final copy in [
@@ -208,6 +214,18 @@ void main() {
       ]) {
         expect(copy.toLowerCase(), isNot(contains('therapy')));
         expect(copy.toLowerCase(), isNot(contains('diagnosis')));
+      }
+    });
+
+    test('first-use prompt avoids chatbot and journaling friction language', () {
+      for (final line in [
+        RecordFirstUsePromptCopy.title,
+        RecordFirstUsePromptCopy.body,
+        RecordFirstUsePromptCopy.footer,
+      ]) {
+        for (final violation in LowEffortCaptureCopyGuard.violationsIn(line)) {
+          fail('"$line" contains banned friction phrase "$violation"');
+        }
       }
     });
 

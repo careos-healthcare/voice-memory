@@ -57,8 +57,8 @@ abstract final class RecordFirstUsePromptCopy {
   static const title = 'Record one real moment';
 
   static const body =
-      'Three moments unlock your first proof — not a journal forever. '
-      'Say what happened, what your mind said, or what you did next.';
+      'Three short moments unlock your first proof. No prompt needed — just say '
+      'what happened, what your mind said, or what you did next.';
 
   static const examplesHeading = 'Examples';
 

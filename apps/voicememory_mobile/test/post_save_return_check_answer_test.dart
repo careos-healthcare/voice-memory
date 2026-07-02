@@ -428,6 +428,10 @@ void main() {
         _expectNoDiagnosticLanguage(copy);
       }
     });
+
+    test('footer says one tap is enough', () {
+      expect(PostSaveReturnCheckAnswerCopy.footer, 'One tap is enough.');
+    });
   });
 
   group('Patterns screen isolation', () {

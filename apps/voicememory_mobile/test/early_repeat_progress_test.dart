@@ -770,4 +770,24 @@ void main() {
       expect(payload.values.whereType<String>(), isNot(contains(moment.body)));
     });
   });
+
+  group('Low-effort capture copy', () {
+    test('entry 1 progress says short is fine', () {
+      expect(
+        EarlyRepeatProgressCopy.oneMomentBody.toLowerCase(),
+        contains('short is fine'),
+      );
+    });
+
+    test('post-save handoff after first save stays low-effort', () {
+      expect(
+        PostSaveReturnHandoffCopy.afterFirstSaveFooter,
+        contains('Ten seconds is enough'),
+      );
+      expect(
+        PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback.toLowerCase(),
+        contains('no need to explain'),
+      );
+    });
+  });
 }
