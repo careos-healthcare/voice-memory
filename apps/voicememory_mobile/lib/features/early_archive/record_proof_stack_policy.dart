@@ -14,6 +14,7 @@ class RecordProofStackDecision {
     required this.showConfirmedRepeatWhyMatters,
     required this.showConfirmedRepeatThoughtMap,
     required this.showPositiveReinforcement,
+    required this.showHelpfulActionAppeared,
     required this.showChangeProof,
     required this.showFirstWeekLoop,
     required this.showProBridge,
@@ -33,6 +34,7 @@ class RecordProofStackDecision {
   final bool showConfirmedRepeatWhyMatters;
   final bool showConfirmedRepeatThoughtMap;
   final bool showPositiveReinforcement;
+  final bool showHelpfulActionAppeared;
   final bool showChangeProof;
   final bool showFirstWeekLoop;
   final bool showProBridge;
@@ -52,6 +54,7 @@ class RecordProofStackDecision {
     showConfirmedRepeatWhyMatters: false,
     showConfirmedRepeatThoughtMap: false,
     showPositiveReinforcement: false,
+    showHelpfulActionAppeared: false,
     showChangeProof: false,
     showFirstWeekLoop: false,
     showProBridge: false,
@@ -83,6 +86,7 @@ abstract final class RecordProofStackPolicy {
     required bool whyMattersEligible,
     required bool thoughtMapEligible,
     required bool positiveReinforcementEligible,
+    bool helpfulActionAppearedEligible = false,
     required bool changeProofEligible,
     required bool firstWeekLoopEligible,
     required bool proBridgeEligible,
@@ -113,6 +117,7 @@ abstract final class RecordProofStackPolicy {
         showConfirmedRepeatWhyMatters: false,
         showConfirmedRepeatThoughtMap: false,
         showPositiveReinforcement: false,
+        showHelpfulActionAppeared: false,
         showChangeProof: false,
         showFirstWeekLoop: false,
         showProBridge: false,
@@ -127,6 +132,9 @@ abstract final class RecordProofStackPolicy {
 
     // Entry 3+: current belief or Archive Summary is the main overview.
     var showPatternChanged = patternChangedVisible;
+    var showHelpfulActionAppeared = helpfulActionAppearedEligible;
+    var showPositiveReinforcement =
+        positiveReinforcementEligible && !showHelpfulActionAppeared;
     var showArchiveCurrentBelief = archiveCurrentBeliefEligible;
     var showArchiveSummary = useSummaryOverview && !showArchiveCurrentBelief;
     var showDailyReturnReason =
@@ -143,12 +151,14 @@ abstract final class RecordProofStackPolicy {
 
     var count = 0;
     if (showPatternChanged) count++;
+    if (showHelpfulActionAppeared) count++;
     if (showArchiveSummary) count++;
     if (showArchiveCurrentBelief) count++;
     if (showDailyReturnReason) count++;
     if (dailyReturnCompetesForCap) count++;
     if (showFirstWeekLoop) count++;
     if (showProBridge) count++;
+    if (showPositiveReinforcement) count++;
 
     // Never more than three proof cards below the recorder.
     while (count > maxProofCardsAtThreePlus) {
@@ -156,6 +166,9 @@ abstract final class RecordProofStackPolicy {
         showProBridge = false;
         count--;
       } else if (showArchiveSummary && showPatternChanged) {
+        showArchiveSummary = false;
+        count--;
+      } else if (showArchiveSummary && showHelpfulActionAppeared) {
         showArchiveSummary = false;
         count--;
       } else if (showFirstWeekLoop && showPatternChanged) {
@@ -193,8 +206,9 @@ abstract final class RecordProofStackPolicy {
           whyMattersEligible && !useSummaryOverview,
       showConfirmedRepeatThoughtMap:
           thoughtMapEligible && !useSummaryOverview,
-      showPositiveReinforcement:
-          positiveReinforcementEligible && !useSummaryOverview,
+      showPositiveReinforcement: showPositiveReinforcement && !useSummaryOverview,
+      showHelpfulActionAppeared:
+          showHelpfulActionAppeared && !useSummaryOverview,
       showChangeProof: changeProofEligible &&
           !useSummaryOverview &&
           !showPatternChanged,
@@ -205,6 +219,8 @@ abstract final class RecordProofStackPolicy {
         showArchiveSummary: showArchiveSummary,
         showArchiveCurrentBelief: showArchiveCurrentBelief,
         showDailyReturnReason: showDailyReturnReason,
+        showHelpfulActionAppeared: showHelpfulActionAppeared && !useSummaryOverview,
+        showPositiveReinforcement: showPositiveReinforcement && !useSummaryOverview,
         showFirstWeekLoop: showFirstWeekLoop,
         showProBridge: showProBridge,
       ),
@@ -216,6 +232,8 @@ abstract final class RecordProofStackPolicy {
     required bool showArchiveSummary,
     required bool showArchiveCurrentBelief,
     required bool showDailyReturnReason,
+    required bool showHelpfulActionAppeared,
+    required bool showPositiveReinforcement,
     required bool showFirstWeekLoop,
     required bool showProBridge,
   }) =>
@@ -223,6 +241,8 @@ abstract final class RecordProofStackPolicy {
       (showArchiveSummary ? 1 : 0) +
       (showArchiveCurrentBelief ? 1 : 0) +
       (showDailyReturnReason ? 1 : 0) +
+      (showHelpfulActionAppeared ? 1 : 0) +
+      (showPositiveReinforcement ? 1 : 0) +
       (showFirstWeekLoop ? 1 : 0) +
       (showProBridge ? 1 : 0);
 }

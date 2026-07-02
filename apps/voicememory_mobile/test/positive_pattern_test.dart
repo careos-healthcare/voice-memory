@@ -284,7 +284,7 @@ void main() {
       );
 
       expect(find.text(PositivePatternCopy.title), findsOneWidget);
-      expect(find.text(PositivePatternCopy.body), findsOneWidget);
+      expect(find.text(result.body), findsOneWidget);
       expect(find.text(PositivePatternCopy.recordAgainCta), findsOneWidget);
       expect(find.textContaining('walked outside'), findsWidgets);
     });

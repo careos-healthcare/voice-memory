@@ -47,6 +47,8 @@ abstract final class EarlyArchiveProofAnalytics {
       'post_save_return_check_answer_tapped';
   static const String whatChangedSinceLastTimeSeenEvent =
       'what_changed_since_last_time_seen';
+  static const String helpfulActionAppearedSeenEvent =
+      'helpful_action_appeared_seen';
 
   static bool _realTimelineSeenThisSession = false;
 
@@ -390,6 +392,23 @@ abstract final class EarlyArchiveProofAnalytics {
     );
   }
 
+  static void helpfulActionAppearedSeen({
+    required int entryCount,
+    required String source,
+    required bool hasActionPhrase,
+    required bool hasConfirmedRepeat,
+  }) {
+    _track(
+      helpfulActionAppearedSeenEvent,
+      entryCount: entryCount,
+      source: source,
+      hasActionPhrase: hasActionPhrase,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+      oncePerSession: true,
+      sessionStage: 'helpful_action_appeared',
+    );
+  }
+
   static void _track(
     String event, {
     int? entryCount,
@@ -398,6 +417,7 @@ abstract final class EarlyArchiveProofAnalytics {
     int? milestoneCount,
     bool? hasRealTimeline,
     bool? hasPhrase,
+    bool? hasActionPhrase,
     bool? hasConfirmedRepeat,
     String? comparisonState,
     String? relationState,
@@ -415,6 +435,7 @@ abstract final class EarlyArchiveProofAnalytics {
       milestoneCount: milestoneCount,
       hasRealTimeline: hasRealTimeline,
       hasPhrase: hasPhrase,
+      hasActionPhrase: hasActionPhrase,
       hasConfirmedRepeat: hasConfirmedRepeat,
       comparisonState: comparisonState,
       relationState: relationState,

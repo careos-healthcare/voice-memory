@@ -4,6 +4,7 @@ import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_m
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
+import 'package:voicememory_mobile/features/early_archive/helpful_action_appeared_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/positive_reinforcement_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/positive_pattern_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
@@ -655,23 +656,25 @@ void main() {
     });
 
     test('helpful action copy is evidence-based not prescriptive', () {
-      final phraseBody = PositivePatternCopy.bodyWithPhrase('walked outside');
+      final phraseBody =
+          HelpfulActionAppearedCopy.bodyWithPhrase('walked outside');
       final joined = [
-        PositivePatternCopy.title,
+        HelpfulActionAppearedCopy.title,
         phraseBody,
+        HelpfulActionAppearedCopy.footer,
+        HelpfulActionAppearedCopy.evidenceLabel,
         PositiveReinforcementCopy.title,
         PositiveReinforcementCopy.body,
-        PositiveReinforcementCopy.completionBody,
         ArchiveSummaryCopy.whatHelpsWithPhrase('walked outside'),
       ].join(' ').toLowerCase();
 
       expect(joined, contains('a helpful action appeared'));
-      expect(joined, contains('noticed'));
-      expect(joined, contains('words'));
+      expect(joined, contains('evidence, not advice'));
+      expect(joined, contains('this is not a suggestion'));
       expect(joined, contains('watching'));
       expect(joined, isNot(contains('try repeating')));
-      expect(joined, isNot(contains('try watching')));
       expect(joined, isNot(contains('you should')));
+      expect(joined, isNot(contains('do this again')));
     });
   });
 

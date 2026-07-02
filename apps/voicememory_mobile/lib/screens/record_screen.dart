@@ -180,6 +180,7 @@ import '../widgets/record/return_check_payoff_card.dart';
 import '../widgets/record/post_save_return_check_answer_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
+import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
 import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/daily_return_reason_card.dart';
@@ -222,6 +223,8 @@ import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_gates.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
 import '../features/early_archive/positive_pattern_engine.dart';
+import '../features/early_archive/helpful_action_appeared_engine.dart';
+import '../features/early_archive/helpful_action_appeared_gates.dart';
 import '../features/early_archive/positive_reinforcement_analytics.dart';
 import '../features/early_archive/positive_reinforcement_engine.dart';
 import '../features/early_archive/positive_reinforcement_gates.dart';
@@ -3686,9 +3689,32 @@ class _RecordScreenState extends State<RecordScreen> {
             !_isPostSaveSurface
         ? PositivePatternEngine.build(entries: _journalEntries)
         : null;
-    final positiveReinforcement = ui == RecordUiState.ready &&
+    final helpfulActionAppearedCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
+        ? HelpfulActionAppearedEngine.build(
+            entries: _journalEntries,
+            returnChecks: RepeatReturnCheckStore.cached,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          )
+        : null;
+    final showHelpfulActionAppearedEligible =
+        HelpfulActionAppearedGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      isDegradedPostSave: false,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+      hasConfirmedRepeatFoundation:
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_journalEntries),
+      result: helpfulActionAppearedCandidate,
+    );
+    final positiveReinforcement = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface &&
+            !showHelpfulActionAppearedEligible
         ? PositiveReinforcementEngine.build(
             positivePattern: positivePattern,
             entries: _journalEntries,
@@ -3859,6 +3885,7 @@ class _RecordScreenState extends State<RecordScreen> {
         hasPositivePattern: positiveReinforcement != null,
       ),
       positivePatternVisible: false,
+      helpfulActionAppearedVisible: showHelpfulActionAppearedEligible,
       patternChangedVisible: PatternChangedGates.shouldShow(
         loaded: _journalEntryCountReady,
         entryCount: _journalEntryCount,
@@ -4004,6 +4031,7 @@ class _RecordScreenState extends State<RecordScreen> {
       whyMattersEligible: showConfirmedRepeatWhyMatters,
       thoughtMapEligible: showConfirmedRepeatThoughtMap,
       positiveReinforcementEligible: showPositiveReinforcement,
+      helpfulActionAppearedEligible: showHelpfulActionAppearedEligible,
       changeProofEligible: repeatReturnChangeProof != null,
       firstWeekLoopEligible: firstWeekLoopCandidate != null &&
           !firstWeekLoopProGated,
@@ -4028,6 +4056,8 @@ class _RecordScreenState extends State<RecordScreen> {
         recordProofStack.showConfirmedRepeatThoughtMap;
     final showPositiveReinforcementOnRecord =
         recordProofStack.showPositiveReinforcement;
+    final showHelpfulActionAppearedOnRecord =
+        recordProofStack.showHelpfulActionAppeared;
     final showChangeProofOnRecord = recordProofStack.showChangeProof;
     final showFirstWeekLoopOnRecord = FirstWeekLoopGates.shouldShow(
       loaded: _journalEntryCountReady,
@@ -4619,6 +4649,15 @@ class _RecordScreenState extends State<RecordScreen> {
                         onRecordMissingPiece: () => _handleThoughtMapMissingPiece(
                           confirmedRepeatThoughtMap,
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showHelpfulActionAppearedOnRecord &&
+                        helpfulActionAppearedCandidate != null) ...[
+                      HelpfulActionAppearedCard(
+                        result: helpfulActionAppearedCandidate,
+                        entryCount: _journalEntryCount,
+                        source: 'record',
                       ),
                       const SizedBox(height: 12),
                     ],

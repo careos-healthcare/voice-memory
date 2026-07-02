@@ -971,6 +971,7 @@ abstract class ActivationFunnelAnalytics {
     bool? hasConnectedThread,
     bool? hasRealTimeline,
     bool? hasPhrase,
+    bool? hasActionPhrase,
     bool? hasConfirmedRepeat,
     String? comparisonState,
     int? phraseCount,
@@ -1034,6 +1035,8 @@ abstract class ActivationFunnelAnalytics {
       if (hasRealTimeline != null)
         'has_real_timeline': hasRealTimeline ? 1 : 0,
       if (hasPhrase != null) 'has_phrase': hasPhrase ? 1 : 0,
+      if (hasActionPhrase != null)
+        'has_action_phrase': hasActionPhrase ? 1 : 0,
       if (hasConfirmedRepeat != null)
         'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
       if (comparisonState != null && _safeValue.hasMatch(comparisonState))

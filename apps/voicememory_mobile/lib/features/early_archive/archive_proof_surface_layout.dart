@@ -10,6 +10,7 @@ class ArchiveProofSurfaceLayout {
     this.positivePatternVisible = false,
     this.positiveReinforcementVisible = false,
     this.patternChangedVisible = false,
+    this.helpfulActionAppearedVisible = false,
     this.archiveSummaryVisible = false,
     this.archiveCurrentBeliefVisible = false,
   });
@@ -23,6 +24,7 @@ class ArchiveProofSurfaceLayout {
   final bool positivePatternVisible;
   final bool positiveReinforcementVisible;
   final bool patternChangedVisible;
+  final bool helpfulActionAppearedVisible;
   final bool archiveSummaryVisible;
   final bool archiveCurrentBeliefVisible;
 
@@ -38,7 +40,12 @@ class ArchiveProofSurfaceLayout {
       thoughtMapVisible && !effectiveArchiveSummaryVisible;
 
   bool get effectivePositiveReinforcementVisible =>
-      positiveReinforcementVisible && !effectiveArchiveSummaryVisible;
+      positiveReinforcementVisible &&
+      !effectiveArchiveSummaryVisible &&
+      !helpfulActionAppearedVisible;
+
+  bool get effectiveHelpfulActionAppearedVisible =>
+      helpfulActionAppearedVisible && !effectiveArchiveSummaryVisible;
 
   bool get effectivePositivePatternVisible =>
       positivePatternVisible &&
