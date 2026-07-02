@@ -15,8 +15,12 @@ import '../features/debug/archive_beta_debug_gate.dart';
 import '../features/beta/beta_metrics_decision_engine.dart';
 import '../features/beta/beta_release_qa_engine.dart';
 import '../features/beta/release_candidate_smoke_engine.dart';
+import '../features/beta/proof_of_value_engine.dart';
+import '../features/beta/beta_report_export_engine.dart';
 import '../widgets/debug/beta_metrics_decision_card.dart';
 import '../widgets/debug/beta_release_qa_card.dart';
+import '../widgets/debug/beta_report_export_card.dart';
+import '../widgets/debug/proof_of_value_card.dart';
 import '../widgets/debug/release_candidate_smoke_card.dart';
 import '../widgets/debug/activation_dropoff_review_card.dart';
 import '../push/firebase_options.dart';
@@ -154,6 +158,20 @@ class _DeveloperDiagnosticsScreenState
               input: BetaMetricsDecisionEngine.fromBetaCounts(
                 betaCounts: _loading ? null : _betaLoopCounts,
               ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ProofOfValueCard(
+            report: ProofOfValueEngine.build(
+              input: ProofOfValueEngine.fromBetaCounts(
+                betaCounts: _loading ? null : _betaLoopCounts,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          BetaReportExportCard(
+            report: BetaReportExportEngine.build(
+              betaCounts: _loading ? null : _betaLoopCounts,
             ),
           ),
           const SizedBox(height: 24),
