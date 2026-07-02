@@ -32,6 +32,7 @@ import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
@@ -811,8 +812,11 @@ void main() {
       await pumpRecordScreen(tester);
 
       expect(find.byKey(const Key('record_first_use_prompt_block')), findsOneWidget);
+      expect(find.byKey(const Key('archive_journey_explainer_card_compact')), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.title), findsOneWidget);
-      expect(find.text(RecordFirstUsePromptCopy.body), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.body), findsNothing);
+      expect(find.text(ArchiveJourneyCopy.step1Body), findsOneWidget);
+      expect(find.text(ArchiveJourneyCopy.step3Title), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
       expect(find.textContaining('1 of 3'), findsOneWidget);

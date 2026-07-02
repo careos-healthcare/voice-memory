@@ -373,6 +373,7 @@ import '../widgets/record/record_first_use_capture_section.dart';
 import '../widgets/record/record_top_archive_promise_hero.dart';
 import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
+import '../features/onboarding/archive_journey_explainer_gates.dart';
 import '../features/onboarding/record_return_pro_state.dart';
 import '../features/onboarding/record_return_pro_store.dart';
 import '../features/memory/memory_scope.dart';
@@ -4455,6 +4456,13 @@ class _RecordScreenState extends State<RecordScreen> {
                         onTextThoughtSaved: _finishSuccessfulCapture,
                         onLogPressureMoment: () =>
                             context.push('/pressure-check-in'),
+                        showArchiveJourneyExplainer:
+                            ArchiveJourneyExplainerGates.showCompactOnRecord(
+                          loaded: _journalEntryCountReady,
+                          entryCount: _journalEntryCount,
+                          isPostSave: _isPostSaveSurface,
+                          entries: _journalEntries,
+                        ),
                       ),
                       const SizedBox(height: 12),
                     ],

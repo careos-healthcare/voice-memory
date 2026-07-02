@@ -11,6 +11,10 @@ import '../features/beta/beta_activation_loop_counts.dart';
 import '../features/beta/beta_activation_loop_tracker.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/debug/archive_beta_debug_gate.dart';
+import '../features/beta/beta_metrics_decision_engine.dart';
+import '../features/beta/beta_release_qa_engine.dart';
+import '../widgets/debug/beta_metrics_decision_card.dart';
+import '../widgets/debug/beta_release_qa_card.dart';
 import '../widgets/debug/activation_dropoff_review_card.dart';
 import '../push/firebase_options.dart';
 import '../services/app_services.dart';
@@ -132,6 +136,16 @@ class _DeveloperDiagnosticsScreenState
           _row(
             'Firebase dart-define',
             FirebaseOptionsConfig.isConfigured ? 'configured' : 'not set',
+          ),
+          const SizedBox(height: 24),
+          BetaReleaseQaCard(report: BetaReleaseQaEngine.build()),
+          const SizedBox(height: 24),
+          BetaMetricsDecisionCard(
+            report: BetaMetricsDecisionEngine.build(
+              input: BetaMetricsDecisionEngine.fromBetaCounts(
+                betaCounts: _loading ? null : _betaLoopCounts,
+              ),
+            ),
           ),
           const SizedBox(height: 24),
           ListTile(

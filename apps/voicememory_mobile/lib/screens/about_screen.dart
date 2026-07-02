@@ -8,6 +8,9 @@ import '../product/archive_positioning_copy.dart';
 import '../config/developer_settings_gate.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
+import '../features/onboarding/archive_journey_copy.dart';
+import '../features/onboarding/archive_journey_model.dart';
+import '../widgets/onboarding/archive_journey_explainer_card.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -83,6 +86,15 @@ class _AboutScreenState extends State<AboutScreen> {
           Text(
             ArchivePositioningCopy.firstPathIntro,
             style: const TextStyle(color: AppTheme.muted, height: 1.45),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            ArchiveJourneyCopy.aboutSectionLabel,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          ArchiveJourneyExplainerCard(
+            explainer: ArchiveJourneyExplainer.full(),
           ),
           const SizedBox(height: 24),
           GestureDetector(

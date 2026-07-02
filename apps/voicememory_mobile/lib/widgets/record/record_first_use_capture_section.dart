@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../features/onboarding/archive_journey_model.dart';
 import '../../services/capture_pipeline_service.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../capture_entry_actions.dart';
+import '../onboarding/archive_journey_explainer_card.dart';
 import '../security/archive_data_flow_sheet.dart';
 import 'record_first_use_prompt_block.dart';
 
@@ -17,6 +19,7 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
     this.typeCapturePrompt,
     this.onTextThoughtSaved,
     this.onLogPressureMoment,
+    this.showArchiveJourneyExplainer = false,
   });
 
   final VoidCallback onRecord;
@@ -25,6 +28,7 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
   final String? typeCapturePrompt;
   final Future<void> Function(CapturePipelineResult result)? onTextThoughtSaved;
   final VoidCallback? onLogPressureMoment;
+  final bool showArchiveJourneyExplainer;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,15 @@ class RecordFirstUseCaptureSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const RecordFirstUsePromptBlock(),
+          RecordFirstUsePromptBlock(
+            hideLeadCopy: showArchiveJourneyExplainer,
+          ),
+          if (showArchiveJourneyExplainer) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ArchiveJourneyExplainerCard(
+              explainer: ArchiveJourneyExplainer.compact(),
+            ),
+          ],
           const SizedBox(height: AppSpacing.md),
           CaptureEntryActions(
             onRecord: onRecord,

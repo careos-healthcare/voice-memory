@@ -10,7 +10,14 @@ import '../../theme/app_spacing.dart';
 
 /// Small first-use prompt inside the capture block — entry count 0 only.
 class RecordFirstUsePromptBlock extends StatelessWidget {
-  const RecordFirstUsePromptBlock({super.key});
+  const RecordFirstUsePromptBlock({
+    super.key,
+    this.hideLeadCopy = false,
+  });
+
+  /// When the archive journey explainer is visible, step 1 already covers the
+  /// lead title and body — keep examples and footer only.
+  final bool hideLeadCopy;
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +42,20 @@ class RecordFirstUsePromptBlock extends StatelessWidget {
       key: const Key('record_first_use_prompt_block'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          RecordFirstUsePromptCopy.title,
-          key: const Key('record_first_use_prompt_title'),
-          style: titleStyle,
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          RecordFirstUsePromptCopy.body,
-          key: const Key('record_first_use_prompt_body'),
-          style: bodyStyle,
-        ),
-        const SizedBox(height: AppSpacing.sm),
+        if (!hideLeadCopy) ...[
+          Text(
+            RecordFirstUsePromptCopy.title,
+            key: const Key('record_first_use_prompt_title'),
+            style: titleStyle,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            RecordFirstUsePromptCopy.body,
+            key: const Key('record_first_use_prompt_body'),
+            style: bodyStyle,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
         Text(
           RecordFirstUsePromptCopy.examplesHeading,
           key: const Key('record_first_use_prompt_examples_heading'),

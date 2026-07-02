@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
+import '../../features/onboarding/archive_journey_explainer_gates.dart';
+import '../../features/onboarding/archive_journey_model.dart';
+import '../../widgets/onboarding/archive_journey_explainer_card.dart';
 import 'patterns_empty_archive_preview_card.dart';
 
 /// Zero-entry Patterns screen — mind-map preview and two capture actions.
@@ -10,10 +13,12 @@ class PatternsEmptyView extends StatelessWidget {
     super.key,
     this.fillViewport = false,
     this.footer = const [],
+    this.showArchiveJourneyExplainer = true,
   });
 
   final bool fillViewport;
   final List<Widget> footer;
+  final bool showArchiveJourneyExplainer;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,15 @@ class PatternsEmptyView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const PatternsEmptyArchivePreviewCard(),
+        if (showArchiveJourneyExplainer &&
+            ArchiveJourneyExplainerGates.showFullOnPatternsEmpty(
+              hasFirstProof: false,
+            )) ...[
+          SizedBox(height: gap),
+          ArchiveJourneyExplainerCard(
+            explainer: ArchiveJourneyExplainer.full(),
+          ),
+        ],
         if (footer.isNotEmpty) ...[
           SizedBox(height: gap),
           ...footer,
