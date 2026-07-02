@@ -124,7 +124,9 @@ abstract final class PositivePatternEngine {
 
     return PositivePatternResult(
       title: PositivePatternCopy.title,
-      body: PositivePatternCopy.body,
+      body: PositivePatternCopy.bodyWithPhrase(
+        evidencePhrases.first.replaceAll('"', '').trim(),
+      ),
       evidencePhrases: evidencePhrases,
     );
   }

@@ -2,23 +2,23 @@
 abstract final class PatternChangedCopy {
   PatternChangedCopy._();
 
-  static const softerTitle = 'What changed: softer';
+  static const softerTitle = 'Softer this time';
 
   static const softerBody =
-      'ArchiveMe noticed this showed up with less urgency than before. Pro keeps the timeline so '
-      'ArchiveMe can compare returns over time.';
+      'ArchiveMe noticed this return showed up with less urgency than earlier '
+      'returns. Pro keeps the timeline so ArchiveMe can compare returns over time.';
 
-  static const changedTitle = 'What changed this time';
+  static const changedTitle = 'Different this time';
 
   static const changedBody =
-      'ArchiveMe noticed this did not show up the same way as before. '
+      'ArchiveMe noticed this did not show up the same way as earlier returns. '
       'Pro keeps tracking what changed over time.';
 
-  static const strongerTitle = 'What changed: stronger';
+  static const strongerTitle = 'Stronger this time';
 
   static const strongerBody =
-      'ArchiveMe noticed this showed up with more intensity than before. Pro keeps the evidence '
-      'history as the trail grows.';
+      'ArchiveMe noticed this return showed up with more intensity than earlier '
+      'returns. Pro keeps the evidence history as the trail grows.';
 
   static const recordIfReturnsCta = 'Record when it returns';
 

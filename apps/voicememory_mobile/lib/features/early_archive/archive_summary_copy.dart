@@ -26,6 +26,10 @@ abstract final class ArchiveSummaryCopy {
       'ArchiveMe has not noticed repeated helpful evidence in your words yet.';
   static const whatHelpsPrefix = 'ArchiveMe noticed this in your words before:';
 
+  static String whatHelpsWithPhrase(String phrase) =>
+      'A helpful action appeared: "$phrase". ArchiveMe is watching whether this '
+      'shows up again.';
+
   static const recordNextLabel = 'Record next';
   static const recordNextCta = 'Record the next piece';
 

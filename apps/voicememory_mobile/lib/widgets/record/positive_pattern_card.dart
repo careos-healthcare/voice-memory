@@ -50,9 +50,9 @@ class PositivePatternCard extends StatelessWidget {
             key: const Key('positive_pattern_body'),
             style: bodyStyle,
           ),
-          if (result.evidencePhrases.isNotEmpty) ...[
+          if (result.evidencePhrases.length > 1) ...[
             const SizedBox(height: AppSpacing.sm),
-            for (final phrase in result.evidencePhrases)
+            for (final phrase in result.evidencePhrases.skip(1))
               Padding(
                 key: Key('positive_pattern_evidence_$phrase'),
                 padding: const EdgeInsets.only(bottom: AppSpacing.xs),

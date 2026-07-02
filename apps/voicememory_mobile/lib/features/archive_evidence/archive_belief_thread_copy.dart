@@ -7,7 +7,7 @@ abstract class ArchiveBeliefThreadCopy {
   static const String currentBeliefLabel = 'What this may be pointing to';
   static const String evidenceLabel = 'Evidence';
   static const String whatChangedLabel = 'What changed';
-  static const String whatToTestLabel = 'What to test';
+  static const String whatToTestLabel = 'What ArchiveMe is watching next';
 
   static const String timelineTitle = 'This thread over time';
   static const String timelineFirstAppeared = 'First appeared';
@@ -71,7 +71,7 @@ abstract class ArchiveBeliefThreadCopy {
   static const String weeklyTitle = "This week, here's what changed.";
   static const String weeklyWhatKeptReturning = 'What kept returning';
   static const String weeklyWhatChanged = 'What changed';
-  static const String weeklyWhatToTestNext = 'What to test next';
+  static const String weeklyWhatToTestNext = 'What ArchiveMe is watching next';
   static const String weeklyProContinuity =
       'Pro keeps weekly archive reviews so ArchiveMe can compare what repeated '
       'and changed over time.';

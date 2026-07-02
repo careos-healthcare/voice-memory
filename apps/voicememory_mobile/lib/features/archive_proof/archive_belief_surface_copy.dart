@@ -15,7 +15,7 @@ abstract final class ArchiveBeliefSurfaceCopy {
 
   static const recordNextCta = 'Record this next';
 
-  static const previewBadge = 'Preview — not a conclusion yet';
+  static const previewBadge = 'Preview — evidence, not advice';
 
   static const beliefFallback =
       'Similar evidence may be forming across these moments.';

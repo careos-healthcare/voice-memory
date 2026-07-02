@@ -10,7 +10,7 @@ abstract final class FirstWeekLoopCopy {
   static const label = 'First week loop';
 
   static const footer =
-      'Keep recording when it returns — that is how ArchiveMe sees change.';
+      'ArchiveMe is watching whether this changes when it comes back.';
 
   static const recordCta = 'Record when it happens';
 

@@ -8,10 +8,10 @@ abstract final class WeeklyArchiveWeekReviewCopy {
       'Free shows what repeated this week. Pro keeps weekly reviews to compare '
       'stronger, softer, and what changed over time.';
 
-  static const repeatedLabel = 'Repeated';
+  static const repeatedLabel = 'What repeated this week';
   static const repeatedFallback = 'No clear repeat yet.';
 
-  static const changedLabel = 'What changed';
+  static const changedLabel = 'What changed this week';
   static const changedLouder = 'Stronger this week.';
   static const changedSame = 'About the same this week.';
   static const changedSofter = 'Softer this week.';
@@ -21,7 +21,7 @@ abstract final class WeeklyArchiveWeekReviewCopy {
   static const helpedPrefix = 'ArchiveMe noticed this in your words before:';
   static const helpedFallback = 'No repeated helpful evidence in your words yet.';
 
-  static const nextToWatchLabel = 'Still watching';
+  static const nextToWatchLabel = 'What ArchiveMe is watching next';
   static const nextToWatchFallback = 'Record the next real moment.';
 
   static const recordCta = "Record next week's evidence";

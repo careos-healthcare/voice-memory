@@ -12,7 +12,7 @@ abstract final class ArchiveThoughtMapCopy {
   static const behaviourLabel = 'Behaviour';
   static const reliefLabel = 'Relief';
   static const costLabel = 'Cost';
-  static const alternativeLabel = 'Alternative / next test';
+  static const alternativeLabel = 'What ArchiveMe is watching next';
 
   static const connectorBecause = 'because';
   static const connectorSo = 'so';

@@ -5,7 +5,10 @@ abstract final class PrivateArchiveReportCopy {
   static const title = 'My ArchiveMe report';
 
   static const intro =
-      'A private evidence summary from your own words — what repeated and what changed.';
+      'What your archive noticed — a private evidence summary from your own words.';
+
+  static const evidenceNotAdviceLine =
+      'This is evidence from your words — not advice.';
 
   static const whatKeepsRepeatingHeading = 'What keeps repeating';
 
