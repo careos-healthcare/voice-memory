@@ -53,6 +53,8 @@ abstract final class BetaReleaseQaEngine {
       rows: rows,
       manualChecklistTitle: BetaReleaseQaCopy.manualChecklistTitle,
       manualChecklistSteps: BetaReleaseQaCopy.manualChecklistSteps,
+      coreValueQuestionTitle: BetaReleaseQaCopy.coreValueQuestionTitle,
+      coreValueQuestion: BetaReleaseQaCopy.coreValueQuestion,
     );
   }
 

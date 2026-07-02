@@ -7,6 +7,9 @@ import 'package:voicememory_mobile/features/onboarding/archive_journey_explainer
 import 'package:voicememory_mobile/features/onboarding/archive_journey_model.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
@@ -340,6 +343,25 @@ void main() {
         contains('Patterns appear after ArchiveMe has something to compare'),
       );
       expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
+    });
+    test('compact helper avoids duplicating ten seconds from first-use footer', () {
+      expect(
+        ArchiveJourneyCopy.compactHelper.toLowerCase(),
+        isNot(contains('ten seconds')),
+      );
+      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
+    });
+
+    test('post-save handoff tells user to return when similar happens', () {
+      expect(
+        PostSaveReturnHandoffCopy.afterFirstSaveTitle,
+        'Come back when something similar happens',
+      );
+      expect(
+        EarlyRepeatProgressCopy.twoRelatedBody,
+        'One more related moment unlocks your first proof.',
+      );
+      expect(PostSaveReturnCheckAnswerCopy.footer, 'One tap is enough.');
     });
   });
 

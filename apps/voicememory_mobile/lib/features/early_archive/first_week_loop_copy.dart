@@ -5,13 +5,12 @@ abstract final class FirstWeekLoopCopy {
   static const title = 'Record when this comes back';
 
   static const bodyFallback =
-      'Next time this comes back, record a short moment. ArchiveMe compares it '
-      'with your first proof and tracks stronger, softer, or about the same.';
+      'Next time it returns, record a short moment. ArchiveMe compares it with your first proof.';
 
   static const label = 'First week loop';
 
   static const footer =
-      'ArchiveMe is watching whether this changes when it comes back.';
+      'The evidence timeline grows as ArchiveMe compares returns over time.';
 
   static const recordCta = 'Record when it happens';
 

@@ -40,15 +40,20 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     'perfectionism',
     'overthinking',
     'fear',
+    'people pleasing',
+    'people-pleasing',
   };
 
   static const _concreteActionPatterns = [
     'said yes again',
     'said yes when',
     'said yes',
+    'still agreed',
     'checked again',
     'checking again',
+    'checked the message again',
     'checked the message',
+    'checked one more time',
     'checked one more',
     'went back and checked',
     'went back',
@@ -68,6 +73,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
   ];
 
   static const _actionVerbHints = {
+    'agreed',
     'asked',
     'avoided',
     'back',

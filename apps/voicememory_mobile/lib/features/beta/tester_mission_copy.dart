@@ -11,7 +11,7 @@ abstract final class TesterMissionCopy {
       'Come back when something similar happens. Ten seconds is enough.';
 
   static const entry1Body =
-      'Record moment 2 when something similar happens. Short is fine.';
+      'Come back when something similar happens. Short is fine.';
   static const entry1StepLabel = 'Step 2 of 3';
   static const entry1Footer =
       'Similar moments let ArchiveMe compare.';
@@ -28,7 +28,7 @@ abstract final class TesterMissionCopy {
   static const entry2UnrelatedFooter = 'No need to force a pattern.';
 
   static const entry3ConfirmedBody =
-      'First proof reached. Record when this comes back so ArchiveMe can show whether it changes.';
+      'First proof reached. Next time it returns, record a short moment so ArchiveMe can compare change.';
   static const entry3ConfirmedStepLabel = 'First proof reached';
   static const entry3ConfirmedFooter =
       'This is the part I need feedback on.';

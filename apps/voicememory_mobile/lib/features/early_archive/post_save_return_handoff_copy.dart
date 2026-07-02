@@ -13,7 +13,7 @@ abstract final class PostSaveReturnHandoffCopy {
   static const afterSecondSaveRelatedTitle = 'One more unlocks first proof';
 
   static const afterSecondSaveRelatedBodyFallback =
-      'Record one more related moment. ArchiveMe can show the repeat back to you.';
+      'One more related moment unlocks first proof.';
 
   static const afterSecondSaveRelatedFooter =
       '2 of 3 · Ten seconds is enough.';

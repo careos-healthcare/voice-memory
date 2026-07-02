@@ -174,6 +174,19 @@ void main() {
           findsOneWidget,
         );
       }
+      expect(
+        find.text(BetaReleaseQaCopy.coreValueQuestionTitle),
+        findsOneWidget,
+      );
+      expect(find.text(BetaReleaseQaCopy.coreValueQuestion), findsOneWidget);
+    });
+
+    test('includes core beta value question for tester feedback', () {
+      final report = BetaReleaseQaEngine.build();
+      expect(
+        report.coreValueQuestion,
+        BetaReleaseQaCopy.coreValueQuestion,
+      );
     });
 
     testWidgets('row statuses render without secrets', (tester) async {

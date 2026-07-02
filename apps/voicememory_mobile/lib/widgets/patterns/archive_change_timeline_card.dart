@@ -23,8 +23,8 @@ class ArchiveChangeTimelineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textSecondary,
-      height: 1.4,
-      fontSize: 14,
+      height: 1.35,
+      fontSize: 13,
     );
     final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textPrimary,

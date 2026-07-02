@@ -150,7 +150,7 @@ void main() {
         compactAtEntryZero: false,
       );
       expect(mission.body.toLowerCase(), contains('similar'));
-      expect(mission.body.toLowerCase(), contains('moment 2'));
+      expect(mission.body.toLowerCase(), contains('come back'));
     });
 
     test('entry 2 related says one more unlocks first proof', () {

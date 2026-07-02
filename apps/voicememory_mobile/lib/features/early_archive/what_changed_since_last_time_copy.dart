@@ -9,7 +9,7 @@ abstract final class WhatChangedSinceLastTimeCopy {
   static const evidenceLabel = 'Compared evidence';
 
   static const footer =
-      'ArchiveMe compares returns over time — not one answer.';
+      'ArchiveMe gets more useful as it compares returns over time.';
 
   static const softerSummary = 'This looked softer than your first proof.';
 

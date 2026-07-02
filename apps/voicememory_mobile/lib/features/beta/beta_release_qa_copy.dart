@@ -62,4 +62,9 @@ abstract final class BetaReleaseQaCopy {
     'Open Patterns',
     'Confirm belief, changed card, helpful action, and evidence timeline are visible when eligible',
   ];
+
+  static const coreValueQuestionTitle = 'Core beta value question';
+
+  static const coreValueQuestion =
+      'Did ArchiveMe show something repeating in your own words that was worth tracking?';
 }

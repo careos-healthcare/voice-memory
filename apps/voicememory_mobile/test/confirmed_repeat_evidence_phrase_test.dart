@@ -71,6 +71,42 @@ List<JournalEntry> _threeCheckingUncertaintyEntries() => [
       ),
     ];
 
+List<JournalEntry> _threeCheckingMessageAgainEntries() => [
+      _entry(
+        id: 'e1',
+        transcript: 'I checked the message again',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript: 'I went back and checked again',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript: 'I checked one more time',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _threeSaidYesConcreteEntries() => [
+      _entry(
+        id: 'e1',
+        transcript: 'I said yes again',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript: 'I had no capacity but said yes',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript: 'I still agreed when I said yes',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
 List<JournalEntry> _threeCheckingAgainEntries() => [
       _entry(
         id: 'e1',
@@ -214,6 +250,45 @@ void main() {
       );
       expect(
         result.phrases.any((p) => p.toLowerCase() == 'uncertainty'),
+        isFalse,
+      );
+    });
+
+    test('concrete checking fixture prefers checked again not control or anxiety',
+        () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeCheckingMessageAgainEntries(),
+      );
+
+      expect(result.isStrong, isTrue);
+      expect(
+        result.phrases.any((p) => p.toLowerCase().contains('checked')),
+        isTrue,
+      );
+      for (final banned in ['control', 'anxiety', 'uncertainty']) {
+        expect(
+          result.phrases.any((phrase) => phrase.toLowerCase().contains(banned)),
+          isFalse,
+        );
+      }
+    });
+
+    test('concrete saying-yes fixture prefers said yes not people pleasing', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeSaidYesConcreteEntries(),
+      );
+
+      expect(result.isStrong, isTrue);
+      expect(
+        result.phrases.any(
+          (p) =>
+              p.toLowerCase().contains('said yes') ||
+              p.toLowerCase().contains('still agreed'),
+        ),
+        isTrue,
+      );
+      expect(
+        result.phrases.any((p) => p.toLowerCase().contains('people pleasing')),
         isFalse,
       );
     });

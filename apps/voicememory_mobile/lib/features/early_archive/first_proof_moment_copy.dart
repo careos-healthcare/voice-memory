@@ -15,7 +15,7 @@ abstract final class FirstProofMomentCopy {
   static const evidenceLabel = 'Evidence from your words';
 
   static const whyLine =
-      'Three moments — your first proof of a repeat. Not chat history — an evidence trail.';
+      'Three related moments — your first proof of a repeat in your own words.';
 
   static const footer =
       'ArchiveMe is watching whether this changes when it shows up again in your words.';

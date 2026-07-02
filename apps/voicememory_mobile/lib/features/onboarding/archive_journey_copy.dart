@@ -32,8 +32,7 @@ abstract final class ArchiveJourneyCopy {
   static const compactStep2Title = 'Return';
   static const compactStep3Title = 'First proof';
 
-  static const compactHelper =
-      'Ten seconds is enough. Three moments unlock first proof.';
+  static const compactHelper = 'Three related moments unlock first proof.';
 
   static const aboutSectionLabel = 'Archive journey';
 }

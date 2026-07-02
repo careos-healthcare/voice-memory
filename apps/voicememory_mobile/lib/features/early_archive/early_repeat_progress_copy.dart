@@ -4,7 +4,7 @@ abstract final class EarlyRepeatProgressCopy {
 
   static const oneMomentTitle = 'One moment saved';
   static const oneMomentBody =
-      'Record moment 2 when something similar happens. Short is fine.';
+      'Come back when something similar happens. Short is fine.';
   static const oneMomentProgress = '1 of 3';
 
   static const twoRelatedTitle = 'Two similar moments';

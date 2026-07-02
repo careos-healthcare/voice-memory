@@ -5,8 +5,7 @@ abstract final class ArchiveChangeTimelineCopy {
   static const title = 'Evidence timeline';
 
   static const subtitle =
-      'ArchiveMe tracks what repeated, what changed, what helped, and what it '
-      'is still watching.';
+      'What repeated, what changed, and what ArchiveMe is still watching.';
 
   static const firstSeenLabel = 'First seen';
 
