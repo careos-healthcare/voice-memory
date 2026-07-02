@@ -14,8 +14,10 @@ import '../features/beta/core_value_feedback_store.dart';
 import '../features/debug/archive_beta_debug_gate.dart';
 import '../features/beta/beta_metrics_decision_engine.dart';
 import '../features/beta/beta_release_qa_engine.dart';
+import '../features/beta/release_candidate_smoke_engine.dart';
 import '../widgets/debug/beta_metrics_decision_card.dart';
 import '../widgets/debug/beta_release_qa_card.dart';
+import '../widgets/debug/release_candidate_smoke_card.dart';
 import '../widgets/debug/activation_dropoff_review_card.dart';
 import '../push/firebase_options.dart';
 import '../services/app_services.dart';
@@ -142,6 +144,10 @@ class _DeveloperDiagnosticsScreenState
           ),
           const SizedBox(height: 24),
           BetaReleaseQaCard(report: BetaReleaseQaEngine.build()),
+          const SizedBox(height: 24),
+          ReleaseCandidateSmokeCard(
+            report: ReleaseCandidateSmokeEngine.build(),
+          ),
           const SizedBox(height: 24),
           BetaMetricsDecisionCard(
             report: BetaMetricsDecisionEngine.build(
