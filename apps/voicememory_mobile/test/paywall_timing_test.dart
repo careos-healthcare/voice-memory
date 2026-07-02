@@ -431,7 +431,7 @@ void main() {
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         containsAll([
-          'Full evidence history',
+          'Full evidence timeline over time',
           'Pattern change tracking',
           'Weekly archive reviews',
           'Private archive reports',

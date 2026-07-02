@@ -3,6 +3,7 @@ import '../early_archive/archive_summary_copy.dart';
 import '../early_archive/confirmed_repeat_thought_map_copy.dart';
 import '../early_archive/first_proof_moment_copy.dart';
 import '../early_archive/first_week_loop_copy.dart';
+import '../early_archive/archive_change_timeline_copy.dart';
 import '../early_archive/helpful_action_appeared_copy.dart';
 import '../early_archive/positive_pattern_copy.dart';
 import '../early_archive/positive_reinforcement_copy.dart';
@@ -129,6 +130,16 @@ abstract final class ProofSurfaceAdviceGuard {
         HelpfulActionAppearedCopy.evidenceLabel,
         HelpfulActionAppearedCopy.chipLabel,
         HelpfulActionAppearedCopy.bodyWithPhrase('walked outside'),
+        ArchiveChangeTimelineCopy.title,
+        ArchiveChangeTimelineCopy.subtitle,
+        ArchiveChangeTimelineCopy.firstSeenBody,
+        ArchiveChangeTimelineCopy.repeatedBody,
+        ArchiveChangeTimelineCopy.lookedSofterBody,
+        ArchiveChangeTimelineCopy.lookedStrongerBody,
+        ArchiveChangeTimelineCopy.aboutTheSameBody,
+        ArchiveChangeTimelineCopy.changedThisTimeBody,
+        ArchiveChangeTimelineCopy.helpfulActionAppearedBody,
+        ArchiveChangeTimelineCopy.stillWatchingBody,
         PositiveReinforcementCopy.title,
         PositiveReinforcementCopy.body,
         PositiveReinforcementCopy.completionTitle,

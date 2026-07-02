@@ -13,6 +13,7 @@ class ArchiveProofSurfaceLayout {
     this.helpfulActionAppearedVisible = false,
     this.archiveSummaryVisible = false,
     this.archiveCurrentBeliefVisible = false,
+    this.archiveChangeTimelineVisible = false,
   });
 
   final bool confirmedRepeatCardVisible;
@@ -27,6 +28,7 @@ class ArchiveProofSurfaceLayout {
   final bool helpfulActionAppearedVisible;
   final bool archiveSummaryVisible;
   final bool archiveCurrentBeliefVisible;
+  final bool archiveChangeTimelineVisible;
 
   /// Current-belief surface replaces Archive Summary as the main overview.
   bool get effectiveArchiveSummaryVisible =>

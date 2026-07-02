@@ -33,7 +33,7 @@ abstract class ArchiveBeliefThreadCopy {
       'words — not conversation history — so ArchiveMe can show whether patterns '
       'get stronger, softer, or change over time.';
   static const List<String> fullArchiveHistoryBullets = [
-    'Full evidence history',
+    'Full evidence timeline over time',
     'Pattern change tracking',
     'Weekly archive reviews',
     'Private archive reports',
