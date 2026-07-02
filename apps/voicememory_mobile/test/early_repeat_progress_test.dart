@@ -157,6 +157,8 @@ void main() {
       expect(result.title, EarlyRepeatProgressCopy.twoUnrelatedTitle);
       expect(result.progressLabel, EarlyRepeatProgressCopy.twoUnrelatedProgress);
       expect(result.claimsRepeatForming, isFalse);
+      expect(result.body.toLowerCase(), contains('okay'));
+      expect(result.body.toLowerCase(), isNot(contains('unlocks')));
       expect(
         result.nextMomentCue.label,
         EarlyRepeatProgressCopy.twoUnrelatedCueLabel,
@@ -201,6 +203,24 @@ void main() {
         final words = quoted.group(1)!.split(RegExp(r'\s+')).length;
         expect(words, lessThanOrEqualTo(6));
       }
+    });
+
+    test('related progress body and cue do not duplicate unlock copy', () {
+      final result = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry(
+            '1',
+            'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+          _entry(
+            '2',
+            'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        ],
+      );
+
+      expect(result!.body, isNot(equals(result.nextMomentCue.label)));
+      expect(result.nextMomentCue.body, isNot(equals(result.body)));
     });
 
     test('entryCount 3 returns null', () {

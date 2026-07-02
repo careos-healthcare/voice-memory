@@ -15,7 +15,7 @@ abstract class ConsumerUiCopy {
   static const String archiveLoopPromise =
       'Record one moment. Test whether the loop repeats.';
   static const String archiveNotChatLine =
-      'Not a chat. A memory for your patterns.';
+      'Not a chat history. An evidence trail of what repeats.';
   static const String archivePatternOverTimeLine =
       'See what changed across days and weeks.';
   static const String archiveMomentsMatterLine =
@@ -27,11 +27,11 @@ abstract class ConsumerUiCopy {
   static const String archiveTimelineSubtitle =
       'See how this has changed over time.';
   static const String patternsEarlyStateBody =
-      'Record short moments. ArchiveMe watches what repeats.';
+      'Record short moments. ArchiveMe tracks repeated evidence from your words.';
   static const String onboardingPositioningHeadline =
-      'Build a private mind map of what keeps repeating';
+      'Build a private evidence archive of what keeps repeating';
   static const String onboardingPositioningBody =
-      'Save real moments. ArchiveMe connects them into patterns, changes, and things to watch.';
+      'Save real moments in your words. ArchiveMe connects repeated evidence into patterns, changes, and things to watch.';
 
   // ——— Launch onboarding (promise + 3 steps) ———
   static const String onboardingStep1Title = 'Record one small moment';

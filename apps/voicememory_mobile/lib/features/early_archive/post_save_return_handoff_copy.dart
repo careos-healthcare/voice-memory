@@ -2,32 +2,32 @@
 abstract final class PostSaveReturnHandoffCopy {
   PostSaveReturnHandoffCopy._();
 
-  static const afterFirstSaveTitle = 'Come back when this happens again';
+  static const afterFirstSaveTitle = 'Come back when something similar happens';
 
   static const afterFirstSaveBodyFallback =
-      'Next time the same kind of moment happens again, record it. That second moment gives ArchiveMe something to compare.';
+      'Record the second moment when something similar happens. ArchiveMe needs something to compare.';
 
   static const afterFirstSaveFooter =
-      'Short is fine — ten seconds is enough.';
+      '1 of 3 · Ten seconds is enough.';
 
-  static const afterSecondSaveRelatedTitle = 'One more creates the first proof';
+  static const afterSecondSaveRelatedTitle = 'One more unlocks first proof';
 
   static const afterSecondSaveRelatedBodyFallback =
-      'One more related moment lets ArchiveMe check whether this is really repeating.';
+      'Record one more related moment. ArchiveMe can show the repeat back to you.';
 
   static const afterSecondSaveRelatedFooter =
-      'The third moment is where ArchiveMe can show the pattern back to you.';
+      '2 of 3 · Ten seconds is enough.';
 
   static const afterSecondSaveUnrelatedTitle = 'Keep recording real moments';
 
   static const afterSecondSaveUnrelatedBody =
-      'These two moments do not clearly match yet. Record the next real moment and ArchiveMe will keep looking.';
+      'No clear match yet — that is okay. Record the next real moment and ArchiveMe will keep looking.';
 
   static const afterSecondSaveUnrelatedFooter = 'No need to force a pattern.';
 
   static String afterFirstSaveBodyWithPhrase(String phrase) =>
-      'Next time something like “$phrase” happens, record that moment. That second moment gives ArchiveMe something to compare.';
+      'Come back when something like “$phrase” happens and record it.';
 
   static String afterSecondSaveRelatedBodyWithPhrase(String phrase) =>
-      'One more moment like “$phrase” lets ArchiveMe check whether this is really repeating.';
+      'Record one more moment like “$phrase”. That unlocks your first proof.';
 }

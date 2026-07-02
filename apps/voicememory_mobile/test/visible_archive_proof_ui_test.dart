@@ -16,7 +16,7 @@ void main() {
     test('first-run promise uses three scannable steps', () {
       expect(VisibleArchiveProofCopy.firstRunPromiseSteps, [
         'Record short moments',
-        'ArchiveMe spots what repeats',
+        'ArchiveMe tracks what repeats in your words',
         'See whether it changes',
       ]);
     });

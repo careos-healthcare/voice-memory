@@ -260,6 +260,21 @@ void main() {
       );
     });
 
+    test('shows after return check answered when no other surfaces', () {
+      expect(
+        PaywallTimingGates.showPostProofProBridge(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          hasArchiveProof: false,
+          viewingConfirmedRepeatOrTimeline: false,
+          hasChangeOverTimeProof: false,
+          hasReturnCheckAnswered: true,
+        ),
+        isTrue,
+      );
+    });
+
     test('respects resolved and Pro user flags', () {
       expect(
         PaywallTimingGates.showPostProofProBridge(
@@ -408,17 +423,21 @@ void main() {
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        contains('first repeat for free'),
+        allOf(
+          contains('Your first repeat is free'),
+          contains('not conversation history'),
+        ),
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         containsAll([
-          'Full archive history',
-          'Weekly archive reviews',
+          'Full evidence history',
           'Pattern change tracking',
+          'Weekly archive reviews',
           'Private archive reports',
         ]),
       );
+      expect(ArchiveBeliefThreadCopy.whyPro, contains('evidence trail'));
       expect(ArchiveBeliefThreadCopy.proBridgeCta, 'See Pro');
       expect(ArchiveBeliefThreadCopy.proBridgeSecondary, 'Not now');
     });
@@ -428,6 +447,7 @@ void main() {
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
+        ArchiveBeliefThreadCopy.whyPro,
         ArchiveBeliefThreadCopy.proBridgeCta,
         ArchiveBeliefThreadCopy.proBridgeSecondary,
       ].join(' ').toLowerCase();
@@ -465,6 +485,7 @@ void main() {
       for (final bullet in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) {
         expect(find.text(bullet), findsOneWidget);
       }
+      expect(find.text(ArchiveBeliefThreadCopy.whyPro), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.proBridgeSecondary), findsOneWidget);
       expect(
@@ -521,6 +542,35 @@ void main() {
           hasChangeOverTimeProof: true,
         ),
         isTrue,
+      );
+    });
+
+    test('return check answered qualifies Pro boundary after entry 3', () {
+      expect(
+        PaywallTimingGates.showFullArchiveHistoryProBoundary(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          isPostSave: false,
+          hasConfirmedRepeat: false,
+          hasArchiveSummary: false,
+          hasWeeklyArchiveReview: false,
+          hasReturnCheckAnswered: true,
+        ),
+        isTrue,
+      );
+      expect(
+        PaywallTimingGates.showFullArchiveHistoryProBoundary(
+          entryCount: 2,
+          resolved: false,
+          isPro: false,
+          isPostSave: false,
+          hasConfirmedRepeat: false,
+          hasArchiveSummary: false,
+          hasWeeklyArchiveReview: false,
+          hasReturnCheckAnswered: true,
+        ),
+        isFalse,
       );
     });
   });

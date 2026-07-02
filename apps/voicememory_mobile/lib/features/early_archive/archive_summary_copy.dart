@@ -2,20 +2,29 @@
 abstract final class ArchiveSummaryCopy {
   ArchiveSummaryCopy._();
 
-  static const title = 'Your archive so far';
+  static const title = 'Repeated evidence in your archive';
 
-  static const keepsRepeatingLabel = 'Keeps repeating';
+  static const promise =
+      'ArchiveMe tracks repeated evidence from your own words — not conversation history.';
+
+  static const keepsRepeatingLabel = 'Showed up again';
   static const keepsRepeatingFallback =
-      'ArchiveMe is still watching for a clear repeat.';
+      'Your archive is still collecting repeated evidence.';
+
+  static const keepsRepeatingForming =
+      'This showed up across three moments. ArchiveMe still needs clearer matching words in your archive.';
+
+  static String keepsRepeatingWithPhrase(String phrase) =>
+      'ArchiveMe found “$phrase” across your first three moments — evidence from your words.';
 
   static const loopFormingLabel = 'Loop forming';
-  static const changingLabel = 'Changing';
+  static const changingLabel = 'What changed';
   static const changingFallback =
-      'Record the next time it happens to see whether it changes.';
-  static const whatHelpsLabel = 'What helps';
+      'ArchiveMe is watching whether this gets stronger, softer, or about the same since your first proof.';
+  static const whatHelpsLabel = 'Appeared to help';
   static const whatHelpsFallback =
-      'ArchiveMe has not found a repeated helpful action yet.';
-  static const whatHelpsPrefix = 'ArchiveMe noticed this helped before:';
+      'ArchiveMe has not noticed repeated helpful evidence in your words yet.';
+  static const whatHelpsPrefix = 'ArchiveMe noticed this in your words before:';
 
   static const recordNextLabel = 'Record next';
   static const recordNextCta = 'Record the next piece';
@@ -27,9 +36,10 @@ abstract final class ArchiveSummaryCopy {
   static const recordNextActionUnknown = 'Record what you did next.';
   static const recordNextResultUnknown =
       'Record whether it helped, cost you, or changed.';
-  static const recordNextChangeUnknown = 'Record the next time it happens.';
-  static const recordNextPositiveMissing = 'Record what helped today.';
+  static const recordNextChangeUnknown =
+      'Record the next return to see what changed.';
+  static const recordNextPositiveMissing = 'Record what showed up as helpful in your words.';
 
   static const recordNextChangeGuided =
-      'What happened when this came up again?';
+      'What changed when this came up again?';
 }

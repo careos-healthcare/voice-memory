@@ -16,7 +16,7 @@ abstract final class EarlyArchiveInsightQualityCopy {
   static const softeningFallback = 'One later entry sounded less urgent.';
 
   static const helpfulActionFallback =
-      'You recorded something that may have helped.';
+      'You mentioned something that may have helped.';
 
   static const timelineSubtitleFallback =
       'ArchiveMe is tracking what repeats, what starts it, and what may help '
@@ -26,10 +26,9 @@ abstract final class EarlyArchiveInsightQualityCopy {
       'The same loop came back, but your archive noticed it may have been softer.';
 
   static const triggerPayoffBodyFallback =
-      'You recorded what happened right before it. That gives ArchiveMe '
+      'You mentioned what happened right before it. That gives ArchiveMe '
       'stronger evidence for what starts this loop.';
 
   static const helpfulActionPayoffBodyFallback =
-      'You recorded something that may have softened the loop. Your archive '
-      'can now watch whether it helps again.';
+      'You mentioned something that may have softened the loop. Your archive is watching whether it shows up again.';
 }

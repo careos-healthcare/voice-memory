@@ -4,7 +4,11 @@ import '../archive_evidence/archive_belief_thread_engine.dart';
 import '../archive_evidence/archive_belief_thread_model.dart';
 import '../archive_evidence/archive_evidence_heuristics.dart';
 import '../archive_evidence/archive_intelligence_tier.dart';
+import '../early_archive/early_first_signal_engine.dart';
+import '../repeat_return_check/repeat_return_check_change_proof.dart';
+import '../repeat_return_check/repeat_return_check_models.dart';
 import 'archive_belief_surface_copy.dart';
+import 'archive_current_belief_engine.dart';
 import 'archive_demo_preview_model.dart';
 import 'archive_demo_preview_resolver.dart';
 import 'archive_display_copy_guard.dart';
@@ -18,9 +22,12 @@ class ArchiveBeliefSurface {
     required this.headline,
     required this.beliefSummary,
     required this.evidenceSummary,
+    this.evidencePhrases = const [],
     this.whatChangedSummary,
+    this.watchingNextLine,
     this.confidenceLabel,
     this.recordNextCta,
+    this.isPrimaryAfterFirstProof = false,
     this.thread,
     this.preview,
   });
@@ -30,9 +37,12 @@ class ArchiveBeliefSurface {
   final String headline;
   final String beliefSummary;
   final String evidenceSummary;
+  final List<String> evidencePhrases;
   final String? whatChangedSummary;
+  final String? watchingNextLine;
   final String? confidenceLabel;
   final String? recordNextCta;
+  final bool isPrimaryAfterFirstProof;
   final ArchiveBeliefThread? thread;
   final ArchiveDemoPreview? preview;
 
@@ -70,9 +80,28 @@ class ArchiveBeliefSurfaceSource {
   ArchiveBeliefSurface resolve(
     List<JournalEntry> entries, {
     ArchiveIntelligenceTier tier = ArchiveIntelligenceTier.freeMedium,
+    EarlyFirstSignalModel? confirmedRepeat,
+    RepeatReturnCheckChangeProof? changeProof,
+    List<RepeatReturnCheckRecord> returnChecks = const [],
+    bool triggerCapturedMilestone = false,
+    bool helpfulActionCapturedMilestone = false,
+    bool viewingConfirmedRepeatOrTimeline = false,
   }) {
     if (entries.isEmpty) {
       return ArchiveBeliefSurface.emptyStaticPreview;
+    }
+
+    final currentBelief = ArchiveCurrentBeliefEngine.build(
+      entries: entries,
+      confirmedRepeat: confirmedRepeat,
+      changeProof: changeProof,
+      returnChecks: returnChecks,
+      triggerCapturedMilestone: triggerCapturedMilestone,
+      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
+    );
+    if (currentBelief != null) {
+      return currentBelief;
     }
 
     final thread = _beliefEngine.build(entries, tier: tier);

@@ -5,7 +5,7 @@ abstract final class PrivateArchiveReportCopy {
   static const title = 'My ArchiveMe report';
 
   static const intro =
-      'A private copy of what ArchiveMe has noticed so far — for you to keep.';
+      'A private evidence summary from your own words — what repeated and what changed.';
 
   static const whatKeepsRepeatingHeading = 'What keeps repeating';
 
@@ -13,18 +13,19 @@ abstract final class PrivateArchiveReportCopy {
 
   static const whatChangedHeading = 'What changed';
 
-  static const whatHelpedHeading = 'What helped';
+  static const whatHelpedHeading = 'Appeared to help';
 
   static const thisWeekHeading = 'This week';
 
-  static const recordNextHeading = 'What to record next';
+  static const recordNextHeading = 'Next evidence to capture';
 
   static const copyReportCta = 'Copy report';
 
   static const sharePrivatelyCta = 'Share privately';
 
   static const previewProNote =
-      'Pro keeps your full archive report and history. This preview shows your first proof only.';
+      'Free shows the first repeat. Pro keeps your full archive report and '
+      'tracks stronger, softer, and what changed over time.';
 
   static const privateFooter =
       'Private copy — not for public sharing.';

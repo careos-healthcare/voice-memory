@@ -157,6 +157,7 @@ import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../features/repeat_return_check/repeat_return_check_trend.dart';
 import '../features/repeat_return_check/pattern_changed_analytics.dart';
 import '../features/repeat_return_check/pattern_changed_engine.dart';
 import '../features/repeat_return_check/pattern_changed_gates.dart';
@@ -247,6 +248,7 @@ import '../widgets/patterns/weekly_pattern_recap_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/activation/third_session_archive_usefulness_card.dart';
 import '../features/archive_proof/archive_belief_surface.dart';
+import '../features/archive_proof/archive_current_belief_gates.dart';
 import '../features/archive_proof/archive_change_timeline_metrics_store.dart';
 import '../features/archive_proof/archive_paid_value_proof_source.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
@@ -2185,7 +2187,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _entries,
       tier: _archiveIntelligenceTier,
     );
-    if (!surface.shouldShow) return const [];
+    if (!surface.shouldShow || surface.isPrimaryAfterFirstProof) {
+      return const [];
+    }
     return [
       ArchiveBeliefSurfaceCard(
         surface: surface,
@@ -3661,6 +3665,30 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
+      final archiveBeliefSurfaceCandidate =
+          ArchiveBeliefSurfaceSource().resolve(
+        _entries,
+        tier: _archiveIntelligenceTier,
+        confirmedRepeat: earlyFirstSignal,
+        changeProof: repeatReturnChangeProof,
+        returnChecks: RepeatReturnCheckStore.cached,
+        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final showArchiveCurrentBelief = ArchiveCurrentBeliefGates.shouldShow(
+        loaded: true,
+        entryCount: _entries.length,
+        isReady: true,
+        isRecording: false,
+        isPostSave: false,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        hasConfirmedRepeatFoundation:
+            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_entries),
+        hasCurrentBeliefSurface:
+            archiveBeliefSurfaceCandidate.isPrimaryAfterFirstProof &&
+                archiveBeliefSurfaceCandidate.shouldShow,
+      );
       final dailyReturnReasonCandidate = DailyReturnReasonEngine.build(
         entries: _entries,
         changeProof: repeatReturnChangeProof,
@@ -3720,6 +3748,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           viewingConfirmedRepeatOnPatterns &&
           _entries.length >
               FirstThreeSessionGates.minEntriesForUsefulArchive;
+      final hasReturnCheckAnsweredForProGate =
+          RepeatReturnCheckTrendEngine.hasAnsweredCheck(
+                RepeatReturnCheckStore.cached,
+              ) &&
+              _entries.length >= PaywallTimingGates.minFullArchiveHistoryEntryCount;
       final showPatternsPostProofProBridge =
           PaywallTimingGates.showPostProofProBridge(
         entryCount: _entries.length,
@@ -3732,6 +3765,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         hasWeeklyArchiveReview: weeklyArchiveReviewVisibleForProGate,
         hasPatternChanged: patternChangedForProGate,
         hasPrivateArchiveReportPreview: privateArchiveReportPreviewForProGate,
+        hasReturnCheckAnswered: hasReturnCheckAnsweredForProGate,
       );
       final proofSurfaceLayout = ArchiveProofSurfaceLayout(
         confirmedRepeatCardVisible: !showEarlyEvidenceTimeline &&
@@ -3781,8 +3815,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
           hasSummary: archiveSummaryCandidate != null,
         ),
+        archiveCurrentBeliefVisible: showArchiveCurrentBelief,
       );
-      final showArchiveSummary = proofSurfaceLayout.archiveSummaryVisible;
+      final showArchiveSummary = proofSurfaceLayout.effectiveArchiveSummaryVisible;
       final archiveSummary = showArchiveSummary ? archiveSummaryCandidate : null;
       final showDailyReturnReason = DailyReturnReasonGates.shouldShow(
         loaded: true,
@@ -3940,6 +3975,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                             );
                           }
                         : null,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+                if (showArchiveCurrentBelief &&
+                    archiveBeliefSurfaceCandidate.shouldShow) ...[
+                  ArchiveBeliefSurfaceCard(
+                    surface: archiveBeliefSurfaceCandidate,
+                    onRecordNext: () => context.go(
+                      ArchiveProofRecordRoutes.uri(
+                        guidedPromptNodeKey:
+                            ArchiveProofRecordRoutes.changeTimelineNodeKey,
+                      ),
+                    ),
+                    onDismissed: () => setState(() {}),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],

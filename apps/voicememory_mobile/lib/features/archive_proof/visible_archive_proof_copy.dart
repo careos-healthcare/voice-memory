@@ -4,7 +4,8 @@ import '../early_archive/early_first_signal_copy.dart';
 abstract final class VisibleArchiveProofCopy {
   // First-run framing — shared across Record and Archive Home.
   static const firstRunPromiseStep1 = 'Record short moments';
-  static const firstRunPromiseStep2 = 'ArchiveMe spots what repeats';
+  static const firstRunPromiseStep2 =
+      'ArchiveMe tracks what repeats in your words';
   static const firstRunPromiseStep3 = 'See whether it changes';
 
   static const firstRunPromiseSteps = [
@@ -15,10 +16,11 @@ abstract final class VisibleArchiveProofCopy {
 
   static const firstRunBuildingLine = 'Record short moments.';
 
-  static const firstRunCompareLine = 'ArchiveMe spots what repeats.';
+  static const firstRunCompareLine =
+      'ArchiveMe tracks what repeats in your words.';
 
   static const firstRunEvidenceLine =
-      'When something comes back, your archive starts building evidence.';
+      'When something shows up again, your archive builds an evidence trail.';
 
   static const firstRunOverTimeLine =
       'Over time, it can show what started it, what changed, and what helped.';
@@ -65,10 +67,11 @@ abstract final class VisibleArchiveProofCopy {
   static const firstSaveViewArchiveCta = 'View archive';
 
   // Patterns zero-entry — mind map preview (Patterns tab).
-  static const patternsMindMapEmptyTitle = 'Your mind map will appear here';
+  static const patternsMindMapEmptyTitle = 'Your evidence archive starts here';
 
   static const patternsMindMapEmptyBody =
-      '$firstRunEvidenceLine $firstRunOverTimeLine';
+      'Save moments in your own words. ArchiveMe builds an evidence trail of '
+      'what repeats — not a chat history.';
 
   static const patternsMindMapPreviewPatternsLabel = 'Patterns';
   static const patternsMindMapPreviewPatternsValue = 'What keeps repeating';

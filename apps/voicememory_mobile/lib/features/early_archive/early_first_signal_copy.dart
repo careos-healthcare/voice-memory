@@ -41,12 +41,12 @@ abstract final class EarlyFirstSignalCopy {
   static const threeEntryConfirmedTitle = 'This is now a confirmed repeat.';
 
   static const threeEntrySeenThreeTimes =
-      'ArchiveMe has seen this across 3 moments.';
+      'ArchiveMe found this repeat across 3 moments in your words.';
 
   static const evidenceHeading = 'Evidence from your words:';
 
   static const evidenceSupportLine =
-      'That is why ArchiveMe is watching this repeat.';
+      'That is why your archive is tracking this repeat.';
 
   static const threeEntryFormingTitle = 'A repeat may be forming.';
 
@@ -107,11 +107,10 @@ abstract final class EarlyFirstSignalCopy {
       'What helped you handle it differently this time?';
 
   // Payoff after saving from the helpful-action guided prompt.
-  static const helpfulActionPayoffTitle = 'ArchiveMe saved what helped.';
+  static const helpfulActionPayoffTitle = 'ArchiveMe captured helpful evidence.';
 
   static const helpfulActionPayoffBody =
-      'You recorded something that may have softened the loop. Your archive '
-      'can now watch whether it helps again.';
+      'You mentioned something that may have softened the loop. Your archive is watching whether it shows up again.';
 
   static const helpfulActionRepeatEvidence = 'Repeat: already confirmed.';
 

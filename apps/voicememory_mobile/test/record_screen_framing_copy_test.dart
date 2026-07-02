@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_copy.dart';
+import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/personal_return_prompt_model.dart';
@@ -195,10 +196,10 @@ void main() {
       expect(RecordFirstUsePromptCopy.title, 'Record one real moment');
       expect(
         RecordFirstUsePromptCopy.body,
-        contains('what your mind said'),
+        contains('first proof'),
       );
+      expect(RecordFirstUsePromptCopy.footer, contains('1 of 3'));
       expect(RecordFirstUsePromptCopy.examples, hasLength(4));
-      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds'));
       for (final copy in [
         RecordFirstUsePromptCopy.title,
         RecordFirstUsePromptCopy.body,
@@ -214,7 +215,7 @@ void main() {
       expect(RecordScreenFramingCopy.emptyArchiveTitle, 'Your archive is empty');
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,
-        'Record short moments. ArchiveMe spots what repeats.',
+        'Record short moments. ArchiveMe tracks repeated evidence from your own words.',
       );
       expect(
         RecordScreenFramingCopy.archiveStartedTitle,
@@ -796,10 +797,14 @@ void main() {
       expect(find.text(RecordFirstUsePromptCopy.body), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsOneWidget);
       expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
+      expect(find.textContaining('1 of 3'), findsOneWidget);
+      expect(find.textContaining('first proof'), findsOneWidget);
       for (final example in RecordFirstUsePromptCopy.examples) {
         expect(find.text(example), findsOneWidget);
       }
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(find.byKey(const Key('tester_mission_card')), findsNothing);
+      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
     });
 
     testWidgets('first-use prompt hides after first entry', (tester) async {
@@ -1372,6 +1377,10 @@ void main() {
       );
       expect(find.text(EarlyRepeatProgressCopy.oneMomentCueLabel), findsOneWidget);
       expect(find.text(EarlyRepeatProgressCopy.oneMomentCueFooter), findsOneWidget);
+      expect(
+        EarlyRepeatProgressCopy.oneMomentBody.toLowerCase(),
+        contains('similar'),
+      );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
     });
@@ -1441,6 +1450,11 @@ void main() {
       );
       expect(find.text(EarlyRepeatProgressCopy.twoRelatedCueLabel), findsOneWidget);
       expect(find.text(EarlyRepeatProgressCopy.twoRelatedCueFooter), findsOneWidget);
+      expect(
+        EarlyRepeatProgressCopy.twoRelatedBody.toLowerCase(),
+        contains('unlocks your first proof'),
+      );
+      expect(find.text(EarlyRepeatProgressCopy.twoRelatedTitle), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
@@ -1477,11 +1491,19 @@ void main() {
         findsNothing,
       );
       expect(
-        find.text(EarlyRepeatProgressCopy.twoRelatedProgress),
-        findsNothing,
+        find.text(EarlyRepeatProgressCopy.twoUnrelatedProgress),
+        findsOneWidget,
       );
       expect(find.text(EarlyRepeatProgressCopy.twoUnrelatedCueLabel), findsOneWidget);
       expect(find.text(EarlyRepeatProgressCopy.twoUnrelatedCueFooter), findsOneWidget);
+      expect(
+        EarlyRepeatProgressCopy.twoUnrelatedBody.toLowerCase(),
+        isNot(contains('repeat may be forming')),
+      );
+      expect(
+        EarlyRepeatProgressCopy.twoUnrelatedCueFooter,
+        contains('No need to force'),
+      );
     });
 
     testWidgets('three confirmed-repeat entries hide early progress card', (
@@ -1512,7 +1534,8 @@ void main() {
       expect(find.byKey(const Key('early_repeat_progress_card_oneMoment')), findsNothing);
       expect(find.byKey(const Key('early_repeat_progress_card_twoRelated')), findsNothing);
       expect(find.byKey(const Key('early_repeat_progress_card_twoUnrelated')), findsNothing);
-      expect(find.byKey(const Key('archive_summary_card')), findsOneWidget);
+      expect(find.byKey(const Key('archive_belief_surface_headline')), findsOneWidget);
+      expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsOneWidget);
     });
 
     testWidgets('three confirmed-repeat ready state shows first week loop', (
@@ -1772,6 +1795,8 @@ void main() {
 
       expect(find.byKey(const Key('archive_summary_card')), findsOneWidget);
       expect(find.text(ArchiveSummaryCopy.title), findsOneWidget);
+      expect(find.text(ArchiveSummaryCopy.promise), findsOneWidget);
+      expect(find.byKey(const Key('archive_belief_surface_headline')), findsNothing);
       expect(
         find.byKey(const Key('confirmed_repeat_thought_map_card')),
         findsNothing,
@@ -1816,6 +1841,7 @@ void main() {
       }
 
       final proofCards = [
+        find.byKey(const Key('archive_belief_surface_headline')),
         find.byKey(const Key('archive_summary_card')),
         find.byKey(const Key('daily_return_reason_card')),
         find.byKey(const Key('pattern_changed_card')),

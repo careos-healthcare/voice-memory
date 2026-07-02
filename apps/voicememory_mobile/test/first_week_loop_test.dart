@@ -454,6 +454,23 @@ void main() {
       expect(FirstProofMomentCopy.title, isNot(FirstWeekLoopCopy.title));
       expect(FirstWeekLoopCopy.title, isNot(contains('first repeat')));
     });
+
+    test('explains why recording again matters after first proof', () {
+      final joined = [
+        FirstWeekLoopCopy.bodyFallback,
+        FirstWeekLoopCopy.footer,
+        FirstWeekLoopCopy.bodyWithPhrase('said yes again'),
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('first proof'));
+      expect(joined, contains('stronger'));
+      expect(joined, contains('softer'));
+      expect(joined, contains('about the same'));
+      expect(joined, contains('what changed'));
+      expect(joined, contains('when it returns'));
+      expect(joined, isNot(contains('you are')));
+      expect(joined, isNot(contains('you should')));
+    });
   });
 
   group('Patterns screen isolation', () {

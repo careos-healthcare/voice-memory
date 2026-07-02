@@ -2,17 +2,17 @@
 abstract final class PositiveReinforcementCopy {
   PositiveReinforcementCopy._();
 
-  static const title = 'Try repeating what helped';
+  static const title = 'This appeared in your words again';
 
   static const body =
-      'ArchiveMe noticed this showed up in better moments. Try watching for it again today.';
+      'ArchiveMe noticed this showed up again in calmer moments from your own words.';
 
   static const recordAgainCta = 'Record when this helps again';
 
-  static const guidedRecordPrompt = 'What helped in this moment?';
+  static const guidedRecordPrompt = 'What showed up as helpful in your words?';
 
-  static const completionTitle = 'That helped again.';
+  static const completionTitle = 'Helpful evidence captured';
 
   static const completionBody =
-      'ArchiveMe is adding this to your helpful patterns.';
+      'ArchiveMe noticed this in your words and is watching whether it repeats.';
 }

@@ -34,7 +34,7 @@ abstract final class ArchiveThoughtMapCopy {
   static const renameSaveCta = 'Save title';
   static const threadRenamedConfirmation = 'Thread renamed';
 
-  static const whyNodeAppearsTitle = 'Why this node appears';
+  static const whyNodeAppearsTitle = 'Evidence for this node';
   static const nodeEvidenceFallback =
       'ArchiveMe needs more saved moments before it can explain this node.';
   static const patternSignalDisclaimer =

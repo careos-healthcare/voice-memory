@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.dart';
@@ -87,6 +88,7 @@ RepeatReturnCheckChangeProof _changeProof(RepeatReturnCheckChoice choice) =>
         RepeatReturnCheckChoice.softer =>
           RepeatReturnCheckCopy.trendSofterThanBefore,
         RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
+        RepeatReturnCheckChoice.changed => 'It changed from before.',
       },
       latestChoice: choice,
     );
@@ -178,11 +180,33 @@ void main() {
       expect(summary, isNotNull);
       expect(summary!.title, ArchiveSummaryCopy.title);
       expect(
-        summary.keepsRepeating.bodyLines,
-        contains(EarlyFirstSignalCopy.threeEntryConfirmedTitle),
+        summary.keepsRepeating.bodyLines.any(
+          (line) => line.contains('evidence') || line.contains('ArchiveMe found'),
+        ),
+        isTrue,
+      );
+      expect(
+        summary.keepsRepeating.bodyLines.join('\n').toLowerCase(),
+        contains('said yes'),
       );
       expect(summary.keepsRepeating.evidencePhrases, isNotEmpty);
       expect(summary.keepsRepeating.isFallback, isFalse);
+    });
+
+    test('keeps repeating copy avoids personality and motive claims', () {
+      final summary = ArchiveSummaryEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        confirmedRepeat: EarlyFirstSignalEngine.build(
+          entries: _threeRelatedRepeatEntries(),
+        ),
+        viewingConfirmedRepeatOrTimeline: true,
+      );
+      expect(summary, isNotNull);
+      final blob = summary!.keepsRepeating.bodyLines.join(' ').toLowerCase();
+      expect(blob, isNot(contains('you always')));
+      expect(blob, isNot(contains('you are')));
+      expect(blob, isNot(contains('because you')));
+      _expectNoDiagnosticLanguage(blob);
     });
 
     test('returns null without confirmed repeat context', () {
@@ -336,6 +360,7 @@ void main() {
     test('avoids therapy and diagnosis language', () {
       final lines = [
         ArchiveSummaryCopy.title,
+        ArchiveSummaryCopy.promise,
         ArchiveSummaryCopy.keepsRepeatingLabel,
         ArchiveSummaryCopy.keepsRepeatingFallback,
         ArchiveSummaryCopy.loopFormingLabel,
@@ -359,6 +384,55 @@ void main() {
           fail('"$line": $reason');
         }
       }
+    });
+
+    test('uses evidence and repeat language, not chat-memory framing', () {
+      final joined = [
+        ArchiveSummaryCopy.title,
+        ArchiveSummaryCopy.promise,
+        ArchiveSummaryCopy.keepsRepeatingLabel,
+        ArchiveSummaryCopy.changingLabel,
+        ArchiveSummaryCopy.recordNextLabel,
+        ArchiveSummaryCopy.recordNextChangeGuided,
+      ].join(' ');
+
+      expect(joined, contains('evidence'));
+      expect(joined, contains('repeat'));
+      expect(ArchiveSummaryCopy.promise, contains('not conversation history'));
+      expect(joined.toLowerCase(), isNot(contains('chat memory')));
+      expect(joined.toLowerCase(), isNot(contains('ai remembers you')));
+    });
+
+    test('references tracking change over time since first proof', () {
+      final joined = [
+        ArchiveSummaryCopy.changingLabel,
+        ArchiveSummaryCopy.changingFallback,
+        ArchiveSummaryCopy.recordNextChangeUnknown,
+        ArchiveSummaryCopy.recordNextChangeGuided,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('first proof'));
+      expect(joined, contains('what changed'));
+      expect(joined, contains('stronger'));
+      expect(joined, contains('softer'));
+      expect(joined, contains('about the same'));
+    });
+
+    test('uses evidence language and avoids coaching advice', () {
+      for (final line in ProofSurfaceAdviceGuard.mainProofSurfaceCopyBlocks()) {
+        for (final violation in ProofSurfaceAdviceGuard.violationsIn(line)) {
+          fail('"$line" contains banned advice phrase "$violation"');
+        }
+      }
+
+      final joined = [
+        ArchiveSummaryCopy.whatHelpsLabel,
+        ArchiveSummaryCopy.whatHelpsPrefix,
+        ArchiveSummaryCopy.changingFallback,
+      ].join(' ').toLowerCase();
+      expect(joined, contains('noticed'));
+      expect(joined, contains('watching'));
+      expect(joined, isNot(contains('you should')));
     });
   });
 
@@ -481,6 +555,20 @@ void main() {
       expect(layout.effectivePositivePatternVisible, isFalse);
       expect(layout.effectiveChangeProofVisible, isFalse);
       expect(layout.effectiveConfirmedRepeatCardVisible, isFalse);
+    });
+
+    test('current belief surface replaces archive summary as main overview', () {
+      const layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: true,
+        timelineVisible: true,
+        changeProofVisible: true,
+        proBridgeVisible: true,
+        archiveSummaryVisible: true,
+        archiveCurrentBeliefVisible: true,
+      );
+      expect(layout.effectiveArchiveSummaryVisible, isFalse);
+      expect(layout.effectiveConfirmedRepeatCardVisible, isFalse);
+      expect(layout.recordTimelineVisible(surfaceIsRecord: true), isFalse);
     });
   });
 }

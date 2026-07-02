@@ -77,6 +77,14 @@ class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
             const SizedBox(height: 4),
           ],
           const SizedBox(height: AppSpacing.sm),
+          Text(
+            ArchiveBeliefThreadCopy.whyPro,
+            key: const Key('full_archive_history_pro_why'),
+            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
               Expanded(

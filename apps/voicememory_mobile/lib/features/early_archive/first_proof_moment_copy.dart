@@ -2,19 +2,24 @@
 abstract final class FirstProofMomentCopy {
   FirstProofMomentCopy._();
 
-  static const title = 'ArchiveMe found your first repeat';
+  static const title = 'ArchiveMe found a repeat in your words';
+
+  static const titlePossible = 'ArchiveMe found a possible repeat';
 
   static const bodyFallback =
-      'ArchiveMe found a repeat across three moments. That is enough to start tracking whether this gets stronger, softer, or changes.';
+      'ArchiveMe noticed a possible repeat across three moments. When it shows up in your words again, your archive can compare whether it holds.';
+
+  static const bodyFallbackStrong =
+      'ArchiveMe found repeated evidence across three moments. Your archive is watching whether this gets stronger, softer, or changes.';
 
   static const evidenceLabel = 'Evidence from your words';
 
   static const whyLine =
-      'This is the first moment your archive becomes useful.';
+      'Three moments — your first proof of a repeat. Not chat history — an evidence trail.';
 
   static const footer =
-      'Keep recording when it shows up again — ArchiveMe will track what changes.';
+      'ArchiveMe is watching whether this changes when it shows up again in your words.';
 
   static String bodyWithPhrase(String phrase) =>
-      'You mentioned “$phrase” across three moments. That is enough for ArchiveMe to start tracking whether this gets stronger, softer, or changes.';
+      'This showed up again in your words: “$phrase”. ArchiveMe found this repeat across three moments.';
 }

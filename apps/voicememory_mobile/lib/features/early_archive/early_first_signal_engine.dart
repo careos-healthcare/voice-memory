@@ -304,6 +304,11 @@ abstract final class EarlyFirstSignalEngine {
             hasConfirmedRepeatAcrossThree(eligible))) {
       final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(eligible);
       final isStrong = evidence.isStrong;
+      final groundedPhrases =
+          ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
+        evidence.phrases,
+        eligible,
+      );
 
       final summaryLines = <String>[
         if (isStrong)
@@ -318,11 +323,11 @@ abstract final class EarlyFirstSignalEngine {
             ? EarlyFirstSignalCopy.threeEntryConfirmedTitle
             : EarlyFirstSignalCopy.threeEntryFormingTitle,
         lines: summaryLines,
-        evidenceHeading: evidence.phrases.isNotEmpty
+        evidenceHeading: groundedPhrases.isNotEmpty
             ? EarlyFirstSignalCopy.evidenceHeading
             : null,
-        evidencePhrases: evidence.phrases,
-        evidenceSupportLine: isStrong && evidence.phrases.isNotEmpty
+        evidencePhrases: groundedPhrases,
+        evidenceSupportLine: isStrong && groundedPhrases.isNotEmpty
             ? EarlyFirstSignalCopy.evidenceSupportLine
             : null,
         primaryCta: EarlyFirstSignalCopy.recordWhatHappensNextCta,

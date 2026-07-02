@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
+import 'package:voicememory_mobile/features/early_archive/positive_reinforcement_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/positive_pattern_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
@@ -25,6 +27,9 @@ import 'package:voicememory_mobile/features/early_archive/post_save_return_hando
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
+import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
+import 'package:voicememory_mobile/features/beta/tester_mission_engine.dart';
+import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
@@ -466,6 +471,200 @@ void main() {
         ),
         1,
       );
+    });
+
+    test('tester mission compact copy stays distinct from first-use prompt', () {
+      final mission = TesterMissionEngine.build(
+        entryCount: 0,
+        entries: const [],
+        compactAtEntryZero: true,
+      );
+      expect(mission.presentation.name, 'compact');
+      expect(mission.body, isNot(equals(RecordFirstUsePromptCopy.body)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          [
+            mission.title,
+            mission.stepLabel,
+            mission.body,
+            mission.footer,
+            RecordFirstUsePromptCopy.title,
+            RecordFirstUsePromptCopy.body,
+            RecordFirstUsePromptCopy.footer,
+          ].join('\n'),
+          TesterMissionCopy.title,
+        ),
+        1,
+      );
+    });
+
+    test('tester mission step two stays distinct from early repeat progress', () {
+      final mission = TesterMissionEngine.build(
+        entryCount: 1,
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript:
+                'A long enough transcript to count as a saved reflection for tests.',
+          ),
+        ],
+        compactAtEntryZero: false,
+      );
+      final progress = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry(
+            id: 'e1',
+            transcript:
+                'A long enough transcript to count as a saved reflection for tests.',
+          ),
+        ],
+      );
+      expect(progress, isNotNull);
+      expect(mission.body, isNot(equals(progress!.body)));
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          [
+            mission.title,
+            mission.body,
+            mission.footer,
+            progress.title,
+            progress.body,
+            progress.progressLabel,
+          ].join('\n'),
+          EarlyRepeatProgressCopy.oneMomentTitle,
+        ),
+        1,
+      );
+    });
+  });
+
+  group('Pattern memory differentiation', () {
+    test('first proof moment uses evidence wording', () {
+      final moment = FirstProofMomentEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+      );
+      expect(moment, isNotNull);
+      final haystack = [
+        moment!.title,
+        moment.body,
+        moment.whyLine,
+        moment.evidenceLabel,
+      ].join(' ').toLowerCase();
+      expect(haystack, contains('evidence'));
+      expect(haystack, contains('repeat'));
+      expect(haystack, contains('your words'));
+      expect(haystack, isNot(contains('chat memory')));
+      expect(haystack, isNot(contains('ai remembers you')));
+      expect(haystack, isNot(contains('i know you')));
+    });
+
+    test('archive summary differentiates from chat-memory framing', () {
+      final joined = [
+        ArchiveSummaryCopy.title,
+        ArchiveSummaryCopy.promise,
+        ArchiveSummaryCopy.keepsRepeatingLabel,
+      ].join(' ').toLowerCase();
+      expect(joined, contains('evidence'));
+      expect(joined, contains('repeat'));
+      expect(ArchiveSummaryCopy.promise, contains('not conversation history'));
+      expect(joined, isNot(contains('chat memory')));
+      expect(joined, isNot(contains('ai remembers you')));
+    });
+
+    test('key surfaces avoid chatbot memory language', () {
+      final surfaces = [
+        RecordScreenFramingCopy.emptyArchiveBody,
+        RecordScreenFramingCopy.weakCompareFootnote,
+        FirstProofMomentCopy.title,
+        FirstProofMomentCopy.whyLine,
+        ArchiveSummaryCopy.promise,
+      ].join('\n').toLowerCase();
+
+      expect(surfaces, isNot(contains('chat memory')));
+      expect(surfaces, isNot(contains('ai remembers you')));
+      expect(surfaces, isNot(contains('i know you')));
+    });
+  });
+
+  group('Longitudinal change differentiation', () {
+    test('pro bridge explains full archive and change tracking', () {
+      final joined = [
+        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+        ArchiveBeliefThreadCopy.whyPro,
+        ArchiveBeliefThreadCopy.proBridgeBody,
+        ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('stronger'));
+      expect(joined, contains('softer'));
+      expect(joined, contains('over time'));
+      expect(joined, contains('evidence'));
+    });
+
+    test('post-save answer and payoff do not duplicate intensity labels', () {
+      final payoff = ReturnCheckPayoffEngine.build(
+        entries: _fourRelatedEntries(),
+        returnChecks: [
+          RepeatReturnCheckRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.stronger,
+            entryCountAtCapture: 4,
+            createdAt: DateTime(2026, 6, 13),
+          ),
+        ],
+      );
+      expect(payoff, isNotNull);
+
+      final answerBlock = [
+        PostSaveReturnCheckAnswerCopy.title,
+        PostSaveReturnCheckAnswerCopy.bodyFallback,
+      ].join('\n');
+      final payoffBlock = [
+        payoff!.title,
+        payoff.body,
+        payoff.footer,
+      ].join('\n');
+
+      expect(
+        ArchiveProofCopyDedup.countPhrase(
+          '$answerBlock\n$payoffBlock'.toLowerCase(),
+          'stronger',
+        ),
+        lessThanOrEqualTo(3),
+      );
+      expect(
+        ArchiveProofCopyDedup.phrasesWithinLimit(
+          copyBlocks: [answerBlock, payoffBlock],
+          onceOnlyPhrases: [ReturnCheckPayoffCopy.strongerTitle],
+        ),
+        isTrue,
+      );
+    });
+  });
+
+  group('Evidence not advice', () {
+    test('main proof surfaces avoid banned coaching phrases', () {
+      for (final line in ProofSurfaceAdviceGuard.mainProofSurfaceCopyBlocks()) {
+        for (final violation in ProofSurfaceAdviceGuard.violationsIn(line)) {
+          fail('"$line" contains banned advice phrase "$violation"');
+        }
+      }
+    });
+
+    test('helpful action copy is evidence-based not prescriptive', () {
+      final joined = [
+        PositivePatternCopy.title,
+        PositivePatternCopy.body,
+        PositiveReinforcementCopy.title,
+        PositiveReinforcementCopy.body,
+        PositiveReinforcementCopy.completionBody,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('noticed'));
+      expect(joined, contains('words'));
+      expect(joined, isNot(contains('try repeating')));
+      expect(joined, isNot(contains('try watching')));
+      expect(joined, isNot(contains('you should')));
     });
   });
 }

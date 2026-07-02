@@ -17,6 +17,7 @@ class RecordProofStackDecision {
     required this.showChangeProof,
     required this.showFirstWeekLoop,
     required this.showProBridge,
+    required this.showArchiveCurrentBelief,
     required this.proofCardCount,
   });
 
@@ -25,6 +26,7 @@ class RecordProofStackDecision {
   final bool showEarlyEvidenceTimeline;
   final bool showPatternChanged;
   final bool showArchiveSummary;
+  final bool showArchiveCurrentBelief;
   final bool showDailyReturnReason;
   final bool showWeeklyArchiveWeekReview;
   final bool showPrivateArchiveReport;
@@ -53,6 +55,7 @@ class RecordProofStackDecision {
     showChangeProof: false,
     showFirstWeekLoop: false,
     showProBridge: false,
+    showArchiveCurrentBelief: false,
     proofCardCount: 0,
   );
 }
@@ -83,6 +86,7 @@ abstract final class RecordProofStackPolicy {
     required bool changeProofEligible,
     required bool firstWeekLoopEligible,
     required bool proBridgeEligible,
+    bool archiveCurrentBeliefEligible = false,
   }) {
     if (!loaded || !isReady || isRecording || isPostSave) {
       return RecordProofStackDecision.empty;
@@ -112,6 +116,7 @@ abstract final class RecordProofStackPolicy {
         showChangeProof: false,
         showFirstWeekLoop: false,
         showProBridge: false,
+        showArchiveCurrentBelief: false,
         proofCardCount: showProgress ? 1 : 0,
       );
     }
@@ -120,9 +125,10 @@ abstract final class RecordProofStackPolicy {
       return RecordProofStackDecision.empty;
     }
 
-    // Entry 3+: Archive Summary is the main overview; fold supporting cards.
+    // Entry 3+: current belief or Archive Summary is the main overview.
     var showPatternChanged = patternChangedVisible;
-    var showArchiveSummary = useSummaryOverview;
+    var showArchiveCurrentBelief = archiveCurrentBeliefEligible;
+    var showArchiveSummary = useSummaryOverview && !showArchiveCurrentBelief;
     var showDailyReturnReason =
         dailyReturnReasonEligible && !useSummaryOverview;
     var showFirstWeekLoop = firstWeekLoopEligible;
@@ -138,6 +144,7 @@ abstract final class RecordProofStackPolicy {
     var count = 0;
     if (showPatternChanged) count++;
     if (showArchiveSummary) count++;
+    if (showArchiveCurrentBelief) count++;
     if (showDailyReturnReason) count++;
     if (dailyReturnCompetesForCap) count++;
     if (showFirstWeekLoop) count++;
@@ -176,6 +183,7 @@ abstract final class RecordProofStackPolicy {
           hasEarlyEvidenceTimeline && !useSummaryOverview,
       showPatternChanged: showPatternChanged,
       showArchiveSummary: showArchiveSummary,
+      showArchiveCurrentBelief: showArchiveCurrentBelief,
       showDailyReturnReason: showDailyReturnReason,
       showWeeklyArchiveWeekReview:
           weeklyReviewEligible && !useSummaryOverview,
@@ -195,6 +203,7 @@ abstract final class RecordProofStackPolicy {
       proofCardCount: _countVisible(
         showPatternChanged: showPatternChanged,
         showArchiveSummary: showArchiveSummary,
+        showArchiveCurrentBelief: showArchiveCurrentBelief,
         showDailyReturnReason: showDailyReturnReason,
         showFirstWeekLoop: showFirstWeekLoop,
         showProBridge: showProBridge,
@@ -205,12 +214,14 @@ abstract final class RecordProofStackPolicy {
   static int _countVisible({
     required bool showPatternChanged,
     required bool showArchiveSummary,
+    required bool showArchiveCurrentBelief,
     required bool showDailyReturnReason,
     required bool showFirstWeekLoop,
     required bool showProBridge,
   }) =>
       (showPatternChanged ? 1 : 0) +
       (showArchiveSummary ? 1 : 0) +
+      (showArchiveCurrentBelief ? 1 : 0) +
       (showDailyReturnReason ? 1 : 0) +
       (showFirstWeekLoop ? 1 : 0) +
       (showProBridge ? 1 : 0);

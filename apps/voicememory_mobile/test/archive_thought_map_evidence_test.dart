@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_correction_store.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_display_copy_guard.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/archive_thought_map/archive_thought_map_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
 import 'package:voicememory_mobile/features/archive_thought_map/archive_thought_map_engine.dart';
 import 'package:voicememory_mobile/features/archive_thought_map/archive_thought_map_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -165,7 +167,21 @@ void main() {
       for (final text in ArchiveThoughtMapCopy.allVisibleStrings) {
         if (text == ArchiveThoughtMapCopy.patternSignalDisclaimer) continue;
         expect(ArchiveDisplayCopyGuard.passes(text), isTrue, reason: text);
+        expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
       }
+    });
+
+    test('thought map evidence copy avoids coaching advice', () {
+      final joined = [
+        ArchiveThoughtMapCopy.whyNodeAppearsTitle,
+        ArchiveThoughtMapCopy.nodeEvidenceFallback,
+        ArchiveThoughtMapCopy.notQuiteMessage,
+        ConfirmedRepeatThoughtMapCopy.title,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('evidence'));
+      expect(joined, isNot(contains('you should')));
+      expect(joined, isNot(contains('try this')));
     });
 
     test('nodes include exact transcript snippets from saved entries', () {

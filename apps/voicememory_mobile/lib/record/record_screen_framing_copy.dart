@@ -12,7 +12,7 @@ abstract class RecordScreenFramingCopy {
   /// True empty archive — count 0 only.
   static const String emptyArchiveTitle = 'Your archive is empty';
   static const String emptyArchiveBody =
-      'Record short moments. ArchiveMe spots what repeats.';
+      'Record short moments. ArchiveMe tracks repeated evidence from your own words.';
   static const String emptyArchiveFootnote =
       'Nothing is analysed until you save something.';
 
@@ -36,7 +36,7 @@ abstract class RecordScreenFramingCopy {
   static const String weakCompareBody =
       'Add one more moment so ArchiveMe can compare the behaviour, not just the words.';
   static const String weakCompareFootnote =
-      'Nothing is guessed. Patterns only appear when your own words support them.';
+      'Not chat history — patterns only appear when your own words repeat.';
 
   /// Must not appear on Record at entry count 0 or 1 (first impression).
   static const List<String> bannedFirstImpressionPhrases = [
@@ -57,7 +57,8 @@ abstract final class RecordFirstUsePromptCopy {
   static const title = 'Record one real moment';
 
   static const body =
-      'Say what happened, what your mind said, or what you did next. It can be messy — ArchiveMe only needs one real moment to start.';
+      'Three moments unlock your first proof — not a journal forever. '
+      'Say what happened, what your mind said, or what you did next.';
 
   static const examplesHeading = 'Examples';
 
@@ -68,5 +69,5 @@ abstract final class RecordFirstUsePromptCopy {
     'I felt calmer after walking outside',
   ];
 
-  static const footer = 'Short is fine. Ten seconds is enough.';
+  static const footer = '1 of 3 · Ten seconds is enough.';
 }

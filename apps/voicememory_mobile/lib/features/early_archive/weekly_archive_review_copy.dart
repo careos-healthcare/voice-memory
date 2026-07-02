@@ -5,22 +5,23 @@ abstract final class WeeklyArchiveWeekReviewCopy {
   static const title = 'This week in your archive';
 
   static const promise =
-      'Your archive is starting to show what repeated, what changed, and what helped.';
+      'Free shows what repeated this week. Pro keeps weekly reviews to compare '
+      'stronger, softer, and what changed over time.';
 
   static const repeatedLabel = 'Repeated';
   static const repeatedFallback = 'No clear repeat yet.';
 
-  static const changedLabel = 'Changed';
-  static const changedLouder = 'The repeat got louder.';
-  static const changedSame = 'The repeat felt about the same.';
-  static const changedSofter = 'The repeat softened.';
+  static const changedLabel = 'What changed';
+  static const changedLouder = 'Stronger this week.';
+  static const changedSame = 'About the same this week.';
+  static const changedSofter = 'Softer this week.';
   static const changedFallback = 'Not enough return checks yet.';
 
-  static const helpedLabel = 'Helped';
-  static const helpedPrefix = 'ArchiveMe noticed this helped before:';
-  static const helpedFallback = 'No repeated helpful action yet.';
+  static const helpedLabel = 'Appeared to help';
+  static const helpedPrefix = 'ArchiveMe noticed this in your words before:';
+  static const helpedFallback = 'No repeated helpful evidence in your words yet.';
 
-  static const nextToWatchLabel = 'Next to watch';
+  static const nextToWatchLabel = 'Still watching';
   static const nextToWatchFallback = 'Record the next real moment.';
 
   static const recordCta = "Record next week's evidence";

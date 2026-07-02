@@ -269,38 +269,22 @@ void main() {
       }
     }
 
-    testWidgets('shows mission card in beta mode without duplicate start CTA', (
+    testWidgets('record screen uses tester mission instead of legacy card', (
       tester,
     ) async {
       await pumpEmptyRecord(tester);
 
-      expect(find.byKey(const Key('archive_beta_mission_card')), findsOneWidget);
-      expect(find.text(ArchiveBetaMissionCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
+      expect(find.byKey(const Key('tester_mission_compact_strip')), findsOneWidget);
       expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
-      expect(find.text(ArchiveBetaMissionCopy.startCta), findsNothing);
     });
 
-    testWidgets('hidden when beta gate is off', (tester) async {
+    testWidgets('legacy card hidden when beta gate is off', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = false;
       await pumpEmptyRecord(tester);
 
       expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
-    });
-
-    testWidgets('dismiss hides card on reload', (tester) async {
-      await pumpEmptyRecord(tester);
-      await tester.tap(find.text(ArchiveBetaMissionCopy.hideCta));
-      await tester.pumpAndSettle();
-      await tester.runAsync(() async {
-        await ArchiveBetaMissionStore.ensureLoaded();
-      });
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
-      expect(ArchiveBetaMissionStore.cachedDismissed, isTrue);
-
-      await pumpEmptyRecord(tester);
-      expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
+      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
     });
   });
 }

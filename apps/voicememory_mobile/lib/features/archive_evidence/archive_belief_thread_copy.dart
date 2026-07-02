@@ -3,7 +3,7 @@ abstract class ArchiveBeliefThreadCopy {
   ArchiveBeliefThreadCopy._();
 
   static const String threadTitle =
-      'Your archive is starting to show a thread.';
+      'Your archive is starting to show repeated evidence.';
   static const String currentBeliefLabel = 'What this may be pointing to';
   static const String evidenceLabel = 'Evidence';
   static const String whatChangedLabel = 'What changed';
@@ -25,28 +25,34 @@ abstract class ArchiveBeliefThreadCopy {
   static const String supportingEvidenceLabel = 'Supporting evidence';
   static const String confidenceLabel = 'Signal strength';
 
-  static const String proKeepsThread = 'Keep the full evidence trail';
-  static const String proNearbyTitle = 'Keep the full evidence trail';
+  static const String proKeepsThread = 'Keep the full archive';
+  static const String proNearbyTitle = 'Keep the full archive';
   static const String fullArchiveHistoryTitle = 'Keep the full archive';
   static const String fullArchiveHistoryBody =
-      'ArchiveMe can show your first repeat for free. Pro keeps the full evidence '
-      'history, weekly reviews, private reports, and whether patterns get '
-      'stronger, softer, or change over time.';
+      'Your first repeat is free. Pro keeps the evidence history from your own '
+      'words — not conversation history — so ArchiveMe can show whether patterns '
+      'get stronger, softer, or change over time.';
   static const List<String> fullArchiveHistoryBullets = [
-    'Full archive history',
-    'Weekly archive reviews',
+    'Full evidence history',
     'Pattern change tracking',
+    'Weekly archive reviews',
     'Private archive reports',
   ];
+  static const String freeShowsFirstRepeat = 'Free shows the first repeat.';
+  static const String proKeepsTimeline = 'Pro keeps the timeline of what changed.';
+  static const String proComparesReturns =
+      'Pro lets ArchiveMe compare returns over time.';
+  static const String whyPro =
+      'The value is not one answer. It is the evidence trail over time.';
   static const String proDeeperHistory =
-      'See deeper history and saved evidence.';
+      'Pro keeps the full evidence history so ArchiveMe can compare returns over time.';
   static const String proReviewChanges =
-      'Review how this changed across your archive.';
+      'Pro keeps the timeline of what changed across your archive.';
   static const String proBridgeBody =
-      'ArchiveMe has found a repeat in your own words. Pro keeps tracking '
-      'whether it gets stronger, softer, or changes over time.';
+      'Your first repeat is free. Pro keeps the evidence history so ArchiveMe '
+      'can show whether patterns get stronger, softer, or change over time.';
   static const String proNearbyBridgeBody =
-      'Pro keeps the complete evidence trail and longer archive history.';
+      'Free shows the first repeat. Pro keeps the timeline of what changed.';
   static const String proBridgeCta = 'See Pro';
   static const String proBridgeSecondary = 'Not now';
 
@@ -67,7 +73,8 @@ abstract class ArchiveBeliefThreadCopy {
   static const String weeklyWhatChanged = 'What changed';
   static const String weeklyWhatToTestNext = 'What to test next';
   static const String weeklyProContinuity =
-      'Keep weekly reviews and deeper history over time.';
+      'Pro keeps weekly archive reviews so ArchiveMe can compare what repeated '
+      'and changed over time.';
 
   static const String entryStarterRepeated = 'Something repeated';
   static const String entryStarterChanged = 'Something changed';
@@ -104,6 +111,10 @@ abstract class ArchiveBeliefThreadCopy {
     fullArchiveHistoryTitle,
     fullArchiveHistoryBody,
     ...fullArchiveHistoryBullets,
+    freeShowsFirstRepeat,
+    proKeepsTimeline,
+    proComparesReturns,
+    whyPro,
     proDeeperHistory,
     proReviewChanges,
     proBridgeBody,

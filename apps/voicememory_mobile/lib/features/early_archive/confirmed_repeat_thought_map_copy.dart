@@ -2,7 +2,7 @@
 abstract final class ConfirmedRepeatThoughtMapCopy {
   ConfirmedRepeatThoughtMapCopy._();
 
-  static const title = 'ArchiveMe is mapping this loop';
+  static const title = 'Evidence map for this loop';
 
   static const triggerLabel = 'Trigger';
   static const triggerQuestion = 'What happened before it?';

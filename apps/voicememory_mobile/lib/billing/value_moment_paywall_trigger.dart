@@ -16,7 +16,7 @@ class ValueMomentBridge {
     this.cardType = '',
   });
 
-  static const String title = 'Keep this thread connected';
+  static const String title = 'Keep the full archive';
   static const String ctaLabel = 'See Pro';
   static const String dismissLabel = 'Not now';
 
@@ -24,20 +24,20 @@ class ValueMomentBridge {
   // underlying evidence is genuinely true. Fixed copy only: never user
   // snippets, belief phrases, or source terms.
   static const String threadReturnBody =
-      'This thread has returned before. Pro keeps tracking whether it '
-      'returns, fades, or changes.';
+      'This thread has returned before. Pro keeps the evidence history so '
+      'ArchiveMe can show whether it gets stronger, softer, or changes.';
   static const String beliefBody =
-      'A belief-like phrase showed up again. Pro keeps the evidence '
-      'connected as it changes.';
+      'A belief-like phrase showed up again. Pro keeps the timeline of what '
+      'changed across your archive.';
   static const String weeklyBody =
-      'Your weekly review found something to compare. Pro keeps these '
-      'changes connected over time.';
+      'Your weekly review found something to compare. Pro keeps weekly archive '
+      'reviews so ArchiveMe can track what changed over time.';
   static const String proofCounterBody =
-      'Your archive has connected recordings. Pro keeps building the '
-      'thread history.';
+      'Your archive has connected recordings. Pro keeps the full evidence '
+      'history as the trail grows.';
   static const String fallbackBody =
-      'ArchiveMe has started connecting your evidence. Pro keeps track of '
-      'what returns, fades, and changes over time.';
+      'Your first repeat is free. Pro keeps the evidence history so ArchiveMe '
+      'can show whether patterns get stronger, softer, or change over time.';
 
   final bool show;
 

@@ -29,6 +29,7 @@ abstract class PaywallTimingGates {
     required bool hasWeeklyArchiveReview,
     bool hasPatternChanged = false,
     bool hasPrivateArchiveReportPreview = false,
+    bool hasReturnCheckAnswered = false,
   }) {
     if (isPro || resolved || isPostSave) return false;
     if (entryCount < minFullArchiveHistoryEntryCount) return false;
@@ -36,7 +37,8 @@ abstract class PaywallTimingGates {
         hasArchiveSummary ||
         hasWeeklyArchiveReview ||
         hasPatternChanged ||
-        hasPrivateArchiveReportPreview;
+        hasPrivateArchiveReportPreview ||
+        hasReturnCheckAnswered;
   }
 
   /// Pro bridge after a real value surface — never on first save, never blocking recording.
@@ -52,6 +54,7 @@ abstract class PaywallTimingGates {
     bool hasWeeklyArchiveReview = false,
     bool hasPatternChanged = false,
     bool hasPrivateArchiveReportPreview = false,
+    bool hasReturnCheckAnswered = false,
   }) =>
       showFullArchiveHistoryProBoundary(
         entryCount: entryCount,
@@ -68,6 +71,7 @@ abstract class PaywallTimingGates {
         hasWeeklyArchiveReview: hasWeeklyArchiveReview,
         hasPatternChanged: hasPatternChanged,
         hasPrivateArchiveReportPreview: hasPrivateArchiveReportPreview,
+        hasReturnCheckAnswered: hasReturnCheckAnswered,
       );
 
   static bool hasConfirmedRepeatProof({

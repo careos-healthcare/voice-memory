@@ -16,6 +16,10 @@ abstract final class ArchiveDisplayCopyGuard {
     'this proves',
     'you always',
     'you never',
+    'conversation history',
+    'chat memory',
+    'ai remembers you',
+    'i know you',
   ];
 
   static String? sanitize(String? text) {

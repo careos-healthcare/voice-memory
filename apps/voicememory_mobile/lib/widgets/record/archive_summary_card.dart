@@ -54,6 +54,12 @@ class ArchiveSummaryCard extends StatelessWidget {
             key: const Key('archive_summary_title'),
             style: ArchiveMobileTypography.listTitle(context),
           ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            ArchiveSummaryCopy.promise,
+            key: const Key('archive_summary_promise'),
+            style: secondaryStyle,
+          ),
           const SizedBox(height: AppSpacing.sm),
           _SectionBlock(
             label: ArchiveSummaryCopy.keepsRepeatingLabel,

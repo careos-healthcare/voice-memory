@@ -79,12 +79,30 @@ List<JournalEntry> _threeCheckingAgainEntries() => [
       ),
       _entry(
         id: 'e2',
-        transcript: 'Same thing — I checked again before sending the update.',
+        transcript: 'I checked the message again before sending the update.',
         createdAt: DateTime(2026, 6, 11, 12),
       ),
       _entry(
         id: 'e3',
-        transcript: 'I checked again after lunch and still felt unsettled.',
+        transcript: 'I went back and checked one more time after lunch.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
+
+List<JournalEntry> _threeVagueUnrelatedEntries() => [
+      _entry(
+        id: 'e1',
+        transcript: 'A quiet moment about lunch with a friend today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      _entry(
+        id: 'e2',
+        transcript: 'Another unrelated note about errands this afternoon.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      _entry(
+        id: 'e3',
+        transcript: 'A calm evening walk before bed tonight.',
         createdAt: DateTime(2026, 6, 12, 12),
       ),
     ];
@@ -173,6 +191,73 @@ void main() {
           return words.length >= 2 && words.length <= 6;
         }),
         isTrue,
+      );
+    });
+
+    test('prefers concrete repeated phrase over abstract label', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeCheckingAgainEntries(),
+      );
+
+      expect(result.isStrong, isTrue);
+      expect(
+        result.phrases.any((p) => p.toLowerCase().contains('checked again')),
+        isTrue,
+      );
+      expect(
+        result.phrases.any((p) => p.toLowerCase() == 'control'),
+        isFalse,
+      );
+      expect(
+        result.phrases.any((p) => p.toLowerCase() == 'anxiety'),
+        isFalse,
+      );
+      expect(
+        result.phrases.any((p) => p.toLowerCase() == 'uncertainty'),
+        isFalse,
+      );
+    });
+
+    test('generic-risk fixture prefers checked again not control or anxiety', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeCheckingAgainEntries(),
+      );
+
+      expect(result.phrases.first.toLowerCase(), contains('checked'));
+      for (final banned in ['control', 'anxiety', 'uncertainty']) {
+        expect(
+          result.phrases.any((phrase) => phrase.toLowerCase() == banned),
+          isFalse,
+        );
+      }
+    });
+
+    test('blocks expanded generic labels unless literally present', () {
+      for (final term in [
+        'procrastination',
+        'perfectionism',
+        'overthinking',
+        'fear',
+      ]) {
+        expect(
+          ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+            label: '$term keeps showing up',
+            entries: _threeRelatedRepeatEntries(),
+          ),
+          isTrue,
+        );
+      }
+    });
+
+    test('weak vague unrelated entries are not strong evidence', () {
+      final result = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeVagueUnrelatedEntries(),
+      );
+
+      expect(result.isStrong, isFalse);
+      expect(
+        FirstProofMomentEngine.build(entries: _threeVagueUnrelatedEntries()),
+        isNull,
       );
     });
 
@@ -422,6 +507,7 @@ void main() {
         entries: _threeRelatedRepeatEntries(),
       );
       expect(moment!.title, FirstProofMomentCopy.title);
+      expect(moment.hasStrongEvidence, isTrue);
       expect(moment.evidencePhrases, isNotEmpty);
       for (final phrase in moment.evidencePhrases) {
         expect(
@@ -431,6 +517,21 @@ void main() {
           contains(phrase.toLowerCase()),
         );
       }
+    });
+
+    test('weak evidence downgrades to possible repeat without chips', () {
+      final moment = FirstProofMomentEngine.build(
+        entries: _threeWeakPhraseConfirmedEntries(),
+      );
+      expect(moment, isNotNull);
+      if (moment!.hasStrongEvidence) {
+        expect(moment.title, FirstProofMomentCopy.title);
+        return;
+      }
+
+      expect(moment.title, FirstProofMomentCopy.titlePossible);
+      expect(moment.evidencePhrases, isEmpty);
+      expect(moment.body, FirstProofMomentCopy.bodyFallback);
     });
   });
 

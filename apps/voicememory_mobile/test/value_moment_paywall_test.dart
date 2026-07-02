@@ -149,8 +149,7 @@ void main() {
       expect(bridge.show, isTrue);
       expect(
         bridge.body,
-        'This thread has returned before. Pro keeps tracking whether it '
-        'returns, fades, or changes.',
+        ValueMomentBridge.threadReturnBody,
       );
       expect(bridge.cardType, 'thread_return');
     });
@@ -164,8 +163,7 @@ void main() {
       expect(bridge.show, isTrue);
       expect(
         bridge.body,
-        'A belief-like phrase showed up again. Pro keeps the evidence '
-        'connected as it changes.',
+        ValueMomentBridge.beliefBody,
       );
       expect(bridge.cardType, 'belief_distance');
     });
@@ -175,8 +173,7 @@ void main() {
       expect(bridge.show, isTrue);
       expect(
         bridge.body,
-        'Your archive has connected recordings. Pro keeps building the '
-        'thread history.',
+        ValueMomentBridge.proofCounterBody,
       );
       expect(bridge.cardType, 'archive_proof_counter');
     });
@@ -190,8 +187,7 @@ void main() {
       expect(bridge.show, isTrue);
       expect(
         bridge.body,
-        'Your weekly review found something to compare. Pro keeps these '
-        'changes connected over time.',
+        ValueMomentBridge.weeklyBody,
       );
       expect(bridge.cardType, 'weekly_thread_review');
     });
@@ -200,8 +196,7 @@ void main() {
       const bridge = ValueMomentBridge(show: true);
       expect(
         bridge.body,
-        'ArchiveMe has started connecting your evidence. Pro keeps track of '
-        'what returns, fades, and changes over time.',
+        ValueMomentBridge.fallbackBody,
       );
       expect(bridge.cardType, isEmpty);
     });
@@ -324,13 +319,10 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('value_moment_pro_bridge')), findsOneWidget);
-      expect(find.text('Keep this thread connected'), findsOneWidget);
+      expect(find.text(ValueMomentBridge.title), findsOneWidget);
       // The body is the moment-specific one — not the generic fallback.
       expect(
-        find.text(
-          'This thread has returned before. Pro keeps tracking whether it '
-          'returns, fades, or changes.',
-        ),
+        find.text(ValueMomentBridge.threadReturnBody),
         findsOneWidget,
       );
       expect(

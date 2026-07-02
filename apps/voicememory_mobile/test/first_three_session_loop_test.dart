@@ -652,5 +652,32 @@ void main() {
         isFalse,
       );
     });
+
+    test('first proof copy uses evidence trail language not chat memory', () {
+      final haystack = [
+        FirstProofMomentCopy.title,
+        FirstProofMomentCopy.whyLine,
+        FirstProofMomentCopy.evidenceLabel,
+        FirstProofMomentCopy.footer,
+      ].join(' ').toLowerCase();
+      expect(haystack, contains('repeat'));
+      expect(haystack, contains('evidence'));
+      expect(haystack, contains('your words'));
+      expect(haystack, isNot(contains('chat memory')));
+      expect(haystack, isNot(contains('ai remembers you')));
+      expect(haystack, isNot(contains('you should')));
+      expect(haystack, isNot(contains('try this')));
+    });
+
+    test('confirmed repeat line uses evidence across moments wording', () {
+      expect(
+        EarlyFirstSignalCopy.threeEntrySeenThreeTimes.toLowerCase(),
+        contains('your words'),
+      );
+      expect(
+        EarlyFirstSignalCopy.threeEntrySeenThreeTimes.toLowerCase(),
+        isNot(contains('chat history')),
+      );
+    });
   });
 }

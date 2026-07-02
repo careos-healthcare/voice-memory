@@ -26,6 +26,7 @@ import '../features/early_archive/confirmed_repeat_why_matters_store.dart';
 import '../features/early_archive/confirmed_repeat_thought_map_store.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta/archive_beta_mission_store.dart';
+import '../features/beta/tester_mission_store.dart';
 import '../features/beta/confirmed_repeat_beta_feedback_store.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
 import '../push/fcm_service.dart';
@@ -336,6 +337,7 @@ class AppServices {
     await ConfirmedRepeatBetaFeedbackStore.resetForTest();
     ArchiveBetaMissionGate.enabledOverride = false;
     await ArchiveBetaMissionStore.resetForTest();
+    await TesterMissionStore.resetForTest();
     await ConfirmedRepeatWhyMattersStore.resetForTest();
     await ConfirmedRepeatThoughtMapStore.resetForTest();
     ArchiveMeDemoState.resetForTest();

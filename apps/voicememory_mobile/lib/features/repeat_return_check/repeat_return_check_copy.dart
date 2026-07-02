@@ -14,14 +14,14 @@ abstract final class RepeatReturnCheckCopy {
 
   static const dismiss = 'Dismiss';
 
-  static const trendGettingLouder = 'The repeat is getting louder.';
-  static const trendSofterThanBefore = 'The repeat is softer than before.';
-  static const trendSteady = 'The repeat feels about the same as last time.';
+  static const trendGettingLouder = 'Stronger since your first proof.';
+  static const trendSofterThanBefore = 'Softer since your first proof.';
+  static const trendSteady = 'About the same since your first proof.';
 
-  static const changeProofTitle = 'This is changing over time.';
+  static const changeProofTitle = 'What changed over time';
 
   static const changeProofSupportLine =
-      'Each return check helps ArchiveMe see whether this pattern is changing.';
+      'Each return helps ArchiveMe compare what changed since your first proof.';
 
   static const changeProofRecordNextCta = 'Record the next time it happens';
 }

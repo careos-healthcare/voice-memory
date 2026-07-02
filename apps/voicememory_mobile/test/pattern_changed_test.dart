@@ -217,6 +217,23 @@ void main() {
   });
 
   group('PatternChangedCopy', () {
+    test('uses longitudinal change language', () {
+      final joined = [
+        PatternChangedCopy.softerTitle,
+        PatternChangedCopy.softerBody,
+        PatternChangedCopy.changedTitle,
+        PatternChangedCopy.changedBody,
+        PatternChangedCopy.strongerTitle,
+        PatternChangedCopy.strongerBody,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('what changed'));
+      expect(joined, contains('over time'));
+      expect(joined, isNot(contains('you should')));
+      expect(joined, isNot(contains('try repeating')));
+      expect(joined, contains('noticed'));
+    });
+
     test('no therapy or diagnosis language', () {
       for (final copy in [
         PatternChangedCopy.softerTitle,

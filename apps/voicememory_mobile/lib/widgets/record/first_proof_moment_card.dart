@@ -56,7 +56,7 @@ class FirstProofMomentCard extends StatelessWidget {
             key: const Key('first_proof_moment_body'),
             style: bodyStyle,
           ),
-          if (moment.evidencePhrases.isNotEmpty) ...[
+          if (moment.hasStrongEvidence && moment.evidencePhrases.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               moment.evidenceLabel,

@@ -19,26 +19,26 @@ abstract final class FirstProofMomentEngine {
     }
 
     final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(eligible);
-    final phrases = evidence.phrases.take(3).toList();
-    final primaryPhrase = phrases.isNotEmpty ? phrases.first : null;
-    final usesPhraseBody = primaryPhrase != null &&
-        ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(primaryPhrase) &&
-        !ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(primaryPhrase) &&
-        !ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
-          label: primaryPhrase,
-          entries: eligible,
-        );
+    final grounded = ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
+      evidence.phrases,
+      eligible,
+    );
+    final hasStrongEvidence = evidence.isStrong && grounded.isNotEmpty;
+    final primaryPhrase = grounded.isNotEmpty ? grounded.first : null;
+    final usesPhraseBody = hasStrongEvidence && primaryPhrase != null;
 
     return FirstProofMoment(
-      title: FirstProofMomentCopy.title,
+      title: usesPhraseBody
+          ? FirstProofMomentCopy.title
+          : FirstProofMomentCopy.titlePossible,
       body: usesPhraseBody
           ? FirstProofMomentCopy.bodyWithPhrase(primaryPhrase)
           : FirstProofMomentCopy.bodyFallback,
       evidenceLabel: FirstProofMomentCopy.evidenceLabel,
-      evidencePhrases: phrases,
+      evidencePhrases: usesPhraseBody ? grounded.take(3).toList() : const [],
       whyLine: FirstProofMomentCopy.whyLine,
       footer: FirstProofMomentCopy.footer,
-      hasStrongEvidence: evidence.isStrong,
+      hasStrongEvidence: hasStrongEvidence,
       usesPhraseBody: usesPhraseBody,
     );
   }

@@ -2,47 +2,47 @@
 abstract final class ReturnCheckPayoffCopy {
   ReturnCheckPayoffCopy._();
 
-  static const evidenceLabel = 'Compared with your first proof';
+  static const evidenceLabel = 'What changed since your first proof';
 
-  static const softerTitle = 'This looked softer than before';
+  static const softerTitle = 'This looked softer since your first proof';
   static const softerBodyFallback =
-      'This return still connects to your first repeat, but the evidence suggests it may be less urgent than before.';
+      'This return still connects to your first repeat. The evidence suggests it may be less urgent than before.';
   static const softerFooter =
-      'Keep recording when it shows up — ArchiveMe will watch whether the shift continues.';
+      'ArchiveMe will keep watching whether this shift holds.';
 
-  static const strongerTitle = 'This looked stronger than before';
+  static const strongerTitle = 'This looked stronger since your first proof';
   static const strongerBodyFallback =
-      'This return still connects to your first repeat, and the evidence suggests it may be showing up more strongly than before.';
+      'This return still connects to your first repeat. The evidence suggests it may be showing up with more intensity than before.';
   static const strongerFooter =
-      'That does not mean you failed. It gives ArchiveMe a clearer signal to track.';
+      'ArchiveMe is watching whether this changes when it comes back.';
 
   static const sameTitle = 'This looked about the same';
   static const sameBodyFallback =
       'This return still connects to your first repeat. ArchiveMe has not seen a clear shift yet.';
   static const sameFooter =
-      'A few more returns will make the pattern clearer.';
+      'ArchiveMe is watching whether this changes when it comes back.';
 
-  static const changedTitle = 'Something changed this time';
+  static const changedTitle = 'This looked different this time';
   static const changedBodyFallback =
-      'This return still connects to your first repeat, but something around it looks different from the first proof.';
+      'This return still connects to your first repeat, but something around it looks different from your first proof.';
   static const changedFooter =
-      'This is the kind of change ArchiveMe is built to track.';
+      'ArchiveMe tracks what happens when this comes back.';
 
   static const unknownTitle = 'ArchiveMe added this return';
   static const unknownBody =
-      'This moment has been added to your evidence trail. ArchiveMe needs more returns before it can say whether the repeat is stronger, softer, or changing.';
+      'This moment joins your evidence trail. ArchiveMe needs more returns before it can compare stronger, softer, or about the same since your first proof.';
   static const unknownFooter =
-      'Keep recording real moments. Do not force a pattern.';
+      'ArchiveMe is watching whether this changes when it comes back.';
 
   static String softerBodyWithPhrase(String phrase) =>
-      'This return still connects to “$phrase”, but the evidence suggests it may be less urgent than your first proof.';
+      'This return still connects to “$phrase”. It looked softer than your first proof.';
 
   static String strongerBodyWithPhrase(String phrase) =>
-      'This return still connects to “$phrase”, and the evidence suggests it may be showing up more strongly than before.';
+      'This return still connects to “$phrase”. It looked stronger than your first proof.';
 
   static String sameBodyWithPhrase(String phrase) =>
-      'This return still connects to “$phrase”. ArchiveMe has not seen a clear shift yet.';
+      'This return still connects to “$phrase”. So far it looks about the same since your first proof.';
 
   static String changedBodyWithPhrase(String phrase) =>
-      'This return still connects to “$phrase”, but something around it looks different from the first proof.';
+      'This return still connects to “$phrase”, but something around it looks different from your first proof.';
 }

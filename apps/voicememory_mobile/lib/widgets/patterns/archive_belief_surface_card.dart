@@ -14,7 +14,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import 'archive_belief_correction_actions.dart';
 
-/// Archive belief proof surface — above timeline on the Patterns tab.
+/// Archive belief proof surface — primary post-first-proof card on Archive/Patterns.
 class ArchiveBeliefSurfaceCard extends StatefulWidget {
   const ArchiveBeliefSurfaceCard({
     super.key,
@@ -81,6 +81,13 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
     if (_hidden) return const SizedBox.shrink();
 
     final surface = widget.surface;
+    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
+      color: AppColors.textPrimary,
+      height: 1.4,
+    );
+    final labelStyle = ArchiveMobileTypography.cardLabel(context);
+    final evidencePhrases = surface.evidencePhrases;
+
     return Container(
       key: const Key('archive_belief_proof_primary_card'),
       width: double.infinity,
@@ -111,6 +118,7 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
           ],
           Text(
             surface.headline,
+            key: const Key('archive_belief_surface_headline'),
             style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
               color: AppColors.accentPrimary,
               fontWeight: FontWeight.w600,
@@ -119,45 +127,86 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '“${surface.beliefSummary}”',
+            surface.beliefSummary,
             key: const Key('archive_belief_surface_belief'),
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            ArchiveBeliefSurfaceCopy.evidenceLabel,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            surface.evidenceSummary,
-            key: const Key('archive_belief_surface_evidence'),
-            style: ArchiveMobileTypography.body(context),
-          ),
+          if (evidencePhrases.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              ArchiveBeliefSurfaceCopy.evidenceLabel,
+              key: const Key('archive_belief_surface_evidence_label'),
+              style: labelStyle,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            for (final phrase in evidencePhrases) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('• ', style: bodyStyle),
+                  Expanded(
+                    child: Text(
+                      '“$phrase”',
+                      key: Key('archive_belief_surface_evidence_phrase_$phrase'),
+                      style: bodyStyle,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+            ],
+          ] else if (surface.evidenceSummary.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              ArchiveBeliefSurfaceCopy.evidenceLabel,
+              style: labelStyle,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              surface.evidenceSummary,
+              key: const Key('archive_belief_surface_evidence'),
+              style: bodyStyle,
+            ),
+          ],
           if (surface.whatChangedSummary case final changed?) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
               ArchiveBeliefSurfaceCopy.whatChangedLabel,
-              style: ArchiveMobileTypography.cardLabel(context),
+              key: const Key('archive_belief_surface_what_changed_label'),
+              style: labelStyle,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               changed,
               key: const Key('archive_belief_surface_what_changed'),
-              style: ArchiveMobileTypography.body(context),
+              style: bodyStyle,
+            ),
+          ],
+          if (surface.watchingNextLine case final watching?) ...[
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              ArchiveBeliefSurfaceCopy.watchingLabel,
+              key: const Key('archive_belief_surface_watching_label'),
+              style: labelStyle,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              watching,
+              key: const Key('archive_belief_surface_watching'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
             ),
           ],
           if (surface.confidenceLabel case final confidence?) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
               ArchiveBeliefSurfaceCopy.confidenceLabel,
-              style: ArchiveMobileTypography.cardLabel(context),
+              style: labelStyle,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               confidence,
               key: const Key('archive_belief_surface_confidence'),
-              style: ArchiveMobileTypography.body(context),
+              style: bodyStyle,
             ),
           ],
           if (surface.recordNextCta case final cta?) ...[

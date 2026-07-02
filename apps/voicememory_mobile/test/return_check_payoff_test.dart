@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/early_archive/return_check_payoff_co
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_gates.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_model.dart';
+import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -149,7 +150,9 @@ void main() {
       );
       expect(payoff!.state, ReturnCheckPayoffComparisonState.softer);
       expect(payoff.title, ReturnCheckPayoffCopy.softerTitle);
+      expect(payoff.evidenceLabel, contains('first proof'));
       expect(payoff.body, contains('said yes'));
+      expect(payoff.footer, contains('keep watching'));
     });
 
     test('stronger copy when latest return check is stronger', () {
@@ -363,6 +366,56 @@ void main() {
   });
 
   group('ReturnCheckPayoffCopy guard', () {
+    test('copy compares with first proof and tracks change over time', () {
+      final joined = [
+        ReturnCheckPayoffCopy.evidenceLabel,
+        ReturnCheckPayoffCopy.softerTitle,
+        ReturnCheckPayoffCopy.strongerTitle,
+        ReturnCheckPayoffCopy.sameTitle,
+        ReturnCheckPayoffCopy.changedTitle,
+        ReturnCheckPayoffCopy.unknownBody,
+        ReturnCheckPayoffCopy.softerFooter,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('first proof'));
+      expect(joined, contains('stronger'));
+      expect(joined, contains('softer'));
+      expect(joined, contains('about the same'));
+      expect(joined, contains('what changed'));
+    });
+
+    test('post-save payoff avoids repeating intensity labels in body and footer', () {
+      final payoff = ReturnCheckPayoffEngine.build(
+        entries: _fourRelatedRepeatEntries(),
+        returnChecks: [
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+        ],
+      )!;
+      final combined = '${payoff.title}\n${payoff.body}\n${payoff.footer}'.toLowerCase();
+      expect(
+        ArchiveProofCopyDedup.countPhrase(combined, 'softer'),
+        lessThanOrEqualTo(2),
+      );
+      expect(combined, isNot(contains('you should')));
+      expect(combined, isNot(contains('try to')));
+    });
+
+    test('payoff copy uses evidence comparison language', () {
+      final joined = [
+        ReturnCheckPayoffCopy.evidenceLabel,
+        ReturnCheckPayoffCopy.softerBodyFallback,
+        ReturnCheckPayoffCopy.strongerBodyFallback,
+        ReturnCheckPayoffCopy.changedBodyFallback,
+        ReturnCheckPayoffCopy.softerFooter,
+        ReturnCheckPayoffCopy.unknownFooter,
+      ].join(' ').toLowerCase();
+
+      expect(joined, contains('first proof'));
+      expect(joined, contains('evidence'));
+      expect(joined, contains('connects'));
+      expect(joined, contains('watching'));
+    });
+
     test('copy avoids therapy diagnosis and personality claims', () {
       const copy = [
         ReturnCheckPayoffCopy.softerTitle,

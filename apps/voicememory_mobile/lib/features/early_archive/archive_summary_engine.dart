@@ -1,8 +1,10 @@
 import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'archive_summary_copy.dart';
 import 'archive_summary_model.dart';
+import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'confirmed_repeat_thought_map_engine.dart';
 import 'confirmed_repeat_thought_map_models.dart';
 import 'early_evidence_timeline_engine.dart';
@@ -36,6 +38,7 @@ abstract final class ArchiveSummaryEngine {
     final positivePattern = PositivePatternEngine.build(entries: entries);
 
     final keepsRepeating = _keepsRepeating(
+      entries: entries,
       confirmedRepeat: confirmedRepeat,
       timeline: timeline,
     );
@@ -61,16 +64,29 @@ abstract final class ArchiveSummaryEngine {
   }
 
   static ArchiveSummaryRepeatingSection _keepsRepeating({
+    required List<JournalEntry> entries,
     EarlyFirstSignalModel? confirmedRepeat,
     EarlyEvidenceTimeline? timeline,
   }) {
     if (confirmedRepeat?.showsConfirmedRepeat == true) {
+      final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+      final grounded = ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
+        confirmedRepeat!.evidencePhrases,
+        eligible,
+      );
+      final primaryPhrase = grounded.isNotEmpty ? grounded.first : null;
+      final bodyLines = <String>[
+        if (primaryPhrase != null)
+          ArchiveSummaryCopy.keepsRepeatingWithPhrase(primaryPhrase)
+        else
+          ArchiveSummaryCopy.keepsRepeatingForming,
+        ...confirmedRepeat.lines,
+      ];
+
       return ArchiveSummaryRepeatingSection(
-        bodyLines: [
-          confirmedRepeat!.title,
-          ...confirmedRepeat.lines,
-        ],
-        evidencePhrases: confirmedRepeat.evidencePhrases,
+        bodyLines: bodyLines,
+        evidencePhrases: grounded,
+        isFallback: primaryPhrase == null,
       );
     }
 

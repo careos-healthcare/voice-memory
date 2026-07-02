@@ -4,38 +4,37 @@ abstract final class EarlyRepeatProgressCopy {
 
   static const oneMomentTitle = 'One moment saved';
   static const oneMomentBody =
-      'Come back when something similar happens again. The second moment helps ArchiveMe compare.';
-  static const oneMomentProgress = '1 of 3 moments for first repeat proof';
+      'Come back when something similar happens and record the second moment.';
+  static const oneMomentProgress = '1 of 3';
 
-  static const twoRelatedTitle = 'A repeat may be forming';
+  static const twoRelatedTitle = 'Two similar moments';
   static const twoRelatedBody =
-      'One more related moment lets ArchiveMe check whether this is really repeating.';
-  static const twoRelatedProgress = '2 of 3 moments for first repeat proof';
+      'One more related moment unlocks your first proof.';
+  static const twoRelatedProgress = '2 of 3';
 
   static const twoUnrelatedTitle = 'Two moments saved';
   static const twoUnrelatedBody =
-      'ArchiveMe has two moments, but they do not look clearly related yet. Record the next real moment and it will keep looking.';
-  static const twoUnrelatedProgress = '2 moments saved';
+      'No clear match yet — that is okay. Record the next real moment.';
+  static const twoUnrelatedProgress = '2 of 3';
 
-  static const oneMomentCueLabel = 'Watch for this next';
+  static const oneMomentCueLabel = 'Next step';
   static const oneMomentCueBodyFallback =
-      'Next time the same kind of moment happens again, record it. The second moment helps ArchiveMe compare.';
-  static const oneMomentCueFooter = 'It only needs ten seconds.';
+      'Come back when something similar happens.';
+  static const oneMomentCueFooter = 'Ten seconds is enough.';
 
-  static const twoRelatedCueLabel = 'Record one more like this';
+  static const twoRelatedCueLabel = 'One more unlocks first proof';
   static const twoRelatedCueBodyFallback =
-      'One more related moment lets ArchiveMe check whether this is really repeating.';
-  static const twoRelatedCueFooter =
-      'That third moment creates the first real proof.';
+      'Record when something similar happens again.';
+  static const twoRelatedCueFooter = 'That creates your first proof.';
 
-  static const twoUnrelatedCueLabel = 'Record the next real moment';
+  static const twoUnrelatedCueLabel = 'Next step';
   static const twoUnrelatedCueBody =
-      'These two moments do not clearly match yet. Record the next real moment and ArchiveMe will keep looking.';
+      'Record the next real moment. ArchiveMe will keep looking.';
   static const twoUnrelatedCueFooter = 'No need to force a pattern.';
 
   static String oneMomentCueBodyWithPhrase(String phrase) =>
-      'Next time something like “$phrase” happens, record that moment. That gives ArchiveMe something to compare.';
+      'Come back when something like “$phrase” happens and record it.';
 
   static String twoRelatedCueBodyWithPhrase(String phrase) =>
-      'One more moment like “$phrase” lets ArchiveMe check whether this is really repeating.';
+      'Record one more moment like “$phrase”. That unlocks your first proof.';
 }

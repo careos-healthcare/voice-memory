@@ -177,6 +177,22 @@ void main() {
       );
     });
 
+    test('visible after return check answered', () {
+      expect(
+        PaywallTimingGates.showFullArchiveHistoryProBoundary(
+          entryCount: 4,
+          resolved: false,
+          isPro: false,
+          isPostSave: false,
+          hasConfirmedRepeat: false,
+          hasArchiveSummary: false,
+          hasWeeklyArchiveReview: false,
+          hasReturnCheckAnswered: true,
+        ),
+        isTrue,
+      );
+    });
+
     test('respects resolved and Pro user flags', () {
       expect(
         PaywallTimingGates.showFullArchiveHistoryProBoundary(
@@ -293,19 +309,20 @@ void main() {
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        'ArchiveMe can show your first repeat for free. Pro keeps the full evidence '
-        'history, weekly reviews, private reports, and whether patterns get '
-        'stronger, softer, or change over time.',
+        'Your first repeat is free. Pro keeps the evidence history from your own '
+        'words — not conversation history — so ArchiveMe can show whether patterns '
+        'get stronger, softer, or change over time.',
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
         containsAll([
-          'Full archive history',
-          'Weekly archive reviews',
+          'Full evidence history',
           'Pattern change tracking',
+          'Weekly archive reviews',
           'Private archive reports',
         ]),
       );
+      expect(ArchiveBeliefThreadCopy.whyPro, isNotEmpty);
       expect(ArchiveBeliefThreadCopy.proBridgeCta, 'See Pro');
       expect(ArchiveBeliefThreadCopy.proBridgeSecondary, 'Not now');
     });
@@ -315,6 +332,7 @@ void main() {
         ArchiveBeliefThreadCopy.fullArchiveHistoryTitle,
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
         ...ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
+        ArchiveBeliefThreadCopy.whyPro,
         ArchiveBeliefThreadCopy.proBridgeCta,
         ArchiveBeliefThreadCopy.proBridgeSecondary,
       ].join(' ').toLowerCase();
@@ -354,6 +372,7 @@ void main() {
       for (final bullet in ArchiveBeliefThreadCopy.fullArchiveHistoryBullets) {
         expect(find.text(bullet), findsOneWidget);
       }
+      expect(find.text(ArchiveBeliefThreadCopy.whyPro), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.proBridgeCta), findsOneWidget);
       expect(
         find.text(ArchiveBeliefThreadCopy.proBridgeSecondary),

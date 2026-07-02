@@ -481,6 +481,8 @@ void main() {
             RepeatReturnCheckChoice.softer =>
               RepeatReturnCheckCopy.trendSofterThanBefore,
             RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
+            RepeatReturnCheckChoice.changed =>
+              RepeatReturnCheckCopy.trendSteady,
           },
           latestChoice: choice,
         );
@@ -626,6 +628,36 @@ void main() {
     });
 
     group('copy', () {
+      test('references change over time with stronger softer same language', () {
+        final joined = [
+          WeeklyArchiveWeekReviewCopy.promise,
+          WeeklyArchiveWeekReviewCopy.changedLabel,
+          WeeklyArchiveWeekReviewCopy.changedLouder,
+          WeeklyArchiveWeekReviewCopy.changedSame,
+          WeeklyArchiveWeekReviewCopy.changedSofter,
+        ].join(' ').toLowerCase();
+
+        expect(joined, contains('over time'));
+        expect(joined, contains('stronger'));
+        expect(joined, contains('softer'));
+        expect(joined, contains('what changed'));
+      });
+
+      test('helpful evidence is framed as noticed not advice', () {
+        expect(
+          WeeklyArchiveWeekReviewCopy.helpedPrefix.toLowerCase(),
+          contains('noticed'),
+        );
+        expect(
+          WeeklyArchiveWeekReviewCopy.helpedLabel,
+          'Appeared to help',
+        );
+        expect(
+          WeeklyArchiveWeekReviewCopy.helpedPrefix.toLowerCase(),
+          isNot(contains('you should')),
+        );
+      });
+
       test('avoids therapy and diagnosis language', () {
         final lines = [
           WeeklyArchiveWeekReviewCopy.title,

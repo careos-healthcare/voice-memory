@@ -5,15 +5,15 @@ abstract final class FirstWeekLoopCopy {
   static const title = 'Record when this comes back';
 
   static const bodyFallback =
-      'Next time this repeat comes back, record it. ArchiveMe will compare it with your first proof and show whether it feels stronger, softer, or different.';
+      'ArchiveMe tracks what happens when this comes back. Record the next return so ArchiveMe can compare stronger, softer, or about the same since your first proof.';
 
   static const label = 'First week loop';
 
   static const footer =
-      'You are not starting again — you are adding evidence.';
+      'Keep recording when it returns — that is how ArchiveMe sees change.';
 
   static const recordCta = 'Record when it happens';
 
   static String bodyWithPhrase(String phrase) =>
-      'Next time something like “$phrase” happens, record it. ArchiveMe will compare it with your first repeat and show whether it feels stronger, softer, or different.';
+      'Next time something like “$phrase” happens, record it. ArchiveMe will compare it with your first proof and track what changed.';
 }

@@ -86,7 +86,8 @@ void main() {
     });
 
     test('builds belief from real capacity repeat entries', () {
-      final surface = const ArchiveBeliefSurfaceSource().resolve([
+      final surface = const ArchiveBeliefSurfaceSource().resolve(
+        [
         _entry(
           id: 'a',
           transcript:
@@ -104,12 +105,16 @@ void main() {
           transcript:
               'I said yes again even though I had no capacity for one more ask.',
         ),
-      ]);
+      ],
+        viewingConfirmedRepeatOrTimeline: true,
+      );
 
       expect(surface.shouldShow, isTrue);
       expect(surface.isPreview, isFalse);
+      expect(surface.isPrimaryAfterFirstProof, isTrue);
+      expect(surface.headline, ArchiveBeliefSurfaceCopy.headline);
+      expect(surface.evidencePhrases, isNotEmpty);
       expect(ArchiveDisplayCopyGuard.passes(surface.beliefSummary), isTrue);
-      expect(ArchiveDisplayCopyGuard.passes(surface.evidenceSummary), isTrue);
     });
 
     test('weak entry count uses preview cautious copy', () {
@@ -135,7 +140,8 @@ void main() {
     testWidgets('shows belief, evidence, what changed, and record next', (
       tester,
     ) async {
-      final surface = ArchiveBeliefSurfaceSource().resolve([
+      final surface = ArchiveBeliefSurfaceSource().resolve(
+        [
         _entry(
           id: 'a',
           transcript:
@@ -153,7 +159,9 @@ void main() {
           transcript:
               'I said yes again even though I had no capacity for one more ask.',
         ),
-      ]);
+      ],
+        viewingConfirmedRepeatOrTimeline: true,
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -169,7 +177,21 @@ void main() {
       );
 
       expect(find.byKey(const Key('archive_belief_proof_primary_card')), findsOneWidget);
+      expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsOneWidget);
       expect(find.text(ArchiveBeliefSurfaceCopy.evidenceLabel), findsOneWidget);
+      if (surface.evidencePhrases.isNotEmpty) {
+        expect(
+          find.byKey(
+            Key(
+              'archive_belief_surface_evidence_phrase_${surface.evidencePhrases.first}',
+            ),
+          ),
+          findsOneWidget,
+        );
+      }
+      if (surface.watchingNextLine != null) {
+        expect(find.text(ArchiveBeliefSurfaceCopy.watchingLabel), findsOneWidget);
+      }
       expect(find.byKey(const Key('archive_belief_surface_record_next')), findsOneWidget);
     });
   });

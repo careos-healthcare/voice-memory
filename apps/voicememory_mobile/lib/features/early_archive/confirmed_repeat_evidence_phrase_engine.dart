@@ -36,6 +36,10 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     'self sabotage',
     'stress',
     'confidence',
+    'procrastination',
+    'perfectionism',
+    'overthinking',
+    'fear',
   };
 
   static const _concreteActionPatterns = [
@@ -44,6 +48,10 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     'said yes',
     'checked again',
     'checking again',
+    'checked the message',
+    'checked one more',
+    'went back and checked',
+    'went back',
     'avoided the message',
     'avoided the',
     'avoided replying',
@@ -62,6 +70,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
   static const _actionVerbHints = {
     'asked',
     'avoided',
+    'back',
     'checked',
     'checking',
     'kept',
@@ -72,6 +81,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     'stopped',
     'walked',
     'thinking',
+    'went',
   };
 
   static const _stopWords = {
@@ -113,18 +123,59 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 2) return ConfirmedRepeatEvidenceResult.empty;
 
-    final window = eligible.length <= 3
-        ? eligible
-        : eligible.sublist(0, 3);
+    final window =
+        eligible.length <= 3 ? eligible : eligible.sublist(0, 3);
     final texts = window.map(_entryText).where((t) => t.isNotEmpty).toList();
     if (texts.length < 2) return ConfirmedRepeatEvidenceResult.empty;
 
-    final phrases = _extractPhrases(texts);
-    final isStrong = _isStrongEvidence(phrases);
+    final rawPhrases = _extractPhrases(texts);
+    final phrases = _rankPhrases(
+      groundedPhrases(rawPhrases, window),
+      texts,
+    );
+    final isStrong = _isStrongEvidence(phrases, texts);
     return ConfirmedRepeatEvidenceResult(
       phrases: phrases,
       isStrong: isStrong,
     );
+  }
+
+  /// Phrases that are concrete, user-written, and not generic psychology labels.
+  static List<String> groundedPhrases(
+    List<String> phrases,
+    List<JournalEntry> entries,
+  ) {
+    final texts = ArchiveEvidenceGuard.eligibleEntries(entries)
+        .map(_entryText)
+        .where((text) => text.isNotEmpty)
+        .toList();
+    return _rankPhrases(
+      phrases
+          .where(
+            (phrase) =>
+                isConcretePhrase(phrase) &&
+                !isAbstractOnlyPhrase(phrase) &&
+                !usesUngroundedGenericLabel(label: phrase, entries: entries),
+          )
+          .toList(),
+      texts,
+    );
+  }
+
+  static List<String> _rankPhrases(List<String> phrases, List<String> texts) {
+    final ranked = [...phrases]
+      ..sort(
+        (a, b) => _phraseRank(b, texts).compareTo(_phraseRank(a, texts)),
+      );
+    return ranked;
+  }
+
+  static int _phraseRank(String phrase, List<String> texts) {
+    var score = _phraseScore(phrase);
+    final lower = phrase.toLowerCase();
+    if (_concreteActionPatterns.any(lower.contains)) score += 30;
+    if (_appearsInMultipleTexts(phrase, texts)) score += 24;
+    return score;
   }
 
   /// First concrete phrase from one moment — for next-moment guidance at entry 1.
@@ -139,7 +190,9 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
       if (!lower.contains(pattern)) continue;
       final display = _displayFromEntries([text], pattern);
       if (display == null) continue;
-      if (!_isConcretePhrase(display) || _isAbstractOnlyPhrase(display)) continue;
+      if (!_isConcretePhrase(display) || _isAbstractOnlyPhrase(display)) {
+        continue;
+      }
       if (usesUngroundedGenericLabel(label: display, entries: [entry])) {
         continue;
       }
@@ -185,9 +238,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 2) return null;
 
-    for (final phrase in extract(eligible).phrases) {
-      if (!_isConcretePhrase(phrase) || _isAbstractOnlyPhrase(phrase)) continue;
-      if (usesUngroundedGenericLabel(label: phrase, entries: eligible)) continue;
+    for (final phrase in groundedPhrases(extract(eligible).phrases, eligible)) {
       return phrase;
     }
     return null;
@@ -215,13 +266,36 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
 
   static bool isAbstractOnlyPhrase(String phrase) => _isAbstractOnlyPhrase(phrase);
 
-  static bool _isStrongEvidence(List<String> phrases) {
+  static bool _isStrongEvidence(List<String> phrases, List<String> texts) {
     if (phrases.isEmpty) return false;
     if (phrases.every(_isAbstractOnlyPhrase)) return false;
     if (!phrases.any(_isConcretePhrase)) return false;
-    if (phrases.length >= minPhrasesForStrong) return true;
-    // One repeated concrete action phrase across entries is enough.
-    return true;
+
+    final crossEntry = phrases
+        .where((phrase) => _appearsInMultipleTexts(phrase, texts))
+        .toList();
+    if (crossEntry.isEmpty) return false;
+
+    if (crossEntry.length >= minPhrasesForStrong) return true;
+    return crossEntry.any(_isConcretePhrase);
+  }
+
+  static bool _appearsInMultipleTexts(String phrase, List<String> texts) {
+    final lower = phrase.toLowerCase();
+    var count =
+        texts.where((text) => text.toLowerCase().contains(lower)).length;
+    if (count >= 2) return true;
+
+    final words =
+        lower.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).toList();
+    if (words.length < 2) return false;
+    if (!_actionVerbHints.contains(words.first)) return false;
+
+    count = texts.where((text) {
+      final blob = text.toLowerCase();
+      return words.every(blob.contains);
+    }).length;
+    return count >= 2;
   }
 
   static List<String> _extractPhrases(List<String> texts) {
@@ -229,10 +303,13 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     final candidates = <String, int>{};
 
     void addCandidate(String phrase, {required int bonus}) {
-      final display = _displayFromEntries(texts, phrase);
+      final display =
+          _displayFromEntries(texts, phrase) ?? _displayActionPattern(texts, phrase);
       if (display == null) return;
+      if (_isAbstractOnlyPhrase(display) && !_isConcretePhrase(display)) return;
       final key = display.toLowerCase();
-      final score = bonus + _phraseScore(display);
+      final score =
+          bonus + _phraseScore(display) + _crossEntryVerbBonus(display, lowerTexts);
       final existing = candidates[key];
       if (existing == null || score > existing) {
         candidates[key] = score;
@@ -240,8 +317,10 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     }
 
     for (final phrase in _concreteActionPatterns) {
-      if (lowerTexts.where((t) => t.contains(phrase)).length >= 2) {
-        addCandidate(phrase, bonus: 20);
+      if (_appearsInMultipleTexts(phrase, texts)) {
+        addCandidate(phrase, bonus: 24);
+      } else if (lowerTexts.any((t) => t.contains(phrase))) {
+        addCandidate(phrase, bonus: 10);
       }
     }
 
@@ -255,10 +334,12 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     for (final entry in ngramCounts.entries) {
       if (entry.value.length < 2) continue;
       if (_isWeakPhrase(entry.key)) continue;
+      if (!_isConcretePhrase(entry.key)) continue;
       if (ArchiveRepeatPhraseSanitizer.isLowQuality(entry.key)) continue;
+      if (_concreteActionPatterns.any(entry.key.contains)) continue;
       addCandidate(
         entry.key,
-        bonus: entry.value.length * entry.key.split(' ').length,
+        bonus: entry.value.length * entry.key.split(' ').length * 2,
       );
     }
 
@@ -277,13 +358,24 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     return kept;
   }
 
+  static int _crossEntryVerbBonus(String phrase, List<String> lowerTexts) {
+    final lower = phrase.toLowerCase();
+    var bonus = 0;
+    for (final verb in _actionVerbHints) {
+      if (!lower.contains(verb)) continue;
+      final count = lowerTexts.where((text) => text.contains(verb)).length;
+      if (count >= 2) bonus += 6;
+    }
+    return bonus;
+  }
+
   static int _phraseScore(String phrase) {
     var score = 0;
     if (_isConcretePhrase(phrase)) score += 12;
-    if (_isAbstractOnlyPhrase(phrase)) score -= 10;
+    if (_isAbstractOnlyPhrase(phrase)) score -= 14;
     final words = phrase.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
-    if (words >= 2 && words <= 4) score += 4;
-    if (words > 6) score -= 6;
+    if (words >= 2 && words <= 4) score += 5;
+    if (words > 6) score -= 8;
     return score;
   }
 
@@ -314,7 +406,15 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     if (lower.length < 5) return true;
     final words = lower.split(' ');
     if (words.every(_stopWords.contains)) return true;
-    const genericOnly = {'work', 'today', 'moment', 'thing', 'things', 'time', 'busy'};
+    const genericOnly = {
+      'work',
+      'today',
+      'moment',
+      'thing',
+      'things',
+      'time',
+      'busy',
+    };
     if (words.length == 1 && genericOnly.contains(words.single)) return true;
     return false;
   }
@@ -351,6 +451,7 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
         'office',
         'day',
         'again',
+        'unsettled',
       };
       return words.every(
         (word) => vagueOnly.contains(word) || _stopWords.contains(word),
@@ -358,6 +459,21 @@ abstract final class ConfirmedRepeatEvidencePhraseEngine {
     }
 
     return true;
+  }
+
+  static String? _displayActionPattern(List<String> texts, String pattern) {
+    if (!_appearsInMultipleTexts(pattern, texts)) return null;
+    final words =
+        pattern.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).toList();
+    if (words.isEmpty || words.length > maxWords) return null;
+
+    for (final text in texts) {
+      final lower = text.toLowerCase();
+      if (!words.every(lower.contains)) continue;
+      final display = _displayFromEntries(texts, pattern);
+      return display ?? pattern;
+    }
+    return null;
   }
 
   static String? _displayFromEntries(List<String> texts, String phraseLower) {

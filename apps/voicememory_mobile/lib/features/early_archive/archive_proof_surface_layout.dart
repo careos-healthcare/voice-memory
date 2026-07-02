@@ -11,6 +11,7 @@ class ArchiveProofSurfaceLayout {
     this.positiveReinforcementVisible = false,
     this.patternChangedVisible = false,
     this.archiveSummaryVisible = false,
+    this.archiveCurrentBeliefVisible = false,
   });
 
   final bool confirmedRepeatCardVisible;
@@ -23,37 +24,46 @@ class ArchiveProofSurfaceLayout {
   final bool positiveReinforcementVisible;
   final bool patternChangedVisible;
   final bool archiveSummaryVisible;
+  final bool archiveCurrentBeliefVisible;
+
+  /// Current-belief surface replaces Archive Summary as the main overview.
+  bool get effectiveArchiveSummaryVisible =>
+      archiveSummaryVisible && !archiveCurrentBeliefVisible;
 
   /// Supporting cards fold into Archive Summary when it is visible.
   bool get effectiveWhyMattersVisible =>
-      whyMattersVisible && !archiveSummaryVisible;
+      whyMattersVisible && !effectiveArchiveSummaryVisible;
 
   bool get effectiveThoughtMapVisible =>
-      thoughtMapVisible && !archiveSummaryVisible;
+      thoughtMapVisible && !effectiveArchiveSummaryVisible;
 
   bool get effectivePositiveReinforcementVisible =>
-      positiveReinforcementVisible && !archiveSummaryVisible;
+      positiveReinforcementVisible && !effectiveArchiveSummaryVisible;
 
   bool get effectivePositivePatternVisible =>
       positivePatternVisible &&
-      !archiveSummaryVisible &&
+      !effectiveArchiveSummaryVisible &&
       !positiveReinforcementVisible;
 
   bool get effectiveChangeProofVisible =>
       changeProofVisible &&
-      !archiveSummaryVisible &&
+      !effectiveArchiveSummaryVisible &&
       !patternChangedVisible;
 
   bool get effectivePatternChangedVisible =>
-      patternChangedVisible && !archiveSummaryVisible;
+      patternChangedVisible && !effectiveArchiveSummaryVisible;
 
-  /// Confirmed-repeat card folds into Archive Summary when both qualify.
+  /// Confirmed-repeat card folds into Archive Summary or current belief.
   bool get effectiveConfirmedRepeatCardVisible =>
-      confirmedRepeatCardVisible && !archiveSummaryVisible;
+      confirmedRepeatCardVisible &&
+      !effectiveArchiveSummaryVisible &&
+      !archiveCurrentBeliefVisible;
 
   /// Full timeline stays on Patterns; Record folds it into Archive Summary.
   bool recordTimelineVisible({required bool surfaceIsRecord}) =>
-      timelineVisible && !(surfaceIsRecord && archiveSummaryVisible);
+      timelineVisible &&
+      !(surfaceIsRecord && effectiveArchiveSummaryVisible) &&
+      !archiveCurrentBeliefVisible;
 
   /// Pattern-changed celebration stays visible on Record above Archive Summary.
   bool get recordPatternChangedVisible => patternChangedVisible;
