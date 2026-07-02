@@ -1,24 +1,23 @@
-/// Copy for pattern-changed celebration — grounded repeat return checks only.
+/// Copy for the pattern-changed payoff — grounded evidence only.
 abstract final class PatternChangedCopy {
   PatternChangedCopy._();
 
-  static const softerTitle = 'Softer this time';
+  static const title = 'Something changed this time';
 
-  static const softerBody =
-      'ArchiveMe noticed this return showed up with less urgency than earlier '
-      'returns. Pro keeps the timeline so ArchiveMe can compare returns over time.';
+  static const earlierLabel = 'Earlier';
 
-  static const changedTitle = 'Different this time';
+  static const thisTimeLabel = 'This time';
 
-  static const changedBody =
-      'ArchiveMe noticed this did not show up the same way as earlier returns. '
-      'Pro keeps tracking what changed over time.';
+  static const bodyFallback =
+      'This return still connects to your first proof, but something around it '
+      'looked different this time.';
 
-  static const strongerTitle = 'Stronger this time';
+  static const footer =
+      'ArchiveMe will keep watching whether this shift holds.';
 
-  static const strongerBody =
-      'ArchiveMe noticed this return showed up with more intensity than earlier '
-      'returns. Pro keeps the evidence history as the trail grows.';
+  static String bodyWithPhrases(String oldPhrase, String newPhrase) =>
+      'Earlier, this showed up as "$oldPhrase". This time, ArchiveMe noticed '
+      '"$newPhrase".';
 
   static const recordIfReturnsCta = 'Record when it returns';
 

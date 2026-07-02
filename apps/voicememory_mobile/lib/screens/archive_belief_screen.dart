@@ -3677,6 +3677,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       final patternChangedCandidate = PatternChangedEngine.build(
         changeProof: repeatReturnChangeProof,
         records: RepeatReturnCheckStore.cached,
+        entries: _entries,
       );
       final patternChangedDismissed = patternChangedCandidate != null &&
           PatternChangedStore.isDismissed(
@@ -4033,6 +4034,27 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 ..._buildWhatChangedSinceLastTimeWidgets(),
+                if (showPatternChanged && patternChangedCandidate != null) ...[
+                  PatternChangedCard(
+                    result: patternChangedCandidate,
+                    entryCount: _entries.length,
+                    surface: 'patterns',
+                    onRecord: () => _handlePatternChangedRecord(
+                      patternChangedCandidate,
+                    ),
+                    onDismissed: () => setState(() {}),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ] else if (proofSurfaceLayout.effectiveChangeProofVisible &&
+                    repeatReturnChangeProof != null) ...[
+                  RepeatReturnCheckChangeProofCard(
+                    proof: repeatReturnChangeProof,
+                    entryCount: _entries.length,
+                    surface: 'patterns',
+                    onRecordNext: _goToRecord,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (showArchiveSummary && archiveSummary != null) ...[
                   ArchiveSummaryCard(
                     summary: archiveSummary,
@@ -4098,27 +4120,6 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     onRecordAgain: () => _handlePositiveReinforcementRecordAgain(
                       positiveReinforcement,
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
-                if (showPatternChanged && patternChangedCandidate != null) ...[
-                  PatternChangedCard(
-                    result: patternChangedCandidate,
-                    entryCount: _entries.length,
-                    surface: 'patterns',
-                    onRecord: () => _handlePatternChangedRecord(
-                      patternChangedCandidate,
-                    ),
-                    onDismissed: () => setState(() {}),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ] else if (proofSurfaceLayout.effectiveChangeProofVisible &&
-                    repeatReturnChangeProof != null) ...[
-                  RepeatReturnCheckChangeProofCard(
-                    proof: repeatReturnChangeProof,
-                    entryCount: _entries.length,
-                    surface: 'patterns',
-                    onRecordNext: _goToRecord,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],

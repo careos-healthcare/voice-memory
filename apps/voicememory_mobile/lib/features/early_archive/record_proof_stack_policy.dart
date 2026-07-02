@@ -155,6 +155,9 @@ abstract final class RecordProofStackPolicy {
       if (showProBridge) {
         showProBridge = false;
         count--;
+      } else if (showArchiveSummary && showPatternChanged) {
+        showArchiveSummary = false;
+        count--;
       } else if (showFirstWeekLoop && showPatternChanged) {
         showFirstWeekLoop = false;
         count--;
@@ -166,9 +169,6 @@ abstract final class RecordProofStackPolicy {
         count--;
       } else if (showFirstWeekLoop) {
         showFirstWeekLoop = false;
-        count--;
-      } else if (showPatternChanged && showArchiveSummary) {
-        showPatternChanged = false;
         count--;
       } else {
         break;

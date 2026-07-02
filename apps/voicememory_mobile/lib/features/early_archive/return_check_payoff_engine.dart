@@ -1,6 +1,5 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
-import '../repeat_return_check/pattern_changed_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_copy.dart';
 import '../repeat_return_check/repeat_return_check_gates.dart';
@@ -86,27 +85,6 @@ abstract final class ReturnCheckPayoffEngine {
       ...returnChecks.where((record) => record.entryId != latestEntryId),
     ];
     final changeProof = _changeProofForRecords(orderedRecords);
-    final patternChanged = changeProof != null
-        ? PatternChangedEngine.build(
-            changeProof: changeProof,
-            records: orderedRecords,
-          )
-        : null;
-
-    if (patternChanged?.type == PatternChangedType.changed &&
-        latestChoice == RepeatReturnCheckChoice.same) {
-      return ReturnCheckPayoffComparisonState.changed;
-    }
-
-    if (patternChanged != null) {
-      return switch (patternChanged.type) {
-        PatternChangedType.softer => ReturnCheckPayoffComparisonState.softer,
-        PatternChangedType.stronger =>
-          ReturnCheckPayoffComparisonState.stronger,
-        PatternChangedType.changed => ReturnCheckPayoffComparisonState.changed,
-      };
-    }
-
     return switch (latestChoice) {
       RepeatReturnCheckChoice.softer => ReturnCheckPayoffComparisonState.softer,
       RepeatReturnCheckChoice.stronger =>

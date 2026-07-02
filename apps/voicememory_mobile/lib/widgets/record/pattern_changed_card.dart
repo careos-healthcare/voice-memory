@@ -9,7 +9,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Quiet win when a repeat softens or meaningfully changes — no gamification.
+/// Major payoff when a repeat meaningfully changes — evidence, not advice.
 class PatternChangedCard extends StatefulWidget {
   const PatternChangedCard({
     super.key,
@@ -112,19 +112,20 @@ class _PatternChangedCardState extends State<PatternChangedCard> {
       );
     }
 
-    final background = widget.result.isCelebration
-        ? const Color(0xFFF5FAF6)
-        : const Color(0xFFFAFAF8);
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textPrimary,
       height: 1.45,
     );
+    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
+      color: AppColors.textSecondary,
+    );
+    final phraseStyle = bodyStyle.copyWith(color: AppColors.textPrimary);
 
     return Container(
       key: const Key('pattern_changed_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: background),
+      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF5FAF6)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -134,10 +135,45 @@ class _PatternChangedCardState extends State<PatternChangedCard> {
             style: ArchiveMobileTypography.listTitle(context),
           ),
           const SizedBox(height: AppSpacing.xs),
+          if (widget.result.usesPhraseEvidence) ...[
+            Text(
+              PatternChangedCopy.earlierLabel,
+              key: const Key('pattern_changed_earlier_label'),
+              style: labelStyle,
+            ),
+            if (widget.result.earlierPhrase != null)
+              Text(
+                '"${widget.result.earlierPhrase!}"',
+                key: const Key('pattern_changed_earlier_phrase'),
+                style: phraseStyle,
+              ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              PatternChangedCopy.thisTimeLabel,
+              key: const Key('pattern_changed_this_time_label'),
+              style: labelStyle,
+            ),
+            if (widget.result.thisTimePhrase != null)
+              Text(
+                '"${widget.result.thisTimePhrase!}"',
+                key: const Key('pattern_changed_this_time_phrase'),
+                style: phraseStyle,
+              ),
+          ] else ...[
+            Text(
+              widget.result.body,
+              key: const Key('pattern_changed_body'),
+              style: bodyStyle,
+            ),
+          ],
+          const SizedBox(height: AppSpacing.sm),
           Text(
-            widget.result.body,
-            key: const Key('pattern_changed_body'),
-            style: bodyStyle,
+            widget.result.footer,
+            key: const Key('pattern_changed_footer'),
+            style: bodyStyle.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 13,
+            ),
           ),
           if (widget.showRecordCta && widget.onRecord != null) ...[
             const SizedBox(height: AppSpacing.sm),

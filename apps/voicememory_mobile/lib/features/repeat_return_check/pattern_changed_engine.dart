@@ -1,20 +1,17 @@
+import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
+import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import 'repeat_return_check_change_proof.dart';
-import 'repeat_return_check_copy.dart';
 import 'repeat_return_check_models.dart';
 import 'repeat_return_check_trend.dart';
 import 'pattern_changed_copy.dart';
 
 enum PatternChangedType {
-  softer,
-  changed,
-  stronger;
+  changed;
 
   String get analyticsValue => name;
 
-  bool get isCelebration => switch (this) {
-        PatternChangedType.softer || PatternChangedType.changed => true,
-        PatternChangedType.stronger => false,
-      };
+  bool get isCelebration => true;
 }
 
 /// Built pattern-changed card from repeat return check evidence.
@@ -23,23 +20,34 @@ class PatternChangedResult {
     required this.type,
     required this.title,
     required this.body,
+    required this.footer,
     required this.entryId,
     required this.isCelebration,
+    required this.usesPhraseEvidence,
+    this.earlierPhrase,
+    this.thisTimePhrase,
   });
 
   final PatternChangedType type;
   final String title;
   final String body;
+  final String footer;
   final String entryId;
   final bool isCelebration;
+  final bool usesPhraseEvidence;
+  final String? earlierPhrase;
+  final String? thisTimePhrase;
 }
 
 abstract final class PatternChangedEngine {
   PatternChangedEngine._();
 
+  static const _maxPhraseWords = 6;
+
   static PatternChangedResult? build({
     required RepeatReturnCheckChangeProof? changeProof,
     required List<RepeatReturnCheckRecord> records,
+    required List<JournalEntry> entries,
   }) {
     if (changeProof == null) return null;
     if (!RepeatReturnCheckTrendEngine.hasAnsweredCheck(records)) return null;
@@ -47,54 +55,103 @@ abstract final class PatternChangedEngine {
     final entryId = _latestAnsweredEntryId(records);
     if (entryId == null || entryId.isEmpty) return null;
 
-    final type = _resolveType(records, changeProof.latestChoice);
-    if (type == null) return null;
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.isEmpty) return null;
 
-    final (title, body) = _copyFor(type);
+    final foundation = eligible.length >= 3
+        ? eligible.sublist(0, 3)
+        : eligible;
+    final latestEntry = eligible.last;
+    final earlierPhrase = _groundedPhrase(foundation);
+    final thisTimePhrase =
+        ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
+      latestEntry,
+    );
+
+    if (!_isMeaningfulChange(
+      latestChoice: changeProof.latestChoice,
+      earlierPhrase: earlierPhrase,
+      thisTimePhrase: thisTimePhrase,
+    )) {
+      return null;
+    }
+
+    final usesPhraseEvidence = _canUsePhraseBody(earlierPhrase, thisTimePhrase);
+    final body = usesPhraseEvidence
+        ? PatternChangedCopy.bodyWithPhrases(earlierPhrase!, thisTimePhrase!)
+        : PatternChangedCopy.bodyFallback;
+
     return PatternChangedResult(
-      type: type,
-      title: title,
+      type: PatternChangedType.changed,
+      title: PatternChangedCopy.title,
       body: body,
+      footer: PatternChangedCopy.footer,
       entryId: entryId,
-      isCelebration: type.isCelebration,
+      isCelebration: true,
+      usesPhraseEvidence: usesPhraseEvidence,
+      earlierPhrase: usesPhraseEvidence ? earlierPhrase : null,
+      thisTimePhrase: usesPhraseEvidence ? thisTimePhrase : null,
     );
   }
 
-  static PatternChangedType? _resolveType(
-    List<RepeatReturnCheckRecord> records,
-    RepeatReturnCheckChoice latestChoice,
-  ) {
-    final choices = records
-        .where((record) => record.choice != null)
-        .map((record) => record.choice!)
-        .toList();
-    if (choices.isEmpty) return null;
-
-    final trend = RepeatReturnCheckTrendEngine.latestTrendCopy(records);
-
-    if (choices.length >= 2) {
-      final latest = choices.first;
-      final prior = choices[1];
-      if (latest == RepeatReturnCheckChoice.same && prior != latest) {
-        if (trend == RepeatReturnCheckCopy.trendGettingLouder) {
-          return PatternChangedType.changed;
-        }
-      }
-    }
-
-    if (trend == RepeatReturnCheckCopy.trendSofterThanBefore) {
-      return PatternChangedType.softer;
-    }
-    if (trend == RepeatReturnCheckCopy.trendGettingLouder) {
-      return PatternChangedType.stronger;
-    }
-
+  static bool _isMeaningfulChange({
+    required RepeatReturnCheckChoice latestChoice,
+    required String? earlierPhrase,
+    required String? thisTimePhrase,
+  }) {
     return switch (latestChoice) {
-      RepeatReturnCheckChoice.softer => PatternChangedType.softer,
-      RepeatReturnCheckChoice.stronger => PatternChangedType.stronger,
-      RepeatReturnCheckChoice.same => null,
-      RepeatReturnCheckChoice.changed => PatternChangedType.changed,
+      RepeatReturnCheckChoice.changed => true,
+      RepeatReturnCheckChoice.softer =>
+        _phrasesMeaningfullyDiffer(earlierPhrase, thisTimePhrase),
+      RepeatReturnCheckChoice.stronger ||
+      RepeatReturnCheckChoice.same =>
+        false,
     };
+  }
+
+  static bool _phrasesMeaningfullyDiffer(String? earlier, String? thisTime) {
+    if (earlier == null || thisTime == null) return false;
+    return earlier.toLowerCase().trim() != thisTime.toLowerCase().trim();
+  }
+
+  static bool _canUsePhraseBody(String? earlier, String? thisTime) {
+    if (!_phrasesMeaningfullyDiffer(earlier, thisTime)) return false;
+    return _phraseWithinLimit(earlier!) && _phraseWithinLimit(thisTime!);
+  }
+
+  static bool _phraseWithinLimit(String phrase) {
+    final words = phrase.trim().split(RegExp(r'\s+'));
+    return words.isNotEmpty && words.length <= _maxPhraseWords;
+  }
+
+  static String? _groundedPhrase(List<JournalEntry> entries) {
+    final shared =
+        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+    if (shared != null && _isGroundedPhrase(shared, entries)) {
+      return shared;
+    }
+
+    for (final phrase
+        in ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases) {
+      if (_isGroundedPhrase(phrase, entries)) return phrase;
+    }
+    return null;
+  }
+
+  static bool _isGroundedPhrase(String phrase, List<JournalEntry> entries) {
+    if (!ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(phrase)) {
+      return false;
+    }
+    if (ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(phrase)) {
+      return false;
+    }
+    if (ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+      label: phrase,
+      entries: entries,
+    )) {
+      return false;
+    }
+    return _phraseWithinLimit(phrase);
   }
 
   static String? _latestAnsweredEntryId(List<RepeatReturnCheckRecord> records) {
@@ -103,20 +160,4 @@ abstract final class PatternChangedEngine {
     }
     return null;
   }
-
-  static (String title, String body) _copyFor(PatternChangedType type) =>
-      switch (type) {
-        PatternChangedType.softer => (
-            PatternChangedCopy.softerTitle,
-            PatternChangedCopy.softerBody,
-          ),
-        PatternChangedType.changed => (
-            PatternChangedCopy.changedTitle,
-            PatternChangedCopy.changedBody,
-          ),
-        PatternChangedType.stronger => (
-            PatternChangedCopy.strongerTitle,
-            PatternChangedCopy.strongerBody,
-          ),
-      };
 }

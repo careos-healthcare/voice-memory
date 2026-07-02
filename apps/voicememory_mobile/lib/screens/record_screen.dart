@@ -3663,6 +3663,7 @@ class _RecordScreenState extends State<RecordScreen> {
         ? PatternChangedEngine.build(
             changeProof: repeatReturnChangeProof,
             records: RepeatReturnCheckStore.cached,
+            entries: _journalEntries,
           )
         : null;
     final patternChangedDismissed = patternChangedCandidate != null &&

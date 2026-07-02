@@ -2,6 +2,7 @@ import '../archive_evidence/archive_belief_thread_copy.dart';
 import '../early_archive/early_evidence_timeline_copy.dart';
 import '../early_archive/early_first_signal_copy.dart';
 import '../early_archive/early_first_signal_engine.dart';
+import '../repeat_return_check/pattern_changed_copy.dart';
 import '../repeat_return_check/pattern_changed_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import 'archive_proof_surface_layout.dart';
@@ -122,6 +123,17 @@ abstract final class ArchiveProofSurfaceCopy {
     if (patternChangedVisible && patternChanged != null) {
       blocks.add(patternChanged.title);
       blocks.add(patternChanged.body);
+      blocks.add(patternChanged.footer);
+      if (patternChanged.usesPhraseEvidence) {
+        blocks.add(PatternChangedCopy.earlierLabel);
+        if (patternChanged.earlierPhrase != null) {
+          blocks.add(patternChanged.earlierPhrase!);
+        }
+        blocks.add(PatternChangedCopy.thisTimeLabel);
+        if (patternChanged.thisTimePhrase != null) {
+          blocks.add(patternChanged.thisTimePhrase!);
+        }
+      }
     } else if (layout.effectiveChangeProofVisible && changeProof != null) {
       if (!summaryVisible) {
         blocks.add(changeProof.title);

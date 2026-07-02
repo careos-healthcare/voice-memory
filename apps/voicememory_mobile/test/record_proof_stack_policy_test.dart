@@ -15,6 +15,7 @@ import 'package:voicememory_mobile/features/repeat_return_check/pattern_changed_
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_change_proof.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
+import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_trend.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 
@@ -214,7 +215,7 @@ void main() {
       expect(decision.proofCardCount, 3);
     });
 
-    test('drops first week loop when pattern changed keeps cap', () {
+    test('drops archive summary before first week loop when pattern changed keeps cap', () {
       final decision = RecordProofStackPolicy.decide(
         loaded: true,
         entryCount: 5,
@@ -237,8 +238,8 @@ void main() {
       );
 
       expect(decision.showPatternChanged, isTrue);
-      expect(decision.showArchiveSummary, isTrue);
-      expect(decision.showFirstWeekLoop, isFalse);
+      expect(decision.showArchiveSummary, isFalse);
+      expect(decision.showFirstWeekLoop, isTrue);
       expect(decision.showProBridge, isFalse);
       expect(decision.proofCardCount, lessThanOrEqualTo(3));
     });
@@ -270,12 +271,36 @@ void main() {
       );
       final proof = RepeatReturnCheckChangeProof(
         title: RepeatReturnCheckCopy.changeProofTitle,
-        body: RepeatReturnCheckCopy.trendGettingLouder,
-        latestChoice: RepeatReturnCheckChoice.stronger,
+        body: RepeatReturnCheckTrendEngine.bodyForChoice(
+          RepeatReturnCheckChoice.changed,
+        ),
+        latestChoice: RepeatReturnCheckChoice.changed,
       );
       final patternChanged = PatternChangedEngine.build(
         changeProof: proof,
-        records: [_strongerRecord()],
+        records: [
+          RepeatReturnCheckRecord(
+            entryId: 'e5',
+            choice: RepeatReturnCheckChoice.changed,
+            entryCountAtCapture: 5,
+            createdAt: DateTime(2026, 6, 14),
+          ),
+        ],
+        entries: [
+          ..._threeRelatedRepeatEntries(),
+          _entry(
+            id: 'e4',
+            transcript:
+                'I said yes again even though I had no capacity for one more ask today.',
+            createdAt: DateTime(2026, 6, 13, 12),
+          ),
+          _entry(
+            id: 'e5',
+            transcript:
+                'Something felt different — I checked again before sending it.',
+            createdAt: DateTime(2026, 6, 14, 12),
+          ),
+        ],
       );
       const layout = ArchiveProofSurfaceLayout(
         confirmedRepeatCardVisible: true,
@@ -321,7 +346,7 @@ void main() {
       );
 
       expect(blocks, contains(ArchiveSummaryCopy.title));
-      expect(blocks, contains(PatternChangedCopy.strongerTitle));
+      expect(blocks, contains(PatternChangedCopy.title));
       expect(blocks, isNot(contains(ConfirmedRepeatThoughtMapCopy.title)));
       expect(blocks, isNot(contains(PositivePatternCopy.title)));
       expect(blocks, isNot(contains(WeeklyArchiveWeekReviewCopy.title)));

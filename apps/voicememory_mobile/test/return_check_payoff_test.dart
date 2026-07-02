@@ -180,7 +180,7 @@ void main() {
       expect(payoff.title, ReturnCheckPayoffCopy.sameTitle);
     });
 
-    test('changed copy when pattern changed resolves changed', () {
+    test('same copy when softer then same without changed choice', () {
       final payoff = ReturnCheckPayoffEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
@@ -188,8 +188,8 @@ void main() {
           _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same),
         ],
       );
-      expect(payoff!.state, ReturnCheckPayoffComparisonState.changed);
-      expect(payoff.title, ReturnCheckPayoffCopy.changedTitle);
+      expect(payoff!.state, ReturnCheckPayoffComparisonState.same);
+      expect(payoff.title, ReturnCheckPayoffCopy.sameTitle);
     });
 
     test('unknown fallback when latest entry has no return check choice', () {
