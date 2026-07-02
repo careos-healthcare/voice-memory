@@ -4632,6 +4632,11 @@ class _RecordScreenState extends State<RecordScreen> {
                         entryCount: _journalEntryCount,
                         surface: 'record',
                         isPro: _recordReturnProIsPro,
+                        onSeePro: _recordReturnProIsPro
+                            ? null
+                            : () => unawaited(
+                                  _resolveRecordReturnProBridge(seePro: true),
+                                ),
                       ),
                       const SizedBox(height: 12),
                     ],

@@ -1,25 +1,23 @@
 import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_guard.dart';
+import '../repeat_return_check/pattern_changed_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
-import 'confirmed_repeat_thought_map_engine.dart';
-import 'confirmed_repeat_thought_map_models.dart';
-import 'daily_return_reason_engine.dart';
-import 'daily_return_reason_model.dart';
-import 'early_evidence_timeline_engine.dart';
+import '../repeat_return_check/repeat_return_check_trend.dart';
+import '../timeline/timeline_entry_display.dart';
+import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'early_first_signal_engine.dart';
-import 'positive_pattern_engine.dart';
-import 'positive_pattern_models.dart';
-import 'positive_reinforcement_engine.dart';
+import 'helpful_action_appeared_engine.dart';
+import 'helpful_action_appeared_model.dart';
 import 'private_archive_report_copy.dart';
 import 'private_archive_report_model.dart';
-import 'weekly_archive_review_copy.dart';
-import 'weekly_archive_review_engine.dart';
-import 'weekly_archive_review_model.dart';
 
-/// Builds a private archive report from existing proof engines only.
+/// Builds a private evidence report from existing proof engines only.
 abstract final class PrivateArchiveReportEngine {
   PrivateArchiveReportEngine._();
+
+  static const _maxPhraseWords = 6;
 
   static PrivateArchiveReport? build({
     required List<JournalEntry> entries,
@@ -31,13 +29,14 @@ abstract final class PrivateArchiveReportEngine {
     bool isPostSave = false,
   }) {
     if (!viewingConfirmedRepeatOrTimeline) return null;
+    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) return null;
 
-    final confirmedRepeat = EarlyFirstSignalEngine.build(entries: entries);
-    final timeline = EarlyEvidenceTimelineEngine.build(
-      entries: entries,
-      triggerCapturedMilestone: triggerCapturedMilestone,
-      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-    );
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    if (eligible.isEmpty) return null;
+
+    final foundation = eligible.length >= 3
+        ? eligible.sublist(0, 3)
+        : eligible;
     final changeProof = RepeatReturnCheckEngine.changeProofForReady(
       entryCount: entries.length,
       viewingConfirmedRepeat: viewingConfirmedRepeatOrTimeline,
@@ -45,189 +44,187 @@ abstract final class PrivateArchiveReportEngine {
       isPostSave: isPostSave,
       records: returnChecks,
     );
-    final thoughtMap = ConfirmedRepeatThoughtMapEngine.build(
-      entries: entries,
-      triggerCapturedMilestone: triggerCapturedMilestone,
-      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-      returnChecks: returnChecks,
-    );
-    final positivePattern = PositivePatternEngine.build(entries: entries);
-    final positiveReinforcement = PositiveReinforcementEngine.build(
-      positivePattern: positivePattern,
-      entries: entries,
-      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-    );
-    final weeklyReview = WeeklyArchiveWeekReviewEngine.build(
-      entries: entries,
-      confirmedRepeat: confirmedRepeat,
+    final latestChoice = RepeatReturnCheckTrendEngine.latestChoice(returnChecks);
+    final patternChanged = PatternChangedEngine.build(
       changeProof: changeProof,
-      triggerCapturedMilestone: triggerCapturedMilestone,
-      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-      returnChecks: returnChecks,
-      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
-    );
-    final dailyReason = DailyReturnReasonEngine.build(
+      records: returnChecks,
       entries: entries,
-      changeProof: changeProof,
-      triggerCapturedMilestone: triggerCapturedMilestone,
-      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-      returnChecks: returnChecks,
-      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
     );
+    final helpfulAction = HelpfulActionAppearedEngine.build(
+      entries: entries,
+      returnChecks: returnChecks,
+      helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+    );
+
+    final repeatPhrase = _groundedPhrase(foundation);
+    if (repeatPhrase == null) return null;
+
+    final repeatCount = _countMomentsWithPhrase(eligible, repeatPhrase);
+    final sections = [
+      _whatRepeatedSection(repeatPhrase, repeatCount),
+      _whatSoftenedSection(latestChoice, eligible, repeatPhrase),
+      _whatGotLouderSection(latestChoice, eligible, repeatPhrase),
+      _whatHelpedSection(helpfulAction, eligible),
+      _whatChangedSection(patternChanged, eligible),
+      _whatToRecordNextSection(),
+    ];
 
     final report = PrivateArchiveReport(
       title: PrivateArchiveReportCopy.title,
       intro: PrivateArchiveReportCopy.intro,
-      sections: [
-        _repeatingSection(confirmedRepeat: confirmedRepeat, timeline: timeline),
-        _loopSection(thoughtMap),
-        _changedSection(changeProof),
-        _helpedSection(positiveReinforcement, positivePattern),
-        _thisWeekSection(weeklyReview),
-        _recordNextSection(dailyReason),
-      ],
+      sections: sections,
     );
 
     if (!report.hasContent) return null;
-    if (!_hasRepeatEvidence(report)) return null;
     return report;
   }
 
-  static bool _hasRepeatEvidence(PrivateArchiveReport report) {
-    final repeating = report.sections.first;
-    return repeating.bullets.isNotEmpty || repeating.lines.isNotEmpty;
-  }
-
-  static PrivateArchiveReportSection _repeatingSection({
-    EarlyFirstSignalModel? confirmedRepeat,
-    EarlyEvidenceTimeline? timeline,
-  }) {
-    if (confirmedRepeat?.showsConfirmedRepeat == true) {
-      return PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.whatKeepsRepeatingHeading,
+  static PrivateArchiveReportSection _whatRepeatedSection(
+    String phrase,
+    int count,
+  ) =>
+      PrivateArchiveReportSection(
+        heading: PrivateArchiveReportCopy.whatRepeatedHeading,
         lines: [
-          confirmedRepeat!.title,
-          ...confirmedRepeat.lines,
+          PrivateArchiveReportCopy.whatRepeatedBody(phrase, count),
         ],
-        bullets: confirmedRepeat.evidencePhrases,
       );
-    }
 
-    if (timeline != null) {
-      final repeatItem = timeline.items
-          .where(
-            (item) => item.kind == EarlyEvidenceTimelineItemKind.repeatConfirmed,
-          )
-          .firstOrNull;
-      return PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.whatKeepsRepeatingHeading,
-        lines: [
-          if (repeatItem != null) repeatItem.title,
-          if (repeatItem != null) repeatItem.body,
-        ],
-        bullets: timeline.evidencePhrases,
-      );
-    }
-
-    return const PrivateArchiveReportSection(
-      heading: PrivateArchiveReportCopy.whatKeepsRepeatingHeading,
-    );
-  }
-
-  static PrivateArchiveReportSection _loopSection(ThoughtMapResult? thoughtMap) {
-    if (thoughtMap == null) {
-      return const PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.loopHeading,
-      );
-    }
-
-    final lines = <String>[
-      thoughtMap.title,
-      for (final section in thoughtMap.sections)
-        '${section.label}: ${section.displayText}',
-    ];
-
-    return PrivateArchiveReportSection(
-      heading: PrivateArchiveReportCopy.loopHeading,
-      lines: lines,
-    );
-  }
-
-  static PrivateArchiveReportSection _changedSection(
-    RepeatReturnCheckChangeProof? changeProof,
+  static PrivateArchiveReportSection _whatSoftenedSection(
+    RepeatReturnCheckChoice? latestChoice,
+    List<JournalEntry> eligible,
+    String foundationPhrase,
   ) {
-    if (changeProof == null || changeProof.body.trim().isEmpty) {
-      return const PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.whatChangedHeading,
-      );
+    if (latestChoice != RepeatReturnCheckChoice.softer) {
+      return _fallbackSection(PrivateArchiveReportCopy.whatSoftenedHeading);
     }
+    final phrase = _latestGroundedPhrase(eligible) ?? foundationPhrase;
+    if (!_isGroundedPhrase(phrase, eligible)) {
+      return _fallbackSection(PrivateArchiveReportCopy.whatSoftenedHeading);
+    }
+    return PrivateArchiveReportSection(
+      heading: PrivateArchiveReportCopy.whatSoftenedHeading,
+      lines: [PrivateArchiveReportCopy.whatSoftenedBody(phrase)],
+    );
+  }
 
+  static PrivateArchiveReportSection _whatGotLouderSection(
+    RepeatReturnCheckChoice? latestChoice,
+    List<JournalEntry> eligible,
+    String foundationPhrase,
+  ) {
+    if (latestChoice != RepeatReturnCheckChoice.stronger) {
+      return _fallbackSection(PrivateArchiveReportCopy.whatGotLouderHeading);
+    }
+    final phrase = _latestGroundedPhrase(eligible) ?? foundationPhrase;
+    if (!_isGroundedPhrase(phrase, eligible)) {
+      return _fallbackSection(PrivateArchiveReportCopy.whatGotLouderHeading);
+    }
+    return PrivateArchiveReportSection(
+      heading: PrivateArchiveReportCopy.whatGotLouderHeading,
+      lines: [PrivateArchiveReportCopy.whatGotLouderBody(phrase)],
+    );
+  }
+
+  static PrivateArchiveReportSection _whatHelpedSection(
+    HelpfulActionAppeared? helpfulAction,
+    List<JournalEntry> entries,
+  ) {
+    final phrase = helpfulAction?.actionPhrase;
+    if (helpfulAction == null ||
+        !helpfulAction.usesActionPhrase ||
+        phrase == null ||
+        !_isGroundedPhrase(phrase, entries)) {
+      return _fallbackSection(PrivateArchiveReportCopy.whatHelpedHeading);
+    }
+    return PrivateArchiveReportSection(
+      heading: PrivateArchiveReportCopy.whatHelpedHeading,
+      lines: [PrivateArchiveReportCopy.whatHelpedBody(phrase)],
+    );
+  }
+
+  static PrivateArchiveReportSection _whatChangedSection(
+    PatternChangedResult? patternChanged,
+    List<JournalEntry> entries,
+  ) {
+    final phrase = patternChanged?.thisTimePhrase;
+    if (patternChanged == null ||
+        !patternChanged.usesPhraseEvidence ||
+        phrase == null ||
+        !_isGroundedPhrase(phrase, entries)) {
+      return _fallbackSection(PrivateArchiveReportCopy.whatChangedHeading);
+    }
     return PrivateArchiveReportSection(
       heading: PrivateArchiveReportCopy.whatChangedHeading,
-      lines: [changeProof.title, changeProof.body],
+      lines: [PrivateArchiveReportCopy.whatChangedBody(phrase)],
     );
   }
 
-  static PrivateArchiveReportSection _helpedSection(
-    PositiveReinforcementResult? reinforcement,
-    PositivePatternResult? pattern,
-  ) {
-    if (reinforcement != null && reinforcement.hasEvidence) {
-      return PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.whatHelpedHeading,
-        lines: [reinforcement.title, reinforcement.body],
-        bullets: reinforcement.evidencePhrases,
+  static PrivateArchiveReportSection _whatToRecordNextSection() =>
+      const PrivateArchiveReportSection(
+        heading: PrivateArchiveReportCopy.whatToRecordNextHeading,
+        lines: [PrivateArchiveReportCopy.whatToRecordNextBody],
       );
-    }
 
-    if (pattern != null && pattern.hasEvidence) {
-      return PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.whatHelpedHeading,
-        lines: [pattern.title, pattern.body],
-        bullets: pattern.evidencePhrases,
+  static PrivateArchiveReportSection _fallbackSection(String heading) =>
+      PrivateArchiveReportSection(
+        heading: heading,
+        lines: const [PrivateArchiveReportCopy.missingEvidenceFallback],
       );
-    }
 
-    return const PrivateArchiveReportSection(
-      heading: PrivateArchiveReportCopy.whatHelpedHeading,
-    );
+  static String? _groundedPhrase(List<JournalEntry> entries) {
+    final shared =
+        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+    if (shared != null && _isGroundedPhrase(shared, entries)) return shared;
+
+    for (final phrase
+        in ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases) {
+      if (_isGroundedPhrase(phrase, entries)) return phrase;
+    }
+    return null;
   }
 
-  static PrivateArchiveReportSection _thisWeekSection(
-    WeeklyArchiveWeekReviewResult review,
-  ) {
-    if (!review.hasRepeat && !review.hasChange && !review.hasPositivePattern) {
-      return const PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.thisWeekHeading,
-      );
-    }
-
-    return PrivateArchiveReportSection(
-      heading: PrivateArchiveReportCopy.thisWeekHeading,
-      lines: [
-        review.title,
-        review.promise,
-        '${WeeklyArchiveWeekReviewCopy.repeatedLabel}: ${review.repeatedLine}',
-        '${WeeklyArchiveWeekReviewCopy.changedLabel}: ${review.changedLine}',
-        '${WeeklyArchiveWeekReviewCopy.helpedLabel}: ${review.helpedLine}',
-        '${WeeklyArchiveWeekReviewCopy.nextToWatchLabel}: ${review.nextToWatchLine}',
-      ],
-      bullets: review.evidencePhrases,
+  static String? _latestGroundedPhrase(List<JournalEntry> entries) {
+    if (entries.isEmpty) return null;
+    final phrase = ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
+      entries.last,
     );
+    if (phrase == null || !_isGroundedPhrase(phrase, entries)) return null;
+    return phrase;
   }
 
-  static PrivateArchiveReportSection _recordNextSection(
-    DailyReturnReasonResult? reason,
+  static int _countMomentsWithPhrase(
+    List<JournalEntry> entries,
+    String phrase,
   ) {
-    if (reason == null) {
-      return const PrivateArchiveReportSection(
-        heading: PrivateArchiveReportCopy.recordNextHeading,
-      );
-    }
+    final normalized = phrase.toLowerCase().trim();
+    if (normalized.isEmpty) return 0;
+    return entries
+        .where((entry) => _entryText(entry).toLowerCase().contains(normalized))
+        .length;
+  }
 
-    return PrivateArchiveReportSection(
-      heading: PrivateArchiveReportCopy.recordNextHeading,
-      lines: [reason.title, reason.body, reason.prompt],
-    );
+  static bool _isGroundedPhrase(String phrase, List<JournalEntry> entries) {
+    if (!ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(phrase)) {
+      return false;
+    }
+    if (ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(phrase)) {
+      return false;
+    }
+    if (entries.isNotEmpty &&
+        ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
+          label: phrase,
+          entries: entries,
+        )) {
+      return false;
+    }
+    final words = phrase.trim().split(RegExp(r'\s+'));
+    return words.isNotEmpty && words.length <= _maxPhraseWords;
+  }
+
+  static String _entryText(JournalEntry entry) {
+    final resolution = resolveEntryDisplayText(entry);
+    if (resolution.text.isNotEmpty) return resolution.text.trim();
+    return entry.transcript.trim();
   }
 }

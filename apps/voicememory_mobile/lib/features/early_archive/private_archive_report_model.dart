@@ -12,6 +12,14 @@ class PrivateArchiveReportSection {
   final List<String> lines;
   final List<String> bullets;
 
+  bool get hasEvidence =>
+      lines.any(
+        (line) =>
+            line.trim().isNotEmpty &&
+            line.trim() != PrivateArchiveReportCopy.missingEvidenceFallback,
+      ) ||
+      bullets.any((bullet) => bullet.trim().isNotEmpty);
+
   bool get hasContent =>
       lines.any((line) => line.trim().isNotEmpty) ||
       bullets.any((bullet) => bullet.trim().isNotEmpty);
@@ -23,7 +31,7 @@ class PrivateArchiveReport {
     required this.title,
     required this.intro,
     required this.sections,
-    this.previewSectionCount = 2,
+    this.previewSectionCount = 1,
   });
 
   final String title;
@@ -34,19 +42,21 @@ class PrivateArchiveReport {
   List<PrivateArchiveReportSection> get populatedSections =>
       sections.where((section) => section.hasContent).toList();
 
-  bool get hasContent => populatedSections.isNotEmpty;
+  bool get hasContent =>
+      sections.any((section) => section.hasEvidence);
 
   String plainText({required bool isPro}) =>
       isPro ? fullPlainText : previewPlainText;
 
-  String get fullPlainText => _formatSections(populatedSections);
+  String get fullPlainText => _formatSections(sections);
 
   String get previewPlainText {
-    final preview = populatedSections.take(previewSectionCount).toList();
-    final blocks = <String>[_formatSections(preview)];
-    if (populatedSections.length > previewSectionCount) {
-      blocks.add(PrivateArchiveReportCopy.previewProNote);
-    }
+    final previewSections = sections.take(previewSectionCount).toList();
+    final blocks = <String>[
+      PrivateArchiveReportCopy.previewTitle,
+      PrivateArchiveReportCopy.previewBody,
+      _formatSections(previewSections),
+    ];
     return blocks.join('\n\n');
   }
 

@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/paywall_timing_gates.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/helpful_action_appeared_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_analytics.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_gates.dart';
-import 'package:voicememory_mobile/features/early_archive/private_archive_report_model.dart';
-import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
-import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_copy.dart';
+import 'package:voicememory_mobile/features/repeat_return_check/pattern_changed_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -58,21 +55,7 @@ List<JournalEntry> _threeRelatedRepeatEntries() => [
       ),
     ];
 
-List<JournalEntry> _mixedRepeatAndWalkEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'w4',
-        transcript: 'I walked outside before replying and it helped.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _entry(
-        id: 'w5',
-        transcript: 'Same week I walked outside again before the hard email.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
-
-List<JournalEntry> _fiveRelatedEntries() => [
+List<JournalEntry> _fourRelatedRepeatEntries() => [
       ..._threeRelatedRepeatEntries(),
       _entry(
         id: 'e4',
@@ -80,11 +63,35 @@ List<JournalEntry> _fiveRelatedEntries() => [
             'I said yes again even though I had no capacity for one more ask today.',
         createdAt: DateTime(2026, 6, 13, 12),
       ),
+    ];
+
+List<JournalEntry> _fiveRelatedEntries() => [
+      ..._fourRelatedRepeatEntries(),
       _entry(
         id: 'e5',
         transcript:
             'Same yes pattern came back but it felt less urgent and easier to stop.',
         createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourWithHelpfulAction() => [
+      ..._threeRelatedRepeatEntries(),
+      _entry(
+        id: 'e4',
+        transcript:
+            'I paused before replying this time and it felt a bit softer.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+    ];
+
+List<JournalEntry> _fourWithChangedReturn() => [
+      ..._threeRelatedRepeatEntries(),
+      _entry(
+        id: 'e4',
+        transcript:
+            'I walked outside for five minutes before I replied to the message.',
+        createdAt: DateTime(2026, 6, 13, 12),
       ),
     ];
 
@@ -99,11 +106,13 @@ RepeatReturnCheckRecord _answeredRecord({
       createdAt: DateTime(2026, 6, 14),
     );
 
-void _expectNoDiagnosticLanguage(String copy) {
+void _expectNoAdviceLanguage(String copy) {
   final lower = copy.toLowerCase();
+  expect(lower, isNot(contains('you should')));
+  expect(lower, isNot(contains('try this')));
+  expect(lower, isNot(contains('recommendations')));
   expect(lower, isNot(contains('diagnosis')));
   expect(lower, isNot(contains('therapy')));
-  expect(lower, isNot(contains('disorder')));
 }
 
 void main() {
@@ -120,101 +129,127 @@ void main() {
       );
     });
 
-    test('report includes repeat evidence phrases', () {
+    test('report sections render in exact order', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _threeRelatedRepeatEntries(),
+        entries: _fourRelatedRepeatEntries(),
+        returnChecks: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+        ],
         viewingConfirmedRepeatOrTimeline: true,
-      );
-      expect(report, isNotNull);
-      final repeating = report!.sections.first;
-      expect(repeating.heading, PrivateArchiveReportCopy.whatKeepsRepeatingHeading);
-      expect(repeating.bullets, isNotEmpty);
+      )!;
       expect(
-        report.fullPlainText,
-        contains(repeating.bullets.first),
+        report.sections.map((section) => section.heading).toList(),
+        [
+          PrivateArchiveReportCopy.whatRepeatedHeading,
+          PrivateArchiveReportCopy.whatSoftenedHeading,
+          PrivateArchiveReportCopy.whatGotLouderHeading,
+          PrivateArchiveReportCopy.whatHelpedHeading,
+          PrivateArchiveReportCopy.whatChangedHeading,
+          PrivateArchiveReportCopy.whatToRecordNextHeading,
+        ],
       );
     });
 
-    test('report includes thought map sections', () {
+    test('repeated phrase is grounded and max 6 words', () {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final loop = report.sections[1];
-      expect(loop.heading, PrivateArchiveReportCopy.loopHeading);
+      final repeated = report.sections.first;
+      expect(repeated.hasEvidence, isTrue);
+      final line = repeated.lines.first;
+      expect(line, contains('showed up across'));
+      final match = RegExp(r'"([^"]+)"').firstMatch(line);
+      expect(match, isNotNull);
+      final words = match!.group(1)!.trim().split(RegExp(r'\s+'));
+      expect(words.length, lessThanOrEqualTo(6));
+    });
+
+    test('missing evidence shows fallback', () {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
       expect(
-        loop.lines.join('\n'),
-        contains(ConfirmedRepeatThoughtMapCopy.triggerLabel),
+        report.sections[1].lines.first,
+        PrivateArchiveReportCopy.missingEvidenceFallback,
       );
       expect(
-        loop.lines.join('\n'),
-        contains(ConfirmedRepeatThoughtMapCopy.thoughtLabel),
+        report.sections[2].lines.first,
+        PrivateArchiveReportCopy.missingEvidenceFallback,
       );
     });
 
-    test('report includes change proof when available', () {
+    test('softened section uses softer evidence', () {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _fiveRelatedEntries(),
+        returnChecks: [
+          _answeredRecord(entryId: 'e5', choice: RepeatReturnCheckChoice.softer),
+        ],
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+      final softened = report.sections[1];
+      expect(softened.lines.first, startsWith('This looked softer than before:'));
+      expect(softened.hasEvidence, isTrue);
+    });
+
+    test('got louder section uses stronger evidence', () {
       final report = PrivateArchiveReportEngine.build(
         entries: _fiveRelatedEntries(),
         returnChecks: [
           _answeredRecord(
             entryId: 'e5',
-            choice: RepeatReturnCheckChoice.softer,
+            choice: RepeatReturnCheckChoice.stronger,
           ),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final changed = report.sections[2];
-      expect(changed.heading, PrivateArchiveReportCopy.whatChangedHeading);
-      expect(changed.lines, contains(RepeatReturnCheckCopy.changeProofTitle));
-      expect(
-        changed.lines,
-        contains(RepeatReturnCheckCopy.trendSofterThanBefore),
-      );
+      final louder = report.sections[2];
+      expect(louder.lines.first, startsWith('This looked stronger than before:'));
+      expect(louder.hasEvidence, isTrue);
     });
 
-    test('report includes positive pattern when available', () {
+    test('helped section uses HelpfulActionAppeared evidence', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _mixedRepeatAndWalkEntries(),
+        entries: _fourWithHelpfulAction(),
+        returnChecks: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+        ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
       final helped = report.sections[3];
-      expect(helped.heading, PrivateArchiveReportCopy.whatHelpedHeading);
-      expect(helped.bullets, isNotEmpty);
+      expect(helped.lines.first, startsWith('A helpful action appeared:'));
       expect(
-        helped.bullets.join(' ').toLowerCase(),
-        contains('walked outside'),
+        helped.lines.first.toLowerCase(),
+        contains('paused before'),
       );
     });
 
-    test('report includes weekly review when available', () {
+    test('changed section uses PatternChanged evidence', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _fiveRelatedEntries(),
+        entries: _fourWithChangedReturn(),
         returnChecks: [
-          _answeredRecord(
-            entryId: 'e5',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final week = report.sections[4];
-      expect(week.heading, PrivateArchiveReportCopy.thisWeekHeading);
-      expect(week.lines, contains(WeeklyArchiveWeekReviewCopy.title));
+      final changed = report.sections[4];
       expect(
-        week.lines.join('\n'),
-        contains(WeeklyArchiveWeekReviewCopy.repeatedLabel),
+        changed.lines.first,
+        startsWith('Something looked different this time:'),
       );
+      expect(changed.hasEvidence, isTrue);
     });
 
-    test('report includes next prompt', () {
+    test('what-to-record-next section appears', () {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
       final next = report.sections.last;
-      expect(next.heading, PrivateArchiveReportCopy.recordNextHeading);
-      expect(next.lines, contains(DailyReturnReasonCopy.title));
-      expect(next.lines.any((line) => line.trim().isNotEmpty), isTrue);
+      expect(next.heading, PrivateArchiveReportCopy.whatToRecordNextHeading);
+      expect(next.lines.first, PrivateArchiveReportCopy.whatToRecordNextBody);
+      expect(next.hasEvidence, isTrue);
     });
 
     test('no full transcript dump', () {
@@ -223,8 +258,6 @@ void main() {
         entries: entries,
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final fullTranscript = entries.map((e) => e.transcript).join(' ');
-      expect(report.fullPlainText, isNot(contains(fullTranscript)));
       for (final entry in entries) {
         if (entry.transcript.length > 48) {
           expect(report.fullPlainText, isNot(contains(entry.transcript)));
@@ -232,24 +265,25 @@ void main() {
       }
     });
 
-    test('no therapy or diagnosis language in report copy', () {
+    test('no advice or coaching language', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _mixedRepeatAndWalkEntries(),
+        entries: _fourWithHelpfulAction(),
         returnChecks: [
-          _answeredRecord(
-            entryId: 'w5',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      _expectNoDiagnosticLanguage(report.fullPlainText);
-      _expectNoDiagnosticLanguage(report.previewPlainText);
+      _expectNoAdviceLanguage(report.fullPlainText);
+      _expectNoAdviceLanguage(report.previewPlainText);
+      expect(
+        report.fullPlainText.toLowerCase(),
+        isNot(contains('recommendations')),
+      );
     });
   });
 
   group('PrivateArchiveReportGates', () {
-    test('hidden during first-three activation', () {
+    test('hidden during first-three activation for full history', () {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
@@ -271,67 +305,68 @@ void main() {
   });
 
   group('PrivateArchiveReport preview/full boundary', () {
-    test('free preview truncates sections and adds pro note', () {
+    test('free preview shows first section only and pro framing', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _mixedRepeatAndWalkEntries(),
+        entries: _fourWithHelpfulAction(),
         returnChecks: [
-          _answeredRecord(
-            entryId: 'w5',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
 
       final preview = report.plainText(isPro: false);
-      expect(preview, contains(PrivateArchiveReportCopy.previewProNote));
-      expect(preview, isNot(contains(PrivateArchiveReportCopy.thisWeekHeading)));
-      expect(preview, isNot(contains(PrivateArchiveReportCopy.recordNextHeading)));
+      expect(preview, contains(PrivateArchiveReportCopy.previewTitle));
+      expect(preview, contains(PrivateArchiveReportCopy.previewBody));
+      expect(preview, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
+      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatSoftenedHeading)));
+      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatToRecordNextHeading)));
 
       final full = report.plainText(isPro: true);
-      expect(full, isNot(contains(PrivateArchiveReportCopy.previewProNote)));
-      expect(full, contains(PrivateArchiveReportCopy.thisWeekHeading));
-      expect(full, contains(PrivateArchiveReportCopy.recordNextHeading));
+      expect(full, isNot(contains(PrivateArchiveReportCopy.previewTitle)));
+      expect(full, contains(PrivateArchiveReportCopy.whatSoftenedHeading));
+      expect(full, contains(PrivateArchiveReportCopy.whatToRecordNextHeading));
     });
 
-    test('preview copy explains change tracking over time', () {
+    test('preview explains full report without entitlement changes', () {
       expect(
-        PrivateArchiveReportCopy.previewProNote.toLowerCase(),
-        contains('over time'),
+        PrivateArchiveReportCopy.previewBody.toLowerCase(),
+        contains('what repeated'),
       );
       expect(
-        PrivateArchiveReportCopy.previewProNote.toLowerCase(),
-        contains('stronger'),
+        PrivateArchiveReportCopy.previewBody.toLowerCase(),
+        contains('what softened'),
       );
       expect(
-        PrivateArchiveReportCopy.previewProNote.toLowerCase(),
-        contains('softer'),
+        PrivateArchiveReportCopy.previewBody.toLowerCase(),
+        contains('what got louder'),
       );
       expect(
-        PrivateArchiveReportCopy.intro.toLowerCase(),
-        contains('what your archive noticed'),
+        PrivateArchiveReportCopy.previewBody.toLowerCase(),
+        contains('what helped'),
       );
       expect(
-        PrivateArchiveReportCopy.evidenceNotAdviceLine.toLowerCase(),
-        contains('evidence'),
+        PrivateArchiveReportCopy.previewBody.toLowerCase(),
+        contains('what changed'),
+      );
+      expect(
+        PrivateArchiveReportCopy.intro,
+        'Your archive noticed these evidence patterns from your own words.',
       );
     });
 
     test('private report is evidence summary not coaching report', () {
       final joined = [
         PrivateArchiveReportCopy.intro,
-        PrivateArchiveReportCopy.evidenceNotAdviceLine,
-        PrivateArchiveReportCopy.previewProNote,
+        PrivateArchiveReportCopy.previewBody,
         PrivateArchiveReportCopy.whatHelpedHeading,
-        PrivateArchiveReportCopy.recordNextHeading,
+        PrivateArchiveReportCopy.whatToRecordNextBody,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('evidence'));
-      expect(joined, contains('what your archive noticed'));
+      expect(joined, contains('your archive noticed'));
+      expect(joined, contains('your own words'));
       expect(joined, isNot(contains('recommendations')));
       expect(joined, isNot(contains('you should')));
       expect(joined, isNot(contains('try this')));
-      expect(joined, isNot(contains('your problem is')));
     });
   });
 
@@ -368,7 +403,42 @@ void main() {
       await tester.pump();
 
       expect(copiedText, contains(PrivateArchiveReportCopy.title));
-      expect(copiedText, contains(PrivateArchiveReportCopy.whatKeepsRepeatingHeading));
+      expect(copiedText, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
+    });
+
+    testWidgets('free preview shows See Pro without full report sections', (
+      tester,
+    ) async {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _fourWithHelpfulAction(),
+        returnChecks: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+        ],
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PrivateArchiveReportCard.test(
+              report: report,
+              entryCount: 4,
+              surface: 'patterns',
+              onSeePro: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        find.text(PrivateArchiveReportCopy.previewTitle),
+        findsOneWidget,
+      );
+      expect(find.text(PrivateArchiveReportCopy.previewProCta), findsOneWidget);
+      expect(
+        find.text(PrivateArchiveReportCopy.whatToRecordNextHeading),
+        findsNothing,
+      );
     });
   });
 
@@ -413,18 +483,6 @@ void main() {
             ?.showsConfirmedRepeat,
         isTrue,
       );
-      expect(
-        PaywallTimingGates.showFullArchiveHistoryProBoundary(
-          entryCount: 3,
-          resolved: false,
-          isPro: false,
-          isPostSave: false,
-          hasConfirmedRepeat: true,
-          hasArchiveSummary: false,
-          hasWeeklyArchiveReview: false,
-        ),
-        isTrue,
-      );
     });
   });
 
@@ -448,6 +506,16 @@ void main() {
       );
       expect(captured!.keys, isNot(contains('transcript')));
       expect(captured!['export_tier'], 'preview');
+    });
+  });
+
+  group('Copy distinct from other proof surfaces', () {
+    test('report title distinct from pattern changed and helpful action', () {
+      expect(PrivateArchiveReportCopy.title, isNot(PatternChangedCopy.title));
+      expect(
+        PrivateArchiveReportCopy.title,
+        isNot(HelpfulActionAppearedCopy.title),
+      );
     });
   });
 }

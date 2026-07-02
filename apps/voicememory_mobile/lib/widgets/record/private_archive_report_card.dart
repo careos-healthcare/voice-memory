@@ -10,7 +10,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Private archive report card — copy/export for personal ownership.
+/// Private archive report card — evidence summary for personal ownership.
 class PrivateArchiveReportCard extends StatefulWidget {
   const PrivateArchiveReportCard({
     super.key,
@@ -20,6 +20,7 @@ class PrivateArchiveReportCard extends StatefulWidget {
     required this.isPro,
     this.onCopy,
     this.onShare,
+    this.onSeePro,
   });
 
   const PrivateArchiveReportCard.test({
@@ -30,6 +31,7 @@ class PrivateArchiveReportCard extends StatefulWidget {
     this.isPro = false,
     this.onCopy,
     this.onShare,
+    this.onSeePro,
   });
 
   final PrivateArchiveReport report;
@@ -38,6 +40,7 @@ class PrivateArchiveReportCard extends StatefulWidget {
   final bool isPro;
   final Future<bool> Function(String text)? onCopy;
   final Future<bool> Function(String text)? onShare;
+  final VoidCallback? onSeePro;
 
   @override
   State<PrivateArchiveReportCard> createState() =>
@@ -94,23 +97,50 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
             style: bodyStyle.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.sm),
-          for (var i = 0; i < widget.report.populatedSections.length; i++)
+          for (var i = 0; i < widget.report.sections.length; i++)
             if (PrivateArchiveReportGates.includeSectionInPreview(
               sectionIndex: i,
               isPro: _isFullExport,
+              previewSectionCount: widget.report.previewSectionCount,
             ))
               _SectionPreview(
-                section: widget.report.populatedSections[i],
+                section: widget.report.sections[i],
                 labelStyle: sectionLabelStyle,
                 bodyStyle: bodyStyle,
               ),
           if (PrivateArchiveReportGates.showPreviewNote(isPro: widget.isPro)) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
-              PrivateArchiveReportCopy.previewProNote,
-              key: const Key('private_archive_report_preview_note'),
+              PrivateArchiveReportCopy.previewTitle,
+              key: const Key('private_archive_report_preview_title'),
+              style: ArchiveMobileTypography.listTitle(context).copyWith(
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              PrivateArchiveReportCopy.previewBody,
+              key: const Key('private_archive_report_preview_body'),
               style: previewStyle,
             ),
+            if (widget.onSeePro != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  key: const Key('private_archive_report_see_pro_cta'),
+                  onPressed: widget.onSeePro,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.accentPrimary,
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(PrivateArchiveReportCopy.previewProCta),
+                ),
+              ),
+            ],
           ],
           const SizedBox(height: AppSpacing.sm),
           Align(

@@ -46,7 +46,7 @@ abstract final class PrivateArchiveReportGates {
   static bool includeSectionInPreview({
     required int sectionIndex,
     required bool isPro,
-    int previewSectionCount = 2,
+    int previewSectionCount = 1,
   }) =>
       isPro || sectionIndex < previewSectionCount;
 

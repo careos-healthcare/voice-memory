@@ -4153,6 +4153,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     entryCount: _entries.length,
                     surface: 'patterns',
                     isPro: _archiveIsPro,
+                    onSeePro: _archiveIsPro
+                        ? null
+                        : () => context.push('/subscription'),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
