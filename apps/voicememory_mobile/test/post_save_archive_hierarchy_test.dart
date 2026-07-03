@@ -166,5 +166,21 @@ void main() {
       expect(hierarchy.kind, PostSavePrimaryArchiveKind.discovery);
       expect(hierarchy.showMomentQualityCoach, isFalse);
     });
+
+    test('first proof unlocked suppresses discovery and focused actions', () {
+      final entries = _threeRepeatCapacityEntries();
+
+      final hierarchy = PostSaveArchiveHierarchy.resolve(
+        entries: entries,
+        suppressLatestSaveArchiveInsight: false,
+        beliefUpdatePayoff: null,
+        firstProofUnlocked: true,
+      );
+
+      expect(hierarchy.kind, PostSavePrimaryArchiveKind.firstProofUnlocked);
+      expect(hierarchy.showFocusedActionsBar, isFalse);
+      expect(hierarchy.showMomentQualityCoach, isFalse);
+      expect(hierarchy.showBeliefUpdateCard, isFalse);
+    });
   });
 }

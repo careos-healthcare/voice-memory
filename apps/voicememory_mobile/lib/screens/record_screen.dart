@@ -4310,6 +4310,7 @@ class _RecordScreenState extends State<RecordScreen> {
             suppressLatestSaveArchiveInsight: suppressLatestSaveArchiveInsight,
             beliefUpdatePayoff: beliefUpdatePayoff,
             mirror: postSaveDailyMirror,
+            firstProofUnlocked: showFirstProofMoment,
           )
         : null;
     final returningUserToday = ui == RecordUiState.ready &&
@@ -5539,6 +5540,14 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ? _resetPostSaveToReady
                                 : null,
                           ),
+                          if (showFirstProofMoment &&
+                              firstProofMomentCandidate != null) ...[
+                            const SizedBox(height: 16),
+                            FirstProofMomentCard(
+                              moment: firstProofMomentCandidate,
+                              entryCount: postSaveEntryCount,
+                            ),
+                          ],
                           if (confirmedRepeatTriggerPayoff != null) ...[
                             const SizedBox(height: 16),
                             ConfirmedRepeatTriggerPayoffCard(
@@ -5661,6 +5670,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           ),
                         ],
                         if (postSaveArchiveHierarchy != null &&
+                            postSaveArchiveHierarchy.showFocusedActionsBar &&
                             !suppressNoisyFirstSaveCards &&
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
@@ -6345,14 +6355,6 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                     ],
                     const SizedBox(height: 8),
-                    if (showFirstProofMoment &&
-                        firstProofMomentCandidate != null) ...[
-                      FirstProofMomentCard(
-                        moment: firstProofMomentCandidate,
-                        entryCount: postSaveEntryCount,
-                      ),
-                      const SizedBox(height: 16),
-                    ],
                     if (showCoreValueFeedbackOnRecordPostFirstProof) ...[
                       CoreValueFeedbackCard(
                         source: CoreValueFeedbackSource.recordPostFirstProof,

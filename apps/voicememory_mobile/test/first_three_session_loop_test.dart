@@ -619,6 +619,28 @@ void main() {
       expect(PostSaveReturnHandoffEngine.build(entries: entries.sublist(0, 2)), isNotNull);
     });
 
+    test('ipad smoke three related moments unlock first proof', () {
+      final entries = [
+        _entry(
+          '1',
+          'I said yes to helping with work even though I was already tired.',
+        ),
+        _entry('2', 'I agreed again before checking if I had enough time.'),
+        _entry(
+          '3',
+          'I noticed I wanted to avoid disappointing them, so I said yes quickly.',
+        ),
+      ];
+      final moment = FirstProofMomentEngine.build(entries: entries);
+      expect(moment, isNotNull);
+      expect(moment!.title, FirstProofMomentCopy.title);
+      expect(moment.evidencePhrases, isNotEmpty);
+      expect(
+        moment.evidencePhrases.any((p) => p.toLowerCase().contains('said yes')),
+        isTrue,
+      );
+    });
+
     test('first week loop follows first proof on ready state', () {
       final entries = [
         _entry(

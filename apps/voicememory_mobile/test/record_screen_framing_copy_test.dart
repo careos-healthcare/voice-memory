@@ -25,6 +25,7 @@ import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.d
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/one_small_recording_engine.dart';
@@ -1154,8 +1155,78 @@ void main() {
       expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
       expect(find.text(FirstProofMomentCopy.nextLine), findsOneWidget);
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
+      expect(find.text(PostSaveFocusedActionsCopy.addOneMoreMoment), findsNothing);
+      expect(
+        find.text('Pressure shows up, then you say yes before checking your capacity.'),
+        findsNothing,
+      );
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+    });
+
+    testWidgets('ipad smoke three related moments surface first proof without stale CTA', (
+      tester,
+    ) async {
+      final entries = [
+        _entry(
+          id: 'ipad_1',
+          transcript:
+              'I said yes to helping with work even though I was already tired.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'ipad_2',
+          transcript: 'I agreed again before checking if I had enough time.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'ipad_3',
+          transcript:
+              'I noticed I wanted to avoid disappointing them, so I said yes quickly.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+      ];
+      await tester.runAsync(() async {
+        for (final entry in entries) {
+          await AppServices.instance.journalStore.save(entry);
+        }
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: entries,
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.text(FirstProofMomentCopy.primaryLabel), findsOneWidget);
+      expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
+      expect(find.text(PostSaveFocusedActionsCopy.addOneMoreMoment), findsNothing);
+      expect(
+        find.text('Pressure shows up, then you say yes before checking your capacity.'),
+        findsNothing,
+      );
+      expect(find.textContaining('said yes'), findsWidgets);
     });
 
     testWidgets('third related post-save shows evidence chips', (tester) async {

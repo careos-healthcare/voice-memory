@@ -13,6 +13,9 @@ enum PostSavePrimaryArchiveKind {
   beliefUpdate,
   savedPrivately,
   firstEntryFootnote,
+
+  /// Third related save — heard excerpt only; [FirstProofMomentCard] owns payoff.
+  firstProofUnlocked,
 }
 
 /// Picks one primary archive result for the Record post-save stack.
@@ -33,13 +36,15 @@ class PostSaveArchiveHierarchy {
       kind == PostSavePrimaryArchiveKind.firstEntryFootnote ||
       kind == PostSavePrimaryArchiveKind.savedPrivately;
 
-  bool get showFocusedActionsBar => true;
+  bool get showFocusedActionsBar =>
+      kind != PostSavePrimaryArchiveKind.firstProofUnlocked;
 
   static PostSaveArchiveHierarchy resolve({
     required List<JournalEntry> entries,
     required bool suppressLatestSaveArchiveInsight,
     BeliefUpdatePayoff? beliefUpdatePayoff,
     DailyMirrorResult? mirror,
+    bool firstProofUnlocked = false,
   }) {
     if (entries.isEmpty) {
       return const PostSaveArchiveHierarchy(
@@ -55,6 +60,13 @@ class PostSaveArchiveHierarchy {
 
     final resolvedMirror =
         mirror ?? const DailyMirrorEngine().build(entries);
+
+    if (firstProofUnlocked) {
+      return PostSaveArchiveHierarchy(
+        kind: PostSavePrimaryArchiveKind.firstProofUnlocked,
+        mirror: resolvedMirror,
+      );
+    }
 
     if (_hasDiscovery(resolvedMirror)) {
       return PostSaveArchiveHierarchy(
