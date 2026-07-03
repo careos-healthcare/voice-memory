@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/archive_evidence/transcript_pending_copy.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -79,7 +80,9 @@ void main() {
       ),
     );
 
-    expect(view.isDegradedTranscription, isTrue);
+    expect(view.isPendingTranscript, isTrue);
+    expect(view.primary, TranscriptPendingCopy.savedLocallyTitle);
+    expect(view.secondary, TranscriptPendingCopy.savedLocallyBody);
     expect(view.primary, isNot(ConsumerUiCopy.savedPrivatelyOnDevice));
     expect(view.primary, contains('could not turn it into text'));
   });
@@ -113,7 +116,7 @@ void main() {
     expect(title, isNot(ConsumerUiCopy.savedPrivatelyOnDevice));
   });
 
-  test('skips draft placeholder transcript and uses real observation', () {
+  test('skips draft placeholder transcript and uses date title when pending', () {
     const observation = 'You sounded tired when talking about work.';
     final title = timelineEntryTitle(
       _entry(
@@ -122,7 +125,8 @@ void main() {
         observation: observation,
       ),
     );
-    expect(title, observation);
+    expect(title, startsWith('Recording ·'));
+    expect(title, isNot(observation));
   });
 
   test('skips draft placeholder reflection', () {

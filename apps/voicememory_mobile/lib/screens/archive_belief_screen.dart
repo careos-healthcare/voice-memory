@@ -246,6 +246,11 @@ import '../features/archive_home/archive_home_priority_models.dart';
 import '../widgets/archive_home_more_tools_section.dart';
 import '../widgets/patterns/early_evidence_timeline_demo_section.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
+import '../widgets/patterns/patterns_transcript_pending_view.dart';
+import '../widgets/patterns/patterns_evidence_quality_fallback_view.dart';
+import '../features/archive_evidence/archive_evidence_quality_gate.dart';
+import '../features/trust/pending_transcript_recovery_gate.dart';
+import '../features/archive_evidence/archive_evidence_guard.dart';
 import '../widgets/patterns/patterns_mind_map_forming_card.dart';
 import '../widgets/patterns/patterns_thought_map_preview_card.dart';
 import '../widgets/patterns/change_summary_card.dart';
@@ -1030,11 +1035,24 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool get _showEmpty {
     if (ScreenshotMode.patternsFirstSessionPreview) return false;
     if (ScreenshotMode.enabled) return false;
-    return isIntentionalEmptyArchive(_entries);
+    return _entries.isEmpty;
+  }
+
+  bool get _showPendingTranscriptOnly {
+    if (ScreenshotMode.enabled) return false;
+    if (_entries.isEmpty) return false;
+    return ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(_entries);
+  }
+
+  bool get _showWeakEvidenceOnly {
+    if (ScreenshotMode.enabled) return false;
+    if (_entries.isEmpty) return false;
+    return ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(_entries);
   }
 
   bool get _showFirstArchive =>
-      !ScreenshotMode.enabled && _entries.length == 1;
+      !ScreenshotMode.enabled &&
+      ArchiveEvidenceGuard.eligibleReflectionCount(_entries) == 1;
 
   String? get _firstArchiveEntryId {
     if (_entries.isEmpty) return null;
@@ -1042,6 +1060,9 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     return sorted.last.id;
   }
+
+  JournalEntry? get _firstRecoverableEntry =>
+      PendingTranscriptRecoveryGate.newestRecoverableEntry(_entries);
 
   /// Indexed-stack tabs stay mounted — refresh when journal changed elsewhere.
   ///
@@ -3646,6 +3667,40 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 ..._earlyEvidenceDemoWidgets(),
                 const SizedBox(height: AppSpacing.md),
               ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_showPendingTranscriptOnly) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: PatternsTranscriptPendingView(
+              fillViewport: true,
+              savedEntryId: _firstArchiveEntryId,
+              recoverableEntry: _firstRecoverableEntry,
+              entryCount: _entries.length,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_showWeakEvidenceOnly) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundPrimary,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _load,
+            child: PatternsEvidenceQualityFallbackView(
+              fillViewport: true,
+              savedEntryId: _firstArchiveEntryId,
+              recoverableEntry: _firstRecoverableEntry,
+              entryCount: _entries.length,
             ),
           ),
         ),

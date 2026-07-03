@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../activation/first_three_journey_engine.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../timeline/timeline_entry_display.dart';
@@ -269,6 +270,8 @@ abstract final class EarlyFirstSignalEngine {
   static EarlyFirstSignalModel? build({
     required List<JournalEntry> entries,
   }) {
+    if (!ArchiveEvidenceQualityGate.allowsEarlySignals(entries)) return null;
+
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty) return null;
 

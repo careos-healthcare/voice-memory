@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'early_first_signal_engine.dart';
 import 'first_proof_moment_copy.dart';
@@ -12,6 +13,8 @@ abstract final class FirstProofMomentEngine {
   static FirstProofMoment? build({
     required List<JournalEntry> entries,
   }) {
+    if (!ArchiveEvidenceQualityGate.allowsFirstProof(entries)) return null;
+
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length != 3) return null;
     if (!EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(eligible)) {

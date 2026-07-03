@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
@@ -288,7 +289,7 @@ void main() {
 
       expect(policy.state, RecordCtaPolicyState.postSaveSuccess);
       expect(policy.primaryLabel, ConsumerUiCopy.doneCta);
-      expect(policy.primaryLabel, isNot(VoiceCaptureCopy.typeWhatYouSaid));
+      expect(policy.primaryLabel, isNot(PendingTranscriptRecoveryCopy.primaryAction));
     });
 
     test('degraded post-save shows typed fallback actions', () {
@@ -302,7 +303,7 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.postSaveDegraded);
-      expect(policy.primaryLabel, VoiceCaptureCopy.typeWhatYouSaid);
+      expect(policy.primaryLabel, PendingTranscriptRecoveryCopy.primaryAction);
       expect(policy.secondaryLabels, [
         VoiceCaptureCopy.recordAgainCta,
         ConsumerUiCopy.doneCta,

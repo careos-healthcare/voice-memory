@@ -1,4 +1,5 @@
 import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../repeat_return_check/pattern_changed_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
@@ -31,8 +32,10 @@ abstract final class PrivateArchiveReportEngine {
     if (!viewingConfirmedRepeatOrTimeline) return null;
     if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) return null;
 
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    if (eligible.isEmpty) return null;
+    if (!ArchiveEvidenceQualityGate.allowsFirstProof(entries)) return null;
+
+    final eligible = ArchiveEvidenceGuard.strongEntries(entries);
+    if (eligible.length < 3) return null;
 
     final foundation = eligible.length >= 3
         ? eligible.sublist(0, 3)

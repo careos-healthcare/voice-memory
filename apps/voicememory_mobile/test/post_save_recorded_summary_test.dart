@@ -4,6 +4,7 @@ import 'package:voicememory_mobile/features/post_save/post_save_archive_hierarch
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_engine.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
+import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -119,8 +120,8 @@ void main() {
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.lowQualityTranscriptIssue), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryBody), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
     });
 
     testWidgets('degraded voice capture shows transcription fallback', (
@@ -144,8 +145,8 @@ void main() {
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsNothing);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryBody), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
       expect(find.text(VoiceCaptureCopy.transcriptionFailedIssue), findsNothing);
       expect(find.byKey(const Key('post_save_type_what_you_said')), findsNothing);
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);

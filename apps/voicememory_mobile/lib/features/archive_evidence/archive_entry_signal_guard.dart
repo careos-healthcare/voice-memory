@@ -1,6 +1,6 @@
 import '../../models/journal_entry.dart';
-import '../timeline/timeline_entry_display.dart';
 import 'archive_pattern_copy_guard.dart';
+import 'comparable_evidence_text.dart';
 
 /// Detects saved moments too thin to support archive/belief/repeat claims.
 abstract final class ArchiveEntrySignalGuard {
@@ -13,6 +13,7 @@ abstract final class ArchiveEntrySignalGuard {
     'blah',
     'foo',
     'bar',
+    'checking',
     'hello',
     'hi',
     'hey',
@@ -52,15 +53,9 @@ abstract final class ArchiveEntrySignalGuard {
     return false;
   }
 
-  /// User-authored capture text only — transcript first, never AI observation.
+  /// User-authored capture text only — never placeholders or pending AI fields.
   static String captureTextForGuard(JournalEntry entry) {
-    final transcript = entry.transcript.trim();
-    if (transcript.isNotEmpty &&
-        !transcript.startsWith('[draft]') &&
-        !isDraftOrSystemTranscriptPlaceholder(transcript)) {
-      return transcript;
-    }
-    return resolveEntryDisplayText(entry).text.trim();
+    return ComparableEvidenceText.userText(entry);
   }
 
   static JournalEntry? newestEntry(Iterable<JournalEntry> entries) {

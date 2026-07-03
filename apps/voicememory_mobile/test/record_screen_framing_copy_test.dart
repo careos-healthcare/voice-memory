@@ -45,6 +45,7 @@ import 'package:voicememory_mobile/features/voice_capture/microphone_permission_
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
@@ -1342,9 +1343,9 @@ void main() {
         degradedVoicePostSave: true,
       );
 
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryBody), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.primaryAction), findsNWidgets(2));
       expect(find.text(VoiceCaptureCopy.recordAgainCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')), findsNothing);

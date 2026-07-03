@@ -7,8 +7,11 @@ import '../../design/user_facing_date.dart';
 import '../../features/early_archive/early_saved_moments_analytics.dart';
 import '../../features/early_archive/early_saved_moments_copy.dart';
 import '../../features/early_archive/early_saved_moments_model.dart';
+import '../../features/trust/pending_transcript_recovery_copy.dart';
+import '../../services/app_services.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import 'pending_transcript_recovery_sheet.dart';
 
 /// Read-only bottom sheet for reviewing saved moments in the early Record flow.
 class EarlySavedMomentsSheet extends StatelessWidget {
@@ -82,7 +85,10 @@ class EarlySavedMomentsSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     for (final moment in content.moments) ...[
-                      _SavedMomentRow(moment: moment),
+                      _SavedMomentRow(
+                        moment: moment,
+                        entryCount: entryCount,
+                      ),
                       if (moment != content.moments.last)
                         const SizedBox(height: AppSpacing.sm),
                     ],
@@ -156,9 +162,32 @@ class _SheetSection extends StatelessWidget {
 }
 
 class _SavedMomentRow extends StatelessWidget {
-  const _SavedMomentRow({required this.moment});
+  const _SavedMomentRow({
+    required this.moment,
+    required this.entryCount,
+  });
 
   final EarlySavedMomentPreview moment;
+  final int entryCount;
+
+  Future<void> _openRecovery(BuildContext context) async {
+    final entryId = moment.entryId?.trim();
+    if (entryId == null || entryId.isEmpty) return;
+    final entry = await AppServices.instance.journalStore.getById(entryId);
+    if (entry == null || !context.mounted) return;
+    final result = await PendingTranscriptRecovery.open(
+      context,
+      entry: entry,
+      source: 'saved_moments_sheet',
+      entryCount: entryCount,
+    );
+    if (result == null || !context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(PendingTranscriptRecoveryCopy.savedSuccess),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +203,16 @@ class _SavedMomentRow extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
+        if (moment.isPendingTranscript) ...[
+          Text(
+            PendingTranscriptRecoveryCopy.title,
+            key: Key('early_saved_moment_pending_title_${moment.index}'),
+            style: ArchiveMobileTypography.explanationBody(context).copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+        ],
         Text(
           moment.previewText,
           key: Key('early_saved_moment_preview_${moment.index}'),
@@ -192,6 +231,14 @@ class _SavedMomentRow extends StatelessWidget {
             fontSize: 13,
           ),
         ),
+        if (moment.isPendingTranscript) ...[
+          const SizedBox(height: AppSpacing.sm),
+          FilledButton(
+            key: Key('early_saved_moment_recovery_${moment.index}'),
+            onPressed: () => unawaited(_openRecovery(context)),
+            child: Text(PendingTranscriptRecoveryCopy.primaryAction),
+          ),
+        ],
       ],
     );
   }

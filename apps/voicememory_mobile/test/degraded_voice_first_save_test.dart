@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -114,7 +115,7 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.postSaveDegraded);
-      expect(policy.primaryLabel, VoiceCaptureCopy.typeWhatYouSaid);
+      expect(policy.primaryLabel, PendingTranscriptRecoveryCopy.primaryAction);
       expect(policy.secondaryLabels, contains(VoiceCaptureCopy.recordAgainCta));
     });
 
@@ -129,19 +130,19 @@ void main() {
       );
 
       expect(policy.state, RecordCtaPolicyState.postSaveSuccess);
-      expect(policy.primaryLabel, isNot(VoiceCaptureCopy.typeWhatYouSaid));
+      expect(policy.primaryLabel, isNot(PendingTranscriptRecoveryCopy.primaryAction));
     });
 
-    test('recovery copy matches first-session spec', () {
+    test('recovery copy matches pending transcript spec', () {
       expect(
-        VoiceCaptureCopy.degradedRecoveryTitle,
-        VoiceCaptureCopy.recordingSavedTitle,
+        PendingTranscriptRecoveryCopy.title,
+        'Transcript pending',
       );
       expect(
-        VoiceCaptureCopy.degradedRecoveryBody,
-        VoiceCaptureCopy.transcriptUnavailable,
+        PendingTranscriptRecoveryCopy.body,
+        'This moment is saved, but ArchiveMe cannot compare it yet.',
       );
-      expect(VoiceCaptureCopy.typeWhatYouSaid, 'Type what you said');
+      expect(PendingTranscriptRecoveryCopy.primaryAction, 'Add what you said');
       expect(RecordReturnProCopy.evidenceTitle, 'Your archive has started.');
     });
   });

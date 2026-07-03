@@ -567,6 +567,7 @@ abstract class ActivationFunnelAnalytics {
   static const Set<String> allowedPropertyKeys = {
     'entry_count',
     'has_connected_thread',
+    'has_parent_entry',
     'has_real_timeline',
     'has_phrase',
     'has_confirmed_repeat',
@@ -969,6 +970,7 @@ abstract class ActivationFunnelAnalytics {
     String event, {
     int? entryCount,
     bool? hasConnectedThread,
+    bool? hasParentEntry,
     bool? hasRealTimeline,
     bool? hasPhrase,
     bool? hasActionPhrase,
@@ -1033,6 +1035,7 @@ abstract class ActivationFunnelAnalytics {
       if (entryCount != null) 'entry_count': entryCount,
       if (hasConnectedThread != null)
         'has_connected_thread': hasConnectedThread ? 1 : 0,
+      if (hasParentEntry != null) 'has_parent_entry': hasParentEntry ? 1 : 0,
       if (hasRealTimeline != null)
         'has_real_timeline': hasRealTimeline ? 1 : 0,
       if (hasPhrase != null) 'has_phrase': hasPhrase ? 1 : 0,

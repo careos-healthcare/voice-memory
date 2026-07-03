@@ -1,5 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/comparable_evidence_text.dart';
+import '../trust/pending_transcript_recovery_copy.dart';
+import '../trust/pending_transcript_recovery_gate.dart';
 import 'early_repeat_progress_model.dart';
 import 'early_saved_moments_copy.dart';
 import 'early_saved_moments_model.dart';
@@ -14,16 +17,20 @@ abstract final class EarlySavedMomentsEngine {
     required List<JournalEntry> entries,
     required EarlyRepeatProgressResult progress,
   }) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    if (eligible.isEmpty || eligible.length > 2) return null;
+    final sorted = List<JournalEntry>.from(entries)
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    if (sorted.isEmpty || sorted.length > 2) return null;
 
     final moments = [
-      for (var i = 0; i < eligible.length; i++)
+      for (var i = 0; i < sorted.length; i++)
         EarlySavedMomentPreview(
           index: i + 1,
           label: '${EarlySavedMomentsCopy.momentLabelPrefix} ${i + 1}',
-          previewText: _previewText(eligible[i]),
-          savedAt: eligible[i].createdAt,
+          previewText: _previewText(sorted[i]),
+          savedAt: sorted[i].createdAt,
+          entryId: sorted[i].id,
+          isPendingTranscript:
+              PendingTranscriptRecoveryGate.entryNeedsRecovery(sorted[i]),
         ),
     ];
 
@@ -62,13 +69,12 @@ abstract final class EarlySavedMomentsEngine {
   }
 
   static String _previewText(JournalEntry entry) {
-    final summary = entry.reflectionSummary.trim();
-    if (summary.length >= 12) {
-      return _truncate(summary);
+    if (PendingTranscriptRecoveryGate.entryNeedsRecovery(entry)) {
+      return PendingTranscriptRecoveryCopy.body;
     }
-    final transcript = entry.transcript.trim();
-    if (transcript.length >= ArchiveEvidenceGuard.minimumTranscriptChars) {
-      return _truncate(transcript);
+    final text = ComparableEvidenceText.userText(entry);
+    if (text.length >= ArchiveEvidenceGuard.minimumTranscriptChars) {
+      return _truncate(text);
     }
     return '';
   }

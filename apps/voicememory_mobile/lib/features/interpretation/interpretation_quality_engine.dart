@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../acquisition/audience_wedge_model.dart';
+import '../archive_evidence/comparable_evidence_text.dart';
 import '../loop_mode/loop_mode_engine.dart';
 import '../loop_mode/loop_mode_model.dart';
 import '../../product/loop_mode_copy.dart';
@@ -52,6 +53,17 @@ class InterpretationQualityEngine {
     String? languageCode,
   }) {
     final text = _entryText(latestEntry);
+    if (text.trim().isEmpty ||
+        ComparableEvidenceText.entryHasPendingTranscript(latestEntry)) {
+      return const InterpretationResult(
+        reads: const [],
+        needsClearerMoment: true,
+        clearerMomentTitle: 'Transcript pending',
+        clearerMomentPrompt:
+            'This moment is saved, but ArchiveMe needs words before suggesting a read.',
+      );
+    }
+
     final normalized = _normalize(text);
     final fragments = _extractFragments(text);
     final tags = _extractTags(normalized);
@@ -253,11 +265,7 @@ class InterpretationQualityEngine {
   }
 
   String _entryText(JournalEntry entry) {
-    final transcript = entry.transcript.trim();
-    if (transcript.isNotEmpty) return transcript;
-    final obs = entry.reflection.concreteObservation.trim();
-    final signal = entry.reflection.repeatedSignal.trim();
-    return [obs, signal].where((s) => s.isNotEmpty).join(' ');
+    return ComparableEvidenceText.userText(entry);
   }
 
   String _normalize(String text) =>

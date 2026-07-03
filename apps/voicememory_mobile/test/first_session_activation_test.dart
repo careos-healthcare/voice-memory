@@ -13,6 +13,7 @@ import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
+import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -782,8 +783,8 @@ void main() {
         degradedVoicePostSave: true,
       );
 
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.primaryAction), findsNWidgets(2));
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsNothing);
       expect(tester.takeException(), isNull);
@@ -794,7 +795,7 @@ void main() {
     ) async {
       await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
 
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsNothing);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

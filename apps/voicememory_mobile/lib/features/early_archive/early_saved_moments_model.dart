@@ -5,12 +5,16 @@ class EarlySavedMomentPreview {
     required this.label,
     required this.previewText,
     required this.savedAt,
+    this.entryId,
+    this.isPendingTranscript = false,
   });
 
   final int index;
   final String label;
   final String previewText;
   final DateTime savedAt;
+  final String? entryId;
+  final bool isPendingTranscript;
 }
 
 /// Content for the early saved-moments review bottom sheet.

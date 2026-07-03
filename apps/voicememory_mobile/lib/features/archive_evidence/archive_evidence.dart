@@ -2,6 +2,8 @@ import '../../models/journal_entry.dart';
 import 'archive_evidence_guard.dart';
 
 export 'archive_evidence_guard.dart';
+export 'archive_evidence_quality.dart';
+export 'archive_evidence_quality_gate.dart';
 export 'archive_evidence_threshold.dart';
 
 /// Minimum reflections with usable transcript before belief/evidence surfaces render.

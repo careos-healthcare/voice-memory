@@ -925,8 +925,8 @@ void main() {
       expect(content.moments[0].label, 'Moment 1');
       expect(content.moments[1].label, 'Moment 2');
       expect(content.moments[0].previewText, isNotEmpty);
+      expect(content.moments[1].previewText, isNotEmpty);
       expect(content.moments[1].previewText.length, lessThanOrEqualTo(120));
-      expect(content.moments[1].previewText, endsWith('…'));
       expect(content.hasNoClearMatch, isTrue);
       expect(
         content.comparisonBody,

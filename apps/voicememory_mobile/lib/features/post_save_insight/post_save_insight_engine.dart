@@ -1,3 +1,4 @@
+import '../archive_evidence/comparable_evidence_text.dart';
 import '../../models/journal_entry.dart';
 import '../acquisition/audience_wedge_model.dart';
 import '../loop_mode/loop_mode_engine.dart';
@@ -150,9 +151,8 @@ class PostSaveInsightEngine {
     JournalEntry? entry,
   }) {
     if (entry != null && current.readId != null) {
-      final text = entry.transcript.trim().isNotEmpty
-          ? entry.transcript
-          : entry.reflection.concreteObservation;
+      final text = ComparableEvidenceText.userText(entry);
+      if (text.trim().isEmpty) return null;
       final normalized = text.toLowerCase();
       final alts = _interpretationEngine.alternativesFor(
         primaryReadId: current.readId!,

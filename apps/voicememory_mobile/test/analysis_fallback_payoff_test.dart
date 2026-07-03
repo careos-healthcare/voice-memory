@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
+import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/analysis_fallback_payoff.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -303,7 +304,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsNothing);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsNothing);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
       expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsNothing);
     });
 
@@ -350,7 +351,7 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
-      expect(find.text(VoiceCaptureCopy.degradedRecoveryTitle), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
       expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
     });
 

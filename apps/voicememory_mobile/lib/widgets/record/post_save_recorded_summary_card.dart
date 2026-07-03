@@ -10,7 +10,9 @@ import '../../features/record/daily_mirror_engine.dart';
 import '../../features/record/daily_mirror_model.dart';
 import '../../features/record/daily_mirror_stage.dart';
 import '../../features/timeline/timeline_entry_display.dart';
+import '../../features/trust/pending_transcript_recovery_copy.dart';
 import '../../features/voice_capture/voice_capture_copy.dart';
+import '../../widgets/record/pending_transcript_recovery_prompt.dart';
 import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -28,6 +30,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     this.showSilentInputWarning = false,
     this.onAddMoreDetail,
     this.onBackToRecord,
+    this.onAddWhatYouSaid,
     this.primaryArchiveResult,
   });
 
@@ -40,6 +43,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
   final bool showSilentInputWarning;
   final VoidCallback? onAddMoreDetail;
   final VoidCallback? onBackToRecord;
+  final VoidCallback? onAddWhatYouSaid;
 
   List<JournalEntry> get _entries =>
       allEntries.isNotEmpty ? allEntries : [entry];
@@ -65,6 +69,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
         entry: entry,
         bodyCopy: degradedBodyCopy ?? VoiceCaptureCopy.transcriptUnavailable,
         showSilentInputWarning: showSilentInputWarning,
+        onAddWhatYouSaid: onAddWhatYouSaid,
       );
     }
 
@@ -275,11 +280,13 @@ class _DegradedTranscriptionCard extends StatelessWidget {
     required this.entry,
     required this.bodyCopy,
     this.showSilentInputWarning = false,
+    this.onAddWhatYouSaid,
   });
 
   final JournalEntry entry;
   final String bodyCopy;
   final bool showSilentInputWarning;
+  final VoidCallback? onAddWhatYouSaid;
 
   @override
   Widget build(BuildContext context) {
@@ -299,21 +306,13 @@ class _DegradedTranscriptionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            VoiceCaptureCopy.degradedRecoveryTitle,
-            key: const Key('post_save_degraded_recovery_title'),
-            style: successStyle.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            VoiceCaptureCopy.degradedRecoveryBody,
-            key: const Key('post_save_degraded_recovery_body'),
-            style: bodyStyle,
+          PendingTranscriptRecoveryPrompt(
+            onAddWhatYouSaid: onAddWhatYouSaid,
+            compact: true,
           ),
           if (bodyCopy != VoiceCaptureCopy.degradedRecoveryBody &&
-              bodyCopy != VoiceCaptureCopy.transcriptionFailedIssue) ...[
+              bodyCopy != VoiceCaptureCopy.transcriptionFailedIssue &&
+              bodyCopy != PendingTranscriptRecoveryCopy.body) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
               bodyCopy,

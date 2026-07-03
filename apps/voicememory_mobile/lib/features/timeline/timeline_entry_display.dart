@@ -6,6 +6,8 @@ import '../../models/sync_status.dart';
 import '../../product/consumer_copy_guard.dart';
 import '../../security/user_content_safety.dart';
 import '../entry_detail/entry_detail_copy.dart';
+import '../archive_evidence/comparable_evidence_text.dart';
+import '../archive_evidence/transcript_pending_copy.dart';
 import '../post_save/post_save_recorded_summary_copy.dart';
 import '../voice_capture/voice_capture_copy.dart';
 import '../voice_capture/voice_capture_quality.dart';
@@ -57,6 +59,7 @@ bool isDraftOrSystemTranscriptPlaceholder(String text) {
   if (trimmed.isEmpty) return false;
   final lower = trimmed.toLowerCase();
   if (lower.startsWith('[draft]')) return true;
+  if (lower == '[draft]') return true;
   if (lower == 'voice reflection') return true;
 
   const exactBlocked = [
@@ -64,11 +67,21 @@ bool isDraftOrSystemTranscriptPlaceholder(String text) {
     'saved privately on this device.',
     'saved privately on this device',
     'recording saved locally — transcribe when connected',
+    'recording saved locally',
     'offline — saved as a draft',
     'you appear to be offline',
   ];
   for (final phrase in exactBlocked) {
     if (lower == phrase) return true;
+  }
+
+  const blockedSubstrings = [
+    'recording saved locally',
+    'transcribe when connected',
+    'saved locally — transcribe',
+  ];
+  for (final fragment in blockedSubstrings) {
+    if (lower.contains(fragment)) return true;
   }
 
   if (trimmed == AppConfig.backendNotConfiguredMessage) return true;
@@ -254,6 +267,10 @@ EntryDisplayResolution resolveEntryDisplayText(JournalEntry entry) {
 
 /// User-facing timeline card title — never transport errors or draft placeholders.
 String timelineEntryTitle(JournalEntry entry) {
+  if (ComparableEvidenceText.entryHasPendingTranscript(entry)) {
+    return _recordingDateTitle(entry.createdAt);
+  }
+
   final snippet = _transcriptSnippet(entry.transcript);
   if (snippet != null) return snippet;
 
@@ -352,13 +369,16 @@ EntryDetailRecordedView entryDetailRecordedView(JournalEntry entry) {
 
   if (VoiceCaptureQuality.isDegradedVoiceCapture(entry)) {
     return EntryDetailRecordedView(
-      primary: VoiceCaptureCopy.transcriptionFailedDegraded,
+      primary: TranscriptPendingCopy.savedLocallyTitle,
+      secondary: TranscriptPendingCopy.savedLocallyBody,
+      isPendingTranscript: true,
       isDegradedTranscription: true,
     );
   }
 
   return EntryDetailRecordedView(
     primary: EntryDetailCopy.transcriptPending,
+    secondary: EntryDetailCopy.transcriptPendingBody,
     isPendingTranscript: true,
   );
 }

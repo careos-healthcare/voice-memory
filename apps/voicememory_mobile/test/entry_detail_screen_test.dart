@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/action_items/archive_action_item.dart';
+import 'package:voicememory_mobile/features/archive_evidence/transcript_pending_copy.dart';
 import 'package:voicememory_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:voicememory_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:voicememory_mobile/features/memory/curated_memory_marker.dart';
@@ -138,7 +139,11 @@ void main() {
       expect(find.textContaining('[draft]'), findsNothing);
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
       expect(
-        find.text(VoiceCaptureCopy.transcriptionFailedDegraded),
+        find.text(TranscriptPendingCopy.savedLocallyTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(TranscriptPendingCopy.savedLocallyBody),
         findsOneWidget,
       );
       expect(find.byKey(const Key('entry_detail_type_what_you_said')), findsOneWidget);

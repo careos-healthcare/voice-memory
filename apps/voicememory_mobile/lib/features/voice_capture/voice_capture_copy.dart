@@ -1,5 +1,6 @@
 /// User-facing copy for voice capture quality and transcription fallback.
 import '../trust/capture_recovery_copy.dart';
+import '../archive_evidence/transcript_pending_copy.dart';
 
 abstract class VoiceCaptureCopy {
   VoiceCaptureCopy._();
@@ -45,6 +46,16 @@ abstract class VoiceCaptureCopy {
 
   /// Legacy alias — prefer [analysisUnavailableNote] for deferred analysis copy.
   static const String analysisDeferredFootnote = analysisUnavailableNote;
+
+  static const String transcriptPendingPostSaveTitle =
+      TranscriptPendingCopy.recordPostSaveTitle;
+
+  static const String transcriptPendingPostSaveBody =
+      TranscriptPendingCopy.recordPostSaveBody;
+
+  /// Post-save when audio saved but transcript is still pending.
+  static const String savedLocallyPendingTitle = transcriptPendingPostSaveTitle;
+  static const String savedLocallyPendingBody = transcriptPendingPostSaveBody;
 
   static const String typeWhatYouSaid = 'Type what you said';
 

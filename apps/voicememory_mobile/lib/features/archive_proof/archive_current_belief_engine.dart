@@ -1,4 +1,5 @@
 import '../../models/journal_entry.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../early_archive/archive_watching_copy.dart';
 import '../early_archive/archive_watching_engine.dart';
@@ -30,11 +31,13 @@ abstract final class ArchiveCurrentBeliefEngine {
       return null;
     }
 
+    if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) return null;
+
     final signal =
         confirmedRepeat ?? EarlyFirstSignalEngine.build(entries: entries);
     if (signal == null) return null;
 
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveEvidenceGuard.strongEntries(entries);
     final grounded = ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
       signal.evidencePhrases,
       eligible,

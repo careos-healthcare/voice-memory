@@ -17,6 +17,7 @@ import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/archive_evidence/archive_entry_signal_guard.dart';
+import '../features/archive_evidence/comparable_evidence_text.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/activation/second_session_payoff.dart';
 import '../features/activation/third_entry_belief_payoff.dart';
@@ -177,6 +178,8 @@ import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/early_repeat_progress_card.dart';
 import '../widgets/record/early_saved_moments_sheet.dart';
+import '../widgets/record/pending_transcript_recovery_sheet.dart';
+import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
@@ -1984,15 +1987,26 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  Future<void> _openTypedFallbackForLastVoiceEntry() async {
+  Future<void> _openPendingTranscriptRecoveryForLastVoiceEntry() async {
     if (_entriesAfterSave.isEmpty) return;
-    final entryId = _lastSavedEntry!.id;
-    final result = await context.push<CapturePipelineResult>(
-      '/quick-capture',
-      extra: {'entryId': entryId},
+    final entry = _lastSavedEntry!;
+    final result = await PendingTranscriptRecovery.open(
+      context,
+      entry: entry,
+      source: 'record_post_save',
+      entryCount: _entriesAfterSave.length,
     );
     if (result == null || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(PendingTranscriptRecoveryCopy.savedSuccess),
+      ),
+    );
     await _finishSuccessfulCapture(result);
+  }
+
+  Future<void> _openTypedFallbackForLastVoiceEntry() async {
+    await _openPendingTranscriptRecoveryForLastVoiceEntry();
   }
 
   Future<void> _openPostSaveMomentDetail({
@@ -2659,7 +2673,7 @@ class _RecordScreenState extends State<RecordScreen> {
       if (VoiceCaptureQuality.isDegradedVoiceCapture(savedEntry)) {
         _localSaveTitle = null;
         _syncNote = null;
-        _stageLabel = VoiceCaptureCopy.degradedRecoveryTitle;
+        _stageLabel = VoiceCaptureCopy.savedLocallyPendingTitle;
       } else if (!cloudOk && hasSavedTranscript && !pipelineResult.analysisSucceeded) {
         _localSaveTitle = VoiceCaptureCopy.recordingSavedTitle;
         _syncNote = VoiceCaptureCopy.analysisUnavailableNote;
@@ -2777,7 +2791,9 @@ class _RecordScreenState extends State<RecordScreen> {
       reflectionCount: all.length,
     );
     FirstSessionPattern? firstPattern;
-    if (firstSession && all.isNotEmpty) {
+    final latestHasComparableText = all.isNotEmpty &&
+        !ComparableEvidenceText.entryHasPendingTranscript(all.last);
+    if (firstSession && all.isNotEmpty && latestHasComparableText) {
       firstPattern = await FirstSessionCoordinator.buildFromEntry(
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
@@ -2797,9 +2813,9 @@ class _RecordScreenState extends State<RecordScreen> {
     FirstSessionPattern? postSavePattern;
     PatternHypothesis? patternHypothesis;
 
-    if (firstSession && all.isNotEmpty) {
+    if (firstSession && all.isNotEmpty && latestHasComparableText) {
       postSavePattern = firstPattern;
-    } else if (all.isNotEmpty) {
+    } else if (all.isNotEmpty && latestHasComparableText) {
       postSavePattern = await FirstSessionCoordinator.buildFromEntry(
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
@@ -5504,6 +5520,11 @@ class _RecordScreenState extends State<RecordScreen> {
                             showAnalysisPendingNote: false,
                             mirror: postSaveDailyMirror,
                             primaryArchiveResult: postSaveArchiveHierarchy?.kind,
+                            onAddWhatYouSaid: _lastSavedEntryIsDegraded
+                                ? () => unawaited(
+                                      _openPendingTranscriptRecoveryForLastVoiceEntry(),
+                                    )
+                                : null,
                             onAddMoreDetail: suppressLatestSaveArchiveInsight
                                 ? () => unawaited(
                                       navigateToTypeInsteadCapture(
@@ -6897,7 +6918,7 @@ class _RecordScreenState extends State<RecordScreen> {
           _buildPolicyPrimarySecondaryButtons(
             policy,
             primaryKey: const Key('post_save_type_what_you_said'),
-            onPrimary: () => unawaited(_openTypedFallbackForLastVoiceEntry()),
+            onPrimary: () => unawaited(_openPendingTranscriptRecoveryForLastVoiceEntry()),
           ),
         );
       } else if (policy.state == RecordCtaPolicyState.postSaveSuccess) {
