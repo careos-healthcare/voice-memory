@@ -183,7 +183,8 @@ import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/early_repeat_progress_card.dart';
-import '../widgets/record/early_saved_moments_sheet.dart';
+import '../features/archive_history/archive_history_engine.dart';
+import '../widgets/archive_history/archive_history_sheet.dart';
 import '../widgets/record/pending_transcript_recovery_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
@@ -216,7 +217,6 @@ import '../features/next_action/next_best_action_engine.dart';
 import '../features/next_action/next_best_action_gates.dart';
 import '../features/next_action/next_best_action_model.dart';
 import '../widgets/next_action/next_best_action_line.dart';
-import '../features/early_archive/early_saved_moments_engine.dart';
 import '../features/early_archive/early_saved_moments_gates.dart';
 import '../features/early_archive/early_repeat_progress_model.dart';
 import '../features/early_archive/post_save_return_handoff_engine.dart';
@@ -2042,15 +2042,10 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  Future<void> _openEarlySavedMoments(
-    EarlyRepeatProgressResult progress,
-  ) async {
-    final content = EarlySavedMomentsEngine.build(
-      entries: _journalEntries,
-      progress: progress,
-    );
-    if (content == null || !mounted) return;
-    await EarlySavedMomentsSheet.show(
+  Future<void> _openArchiveHistory() async {
+    final content = ArchiveHistoryEngine.build(entries: _journalEntries);
+    if (!mounted) return;
+    await ArchiveHistorySheet.show(
       context,
       content: content,
       entryCount: _journalEntryCount,
@@ -4772,9 +4767,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       EarlyRepeatProgressCard(
                         progress: earlyRepeatProgress,
                         onViewSavedMoments: showEarlySavedMoments
-                            ? () => unawaited(
-                                  _openEarlySavedMoments(earlyRepeatProgress),
-                                )
+                            ? () => unawaited(_openArchiveHistory())
                             : null,
                       ),
                       const SizedBox(height: 12),

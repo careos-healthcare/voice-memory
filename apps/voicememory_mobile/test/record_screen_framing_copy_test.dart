@@ -19,6 +19,7 @@ import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thoug
 import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
+import 'package:voicememory_mobile/features/archive_history/archive_history_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
@@ -1684,26 +1685,19 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('early_saved_moments_sheet')), findsOneWidget);
-      expect(find.byKey(const Key('early_saved_moments_sheet_title')), findsOneWidget);
-      expect(find.text(EarlySavedMomentsCopy.sheetSubtitle), findsOneWidget);
-      expect(find.byKey(const Key('early_saved_moments_section_saved')), findsOneWidget);
-      expect(find.text('Moment 1'), findsOneWidget);
-      expect(find.text('Moment 2'), findsOneWidget);
+      expect(find.byKey(const Key('archive_history_sheet')), findsOneWidget);
+      expect(find.byKey(const Key('archive_history_sheet_title')), findsOneWidget);
+      expect(find.text(ArchiveHistoryCopy.sheetSubtitle), findsOneWidget);
+      expect(find.text(ArchiveHistoryCopy.sheetTitle), findsOneWidget);
+      expect(find.byKey(const Key('archive_history_row_a')), findsOneWidget);
+      expect(find.byKey(const Key('archive_history_row_b')), findsOneWidget);
+      expect(find.text(ArchiveHistoryCopy.chipSavedOnly), findsNWidgets(2));
       expect(
-        find.text(EarlySavedMomentsCopy.comparingSectionTitle),
+        find.text('Another unrelated note about errands this afternoon.'),
         findsOneWidget,
       );
       expect(
-        find.text(EarlySavedMomentsCopy.comparingNoClearMatch),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EarlySavedMomentsCopy.nextRecordSectionTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EarlySavedMomentsCopy.nextActionTwoUnrelated),
+        find.text('A quiet moment about lunch with a friend today.'),
         findsOneWidget,
       );
       expect(find.text('Delete'), findsNothing);
