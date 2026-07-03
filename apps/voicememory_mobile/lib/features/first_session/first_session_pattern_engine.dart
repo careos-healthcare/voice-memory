@@ -2,6 +2,8 @@ import '../../models/journal_entry.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'first_session_pattern_category.dart';
 import 'first_session_pattern_model.dart';
+import '../archive_evidence/archive_evidence_quality.dart';
+import '../archive_evidence/comparable_evidence_text.dart';
 import '../archive_evidence/archive_pattern_copy_guard.dart';
 
 /// Builds the first named pattern from a user's first saved reflection.
@@ -131,6 +133,10 @@ class FirstSessionPatternEngine {
     int alternativeIndex = 0,
     Map<FirstSessionPatternCategory, double> preferredCategoryBoosts = const {},
   }) {
+    if (ArchiveEvidenceQuality.entryIsGenericTest(entry)) {
+      return _blockedGenericTestPattern(entry, now: now ?? DateTime.now());
+    }
+
     final result = _score(
       entry,
       preferredCategoryBoosts: preferredCategoryBoosts,
@@ -188,6 +194,27 @@ class FirstSessionPatternEngine {
       chips: def.chips,
       confidenceScore: 0.2,
       categoryId: FirstSessionPatternCategory.fallback.id,
+    );
+  }
+
+  FirstSessionPattern _blockedGenericTestPattern(
+    JournalEntry entry, {
+    required DateTime now,
+  }) {
+    final preview = ComparableEvidenceText.userText(entry);
+    return FirstSessionPattern(
+      id: 'blocked_generic_test',
+      createdAt: now,
+      title: '',
+      whyNoticed: '',
+      watchForText: '',
+      chips: const [],
+      confidenceLabel: FirstSessionConfidenceLabel.early,
+      sourceTextPreview: preview.length <= 80 ? preview : '${preview.substring(0, 77)}…',
+      matchReason: 'generic_test_blocked',
+      confidenceScore: 0,
+      categoryId: 'blocked',
+      userCanCorrect: false,
     );
   }
 

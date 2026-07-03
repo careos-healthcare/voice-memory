@@ -1,5 +1,6 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../first_session/first_session_pattern_engine.dart';
 import '../post_save_insight/selected_signal_coordinator.dart';
 import '../post_save_insight/selected_signal_model.dart';
@@ -14,6 +15,10 @@ class PatternHypothesisEngine {
   static const _compareEngine = SecondSessionSignalEngine();
 
   Future<PatternHypothesis> build(List<JournalEntry> entries) async {
+    if (!ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries)) {
+      return PatternHypothesis.insufficient();
+    }
+
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 2) {
       return PatternHypothesis.insufficient();

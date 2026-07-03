@@ -110,6 +110,17 @@ void main() {
     expect(rows.first.action, PostSaveSignalAction.rejected);
   });
 
+  test('generic harness entries return insufficient hypothesis', () async {
+    const engine = PatternHypothesisEngine();
+    final hypothesis = await engine.build([
+      _entry('1', 'This is a test to check function'),
+      _entry('2', 'This is a second test for pressure'),
+    ]);
+    expect(hypothesis.hasEnoughData, isFalse);
+    expect(hypothesis.patternMightBe, isEmpty);
+    expect(hypothesis.evidenceSoFar, isEmpty);
+  });
+
   test('hypothesis copy uses working hypothesis language', () async {
     const engine = PatternHypothesisEngine();
     final hypothesis = await engine.build([

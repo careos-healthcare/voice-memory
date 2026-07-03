@@ -1,6 +1,7 @@
 import '../../models/journal_entry.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../first_session/first_session_pattern_engine.dart';
 import '../first_session/first_session_pattern_model.dart';
 import '../interpretation/interpretation_quality_engine.dart';
@@ -48,6 +49,10 @@ class SecondSessionSignalEngine {
   }
 
   SecondSessionComparison build(List<JournalEntry> entries) {
+    if (!ArchiveEvidenceQualityGate.allowsEarlyComparisons(entries)) {
+      return SecondSessionComparison.insufficient();
+    }
+
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 2) {
       return SecondSessionComparison.insufficient();

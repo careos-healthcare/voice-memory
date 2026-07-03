@@ -233,6 +233,25 @@ void main() {
       final entries = [_voiceEntry(id: 'p', transcript: _placeholder)];
       expect(ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries), isTrue);
       expect(ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries), isFalse);
+      expect(
+        ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries),
+        isFalse,
+      );
+    });
+
+    test('simulator harness strings block pattern hypothesis', () {
+      const testOne = 'This is a test to check function';
+      const testTwo = 'This is a second test for pressure';
+      final entries = [
+        _textEntry('1', testOne),
+        _textEntry('2', testTwo),
+      ];
+      for (final text in [testOne, testTwo]) {
+        expect(ArchiveEvidenceQuality.isGenericTestText(text), isTrue);
+        expect(ArchiveEvidenceQuality.assess(_textEntry('x', text)).allowsInsights, isFalse);
+      }
+      expect(ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries), isFalse);
+      expect(ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries), isTrue);
     });
   });
 
@@ -251,7 +270,32 @@ void main() {
         find.text(ArchiveEvidenceQualityCopy.needsClearerWordsBody),
         findsOneWidget,
       );
-      expect(find.textContaining('Saying yes'), findsNothing);
+    });
+
+    testWidgets('generic test fallback shows forming copy', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: PatternsEvidenceQualityFallbackView(
+              savedEntryId: 'e1',
+              genericTestOnly: true,
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        find.text(ArchiveEvidenceQualityCopy.patternsStillFormingTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveEvidenceQualityCopy.patternsNeedClearerMomentsBody),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveEvidenceQualityCopy.savedTitle),
+        findsNothing,
+      );
     });
   });
 

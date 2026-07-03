@@ -17,6 +17,7 @@ import '../theme/voicememory_colors.dart';
 import '../theme/voicememory_typography.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/archive_evidence/archive_entry_signal_guard.dart';
+import '../features/archive_evidence/archive_evidence_quality_gate.dart';
 import '../features/archive_evidence/comparable_evidence_text.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/activation/second_session_payoff.dart';
@@ -2825,7 +2826,8 @@ class _RecordScreenState extends State<RecordScreen> {
         secondComparison = const SecondSessionSignalEngine().build(all);
       }
     }
-    if (all.length >= FirstThreeSessionGates.minEntriesForUsefulArchive) {
+    if (all.length >= FirstThreeSessionGates.minEntriesForUsefulArchive &&
+        ArchiveEvidenceQualityGate.allowsPatternHypothesis(all)) {
       patternHypothesis = await const PatternHypothesisEngine().build(all);
     }
 

@@ -66,6 +66,32 @@ abstract final class ArchiveEvidenceQualityGate {
   static bool allowsAdaptiveDailyQuestion(List<JournalEntry> entries) =>
       usableCount(entries) >= 1;
 
+  /// True when saved entries support a grounded working hypothesis.
+  static bool allowsPatternHypothesis(List<JournalEntry> entries) {
+    if (entries.length < 2) return false;
+    final usable = usableEntries(entries);
+    if (usable.length < 2) return false;
+    return usable.every(
+      (e) =>
+          ArchiveEvidenceQuality.assess(e).reason !=
+              ArchiveEvidenceQualityReason.genericTestText &&
+          !ArchiveEvidenceQuality.entryIsGenericTest(e),
+    );
+  }
+
+  /// True when archive has only generic test / harness entries.
+  static bool showsGenericTestEvidenceFallback(List<JournalEntry> entries) {
+    if (entries.isEmpty) return false;
+    if (usableCount(entries) > 0) return false;
+    return entries.every((e) {
+      final text = ComparableEvidenceText.userText(e);
+      if (text.isEmpty) return false;
+      return ArchiveEvidenceQuality.assess(e).reason ==
+              ArchiveEvidenceQualityReason.genericTestText ||
+          ArchiveEvidenceQuality.entryIsGenericTest(e);
+    });
+  }
+
   /// True when saved entries exist but none are usable for insights.
   static bool showsInsightFallbackOnly(List<JournalEntry> entries) {
     if (entries.isEmpty) return false;
@@ -88,6 +114,7 @@ abstract final class ArchiveEvidenceQualityGate {
   static bool showsWeakEvidenceFallback(List<JournalEntry> entries) {
     if (entries.isEmpty) return false;
     if (usableCount(entries) > 0) return false;
+    if (showsGenericTestEvidenceFallback(entries)) return true;
     return entries.any(
       (e) =>
           ArchiveEvidenceQuality.assess(e).level ==

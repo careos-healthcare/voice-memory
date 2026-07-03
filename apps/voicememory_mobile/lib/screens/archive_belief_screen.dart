@@ -3701,6 +3701,10 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               savedEntryId: _firstArchiveEntryId,
               recoverableEntry: _firstRecoverableEntry,
               entryCount: _entries.length,
+              genericTestOnly:
+                  ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(
+                _entries,
+              ),
             ),
           ),
         ),

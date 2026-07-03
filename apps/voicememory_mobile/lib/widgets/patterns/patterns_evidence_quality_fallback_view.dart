@@ -20,12 +20,14 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
     this.savedEntryId,
     this.recoverableEntry,
     this.entryCount = 1,
+    this.genericTestOnly = false,
   });
 
   final bool fillViewport;
   final String? savedEntryId;
   final JournalEntry? recoverableEntry;
   final int entryCount;
+  final bool genericTestOnly;
 
   Future<void> _openRecovery(BuildContext context) async {
     final entry = recoverableEntry;
@@ -44,6 +46,12 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
     final entryId = savedEntryId?.trim();
     final showRecovery = recoverableEntry != null &&
         PendingTranscriptRecoveryGate.entryNeedsRecovery(recoverableEntry!);
+    final title = genericTestOnly
+        ? ArchiveEvidenceQualityCopy.patternsStillFormingTitle
+        : ArchiveEvidenceQualityCopy.savedTitle;
+    final body = genericTestOnly
+        ? ArchiveEvidenceQualityCopy.patternsNeedClearerMomentsBody
+        : ArchiveEvidenceQualityCopy.needsClearerWordsBody;
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
@@ -71,12 +79,18 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
                 ),
               ] else ...[
                 Text(
-                  ArchiveEvidenceQualityCopy.savedTitle,
+                  title,
+                  key: genericTestOnly
+                      ? const Key('patterns_generic_test_forming_title')
+                      : null,
                   style: ArchiveMobileTypography.responsivePageTitle(context),
                 ),
                 SizedBox(height: gap),
                 Text(
-                  ArchiveEvidenceQualityCopy.needsClearerWordsBody,
+                  body,
+                  key: genericTestOnly
+                      ? const Key('patterns_generic_test_forming_body')
+                      : null,
                   style: ArchiveMobileTypography.explanationBody(context),
                 ),
               ],

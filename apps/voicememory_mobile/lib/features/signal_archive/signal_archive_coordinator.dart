@@ -1,4 +1,5 @@
 import '../../services/app_services.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../post_save_insight/selected_signal_coordinator.dart';
 import '../post_save_insight/signal_feedback_store.dart';
 import '../retention/pattern_hypothesis_engine.dart';
@@ -35,7 +36,7 @@ abstract class SignalArchiveCoordinator {
     final feedback = await SignalFeedbackStore.instance().loadAll();
 
     PatternHypothesis? hypothesis;
-    if (entries.length >= 2) {
+    if (ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries)) {
       hypothesis = await const PatternHypothesisEngine().build(entries);
       if (!hypothesis.hasEnoughData) hypothesis = null;
     }
