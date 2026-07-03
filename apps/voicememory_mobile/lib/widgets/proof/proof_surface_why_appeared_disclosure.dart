@@ -11,10 +11,16 @@ class ProofSurfaceWhyAppearedDisclosure extends StatefulWidget {
     super.key,
     required this.body,
     required this.surfaceKey,
+    this.expanded,
+    this.onExpandedChanged,
   });
 
   final String body;
   final String surfaceKey;
+
+  /// When set with [onExpandedChanged], expansion is controlled by the parent.
+  final bool? expanded;
+  final ValueChanged<bool>? onExpandedChanged;
 
   @override
   State<ProofSurfaceWhyAppearedDisclosure> createState() =>
@@ -23,7 +29,22 @@ class ProofSurfaceWhyAppearedDisclosure extends StatefulWidget {
 
 class _ProofSurfaceWhyAppearedDisclosureState
     extends State<ProofSurfaceWhyAppearedDisclosure> {
-  var _expanded = false;
+  var _internalExpanded = false;
+
+  bool get _isControlled =>
+      widget.expanded != null && widget.onExpandedChanged != null;
+
+  bool get _expanded =>
+      _isControlled ? widget.expanded! : _internalExpanded;
+
+  void _toggle() {
+    final next = !_expanded;
+    if (_isControlled) {
+      widget.onExpandedChanged!(next);
+    } else {
+      setState(() => _internalExpanded = next);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +69,7 @@ class _ProofSurfaceWhyAppearedDisclosureState
           alignment: Alignment.centerLeft,
           child: TextButton(
             key: Key('proof_surface_why_appeared_link_${widget.surfaceKey}'),
-            onPressed: () => setState(() => _expanded = !_expanded),
+            onPressed: _toggle,
             style: TextButton.styleFrom(
               foregroundColor: AppColors.textSecondary,
               visualDensity: VisualDensity.compact,

@@ -67,4 +67,20 @@ class DoneForTodayReceipt {
 
   factory DoneForTodayReceipt.none() =>
       const DoneForTodayReceipt(hasReceipt: false);
+
+  DoneForTodayReceipt copyWith({
+    String? archiveLine,
+  }) =>
+      DoneForTodayReceipt(
+        hasReceipt: hasReceipt,
+        title: title,
+        completionLine: completionLine,
+        archiveLine: archiveLine ?? this.archiveLine,
+        tomorrowLine: tomorrowLine,
+        restLine: restLine,
+        tomorrowCueTitle: tomorrowCueTitle,
+        tomorrowCueLine: tomorrowCueLine,
+        sourceTerms: sourceTerms,
+        entryIds: entryIds,
+      );
 }

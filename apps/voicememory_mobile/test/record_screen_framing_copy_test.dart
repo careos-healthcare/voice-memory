@@ -26,6 +26,8 @@ import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.d
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
 import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
@@ -1191,6 +1193,15 @@ void main() {
       expect(find.text(FirstProofMomentCopy.primaryLabel), findsOneWidget);
       expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
       expect(find.text(FirstProofMomentCopy.nextLine), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+        findsNothing,
+      );
+      expect(
+        find.text(ArchiveProofCounter.onePieceTodayLine),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
       expect(find.text(PostSaveFocusedActionsCopy.addOneMoreMoment), findsNothing);
       expect(

@@ -5918,7 +5918,11 @@ class _RecordScreenState extends State<RecordScreen> {
                             !suppressNoisyFirstSaveCards) ...[
                           const SizedBox(height: 16),
                           DoneForTodayReceiptCard(
-                            receipt: _doneForTodayReceipt!,
+                            receipt: showFirstProofMoment
+                                ? _doneForTodayReceipt!.copyWith(
+                                    archiveLine: '',
+                                  )
+                                : _doneForTodayReceipt!,
                           ),
                           // 2-day path day-1 closure: only after the very
                           // first save, alongside (never instead of) the
@@ -5962,7 +5966,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         ],
                         if (_archiveProofCounter != null &&
                             _archiveProofCounter!.hasProof &&
-                            !suppressNoisyFirstSaveCards) ...[
+                            !suppressNoisyFirstSaveCards &&
+                            !showFirstProofMoment) ...[
                           const SizedBox(height: 16),
                           ArchiveProofCounterCard(
                             counter: _archiveProofCounter!,

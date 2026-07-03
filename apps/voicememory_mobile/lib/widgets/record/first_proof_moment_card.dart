@@ -10,7 +10,7 @@ import '../proof/proof_surface_why_appeared_disclosure.dart';
 import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 
 /// Post-save emotional payoff after the third related save — no extra CTAs.
-class FirstProofMomentCard extends StatelessWidget {
+class FirstProofMomentCard extends StatefulWidget {
   const FirstProofMomentCard({
     super.key,
     required this.moment,
@@ -20,23 +20,38 @@ class FirstProofMomentCard extends StatelessWidget {
   final FirstProofMoment moment;
   final int entryCount;
 
+  @override
+  State<FirstProofMomentCard> createState() => _FirstProofMomentCardState();
+}
+
+class _FirstProofMomentCardState extends State<FirstProofMomentCard> {
+  var _whyExpanded = false;
+
   void _trackSeen() {
     FirstProofMomentAnalytics.seen(
-      entryCount: entryCount,
-      phraseCount: moment.evidencePhrases.length,
-      hasStrongEvidence: moment.hasStrongEvidence,
+      entryCount: widget.entryCount,
+      phraseCount: widget.moment.evidencePhrases.length,
+      hasStrongEvidence: widget.moment.hasStrongEvidence,
     );
+  }
+
+  void _openWhyExplanation() {
+    setState(() => _whyExpanded = true);
   }
 
   @override
   Widget build(BuildContext context) {
     _trackSeen();
+    final moment = widget.moment;
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textSecondary,
     );
     final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textPrimary,
       height: 1.4,
+    );
+    final evidenceLabelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
+      color: AppColors.textSecondary,
     );
 
     return Container(
@@ -69,10 +84,22 @@ class FirstProofMomentCard extends StatelessWidget {
           ),
           if (moment.hasStrongEvidence && moment.evidencePhrases.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              moment.evidenceLabel,
-              key: const Key('first_proof_moment_evidence_label'),
-              style: ArchiveMobileTypography.cardLabel(context),
+            Semantics(
+              button: true,
+              label: moment.evidenceLabel,
+              child: InkWell(
+                key: const Key('first_proof_moment_evidence_label_tap'),
+                onTap: _openWhyExplanation,
+                borderRadius: BorderRadius.circular(4),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    moment.evidenceLabel,
+                    key: const Key('first_proof_moment_evidence_label'),
+                    style: evidenceLabelStyle,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.xs),
             Wrap(
@@ -81,9 +108,10 @@ class FirstProofMomentCard extends StatelessWidget {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final phrase in moment.evidencePhrases)
-                  Chip(
+                  ActionChip(
                     key: Key('first_proof_moment_evidence_phrase_$phrase'),
                     label: Text(phrase),
+                    onPressed: _openWhyExplanation,
                     backgroundColor: const Color(0xFFF4F7F4),
                     side: BorderSide.none,
                     visualDensity: VisualDensity.compact,
@@ -109,6 +137,9 @@ class FirstProofMomentCard extends StatelessWidget {
           ProofSurfaceWhyAppearedDisclosure(
             body: ProofSurfaceWhyAppearedCopy.firstProof,
             surfaceKey: 'first_proof_moment',
+            expanded: _whyExpanded,
+            onExpandedChanged: (expanded) =>
+                setState(() => _whyExpanded = expanded),
           ),
         ],
       ),
