@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_belief_thread_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
@@ -31,6 +32,18 @@ import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_ch
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_engine.dart';
+import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:voicememory_mobile/features/activation/first_three_session_gates.dart';
+import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_engine.dart';
+import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
+import 'package:voicememory_mobile/features/pressure_retention/done_for_today_receipt_engine.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_completion_copy_gates.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
+import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/widgets/pressure_retention/archive_proof_counter_card.dart';
+import 'package:voicememory_mobile/widgets/record/done_for_today_receipt_card.dart';
+import 'package:voicememory_mobile/widgets/record/first_proof_moment_card.dart';
+import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -676,6 +689,198 @@ void main() {
       expect(joined, isNot(contains('try repeating')));
       expect(joined, isNot(contains('you should')));
       expect(joined, isNot(contains('do this again')));
+    });
+  });
+
+  group('Post-save completion copy dedup', () {
+    const doneEngine = DoneForTodayReceiptEngine();
+    const counterEngine = ArchiveProofCounterEngine();
+
+    Future<void> pumpCompletionStack(
+      WidgetTester tester, {
+      required int entryCount,
+      required bool showFirstProofMoment,
+      bool justSavedFirst = false,
+    }) async {
+      final doneReceipt = doneEngine.build(
+        saved: true,
+        entryCount: entryCount,
+      );
+      final receipt = showFirstProofMoment
+          ? doneReceipt.copyWith(archiveLine: '')
+          : doneReceipt;
+      final counter = counterEngine.build(const [], savedToday: true);
+      final suppressNoisy = FirstThreeSessionGates.suppressNoisyPostSaveCards(
+        justSavedFirst: justSavedFirst,
+        entryCount: entryCount,
+      );
+      final showDone = receipt.hasReceipt && !suppressNoisy;
+      final showCounter = PostSaveCompletionCopyGates.showArchiveProofCounter(
+        counterHasProof: counter.hasProof,
+        doneReceiptVisible: showDone,
+        suppressNoisyFirstSaveCards: suppressNoisy,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  if (showFirstProofMoment)
+                    FirstProofMomentCard(
+                      moment: FirstProofMomentEngine.build(
+                        entries: _threeRelatedRepeatEntries(),
+                      )!,
+                      entryCount: 3,
+                    ),
+                  if (showDone) DoneForTodayReceiptCard(receipt: receipt),
+                  if (showCounter) ArchiveProofCounterCard(counter: counter),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+    }
+
+    test('gate hides proof counter when done receipt is visible', () {
+      expect(
+        PostSaveCompletionCopyGates.showArchiveProofCounter(
+          counterHasProof: true,
+          doneReceiptVisible: true,
+          suppressNoisyFirstSaveCards: false,
+        ),
+        isFalse,
+      );
+      expect(
+        PostSaveCompletionCopyGates.showArchiveProofCounter(
+          counterHasProof: true,
+          doneReceiptVisible: false,
+          suppressNoisyFirstSaveCards: false,
+        ),
+        isTrue,
+      );
+    });
+
+    testWidgets('first save post-save has no duplicate completion copy', (
+      tester,
+    ) async {
+      await pumpCompletionStack(
+        tester,
+        entryCount: 1,
+        showFirstProofMoment: false,
+        justSavedFirst: true,
+      );
+
+      expect(find.byKey(const Key('done_for_today_receipt_card')), findsNothing);
+      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
+      expect(
+        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+        findsNothing,
+      );
+      expect(
+        find.text(ArchiveProofCounter.onePieceTodayLine),
+        findsNothing,
+      );
+    });
+
+    testWidgets('third save first-proof post-save has no duplicate completion copy', (
+      tester,
+    ) async {
+      await pumpCompletionStack(
+        tester,
+        entryCount: 3,
+        showFirstProofMoment: true,
+      );
+
+      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.byKey(const Key('done_for_today_receipt_card')), findsOneWidget);
+      expect(find.text('That is enough for today.'), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+        findsNothing,
+      );
+      expect(
+        find.text(ArchiveProofCounter.onePieceTodayLine),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
+    });
+
+    testWidgets('fourth related post-save has no duplicate completion copy', (
+      tester,
+    ) async {
+      await pumpCompletionStack(
+        tester,
+        entryCount: 4,
+        showFirstProofMoment: false,
+      );
+
+      expect(find.byKey(const Key('done_for_today_receipt_card')), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveProofCounter.onePieceTodayLine),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
+    });
+
+    testWidgets('fourth changed entry still shows What changed in summary', (
+      tester,
+    ) async {
+      final entries = [
+        _entry(
+          id: 'a',
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          id: 'b',
+          transcript:
+              'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+        _entry(
+          id: 'c',
+          transcript:
+              'I said yes again even though I had no capacity for one more ask.',
+        ),
+        _entry(
+          id: 'd',
+          transcript:
+              'I paused before saying yes when they asked me to take on more work.',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: PostSaveRecordedSummaryCard(
+              entry: entries.last,
+              allEntries: entries,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+        findsOneWidget,
+      );
+    });
+
+    test('first proof still appears after three related entries', () {
+      expect(
+        FirstProofMomentEngine.build(entries: _threeRelatedRepeatEntries()),
+        isNotNull,
+      );
     });
   });
 

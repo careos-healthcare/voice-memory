@@ -383,6 +383,7 @@ import '../widgets/record/done_for_today_receipt_card.dart';
 import '../widgets/record/belief_update_payoff_card.dart';
 import '../widgets/record/day_two_return_loop_card.dart';
 import '../features/post_save/post_save_archive_hierarchy.dart';
+import '../features/post_save/post_save_completion_copy_gates.dart';
 import '../features/record/record_home_surface_policy.dart';
 import '../widgets/record/post_save_focused_actions_bar.dart';
 import '../widgets/record/post_save_recorded_summary_card.dart';
@@ -5965,9 +5966,14 @@ class _RecordScreenState extends State<RecordScreen> {
                             ),
                         ],
                         if (_archiveProofCounter != null &&
-                            _archiveProofCounter!.hasProof &&
-                            !suppressNoisyFirstSaveCards &&
-                            !showFirstProofMoment) ...[
+                            PostSaveCompletionCopyGates.showArchiveProofCounter(
+                              counterHasProof: _archiveProofCounter!.hasProof,
+                              doneReceiptVisible:
+                                  _doneForTodayReceipt != null &&
+                                  _doneForTodayReceipt!.hasReceipt,
+                              suppressNoisyFirstSaveCards:
+                                  suppressNoisyFirstSaveCards,
+                            )) ...[
                           const SizedBox(height: 16),
                           ArchiveProofCounterCard(
                             counter: _archiveProofCounter!,

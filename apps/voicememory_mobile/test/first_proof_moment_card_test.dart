@@ -5,6 +5,7 @@ import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_model.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_completion_copy_gates.dart';
 import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -185,8 +186,12 @@ void main() {
         'You added one more piece today.',
       );
       expect(
-        VisibleArchiveProofCopy.oneEntryAddedTodayLine,
-        isNot(equals(ArchiveProofCounter.onePieceTodayLine)),
+        PostSaveCompletionCopyGates.showArchiveProofCounter(
+          counterHasProof: true,
+          doneReceiptVisible: true,
+          suppressNoisyFirstSaveCards: false,
+        ),
+        isFalse,
       );
     });
   });

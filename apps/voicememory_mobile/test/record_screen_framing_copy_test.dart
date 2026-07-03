@@ -28,6 +28,7 @@ import 'package:voicememory_mobile/features/early_archive/return_check_payoff_co
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
+import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
@@ -1861,6 +1862,87 @@ void main() {
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+        findsNothing,
+      );
+      expect(
+        find.text(ArchiveProofCounter.onePieceTodayLine),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
+    });
+
+    testWidgets('fourth changed related post-save shows What changed without duplicate completion copy', (
+      tester,
+    ) async {
+      final entries = [
+        _entry(
+          id: 'repeat_0',
+          transcript:
+              'I had no capacity but I said yes again to the extra meeting today.',
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
+        _entry(
+          id: 'repeat_1',
+          transcript:
+              'Same thing — said yes when I had no capacity for one more thing.',
+          createdAt: DateTime(2026, 6, 11, 12),
+        ),
+        _entry(
+          id: 'repeat_2',
+          transcript:
+              'I said yes again even though I had no capacity for one more ask.',
+          createdAt: DateTime(2026, 6, 12, 12),
+        ),
+        _entry(
+          id: 'repeat_3',
+          transcript:
+              'I paused before saying yes when they asked me to take on more work.',
+          createdAt: DateTime(2026, 6, 13, 12),
+        ),
+      ];
+      await tester.runAsync(() async {
+        for (final entry in entries) {
+          await AppServices.instance.journalStore.save(entry);
+        }
+      });
+      VisualAuditOverrides.setRecordPresentation(
+        RecordAuditPresentation(
+          ui: RecordUiState.done,
+          entriesAfterSave: entries,
+        ),
+      );
+      await tester.binding.setSurfaceSize(const Size(390, 2800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      });
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatChangedTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveProofCounter.onePieceTodayLine),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
     });
 
     testWidgets('tapping softer on return check answer shows softer payoff', (
