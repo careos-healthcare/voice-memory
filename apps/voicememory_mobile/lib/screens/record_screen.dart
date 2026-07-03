@@ -143,6 +143,7 @@ import '../widgets/signal/signal_journey_card.dart';
 import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../features/retention/return_tomorrow_cue_engine.dart';
+import '../features/retention/first_week_progress_engine.dart';
 import '../features/retention/yesterday_watch_copy.dart';
 import '../features/retention/yesterday_watch_engine.dart';
 import '../features/retention/yesterday_watch_store.dart';
@@ -186,6 +187,7 @@ import '../widgets/record/early_saved_moments_sheet.dart';
 import '../widgets/record/pending_transcript_recovery_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
+import '../widgets/record/first_week_progress_line.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
 import '../widgets/record/yesterday_watch_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
@@ -3727,6 +3729,18 @@ class _RecordScreenState extends State<RecordScreen> {
       cue: returnTomorrowCueReady,
     ) &&
         !showYesterdayWatch;
+    final firstWeekProgressReady = ui == RecordUiState.ready &&
+            _journalEntryCountReady
+        ? FirstWeekProgressEngine.buildReady(entries: _journalEntries)
+        : null;
+    final showFirstWeekProgressReady = FirstWeekProgressGates.shouldShowReady(
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      progress: firstWeekProgressReady,
+      showYesterdayWatch: showYesterdayWatch,
+      showReturnTomorrowCue: showReturnTomorrowCueReady,
+    );
     final showEarlyReturnReminder = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
@@ -4307,6 +4321,19 @@ class _RecordScreenState extends State<RecordScreen> {
       isDegradedPostSave: postSaveDegradedForReturnCue,
       cue: returnTomorrowCuePostSave,
     );
+    final firstWeekProgressPostSave = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? FirstWeekProgressEngine.buildPostSave(
+            entries: entriesAfterSave,
+            firstProofUnlocked: showFirstProofMoment,
+          )
+        : null;
+    final showFirstWeekProgressPostSave = FirstWeekProgressGates.shouldShowPostSave(
+      isPostSaveDone: ui == RecordUiState.done,
+      isDegradedPostSave: postSaveDegradedForReturnCue,
+      progress: firstWeekProgressPostSave,
+      showReturnTomorrowCue: showReturnTomorrowCuePostSave,
+    );
     final showPostSaveReturnHandoff = PostSaveReturnHandoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
@@ -4726,6 +4753,15 @@ class _RecordScreenState extends State<RecordScreen> {
                         surface: 'record_ready',
                       ),
                       const SizedBox(height: 12),
+                    ],
+                    if (showFirstWeekProgressReady &&
+                        firstWeekProgressReady != null) ...[
+                      FirstWeekProgressLine(
+                        progress: firstWeekProgressReady,
+                        entryCount: _journalEntryCount,
+                        surface: 'record_ready',
+                      ),
+                      const SizedBox(height: 8),
                     ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
@@ -6465,6 +6501,15 @@ class _RecordScreenState extends State<RecordScreen> {
                         entryCount: postSaveEntryCount,
                       ),
                       const SizedBox(height: 16),
+                    ],
+                    if (showFirstWeekProgressPostSave &&
+                        firstWeekProgressPostSave != null) ...[
+                      FirstWeekProgressLine(
+                        progress: firstWeekProgressPostSave,
+                        entryCount: postSaveEntryCount,
+                        surface: 'record_post_save',
+                      ),
+                      const SizedBox(height: 12),
                     ],
                     if (showReturnTomorrowCuePostSave &&
                         returnTomorrowCuePostSave != null) ...[

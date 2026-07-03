@@ -495,6 +495,7 @@ abstract class ActivationFunnelAnalytics {
   static const String yesterdayWatchSeen = 'yesterday_watch_seen';
   static const String yesterdayWatchAnswered = 'yesterday_watch_answered';
   static const String yesterdayWatchDismissed = 'yesterday_watch_dismissed';
+  static const String firstWeekProgressSeen = 'first_week_progress_seen';
   static const String changeCanBeginSeen = 'change_can_begin_seen';
   static const String proArchiveContinuitySeen = 'pro_archive_continuity_seen';
   static const String proArchiveContinuityTapped =
