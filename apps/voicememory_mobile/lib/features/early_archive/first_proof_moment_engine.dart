@@ -24,20 +24,20 @@ abstract final class FirstProofMomentEngine {
       eligible,
     );
     final hasStrongEvidence = evidence.isStrong && grounded.isNotEmpty;
-    final primaryPhrase = grounded.isNotEmpty ? grounded.first : null;
-    final usesPhraseBody = hasStrongEvidence && primaryPhrase != null;
+    final usesPhraseBody = hasStrongEvidence;
 
     return FirstProofMoment(
+      primaryLabel: FirstProofMomentCopy.primaryLabel,
       title: usesPhraseBody
           ? FirstProofMomentCopy.title
           : FirstProofMomentCopy.titlePossible,
       body: usesPhraseBody
-          ? FirstProofMomentCopy.bodyWithPhrase(primaryPhrase)
+          ? FirstProofMomentCopy.bodyStrong
           : FirstProofMomentCopy.bodyFallback,
       evidenceLabel: FirstProofMomentCopy.evidenceLabel,
       evidencePhrases: usesPhraseBody ? grounded.take(3).toList() : const [],
       whyLine: FirstProofMomentCopy.whyLine,
-      footer: FirstProofMomentCopy.footer,
+      nextLine: FirstProofMomentCopy.nextLine,
       hasStrongEvidence: hasStrongEvidence,
       usesPhraseBody: usesPhraseBody,
     );

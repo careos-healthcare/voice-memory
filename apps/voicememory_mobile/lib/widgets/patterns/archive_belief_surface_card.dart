@@ -12,6 +12,8 @@ import '../../features/tomorrow_return/watch_for_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 import 'archive_belief_correction_actions.dart';
 
 /// Archive belief proof surface — primary post-first-proof card on Archive/Patterns.
@@ -238,6 +240,10 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
               ),
             ],
           ],
+          ProofSurfaceWhyAppearedDisclosure(
+            body: ProofSurfaceWhyAppearedCopy.archiveBelief,
+            surfaceKey: 'archive_belief_surface',
+          ),
         ],
       ),
     );

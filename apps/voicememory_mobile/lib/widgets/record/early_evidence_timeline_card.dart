@@ -12,6 +12,8 @@ import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 import 'early_archive_insight_feedback_row.dart';
 import 'early_archive_insight_why_section.dart';
 
@@ -135,10 +137,16 @@ class EarlyEvidenceTimelineCard extends StatelessWidget {
             nearbyConfirmedRepeat: nearbyConfirmedRepeat,
           ),
           if (!isSample && surface != null && count != null) ...[
-            EarlyArchiveInsightWhySection(
-              reasons: whyReasons,
-              insightKey: 'timeline',
-            ),
+            if (surface == 'patterns' && !compact)
+              ProofSurfaceWhyAppearedDisclosure(
+                body: ProofSurfaceWhyAppearedCopy.evidenceTimeline,
+                surfaceKey: 'early_evidence_timeline',
+              )
+            else
+              EarlyArchiveInsightWhySection(
+                reasons: whyReasons,
+                insightKey: 'timeline',
+              ),
             EarlyArchiveInsightFeedbackRow(
               insightType: EarlyArchiveInsightType.timeline,
               surface: surface!,

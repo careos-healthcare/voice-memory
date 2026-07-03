@@ -1,15 +1,15 @@
 /// User-facing copy for voice capture quality and transcription fallback.
+import '../trust/capture_recovery_copy.dart';
+
 abstract class VoiceCaptureCopy {
   VoiceCaptureCopy._();
 
-  static const String recordingFailed =
-      'Recording did not start. Try again, or save a short text moment.';
+  static const String recordingFailed = CaptureRecoveryCopy.recordingFailed;
 
-  static const String saveFailed =
-      'That moment was not saved. Please try again.';
+  static const String saveFailed = CaptureRecoveryCopy.saveFailed;
 
   static const String transcriptUnavailable =
-      'ArchiveMe saved the moment, but the transcript may need another try.';
+      CaptureRecoveryCopy.transcriptUnavailable;
 
   static const String notEnoughAudio =
       'We could not hear enough audio. Try again closer to the microphone.';

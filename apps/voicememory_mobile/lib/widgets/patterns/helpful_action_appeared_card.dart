@@ -6,6 +6,8 @@ import '../../features/early_archive/helpful_action_appeared_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 
 /// Patterns / Archive positive payoff — evidence from the user's words, no CTAs.
 class HelpfulActionAppearedCard extends StatelessWidget {
@@ -94,6 +96,10 @@ class HelpfulActionAppearedCard extends StatelessWidget {
               color: AppColors.textSecondary,
               fontSize: 13,
             ),
+          ),
+          ProofSurfaceWhyAppearedDisclosure(
+            body: ProofSurfaceWhyAppearedCopy.helpfulAction,
+            surfaceKey: 'helpful_action_appeared',
           ),
         ],
       ),

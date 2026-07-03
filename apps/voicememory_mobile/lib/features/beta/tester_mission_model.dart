@@ -4,7 +4,8 @@ enum TesterMissionStep {
   step2Of3,
   step3Of3,
   stillLooking,
-  firstProofReached;
+  firstProofReached,
+  feedbackSaved;
 
   String get analyticsValue => switch (this) {
         TesterMissionStep.step1Of3 => 'step_1_of_3',
@@ -12,6 +13,7 @@ enum TesterMissionStep {
         TesterMissionStep.step3Of3 => 'step_3_of_3',
         TesterMissionStep.stillLooking => 'still_looking',
         TesterMissionStep.firstProofReached => 'first_proof_reached',
+        TesterMissionStep.feedbackSaved => 'feedback_saved',
       };
 }
 

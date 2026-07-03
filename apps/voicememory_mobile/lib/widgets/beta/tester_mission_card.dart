@@ -152,25 +152,36 @@ class _FullCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            mission.stepLabel,
-            key: const Key('tester_mission_step_label'),
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            mission.body,
-            key: const Key('tester_mission_body'),
+            TesterMissionCopy.mission,
+            key: const Key('tester_mission_mission'),
             style: bodyStyle.copyWith(height: 1.45),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            mission.footer,
-            key: const Key('tester_mission_footer'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              height: 1.4,
+          if (mission.stepLabel.isNotEmpty) ...[
+            Text(
+              mission.stepLabel,
+              key: const Key('tester_mission_step_label'),
+              style: ArchiveMobileTypography.cardLabel(context),
             ),
-          ),
+            const SizedBox(height: AppSpacing.xs),
+          ],
+          if (mission.body.isNotEmpty)
+            Text(
+              mission.body,
+              key: const Key('tester_mission_body'),
+              style: bodyStyle.copyWith(height: 1.45),
+            ),
+          if (mission.footer.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              mission.footer,
+              key: const Key('tester_mission_footer'),
+              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           _DismissActions(
             onHideForSession: onHideForSession,
@@ -220,10 +231,25 @@ class _CompactStrip extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      mission.stepLabel,
-                      key: const Key('tester_mission_compact_step_label'),
+                      TesterMissionCopy.mission,
+                      key: const Key('tester_mission_compact_mission'),
                       style: ArchiveMobileTypography.responsiveHelper(context),
                     ),
+                    if (mission.stepLabel.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        mission.stepLabel,
+                        key: const Key('tester_mission_compact_step_label'),
+                        style: ArchiveMobileTypography.responsiveHelper(context),
+                      ),
+                    ] else if (mission.body.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        mission.body,
+                        key: const Key('tester_mission_compact_body'),
+                        style: ArchiveMobileTypography.responsiveHelper(context),
+                      ),
+                    ],
                   ],
                 ),
               ),

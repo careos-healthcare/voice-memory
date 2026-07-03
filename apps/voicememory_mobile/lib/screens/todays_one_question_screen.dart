@@ -113,8 +113,8 @@ class _TodaysOneQuestionScreenState extends State<TodaysOneQuestionScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          TodaysQuestionCopy.fullScreenWhy,
-          key: const Key('todays_one_question_screen_why'),
+          result.helperText,
+          key: const Key('todays_one_question_screen_helper'),
           style: ArchiveMobileTypography.explanationBody(
             context,
             color: AppColors.textSecondary,

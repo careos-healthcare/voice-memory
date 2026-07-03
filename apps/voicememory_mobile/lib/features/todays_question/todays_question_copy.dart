@@ -1,4 +1,5 @@
 import '../activation/weekly_archive_review.dart';
+import '../daily_question/adaptive_daily_question_copy.dart';
 
 /// Calm copy for today's one question on Record.
 abstract final class TodaysQuestionCopy {
@@ -82,5 +83,6 @@ abstract final class TodaysQuestionCopy {
         supportSectionTitle,
         supportSectionBody,
         ...rotatedQuestions,
+        ...AdaptiveDailyQuestionCopy.allVisibleStrings,
       ];
 }

@@ -15,10 +15,23 @@ abstract final class TesterMissionEngine {
     required int entryCount,
     required List<JournalEntry> entries,
     required bool compactAtEntryZero,
+    bool feedbackAnswered = false,
   }) {
     final presentation = compactAtEntryZero && entryCount == 0
         ? TesterMissionPresentation.compact
         : TesterMissionPresentation.full;
+
+    if (feedbackAnswered) {
+      return TesterMissionResult(
+        title: TesterMissionCopy.title,
+        body: TesterMissionCopy.feedbackSavedBody,
+        stepLabel: TesterMissionCopy.feedbackSavedStepLabel,
+        footer: TesterMissionCopy.feedbackSavedFooter,
+        step: TesterMissionStep.feedbackSaved,
+        presentation: presentation,
+        entryCount: entryCount,
+      );
+    }
 
     if (entryCount <= 0) {
       return TesterMissionResult(

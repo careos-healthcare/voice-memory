@@ -160,6 +160,10 @@ import '../features/beta/core_value_feedback_store.dart';
 import '../features/early_archive/archive_proof_surface_layout.dart';
 import '../features/repeat_return_check/repeat_return_check_engine.dart';
 import '../features/repeat_return_check/repeat_return_check_store.dart';
+import '../features/next_action/next_best_action_engine.dart';
+import '../features/next_action/next_best_action_gates.dart';
+import '../features/next_action/next_best_action_model.dart';
+import '../widgets/next_action/next_best_action_line.dart';
 import '../features/repeat_return_check/repeat_return_check_trend.dart';
 import '../features/repeat_return_check/pattern_changed_analytics.dart';
 import '../features/repeat_return_check/pattern_changed_engine.dart';
@@ -255,6 +259,7 @@ import '../features/archive_proof/archive_belief_surface.dart';
 import '../features/archive_proof/archive_current_belief_gates.dart';
 import '../features/early_archive/archive_change_timeline_engine.dart';
 import '../features/early_archive/archive_change_timeline_gates.dart';
+import '../features/early_archive/archive_change_timeline_model.dart';
 import '../features/early_archive/helpful_action_appeared_engine.dart';
 import '../features/early_archive/helpful_action_appeared_gates.dart';
 import '../features/early_archive/what_changed_since_last_time_engine.dart';
@@ -3745,7 +3750,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
       );
-      final showHelpfulActionAppeared = HelpfulActionAppearedGates.shouldShow(
+      final helpfulActionAppearedCandidateVisible =
+          HelpfulActionAppearedGates.shouldShow(
         loaded: true,
         entryCount: _entries.length,
         isReady: true,
@@ -3763,6 +3769,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
+      final timelineShowsHelpfulAction =
+          earlyEvidenceTimeline?.showsHelpfulAction ?? false;
+      final changeTimelineShowsHelpfulAction =
+          archiveChangeTimelineCandidate?.items.any(
+            (item) =>
+                item.kind ==
+                ArchiveChangeTimelineItemKind.helpfulActionAppeared,
+          ) ??
+          false;
+      final changeTimelineShowsChanged =
+          archiveChangeTimelineCandidate?.items.any(
+            (item) =>
+                item.kind == ArchiveChangeTimelineItemKind.changedThisTime,
+          ) ??
+          false;
       final showArchiveChangeTimeline = ArchiveChangeTimelineGates.shouldShow(
         loaded: true,
         entryCount: _entries.length,
@@ -3933,7 +3954,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           isRecording: false,
           hasPositivePattern: positiveReinforcement != null,
         ) &&
-            !showHelpfulActionAppeared,
+            !helpfulActionAppearedCandidateVisible,
         positivePatternVisible: false,
         patternChangedVisible: PatternChangedGates.shouldShow(
           loaded: true,
@@ -3945,7 +3966,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           patternChanged: patternChangedCandidate,
           dismissed: patternChangedDismissed,
         ),
-        helpfulActionAppearedVisible: showHelpfulActionAppeared,
+        helpfulActionAppearedVisible: helpfulActionAppearedCandidateVisible,
         archiveSummaryVisible: ArchiveSummaryGates.shouldShow(
           loaded: true,
           entryCount: _entries.length,
@@ -3956,7 +3977,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         ),
         archiveCurrentBeliefVisible: showArchiveCurrentBelief,
         archiveChangeTimelineVisible: showArchiveChangeTimeline,
+        timelineShowsHelpfulAction: timelineShowsHelpfulAction,
+        changeTimelineShowsHelpfulAction: changeTimelineShowsHelpfulAction,
+        changeTimelineShowsChanged: changeTimelineShowsChanged,
       );
+      final showHelpfulActionAppeared =
+          proofSurfaceLayout.effectiveHelpfulActionAppearedVisible;
       final showArchiveSummary = proofSurfaceLayout.effectiveArchiveSummaryVisible;
       final archiveSummary = showArchiveSummary ? archiveSummaryCandidate : null;
       final showDailyReturnReason = DailyReturnReasonGates.shouldShow(
@@ -4060,6 +4086,25 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         tier: _archiveIntelligenceTier,
       );
       final strongest = _strongest;
+      final nextBestActionCandidate = NextBestActionEngine.build(
+        entries: _entries,
+        returnChecks: RepeatReturnCheckStore.cached,
+        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+        privateReportForming: showPrivateArchiveReport &&
+            privateArchiveReportCandidate != null,
+      );
+      final showNextBestActionOnPatterns = NextBestActionGates.shouldShow(
+        action: nextBestActionCandidate,
+        surface: NextBestActionSurface.patterns,
+        showEarlyRepeatProgress: false,
+        showPostSaveReturnCheckAnswer: false,
+        repeatReturnCheckOfferVisible: false,
+        showPatternChangedCard:
+            showPatternChanged && patternChangedCandidate != null,
+        showHelpfulActionCard: showHelpfulActionAppeared,
+        showPrivateArchiveReportCard: showPrivateArchiveReport &&
+            privateArchiveReportCandidate != null,
+      );
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
@@ -4068,6 +4113,39 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
             child: ListView(
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
+                if (showArchiveCurrentBelief &&
+                    archiveBeliefSurfaceCandidate.shouldShow) ...[
+                  ArchiveBeliefSurfaceCard(
+                    surface: archiveBeliefSurfaceCandidate,
+                    onRecordNext: () => context.go(
+                      ArchiveProofRecordRoutes.uri(
+                        guidedPromptNodeKey:
+                            ArchiveProofRecordRoutes.changeTimelineNodeKey,
+                      ),
+                    ),
+                    onDismissed: () => setState(() {}),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showNextBestActionOnPatterns &&
+                    nextBestActionCandidate != null) ...[
+                  NextBestActionLine(
+                    action: nextBestActionCandidate,
+                    surface: NextBestActionSurface.patterns,
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                if (showCoreValueFeedbackOnPatterns) ...[
+                  CoreValueFeedbackCard(
+                    source: CoreValueFeedbackSource.patternsArchive,
+                    entryCount: _entries.length,
+                    hasConfirmedRepeat: patternsHasConfirmedRepeat,
+                    hasFirstProof: patternsHasFirstProof,
+                    onChanged: () => setState(() {}),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
+                ..._buildWhatChangedSinceLastTimeWidgets(),
                 if (showEarlyEvidenceTimeline) ...[
                   EarlyEvidenceTimelineCard(
                     timeline: earlyEvidenceTimeline!,
@@ -4118,31 +4196,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (showArchiveCurrentBelief &&
-                    archiveBeliefSurfaceCandidate.shouldShow) ...[
-                  ArchiveBeliefSurfaceCard(
-                    surface: archiveBeliefSurfaceCandidate,
-                    onRecordNext: () => context.go(
-                      ArchiveProofRecordRoutes.uri(
-                        guidedPromptNodeKey:
-                            ArchiveProofRecordRoutes.changeTimelineNodeKey,
-                      ),
-                    ),
-                    onDismissed: () => setState(() {}),
-                  ),
-                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
-                ],
-                if (showCoreValueFeedbackOnPatterns) ...[
-                  CoreValueFeedbackCard(
-                    source: CoreValueFeedbackSource.patternsArchive,
+                if (showArchiveChangeTimeline &&
+                    archiveChangeTimelineCandidate != null) ...[
+                  ArchiveChangeTimelineCard(
+                    timeline: archiveChangeTimelineCandidate,
                     entryCount: _entries.length,
-                    hasConfirmedRepeat: patternsHasConfirmedRepeat,
-                    hasFirstProof: patternsHasFirstProof,
-                    onChanged: () => setState(() {}),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
-                ..._buildWhatChangedSinceLastTimeWidgets(),
                 if (showPatternChanged && patternChangedCandidate != null) ...[
                   PatternChangedCard(
                     result: patternChangedCandidate,
@@ -4164,15 +4225,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                ..._buildHelpfulActionAppearedWidgets(),
-                if (showArchiveChangeTimeline &&
-                    archiveChangeTimelineCandidate != null) ...[
-                  ArchiveChangeTimelineCard(
-                    timeline: archiveChangeTimelineCandidate,
-                    entryCount: _entries.length,
-                  ),
-                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
-                ],
+                if (showHelpfulActionAppeared)
+                  ..._buildHelpfulActionAppearedWidgets(),
                 if (showArchiveSummary && archiveSummary != null) ...[
                   ArchiveSummaryCard(
                     summary: archiveSummary,

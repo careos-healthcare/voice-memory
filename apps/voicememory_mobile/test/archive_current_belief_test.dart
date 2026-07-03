@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_current_belief_engine.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_current_belief_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_display_copy_guard.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
@@ -150,6 +153,66 @@ void main() {
         ),
         isFalse,
       );
+    });
+  });
+
+  group('Patterns post-proof stack order', () {
+    test('primary surfaces follow deterministic order constants', () {
+      expect(
+        PatternsPostProofStackOrder.primarySurfacesAfterFirstProof,
+        [
+          PatternsPostProofStackOrder.archiveCurrentBelief,
+          PatternsPostProofStackOrder.whatChangedSinceLastTime,
+          PatternsPostProofStackOrder.earlyEvidenceTimeline,
+        ],
+      );
+    });
+
+    test('ArchiveCurrentBelief leads WhatChanged and timeline on Patterns', () {
+      final source =
+          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      const stackAnchor =
+          'if (showArchiveCurrentBelief &&\n                    archiveBeliefSurfaceCandidate.shouldShow)';
+      final stackStart = source.indexOf(stackAnchor);
+      expect(stackStart, greaterThan(0));
+      final stack = source.substring(stackStart);
+      final belief = stack.indexOf('ArchiveBeliefSurfaceCard');
+      final whatChanged = stack.indexOf('_buildWhatChangedSinceLastTimeWidgets');
+      final timeline = stack.indexOf('EarlyEvidenceTimelineCard');
+      final privateReport = stack.indexOf('PrivateArchiveReportCard');
+      final proBridge = stack.indexOf('ArchiveIntelligenceProBridgeCard');
+
+      expect(belief, greaterThan(0));
+      expect(whatChanged, greaterThan(belief));
+      expect(timeline, greaterThan(whatChanged));
+      expect(privateReport, greaterThan(timeline));
+      expect(proBridge, greaterThan(privateReport));
+    });
+
+    test('timeline dedup suppresses duplicate helpful action card', () {
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: false,
+        timelineVisible: true,
+        changeProofVisible: false,
+        proBridgeVisible: false,
+        helpfulActionAppearedVisible: true,
+        timelineShowsHelpfulAction: true,
+      );
+
+      expect(layout.effectiveHelpfulActionAppearedVisible, isFalse);
+    });
+
+    test('change timeline dedup suppresses duplicate pattern changed card', () {
+      final layout = ArchiveProofSurfaceLayout(
+        confirmedRepeatCardVisible: false,
+        timelineVisible: true,
+        changeProofVisible: false,
+        proBridgeVisible: false,
+        patternChangedVisible: true,
+        changeTimelineShowsChanged: true,
+      );
+
+      expect(layout.effectivePatternChangedVisible, isFalse);
     });
   });
 }

@@ -6,6 +6,8 @@ import '../../features/early_archive/what_changed_since_last_time_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 
 /// Patterns / Archive longitudinal return comparison — no CTAs.
 class WhatChangedSinceLastTimeCard extends StatelessWidget {
@@ -91,6 +93,10 @@ class WhatChangedSinceLastTimeCard extends StatelessWidget {
             result.footer,
             key: const Key('what_changed_since_last_time_footer'),
             style: bodyStyle.copyWith(fontSize: 13),
+          ),
+          ProofSurfaceWhyAppearedDisclosure(
+            body: ProofSurfaceWhyAppearedCopy.whatChanged,
+            surfaceKey: 'what_changed_since_last_time',
           ),
         ],
       ),

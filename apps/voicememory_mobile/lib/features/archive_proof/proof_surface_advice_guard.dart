@@ -12,6 +12,8 @@ import '../early_archive/return_check_payoff_copy.dart';
 import '../early_archive/weekly_archive_review_copy.dart';
 import '../archive_thought_map/archive_thought_map_copy.dart';
 import '../repeat_return_check/pattern_changed_copy.dart';
+import '../next_action/next_best_action_copy.dart';
+import 'proof_surface_why_appeared_copy.dart';
 import 'archive_belief_surface_copy.dart';
 
 /// Guards main proof surfaces from coaching / advice language.
@@ -52,14 +54,14 @@ abstract final class ProofSurfaceAdviceGuard {
   static bool passes(String text) => violationsIn(text).isEmpty;
 
   static List<String> mainProofSurfaceCopyBlocks() => [
+        FirstProofMomentCopy.primaryLabel,
         FirstProofMomentCopy.title,
         FirstProofMomentCopy.titlePossible,
+        FirstProofMomentCopy.bodyStrong,
         FirstProofMomentCopy.bodyFallback,
-        FirstProofMomentCopy.bodyFallbackStrong,
         FirstProofMomentCopy.evidenceLabel,
         FirstProofMomentCopy.whyLine,
-        FirstProofMomentCopy.footer,
-        FirstProofMomentCopy.bodyWithPhrase('said yes again'),
+        FirstProofMomentCopy.nextLine,
         ArchiveSummaryCopy.title,
         ArchiveSummaryCopy.promise,
         ArchiveSummaryCopy.keepsRepeatingLabel,
@@ -100,6 +102,11 @@ abstract final class ProofSurfaceAdviceGuard {
         PrivateArchiveReportCopy.intro,
         PrivateArchiveReportCopy.previewTitle,
         PrivateArchiveReportCopy.previewBody,
+        PrivateArchiveReportCopy.exportIncludedHeading,
+        ...PrivateArchiveReportCopy.exportIncludedItems,
+        PrivateArchiveReportCopy.exportNotIncludedHeading,
+        ...PrivateArchiveReportCopy.exportNotIncludedItems,
+        PrivateArchiveReportCopy.copyReportHelper,
         PrivateArchiveReportCopy.whatHelpedHeading,
         PrivateArchiveReportCopy.whatToRecordNextHeading,
         PrivateArchiveReportCopy.whatToRecordNextBody,
@@ -144,6 +151,8 @@ abstract final class ProofSurfaceAdviceGuard {
         PositiveReinforcementCopy.body,
         PositiveReinforcementCopy.completionTitle,
         PositiveReinforcementCopy.completionBody,
+        ...NextBestActionCopy.allVisibleStrings,
+        ...ProofSurfaceWhyAppearedCopy.allLines,
         ...ArchiveThoughtMapCopy.allVisibleStrings,
       ];
 }

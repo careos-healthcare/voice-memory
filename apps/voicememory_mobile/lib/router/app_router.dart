@@ -25,6 +25,7 @@ import '../screens/archive_evidence_context_screen.dart';
 import '../screens/entry_detail_screen.dart';
 import '../screens/archive_export_screen.dart';
 import '../screens/help_reviewer_guide_screen.dart';
+import '../screens/testing_archiveme_screen.dart';
 import '../screens/pro_value_preview_screen.dart';
 import '../screens/support_feedback_screen.dart';
 import '../screens/beta_feedback_screen.dart';
@@ -197,6 +198,7 @@ final GoRouter appRouter = GoRouter(
         path != '/privacy' &&
         path != '/terms' &&
         path != '/help-reviewer-guide' &&
+        path != '/testing-archiveme' &&
         path != '/support-feedback' &&
         path != '/beta-feedback' &&
         path != '/first-week-path' &&
@@ -837,6 +839,11 @@ final GoRouter appRouter = GoRouter(
       path: '/help-reviewer-guide',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const HelpReviewerGuideScreen(),
+    ),
+    GoRoute(
+      path: '/testing-archiveme',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const TestingArchiveMeScreen(),
     ),
     GoRoute(
       path: '/pro-preview',

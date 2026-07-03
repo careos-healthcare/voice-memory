@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/support/testflight_feedback_analytics.dart';
 import 'package:voicememory_mobile/features/support/testflight_feedback_copy.dart';
 import 'package:voicememory_mobile/features/support/testflight_feedback_launcher.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
+import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 
 void main() {
   tearDown(() {
     TestFlightFeedbackLauncher.launchUrlForTest = null;
     ActivationFunnelAnalytics.resetForTest();
+    ArchiveBetaMissionGate.resetForTest();
   });
 
   group('TestFlightFeedbackLauncher', () {
@@ -61,13 +66,31 @@ void main() {
   });
 
   group('SettingsScreen TestFlight feedback', () {
+    GoRouter _router() => GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const SettingsScreen(),
+            ),
+            GoRoute(
+              path: '/testing-archiveme',
+              builder: (context, state) => const TestingArchiveMeScreen(),
+            ),
+          ],
+        );
+
     Future<void> pumpSettings(WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+      await tester.pumpWidget(
+        MaterialApp.router(routerConfig: _router()),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
     }
 
-    testWidgets('shows Testing ArchiveMe and Send feedback row', (tester) async {
+    testWidgets('shows Testing ArchiveMe row when beta mission enabled', (
+      tester,
+    ) async {
+      ArchiveBetaMissionGate.enabledOverride = true;
       await pumpSettings(tester);
 
       expect(find.text(TestFlightFeedbackCopy.settingsTitle), findsOneWidget);
@@ -78,8 +101,36 @@ void main() {
       );
     });
 
-    testWidgets('tapping feedback opens email launcher with correct mailto',
+    testWidgets('hidden when beta mission disabled', (tester) async {
+      ArchiveBetaMissionGate.enabledOverride = false;
+      await pumpSettings(tester);
+
+      expect(find.text(TestFlightFeedbackCopy.settingsTitle), findsNothing);
+      expect(
+        find.byKey(const Key('settings_testflight_feedback_tile')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('tapping row opens Testing ArchiveMe guide screen', (
+      tester,
+    ) async {
+      ArchiveBetaMissionGate.enabledOverride = true;
+      await pumpSettings(tester);
+      await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('testing_archiveme_screen')), findsOneWidget);
+      expect(find.text(TesterMissionCopy.mission), findsOneWidget);
+      for (final step in TesterMissionCopy.steps) {
+        expect(find.textContaining(step), findsOneWidget);
+      }
+      expect(find.text(TesterMissionCopy.feedbackQuestion), findsOneWidget);
+    });
+
+    testWidgets('send feedback from guide opens email launcher with correct mailto',
         (tester) async {
+      ArchiveBetaMissionGate.enabledOverride = true;
       Uri? captured;
       TestFlightFeedbackLauncher.launchUrlForTest = (uri) async {
         captured = uri;
@@ -88,6 +139,8 @@ void main() {
 
       await pumpSettings(tester);
       await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('testing_archiveme_send_feedback')));
       await tester.pump();
 
       expect(captured, isNotNull);
@@ -104,10 +157,13 @@ void main() {
     });
 
     testWidgets('failure path shows fallback snackbar', (tester) async {
+      ArchiveBetaMissionGate.enabledOverride = true;
       TestFlightFeedbackLauncher.launchUrlForTest = (_) async => false;
 
       await pumpSettings(tester);
       await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('testing_archiveme_send_feedback')));
       await tester.pump();
 
       expect(

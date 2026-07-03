@@ -6,6 +6,8 @@ import '../../features/early_archive/first_proof_moment_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 
 /// Post-save emotional payoff after the third related save — no extra CTAs.
 class FirstProofMomentCard extends StatelessWidget {
@@ -45,6 +47,15 @@ class FirstProofMomentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Text(
+            moment.primaryLabel,
+            key: const Key('first_proof_moment_primary_label'),
+            style: ArchiveMobileTypography.cardLabel(context).copyWith(
+              color: AppColors.textSecondary,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             moment.title,
             key: const Key('first_proof_moment_title'),
@@ -91,9 +102,13 @@ class FirstProofMomentCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            moment.footer,
-            key: const Key('first_proof_moment_footer'),
+            moment.nextLine,
+            key: const Key('first_proof_moment_next_line'),
             style: bodyStyle.copyWith(fontSize: 13),
+          ),
+          ProofSurfaceWhyAppearedDisclosure(
+            body: ProofSurfaceWhyAppearedCopy.firstProof,
+            surfaceKey: 'first_proof_moment',
           ),
         ],
       ),

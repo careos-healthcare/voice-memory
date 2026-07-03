@@ -19,6 +19,7 @@ import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thoug
 import 'package:voicememory_mobile/features/early_archive/daily_return_reason_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
@@ -1148,7 +1149,9 @@ void main() {
         findsNothing,
       );
       expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.text(FirstProofMomentCopy.primaryLabel), findsOneWidget);
       expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
+      expect(find.text(FirstProofMomentCopy.nextLine), findsOneWidget);
       expect(find.byKey(const Key('archive_summary_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.doneCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsOneWidget);
@@ -1410,6 +1413,12 @@ void main() {
       );
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(EarlyFirstSignalCopy.confirmRepeatCta), findsNothing);
+      expect(
+        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+        findsOneWidget,
+      );
+      expect(find.text(EarlySavedMomentsCopy.viewSavedMomentsCta), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
     testWidgets('post-save done state hides returning-user Today card', (
@@ -1522,7 +1531,14 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(EarlyRepeatProgressCopy.twoUnrelatedCueLabel), findsOneWidget);
-      expect(find.text(EarlyRepeatProgressCopy.twoUnrelatedCueFooter), findsOneWidget);
+      expect(
+        find.byKey(const Key('early_repeat_progress_next_moment_cue_footer')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('todays_one_question_card_helper')),
+        findsOneWidget,
+      );
       expect(
         EarlyRepeatProgressCopy.twoUnrelatedBody.toLowerCase(),
         isNot(contains('repeat may be forming')),
@@ -1531,6 +1547,61 @@ void main() {
         EarlyRepeatProgressCopy.twoUnrelatedCueFooter,
         contains('No need to force'),
       );
+      expect(
+        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+        findsOneWidget,
+      );
+      expect(find.text(EarlySavedMomentsCopy.viewSavedMomentsCta), findsOneWidget);
+    });
+
+    testWidgets('tapping view saved moments opens review sheet', (tester) async {
+      await tester.runAsync(() async {
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'a',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
+        );
+        await AppServices.instance.journalStore.save(
+          _entry(
+            id: 'b',
+            transcript: 'Another unrelated note about errands this afternoon.',
+          ),
+        );
+      });
+      await pumpRecordScreen(tester);
+
+      await tester.tap(
+        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('early_saved_moments_sheet')), findsOneWidget);
+      expect(find.byKey(const Key('early_saved_moments_sheet_title')), findsOneWidget);
+      expect(find.text(EarlySavedMomentsCopy.sheetSubtitle), findsOneWidget);
+      expect(find.byKey(const Key('early_saved_moments_section_saved')), findsOneWidget);
+      expect(find.text('Moment 1'), findsOneWidget);
+      expect(find.text('Moment 2'), findsOneWidget);
+      expect(
+        find.text(EarlySavedMomentsCopy.comparingSectionTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.comparingNoClearMatch),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.nextRecordSectionTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.nextActionTwoUnrelated),
+        findsOneWidget,
+      );
+      expect(find.text('Delete'), findsNothing);
+      expect(find.text('Share'), findsNothing);
+      expect(find.text('Edit'), findsNothing);
+      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
     testWidgets('three confirmed-repeat entries hide early progress card', (
@@ -1561,6 +1632,10 @@ void main() {
       expect(find.byKey(const Key('early_repeat_progress_card_oneMoment')), findsNothing);
       expect(find.byKey(const Key('early_repeat_progress_card_twoRelated')), findsNothing);
       expect(find.byKey(const Key('early_repeat_progress_card_twoUnrelated')), findsNothing);
+      expect(
+        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('archive_belief_surface_headline')), findsOneWidget);
       expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsOneWidget);
     });

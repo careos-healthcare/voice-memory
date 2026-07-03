@@ -1,4 +1,6 @@
 /// Copy for the first-three recording retention loop on Record.
+import '../trust/capture_recovery_copy.dart';
+
 abstract final class EarlyRepeatProgressCopy {
   EarlyRepeatProgressCopy._();
 
@@ -13,8 +15,7 @@ abstract final class EarlyRepeatProgressCopy {
   static const twoRelatedProgress = '2 of 3';
 
   static const twoUnrelatedTitle = 'Two moments saved';
-  static const twoUnrelatedBody =
-      'No clear match yet — that is okay. Record the next real moment.';
+  static const twoUnrelatedBody = CaptureRecoveryCopy.noClearMatchYet;
   static const twoUnrelatedProgress = '2 of 3';
 
   static const oneMomentCueLabel = 'Next step';

@@ -1,11 +1,12 @@
+import 'tester_mission_copy.dart';
+
 /// Copy for the beta-only core value feedback prompt.
 abstract final class CoreValueFeedbackCopy {
   CoreValueFeedbackCopy._();
 
   static const title = 'Beta feedback';
 
-  static const question =
-      'Did ArchiveMe show something repeating in your own words that was worth tracking?';
+  static const question = TesterMissionCopy.feedbackQuestion;
 
   static const helper = 'This is the main thing I’m testing.';
 
@@ -16,6 +17,8 @@ abstract final class CoreValueFeedbackCopy {
   static const answerGeneric = 'Felt generic';
 
   static const hideForNow = 'Hide for now';
+
+  static const savedMessage = TesterMissionCopy.feedbackSavedBody;
 
   static const diagnosticsLabel = 'Core value feedback';
 
@@ -29,6 +32,7 @@ abstract final class CoreValueFeedbackCopy {
         answerNotYet,
         answerGeneric,
         hideForNow,
+        savedMessage,
         diagnosticsLabel,
         diagnosticsNoAnswer,
       ];

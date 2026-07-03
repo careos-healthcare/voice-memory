@@ -11,7 +11,13 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
+import 'package:voicememory_mobile/features/early_archive/early_saved_moments_analytics.dart';
+import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
+import 'package:voicememory_mobile/features/early_archive/early_saved_moments_engine.dart';
+import 'package:voicememory_mobile/features/early_archive/early_saved_moments_gates.dart';
+import 'package:voicememory_mobile/features/early_archive/early_saved_moments_model.dart';
 import 'package:voicememory_mobile/widgets/record/early_repeat_progress_card.dart';
+import 'package:voicememory_mobile/widgets/record/early_saved_moments_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_moment_card.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_return_handoff_card.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
@@ -589,7 +595,8 @@ void main() {
       final moment = FirstProofMomentEngine.build(entries: _threeRelated());
       expect(moment!.title, FirstProofMomentCopy.title);
       expect(moment.usesPhraseBody, isTrue);
-      expect(moment.body, contains('said yes again'));
+      expect(moment.body, FirstProofMomentCopy.bodyStrong);
+      expect(moment.evidencePhrases, isNotEmpty);
     });
 
     test('evidence chips come from user words', () {
@@ -644,11 +651,12 @@ void main() {
 
     test('copy avoids therapy diagnosis and personality claims', () {
       const copy = [
+        FirstProofMomentCopy.primaryLabel,
         FirstProofMomentCopy.title,
         FirstProofMomentCopy.bodyFallback,
         FirstProofMomentCopy.evidenceLabel,
         FirstProofMomentCopy.whyLine,
-        FirstProofMomentCopy.footer,
+        FirstProofMomentCopy.nextLine,
       ];
       final blob = copy.join(' ').toLowerCase();
       for (final banned in [
@@ -787,6 +795,428 @@ void main() {
       expect(
         PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback.toLowerCase(),
         contains('no need to explain'),
+      );
+    });
+  });
+
+  group('EarlySavedMomentsGates', () {
+    test('hidden at entryCount 0', () {
+      expect(
+        EarlySavedMomentsGates.shouldShow(
+          loaded: true,
+          entryCount: 0,
+          isReady: true,
+          isPostSave: false,
+          isRecording: false,
+          showEarlyRepeatProgress: true,
+          progress: EarlyRepeatProgressEngine.build(
+            entries: [_entry('1', 'A saved moment with enough words for evidence.')],
+          ),
+        ),
+        isFalse,
+      );
+    });
+
+    test('visible at entryCount 1 or 2 before first proof', () {
+      final progressOne = EarlyRepeatProgressEngine.build(
+        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+      );
+      final progressTwo = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry('1', 'A quiet moment about lunch with a friend today.'),
+          _entry('2', 'Another unrelated note about errands this afternoon.'),
+        ],
+      );
+
+      expect(
+        EarlySavedMomentsGates.shouldShow(
+          loaded: true,
+          entryCount: 1,
+          isReady: true,
+          isPostSave: false,
+          isRecording: false,
+          showEarlyRepeatProgress: true,
+          progress: progressOne,
+        ),
+        isTrue,
+      );
+      expect(
+        EarlySavedMomentsGates.shouldShow(
+          loaded: true,
+          entryCount: 2,
+          isReady: true,
+          isPostSave: false,
+          isRecording: false,
+          showEarlyRepeatProgress: true,
+          progress: progressTwo,
+        ),
+        isTrue,
+      );
+    });
+
+    test('hidden after first proof stack replaces early progress', () {
+      final progress = EarlyRepeatProgressEngine.build(
+        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+      );
+
+      expect(
+        EarlySavedMomentsGates.shouldShow(
+          loaded: true,
+          entryCount: 1,
+          isReady: true,
+          isPostSave: false,
+          isRecording: false,
+          showEarlyRepeatProgress: false,
+          progress: progress,
+        ),
+        isFalse,
+      );
+    });
+  });
+
+  group('EarlySavedMomentsEngine', () {
+    test('builds moment labels and truncated previews', () {
+      final longObservation =
+          'Work pressure showed up again today with many extra words that should not all appear in the preview because the engine truncates long reflection summaries for the sheet display.';
+      final progress = EarlyRepeatProgressEngine.build(
+        entries: [
+          _entry('1', 'A quiet moment about lunch with a friend today.'),
+          JournalEntry(
+            id: '2',
+            createdAt: DateTime(2026, 6, 13, 10),
+            transcript:
+                'Another unrelated note about errands this afternoon with many extra words.',
+            durationSeconds: 24,
+            reflection: Reflection(
+              mood: 'thoughtful',
+              emotionalIntensity: 2,
+              recurringThemes: const ['work'],
+              exactLanguagePattern: '',
+              concreteObservation: longObservation,
+              repeatedSignal: '',
+            ),
+          ),
+        ],
+      )!;
+
+      final content = EarlySavedMomentsEngine.build(
+        entries: [
+          _entry('1', 'A quiet moment about lunch with a friend today.'),
+          JournalEntry(
+            id: '2',
+            createdAt: DateTime(2026, 6, 13, 10),
+            transcript:
+                'Another unrelated note about errands this afternoon with many extra words.',
+            durationSeconds: 24,
+            reflection: Reflection(
+              mood: 'thoughtful',
+              emotionalIntensity: 2,
+              recurringThemes: const ['work'],
+              exactLanguagePattern: '',
+              concreteObservation: longObservation,
+              repeatedSignal: '',
+            ),
+          ),
+        ],
+        progress: progress,
+      )!;
+
+      expect(content.moments, hasLength(2));
+      expect(content.moments[0].label, 'Moment 1');
+      expect(content.moments[1].label, 'Moment 2');
+      expect(content.moments[0].previewText, isNotEmpty);
+      expect(content.moments[1].previewText.length, lessThanOrEqualTo(120));
+      expect(content.moments[1].previewText, endsWith('…'));
+      expect(content.hasNoClearMatch, isTrue);
+      expect(
+        content.comparisonBody,
+        EarlySavedMomentsCopy.comparingNoClearMatch,
+      );
+      expect(
+        content.nextActionBody,
+        EarlySavedMomentsCopy.nextActionTwoUnrelated,
+      );
+    });
+
+    test('one entry uses next action for single moment only', () {
+      final entries = [
+        _entry('1', 'A quiet moment about lunch with a friend today.'),
+      ];
+      final progress = EarlyRepeatProgressEngine.build(entries: entries)!;
+      final content = EarlySavedMomentsEngine.build(
+        entries: entries,
+        progress: progress,
+      )!;
+
+      expect(content.comparisonBody, isNull);
+      expect(
+        content.nextActionBody,
+        EarlySavedMomentsCopy.nextActionOneEntry,
+      );
+    });
+
+    test('related pair uses related comparison and unlock copy', () {
+      final entries = [
+        _entry(
+          '1',
+          'I had no capacity but I said yes again to the extra meeting today.',
+        ),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+        ),
+      ];
+      final progress = EarlyRepeatProgressEngine.build(entries: entries)!;
+      final content = EarlySavedMomentsEngine.build(
+        entries: entries,
+        progress: progress,
+      )!;
+
+      expect(content.hasConfirmedRepeat, isTrue);
+      expect(content.hasNoClearMatch, isFalse);
+      expect(
+        content.comparisonBody,
+        EarlySavedMomentsCopy.comparingRelated,
+      );
+      expect(
+        content.nextActionBody,
+        EarlySavedMomentsCopy.nextActionTwoRelated,
+      );
+    });
+  });
+
+  group('EarlySavedMomentsSheet', () {
+    testWidgets('shows saved moments comparing and next sections without actions', (
+      tester,
+    ) async {
+      final content = EarlySavedMomentsSheetContent(
+        moments: [
+          EarlySavedMomentPreview(
+            index: 1,
+            label: 'Moment 1',
+            previewText: 'Work pressure showed up again today.',
+            savedAt: DateTime(2026, 6, 12, 10),
+          ),
+          EarlySavedMomentPreview(
+            index: 2,
+            label: 'Moment 2',
+            previewText: 'Another saved reflection for the early loop.',
+            savedAt: DateTime(2026, 6, 13, 10),
+          ),
+        ],
+        comparisonBody: EarlySavedMomentsCopy.comparingNoClearMatch,
+        nextActionBody: EarlySavedMomentsCopy.nextActionTwoUnrelated,
+        hasConfirmedRepeat: false,
+        hasNoClearMatch: true,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlySavedMomentsSheet(content: content, entryCount: 2),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('early_saved_moments_sheet')), findsOneWidget);
+      expect(find.byKey(const Key('early_saved_moments_sheet_title')), findsOneWidget);
+      expect(find.text(EarlySavedMomentsCopy.sheetSubtitle), findsOneWidget);
+      expect(find.byKey(const Key('early_saved_moments_section_saved')), findsOneWidget);
+      expect(
+        find.text(EarlySavedMomentsCopy.comparingSectionTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.nextRecordSectionTitle),
+        findsOneWidget,
+      );
+      expect(find.text('Moment 1'), findsOneWidget);
+      expect(find.text('Moment 2'), findsOneWidget);
+      expect(
+        find.text(EarlySavedMomentsCopy.comparingNoClearMatch),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.nextActionTwoUnrelated),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('early_saved_moment_preview_1')), findsOneWidget);
+      expect(find.byKey(const Key('early_saved_moment_preview_2')), findsOneWidget);
+      expect(find.byType(IconButton), findsNothing);
+      expect(find.text('Delete'), findsNothing);
+      expect(find.text('Share'), findsNothing);
+      expect(find.text('Edit'), findsNothing);
+      expect(find.byType(ElevatedButton), findsNothing);
+      expect(find.byType(FilledButton), findsNothing);
+    });
+
+    testWidgets('related state shows related comparison copy', (tester) async {
+      final content = EarlySavedMomentsSheetContent(
+        moments: [
+          EarlySavedMomentPreview(
+            index: 1,
+            label: 'Moment 1',
+            previewText: 'Said yes when I had no capacity.',
+            savedAt: DateTime(2026, 6, 12, 10),
+          ),
+          EarlySavedMomentPreview(
+            index: 2,
+            label: 'Moment 2',
+            previewText: 'Same yes moment again today.',
+            savedAt: DateTime(2026, 6, 13, 10),
+          ),
+        ],
+        comparisonBody: EarlySavedMomentsCopy.comparingRelated,
+        nextActionBody: EarlySavedMomentsCopy.nextActionTwoRelated,
+        hasConfirmedRepeat: true,
+        hasNoClearMatch: false,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlySavedMomentsSheet(content: content, entryCount: 2),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(EarlySavedMomentsCopy.comparingRelated),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.nextActionTwoRelated),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('one entry hides comparison section and shows next copy', (
+      tester,
+    ) async {
+      final content = EarlySavedMomentsSheetContent(
+        moments: [
+          EarlySavedMomentPreview(
+            index: 1,
+            label: 'Moment 1',
+            previewText: 'A quiet moment about lunch with a friend today.',
+            savedAt: DateTime(2026, 6, 12, 10),
+          ),
+        ],
+        comparisonBody: null,
+        nextActionBody: EarlySavedMomentsCopy.nextActionOneEntry,
+        hasConfirmedRepeat: false,
+        hasNoClearMatch: false,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlySavedMomentsSheet(content: content, entryCount: 1),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(EarlySavedMomentsCopy.comparingSectionTitle),
+        findsNothing,
+      );
+      expect(
+        find.text(EarlySavedMomentsCopy.nextActionOneEntry),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('preview text is limited to two lines', (tester) async {
+      final content = EarlySavedMomentsSheetContent(
+        moments: [
+          EarlySavedMomentPreview(
+            index: 1,
+            label: 'Moment 1',
+            previewText:
+                'Line one with enough words. Line two with enough words. Line three should not render fully because maxLines is two.',
+            savedAt: DateTime(2026, 6, 12, 10),
+          ),
+        ],
+        comparisonBody: null,
+        nextActionBody: EarlySavedMomentsCopy.nextActionOneEntry,
+        hasConfirmedRepeat: false,
+        hasNoClearMatch: false,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlySavedMomentsSheet(content: content, entryCount: 1),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final preview = tester.widget<Text>(
+        find.byKey(const Key('early_saved_moment_preview_1')),
+      );
+      expect(preview.maxLines, 2);
+      expect(preview.overflow, TextOverflow.ellipsis);
+    });
+  });
+
+  group('EarlyRepeatProgressCard saved moments action', () {
+    testWidgets('shows secondary text button when callback provided', (
+      tester,
+    ) async {
+      var tapped = false;
+      const progress = EarlyRepeatProgressResult(
+        kind: EarlyRepeatProgressKind.oneMoment,
+        title: EarlyRepeatProgressCopy.oneMomentTitle,
+        body: EarlyRepeatProgressCopy.oneMomentBody,
+        progressLabel: EarlyRepeatProgressCopy.oneMomentProgress,
+        nextMomentCue: EarlyRepeatNextMomentCue(
+          label: EarlyRepeatProgressCopy.oneMomentCueLabel,
+          body: EarlyRepeatProgressCopy.oneMomentCueBodyFallback,
+          footer: EarlyRepeatProgressCopy.oneMomentCueFooter,
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EarlyRepeatProgressCard(
+              progress: progress,
+              onViewSavedMoments: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+        findsOneWidget,
+      );
+      expect(find.text(EarlySavedMomentsCopy.viewSavedMomentsCta), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsNothing);
+      expect(find.byType(FilledButton), findsNothing);
+
+      await tester.tap(
+        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+      );
+      expect(tapped, isTrue);
+    });
+  });
+
+  group('EarlySavedMoments analytics', () {
+    test('viewed event uses safe metadata only', () {
+      expect(EarlySavedMomentsAnalytics.viewedEvent, 'early_saved_moments_viewed');
+      expect(
+        EarlySavedMomentsAnalytics.viewedEvent.toLowerCase(),
+        isNot(contains('transcript')),
+      );
+      expect(
+        EarlySavedMomentsAnalytics.viewedEvent.toLowerCase(),
+        isNot(contains('phrase')),
       );
     });
   });

@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:voicememory_mobile/features/beta/core_value_feedback_copy.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_analytics.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_engine.dart';
@@ -17,6 +19,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
+import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -83,6 +86,27 @@ List<JournalEntry> _relatedThree() => [
     ];
 
 void main() {
+  group('TesterMissionCopy canonical onboarding', () {
+    test('title mission steps and feedback question match brief', () {
+      expect(TesterMissionCopy.title, 'Testing ArchiveMe?');
+      expect(TesterMissionCopy.mission, 'Reach first proof.');
+      expect(TesterMissionCopy.steps, [
+        'Record one real moment.',
+        'Come back when something similar happens.',
+        'Record a third related moment.',
+        'Check whether first proof feels specific to your own words.',
+      ]);
+      expect(
+        TesterMissionCopy.feedbackQuestion,
+        CoreValueFeedbackCopy.question,
+      );
+      expect(
+        TesterMissionCopy.feedbackSavedBody,
+        CoreValueFeedbackCopy.savedMessage,
+      );
+    });
+  });
+
   group('TesterMissionGates', () {
     tearDown(ArchiveBetaMissionGate.resetForTest);
 
@@ -133,39 +157,40 @@ void main() {
   });
 
   group('TesterMissionEngine', () {
-    test('entry 0 explains 3-moment proof test', () {
+    test('entry 0 uses step 1 progress copy', () {
       final mission = TesterMissionEngine.build(
         entryCount: 0,
         entries: const [],
         compactAtEntryZero: false,
       );
-      expect(mission.body.toLowerCase(), contains('3-moment'));
-      expect(mission.body.toLowerCase(), contains('real moment'));
+      expect(mission.body, 'Step 1: record one real moment.');
+      expect(mission.footer, isEmpty);
     });
 
-    test('entry 1 tells user to come back with similar moment', () {
+    test('entry 1 uses step 1 complete copy', () {
       final mission = TesterMissionEngine.build(
         entryCount: 1,
         entries: [_entry(id: 'e1')],
         compactAtEntryZero: false,
       );
-      expect(mission.body.toLowerCase(), contains('similar'));
-      expect(mission.body.toLowerCase(), contains('come back'));
+      expect(mission.body, 'Step 1 complete. Next: record something similar.');
+      expect(mission.footer, isEmpty);
     });
 
-    test('entry 2 related says one more unlocks first proof', () {
+    test('entry 2 related uses step 2 complete copy', () {
       final mission = TesterMissionEngine.build(
         entryCount: 2,
         entries: _relatedPair(),
         compactAtEntryZero: false,
       );
       expect(
-        mission.body.toLowerCase(),
-        contains('unlocks your first proof'),
+        mission.body,
+        'Step 2 complete. One more related moment unlocks first proof.',
       );
+      expect(mission.footer, isEmpty);
     });
 
-    test('entry 2 unrelated reassures without claiming repeat', () {
+    test('entry 2 unrelated shows still forming copy', () {
       final mission = TesterMissionEngine.build(
         entryCount: 2,
         entries: [
@@ -177,40 +202,40 @@ void main() {
         ],
         compactAtEntryZero: false,
       );
-      expect(mission.body.toLowerCase(), contains('okay'));
-      expect(mission.body.toLowerCase(), isNot(contains('unlocks')));
-      expect(mission.footer, TesterMissionCopy.entry2UnrelatedFooter);
+      expect(
+        mission.body,
+        'Step 2 still forming. Record the next real moment.',
+      );
+      expect(mission.footer, isEmpty);
+      expect(mission.body.toLowerCase(), isNot(contains('repeat')));
     });
 
-    test('entry 0 shows Step 1 of 3', () {
+    test('entry 0 shows step 1 at zero entries', () {
       final mission = TesterMissionEngine.build(
         entryCount: 0,
         entries: const [],
         compactAtEntryZero: false,
       );
-      expect(mission.stepLabel, TesterMissionCopy.entry0StepLabel);
       expect(mission.body, TesterMissionCopy.entry0Body);
       expect(mission.step, TesterMissionStep.step1Of3);
     });
 
-    test('entry 1 shows Step 2 of 3', () {
+    test('entry 1 shows step 1 complete at one entry', () {
       final mission = TesterMissionEngine.build(
         entryCount: 1,
         entries: [_entry(id: 'e1')],
         compactAtEntryZero: false,
       );
-      expect(mission.stepLabel, TesterMissionCopy.entry1StepLabel);
       expect(mission.body, TesterMissionCopy.entry1Body);
       expect(mission.step, TesterMissionStep.step2Of3);
     });
 
-    test('entry 2 related shows Step 3 of 3', () {
+    test('entry 2 related shows one more unlocks first proof', () {
       final mission = TesterMissionEngine.build(
         entryCount: 2,
         entries: _relatedPair(),
         compactAtEntryZero: false,
       );
-      expect(mission.stepLabel, TesterMissionCopy.entry2RelatedStepLabel);
       expect(mission.body, TesterMissionCopy.entry2RelatedBody);
       expect(mission.step, TesterMissionStep.step3Of3);
     });
@@ -227,24 +252,22 @@ void main() {
         ],
         compactAtEntryZero: false,
       );
-      expect(mission.stepLabel, TesterMissionCopy.entry2UnrelatedStepLabel);
       expect(mission.body, TesterMissionCopy.entry2UnrelatedBody);
       expect(mission.step, TesterMissionStep.stillLooking);
-      expect(mission.body.toLowerCase(), isNot(contains('repeat')));
     });
 
-    test('entry 3 confirmed shows First proof reached', () {
+    test('entry 3 confirmed asks if first proof felt specific', () {
       final mission = TesterMissionEngine.build(
         entryCount: 3,
         entries: _relatedThree(),
         compactAtEntryZero: false,
       );
-      expect(mission.stepLabel, TesterMissionCopy.entry3ConfirmedStepLabel);
       expect(mission.body, TesterMissionCopy.entry3ConfirmedBody);
+      expect(mission.body, contains('Did it feel specific to your own words?'));
       expect(mission.step, TesterMissionStep.firstProofReached);
     });
 
-    test('entry 3 unconfirmed shows Still looking', () {
+    test('entry 3 unconfirmed shows still looking', () {
       final mission = TesterMissionEngine.build(
         entryCount: 3,
         entries: [
@@ -260,9 +283,19 @@ void main() {
         ],
         compactAtEntryZero: false,
       );
-      expect(mission.stepLabel, TesterMissionCopy.entry3UnconfirmedStepLabel);
       expect(mission.body, TesterMissionCopy.entry3UnconfirmedBody);
       expect(mission.step, TesterMissionStep.stillLooking);
+    });
+
+    test('feedback answered shows saved thank you', () {
+      final mission = TesterMissionEngine.build(
+        entryCount: 3,
+        entries: _relatedThree(),
+        compactAtEntryZero: false,
+        feedbackAnswered: true,
+      );
+      expect(mission.body, TesterMissionCopy.feedbackSavedBody);
+      expect(mission.step, TesterMissionStep.feedbackSaved);
     });
   });
 
@@ -276,6 +309,9 @@ void main() {
       ];
       final corpus = [
         TesterMissionCopy.title,
+        TesterMissionCopy.mission,
+        ...TesterMissionCopy.steps,
+        TesterMissionCopy.feedbackQuestion,
         TesterMissionCopy.entry0Body,
         TesterMissionCopy.entry0Footer,
         TesterMissionCopy.entry1Body,
@@ -288,6 +324,7 @@ void main() {
         TesterMissionCopy.entry3ConfirmedFooter,
         TesterMissionCopy.entry3UnconfirmedBody,
         TesterMissionCopy.entry3UnconfirmedFooter,
+        TesterMissionCopy.feedbackSavedBody,
         TesterMissionAnalytics.seenEvent,
         TesterMissionAnalytics.dismissedEvent,
       ].join('\n').toLowerCase();
@@ -297,26 +334,34 @@ void main() {
       }
     });
 
-    test('explains 3-moment proof without journaling-forever language', () {
-      final joined = [
-        TesterMissionCopy.entry0Body,
-        TesterMissionCopy.entry0Footer,
-        TesterMissionCopy.entry1Body,
-      ].join(' ').toLowerCase();
+    test('mission steps stay ordered and distinct from journaling forever', () {
+      expect(TesterMissionCopy.steps, hasLength(4));
+      expect(TesterMissionCopy.steps.first, TesterMissionCopy.step1);
+      expect(TesterMissionCopy.steps.last, TesterMissionCopy.step4);
 
-      expect(joined, contains('3-moment'));
+      final joined = TesterMissionCopy.steps.join(' ').toLowerCase();
       expect(joined, contains('real moment'));
-      expect(joined, anyOf(contains('short is fine'), contains('ten seconds')));
       expect(joined, isNot(contains('journal forever')));
       expect(joined, isNot(contains('journal every day')));
     });
 
+    test('progress states stay distinct from guide steps', () {
+      expect(TesterMissionCopy.entry0Body, isNot(equals(TesterMissionCopy.step1)));
+      expect(TesterMissionCopy.entry1Body, contains('Step 1 complete'));
+      expect(TesterMissionCopy.entry2RelatedBody, contains('Step 2 complete'));
+      expect(TesterMissionCopy.entry3ConfirmedBody, contains('First proof reached'));
+    });
+
     test('avoids chatbot and high-friction capture language', () {
       for (final line in [
+        TesterMissionCopy.mission,
+        ...TesterMissionCopy.steps,
         TesterMissionCopy.entry0Body,
-        TesterMissionCopy.entry0Footer,
         TesterMissionCopy.entry1Body,
-        TesterMissionCopy.entry1Footer,
+        TesterMissionCopy.entry2RelatedBody,
+        TesterMissionCopy.entry2UnrelatedBody,
+        TesterMissionCopy.entry3ConfirmedBody,
+        TesterMissionCopy.feedbackSavedBody,
       ]) {
         for (final violation in LowEffortCaptureCopyGuard.violationsIn(line)) {
           fail('"$line" contains banned friction phrase "$violation"');
@@ -378,9 +423,37 @@ void main() {
       );
 
       expect(find.byKey(const Key('tester_mission_card')), findsOneWidget);
+      expect(find.text(TesterMissionCopy.mission), findsOneWidget);
       await tester.tap(find.text(TesterMissionCopy.hideForNowCta));
       await tester.pump();
       expect(find.byKey(const Key('tester_mission_card_hidden')), findsOneWidget);
+    });
+  });
+
+  group('TestingArchiveMeScreen', () {
+    tearDown(ArchiveBetaMissionGate.resetForTest);
+
+    testWidgets('mission steps render in order with feedback question', (
+      tester,
+    ) async {
+      ArchiveBetaMissionGate.enabledOverride = true;
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: TestingArchiveMeScreen(),
+        ),
+      );
+
+      expect(find.byKey(const Key('testing_archiveme_screen')), findsOneWidget);
+      expect(find.text(TesterMissionCopy.mission), findsOneWidget);
+      for (var i = 0; i < TesterMissionCopy.steps.length; i++) {
+        expect(
+          find.text('${i + 1}. ${TesterMissionCopy.steps[i]}'),
+          findsOneWidget,
+        );
+      }
+      expect(find.text(TesterMissionCopy.feedbackQuestion), findsOneWidget);
+      expect(find.text(TesterMissionCopy.hideForNowCta), findsNothing);
     });
   });
 
@@ -458,16 +531,16 @@ void main() {
       await pumpRecord(tester);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsOneWidget);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
-      expect(find.text(TesterMissionCopy.entry0StepLabel), findsOneWidget);
-      expect(find.text(TesterMissionCopy.entry0Body), findsNothing);
+      expect(find.text(TesterMissionCopy.entry0Body), findsOneWidget);
+      expect(find.text(TesterMissionCopy.mission), findsOneWidget);
     });
 
-    testWidgets('entry 1 shows Step 2 of 3 without duplicate primary CTA', (
+    testWidgets('entry 1 shows step 1 complete without duplicate primary CTA', (
       tester,
     ) async {
       await pumpRecord(tester, entryCount: 1);
       expect(find.byKey(const Key('tester_mission_card')), findsOneWidget);
-      expect(find.text(TesterMissionCopy.entry1StepLabel), findsOneWidget);
+      expect(find.text(TesterMissionCopy.entry1Body), findsOneWidget);
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
       expect(find.text(TesterMissionCopy.hideForNowCta), findsOneWidget);
       expect(find.text('Start with one moment'), findsNothing);

@@ -143,6 +143,24 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
             ],
           ],
           const SizedBox(height: AppSpacing.sm),
+          _ExportScopeList(
+            heading: PrivateArchiveReportCopy.exportIncludedHeading,
+            items: PrivateArchiveReportCopy.exportIncludedItems,
+            headingKey: const Key('private_archive_report_export_included_heading'),
+            listKey: const Key('private_archive_report_export_included'),
+            labelStyle: sectionLabelStyle,
+            bodyStyle: bodyStyle,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          _ExportScopeList(
+            heading: PrivateArchiveReportCopy.exportNotIncludedHeading,
+            items: PrivateArchiveReportCopy.exportNotIncludedItems,
+            headingKey: const Key('private_archive_report_export_not_included_heading'),
+            listKey: const Key('private_archive_report_export_not_included'),
+            labelStyle: sectionLabelStyle,
+            bodyStyle: bodyStyle,
+          ),
+          const SizedBox(height: AppSpacing.sm),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
@@ -269,6 +287,44 @@ class _SectionPreview extends StatelessWidget {
               ),
         ],
       ),
+    );
+  }
+}
+
+class _ExportScopeList extends StatelessWidget {
+  const _ExportScopeList({
+    required this.heading,
+    required this.items,
+    required this.headingKey,
+    required this.listKey,
+    required this.labelStyle,
+    required this.bodyStyle,
+  });
+
+  final String heading;
+  final List<String> items;
+  final Key headingKey;
+  final Key listKey;
+  final TextStyle labelStyle;
+  final TextStyle bodyStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: listKey,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(heading, key: headingKey, style: labelStyle),
+        for (final item in items)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              '- $item',
+              key: Key('${listKey.toString()}_$item'),
+              style: bodyStyle.copyWith(color: AppColors.textSecondary),
+            ),
+          ),
+      ],
     );
   }
 }

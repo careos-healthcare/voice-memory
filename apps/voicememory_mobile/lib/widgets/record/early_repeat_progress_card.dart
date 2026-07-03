@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/early_archive/early_repeat_progress_model.dart';
+import '../../features/early_archive/early_saved_moments_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
@@ -11,9 +12,11 @@ class EarlyRepeatProgressCard extends StatelessWidget {
   const EarlyRepeatProgressCard({
     super.key,
     required this.progress,
+    this.onViewSavedMoments,
   });
 
   final EarlyRepeatProgressResult progress;
+  final VoidCallback? onViewSavedMoments;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +74,17 @@ class EarlyRepeatProgressCard extends StatelessWidget {
               fontSize: 13,
             ),
           ),
+          if (onViewSavedMoments != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('early_repeat_progress_view_saved_moments_button'),
+                onPressed: onViewSavedMoments,
+                child: const Text(EarlySavedMomentsCopy.viewSavedMomentsCta),
+              ),
+            ),
+          ],
         ],
       ),
     );

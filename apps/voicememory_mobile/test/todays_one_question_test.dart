@@ -99,26 +99,45 @@ void main() {
   const engine = TodaysQuestionEngine();
 
   group('TodaysQuestionEngine', () {
-    test('0 entries returns future-archive question', () {
-      final result = engine.build(_input());
+    test('0 entries returns adaptive first-moment question via journal', () {
+      final result = engine.buildFromJournal(
+        entries: const [],
+        hasWatchTheme: false,
+        betaFeedbackCaptured: false,
+      );
 
-      expect(result.questionId, TodaysQuestionId.futureArchive);
-      expect(result.questionText, TodaysQuestionCopy.futureArchiveQuestion);
+      expect(result.questionId, TodaysQuestionId.adaptive);
+      expect(
+        result.questionText,
+        'What is one real moment from today?',
+      );
       expect(result.primaryCtaLabel, TodaysQuestionCopy.saveMomentCta);
       expect(result.isEmptyState, isTrue);
     });
 
-    test('1 entry returns comparison question', () {
-      final result = engine.build(_input(realSavedMomentCount: 1));
+    test('1 entry returns adaptive similar-again question via journal', () {
+      final result = engine.buildFromJournal(
+        entries: _realEntries(1),
+        hasWatchTheme: false,
+        betaFeedbackCaptured: false,
+      );
 
-      expect(result.questionId, TodaysQuestionId.comparison);
-      expect(result.questionText, TodaysQuestionCopy.comparisonQuestion);
+      expect(result.questionId, TodaysQuestionId.adaptive);
+      expect(
+        result.questionText,
+        'Did anything similar happen again?',
+      );
     });
 
-    test('2 entries returns comparison question', () {
-      final result = engine.build(_input(realSavedMomentCount: 2));
+    test('2 entries returns adaptive comparison question via journal', () {
+      final result = engine.buildFromJournal(
+        entries: _realEntries(2),
+        hasWatchTheme: false,
+        betaFeedbackCaptured: false,
+      );
 
-      expect(result.questionId, TodaysQuestionId.comparison);
+      expect(result.questionId, TodaysQuestionId.adaptive);
+      expect(result.questionText, isNot(TodaysQuestionCopy.comparisonQuestion));
     });
 
     test('3+ entries with beta feedback missing returns beta feedback prompt', () {
@@ -164,7 +183,7 @@ void main() {
         hasWatchTheme: false,
         betaFeedbackCaptured: false,
       );
-      expect(result.questionId, TodaysQuestionId.comparison);
+      expect(result.questionId, TodaysQuestionId.adaptive);
     });
 
     test('question model contains no raw journal text', () {
@@ -197,7 +216,11 @@ void main() {
 
   group('Record screen card', () {
     testWidgets('ready state shows Today\'s One Question card', (tester) async {
-      final question = engine.build(_input(realSavedMomentCount: 1));
+      final question = engine.buildFromJournal(
+        entries: _realEntries(1),
+        hasWatchTheme: false,
+        betaFeedbackCaptured: false,
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -210,7 +233,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('todays_one_question_card')), findsOneWidget);
-      expect(find.text(TodaysQuestionCopy.comparisonQuestion), findsOneWidget);
+      expect(find.text('Did anything similar happen again?'), findsOneWidget);
     });
 
     testWidgets('Record screen still shows primary record button', (tester) async {
@@ -248,7 +271,11 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: TodaysOneQuestionScreen(
-            initialResult: engine.build(_input(realSavedMomentCount: 1)),
+            initialResult: engine.buildFromJournal(
+              entries: _realEntries(1),
+              hasWatchTheme: false,
+              betaFeedbackCaptured: false,
+            ),
           ),
         ),
       );
@@ -268,6 +295,11 @@ void main() {
       expect(find.text(TodaysQuestionCopy.recordAnswerCta), findsOneWidget);
       expect(find.text(TodaysQuestionCopy.typeAnswerCta), findsOneWidget);
       expect(find.text(TodaysQuestionCopy.backToRecordCta), findsOneWidget);
+      expect(
+        find.byKey(const Key('todays_one_question_screen_helper')),
+        findsOneWidget,
+      );
+      expect(find.text('ArchiveMe needs a second moment to compare.'), findsOneWidget);
     });
   });
 

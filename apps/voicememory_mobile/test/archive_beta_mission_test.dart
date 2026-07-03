@@ -7,6 +7,7 @@ import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_copy.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gates.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_store.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
@@ -37,17 +38,13 @@ class _MemoryPrefs extends MobilePrefsStore {
 
 void main() {
   group('ArchiveBetaMissionCopy', () {
-    test('copy matches beta mission brief', () {
-      expect(ArchiveBetaMissionCopy.title, 'Beta mission');
-      expect(ArchiveBetaMissionCopy.intro, 'To test ArchiveMe properly:');
-      expect(ArchiveBetaMissionCopy.steps, [
-        'Record one real moment.',
-        'Come back and record something similar.',
-        'Add a third moment so ArchiveMe can check what repeats.',
-      ]);
+    test('copy matches beta tester onboarding brief', () {
+      expect(ArchiveBetaMissionCopy.title, TesterMissionCopy.title);
+      expect(ArchiveBetaMissionCopy.mission, TesterMissionCopy.mission);
+      expect(ArchiveBetaMissionCopy.steps, TesterMissionCopy.steps);
       expect(
         ArchiveBetaMissionCopy.feedbackLine,
-        'Then tell us if the evidence felt specific or generic.',
+        TesterMissionCopy.feedbackQuestion,
       );
       expect(ArchiveBetaMissionCopy.startCta, 'Start with one moment');
       expect(ArchiveBetaMissionCopy.hideCta, 'Hide this');

@@ -14,7 +14,7 @@ abstract final class TrustReliabilityCopy {
 
   static const copyPrivateReportsTitle = 'You can copy private reports';
   static const copyPrivateReportsSubtitle =
-      'Only report text is copied — not audio.';
+      'Only report text is copied — not audio or raw transcripts.';
 
   static const supportAvailableTitle = 'Support is available';
   static const supportAvailableSubtitle =

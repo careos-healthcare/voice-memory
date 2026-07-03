@@ -8,6 +8,8 @@ import '../../features/repeat_return_check/pattern_changed_store.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 
 /// Major payoff when a repeat meaningfully changes — evidence, not advice.
 class PatternChangedCard extends StatefulWidget {
@@ -208,6 +210,10 @@ class _PatternChangedCardState extends State<PatternChangedCard> {
               ),
               child: Text(PatternChangedCopy.dismiss),
             ),
+          ),
+          ProofSurfaceWhyAppearedDisclosure(
+            body: ProofSurfaceWhyAppearedCopy.patternChanged,
+            surfaceKey: 'pattern_changed',
           ),
         ],
       ),

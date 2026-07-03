@@ -1,20 +1,16 @@
+import 'tester_mission_copy.dart';
+
 /// Copy for the lightweight TestFlight/beta mission card on Record.
 abstract final class ArchiveBetaMissionCopy {
   ArchiveBetaMissionCopy._();
 
-  static const title = 'Beta mission';
+  static const title = TesterMissionCopy.title;
 
-  static const intro = 'To test ArchiveMe properly:';
+  static const mission = TesterMissionCopy.mission;
 
-  static const step1 = 'Record one real moment.';
-  static const step2 = 'Come back and record something similar.';
-  static const step3 =
-      'Add a third moment so ArchiveMe can check what repeats.';
+  static const steps = TesterMissionCopy.steps;
 
-  static const feedbackLine =
-      'Then tell us if the evidence felt specific or generic.';
-
-  static const steps = [step1, step2, step3];
+  static const feedbackLine = TesterMissionCopy.feedbackQuestion;
 
   static const startCta = 'Start with one moment';
   static const hideCta = 'Hide this';

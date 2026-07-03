@@ -1,3 +1,4 @@
+import '../beta/tester_mission_copy.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../beta_invite/beta_invite_copy.dart';
 import '../beta_outcomes/beta_outcomes_copy.dart';
@@ -66,6 +67,13 @@ abstract final class HelpReviewerGuideCopy {
 
   static const helpBetaInviteTitle = BetaInviteCopy.helpTitle;
   static const helpBetaInviteBody = BetaInviteCopy.helpBody;
+
+  static const helpBetaTesterTitle = TesterMissionCopy.title;
+  static const helpBetaTesterMission = TesterMissionCopy.mission;
+  static List<String> get helpBetaTesterBullets => [
+        ...TesterMissionCopy.steps,
+        TesterMissionCopy.feedbackQuestion,
+      ];
 
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 

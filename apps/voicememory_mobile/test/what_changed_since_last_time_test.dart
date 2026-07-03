@@ -360,8 +360,14 @@ void main() {
       expect(find.text(WhatChangedSinceLastTimeCopy.softerSummary), findsOneWidget);
       expect(find.text(WhatChangedSinceLastTimeCopy.evidenceLabel), findsOneWidget);
       expect(find.text(WhatChangedSinceLastTimeCopy.footer), findsOneWidget);
+      expect(
+        find.byKey(
+          const Key('proof_surface_why_appeared_link_what_changed_since_last_time'),
+        ),
+        findsOneWidget,
+      );
       expect(find.byType(ElevatedButton), findsNothing);
-      expect(find.byType(TextButton), findsNothing);
+      expect(find.byType(TextButton), findsOneWidget);
     });
   });
 

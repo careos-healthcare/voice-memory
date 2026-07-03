@@ -328,25 +328,27 @@ void main() {
     });
 
     test('preview explains full report without entitlement changes', () {
+      expect(PrivateArchiveReportCopy.previewTitle, 'Preview private report');
       expect(
-        PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('what repeated'),
+        PrivateArchiveReportCopy.exportIncludedItems,
+        [
+          PrivateArchiveReportCopy.whatRepeatedHeading,
+          PrivateArchiveReportCopy.whatChangedHeading,
+          PrivateArchiveReportCopy.whatHelpedHeading,
+          PrivateArchiveReportCopy.whatToRecordNextHeading,
+        ],
+      );
+      expect(
+        PrivateArchiveReportCopy.exportNotIncludedItems,
+        [
+          'Audio',
+          'Full raw transcripts',
+          'Private settings data',
+        ],
       );
       expect(
         PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('what softened'),
-      );
-      expect(
-        PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('what got louder'),
-      );
-      expect(
-        PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('what helped'),
-      );
-      expect(
-        PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('what changed'),
+        contains('your first repeat'),
       );
       expect(
         PrivateArchiveReportCopy.intro,
@@ -371,6 +373,79 @@ void main() {
   });
 
   group('PrivateArchiveReportCard', () {
+    testWidgets('copy private report CTA and helper appear', (tester) async {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: PrivateArchiveReportCard.test(
+                report: report,
+                entryCount: 3,
+                surface: 'patterns',
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        find.text(PrivateArchiveReportCopy.copyReportCta),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PrivateArchiveReportCopy.copyReportHelper),
+        findsOneWidget,
+      );
+      expect(
+        PrivateArchiveReportCopy.copyReportHelper,
+        'Only report text is copied — not audio.',
+      );
+    });
+
+    testWidgets('export scope lists included and not included sections', (
+      tester,
+    ) async {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: PrivateArchiveReportCard.test(
+                report: report,
+                entryCount: 3,
+                surface: 'patterns',
+                isPro: true,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        find.byKey(const Key('private_archive_report_export_included')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('private_archive_report_export_not_included')),
+        findsOneWidget,
+      );
+      for (final item in PrivateArchiveReportCopy.exportIncludedItems) {
+        expect(find.text('- $item'), findsOneWidget);
+      }
+      for (final item in PrivateArchiveReportCopy.exportNotIncludedItems) {
+        expect(find.text('- $item'), findsOneWidget);
+      }
+    });
+
     testWidgets('copy action is wired safely', (tester) async {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
@@ -404,6 +479,52 @@ void main() {
 
       expect(copiedText, contains(PrivateArchiveReportCopy.title));
       expect(copiedText, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
+      expect(copiedText.toLowerCase(), isNot(contains('full raw transcripts')));
+    });
+
+    testWidgets('pro full export still includes all report sections', (
+      tester,
+    ) async {
+      final report = PrivateArchiveReportEngine.build(
+        entries: _fourWithHelpfulAction(),
+        returnChecks: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+        ],
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+      var copiedText = '';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: PrivateArchiveReportCard.test(
+                report: report,
+                entryCount: 4,
+                surface: 'patterns',
+                isPro: true,
+                onCopy: (text) async {
+                  copiedText = text;
+                  return true;
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.ensureVisible(
+        find.byKey(const Key('private_archive_report_copy_cta')),
+      );
+      await tester.tap(find.byKey(const Key('private_archive_report_copy_cta')));
+      await tester.pump();
+
+      expect(copiedText, contains(PrivateArchiveReportCopy.whatSoftenedHeading));
+      expect(
+        copiedText,
+        contains(PrivateArchiveReportCopy.whatToRecordNextHeading),
+      );
+      expect(copiedText, isNot(contains(PrivateArchiveReportCopy.previewTitle)));
     });
 
     testWidgets('free preview shows See Pro without full report sections', (
@@ -420,11 +541,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: PrivateArchiveReportCard.test(
-              report: report,
-              entryCount: 4,
-              surface: 'patterns',
-              onSeePro: () {},
+            body: SingleChildScrollView(
+              child: PrivateArchiveReportCard.test(
+                report: report,
+                entryCount: 4,
+                surface: 'patterns',
+                onSeePro: () {},
+              ),
             ),
           ),
         ),

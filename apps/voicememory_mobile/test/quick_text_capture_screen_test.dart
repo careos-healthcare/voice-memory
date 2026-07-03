@@ -145,6 +145,14 @@ void main() {
       final enabled = tester.widget<FilledButton>(saveButton);
       expect(enabled.onPressed, isNotNull);
     });
+
+    test('save failure keeps draft text in the controller', () {
+      final source = File(
+        'lib/screens/quick_text_capture_screen.dart',
+      ).readAsStringSync();
+      expect(source, contains('_error = VoiceCaptureCopy.saveFailed'));
+      expect(source, isNot(contains('_controller.clear()')));
+    });
   });
 
   group('QuickTextCaptureScreen layout', () {

@@ -239,6 +239,7 @@ void main() {
       );
       expect(CoreValueFeedbackCopy.title, 'Beta feedback');
       expect(CoreValueFeedbackCopy.helper, 'This is the main thing I’m testing.');
+      expect(CoreValueFeedbackCopy.savedMessage, 'Beta feedback saved. Thank you.');
       expect(CoreValueFeedbackCopy.answerYes, 'Yes');
       expect(CoreValueFeedbackCopy.answerNotYet, 'Not yet');
       expect(CoreValueFeedbackCopy.answerGeneric, 'Felt generic');
@@ -335,7 +336,7 @@ void main() {
       expect(find.text(CoreValueFeedbackCopy.hideForNow), findsOneWidget);
     });
 
-    testWidgets('answered state hides prompt', (tester) async {
+    testWidgets('answered state shows saved thank you', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -352,7 +353,8 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('core_value_feedback_hidden')), findsOneWidget);
+      expect(find.byKey(const Key('core_value_feedback_saved')), findsOneWidget);
+      expect(find.text(CoreValueFeedbackCopy.savedMessage), findsOneWidget);
       expect(find.text(CoreValueFeedbackCopy.question), findsNothing);
     });
 

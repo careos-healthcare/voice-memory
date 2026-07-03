@@ -120,6 +120,9 @@ import '../features/return_changes/archive_return_changes_gates.dart';
 import '../features/return_changes/archive_return_changes_store.dart';
 import '../features/return_changes/archive_return_snapshot.dart';
 import '../widgets/moment_quality_card.dart';
+import '../widgets/record/post_save_moment_detail_sheet.dart';
+import '../features/moment_quality/post_save_moment_detail_copy.dart';
+import '../features/moment_quality/post_save_moment_detail_model.dart';
 import '../widgets/record/tomorrow_commitment_card.dart';
 import '../widgets/record/tomorrow_return_card.dart';
 import '../widgets/record/active_pattern_thread_prompt_card.dart';
@@ -173,6 +176,7 @@ import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
 import '../widgets/record/early_repeat_progress_card.dart';
+import '../widgets/record/early_saved_moments_sheet.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
@@ -196,6 +200,13 @@ import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_repeat_progress_engine.dart';
+import '../features/next_action/next_best_action_engine.dart';
+import '../features/next_action/next_best_action_gates.dart';
+import '../features/next_action/next_best_action_model.dart';
+import '../widgets/next_action/next_best_action_line.dart';
+import '../features/early_archive/early_saved_moments_engine.dart';
+import '../features/early_archive/early_saved_moments_gates.dart';
+import '../features/early_archive/early_repeat_progress_model.dart';
 import '../features/early_archive/post_save_return_handoff_engine.dart';
 import '../features/early_archive/post_save_return_handoff_gates.dart';
 import '../features/early_archive/first_proof_moment_engine.dart';
@@ -422,9 +433,11 @@ import '../features/repeat_return_check/pattern_changed_analytics.dart';
 import '../features/repeat_return_check/pattern_changed_engine.dart';
 import '../features/repeat_return_check/pattern_changed_gates.dart';
 import '../features/repeat_return_check/pattern_changed_store.dart';
-import '../widgets/beta/tester_mission_card.dart';
+import '../features/trust/capture_recovery_gates.dart';
+import '../widgets/record/capture_recovery_hint_strip.dart';
 import '../widgets/beta/confirmed_repeat_beta_feedback_card.dart';
 import '../widgets/beta/core_value_feedback_card.dart';
+import '../widgets/beta/tester_mission_card.dart';
 import '../widgets/record/repeat_return_check_card.dart';
 import '../widgets/record/repeat_return_check_change_proof_card.dart';
 import '../widgets/record/pattern_changed_card.dart';
@@ -1980,6 +1993,40 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     if (result == null || !mounted) return;
     await _finishSuccessfulCapture(result);
+  }
+
+  Future<void> _openPostSaveMomentDetail({
+    required JournalEntry parentEntry,
+    required PostSaveMomentDetailType detailType,
+    required int entryCount,
+  }) async {
+    final saved = await PostSaveMomentDetailSheet.show(
+      context,
+      parentEntry: parentEntry,
+      detailType: detailType,
+      entryCount: entryCount,
+    );
+    if (!mounted || saved != true) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(PostSaveMomentDetailCopy.savedConfirmation),
+      ),
+    );
+  }
+
+  Future<void> _openEarlySavedMoments(
+    EarlyRepeatProgressResult progress,
+  ) async {
+    final content = EarlySavedMomentsEngine.build(
+      entries: _journalEntries,
+      progress: progress,
+    );
+    if (content == null || !mounted) return;
+    await EarlySavedMomentsSheet.show(
+      context,
+      content: content,
+      entryCount: _journalEntryCount,
+    );
   }
 
   JournalEntry? get _lastSavedEntry =>
@@ -4146,6 +4193,49 @@ class _RecordScreenState extends State<RecordScreen> {
     final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
         ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
         : null;
+    final daysSinceLastEntry = CaptureRecoveryGates.daysSinceLastEntry(
+      entries: _journalEntries,
+    );
+    final showReturnedAfterDelayRecovery = CaptureRecoveryGates.showReturnedAfterDelay(
+      entryCount: _journalEntryCount,
+      daysSinceLastEntry: daysSinceLastEntry,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+    );
+    final showEarlySavedMoments = EarlySavedMomentsGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isPostSave: ui == RecordUiState.done,
+      isRecording: ui == RecordUiState.recording,
+      showEarlyRepeatProgress: recordProofStack.showEarlyRepeatProgress,
+      progress: earlyRepeatProgress,
+    );
+    final nextBestActionCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? NextBestActionEngine.build(
+            entries: _journalEntries,
+            returnChecks: RepeatReturnCheckStore.cached,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+            privateReportForming: showPrivateArchiveReportOnRecord &&
+                privateArchiveReportCandidate != null,
+          )
+        : null;
+    final showNextBestActionOnRecord = NextBestActionGates.shouldShow(
+      action: nextBestActionCandidate,
+      surface: NextBestActionSurface.record,
+      showEarlyRepeatProgress: recordProofStack.showEarlyRepeatProgress,
+      showPostSaveReturnCheckAnswer: showPostSaveReturnCheckAnswer,
+      repeatReturnCheckOfferVisible: repeatReturnCheckOffer != null,
+      showPatternChangedCard:
+          showPatternChanged && patternChangedCandidate != null,
+      showHelpfulActionCard: showHelpfulActionAppearedOnRecord &&
+          helpfulActionAppearedCandidate != null,
+      showPrivateArchiveReportCard: showPrivateArchiveReportOnRecord &&
+          privateArchiveReportCandidate != null,
+    );
     final postSaveReturnHandoffCandidate = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
         ? PostSaveReturnHandoffEngine.build(entries: entriesAfterSave)
@@ -4287,6 +4377,7 @@ class _RecordScreenState extends State<RecordScreen> {
             entryCount: _journalEntryCount,
             entries: _journalEntries,
             compactAtEntryZero: firstUseSimplifiedRecord,
+            feedbackAnswered: CoreValueFeedbackStore.cached.answered,
           )
         : null;
     final showThoughtMapRecordCta = showConfirmedRepeatThoughtMapOnRecord &&
@@ -4514,6 +4605,15 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                     ],
                     if (ui == RecordUiState.ready &&
+                        showNextBestActionOnRecord &&
+                        nextBestActionCandidate != null) ...[
+                      NextBestActionLine(
+                        action: nextBestActionCandidate,
+                        surface: NextBestActionSurface.record,
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    if (ui == RecordUiState.ready &&
                         recordHomeSurface.showStartHereTodayPrompt &&
                         _dailyReturnSuggestions.hasSuggestions) ...[
                       DailyReturnSuggestionsCard(
@@ -4528,11 +4628,22 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (showReturnedAfterDelayRecovery) ...[
+                      const CaptureRecoveryHintStrip.returnedAfterDelay(),
+                      const SizedBox(height: 12),
+                    ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         recordProofStack.showEarlyRepeatProgress &&
                         earlyRepeatProgress != null) ...[
-                      EarlyRepeatProgressCard(progress: earlyRepeatProgress),
+                      EarlyRepeatProgressCard(
+                        progress: earlyRepeatProgress,
+                        onViewSavedMoments: showEarlySavedMoments
+                            ? () => unawaited(
+                                  _openEarlySavedMoments(earlyRepeatProgress),
+                                )
+                            : null,
+                      ),
                       const SizedBox(height: 12),
                     ],
                     if (ui == RecordUiState.ready &&
@@ -5469,6 +5580,13 @@ class _RecordScreenState extends State<RecordScreen> {
                               true)
                             SavedMomentQualityCard(
                               transcript: entriesAfterSave.first.transcript,
+                              entry: entriesAfterSave.first,
+                              onSuggestionTap: (detailType) =>
+                                  _openPostSaveMomentDetail(
+                                parentEntry: entriesAfterSave.first,
+                                detailType: detailType,
+                                entryCount: postSaveEntryCount,
+                              ),
                             ),
                           if (postSaveArchiveHierarchy?.showMomentQualityCoach ??
                               true)

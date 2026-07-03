@@ -611,7 +611,10 @@ void main() {
         ),
       ];
       final moment = FirstProofMomentEngine.build(entries: entries);
-      expect(moment!.title, FirstProofMomentCopy.title);
+      expect(moment!.primaryLabel, FirstProofMomentCopy.primaryLabel);
+      expect(moment.title, FirstProofMomentCopy.title);
+      expect(moment.body, FirstProofMomentCopy.bodyStrong);
+      expect(moment.nextLine, FirstProofMomentCopy.nextLine);
       expect(EarlyRepeatProgressEngine.build(entries: entries.sublist(0, 2)), isNotNull);
       expect(PostSaveReturnHandoffEngine.build(entries: entries.sublist(0, 2)), isNotNull);
     });
@@ -656,10 +659,11 @@ void main() {
 
     test('first proof copy uses evidence trail language not chat memory', () {
       final haystack = [
+        FirstProofMomentCopy.primaryLabel,
         FirstProofMomentCopy.title,
         FirstProofMomentCopy.whyLine,
         FirstProofMomentCopy.evidenceLabel,
-        FirstProofMomentCopy.footer,
+        FirstProofMomentCopy.nextLine,
       ].join(' ').toLowerCase();
       expect(haystack, contains('repeat'));
       expect(haystack, contains('evidence'));

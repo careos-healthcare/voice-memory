@@ -5,6 +5,8 @@ import '../beta_feedback/beta_feedback_engine.dart';
 import '../demo/sample_archive_mode.dart';
 import '../archive_clarity/archive_clarity_models.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../daily_question/adaptive_daily_question_engine.dart';
+import '../repeat_return_check/repeat_return_check_store.dart';
 import 'todays_question_copy.dart';
 import 'todays_question_gates.dart';
 import 'todays_question_models.dart';
@@ -61,7 +63,7 @@ class TodaysQuestionEngine {
     );
 
     final clock = now ?? DateTime.now();
-    return build(
+    final base = build(
       TodaysQuestionInput(
         realSavedMomentCount: count,
         usableEvidenceCount: usable,
@@ -72,6 +74,33 @@ class TodaysQuestionEngine {
         sampleMode: sampleMode,
         dayKey: clock.day + clock.month * 31,
       ),
+    );
+
+    if (sampleMode ||
+        base.questionId == TodaysQuestionId.betaFeedback ||
+        base.questionId == TodaysQuestionId.watchTheme ||
+        base.questionId == TodaysQuestionId.reviewChange) {
+      return base;
+    }
+
+    final adaptive = AdaptiveDailyQuestionEngine.build(
+      entries: realEntries,
+      returnChecks: RepeatReturnCheckStore.cached,
+    );
+
+    return TodaysQuestionResult(
+      questionId: TodaysQuestionId.adaptive,
+      eyebrow: base.eyebrow,
+      questionText: adaptive.questionText,
+      helperText: adaptive.helperText,
+      primaryCtaLabel: base.primaryCtaLabel,
+      primaryRoute: base.primaryRoute,
+      suggestedCaptureMode: base.suggestedCaptureMode,
+      isEmptyState: base.isEmptyState,
+      isBetaFeedbackPrompt: base.isBetaFeedbackPrompt,
+      showOnRecord: base.showOnRecord,
+      secondaryCtaLabel: base.secondaryCtaLabel,
+      secondaryRoute: base.secondaryRoute,
     );
   }
 

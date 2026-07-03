@@ -128,8 +128,24 @@ class _CoreValueFeedbackCardState extends State<CoreValueFeedbackCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (_dismissed || _answered) {
+    if (_dismissed) {
       return const SizedBox.shrink(key: Key('core_value_feedback_hidden'));
+    }
+
+    if (_answered) {
+      return Container(
+        key: const Key('core_value_feedback_saved'),
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+        child: Text(
+          CoreValueFeedbackCopy.savedMessage,
+          key: const Key('core_value_feedback_saved_message'),
+          style: ArchiveMobileTypography.listSubtitle(context).copyWith(
+            height: 1.45,
+          ),
+        ),
+      );
     }
 
     _logSeenIfNeeded();

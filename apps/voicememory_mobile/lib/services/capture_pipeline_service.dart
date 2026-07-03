@@ -7,6 +7,8 @@ import '../features/timeline/timeline_entry_display.dart';
 import '../features/voice_capture/analysis/analysis_log.dart';
 import '../features/voice_capture/transcription/transcription_log.dart';
 import '../features/voice_capture/transcription/transcription_service.dart';
+import '../features/moment_quality/post_save_moment_detail_model.dart';
+import '../features/moment_quality/post_save_moment_detail_service.dart';
 import '../features/voice_capture/voice_capture_copy.dart';
 import '../features/voice_capture/voice_capture_quality.dart';
 import '../models/journal_entry.dart';
@@ -627,6 +629,61 @@ class CapturePipelineService {
         syncNote: syncNote,
         lowQualityTranscript: lowQualityTranscript,
       );
+    } catch (e) {
+      throw CapturePipelineFailure(
+        VoiceCaptureCopy.saveFailed,
+        savedDraft: false,
+      );
+    }
+  }
+
+  /// Saves or updates a linked local detail entry — no network, no parent overwrite.
+  Future<JournalEntry> savePostSaveMomentDetail({
+    required JournalEntry parentEntry,
+    required PostSaveMomentDetailType detailType,
+    required String detailText,
+  }) async {
+    final trimmed = detailText.trim();
+    if (trimmed.isEmpty) {
+      throw CapturePipelineFailure('Enter a thought before saving.');
+    }
+
+    final tag = PostSaveMomentDetailType.linkedCaptureContextTag(
+      type: detailType,
+      parentEntryId: parentEntry.id,
+    );
+
+    try {
+      final all = await _journalStore.loadAll();
+      JournalEntry? existing;
+      for (final entry in all) {
+        if (entry.captureContextTag == tag) {
+          existing = entry;
+          break;
+        }
+      }
+
+      if (existing != null) {
+        final updated = buildLinkedDetailEntry(
+          existing: existing,
+          detailText: trimmed,
+        );
+        await _journalStore.save(
+          updated,
+          first25Source: 'post_save_detail_update',
+        );
+        return updated;
+      }
+
+      final entry = buildNewLinkedDetailEntry(
+        id: _uuid.v4(),
+        parentEntryId: parentEntry.id,
+        detailType: detailType,
+        detailText: trimmed,
+        durationSeconds: _estimatedDurationSeconds(trimmed),
+      );
+      await _journalStore.save(entry, first25Source: 'post_save_detail');
+      return entry;
     } catch (e) {
       throw CapturePipelineFailure(
         VoiceCaptureCopy.saveFailed,

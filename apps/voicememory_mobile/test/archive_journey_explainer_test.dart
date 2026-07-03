@@ -391,7 +391,7 @@ void main() {
       );
       expect(
         PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('your first repeat is free'),
+        contains('your first repeat'),
       );
     });
   });

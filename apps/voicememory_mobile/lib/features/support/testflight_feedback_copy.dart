@@ -6,6 +6,9 @@ abstract final class TestFlightFeedbackCopy {
 
   static const settingsCta = 'Send feedback';
 
+  static const unavailableMessage =
+      'Tester guidance is not available in this build.';
+
   static const emailTo = 'hello@careosapp.co.uk';
 
   static const emailSubject = 'ArchiveMe TestFlight feedback';

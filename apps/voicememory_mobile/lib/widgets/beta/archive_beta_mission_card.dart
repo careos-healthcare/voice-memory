@@ -93,7 +93,8 @@ class _ArchiveBetaMissionCardState extends State<ArchiveBetaMissionCard> {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            ArchiveBetaMissionCopy.intro,
+            ArchiveBetaMissionCopy.mission,
+            key: const Key('archive_beta_mission_mission'),
             style: bodyStyle,
           ),
           const SizedBox(height: AppSpacing.xs),

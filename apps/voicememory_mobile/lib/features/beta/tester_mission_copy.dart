@@ -1,42 +1,54 @@
-/// Copy for the internal TestFlight tester mission card — debug/beta only.
+/// Copy for beta-only tester onboarding — mission card, settings guide, QA.
 abstract final class TesterMissionCopy {
   TesterMissionCopy._();
 
-  static const title = 'Test mission';
+  static const title = 'Testing ArchiveMe?';
 
-  static const entry0Body =
-      '3-moment proof test. Record one real moment — no need to explain everything.';
-  static const entry0StepLabel = 'Step 1 of 3';
-  static const entry0Footer =
-      'Come back when something similar happens. Ten seconds is enough.';
+  static const mission = 'Reach first proof.';
 
-  static const entry1Body =
-      'Come back when something similar happens. Short is fine.';
-  static const entry1StepLabel = 'Step 2 of 3';
-  static const entry1Footer =
-      'Similar moments let ArchiveMe compare.';
+  static const step1 = 'Record one real moment.';
+  static const step2 = 'Come back when something similar happens.';
+  static const step3 = 'Record a third related moment.';
+  static const step4 =
+      'Check whether first proof feels specific to your own words.';
+
+  static const steps = [step1, step2, step3, step4];
+
+  static const feedbackQuestion =
+      'Did ArchiveMe show something repeating in your own words that was worth tracking?';
+
+  static const feedbackSavedBody = 'Beta feedback saved. Thank you.';
+
+  static const entry0Body = 'Step 1: record one real moment.';
+  static const entry0StepLabel = '';
+  static const entry0Footer = '';
+
+  static const entry1Body = 'Step 1 complete. Next: record something similar.';
+  static const entry1StepLabel = '';
+  static const entry1Footer = '';
 
   static const entry2RelatedBody =
-      'One more related moment unlocks your first proof.';
-  static const entry2RelatedStepLabel = 'Step 3 of 3';
-  static const entry2RelatedFooter =
-      'The third moment shows the repeat back to you.';
+      'Step 2 complete. One more related moment unlocks first proof.';
+  static const entry2RelatedStepLabel = '';
+  static const entry2RelatedFooter = '';
 
   static const entry2UnrelatedBody =
-      'No clear match yet — that is okay. Record the next real moment.';
-  static const entry2UnrelatedStepLabel = 'Still looking';
-  static const entry2UnrelatedFooter = 'No need to force a pattern.';
+      'Step 2 still forming. Record the next real moment.';
+  static const entry2UnrelatedStepLabel = '';
+  static const entry2UnrelatedFooter = '';
 
   static const entry3ConfirmedBody =
-      'First proof reached. Next time it returns, record a short moment so ArchiveMe can compare change.';
-  static const entry3ConfirmedStepLabel = 'First proof reached';
-  static const entry3ConfirmedFooter =
-      'This is the part I need feedback on.';
+      'First proof reached. Did it feel specific to your own words?';
+  static const entry3ConfirmedStepLabel = '';
+  static const entry3ConfirmedFooter = '';
 
   static const entry3UnconfirmedBody =
-      'Keep recording real moments until ArchiveMe has enough evidence to show a repeat.';
-  static const entry3UnconfirmedStepLabel = 'Still looking';
-  static const entry3UnconfirmedFooter = 'Do not force a pattern.';
+      'First proof has not appeared yet. Record the next real moment.';
+  static const entry3UnconfirmedStepLabel = '';
+  static const entry3UnconfirmedFooter = '';
+
+  static const feedbackSavedStepLabel = '';
+  static const feedbackSavedFooter = '';
 
   static const hideForNowCta = 'Hide for now';
   static const hideForTodayCta = 'Hide for today';

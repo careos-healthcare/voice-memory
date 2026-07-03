@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/beta_invite/beta_invite_copy.dart';
 import '../features/beta_outcomes/beta_outcomes_copy.dart';
+import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -24,6 +25,53 @@ class HelpReviewerGuideScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (ArchiveBetaMissionGate.isEnabled) ...[
+              Text(
+                HelpReviewerGuideCopy.helpBetaTesterTitle,
+                key: const Key('help_reviewer_guide_beta_tester_title'),
+                style: ArchiveMobileTypography.cardLabel(context),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                HelpReviewerGuideCopy.helpBetaTesterMission,
+                key: const Key('help_reviewer_guide_beta_tester_mission'),
+                style: ArchiveMobileTypography.explanationBody(
+                  context,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              for (var index = 0;
+                  index < HelpReviewerGuideCopy.helpBetaTesterBullets.length;
+                  index++) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '\u2022 ',
+                        style: ArchiveMobileTypography.explanationBody(
+                          context,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          HelpReviewerGuideCopy.helpBetaTesterBullets[index],
+                          key: Key('help_reviewer_guide_beta_tester_bullet_$index'),
+                          style: ArchiveMobileTypography.explanationBody(
+                            context,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: AppSpacing.lg),
+            ],
             for (final section in HelpReviewerGuideCopy.sections) ...[
               Text(
                 section.title,

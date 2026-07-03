@@ -1,4 +1,6 @@
 /// Copy for the post-save return handoff after entry 1 or 2.
+import '../trust/capture_recovery_copy.dart';
+
 abstract final class PostSaveReturnHandoffCopy {
   PostSaveReturnHandoffCopy._();
 
@@ -20,8 +22,7 @@ abstract final class PostSaveReturnHandoffCopy {
 
   static const afterSecondSaveUnrelatedTitle = 'Keep recording real moments';
 
-  static const afterSecondSaveUnrelatedBody =
-      'No clear match yet — that is okay. Record the next real moment and ArchiveMe will keep looking.';
+  static const afterSecondSaveUnrelatedBody = CaptureRecoveryCopy.noClearMatchYet;
 
   static const afterSecondSaveUnrelatedFooter = 'No need to force a pattern.';
 

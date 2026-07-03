@@ -8,6 +8,7 @@ enum TodaysQuestionId {
   watchTheme,
   reviewChange,
   rotated,
+  adaptive,
 }
 
 /// How the Record screen should open capture for this question.

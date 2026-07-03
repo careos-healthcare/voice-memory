@@ -378,9 +378,10 @@ void main() {
       expect(moment, isNotNull);
 
       final blocks = [
-        moment!.title,
+        moment!.primaryLabel,
+        moment.title,
         moment.body,
-        moment.footer,
+        moment.nextLine,
         moment.whyLine,
       ];
       expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
@@ -522,9 +523,9 @@ void main() {
         ],
       );
       expect(progress, isNotNull);
-      expect(mission.body, equals(progress!.body));
+      expect(mission.body, TesterMissionCopy.entry1Body);
+      expect(progress!.body, contains('Come back when something similar happens'));
       expect(mission.title, isNot(equals(progress.title)));
-      expect(mission.stepLabel, TesterMissionCopy.entry1StepLabel);
       expect(
         ArchiveProofCopyDedup.countPhrase(
           [

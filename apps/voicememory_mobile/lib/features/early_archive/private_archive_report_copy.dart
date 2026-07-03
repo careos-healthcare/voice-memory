@@ -24,11 +24,27 @@ abstract final class PrivateArchiveReportCopy {
   static const whatToRecordNextBody =
       'Record when this comes back again. ArchiveMe will compare it with this report.';
 
-  static const previewTitle = 'Your private archive report is forming';
+  static const previewTitle = 'Preview private report';
 
   static const previewBody =
-      'Your first repeat is free. Pro keeps the full report: what repeated, '
-      'what softened, what got louder, what helped, and what changed.';
+      'Your first repeat shows a preview. Pro keeps every report section.';
+
+  static const exportIncludedHeading = 'Included';
+
+  static List<String> get exportIncludedItems => [
+        whatRepeatedHeading,
+        whatChangedHeading,
+        whatHelpedHeading,
+        whatToRecordNextHeading,
+      ];
+
+  static const exportNotIncludedHeading = 'Not included';
+
+  static const exportNotIncludedItems = [
+    'Audio',
+    'Full raw transcripts',
+    'Private settings data',
+  ];
 
   static const previewProCta = 'See Pro';
 

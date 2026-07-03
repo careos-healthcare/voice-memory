@@ -5,6 +5,8 @@ import '../../features/early_archive/archive_change_timeline_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../proof/proof_surface_why_appeared_disclosure.dart';
+import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
 
 /// Vertical evidence trail tying archive proof moments together over time.
 class ArchiveChangeTimelineCard extends StatelessWidget {
@@ -71,6 +73,10 @@ class ArchiveChangeTimelineCard extends StatelessWidget {
                   chipStyle: chipStyle,
                 ),
             ],
+          ),
+          ProofSurfaceWhyAppearedDisclosure(
+            body: ProofSurfaceWhyAppearedCopy.evidenceTimeline,
+            surfaceKey: 'archive_change_timeline',
           ),
         ],
       ),

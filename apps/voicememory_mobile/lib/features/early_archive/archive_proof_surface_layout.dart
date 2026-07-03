@@ -1,3 +1,26 @@
+/// Deterministic Patterns tab order after first proof (layout pass only).
+abstract final class PatternsPostProofStackOrder {
+  PatternsPostProofStackOrder._();
+
+  static const archiveCurrentBelief = 'archive_current_belief';
+  static const whatChangedSinceLastTime = 'what_changed_since_last_time';
+  static const earlyEvidenceTimeline = 'early_evidence_timeline';
+  static const earlyFirstSignalFallback = 'early_first_signal_fallback';
+  static const archiveChangeTimeline = 'archive_change_timeline';
+  static const patternChanged = 'pattern_changed';
+  static const helpfulActionAppeared = 'helpful_action_appeared';
+  static const archiveSummary = 'archive_summary';
+  static const weeklyReview = 'weekly_review';
+  static const privateArchiveReport = 'private_archive_report';
+  static const proBridge = 'pro_bridge';
+
+  static const primarySurfacesAfterFirstProof = [
+    archiveCurrentBelief,
+    whatChangedSinceLastTime,
+    earlyEvidenceTimeline,
+  ];
+}
+
 /// Which proof cards are visible together — drives de-duplicated copy.
 class ArchiveProofSurfaceLayout {
   const ArchiveProofSurfaceLayout({
@@ -14,6 +37,9 @@ class ArchiveProofSurfaceLayout {
     this.archiveSummaryVisible = false,
     this.archiveCurrentBeliefVisible = false,
     this.archiveChangeTimelineVisible = false,
+    this.timelineShowsHelpfulAction = false,
+    this.changeTimelineShowsHelpfulAction = false,
+    this.changeTimelineShowsChanged = false,
   });
 
   final bool confirmedRepeatCardVisible;
@@ -29,6 +55,9 @@ class ArchiveProofSurfaceLayout {
   final bool archiveSummaryVisible;
   final bool archiveCurrentBeliefVisible;
   final bool archiveChangeTimelineVisible;
+  final bool timelineShowsHelpfulAction;
+  final bool changeTimelineShowsHelpfulAction;
+  final bool changeTimelineShowsChanged;
 
   /// Current-belief surface replaces Archive Summary as the main overview.
   bool get effectiveArchiveSummaryVisible =>
@@ -47,7 +76,10 @@ class ArchiveProofSurfaceLayout {
       !helpfulActionAppearedVisible;
 
   bool get effectiveHelpfulActionAppearedVisible =>
-      helpfulActionAppearedVisible && !effectiveArchiveSummaryVisible;
+      helpfulActionAppearedVisible &&
+      !effectiveArchiveSummaryVisible &&
+      !timelineShowsHelpfulAction &&
+      !changeTimelineShowsHelpfulAction;
 
   bool get effectivePositivePatternVisible =>
       positivePatternVisible &&
@@ -60,7 +92,9 @@ class ArchiveProofSurfaceLayout {
       !patternChangedVisible;
 
   bool get effectivePatternChangedVisible =>
-      patternChangedVisible && !effectiveArchiveSummaryVisible;
+      patternChangedVisible &&
+      !effectiveArchiveSummaryVisible &&
+      !changeTimelineShowsChanged;
 
   /// Confirmed-repeat card folds into Archive Summary or current belief.
   bool get effectiveConfirmedRepeatCardVisible =>

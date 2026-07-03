@@ -1,3 +1,5 @@
+import 'tester_mission_copy.dart';
+
 /// Copy for the internal beta release QA checklist — developer diagnostics only.
 abstract final class BetaReleaseQaCopy {
   BetaReleaseQaCopy._();
@@ -50,23 +52,20 @@ abstract final class BetaReleaseQaCopy {
 
   static const proBridgeRoute = '/subscription';
 
-  static const manualChecklistSteps = [
-    'Install build',
-    'Open app',
-    'Record one real moment',
-    'Return and record a similar second moment',
-    'Record a third related moment',
-    'Confirm first proof appears',
-    'Record a fourth related moment',
-    'Answer return check',
-    'Open Patterns',
-    'Confirm belief, changed card, helpful action, and evidence timeline are visible when eligible',
-  ];
+  static List<String> get manualChecklistSteps => [
+        'Install build',
+        'Open app',
+        ...TesterMissionCopy.steps,
+        'Confirm first proof appears on Patterns',
+        'Record a fourth related moment',
+        'Answer return check',
+        'Open Patterns',
+        'Confirm belief, changed card, helpful action, and evidence timeline are visible when eligible',
+      ];
 
   static const coreValueQuestionTitle = 'Core beta value question';
 
-  static const coreValueQuestion =
-      'Did ArchiveMe show something repeating in your own words that was worth tracking?';
+  static const coreValueQuestion = TesterMissionCopy.feedbackQuestion;
 
   static const coreValueFeedbackLabel = 'Core value feedback';
 }
