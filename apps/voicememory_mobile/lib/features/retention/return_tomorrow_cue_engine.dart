@@ -112,7 +112,7 @@ abstract final class ReturnTomorrowCueEngine {
     }
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final phrase = _groundedWatchingPhrase(eligible);
+    final phrase = groundedWatchingPhrase(eligible);
 
     return ReturnTomorrowCue(
       state: ReturnTomorrowCueState.nextDayReturn,
@@ -124,7 +124,7 @@ abstract final class ReturnTomorrowCueEngine {
     );
   }
 
-  static String? _groundedWatchingPhrase(List<JournalEntry> eligible) {
+  static String? groundedWatchingPhrase(List<JournalEntry> eligible) {
     if (eligible.isEmpty) return null;
 
     if (eligible.length >= 2) {
@@ -143,5 +143,10 @@ abstract final class ReturnTomorrowCueEngine {
     return ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
       eligible.last,
     );
+  }
+
+  static String? groundedWatchingPhraseFor(List<JournalEntry> entries) {
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    return groundedWatchingPhrase(eligible);
   }
 }

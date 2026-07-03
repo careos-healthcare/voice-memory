@@ -492,6 +492,9 @@ abstract class ActivationFunnelAnalytics {
       'first_save_evidence_view_archive_tapped';
   static const String returnTomorrowSeen = 'return_tomorrow_seen';
   static const String returnTomorrowAccepted = 'return_tomorrow_accepted';
+  static const String yesterdayWatchSeen = 'yesterday_watch_seen';
+  static const String yesterdayWatchAnswered = 'yesterday_watch_answered';
+  static const String yesterdayWatchDismissed = 'yesterday_watch_dismissed';
   static const String changeCanBeginSeen = 'change_can_begin_seen';
   static const String proArchiveContinuitySeen = 'pro_archive_continuity_seen';
   static const String proArchiveContinuityTapped =
