@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 import type { ApiGuardContext } from "@/lib/server/api-guard";
 import type { ApiUsageKind } from "@/lib/server/api-usage-store";
 import {
+  ANALYZE_UNAVAILABLE_MESSAGE,
   classifyAnalyzeRouteError,
-  logAnalyzeFailure,
-} from "@/lib/server/analyze-route-errors";
+} from "@/lib/analyze/analyze-route-failure";
 import {
   estimateOpenAiBudgetCharge,
   getOpenAiBudgetLimits,
@@ -75,18 +75,26 @@ export function safeOpenAiRouteError(
   kind: ApiUsageKind,
   error: unknown,
 ): { message: string; code: string } {
-  if (kind === "analyze") {
-    const classified = classifyAnalyzeRouteError(error);
-    logAnalyzeFailure(classified.code, classified.message);
-    return { code: classified.code, message: classified.message };
-  }
-
   const codes: Record<ApiUsageKind, string> = {
     transcribe: "TRANSCRIBE_UNAVAILABLE",
     analyze: "ANALYZE_UNAVAILABLE",
     atmosphere: "ATMOSPHERE_UNAVAILABLE",
     attest: "ATTEST_UNAVAILABLE",
   };
+
+  if (kind === "analyze") {
+    const classified = classifyAnalyzeRouteError(error);
+    if (process.env.NODE_ENV !== "production") {
+      return { code: classified.code, message: classified.message };
+    }
+    if (classified.code === "missing_openai_key") {
+      return { code: classified.code, message: classified.message };
+    }
+    return {
+      code: "ANALYZE_UNAVAILABLE",
+      message: ANALYZE_UNAVAILABLE_MESSAGE,
+    };
+  }
 
   if (!process.env.OPENAI_API_KEY?.trim()) {
     return {
@@ -98,7 +106,7 @@ export function safeOpenAiRouteError(
   if (process.env.NODE_ENV === "production") {
     return {
       code: codes[kind],
-      message: "Voice processing is temporarily unavailable. Please try again later.",
+      message: ANALYZE_UNAVAILABLE_MESSAGE,
     };
   }
   const message = error instanceof Error ? error.message : `${kind} failed`;

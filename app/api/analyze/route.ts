@@ -2,16 +2,14 @@ import { NextResponse } from "next/server";
 
 import { parseReflectionResponse } from "@/lib/analyze/parse-reflection-response";
 import {
+  analyzeRouteCatchResponse,
   analyzeRouteErrorResponse,
-  classifyAnalyzeRouteError,
-  logAnalyzeFailure,
   logAnalyzeStep,
 } from "@/lib/server/analyze-route-errors";
 import {
   guardOpenAiRoute,
   MAX_TRANSCRIPT_CHARS,
 } from "@/lib/server/api-guard";
-import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
 import { NOT_AI_JOURNAL_LINE } from "@/lib/product-copy";
 import { buildEvidencePacket } from "@/lib/evidence/evidence-pipeline";
 import { isWebMemoryScope } from "@/lib/evidence/evidence-policy";
@@ -198,13 +196,6 @@ export async function POST(request: Request) {
     );
     return NextResponse.json({ reflection });
   } catch (error) {
-    console.error("Analysis failed:", error);
-    const classified = classifyAnalyzeRouteError(error);
-    logAnalyzeFailure(classified.code, classified.message);
-    const safe = safeOpenAiRouteError("analyze", error);
-    return NextResponse.json(
-      { error: safe.message, code: safe.code },
-      { status: classified.status },
-    );
+    return analyzeRouteCatchResponse(error);
   }
 }

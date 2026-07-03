@@ -126,6 +126,28 @@ export async function resolveCaptureAuthFailureCode(
   return "unauthorized_capture_token";
 }
 
+function openAiGuardFailureResponse(
+  kind: ApiUsageKind,
+  reason: string,
+): NextResponse {
+  const codes: Record<ApiUsageKind, string> = {
+    transcribe: "TRANSCRIBE_UNAVAILABLE",
+    analyze: "ANALYZE_UNAVAILABLE",
+    atmosphere: "ATMOSPHERE_UNAVAILABLE",
+    attest: "ATTEST_UNAVAILABLE",
+  };
+  console.error(
+    `ARCHIVEME_OPENAI_GUARD_FAILED kind=${kind} reason=${reason}`,
+  );
+  return NextResponse.json(
+    {
+      error: "Voice processing is temporarily unavailable. Please try again later.",
+      code: codes[kind],
+    },
+    { status: 503 },
+  );
+}
+
 export async function guardOpenAiRoute(
   request: Request,
   kind: ApiUsageKind,
@@ -135,41 +157,56 @@ export async function guardOpenAiRoute(
     audioBytes?: number;
   },
 ): Promise<{ ok: true; ctx: ApiGuardContext } | { ok: false; response: NextResponse }> {
-  if (isOpenAiKillSwitchActive()) {
-    return { ok: false, response: openAiKillSwitchResponse() };
-  }
+  try {
+    if (isOpenAiKillSwitchActive()) {
+      return { ok: false, response: openAiKillSwitchResponse() };
+    }
 
-  const ctx = await resolveApiGuardContext(request);
-  if (!ctx) {
-    const code = await resolveCaptureAuthFailureCode(request);
-    const message =
-      code === "missing_capture_token"
-        ? "Capture token is required before using voice analysis."
-        : "Sign in or attest this device before using voice analysis.";
+    const ctx = await resolveApiGuardContext(request);
+    if (!ctx) {
+      const code = await resolveCaptureAuthFailureCode(request);
+      const message =
+        code === "missing_capture_token"
+          ? "Capture token is required before using voice analysis."
+          : "Sign in or attest this device before using voice analysis.";
+      return {
+        ok: false,
+        response: NextResponse.json({ error: message, code }, { status: 401 }),
+      };
+    }
+
+    const ipSubject = `ip:${ipHashFromRequest(request)}`;
+    const usageSubject = ctx.subject;
+    const usage = await checkAndRecordApiUsage(usageSubject, kind);
+    if (!usage.allowed) {
+      return rateLimitResponse(usage);
+    }
+
+    const ipUsage = await checkAndRecordApiUsage(ipSubject, kind);
+    if (!ipUsage.allowed) {
+      return rateLimitResponse(ipUsage);
+    }
+
+    const budget = await guardOpenAiBudget(ctx, request, kind, options);
+    if (!budget.ok) {
+      return budget;
+    }
+
+    return { ok: true, ctx };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const lower = message.toLowerCase();
+    const reason =
+      lower.includes("database") || lower.includes("postgres")
+        ? "database_unavailable"
+        : lower.includes("auth_secret")
+          ? "auth_secret_unconfigured"
+          : "guard_exception";
     return {
       ok: false,
-      response: NextResponse.json({ error: message, code }, { status: 401 }),
+      response: openAiGuardFailureResponse(kind, reason),
     };
   }
-
-  const ipSubject = `ip:${ipHashFromRequest(request)}`;
-  const usageSubject = ctx.subject;
-  const usage = await checkAndRecordApiUsage(usageSubject, kind);
-  if (!usage.allowed) {
-    return rateLimitResponse(usage);
-  }
-
-  const ipUsage = await checkAndRecordApiUsage(ipSubject, kind);
-  if (!ipUsage.allowed) {
-    return rateLimitResponse(ipUsage);
-  }
-
-  const budget = await guardOpenAiBudget(ctx, request, kind, options);
-  if (!budget.ok) {
-    return budget;
-  }
-
-  return { ok: true, ctx };
 }
 
 function rateLimitResponse(usage: {

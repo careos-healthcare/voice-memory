@@ -2,23 +2,15 @@ import "server-only";
 
 import { NextResponse } from "next/server";
 
-export type AnalyzeRouteFailureCode =
-  | "missing_openai_key"
-  | "missing_capture_token"
-  | "unauthorized_capture_token"
-  | "model_error"
-  | "invalid_request_body"
-  | "invalid_reflection"
-  | "transcript_required"
-  | "transcript_too_long"
-  | "route_not_found"
-  | "ANALYZE_UNAVAILABLE"
-  | "OPENAI_DISABLED"
-  | "OPENAI_BUDGET_EXCEEDED"
-  | "OPENAI_PLATFORM_LIMIT"
-  | "RATE_LIMIT_MINUTE"
-  | "RATE_LIMIT_DAILY"
-  | "CAPTURE_AUTH_REQUIRED";
+import {
+  ANALYZE_UNAVAILABLE_MESSAGE,
+  analyzeRouteClientError as buildAnalyzeRouteClientError,
+  classifyAnalyzeRouteError as classifyAnalyzeFailure,
+  type AnalyzeRouteFailureCode,
+} from "@/lib/analyze/analyze-route-failure";
+
+export type { AnalyzeRouteFailureCode } from "@/lib/analyze/analyze-route-failure";
+export { ANALYZE_UNAVAILABLE_MESSAGE } from "@/lib/analyze/analyze-route-failure";
 
 const LOG_PREFIX = "ARCHIVEME_ANALYZE";
 
@@ -28,6 +20,24 @@ export function logAnalyzeStep(message: string): void {
 
 export function logAnalyzeFailure(code: string, reason: string): void {
   console.error(`${LOG_PREFIX}_FAILED code=${code} reason=${reason}`);
+}
+
+export function logAnalyzeFailureType(code: string, error: unknown): void {
+  const type =
+    error instanceof Error
+      ? error.name || "Error"
+      : typeof error === "object" && error !== null
+        ? error.constructor?.name ?? "object"
+        : typeof error;
+  const status =
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    typeof (error as { status?: unknown }).status === "number"
+      ? (error as { status: number }).status
+      : null;
+  const statusSuffix = status == null ? "" : ` httpStatus=${status}`;
+  logAnalyzeFailure(code, `failureType=${type}${statusSuffix}`);
 }
 
 export function analyzeRouteErrorResponse(
@@ -45,61 +55,23 @@ export function classifyAnalyzeRouteError(error: unknown): {
   message: string;
   status: number;
 } {
-  if (!process.env.OPENAI_API_KEY?.trim()) {
-    return {
-      code: "missing_openai_key",
-      message: "Analysis is not configured on the server.",
-      status: 503,
-    };
-  }
+  return classifyAnalyzeFailure(error);
+}
 
-  const message = error instanceof Error ? error.message : String(error);
-  const lower = message.toLowerCase();
+export function analyzeRouteClientError(error: unknown): {
+  code: AnalyzeRouteFailureCode;
+  message: string;
+  status: number;
+} {
+  const client = buildAnalyzeRouteClientError(error);
+  logAnalyzeFailureType(client.code, error);
+  return client;
+}
 
-  if (lower.includes("openapi_api_key") || lower.includes("openai_api_key")) {
-    return {
-      code: "missing_openai_key",
-      message: "Analysis is not configured on the server.",
-      status: 503,
-    };
-  }
-
-  if (error instanceof SyntaxError || lower.includes("json")) {
-    return {
-      code: "model_error",
-      message: "Analysis model returned an unreadable response.",
-      status: 502,
-    };
-  }
-
-  if (
-    lower.includes("invalid reflection") ||
-    lower.includes("therapy") ||
-    lower.includes("generic therapy")
-  ) {
-    return {
-      code: "invalid_reflection",
-      message: "Analysis model returned an invalid reflection.",
-      status: 502,
-    };
-  }
-
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    typeof (error as { status?: unknown }).status === "number"
-  ) {
-    return {
-      code: "model_error",
-      message: "Analysis model request failed.",
-      status: 502,
-    };
-  }
-
-  return {
-    code: "model_error",
-    message: "Analysis could not be completed.",
-    status: 502,
-  };
+export function analyzeRouteCatchResponse(error: unknown): NextResponse {
+  const client = analyzeRouteClientError(error);
+  return NextResponse.json(
+    { error: client.message, code: client.code },
+    { status: client.status },
+  );
 }
