@@ -25,6 +25,7 @@ import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.d
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
+import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/weekly_archive_review_copy.dart';
@@ -922,17 +923,25 @@ void main() {
       expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsOneWidget);
       expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
       expect(
-        find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
+        find.byKey(const Key('return_tomorrow_cue_card_after_first_moment')),
         findsOneWidget,
       );
       expect(
-        find.text(PostSaveReturnHandoffCopy.afterFirstSaveTitle),
+        find.text(ReturnTomorrowCueCopy.afterFirstMomentTitle),
         findsOneWidget,
+      );
+      expect(
+        find.text(ReturnTomorrowCueCopy.afterFirstMomentBody),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_return_handoff_card_afterFirstSave')),
+        findsNothing,
       );
       expect(find.byKey(const Key('early_repeat_progress_card_oneMoment')), findsNothing);
     });
 
-    testWidgets('entry 1 post-save with phrase shows phrase in handoff', (
+    testWidgets('entry 1 post-save with phrase shows return tomorrow cue', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -978,14 +987,21 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.textContaining('said yes again'), findsOneWidget);
+      expect(
+        find.text(ReturnTomorrowCueCopy.afterFirstMomentTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ReturnTomorrowCueCopy.afterFirstMomentBody),
+        findsOneWidget,
+      );
       expect(
         find.text(PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback),
         findsNothing,
       );
     });
 
-    testWidgets('entry 2 related post-save shows first proof handoff', (
+    testWidgets('entry 2 related post-save shows return tomorrow cue', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -1043,8 +1059,16 @@ void main() {
       }
 
       expect(
-        find.text(PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle),
+        find.text(ReturnTomorrowCueCopy.afterSecondRelatedTitle),
         findsOneWidget,
+      );
+      expect(
+        find.text(ReturnTomorrowCueCopy.afterSecondRelatedBody),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveRelated')),
+        findsNothing,
       );
       expect(find.text(EarlyRepeatProgressCopy.twoRelatedTitle), findsNothing);
     });
@@ -1149,6 +1173,18 @@ void main() {
       expect(
         find.byKey(const Key('post_save_return_handoff_card_afterSecondSaveUnrelated')),
         findsNothing,
+      );
+      expect(
+        find.byKey(const Key('return_tomorrow_cue_card_after_first_proof')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ReturnTomorrowCueCopy.afterFirstProofTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ReturnTomorrowCueCopy.afterFirstProofBody),
+        findsOneWidget,
       );
       expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
       expect(find.text(FirstProofMomentCopy.primaryLabel), findsOneWidget);

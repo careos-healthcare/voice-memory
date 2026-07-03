@@ -142,6 +142,7 @@ import '../widgets/signal/archive_watching_card.dart';
 import '../widgets/signal/signal_journey_card.dart';
 import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
+import '../features/retention/return_tomorrow_cue_engine.dart';
 import '../features/retention/second_session_signal_engine.dart';
 import '../features/retention/second_session_signal_model.dart';
 import '../features/retention/pattern_hypothesis_engine.dart';
@@ -182,6 +183,7 @@ import '../widgets/record/early_saved_moments_sheet.dart';
 import '../widgets/record/pending_transcript_recovery_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
+import '../widgets/record/return_tomorrow_cue_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/return_check_payoff_card.dart';
@@ -3694,9 +3696,20 @@ class _RecordScreenState extends State<RecordScreen> {
             !showEarlyEvidenceTimeline
         ? EarlyFirstSignalEngine.build(entries: _journalEntries)
         : null;
+    final returnTomorrowCueReady = ui == RecordUiState.ready &&
+            _journalEntryCountReady
+        ? ReturnTomorrowCueEngine.buildReady(entries: _journalEntries)
+        : null;
+    final showReturnTomorrowCueReady = ReturnTomorrowCueGates.shouldShowReady(
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      cue: returnTomorrowCueReady,
+    );
     final showEarlyReturnReminder = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
+        !showReturnTomorrowCueReady &&
         _earlyReturnReminderOffer &&
         !_earlyReturnReminderHidden &&
         !suppressEarlyRepeatPayoffCompetitors &&
@@ -4258,13 +4271,27 @@ class _RecordScreenState extends State<RecordScreen> {
             entriesAfterSave.isNotEmpty
         ? PostSaveReturnHandoffEngine.build(entries: entriesAfterSave)
         : null;
+    final returnTomorrowCuePostSave = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? ReturnTomorrowCueEngine.buildPostSave(
+            entries: entriesAfterSave,
+            firstProofUnlocked: showFirstProofMoment,
+          )
+        : null;
+    final postSaveDegradedForReturnCue = entriesAfterSave.isNotEmpty &&
+        VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last);
+    final showReturnTomorrowCuePostSave = ReturnTomorrowCueGates.shouldShowPostSave(
+      isPostSaveDone: ui == RecordUiState.done,
+      isDegradedPostSave: postSaveDegradedForReturnCue,
+      cue: returnTomorrowCuePostSave,
+    );
     final showPostSaveReturnHandoff = PostSaveReturnHandoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
-      isDegradedPostSave: entriesAfterSave.isNotEmpty &&
-          VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+      isDegradedPostSave: postSaveDegradedForReturnCue,
       handoff: postSaveReturnHandoffCandidate,
-    );
+    ) &&
+        !showReturnTomorrowCuePostSave;
     final beliefUpdatePayoff = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty &&
             !suppressLatestSaveArchiveInsight
@@ -4651,10 +4678,20 @@ class _RecordScreenState extends State<RecordScreen> {
                       const CaptureRecoveryHintStrip.returnedAfterDelay(),
                       const SizedBox(height: 12),
                     ],
+                    if (showReturnTomorrowCueReady &&
+                        returnTomorrowCueReady != null) ...[
+                      ReturnTomorrowCueCard(
+                        cue: returnTomorrowCueReady,
+                        entryCount: _journalEntryCount,
+                        surface: 'record_ready',
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         recordProofStack.showEarlyRepeatProgress &&
-                        earlyRepeatProgress != null) ...[
+                        earlyRepeatProgress != null &&
+                        !showReturnTomorrowCueReady) ...[
                       EarlyRepeatProgressCard(
                         progress: earlyRepeatProgress,
                         onViewSavedMoments: showEarlySavedMoments
@@ -6385,6 +6422,15 @@ class _RecordScreenState extends State<RecordScreen> {
                       ReturnCheckPayoffCard(
                         payoff: returnCheckPayoffCandidate,
                         entryCount: postSaveEntryCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (showReturnTomorrowCuePostSave &&
+                        returnTomorrowCuePostSave != null) ...[
+                      ReturnTomorrowCueCard(
+                        cue: returnTomorrowCuePostSave,
+                        entryCount: postSaveEntryCount,
+                        surface: 'record_post_save',
                       ),
                       const SizedBox(height: 16),
                     ],
