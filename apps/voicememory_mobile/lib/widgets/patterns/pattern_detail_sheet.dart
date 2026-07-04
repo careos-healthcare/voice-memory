@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
+import '../../features/pro_memory/pro_memory_boundary_copy.dart';
+import '../../features/pro_memory/pro_memory_boundary_engine.dart';
+import '../../features/share_card/share_card_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../archive_paywall/pro_memory_upgrade_bridge.dart';
 import '../record/entry_importance_button.dart';
+import '../share_card/share_card_action_card.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatelessWidget {
@@ -13,15 +18,24 @@ class PatternDetailSheet extends StatelessWidget {
     super.key,
     required this.detail,
     this.entryCount = 0,
+    this.isPro = true,
+    this.onSeePro,
+    this.shareCard,
   });
 
   final PatternDetailResult detail;
   final int entryCount;
+  final bool isPro;
+  final VoidCallback? onSeePro;
+  final ShareCardModel? shareCard;
 
   static Future<void> show(
     BuildContext context, {
     required PatternDetailResult detail,
     int entryCount = 0,
+    bool isPro = true,
+    VoidCallback? onSeePro,
+    ShareCardModel? shareCard,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -34,6 +48,9 @@ class PatternDetailSheet extends StatelessWidget {
         child: PatternDetailSheet(
           detail: detail,
           entryCount: entryCount,
+          isPro: isPro,
+          onSeePro: onSeePro,
+          shareCard: shareCard,
         ),
       ),
     );
@@ -49,6 +66,14 @@ class PatternDetailSheet extends StatelessWidget {
     );
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
     final fallbackStyle = secondaryStyle.copyWith(fontStyle: FontStyle.italic);
+    final visibleMoments = ProMemoryBoundaryEngine.visibleRecentMoments(
+      moments: detail.savedMoments,
+      isPro: isPro,
+    );
+    final gatedOlderCount = ProMemoryBoundaryEngine.gatedOlderMomentCount(
+      totalMomentCount: detail.savedMoments.length,
+      isPro: isPro,
+    );
 
     return SafeArea(
       child: Padding(
@@ -141,12 +166,34 @@ class PatternDetailSheet extends StatelessWidget {
                   style: labelStyle,
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                for (var i = 0; i < detail.savedMoments.length; i++)
+                for (var i = 0; i < visibleMoments.length; i++)
                   _MomentRow(
-                    moment: detail.savedMoments[i],
+                    moment: visibleMoments[i],
                     index: i,
                     entryCount: entryCount,
                   ),
+                if (gatedOlderCount > 0) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    ProMemoryBoundaryCopy.olderEvidenceTitle,
+                    key: const Key('pattern_detail_older_evidence_title'),
+                    style: labelStyle,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    ProMemoryBoundaryCopy.olderEvidenceBody,
+                    key: const Key('pattern_detail_older_evidence_body'),
+                    style: secondaryStyle,
+                  ),
+                  if (onSeePro != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    ProMemoryUpgradeBridge(
+                      compact: true,
+                      showNotNow: false,
+                      onSeePro: onSeePro!,
+                    ),
+                  ],
+                ],
               ],
               const SizedBox(height: AppSpacing.md),
               Text(
@@ -160,6 +207,13 @@ class PatternDetailSheet extends StatelessWidget {
                 key: const Key('pattern_detail_what_to_watch_body'),
                 style: bodyStyle,
               ),
+              if (shareCard != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                ShareCardActionCard(
+                  model: shareCard!,
+                  source: 'pattern_detail',
+                ),
+              ],
             ],
           ),
         ),

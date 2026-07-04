@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/pro_memory/pro_memory_boundary_copy.dart';
+import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/weekly_review/weekly_archive_review_copy.dart';
 import '../../features/weekly_review/weekly_archive_review_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../archive_paywall/pro_memory_upgrade_bridge.dart';
 
 /// Full weekly archive review in a bottom sheet.
 class WeeklyArchiveReviewSheet extends StatelessWidget {
   const WeeklyArchiveReviewSheet({
     super.key,
     required this.review,
+    this.isPro = true,
+    this.onSeePro,
   });
 
   final WeeklyArchiveReviewResult review;
+  final bool isPro;
+  final VoidCallback? onSeePro;
 
   static Future<void> show(
     BuildContext context, {
     required WeeklyArchiveReviewResult review,
+    bool isPro = true,
+    VoidCallback? onSeePro,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -27,7 +36,11 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
         padding: EdgeInsets.only(
           bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
         ),
-        child: WeeklyArchiveReviewSheet(review: review),
+        child: WeeklyArchiveReviewSheet(
+          review: review,
+          isPro: isPro,
+          onSeePro: onSeePro,
+        ),
       ),
     );
   }
@@ -87,7 +100,11 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                 ),
               ],
               if (review.state == WeeklyArchiveReviewState.full) ...[
-                if (review.whatRepeated case final section?) ...[
+                if (review.whatRepeated case final section?
+                    when ProMemoryBoundaryEngine.includeWeeklyReviewSection(
+                      sectionIndex: 0,
+                      isPro: isPro,
+                    )) ...[
                   const SizedBox(height: AppSpacing.md),
                   _Section(
                     label: section.label,
@@ -109,7 +126,11 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (review.whatChanged case final section?) ...[
+                if (review.whatChanged case final section?
+                    when ProMemoryBoundaryEngine.includeWeeklyReviewSection(
+                      sectionIndex: 1,
+                      isPro: isPro,
+                    )) ...[
                   const SizedBox(height: AppSpacing.sm),
                   _Section(
                     label: section.label,
@@ -121,7 +142,11 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (review.whatHelped case final section?) ...[
+                if (review.whatHelped case final section?
+                    when ProMemoryBoundaryEngine.includeWeeklyReviewSection(
+                      sectionIndex: 2,
+                      isPro: isPro,
+                    )) ...[
                   const SizedBox(height: AppSpacing.sm),
                   _Section(
                     label: section.label,
@@ -133,7 +158,11 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (review.whatToWatchNext case final section?) ...[
+                if (review.whatToWatchNext case final section?
+                    when ProMemoryBoundaryEngine.includeWeeklyReviewSection(
+                      sectionIndex: 3,
+                      isPro: isPro,
+                    )) ...[
                   const SizedBox(height: AppSpacing.sm),
                   _Section(
                     label: section.label,
@@ -143,6 +172,41 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                       key: const Key('weekly_archive_review_watch_body'),
                       style: bodyStyle.copyWith(color: AppColors.textSecondary),
                     ),
+                  ),
+                ],
+                if (ProMemoryBoundaryEngine.showWeeklyReviewPreviewNote(
+                  isPro: isPro,
+                ) &&
+                    ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
+                      review: review,
+                      isPro: isPro,
+                    )) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    ProMemoryBoundaryCopy.weeklyReviewPreviewTitle,
+                    key: const Key('weekly_archive_review_preview_title'),
+                    style: ArchiveMobileTypography.listTitle(context).copyWith(
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    ProMemoryBoundaryCopy.weeklyReviewPreviewBody,
+                    key: const Key('weekly_archive_review_preview_body'),
+                    style: bodyStyle.copyWith(color: AppColors.textSecondary),
+                  ),
+                ],
+                if (!isPro &&
+                    onSeePro != null &&
+                    ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
+                      review: review,
+                      isPro: isPro,
+                    )) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  ProMemoryUpgradeBridge(
+                    compact: true,
+                    showNotNow: false,
+                    onSeePro: onSeePro!,
                   ),
                 ],
               ],

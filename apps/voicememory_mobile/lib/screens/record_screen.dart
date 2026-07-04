@@ -1773,7 +1773,22 @@ class _RecordScreenState extends State<RecordScreen> {
       hasChange: review.whatChanged?.isSupported ?? false,
       hasPositivePattern: review.whatHelped?.isSupported ?? false,
     );
-    unawaited(WeeklyArchiveReviewSheet.show(context, review: review));
+    unawaited(
+      WeeklyArchiveReviewSheet.show(
+        context,
+        review: review,
+        isPro: _recordReturnProIsPro,
+        onSeePro: _recordReturnProIsPro
+            ? null
+            : () => context.push(
+                  '/subscription',
+                  extra: PaywallRouteArgs(
+                    source: PaywallSource.valueMoment,
+                    sourceRoute: '/record',
+                  ),
+                ),
+      ),
+    );
   }
 
   /// Resolves the commercial-loop Pro bridge once.

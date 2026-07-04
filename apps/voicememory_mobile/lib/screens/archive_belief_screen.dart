@@ -56,6 +56,7 @@ import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
+import '../features/share_card/share_card_builder.dart';
 import '../features/entry_importance/entry_importance_store.dart';
 import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
@@ -283,6 +284,7 @@ import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../widgets/patterns/archive_belief_surface_card.dart';
 import '../widgets/patterns/pattern_detail_sheet.dart';
+import '../widgets/share_card/share_card_action_card.dart';
 import '../widgets/patterns/archive_change_timeline_card.dart';
 import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
@@ -1271,7 +1273,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       hasChange: review.whatChanged?.isSupported ?? false,
       hasPositivePattern: review.whatHelped?.isSupported ?? false,
     );
-    unawaited(WeeklyArchiveReviewSheet.show(context, review: review));
+    unawaited(
+      WeeklyArchiveReviewSheet.show(
+        context,
+        review: review,
+        isPro: _archiveIsPro,
+        onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
+      ),
+    );
   }
 
   void _openPatternDetail() {
@@ -1300,11 +1309,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
     );
     if (detail == null) return;
+    final shareCard = ShareCardBuilder.build(
+      entries: _entries,
+      detail: detail,
+      confirmedRepeat: earlyFirstSignal,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+    );
     unawaited(
       PatternDetailSheet.show(
         context,
         detail: detail,
         entryCount: _entries.length,
+        isPro: _archiveIsPro,
+        onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
+        shareCard: shareCard,
       ),
     );
   }
@@ -3923,6 +3941,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         entries: _entries,
         confirmedRepeat: earlyFirstSignal,
       );
+      final shareCardModel = ShareCardBuilder.build(
+        entries: _entries,
+        confirmedRepeat: earlyFirstSignal,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
       final showArchiveCurrentBelief = ArchiveCurrentBeliefGates.shouldShow(
         loaded: true,
         entryCount: _entries.length,
@@ -4246,6 +4269,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                       source: 'patterns',
                       entryCount: _entries.length,
                       onChanged: () => setState(() {}),
+                    ),
+                  ],
+                  if (shareCardModel != null) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    ShareCardActionCard(
+                      model: shareCardModel,
+                      source: 'patterns',
                     ),
                   ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
