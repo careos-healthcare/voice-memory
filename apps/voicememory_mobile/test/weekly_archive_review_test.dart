@@ -26,6 +26,15 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive/weekly_archive_review_card.dart';
 import 'package:voicememory_mobile/widgets/record/weekly_archive_review_card.dart'
     as week_v1;
+import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_copy.dart'
+    as reviewSurfaceCopy;
+import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_engine.dart'
+    as reviewSurface;
+import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_model.dart';
+import 'package:voicememory_mobile/widgets/weekly_review/weekly_archive_review_card.dart'
+    as reviewSurfaceWidget;
+import 'package:voicememory_mobile/widgets/weekly_review/weekly_archive_review_sheet.dart'
+    as reviewSurfaceWidget;
 
 JournalEntry _voiceEntry({
   required String id,
@@ -808,16 +817,16 @@ void main() {
         final summaryIndex = src.indexOf('ArchiveSummaryCard');
         final dailyIndex = src.indexOf('DailyReturnReasonCard');
         final weeklyIndex =
-            src.indexOf('week_review.WeeklyArchiveWeekReviewCard');
+            src.indexOf('weeklyReviewSurface.WeeklyArchiveReviewCard');
         expect(summaryIndex, greaterThan(-1));
         expect(dailyIndex, greaterThan(summaryIndex));
         expect(weeklyIndex, greaterThan(dailyIndex));
       });
 
-      test('Record screen gates weekly CTA away from primary capture', () {
+      test('Record screen gates weekly review away from primary capture', () {
         final src = File('lib/screens/record_screen.dart').readAsStringSync();
-        expect(src, contains('showWeeklyArchiveWeekReviewRecordCta'));
-        expect(src, contains('WeeklyArchiveWeekReviewGates.showRecordCta'));
+        expect(src, contains('showWeeklyArchiveWeekReview'));
+        expect(src, contains('weeklyReviewSurface.WeeklyArchiveReviewCard'));
       });
     });
 
@@ -832,6 +841,345 @@ void main() {
           'lib/widgets/record/weekly_archive_review_card.dart',
         ];
         for (final path in v1Paths) {
+          final content = File(path).readAsStringSync().toLowerCase();
+          expect(content, isNot(contains('revenuecat')));
+          expect(content, isNot(contains('restorepurchase')));
+          expect(content, isNot(contains('billing/')));
+        }
+      });
+    });
+  });
+
+  group('WeeklyArchiveReviewSurface v1', () {
+    const genericTestOne = 'This is a test to check function';
+    const genericTestTwo = 'This is a second test for pressure';
+
+    JournalEntry surfaceEntry({
+      required String id,
+      required String transcript,
+      DateTime? createdAt,
+    }) =>
+        JournalEntry(
+          id: id,
+          createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+          transcript: transcript,
+          durationSeconds: 30,
+          localAudioPath: '/tmp/$id.m4a',
+          reflection: const Reflection(
+            mood: 'neutral',
+            emotionalIntensity: 2,
+            recurringThemes: ['work'],
+            exactLanguagePattern: '',
+            concreteObservation: 'Work pressure showed up in this moment.',
+            repeatedSignal: '',
+          ),
+        );
+
+    List<JournalEntry> threeDistinctUnrelatedEntries() => [
+          surfaceEntry(
+            id: 'u1',
+            transcript:
+                'I stayed late finishing a report for my manager at work.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          surfaceEntry(
+            id: 'u2',
+            transcript: 'My neighbor was loud during my morning call at home.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          surfaceEntry(
+            id: 'u3',
+            transcript: 'I forgot to buy groceries on the way home tonight.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+        ];
+
+    List<JournalEntry> fiveSaidYesEntries() => [
+          surfaceEntry(
+            id: 'e1',
+            transcript:
+                'I had no capacity but I said yes again to the extra meeting today.',
+            createdAt: DateTime(2026, 6, 10, 12),
+          ),
+          surfaceEntry(
+            id: 'e2',
+            transcript:
+                'Same thing — said yes when I had no capacity for one more thing.',
+            createdAt: DateTime(2026, 6, 11, 12),
+          ),
+          surfaceEntry(
+            id: 'e3',
+            transcript:
+                'I said yes again even though I had no capacity for one more ask.',
+            createdAt: DateTime(2026, 6, 12, 12),
+          ),
+          surfaceEntry(
+            id: 'e4',
+            transcript:
+                'I said yes again even though I had no capacity for one more ask today.',
+            createdAt: DateTime(2026, 6, 13, 12),
+          ),
+          surfaceEntry(
+            id: 'e5',
+            transcript:
+                'Same yes pattern came back but it felt less urgent and easier to stop this time.',
+            createdAt: DateTime(2026, 6, 14, 12),
+          ),
+        ];
+
+    void expectNoDebugLabels(Iterable<String> copy) {
+      final joined = copy.join(' ').toLowerCase();
+      expect(joined, isNot(contains('[draft]')));
+      expect(joined, isNot(contains('transcribe when connected')));
+      expect(joined, isNot(contains('entry_id')));
+      expect(joined, isNot(contains('debug')));
+      _expectNoBannedCopy(copy);
+    }
+
+    group('gates', () {
+      test('does not show with zero entries', () {
+        expect(reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: []), isFalse);
+        expect(reviewSurface.WeeklyArchiveReviewEngine.build(entries: []), isNull);
+      });
+
+      test('does not show with generic test entries only', () {
+        final entries = [
+          surfaceEntry(id: 'g1', transcript: genericTestOne),
+          surfaceEntry(id: 'g2', transcript: genericTestTwo),
+        ];
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: entries),
+          isFalse,
+        );
+      });
+
+      test('does not show with quiet-day entries only', () {
+        final entries = [
+          surfaceEntry(id: 'q1', transcript: 'Nothing much today.'),
+          surfaceEntry(id: 'q2', transcript: 'Nothing much today.'),
+        ];
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: entries),
+          isFalse,
+        );
+      });
+
+      test('does not show with pending transcript entries only', () {
+        final entries = [_degradedVoiceEntry(), _degradedVoiceEntry(id: 'v2')];
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: entries),
+          isFalse,
+        );
+      });
+    });
+
+    group('states', () {
+      test('shows week still forming when low evidence but real entries exist', () {
+        final entries = threeDistinctUnrelatedEntries();
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: entries),
+          isTrue,
+        );
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+        );
+        expect(review, isNotNull);
+        expect(review!.state, WeeklyArchiveReviewState.forming);
+        expect(review.title, reviewSurfaceCopy.WeeklyArchiveReviewCopy.formingTitle);
+        expect(review.formingBody, reviewSurfaceCopy.WeeklyArchiveReviewCopy.formingBody);
+      });
+
+      test('shows full weekly review after five real entries', () {
+        final entries = fiveSaidYesEntries();
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(review, isNotNull);
+        expect(review!.state, WeeklyArchiveReviewState.full);
+        expect(review.title, reviewSurfaceCopy.WeeklyArchiveReviewCopy.title);
+        expect(review.subtitle, reviewSurfaceCopy.WeeklyArchiveReviewCopy.subtitle);
+      });
+
+      test('shows full weekly review after first proof and later return', () {
+        final entries = fiveSaidYesEntries().sublist(0, 4);
+        final returnChecks = [
+          RepeatReturnCheckRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+            entryCountAtCapture: 4,
+            createdAt: DateTime(2026, 6, 14),
+          ),
+        ];
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(
+            entries: entries,
+            returnChecks: returnChecks,
+          ),
+          isTrue,
+        );
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+          returnChecks: returnChecks,
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(review, isNotNull);
+        expect(review!.state, WeeklyArchiveReviewState.full);
+      });
+    });
+
+    group('sections', () {
+      test('what repeated uses grounded phrase only', () {
+        final entries = fiveSaidYesEntries();
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(review!.whatRepeated?.isSupported, isTrue);
+        expect(
+          review.whatRepeated!.body,
+          contains('appeared across several moments'),
+        );
+        expect(review.whatRepeated!.body.toLowerCase(), contains('said yes'));
+        for (final phrase in review.whatRepeated!.evidencePhrases) {
+          expect(
+            phrase.toLowerCase(),
+            isNot(anyOf('control', 'anxiety', 'stress')),
+          );
+        }
+      });
+
+      test('what changed appears only when change evidence supports it', () {
+        final entries = fiveSaidYesEntries().sublist(0, 4);
+        final withoutChange = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+        );
+        expect(withoutChange!.whatChanged?.isSupported, isFalse);
+        expect(
+          withoutChange.whatChanged?.body,
+          reviewSurfaceCopy.WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+        );
+
+        final withChange = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+          changeProof: RepeatReturnCheckChangeProof(
+            title: RepeatReturnCheckCopy.changeProofTitle,
+            body: RepeatReturnCheckCopy.trendSofterThanBefore,
+            latestChoice: RepeatReturnCheckChoice.softer,
+          ),
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(withChange!.whatChanged?.isSupported, isTrue);
+        expect(withChange.whatChanged!.body, isNotEmpty);
+      });
+
+      test('what seemed to help says not enough evidence when unsupported', () {
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: fiveSaidYesEntries(),
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(review!.whatHelped?.isSupported, isFalse);
+        expect(
+          review.whatHelped?.body,
+          reviewSurfaceCopy.WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+        );
+      });
+    });
+
+    group('copy safety', () {
+      test('no raw placeholders or debug labels', () {
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: fiveSaidYesEntries(),
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expectNoDebugLabels([
+          review!.title,
+          if (review.subtitle != null) review.subtitle!,
+          if (review.whatRepeated != null) review.whatRepeated!.body,
+          if (review.whatChanged != null) review.whatChanged!.body,
+          if (review.whatHelped != null) review.whatHelped!.body,
+          if (review.whatToWatchNext != null) review.whatToWatchNext!.body,
+        ]);
+      });
+    });
+
+    group('widgets', () {
+      testWidgets('compact card uses view weekly review CTA', (tester) async {
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: fiveSaidYesEntries(),
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: reviewSurfaceWidget.WeeklyArchiveReviewCard(
+                review: review!,
+                onViewReview: () {},
+              ),
+            ),
+          ),
+        );
+
+        expect(find.byKey(const Key('weekly_archive_review_card')), findsOneWidget);
+        expect(
+          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.viewWeeklyReviewCta),
+          findsOneWidget,
+        );
+        expect(
+          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.title),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('sheet renders full sections', (tester) async {
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: fiveSaidYesEntries(),
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+
+        await tester.binding.setSurfaceSize(const Size(390, 900));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: reviewSurfaceWidget.WeeklyArchiveReviewSheet(review: review!),
+            ),
+          ),
+        );
+
+        expect(find.byKey(const Key('weekly_archive_review_sheet')), findsOneWidget);
+        expect(
+          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatRepeatedLabel),
+          findsOneWidget,
+        );
+        expect(
+          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatChangedLabel),
+          findsOneWidget,
+        );
+        expect(
+          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatHelpedLabel),
+          findsOneWidget,
+        );
+        expect(
+          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatToWatchLabel),
+          findsOneWidget,
+        );
+      });
+    });
+
+    group('billing untouched', () {
+      test('surface files do not touch billing RevenueCat or restore', () {
+        const surfacePaths = [
+          'lib/features/weekly_review/weekly_archive_review_copy.dart',
+          'lib/features/weekly_review/weekly_archive_review_model.dart',
+          'lib/features/weekly_review/weekly_archive_review_engine.dart',
+          'lib/widgets/weekly_review/weekly_archive_review_card.dart',
+          'lib/widgets/weekly_review/weekly_archive_review_sheet.dart',
+        ];
+        for (final path in surfacePaths) {
           final content = File(path).readAsStringSync().toLowerCase();
           expect(content, isNot(contains('revenuecat')));
           expect(content, isNot(contains('restorepurchase')));

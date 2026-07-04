@@ -47,9 +47,12 @@ import '../features/early_archive/daily_return_reason_engine.dart';
 import '../features/early_archive/daily_return_reason_gates.dart';
 import '../features/early_archive/daily_return_reason_model.dart';
 import '../features/early_archive/weekly_archive_review_analytics.dart';
-import '../features/early_archive/weekly_archive_review_engine.dart';
-import '../features/early_archive/weekly_archive_review_gates.dart';
-import '../features/early_archive/weekly_archive_review_model.dart';
+import '../features/weekly_review/weekly_archive_review_engine.dart'
+    as weeklyReviewSurface;
+import '../features/weekly_review/weekly_archive_review_model.dart';
+import '../widgets/weekly_review/weekly_archive_review_card.dart'
+    as weeklyReviewSurface;
+import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/onboarding/record_return_pro_store.dart';
@@ -336,7 +339,6 @@ import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
 import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/daily_return_reason_card.dart';
-import '../widgets/record/weekly_archive_review_card.dart' as week_review;
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/early_archive_return_reminder_card.dart';
 import '../widgets/record/early_evidence_timeline_card.dart';
@@ -1253,20 +1255,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
   }
 
-  void _handleWeeklyArchiveWeekReview(WeeklyArchiveWeekReviewResult review) {
+  void _openWeeklyArchiveReview(WeeklyArchiveReviewResult review) {
     WeeklyArchiveWeekReviewAnalytics.recordTapped(
       surface: 'patterns',
       entryCount: _entries.length,
-      hasRepeat: review.hasRepeat,
-      hasChange: review.hasChange,
-      hasPositivePattern: review.hasPositivePattern,
+      hasRepeat: review.whatRepeated?.isSupported ?? false,
+      hasChange: review.whatChanged?.isSupported ?? false,
+      hasPositivePattern: review.whatHelped?.isSupported ?? false,
     );
-    context.go(
-      EarlyFirstSignalRecordRoutes.routeWithPrompt(
-        prompt: review.guidedRecordPrompt,
-        autostart: true,
-      ),
-    );
+    unawaited(WeeklyArchiveReviewSheet.show(context, review: review));
   }
 
   void _handlePositiveReinforcementRecordAgain(
@@ -3916,11 +3913,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         hasSummary: archiveSummaryCandidate != null,
       );
       final weeklyArchiveReviewVisibleForProGate =
-          WeeklyArchiveWeekReviewGates.shouldShow(
+          weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShowOnSurface(
         loaded: true,
-        entryCount: _entries.length,
         isReady: true,
         isRecording: false,
+        isPostSave: false,
         entries: _entries,
         returnChecks: RepeatReturnCheckStore.cached,
       );
@@ -4073,7 +4070,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           )
           ? archiveWatchingCandidate
           : null;
-      final weeklyArchiveWeekReview = WeeklyArchiveWeekReviewEngine.build(
+      final weeklyArchiveReviewSurface =
+          weeklyReviewSurface.WeeklyArchiveReviewEngine.build(
         entries: _entries,
         confirmedRepeat: earlyFirstSignal,
         changeProof: repeatReturnChangeProof,
@@ -4082,11 +4080,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
-      final showWeeklyArchiveWeekReview = WeeklyArchiveWeekReviewGates.shouldShow(
+      final showWeeklyArchiveReview =
+          weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShowOnSurface(
         loaded: true,
-        entryCount: _entries.length,
         isReady: true,
         isRecording: false,
+        isPostSave: false,
         entries: _entries,
         returnChecks: RepeatReturnCheckStore.cached,
       );
@@ -4305,13 +4304,12 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (showWeeklyArchiveWeekReview &&
-                    weeklyArchiveWeekReview != null) ...[
-                  week_review.WeeklyArchiveWeekReviewCard(
-                    review: weeklyArchiveWeekReview,
-                    showRecordCta: true,
-                    onRecord: () => _handleWeeklyArchiveWeekReview(
-                      weeklyArchiveWeekReview,
+                if (showWeeklyArchiveReview &&
+                    weeklyArchiveReviewSurface != null) ...[
+                  weeklyReviewSurface.WeeklyArchiveReviewCard(
+                    review: weeklyArchiveReviewSurface,
+                    onViewReview: () => _openWeeklyArchiveReview(
+                      weeklyArchiveReviewSurface,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),

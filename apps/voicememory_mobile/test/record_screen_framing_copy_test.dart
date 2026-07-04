@@ -2100,7 +2100,7 @@ void main() {
       );
       expect(find.text(ConfirmedRepeatThoughtMapCopy.title), findsNothing);
       expect(
-        find.byKey(const Key('weekly_archive_week_review_card')),
+        find.byKey(const Key('weekly_archive_review_card')),
         findsNothing,
       );
       expect(find.text(WeeklyArchiveWeekReviewCopy.title), findsNothing);
@@ -2145,7 +2145,7 @@ void main() {
         find.byKey(const Key('repeat_return_check_change_proof_card')),
         find.byKey(const Key('confirmed_repeat_thought_map_card')),
         find.byKey(const Key('positive_reinforcement_card')),
-        find.byKey(const Key('weekly_archive_week_review_card')),
+        find.byKey(const Key('weekly_archive_review_card')),
         find.byKey(const Key('private_archive_report_card')),
         find.byKey(const Key('archive_change_timeline_card')),
         find.byKey(const Key('early_evidence_timeline_card')),

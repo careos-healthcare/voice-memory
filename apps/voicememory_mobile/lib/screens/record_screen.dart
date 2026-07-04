@@ -208,7 +208,12 @@ import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/record/positive_reinforcement_card.dart';
 import '../widgets/record/archive_summary_card.dart';
 import '../widgets/record/daily_return_reason_card.dart';
-import '../widgets/record/weekly_archive_review_card.dart' as week_review;
+import '../features/weekly_review/weekly_archive_review_engine.dart'
+    as weeklyReviewSurface;
+import '../features/weekly_review/weekly_archive_review_model.dart';
+import '../widgets/weekly_review/weekly_archive_review_card.dart'
+    as weeklyReviewSurface;
+import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
@@ -273,9 +278,6 @@ import '../features/early_archive/daily_return_reason_engine.dart';
 import '../features/early_archive/daily_return_reason_gates.dart';
 import '../features/early_archive/daily_return_reason_model.dart';
 import '../features/early_archive/weekly_archive_review_analytics.dart';
-import '../features/early_archive/weekly_archive_review_engine.dart';
-import '../features/early_archive/weekly_archive_review_gates.dart';
-import '../features/early_archive/weekly_archive_review_model.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/record/record_empty_archive_gates.dart';
 import '../features/return_ritual/return_ritual_gates.dart';
@@ -1726,16 +1728,15 @@ class _RecordScreenState extends State<RecordScreen> {
     unawaited(_onRecordPressed(source: 'daily_return_reason'));
   }
 
-  void _handleWeeklyArchiveWeekReview(WeeklyArchiveWeekReviewResult review) {
+  void _openWeeklyArchiveReview(WeeklyArchiveReviewResult review) {
     WeeklyArchiveWeekReviewAnalytics.recordTapped(
       surface: 'record',
       entryCount: _journalEntryCount,
-      hasRepeat: review.hasRepeat,
-      hasChange: review.hasChange,
-      hasPositivePattern: review.hasPositivePattern,
+      hasRepeat: review.whatRepeated?.isSupported ?? false,
+      hasChange: review.whatChanged?.isSupported ?? false,
+      hasPositivePattern: review.whatHelped?.isSupported ?? false,
     );
-    setState(() => _selectedPromptLine = review.guidedRecordPrompt);
-    unawaited(_onRecordPressed(source: 'weekly_archive_review'));
+    unawaited(WeeklyArchiveReviewSheet.show(context, review: review));
   }
 
   /// Resolves the commercial-loop Pro bridge once.
@@ -3956,11 +3957,11 @@ class _RecordScreenState extends State<RecordScreen> {
     final weeklyArchiveReviewVisibleForProGate = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
-        WeeklyArchiveWeekReviewGates.shouldShow(
+        weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShowOnSurface(
           loaded: _journalEntryCountReady,
-          entryCount: _journalEntryCount,
           isReady: ui == RecordUiState.ready,
           isRecording: ui == RecordUiState.recording,
+          isPostSave: _isPostSaveSurface,
           entries: _journalEntries,
           returnChecks: RepeatReturnCheckStore.cached,
         );
@@ -4107,10 +4108,10 @@ class _RecordScreenState extends State<RecordScreen> {
         )
         ? archiveWatchingCandidate
         : null;
-    final weeklyArchiveWeekReview = ui == RecordUiState.ready &&
+    final weeklyArchiveReview = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
-        ? WeeklyArchiveWeekReviewEngine.build(
+        ? weeklyReviewSurface.WeeklyArchiveReviewEngine.build(
             entries: _journalEntries,
             confirmedRepeat: earlyFirstSignalOnRecord,
             changeProof: repeatReturnChangeProof,
@@ -4120,11 +4121,12 @@ class _RecordScreenState extends State<RecordScreen> {
             viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
           )
         : null;
-    final showWeeklyArchiveWeekReview = WeeklyArchiveWeekReviewGates.shouldShow(
+    final showWeeklyArchiveReview =
+        weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShowOnSurface(
       loaded: _journalEntryCountReady,
-      entryCount: _journalEntryCount,
       isReady: ui == RecordUiState.ready,
       isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
       entries: _journalEntries,
       returnChecks: RepeatReturnCheckStore.cached,
     );
@@ -4192,7 +4194,7 @@ class _RecordScreenState extends State<RecordScreen> {
         dismissed: patternChangedDismissed,
       ),
       dailyReturnReasonEligible: showDailyReturnReason,
-      weeklyReviewEligible: showWeeklyArchiveWeekReview,
+      weeklyReviewEligible: showWeeklyArchiveReview,
       privateReportEligible: showPrivateArchiveReport,
       whyMattersEligible: showConfirmedRepeatWhyMatters,
       thoughtMapEligible: showConfirmedRepeatThoughtMap,
@@ -4209,7 +4211,7 @@ class _RecordScreenState extends State<RecordScreen> {
         recordProofStack.showArchiveCurrentBelief;
     final showEarlyEvidenceTimelineOnRecord =
         recordProofStack.showEarlyEvidenceTimeline;
-    final showWeeklyArchiveWeekReviewOnRecord =
+    final showWeeklyArchiveReviewOnRecord =
         recordProofStack.showWeeklyArchiveWeekReview;
     final showPrivateArchiveReportOnRecord =
         recordProofStack.showPrivateArchiveReport;
@@ -4392,11 +4394,6 @@ class _RecordScreenState extends State<RecordScreen> {
             analysisSucceeded: lastCaptureAnalysisSucceeded,
           )
         : null;
-    final weeklyArchiveReview = ui == RecordUiState.done &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? WeeklyArchiveReviewEngine.build(entries: entriesAfterSave)
-        : null;
     final journalShareProof = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
         ? const ShareableArchiveProofEngine().buildFromJournal(
@@ -4560,14 +4557,6 @@ class _RecordScreenState extends State<RecordScreen> {
     final showFirstWeekLoopRecordCta = showFirstWeekLoopOnRecord &&
         firstWeekLoopCandidate != null &&
         FirstWeekLoopGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
-          promoteMicCaptureActions:
-              _shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showWeeklyArchiveWeekReviewRecordCta =
-        showWeeklyArchiveWeekReviewOnRecord &&
-        WeeklyArchiveWeekReviewGates.showRecordCta(
           policy: readyCapturePolicy,
           hideCardRecordButtons: _shouldHideCardRecordButtons(ui),
           promoteMicCaptureActions:
@@ -4945,13 +4934,12 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showWeeklyArchiveWeekReviewOnRecord &&
-                        weeklyArchiveWeekReview != null) ...[
-                      week_review.WeeklyArchiveWeekReviewCard(
-                        review: weeklyArchiveWeekReview,
-                        showRecordCta: showWeeklyArchiveWeekReviewRecordCta,
-                        onRecord: () => _handleWeeklyArchiveWeekReview(
-                          weeklyArchiveWeekReview,
+                    if (showWeeklyArchiveReviewOnRecord &&
+                        weeklyArchiveReview != null) ...[
+                      weeklyReviewSurface.WeeklyArchiveReviewCard(
+                        review: weeklyArchiveReview,
+                        onViewReview: () => _openWeeklyArchiveReview(
+                          weeklyArchiveReview,
                         ),
                       ),
                       const SizedBox(height: 12),
