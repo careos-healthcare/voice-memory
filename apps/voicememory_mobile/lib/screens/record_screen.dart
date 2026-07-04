@@ -190,6 +190,7 @@ import '../features/record_capture_modes/record_capture_mode_engine.dart';
 import '../features/record_capture_modes/record_capture_mode_model.dart';
 import '../widgets/record/navigate_to_capture_mode.dart';
 import '../widgets/record/record_capture_modes_card.dart';
+import '../widgets/record/first_session_onboarding_card.dart';
 import '../widgets/record/correct_transcript_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../features/transcript_correction/transcript_correction_copy.dart';
@@ -413,6 +414,7 @@ import '../widgets/record/record_top_archive_promise_hero.dart';
 import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
 import '../features/onboarding/archive_journey_explainer_gates.dart';
+import '../features/onboarding/first_session_onboarding_store.dart';
 import '../features/onboarding/record_return_pro_state.dart';
 import '../features/onboarding/record_return_pro_store.dart';
 import '../features/memory/memory_scope.dart';
@@ -689,6 +691,11 @@ class _RecordScreenState extends State<RecordScreen> {
     _loadRecordReturnProState();
     unawaited(
       ConfirmedRepeatBetaFeedbackStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      FirstSessionOnboardingStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4607,6 +4614,15 @@ class _RecordScreenState extends State<RecordScreen> {
         );
 
     final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final showFirstSessionOnboarding = showFraming &&
+        ui == RecordUiState.ready &&
+        _journalEntryCountReady &&
+        FirstSessionOnboardingStore.shouldShow(
+          loaded: _journalEntryCountReady,
+          entryCount: _journalEntryCount,
+          isReady: ui == RecordUiState.ready,
+          isPostSave: _isPostSaveSurface,
+        );
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
     return ColoredBox(
       color: AppColors.backgroundPrimary,
@@ -4640,7 +4656,14 @@ class _RecordScreenState extends State<RecordScreen> {
                         width: 0,
                         height: 0,
                       ),
-                    if (showFraming &&
+                    if (showFirstSessionOnboarding) ...[
+                      FirstSessionOnboardingCard(
+                        onStartMoment: () =>
+                            unawaited(_onRecordPressed(source: 'main')),
+                        onExploreFirst: () => unawaited(_dismissFirstSessionOnboarding()),
+                      ),
+                      const SizedBox(height: 16),
+                    ] else if (showFraming &&
                         ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         _journalEntryCount == 0) ...[
@@ -6682,6 +6705,11 @@ class _RecordScreenState extends State<RecordScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _dismissFirstSessionOnboarding() async {
+    await FirstSessionOnboardingStore.instance().markDismissed();
+    if (mounted) setState(() {});
   }
 
   void _resetPostSaveToReady() {

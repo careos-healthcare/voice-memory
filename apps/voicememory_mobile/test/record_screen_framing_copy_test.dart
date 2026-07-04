@@ -41,6 +41,9 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/archive_journey_copy.dart';
+import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
+import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
+import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/design/empty_archive_experience.dart';
@@ -51,7 +54,8 @@ import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_return_reminder_copy.dart';
-import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
+import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -282,6 +286,7 @@ void main() {
         journalPath: '${tempDir.path}/journal.json',
         skipRevenueCat: true,
       );
+      await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
@@ -351,15 +356,15 @@ void main() {
       );
     });
 
-    testWidgets('entry count 0 shows three-step promise not generic framing', (
+    testWidgets('entry count 0 shows first-session onboarding not generic framing', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsOneWidget);
-      for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
-        expect(find.text(step), findsOneWidget);
-      }
+      expect(find.byKey(const Key('first_session_onboarding_card')), findsOneWidget);
+      expect(find.text(FirstSessionOnboardingCopy.title), findsOneWidget);
+      expect(find.textContaining(FirstSessionOnboardingCopy.step1Title), findsOneWidget);
+      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
       expect(find.text(RecordScreenFramingCopy.title), findsNothing);
       expect(find.text(RecordScreenFramingCopy.guidance), findsNothing);
       expect(find.text(RecordScreenFramingCopy.emptyArchiveTitle), findsNothing);
@@ -716,6 +721,7 @@ void main() {
       await AppServices.resetForTest(
         journalPath: '${tempDir.path}/journal.json',
       );
+      await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
@@ -806,7 +812,7 @@ void main() {
       await pumpRecordScreen(tester);
 
       expect(
-        find.byKey(const Key('record_top_archive_promise_hero')),
+        find.byKey(const Key('first_session_onboarding_card')),
         findsOneWidget,
       );
       expect(find.byKey(const Key('record_first_use_capture_section')), findsOneWidget);
