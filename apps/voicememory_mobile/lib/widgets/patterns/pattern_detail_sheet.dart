@@ -5,19 +5,23 @@ import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../record/entry_importance_button.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatelessWidget {
   const PatternDetailSheet({
     super.key,
     required this.detail,
+    this.entryCount = 0,
   });
 
   final PatternDetailResult detail;
+  final int entryCount;
 
   static Future<void> show(
     BuildContext context, {
     required PatternDetailResult detail,
+    int entryCount = 0,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -27,7 +31,10 @@ class PatternDetailSheet extends StatelessWidget {
         padding: EdgeInsets.only(
           bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
         ),
-        child: PatternDetailSheet(detail: detail),
+        child: PatternDetailSheet(
+          detail: detail,
+          entryCount: entryCount,
+        ),
       ),
     );
   }
@@ -138,6 +145,7 @@ class PatternDetailSheet extends StatelessWidget {
                   _MomentRow(
                     moment: detail.savedMoments[i],
                     index: i,
+                    entryCount: entryCount,
                   ),
               ],
               const SizedBox(height: AppSpacing.md),
@@ -160,14 +168,24 @@ class PatternDetailSheet extends StatelessWidget {
   }
 }
 
-class _MomentRow extends StatelessWidget {
+class _MomentRow extends StatefulWidget {
   const _MomentRow({
     required this.moment,
     required this.index,
+    required this.entryCount,
   });
 
   final PatternDetailMoment moment;
   final int index;
+  final int entryCount;
+
+  @override
+  State<_MomentRow> createState() => _MomentRowState();
+}
+
+class _MomentRowState extends State<_MomentRow> {
+  PatternDetailMoment get moment => widget.moment;
+  int get index => widget.index;
 
   @override
   Widget build(BuildContext context) {
@@ -225,6 +243,14 @@ class _MomentRow extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: previewStyle,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          EntryImportanceButton(
+            entryId: moment.entryId,
+            source: 'pattern_detail_sheet',
+            entryCount: widget.entryCount,
+            compact: true,
+            onChanged: () => setState(() {}),
           ),
         ],
       ),

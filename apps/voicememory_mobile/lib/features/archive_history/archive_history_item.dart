@@ -17,6 +17,7 @@ class ArchiveHistoryItem {
     this.evidenceNote,
     this.helpedNote,
     this.isQuietDay = false,
+    this.isImportant = false,
     this.showAddWordsCta = false,
     this.showCorrectTranscriptCta = false,
   });
@@ -28,6 +29,7 @@ class ArchiveHistoryItem {
   final String? evidenceNote;
   final String? helpedNote;
   final bool isQuietDay;
+  final bool isImportant;
   final bool showAddWordsCta;
   final bool showCorrectTranscriptCta;
 }

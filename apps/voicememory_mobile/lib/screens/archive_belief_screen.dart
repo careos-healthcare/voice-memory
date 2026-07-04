@@ -56,6 +56,7 @@ import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
+import '../features/entry_importance/entry_importance_store.dart';
 import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
@@ -649,6 +650,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ConfirmedRepeatWhyMattersStore.ensureLoaded();
     await ConfirmedRepeatThoughtMapStore.ensureLoaded();
     await RepeatReturnCheckStore.ensureLoaded();
+    await EntryImportanceStore.ensureLoaded();
     await PatternChangedStore.ensureLoaded();
     await ReviewRitualStore.ensureLoaded();
     await CapacityCostStore.ensureLoaded();
@@ -1298,7 +1300,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
     );
     if (detail == null) return;
-    unawaited(PatternDetailSheet.show(context, detail: detail));
+    unawaited(
+      PatternDetailSheet.show(
+        context,
+        detail: detail,
+        entryCount: _entries.length,
+      ),
+    );
   }
 
   void _handlePositiveReinforcementRecordAgain(

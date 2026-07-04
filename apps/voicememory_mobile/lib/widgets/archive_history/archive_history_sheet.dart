@@ -13,6 +13,7 @@ import '../../services/app_services.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../record/correct_transcript_sheet.dart';
+import '../record/entry_importance_button.dart';
 import '../record/pending_transcript_recovery_sheet.dart';
 
 /// Bottom sheet listing saved moments with trust/status chips.
@@ -172,7 +173,7 @@ class _ArchiveHistoryFilterChips extends StatelessWidget {
   }
 }
 
-class _ArchiveHistoryRow extends StatelessWidget {
+class _ArchiveHistoryRow extends StatefulWidget {
   const _ArchiveHistoryRow({
     required this.item,
     required this.entryCount,
@@ -180,6 +181,14 @@ class _ArchiveHistoryRow extends StatelessWidget {
 
   final ArchiveHistoryItem item;
   final int entryCount;
+
+  @override
+  State<_ArchiveHistoryRow> createState() => _ArchiveHistoryRowState();
+}
+
+class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
+  ArchiveHistoryItem get item => widget.item;
+  int get entryCount => widget.entryCount;
 
   String get _statusKey => switch (item.status) {
         ArchiveHistoryStatus.usedAsEvidence => 'used_as_evidence',
@@ -313,6 +322,14 @@ class _ArchiveHistoryRow extends StatelessWidget {
             ),
           ),
         ],
+        const SizedBox(height: AppSpacing.xs),
+        EntryImportanceButton(
+          entryId: item.entryId,
+          source: 'archive_history_sheet',
+          entryCount: entryCount,
+          compact: true,
+          onChanged: () => setState(() {}),
+        ),
       ],
     );
   }

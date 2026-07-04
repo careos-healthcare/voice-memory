@@ -220,6 +220,7 @@ import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/helped_tracking/helped_tracking_engine.dart';
 import '../features/helped_tracking/helped_tracking_store.dart';
+import '../features/entry_importance/entry_importance_store.dart';
 import '../widgets/record/helped_tracking_card.dart';
 import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
@@ -739,6 +740,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       HelpedTrackingStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      EntryImportanceStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );

@@ -16,6 +16,7 @@ import '../../features/transcript_correction/transcript_correction_gate.dart';
 import '../../features/voice_capture/voice_capture_copy.dart';
 import '../../widgets/record/pending_transcript_recovery_prompt.dart';
 import '../../models/journal_entry.dart';
+import '../../widgets/record/entry_importance_button.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
@@ -279,6 +280,12 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               style: footnoteStyle,
             ),
           ],
+          const SizedBox(height: AppSpacing.sm),
+          EntryImportanceButton(
+            entryId: entry.id,
+            source: 'post_save_summary',
+            entryCount: _entries.length,
+          ),
         ],
       ),
     );

@@ -3,6 +3,8 @@ import '../features/insight_feedback/insight_feedback_store.dart';
 import '../features/review_ritual/view_ritual_store.dart';
 import '../features/activation/archive_workspace_hint_store.dart';
 import '../features/helped_tracking/helped_tracking_store.dart';
+import '../features/helped_tracking/helped_tracking_store.dart';
+import '../features/entry_importance/entry_importance_store.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/what_changed/what_changed_v2_store.dart';
 import '../services/app_services.dart';
@@ -26,6 +28,7 @@ class LocalPrivacyDataControls {
     await _privateDataService.clearLocalArchiveData();
     await PatternNameStore.clearAll();
     await HelpedTrackingStore.clearAll();
+    await EntryImportanceStore.clearAll();
     await WhatChangedV2Store.clearAll();
     await ArchiveInsightFeedbackStore.clearAll();
     await InsightFeedbackStore.clearAll();

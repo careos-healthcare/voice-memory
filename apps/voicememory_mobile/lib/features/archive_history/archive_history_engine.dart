@@ -7,6 +7,8 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../transcript_correction/transcript_correction_gate.dart';
 import '../trust/pending_transcript_recovery_gate.dart';
+import '../entry_importance/entry_importance_engine.dart';
+import '../entry_importance/entry_importance_store.dart';
 import '../helped_tracking/helped_tracking_engine.dart';
 import '../record_capture_modes/record_capture_mode_engine.dart';
 import '../voice_capture/voice_capture_quality.dart';
@@ -31,13 +33,13 @@ abstract final class ArchiveHistoryEngine {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     final evidenceIds = _evidenceEntryIds(sorted);
 
-    final items = [
+    final items = EntryImportanceEngine.prioritizeHistoryItems([
       for (final entry in sorted)
         _buildItem(
           entry: entry,
           evidenceIds: evidenceIds,
         ),
-    ];
+    ]);
 
     return ArchiveHistoryContent(items: items, isEmpty: false);
   }
@@ -57,6 +59,7 @@ abstract final class ArchiveHistoryEngine {
       evidenceNote: _evidenceNote(status),
       helpedNote: HelpedTrackingEngine.archiveHistoryNoteForEntry(entry.id),
       isQuietDay: RecordCaptureModeEngine.entryIsQuietDay(entry),
+      isImportant: EntryImportanceStore.isImportant(entry.id),
       showAddWordsCta: needsAddWords,
       showCorrectTranscriptCta: !needsAddWords &&
           TranscriptCorrectionGate.entryAllowsCorrection(entry),

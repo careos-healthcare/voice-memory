@@ -9,6 +9,8 @@ import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import '../early_archive/daily_return_reason_engine.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../early_archive/positive_pattern_engine.dart';
+import '../entry_importance/entry_importance_engine.dart';
+import '../entry_importance/entry_importance_store.dart';
 import '../helped_tracking/helped_tracking_engine.dart';
 import '../pattern_naming/pattern_name_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
@@ -89,9 +91,11 @@ abstract final class PatternDetailEngine {
       whatHelpedBody: helped.body,
       whatHelpedSupported: helped.isSupported,
       whatToWatchNextBody: watchNext,
-      savedMoments: _savedMoments(
-        entries: entries,
-        groundedPhrases: grounded,
+      savedMoments: EntryImportanceEngine.prioritizePatternMoments(
+        _savedMoments(
+          entries: entries,
+          groundedPhrases: grounded,
+        ),
       ),
     );
   }
@@ -258,10 +262,12 @@ abstract final class PatternDetailEngine {
 
       moments.add(
         PatternDetailMoment(
+          entryId: entry.id,
           dateTimeLabel: _dateTimeLabel(entry.createdAt),
           previewText: _truncate(text),
           statusChipLabel: ArchiveHistoryCopy.chipUsedAsEvidence,
           statusKey: 'used_as_evidence',
+          isImportant: EntryImportanceStore.isImportant(entry.id),
         ),
       );
     }
