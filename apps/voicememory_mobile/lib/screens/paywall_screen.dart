@@ -38,6 +38,10 @@ import '../widgets/billing/paywall_objection_follow_up_card.dart';
 import '../widgets/billing/paywall_rejection_prompt.dart';
 import '../widgets/billing/plan_selection_confidence_block.dart';
 import '../widgets/pushed_screen_shell.dart';
+import '../features/pro_packaging/pro_value_copy.dart';
+import '../features/pro_packaging/pro_value_engine.dart';
+import '../features/pro_packaging/pro_value_model.dart';
+import '../widgets/account/archive_me_pro_value_section.dart';
 import '../widgets/archive_paywall/paywall_unavailable_fallback.dart';
 
 /// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
@@ -86,7 +90,7 @@ enum _PaywallPlan { monthly, yearly }
 
 class _PaywallScreenState extends State<PaywallScreen> {
   static const Duration _loadTimeout = Duration(seconds: 12);
-  static const String _entitlementLabel = 'ArchiveMe Pro';
+  static const String _entitlementLabel = ProPackagingCopy.title;
 
   static final _benefits = ConsumerUiCopy.paywallBullets
       .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
@@ -181,15 +185,20 @@ class _PaywallScreenState extends State<PaywallScreen> {
     unawaited(suggestionStore.record(suggestionStage));
   }
 
+  ProPackagingDisplay get _packaging => ProPackagingEngine.build(
+        offeringsAvailable: _purchasePlansAvailable,
+        showPlanPrices: _purchasePlansAvailable,
+      );
+
   String get _unavailableBodyText {
-    if (!_billingReady) return ConsumerUiCopy.paywallBillingNotConfigured;
+    if (!_billingReady) return ProPackagingCopy.offeringsUnavailableBody;
     final err = _error;
     if (err != null &&
         err != SubscriptionCopy.paywallNoOfferings &&
         err != SubscriptionCopy.temporarilyUnavailable) {
       return err;
     }
-    return ConsumerUiCopy.paywallSetupUnavailableBody;
+    return ProPackagingCopy.offeringsUnavailableBody;
   }
 
   bool get _hasPackages {
@@ -645,17 +654,21 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _unavailableBody() {
     final sourceCopy = _sourceCopy;
+    final packaging = _packaging;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        ArchiveMeProValueSection(packaging: packaging),
+        const SizedBox(height: 16),
         PaywallUnavailableFallback(
-          headline: sourceCopy?.headline,
-          subhead: sourceCopy?.subheadline,
+          headline: sourceCopy?.headline ?? packaging.title,
+          subhead: sourceCopy?.subheadline ?? packaging.subtitle,
           body: _unavailableBodyText,
           busy: _busy,
           showRetry: _billingReady,
           onRetry: _load,
           onRestore: _restore,
+          hideBenefits: true,
         ),
         // Same above-fold clarity as the live paywall body.
         const SizedBox(height: 16),
@@ -980,16 +993,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final triggerArgs = widget.triggerArgs;
     final valuePreview = triggerArgs?.valuePreview;
     final sourceCopy = _sourceCopy;
+    final packaging = _packaging;
     final headline =
         sourceCopy?.headline ??
         (triggerArgs?.hasTriggerCopy == true
             ? triggerArgs!.previewTitle!
-            : ConsumerUiCopy.paywallHeadline);
+            : packaging.title);
     final subhead =
         sourceCopy?.subheadline ??
         (triggerArgs?.hasTriggerCopy == true
             ? triggerArgs!.previewBody!
-            : ConsumerUiCopy.paywallSubhead);
+            : packaging.subtitle);
+    final showPackagingSection = sourceCopy == null && valuePreview == null;
     final benefitRows = sourceCopy != null
         ? sourceCopy.bullets
               .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
@@ -998,34 +1013,43 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ? valuePreview.previewBullets
               .map((b) => _PaywallBenefit(Icons.check_circle_outline, b))
               .toList()
-        : _benefits;
+        : const <_PaywallBenefit>[];
 
     return ArchiveResponsiveLayout.constrainContent(
       context: context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            headline,
-            style: ArchiveMobileTypography.responsivePageTitle(context),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            subhead,
-            style: ArchiveMobileTypography.responsiveBody(context),
-            textAlign: TextAlign.center,
-          ),
-          // Above-fold clarity: the paid promise before plan cards or CTA.
-          const SizedBox(height: 14),
-          _aboveFoldClaritySection(),
+          if (!showPackagingSection) ...[
+            Text(
+              headline,
+              style: ArchiveMobileTypography.responsivePageTitle(context),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              subhead,
+              style: ArchiveMobileTypography.responsiveBody(context),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          if (showPackagingSection) ...[
+            ArchiveMeProValueSection(
+              packaging: packaging,
+              showTitle: true,
+            ),
+            const SizedBox(height: 14),
+          ] else ...[
+            const SizedBox(height: 14),
+            _aboveFoldClaritySection(),
+          ],
           // Objection follow-up: below the clarity block, above plan cards.
           if (_objectionFollowUpReason != null) ...[
             const SizedBox(height: 14),
             _objectionFollowUpSection(),
           ],
           SizedBox(height: ArchiveResponsiveLayout.gap(context) + 6),
-          ...benefitRows.map(_benefitRow),
+          if (benefitRows.isNotEmpty) ...benefitRows.map(_benefitRow),
           if (PaywallAnnualValueCopy.showFor(widget.triggerArgs?.source)) ...[
             const SizedBox(height: 14),
             _longTermArchiveLine(),

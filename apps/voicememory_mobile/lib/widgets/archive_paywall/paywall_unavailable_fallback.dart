@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
+import '../../features/pro_packaging/pro_value_copy.dart';
 import '../../product/consumer_ui_copy.dart';
 import '../../theme/voicememory_colors.dart';
 
@@ -17,6 +18,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
     this.busy = false,
     this.showRetry = false,
     this.onRetry,
+    this.hideBenefits = false,
   });
 
   final String body;
@@ -30,6 +32,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
   final bool busy;
   final bool showRetry;
   final VoidCallback? onRetry;
+  final bool hideBenefits;
 
   static const List<String> benefits = ConsumerUiCopy.paywallFallbackBullets;
 
@@ -63,50 +66,52 @@ class PaywallUnavailableFallback extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 18),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: VoiceMemoryColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: VoiceMemoryColors.border),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final benefit in benefits)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline,
-                          size: 20,
-                          color: VoiceMemoryColors.primaryIndigo,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            benefit,
-                            style: ArchiveMobileTypography.responsiveBody(
-                              context,
-                              color: VoiceMemoryColors.textPrimary,
-                            ).copyWith(fontWeight: FontWeight.w500),
+          if (!hideBenefits)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: VoiceMemoryColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: VoiceMemoryColors.border),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final benefit in benefits)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline,
+                            size: 20,
+                            color: VoiceMemoryColors.primaryIndigo,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              benefit,
+                              style: ArchiveMobileTypography.responsiveBody(
+                                context,
+                                color: VoiceMemoryColors.textPrimary,
+                              ).copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
+          if (!hideBenefits) const SizedBox(height: 16),
           if (showRetry) ...[
-            const SizedBox(height: 16),
             OutlinedButton(
               onPressed: busy ? null : onRetry,
               child: const Text('Try again'),
             ),
+            const SizedBox(height: 12),
           ],
           const SizedBox(height: 12),
           FilledButton(
@@ -115,7 +120,7 @@ class PaywallUnavailableFallback extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
             child: Text(
-              'Done',
+              hideBenefits ? ProPackagingCopy.continueCta : 'Done',
               style: ArchiveMobileTypography.responsiveCta(context),
             ),
           ),

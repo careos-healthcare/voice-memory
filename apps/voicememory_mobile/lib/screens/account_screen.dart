@@ -9,7 +9,10 @@ import '../product/consumer_ui_copy.dart';
 import '../config/screenshot_mode.dart';
 import '../config/screenshot_sample_data.dart';
 import '../services/app_services.dart';
+import '../features/pro_packaging/pro_value_copy.dart';
+import '../features/pro_packaging/pro_value_engine.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
+import '../widgets/account/archive_me_pro_value_section.dart';
 import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -94,6 +97,19 @@ class _AccountScreenState extends State<AccountScreen> {
               const SizedBox(height: AppSpacing.md),
               const AccountPrivacyControlsSection(),
               const SizedBox(height: AppSpacing.md),
+              ArchiveMeProValueSection(
+                packaging: ProPackagingEngine.build(
+                  offeringsAvailable: false,
+                  showPlanPrices: false,
+                ),
+                compact: true,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _sectionTile(
+                title: ProPackagingCopy.title,
+                subtitle: ProPackagingCopy.accountTileSubtitle,
+                onTap: () => context.push('/subscription'),
+              ),
               _sectionTile(
                 title: ConsumerUiCopy.syncStatus,
                 subtitle: syncSubtitle,
@@ -104,11 +120,6 @@ class _AccountScreenState extends State<AccountScreen> {
                         child: const Text('Sync now'),
                       )
                     : null,
-              ),
-              _sectionTile(
-                title: ConsumerUiCopy.subscription,
-                subtitle: _sessionLabel,
-                onTap: () => context.push('/subscription'),
               ),
               _sectionTile(
                 title: ConsumerUiCopy.privacy,
