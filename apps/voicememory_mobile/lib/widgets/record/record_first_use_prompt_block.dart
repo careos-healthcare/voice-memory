@@ -27,15 +27,9 @@ class RecordFirstUsePromptBlock extends StatelessWidget {
       color: AppColors.textPrimary,
       height: 1.45,
     );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context);
     final footerStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textSecondary,
       height: 1.4,
-    );
-    final chipStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.35,
-      fontSize: 13,
     );
 
     return Column(
@@ -56,33 +50,6 @@ class RecordFirstUsePromptBlock extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
         ],
-        Text(
-          RecordFirstUsePromptCopy.examplesHeading,
-          key: const Key('record_first_use_prompt_examples_heading'),
-          style: labelStyle,
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          children: [
-            for (final example in RecordFirstUsePromptCopy.examples)
-              Container(
-                key: Key('record_first_use_prompt_example_$example'),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundSecondary,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.borderSubtle),
-                ),
-                child: Text(example, style: chipStyle),
-              ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
         Text(
           RecordFirstUsePromptCopy.footer,
           key: const Key('record_first_use_prompt_footer'),

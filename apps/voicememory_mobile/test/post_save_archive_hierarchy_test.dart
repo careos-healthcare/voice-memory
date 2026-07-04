@@ -125,7 +125,7 @@ void main() {
       );
 
       expect(hierarchy.kind, PostSavePrimaryArchiveKind.firstEntryFootnote);
-      expect(hierarchy.showMomentQualityCoach, isTrue);
+      expect(hierarchy.showMomentQualityFeedback, isTrue);
     });
 
     test('three repeat entries prefer discovery over belief update card', () {
@@ -156,7 +156,7 @@ void main() {
       expect(hierarchy.showBeliefUpdateCard, isFalse);
     });
 
-    test('moment quality hidden when discovery is primary', () {
+    test('moment quality feedback still allowed when discovery is primary', () {
       final hierarchy = PostSaveArchiveHierarchy.resolve(
         entries: _threeRepeatCapacityEntries(),
         suppressLatestSaveArchiveInsight: false,
@@ -164,7 +164,7 @@ void main() {
       );
 
       expect(hierarchy.kind, PostSavePrimaryArchiveKind.discovery);
-      expect(hierarchy.showMomentQualityCoach, isFalse);
+      expect(hierarchy.showMomentQualityFeedback, isTrue);
     });
 
     test('first proof unlocked suppresses discovery and focused actions', () {
@@ -179,7 +179,7 @@ void main() {
 
       expect(hierarchy.kind, PostSavePrimaryArchiveKind.firstProofUnlocked);
       expect(hierarchy.showFocusedActionsBar, isFalse);
-      expect(hierarchy.showMomentQualityCoach, isFalse);
+      expect(hierarchy.showMomentQualityFeedback, isFalse);
       expect(hierarchy.showBeliefUpdateCard, isFalse);
     });
   });

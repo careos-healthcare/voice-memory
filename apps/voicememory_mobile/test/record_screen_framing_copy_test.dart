@@ -826,7 +826,7 @@ void main() {
       expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
     });
 
-    testWidgets('first-use prompt appears at entryCount 0 with examples', (
+    testWidgets('first-use prompt appears at entryCount 0 without duplicate examples', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
@@ -837,13 +837,14 @@ void main() {
       expect(find.text(RecordFirstUsePromptCopy.body), findsNothing);
       expect(find.text(ArchiveJourneyCopy.compactHelper), findsOneWidget);
       expect(find.text(ArchiveJourneyCopy.step3Body), findsNothing);
-      expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsOneWidget);
+      expect(find.text(RecordFirstUsePromptCopy.examplesHeading), findsNothing);
       expect(find.text(RecordFirstUsePromptCopy.footer), findsOneWidget);
       expect(find.textContaining('1 of 3'), findsOneWidget);
       expect(find.textContaining('first proof'), findsOneWidget);
       for (final example in RecordFirstUsePromptCopy.examples) {
-        expect(find.text(example), findsOneWidget);
+        expect(find.text(example), findsNothing);
       }
+      expect(find.byKey(const Key('guided_examples_card')), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);

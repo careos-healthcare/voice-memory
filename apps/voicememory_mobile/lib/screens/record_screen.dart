@@ -121,7 +121,8 @@ import '../features/return_changes/archive_return_changes_engine.dart';
 import '../features/return_changes/archive_return_changes_gates.dart';
 import '../features/return_changes/archive_return_changes_store.dart';
 import '../features/return_changes/archive_return_snapshot.dart';
-import '../widgets/moment_quality_card.dart';
+import '../widgets/record/moment_quality_feedback_card.dart';
+import '../features/moment_quality/moment_quality_feedback_engine.dart';
 import '../widgets/record/post_save_moment_detail_sheet.dart';
 import '../features/moment_quality/post_save_moment_detail_copy.dart';
 import '../features/moment_quality/post_save_moment_detail_model.dart';
@@ -191,6 +192,7 @@ import '../features/record_capture_modes/record_capture_mode_model.dart';
 import '../widgets/record/navigate_to_capture_mode.dart';
 import '../widgets/record/record_capture_modes_card.dart';
 import '../widgets/record/first_session_onboarding_card.dart';
+import '../widgets/record/guided_examples_card.dart';
 import '../widgets/record/correct_transcript_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../features/transcript_correction/transcript_correction_copy.dart';
@@ -415,6 +417,7 @@ import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
 import '../features/onboarding/archive_journey_explainer_gates.dart';
 import '../features/onboarding/first_session_onboarding_store.dart';
+import '../features/onboarding/guided_examples_model.dart';
 import '../features/onboarding/record_return_pro_state.dart';
 import '../features/onboarding/record_return_pro_store.dart';
 import '../features/memory/memory_scope.dart';
@@ -2060,6 +2063,14 @@ class _RecordScreenState extends State<RecordScreen> {
     await navigateToCaptureMode(
       context,
       mode: mode,
+      onSaved: _finishSuccessfulCapture,
+    );
+  }
+
+  Future<void> _openGuidedExampleStyle(GuidedExample example) async {
+    await navigateToGuidedExampleStyle(
+      context,
+      example: example,
       onSaved: _finishSuccessfulCapture,
     );
   }
@@ -4623,6 +4634,13 @@ class _RecordScreenState extends State<RecordScreen> {
           isReady: ui == RecordUiState.ready,
           isPostSave: _isPostSaveSurface,
         );
+    final showGuidedExamples = ui == RecordUiState.ready &&
+        GuidedExamplesGates.shouldShow(
+          loaded: _journalEntryCountReady,
+          entryCount: _journalEntryCount,
+          isReady: true,
+          isPostSave: _isPostSaveSurface,
+        );
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
     return ColoredBox(
       color: AppColors.backgroundPrimary,
@@ -4773,6 +4791,13 @@ class _RecordScreenState extends State<RecordScreen> {
                           isPostSave: _isPostSaveSurface,
                           entries: _journalEntries,
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showGuidedExamples) ...[
+                      GuidedExamplesCard(
+                        onUseStyle: (example) =>
+                            unawaited(_openGuidedExampleStyle(example)),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -5782,6 +5807,17 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ? _resetPostSaveToReady
                                 : null,
                           ),
+                          if (MomentQualityFeedbackGates.shouldShow(
+                            entry: entriesAfterSave.first,
+                            showFirstProofMoment: showFirstProofMoment,
+                            hierarchyAllowsFeedback:
+                                postSaveArchiveHierarchy?.showMomentQualityFeedback ??
+                                true,
+                          )) ...[
+                            MomentQualityFeedbackCard(
+                              entry: entriesAfterSave.first,
+                            ),
+                          ],
                           if (showFirstProofMoment &&
                               firstProofMomentCandidate != null) ...[
                             const SizedBox(height: 16),
@@ -5850,19 +5886,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               },
                             ),
                           ],
-                          if (postSaveArchiveHierarchy?.showMomentQualityCoach ??
-                              true)
-                            SavedMomentQualityCard(
-                              transcript: entriesAfterSave.first.transcript,
-                              entry: entriesAfterSave.first,
-                              onSuggestionTap: (detailType) =>
-                                  _openPostSaveMomentDetail(
-                                parentEntry: entriesAfterSave.first,
-                                detailType: detailType,
-                                entryCount: postSaveEntryCount,
-                              ),
-                            ),
-                          if (postSaveArchiveHierarchy?.showMomentQualityCoach ??
+                          if (postSaveArchiveHierarchy?.showMomentQualityFeedback ??
                               true)
                             Builder(
                               builder: (context) {

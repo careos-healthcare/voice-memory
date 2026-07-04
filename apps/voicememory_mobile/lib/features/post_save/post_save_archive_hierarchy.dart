@@ -34,9 +34,8 @@ class PostSaveArchiveHierarchy {
 
   bool get showBeliefUpdateCard => kind == PostSavePrimaryArchiveKind.beliefUpdate;
 
-  bool get showMomentQualityCoach =>
-      kind == PostSavePrimaryArchiveKind.firstEntryFootnote ||
-      kind == PostSavePrimaryArchiveKind.savedPrivately;
+  bool get showMomentQualityFeedback =>
+      kind != PostSavePrimaryArchiveKind.firstProofUnlocked;
 
   bool get showFocusedActionsBar =>
       kind != PostSavePrimaryArchiveKind.firstProofUnlocked;

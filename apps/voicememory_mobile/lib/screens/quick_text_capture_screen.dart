@@ -9,10 +9,13 @@ import '../product/consumer_ui_copy.dart';
 import '../services/app_services.dart';
 import '../services/capture_pipeline_service.dart';
 import '../services/product_analytics.dart';
+import '../features/onboarding/guided_examples_copy.dart';
+import '../features/onboarding/guided_examples_model.dart';
 import '../features/record_capture_modes/record_capture_mode_copy.dart';
 import '../features/record_capture_modes/record_capture_mode_engine.dart';
 import '../record/start_here_visibility.dart';
 import '../theme/voicememory_colors.dart';
+import '../widgets/record/guided_examples_card.dart';
 import '../widgets/record/start_here_recording_section.dart';
 import '../widgets/moment_quality_card.dart';
 
@@ -25,6 +28,7 @@ class QuickTextCaptureScreen extends StatefulWidget {
     this.helperText,
     this.captureModeId,
     this.allowQuietDaySave = false,
+    this.showGuidedExamples = false,
   });
 
   /// Optional prompt hint from conversation starters — never prefilled as editable text.
@@ -44,6 +48,9 @@ class QuickTextCaptureScreen extends StatefulWidget {
   /// Quiet-day mode may save a short default phrase when the field is empty.
   final bool allowQuietDaySave;
 
+  /// Show style-guide examples in typed capture for early users.
+  final bool showGuidedExamples;
+
   @override
   State<QuickTextCaptureScreen> createState() => _QuickTextCaptureScreenState();
 }
@@ -55,6 +62,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   bool _abandonLogged = false;
   String? _error;
   String? _promptHint;
+  String? _guidedStyleHelper;
   int _recordingCount = 0;
   bool _firstArchiveMilestoneCompleted = false;
   bool _journalLoaded = false;
@@ -71,6 +79,10 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       _promptHint = modePrompt;
     } else if (legacySeed != null && legacySeed.isNotEmpty) {
       _promptHint = legacySeed;
+    }
+    final initialHelper = widget.helperText?.trim();
+    if (initialHelper != null && initialHelper.isNotEmpty) {
+      _guidedStyleHelper = initialHelper;
     }
     ProductAnalytics.track('quick_text_capture_started');
     _controller.addListener(_onTextChanged);
@@ -91,6 +103,21 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   void _onStartHereSelected(String prompt) {
     setState(() => _promptHint = prompt);
   }
+
+  void _onGuidedExampleStyle(GuidedExample example) {
+    setState(() => _guidedStyleHelper = GuidedExamplesCopy.styleHelper(example.text));
+  }
+
+  bool get _showGuidedExamplesCapturePanel =>
+      _journalLoaded &&
+      !_isVoiceFallback &&
+      GuidedExamplesGates.shouldShow(
+        loaded: true,
+        entryCount: _recordingCount,
+        isReady: true,
+        isPostSave: false,
+      ) &&
+      (widget.showGuidedExamples || widget.captureModeId != null);
 
   void _onTextChanged() {
     if (mounted) setState(() {});
@@ -122,7 +149,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       _promptHint != null && _controller.text.isEmpty;
 
   String? get _modeHelperText {
-    final helper = widget.helperText?.trim();
+    final helper = _guidedStyleHelper?.trim();
     if (helper == null || helper.isEmpty) return null;
     return helper;
   }
@@ -264,6 +291,13 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                             color: VoiceMemoryColors.textSecondary,
                             height: 1.45,
                           ),
+                        ),
+                      ],
+                      if (_showGuidedExamplesCapturePanel) ...[
+                        const SizedBox(height: 12),
+                        GuidedExamplesCapturePanel(
+                          compact: widget.captureModeId != null,
+                          onUseStyle: _onGuidedExampleStyle,
                         ),
                       ],
                       if (_journalLoaded && widget.captureModeId == null) ...[
