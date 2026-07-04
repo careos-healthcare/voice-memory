@@ -6,6 +6,7 @@ import '../../features/archive_evidence/archive_belief_thread_copy.dart';
 import '../../features/archive_evidence/archive_belief_thread_model.dart';
 import '../../features/archive_proof/archive_belief_surface.dart';
 import '../../features/archive_proof/archive_belief_surface_copy.dart';
+import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/tomorrow_return/active_pattern_thread_coordinator.dart';
 import '../../features/tomorrow_return/active_pattern_thread_model.dart';
 import '../../features/tomorrow_return/watch_for_model.dart';
@@ -22,11 +23,13 @@ class ArchiveBeliefSurfaceCard extends StatefulWidget {
     super.key,
     required this.surface,
     required this.onRecordNext,
+    this.onViewPatternDetails,
     this.onDismissed,
   });
 
   final ArchiveBeliefSurface surface;
   final VoidCallback onRecordNext;
+  final VoidCallback? onViewPatternDetails;
   final VoidCallback? onDismissed;
 
   @override
@@ -219,6 +222,19 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
                 key: const Key('archive_belief_surface_record_next'),
                 onPressed: widget.onRecordNext,
                 child: Text(cta),
+              ),
+            ),
+          ],
+          if (widget.onViewPatternDetails != null &&
+              surface.isPrimaryAfterFirstProof &&
+              !surface.isPreview) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('archive_belief_surface_view_pattern_details'),
+                onPressed: widget.onViewPatternDetails,
+                child: Text(PatternDetailCopy.viewPatternDetailsCta),
               ),
             ),
           ],

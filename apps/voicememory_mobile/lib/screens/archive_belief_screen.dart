@@ -55,6 +55,7 @@ import '../widgets/weekly_review/weekly_archive_review_card.dart'
 import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
+import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
@@ -280,6 +281,7 @@ import '../features/archive_proof/archive_paid_value_proof_source.dart';
 import '../features/archive_proof/archive_proof_record_routes.dart';
 import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../widgets/patterns/archive_belief_surface_card.dart';
+import '../widgets/patterns/pattern_detail_sheet.dart';
 import '../widgets/patterns/archive_change_timeline_card.dart';
 import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
@@ -1268,6 +1270,35 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       hasPositivePattern: review.whatHelped?.isSupported ?? false,
     );
     unawaited(WeeklyArchiveReviewSheet.show(context, review: review));
+  }
+
+  void _openPatternDetail() {
+    final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _entries);
+    final earlyEvidenceTimeline = EarlyEvidenceTimelineEngine.build(
+      entries: _entries,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+    );
+    final viewingConfirmedRepeatOnPatterns = earlyEvidenceTimeline != null ||
+        (earlyFirstSignal?.showsConfirmedRepeat ?? false);
+    final repeatReturnChangeProof = RepeatReturnCheckEngine.changeProofForReady(
+      entryCount: _entries.length,
+      viewingConfirmedRepeat: viewingConfirmedRepeatOnPatterns,
+      isRecording: false,
+      isPostSave: false,
+      records: RepeatReturnCheckStore.cached,
+    );
+    final detail = PatternDetailEngine.build(
+      entries: _entries,
+      confirmedRepeat: earlyFirstSignal,
+      changeProof: repeatReturnChangeProof,
+      returnChecks: RepeatReturnCheckStore.cached,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+    );
+    if (detail == null) return;
+    unawaited(PatternDetailSheet.show(context, detail: detail));
   }
 
   void _handlePositiveReinforcementRecordAgain(
@@ -4190,6 +4221,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                             ArchiveProofRecordRoutes.changeTimelineNodeKey,
                       ),
                     ),
+                    onViewPatternDetails: PatternDetailEngine.canShow(
+                      entries: _entries,
+                      confirmedRepeat: earlyFirstSignal,
+                      viewingConfirmedRepeatOrTimeline:
+                          viewingConfirmedRepeatOnPatterns,
+                    )
+                        ? _openPatternDetail
+                        : null,
                     onDismissed: () => setState(() {}),
                   ),
                   if (patternNamePrompt != null) ...[
