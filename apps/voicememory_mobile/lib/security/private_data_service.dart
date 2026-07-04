@@ -327,6 +327,7 @@ class PrivateDataService {
       'archiveChangeTimelineMetrics',
       'archiveActivationFunnel',
       'pattern_name_preferences_v1',
+      'helped_tracking_records_v1',
     ];
     for (final key in cacheKeys) {
       await prefs.writeMap(key, {});

@@ -15,6 +15,7 @@ class ArchiveHistoryItem {
     required this.previewText,
     required this.status,
     this.evidenceNote,
+    this.helpedNote,
     this.showAddWordsCta = false,
     this.showCorrectTranscriptCta = false,
   });
@@ -24,6 +25,7 @@ class ArchiveHistoryItem {
   final String previewText;
   final ArchiveHistoryStatus status;
   final String? evidenceNote;
+  final String? helpedNote;
   final bool showAddWordsCta;
   final bool showCorrectTranscriptCta;
 }

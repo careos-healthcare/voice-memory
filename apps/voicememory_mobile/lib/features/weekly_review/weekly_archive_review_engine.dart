@@ -12,6 +12,7 @@ import '../record_capture_modes/record_capture_mode_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_trend.dart';
+import '../helped_tracking/helped_tracking_engine.dart';
 import '../pattern_naming/pattern_name_engine.dart';
 import 'weekly_archive_review_copy.dart';
 import 'weekly_archive_review_model.dart';
@@ -54,7 +55,11 @@ abstract final class WeeklyArchiveReviewEngine {
       changeProof: changeProof,
       returnChecks: returnChecks,
     );
-    final helped = _helpedSection(positivePattern);
+    final helped = _helpedSection(
+      entries: entries,
+      returnChecks: returnChecks,
+      positivePattern: positivePattern,
+    );
     final dailyReason = DailyReturnReasonEngine.build(
       entries: entries,
       changeProof: changeProof,
@@ -281,20 +286,17 @@ abstract final class WeeklyArchiveReviewEngine {
     );
   }
 
-  static WeeklyArchiveReviewSection _helpedSection(
+  static WeeklyArchiveReviewSection _helpedSection({
+    required List<JournalEntry> entries,
+    List<RepeatReturnCheckRecord> returnChecks = const [],
     PositivePatternResult? positivePattern,
-  ) {
-    if (positivePattern != null && positivePattern.evidencePhrases.isNotEmpty) {
-      final phrase = positivePattern.evidencePhrases.first
-          .replaceAll('"', '')
-          .trim();
-      return WeeklyArchiveReviewSection(
-        label: WeeklyArchiveReviewCopy.whatHelpedLabel,
-        body: phrase,
-        isSupported: true,
-        evidencePhrases: positivePattern.evidencePhrases,
-      );
-    }
+  }) {
+    final fromMarkers = HelpedTrackingEngine.weeklyReviewSection(
+      entries: entries,
+      returnChecks: returnChecks,
+      positivePattern: positivePattern,
+    );
+    if (fromMarkers != null) return fromMarkers;
 
     return const WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatHelpedLabel,

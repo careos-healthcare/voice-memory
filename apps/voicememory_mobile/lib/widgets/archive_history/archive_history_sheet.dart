@@ -212,6 +212,17 @@ class _ArchiveHistoryRow extends StatelessWidget {
             ),
           ),
         ],
+        if (item.helpedNote != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            item.helpedNote!,
+            key: Key('archive_history_helped_${item.entryId}'),
+            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 13,
+            ),
+          ),
+        ],
         if (item.showAddWordsCta) ...[
           const SizedBox(height: AppSpacing.sm),
           Align(

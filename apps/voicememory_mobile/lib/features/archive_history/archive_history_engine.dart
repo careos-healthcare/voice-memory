@@ -7,6 +7,7 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../transcript_correction/transcript_correction_gate.dart';
 import '../trust/pending_transcript_recovery_gate.dart';
+import '../helped_tracking/helped_tracking_engine.dart';
 import '../voice_capture/voice_capture_quality.dart';
 import 'archive_history_copy.dart';
 import 'archive_history_item.dart';
@@ -53,6 +54,7 @@ abstract final class ArchiveHistoryEngine {
       previewText: _previewText(entry, status),
       status: status,
       evidenceNote: _evidenceNote(status),
+      helpedNote: HelpedTrackingEngine.archiveHistoryNoteForEntry(entry.id),
       showAddWordsCta: needsAddWords,
       showCorrectTranscriptCta: !needsAddWords &&
           TranscriptCorrectionGate.entryAllowsCorrection(entry),

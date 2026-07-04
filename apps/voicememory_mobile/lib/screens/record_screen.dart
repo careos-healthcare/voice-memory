@@ -216,6 +216,9 @@ import '../widgets/weekly_review/weekly_archive_review_card.dart'
 import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
+import '../features/helped_tracking/helped_tracking_engine.dart';
+import '../features/helped_tracking/helped_tracking_store.dart';
+import '../widgets/record/helped_tracking_card.dart';
 import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
@@ -716,6 +719,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       PatternChangedStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      HelpedTrackingStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4306,6 +4314,19 @@ class _RecordScreenState extends State<RecordScreen> {
       showFirstProofMoment: showFirstProofMoment,
       answer: postSaveReturnCheckAnswerCandidate,
     );
+    final helpedTrackingPrompt = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? HelpedTrackingEngine.buildPrompt(
+            entries: entriesAfterSave,
+            isPostSaveDone: ui == RecordUiState.done,
+            isDegradedPostSave: entriesAfterSave.isNotEmpty &&
+                VoiceCaptureQuality.isDegradedVoiceCapture(
+                  entriesAfterSave.last,
+                ),
+            showPostSaveReturnCheckAnswer: showPostSaveReturnCheckAnswer,
+          )
+        : null;
+    final showHelpedTracking = helpedTrackingPrompt != null;
     final showReturnCheckPayoff = ReturnCheckPayoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
@@ -6578,6 +6599,17 @@ class _RecordScreenState extends State<RecordScreen> {
                           postSaveReturnCheckAnswerCandidate.entryId,
                         ),
                         answer: postSaveReturnCheckAnswerCandidate,
+                        onChanged: () {
+                          if (mounted) setState(() {});
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (showHelpedTracking && helpedTrackingPrompt != null) ...[
+                      HelpedTrackingCard(
+                        key: ValueKey(helpedTrackingPrompt.entryId),
+                        prompt: helpedTrackingPrompt,
+                        source: 'record_post_save',
                         onChanged: () {
                           if (mounted) setState(() {});
                         },
