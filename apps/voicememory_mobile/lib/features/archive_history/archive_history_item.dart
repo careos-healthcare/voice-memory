@@ -16,6 +16,7 @@ class ArchiveHistoryItem {
     required this.status,
     this.evidenceNote,
     this.showAddWordsCta = false,
+    this.showCorrectTranscriptCta = false,
   });
 
   final String entryId;
@@ -24,6 +25,7 @@ class ArchiveHistoryItem {
   final ArchiveHistoryStatus status;
   final String? evidenceNote;
   final bool showAddWordsCta;
+  final bool showCorrectTranscriptCta;
 }
 
 /// Content for the archive history bottom sheet.

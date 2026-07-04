@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_history/archive_history_copy.dart';
 import '../../features/archive_history/archive_history_item.dart';
+import '../../features/transcript_correction/transcript_correction_copy.dart';
+import '../../features/transcript_correction/transcript_correction_gate.dart';
 import '../../features/trust/pending_transcript_recovery_copy.dart';
 import '../../services/app_services.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../record/correct_transcript_sheet.dart';
 import '../record/pending_transcript_recovery_sheet.dart';
 
 /// Bottom sheet listing saved moments with trust/status chips.
@@ -147,6 +150,23 @@ class _ArchiveHistoryRow extends StatelessWidget {
     );
   }
 
+  Future<void> _openCorrection(BuildContext context) async {
+    final entry = await AppServices.instance.journalStore.getById(item.entryId);
+    if (entry == null || !context.mounted) return;
+    final updated = await TranscriptCorrection.open(
+      context,
+      entry: entry,
+      source: 'archive_history_sheet',
+      entryCount: entryCount,
+    );
+    if (updated == null || !context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(TranscriptCorrectionCopy.savedSuccess),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -200,6 +220,17 @@ class _ArchiveHistoryRow extends StatelessWidget {
               key: Key('archive_history_add_words_${item.entryId}'),
               onPressed: () => unawaited(_openRecovery(context)),
               child: const Text(ArchiveHistoryCopy.addWordsCta),
+            ),
+          ),
+        ],
+        if (item.showCorrectTranscriptCta) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: Key('archive_history_correct_transcript_${item.entryId}'),
+              onPressed: () => unawaited(_openCorrection(context)),
+              child: const Text(TranscriptCorrectionCopy.actionLabel),
             ),
           ),
         ],

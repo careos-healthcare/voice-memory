@@ -186,7 +186,10 @@ import '../widgets/record/early_repeat_progress_card.dart';
 import '../features/archive_history/archive_history_engine.dart';
 import '../widgets/archive_history/archive_history_sheet.dart';
 import '../widgets/record/pending_transcript_recovery_sheet.dart';
+import '../widgets/record/correct_transcript_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
+import '../features/transcript_correction/transcript_correction_copy.dart';
+import '../features/transcript_correction/transcript_correction_gate.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_week_progress_line.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
@@ -2018,6 +2021,38 @@ class _RecordScreenState extends State<RecordScreen> {
       ),
     );
     await _finishSuccessfulCapture(result);
+  }
+
+  Future<void> _openCorrectTranscriptForEntry(JournalEntry entry) async {
+    final updated = await TranscriptCorrection.open(
+      context,
+      entry: entry,
+      source: 'record_post_save_heard',
+      entryCount: _journalEntryCount,
+    );
+    if (updated == null || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(TranscriptCorrectionCopy.savedSuccess),
+      ),
+    );
+    await _refreshAfterTranscriptCorrection(updated);
+  }
+
+  Future<void> _refreshAfterTranscriptCorrection(JournalEntry corrected) async {
+    final all = await AppServices.instance.journalStore.loadAll();
+    if (!mounted) return;
+    setState(() {
+      _journalEntries = all;
+      _journalEntryCount = all.length;
+      if (_entriesAfterSave.isNotEmpty &&
+          _entriesAfterSave.first.id == corrected.id) {
+        _entriesAfterSave = [
+          corrected,
+          ..._entriesAfterSave.skip(1),
+        ];
+      }
+    });
   }
 
   Future<void> _openTypedFallbackForLastVoiceEntry() async {
@@ -5634,6 +5669,18 @@ class _RecordScreenState extends State<RecordScreen> {
                             onAddWhatYouSaid: _lastSavedEntryIsDegraded
                                 ? () => unawaited(
                                       _openPendingTranscriptRecoveryForLastVoiceEntry(),
+                                    )
+                                : null,
+                            onCorrectTranscript:
+                                _lastSavedEntry != null &&
+                                    !_lastSavedEntryIsDegraded &&
+                                    TranscriptCorrectionGate.entryAllowsCorrection(
+                                      _lastSavedEntry!,
+                                    )
+                                ? () => unawaited(
+                                      _openCorrectTranscriptForEntry(
+                                        _lastSavedEntry!,
+                                      ),
                                     )
                                 : null,
                             onAddMoreDetail: suppressLatestSaveArchiveInsight

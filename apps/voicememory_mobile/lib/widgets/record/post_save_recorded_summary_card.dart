@@ -11,6 +11,8 @@ import '../../features/record/daily_mirror_model.dart';
 import '../../features/record/daily_mirror_stage.dart';
 import '../../features/timeline/timeline_entry_display.dart';
 import '../../features/trust/pending_transcript_recovery_copy.dart';
+import '../../features/transcript_correction/transcript_correction_copy.dart';
+import '../../features/transcript_correction/transcript_correction_gate.dart';
 import '../../features/voice_capture/voice_capture_copy.dart';
 import '../../widgets/record/pending_transcript_recovery_prompt.dart';
 import '../../models/journal_entry.dart';
@@ -31,6 +33,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
     this.onAddMoreDetail,
     this.onBackToRecord,
     this.onAddWhatYouSaid,
+    this.onCorrectTranscript,
     this.primaryArchiveResult,
   });
 
@@ -44,6 +47,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
   final VoidCallback? onAddMoreDetail;
   final VoidCallback? onBackToRecord;
   final VoidCallback? onAddWhatYouSaid;
+  final VoidCallback? onCorrectTranscript;
 
   List<JournalEntry> get _entries =>
       allEntries.isNotEmpty ? allEntries : [entry];
@@ -108,6 +112,18 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
             key: const Key('post_save_recorded_summary_body'),
             style: bodyStyle,
           ),
+          if (onCorrectTranscript != null &&
+              TranscriptCorrectionGate.entryAllowsCorrection(entry)) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('post_save_correct_transcript_button'),
+                onPressed: onCorrectTranscript,
+                child: const Text(TranscriptCorrectionCopy.actionLabel),
+              ),
+            ),
+          ],
           if (_isLowSignal && _shows(PostSavePrimaryArchiveKind.lowSignal)) ...[
             const SizedBox(height: AppSpacing.md),
             Text(

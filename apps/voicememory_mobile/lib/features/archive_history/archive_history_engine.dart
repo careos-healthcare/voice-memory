@@ -5,6 +5,7 @@ import '../archive_evidence/archive_evidence_quality.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../retention/second_session_signal_engine.dart';
+import '../transcript_correction/transcript_correction_gate.dart';
 import '../trust/pending_transcript_recovery_gate.dart';
 import '../voice_capture/voice_capture_quality.dart';
 import 'archive_history_copy.dart';
@@ -44,14 +45,17 @@ abstract final class ArchiveHistoryEngine {
     required Set<String> evidenceIds,
   }) {
     final status = _statusFor(entry, evidenceIds);
+    final needsAddWords = status == ArchiveHistoryStatus.needsYourWords &&
+        PendingTranscriptRecoveryGate.entryNeedsRecovery(entry);
     return ArchiveHistoryItem(
       entryId: entry.id,
       dateTimeLabel: _dateTimeLabel(entry.createdAt),
       previewText: _previewText(entry, status),
       status: status,
       evidenceNote: _evidenceNote(status),
-      showAddWordsCta: status == ArchiveHistoryStatus.needsYourWords &&
-          PendingTranscriptRecoveryGate.entryNeedsRecovery(entry),
+      showAddWordsCta: needsAddWords,
+      showCorrectTranscriptCta: !needsAddWords &&
+          TranscriptCorrectionGate.entryAllowsCorrection(entry),
     );
   }
 
