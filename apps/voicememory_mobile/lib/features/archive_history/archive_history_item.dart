@@ -16,6 +16,7 @@ class ArchiveHistoryItem {
     required this.status,
     this.evidenceNote,
     this.helpedNote,
+    this.isQuietDay = false,
     this.showAddWordsCta = false,
     this.showCorrectTranscriptCta = false,
   });
@@ -26,6 +27,7 @@ class ArchiveHistoryItem {
   final ArchiveHistoryStatus status;
   final String? evidenceNote;
   final String? helpedNote;
+  final bool isQuietDay;
   final bool showAddWordsCta;
   final bool showCorrectTranscriptCta;
 }

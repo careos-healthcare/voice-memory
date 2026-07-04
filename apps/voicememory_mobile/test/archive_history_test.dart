@@ -248,8 +248,14 @@ void main() {
       );
 
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsOneWidget);
-      expect(find.text(ArchiveHistoryCopy.chipNeedsYourWords), findsOneWidget);
-      expect(find.text(ArchiveHistoryCopy.chipSavedOnly), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_chip_needs_your_words')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_history_filter_chip_saved_only')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('saved row shows status chip and preview', (tester) async {
@@ -268,7 +274,10 @@ void main() {
 
       expect(find.text(ArchiveHistoryCopy.sheetTitle), findsOneWidget);
       expect(find.text(ArchiveHistoryCopy.sheetSubtitle), findsOneWidget);
-      expect(find.text(ArchiveHistoryCopy.chipSavedOnly), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_chip_saved_only')),
+        findsOneWidget,
+      );
       expect(find.textContaining('pressure to say yes'), findsOneWidget);
     });
 
@@ -288,7 +297,10 @@ void main() {
         ),
       );
 
-      expect(find.text(ArchiveHistoryCopy.chipIgnoredForPatterns), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_history_chip_ignored_for_patterns')),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveHistoryCopy.noteIgnoredForPatterns), findsOneWidget);
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsNothing);
     });
@@ -321,7 +333,10 @@ void main() {
         ),
       );
 
-      expect(find.text(ArchiveHistoryCopy.chipUsedAsEvidence), findsNWidgets(2));
+      expect(
+        find.byKey(const Key('archive_history_chip_used_as_evidence')),
+        findsNWidgets(2),
+      );
       expect(find.text(ArchiveHistoryCopy.noteUsedAsEvidence), findsNWidgets(2));
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsNothing);
     });

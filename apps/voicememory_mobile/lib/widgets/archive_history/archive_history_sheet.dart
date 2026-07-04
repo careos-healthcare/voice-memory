@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_history/archive_history_copy.dart';
+import '../../features/archive_history/archive_history_filter.dart';
 import '../../features/archive_history/archive_history_item.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
 import '../../features/transcript_correction/transcript_correction_gate.dart';
@@ -15,7 +16,7 @@ import '../record/correct_transcript_sheet.dart';
 import '../record/pending_transcript_recovery_sheet.dart';
 
 /// Bottom sheet listing saved moments with trust/status chips.
-class ArchiveHistorySheet extends StatelessWidget {
+class ArchiveHistorySheet extends StatefulWidget {
   const ArchiveHistorySheet({
     super.key,
     required this.content,
@@ -42,7 +43,21 @@ class ArchiveHistorySheet extends StatelessWidget {
   }
 
   @override
+  State<ArchiveHistorySheet> createState() => _ArchiveHistorySheetState();
+}
+
+class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
+  ArchiveHistoryFilter _activeFilter = ArchiveHistoryFilterEngine.defaultFilter;
+
+  List<ArchiveHistoryItem> get _filteredItems => ArchiveHistoryFilterEngine.apply(
+        items: widget.content.items,
+        filter: _activeFilter,
+      );
+
+  @override
   Widget build(BuildContext context) {
+    final filteredItems = _filteredItems;
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
@@ -72,8 +87,17 @@ class ArchiveHistorySheet extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
+              if (!widget.content.isEmpty) ...[
+                const SizedBox(height: AppSpacing.md),
+                _ArchiveHistoryFilterChips(
+                  activeFilter: _activeFilter,
+                  onFilterSelected: (filter) {
+                    setState(() => _activeFilter = filter);
+                  },
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
-              if (content.isEmpty) ...[
+              if (widget.content.isEmpty) ...[
                 Text(
                   ArchiveHistoryCopy.emptyTitle,
                   key: const Key('archive_history_empty_title'),
@@ -86,13 +110,26 @@ class ArchiveHistorySheet extends StatelessWidget {
                   style: ArchiveMobileTypography.explanationBody(context)
                       .copyWith(color: AppColors.textSecondary),
                 ),
+              ] else if (filteredItems.isEmpty) ...[
+                Text(
+                  ArchiveHistoryCopy.filteredEmptyTitle,
+                  key: const Key('archive_history_filtered_empty_title'),
+                  style: ArchiveMobileTypography.cardLabel(context),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  ArchiveHistoryCopy.filteredEmptyBody,
+                  key: const Key('archive_history_filtered_empty_body'),
+                  style: ArchiveMobileTypography.explanationBody(context)
+                      .copyWith(color: AppColors.textSecondary),
+                ),
               ] else ...[
-                for (final item in content.items) ...[
+                for (final item in filteredItems) ...[
                   _ArchiveHistoryRow(
                     item: item,
-                    entryCount: entryCount,
+                    entryCount: widget.entryCount,
                   ),
-                  if (item != content.items.last)
+                  if (item != filteredItems.last)
                     const SizedBox(height: AppSpacing.md),
                 ],
               ],
@@ -100,6 +137,37 @@ class ArchiveHistorySheet extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ArchiveHistoryFilterChips extends StatelessWidget {
+  const _ArchiveHistoryFilterChips({
+    required this.activeFilter,
+    required this.onFilterSelected,
+  });
+
+  final ArchiveHistoryFilter activeFilter;
+  final ValueChanged<ArchiveHistoryFilter> onFilterSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      key: const Key('archive_history_filter_chips'),
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xs,
+      children: [
+        for (final filter in ArchiveHistoryFilterEngine.orderedFilters)
+          FilterChip(
+            key: Key(
+              'archive_history_filter_chip_${ArchiveHistoryFilterEngine.filterKey(filter)}',
+            ),
+            label: Text(ArchiveHistoryFilterEngine.label(filter)),
+            selected: activeFilter == filter,
+            showCheckmark: false,
+            onSelected: (_) => onFilterSelected(filter),
+          ),
+      ],
     );
   }
 }

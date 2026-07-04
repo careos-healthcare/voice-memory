@@ -25,6 +25,18 @@ abstract final class ArchiveHistoryCopy {
 
   static const addWordsCta = 'Add words';
 
+  static const filterAll = 'All';
+  static const filterUsedAsEvidence = 'Used as evidence';
+  static const filterSavedOnly = 'Saved only';
+  static const filterNeedsYourWords = 'Needs your words';
+  static const filterQuietDays = 'Quiet days';
+  static const filterIgnoredForPatterns = 'Ignored for patterns';
+  static const filterHelped = 'Helped';
+
+  static const filteredEmptyTitle = 'Nothing here yet';
+  static const filteredEmptyBody =
+      'Moments will appear here when they match this filter.';
+
   static const List<String> all = [
     sheetTitle,
     sheetSubtitle,
@@ -40,5 +52,14 @@ abstract final class ArchiveHistoryCopy {
     noteNeedsYourWords,
     noteIgnoredForPatterns,
     addWordsCta,
+    filterAll,
+    filterUsedAsEvidence,
+    filterSavedOnly,
+    filterNeedsYourWords,
+    filterQuietDays,
+    filterIgnoredForPatterns,
+    filterHelped,
+    filteredEmptyTitle,
+    filteredEmptyBody,
   ];
 }
