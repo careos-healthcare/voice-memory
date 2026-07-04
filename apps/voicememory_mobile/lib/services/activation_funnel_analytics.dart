@@ -575,6 +575,7 @@ abstract class ActivationFunnelAnalytics {
     'has_real_timeline',
     'has_phrase',
     'has_confirmed_repeat',
+    'has_custom_name',
     'comparison_state',
     'answer',
     'has_strong_evidence',
@@ -979,6 +980,7 @@ abstract class ActivationFunnelAnalytics {
     bool? hasPhrase,
     bool? hasActionPhrase,
     bool? hasConfirmedRepeat,
+    bool? hasCustomName,
     bool? hasFirstProof,
     String? comparisonState,
     int? phraseCount,
@@ -1047,6 +1049,7 @@ abstract class ActivationFunnelAnalytics {
         'has_action_phrase': hasActionPhrase ? 1 : 0,
       if (hasConfirmedRepeat != null)
         'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
+      if (hasCustomName != null) 'has_custom_name': hasCustomName ? 1 : 0,
       if (hasFirstProof != null) 'has_first_proof': hasFirstProof ? 1 : 0,
       if (comparisonState != null && _safeValue.hasMatch(comparisonState))
         'comparison_state': comparisonState,

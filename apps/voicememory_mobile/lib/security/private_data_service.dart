@@ -326,6 +326,7 @@ class PrivateDataService {
       'archiveReturnLastSeenSnapshot',
       'archiveChangeTimelineMetrics',
       'archiveActivationFunnel',
+      'pattern_name_preferences_v1',
     ];
     for (final key in cacheKeys) {
       await prefs.writeMap(key, {});

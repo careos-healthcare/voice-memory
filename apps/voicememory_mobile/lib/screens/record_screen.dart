@@ -214,6 +214,9 @@ import '../features/weekly_review/weekly_archive_review_model.dart';
 import '../widgets/weekly_review/weekly_archive_review_card.dart'
     as weeklyReviewSurface;
 import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
+import '../features/pattern_naming/pattern_name_engine.dart';
+import '../features/pattern_naming/pattern_name_store.dart';
+import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../widgets/record/confirmed_repeat_trigger_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_change_notice_card.dart';
 import '../widgets/record/confirmed_repeat_helpful_action_payoff_card.dart';
@@ -713,6 +716,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       PatternChangedStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      PatternNameStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -3905,16 +3913,26 @@ class _RecordScreenState extends State<RecordScreen> {
     final archiveBeliefSurfaceCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
             !_isPostSaveSurface
-        ? ArchiveBeliefSurfaceSource().resolve(
-            _journalEntries,
-            confirmedRepeat: earlyFirstSignalOnRecord,
-            changeProof: repeatReturnChangeProof,
-            returnChecks: RepeatReturnCheckStore.cached,
-            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
-            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
-            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+        ? PatternNameEngine.applyDisplayLabels(
+            ArchiveBeliefSurfaceSource().resolve(
+              _journalEntries,
+              confirmedRepeat: earlyFirstSignalOnRecord,
+              changeProof: repeatReturnChangeProof,
+              returnChecks: RepeatReturnCheckStore.cached,
+              triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+              helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+              viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+            ),
           )
         : ArchiveBeliefSurface.none;
+    final patternNamePrompt = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? PatternNameEngine.buildPrompt(
+            entries: _journalEntries,
+            confirmedRepeat: earlyFirstSignalOnRecord,
+          )
+        : null;
     final showArchiveCurrentBeliefEligible = ArchiveCurrentBeliefGates.shouldShow(
       loaded: _journalEntryCountReady,
       entryCount: _journalEntryCount,
@@ -4883,6 +4901,15 @@ class _RecordScreenState extends State<RecordScreen> {
                           _onRecordPressed(source: 'archive_current_belief'),
                         ),
                       ),
+                      if (patternNamePrompt != null) ...[
+                        const SizedBox(height: 12),
+                        PatternNameConfirmationCard(
+                          prompt: patternNamePrompt,
+                          source: 'record',
+                          entryCount: _journalEntryCount,
+                          onChanged: () => setState(() {}),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                     ],
                     if (showArchiveSummaryOnRecord &&

@@ -12,6 +12,7 @@ import '../record_capture_modes/record_capture_mode_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_trend.dart';
+import '../pattern_naming/pattern_name_engine.dart';
 import 'weekly_archive_review_copy.dart';
 import 'weekly_archive_review_model.dart';
 
@@ -222,9 +223,10 @@ abstract final class WeeklyArchiveReviewEngine {
     }
 
     final phrase = grounded.first.replaceAll('"', '').trim();
+    final displayPhrase = PatternNameEngine.displayLabelForGroundedPhrase(phrase);
     return WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatRepeatedLabel,
-      body: "'$phrase' appeared across several moments.",
+      body: "'$displayPhrase' appeared across several moments.",
       isSupported: true,
       evidencePhrases: grounded,
     );

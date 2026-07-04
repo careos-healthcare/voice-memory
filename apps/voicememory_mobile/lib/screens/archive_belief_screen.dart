@@ -53,6 +53,9 @@ import '../features/weekly_review/weekly_archive_review_model.dart';
 import '../widgets/weekly_review/weekly_archive_review_card.dart'
     as weeklyReviewSurface;
 import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
+import '../features/pattern_naming/pattern_name_engine.dart';
+import '../features/pattern_naming/pattern_name_store.dart';
+import '../widgets/patterns/pattern_name_confirmation_card.dart';
 import '../features/early_archive/confirmed_repeat_trigger_capture.dart';
 import '../features/early_archive/confirmed_repeat_helpful_action_capture.dart';
 import '../features/onboarding/record_return_pro_store.dart';
@@ -634,6 +637,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       _applyScreenshotSample();
       return;
     }
+    await PatternNameStore.ensureLoaded();
     await ArchiveBeliefCorrectionStore.ensureLoaded();
     await ArchiveWorkspaceHintStore.ensureLoaded();
     await ProValuePreviewDismissStore.ensureLoaded();
@@ -3864,16 +3868,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         returnChecks: RepeatReturnCheckStore.cached,
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
-      final archiveBeliefSurfaceCandidate =
-          ArchiveBeliefSurfaceSource().resolve(
-        _entries,
-        tier: _archiveIntelligenceTier,
+      final archiveBeliefSurfaceCandidate = PatternNameEngine.applyDisplayLabels(
+        ArchiveBeliefSurfaceSource().resolve(
+          _entries,
+          tier: _archiveIntelligenceTier,
+          confirmedRepeat: earlyFirstSignal,
+          changeProof: repeatReturnChangeProof,
+          returnChecks: RepeatReturnCheckStore.cached,
+          triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        ),
+      );
+      final patternNamePrompt = PatternNameEngine.buildPrompt(
+        entries: _entries,
         confirmedRepeat: earlyFirstSignal,
-        changeProof: repeatReturnChangeProof,
-        returnChecks: RepeatReturnCheckStore.cached,
-        triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
-        helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
-        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
       );
       final showArchiveCurrentBelief = ArchiveCurrentBeliefGates.shouldShow(
         loaded: true,
@@ -4183,6 +4192,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                     ),
                     onDismissed: () => setState(() {}),
                   ),
+                  if (patternNamePrompt != null) ...[
+                    SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                    PatternNameConfirmationCard(
+                      prompt: patternNamePrompt,
+                      source: 'patterns',
+                      entryCount: _entries.length,
+                      onChanged: () => setState(() {}),
+                    ),
+                  ],
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
                 if (showNextBestActionOnPatterns &&
@@ -4252,6 +4270,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                           }
                         : null,
                   ),
+                  if (!showArchiveCurrentBelief && patternNamePrompt != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    PatternNameConfirmationCard(
+                      prompt: patternNamePrompt,
+                      source: 'patterns',
+                      entryCount: _entries.length,
+                      onChanged: () => setState(() {}),
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (showArchiveChangeTimeline &&
