@@ -4,11 +4,13 @@ import '../archive_evidence/archive_entry_signal_guard.dart';
 import '../record/daily_mirror_engine.dart';
 import '../record/daily_mirror_model.dart';
 import '../record/daily_mirror_stage.dart';
+import '../record_capture_modes/record_capture_mode_engine.dart';
 import '../timeline/timeline_entry_display.dart';
 
 /// Which single archive result to show below the heard excerpt on Record post-save.
 enum PostSavePrimaryArchiveKind {
   lowSignal,
+  quietDay,
   discovery,
   beliefUpdate,
   savedPrivately,
@@ -53,6 +55,12 @@ class PostSaveArchiveHierarchy {
     }
 
     if (suppressLatestSaveArchiveInsight) {
+      final newest = entries.first;
+      if (RecordCaptureModeEngine.entryIsQuietDay(newest)) {
+        return const PostSaveArchiveHierarchy(
+          kind: PostSavePrimaryArchiveKind.quietDay,
+        );
+      }
       return const PostSaveArchiveHierarchy(
         kind: PostSavePrimaryArchiveKind.lowSignal,
       );

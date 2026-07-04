@@ -530,8 +530,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(PostSaveRecordedSummaryCopy.safeSavedPrivately), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.safeNoGuessing), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.noPatternReassurance), findsOneWidget);
+      expect(find.text(PostSaveRecordedSummaryCopy.safeNoGuessing), findsNothing);
       expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
       expect(find.text(PostSaveRecordedSummaryCopy.whatChangedTitle), findsNothing);
     });

@@ -5,6 +5,7 @@ import '../../features/voice_capture/audio/audio_debug_actions.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_evidence/archive_entry_signal_guard.dart';
 import '../../features/post_save/post_save_archive_hierarchy.dart';
+import '../../features/record_capture_modes/record_capture_mode_engine.dart';
 import '../../features/post_save/post_save_recorded_summary_copy.dart';
 import '../../features/record/daily_mirror_engine.dart';
 import '../../features/record/daily_mirror_model.dart';
@@ -62,6 +63,11 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
   bool get _isDegraded => postSaveIsDegradedVoiceCapture(entry);
 
   bool get _hasHeardText => postSaveHasHeardText(entry);
+
+  bool get _showQuietDayFootnote =>
+      primaryArchiveResult == PostSavePrimaryArchiveKind.quietDay ||
+      (primaryArchiveResult == null &&
+          RecordCaptureModeEngine.entryIsQuietDay(entry));
 
   bool _shows(PostSavePrimaryArchiveKind kind) =>
       primaryArchiveResult == null || primaryArchiveResult == kind;
@@ -124,7 +130,20 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               ),
             ),
           ],
-          if (_isLowSignal && _shows(PostSavePrimaryArchiveKind.lowSignal)) ...[
+          if (_showQuietDayFootnote) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              PostSaveRecordedSummaryCopy.quietDaySaved,
+              key: const Key('post_save_quiet_day_saved'),
+              style: footnoteStyle,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              PostSaveRecordedSummaryCopy.quietDayWatching,
+              key: const Key('post_save_quiet_day_watching'),
+              style: footnoteStyle,
+            ),
+          ] else if (_isLowSignal && _shows(PostSavePrimaryArchiveKind.lowSignal)) ...[
             const SizedBox(height: AppSpacing.md),
             Text(
               PostSaveRecordedSummaryCopy.whatThisAddedTitle,
@@ -274,14 +293,8 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               const SizedBox(height: 4),
             ],
             Text(
-              PostSaveRecordedSummaryCopy.safeSavedPrivately,
-              key: const Key('post_save_safe_saved_privately'),
-              style: footnoteStyle,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              PostSaveRecordedSummaryCopy.safeNoGuessing,
-              key: const Key('post_save_safe_no_guessing'),
+              PostSaveRecordedSummaryCopy.noPatternReassurance,
+              key: const Key('post_save_no_pattern_reassurance'),
               style: footnoteStyle,
             ),
           ],

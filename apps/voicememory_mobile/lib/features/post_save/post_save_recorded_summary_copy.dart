@@ -19,6 +19,11 @@ abstract class PostSaveRecordedSummaryCopy {
   static const String safeSavedPrivately = 'Saved privately.';
   static const String safeNoGuessing =
       'ArchiveMe will only show a pattern when your own words support it.';
+  static const String noPatternReassurance =
+      'Saved. ArchiveMe does not need every entry to become a pattern.';
+  static const String quietDaySaved = 'Saved as a quiet day.';
+  static const String quietDayWatching =
+      'ArchiveMe will keep watching when something stands out.';
 
   static const String lowSignalWhatThisAddedBody =
       'This was saved, but it does not add enough detail for ArchiveMe to connect it yet.';

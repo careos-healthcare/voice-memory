@@ -186,6 +186,10 @@ import '../widgets/record/early_repeat_progress_card.dart';
 import '../features/archive_history/archive_history_engine.dart';
 import '../widgets/archive_history/archive_history_sheet.dart';
 import '../widgets/record/pending_transcript_recovery_sheet.dart';
+import '../features/record_capture_modes/record_capture_mode_engine.dart';
+import '../features/record_capture_modes/record_capture_mode_model.dart';
+import '../widgets/record/navigate_to_capture_mode.dart';
+import '../widgets/record/record_capture_modes_card.dart';
 import '../widgets/record/correct_transcript_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../features/transcript_correction/transcript_correction_copy.dart';
@@ -2021,6 +2025,14 @@ class _RecordScreenState extends State<RecordScreen> {
       ),
     );
     await _finishSuccessfulCapture(result);
+  }
+
+  Future<void> _openCaptureMode(RecordCaptureMode mode) async {
+    await navigateToCaptureMode(
+      context,
+      mode: mode,
+      onSaved: _finishSuccessfulCapture,
+    );
   }
 
   Future<void> _openCorrectTranscriptForEntry(JournalEntry entry) async {
@@ -4729,6 +4741,18 @@ class _RecordScreenState extends State<RecordScreen> {
                           );
                         },
                       ),
+                    ],
+                    if (ui == RecordUiState.ready &&
+                        RecordCaptureModeEngine.shouldShow(
+                          loaded: _journalEntryCountReady,
+                          isReady: true,
+                          isPostSave: _isPostSaveSurface,
+                        )) ...[
+                      RecordCaptureModesCard(
+                        onModeTap: (mode) =>
+                            unawaited(_openCaptureMode(mode)),
+                      ),
+                      const SizedBox(height: 12),
                     ],
                     if (ui == RecordUiState.ready &&
                         showNextBestActionOnRecord &&

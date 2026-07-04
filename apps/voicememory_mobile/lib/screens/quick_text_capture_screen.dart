@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,6 +9,8 @@ import '../product/consumer_ui_copy.dart';
 import '../services/app_services.dart';
 import '../services/capture_pipeline_service.dart';
 import '../services/product_analytics.dart';
+import '../features/record_capture_modes/record_capture_mode_copy.dart';
+import '../features/record_capture_modes/record_capture_mode_engine.dart';
 import '../record/start_here_visibility.dart';
 import '../theme/voicememory_colors.dart';
 import '../widgets/record/start_here_recording_section.dart';
@@ -17,6 +21,10 @@ class QuickTextCaptureScreen extends StatefulWidget {
     super.key,
     this.initialText,
     this.entryId,
+    this.promptHint,
+    this.helperText,
+    this.captureModeId,
+    this.allowQuietDaySave = false,
   });
 
   /// Optional prompt hint from conversation starters — never prefilled as editable text.
@@ -24,6 +32,17 @@ class QuickTextCaptureScreen extends StatefulWidget {
 
   /// When set, typed text is attached to this existing voice entry.
   final String? entryId;
+
+  /// Capture-mode question shown as hint — never saved as transcript.
+  final String? promptHint;
+
+  /// Capture-mode helper shown above the field — never saved as transcript.
+  final String? helperText;
+
+  final String? captureModeId;
+
+  /// Quiet-day mode may save a short default phrase when the field is empty.
+  final bool allowQuietDaySave;
 
   @override
   State<QuickTextCaptureScreen> createState() => _QuickTextCaptureScreenState();
@@ -46,9 +65,12 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   void initState() {
     super.initState();
     _pipeline = AppServices.instance.pipeline;
-    final seed = widget.initialText?.trim();
-    if (seed != null && seed.isNotEmpty) {
-      _promptHint = seed;
+    final modePrompt = widget.promptHint?.trim();
+    final legacySeed = widget.initialText?.trim();
+    if (modePrompt != null && modePrompt.isNotEmpty) {
+      _promptHint = modePrompt;
+    } else if (legacySeed != null && legacySeed.isNotEmpty) {
+      _promptHint = legacySeed;
     }
     ProductAnalytics.track('quick_text_capture_started');
     _controller.addListener(_onTextChanged);
@@ -90,16 +112,28 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
 
   bool get _canSave => !_saving && _controller.text.trim().isNotEmpty;
 
+  bool get _canQuietDaySave =>
+      !_saving &&
+      widget.allowQuietDaySave &&
+      _controller.text.trim().isEmpty &&
+      !_isVoiceFallback;
+
   bool get _showPromptHelper =>
       _promptHint != null && _controller.text.isEmpty;
+
+  String? get _modeHelperText {
+    final helper = widget.helperText?.trim();
+    if (helper == null || helper.isEmpty) return null;
+    return helper;
+  }
 
   bool get _isVoiceFallback => widget.entryId?.trim().isNotEmpty == true;
 
   String get _saveButtonLabel =>
       _isVoiceFallback ? 'Save words' : 'Save Thought';
 
-  Future<void> _save() async {
-    final text = _controller.text.trim();
+  Future<void> _save({String? overrideText}) async {
+    final text = (overrideText ?? _controller.text).trim();
     if (text.isEmpty || _saving) return;
 
     debugPrint('thought_save_tapped');
@@ -220,7 +254,19 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      if (_journalLoaded) ...[
+                      if (_modeHelperText != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          _modeHelperText!,
+                          key: const Key('quick_text_capture_mode_helper'),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: VoiceMemoryColors.textSecondary,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
+                      if (_journalLoaded && widget.captureModeId == null) ...[
                         const SizedBox(height: 12),
                         StartHereRecordingSection(
                           recordingCount: _recordingCount,
@@ -233,7 +279,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                           maxPrompts: _isVoiceFallback ? 2 : null,
                         ),
                       ],
-                      if (_showPromptHelper) ...[
+                      if (_showPromptHelper && _modeHelperText == null) ...[
                         const SizedBox(height: 12),
                         Text(
                           ConsumerUiCopy.trySayingLabel,
@@ -293,7 +339,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                         height: 48,
                         child: FilledButton(
                           key: const Key('quick_text_capture_save_button'),
-                          onPressed: _canSave ? _save : null,
+                          onPressed: _canSave ? () => unawaited(_save()) : null,
                           child: _saving
                               ? const SizedBox(
                                   width: 22,
@@ -305,6 +351,24 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                               : Text(_saveButtonLabel),
                         ),
                       ),
+                      if (_canQuietDaySave) ...[
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 44,
+                          child: TextButton(
+                            key: const Key('quick_text_capture_quiet_day_save'),
+                            onPressed: () => unawaited(
+                              _save(
+                                overrideText:
+                                    RecordCaptureModeEngine.quietDaySaveText(),
+                              ),
+                            ),
+                            child: const Text(
+                              RecordCaptureModeCopy.quietDaySaveButton,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

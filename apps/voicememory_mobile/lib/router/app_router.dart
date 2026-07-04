@@ -526,15 +526,27 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra;
         String? initialText;
         String? entryId;
+        String? promptHint;
+        String? helperText;
+        String? captureModeId;
+        bool allowQuietDaySave = false;
         if (extra is String) {
           initialText = extra;
         } else if (extra is Map) {
           initialText = extra['initialText'] as String?;
           entryId = extra['entryId'] as String?;
+          promptHint = extra['prompt'] as String?;
+          helperText = extra['helper'] as String?;
+          captureModeId = extra['captureModeId'] as String?;
+          allowQuietDaySave = extra['allowQuietDaySave'] == true;
         }
         return QuickTextCaptureScreen(
           initialText: initialText,
           entryId: entryId,
+          promptHint: promptHint,
+          helperText: helperText,
+          captureModeId: captureModeId,
+          allowQuietDaySave: allowQuietDaySave,
         );
       },
     ),
