@@ -9,6 +9,7 @@ import '../../features/share/archive_share_actions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import '../private_report/private_report_sheet.dart';
 
 /// Private archive report card — evidence summary for personal ownership.
 class PrivateArchiveReportCard extends StatefulWidget {
@@ -19,7 +20,6 @@ class PrivateArchiveReportCard extends StatefulWidget {
     required this.surface,
     required this.isPro,
     this.onCopy,
-    this.onShare,
     this.onSeePro,
   });
 
@@ -30,7 +30,6 @@ class PrivateArchiveReportCard extends StatefulWidget {
     required this.surface,
     this.isPro = false,
     this.onCopy,
-    this.onShare,
     this.onSeePro,
   });
 
@@ -39,7 +38,6 @@ class PrivateArchiveReportCard extends StatefulWidget {
   final String surface;
   final bool isPro;
   final Future<bool> Function(String text)? onCopy;
-  final Future<bool> Function(String text)? onShare;
   final VoidCallback? onSeePro;
 
   @override
@@ -53,8 +51,10 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
   bool get _isFullExport =>
       PrivateArchiveReportGates.showFullExport(isPro: widget.isPro);
 
-  String get _exportText =>
-      widget.report.plainText(isPro: _isFullExport);
+  String get _exportText => widget.report.visiblePlainText(
+        isPro: _isFullExport,
+        previewSectionCount: widget.report.previewSectionCount,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +155,8 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
           _ExportScopeList(
             heading: PrivateArchiveReportCopy.exportNotIncludedHeading,
             items: PrivateArchiveReportCopy.exportNotIncludedItems,
-            headingKey: const Key('private_archive_report_export_not_included_heading'),
+            headingKey:
+                const Key('private_archive_report_export_not_included_heading'),
             listKey: const Key('private_archive_report_export_not_included'),
             labelStyle: sectionLabelStyle,
             bodyStyle: bodyStyle,
@@ -164,10 +165,25 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
+              key: const Key('private_archive_report_view_cta'),
+              onPressed: () => _openSheet(context),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.accentPrimary,
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(PrivateArchiveReportCopy.viewReportCta),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
               key: const Key('private_archive_report_copy_cta'),
               onPressed: () => _copy(context),
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.accentPrimary,
+                foregroundColor: AppColors.textSecondary,
                 visualDensity: VisualDensity.compact,
                 padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
                 minimumSize: Size.zero,
@@ -176,28 +192,19 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
               child: Text(PrivateArchiveReportCopy.copyReportCta),
             ),
           ),
-          Text(
-            PrivateArchiveReportCopy.copyReportHelper,
-            key: const Key('private_archive_report_copy_helper'),
-            style: previewStyle,
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              key: const Key('private_archive_report_share_cta'),
-              onPressed: () => _share(context),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.textSecondary,
-                visualDensity: VisualDensity.compact,
-                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(PrivateArchiveReportCopy.sharePrivatelyCta),
-            ),
-          ),
         ],
       ),
+    );
+  }
+
+  Future<void> _openSheet(BuildContext context) {
+    return PrivateReportSheet.show(
+      context,
+      report: widget.report,
+      entryCount: widget.entryCount,
+      surface: widget.surface,
+      isPro: widget.isPro,
+      onCopy: widget.onCopy,
     );
   }
 
@@ -221,30 +228,6 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
       ArchiveShareActions.showFeedback(
         context,
         PrivateArchiveReportCopy.copyConfirmation,
-      );
-    }
-  }
-
-  Future<void> _share(BuildContext context) async {
-    PrivateArchiveReportAnalytics.shareTapped(
-      surface: widget.surface,
-      entryCount: widget.entryCount,
-      isFullExport: _isFullExport,
-    );
-    if (widget.onShare != null) {
-      await widget.onShare!(_exportText);
-      return;
-    }
-    final outcome = await ArchiveShareActions.shareShareText(
-      context,
-      text: _exportText,
-      subject: widget.report.title,
-    );
-    if (!context.mounted) return;
-    if (outcome == ArchiveShareOutcome.fallbackCopied) {
-      ArchiveShareActions.showFeedback(
-        context,
-        PrivateArchiveReportCopy.shareFallbackMessage,
       );
     }
   }

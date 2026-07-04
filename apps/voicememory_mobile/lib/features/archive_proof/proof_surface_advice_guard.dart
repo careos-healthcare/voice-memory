@@ -10,6 +10,7 @@ import '../early_archive/positive_reinforcement_copy.dart';
 import '../early_archive/private_archive_report_copy.dart';
 import '../early_archive/return_check_payoff_copy.dart';
 import '../early_archive/weekly_archive_review_copy.dart';
+import '../weekly_review/weekly_archive_review_copy.dart';
 import '../archive_thought_map/archive_thought_map_copy.dart';
 import '../repeat_return_check/pattern_changed_copy.dart';
 import '../next_action/next_best_action_copy.dart';
@@ -106,10 +107,11 @@ abstract final class ProofSurfaceAdviceGuard {
         ...PrivateArchiveReportCopy.exportIncludedItems,
         PrivateArchiveReportCopy.exportNotIncludedHeading,
         ...PrivateArchiveReportCopy.exportNotIncludedItems,
-        PrivateArchiveReportCopy.copyReportHelper,
+        PrivateArchiveReportCopy.copyReportCta,
+        PrivateArchiveReportCopy.viewReportCta,
         PrivateArchiveReportCopy.whatHelpedHeading,
-        PrivateArchiveReportCopy.whatToRecordNextHeading,
-        PrivateArchiveReportCopy.whatToRecordNextBody,
+        PrivateArchiveReportCopy.whatToWatchNextHeading,
+        WeeklyArchiveReviewCopy.watchBeforeAgree,
         PrivateArchiveReportCopy.missingEvidenceFallback,
         ArchiveBeliefSurfaceCopy.headline,
         ArchiveBeliefSurfaceCopy.evidenceLabel,

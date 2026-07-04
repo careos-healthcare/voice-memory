@@ -292,7 +292,7 @@ abstract final class ReleaseCandidateSmokeEngine {
 
   static ReleaseCandidateSmokeRow _reportCopyRow() {
     final available = PrivateArchiveReportCopy.copyReportCta.isNotEmpty &&
-        PrivateArchiveReportCopy.copyReportHelper.isNotEmpty;
+        PrivateArchiveReportCopy.intro.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.reportCopy,
       label: ReleaseCandidateSmokeCopy.rowReportCopy,

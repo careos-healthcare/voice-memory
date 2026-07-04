@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/activation/paywall_timing_gates.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/helpful_action_appeared_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_analytics.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_gates.dart';
-import 'package:voicememory_mobile/features/repeat_return_check/pattern_changed_copy.dart';
+import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_model.dart';
+import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
+import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
+import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
+import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/record/private_archive_report_card.dart';
 
 JournalEntry _entry({
@@ -65,36 +69,6 @@ List<JournalEntry> _fourRelatedRepeatEntries() => [
       ),
     ];
 
-List<JournalEntry> _fiveRelatedEntries() => [
-      ..._fourRelatedRepeatEntries(),
-      _entry(
-        id: 'e5',
-        transcript:
-            'Same yes pattern came back but it felt less urgent and easier to stop.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
-
-List<JournalEntry> _fourWithHelpfulAction() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I paused before replying this time and it felt a bit softer.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
-
-List<JournalEntry> _fourWithChangedReturn() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I walked outside for five minutes before I replied to the message.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
-
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
@@ -116,7 +90,21 @@ void _expectNoAdviceLanguage(String copy) {
 }
 
 void main() {
-  setUp(PrivateArchiveReportAnalytics.resetForTest);
+  setUp(() async {
+    PrivateArchiveReportAnalytics.resetForTest();
+    await WhatChangedV2Store.resetForTest();
+    await HelpedTrackingStore.resetForTest();
+    await AppServices.resetForTest(
+      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
+      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      skipRevenueCat: true,
+    );
+  });
+
+  tearDown(() async {
+    await WhatChangedV2Store.resetForTest();
+    await HelpedTrackingStore.resetForTest();
+  });
 
   group('PrivateArchiveReportEngine', () {
     test('hidden without confirmed repeat evidence', () {
@@ -132,20 +120,16 @@ void main() {
     test('report sections render in exact order', () {
       final report = PrivateArchiveReportEngine.build(
         entries: _fourRelatedRepeatEntries(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
       expect(
         report.sections.map((section) => section.heading).toList(),
         [
           PrivateArchiveReportCopy.whatRepeatedHeading,
-          PrivateArchiveReportCopy.whatSoftenedHeading,
-          PrivateArchiveReportCopy.whatGotLouderHeading,
-          PrivateArchiveReportCopy.whatHelpedHeading,
           PrivateArchiveReportCopy.whatChangedHeading,
-          PrivateArchiveReportCopy.whatToRecordNextHeading,
+          PrivateArchiveReportCopy.whatHelpedHeading,
+          PrivateArchiveReportCopy.whatToWatchNextHeading,
+          PrivateArchiveReportCopy.evidenceHeading,
         ],
       );
     });
@@ -180,76 +164,55 @@ void main() {
       );
     });
 
-    test('softened section uses softer evidence', () {
+    test('changed section uses WhatChanged v2 marker', () async {
+      final store = WhatChangedV2Store.instance();
+      await store.saveSelection(
+        entryId: 'e4',
+        option: WhatChangedV2Option.softer,
+        entryCountAtCapture: 4,
+      );
+
       final report = PrivateArchiveReportEngine.build(
-        entries: _fiveRelatedEntries(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e5', choice: RepeatReturnCheckChoice.softer),
-        ],
+        entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final softened = report.sections[1];
-      expect(softened.lines.first, startsWith('This looked softer than before:'));
-      expect(softened.hasEvidence, isTrue);
+      final changed = report.sections[1];
+      expect(changed.hasEvidence, isTrue);
+      expect(
+        changed.lines.first,
+        'You marked that the repeat felt softer this time.',
+      );
     });
 
-    test('got louder section uses stronger evidence', () {
-      final report = PrivateArchiveReportEngine.build(
-        entries: _fiveRelatedEntries(),
-        returnChecks: [
-          _answeredRecord(
-            entryId: 'e5',
-            choice: RepeatReturnCheckChoice.stronger,
-          ),
-        ],
-        viewingConfirmedRepeatOrTimeline: true,
-      )!;
-      final louder = report.sections[2];
-      expect(louder.lines.first, startsWith('This looked stronger than before:'));
-      expect(louder.hasEvidence, isTrue);
-    });
+    test('helped section uses helped tracking marker', () async {
+      final store = HelpedTrackingStore.instance();
+      await store.saveSelection(
+        entryId: 'e4',
+        option: HelpedTrackingOption.paused,
+        entryCountAtCapture: 4,
+      );
 
-    test('helped section uses HelpfulActionAppeared evidence', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _fourWithHelpfulAction(),
+        entries: _fourRelatedRepeatEntries(),
         returnChecks: [
           _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final helped = report.sections[3];
-      expect(helped.lines.first, startsWith('A helpful action appeared:'));
-      expect(
-        helped.lines.first.toLowerCase(),
-        contains('paused before'),
-      );
+      final helped = report.sections[2];
+      expect(helped.hasEvidence, isTrue);
+      expect(helped.lines.first, contains('paused'));
     });
 
-    test('changed section uses PatternChanged evidence', () {
-      final report = PrivateArchiveReportEngine.build(
-        entries: _fourWithChangedReturn(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
-        ],
-        viewingConfirmedRepeatOrTimeline: true,
-      )!;
-      final changed = report.sections[4];
-      expect(
-        changed.lines.first,
-        startsWith('Something looked different this time:'),
-      );
-      expect(changed.hasEvidence, isTrue);
-    });
-
-    test('what-to-record-next section appears', () {
+    test('what-to-watch-next section appears', () {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final next = report.sections.last;
-      expect(next.heading, PrivateArchiveReportCopy.whatToRecordNextHeading);
-      expect(next.lines.first, PrivateArchiveReportCopy.whatToRecordNextBody);
-      expect(next.hasEvidence, isTrue);
+      final watch = report.sections[3];
+      expect(watch.heading, PrivateArchiveReportCopy.whatToWatchNextHeading);
+      expect(watch.lines.first.trim(), isNotEmpty);
+      expect(watch.hasEvidence, isTrue);
     });
 
     test('no full transcript dump', () {
@@ -267,10 +230,7 @@ void main() {
 
     test('no advice or coaching language', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _fourWithHelpfulAction(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
+        entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
       _expectNoAdviceLanguage(report.fullPlainText);
@@ -307,10 +267,7 @@ void main() {
   group('PrivateArchiveReport preview/full boundary', () {
     test('free preview shows first section only and pro framing', () {
       final report = PrivateArchiveReportEngine.build(
-        entries: _fourWithHelpfulAction(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
+        entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
 
@@ -318,33 +275,24 @@ void main() {
       expect(preview, contains(PrivateArchiveReportCopy.previewTitle));
       expect(preview, contains(PrivateArchiveReportCopy.previewBody));
       expect(preview, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
-      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatSoftenedHeading)));
-      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatToRecordNextHeading)));
+      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatChangedHeading)));
+      expect(preview, isNot(contains(PrivateArchiveReportCopy.whatToWatchNextHeading)));
 
       final full = report.plainText(isPro: true);
       expect(full, isNot(contains(PrivateArchiveReportCopy.previewTitle)));
-      expect(full, contains(PrivateArchiveReportCopy.whatSoftenedHeading));
-      expect(full, contains(PrivateArchiveReportCopy.whatToRecordNextHeading));
+      expect(full, contains(PrivateArchiveReportCopy.whatChangedHeading));
+      expect(full, contains(PrivateArchiveReportCopy.whatToWatchNextHeading));
     });
 
     test('preview explains full report without entitlement changes', () {
       expect(PrivateArchiveReportCopy.previewTitle, 'Preview private report');
       expect(
         PrivateArchiveReportCopy.exportIncludedItems,
-        [
-          PrivateArchiveReportCopy.whatRepeatedHeading,
-          PrivateArchiveReportCopy.whatChangedHeading,
-          PrivateArchiveReportCopy.whatHelpedHeading,
-          PrivateArchiveReportCopy.whatToRecordNextHeading,
-        ],
+        PrivateReportCopy.includedItems,
       );
       expect(
         PrivateArchiveReportCopy.exportNotIncludedItems,
-        [
-          'Audio',
-          'Full raw transcripts',
-          'Private settings data',
-        ],
+        PrivateReportCopy.notIncludedItems,
       );
       expect(
         PrivateArchiveReportCopy.previewBody.toLowerCase(),
@@ -352,7 +300,7 @@ void main() {
       );
       expect(
         PrivateArchiveReportCopy.intro,
-        'Your archive noticed these evidence patterns from your own words.',
+        PrivateReportCopy.subtitle,
       );
     });
 
@@ -361,11 +309,10 @@ void main() {
         PrivateArchiveReportCopy.intro,
         PrivateArchiveReportCopy.previewBody,
         PrivateArchiveReportCopy.whatHelpedHeading,
-        PrivateArchiveReportCopy.whatToRecordNextBody,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('your archive noticed'));
-      expect(joined, contains('your own words'));
+      expect(joined, contains('local summary'));
+      expect(joined, contains('raw recordings are not included'));
       expect(joined, isNot(contains('recommendations')));
       expect(joined, isNot(contains('you should')));
       expect(joined, isNot(contains('try this')));
@@ -373,7 +320,7 @@ void main() {
   });
 
   group('PrivateArchiveReportCard', () {
-    testWidgets('copy private report CTA and helper appear', (tester) async {
+    testWidgets('copy report and view report CTAs appear', (tester) async {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
@@ -398,12 +345,8 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(PrivateArchiveReportCopy.copyReportHelper),
+        find.text(PrivateArchiveReportCopy.viewReportCta),
         findsOneWidget,
-      );
-      expect(
-        PrivateArchiveReportCopy.copyReportHelper,
-        'Only report text is copied — not audio.',
       );
     });
 
@@ -461,6 +404,7 @@ void main() {
                 report: report,
                 entryCount: 3,
                 surface: 'record',
+                isPro: true,
                 onCopy: (text) async {
                   copiedText = text;
                   return true;
@@ -479,17 +423,15 @@ void main() {
 
       expect(copiedText, contains(PrivateArchiveReportCopy.title));
       expect(copiedText, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
-      expect(copiedText.toLowerCase(), isNot(contains('full raw transcripts')));
+      expect(copiedText, contains(PrivateArchiveReportCopy.exportIncludedHeading));
+      expect(copiedText.toLowerCase(), isNot(contains('.m4a')));
     });
 
     testWidgets('pro full export still includes all report sections', (
       tester,
     ) async {
       final report = PrivateArchiveReportEngine.build(
-        entries: _fourWithHelpfulAction(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
+        entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
       var copiedText = '';
@@ -519,10 +461,10 @@ void main() {
       await tester.tap(find.byKey(const Key('private_archive_report_copy_cta')));
       await tester.pump();
 
-      expect(copiedText, contains(PrivateArchiveReportCopy.whatSoftenedHeading));
+      expect(copiedText, contains(PrivateArchiveReportCopy.whatChangedHeading));
       expect(
         copiedText,
-        contains(PrivateArchiveReportCopy.whatToRecordNextHeading),
+        contains(PrivateArchiveReportCopy.whatToWatchNextHeading),
       );
       expect(copiedText, isNot(contains(PrivateArchiveReportCopy.previewTitle)));
     });
@@ -531,10 +473,7 @@ void main() {
       tester,
     ) async {
       final report = PrivateArchiveReportEngine.build(
-        entries: _fourWithHelpfulAction(),
-        returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
-        ],
+        entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
 
@@ -559,7 +498,7 @@ void main() {
       );
       expect(find.text(PrivateArchiveReportCopy.previewProCta), findsOneWidget);
       expect(
-        find.text(PrivateArchiveReportCopy.whatToRecordNextHeading),
+        find.text(PrivateArchiveReportCopy.whatToWatchNextHeading),
         findsNothing,
       );
     });
@@ -629,16 +568,6 @@ void main() {
       );
       expect(captured!.keys, isNot(contains('transcript')));
       expect(captured!['export_tier'], 'preview');
-    });
-  });
-
-  group('Copy distinct from other proof surfaces', () {
-    test('report title distinct from pattern changed and helpful action', () {
-      expect(PrivateArchiveReportCopy.title, isNot(PatternChangedCopy.title));
-      expect(
-        PrivateArchiveReportCopy.title,
-        isNot(HelpfulActionAppearedCopy.title),
-      );
     });
   });
 }

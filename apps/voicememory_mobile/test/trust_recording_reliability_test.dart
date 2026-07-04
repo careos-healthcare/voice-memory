@@ -361,14 +361,14 @@ void main() {
     test('private report copy does not imply audio sharing', () {
       expect(
         PrivateArchiveReportCopy.copyReportCta,
-        'Copy private report',
+        'Copy report',
       );
       expect(
-        PrivateArchiveReportCopy.copyReportHelper,
-        contains('not audio'),
+        PrivateArchiveReportCopy.intro,
+        contains('raw recordings are not included'),
       );
       expect(
-        PrivateArchiveReportCopy.copyReportHelper.toLowerCase(),
+        PrivateArchiveReportCopy.intro.toLowerCase(),
         isNot(contains('share audio')),
       );
     });
