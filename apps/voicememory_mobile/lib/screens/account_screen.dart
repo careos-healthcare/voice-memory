@@ -13,6 +13,9 @@ import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
+import '../features/beta_feedback/beta_feedback_copy.dart';
+import '../features/beta_feedback/beta_feedback_engine.dart';
+import '../widgets/account/beta_feedback_sheet.dart';
 import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
@@ -30,11 +33,22 @@ class _AccountScreenState extends State<AccountScreen> {
   String _status = '';
   bool _busy = false;
   bool _showSignIn = false;
+  int _entryCount = 0;
 
   @override
   void initState() {
     super.initState();
     _refresh();
+    _loadEntryCount();
+  }
+
+  Future<void> _loadEntryCount() async {
+    if (ScreenshotMode.enabled || !AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    setState(
+      () => _entryCount = const BetaFeedbackEngine().realEntryCount(entries),
+    );
   }
 
   Future<void> _refresh() async {
@@ -122,6 +136,15 @@ class _AccountScreenState extends State<AccountScreen> {
                     : null,
               ),
               _sectionTile(
+                key: const Key('account_beta_feedback_tile'),
+                title: BetaFeedbackCopy.sheetLinkLabel,
+                onTap: () => BetaFeedbackSheet.show(
+                  context,
+                  source: 'account',
+                  entryCount: _entryCount,
+                ),
+              ),
+              _sectionTile(
                 title: ConsumerUiCopy.privacy,
                 onTap: () => context.push('/privacy'),
               ),
@@ -202,6 +225,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _sectionTile({
+    Key? key,
     required String title,
     String? subtitle,
     VoidCallback? onTap,
@@ -213,8 +237,9 @@ class _AccountScreenState extends State<AccountScreen> {
       child: Material(
         color: AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(16),
-        child: ListTile(
-          shape: RoundedRectangleBorder(
+      child: ListTile(
+        key: key,
+        shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: const BorderSide(color: AppColors.borderSubtle),
           ),

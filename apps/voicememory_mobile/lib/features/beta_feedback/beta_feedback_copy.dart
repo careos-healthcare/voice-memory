@@ -46,6 +46,32 @@ abstract final class BetaFeedbackCopy {
       'Feedback stays on this device only.';
   static const openBetaFeedbackButton = 'Open beta feedback';
 
+  // Beta Feedback v1 sheet — structured TestFlight feedback.
+  static const sheetLinkLabel = 'Send beta feedback';
+  static const sheetTitle = 'Send beta feedback';
+  static const sheetSubtitle = 'What should we improve before launch?';
+
+  static const optionConfused = 'Something confused me';
+  static const optionUseful = 'Something felt useful';
+  static const optionWrong = 'Something felt wrong';
+  static const optionWouldPay = 'I would pay for this';
+  static const optionWouldNotPayYet = 'I would not pay for this yet';
+  static const optionOther = 'Other';
+
+  static const sheetNoteLabel = 'Add a note';
+  static const sheetSendCta = 'Send feedback';
+  static const sheetCancelCta = 'Cancel';
+
+  static const previewTitle = 'Review feedback before sending';
+  static const previewSendCta = 'Send';
+  static const previewBodyIntro =
+      'This message opens in your email app. Nothing is sent automatically.';
+
+  static const emailCopiedFallback =
+      'Could not open email. Feedback copied — paste it into an email to '
+      'hello@careosapp.co.uk.';
+  static const emailSentConfirmation = 'Opening your email app…';
+
   static const testimonialDefault =
       'ArchiveMe helped me notice a pattern across my own saved moments.';
   static const testimonialUnderstood =
@@ -105,6 +131,50 @@ abstract final class BetaFeedbackCopy {
     return buffer.toString().trim();
   }
 
+  static String buildSubmissionMessage({
+    required String surface,
+    required String optionLabel,
+    required int entryCount,
+    required String appVersion,
+    String? note,
+  }) {
+    final buffer = StringBuffer()
+      ..writeln('ArchiveMe beta feedback')
+      ..writeln('')
+      ..writeln('Surface: $surface')
+      ..writeln('Option: $optionLabel')
+      ..writeln('Entry count: $entryCount')
+      ..writeln('App version: $appVersion');
+    final trimmedNote = note?.trim();
+    if (trimmedNote != null && trimmedNote.isNotEmpty) {
+      buffer
+        ..writeln('')
+        ..writeln('Note:')
+        ..writeln(trimmedNote);
+    }
+    return buffer.toString().trim();
+  }
+
+  static List<String> allSheetCopy() => [
+        sheetLinkLabel,
+        sheetTitle,
+        sheetSubtitle,
+        optionConfused,
+        optionUseful,
+        optionWrong,
+        optionWouldPay,
+        optionWouldNotPayYet,
+        optionOther,
+        sheetNoteLabel,
+        sheetSendCta,
+        sheetCancelCta,
+        previewTitle,
+        previewSendCta,
+        previewBodyIntro,
+        emailCopiedFallback,
+        emailSentConfirmation,
+      ];
+
   static List<String> allVisibleCopy() => [
         cardTitle,
         cardBody,
@@ -139,5 +209,6 @@ abstract final class BetaFeedbackCopy {
         testimonialNotYet,
         usefulnessNotAnswered,
         clarityNotAnswered,
+        ...allSheetCopy(),
       ];
 }

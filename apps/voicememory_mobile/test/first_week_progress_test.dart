@@ -7,7 +7,7 @@ import 'package:voicememory_mobile/features/retention/first_week_progress_copy.d
 import 'package:voicememory_mobile/features/retention/first_week_progress_engine.dart';
 import 'package:voicememory_mobile/features/retention/first_week_progress_model.dart';
 import 'package:voicememory_mobile/features/retention/return_tomorrow_cue_engine.dart';
-import 'package:voicememory_mobile/features/retention/yesterday_watch_engine.dart';
+import 'package:voicememory_mobile/features/return_day/return_day_flow_engine.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
@@ -205,22 +205,22 @@ void main() {
   });
 
   group('FirstWeekProgressGates dedup', () {
-    test('does not show with Yesterday Watch on ready', () {
+    test('does not show with Return Day Flow on ready', () {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
       final progress = FirstWeekProgressEngine.buildReady(entries: entries, now: now);
-      final watch = YesterdayWatchEngine.build(entries: entries, now: now);
+      final flow = ReturnDayFlowEngine.build(entries: entries, now: now);
 
       expect(progress, isNotNull);
-      expect(watch, isNotNull);
+      expect(flow, isNotNull);
       expect(
         FirstWeekProgressGates.shouldShowReady(
           isReady: true,
           isRecording: false,
           isPostSave: false,
           progress: progress,
-          showYesterdayWatch: true,
+          showReturnDayFlow: true,
           showReturnTomorrowCue: false,
         ),
         isFalse,
@@ -242,7 +242,7 @@ void main() {
           isRecording: false,
           isPostSave: false,
           progress: progress,
-          showYesterdayWatch: false,
+          showReturnDayFlow: false,
           showReturnTomorrowCue: true,
         ),
         isFalse,

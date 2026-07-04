@@ -8,6 +8,7 @@ import '../../features/weekly_review/weekly_archive_review_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
+import '../account/beta_feedback_sheet.dart';
 
 /// Full weekly archive review in a bottom sheet.
 class WeeklyArchiveReviewSheet extends StatelessWidget {
@@ -16,17 +17,20 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     required this.review,
     this.isPro = true,
     this.onSeePro,
+    this.entryCount = 0,
   });
 
   final WeeklyArchiveReviewResult review;
   final bool isPro;
   final VoidCallback? onSeePro;
+  final int entryCount;
 
   static Future<void> show(
     BuildContext context, {
     required WeeklyArchiveReviewResult review,
     bool isPro = true,
     VoidCallback? onSeePro,
+    int entryCount = 0,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -40,6 +44,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           review: review,
           isPro: isPro,
           onSeePro: onSeePro,
+          entryCount: entryCount,
         ),
       ),
     );
@@ -210,6 +215,11 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   ),
                 ],
               ],
+              const SizedBox(height: AppSpacing.sm),
+              BetaFeedbackLink(
+                source: 'weekly_review',
+                entryCount: entryCount,
+              ),
               const SizedBox(height: AppSpacing.md),
               Align(
                 alignment: Alignment.centerLeft,

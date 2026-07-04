@@ -1711,7 +1711,7 @@ void main() {
       expect(find.text(ArchiveHistoryCopy.sheetTitle), findsOneWidget);
       expect(find.byKey(const Key('archive_history_row_a')), findsOneWidget);
       expect(find.byKey(const Key('archive_history_row_b')), findsOneWidget);
-      expect(find.text(ArchiveHistoryCopy.chipSavedOnly), findsNWidgets(2));
+      expect(find.byKey(const Key('archive_history_chip_saved_only')), findsNWidgets(2));
       expect(
         find.text('Another unrelated note about errands this afternoon.'),
         findsOneWidget,

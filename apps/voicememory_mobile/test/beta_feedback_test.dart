@@ -16,7 +16,16 @@ import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_analytics.dart';
+import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_controller.dart';
+import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_model.dart';
+import 'package:voicememory_mobile/features/share/archive_share_actions.dart';
+import 'package:voicememory_mobile/features/support/testflight_feedback_launcher.dart';
+import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
+import 'package:voicememory_mobile/services/app_services.dart';
+import 'package:voicememory_mobile/screens/account_screen.dart';
 import 'package:voicememory_mobile/widgets/beta_feedback_card.dart';
+import 'package:voicememory_mobile/widgets/account/beta_feedback_sheet.dart';
 
 const _bannedWords = [
   'diagnosis',
@@ -445,4 +454,297 @@ void main() {
       expect(belief, contains('BetaFeedbackCard'));
     });
   });
+
+  group('Beta feedback v1 sheet', () {
+    setUp(() async {
+      await _resetServicesForAccount();
+    });
+
+    tearDown(() {
+      BetaFeedbackAnalytics.resetForTest();
+      TestFlightFeedbackLauncher.launchUrlForTest = null;
+    });
+
+    test('submission message excludes transcripts audio and internal IDs', () {
+      const controller = BetaFeedbackController();
+      final message = controller.buildMessage(
+        const BetaFeedbackSubmission(
+          source: 'account',
+          option: BetaFeedbackOptionType.useful,
+          entryCount: 4,
+          appVersion: '1.2.3 (45)',
+          note: 'Comparison view helped.',
+        ),
+      );
+      expect(message, contains('Surface: account'));
+      expect(message, contains('Option: Something felt useful'));
+      expect(message, contains('Entry count: 4'));
+      expect(message, contains('App version: 1.2.3 (45)'));
+      expect(message, contains('Note:'));
+      expect(message, contains('Comparison view helped.'));
+      expect(message.toLowerCase(), isNot(contains('transcript')));
+      expect(message.toLowerCase(), isNot(contains('audio')));
+      expect(message, isNot(contains('entry-')));
+      expect(message, isNot(contains('uuid')));
+    });
+
+    testWidgets('feedback link appears in Account', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(const MaterialApp(home: AccountScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('account_beta_feedback_tile')),
+        200,
+      );
+      expect(find.text(BetaFeedbackCopy.sheetLinkLabel), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.accountTitle), findsOneWidget);
+    });
+
+    testWidgets('feedback sheet opens from Account', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(const MaterialApp(home: AccountScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('account_beta_feedback_tile')),
+        200,
+      );
+      await tester.tap(find.byKey(const Key('account_beta_feedback_tile')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('beta_feedback_sheet')), findsOneWidget);
+      expect(find.text(BetaFeedbackCopy.sheetTitle), findsWidgets);
+      expect(find.text(BetaFeedbackCopy.sheetSubtitle), findsOneWidget);
+    });
+
+    testWidgets('all options render in sheet', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => BetaFeedbackSheet.show(
+                  context,
+                  source: 'test',
+                  entryCount: 2,
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      for (final option in BetaFeedbackOptionType.values) {
+        expect(find.text(option.label), findsOneWidget);
+      }
+    });
+
+    testWidgets('optional note field works', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => BetaFeedbackSheet.show(
+                  context,
+                  source: 'test',
+                  entryCount: 1,
+                  controller: BetaFeedbackController(
+                    loadAppVersion: _fixedVersion,
+                    launchEmail: (_) async => false,
+                    copyText: (_, __) async => ArchiveShareOutcome.copied,
+                  ),
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('beta_feedback_option_useful')));
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const Key('beta_feedback_sheet_note')),
+        'Helpful comparison view.',
+      );
+      await tester.pump();
+      expect(find.text('Helpful comparison view.'), findsOneWidget);
+    });
+
+    testWidgets('analytics excludes note text', (tester) async {
+      final captured = <({String event, Map<String, Object> properties})>[];
+      BetaFeedbackAnalytics.captureForTest =
+          (event, properties) => captured.add((event: event, properties: properties));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => BetaFeedbackSheet.show(
+                  context,
+                  source: 'weekly_review',
+                  entryCount: 3,
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      final opened = captured
+          .where((e) => e.event == BetaFeedbackAnalytics.openedEvent)
+          .single;
+      expect(opened.properties['source'], 'weekly_review');
+      expect(opened.properties['entry_count'], 3);
+      expect(opened.properties.containsKey('note'), isFalse);
+
+      BetaFeedbackAnalytics.submitted(
+        source: 'weekly_review',
+        optionType: BetaFeedbackOptionType.wrong.analyticsKey,
+        entryCount: 3,
+      );
+
+      final submitted = captured
+          .where((e) => e.event == BetaFeedbackAnalytics.submittedEvent)
+          .single;
+      expect(submitted.properties['option_type'], 'wrong');
+      final blob = submitted.properties.entries
+          .map((e) => '${e.key}:${e.value}')
+          .join(' ');
+      expect(blob.toLowerCase(), isNot(contains('private note')));
+      expect(blob.toLowerCase(), isNot(contains('note')));
+    });
+
+    testWidgets('email fallback copies feedback when launcher fails', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      Uri? capturedUri;
+      String? copiedText;
+      final controller = BetaFeedbackController(
+        loadAppVersion: _fixedVersion,
+        launchEmail: (uri) async {
+          capturedUri = uri;
+          return false;
+        },
+        copyText: (_, text) async {
+          copiedText = text;
+          return ArchiveShareOutcome.copied;
+        },
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => BetaFeedbackSheet.show(
+                  context,
+                  source: 'account',
+                  entryCount: 5,
+                  controller: controller,
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('beta_feedback_option_other')));
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const Key('beta_feedback_sheet_note')),
+        'Needs clearer next step.',
+      );
+      await tester.pump();
+      await tester.ensureVisible(find.byKey(const Key('beta_feedback_sheet_send')).last);
+      await tester.tap(find.byKey(const Key('beta_feedback_sheet_send')).last);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('beta_feedback_preview_dialog')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('beta_feedback_preview_send')));
+      await tester.pumpAndSettle();
+
+      expect(capturedUri, isNotNull);
+      expect(capturedUri!.scheme, 'mailto');
+      expect(copiedText, isNotNull);
+      expect(copiedText!, contains('Surface: account'));
+      expect(copiedText!, contains('Needs clearer next step.'));
+      expect(copiedText!.toLowerCase(), isNot(contains('transcript')));
+      expect(find.text(BetaFeedbackCopy.emailCopiedFallback), findsOneWidget);
+    });
+
+    testWidgets('preview shown before email send', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      var emailLaunched = false;
+      final controller = BetaFeedbackController(
+        loadAppVersion: _fixedVersion,
+        launchEmail: (_) async {
+          emailLaunched = true;
+          return true;
+        },
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => BetaFeedbackSheet.show(
+                  context,
+                  source: 'first_proof',
+                  entryCount: 3,
+                  controller: controller,
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('beta_feedback_option_useful')));
+      await tester.pump();
+      await tester.ensureVisible(find.byKey(const Key('beta_feedback_sheet_send')).last);
+      await tester.tap(find.byKey(const Key('beta_feedback_sheet_send')).last);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('beta_feedback_preview_message')), findsOneWidget);
+      expect(emailLaunched, isFalse);
+      await tester.tap(find.byKey(const Key('beta_feedback_preview_send')));
+      await tester.pumpAndSettle();
+      expect(emailLaunched, isTrue);
+    });
+  });
+}
+
+Future<String> _fixedVersion() async => '9.9.9 (99)';
+
+Future<void> _resetServicesForAccount() async {
+  final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+  await AppServices.resetForTest(
+    journalPath: '/tmp/vm_beta_feedback_journal_$stamp.json',
+    prefsPath: '/tmp/vm_beta_feedback_prefs_$stamp.json',
+  );
 }

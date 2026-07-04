@@ -8,6 +8,7 @@ import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../proof/proof_surface_why_appeared_disclosure.dart';
 import '../../features/archive_proof/proof_surface_why_appeared_copy.dart';
+import '../account/beta_feedback_sheet.dart';
 
 /// Post-save emotional payoff after the third related save — no extra CTAs.
 class FirstProofMomentCard extends StatefulWidget {
@@ -140,6 +141,10 @@ class _FirstProofMomentCardState extends State<FirstProofMomentCard> {
             expanded: _whyExpanded,
             onExpandedChanged: (expanded) =>
                 setState(() => _whyExpanded = expanded),
+          ),
+          BetaFeedbackLink(
+            source: 'first_proof',
+            entryCount: widget.entryCount,
           ),
         ],
       ),

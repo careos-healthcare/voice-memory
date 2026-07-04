@@ -1278,6 +1278,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         context,
         review: review,
         isPro: _archiveIsPro,
+        entryCount: _entries.length,
         onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
       ),
     );

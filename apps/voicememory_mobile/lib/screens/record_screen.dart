@@ -145,9 +145,9 @@ import '../widgets/signal/signal_journey_completion_card.dart';
 import '../widgets/signal/signal_review_card.dart';
 import '../features/retention/return_tomorrow_cue_engine.dart';
 import '../features/retention/first_week_progress_engine.dart';
-import '../features/retention/yesterday_watch_copy.dart';
-import '../features/retention/yesterday_watch_engine.dart';
-import '../features/retention/yesterday_watch_store.dart';
+import '../features/return_day/return_day_flow_copy.dart';
+import '../features/return_day/return_day_flow_engine.dart';
+import '../features/return_day/return_day_flow_store.dart';
 import '../features/retention/second_session_signal_engine.dart';
 import '../features/retention/second_session_signal_model.dart';
 import '../features/retention/pattern_hypothesis_engine.dart';
@@ -200,7 +200,7 @@ import '../features/transcript_correction/transcript_correction_gate.dart';
 import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_week_progress_line.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
-import '../widgets/record/yesterday_watch_card.dart';
+import '../widgets/record/return_day_flow_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/return_check_payoff_card.dart';
@@ -754,7 +754,7 @@ class _RecordScreenState extends State<RecordScreen> {
       }),
     );
     unawaited(
-      YesterdayWatchStore.ensureLoaded().then((_) {
+      ReturnDayFlowStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -1778,6 +1778,7 @@ class _RecordScreenState extends State<RecordScreen> {
         context,
         review: review,
         isPro: _recordReturnProIsPro,
+        entryCount: _journalEntryCount,
         onSeePro: _recordReturnProIsPro
             ? null
             : () => context.push(
@@ -3815,16 +3816,16 @@ class _RecordScreenState extends State<RecordScreen> {
             _journalEntryCountReady
         ? ReturnTomorrowCueEngine.buildReady(entries: _journalEntries)
         : null;
-    final yesterdayWatchCandidate = ui == RecordUiState.ready &&
+    final returnDayFlowCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady
-        ? YesterdayWatchEngine.build(entries: _journalEntries)
+        ? ReturnDayFlowEngine.build(entries: _journalEntries)
         : null;
-    final showYesterdayWatch = YesterdayWatchGates.shouldShow(
+    final showReturnDayFlow = ReturnDayFlowGates.shouldShow(
       isReady: ui == RecordUiState.ready,
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
-      watch: yesterdayWatchCandidate,
-      dismissedToday: YesterdayWatchEngine.shouldHideForDismissal(),
+      flow: returnDayFlowCandidate,
+      dismissedToday: ReturnDayFlowEngine.shouldHideForDismissal(),
     );
     final showReturnTomorrowCueReady = ReturnTomorrowCueGates.shouldShowReady(
       isReady: ui == RecordUiState.ready,
@@ -3832,7 +3833,7 @@ class _RecordScreenState extends State<RecordScreen> {
       isPostSave: _isPostSaveSurface,
       cue: returnTomorrowCueReady,
     ) &&
-        !showYesterdayWatch;
+        !showReturnDayFlow;
     final firstWeekProgressReady = ui == RecordUiState.ready &&
             _journalEntryCountReady
         ? FirstWeekProgressEngine.buildReady(entries: _journalEntries)
@@ -3842,13 +3843,13 @@ class _RecordScreenState extends State<RecordScreen> {
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
       progress: firstWeekProgressReady,
-      showYesterdayWatch: showYesterdayWatch,
+      showReturnDayFlow: showReturnDayFlow,
       showReturnTomorrowCue: showReturnTomorrowCueReady,
     );
     final showEarlyReturnReminder = ui == RecordUiState.ready &&
         _journalEntryCountReady &&
         !_isPostSaveSurface &&
-        !showYesterdayWatch &&
+        !showReturnDayFlow &&
         !showReturnTomorrowCueReady &&
         _earlyReturnReminderOffer &&
         !_earlyReturnReminderHidden &&
@@ -4883,17 +4884,17 @@ class _RecordScreenState extends State<RecordScreen> {
                       const CaptureRecoveryHintStrip.returnedAfterDelay(),
                       const SizedBox(height: 12),
                     ],
-                    if (showYesterdayWatch && yesterdayWatchCandidate != null) ...[
-                      YesterdayWatchCard(
-                        watch: yesterdayWatchCandidate,
+                    if (showReturnDayFlow && returnDayFlowCandidate != null) ...[
+                      ReturnDayFlowCard(
+                        flow: returnDayFlowCandidate,
                         entryCount: _journalEntryCount,
                         onCameBack: () => setState(
                           () => _selectedPromptLine =
-                              YesterdayWatchCopy.cameBackRecordPrompt,
+                              ReturnDayFlowCopy.cameBackRecordPrompt,
                         ),
                         onDifferent: () => setState(
                           () => _selectedPromptLine =
-                              YesterdayWatchCopy.differentRecordPrompt,
+                              ReturnDayFlowCopy.differentRecordPrompt,
                         ),
                         onAnswered: () {
                           if (mounted) setState(() {});
@@ -4924,7 +4925,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         recordProofStack.showEarlyRepeatProgress &&
                         earlyRepeatProgress != null &&
                         !showReturnTomorrowCueReady &&
-                        !showYesterdayWatch) ...[
+                        !showReturnDayFlow) ...[
                       EarlyRepeatProgressCard(
                         progress: earlyRepeatProgress,
                         onViewSavedMoments: showEarlySavedMoments
