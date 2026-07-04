@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_history/archive_history_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
+import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_analytics.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_copy.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_engine.dart';
@@ -96,7 +97,7 @@ HelpedTrackingPrompt _promptFor(List<JournalEntry> entries) {
     entries: entries,
     isPostSaveDone: true,
     isDegradedPostSave: false,
-    showPostSaveReturnCheckAnswer: false,
+    showWhatChangedV2: false,
   );
   expect(prompt, isNotNull);
   return prompt!;
@@ -120,7 +121,7 @@ void main() {
         entries: entries,
         isPostSaveDone: true,
         isDegradedPostSave: false,
-        showPostSaveReturnCheckAnswer: false,
+        showWhatChangedV2: false,
       );
       expect(prompt, isNotNull);
       expect(prompt!.entryId, 'e3');
@@ -136,7 +137,7 @@ void main() {
           ],
           isPostSaveDone: true,
           isDegradedPostSave: false,
-          showPostSaveReturnCheckAnswer: false,
+          showWhatChangedV2: false,
         ),
         isNull,
       );
@@ -148,7 +149,7 @@ void main() {
           ],
           isPostSaveDone: true,
           isDegradedPostSave: false,
-          showPostSaveReturnCheckAnswer: false,
+          showWhatChangedV2: false,
         ),
         isNull,
       );
@@ -157,30 +158,27 @@ void main() {
           entries: [_degradedVoiceEntry(), _degradedVoiceEntry(id: 'v2')],
           isPostSaveDone: true,
           isDegradedPostSave: false,
-          showPostSaveReturnCheckAnswer: false,
+          showWhatChangedV2: false,
         ),
         isNull,
       );
     });
 
-    test('prompt hides while What changed return check is showing', () {
+    test('prompt hides while What changed v2 is showing', () {
       final entries = _fourSaidYesEntries();
       expect(
         HelpedTrackingEngine.buildPrompt(
           entries: entries,
           isPostSaveDone: true,
           isDegradedPostSave: false,
-          showPostSaveReturnCheckAnswer: true,
+          showWhatChangedV2: true,
         ),
         isNull,
       );
-      expect(
-        PostSaveReturnCheckAnswerCopy.title,
-        contains('different from your first proof'),
-      );
+      expect(WhatChangedV2Copy.question, 'What changed this time?');
       expect(
         HelpedTrackingCopy.question,
-        isNot(contains('different')),
+        isNot(contains('What changed this time')),
       );
     });
   });

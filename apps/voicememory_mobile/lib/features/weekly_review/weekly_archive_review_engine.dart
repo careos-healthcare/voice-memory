@@ -14,6 +14,7 @@ import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_trend.dart';
 import '../helped_tracking/helped_tracking_engine.dart';
 import '../pattern_naming/pattern_name_engine.dart';
+import '../what_changed/what_changed_v2_engine.dart';
 import 'weekly_archive_review_copy.dart';
 import 'weekly_archive_review_model.dart';
 
@@ -242,6 +243,9 @@ abstract final class WeeklyArchiveReviewEngine {
     RepeatReturnCheckChangeProof? changeProof,
     List<RepeatReturnCheckRecord> returnChecks = const [],
   }) {
+    final v2Marker = WhatChangedV2Engine.weeklyReviewSection(entries: entries);
+    if (v2Marker != null) return v2Marker;
+
     final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(entries: entries);
     if (changeNotice != null && changeNotice.body.trim().isNotEmpty) {
       return WeeklyArchiveReviewSection(

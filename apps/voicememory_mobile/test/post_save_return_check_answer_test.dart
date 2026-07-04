@@ -434,13 +434,14 @@ void main() {
     });
   });
 
-  group('Patterns screen isolation', () {
-    test('archive belief screen does not import post save return check answer card', () {
+  group('Record screen isolation', () {
+    test('record screen does not import post save return check answer card', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/screens/record_screen.dart',
       ).readAsStringSync();
       expect(source.contains('post_save_return_check_answer'), isFalse);
       expect(source.contains('PostSaveReturnCheckAnswerCard'), isFalse);
+      expect(source.contains('what_changed_v2_card'), isTrue);
     });
   });
 

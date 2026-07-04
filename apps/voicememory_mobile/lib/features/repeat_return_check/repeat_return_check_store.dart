@@ -79,6 +79,25 @@ class RepeatReturnCheckStore {
     );
   }
 
+  /// Updates the in-memory return-check cache immediately for post-save reads.
+  void stageChoice({
+    required String entryId,
+    required RepeatReturnCheckChoice choice,
+    required int entryCountAtCapture,
+  }) {
+    final records = [
+      RepeatReturnCheckRecord(
+        entryId: entryId,
+        choice: choice,
+        entryCountAtCapture: entryCountAtCapture,
+        createdAt: DateTime.now().toUtc(),
+      ),
+      ..._cached.where((existing) => existing.entryId != entryId),
+    ]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    _cached = records;
+    _loaded = true;
+  }
+
   Future<void> dismiss({
     required String entryId,
     required int entryCountAtCapture,

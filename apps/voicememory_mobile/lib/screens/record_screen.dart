@@ -201,7 +201,6 @@ import '../widgets/record/yesterday_watch_card.dart';
 import '../widgets/record/first_proof_moment_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/return_check_payoff_card.dart';
-import '../widgets/record/post_save_return_check_answer_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
 import '../widgets/record/confirmed_repeat_why_matters_card.dart';
 import '../widgets/patterns/helpful_action_appeared_card.dart';
@@ -245,8 +244,9 @@ import '../features/early_archive/first_week_loop_engine.dart';
 import '../features/early_archive/first_week_loop_gates.dart';
 import '../features/early_archive/return_check_payoff_engine.dart';
 import '../features/early_archive/return_check_payoff_gates.dart';
-import '../features/early_archive/post_save_return_check_answer_engine.dart';
-import '../features/early_archive/post_save_return_check_answer_gates.dart';
+import '../features/what_changed/what_changed_v2_engine.dart';
+import '../features/what_changed/what_changed_v2_store.dart';
+import '../widgets/record/what_changed_v2_card.dart';
 import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/early_archive/early_archive_proof_analytics.dart';
 import '../features/early_archive/early_evidence_timeline_engine.dart';
@@ -719,6 +719,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       PatternChangedStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      WhatChangedV2Store.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4299,20 +4304,19 @@ class _RecordScreenState extends State<RecordScreen> {
             returnChecks: RepeatReturnCheckStore.cached,
           )
         : null;
-    final postSaveReturnCheckAnswerCandidate = ui == RecordUiState.done &&
+    final whatChangedV2Prompt = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
-        ? PostSaveReturnCheckAnswerEngine.build(
+        ? WhatChangedV2Engine.buildPrompt(
             entries: entriesAfterSave,
             returnChecks: RepeatReturnCheckStore.cached,
           )
         : null;
-    final showPostSaveReturnCheckAnswer = PostSaveReturnCheckAnswerGates.shouldShow(
+    final showWhatChangedV2 = WhatChangedV2Engine.shouldShowOnPostSave(
       isPostSaveDone: ui == RecordUiState.done,
-      entryCount: postSaveEntryCount,
       isDegradedPostSave: entriesAfterSave.isNotEmpty &&
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       showFirstProofMoment: showFirstProofMoment,
-      answer: postSaveReturnCheckAnswerCandidate,
+      prompt: whatChangedV2Prompt,
     );
     final helpedTrackingPrompt = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
@@ -4323,7 +4327,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 VoiceCaptureQuality.isDegradedVoiceCapture(
                   entriesAfterSave.last,
                 ),
-            showPostSaveReturnCheckAnswer: showPostSaveReturnCheckAnswer,
+            showWhatChangedV2: showWhatChangedV2,
           )
         : null;
     final showHelpedTracking = helpedTrackingPrompt != null;
@@ -4333,14 +4337,14 @@ class _RecordScreenState extends State<RecordScreen> {
       isDegradedPostSave: entriesAfterSave.isNotEmpty &&
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       showFirstProofMoment: showFirstProofMoment,
-      showPostSaveReturnCheckAnswer: showPostSaveReturnCheckAnswer,
+      showPostSaveReturnCheckAnswer: showWhatChangedV2,
       payoff: returnCheckPayoffCandidate,
     );
     final showArchiveSummaryOnRecord =
         recordProofStack.showArchiveSummary &&
             !showFirstProofMoment &&
             !showReturnCheckPayoff &&
-            !showPostSaveReturnCheckAnswer;
+            !showWhatChangedV2;
     final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
         ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
         : null;
@@ -4378,7 +4382,7 @@ class _RecordScreenState extends State<RecordScreen> {
       action: nextBestActionCandidate,
       surface: NextBestActionSurface.record,
       showEarlyRepeatProgress: recordProofStack.showEarlyRepeatProgress,
-      showPostSaveReturnCheckAnswer: showPostSaveReturnCheckAnswer,
+      showPostSaveReturnCheckAnswer: showWhatChangedV2,
       repeatReturnCheckOfferVisible: repeatReturnCheckOffer != null,
       showPatternChangedCard:
           showPatternChanged && patternChangedCandidate != null,
@@ -5812,7 +5816,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           ],
                           if (repeatReturnCheckOffer != null &&
                               !showReturnCheckPayoff &&
-                              !showPostSaveReturnCheckAnswer) ...[
+                              !showWhatChangedV2) ...[
                             const SizedBox(height: 12),
                             RepeatReturnCheckCard(
                               entryId: repeatReturnCheckOffer.entryId,
@@ -5874,7 +5878,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             beliefUpdatePayoff != null &&
                             !showFirstProofMoment &&
                             !showReturnCheckPayoff &&
-                            !showPostSaveReturnCheckAnswer) ...[
+                            !showWhatChangedV2) ...[
                           const SizedBox(height: 16),
                           BeliefUpdatePayoffCard(
                             payoff: beliefUpdatePayoff,
@@ -5890,7 +5894,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
                             !showReturnCheckPayoff &&
-                            !showPostSaveReturnCheckAnswer) ...[
+                            !showWhatChangedV2) ...[
                           const SizedBox(height: 16),
                           PostSaveFocusedActionsBar(
                             onViewEvidence: () =>
@@ -6325,7 +6329,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             !suppressEarlyRepeatPayoffCompetitors &&
                             !showFirstProofMoment &&
                             !showReturnCheckPayoff &&
-                            !showPostSaveReturnCheckAnswer) ...[
+                            !showWhatChangedV2) ...[
                           if (_secondSessionComparison?.hasEnoughData == true &&
                               secondSessionPayoff == null) ...[
                             const SizedBox(height: 12),
@@ -6592,13 +6596,14 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    if (showPostSaveReturnCheckAnswer &&
-                        postSaveReturnCheckAnswerCandidate != null) ...[
-                      PostSaveReturnCheckAnswerCard(
-                        key: ValueKey(
-                          postSaveReturnCheckAnswerCandidate.entryId,
-                        ),
-                        answer: postSaveReturnCheckAnswerCandidate,
+                    if (showWhatChangedV2 && whatChangedV2Prompt != null) ...[
+                      WhatChangedV2Card(
+                        key: ValueKey(whatChangedV2Prompt.entryId),
+                        prompt: whatChangedV2Prompt,
+                        source: 'record_post_save',
+                        onSomethingHelped: () {
+                          if (mounted) setState(() {});
+                        },
                         onChanged: () {
                           if (mounted) setState(() {});
                         },

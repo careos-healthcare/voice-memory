@@ -11,6 +11,8 @@ import '../repeat_return_check/repeat_return_check_store.dart';
 import '../repeat_return_check/repeat_return_check_trend.dart';
 import '../weekly_review/weekly_archive_review_copy.dart';
 import '../weekly_review/weekly_archive_review_model.dart';
+import '../what_changed/what_changed_v2_model.dart';
+import '../what_changed/what_changed_v2_store.dart';
 import 'helped_tracking_copy.dart';
 import 'helped_tracking_model.dart';
 import 'helped_tracking_store.dart';
@@ -34,13 +36,21 @@ abstract final class HelpedTrackingEngine {
     required List<JournalEntry> entries,
     required bool isPostSaveDone,
     required bool isDegradedPostSave,
-    required bool showPostSaveReturnCheckAnswer,
+    required bool showWhatChangedV2,
   }) {
     if (!isPostSaveDone || isDegradedPostSave) return null;
-    if (showPostSaveReturnCheckAnswer) return null;
+    if (showWhatChangedV2) return null;
     if (!_allowsPrompt(entries)) return null;
 
     final latestEntryId = RepeatReturnCheckStore.latestSavedEntryId(entries);
+    final changeMarker = WhatChangedV2Store.cached
+        .where((record) => record.entryId == latestEntryId)
+        .firstOrNull;
+    if (changeMarker != null &&
+        changeMarker.option != WhatChangedV2Option.somethingHelped) {
+      return null;
+    }
+
     if (HelpedTrackingStore.cached
         .any((record) => record.entryId == latestEntryId)) {
       return null;

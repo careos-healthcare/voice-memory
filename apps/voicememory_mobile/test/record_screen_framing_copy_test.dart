@@ -24,6 +24,7 @@ import 'package:voicememory_mobile/features/early_archive/early_saved_moments_co
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
+import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
@@ -1818,7 +1819,7 @@ void main() {
       expect(find.byKey(const Key('first_week_loop_card')), findsNothing);
     });
 
-    testWidgets('fourth related post-save shows return check answer question', (
+    testWidgets('fourth related post-save shows What changed v2 question', (
       tester,
     ) async {
       await seedConfirmedRepeatEntries(tester, 4);
@@ -1850,11 +1851,11 @@ void main() {
       }
 
       expect(
-        find.byKey(const Key('post_save_return_check_answer_card')),
+        find.byKey(const Key('what_changed_v2_card')),
         findsOneWidget,
       );
       expect(
-        find.text(PostSaveReturnCheckAnswerCopy.title),
+        find.text(WhatChangedV2Copy.question),
         findsOneWidget,
       );
       expect(find.byKey(const Key('return_check_payoff_card_unknown')), findsNothing);
@@ -1945,7 +1946,7 @@ void main() {
       expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
     });
 
-    testWidgets('tapping softer on return check answer shows softer payoff', (
+    testWidgets('tapping softer on What changed v2 shows softer payoff', (
       tester,
     ) async {
       await seedConfirmedRepeatEntries(tester, 4);
@@ -1976,17 +1977,19 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
+      await tester.tap(
+        find.byKey(const Key('what_changed_v2_option_softer')),
+      );
+      await tester.pump();
       await tester.runAsync(() async {
-        await tester.tap(
-          find.byKey(const Key('post_save_return_check_answer_softer')),
-        );
-        await Future<void>.delayed(const Duration(milliseconds: 200));
+        await Future<void>.delayed(const Duration(milliseconds: 400));
       });
       for (var i = 0; i < 20; i++) {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('post_save_return_check_answer_card')), findsNothing);
+      expect(find.byKey(const Key('what_changed_v2_card')), findsNothing);
+      expect(find.byKey(const Key('helped_tracking_card')), findsNothing);
       expect(find.byKey(const Key('return_check_payoff_card_softer')), findsOneWidget);
       expect(find.text(ReturnCheckPayoffCopy.softerTitle), findsOneWidget);
     });
