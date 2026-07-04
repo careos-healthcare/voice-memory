@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
@@ -37,6 +41,7 @@ class PatternDetailSheet extends StatelessWidget {
     VoidCallback? onSeePro,
     ShareCardModel? shareCard,
   }) {
+    unawaited(BetaActivationSummaryTracker.trackPatternDetailsOpened());
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

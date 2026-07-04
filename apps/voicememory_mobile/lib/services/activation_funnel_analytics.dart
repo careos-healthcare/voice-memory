@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../features/beta_activation/beta_activation_summary_tracker.dart';
 import 'product_analytics.dart';
 
 /// Core activation funnel events — where users drop off between the first
@@ -1168,8 +1169,10 @@ abstract class ActivationFunnelAnalytics {
     final sink = _sink;
     if (sink != null) {
       sink(event, Map.unmodifiable(properties));
+      unawaited(BetaActivationSummaryTracker.onFunnelEvent(event));
       return;
     }
+    unawaited(BetaActivationSummaryTracker.onFunnelEvent(event));
     unawaited(
       ProductAnalytics.track(
         event,

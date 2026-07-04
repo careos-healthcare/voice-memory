@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
@@ -32,6 +36,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     VoidCallback? onSeePro,
     int entryCount = 0,
   }) {
+    unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

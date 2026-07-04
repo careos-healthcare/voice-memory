@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
+import '../../features/beta_activation/beta_activation_summary_tracker.dart';
 
 /// Safe analytics for weekly archive review — metadata only.
 abstract final class WeeklyArchiveWeekReviewAnalytics {
@@ -61,6 +65,9 @@ abstract final class WeeklyArchiveWeekReviewAnalytics {
       'has_positive_pattern': hasPositivePattern,
     };
     captureForTest?.call(event, props);
+    if (event == seenEvent) {
+      unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
+    }
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_WEEKLY_REVIEW event=$event surface=$surface '

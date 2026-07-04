@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/beta/tester_mission_copy.dart';
+import '../features/beta_activation/beta_activation_summary_copy.dart';
 import '../features/support/testflight_feedback_analytics.dart';
 import '../features/support/testflight_feedback_copy.dart';
 import '../features/support/testflight_feedback_launcher.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/account/beta_activation_summary_sheet.dart';
 import '../widgets/pushed_screen_shell.dart';
 
 /// Beta-only tester mission guide — steps, feedback question, and email feedback.
@@ -84,6 +86,15 @@ class TestingArchiveMeScreen extends StatelessWidget {
                 key: const Key('testing_archiveme_send_feedback'),
                 onPressed: () => _sendFeedback(context),
                 child: Text(TestFlightFeedbackCopy.settingsCta),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('testing_archiveme_beta_progress_summary'),
+                onPressed: () => BetaActivationSummarySheet.show(context),
+                child: const Text(BetaActivationSummaryCopy.openLink),
               ),
             ),
           ],
