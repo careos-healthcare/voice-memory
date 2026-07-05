@@ -192,7 +192,9 @@ void main() {
   });
 
   group('FirstProofTruthCard', () {
-    testWidgets('answering switches to follow-up copy', (tester) async {
+    testWidgets('answering hides question for action loop handoff', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -210,10 +212,11 @@ void main() {
       await tester.pump();
 
       expect(find.text(FirstProofTruthCopy.question), findsNothing);
-      expect(find.text(FirstProofTruthCopy.afterYes), findsOneWidget);
+      expect(find.text(FirstProofTruthCopy.afterYes), findsNothing);
+      expect(find.byKey(const Key('first_proof_truth_answered')), findsOneWidget);
     });
 
-    testWidgets('already answered proof shows follow-up not question', (
+    testWidgets('already answered proof hides card content', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -230,7 +233,8 @@ void main() {
       );
 
       expect(find.text(FirstProofTruthCopy.question), findsNothing);
-      expect(find.text(FirstProofTruthCopy.afterNo), findsOneWidget);
+      expect(find.text(FirstProofTruthCopy.afterNo), findsNothing);
+      expect(find.byKey(const Key('first_proof_truth_answered')), findsOneWidget);
     });
   });
 

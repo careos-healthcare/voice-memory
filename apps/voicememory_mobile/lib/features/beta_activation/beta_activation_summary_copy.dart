@@ -28,6 +28,18 @@ abstract final class BetaActivationSummaryCopy {
   static const firstProofTruthYes = 'First proof truth: yes';
   static const firstProofTruthSortOf = 'First proof truth: sort of';
   static const firstProofTruthNo = 'First proof truth: no';
+  static const firstProofActionWatchThisNext =
+      'First proof action: watch this next';
+  static const firstProofActionViewPatternDetails =
+      'First proof action: view pattern details';
+  static const firstProofActionRenamePattern =
+      'First proof action: rename pattern';
+  static const firstProofActionKeepRecording =
+      'First proof action: keep recording';
+  static const firstProofActionCorrectTranscript =
+      'First proof action: correct words';
+  static const firstProofActionRemoveFromPattern =
+      'First proof action: remove from pattern';
   static const proScreenOpened = 'Pro screen opened';
   static const restorePurchasesTapped = 'Restore purchases tapped';
 
@@ -63,6 +75,12 @@ abstract final class BetaActivationSummaryCopy {
         firstProofTruthYes,
         firstProofTruthSortOf,
         firstProofTruthNo,
+        firstProofActionWatchThisNext,
+        firstProofActionViewPatternDetails,
+        firstProofActionRenamePattern,
+        firstProofActionKeepRecording,
+        firstProofActionCorrectTranscript,
+        firstProofActionRemoveFromPattern,
         proScreenOpened,
         restorePurchasesTapped,
         ...BetaActivationStatus.values.map(statusLabel),

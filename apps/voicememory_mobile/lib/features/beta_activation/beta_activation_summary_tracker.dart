@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../services/app_services.dart';
 import '../beta/beta_activation_loop_counts.dart';
 import '../beta/beta_activation_loop_tracker.dart';
+import '../first_proof_action_loop/first_proof_action_loop_model.dart';
 import '../first_proof_truth/first_proof_truth_model.dart';
 import 'beta_activation_summary_model.dart';
 import 'beta_activation_summary_store.dart';
@@ -59,6 +60,23 @@ abstract final class BetaActivationSummaryTracker {
     await _increment(field);
   }
 
+  static Future<void> trackFirstProofActionSelected(
+    FirstProofActionType action,
+  ) async {
+    final field = switch (action) {
+      FirstProofActionType.watchThisNext => 'firstProofActionWatchThisNext',
+      FirstProofActionType.viewPatternDetails =>
+        'firstProofActionViewPatternDetails',
+      FirstProofActionType.renamePattern => 'firstProofActionRenamePattern',
+      FirstProofActionType.keepRecording => 'firstProofActionKeepRecording',
+      FirstProofActionType.correctTranscript =>
+        'firstProofActionCorrectTranscript',
+      FirstProofActionType.removeFromPattern =>
+        'firstProofActionRemoveFromPattern',
+    };
+    await _increment(field);
+  }
+
   static Future<BetaActivationSummaryExtension> loadExtension() async {
     if (!AppServices.isInitialized) return BetaActivationSummaryExtension.empty;
     return BetaActivationSummaryStore.fromAppServices().read();
@@ -110,6 +128,15 @@ abstract final class BetaActivationSummaryTracker {
       'firstProofTruthYes' => counts.firstProofTruthYes,
       'firstProofTruthSortOf' => counts.firstProofTruthSortOf,
       'firstProofTruthNo' => counts.firstProofTruthNo,
+      'firstProofActionWatchThisNext' => counts.firstProofActionWatchThisNext,
+      'firstProofActionViewPatternDetails' =>
+        counts.firstProofActionViewPatternDetails,
+      'firstProofActionRenamePattern' => counts.firstProofActionRenamePattern,
+      'firstProofActionKeepRecording' => counts.firstProofActionKeepRecording,
+      'firstProofActionCorrectTranscript' =>
+        counts.firstProofActionCorrectTranscript,
+      'firstProofActionRemoveFromPattern' =>
+        counts.firstProofActionRemoveFromPattern,
       _ => 0,
     };
   }

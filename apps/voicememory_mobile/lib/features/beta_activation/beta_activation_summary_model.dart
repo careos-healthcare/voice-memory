@@ -22,6 +22,12 @@ class BetaActivationSummaryExtension {
     this.firstProofTruthYes = 0,
     this.firstProofTruthSortOf = 0,
     this.firstProofTruthNo = 0,
+    this.firstProofActionWatchThisNext = 0,
+    this.firstProofActionViewPatternDetails = 0,
+    this.firstProofActionRenamePattern = 0,
+    this.firstProofActionKeepRecording = 0,
+    this.firstProofActionCorrectTranscript = 0,
+    this.firstProofActionRemoveFromPattern = 0,
   });
 
   final int firstProofReached;
@@ -35,6 +41,12 @@ class BetaActivationSummaryExtension {
   final int firstProofTruthYes;
   final int firstProofTruthSortOf;
   final int firstProofTruthNo;
+  final int firstProofActionWatchThisNext;
+  final int firstProofActionViewPatternDetails;
+  final int firstProofActionRenamePattern;
+  final int firstProofActionKeepRecording;
+  final int firstProofActionCorrectTranscript;
+  final int firstProofActionRemoveFromPattern;
 
   static const empty = BetaActivationSummaryExtension();
 
@@ -62,6 +74,33 @@ class BetaActivationSummaryExtension {
         return copyWith(firstProofTruthSortOf: firstProofTruthSortOf + 1);
       case 'firstProofTruthNo':
         return copyWith(firstProofTruthNo: firstProofTruthNo + 1);
+      case 'firstProofActionWatchThisNext':
+        return copyWith(
+          firstProofActionWatchThisNext: firstProofActionWatchThisNext + 1,
+        );
+      case 'firstProofActionViewPatternDetails':
+        return copyWith(
+          firstProofActionViewPatternDetails:
+              firstProofActionViewPatternDetails + 1,
+        );
+      case 'firstProofActionRenamePattern':
+        return copyWith(
+          firstProofActionRenamePattern: firstProofActionRenamePattern + 1,
+        );
+      case 'firstProofActionKeepRecording':
+        return copyWith(
+          firstProofActionKeepRecording: firstProofActionKeepRecording + 1,
+        );
+      case 'firstProofActionCorrectTranscript':
+        return copyWith(
+          firstProofActionCorrectTranscript:
+              firstProofActionCorrectTranscript + 1,
+        );
+      case 'firstProofActionRemoveFromPattern':
+        return copyWith(
+          firstProofActionRemoveFromPattern:
+              firstProofActionRemoveFromPattern + 1,
+        );
       default:
         return this;
     }
@@ -79,6 +118,12 @@ class BetaActivationSummaryExtension {
     int? firstProofTruthYes,
     int? firstProofTruthSortOf,
     int? firstProofTruthNo,
+    int? firstProofActionWatchThisNext,
+    int? firstProofActionViewPatternDetails,
+    int? firstProofActionRenamePattern,
+    int? firstProofActionKeepRecording,
+    int? firstProofActionCorrectTranscript,
+    int? firstProofActionRemoveFromPattern,
   }) {
     return BetaActivationSummaryExtension(
       firstProofReached: firstProofReached ?? this.firstProofReached,
@@ -95,6 +140,18 @@ class BetaActivationSummaryExtension {
       firstProofTruthSortOf:
           firstProofTruthSortOf ?? this.firstProofTruthSortOf,
       firstProofTruthNo: firstProofTruthNo ?? this.firstProofTruthNo,
+      firstProofActionWatchThisNext:
+          firstProofActionWatchThisNext ?? this.firstProofActionWatchThisNext,
+      firstProofActionViewPatternDetails: firstProofActionViewPatternDetails ??
+          this.firstProofActionViewPatternDetails,
+      firstProofActionRenamePattern:
+          firstProofActionRenamePattern ?? this.firstProofActionRenamePattern,
+      firstProofActionKeepRecording:
+          firstProofActionKeepRecording ?? this.firstProofActionKeepRecording,
+      firstProofActionCorrectTranscript: firstProofActionCorrectTranscript ??
+          this.firstProofActionCorrectTranscript,
+      firstProofActionRemoveFromPattern: firstProofActionRemoveFromPattern ??
+          this.firstProofActionRemoveFromPattern,
     );
   }
 
@@ -110,6 +167,12 @@ class BetaActivationSummaryExtension {
         'firstProofTruthYes': firstProofTruthYes,
         'firstProofTruthSortOf': firstProofTruthSortOf,
         'firstProofTruthNo': firstProofTruthNo,
+        'firstProofActionWatchThisNext': firstProofActionWatchThisNext,
+        'firstProofActionViewPatternDetails': firstProofActionViewPatternDetails,
+        'firstProofActionRenamePattern': firstProofActionRenamePattern,
+        'firstProofActionKeepRecording': firstProofActionKeepRecording,
+        'firstProofActionCorrectTranscript': firstProofActionCorrectTranscript,
+        'firstProofActionRemoveFromPattern': firstProofActionRemoveFromPattern,
       };
 
   factory BetaActivationSummaryExtension.fromMap(Map<String, dynamic>? map) {
@@ -133,6 +196,13 @@ class BetaActivationSummaryExtension {
       firstProofTruthYes: n('firstProofTruthYes'),
       firstProofTruthSortOf: n('firstProofTruthSortOf'),
       firstProofTruthNo: n('firstProofTruthNo'),
+      firstProofActionWatchThisNext: n('firstProofActionWatchThisNext'),
+      firstProofActionViewPatternDetails:
+          n('firstProofActionViewPatternDetails'),
+      firstProofActionRenamePattern: n('firstProofActionRenamePattern'),
+      firstProofActionKeepRecording: n('firstProofActionKeepRecording'),
+      firstProofActionCorrectTranscript: n('firstProofActionCorrectTranscript'),
+      firstProofActionRemoveFromPattern: n('firstProofActionRemoveFromPattern'),
     );
   }
 }
@@ -155,6 +225,12 @@ class BetaActivationSummary {
     required this.firstProofTruthYes,
     required this.firstProofTruthSortOf,
     required this.firstProofTruthNo,
+    required this.firstProofActionWatchThisNext,
+    required this.firstProofActionViewPatternDetails,
+    required this.firstProofActionRenamePattern,
+    required this.firstProofActionKeepRecording,
+    required this.firstProofActionCorrectTranscript,
+    required this.firstProofActionRemoveFromPattern,
     required this.proScreenOpened,
     required this.restorePurchasesTapped,
     required this.returnedAfterFirstProof,
@@ -176,6 +252,12 @@ class BetaActivationSummary {
   final int firstProofTruthYes;
   final int firstProofTruthSortOf;
   final int firstProofTruthNo;
+  final int firstProofActionWatchThisNext;
+  final int firstProofActionViewPatternDetails;
+  final int firstProofActionRenamePattern;
+  final int firstProofActionKeepRecording;
+  final int firstProofActionCorrectTranscript;
+  final int firstProofActionRemoveFromPattern;
   final int proScreenOpened;
   final int restorePurchasesTapped;
   final int returnedAfterFirstProof;

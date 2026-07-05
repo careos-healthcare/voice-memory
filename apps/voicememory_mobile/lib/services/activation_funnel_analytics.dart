@@ -642,6 +642,12 @@ abstract class ActivationFunnelAnalytics {
     'delete_selected',
     'treat_as_new',
     'keep_exact_details',
+    'watch_this_next',
+    'view_pattern_details',
+    'rename_pattern',
+    'keep_recording',
+    'correct_transcript',
+    'remove_from_pattern',
   };
 
   /// The only values `format` can ever carry.

@@ -220,6 +220,42 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
               ),
               _row(
                 context,
+                key: 'first_proof_action_watch_this_next',
+                label: BetaActivationSummaryCopy.firstProofActionWatchThisNext,
+                value: summary.firstProofActionWatchThisNext,
+              ),
+              _row(
+                context,
+                key: 'first_proof_action_view_pattern_details',
+                label: BetaActivationSummaryCopy.firstProofActionViewPatternDetails,
+                value: summary.firstProofActionViewPatternDetails,
+              ),
+              _row(
+                context,
+                key: 'first_proof_action_rename_pattern',
+                label: BetaActivationSummaryCopy.firstProofActionRenamePattern,
+                value: summary.firstProofActionRenamePattern,
+              ),
+              _row(
+                context,
+                key: 'first_proof_action_keep_recording',
+                label: BetaActivationSummaryCopy.firstProofActionKeepRecording,
+                value: summary.firstProofActionKeepRecording,
+              ),
+              _row(
+                context,
+                key: 'first_proof_action_correct_transcript',
+                label: BetaActivationSummaryCopy.firstProofActionCorrectTranscript,
+                value: summary.firstProofActionCorrectTranscript,
+              ),
+              _row(
+                context,
+                key: 'first_proof_action_remove_from_pattern',
+                label: BetaActivationSummaryCopy.firstProofActionRemoveFromPattern,
+                value: summary.firstProofActionRemoveFromPattern,
+              ),
+              _row(
+                context,
                 key: 'pro_screen_opened',
                 label: BetaActivationSummaryCopy.proScreenOpened,
                 value: summary.proScreenOpened,

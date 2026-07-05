@@ -202,6 +202,7 @@ import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_week_progress_line.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
 import '../widgets/record/return_day_flow_card.dart';
+import '../widgets/record/first_proof_action_loop_card.dart';
 import '../widgets/record/first_proof_payoff_card.dart';
 import '../widgets/record/first_proof_truth_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
@@ -241,10 +242,16 @@ import '../features/next_action/next_best_action_model.dart';
 import '../widgets/next_action/next_best_action_line.dart';
 import '../features/early_archive/post_save_return_handoff_engine.dart';
 import '../features/early_archive/post_save_return_handoff_gates.dart';
+import '../features/first_proof_action_loop/first_proof_action_loop_engine.dart';
+import '../features/first_proof_action_loop/first_proof_action_loop_gates.dart';
 import '../features/first_proof_payoff/first_proof_payoff_engine.dart';
 import '../features/first_proof_payoff/first_proof_payoff_gates.dart';
 import '../features/first_proof_truth/first_proof_truth_gates.dart';
 import '../features/first_proof_truth/first_proof_truth_store.dart';
+import '../features/archive_controls/archive_exclusion_engine.dart';
+import '../widgets/archive_controls/archive_pattern_exclusion_actions.dart';
+import '../features/pattern_naming/pattern_name_analytics.dart';
+import '../widgets/patterns/rename_pattern_sheet.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
@@ -1861,6 +1868,50 @@ class _RecordScreenState extends State<RecordScreen> {
                 ),
         shareCard: shareCard,
       ),
+    );
+  }
+
+  Future<void> _openFirstProofRenamePattern() async {
+    final entries = _entriesAfterSave;
+    if (entries.isEmpty) return;
+
+    final prompt = PatternNameEngine.buildPrompt(entries: entries);
+    final payoff = FirstProofPayoffEngine.build(entries: entries);
+    final groundedPhrase =
+        prompt?.groundedPhrase ?? payoff?.groundedPhrase ?? '';
+    if (groundedPhrase.trim().isEmpty) return;
+
+    final patternKey = PatternNameEngine.patternKey(groundedPhrase);
+    final initialName =
+        PatternNameEngine.displayLabelForGroundedPhrase(groundedPhrase);
+    final saved = await RenamePatternSheet.show(
+      context,
+      initialName: initialName,
+      onSave: (name) {
+        PatternNameStore.setCustomName(patternKey, name);
+        PatternNameAnalytics.renamed(
+          source: 'first_proof_action_loop',
+          entryCount: entries.length,
+          hasCustomName: true,
+        );
+      },
+    );
+    if (saved == true && mounted) setState(() {});
+  }
+
+  Future<void> _excludeLatestFromFirstProofPattern() async {
+    final entries = _entriesAfterSave;
+    if (entries.isEmpty) return;
+
+    final patternKey = ArchiveExclusionEngine.activePatternKeyForEntries(entries);
+    final entryId = entries.last.id;
+    if (patternKey == null || entryId.isEmpty) return;
+
+    await ArchivePatternExclusionActions.excludeFromPattern(
+      context: context,
+      entryId: entryId,
+      patternKey: patternKey,
+      source: 'first_proof_action_loop',
     );
   }
 
@@ -4429,6 +4480,25 @@ class _RecordScreenState extends State<RecordScreen> {
       hasAnsweredForProof: firstProofTruthProofKey.isNotEmpty &&
           FirstProofTruthStore.hasAnswered(firstProofTruthProofKey),
     );
+    final firstProofTruthAnswer = firstProofTruthProofKey.isNotEmpty
+        ? FirstProofTruthStore.answerFor(firstProofTruthProofKey)
+        : null;
+    final showFirstProofActionLoop = FirstProofActionLoopGates.shouldShow(
+      showFirstProofPayoff: showFirstProofPayoff,
+      payoff: firstProofPayoffCandidate,
+      proofKey: firstProofTruthProofKey,
+      hasAnsweredForProof: firstProofTruthProofKey.isNotEmpty &&
+          FirstProofTruthStore.hasAnswered(firstProofTruthProofKey),
+    );
+    final firstProofActionLoopContent = showFirstProofActionLoop &&
+            firstProofTruthAnswer != null &&
+            firstProofPayoffCandidate != null
+        ? FirstProofActionLoopEngine.build(
+            answer: firstProofTruthAnswer,
+            entries: entriesAfterSave,
+            payoff: firstProofPayoffCandidate,
+          )
+        : null;
     final showFirstProofMoment = showFirstProofPayoff;
     final postSaveHasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entriesAfterSave);
@@ -5946,6 +6016,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             FirstProofPayoffCard(
                               payoff: firstProofPayoffCandidate,
                               entryCount: postSaveEntryCount,
+                              suppressCtas: firstProofActionLoopContent != null,
                               onWatchThisNext: _handleFirstProofWatchThisNext,
                               onViewPatternDetails:
                                   firstProofPayoffCandidate.canShowPatternDetail
@@ -5960,6 +6031,42 @@ class _RecordScreenState extends State<RecordScreen> {
                               entryCount: postSaveEntryCount,
                               hasSnippets:
                                   firstProofPayoffCandidate!.hasSnippets,
+                              onAnswered: () {
+                                if (mounted) setState(() {});
+                              },
+                            ),
+                          ],
+                          if (firstProofActionLoopContent != null) ...[
+                            const SizedBox(height: 12),
+                            FirstProofActionLoopCard(
+                              content: firstProofActionLoopContent,
+                              entryCount: postSaveEntryCount,
+                              onWatchThisNext: _handleFirstProofWatchThisNext,
+                              onViewPatternDetails:
+                                  firstProofActionLoopContent
+                                          .canShowPatternDetails
+                                      ? _openFirstProofPatternDetail
+                                      : null,
+                              onRenamePattern:
+                                  firstProofActionLoopContent.canRenamePattern
+                                      ? _openFirstProofRenamePattern
+                                      : null,
+                              onKeepRecording: _keepRecording,
+                              onCorrectTranscript: firstProofActionLoopContent
+                                      .canCorrectTranscript
+                                  ? () {
+                                      final entry = entriesAfterSave.last;
+                                      unawaited(
+                                        _openCorrectTranscriptForEntry(entry),
+                                      );
+                                    }
+                                  : null,
+                              onRemoveFromPattern: firstProofActionLoopContent
+                                      .canRemoveFromPattern
+                                  ? () => unawaited(
+                                        _excludeLatestFromFirstProofPattern(),
+                                      )
+                                  : null,
                             ),
                           ],
                           if (confirmedRepeatTriggerPayoff != null) ...[

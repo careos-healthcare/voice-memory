@@ -16,12 +16,14 @@ class FirstProofPayoffCard extends StatefulWidget {
     required this.entryCount,
     required this.onWatchThisNext,
     this.onViewPatternDetails,
+    this.suppressCtas = false,
   });
 
   final FirstProofPayoff payoff;
   final int entryCount;
   final VoidCallback onWatchThisNext;
   final VoidCallback? onViewPatternDetails;
+  final bool suppressCtas;
 
   @override
   State<FirstProofPayoffCard> createState() => _FirstProofPayoffCardState();
@@ -144,18 +146,20 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
             style: bodyStyle.copyWith(fontSize: 13),
           ),
           const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            key: const Key('first_proof_payoff_watch_cta'),
-            onPressed: _handleWatchThisNext,
-            child: const Text(FirstProofPayoffCopy.watchThisNextCta),
-          ),
-          if (widget.onViewPatternDetails != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            TextButton(
-              key: const Key('first_proof_payoff_pattern_detail_cta'),
-              onPressed: _handleViewPatternDetails,
-              child: const Text(FirstProofPayoffCopy.viewPatternDetailsCta),
+          if (!widget.suppressCtas) ...[
+            FilledButton(
+              key: const Key('first_proof_payoff_watch_cta'),
+              onPressed: _handleWatchThisNext,
+              child: const Text(FirstProofPayoffCopy.watchThisNextCta),
             ),
+            if (widget.onViewPatternDetails != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              TextButton(
+                key: const Key('first_proof_payoff_pattern_detail_cta'),
+                onPressed: _handleViewPatternDetails,
+                child: const Text(FirstProofPayoffCopy.viewPatternDetailsCta),
+              ),
+            ],
           ],
         ],
       ),

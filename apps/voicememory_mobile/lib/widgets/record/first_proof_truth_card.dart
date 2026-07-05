@@ -5,7 +5,6 @@ import '../../features/first_proof_truth/first_proof_truth_analytics.dart';
 import '../../features/first_proof_truth/first_proof_truth_copy.dart';
 import '../../features/first_proof_truth/first_proof_truth_model.dart';
 import '../../features/first_proof_truth/first_proof_truth_store.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
@@ -93,12 +92,6 @@ class _FirstProofTruthCardState extends State<FirstProofTruthCard> {
     widget.onAnswered?.call();
   }
 
-  String? _followUpFor(FirstProofTruthAnswer answer) => switch (answer) {
-        FirstProofTruthAnswer.yes => FirstProofTruthCopy.afterYes,
-        FirstProofTruthAnswer.sortOf => FirstProofTruthCopy.afterSortOf,
-        FirstProofTruthAnswer.no => FirstProofTruthCopy.afterNo,
-      };
-
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -106,11 +99,11 @@ class _FirstProofTruthCardState extends State<FirstProofTruthCard> {
     }
 
     final answer = _answer;
-    final followUp = answer != null ? _followUpFor(answer) : null;
     final showChoices = answer == null;
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+
+    if (answer != null) {
+      return const SizedBox.shrink(key: Key('first_proof_truth_answered'));
+    }
 
     return Container(
       key: const Key('first_proof_truth_card'),
@@ -142,12 +135,6 @@ class _FirstProofTruthCardState extends State<FirstProofTruthCard> {
               key: const Key('first_proof_truth_no'),
               onPressed: () => _select(FirstProofTruthAnswer.no),
               child: const Text(FirstProofTruthCopy.noOption),
-            ),
-          ] else if (followUp != null) ...[
-            Text(
-              followUp,
-              key: Key('first_proof_truth_followup_${answer!.name}'),
-              style: bodyStyle,
             ),
           ],
         ],

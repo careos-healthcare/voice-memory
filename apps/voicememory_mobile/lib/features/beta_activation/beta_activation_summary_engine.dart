@@ -26,6 +26,15 @@ abstract final class BetaActivationSummaryEngine {
       firstProofTruthYes: extension.firstProofTruthYes,
       firstProofTruthSortOf: extension.firstProofTruthSortOf,
       firstProofTruthNo: extension.firstProofTruthNo,
+      firstProofActionWatchThisNext: extension.firstProofActionWatchThisNext,
+      firstProofActionViewPatternDetails:
+          extension.firstProofActionViewPatternDetails,
+      firstProofActionRenamePattern: extension.firstProofActionRenamePattern,
+      firstProofActionKeepRecording: extension.firstProofActionKeepRecording,
+      firstProofActionCorrectTranscript:
+          extension.firstProofActionCorrectTranscript,
+      firstProofActionRemoveFromPattern:
+          extension.firstProofActionRemoveFromPattern,
       proScreenOpened: loop.paywallSeen,
       restorePurchasesTapped: loop.restoreTapped,
       returnedAfterFirstProof: loop.returnedAfterFirstProof,
@@ -121,6 +130,30 @@ abstract final class BetaActivationSummaryEngine {
       ..writeln(
         '${BetaActivationSummaryCopy.firstProofTruthNo}: '
         '${summary.firstProofTruthNo}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofActionWatchThisNext}: '
+        '${summary.firstProofActionWatchThisNext}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofActionViewPatternDetails}: '
+        '${summary.firstProofActionViewPatternDetails}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofActionRenamePattern}: '
+        '${summary.firstProofActionRenamePattern}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofActionKeepRecording}: '
+        '${summary.firstProofActionKeepRecording}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofActionCorrectTranscript}: '
+        '${summary.firstProofActionCorrectTranscript}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofActionRemoveFromPattern}: '
+        '${summary.firstProofActionRemoveFromPattern}',
       )
       ..writeln(
         '${BetaActivationSummaryCopy.proScreenOpened}: '
