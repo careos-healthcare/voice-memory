@@ -2,48 +2,49 @@
 abstract final class FirstProofPayoffCopy {
   FirstProofPayoffCopy._();
 
-  static const headline = 'This came back.';
+  static const headline = 'ArchiveMe noticed this came back';
 
-  static const subheadWithSnippets =
-      'Across three moments, your archive noticed:';
+  static const yourWordsLabel = 'Your words:';
 
-  static const subheadFallback =
-      'ArchiveMe found this repeat across three real moments.';
+  static const patternLine = 'That is the pattern.';
 
-  static const evidenceLabel = 'Evidence from your words';
+  static const truthLine =
+      'This is not a diagnosis or advice. It is a repeat ArchiveMe found in your own words.';
 
-  static const meaningLine = 'That may be worth watching.';
+  static const fallbackHeadline =
+      'ArchiveMe noticed the same thread across your saved moments.';
 
-  static const returnHook =
-      'Next time it shows up, ArchiveMe can compare what changed.';
+  static const fallbackBody = 'Record one more real moment when it returns.';
 
   static const watchThisNextCta = 'Watch this next';
 
   static const viewPatternDetailsCta = 'View pattern details';
 
-  static const firstSnippetLabel = 'You said:';
-  static const laterSnippetLabel = 'Then later:';
-  static const thirdSnippetLabel = 'And again:';
+  /// Weak milestone copy that must not lead the payoff card.
+  static const bannedMainLeads = [
+    'First proof unlocked',
+    'ArchiveMe found a repeat in your words',
+    'This showed up across three related moments',
+    'This came back.',
+    'ArchiveMe found this repeat across three real moments',
+    'Across three moments, your archive noticed:',
+    'That may be worth watching.',
+  ];
 
-  static String groundedPhraseLine(String phrase) => phrase.trim();
-
-  static String formatQuotedSnippet(String snippet) {
+  static String formatBulletSnippet(String snippet) {
     final trimmed = snippet.trim();
     if (trimmed.isEmpty) return '';
-    return '‘$trimmed’';
+    return '- "$trimmed"';
   }
 
   static List<String> allVisibleStrings() => [
         headline,
-        subheadWithSnippets,
-        subheadFallback,
-        evidenceLabel,
-        meaningLine,
-        returnHook,
+        yourWordsLabel,
+        patternLine,
+        truthLine,
+        fallbackHeadline,
+        fallbackBody,
         watchThisNextCta,
         viewPatternDetailsCta,
-        firstSnippetLabel,
-        laterSnippetLabel,
-        thirdSnippetLabel,
       ];
 }

@@ -557,19 +557,19 @@ void main() {
   });
 
   group('Pattern memory differentiation', () {
-    test('first proof payoff uses evidence wording', () {
+    test('first proof payoff uses user-word evidence wording', () {
       final payoff = FirstProofPayoffEngine.build(
         entries: _threeRelatedRepeatEntries(),
       );
       expect(payoff, isNotNull);
       final haystack = [
         payoff!.headline,
-        payoff.subhead,
         payoff.evidenceLabel,
-        payoff.groundedPhrase,
+        payoff.meaningLine,
+        payoff.returnHook,
       ].join(' ').toLowerCase();
-      expect(haystack, contains('evidence'));
       expect(haystack, contains('your words'));
+      expect(haystack, contains('pattern'));
       expect(haystack, isNot(contains('chat memory')));
       expect(haystack, isNot(contains('ai remembers you')));
       expect(haystack, isNot(contains('i know you')));
@@ -593,7 +593,8 @@ void main() {
         RecordScreenFramingCopy.emptyArchiveBody,
         RecordScreenFramingCopy.weakCompareFootnote,
         FirstProofPayoffCopy.headline,
-        FirstProofPayoffCopy.meaningLine,
+        FirstProofPayoffCopy.patternLine,
+        FirstProofPayoffCopy.truthLine,
         ArchiveSummaryCopy.promise,
       ].join('\n').toLowerCase();
 

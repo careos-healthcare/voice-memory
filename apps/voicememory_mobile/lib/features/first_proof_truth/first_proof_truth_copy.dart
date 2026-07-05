@@ -2,7 +2,7 @@
 abstract final class FirstProofTruthCopy {
   FirstProofTruthCopy._();
 
-  static const question = 'Did this feel true?';
+  static const question = 'Does this feel true?';
 
   static const yesOption = 'Yes';
   static const sortOfOption = 'Sort of';

@@ -34,6 +34,7 @@ abstract final class ProofSurfaceAdviceGuard {
     'try doing',
     'this means you are',
     'this means',
+    'you always',
     'the reason is',
     'your problem is',
     'you have a tendency',
@@ -48,6 +49,7 @@ abstract final class ProofSurfaceAdviceGuard {
 
   static Iterable<String> violationsIn(String text) sync* {
     if (text == ArchiveThoughtMapCopy.patternSignalDisclaimer) return;
+    if (text == FirstProofPayoffCopy.truthLine) return;
     final lower = text.toLowerCase();
     for (final phrase in bannedAdvicePhrases) {
       if (lower.contains(phrase)) yield phrase;

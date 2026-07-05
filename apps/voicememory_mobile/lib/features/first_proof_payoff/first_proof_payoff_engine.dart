@@ -5,7 +5,6 @@ import '../archive_evidence/archive_pattern_copy_guard.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import '../early_archive/early_first_signal_engine.dart';
-import '../early_archive/early_first_signal_engine.dart';
 import '../pattern_detail/pattern_detail_engine.dart';
 import 'first_proof_payoff_copy.dart';
 import 'first_proof_payoff_model.dart';
@@ -56,17 +55,22 @@ abstract final class FirstProofPayoffEngine {
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
     );
 
+    final hasSnippets = variant == FirstProofPayoffVariant.strongWithSnippets;
+
     return FirstProofPayoff(
       variant: variant,
-      headline: FirstProofPayoffCopy.headline,
-      subhead: variant == FirstProofPayoffVariant.strongWithSnippets
-          ? FirstProofPayoffCopy.subheadWithSnippets
-          : FirstProofPayoffCopy.subheadFallback,
+      headline: hasSnippets
+          ? FirstProofPayoffCopy.headline
+          : FirstProofPayoffCopy.fallbackHeadline,
+      subhead: '',
       groundedPhrase: primaryPhrase,
-      evidenceLabel: FirstProofPayoffCopy.evidenceLabel,
+      evidenceLabel: FirstProofPayoffCopy.yourWordsLabel,
       snippets: snippets,
-      meaningLine: FirstProofPayoffCopy.meaningLine,
-      returnHook: FirstProofPayoffCopy.returnHook,
+      meaningLine:
+          hasSnippets ? FirstProofPayoffCopy.patternLine : '',
+      returnHook: hasSnippets
+          ? FirstProofPayoffCopy.truthLine
+          : FirstProofPayoffCopy.fallbackBody,
       hasStrongEvidence: hasStrongEvidence,
       canShowPatternDetail: canShowPatternDetail,
     );
@@ -76,12 +80,6 @@ abstract final class FirstProofPayoffEngine {
     List<JournalEntry> entries,
     List<String> groundedPhrases,
   ) {
-    const labels = [
-      FirstProofPayoffCopy.firstSnippetLabel,
-      FirstProofPayoffCopy.laterSnippetLabel,
-      FirstProofPayoffCopy.thirdSnippetLabel,
-    ];
-
     final snippets = <FirstProofEvidenceSnippet>[];
     for (final entry in entries) {
       if (snippets.length >= 3) break;
@@ -94,12 +92,7 @@ abstract final class FirstProofPayoffEngine {
       final quote = _quoteForEntry(text, groundedPhrases);
       if (quote == null) continue;
 
-      snippets.add(
-        FirstProofEvidenceSnippet(
-          label: labels[snippets.length],
-          quote: quote,
-        ),
-      );
+      snippets.add(FirstProofEvidenceSnippet(label: '', quote: quote));
     }
     return snippets;
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
@@ -72,15 +73,17 @@ void main() {
       expect(payoff.groundedPhrase.toLowerCase(), contains('said yes'));
     });
 
-    test('shows grounded phrase and 2–3 snippets when safely available', () {
+    test('shows 2–3 user-word snippets when safely available', () {
       final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
       expect(payoff, isNotNull);
       expect(payoff!.variant, FirstProofPayoffVariant.strongWithSnippets);
       expect(payoff.snippets.length, greaterThanOrEqualTo(2));
       expect(payoff.snippets.length, lessThanOrEqualTo(3));
+      expect(payoff.evidenceLabel, FirstProofPayoffCopy.yourWordsLabel);
+      expect(payoff.meaningLine, FirstProofPayoffCopy.patternLine);
+      expect(payoff.returnHook, FirstProofPayoffCopy.truthLine);
       for (final snippet in payoff.snippets) {
         expect(snippet.quote, isNotEmpty);
-        expect(snippet.label, isNotEmpty);
       }
     });
 
@@ -135,6 +138,21 @@ void main() {
     });
   });
 
+  group('FirstProofPayoffCopy', () {
+    test('avoids weak milestone headlines as main lead', () {
+      expect(FirstProofPayoffCopy.headline, 'ArchiveMe noticed this came back');
+      for (final banned in FirstProofPayoffCopy.bannedMainLeads) {
+        expect(FirstProofPayoffCopy.headline, isNot(equals(banned)));
+      }
+    });
+
+    test('visible strings pass advice guard except intentional negation line', () {
+      for (final line in FirstProofPayoffCopy.allVisibleStrings()) {
+        expect(ProofSurfaceAdviceGuard.passes(line), isTrue, reason: line);
+      }
+    });
+  });
+
   group('FirstProofPayoffGates', () {
     test('suppresses lower-priority surfaces during payoff', () {
       expect(FirstProofPayoffGates.suppressLowerPrioritySurfaces(true), isTrue);
@@ -158,7 +176,7 @@ void main() {
   });
 
   group('FirstProofPayoffCard', () {
-    testWidgets('headline says This came back.', (tester) async {
+    testWidgets('leads with headline then user evidence snippets', (tester) async {
       final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
       expect(payoff, isNotNull);
 
@@ -174,13 +192,23 @@ void main() {
         ),
       );
 
-      expect(find.text('This came back.'), findsOneWidget);
-      expect(find.text(payoff.groundedPhrase), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_proof_payoff_your_words_label')),
+        findsOneWidget,
+      );
+      expect(find.text(FirstProofPayoffCopy.patternLine), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.truthLine), findsOneWidget);
+      expect(find.textContaining('said yes'), findsWidgets);
+      for (final banned in FirstProofPayoffCopy.bannedMainLeads) {
+        expect(find.text(banned), findsNothing);
+      }
     });
 
-    testWidgets('Watch this next CTA fires callback', (tester) async {
+    testWidgets('does not show large Watch this next CTA inside payoff card', (
+      tester,
+    ) async {
       final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
-      var watched = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -188,33 +216,26 @@ void main() {
             body: FirstProofPayoffCard(
               payoff: payoff!,
               entryCount: 3,
-              onWatchThisNext: () => watched = true,
+              onWatchThisNext: () {},
             ),
           ),
         ),
       );
 
-      await tester.tap(find.byKey(const Key('first_proof_payoff_watch_cta')));
-      await tester.pump();
-      expect(watched, isTrue);
+      expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsNothing);
+      expect(find.byKey(const Key('first_proof_payoff_watch_cta')), findsNothing);
     });
 
-    testWidgets('falls back to grounded phrase when snippets unavailable', (
-      tester,
-    ) async {
-      final enginePayoff =
-          FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
-      expect(enginePayoff, isNotNull);
-
+    testWidgets('falls back when snippets unavailable', (tester) async {
       final fallback = FirstProofPayoff(
         variant: FirstProofPayoffVariant.fallbackPhraseOnly,
-        headline: FirstProofPayoffCopy.headline,
-        subhead: FirstProofPayoffCopy.subheadFallback,
-        groundedPhrase: enginePayoff!.groundedPhrase,
-        evidenceLabel: FirstProofPayoffCopy.evidenceLabel,
+        headline: FirstProofPayoffCopy.fallbackHeadline,
+        subhead: '',
+        groundedPhrase: 'said yes again',
+        evidenceLabel: FirstProofPayoffCopy.yourWordsLabel,
         snippets: const [],
-        meaningLine: FirstProofPayoffCopy.meaningLine,
-        returnHook: FirstProofPayoffCopy.returnHook,
+        meaningLine: '',
+        returnHook: FirstProofPayoffCopy.fallbackBody,
         hasStrongEvidence: true,
         canShowPatternDetail: false,
       );
@@ -233,12 +254,12 @@ void main() {
         ),
       );
 
-      expect(find.text(FirstProofPayoffCopy.subheadFallback), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.fallbackHeadline), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.fallbackBody), findsOneWidget);
       expect(
-        find.byKey(const Key('first_proof_payoff_evidence_label')),
+        find.byKey(const Key('first_proof_payoff_your_words_label')),
         findsNothing,
       );
-      expect(find.text(fallback.groundedPhrase), findsOneWidget);
     });
 
     testWidgets('View pattern details CTA fires when available', (tester) async {
@@ -296,7 +317,7 @@ void main() {
         entryCount: 3,
         hasSnippets: true,
         hasPatternDetailCta: true,
-        cta: 'watch_this_next',
+        cta: 'view_pattern_details',
       );
 
       expect(captured.length, 2);
@@ -320,7 +341,7 @@ void main() {
       expect(captured.first.event, FirstProofPayoffAnalytics.seenEvent);
       expect(captured.last.event, FirstProofPayoffAnalytics.ctaTappedEvent);
       expect(captured.first.props['has_snippets'], 1);
-      expect(captured.last.props['stage'], 'watch_this_next');
+      expect(captured.last.props['stage'], 'view_pattern_details');
     });
   });
 

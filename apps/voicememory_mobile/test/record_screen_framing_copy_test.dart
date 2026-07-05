@@ -1193,8 +1193,9 @@ void main() {
       );
       expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
-      expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsOneWidget);
-      expect(find.text(FirstProofPayoffCopy.returnHook), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.patternLine), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.truthLine), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsNothing);
       expect(
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsNothing,
@@ -1307,7 +1308,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_proof_payoff_evidence_label')), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_your_words_label')), findsOneWidget);
       expect(find.textContaining('said yes'), findsWidgets);
     });
 
