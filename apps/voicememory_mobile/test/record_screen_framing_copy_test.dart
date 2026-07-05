@@ -21,7 +21,7 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_cop
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/archive_history/archive_history_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
+import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
@@ -1188,20 +1188,12 @@ void main() {
       );
       expect(
         find.byKey(const Key('return_tomorrow_cue_card_after_first_proof')),
-        findsOneWidget,
+        findsNothing,
       );
-      expect(
-        find.text(ReturnTomorrowCueCopy.afterFirstProofTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ReturnTomorrowCueCopy.afterFirstProofBody),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
-      expect(find.text(FirstProofMomentCopy.primaryLabel), findsOneWidget);
-      expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
-      expect(find.text(FirstProofMomentCopy.nextLine), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.returnHook), findsOneWidget);
       expect(
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsNothing,
@@ -1275,9 +1267,8 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
-      expect(find.text(FirstProofMomentCopy.primaryLabel), findsOneWidget);
-      expect(find.text(FirstProofMomentCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
+      expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
       expect(find.text(PostSaveFocusedActionsCopy.addOneMoreMoment), findsNothing);
       expect(
         find.text('Pressure shows up, then you say yes before checking your capacity.'),
@@ -1315,7 +1306,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_proof_moment_evidence_phrases')), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_evidence_label')), findsOneWidget);
       expect(find.textContaining('said yes'), findsWidgets);
     });
 
@@ -1362,7 +1353,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_proof_moment_card')), findsNothing);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsNothing);
     });
 
     testWidgets('degraded third save hides first proof moment', (tester) async {
@@ -1373,7 +1364,7 @@ void main() {
         degradedVoicePostSave: true,
       );
 
-      expect(find.byKey(const Key('first_proof_moment_card')), findsNothing);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsNothing);
     });
 
     testWidgets('post-save success shows Done and Record another only', (
@@ -1822,7 +1813,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
 
-      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
       expect(find.byKey(const Key('first_week_loop_card')), findsNothing);
     });
 

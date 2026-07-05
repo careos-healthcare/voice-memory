@@ -582,6 +582,8 @@ abstract class ActivationFunnelAnalytics {
     'answer',
     'comparison_state',
     'has_strong_evidence',
+    'has_snippets',
+    'has_pattern_detail_cta',
     'milestone_count',
     'phrase_count',
     'relation_state',
@@ -991,6 +993,8 @@ abstract class ActivationFunnelAnalytics {
     String? comparisonState,
     int? phraseCount,
     bool? hasStrongEvidence,
+    bool? hasSnippets,
+    bool? hasPatternDetailCta,
     int? milestoneCount,
     String? relationState,
     String? source,
@@ -1065,6 +1069,9 @@ abstract class ActivationFunnelAnalytics {
       if (phraseCount != null) 'phrase_count': phraseCount,
       if (hasStrongEvidence != null)
         'has_strong_evidence': hasStrongEvidence ? 1 : 0,
+      if (hasSnippets != null) 'has_snippets': hasSnippets ? 1 : 0,
+      if (hasPatternDetailCta != null)
+        'has_pattern_detail_cta': hasPatternDetailCta ? 1 : 0,
       if (milestoneCount != null) 'milestone_count': milestoneCount,
       if (relationState != null &&
           allowedRelationStateValues.contains(relationState))

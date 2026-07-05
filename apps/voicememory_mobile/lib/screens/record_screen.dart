@@ -201,7 +201,7 @@ import '../widgets/record/post_save_return_handoff_card.dart';
 import '../widgets/record/first_week_progress_line.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
 import '../widgets/record/return_day_flow_card.dart';
-import '../widgets/record/first_proof_moment_card.dart';
+import '../widgets/record/first_proof_payoff_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/return_check_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
@@ -242,8 +242,13 @@ import '../features/early_archive/early_saved_moments_gates.dart';
 import '../features/early_archive/early_repeat_progress_model.dart';
 import '../features/early_archive/post_save_return_handoff_engine.dart';
 import '../features/early_archive/post_save_return_handoff_gates.dart';
-import '../features/early_archive/first_proof_moment_engine.dart';
-import '../features/early_archive/first_proof_moment_gates.dart';
+import '../features/first_proof_payoff/first_proof_payoff_engine.dart';
+import '../features/first_proof_payoff/first_proof_payoff_gates.dart';
+import '../features/pattern_detail/pattern_detail_engine.dart';
+import '../features/share_card/share_card_builder.dart';
+import '../widgets/patterns/pattern_detail_sheet.dart';
+import '../features/retention/return_tomorrow_cue_engine.dart';
+import '../features/archive_evidence/archive_evidence_guard.dart';
 import '../features/early_archive/first_week_loop_engine.dart';
 import '../features/early_archive/first_week_loop_gates.dart';
 import '../features/early_archive/return_check_payoff_engine.dart';
@@ -1763,6 +1768,84 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     setState(() => _selectedPromptLine = reason.guidedRecordPrompt);
     unawaited(_onRecordPressed(source: 'daily_return_reason'));
+  }
+
+  Future<void> _handleFirstProofWatchThisNext() async {
+    final entries = _entriesAfterSave;
+    if (entries.isEmpty) {
+      _resetPostSaveToReady();
+      return;
+    }
+
+    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final phrase = ReturnTomorrowCueEngine.groundedWatchingPhrase(eligible);
+    final watch = WatchForCoordinator.buildSuggestedWatchForAfterSave(
+      entries: entries,
+      loop: _tomorrowReturnLoop,
+      signals: phrase != null ? [phrase] : _postSaveSignals(),
+    );
+    await WatchForCoordinator.acceptSuggestedWatchFor(watch);
+    if (!mounted) return;
+    if (phrase != null && phrase.trim().isNotEmpty) {
+      setState(() => _selectedPromptLine = 'Watch for: $phrase');
+    }
+    _resetPostSaveToReady();
+  }
+
+  void _openFirstProofPatternDetail() {
+    final entries = _entriesAfterSave;
+    if (entries.isEmpty) return;
+
+    final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: entries);
+    final earlyEvidenceTimeline = EarlyEvidenceTimelineEngine.build(
+      entries: entries,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+    );
+    final viewingConfirmedRepeat = earlyEvidenceTimeline != null ||
+        (earlyFirstSignal?.showsConfirmedRepeat ?? false);
+    final repeatReturnChangeProof = RepeatReturnCheckEngine.changeProofForReady(
+      entryCount: entries.length,
+      viewingConfirmedRepeat: viewingConfirmedRepeat,
+      isRecording: false,
+      isPostSave: true,
+      records: RepeatReturnCheckStore.cached,
+    );
+    final detail = PatternDetailEngine.build(
+      entries: entries,
+      confirmedRepeat: earlyFirstSignal,
+      changeProof: repeatReturnChangeProof,
+      returnChecks: RepeatReturnCheckStore.cached,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeat,
+    );
+    if (detail == null) return;
+
+    final shareCard = ShareCardBuilder.build(
+      entries: entries,
+      detail: detail,
+      confirmedRepeat: earlyFirstSignal,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeat,
+    );
+    unawaited(
+      PatternDetailSheet.show(
+        context,
+        detail: detail,
+        entryCount: entries.length,
+        isPro: _recordReturnProIsPro,
+        onSeePro: _recordReturnProIsPro
+            ? null
+            : () => context.push(
+                  '/subscription',
+                  extra: PaywallRouteArgs(
+                    source: PaywallSource.valueMoment,
+                    sourceRoute: '/record',
+                  ),
+                ),
+        shareCard: shareCard,
+      ),
+    );
   }
 
   void _openWeeklyArchiveReview(WeeklyArchiveReviewResult review) {
@@ -4308,17 +4391,18 @@ class _RecordScreenState extends State<RecordScreen> {
       policyAllows: recordProofStack.showFirstWeekLoop,
       loop: firstWeekLoopCandidate,
     );
-    final firstProofMomentCandidate = ui == RecordUiState.done &&
+    final firstProofPayoffCandidate = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
-        ? FirstProofMomentEngine.build(entries: entriesAfterSave)
+        ? FirstProofPayoffEngine.build(entries: entriesAfterSave)
         : null;
-    final showFirstProofMoment = FirstProofMomentGates.shouldShow(
+    final showFirstProofPayoff = FirstProofPayoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
       isDegradedPostSave: entriesAfterSave.isNotEmpty &&
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
-      moment: firstProofMomentCandidate,
+      payoff: firstProofPayoffCandidate,
     );
+    final showFirstProofMoment = showFirstProofPayoff;
     final postSaveHasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entriesAfterSave);
     final postSaveHasFirstProof = CoreValueFeedbackGates.hasFirstProof(
@@ -4328,6 +4412,7 @@ class _RecordScreenState extends State<RecordScreen> {
     final postSaveDegraded = entriesAfterSave.isNotEmpty &&
         VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last);
     final showCoreValueFeedbackOnRecordPostFirstProof =
+        !showFirstProofPayoff &&
         CoreValueFeedbackGates.shouldShowOnRecordPostFirstProof(
       showFirstProofMoment: showFirstProofMoment,
       isPostSaveDone: ui == RecordUiState.done,
@@ -4370,7 +4455,8 @@ class _RecordScreenState extends State<RecordScreen> {
             showWhatChangedV2: showWhatChangedV2,
           )
         : null;
-    final showHelpedTracking = helpedTrackingPrompt != null;
+    final showHelpedTracking =
+        helpedTrackingPrompt != null && !showFirstProofPayoff;
     final showReturnCheckPayoff = ReturnCheckPayoffGates.shouldShow(
       isPostSaveDone: ui == RecordUiState.done,
       entryCount: postSaveEntryCount,
@@ -4444,7 +4530,8 @@ class _RecordScreenState extends State<RecordScreen> {
         : null;
     final postSaveDegradedForReturnCue = entriesAfterSave.isNotEmpty &&
         VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last);
-    final showReturnTomorrowCuePostSave = ReturnTomorrowCueGates.shouldShowPostSave(
+    final showReturnTomorrowCuePostSave = !showFirstProofPayoff &&
+        ReturnTomorrowCueGates.shouldShowPostSave(
       isPostSaveDone: ui == RecordUiState.done,
       isDegradedPostSave: postSaveDegradedForReturnCue,
       cue: returnTomorrowCuePostSave,
@@ -5840,12 +5927,17 @@ class _RecordScreenState extends State<RecordScreen> {
                               entry: entriesAfterSave.first,
                             ),
                           ],
-                          if (showFirstProofMoment &&
-                              firstProofMomentCandidate != null) ...[
+                          if (showFirstProofPayoff &&
+                              firstProofPayoffCandidate != null) ...[
                             const SizedBox(height: 16),
-                            FirstProofMomentCard(
-                              moment: firstProofMomentCandidate,
+                            FirstProofPayoffCard(
+                              payoff: firstProofPayoffCandidate,
                               entryCount: postSaveEntryCount,
+                              onWatchThisNext: _handleFirstProofWatchThisNext,
+                              onViewPatternDetails:
+                                  firstProofPayoffCandidate.canShowPatternDetail
+                                      ? _openFirstProofPatternDetail
+                                      : null,
                             ),
                           ],
                           if (confirmedRepeatTriggerPayoff != null) ...[

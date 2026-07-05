@@ -17,8 +17,8 @@ import 'package:voicememory_mobile/features/early_archive/early_first_signal_eng
 import 'package:voicememory_mobile/features/early_archive/archive_summary_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
+import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
+import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/return_check_payoff_copy.dart';
@@ -42,7 +42,7 @@ import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/archive_proof_counter_card.dart';
 import 'package:voicememory_mobile/widgets/record/done_for_today_receipt_card.dart';
-import 'package:voicememory_mobile/widgets/record/first_proof_moment_card.dart';
+import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -385,23 +385,23 @@ void main() {
       );
     });
 
-    test('first proof moment stays distinct from archive summary copy', () {
+    test('first proof payoff stays distinct from archive summary copy', () {
       final entries = _threeRelatedRepeatEntries();
-      final moment = FirstProofMomentEngine.build(entries: entries);
-      expect(moment, isNotNull);
+      final payoff = FirstProofPayoffEngine.build(entries: entries);
+      expect(payoff, isNotNull);
 
       final blocks = [
-        moment!.primaryLabel,
-        moment.title,
-        moment.body,
-        moment.nextLine,
-        moment.whyLine,
+        payoff!.headline,
+        payoff.subhead,
+        payoff.groundedPhrase,
+        payoff.meaningLine,
+        payoff.returnHook,
       ];
       expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
       expect(
         ArchiveProofCopyDedup.countPhrase(
           blocks.join('\n'),
-          FirstProofMomentCopy.title,
+          FirstProofPayoffCopy.headline,
         ),
         1,
       );
@@ -557,19 +557,18 @@ void main() {
   });
 
   group('Pattern memory differentiation', () {
-    test('first proof moment uses evidence wording', () {
-      final moment = FirstProofMomentEngine.build(
+    test('first proof payoff uses evidence wording', () {
+      final payoff = FirstProofPayoffEngine.build(
         entries: _threeRelatedRepeatEntries(),
       );
-      expect(moment, isNotNull);
+      expect(payoff, isNotNull);
       final haystack = [
-        moment!.title,
-        moment.body,
-        moment.whyLine,
-        moment.evidenceLabel,
+        payoff!.headline,
+        payoff.subhead,
+        payoff.evidenceLabel,
+        payoff.groundedPhrase,
       ].join(' ').toLowerCase();
       expect(haystack, contains('evidence'));
-      expect(haystack, contains('repeat'));
       expect(haystack, contains('your words'));
       expect(haystack, isNot(contains('chat memory')));
       expect(haystack, isNot(contains('ai remembers you')));
@@ -593,8 +592,8 @@ void main() {
       final surfaces = [
         RecordScreenFramingCopy.emptyArchiveBody,
         RecordScreenFramingCopy.weakCompareFootnote,
-        FirstProofMomentCopy.title,
-        FirstProofMomentCopy.whyLine,
+        FirstProofPayoffCopy.headline,
+        FirstProofPayoffCopy.meaningLine,
         ArchiveSummaryCopy.promise,
       ].join('\n').toLowerCase();
 
@@ -699,14 +698,14 @@ void main() {
     Future<void> pumpCompletionStack(
       WidgetTester tester, {
       required int entryCount,
-      required bool showFirstProofMoment,
+      required bool showFirstProofPayoff,
       bool justSavedFirst = false,
     }) async {
       final doneReceipt = doneEngine.build(
         saved: true,
         entryCount: entryCount,
       );
-      final receipt = showFirstProofMoment
+      final receipt = showFirstProofPayoff
           ? doneReceipt.copyWith(archiveLine: '')
           : doneReceipt;
       final counter = counterEngine.build(const [], savedToday: true);
@@ -728,12 +727,13 @@ void main() {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  if (showFirstProofMoment)
-                    FirstProofMomentCard(
-                      moment: FirstProofMomentEngine.build(
+                  if (showFirstProofPayoff)
+                    FirstProofPayoffCard(
+                      payoff: FirstProofPayoffEngine.build(
                         entries: _threeRelatedRepeatEntries(),
                       )!,
                       entryCount: 3,
+                      onWatchThisNext: () {},
                     ),
                   if (showDone) DoneForTodayReceiptCard(receipt: receipt),
                   if (showCounter) ArchiveProofCounterCard(counter: counter),
@@ -771,7 +771,7 @@ void main() {
       await pumpCompletionStack(
         tester,
         entryCount: 1,
-        showFirstProofMoment: false,
+        showFirstProofPayoff: false,
         justSavedFirst: true,
       );
 
@@ -793,10 +793,10 @@ void main() {
       await pumpCompletionStack(
         tester,
         entryCount: 3,
-        showFirstProofMoment: true,
+        showFirstProofPayoff: true,
       );
 
-      expect(find.byKey(const Key('first_proof_moment_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
       expect(find.byKey(const Key('done_for_today_receipt_card')), findsOneWidget);
       expect(find.text('That is enough for today.'), findsOneWidget);
       expect(
@@ -816,7 +816,7 @@ void main() {
       await pumpCompletionStack(
         tester,
         entryCount: 4,
-        showFirstProofMoment: false,
+        showFirstProofPayoff: false,
       );
 
       expect(find.byKey(const Key('done_for_today_receipt_card')), findsOneWidget);
@@ -878,7 +878,7 @@ void main() {
 
     test('first proof still appears after three related entries', () {
       expect(
-        FirstProofMomentEngine.build(entries: _threeRelatedRepeatEntries()),
+        FirstProofPayoffEngine.build(entries: _threeRelatedRepeatEntries()),
         isNotNull,
       );
     });
