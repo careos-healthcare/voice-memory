@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
+import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
@@ -14,6 +15,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
+import 'package:voicememory_mobile/widgets/record/chat_differentiation_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
 
 const _placeholder =
@@ -82,6 +84,9 @@ void main() {
       expect(payoff.evidenceLabel, FirstProofPayoffCopy.yourWordsLabel);
       expect(payoff.meaningLine, FirstProofPayoffCopy.patternLine);
       expect(payoff.returnHook, FirstProofPayoffCopy.truthLine);
+      expect(payoff.showDifferentiation, isTrue);
+      expect(payoff.differentiationLine, ChatDifferentiationCopy.firstProofLine);
+      expect(payoff.timelineRows, hasLength(3));
       for (final snippet in payoff.snippets) {
         expect(snippet.quote, isNotEmpty);
       }
@@ -198,6 +203,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(FirstProofPayoffCopy.patternLine), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.firstProofLine), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.expandLinkLabel), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.truthLine), findsOneWidget);
       expect(find.textContaining('said yes'), findsWidgets);
       for (final banned in FirstProofPayoffCopy.bannedMainLeads) {
@@ -224,6 +231,42 @@ void main() {
 
       expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsNothing);
       expect(find.byKey(const Key('first_proof_payoff_watch_cta')), findsNothing);
+    });
+
+    testWidgets('Why this is different from chat opens explanation sheet', (
+      tester,
+    ) async {
+      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+      expect(payoff!.showDifferentiation, isTrue);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: FirstProofPayoffCard(
+              payoff: payoff,
+              entryCount: 3,
+              onWatchThisNext: () {},
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('first_proof_payoff_chat_differentiation_link')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('chat_differentiation_sheet')), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.sheetTitle), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.sheetBody), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.sheetCloseLine), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.timelineFirstSavedLabel), findsOneWidget);
+      final joined = [
+        ChatDifferentiationCopy.sheetTitle,
+        ChatDifferentiationCopy.sheetBody,
+        ChatDifferentiationCopy.sheetCloseLine,
+      ].join(' ').toLowerCase();
+      for (final banned in ChatDifferentiationCopy.bannedAttackPhrases) {
+        expect(joined, isNot(contains(banned)), reason: banned);
+      }
     });
 
     testWidgets('falls back when snippets unavailable', (tester) async {
@@ -256,6 +299,8 @@ void main() {
 
       expect(find.text(FirstProofPayoffCopy.fallbackHeadline), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.fallbackBody), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.firstProofLine), findsNothing);
+      expect(find.text(ChatDifferentiationCopy.expandLinkLabel), findsNothing);
       expect(
         find.byKey(const Key('first_proof_payoff_your_words_label')),
         findsNothing,

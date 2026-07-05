@@ -80,4 +80,6 @@ class PatternDetailResult {
   final List<PatternDetailMoment> savedMoments;
 
   bool get hasSavedMoments => savedMoments.isNotEmpty;
+
+  bool get showWhyThisMatters => savedMoments.length >= 3;
 }

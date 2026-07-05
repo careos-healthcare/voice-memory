@@ -630,6 +630,21 @@ void main() {
       expect(blob.toLowerCase(), isNot(contains('note')));
     });
 
+    test('includes ChatGPT differentiation feedback option', () {
+      expect(
+        BetaFeedbackOptionType.notDifferentFromChat.label,
+        BetaFeedbackCopy.optionNotDifferentFromChat,
+      );
+      expect(
+        BetaFeedbackOptionType.notDifferentFromChat.analyticsKey,
+        'not_different_from_chat',
+      );
+      expect(
+        BetaFeedbackCopy.allSheetCopy(),
+        contains(BetaFeedbackCopy.optionNotDifferentFromChat),
+      );
+    });
+
     testWidgets('email fallback copies feedback when launcher fails', (tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));

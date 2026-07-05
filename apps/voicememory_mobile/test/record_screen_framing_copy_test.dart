@@ -22,6 +22,7 @@ import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_
 import 'package:voicememory_mobile/features/low_evidence/low_evidence_copy.dart';
 import 'package:voicememory_mobile/features/archive_history/archive_history_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_saved_moments_copy.dart';
+import 'package:voicememory_mobile/features/chat_differentiation/chat_differentiation_copy.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
@@ -1194,6 +1195,7 @@ void main() {
       expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.patternLine), findsOneWidget);
+      expect(find.text(ChatDifferentiationCopy.firstProofLine), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.truthLine), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.watchThisNextCta), findsNothing);
       expect(

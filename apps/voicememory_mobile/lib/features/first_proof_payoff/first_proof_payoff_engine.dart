@@ -5,6 +5,8 @@ import '../archive_evidence/archive_pattern_copy_guard.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import '../early_archive/early_first_signal_engine.dart';
+import '../chat_differentiation/chat_differentiation_copy.dart';
+import '../chat_differentiation/chat_differentiation_engine.dart';
 import '../pattern_detail/pattern_detail_engine.dart';
 import 'first_proof_payoff_copy.dart';
 import 'first_proof_payoff_model.dart';
@@ -73,6 +75,12 @@ abstract final class FirstProofPayoffEngine {
           : FirstProofPayoffCopy.fallbackBody,
       hasStrongEvidence: hasStrongEvidence,
       canShowPatternDetail: canShowPatternDetail,
+      differentiationLine: hasSnippets
+          ? ChatDifferentiationCopy.firstProofLine
+          : null,
+      timelineRows: hasSnippets
+          ? ChatDifferentiationEngine.timelineFromEntries(eligible)
+          : const [],
     );
   }
 

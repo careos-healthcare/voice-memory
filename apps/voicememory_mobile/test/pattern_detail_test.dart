@@ -227,6 +227,26 @@ void main() {
       }
       expect(detail.savedMoments.length, lessThanOrEqualTo(3));
     });
+
+    test('showWhyThisMatters requires three evidence moments', () {
+      final entries = _threeSaidYesEntries();
+      final detail = _detailFor(entries);
+      expect(detail.savedMoments.length, greaterThanOrEqualTo(3));
+      expect(detail.showWhyThisMatters, isTrue);
+
+      final twoMoments = PatternDetailResult(
+        patternLabel: detail.patternLabel,
+        patternKey: detail.patternKey,
+        evidencePhrases: detail.evidencePhrases,
+        whatChangedBody: detail.whatChangedBody,
+        whatChangedSupported: detail.whatChangedSupported,
+        whatHelpedBody: detail.whatHelpedBody,
+        whatHelpedSupported: detail.whatHelpedSupported,
+        whatToWatchNextBody: detail.whatToWatchNextBody,
+        savedMoments: detail.savedMoments.take(2).toList(),
+      );
+      expect(twoMoments.showWhyThisMatters, isFalse);
+    });
   });
 
   group('what changed and what helped', () {
@@ -286,6 +306,8 @@ void main() {
 
       expect(find.byKey(const Key('pattern_detail_sheet_title')), findsOneWidget);
       expect(find.text(PatternDetailCopy.sheetTitle), findsOneWidget);
+      expect(find.text(PatternDetailCopy.whyThisMattersHeading), findsOneWidget);
+      expect(find.text(PatternDetailCopy.whyThisMattersBody), findsOneWidget);
       expect(find.text(PatternDetailCopy.evidenceIntro), findsOneWidget);
       expect(find.text(PatternDetailCopy.whatChangedHeading), findsOneWidget);
       expect(find.text(PatternDetailCopy.whatHelpedHeading), findsOneWidget);

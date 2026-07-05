@@ -77,6 +77,10 @@ void main() {
       expect(FirstSessionOnboardingCopy.startCta, 'Start with a moment');
       expect(FirstSessionOnboardingCopy.exploreCta, "I'll explore first");
       expect(FirstSessionOnboardingCopy.steps, hasLength(3));
+      expect(
+        FirstSessionOnboardingCopy.notChatFootnote,
+        'ArchiveMe is not a chat. It helps you notice what keeps returning.',
+      );
     });
 
     test('no therapy advice or instant insight claims', () {
@@ -86,6 +90,7 @@ void main() {
         ...FirstSessionOnboardingCopy.steps.map((step) => '${step.title} ${step.body}'),
         FirstSessionOnboardingCopy.startCta,
         FirstSessionOnboardingCopy.exploreCta,
+        FirstSessionOnboardingCopy.notChatFootnote,
       ].join(' ').toLowerCase();
 
       expect(joined, isNot(contains('you should')));
@@ -176,6 +181,7 @@ void main() {
       expect(find.byKey(const Key('first_session_onboarding_step_body_2')), findsOneWidget);
       expect(find.text(FirstSessionOnboardingCopy.startCta), findsOneWidget);
       expect(find.text(FirstSessionOnboardingCopy.exploreCta), findsOneWidget);
+      expect(find.text(FirstSessionOnboardingCopy.notChatFootnote), findsOneWidget);
     });
 
     testWidgets('explore CTA invokes dismiss callback', (tester) async {

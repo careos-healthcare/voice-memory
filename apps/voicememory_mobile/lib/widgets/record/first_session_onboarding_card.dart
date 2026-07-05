@@ -61,6 +61,12 @@ class FirstSessionOnboardingCard extends StatelessWidget {
               bodyStyle: stepBodyStyle,
             ),
           ],
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            FirstSessionOnboardingCopy.notChatFootnote,
+            key: const Key('first_session_onboarding_not_chat_footnote'),
+            style: secondaryStyle,
+          ),
           const SizedBox(height: AppSpacing.md),
           Align(
             alignment: Alignment.centerLeft,

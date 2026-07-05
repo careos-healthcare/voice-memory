@@ -20,6 +20,9 @@ abstract final class FirstSessionOnboardingCopy {
   static const startCta = 'Start with a moment';
   static const exploreCta = "I'll explore first";
 
+  static const notChatFootnote =
+      'ArchiveMe is not a chat. It helps you notice what keeps returning.';
+
   static const steps = <({String title, String body})>[
     (title: step1Title, body: step1Body),
     (title: step2Title, body: step2Body),

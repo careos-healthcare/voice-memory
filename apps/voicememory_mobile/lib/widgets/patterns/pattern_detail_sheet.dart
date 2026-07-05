@@ -178,6 +178,20 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                 key: const Key('pattern_detail_pattern_label'),
                 style: bodyStyle,
               ),
+              if (detail.showWhyThisMatters) ...[
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  PatternDetailCopy.whyThisMattersHeading,
+                  key: const Key('pattern_detail_why_this_matters_heading'),
+                  style: labelStyle,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  PatternDetailCopy.whyThisMattersBody,
+                  key: const Key('pattern_detail_why_this_matters_body'),
+                  style: secondaryStyle,
+                ),
+              ],
               const SizedBox(height: AppSpacing.md),
               Text(
                 PatternDetailCopy.evidenceHeading,

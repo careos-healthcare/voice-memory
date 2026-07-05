@@ -20,6 +20,10 @@ abstract final class PatternDetailCopy {
 
   static const whatToWatchHeading = 'What to watch next';
 
+  static const whyThisMattersHeading = 'Why this matters';
+  static const whyThisMattersBody =
+      'This is not one answer. It is the same thread appearing across saved moments.';
+
   static const viewPatternDetailsCta = 'View pattern details';
 
   static List<String> allVisibleCopy() => [
@@ -33,6 +37,8 @@ abstract final class PatternDetailCopy {
         notEnoughHelpedEvidence,
         savedMomentsHeading,
         whatToWatchHeading,
+        whyThisMattersHeading,
+        whyThisMattersBody,
         viewPatternDetailsCta,
       ];
 }

@@ -1,3 +1,5 @@
+import '../chat_differentiation/chat_differentiation_model.dart';
+
 /// One quoted line pulled from a saved entry — never invented.
 class FirstProofEvidenceSnippet {
   const FirstProofEvidenceSnippet({
@@ -27,6 +29,8 @@ class FirstProofPayoff {
     required this.returnHook,
     required this.hasStrongEvidence,
     required this.canShowPatternDetail,
+    this.differentiationLine,
+    this.timelineRows = const [],
   });
 
   final FirstProofPayoffVariant variant;
@@ -39,6 +43,11 @@ class FirstProofPayoff {
   final String returnHook;
   final bool hasStrongEvidence;
   final bool canShowPatternDetail;
+  final String? differentiationLine;
+  final List<ChatDifferentiationTimelineRow> timelineRows;
 
   bool get hasSnippets => snippets.length >= 2;
+
+  bool get showDifferentiation =>
+      differentiationLine != null && differentiationLine!.trim().isNotEmpty;
 }

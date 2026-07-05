@@ -7,6 +7,7 @@ enum BetaFeedbackOptionType {
   wrong,
   wouldPay,
   wouldNotPayYet,
+  notDifferentFromChat,
   other;
 
   String get label => switch (this) {
@@ -16,6 +17,8 @@ enum BetaFeedbackOptionType {
         BetaFeedbackOptionType.wouldPay => BetaFeedbackCopy.optionWouldPay,
         BetaFeedbackOptionType.wouldNotPayYet =>
           BetaFeedbackCopy.optionWouldNotPayYet,
+        BetaFeedbackOptionType.notDifferentFromChat =>
+          BetaFeedbackCopy.optionNotDifferentFromChat,
         BetaFeedbackOptionType.other => BetaFeedbackCopy.optionOther,
       };
 
@@ -25,6 +28,7 @@ enum BetaFeedbackOptionType {
         BetaFeedbackOptionType.wrong => 'wrong',
         BetaFeedbackOptionType.wouldPay => 'would_pay',
         BetaFeedbackOptionType.wouldNotPayYet => 'would_not_pay_yet',
+        BetaFeedbackOptionType.notDifferentFromChat => 'not_different_from_chat',
         BetaFeedbackOptionType.other => 'other',
       };
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/chat_differentiation/chat_differentiation_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
+import 'chat_differentiation_sheet.dart';
 
 /// Emotional first-proof payoff — user evidence first, calm CTAs elsewhere.
 class FirstProofPayoffCard extends StatefulWidget {
@@ -105,6 +107,38 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
               key: const Key('first_proof_payoff_pattern_line'),
               style: ArchiveMobileTypography.listTitle(context),
             ),
+            if (payoff.showDifferentiation) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                payoff.differentiationLine!,
+                key: const Key('first_proof_payoff_differentiation_line'),
+                style: bodyStyle,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  key: const Key('first_proof_payoff_chat_differentiation_link'),
+                  onPressed: () => ChatDifferentiationSheet.show(
+                    context,
+                    timelineRows: payoff.timelineRows,
+                  ),
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    ChatDifferentiationCopy.expandLinkLabel,
+                    style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
+                      color: AppColors.textSecondary,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.xs),
             Text(
               payoff.returnHook,
