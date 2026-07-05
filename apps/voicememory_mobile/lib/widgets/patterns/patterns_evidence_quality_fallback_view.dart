@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
 import '../../features/archive_evidence/archive_evidence_quality.dart';
+import '../../features/low_evidence/low_evidence_copy.dart';
+import '../../features/low_evidence/low_evidence_model.dart';
 import '../../features/trust/pending_transcript_recovery_gate.dart';
 import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
@@ -21,6 +23,7 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
     this.recoverableEntry,
     this.entryCount = 1,
     this.genericTestOnly = false,
+    this.lowEvidence,
   });
 
   final bool fillViewport;
@@ -28,6 +31,7 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
   final JournalEntry? recoverableEntry;
   final int entryCount;
   final bool genericTestOnly;
+  final LowEvidenceGuidance? lowEvidence;
 
   Future<void> _openRecovery(BuildContext context) async {
     final entry = recoverableEntry;
@@ -46,12 +50,18 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
     final entryId = savedEntryId?.trim();
     final showRecovery = recoverableEntry != null &&
         PendingTranscriptRecoveryGate.entryNeedsRecovery(recoverableEntry!);
-    final title = genericTestOnly
-        ? ArchiveEvidenceQualityCopy.patternsStillFormingTitle
-        : ArchiveEvidenceQualityCopy.savedTitle;
-    final body = genericTestOnly
-        ? ArchiveEvidenceQualityCopy.patternsNeedClearerMomentsBody
-        : ArchiveEvidenceQualityCopy.needsClearerWordsBody;
+    final title = lowEvidence?.title ??
+        (genericTestOnly
+            ? LowEvidenceCopy.genericTestTitle
+            : ArchiveEvidenceQualityCopy.savedTitle);
+    final body = lowEvidence?.body ??
+        (genericTestOnly
+            ? LowEvidenceCopy.genericTestBody
+            : ArchiveEvidenceQualityCopy.needsClearerWordsBody);
+    final isGenericTestForming = genericTestOnly ||
+        lowEvidence?.kind == LowEvidenceStateKind.genericTestOnly;
+    final isQuietDayForming =
+        lowEvidence?.kind == LowEvidenceStateKind.quietDayOnly;
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
@@ -80,17 +90,21 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
               ] else ...[
                 Text(
                   title,
-                  key: genericTestOnly
+                  key: isGenericTestForming
                       ? const Key('patterns_generic_test_forming_title')
-                      : null,
+                      : isQuietDayForming
+                          ? const Key('patterns_quiet_day_forming_title')
+                          : null,
                   style: ArchiveMobileTypography.responsivePageTitle(context),
                 ),
                 SizedBox(height: gap),
                 Text(
                   body,
-                  key: genericTestOnly
+                  key: isGenericTestForming
                       ? const Key('patterns_generic_test_forming_body')
-                      : null,
+                      : isQuietDayForming
+                          ? const Key('patterns_quiet_day_forming_body')
+                          : null,
                   style: ArchiveMobileTypography.explanationBody(context),
                 ),
               ],

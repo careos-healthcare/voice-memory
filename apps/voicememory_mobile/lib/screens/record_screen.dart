@@ -183,7 +183,8 @@ import '../widgets/record/watch_for_tomorrow_card.dart';
 import '../widgets/patterns/active_pattern_thread_card.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
 import '../widgets/record/early_first_signal_card.dart';
-import '../widgets/record/early_repeat_progress_card.dart';
+import '../features/low_evidence/low_evidence_engine.dart';
+import '../widgets/record/low_evidence_guidance_card.dart';
 import '../features/archive_history/archive_history_engine.dart';
 import '../widgets/archive_history/archive_history_sheet.dart';
 import '../widgets/record/pending_transcript_recovery_sheet.dart';
@@ -234,13 +235,10 @@ import '../features/record/record_stack_policy.dart';
 import '../features/record/daily_mirror_engine.dart';
 import '../features/record/daily_mirror_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
-import '../features/early_archive/early_repeat_progress_engine.dart';
 import '../features/next_action/next_best_action_engine.dart';
 import '../features/next_action/next_best_action_gates.dart';
 import '../features/next_action/next_best_action_model.dart';
 import '../widgets/next_action/next_best_action_line.dart';
-import '../features/early_archive/early_saved_moments_gates.dart';
-import '../features/early_archive/early_repeat_progress_model.dart';
 import '../features/early_archive/post_save_return_handoff_engine.dart';
 import '../features/early_archive/post_save_return_handoff_gates.dart';
 import '../features/first_proof_payoff/first_proof_payoff_engine.dart';
@@ -4500,8 +4498,8 @@ class _RecordScreenState extends State<RecordScreen> {
             !showFirstProofMoment &&
             !showReturnCheckPayoff &&
             !showWhatChangedV2;
-    final earlyRepeatProgress = recordProofStack.showEarlyRepeatProgress
-        ? EarlyRepeatProgressEngine.build(entries: _journalEntries)
+    final lowEvidenceGuidance = recordProofStack.showEarlyRepeatProgress
+        ? LowEvidenceEngine.buildForRecordReady(entries: _journalEntries)
         : null;
     final daysSinceLastEntry = CaptureRecoveryGates.daysSinceLastEntry(
       entries: _journalEntries,
@@ -4512,15 +4510,6 @@ class _RecordScreenState extends State<RecordScreen> {
       isReady: ui == RecordUiState.ready,
       isRecording: ui == RecordUiState.recording,
       isPostSave: _isPostSaveSurface,
-    );
-    final showEarlySavedMoments = EarlySavedMomentsGates.shouldShow(
-      loaded: _journalEntryCountReady,
-      entryCount: _journalEntryCount,
-      isReady: ui == RecordUiState.ready,
-      isPostSave: ui == RecordUiState.done,
-      isRecording: ui == RecordUiState.recording,
-      showEarlyRepeatProgress: recordProofStack.showEarlyRepeatProgress,
-      progress: earlyRepeatProgress,
     );
     final nextBestActionCandidate = ui == RecordUiState.ready &&
             _journalEntryCountReady &&
@@ -5039,15 +5028,10 @@ class _RecordScreenState extends State<RecordScreen> {
                     if (ui == RecordUiState.ready &&
                         _journalEntryCountReady &&
                         recordProofStack.showEarlyRepeatProgress &&
-                        earlyRepeatProgress != null &&
+                        lowEvidenceGuidance != null &&
                         !showReturnTomorrowCueReady &&
                         !showReturnDayFlow) ...[
-                      EarlyRepeatProgressCard(
-                        progress: earlyRepeatProgress,
-                        onViewSavedMoments: showEarlySavedMoments
-                            ? () => unawaited(_openArchiveHistory())
-                            : null,
-                      ),
+                      LowEvidenceGuidanceCard(guidance: lowEvidenceGuidance),
                       const SizedBox(height: 12),
                     ],
                     if (ui == RecordUiState.ready &&

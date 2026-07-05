@@ -1,3 +1,5 @@
+import '../low_evidence/low_evidence_copy.dart';
+
 /// User-facing copy for the post-save heard/read-back card.
 abstract class PostSaveRecordedSummaryCopy {
   PostSaveRecordedSummaryCopy._();
@@ -19,8 +21,7 @@ abstract class PostSaveRecordedSummaryCopy {
   static const String safeSavedPrivately = 'Saved privately.';
   static const String safeNoGuessing =
       'ArchiveMe will only show a pattern when your own words support it.';
-  static const String noPatternReassurance =
-      'Saved. ArchiveMe does not need every entry to become a pattern.';
+  static const String noPatternReassurance = LowEvidenceCopy.postSaveNoRepeat;
   static const String quietDaySaved = 'Saved as a quiet day.';
   static const String quietDayWatching =
       'ArchiveMe will keep watching when something stands out.';

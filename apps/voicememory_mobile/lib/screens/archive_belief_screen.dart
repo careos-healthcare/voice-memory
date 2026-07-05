@@ -22,6 +22,8 @@ import '../features/early_archive/early_evidence_timeline_engine.dart';
 import '../features/early_archive/early_archive_return_reminder_gates.dart';
 import '../features/early_archive/early_archive_return_reminder_store.dart';
 import '../features/early_archive/early_evidence_milestone_store.dart';
+import '../features/low_evidence/low_evidence_engine.dart';
+import '../features/low_evidence/low_evidence_model.dart';
 import '../features/early_archive/early_first_signal_engine.dart';
 import '../features/early_archive/early_first_signal_record_routes.dart';
 import '../features/early_archive/confirmed_repeat_why_matters_gates.dart';
@@ -257,6 +259,7 @@ import '../widgets/archive_home_more_tools_section.dart';
 import '../widgets/patterns/early_evidence_timeline_demo_section.dart';
 import '../widgets/patterns/patterns_empty_view.dart';
 import '../widgets/patterns/patterns_transcript_pending_view.dart';
+import '../widgets/record/low_evidence_guidance_card.dart';
 import '../widgets/patterns/patterns_evidence_quality_fallback_view.dart';
 import '../features/archive_evidence/archive_evidence_quality_gate.dart';
 import '../features/trust/pending_transcript_recovery_gate.dart';
@@ -1066,6 +1069,18 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   bool get _showFirstArchive =>
       !ScreenshotMode.enabled &&
       ArchiveEvidenceGuard.eligibleReflectionCount(_entries) == 1;
+
+  LowEvidenceGuidance? get _patternsLowEvidenceGuidance =>
+      LowEvidenceEngine.buildForPatternsTab(entries: _entries);
+
+  List<Widget> _patternsLowEvidenceWidgets() {
+    final guidance = _patternsLowEvidenceGuidance;
+    if (guidance == null) return const [];
+    return [
+      LowEvidenceGuidanceCard(guidance: guidance),
+      const SizedBox(height: AppSpacing.lg),
+    ];
+  }
 
   String? get _firstArchiveEntryId {
     if (_entries.isEmpty) return null;
@@ -3587,6 +3602,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         onStartRecording: () async => _goToRecord(),
       ),
       const SizedBox(height: AppSpacing.sm),
+      ..._patternsLowEvidenceWidgets(),
       ..._archiveHomeCommandCenterWidgets(),
       if (!suppressFormingStackDuplicates) ..._buildThoughtMapPreviewWidgets(),
     ];
@@ -3760,6 +3776,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     }
 
     if (_showWeakEvidenceOnly) {
+      final lowEvidence = _patternsLowEvidenceGuidance;
       return Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SafeArea(
@@ -3774,6 +3791,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(
                 _entries,
               ),
+              lowEvidence: lowEvidence,
             ),
           ),
         ),
@@ -3791,6 +3809,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: ArchiveMobileSpacing.pagePadding,
               children: [
+                ..._patternsLowEvidenceWidgets(),
                 ..._archiveHomeCommandCenterWidgets(),
                 if (demoWidgets.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.lg),
