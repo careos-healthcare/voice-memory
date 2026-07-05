@@ -9,6 +9,8 @@ import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import '../early_archive/daily_return_reason_engine.dart';
 import '../early_archive/early_first_signal_engine.dart';
 import '../early_archive/positive_pattern_engine.dart';
+import '../archive_controls/archive_exclusion_engine.dart';
+import '../archive_controls/archive_exclusion_store.dart';
 import '../entry_importance/entry_importance_engine.dart';
 import '../entry_importance/entry_importance_store.dart';
 import '../helped_tracking/helped_tracking_engine.dart';
@@ -62,6 +64,7 @@ abstract final class PatternDetailEngine {
     if (grounded.isEmpty) return null;
 
     final primaryPhrase = grounded.first.trim();
+    final patternKey = ArchiveExclusionEngine.normalizePatternKey(primaryPhrase);
     final patternLabel =
         PatternNameEngine.displayLabelForGroundedPhrase(primaryPhrase);
 
@@ -85,6 +88,7 @@ abstract final class PatternDetailEngine {
 
     return PatternDetailResult(
       patternLabel: patternLabel,
+      patternKey: patternKey,
       evidencePhrases: grounded,
       whatChangedBody: changed.body,
       whatChangedSupported: changed.isSupported,
@@ -95,6 +99,7 @@ abstract final class PatternDetailEngine {
         _savedMoments(
           entries: entries,
           groundedPhrases: grounded,
+          patternKey: patternKey,
         ),
       ),
     );
@@ -229,6 +234,7 @@ abstract final class PatternDetailEngine {
   static List<PatternDetailMoment> _savedMoments({
     required List<JournalEntry> entries,
     required List<String> groundedPhrases,
+    required String patternKey,
   }) {
     final normalizedPhrases = groundedPhrases
         .map((phrase) => phrase.toLowerCase().trim())
@@ -241,6 +247,13 @@ abstract final class PatternDetailEngine {
 
     final moments = <PatternDetailMoment>[];
     for (final entry in sorted) {
+      if (ArchiveExclusionStore.isExcluded(
+        entryId: entry.id,
+        patternKey: patternKey,
+      )) {
+        continue;
+      }
+
       final verdict = ArchiveEvidenceQuality.assess(entry);
       if (!verdict.allowsInsights) continue;
 

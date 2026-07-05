@@ -11,6 +11,7 @@ import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/share_card/share_card_model.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
 import '../archive_controls/archive_moment_actions_sheet.dart';
+import '../archive_controls/archive_pattern_exclusion_actions.dart';
 import '../../services/app_services.dart';
 import '../../design/archive_mobile_typography.dart';
 import '../../theme/app_colors.dart';
@@ -242,8 +243,9 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   _MomentRow(
                     moment: visibleMoments[i],
                     index: i,
+                    patternKey: detail.patternKey,
                     entryCount: _entryCount,
-                    onMomentDeleted: _reloadDetail,
+                    onMomentChanged: _reloadDetail,
                   ),
                 if (gatedOlderCount > 0) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -299,14 +301,16 @@ class _MomentRow extends StatefulWidget {
   const _MomentRow({
     required this.moment,
     required this.index,
+    required this.patternKey,
     required this.entryCount,
-    required this.onMomentDeleted,
+    required this.onMomentChanged,
   });
 
   final PatternDetailMoment moment;
   final int index;
+  final String patternKey;
   final int entryCount;
-  final Future<void> Function() onMomentDeleted;
+  final Future<void> Function() onMomentChanged;
 
   @override
   State<_MomentRow> createState() => _MomentRowState();
@@ -330,7 +334,19 @@ class _MomentRowState extends State<_MomentRow> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text(TranscriptCorrectionCopy.savedSuccess)),
     );
-    await widget.onMomentDeleted();
+    await widget.onMomentChanged();
+  }
+
+  Future<void> _excludeFromPattern(BuildContext context) async {
+    final result = await ArchivePatternExclusionActions.excludeFromPattern(
+      context: context,
+      entryId: moment.entryId,
+      patternKey: widget.patternKey,
+      source: 'pattern_detail_sheet',
+    );
+    if (result?.excluded == true) {
+      await widget.onMomentChanged();
+    }
   }
 
   Future<void> _deleteMoment(BuildContext context) async {
@@ -340,7 +356,7 @@ class _MomentRowState extends State<_MomentRow> {
       source: 'pattern_detail_sheet',
     );
     if (result?.deleted == true) {
-      await widget.onMomentDeleted();
+      await widget.onMomentChanged();
     }
   }
 
@@ -410,6 +426,17 @@ class _MomentRowState extends State<_MomentRow> {
               child: const Text(TranscriptCorrectionCopy.actionLabel),
             ),
           ),
+          if (moment.statusKey == 'used_as_evidence') ...[
+            const SizedBox(height: AppSpacing.xs),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: Key('pattern_detail_exclude_from_pattern_$index'),
+                onPressed: () => unawaited(_excludeFromPattern(context)),
+                child: const Text(ArchiveControlCopy.excludeFromPatternButton),
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xs),
           Align(
             alignment: Alignment.centerLeft,

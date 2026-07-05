@@ -1,5 +1,5 @@
 import '../../models/journal_entry.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_controls/archive_exclusion_engine.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../early_archive/confirmed_repeat_evidence_phrase_engine.dart';
@@ -146,7 +146,7 @@ abstract final class WeeklyArchiveReviewEngine {
       shouldShow(entries: entries, returnChecks: returnChecks);
 
   static List<JournalEntry> _reviewEntries(List<JournalEntry> entries) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveExclusionEngine.eligibleForActivePattern(entries);
     if (eligible.isEmpty) return const [];
 
     final anchor = eligible.last.createdAt;
@@ -184,7 +184,7 @@ abstract final class WeeklyArchiveReviewEngine {
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
   }) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveExclusionEngine.eligibleForActivePattern(entries);
     if (eligible.length < 4) return false;
 
     final hadFirstProof = FirstProofMomentEngine.build(entries: eligible) != null ||

@@ -214,6 +214,7 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
         ArchiveHistoryStatus.transcriptPending => 'transcript_pending',
         ArchiveHistoryStatus.needsYourWords => 'needs_your_words',
         ArchiveHistoryStatus.ignoredForPatterns => 'ignored_for_patterns',
+        ArchiveHistoryStatus.excludedFromPattern => 'excluded_from_pattern',
       };
 
   String get _chipLabel => switch (item.status) {
@@ -226,6 +227,8 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
           ArchiveHistoryCopy.chipNeedsYourWords,
         ArchiveHistoryStatus.ignoredForPatterns =>
           ArchiveHistoryCopy.chipIgnoredForPatterns,
+        ArchiveHistoryStatus.excludedFromPattern =>
+          ArchiveHistoryCopy.chipExcludedFromPattern,
       };
 
   Future<void> _openRecovery(BuildContext context) async {

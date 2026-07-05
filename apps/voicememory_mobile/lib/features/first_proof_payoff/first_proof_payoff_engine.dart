@@ -1,5 +1,5 @@
 import '../../models/journal_entry.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_controls/archive_exclusion_engine.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/archive_pattern_copy_guard.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
@@ -29,7 +29,7 @@ abstract final class FirstProofPayoffEngine {
       return null;
     }
 
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveExclusionEngine.eligibleForActivePattern(entries);
     if (eligible.length != 3) return null;
     if (!EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(eligible)) {
       return null;

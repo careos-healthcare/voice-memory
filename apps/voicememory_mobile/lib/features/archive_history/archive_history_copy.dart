@@ -14,6 +14,7 @@ abstract final class ArchiveHistoryCopy {
   static const chipTranscriptPending = 'Transcript pending';
   static const chipNeedsYourWords = 'Needs your words';
   static const chipIgnoredForPatterns = 'Ignored for patterns';
+  static const chipExcludedFromPattern = 'Excluded from pattern';
 
   static const pendingPreview =
       'Voice moment saved. Transcript needs your words.';
@@ -22,6 +23,8 @@ abstract final class ArchiveHistoryCopy {
   static const noteNeedsYourWords =
       'Add what you said so ArchiveMe can use it.';
   static const noteIgnoredForPatterns = 'Saved, but not used as evidence.';
+  static const noteExcludedFromPattern =
+      'Saved, but not used as evidence for this pattern.';
 
   static const addWordsCta = 'Add words';
 
@@ -47,10 +50,12 @@ abstract final class ArchiveHistoryCopy {
     chipTranscriptPending,
     chipNeedsYourWords,
     chipIgnoredForPatterns,
+    chipExcludedFromPattern,
     pendingPreview,
     noteUsedAsEvidence,
     noteNeedsYourWords,
     noteIgnoredForPatterns,
+    noteExcludedFromPattern,
     addWordsCta,
     filterAll,
     filterUsedAsEvidence,

@@ -7,6 +7,7 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../transcript_correction/transcript_correction_gate.dart';
 import '../trust/pending_transcript_recovery_gate.dart';
+import '../archive_controls/archive_exclusion_engine.dart';
 import '../entry_importance/entry_importance_engine.dart';
 import '../entry_importance/entry_importance_store.dart';
 import '../helped_tracking/helped_tracking_engine.dart';
@@ -37,6 +38,7 @@ abstract final class ArchiveHistoryEngine {
       for (final entry in sorted)
         _buildItem(
           entry: entry,
+          entries: sorted,
           evidenceIds: evidenceIds,
         ),
     ]);
@@ -46,9 +48,10 @@ abstract final class ArchiveHistoryEngine {
 
   static ArchiveHistoryItem _buildItem({
     required JournalEntry entry,
+    required List<JournalEntry> entries,
     required Set<String> evidenceIds,
   }) {
-    final status = _statusFor(entry, evidenceIds);
+    final status = _statusFor(entry, evidenceIds, entries);
     final needsAddWords = status == ArchiveHistoryStatus.needsYourWords &&
         PendingTranscriptRecoveryGate.entryNeedsRecovery(entry);
     return ArchiveHistoryItem(
@@ -67,7 +70,7 @@ abstract final class ArchiveHistoryEngine {
   }
 
   static Set<String> _evidenceEntryIds(List<JournalEntry> entries) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveExclusionEngine.eligibleForActivePattern(entries);
     if (eligible.isEmpty) return {};
 
     final ids = <String>{};
@@ -96,6 +99,7 @@ abstract final class ArchiveHistoryEngine {
   static ArchiveHistoryStatus _statusFor(
     JournalEntry entry,
     Set<String> evidenceIds,
+    List<JournalEntry> entries,
   ) {
     if (PendingTranscriptRecoveryGate.entryNeedsRecovery(entry)) {
       return ArchiveHistoryStatus.needsYourWords;
@@ -125,6 +129,13 @@ abstract final class ArchiveHistoryEngine {
       return ArchiveHistoryStatus.usedAsEvidence;
     }
 
+    if (ArchiveExclusionEngine.isExcludedForActivePattern(
+      entryId: entry.id,
+      entries: entries,
+    )) {
+      return ArchiveHistoryStatus.excludedFromPattern;
+    }
+
     return ArchiveHistoryStatus.savedOnly;
   }
 
@@ -135,6 +146,8 @@ abstract final class ArchiveHistoryEngine {
           ArchiveHistoryCopy.noteNeedsYourWords,
         ArchiveHistoryStatus.ignoredForPatterns =>
           ArchiveHistoryCopy.noteIgnoredForPatterns,
+        ArchiveHistoryStatus.excludedFromPattern =>
+          ArchiveHistoryCopy.noteExcludedFromPattern,
         ArchiveHistoryStatus.transcriptPending =>
           ArchiveHistoryCopy.noteNeedsYourWords,
         ArchiveHistoryStatus.savedOnly => null,

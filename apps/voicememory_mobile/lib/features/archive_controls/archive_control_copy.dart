@@ -18,6 +18,19 @@ abstract final class ArchiveControlCopy {
   static const patternNeedsMoreEvidenceFallback =
       'ArchiveMe needs more evidence before showing this pattern.';
 
+  static const excludeFromPatternButton = 'Remove from this pattern';
+
+  static const excludeDialogTitle = 'Remove from this pattern?';
+
+  static const excludeDialogBody =
+      'The moment will stay saved, but ArchiveMe will not use it as evidence for this pattern.';
+
+  static const excludeDialogConfirm = 'Remove';
+
+  static const excludeSuccess = 'Removed from this pattern';
+
+  static const excludedFromPatternChip = 'Excluded from pattern';
+
   static List<String> allVisibleStrings() => [
         deleteMomentButton,
         deleteDialogTitle,
@@ -26,5 +39,11 @@ abstract final class ArchiveControlCopy {
         deleteDialogCancel,
         deleteSuccess,
         patternNeedsMoreEvidenceFallback,
+        excludeFromPatternButton,
+        excludeDialogTitle,
+        excludeDialogBody,
+        excludeDialogConfirm,
+        excludeSuccess,
+        excludedFromPatternChip,
       ];
 }

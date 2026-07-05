@@ -7,6 +7,7 @@ abstract final class ArchiveControlAnalytics {
   ArchiveControlAnalytics._();
 
   static const deletedEvent = 'archive_moment_deleted';
+  static const patternEvidenceExcludedEvent = 'pattern_evidence_excluded';
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
@@ -34,6 +35,33 @@ abstract final class ArchiveControlAnalytics {
       debugPrint(
         'ARCHIVEME_ARCHIVE_CONTROL event=$deletedEvent source=$source '
         'entry_count=$entryCount was_evidence=$wasEvidence',
+      );
+    }
+  }
+
+  static void patternEvidenceExcluded({
+    required String source,
+    required int entryCount,
+    required bool hasConfirmedRepeat,
+  }) {
+    final props = <String, Object>{
+      'source': source,
+      'entry_count': entryCount,
+      'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
+    };
+
+    captureForTest?.call(patternEvidenceExcludedEvent, props);
+    ActivationFunnelAnalytics.track(
+      patternEvidenceExcludedEvent,
+      source: source,
+      entryCount: entryCount,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+    );
+    if (kDebugMode) {
+      debugPrint(
+        'ARCHIVEME_ARCHIVE_CONTROL event=$patternEvidenceExcludedEvent '
+        'source=$source entry_count=$entryCount '
+        'has_confirmed_repeat=$hasConfirmedRepeat',
       );
     }
   }

@@ -1,7 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../activation/first_three_journey_engine.dart';
-import '../archive_evidence/archive_evidence_quality_gate.dart';
+import '../archive_controls/archive_exclusion_engine.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
+import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../retention/second_session_signal_engine.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'confirmed_repeat_evidence_phrase_engine.dart';
@@ -253,7 +254,7 @@ abstract final class EarlyFirstSignalEngine {
 
   /// True when the archive already has a confirmed repeat foundation.
   static bool hasConfirmedRepeatFoundation(List<JournalEntry> entries) {
-    final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
+    final eligible = ArchiveExclusionEngine.eligibleForActivePattern(entries);
     if (eligible.length < 3) return false;
     return hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3));
   }

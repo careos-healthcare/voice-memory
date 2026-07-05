@@ -59,6 +59,7 @@ class PatternDetailMoment {
 class PatternDetailResult {
   const PatternDetailResult({
     required this.patternLabel,
+    required this.patternKey,
     required this.evidencePhrases,
     required this.whatChangedBody,
     required this.whatChangedSupported,
@@ -69,6 +70,7 @@ class PatternDetailResult {
   });
 
   final String patternLabel;
+  final String patternKey;
   final List<String> evidencePhrases;
   final String whatChangedBody;
   final bool whatChangedSupported;

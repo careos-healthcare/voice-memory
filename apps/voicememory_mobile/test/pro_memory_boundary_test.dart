@@ -116,6 +116,7 @@ PatternDetailResult _detailWithMoments(int momentCount) {
   );
   return PatternDetailResult(
     patternLabel: 'Saying yes before checking capacity',
+    patternKey: 'said yes',
     evidencePhrases: const ['said yes'],
     whatChangedBody: 'One later entry sounded softer.',
     whatChangedSupported: true,

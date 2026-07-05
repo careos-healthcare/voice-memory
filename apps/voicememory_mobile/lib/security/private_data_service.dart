@@ -276,7 +276,7 @@ class PrivateDataService {
 
     await _journal.clearAll();
     await TempRecordingCleanup.purgeTempRecordings(
-      tempDir: await _tempDirProvider(),
+      tempDir: await _resolveTempDirectory(),
     );
     await _clearArchiveCaches();
   }
@@ -339,6 +339,7 @@ class PrivateDataService {
       'pattern_name_preferences_v1',
       'helped_tracking_records_v1',
       'what_changed_v2_records_v1',
+      'archive_pattern_exclusions_v1',
     ];
     for (final key in cacheKeys) {
       await prefs.writeMap(key, {});

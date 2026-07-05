@@ -5,6 +5,7 @@ enum ArchiveHistoryStatus {
   transcriptPending,
   needsYourWords,
   ignoredForPatterns,
+  excludedFromPattern,
 }
 
 /// One row in the archive history sheet.
