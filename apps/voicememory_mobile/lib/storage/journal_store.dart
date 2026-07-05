@@ -342,6 +342,14 @@ class JournalStore {
     ).convert(all.map((e) => e.toJson()).toList());
   }
 
+  /// Replaces the on-device journal — local backup restore only.
+  Future<void> replaceAll(List<JournalEntry> entries) async {
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
+    final next = List<JournalEntry>.from(entries)
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    await _writeAll(next);
+  }
+
   Future<void> _writeAll(List<JournalEntry> entries) async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = List<JournalEntry>.from(entries);

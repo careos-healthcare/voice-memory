@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../services/app_services.dart';
 import '../../storage/mobile_prefs_store.dart';
 
@@ -75,6 +77,12 @@ class ArchiveExclusionStore {
     _loaded = false;
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
+  }
+
+  @visibleForTesting
+  static void invalidateCache() {
+    _cached = {};
+    _loaded = false;
   }
 
   static Future<void> resetForTest() async {

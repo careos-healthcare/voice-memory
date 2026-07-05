@@ -8,6 +8,8 @@ import '../../features/beta_activation/beta_activation_summary_copy.dart';
 import '../../features/beta_feedback/beta_feedback_engine.dart';
 import '../../features/early_archive/early_first_signal_engine.dart';
 import '../../features/early_archive/private_archive_report_engine.dart';
+import '../../features/local_backup/local_backup_copy.dart';
+import '../../features/local_backup/local_backup_restore_service.dart';
 import '../../features/privacy_trust/privacy_trust_copy.dart';
 import '../../features/repeat_return_check/repeat_return_check_store.dart';
 import '../../security/local_privacy_data_controls.dart';
@@ -18,6 +20,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../widgets/account/beta_activation_summary_sheet.dart';
 import '../../widgets/account/beta_feedback_sheet.dart';
+import '../../widgets/account/local_backup_restore_sheet.dart';
 import '../../widgets/archive_history/archive_history_sheet.dart';
 import '../../widgets/pushed_screen_shell.dart';
 import '../../widgets/private_report/private_report_sheet.dart';
@@ -41,11 +44,17 @@ class PrivacyTrustCentreScreen extends StatefulWidget {
 
 class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
   bool _deleteBusy = false;
+  bool _exportBusy = false;
+  bool _restoreBusy = false;
   int _entryCount = 0;
   bool _loaded = false;
 
   LocalPrivacyDataControls get _controls =>
       widget.controls ?? LocalPrivacyDataControls.instance();
+
+  LocalBackupRestoreService get _backupService => LocalBackupRestoreService(
+        controls: widget.controls,
+      );
 
   @override
   void initState() {
@@ -140,6 +149,37 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
     BetaActivationSummarySheet.show(context);
   }
 
+  Future<void> _exportLocalBackup() async {
+    if (_exportBusy || !_loaded) return;
+    setState(() => _exportBusy = true);
+    try {
+      await runExportLocalBackupFlow(
+        context,
+        service: _backupService,
+        source: 'privacy_trust_centre',
+        onComplete: _loadEntryCount,
+      );
+    } finally {
+      if (mounted) setState(() => _exportBusy = false);
+    }
+  }
+
+  Future<void> _restoreLocalBackup() async {
+    if (_restoreBusy || !_loaded) return;
+    setState(() => _restoreBusy = true);
+    try {
+      await runRestoreLocalBackupFlowWithConfirmation(
+        context,
+        service: _backupService,
+        source: 'privacy_trust_centre',
+        pickBackupFile: () => _backupService.pickBackupFileContent(),
+        onComplete: _loadEntryCount,
+      );
+    } finally {
+      if (mounted) setState(() => _restoreBusy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
@@ -203,6 +243,18 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
               key: const Key('privacy_trust_control_copy_private_report'),
               title: PrivacyTrustCopy.copyPrivateReportControl,
               onTap: _loaded ? _copyPrivateReport : null,
+            ),
+            _controlTile(
+              key: const Key('privacy_trust_control_export_backup'),
+              title: LocalBackupCopy.exportControl,
+              busy: _exportBusy,
+              onTap: _exportBusy || !_loaded ? null : _exportLocalBackup,
+            ),
+            _controlTile(
+              key: const Key('privacy_trust_control_restore_backup'),
+              title: LocalBackupCopy.restoreControl,
+              busy: _restoreBusy,
+              onTap: _restoreBusy || !_loaded ? null : _restoreLocalBackup,
             ),
             _controlTile(
               key: const Key('privacy_trust_control_beta_feedback'),

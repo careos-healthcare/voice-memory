@@ -123,6 +123,12 @@ class WhatChangedV2Store {
   }
 
   @visibleForTesting
+  static void invalidateCache() {
+    _cached = const [];
+    _loaded = false;
+  }
+
+  @visibleForTesting
   static Future<void> resetForTest() async {
     await clearAll();
   }

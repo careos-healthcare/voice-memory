@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/beta_activation/beta_activation_summary_copy.dart';
+import 'package:voicememory_mobile/features/local_backup/local_backup_copy.dart';
 import 'package:voicememory_mobile/features/privacy_trust/privacy_trust_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/account_screen.dart';
@@ -56,6 +57,8 @@ void main() {
       expect(find.text(PrivacyTrustCopy.correctTranscriptControl), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.deleteArchiveControl), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.copyPrivateReportControl), findsOneWidget);
+      expect(find.text(LocalBackupCopy.exportControl), findsOneWidget);
+      expect(find.text(LocalBackupCopy.restoreControl), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.sendBetaFeedbackControl), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.betaMeasurementHeading), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.betaMeasurementBody), findsOneWidget);
@@ -195,6 +198,8 @@ void main() {
       final files = [
         'lib/features/privacy_trust/privacy_trust_copy.dart',
         'lib/widgets/account/privacy_trust_centre_screen.dart',
+        'lib/features/local_backup/local_backup_copy.dart',
+        'lib/features/local_backup/local_backup_builder.dart',
       ];
       for (final path in files) {
         final text = File(path).readAsStringSync();

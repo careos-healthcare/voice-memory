@@ -98,9 +98,14 @@ class FirstProofTruthStore {
   }
 
   @visibleForTesting
-  static Future<void> resetForTest(MobilePrefsStore? prefs) async {
+  static void invalidateCache() {
     _answered.clear();
     _loaded = false;
+  }
+
+  @visibleForTesting
+  static Future<void> resetForTest(MobilePrefsStore? prefs) async {
+    invalidateCache();
     if (prefs == null) return;
     await prefs.writeMap(answeredPrefsKey, {});
   }
