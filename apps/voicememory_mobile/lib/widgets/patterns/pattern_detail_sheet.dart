@@ -2,25 +2,30 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../features/archive_controls/archive_control_copy.dart';
 import '../../features/beta_activation/beta_activation_summary_tracker.dart';
-
-import '../../design/archive_mobile_typography.dart';
 import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/share_card/share_card_model.dart';
+import '../../features/transcript_correction/transcript_correction_copy.dart';
+import '../archive_controls/archive_moment_actions_sheet.dart';
+import '../../services/app_services.dart';
+import '../../design/archive_mobile_typography.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
+import '../record/correct_transcript_sheet.dart';
 import '../record/entry_importance_button.dart';
 import '../share_card/share_card_action_card.dart';
 
 /// Bottom sheet explaining one confirmed pattern and its evidence.
-class PatternDetailSheet extends StatelessWidget {
+class PatternDetailSheet extends StatefulWidget {
   const PatternDetailSheet({
     super.key,
     required this.detail,
+    this.buildInput,
     this.entryCount = 0,
     this.isPro = true,
     this.onSeePro,
@@ -28,6 +33,7 @@ class PatternDetailSheet extends StatelessWidget {
   });
 
   final PatternDetailResult detail;
+  final PatternDetailBuildInput? buildInput;
   final int entryCount;
   final bool isPro;
   final VoidCallback? onSeePro;
@@ -36,6 +42,7 @@ class PatternDetailSheet extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     required PatternDetailResult detail,
+    PatternDetailBuildInput? buildInput,
     int entryCount = 0,
     bool isPro = true,
     VoidCallback? onSeePro,
@@ -52,6 +59,7 @@ class PatternDetailSheet extends StatelessWidget {
         ),
         child: PatternDetailSheet(
           detail: detail,
+          buildInput: buildInput,
           entryCount: entryCount,
           isPro: isPro,
           onSeePro: onSeePro,
@@ -62,7 +70,66 @@ class PatternDetailSheet extends StatelessWidget {
   }
 
   @override
+  State<PatternDetailSheet> createState() => _PatternDetailSheetState();
+}
+
+class _PatternDetailSheetState extends State<PatternDetailSheet> {
+  late PatternDetailResult? _detail;
+  late int _entryCount;
+  bool _belowThreshold = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _detail = widget.detail;
+    _entryCount = widget.entryCount;
+  }
+
+  Future<void> _reloadDetail() async {
+    final input = widget.buildInput;
+    if (input == null || !AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    final rebuilt = PatternDetailBuildInput(
+      entries: entries,
+      confirmedRepeat: input.confirmedRepeat,
+      changeProof: input.changeProof,
+      returnChecks: input.returnChecks,
+      triggerCapturedMilestone: input.triggerCapturedMilestone,
+      helpfulActionCapturedMilestone: input.helpfulActionCapturedMilestone,
+      viewingConfirmedRepeatOrTimeline: input.viewingConfirmedRepeatOrTimeline,
+    ).buildDetail();
+    setState(() {
+      _entryCount = entries.length;
+      _detail = rebuilt;
+      _belowThreshold = rebuilt == null;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_belowThreshold || _detail == null) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            AppSpacing.md,
+          ),
+          child: Text(
+            ArchiveControlCopy.patternNeedsMoreEvidenceFallback,
+            key: const Key('pattern_detail_needs_more_evidence'),
+            style: ArchiveMobileTypography.explanationBody(context).copyWith(
+              color: AppColors.textSecondary,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final detail = _detail!;
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
     final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
@@ -73,11 +140,11 @@ class PatternDetailSheet extends StatelessWidget {
     final fallbackStyle = secondaryStyle.copyWith(fontStyle: FontStyle.italic);
     final visibleMoments = ProMemoryBoundaryEngine.visibleRecentMoments(
       moments: detail.savedMoments,
-      isPro: isPro,
+      isPro: widget.isPro,
     );
     final gatedOlderCount = ProMemoryBoundaryEngine.gatedOlderMomentCount(
       totalMomentCount: detail.savedMoments.length,
-      isPro: isPro,
+      isPro: widget.isPro,
     );
 
     return SafeArea(
@@ -175,7 +242,8 @@ class PatternDetailSheet extends StatelessWidget {
                   _MomentRow(
                     moment: visibleMoments[i],
                     index: i,
-                    entryCount: entryCount,
+                    entryCount: _entryCount,
+                    onMomentDeleted: _reloadDetail,
                   ),
                 if (gatedOlderCount > 0) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -190,12 +258,12 @@ class PatternDetailSheet extends StatelessWidget {
                     key: const Key('pattern_detail_older_evidence_body'),
                     style: secondaryStyle,
                   ),
-                  if (onSeePro != null) ...[
+                  if (widget.onSeePro != null) ...[
                     const SizedBox(height: AppSpacing.sm),
                     ProMemoryUpgradeBridge(
                       compact: true,
                       showNotNow: false,
-                      onSeePro: onSeePro!,
+                      onSeePro: widget.onSeePro!,
                     ),
                   ],
                 ],
@@ -212,10 +280,10 @@ class PatternDetailSheet extends StatelessWidget {
                 key: const Key('pattern_detail_what_to_watch_body'),
                 style: bodyStyle,
               ),
-              if (shareCard != null) ...[
+              if (widget.shareCard != null) ...[
                 const SizedBox(height: AppSpacing.md),
                 ShareCardActionCard(
-                  model: shareCard!,
+                  model: widget.shareCard!,
                   source: 'pattern_detail',
                 ),
               ],
@@ -232,11 +300,13 @@ class _MomentRow extends StatefulWidget {
     required this.moment,
     required this.index,
     required this.entryCount,
+    required this.onMomentDeleted,
   });
 
   final PatternDetailMoment moment;
   final int index;
   final int entryCount;
+  final Future<void> Function() onMomentDeleted;
 
   @override
   State<_MomentRow> createState() => _MomentRowState();
@@ -245,6 +315,34 @@ class _MomentRow extends StatefulWidget {
 class _MomentRowState extends State<_MomentRow> {
   PatternDetailMoment get moment => widget.moment;
   int get index => widget.index;
+
+  Future<void> _openCorrection(BuildContext context) async {
+    final entry =
+        await AppServices.instance.journalStore.getById(moment.entryId);
+    if (entry == null || !context.mounted) return;
+    final updated = await TranscriptCorrection.open(
+      context,
+      entry: entry,
+      source: 'pattern_detail_sheet',
+      entryCount: widget.entryCount,
+    );
+    if (updated == null || !context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text(TranscriptCorrectionCopy.savedSuccess)),
+    );
+    await widget.onMomentDeleted();
+  }
+
+  Future<void> _deleteMoment(BuildContext context) async {
+    final result = await ArchiveMomentDeleteActions.deleteMoment(
+      context: context,
+      entryId: moment.entryId,
+      source: 'pattern_detail_sheet',
+    );
+    if (result?.deleted == true) {
+      await widget.onMomentDeleted();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -302,6 +400,24 @@ class _MomentRowState extends State<_MomentRow> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: previewStyle,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: Key('pattern_detail_correct_transcript_$index'),
+              onPressed: () => unawaited(_openCorrection(context)),
+              child: const Text(TranscriptCorrectionCopy.actionLabel),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              key: Key('pattern_detail_delete_moment_$index'),
+              onPressed: () => unawaited(_deleteMoment(context)),
+              child: const Text(ArchiveControlCopy.deleteMomentButton),
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           EntryImportanceButton(

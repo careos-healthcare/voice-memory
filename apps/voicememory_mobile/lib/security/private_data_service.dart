@@ -221,6 +221,16 @@ class PrivateDataService {
 
   static const wipeConfirmationPhrase = 'DELETE MY ARCHIVE';
 
+  Future<Directory?> _resolveTempDirectory() async {
+    try {
+      return await _tempDirProvider();
+    } on MissingPluginException {
+      return null;
+    } on PlatformException {
+      return null;
+    }
+  }
+
   Future<SecureDeleteEntryResult> deleteEntrySecurely(String id) async {
     final entry = await _journal.getById(id);
     if (entry == null) {
@@ -235,7 +245,7 @@ class PrivateDataService {
 
     await _journal.delete(id);
     await TempRecordingCleanup.purgeRetryRecordings(
-      tempDir: await _tempDirProvider(),
+      tempDir: await _resolveTempDirectory(),
     );
     return SecureDeleteEntryResult(
       deleted: true,

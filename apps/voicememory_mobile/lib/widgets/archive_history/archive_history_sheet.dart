@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
+import '../../features/archive_controls/archive_control_copy.dart';
 import '../../features/archive_history/archive_history_copy.dart';
+import '../../features/archive_history/archive_history_engine.dart';
 import '../../features/archive_history/archive_history_filter.dart';
 import '../../features/archive_history/archive_history_item.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
@@ -12,6 +14,7 @@ import '../../features/trust/pending_transcript_recovery_copy.dart';
 import '../../services/app_services.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
+import '../archive_controls/archive_moment_actions_sheet.dart';
 import '../record/correct_transcript_sheet.dart';
 import '../record/entry_importance_button.dart';
 import '../record/pending_transcript_recovery_sheet.dart';
@@ -49,11 +52,23 @@ class ArchiveHistorySheet extends StatefulWidget {
 
 class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
   ArchiveHistoryFilter _activeFilter = ArchiveHistoryFilterEngine.defaultFilter;
+  late ArchiveHistoryContent _content = widget.content;
+  late int _entryCount = widget.entryCount;
 
   List<ArchiveHistoryItem> get _filteredItems => ArchiveHistoryFilterEngine.apply(
-        items: widget.content.items,
+        items: _content.items,
         filter: _activeFilter,
       );
+
+  Future<void> _reloadContent() async {
+    if (!AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    setState(() {
+      _content = ArchiveHistoryEngine.build(entries: entries);
+      _entryCount = entries.length;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +103,7 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                   height: 1.4,
                 ),
               ),
-              if (!widget.content.isEmpty) ...[
+              if (!_content.isEmpty) ...[
                 const SizedBox(height: AppSpacing.md),
                 _ArchiveHistoryFilterChips(
                   activeFilter: _activeFilter,
@@ -98,7 +113,7 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                 ),
               ],
               const SizedBox(height: AppSpacing.md),
-              if (widget.content.isEmpty) ...[
+              if (_content.isEmpty) ...[
                 Text(
                   ArchiveHistoryCopy.emptyTitle,
                   key: const Key('archive_history_empty_title'),
@@ -128,7 +143,8 @@ class _ArchiveHistorySheetState extends State<ArchiveHistorySheet> {
                 for (final item in filteredItems) ...[
                   _ArchiveHistoryRow(
                     item: item,
-                    entryCount: widget.entryCount,
+                    entryCount: _entryCount,
+                    onMomentDeleted: _reloadContent,
                   ),
                   if (item != filteredItems.last)
                     const SizedBox(height: AppSpacing.md),
@@ -177,10 +193,12 @@ class _ArchiveHistoryRow extends StatefulWidget {
   const _ArchiveHistoryRow({
     required this.item,
     required this.entryCount,
+    required this.onMomentDeleted,
   });
 
   final ArchiveHistoryItem item;
   final int entryCount;
+  final Future<void> Function() onMomentDeleted;
 
   @override
   State<_ArchiveHistoryRow> createState() => _ArchiveHistoryRowState();
@@ -242,6 +260,18 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
         content: Text(TranscriptCorrectionCopy.savedSuccess),
       ),
     );
+    await widget.onMomentDeleted();
+  }
+
+  Future<void> _deleteMoment(BuildContext context) async {
+    final result = await ArchiveMomentDeleteActions.deleteMoment(
+      context: context,
+      entryId: item.entryId,
+      source: 'archive_history_sheet',
+    );
+    if (result?.deleted == true) {
+      await widget.onMomentDeleted();
+    }
   }
 
   @override
@@ -322,6 +352,15 @@ class _ArchiveHistoryRowState extends State<_ArchiveHistoryRow> {
             ),
           ),
         ],
+        const SizedBox(height: AppSpacing.sm),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            key: Key('archive_history_delete_moment_${item.entryId}'),
+            onPressed: () => unawaited(_deleteMoment(context)),
+            child: const Text(ArchiveControlCopy.deleteMomentButton),
+          ),
+        ),
         const SizedBox(height: AppSpacing.xs),
         EntryImportanceButton(
           entryId: item.entryId,

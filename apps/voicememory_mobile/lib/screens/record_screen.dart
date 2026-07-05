@@ -248,6 +248,7 @@ import '../features/first_proof_payoff/first_proof_payoff_gates.dart';
 import '../features/first_proof_truth/first_proof_truth_gates.dart';
 import '../features/first_proof_truth/first_proof_truth_store.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
+import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
 import '../widgets/patterns/pattern_detail_sheet.dart';
 import '../features/retention/return_tomorrow_cue_engine.dart';
@@ -1840,6 +1841,15 @@ class _RecordScreenState extends State<RecordScreen> {
       PatternDetailSheet.show(
         context,
         detail: detail,
+        buildInput: PatternDetailBuildInput(
+          entries: entries,
+          confirmedRepeat: earlyFirstSignal,
+          changeProof: repeatReturnChangeProof,
+          returnChecks: RepeatReturnCheckStore.cached,
+          triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeat,
+        ),
         entryCount: entries.length,
         isPro: _recordReturnProIsPro,
         onSeePro: _recordReturnProIsPro

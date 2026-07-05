@@ -1,3 +1,41 @@
+import '../../models/journal_entry.dart';
+import '../early_archive/early_first_signal_engine.dart';
+import '../repeat_return_check/repeat_return_check_change_proof.dart';
+import '../repeat_return_check/repeat_return_check_models.dart';
+import 'pattern_detail_engine.dart';
+import 'pattern_detail_model.dart';
+
+/// Inputs needed to rebuild pattern detail after a moment delete.
+class PatternDetailBuildInput {
+  const PatternDetailBuildInput({
+    required this.entries,
+    this.confirmedRepeat,
+    this.changeProof,
+    this.returnChecks = const [],
+    this.triggerCapturedMilestone = false,
+    this.helpfulActionCapturedMilestone = false,
+    required this.viewingConfirmedRepeatOrTimeline,
+  });
+
+  final List<JournalEntry> entries;
+  final EarlyFirstSignalModel? confirmedRepeat;
+  final RepeatReturnCheckChangeProof? changeProof;
+  final List<RepeatReturnCheckRecord> returnChecks;
+  final bool triggerCapturedMilestone;
+  final bool helpfulActionCapturedMilestone;
+  final bool viewingConfirmedRepeatOrTimeline;
+
+  PatternDetailResult? buildDetail() => PatternDetailEngine.build(
+        entries: entries,
+        confirmedRepeat: confirmedRepeat,
+        changeProof: changeProof,
+        returnChecks: returnChecks,
+        triggerCapturedMilestone: triggerCapturedMilestone,
+        helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
+      );
+}
+
 /// One saved moment row in pattern detail — no internal ids in UI.
 class PatternDetailMoment {
   const PatternDetailMoment({

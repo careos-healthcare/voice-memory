@@ -56,6 +56,7 @@ import '../widgets/weekly_review/weekly_archive_review_sheet.dart';
 import '../features/pattern_naming/pattern_name_engine.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
+import '../features/pattern_detail/pattern_detail_model.dart';
 import '../features/share_card/share_card_builder.dart';
 import '../features/entry_importance/entry_importance_store.dart';
 import '../widgets/patterns/pattern_name_confirmation_card.dart';
@@ -1320,6 +1321,15 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       PatternDetailSheet.show(
         context,
         detail: detail,
+        buildInput: PatternDetailBuildInput(
+          entries: _entries,
+          confirmedRepeat: earlyFirstSignal,
+          changeProof: repeatReturnChangeProof,
+          returnChecks: RepeatReturnCheckStore.cached,
+          triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+        ),
         entryCount: _entries.length,
         isPro: _archiveIsPro,
         onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),

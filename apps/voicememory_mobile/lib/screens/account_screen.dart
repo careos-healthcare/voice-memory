@@ -11,6 +11,7 @@ import '../config/screenshot_sample_data.dart';
 import '../services/app_services.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
+import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
 import '../features/beta_feedback/beta_feedback_copy.dart';
@@ -143,6 +144,11 @@ class _AccountScreenState extends State<AccountScreen> {
                   source: 'account',
                   entryCount: _entryCount,
                 ),
+              ),
+              _sectionTile(
+                key: const Key('account_privacy_trust_centre_tile'),
+                title: PrivacyTrustCopy.title,
+                onTap: () => context.push('/privacy-trust-centre'),
               ),
               _sectionTile(
                 title: ConsumerUiCopy.privacy,

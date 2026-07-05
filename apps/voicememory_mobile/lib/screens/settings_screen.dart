@@ -9,6 +9,7 @@ import '../design/archive_mobile_typography.dart';
 import '../design/archive_responsive_layout.dart';
 import '../features/beta/archive_beta_mission_gate.dart';
 import '../features/help/help_reviewer_guide_copy.dart';
+import '../features/privacy_trust/privacy_trust_copy.dart';
 import '../features/pro/pro_value_preview_copy.dart';
 import '../features/support/support_feedback_copy.dart';
 import '../features/support/testflight_feedback_copy.dart';
@@ -126,6 +127,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            ListTile(
+              key: const Key('settings_privacy_trust_centre_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                PrivacyTrustCopy.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/privacy-trust-centre'),
+            ),
             _tile(
               ConsumerUiCopy.privacy,
               onTap: () => context.push('/privacy'),

@@ -120,6 +120,7 @@ import '../screens/developer_diagnostics_screen.dart';
 import '../screens/first_pattern_quality_screen.dart';
 import '../screens/trial_control_screen.dart';
 import '../screens/settings_screen.dart';
+import '../widgets/account/privacy_trust_centre_screen.dart';
 import '../screens/updates_screen.dart';
 import '../config/developer_settings_gate.dart';
 import '../config/screenshot_mode.dart';
@@ -196,6 +197,7 @@ final GoRouter appRouter = GoRouter(
         path != '/settings' &&
         path != '/about' &&
         path != '/privacy' &&
+        path != '/privacy-trust-centre' &&
         path != '/terms' &&
         path != '/help-reviewer-guide' &&
         path != '/testing-archiveme' &&
@@ -874,6 +876,11 @@ final GoRouter appRouter = GoRouter(
       path: '/about',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      path: '/privacy-trust-centre',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PrivacyTrustCentreScreen(),
     ),
     GoRoute(
       path: '/privacy',
