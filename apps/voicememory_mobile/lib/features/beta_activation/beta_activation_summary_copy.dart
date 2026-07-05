@@ -25,6 +25,9 @@ abstract final class BetaActivationSummaryCopy {
   static const transcriptCorrected = 'Transcript corrected';
   static const betaFeedbackOpened = 'Beta feedback opened';
   static const betaFeedbackSubmitted = 'Beta feedback submitted';
+  static const firstProofTruthYes = 'First proof truth: yes';
+  static const firstProofTruthSortOf = 'First proof truth: sort of';
+  static const firstProofTruthNo = 'First proof truth: no';
   static const proScreenOpened = 'Pro screen opened';
   static const restorePurchasesTapped = 'Restore purchases tapped';
 
@@ -57,6 +60,9 @@ abstract final class BetaActivationSummaryCopy {
         transcriptCorrected,
         betaFeedbackOpened,
         betaFeedbackSubmitted,
+        firstProofTruthYes,
+        firstProofTruthSortOf,
+        firstProofTruthNo,
         proScreenOpened,
         restorePurchasesTapped,
         ...BetaActivationStatus.values.map(statusLabel),

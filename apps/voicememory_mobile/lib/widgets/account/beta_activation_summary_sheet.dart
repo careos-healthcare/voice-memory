@@ -202,6 +202,24 @@ class _BetaActivationSummarySheetState extends State<BetaActivationSummarySheet>
               ),
               _row(
                 context,
+                key: 'first_proof_truth_yes',
+                label: BetaActivationSummaryCopy.firstProofTruthYes,
+                value: summary.firstProofTruthYes,
+              ),
+              _row(
+                context,
+                key: 'first_proof_truth_sort_of',
+                label: BetaActivationSummaryCopy.firstProofTruthSortOf,
+                value: summary.firstProofTruthSortOf,
+              ),
+              _row(
+                context,
+                key: 'first_proof_truth_no',
+                label: BetaActivationSummaryCopy.firstProofTruthNo,
+                value: summary.firstProofTruthNo,
+              ),
+              _row(
+                context,
                 key: 'pro_screen_opened',
                 label: BetaActivationSummaryCopy.proScreenOpened,
                 value: summary.proScreenOpened,

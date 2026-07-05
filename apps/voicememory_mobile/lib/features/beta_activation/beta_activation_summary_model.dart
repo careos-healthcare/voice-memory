@@ -19,6 +19,9 @@ class BetaActivationSummaryExtension {
     this.transcriptCorrected = 0,
     this.betaFeedbackOpened = 0,
     this.betaFeedbackSubmitted = 0,
+    this.firstProofTruthYes = 0,
+    this.firstProofTruthSortOf = 0,
+    this.firstProofTruthNo = 0,
   });
 
   final int firstProofReached;
@@ -29,6 +32,9 @@ class BetaActivationSummaryExtension {
   final int transcriptCorrected;
   final int betaFeedbackOpened;
   final int betaFeedbackSubmitted;
+  final int firstProofTruthYes;
+  final int firstProofTruthSortOf;
+  final int firstProofTruthNo;
 
   static const empty = BetaActivationSummaryExtension();
 
@@ -50,6 +56,12 @@ class BetaActivationSummaryExtension {
         return copyWith(betaFeedbackOpened: betaFeedbackOpened + 1);
       case 'betaFeedbackSubmitted':
         return copyWith(betaFeedbackSubmitted: betaFeedbackSubmitted + 1);
+      case 'firstProofTruthYes':
+        return copyWith(firstProofTruthYes: firstProofTruthYes + 1);
+      case 'firstProofTruthSortOf':
+        return copyWith(firstProofTruthSortOf: firstProofTruthSortOf + 1);
+      case 'firstProofTruthNo':
+        return copyWith(firstProofTruthNo: firstProofTruthNo + 1);
       default:
         return this;
     }
@@ -64,6 +76,9 @@ class BetaActivationSummaryExtension {
     int? transcriptCorrected,
     int? betaFeedbackOpened,
     int? betaFeedbackSubmitted,
+    int? firstProofTruthYes,
+    int? firstProofTruthSortOf,
+    int? firstProofTruthNo,
   }) {
     return BetaActivationSummaryExtension(
       firstProofReached: firstProofReached ?? this.firstProofReached,
@@ -76,6 +91,10 @@ class BetaActivationSummaryExtension {
       betaFeedbackOpened: betaFeedbackOpened ?? this.betaFeedbackOpened,
       betaFeedbackSubmitted:
           betaFeedbackSubmitted ?? this.betaFeedbackSubmitted,
+      firstProofTruthYes: firstProofTruthYes ?? this.firstProofTruthYes,
+      firstProofTruthSortOf:
+          firstProofTruthSortOf ?? this.firstProofTruthSortOf,
+      firstProofTruthNo: firstProofTruthNo ?? this.firstProofTruthNo,
     );
   }
 
@@ -88,6 +107,9 @@ class BetaActivationSummaryExtension {
         'transcriptCorrected': transcriptCorrected,
         'betaFeedbackOpened': betaFeedbackOpened,
         'betaFeedbackSubmitted': betaFeedbackSubmitted,
+        'firstProofTruthYes': firstProofTruthYes,
+        'firstProofTruthSortOf': firstProofTruthSortOf,
+        'firstProofTruthNo': firstProofTruthNo,
       };
 
   factory BetaActivationSummaryExtension.fromMap(Map<String, dynamic>? map) {
@@ -108,6 +130,9 @@ class BetaActivationSummaryExtension {
       transcriptCorrected: n('transcriptCorrected'),
       betaFeedbackOpened: n('betaFeedbackOpened'),
       betaFeedbackSubmitted: n('betaFeedbackSubmitted'),
+      firstProofTruthYes: n('firstProofTruthYes'),
+      firstProofTruthSortOf: n('firstProofTruthSortOf'),
+      firstProofTruthNo: n('firstProofTruthNo'),
     );
   }
 }
@@ -127,6 +152,9 @@ class BetaActivationSummary {
     required this.transcriptCorrected,
     required this.betaFeedbackOpened,
     required this.betaFeedbackSubmitted,
+    required this.firstProofTruthYes,
+    required this.firstProofTruthSortOf,
+    required this.firstProofTruthNo,
     required this.proScreenOpened,
     required this.restorePurchasesTapped,
     required this.returnedAfterFirstProof,
@@ -145,6 +173,9 @@ class BetaActivationSummary {
   final int transcriptCorrected;
   final int betaFeedbackOpened;
   final int betaFeedbackSubmitted;
+  final int firstProofTruthYes;
+  final int firstProofTruthSortOf;
+  final int firstProofTruthNo;
   final int proScreenOpened;
   final int restorePurchasesTapped;
   final int returnedAfterFirstProof;

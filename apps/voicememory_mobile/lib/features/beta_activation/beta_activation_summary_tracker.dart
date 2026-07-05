@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../services/app_services.dart';
 import '../beta/beta_activation_loop_counts.dart';
 import '../beta/beta_activation_loop_tracker.dart';
+import '../first_proof_truth/first_proof_truth_model.dart';
 import 'beta_activation_summary_model.dart';
 import 'beta_activation_summary_store.dart';
 
@@ -46,6 +47,17 @@ abstract final class BetaActivationSummaryTracker {
 
   static Future<void> trackWeeklyReviewOpened() =>
       _increment('weeklyReviewOpened');
+
+  static Future<void> trackFirstProofTruthAnswer(
+    FirstProofTruthAnswer answer,
+  ) async {
+    final field = switch (answer) {
+      FirstProofTruthAnswer.yes => 'firstProofTruthYes',
+      FirstProofTruthAnswer.sortOf => 'firstProofTruthSortOf',
+      FirstProofTruthAnswer.no => 'firstProofTruthNo',
+    };
+    await _increment(field);
+  }
 
   static Future<BetaActivationSummaryExtension> loadExtension() async {
     if (!AppServices.isInitialized) return BetaActivationSummaryExtension.empty;
@@ -95,6 +107,9 @@ abstract final class BetaActivationSummaryTracker {
       'transcriptCorrected' => counts.transcriptCorrected,
       'betaFeedbackOpened' => counts.betaFeedbackOpened,
       'betaFeedbackSubmitted' => counts.betaFeedbackSubmitted,
+      'firstProofTruthYes' => counts.firstProofTruthYes,
+      'firstProofTruthSortOf' => counts.firstProofTruthSortOf,
+      'firstProofTruthNo' => counts.firstProofTruthNo,
       _ => 0,
     };
   }

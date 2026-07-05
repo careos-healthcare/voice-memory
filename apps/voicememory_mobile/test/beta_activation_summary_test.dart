@@ -139,6 +139,9 @@ void main() {
           transcriptCorrected: 1,
           betaFeedbackOpened: 1,
           betaFeedbackSubmitted: 1,
+          firstProofTruthYes: 2,
+          firstProofTruthSortOf: 1,
+          firstProofTruthNo: 0,
         ),
       );
 
@@ -154,6 +157,9 @@ void main() {
       expect(summary.transcriptCorrected, 1);
       expect(summary.betaFeedbackOpened, 1);
       expect(summary.betaFeedbackSubmitted, 1);
+      expect(summary.firstProofTruthYes, 2);
+      expect(summary.firstProofTruthSortOf, 1);
+      expect(summary.firstProofTruthNo, 0);
       expect(summary.proScreenOpened, 2);
       expect(summary.restorePurchasesTapped, 1);
       expect(summary.status, BetaActivationStatus.weeklyReviewReached);

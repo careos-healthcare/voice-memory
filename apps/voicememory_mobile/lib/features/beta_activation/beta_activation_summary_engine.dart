@@ -23,6 +23,9 @@ abstract final class BetaActivationSummaryEngine {
       transcriptCorrected: extension.transcriptCorrected,
       betaFeedbackOpened: extension.betaFeedbackOpened,
       betaFeedbackSubmitted: extension.betaFeedbackSubmitted,
+      firstProofTruthYes: extension.firstProofTruthYes,
+      firstProofTruthSortOf: extension.firstProofTruthSortOf,
+      firstProofTruthNo: extension.firstProofTruthNo,
       proScreenOpened: loop.paywallSeen,
       restorePurchasesTapped: loop.restoreTapped,
       returnedAfterFirstProof: loop.returnedAfterFirstProof,
@@ -106,6 +109,18 @@ abstract final class BetaActivationSummaryEngine {
       ..writeln(
         '${BetaActivationSummaryCopy.betaFeedbackSubmitted}: '
         '${summary.betaFeedbackSubmitted}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofTruthYes}: '
+        '${summary.firstProofTruthYes}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofTruthSortOf}: '
+        '${summary.firstProofTruthSortOf}',
+      )
+      ..writeln(
+        '${BetaActivationSummaryCopy.firstProofTruthNo}: '
+        '${summary.firstProofTruthNo}',
       )
       ..writeln(
         '${BetaActivationSummaryCopy.proScreenOpened}: '

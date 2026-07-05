@@ -3,6 +3,7 @@ import '../early_archive/archive_summary_copy.dart';
 import '../early_archive/confirmed_repeat_thought_map_copy.dart';
 import '../early_archive/first_proof_moment_copy.dart';
 import '../first_proof_payoff/first_proof_payoff_copy.dart';
+import '../first_proof_truth/first_proof_truth_copy.dart';
 import '../early_archive/first_week_loop_copy.dart';
 import '../early_archive/archive_change_timeline_copy.dart';
 import '../early_archive/helpful_action_appeared_copy.dart';
@@ -65,6 +66,7 @@ abstract final class ProofSurfaceAdviceGuard {
         FirstProofMomentCopy.whyLine,
         FirstProofMomentCopy.nextLine,
         ...FirstProofPayoffCopy.allVisibleStrings(),
+        ...FirstProofTruthCopy.allVisibleStrings(),
         ArchiveSummaryCopy.title,
         ArchiveSummaryCopy.promise,
         ArchiveSummaryCopy.keepsRepeatingLabel,

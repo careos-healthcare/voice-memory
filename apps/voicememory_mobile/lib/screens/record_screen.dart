@@ -202,6 +202,7 @@ import '../widgets/record/first_week_progress_line.dart';
 import '../widgets/record/return_tomorrow_cue_card.dart';
 import '../widgets/record/return_day_flow_card.dart';
 import '../widgets/record/first_proof_payoff_card.dart';
+import '../widgets/record/first_proof_truth_card.dart';
 import '../widgets/record/first_week_loop_card.dart';
 import '../widgets/record/return_check_payoff_card.dart';
 import '../widgets/record/confirmed_repeat_thought_map_card.dart';
@@ -244,6 +245,8 @@ import '../features/early_archive/post_save_return_handoff_engine.dart';
 import '../features/early_archive/post_save_return_handoff_gates.dart';
 import '../features/first_proof_payoff/first_proof_payoff_engine.dart';
 import '../features/first_proof_payoff/first_proof_payoff_gates.dart';
+import '../features/first_proof_truth/first_proof_truth_gates.dart';
+import '../features/first_proof_truth/first_proof_truth_store.dart';
 import '../features/pattern_detail/pattern_detail_engine.dart';
 import '../features/share_card/share_card_builder.dart';
 import '../widgets/patterns/pattern_detail_sheet.dart';
@@ -760,6 +763,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
     unawaited(
       ReturnDayFlowStore.ensureLoaded().then((_) {
+        if (mounted) setState(() {});
+      }),
+    );
+    unawaited(
+      FirstProofTruthStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
       }),
     );
@@ -4402,6 +4410,17 @@ class _RecordScreenState extends State<RecordScreen> {
           VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
       payoff: firstProofPayoffCandidate,
     );
+    final firstProofTruthProofKey = showFirstProofPayoff
+        ? FirstProofTruthGates.proofKeyForEntries(entriesAfterSave)
+        : '';
+    final showFirstProofTruth = FirstProofTruthGates.shouldShow(
+      showFirstProofPayoff: showFirstProofPayoff,
+      payoff: firstProofPayoffCandidate,
+      entries: entriesAfterSave,
+      proofKey: firstProofTruthProofKey,
+      hasAnsweredForProof: firstProofTruthProofKey.isNotEmpty &&
+          FirstProofTruthStore.hasAnswered(firstProofTruthProofKey),
+    );
     final showFirstProofMoment = showFirstProofPayoff;
     final postSaveHasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entriesAfterSave);
@@ -5938,6 +5957,15 @@ class _RecordScreenState extends State<RecordScreen> {
                                   firstProofPayoffCandidate.canShowPatternDetail
                                       ? _openFirstProofPatternDetail
                                       : null,
+                            ),
+                          ],
+                          if (showFirstProofTruth) ...[
+                            const SizedBox(height: 12),
+                            FirstProofTruthCard(
+                              proofKey: firstProofTruthProofKey,
+                              entryCount: postSaveEntryCount,
+                              hasSnippets:
+                                  firstProofPayoffCandidate!.hasSnippets,
                             ),
                           ],
                           if (confirmedRepeatTriggerPayoff != null) ...[
