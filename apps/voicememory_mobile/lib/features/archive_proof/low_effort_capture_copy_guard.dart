@@ -1,6 +1,6 @@
 import '../../record/record_screen_framing_copy.dart';
 import '../beta/tester_mission_copy.dart';
-import '../onboarding/guided_examples_copy.dart';
+import '../first_use_wording/first_use_wording_copy.dart';
 import '../moment_quality/moment_quality_feedback_copy.dart';
 import '../early_archive/early_repeat_progress_copy.dart';
 import '../early_archive/first_week_loop_copy.dart';
@@ -42,9 +42,9 @@ abstract final class LowEffortCaptureCopyGuard {
         RecordFirstUsePromptCopy.title,
         RecordFirstUsePromptCopy.body,
         RecordFirstUsePromptCopy.footer,
-        GuidedExamplesCopy.title,
-        GuidedExamplesCopy.subtitle,
-        GuidedExamplesCopy.useStyleCta,
+        FirstUseWordingCopy.title,
+        FirstUseWordingCopy.body,
+        FirstUseWordingCopy.useOpeningCta,
         MomentQualityFeedbackCopy.specificUsableTitle,
         MomentQualityFeedbackCopy.specificUsableBody,
         MomentQualityFeedbackCopy.savedTitle,

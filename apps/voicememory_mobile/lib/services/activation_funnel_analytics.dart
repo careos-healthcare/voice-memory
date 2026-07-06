@@ -630,6 +630,10 @@ abstract class ActivationFunnelAnalytics {
     'fact_type',
     'fact_count_bucket',
     'share_type',
+    'prompt_type',
+    'has_change',
+    'has_helped',
+    'has_watch_target',
   };
 
   /// The only values `action_type` can ever carry.
@@ -648,6 +652,7 @@ abstract class ActivationFunnelAnalytics {
     'keep_recording',
     'correct_transcript',
     'remove_from_pattern',
+    'record_what_happened',
   };
 
   /// The only values `format` can ever carry.
@@ -1005,6 +1010,7 @@ abstract class ActivationFunnelAnalytics {
     bool? hasPatternDetailCta,
     bool? hasChange,
     bool? hasHelped,
+    bool? hasWatchTarget,
     int? milestoneCount,
     String? relationState,
     String? source,
@@ -1049,6 +1055,7 @@ abstract class ActivationFunnelAnalytics {
     String? factType,
     String? factCountBucket,
     String? shareType,
+    String? promptType,
     bool oncePerSession = false,
   }) {
     if (oncePerSession) {
@@ -1085,6 +1092,7 @@ abstract class ActivationFunnelAnalytics {
         'has_pattern_detail_cta': hasPatternDetailCta ? 1 : 0,
       if (hasChange != null) 'has_change': hasChange ? 1 : 0,
       if (hasHelped != null) 'has_helped': hasHelped ? 1 : 0,
+      if (hasWatchTarget != null) 'has_watch_target': hasWatchTarget ? 1 : 0,
       if (milestoneCount != null) 'milestone_count': milestoneCount,
       if (relationState != null &&
           allowedRelationStateValues.contains(relationState))
@@ -1184,6 +1192,8 @@ abstract class ActivationFunnelAnalytics {
         'fact_count_bucket': factCountBucket,
       if (shareType != null && allowedShareTypeValues.contains(shareType))
         'share_type': shareType,
+      if (promptType != null && _safeValue.hasMatch(promptType))
+        'prompt_type': promptType,
     };
 
     final sink = _sink;

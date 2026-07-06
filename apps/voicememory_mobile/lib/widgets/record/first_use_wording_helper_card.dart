@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../features/onboarding/guided_examples_copy.dart';
-import '../../features/onboarding/guided_examples_model.dart';
+import '../../features/first_use_wording/first_use_wording_copy.dart';
+import '../../features/first_use_wording/first_use_wording_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 
-/// Permissive recording examples for first-use Record — style guide only.
-class GuidedExamplesCard extends StatelessWidget {
-  const GuidedExamplesCard({
+/// Opening prompts for first-use Record — placeholder only, never saved.
+class FirstUseWordingHelperCard extends StatelessWidget {
+  const FirstUseWordingHelperCard({
     super.key,
-    required this.onUseStyle,
+    required this.onUseOpening,
   });
 
-  final ValueChanged<GuidedExample> onUseStyle;
+  final ValueChanged<FirstUseWordingPrompt> onUseOpening;
 
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
       fontWeight: FontWeight.w600,
     );
-    final subtitleStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textSecondary,
       height: 1.4,
     );
-    final exampleStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
+    final promptStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
       color: AppColors.textPrimary,
       height: 1.4,
       fontSize: 14,
@@ -37,7 +37,7 @@ class GuidedExamplesCard extends StatelessWidget {
     );
 
     return Container(
-      key: const Key('guided_examples_card'),
+      key: const Key('first_use_wording_helper_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: VoiceMemoryCards.standard(background: const Color(0xFFFAFAF8)),
@@ -45,33 +45,33 @@ class GuidedExamplesCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            GuidedExamplesCopy.title,
-            key: const Key('guided_examples_title'),
+            FirstUseWordingCopy.title,
+            key: const Key('first_use_wording_helper_title'),
             style: titleStyle,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            GuidedExamplesCopy.subtitle,
-            key: const Key('guided_examples_subtitle'),
-            style: subtitleStyle,
+            FirstUseWordingCopy.body,
+            key: const Key('first_use_wording_helper_body'),
+            style: bodyStyle,
           ),
           const SizedBox(height: AppSpacing.sm),
-          for (final example in GuidedExamplesCatalog.examples) ...[
+          for (final prompt in FirstUseWordingCatalog.prompts) ...[
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    '"${example.text}"',
-                    key: Key('guided_examples_text_${example.id}'),
-                    style: exampleStyle,
+                    prompt.opening,
+                    key: Key('first_use_wording_prompt_${prompt.id}'),
+                    style: promptStyle,
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton(
-                      key: Key('guided_examples_use_style_${example.id}'),
-                      onPressed: () => onUseStyle(example),
+                      key: Key('first_use_wording_use_opening_${prompt.id}'),
+                      onPressed: () => onUseOpening(prompt),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.accentPrimary,
                         visualDensity: VisualDensity.compact,
@@ -80,7 +80,7 @@ class GuidedExamplesCard extends StatelessWidget {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        GuidedExamplesCopy.useStyleCta,
+                        FirstUseWordingCopy.useOpeningCta,
                         style: actionStyle,
                       ),
                     ),
@@ -95,51 +95,51 @@ class GuidedExamplesCard extends StatelessWidget {
   }
 }
 
-/// Compact guided examples inside typed capture for early users.
-class GuidedExamplesCapturePanel extends StatelessWidget {
-  const GuidedExamplesCapturePanel({
+/// Compact first-use wording helper inside typed capture for early users.
+class FirstUseWordingCapturePanel extends StatelessWidget {
+  const FirstUseWordingCapturePanel({
     super.key,
-    required this.onUseStyle,
+    required this.onUseOpening,
     this.compact = false,
   });
 
-  final ValueChanged<GuidedExample> onUseStyle;
+  final ValueChanged<FirstUseWordingPrompt> onUseOpening;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
-    final exampleStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
       color: AppColors.textSecondary,
       height: 1.35,
       fontSize: 13,
     );
-    final actionStyle = exampleStyle.copyWith(
+    final actionStyle = bodyStyle.copyWith(
       color: AppColors.accentPrimary,
       fontWeight: FontWeight.w600,
     );
 
-    final visibleExamples = compact
-        ? GuidedExamplesCatalog.examples.take(3)
-        : GuidedExamplesCatalog.examples;
+    final visiblePrompts = compact
+        ? FirstUseWordingCatalog.prompts.take(3)
+        : FirstUseWordingCatalog.prompts;
 
     return Column(
-      key: const Key('guided_examples_capture_panel'),
+      key: const Key('first_use_wording_capture_panel'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          GuidedExamplesCopy.title,
-          key: const Key('guided_examples_capture_title'),
+          FirstUseWordingCopy.title,
+          key: const Key('first_use_wording_capture_title'),
           style: labelStyle,
         ),
         const SizedBox(height: 2),
         Text(
-          GuidedExamplesCopy.subtitle,
-          key: const Key('guided_examples_capture_subtitle'),
-          style: exampleStyle,
+          FirstUseWordingCopy.body,
+          key: const Key('first_use_wording_capture_body'),
+          style: bodyStyle,
         ),
         const SizedBox(height: AppSpacing.xs),
-        for (final example in visibleExamples)
+        for (final prompt in visiblePrompts)
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Wrap(
@@ -147,13 +147,13 @@ class GuidedExamplesCapturePanel extends StatelessWidget {
               spacing: AppSpacing.xs,
               children: [
                 Text(
-                  '"${example.text}"',
-                  key: Key('guided_examples_capture_text_${example.id}'),
-                  style: exampleStyle,
+                  prompt.opening,
+                  key: Key('first_use_wording_capture_prompt_${prompt.id}'),
+                  style: bodyStyle,
                 ),
                 TextButton(
-                  key: Key('guided_examples_capture_use_style_${example.id}'),
-                  onPressed: () => onUseStyle(example),
+                  key: Key('first_use_wording_capture_use_opening_${prompt.id}'),
+                  onPressed: () => onUseOpening(prompt),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.accentPrimary,
                     visualDensity: VisualDensity.compact,
@@ -162,7 +162,7 @@ class GuidedExamplesCapturePanel extends StatelessWidget {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
-                    GuidedExamplesCopy.useStyleCta,
+                    FirstUseWordingCopy.useOpeningCta,
                     style: actionStyle,
                   ),
                 ),

@@ -846,7 +846,7 @@ void main() {
       for (final example in RecordFirstUsePromptCopy.examples) {
         expect(find.text(example), findsNothing);
       }
-      expect(find.byKey(const Key('guided_examples_card')), findsOneWidget);
+      expect(find.byKey(const Key('first_use_wording_helper_card')), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
       expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);

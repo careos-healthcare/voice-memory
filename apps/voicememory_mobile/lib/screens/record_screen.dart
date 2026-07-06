@@ -193,7 +193,8 @@ import '../features/record_capture_modes/record_capture_mode_model.dart';
 import '../widgets/record/navigate_to_capture_mode.dart';
 import '../widgets/record/record_capture_modes_card.dart';
 import '../widgets/record/first_session_onboarding_card.dart';
-import '../widgets/record/guided_examples_card.dart';
+import '../widgets/record/daily_archive_memory_card.dart';
+import '../widgets/record/first_use_wording_helper_card.dart';
 import '../widgets/record/correct_transcript_sheet.dart';
 import '../features/trust/pending_transcript_recovery_copy.dart';
 import '../features/transcript_correction/transcript_correction_copy.dart';
@@ -435,7 +436,9 @@ import '../widgets/record/record_screen_close_button.dart';
 import '../widgets/record/record_first_run_privacy_reassurance.dart';
 import '../features/onboarding/archive_journey_explainer_gates.dart';
 import '../features/onboarding/first_session_onboarding_store.dart';
-import '../features/onboarding/guided_examples_model.dart';
+import '../features/daily_archive_memory/daily_archive_memory_engine.dart';
+import '../features/daily_archive_memory/daily_archive_memory_model.dart';
+import '../features/first_use_wording/first_use_wording_model.dart';
 import '../features/onboarding/record_return_pro_state.dart';
 import '../features/onboarding/record_return_pro_store.dart';
 import '../features/memory/memory_scope.dart';
@@ -1809,6 +1812,68 @@ class _RecordScreenState extends State<RecordScreen> {
     _resetPostSaveToReady();
   }
 
+  void _openPatternDetailFromRecord() {
+    final earlyFirstSignal = EarlyFirstSignalEngine.build(entries: _journalEntries);
+    final earlyEvidenceTimeline = EarlyEvidenceTimelineEngine.build(
+      entries: _journalEntries,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+    );
+    final viewingConfirmedRepeat = earlyEvidenceTimeline != null ||
+        (earlyFirstSignal?.showsConfirmedRepeat ?? false);
+    final repeatReturnChangeProof = RepeatReturnCheckEngine.changeProofForReady(
+      entryCount: _journalEntryCount,
+      viewingConfirmedRepeat: viewingConfirmedRepeat,
+      isRecording: false,
+      isPostSave: false,
+      records: RepeatReturnCheckStore.cached,
+    );
+    final detail = PatternDetailEngine.build(
+      entries: _journalEntries,
+      confirmedRepeat: earlyFirstSignal,
+      changeProof: repeatReturnChangeProof,
+      returnChecks: RepeatReturnCheckStore.cached,
+      triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+      helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeat,
+    );
+    if (detail == null) return;
+
+    final shareCard = ShareCardBuilder.build(
+      entries: _journalEntries,
+      detail: detail,
+      confirmedRepeat: earlyFirstSignal,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeat,
+    );
+    unawaited(
+      PatternDetailSheet.show(
+        context,
+        detail: detail,
+        buildInput: PatternDetailBuildInput(
+          entries: _journalEntries,
+          confirmedRepeat: earlyFirstSignal,
+          changeProof: repeatReturnChangeProof,
+          returnChecks: RepeatReturnCheckStore.cached,
+          triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+          helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+          viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeat,
+        ),
+        entryCount: _journalEntryCount,
+        isPro: _recordReturnProIsPro,
+        onSeePro: _recordReturnProIsPro
+            ? null
+            : () => context.push(
+                  '/subscription',
+                  extra: PaywallRouteArgs(
+                    source: PaywallSource.valueMoment,
+                    sourceRoute: '/record',
+                  ),
+                ),
+        shareCard: shareCard,
+      ),
+    );
+  }
+
   void _openFirstProofPatternDetail() {
     final entries = _entriesAfterSave;
     if (entries.isEmpty) return;
@@ -2265,10 +2330,11 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  Future<void> _openGuidedExampleStyle(GuidedExample example) async {
-    await navigateToGuidedExampleStyle(
+  Future<void> _openFirstUseWordingOpening(FirstUseWordingPrompt prompt) async {
+    await navigateToFirstUseWordingOpening(
       context,
-      example: example,
+      prompt: prompt,
+      source: 'record',
       onSaved: _finishSuccessfulCapture,
     );
   }
@@ -4620,6 +4686,43 @@ class _RecordScreenState extends State<RecordScreen> {
     final lowEvidenceGuidance = recordProofStack.showEarlyRepeatProgress
         ? LowEvidenceEngine.buildForRecordReady(entries: _journalEntries)
         : null;
+    final showLowEvidenceGuidanceOnRecord = ui == RecordUiState.ready &&
+        _journalEntryCountReady &&
+        recordProofStack.showEarlyRepeatProgress &&
+        lowEvidenceGuidance != null &&
+        !showReturnTomorrowCueReady &&
+        !showReturnDayFlow;
+    final dailyArchiveMemoryCandidate = ui == RecordUiState.ready &&
+            _journalEntryCountReady &&
+            !_isPostSaveSurface
+        ? DailyArchiveMemoryEngine.build(
+            entries: _journalEntries,
+            confirmedRepeat: earlyFirstSignalOnRecord,
+            changeProof: repeatReturnChangeProof,
+            returnChecks: RepeatReturnCheckStore.cached,
+            triggerCapturedMilestone: _earlyEvidenceTriggerCaptured,
+            helpfulActionCapturedMilestone: _earlyEvidenceHelpfulCaptured,
+            viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
+            isRecording: ui == RecordUiState.recording,
+            isPostSave: _isPostSaveSurface,
+          )
+        : null;
+    final firstProofLoopActive = showFirstProofPayoff ||
+        showFirstProofTruth ||
+        showFirstProofActionLoop;
+    final showDailyArchiveMemory = DailyArchiveMemoryGates.shouldShow(
+      loaded: _journalEntryCountReady,
+      entryCount: _journalEntryCount,
+      isReady: ui == RecordUiState.ready,
+      isRecording: ui == RecordUiState.recording,
+      isPostSave: _isPostSaveSurface,
+      memory: dailyArchiveMemoryCandidate,
+      showReturnDayFlow: showReturnDayFlow,
+      showReturnTomorrowCueReady: showReturnTomorrowCueReady,
+      showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
+      showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
+      firstProofLoopActive: firstProofLoopActive,
+    );
     final daysSinceLastEntry = CaptureRecoveryGates.daysSinceLastEntry(
       entries: _journalEntries,
     );
@@ -4880,12 +4983,13 @@ class _RecordScreenState extends State<RecordScreen> {
           isReady: ui == RecordUiState.ready,
           isPostSave: _isPostSaveSurface,
         );
-    final showGuidedExamples = ui == RecordUiState.ready &&
-        GuidedExamplesGates.shouldShow(
+    final showFirstUseWordingHelper = ui == RecordUiState.ready &&
+        FirstUseWordingGates.shouldShow(
           loaded: _journalEntryCountReady,
           entryCount: _journalEntryCount,
           isReady: true,
           isPostSave: _isPostSaveSurface,
+          isRecordCluttered: _isPostSaveSurface,
         );
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
     return ColoredBox(
@@ -5040,10 +5144,10 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showGuidedExamples) ...[
-                      GuidedExamplesCard(
-                        onUseStyle: (example) =>
-                            unawaited(_openGuidedExampleStyle(example)),
+                    if (showFirstUseWordingHelper) ...[
+                      FirstUseWordingHelperCard(
+                        onUseOpening: (prompt) =>
+                            unawaited(_openFirstUseWordingOpening(prompt)),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -5144,13 +5248,24 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 8),
                     ],
-                    if (ui == RecordUiState.ready &&
-                        _journalEntryCountReady &&
-                        recordProofStack.showEarlyRepeatProgress &&
-                        lowEvidenceGuidance != null &&
-                        !showReturnTomorrowCueReady &&
-                        !showReturnDayFlow) ...[
+                    if (showLowEvidenceGuidanceOnRecord &&
+                        lowEvidenceGuidance != null) ...[
                       LowEvidenceGuidanceCard(guidance: lowEvidenceGuidance),
+                      const SizedBox(height: 12),
+                    ],
+                    if (showDailyArchiveMemory &&
+                        dailyArchiveMemoryCandidate != null) ...[
+                      DailyArchiveMemoryCard(
+                        memory: dailyArchiveMemoryCandidate,
+                        entryCount: _journalEntryCount,
+                        source: 'record',
+                        onRecord: () =>
+                            unawaited(_onRecordPressed(source: 'daily_archive_memory')),
+                        onViewPatternDetails:
+                            dailyArchiveMemoryCandidate.canShowPatternDetail
+                            ? _openPatternDetailFromRecord
+                            : null,
+                      ),
                       const SizedBox(height: 12),
                     ],
                     if (ui == RecordUiState.ready &&

@@ -532,7 +532,7 @@ final GoRouter appRouter = GoRouter(
         String? helperText;
         String? captureModeId;
         bool allowQuietDaySave = false;
-        bool showGuidedExamples = false;
+        bool showFirstUseWordingHelper = false;
         if (extra is String) {
           initialText = extra;
         } else if (extra is Map) {
@@ -542,7 +542,9 @@ final GoRouter appRouter = GoRouter(
           helperText = extra['helper'] as String?;
           captureModeId = extra['captureModeId'] as String?;
           allowQuietDaySave = extra['allowQuietDaySave'] == true;
-          showGuidedExamples = extra['showGuidedExamples'] == true;
+          showFirstUseWordingHelper =
+              extra['showFirstUseWordingHelper'] == true ||
+                  extra['showGuidedExamples'] == true;
         }
         return QuickTextCaptureScreen(
           initialText: initialText,
@@ -551,7 +553,7 @@ final GoRouter appRouter = GoRouter(
           helperText: helperText,
           captureModeId: captureModeId,
           allowQuietDaySave: allowQuietDaySave,
-          showGuidedExamples: showGuidedExamples,
+          showFirstUseWordingHelper: showFirstUseWordingHelper,
         );
       },
     ),

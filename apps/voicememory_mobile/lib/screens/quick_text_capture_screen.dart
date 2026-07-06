@@ -9,13 +9,13 @@ import '../product/consumer_ui_copy.dart';
 import '../services/app_services.dart';
 import '../services/capture_pipeline_service.dart';
 import '../services/product_analytics.dart';
-import '../features/onboarding/guided_examples_copy.dart';
-import '../features/onboarding/guided_examples_model.dart';
+import '../features/first_use_wording/first_use_wording_analytics.dart';
+import '../features/first_use_wording/first_use_wording_model.dart';
 import '../features/record_capture_modes/record_capture_mode_copy.dart';
 import '../features/record_capture_modes/record_capture_mode_engine.dart';
 import '../record/start_here_visibility.dart';
 import '../theme/voicememory_colors.dart';
-import '../widgets/record/guided_examples_card.dart';
+import '../widgets/record/first_use_wording_helper_card.dart';
 import '../widgets/record/start_here_recording_section.dart';
 import '../widgets/moment_quality_card.dart';
 
@@ -28,7 +28,7 @@ class QuickTextCaptureScreen extends StatefulWidget {
     this.helperText,
     this.captureModeId,
     this.allowQuietDaySave = false,
-    this.showGuidedExamples = false,
+    this.showFirstUseWordingHelper = false,
   });
 
   /// Optional prompt hint from conversation starters — never prefilled as editable text.
@@ -48,8 +48,8 @@ class QuickTextCaptureScreen extends StatefulWidget {
   /// Quiet-day mode may save a short default phrase when the field is empty.
   final bool allowQuietDaySave;
 
-  /// Show style-guide examples in typed capture for early users.
-  final bool showGuidedExamples;
+  /// Show opening prompts in typed capture for early users.
+  final bool showFirstUseWordingHelper;
 
   @override
   State<QuickTextCaptureScreen> createState() => _QuickTextCaptureScreenState();
@@ -104,20 +104,24 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
     setState(() => _promptHint = prompt);
   }
 
-  void _onGuidedExampleStyle(GuidedExample example) {
-    setState(() => _guidedStyleHelper = GuidedExamplesCopy.styleHelper(example.text));
+  void _onFirstUseWordingOpening(FirstUseWordingPrompt prompt) {
+    FirstUseWordingAnalytics.selected(
+      source: 'text_capture',
+      promptType: prompt.id,
+    );
+    setState(() => _promptHint = prompt.opening);
   }
 
-  bool get _showGuidedExamplesCapturePanel =>
+  bool get _showFirstUseWordingCapturePanel =>
       _journalLoaded &&
       !_isVoiceFallback &&
-      GuidedExamplesGates.shouldShow(
+      FirstUseWordingGates.shouldShow(
         loaded: true,
         entryCount: _recordingCount,
         isReady: true,
         isPostSave: false,
       ) &&
-      (widget.showGuidedExamples || widget.captureModeId != null);
+      (widget.showFirstUseWordingHelper || widget.captureModeId != null);
 
   void _onTextChanged() {
     if (mounted) setState(() {});
@@ -293,11 +297,11 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                           ),
                         ),
                       ],
-                      if (_showGuidedExamplesCapturePanel) ...[
+                      if (_showFirstUseWordingCapturePanel) ...[
                         const SizedBox(height: 12),
-                        GuidedExamplesCapturePanel(
+                        FirstUseWordingCapturePanel(
                           compact: widget.captureModeId != null,
-                          onUseStyle: _onGuidedExampleStyle,
+                          onUseOpening: _onFirstUseWordingOpening,
                         ),
                       ],
                       if (_journalLoaded && widget.captureModeId == null) ...[
