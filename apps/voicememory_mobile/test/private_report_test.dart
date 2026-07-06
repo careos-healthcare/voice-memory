@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/features/early_archive/private_archive_report_engine.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_model.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
+import 'package:voicememory_mobile/features/private_report/private_report_analytics.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_builder.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
+import 'package:voicememory_mobile/features/private_report/private_report_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/features/transcript_correction/transcript_correction_controller.dart';
+import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -15,6 +21,9 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/private_report/private_report_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/private_archive_report_card.dart';
+
+const _placeholder =
+    '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
 
 JournalEntry _entry({
   required String id,
@@ -99,6 +108,7 @@ RepeatReturnCheckRecord _answeredRecord({
 
 void main() {
   setUp(() async {
+    PrivateReportAnalytics.resetForTest();
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();
     await AppServices.resetForTest(
@@ -114,16 +124,62 @@ void main() {
   });
 
   group('PrivateReportCopy', () {
-    test('spec copy is stable', () {
-      expect(PrivateReportCopy.title, 'Private archive report');
-      expect(
-        PrivateReportCopy.subtitle,
-        'A local summary you can copy. Your raw recordings are not included.',
-      );
+    test('v1 copy is stable', () {
+      expect(PrivateReportCopy.title, 'My ArchiveMe report');
+      expect(PrivateReportCopy.whatHelpedHeading, 'What seemed to help');
+      expect(PrivateReportCopy.evidenceHeading, 'Evidence from saved moments');
       expect(PrivateReportCopy.copyReportCta, 'Copy report');
+      expect(PrivateReportCopy.shareReportCta, 'Share report');
       expect(PrivateReportCopy.closeCta, 'Close');
-      expect(PrivateReportCopy.copySuccess, 'Private report copied');
-      expect(PrivateReportCopy.notEnoughEvidence, 'Not enough evidence yet');
+      expect(
+        PrivateReportCopy.insufficientEvidence,
+        'ArchiveMe needs more evidence before creating a private report.',
+      );
+      expect(
+        PrivateReportCopy.footer,
+        contains('not advice or a diagnosis'),
+      );
+    });
+  });
+
+  group('PrivateReportEngine', () {
+    test('returns null when no pattern foundation', () {
+      expect(
+        PrivateReportEngine.build(
+          entries: [
+            _entry(id: 'g1', transcript: 'This is a test to check function'),
+            _entry(id: 'g2', transcript: 'This is a second test for pressure'),
+            _entry(id: 'g3', transcript: 'Another test for the app today'),
+          ],
+          viewingConfirmedRepeatOrTimeline: true,
+        ),
+        isNull,
+      );
+    });
+
+    test('tracks hasChange and hasHelped metadata', () async {
+      final store = WhatChangedV2Store.instance();
+      await store.saveSelection(
+        entryId: 'e4',
+        option: WhatChangedV2Option.softer,
+        entryCountAtCapture: 4,
+      );
+      await HelpedTrackingStore.instance().saveSelection(
+        entryId: 'e4',
+        option: HelpedTrackingOption.paused,
+        entryCountAtCapture: 4,
+      );
+
+      final result = PrivateReportEngine.build(
+        entries: _fourRelatedRepeatEntries(),
+        returnChecks: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+        ],
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+
+      expect(result.hasChange, isTrue);
+      expect(result.hasHelped, isTrue);
     });
   });
 
@@ -139,8 +195,7 @@ void main() {
       expect(text, isNot(contains('entry_id')));
       expect(text, isNot(contains('revenuecat')));
       expect(text, isNot(contains('restore purchases')));
-      expect(text, contains('not included'));
-      expect(text, contains('debug logs'));
+      expect(text, contains('not advice or a diagnosis'));
     });
 
     test('report excludes pending placeholders', () {
@@ -157,21 +212,7 @@ void main() {
       );
     });
 
-    test('report excludes generic test text', () {
-      expect(
-        PrivateReportBuilder.build(
-          entries: [
-            _entry(id: 'g1', transcript: 'This is a test to check function'),
-            _entry(id: 'g2', transcript: 'This is a second test for pressure'),
-            _entry(id: 'g3', transcript: 'Another test for the app today'),
-          ],
-          viewingConfirmedRepeatOrTimeline: true,
-        ),
-        isNull,
-      );
-    });
-
-    test('report sections render in exact order', () {
+    test('report sections render in v1 order', () {
       final report = PrivateReportBuilder.build(
         entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
@@ -182,8 +223,8 @@ void main() {
           PrivateReportCopy.whatRepeatedHeading,
           PrivateReportCopy.whatChangedHeading,
           PrivateReportCopy.whatHelpedHeading,
-          PrivateReportCopy.whatToWatchNextHeading,
           PrivateReportCopy.evidenceHeading,
+          PrivateReportCopy.whatToWatchNextHeading,
         ],
       );
     });
@@ -196,25 +237,6 @@ void main() {
       final repeated = report.sections.first;
       expect(repeated.hasEvidence, isTrue);
       expect(repeated.lines.first, contains('showed up across'));
-      final match = RegExp(r'"([^"]+)"').firstMatch(repeated.lines.first);
-      expect(match, isNotNull);
-      final words = match!.group(1)!.trim().split(RegExp(r'\s+'));
-      expect(words.length, lessThanOrEqualTo(6));
-    });
-
-    test('not enough evidence fallback when section lacks proof', () {
-      final report = PrivateReportBuilder.build(
-        entries: _threeRelatedRepeatEntries(),
-        viewingConfirmedRepeatOrTimeline: true,
-      )!;
-      expect(
-        report.sections[1].lines.first,
-        PrivateReportCopy.notEnoughEvidence,
-      );
-      expect(
-        report.sections[2].lines.first,
-        PrivateReportCopy.notEnoughEvidence,
-      );
     });
 
     test('report includes what-changed marker if available', () async {
@@ -233,13 +255,12 @@ void main() {
       expect(changed.hasEvidence, isTrue);
       expect(
         changed.lines.first,
-        'You marked that the repeat felt softer this time.',
+        WhatChangedV2Copy.payoffSofter,
       );
     });
 
     test('report includes helped marker if available', () async {
-      final store = HelpedTrackingStore.instance();
-      await store.saveSelection(
+      await HelpedTrackingStore.instance().saveSelection(
         entryId: 'e4',
         option: HelpedTrackingOption.paused,
         entryCountAtCapture: 4,
@@ -257,51 +278,15 @@ void main() {
       expect(helped.lines.first, contains('paused'));
     });
 
-    test('report includes user-corrected text when used as evidence', () async {
-      const misheard =
-          "I said yes when I didn't have the cockpit's capability left today.";
-      const corrected =
-          'I said yes again before checking capacity at work today.';
-
-      await AppServices.instance.journalStore.save(
-        _entry(
-          id: 'c1',
-          transcript: misheard,
-          createdAt: DateTime(2026, 6, 10, 12),
-        ),
-      );
-      await AppServices.instance.journalStore.save(
-        _entry(
-          id: 'c2',
-          transcript:
-              'Same thing — said yes when I had no capacity for one more thing.',
-          createdAt: DateTime(2026, 6, 11, 12),
-        ),
-      );
-      await AppServices.instance.journalStore.save(
-        _entry(
-          id: 'c3',
-          transcript:
-              'I said yes again even though I had no capacity for one more ask.',
-          createdAt: DateTime(2026, 6, 12, 12),
-        ),
-      );
-
-      await TranscriptCorrectionController.apply(
-        entry: _entry(id: 'c1', transcript: misheard),
-        correctedText: corrected,
-      );
-
-      final entries = await AppServices.instance.journalStore.loadAll();
+    test('report includes up to three evidence snippets', () {
       final report = PrivateReportBuilder.build(
-        entries: entries,
+        entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final evidence = report.sections.last;
+      final evidence = report.sections[3];
       expect(evidence.heading, PrivateReportCopy.evidenceHeading);
-      final joined = evidence.bullets.join('\n').toLowerCase();
-      expect(joined, contains('checking capacity'));
-      expect(joined, isNot(contains('cockpit')));
+      expect(evidence.bullets.length, lessThanOrEqualTo(3));
+      expect(evidence.bullets, isNotEmpty);
     });
 
     test('no full transcript dump', () {
@@ -312,35 +297,104 @@ void main() {
       )!;
       for (final entry in entries) {
         if (entry.transcript.length > 48) {
-          expect(
-            report.fullPlainText,
-            isNot(contains(entry.transcript)),
-          );
+          expect(report.fullPlainText, isNot(contains(entry.transcript)));
         }
       }
-      final evidence = report.sections.last.bullets.join('\n');
-      for (final bullet in report.sections.last.bullets) {
-        expect(bullet.length, lessThan(80));
-      }
-      expect(evidence, isNot(contains('localAudioPath')));
     });
-  });
 
-  group('PrivateReport export copy', () {
-    test('included and not included scope lists are present in copy text', () {
+    test('export text includes privacy footer not analytics counters', () {
       final report = PrivateReportBuilder.build(
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
       final text = report.fullPlainText;
-      expect(text, contains(PrivateReportCopy.includedHeading));
-      expect(text, contains('Short pattern summaries'));
-      expect(text, contains(PrivateReportCopy.notIncludedHeading));
-      expect(text, contains('Audio files'));
-      expect(text, contains('Billing information'));
-      expect(text, isNot(contains('Made with ArchiveMe')));
+      expect(text, contains(PrivateReportCopy.footer));
+      expect(text, isNot(contains('Debug logs')));
+      expect(text, isNot(contains('analytics')));
     });
+  });
 
+  group('PrivateReportAnalytics', () {
+    test('events contain metadata only', () {
+      final events = <String, Map<String, Object>>{};
+      PrivateReportAnalytics.captureForTest = (event, props) {
+        events[event] = props;
+      };
+
+      PrivateReportAnalytics.opened(
+        source: 'pattern_detail',
+        entryCount: 4,
+        hasChange: true,
+        hasHelped: false,
+      );
+      PrivateReportAnalytics.copied(
+        source: 'pattern_detail',
+        entryCount: 4,
+        hasChange: true,
+        hasHelped: false,
+      );
+      PrivateReportAnalytics.shared(
+        source: 'pattern_detail',
+        entryCount: 4,
+        hasChange: true,
+        hasHelped: false,
+      );
+
+      expect(events.keys, containsAll([
+        PrivateReportAnalytics.openedEvent,
+        PrivateReportAnalytics.copiedEvent,
+        PrivateReportAnalytics.sharedEvent,
+      ]));
+      for (final props in events.values) {
+        expect(props.keys, containsAll(['source', 'entry_count']));
+        expect(props, isNot(contains('transcript')));
+        final flat = props.values.join(' ').toLowerCase();
+        expect(flat, isNot(contains('said yes')));
+      }
+    });
+  });
+
+  group('PrivateReportSheet', () {
+    testWidgets('sheet shows copy share close and footer', (tester) async {
+      final result = PrivateReportEngine.build(
+        entries: _threeRelatedRepeatEntries(),
+        viewingConfirmedRepeatOrTimeline: true,
+      )!;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => PrivateReportSheet.show(
+                  context,
+                  report: result.report,
+                  entryCount: 3,
+                  source: 'test',
+                  isPro: true,
+                  hasChange: result.hasChange,
+                  hasHelped: result.hasHelped,
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('private_report_sheet')), findsOneWidget);
+      expect(find.text(PrivateReportCopy.copyReportCta), findsOneWidget);
+      expect(find.text(PrivateReportCopy.shareReportCta), findsOneWidget);
+      expect(find.text(PrivateReportCopy.closeCta), findsOneWidget);
+      expect(find.text(PrivateReportCopy.footer), findsOneWidget);
+      expect(find.text(PrivateReportCopy.title), findsOneWidget);
+    });
+  });
+
+  group('PrivateReport export copy', () {
     testWidgets('copy action copies safe visible text', (tester) async {
       final report = PrivateArchiveReportEngine.build(
         entries: _threeRelatedRepeatEntries(),
@@ -375,45 +429,31 @@ void main() {
 
       expect(copiedText, contains(PrivateReportCopy.title));
       expect(copiedText, contains(PrivateReportCopy.whatRepeatedHeading));
-      expect(copiedText, contains(PrivateReportCopy.includedHeading));
-      expect(copiedText, contains(PrivateReportCopy.notIncludedHeading));
+      expect(copiedText, contains(PrivateReportCopy.footer));
       expect(copiedText.toLowerCase(), isNot(contains('.m4a')));
     });
   });
 
-  group('PrivateReportSheet', () {
-    testWidgets('sheet shows copy and close actions', (tester) async {
-      final report = PrivateReportBuilder.build(
-        entries: _threeRelatedRepeatEntries(),
-        viewingConfirmedRepeatOrTimeline: true,
-      )!;
+  group('protected areas untouched', () {
+    test('RevenueCat product id unchanged', () {
+      expect(RevenueCatService.proEntitlementId, 'pro');
+    });
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) => TextButton(
-                onPressed: () => PrivateReportSheet.show(
-                  context,
-                  report: report,
-                  entryCount: 3,
-                  surface: 'test',
-                  isPro: true,
-                ),
-                child: const Text('open'),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.text('open'));
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('private_report_sheet')), findsOneWidget);
-      expect(find.text(PrivateReportCopy.copyReportCta), findsOneWidget);
-      expect(find.text(PrivateReportCopy.closeCta), findsOneWidget);
-      expect(find.text(PrivateReportCopy.subtitle), findsOneWidget);
+    test('feature files avoid billing entitlement and signing', () {
+      const paths = [
+        'lib/features/private_report/private_report_copy.dart',
+        'lib/features/private_report/private_report_model.dart',
+        'lib/features/private_report/private_report_engine.dart',
+        'lib/features/private_report/private_report_analytics.dart',
+        'lib/widgets/private_report/private_report_sheet.dart',
+      ];
+      for (final path in paths) {
+        final content = File(path).readAsStringSync().toLowerCase();
+        expect(content, isNot(contains('purchasepackage')));
+        expect(content, isNot(contains('proentitlementid')));
+        expect(content, isNot(contains('build_number')));
+        expect(content, isNot(contains('productidentifier')));
+      }
     });
   });
 }

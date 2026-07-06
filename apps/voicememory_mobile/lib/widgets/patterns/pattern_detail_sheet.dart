@@ -15,6 +15,8 @@ import '../../features/pattern_detail/pattern_detail_copy.dart';
 import '../../features/pattern_detail/pattern_detail_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
+import '../../features/private_report/private_report_copy.dart';
+import '../../features/private_report/private_report_engine.dart';
 import '../../features/share_card/share_card_model.dart';
 import '../../features/transcript_correction/transcript_correction_copy.dart';
 import '../../models/journal_entry.dart';
@@ -141,6 +143,25 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
         entries: entries,
         onMomentChanged: _reloadDetail,
       ),
+    );
+  }
+
+  Future<void> _openPrivateReport(BuildContext context) async {
+    final input = widget.buildInput;
+    final entries = input?.entries ?? await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+
+    await PrivateReportEngine.showSheet(
+      context,
+      entries: entries,
+      source: 'pattern_detail',
+      isPro: widget.isPro,
+      returnChecks: input?.returnChecks ?? const [],
+      viewingConfirmedRepeatOrTimeline:
+          input?.viewingConfirmedRepeatOrTimeline ?? true,
+      triggerCapturedMilestone: input?.triggerCapturedMilestone ?? false,
+      helpfulActionCapturedMilestone:
+          input?.helpfulActionCapturedMilestone ?? false,
     );
   }
 
@@ -455,6 +476,28 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   source: 'pattern_detail',
                 ),
               ],
+              const SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  key: const Key('private_report_open_link'),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: () => _openPrivateReport(context),
+                  child: Text(
+                    PrivateReportCopy.openReportCta,
+                    style: ArchiveMobileTypography.responsiveHelper(context)
+                        .copyWith(
+                      color: AppColors.textSecondary,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

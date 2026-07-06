@@ -10,6 +10,10 @@ import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
 import '../../features/weekly_review/weekly_archive_review_copy.dart';
 import '../../features/weekly_review/weekly_archive_review_model.dart';
+import '../../features/private_report/private_report_copy.dart';
+import '../../features/private_report/private_report_engine.dart';
+import '../../features/repeat_return_check/repeat_return_check_store.dart';
+import '../../services/app_services.dart';
 import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -251,6 +255,40 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   ),
                 ],
               ],
+              const SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  key: const Key('private_report_open_link'),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: () async {
+                    if (!AppServices.isInitialized) return;
+                    final entries = await AppServices.instance.journal.loadAll();
+                    if (!context.mounted) return;
+                    await PrivateReportEngine.showSheet(
+                      context,
+                      entries: entries,
+                      source: 'weekly_review',
+                      isPro: isPro,
+                      returnChecks: RepeatReturnCheckStore.cached,
+                      viewingConfirmedRepeatOrTimeline: true,
+                    );
+                  },
+                  child: Text(
+                    PrivateReportCopy.openReportCta,
+                    style: ArchiveMobileTypography.responsiveHelper(context)
+                        .copyWith(
+                      color: AppColors.textSecondary,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: AppSpacing.sm),
               BetaFeedbackLink(
                 source: 'weekly_review',

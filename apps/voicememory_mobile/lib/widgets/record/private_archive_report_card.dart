@@ -5,6 +5,7 @@ import '../../features/early_archive/private_archive_report_analytics.dart';
 import '../../features/early_archive/private_archive_report_copy.dart';
 import '../../features/early_archive/private_archive_report_gates.dart';
 import '../../features/early_archive/private_archive_report_model.dart';
+import '../../features/private_report/private_report_copy.dart';
 import '../../features/share/archive_share_actions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -202,10 +203,19 @@ class _PrivateArchiveReportCardState extends State<PrivateArchiveReportCard> {
       context,
       report: widget.report,
       entryCount: widget.entryCount,
-      surface: widget.surface,
+      source: widget.surface,
       isPro: widget.isPro,
+      hasChange: _sectionHasEvidence(PrivateReportCopy.whatChangedHeading),
+      hasHelped: _sectionHasEvidence(PrivateReportCopy.whatHelpedHeading),
       onCopy: widget.onCopy,
     );
+  }
+
+  bool _sectionHasEvidence(String heading) {
+    for (final section in widget.report.sections) {
+      if (section.heading == heading) return section.hasEvidence;
+    }
+    return false;
   }
 
   Future<void> _copy(BuildContext context) async {

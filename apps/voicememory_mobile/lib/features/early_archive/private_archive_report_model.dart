@@ -17,7 +17,7 @@ class PrivateArchiveReportSection {
       lines.any(
         (line) =>
             line.trim().isNotEmpty &&
-            line.trim() != PrivateReportCopy.notEnoughEvidence,
+            line.trim() != PrivateReportCopy.sectionFallback,
       ) ||
       bullets.any((bullet) => bullet.trim().isNotEmpty);
 
@@ -96,24 +96,9 @@ class PrivateArchiveReport {
     }
 
     if (includeScope) {
-      blocks.add(_formatScopeList(
-        PrivateArchiveReportCopy.exportIncludedHeading,
-        PrivateArchiveReportCopy.exportIncludedItems,
-      ));
-      blocks.add(_formatScopeList(
-        PrivateArchiveReportCopy.exportNotIncludedHeading,
-        PrivateArchiveReportCopy.exportNotIncludedItems,
-      ));
+      blocks.add(PrivateReportCopy.footer.trim());
     }
 
     return blocks.join('\n\n');
-  }
-
-  String _formatScopeList(String heading, List<String> items) {
-    final lines = <String>[heading.trim()];
-    for (final item in items) {
-      lines.add('- $item');
-    }
-    return lines.join('\n');
   }
 }

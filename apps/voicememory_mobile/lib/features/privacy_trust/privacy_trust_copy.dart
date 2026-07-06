@@ -1,3 +1,5 @@
+import '../private_report/private_report_copy.dart';
+
 /// Copy for the Privacy & Trust Centre — factual, no unsupported claims.
 abstract final class PrivacyTrustCopy {
   PrivacyTrustCopy._();
@@ -29,8 +31,7 @@ abstract final class PrivacyTrustCopy {
 
   static const betaProgressSummaryControl = 'Beta progress summary';
 
-  static const notEnoughReportEvidence =
-      'Not enough evidence yet for a private report.';
+  static const notEnoughReportEvidence = PrivateReportCopy.insufficientEvidence;
 
   static const deleteArchiveDone = 'Local archive cleared.';
 

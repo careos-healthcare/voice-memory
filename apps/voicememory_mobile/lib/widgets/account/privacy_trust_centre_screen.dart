@@ -23,7 +23,7 @@ import '../../widgets/account/beta_feedback_sheet.dart';
 import '../../widgets/account/local_backup_restore_sheet.dart';
 import '../../widgets/archive_history/archive_history_sheet.dart';
 import '../../widgets/pushed_screen_shell.dart';
-import '../../widgets/private_report/private_report_sheet.dart';
+import '../../features/private_report/private_report_engine.dart';
 import '../../widgets/settings/privacy_data_controls_dialogs.dart';
 
 /// Privacy & Trust Centre — what is stored, what stays private, and controls.
@@ -110,30 +110,20 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
     final entries = await AppServices.instance.journal.loadAll();
     final viewingConfirmed =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
-    final report = PrivateArchiveReportEngine.build(
-      entries: entries,
-      returnChecks: RepeatReturnCheckStore.cached,
-      viewingConfirmedRepeatOrTimeline: viewingConfirmed,
-    );
     if (!mounted) return;
-    if (report == null || !report.hasContent) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(PrivacyTrustCopy.notEnoughReportEvidence)),
-      );
-      return;
-    }
 
     final reader =
         widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
     final isPro = await reader.isPro;
     if (!mounted) return;
 
-    await PrivateReportSheet.show(
+    await PrivateReportEngine.showSheet(
       context,
-      report: report,
-      entryCount: entries.length,
-      surface: 'privacy_trust_centre',
+      entries: entries,
+      source: 'privacy_trust_centre',
       isPro: isPro,
+      returnChecks: RepeatReturnCheckStore.cached,
+      viewingConfirmedRepeatOrTimeline: viewingConfirmed,
     );
   }
 

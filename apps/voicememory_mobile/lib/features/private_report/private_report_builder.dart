@@ -16,7 +16,10 @@ import '../repeat_return_check/repeat_return_check_trend.dart';
 import '../timeline/timeline_entry_display.dart';
 import '../weekly_review/weekly_archive_review_copy.dart';
 import '../weekly_review/weekly_archive_review_engine.dart';
+import '../what_changed/what_changed_v2_copy.dart';
 import '../what_changed/what_changed_v2_engine.dart';
+import '../what_changed/what_changed_v2_model.dart';
+import '../what_changed/what_changed_v2_store.dart';
 import '../early_archive/private_archive_report_model.dart';
 import 'private_report_copy.dart';
 
@@ -69,6 +72,7 @@ abstract final class PrivateReportBuilder {
       _whatRepeatedSection(repeatPhrase, repeatCount),
       _whatChangedSection(
         entries: reviewEntries,
+        sourceEntries: entries,
         changeProof: changeProof,
         returnChecks: returnChecks,
       ),
@@ -77,14 +81,6 @@ abstract final class PrivateReportBuilder {
         returnChecks: returnChecks,
         positivePattern: positivePattern,
       ),
-      _whatToWatchNextSection(
-        entries: entries,
-        changeProof: changeProof,
-        triggerCapturedMilestone: triggerCapturedMilestone,
-        helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-        returnChecks: returnChecks,
-        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
-      ),
     ];
     final sections = [
       ...contentSections,
@@ -92,6 +88,14 @@ abstract final class PrivateReportBuilder {
         entries: reviewEntries,
         repeatPhrase: repeatPhrase,
         sections: contentSections,
+      ),
+      _whatToWatchNextSection(
+        entries: entries,
+        changeProof: changeProof,
+        triggerCapturedMilestone: triggerCapturedMilestone,
+        helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+        returnChecks: returnChecks,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
       ),
     ];
 
@@ -128,14 +132,27 @@ abstract final class PrivateReportBuilder {
 
   static PrivateArchiveReportSection _whatChangedSection({
     required List<JournalEntry> entries,
+    required List<JournalEntry> sourceEntries,
     RepeatReturnCheckChangeProof? changeProof,
     List<RepeatReturnCheckRecord> returnChecks = const [],
   }) {
-    final v2 = WhatChangedV2Engine.weeklyReviewSection(entries: entries);
+    final v2 = WhatChangedV2Engine.weeklyReviewSection(entries: sourceEntries);
     if (v2 != null && v2.isSupported) {
       return PrivateArchiveReportSection(
         heading: PrivateReportCopy.whatChangedHeading,
         lines: [v2.body.trim()],
+      );
+    }
+
+    final entryIds = sourceEntries.map((entry) => entry.id).toSet();
+    final changeMarker = WhatChangedV2Store.cached
+        .where((record) => entryIds.contains(record.entryId))
+        .firstOrNull;
+    if (changeMarker != null &&
+        changeMarker.option != WhatChangedV2Option.somethingHelped) {
+      return PrivateArchiveReportSection(
+        heading: PrivateReportCopy.whatChangedHeading,
+        lines: [WhatChangedV2Copy.payoffMessage(changeMarker.option)],
       );
     }
 
@@ -285,14 +302,14 @@ abstract final class PrivateReportBuilder {
 
     return PrivateArchiveReportSection(
       heading: PrivateReportCopy.evidenceHeading,
-      bullets: bullets.take(_maxEvidenceSnippets + phrases.length).toList(),
+      bullets: bullets.take(_maxEvidenceSnippets).toList(),
     );
   }
 
   static PrivateArchiveReportSection _fallbackSection(String heading) =>
       PrivateArchiveReportSection(
         heading: heading,
-        lines: const [PrivateReportCopy.notEnoughEvidence],
+        lines: const [PrivateReportCopy.sectionFallback],
       );
 
   static String? _groundedPhrase(List<JournalEntry> entries) {

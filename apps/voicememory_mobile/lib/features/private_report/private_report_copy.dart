@@ -1,24 +1,42 @@
-/// User-facing copy for the private archive report export surface.
+/// User-facing copy for the shareable private archive report.
 abstract final class PrivateReportCopy {
   PrivateReportCopy._();
 
-  static const title = 'Private archive report';
+  static const title = 'My ArchiveMe report';
 
   static const subtitle =
-      'A local summary you can copy. Your raw recordings are not included.';
+      'A private summary from your saved moments on this device.';
 
   static const whatRepeatedHeading = 'What repeated';
   static const whatChangedHeading = 'What changed';
-  static const whatHelpedHeading = 'What helped';
+  static const whatHelpedHeading = 'What seemed to help';
   static const whatToWatchNextHeading = 'What to watch next';
-  static const evidenceHeading = 'Evidence from your words';
+  static const evidenceHeading = 'Evidence from saved moments';
 
-  static const notEnoughEvidence = 'Not enough evidence yet';
+  static const sectionFallback = 'Not enough evidence yet';
+
+  static const insufficientEvidence =
+      'ArchiveMe needs more evidence before creating a private report.';
+
+  static const footer =
+      'This report is private. It is based on saved moments from this device. '
+      'It is not advice or a diagnosis.';
 
   static const copyReportCta = 'Copy report';
+  static const shareReportCta = 'Share report';
   static const closeCta = 'Close';
   static const copySuccess = 'Private report copied';
 
+  static const openReportCta = 'View private report';
+
+  static const previewTitle = 'Preview private report';
+  static const previewBody =
+      'Your first repeat shows a preview. Pro keeps every report section.';
+  static const previewProCta = 'See Pro';
+  static const viewReportCta = 'View report';
+
+  // Legacy card/export aliases — kept for existing surfaces.
+  static const notEnoughEvidence = sectionFallback;
   static const includedHeading = 'Included';
   static const includedItems = [
     'Short pattern summaries',
@@ -26,7 +44,6 @@ abstract final class PrivateReportCopy {
     'Dates or relative dates if already shown safely',
     'User-corrected transcript snippets only when used as evidence',
   ];
-
   static const notIncludedHeading = 'Not included';
   static const notIncludedItems = [
     'Audio files',
@@ -35,12 +52,6 @@ abstract final class PrivateReportCopy {
     'Debug logs',
     'Billing information',
   ];
-
-  static const previewTitle = 'Preview private report';
-  static const previewBody =
-      'Your first repeat shows a preview. Pro keeps every report section.';
-  static const previewProCta = 'See Pro';
-  static const viewReportCta = 'View report';
 
   static String whatRepeatedBody(String phrase, int count) =>
       '"$phrase" showed up across $count moments.';
@@ -51,4 +62,22 @@ abstract final class PrivateReportCopy {
     }
     return '$relativeDate — "$snippet"';
   }
+
+  static List<String> allVisibleStrings() => [
+        title,
+        subtitle,
+        whatRepeatedHeading,
+        whatChangedHeading,
+        whatHelpedHeading,
+        whatToWatchNextHeading,
+        evidenceHeading,
+        sectionFallback,
+        insufficientEvidence,
+        footer,
+        copyReportCta,
+        shareReportCta,
+        closeCta,
+        copySuccess,
+        openReportCta,
+      ];
 }

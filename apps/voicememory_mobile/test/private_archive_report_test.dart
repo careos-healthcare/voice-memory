@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_mode
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
+import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -81,7 +82,9 @@ RepeatReturnCheckRecord _answeredRecord({
     );
 
 void _expectNoAdviceLanguage(String copy) {
-  final lower = copy.toLowerCase();
+  final lower = copy
+      .replaceAll(PrivateReportCopy.footer, '')
+      .toLowerCase();
   expect(lower, isNot(contains('you should')));
   expect(lower, isNot(contains('try this')));
   expect(lower, isNot(contains('recommendations')));
@@ -128,8 +131,8 @@ void main() {
           PrivateArchiveReportCopy.whatRepeatedHeading,
           PrivateArchiveReportCopy.whatChangedHeading,
           PrivateArchiveReportCopy.whatHelpedHeading,
-          PrivateArchiveReportCopy.whatToWatchNextHeading,
           PrivateArchiveReportCopy.evidenceHeading,
+          PrivateArchiveReportCopy.whatToWatchNextHeading,
         ],
       );
     });
@@ -180,7 +183,7 @@ void main() {
       expect(changed.hasEvidence, isTrue);
       expect(
         changed.lines.first,
-        'You marked that the repeat felt softer this time.',
+        WhatChangedV2Copy.payoffSofter,
       );
     });
 
@@ -209,7 +212,7 @@ void main() {
         entries: _threeRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      final watch = report.sections[3];
+      final watch = report.sections[4];
       expect(watch.heading, PrivateArchiveReportCopy.whatToWatchNextHeading);
       expect(watch.lines.first.trim(), isNotEmpty);
       expect(watch.hasEvidence, isTrue);
@@ -311,8 +314,8 @@ void main() {
         PrivateArchiveReportCopy.whatHelpedHeading,
       ].join(' ').toLowerCase();
 
-      expect(joined, contains('local summary'));
-      expect(joined, contains('raw recordings are not included'));
+      expect(joined, contains('private summary'));
+      expect(joined, contains('saved moments'));
       expect(joined, isNot(contains('recommendations')));
       expect(joined, isNot(contains('you should')));
       expect(joined, isNot(contains('try this')));
@@ -423,7 +426,7 @@ void main() {
 
       expect(copiedText, contains(PrivateArchiveReportCopy.title));
       expect(copiedText, contains(PrivateArchiveReportCopy.whatRepeatedHeading));
-      expect(copiedText, contains(PrivateArchiveReportCopy.exportIncludedHeading));
+      expect(copiedText, contains(PrivateReportCopy.footer));
       expect(copiedText.toLowerCase(), isNot(contains('.m4a')));
     });
 

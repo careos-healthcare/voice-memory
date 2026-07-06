@@ -1,41 +1,55 @@
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
-import '../../features/early_archive/private_archive_report_analytics.dart';
 import '../../features/early_archive/private_archive_report_copy.dart';
 import '../../features/early_archive/private_archive_report_gates.dart';
 import '../../features/early_archive/private_archive_report_model.dart';
+import '../../features/private_report/private_report_analytics.dart';
 import '../../features/private_report/private_report_copy.dart';
 import '../../features/share/archive_share_actions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../common/contextual_privacy_reassurance.dart';
 
-/// Full private archive report in a bottom sheet.
+/// Full private archive report in a bottom sheet — text only, copy or share.
 class PrivateReportSheet extends StatelessWidget {
   const PrivateReportSheet({
     super.key,
     required this.report,
     required this.entryCount,
-    required this.surface,
+    required this.source,
     required this.isPro,
+    required this.hasChange,
+    required this.hasHelped,
     this.onCopy,
+    this.onShare,
   });
 
   final PrivateArchiveReport report;
   final int entryCount;
-  final String surface;
+  final String source;
   final bool isPro;
+  final bool hasChange;
+  final bool hasHelped;
   final Future<bool> Function(String text)? onCopy;
+  final Future<bool> Function(String text)? onShare;
 
   static Future<void> show(
     BuildContext context, {
     required PrivateArchiveReport report,
     required int entryCount,
-    required String surface,
+    required String source,
     required bool isPro,
+    required bool hasChange,
+    required bool hasHelped,
     Future<bool> Function(String text)? onCopy,
+    Future<bool> Function(String text)? onShare,
   }) {
+    PrivateReportAnalytics.opened(
+      source: source,
+      entryCount: entryCount,
+      hasChange: hasChange,
+      hasHelped: hasHelped,
+    );
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -47,9 +61,12 @@ class PrivateReportSheet extends StatelessWidget {
         child: PrivateReportSheet(
           report: report,
           entryCount: entryCount,
-          surface: surface,
+          source: source,
           isPro: isPro,
+          hasChange: hasChange,
+          hasHelped: hasHelped,
           onCopy: onCopy,
+          onShare: onShare,
         ),
       ),
     );
@@ -128,30 +145,11 @@ class PrivateReportSheet extends StatelessWidget {
                   style: secondaryStyle,
                 ),
               ],
-              const SizedBox(height: AppSpacing.sm),
-              _ScopeList(
-                heading: PrivateReportCopy.includedHeading,
-                items: PrivateReportCopy.includedItems,
-                headingKey: const Key('private_report_sheet_included_heading'),
-                listKey: const Key('private_report_sheet_included'),
-                labelStyle: labelStyle,
-                bodyStyle: secondaryStyle,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _ScopeList(
-                heading: PrivateReportCopy.notIncludedHeading,
-                items: PrivateReportCopy.notIncludedItems,
-                headingKey:
-                    const Key('private_report_sheet_not_included_heading'),
-                listKey: const Key('private_report_sheet_not_included'),
-                labelStyle: labelStyle,
-                bodyStyle: secondaryStyle,
-              ),
               const SizedBox(height: AppSpacing.md),
-              ContextualPrivacyReassurance(
-                source: surface,
-                entryCount: entryCount,
-                compact: false,
+              Text(
+                PrivateReportCopy.footer,
+                key: const Key('private_report_sheet_footer'),
+                style: secondaryStyle,
               ),
               const SizedBox(height: AppSpacing.md),
               Align(
@@ -172,6 +170,21 @@ class PrivateReportSheet extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
+                  key: const Key('private_report_sheet_share_cta'),
+                  onPressed: () => _share(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.accentPrimary,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(PrivateReportCopy.shareReportCta),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
                   key: const Key('private_report_sheet_close_cta'),
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text(PrivateReportCopy.closeCta),
@@ -185,10 +198,11 @@ class PrivateReportSheet extends StatelessWidget {
   }
 
   Future<void> _copy(BuildContext context) async {
-    PrivateArchiveReportAnalytics.copyTapped(
-      surface: surface,
+    PrivateReportAnalytics.copied(
+      source: source,
       entryCount: entryCount,
-      isFullExport: _isFullExport,
+      hasChange: hasChange,
+      hasHelped: hasHelped,
     );
     if (onCopy != null) {
       await onCopy!(_exportText);
@@ -206,6 +220,24 @@ class PrivateReportSheet extends StatelessWidget {
         PrivateReportCopy.copySuccess,
       );
     }
+  }
+
+  Future<void> _share(BuildContext context) async {
+    PrivateReportAnalytics.shared(
+      source: source,
+      entryCount: entryCount,
+      hasChange: hasChange,
+      hasHelped: hasHelped,
+    );
+    if (onShare != null) {
+      await onShare!(_exportText);
+      return;
+    }
+    await ArchiveShareActions.shareShareText(
+      context,
+      text: _exportText,
+      subject: report.title,
+    );
   }
 }
 
@@ -225,7 +257,7 @@ class _SectionBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isFallback = section.lines.any(
-      (line) => line.trim() == PrivateReportCopy.notEnoughEvidence,
+      (line) => line.trim() == PrivateReportCopy.sectionFallback,
     );
 
     return Padding(
@@ -255,40 +287,6 @@ class _SectionBlock extends StatelessWidget {
               ),
         ],
       ),
-    );
-  }
-}
-
-class _ScopeList extends StatelessWidget {
-  const _ScopeList({
-    required this.heading,
-    required this.items,
-    required this.headingKey,
-    required this.listKey,
-    required this.labelStyle,
-    required this.bodyStyle,
-  });
-
-  final String heading;
-  final List<String> items;
-  final Key headingKey;
-  final Key listKey;
-  final TextStyle labelStyle;
-  final TextStyle bodyStyle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      key: listKey,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(heading, key: headingKey, style: labelStyle),
-        for (final item in items)
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Text('- $item', style: bodyStyle),
-          ),
-      ],
     );
   }
 }

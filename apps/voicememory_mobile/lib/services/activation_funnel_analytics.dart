@@ -1003,6 +1003,8 @@ abstract class ActivationFunnelAnalytics {
     bool? wasEvidence,
     bool? hasSnippets,
     bool? hasPatternDetailCta,
+    bool? hasChange,
+    bool? hasHelped,
     int? milestoneCount,
     String? relationState,
     String? source,
@@ -1081,6 +1083,8 @@ abstract class ActivationFunnelAnalytics {
       if (hasSnippets != null) 'has_snippets': hasSnippets ? 1 : 0,
       if (hasPatternDetailCta != null)
         'has_pattern_detail_cta': hasPatternDetailCta ? 1 : 0,
+      if (hasChange != null) 'has_change': hasChange ? 1 : 0,
+      if (hasHelped != null) 'has_helped': hasHelped ? 1 : 0,
       if (milestoneCount != null) 'milestone_count': milestoneCount,
       if (relationState != null &&
           allowedRelationStateValues.contains(relationState))
