@@ -17,6 +17,17 @@ Strategy and positioning documentation only. **Do not treat these docs as produc
 | [TESTFLIGHT_REVENUE_SCRIPT.md](./TESTFLIGHT_REVENUE_SCRIPT.md) | Tester interview questions for monetization learning |
 | [DO_NOT_BUILD_YET.md](./DO_NOT_BUILD_YET.md) | Scope guardrails before beta feedback |
 | [NEXT_PRODUCT_BETS.md](./NEXT_PRODUCT_BETS.md) | Ranked future bets after validation |
+| [PAID_REASON_V1.md](./PAID_REASON_V1.md) | Canonical paid reason — memory not AI |
+| [LONG_TERM_ARCHIVE_HISTORY.md](./LONG_TERM_ARCHIVE_HISTORY.md) | Longer history value pillar |
+| [PRIVATE_REPORTS_AND_EXPORTS.md](./PRIVATE_REPORTS_AND_EXPORTS.md) | Reports & export honesty |
+| [SAFE_SHARING_STRATEGY.md](./SAFE_SHARING_STRATEGY.md) | Future-safe sharing without medical claims |
+| [REVENUE_BUILD_SEQUENCE.md](./REVENUE_BUILD_SEQUENCE.md) | Phased build order — no billing changes |
+
+---
+
+## Code reference (safe copy only)
+
+- `lib/features/revenue_foundation/` — value flags and canonical copy (`revenue_value_engine.dart`)
 
 ---
 

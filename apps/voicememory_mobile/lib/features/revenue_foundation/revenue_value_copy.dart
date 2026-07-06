@@ -1,0 +1,107 @@
+/// Canonical revenue value copy — display only, no billing logic.
+abstract final class RevenueValueCopy {
+  RevenueValueCopy._();
+
+  static const positioningHeadline =
+      'ArchiveMe is not trying to answer better than ChatGPT.';
+  static const positioningSubhead = 'ArchiveMe remembers differently.';
+
+  static const memoryJob =
+      'It compares moments saved over time and shows what returned, changed, softened, disappeared, or helped.';
+
+  static const paidReasonHeadline = 'Keep the longer story';
+
+  static const paidReasonBody =
+      'Free shows the first proof. Pro keeps more of the pattern history, change timeline, private reports, and older evidence.';
+
+  static const paidReasonEvidenceLine =
+      'Pro is for keeping the evidence, not getting generic advice.';
+
+  static const chatGptDifferentiationLine =
+      'ChatGPT helps you think today. ArchiveMe shows what keeps repeating across your life.';
+
+  static const comparesMomentsLine =
+      'ArchiveMe compares saved moments over time — it is not a chat.';
+
+  static const longTermHistoryHeadline = 'Longer archive history';
+
+  static const longTermHistoryBody =
+      'Pro keeps more of your saved moments available as patterns grow across weeks — what returned, changed, softened, or got quieter.';
+
+  static const privateReportHeadline = 'Private reports';
+
+  static const privateReportBody =
+      'Recap what the archive noticed across your moments — private, in your words, not generic advice.';
+
+  static const exportHeadline = 'Export a copy you control';
+
+  static const exportBodyLive =
+      'Take a private report or recap out of the app when you choose.';
+
+  static const exportBodyPlanned =
+      'Exportable reports are planned — Pro is still for keeping longer evidence in the archive.';
+
+  static const safeSharingHeadline = 'Talk about patterns with someone you trust';
+
+  static const safeSharingBody =
+      'Private sharing may help you talk about patterns with someone you trust.';
+
+  static const safeSharingDisclaimer =
+      'ArchiveMe does not diagnose or treat anything.';
+
+  static const safeSharingChoice = 'Only share what you choose.';
+
+  static const safeSharingFutureNote =
+      'Read-only sharing with someone you trust is a future direction — not available in the app yet.';
+
+  static const syncFutureNote =
+      'Cloud backup and multi-device sync are future directions — not live today.';
+
+  static const bannedMedicalTerms = <String>[
+    'therapy',
+    'diagnosis',
+    'treatment',
+    'mental health care',
+    'medical advice',
+    'clinical',
+    'therapist replacement',
+  ];
+
+  static const bannedLiveOverpromises = <String>[
+    'automatic cloud backup',
+    'sync across all devices',
+    'share with your therapist automatically',
+  ];
+
+  static List<String> allConsumerStrings({
+    required bool exportReportsLive,
+    required bool safeSharingLive,
+  }) => [
+        positioningHeadline,
+        positioningSubhead,
+        memoryJob,
+        paidReasonHeadline,
+        paidReasonBody,
+        paidReasonEvidenceLine,
+        chatGptDifferentiationLine,
+        comparesMomentsLine,
+        longTermHistoryHeadline,
+        longTermHistoryBody,
+        privateReportHeadline,
+        privateReportBody,
+        exportHeadline,
+        exportBodyForDisplay(exportReportsLive: exportReportsLive),
+        if (!safeSharingLive) safeSharingFutureNote,
+        safeSharingHeadline,
+        safeSharingBody,
+        safeSharingDisclaimer,
+        safeSharingChoice,
+        syncFutureNote,
+      ];
+
+  static String exportBodyForDisplay({required bool exportReportsLive}) =>
+      exportReportsLive ? exportBodyLive : exportBodyPlanned;
+
+  static String exportLabelForDisplay({required bool exportReportsLive}) =>
+      exportReportsLive ? 'Exportable reports' : 'Exportable reports (planned)';
+}
