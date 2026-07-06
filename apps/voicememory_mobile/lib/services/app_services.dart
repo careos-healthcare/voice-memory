@@ -35,6 +35,7 @@ import '../features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import '../features/first_proof_truth/first_proof_truth_store.dart';
 import '../features/helped_tracking/helped_tracking_store.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
+import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../features/quiet_signal/quiet_signal_analytics.dart';
 import '../features/voice_capture/microphone_permission_environment.dart';
 import '../features/what_changed/what_changed_v2_store.dart';
@@ -360,5 +361,6 @@ class AppServices {
     PatternNameStore.resetForTest();
     MicrophonePermissionEnvironment.resetForTest();
     QuietSignalAnalytics.resetForTest();
+    await ProEvidenceValueDismissStore.resetForTest();
   }
 }

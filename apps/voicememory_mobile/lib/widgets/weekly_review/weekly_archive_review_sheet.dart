@@ -8,11 +8,15 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
+import '../../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
+import '../../features/pro_evidence_value/pro_evidence_value_engine.dart';
+import '../../features/pro_evidence_value/pro_evidence_value_model.dart';
 import '../../features/weekly_review/weekly_archive_review_copy.dart';
 import '../../features/weekly_review/weekly_archive_review_model.dart';
 import '../../features/private_report/private_report_copy.dart';
 import '../../features/private_report/private_report_engine.dart';
 import '../../features/repeat_return_check/repeat_return_check_store.dart';
+import '../../models/journal_entry.dart';
 import '../../services/app_services.dart';
 import '../../features/pattern_confidence/pattern_confidence_model.dart';
 import '../../features/pattern_lifecycle/pattern_lifecycle_model.dart';
@@ -20,6 +24,7 @@ import '../../features/quiet_signal/quiet_signal_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
+import '../pro/pro_evidence_value_card.dart';
 import '../patterns/belief_change_moment_card.dart';
 import '../patterns/pattern_confidence_badge.dart';
 import '../patterns/pattern_lifecycle_badge.dart';
@@ -38,12 +43,14 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     this.patternConfidence,
     this.patternLifecycle,
     this.quietSignal,
+    this.entries = const [],
   });
 
   final WeeklyArchiveReviewResult review;
   final bool isPro;
   final VoidCallback? onSeePro;
   final int entryCount;
+  final List<JournalEntry> entries;
   final BeliefChangeMoment? beliefChangeMoment;
   final PatternConfidence? patternConfidence;
   final PatternLifecycle? patternLifecycle;
@@ -59,6 +66,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
     PatternConfidence? patternConfidence,
     PatternLifecycle? patternLifecycle,
     QuietSignal? quietSignal,
+    List<JournalEntry> entries = const [],
   }) {
     unawaited(BetaActivationSummaryTracker.trackWeeklyReviewOpened());
     return showModalBottomSheet<void>(
@@ -78,6 +86,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
           patternConfidence: patternConfidence,
           patternLifecycle: patternLifecycle,
           quietSignal: quietSignal,
+          entries: entries,
         ),
       ),
     );
@@ -279,11 +288,31 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                       isPro: isPro,
                     )) ...[
                   const SizedBox(height: AppSpacing.md),
-                  ProMemoryUpgradeBridge(
-                    compact: true,
-                    showNotNow: false,
-                    onSeePro: onSeePro!,
-                  ),
+                  if (ProEvidenceValueEngine.shouldShowCard(
+                    ProEvidenceValueEngine.buildContext(
+                      surface: ProEvidenceValueSurface.weeklyReviewPreview,
+                      entryCount: entryCount,
+                      isPro: isPro,
+                      dismissed: ProEvidenceValueDismissStore.isDismissed(),
+                      entries: entries,
+                      returnChecks: RepeatReturnCheckStore.cached,
+                      weeklyReviewPreviewVisible: true,
+                    ),
+                  ))
+                    ProEvidenceValueCard(
+                      surface: ProEvidenceValueSurface.weeklyReviewPreview,
+                      entryCount: entryCount,
+                      compact: true,
+                      onSeePro: onSeePro!,
+                      onDismiss: () =>
+                          unawaited(ProEvidenceValueEngine.dismissForSession()),
+                    )
+                  else
+                    ProMemoryUpgradeBridge(
+                      compact: true,
+                      showNotNow: false,
+                      onSeePro: onSeePro!,
+                    ),
                 ],
               ],
               const SizedBox(height: AppSpacing.sm),

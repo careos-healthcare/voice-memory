@@ -301,7 +301,11 @@ import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
 import '../widgets/patterns/archive_paid_value_proof_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
+import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
+import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
+import '../features/pro_evidence_value/pro_evidence_value_model.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
+import '../widgets/pro/pro_evidence_value_card.dart';
 import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../widgets/patterns/watch_for_result_card.dart';
@@ -657,6 +661,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ArchiveBeliefCorrectionStore.ensureLoaded();
     await ArchiveWorkspaceHintStore.ensureLoaded();
     await ProValuePreviewDismissStore.ensureLoaded();
+    await ProEvidenceValueDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
     await CoreValueFeedbackStore.ensureLoaded();
@@ -1330,6 +1335,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
           confirmedRepeat: earlyFirstSignal,
         ),
         quietSignal: QuietSignalEngine.build(entries: _entries),
+        entries: _entries,
         onSeePro: _archiveIsPro ? null : () => context.push('/subscription'),
       ),
     );
@@ -2277,6 +2283,38 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     );
   }
 
+  bool _showProEvidenceValueBridge({
+    required ProEvidenceValueSurface surface,
+    bool privateReportPreviewVisible = false,
+    bool weeklyReviewPreviewVisible = false,
+  }) {
+    return ProEvidenceValueEngine.shouldShowCard(
+      ProEvidenceValueEngine.buildContext(
+        surface: surface,
+        entryCount: _entries.length,
+        isPro: _archiveIsPro,
+        dismissed: ProEvidenceValueDismissStore.isDismissed(),
+        entries: _entries,
+        returnChecks: RepeatReturnCheckStore.cached,
+        privateReportPreviewVisible: privateReportPreviewVisible,
+        weeklyReviewPreviewVisible: weeklyReviewPreviewVisible,
+      ),
+    );
+  }
+
+  Future<void> _dismissProEvidenceValueBridge() async {
+    await ProEvidenceValueEngine.dismissForSession();
+    await RecordReturnProStore.instance().markProBridgeResolved();
+    if (mounted) setState(() => _proBridgeResolved = true);
+  }
+
+  void _openProEvidenceValueSubscription({required String analyticsSource}) {
+    EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
+      source: analyticsSource,
+    );
+    context.push('/subscription');
+  }
+
   List<Widget> _buildArchiveIntelligenceWidgets({
     required ArchiveBeliefThread belief,
     required WeeklyWhatChangedReview weekly,
@@ -2296,7 +2334,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
       widgets.add(WeeklyWhatChangedReviewCard(review: weekly));
       widgets.add(const SizedBox(height: AppSpacing.lg));
     }
-    if (_showArchiveIntelligenceProBridge(
+    if (_showProEvidenceValueBridge(
+      surface: ProEvidenceValueSurface.archivePatterns,
+    )) {
+      widgets.add(
+        ProEvidenceValueCard(
+          surface: ProEvidenceValueSurface.archivePatterns,
+          entryCount: _entries.length,
+          onSeePro: () => _openProEvidenceValueSubscription(
+            analyticsSource: 'patterns_pro_evidence_value',
+          ),
+          onDismiss: () => unawaited(_dismissProEvidenceValueBridge()),
+        ),
+      );
+      widgets.add(const SizedBox(height: AppSpacing.lg));
+    } else if (_showArchiveIntelligenceProBridge(
       belief: belief,
       weekly: weekly,
       ohWow: ohWow,
@@ -4278,6 +4330,13 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
         viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
         report: privateArchiveReportCandidate,
       );
+      final showProEvidenceValuePrivateReportOnPatterns =
+          showPrivateArchiveReport &&
+              privateArchiveReportPreviewForProGate &&
+              _showProEvidenceValueBridge(
+                surface: ProEvidenceValueSurface.privateReportPreview,
+                privateReportPreviewVisible: true,
+              );
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -4557,6 +4616,19 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],
+                if (showProEvidenceValuePrivateReportOnPatterns) ...[
+                  ProEvidenceValueCard(
+                    surface: ProEvidenceValueSurface.privateReportPreview,
+                    entryCount: _entries.length,
+                    compact: true,
+                    onSeePro: () => _openProEvidenceValueSubscription(
+                      analyticsSource:
+                          'patterns_private_report_pro_evidence_value',
+                    ),
+                    onDismiss: () => unawaited(_dismissProEvidenceValueBridge()),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ],
                 if (showConfirmedRepeatWhyMatters) ...[
                   ConfirmedRepeatWhyMattersCard(
                     onDismissed: () => setState(() {}),
@@ -4597,7 +4669,21 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
-                if (showPatternsPostProofProBridge) ...[
+                if (showPatternsPostProofProBridge &&
+                    _showProEvidenceValueBridge(
+                      surface: ProEvidenceValueSurface.archivePatterns,
+                    )) ...[
+                  ProEvidenceValueCard(
+                    surface: ProEvidenceValueSurface.archivePatterns,
+                    entryCount: _entries.length,
+                    compact: proofSurfaceLayout.proBridgeCompact,
+                    onSeePro: () => _openProEvidenceValueSubscription(
+                      analyticsSource: 'patterns_post_proof_pro_evidence_value',
+                    ),
+                    onDismiss: () => unawaited(_dismissProEvidenceValueBridge()),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ] else if (showPatternsPostProofProBridge) ...[
                   ArchiveIntelligenceProBridgeCard(
                     compact: proofSurfaceLayout.proBridgeCompact,
                     onSeePro: () {

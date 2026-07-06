@@ -13,6 +13,7 @@ import 'package:voicememory_mobile/features/early_archive/first_proof_moment_gat
 import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_engine.dart';
+import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_copy.dart';
 import 'package:voicememory_mobile/features/activation/paywall_timing_gates.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -117,6 +118,24 @@ void main() {
       expect(
         ProPackagingCopy.offeringsUnavailableBody,
         'Plans are temporarily unavailable. You can still use ArchiveMe.',
+      );
+    });
+  });
+
+  group('ProEvidenceValueCopy', () {
+    test('aligns longer-story Pro bridge with packaging', () {
+      expect(ProEvidenceValueCopy.title, 'Keep the longer story');
+      expect(
+        ProEvidenceValueCopy.chatGptDifferentiationLine,
+        contains('ChatGPT answers one conversation'),
+      );
+      expect(
+        ProEvidenceValueCopy.sheetFooter,
+        contains('remembers differently'),
+      );
+      expect(
+        ProEvidenceValueCopy.proBulletsForDisplay(exportReportsLive: true),
+        contains('Exportable reports'),
       );
     });
   });

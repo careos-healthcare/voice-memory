@@ -18,6 +18,10 @@ import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
+import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
+import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
+import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_model.dart';
+import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/weekly_archive_review_screen.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
@@ -1166,6 +1170,47 @@ void main() {
         expect(
           find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatToWatchLabel),
           findsOneWidget,
+        );
+      });
+
+      test('weekly preview surface can show pro evidence bridge when gates pass',
+          () {
+        ProEvidenceValueDismissStore.invalidateSessionForTest();
+        final entries = fiveSaidYesEntries();
+        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+          entries: entries,
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(review, isNotNull);
+        expect(
+          ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
+            review: review!,
+            isPro: false,
+          ),
+          isTrue,
+        );
+        expect(
+          ProEvidenceValueEngine.shouldShowCard(
+            ProEvidenceValueContext(
+              surface: ProEvidenceValueSurface.weeklyReviewPreview,
+              entryCount: entries.length,
+              isPro: false,
+              dismissed: false,
+              firstProofPayoffSeen: true,
+              hasConfirmedRepeatEvidence: true,
+              privateReportPreviewVisible: false,
+              weeklyReviewPreviewVisible: true,
+              isZeroEntryState: false,
+              isFirstRecordingState: false,
+              isDegradedTranscriptState: false,
+              isPostSaveDegradedState: false,
+              firstProofTruthQuestionActive: false,
+              whatChangedQuestionActive: false,
+              patternReviewInboxHasActiveItems: false,
+              exportReportsLive: true,
+            ),
+          ),
+          isTrue,
         );
       });
     });

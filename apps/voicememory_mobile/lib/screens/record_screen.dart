@@ -514,7 +514,10 @@ import '../features/activation/capture_context_tags.dart';
 import '../widgets/onboarding/first_save_evidence_card.dart';
 import '../widgets/record/first_entry_saved_receipt_card.dart';
 import '../widgets/patterns/archive_demo_preview_card.dart';
-import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
+import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
+import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
+import '../features/pro_evidence_value/pro_evidence_value_model.dart';
+import '../widgets/pro/pro_evidence_value_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
 import '../widgets/onboarding/record_once_intro_card.dart';
 import '../widgets/onboarding/tomorrow_return_cue_card.dart';
@@ -1671,6 +1674,7 @@ class _RecordScreenState extends State<RecordScreen> {
 
   Future<void> _loadRecordReturnProState() async {
     if (!AppServices.isInitialized) return;
+    await ProEvidenceValueDismissStore.ensureLoaded();
     final state = await RecordReturnProStore.instance().load();
     final isPro =
         await (widget.entitlementReader ??
@@ -2036,6 +2040,7 @@ class _RecordScreenState extends State<RecordScreen> {
         review: review,
         isPro: _recordReturnProIsPro,
         entryCount: _journalEntryCount,
+        entries: _journalEntries,
         onSeePro: _recordReturnProIsPro
             ? null
             : () => context.push(
@@ -2067,6 +2072,25 @@ class _RecordScreenState extends State<RecordScreen> {
         ),
       );
     }
+  }
+
+  Future<void> _dismissProEvidenceValueBridge() async {
+    await ProEvidenceValueEngine.dismissForSession();
+    await RecordReturnProStore.instance().markProBridgeResolved();
+    if (mounted) setState(() {});
+  }
+
+  void _openProEvidenceValueSubscription({required String analyticsSource}) {
+    EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
+      source: analyticsSource,
+    );
+    context.push(
+      '/subscription',
+      extra: PaywallRouteArgs(
+        source: PaywallSource.valueMoment,
+        sourceRoute: '/record',
+      ),
+    );
   }
 
   /// Builds the "Done for today" closure receipt — only ever called after a
@@ -4547,6 +4571,40 @@ class _RecordScreenState extends State<RecordScreen> {
     final showDailyReturnReasonOnRecord =
         recordProofStack.showDailyReturnReason;
     final showPostProofProBridgeOnRecord = recordProofStack.showProBridge;
+    final firstProofPayoffSeenOnRecord =
+        FirstProofPayoffEngine.build(entries: _journalEntries) != null;
+    final isDegradedTranscriptOnRecord = _journalEntries.isNotEmpty &&
+        VoiceCaptureQuality.isDegradedVoiceCapture(_journalEntries.last);
+    final showProEvidenceValueOnRecordReady = showPostProofProBridgeOnRecord &&
+        ProEvidenceValueEngine.shouldShowCard(
+          ProEvidenceValueEngine.buildContext(
+            surface: ProEvidenceValueSurface.recordReady,
+            entryCount: _journalEntryCount,
+            isPro: _recordReturnProIsPro,
+            dismissed: ProEvidenceValueDismissStore.isDismissed(),
+            entries: _journalEntries,
+            returnChecks: RepeatReturnCheckStore.cached,
+            isZeroEntryState: _journalEntryCount == 0,
+            isFirstRecordingState:
+                _journalEntryCount <= 1 && !firstProofPayoffSeenOnRecord,
+            isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+          ),
+        );
+    final showProEvidenceValuePrivateReportOnRecord =
+        showPrivateArchiveReportOnRecord &&
+            privateArchiveReportPreviewForProGate &&
+            ProEvidenceValueEngine.shouldShowCard(
+              ProEvidenceValueEngine.buildContext(
+                surface: ProEvidenceValueSurface.privateReportPreview,
+                entryCount: _journalEntryCount,
+                isPro: _recordReturnProIsPro,
+                dismissed: ProEvidenceValueDismissStore.isDismissed(),
+                entries: _journalEntries,
+                returnChecks: RepeatReturnCheckStore.cached,
+                isDegradedTranscriptState: isDegradedTranscriptOnRecord,
+                privateReportPreviewVisible: true,
+              ),
+            );
     final showConfirmedRepeatWhyMattersOnRecord =
         recordProofStack.showConfirmedRepeatWhyMatters;
     final showConfirmedRepeatThoughtMapOnRecord =
@@ -4671,6 +4729,26 @@ class _RecordScreenState extends State<RecordScreen> {
       showFirstProofMoment: showFirstProofMoment,
       display: whatChangedV2Display,
     );
+    final showProEvidenceValuePostSave = ui == RecordUiState.done &&
+        entriesAfterSave.isNotEmpty &&
+        showFirstProofPayoff &&
+        firstProofPayoffCandidate != null &&
+        ProEvidenceValueEngine.shouldShowCard(
+          ProEvidenceValueEngine.buildContext(
+            surface: ProEvidenceValueSurface.recordPostSaveAfterPayoff,
+            entryCount: postSaveEntryCount,
+            isPro: _recordReturnProIsPro,
+            dismissed: ProEvidenceValueDismissStore.isDismissed(),
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+            isPostSaveDegradedState: VoiceCaptureQuality.isDegradedVoiceCapture(
+              entriesAfterSave.last,
+            ),
+            firstProofTruthQuestionActive: showFirstProofTruth,
+            whatChangedQuestionActive: showWhatChangedV2,
+            firstProofPayoffVisible: true,
+          ),
+        );
     final helpedTrackingPrompt = ui == RecordUiState.done &&
             entriesAfterSave.isNotEmpty
         ? HelpedTrackingEngine.buildPrompt(
@@ -5488,6 +5566,19 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (showProEvidenceValuePrivateReportOnRecord) ...[
+                      ProEvidenceValueCard(
+                        surface: ProEvidenceValueSurface.privateReportPreview,
+                        entryCount: _journalEntryCount,
+                        compact: true,
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_private_report_pro_evidence_value',
+                        ),
+                        onDismiss: () =>
+                            unawaited(_dismissProEvidenceValueBridge()),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     if (showConfirmedRepeatWhyMattersOnRecord) ...[
                       ConfirmedRepeatWhyMattersCard(
                         onDismissed: () => setState(() {}),
@@ -5585,19 +5676,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
-                    if (showPostProofProBridgeOnRecord) ...[
-                      ArchiveIntelligenceProBridgeCard(
+                    if (showProEvidenceValueOnRecordReady) ...[
+                      ProEvidenceValueCard(
+                        surface: ProEvidenceValueSurface.recordReady,
+                        entryCount: _journalEntryCount,
                         compact: proofSurfaceLayout.proBridgeCompact,
-                        onSeePro: () {
-                          EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
-                            source: 'record_post_proof_bridge',
-                          );
-                          unawaited(
-                            _resolveRecordReturnProBridge(seePro: true),
-                          );
-                        },
-                        onNotNow: () =>
-                            unawaited(_resolveRecordReturnProBridge(seePro: false)),
+                        onSeePro: () => _openProEvidenceValueSubscription(
+                          analyticsSource: 'record_pro_evidence_value',
+                        ),
+                        onDismiss: () =>
+                            unawaited(_dismissProEvidenceValueBridge()),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -6283,11 +6371,26 @@ class _RecordScreenState extends State<RecordScreen> {
                               entryCount: postSaveEntryCount,
                               patternConfidence: firstProofPatternConfidence,
                               suppressCtas: firstProofActionLoopContent != null,
+                              showProPackagingBridge: !showProEvidenceValuePostSave,
                               onWatchThisNext: _handleFirstProofWatchThisNext,
                               onViewPatternDetails:
                                   firstProofPayoffCandidate.canShowPatternDetail
                                       ? _openFirstProofPatternDetail
                                       : null,
+                            ),
+                          ],
+                          if (showProEvidenceValuePostSave) ...[
+                            const SizedBox(height: 12),
+                            ProEvidenceValueCard(
+                              surface:
+                                  ProEvidenceValueSurface.recordPostSaveAfterPayoff,
+                              entryCount: postSaveEntryCount,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_post_save_pro_evidence_value',
+                              ),
+                              onDismiss: () =>
+                                  unawaited(_dismissProEvidenceValueBridge()),
                             ),
                           ],
                           if (showFirstProofTruth) ...[
