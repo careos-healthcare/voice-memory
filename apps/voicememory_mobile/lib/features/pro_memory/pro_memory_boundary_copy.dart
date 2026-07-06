@@ -2,9 +2,9 @@
 abstract final class ProMemoryBoundaryCopy {
   ProMemoryBoundaryCopy._();
 
-  static const upgradeBridgeTitle = 'Go deeper with ArchiveMe Pro';
+  static const upgradeBridgeTitle = 'ArchiveMe Pro';
   static const upgradeBridgeBody =
-      'Keep a longer view of what repeats, what changes, and what helps.';
+      'Keep a longer memory of what repeats and how it changes.';
   static const seeProCta = 'See Pro';
   static const notNowCta = 'Not now';
 

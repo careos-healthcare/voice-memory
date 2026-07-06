@@ -128,6 +128,7 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   source: 'weekly_review',
                   compact: true,
                   showPrivacyReassurance: false,
+                  showProPackagingBridge: false,
                 ),
               ],
               if (review.state == WeeklyArchiveReviewState.forming &&

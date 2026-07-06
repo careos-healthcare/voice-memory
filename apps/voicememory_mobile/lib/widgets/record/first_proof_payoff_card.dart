@@ -6,11 +6,13 @@ import '../../features/first_proof_payoff/first_proof_payoff_analytics.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_copy.dart';
 import '../../features/first_proof_payoff/first_proof_payoff_model.dart';
 import '../../features/pattern_confidence/pattern_confidence_model.dart';
+import '../../features/pro_packaging/pro_value_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../patterns/pattern_confidence_badge.dart';
 import '../common/contextual_privacy_reassurance.dart';
+import '../common/pro_packaging_bridge_line.dart';
 import 'chat_differentiation_sheet.dart';
 
 /// Emotional first-proof payoff — user evidence first, calm CTAs elsewhere.
@@ -23,6 +25,7 @@ class FirstProofPayoffCard extends StatefulWidget {
     this.onViewPatternDetails,
     this.suppressCtas = false,
     this.patternConfidence,
+    this.showProPackagingBridge = true,
   });
 
   final FirstProofPayoff payoff;
@@ -31,6 +34,7 @@ class FirstProofPayoffCard extends StatefulWidget {
   final VoidCallback? onViewPatternDetails;
   final bool suppressCtas;
   final PatternConfidence? patternConfidence;
+  final bool showProPackagingBridge;
 
   @override
   State<FirstProofPayoffCard> createState() => _FirstProofPayoffCardState();
@@ -171,6 +175,13 @@ class _FirstProofPayoffCardState extends State<FirstProofPayoffCard> {
                 onPressed: _handleViewPatternDetails,
                 child: const Text(FirstProofPayoffCopy.viewPatternDetailsCta),
               ),
+            ),
+          ],
+          if (widget.showProPackagingBridge) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ProPackagingBridgeLine(
+              line: ProPackagingCopy.bridgeAfterFirstProof,
+              lineKey: const Key('pro_packaging_bridge_first_proof'),
             ),
           ],
           const SizedBox(height: AppSpacing.sm),

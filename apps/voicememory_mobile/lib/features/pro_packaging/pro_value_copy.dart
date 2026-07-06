@@ -5,23 +5,27 @@ abstract final class ProPackagingCopy {
   static const title = 'ArchiveMe Pro';
 
   static const subtitle =
-      'Go deeper into what keeps repeating and what changes.';
+      'Keep a longer memory of what repeats and how it changes.';
 
-  static const freeSectionTitle = 'Start your archive';
+  static const freeSectionTitle = 'Free';
   static const freeBullets = <String>[
-    'Save moments',
-    'Unlock first proof',
-    'See your first pattern',
+    'Start your archive and unlock your first proof.',
   ];
 
-  static const proSectionTitle = 'Go deeper';
+  static const proSectionTitle = 'Pro';
   static const proBullets = <String>[
-    'Weekly archive reviews',
-    'Change timeline',
-    'Private archive report',
     'Longer pattern history',
-    'Copy/export your archive summary',
+    'Belief change over time',
+    'Weekly archive reviews',
+    'Private archive reports',
+    'Export your archive backup',
   ];
+
+  static const bridgeAfterFirstProof =
+      'First proof is free. Pro is for keeping the longer story.';
+
+  static const bridgeAfterBeliefChange =
+      'Seeing change over time is the reason to keep your archive.';
 
   static const continueCta = 'Continue';
   static const restorePurchases = 'Restore purchases';
@@ -38,6 +42,8 @@ abstract final class ProPackagingCopy {
     yield* freeBullets;
     yield proSectionTitle;
     yield* proBullets;
+    yield bridgeAfterFirstProof;
+    yield bridgeAfterBeliefChange;
     yield continueCta;
     yield restorePurchases;
     yield offeringsUnavailableBody;

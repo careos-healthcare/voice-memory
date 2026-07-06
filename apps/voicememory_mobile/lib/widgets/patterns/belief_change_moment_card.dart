@@ -4,10 +4,12 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/belief_change/belief_change_moment_analytics.dart';
 import '../../features/belief_change/belief_change_moment_copy.dart';
 import '../../features/belief_change/belief_change_moment_model.dart';
+import '../../features/pro_packaging/pro_value_copy.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 import '../common/contextual_privacy_reassurance.dart';
+import '../common/pro_packaging_bridge_line.dart';
 import 'archive_change_timeline_card.dart';
 
 /// Emotional payoff when a repeat pattern may be softening — evidence only.
@@ -19,6 +21,7 @@ class BeliefChangeMomentCard extends StatefulWidget {
     required this.source,
     this.compact = false,
     this.showPrivacyReassurance = true,
+    this.showProPackagingBridge = true,
   });
 
   final BeliefChangeMoment moment;
@@ -26,6 +29,7 @@ class BeliefChangeMomentCard extends StatefulWidget {
   final String source;
   final bool compact;
   final bool showPrivacyReassurance;
+  final bool showProPackagingBridge;
 
   @override
   State<BeliefChangeMomentCard> createState() => _BeliefChangeMomentCardState();
@@ -155,6 +159,13 @@ class _BeliefChangeMomentCardState extends State<BeliefChangeMomentCard> {
                 onPressed: _openChangeTimeline,
                 child: const Text(BeliefChangeMomentCopy.viewChangeTimelineCta),
               ),
+            ),
+          ],
+          if (widget.showProPackagingBridge) ...[
+            const SizedBox(height: AppSpacing.sm),
+            ProPackagingBridgeLine(
+              line: ProPackagingCopy.bridgeAfterBeliefChange,
+              lineKey: const Key('pro_packaging_bridge_belief_change'),
             ),
           ],
           if (widget.showPrivacyReassurance) ...[

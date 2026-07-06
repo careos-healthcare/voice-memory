@@ -249,6 +249,7 @@ class _PatternDetailSheetState extends State<PatternDetailSheet> {
                   source: 'pattern_detail',
                   compact: true,
                   showPrivacyReassurance: false,
+                  showProPackagingBridge: false,
                 ),
               ],
               const SizedBox(height: AppSpacing.md),

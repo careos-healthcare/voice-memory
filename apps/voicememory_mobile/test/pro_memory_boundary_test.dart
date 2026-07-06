@@ -166,11 +166,11 @@ void main() {
     test('defines upgrade bridge and fallback copy', () {
       expect(
         ProMemoryBoundaryCopy.upgradeBridgeTitle,
-        'Go deeper with ArchiveMe Pro',
+        'ArchiveMe Pro',
       );
       expect(
         ProMemoryBoundaryCopy.upgradeBridgeBody,
-        'Keep a longer view of what repeats, what changes, and what helps.',
+        'Keep a longer memory of what repeats and how it changes.',
       );
       expect(ProMemoryBoundaryCopy.seeProCta, 'See Pro');
       expect(

@@ -5,8 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
+import 'package:voicememory_mobile/features/belief_change/belief_change_moment_engine.dart';
+import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
+import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_gates.dart';
+import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:voicememory_mobile/features/pro_packaging/pro_value_engine.dart';
 import 'package:voicememory_mobile/features/activation/paywall_timing_gates.dart';
@@ -18,6 +22,8 @@ import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/archive_me_pro_value_section.dart';
+import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
+import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
 
 JournalEntry _entry(String id, String transcript) => JournalEntry(
       id: id,
@@ -85,11 +91,29 @@ void main() {
   });
 
   group('ProPackagingCopy', () {
-    test('defines free and pro value split', () {
+    test('defines longer memory Pro positioning', () {
       expect(ProPackagingCopy.title, 'ArchiveMe Pro');
-      expect(ProPackagingCopy.subtitle, contains('what changes'));
-      expect(ProPackagingCopy.freeBullets, hasLength(3));
+      expect(
+        ProPackagingCopy.subtitle,
+        'Keep a longer memory of what repeats and how it changes.',
+      );
+      expect(ProPackagingCopy.freeSectionTitle, 'Free');
+      expect(
+        ProPackagingCopy.freeBullets.single,
+        'Start your archive and unlock your first proof.',
+      );
+      expect(ProPackagingCopy.proSectionTitle, 'Pro');
       expect(ProPackagingCopy.proBullets, hasLength(5));
+      expect(ProPackagingCopy.proBullets, contains('Longer pattern history'));
+      expect(ProPackagingCopy.proBullets, contains('Belief change over time'));
+      expect(
+        ProPackagingCopy.bridgeAfterFirstProof,
+        'First proof is free. Pro is for keeping the longer story.',
+      );
+      expect(
+        ProPackagingCopy.bridgeAfterBeliefChange,
+        'Seeing change over time is the reason to keep your archive.',
+      );
       expect(
         ProPackagingCopy.offeringsUnavailableBody,
         'Plans are temporarily unavailable. You can still use ArchiveMe.',
@@ -136,10 +160,14 @@ void main() {
       expect(find.byKey(const Key('archive_me_pro_value_section')), findsOneWidget);
       expect(find.byKey(const Key('archive_me_pro_free_section')), findsOneWidget);
       expect(find.byKey(const Key('archive_me_pro_pro_section')), findsOneWidget);
-      expect(find.text('Start your archive'), findsOneWidget);
-      expect(find.text('Go deeper'), findsOneWidget);
-      expect(find.text('Weekly archive reviews'), findsOneWidget);
-      expect(find.text('Unlock first proof'), findsOneWidget);
+      expect(find.text('Free'), findsOneWidget);
+      expect(find.text('Pro'), findsOneWidget);
+      expect(
+        find.text('Start your archive and unlock your first proof.'),
+        findsOneWidget,
+      );
+      expect(find.text('Longer pattern history'), findsOneWidget);
+      expect(find.text('Belief change over time'), findsOneWidget);
     });
   });
 
@@ -170,8 +198,8 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.text(ProPackagingCopy.offeringsUnavailableBody), findsOneWidget);
-      expect(find.text('Start your archive'), findsOneWidget);
-      expect(find.text('Go deeper'), findsOneWidget);
+      expect(find.text('Free'), findsOneWidget);
+      expect(find.text('Pro'), findsOneWidget);
       expect(find.textContaining(r'$'), findsNothing);
       expect(find.textContaining('0.00'), findsNothing);
     });
@@ -266,6 +294,85 @@ void main() {
     });
   });
 
+  group('value moment bridge copy', () {
+    testWidgets('first proof payoff shows longer story bridge', (tester) async {
+      final payoff = FirstProofPayoffEngine.build(entries: _threeRelatedEntries());
+      expect(payoff, isNotNull);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: FirstProofPayoffCard(
+              payoff: payoff!,
+              entryCount: 3,
+              onWatchThisNext: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(ProPackagingCopy.bridgeAfterFirstProof),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('belief change moment shows keep archive bridge', (tester) async {
+      final moment = BeliefChangeMomentEngine.build(
+        entries: [
+          ..._threeRelatedEntries(),
+          _entry(
+            'e4',
+            'I checked my calendar before answering when they asked me to take on more work.',
+          ),
+        ],
+        returnChecks: [
+          RepeatReturnCheckRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.changed,
+            entryCountAtCapture: 4,
+            createdAt: DateTime(2026, 6, 13),
+          ),
+        ],
+        viewingConfirmedRepeatOrTimeline: true,
+      );
+      expect(moment, isNotNull);
+
+      await tester.binding.setSurfaceSize(const Size(800, 1200));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: BeliefChangeMomentCard(
+                moment: moment!,
+                entryCount: 4,
+                source: 'patterns',
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.text(ProPackagingCopy.bridgeAfterBeliefChange),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('free controls stay available', () {
+    test('recording transcript correction and first proof stay free', () {
+      expect(ProMemoryBoundaryEngine.canRecord(), isTrue);
+      expect(ProMemoryBoundaryEngine.canCorrectTranscript(), isTrue);
+      expect(ProMemoryBoundaryEngine.canSeeFirstProof(), isTrue);
+    });
+  });
+
   group('protected areas untouched', () {
     test('RevenueCat product id unchanged', () {
       expect(RevenueCatService.proEntitlementId, 'pro');
@@ -277,6 +384,7 @@ void main() {
         'lib/features/pro_packaging/pro_value_model.dart',
         'lib/features/pro_packaging/pro_value_engine.dart',
         'lib/widgets/account/archive_me_pro_value_section.dart',
+        'lib/widgets/common/pro_packaging_bridge_line.dart',
       ];
       for (final path in paths) {
         final content = File(path).readAsStringSync().toLowerCase();
