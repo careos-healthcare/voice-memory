@@ -8,6 +8,9 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/belief_change/belief_change_moment_model.dart';
 import '../../features/pro_memory/pro_memory_boundary_copy.dart';
 import '../../features/pro_memory/pro_memory_boundary_engine.dart';
+import '../../features/monthly_private_report/monthly_private_report_dismiss_store.dart';
+import '../../features/monthly_private_report/monthly_private_report_engine.dart';
+import '../../features/monthly_private_report/monthly_private_report_model.dart';
 import '../../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../../features/pro_evidence_value/pro_evidence_value_engine.dart';
 import '../../features/pro_evidence_value/pro_evidence_value_model.dart';
@@ -24,6 +27,7 @@ import '../../features/quiet_signal/quiet_signal_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../archive_paywall/pro_memory_upgrade_bridge.dart';
+import '../pro/monthly_private_report_preview_card.dart';
 import '../pro/pro_evidence_value_card.dart';
 import '../patterns/belief_change_moment_card.dart';
 import '../patterns/pattern_confidence_badge.dart';
@@ -98,6 +102,39 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
       color: AppColors.textPrimary,
       height: 1.45,
     );
+    final monthlyPrivateReportPreview = MonthlyPrivateReportEngine.build(
+      entries: entries,
+      returnChecks: RepeatReturnCheckStore.cached,
+      viewingConfirmedRepeatOrTimeline: true,
+    );
+    final showMonthlyPrivateReportPreview = !isPro &&
+        onSeePro != null &&
+        ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
+          review: review,
+          isPro: isPro,
+        ) &&
+        MonthlyPrivateReportEngine.shouldShowCard(
+          MonthlyPrivateReportEngine.buildContext(
+            surface: MonthlyPrivateReportSurface.weeklyReviewPreview,
+            entryCount: entryCount,
+            isPro: isPro,
+            dismissed: MonthlyPrivateReportDismissStore.isDismissed(),
+            entries: entries,
+            returnChecks: RepeatReturnCheckStore.cached,
+            preview: monthlyPrivateReportPreview,
+            proEvidenceValueVisible: ProEvidenceValueEngine.shouldShowCard(
+              ProEvidenceValueEngine.buildContext(
+                surface: ProEvidenceValueSurface.weeklyReviewPreview,
+                entryCount: entryCount,
+                isPro: isPro,
+                dismissed: ProEvidenceValueDismissStore.isDismissed(),
+                entries: entries,
+                returnChecks: RepeatReturnCheckStore.cached,
+                weeklyReviewPreviewVisible: true,
+              ),
+            ),
+          ),
+        );
     final fallbackStyle = bodyStyle.copyWith(
       color: AppColors.textSecondary,
       fontStyle: FontStyle.italic,
@@ -306,6 +343,17 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                       onSeePro: onSeePro!,
                       onDismiss: () =>
                           unawaited(ProEvidenceValueEngine.dismissForSession()),
+                    )
+                  else if (showMonthlyPrivateReportPreview &&
+                      monthlyPrivateReportPreview != null)
+                    MonthlyPrivateReportPreviewCard(
+                      surface: MonthlyPrivateReportSurface.weeklyReviewPreview,
+                      entryCount: entryCount,
+                      preview: monthlyPrivateReportPreview,
+                      onSeePro: onSeePro!,
+                      onDismiss: () => unawaited(
+                        MonthlyPrivateReportDismissStore.dismiss(),
+                      ),
                     )
                   else
                     ProMemoryUpgradeBridge(

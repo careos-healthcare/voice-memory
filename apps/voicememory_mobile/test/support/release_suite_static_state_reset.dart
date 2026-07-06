@@ -3,6 +3,8 @@ import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
 import 'package:voicememory_mobile/features/pattern_naming/pattern_name_store.dart';
 import 'package:voicememory_mobile/features/pattern_review_inbox/pattern_review_inbox_analytics.dart';
+import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_analytics.dart';
+import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_dismiss_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_analytics.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
@@ -32,6 +34,8 @@ abstract final class ReleaseSuiteStaticStateReset {
     ProEvidenceValueDismissStore.invalidateSessionForTest();
     ProLockMomentAnalytics.resetForTest();
     ProLockMomentDismissStore.invalidateSessionForTest();
+    MonthlyPrivateReportAnalytics.resetForTest();
+    MonthlyPrivateReportDismissStore.invalidateSessionForTest();
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     BetaFeedbackIntelligenceStore.invalidateSessionForTest();
   }

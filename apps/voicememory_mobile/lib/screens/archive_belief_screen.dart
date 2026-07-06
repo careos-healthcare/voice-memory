@@ -301,10 +301,14 @@ import '../widgets/patterns/helpful_action_appeared_card.dart';
 import '../widgets/patterns/what_changed_since_last_time_card.dart';
 import '../widgets/patterns/archive_paid_value_proof_card.dart';
 import '../widgets/patterns/archive_oh_wow_moment_card.dart';
+import '../features/monthly_private_report/monthly_private_report_dismiss_store.dart';
+import '../features/monthly_private_report/monthly_private_report_engine.dart';
+import '../features/monthly_private_report/monthly_private_report_model.dart';
 import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
 import '../features/pro_evidence_value/pro_evidence_value_model.dart';
 import '../widgets/patterns/archive_intelligence_pro_bridge_card.dart';
+import '../widgets/pro/monthly_private_report_preview_card.dart';
 import '../widgets/pro/pro_evidence_value_card.dart';
 import '../widgets/patterns/weekly_what_changed_review_card.dart';
 import '../billing/archive_entitlement_reader.dart';
@@ -662,6 +666,7 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ArchiveWorkspaceHintStore.ensureLoaded();
     await ProValuePreviewDismissStore.ensureLoaded();
     await ProEvidenceValueDismissStore.ensureLoaded();
+    await MonthlyPrivateReportDismissStore.ensureLoaded();
     await BetaFeedbackStore.ensureLoaded();
     await ConfirmedRepeatBetaFeedbackStore.ensureLoaded();
     await CoreValueFeedbackStore.ensureLoaded();
@@ -2306,6 +2311,11 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     await ProEvidenceValueEngine.dismissForSession();
     await RecordReturnProStore.instance().markProBridgeResolved();
     if (mounted) setState(() => _proBridgeResolved = true);
+  }
+
+  Future<void> _dismissMonthlyPrivateReportPreview() async {
+    await MonthlyPrivateReportDismissStore.dismiss();
+    if (mounted) setState(() {});
   }
 
   void _openProEvidenceValueSubscription({required String analyticsSource}) {
@@ -4337,6 +4347,27 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                 surface: ProEvidenceValueSurface.privateReportPreview,
                 privateReportPreviewVisible: true,
               );
+      final monthlyPrivateReportPreview = MonthlyPrivateReportEngine.build(
+        entries: _entries,
+        returnChecks: RepeatReturnCheckStore.cached,
+        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnPatterns,
+      );
+      final showMonthlyPrivateReportPreviewOnPatterns =
+          showPrivateArchiveReport &&
+              privateArchiveReportPreviewForProGate &&
+              MonthlyPrivateReportEngine.shouldShowCard(
+                MonthlyPrivateReportEngine.buildContext(
+                  surface: MonthlyPrivateReportSurface.archivePatterns,
+                  entryCount: _entries.length,
+                  isPro: _archiveIsPro,
+                  dismissed: MonthlyPrivateReportDismissStore.isDismissed(),
+                  entries: _entries,
+                  returnChecks: RepeatReturnCheckStore.cached,
+                  preview: monthlyPrivateReportPreview,
+                  proEvidenceValueVisible:
+                      showProEvidenceValuePrivateReportOnPatterns,
+                ),
+              );
       final showConfirmedRepeatWhyMatters =
           proofSurfaceLayout.effectiveWhyMattersVisible;
       final showConfirmedRepeatThoughtMap =
@@ -4626,6 +4657,20 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
                           'patterns_private_report_pro_evidence_value',
                     ),
                     onDismiss: () => unawaited(_dismissProEvidenceValueBridge()),
+                  ),
+                  SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
+                ] else if (showMonthlyPrivateReportPreviewOnPatterns &&
+                    monthlyPrivateReportPreview != null) ...[
+                  MonthlyPrivateReportPreviewCard(
+                    surface: MonthlyPrivateReportSurface.archivePatterns,
+                    entryCount: _entries.length,
+                    preview: monthlyPrivateReportPreview,
+                    onSeePro: () => _openProEvidenceValueSubscription(
+                      analyticsSource:
+                          'patterns_monthly_private_report_preview',
+                    ),
+                    onDismiss: () =>
+                        unawaited(_dismissMonthlyPrivateReportPreview()),
                   ),
                   SizedBox(height: ArchiveMobileSpacing.proofStackCardGap),
                 ],

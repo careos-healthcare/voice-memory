@@ -517,12 +517,16 @@ import '../widgets/patterns/archive_demo_preview_card.dart';
 import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import '../features/pro_evidence_value/pro_evidence_value_engine.dart';
 import '../features/pro_evidence_value/pro_evidence_value_model.dart';
+import '../features/monthly_private_report/monthly_private_report_dismiss_store.dart';
+import '../features/monthly_private_report/monthly_private_report_engine.dart';
+import '../features/monthly_private_report/monthly_private_report_model.dart';
 import '../features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
 import '../features/pro_lock_moment/pro_lock_moment_engine.dart';
 import '../features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
 import '../features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
 import '../features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import '../widgets/pro/pro_evidence_value_card.dart';
+import '../widgets/pro/monthly_private_report_preview_card.dart';
 import '../widgets/pro/pro_lock_moment_card.dart';
 import '../widgets/beta/beta_feedback_intelligence_card.dart';
 import '../widgets/onboarding/pro_archive_continuity_card.dart';
@@ -1683,6 +1687,7 @@ class _RecordScreenState extends State<RecordScreen> {
     if (!AppServices.isInitialized) return;
     await ProEvidenceValueDismissStore.ensureLoaded();
     await ProLockMomentDismissStore.ensureLoaded();
+    await MonthlyPrivateReportDismissStore.ensureLoaded();
     await BetaFeedbackIntelligenceStore.ensureLoaded();
     final state = await RecordReturnProStore.instance().load();
     final isPro =
@@ -2085,6 +2090,11 @@ class _RecordScreenState extends State<RecordScreen> {
 
   Future<void> _dismissProLockMoment() async {
     await ProLockMomentDismissStore.dismiss();
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _dismissMonthlyPrivateReportPreview() async {
+    await MonthlyPrivateReportDismissStore.dismiss();
     if (mounted) setState(() {});
   }
 
@@ -4784,6 +4794,39 @@ class _RecordScreenState extends State<RecordScreen> {
             proEvidenceValueVisible: showProEvidenceValuePostSave,
           ),
         );
+    final monthlyPrivateReportPreviewPostSave = ui == RecordUiState.done &&
+            entriesAfterSave.isNotEmpty
+        ? MonthlyPrivateReportEngine.build(
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+            viewingConfirmedRepeatOrTimeline: true,
+            isPostSave: true,
+          )
+        : null;
+    final showMonthlyPrivateReportPreviewPostSave = ui == RecordUiState.done &&
+        entriesAfterSave.isNotEmpty &&
+        showFirstProofPayoff &&
+        firstProofPayoffCandidate != null &&
+        !showProEvidenceValuePostSave &&
+        !showProLockMomentPostSave &&
+        monthlyPrivateReportPreviewPostSave != null &&
+        MonthlyPrivateReportEngine.shouldShowCard(
+          MonthlyPrivateReportEngine.buildContext(
+            surface: MonthlyPrivateReportSurface.recordPostSaveAfterProof,
+            entryCount: postSaveEntryCount,
+            isPro: _recordReturnProIsPro,
+            dismissed: MonthlyPrivateReportDismissStore.isDismissed(),
+            entries: entriesAfterSave,
+            returnChecks: RepeatReturnCheckStore.cached,
+            preview: monthlyPrivateReportPreviewPostSave,
+            isPostSaveDegradedState: postSaveDegraded,
+            firstProofTruthQuestionActive: showFirstProofTruth,
+            whatChangedQuestionActive: showWhatChangedV2,
+            proLockMomentVisible: showProLockMomentPostSave,
+            proEvidenceValueVisible: showProEvidenceValuePostSave,
+            isPostSave: true,
+          ),
+        );
     const betaFeedbackRecordSurfaces = [
       BetaFeedbackIntelligenceSurface.afterProEvidenceSheet,
       BetaFeedbackIntelligenceSurface.afterFirstProofPayoff,
@@ -6484,6 +6527,22 @@ class _RecordScreenState extends State<RecordScreen> {
                                 analyticsSource: 'record_post_save_pro_lock_moment',
                               ),
                               onDismiss: () => unawaited(_dismissProLockMoment()),
+                            ),
+                          ] else if (showMonthlyPrivateReportPreviewPostSave &&
+                              monthlyPrivateReportPreviewPostSave != null) ...[
+                            const SizedBox(height: 12),
+                            MonthlyPrivateReportPreviewCard(
+                              surface:
+                                  MonthlyPrivateReportSurface.recordPostSaveAfterProof,
+                              entryCount: postSaveEntryCount,
+                              preview: monthlyPrivateReportPreviewPostSave,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_post_save_monthly_private_report_preview',
+                              ),
+                              onDismiss: () => unawaited(
+                                _dismissMonthlyPrivateReportPreview(),
+                              ),
                             ),
                           ],
                           if (betaFeedbackIntelligenceSurfacePostSave != null) ...[
