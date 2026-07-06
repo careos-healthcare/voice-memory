@@ -4,10 +4,11 @@ import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_stor
 import 'package:voicememory_mobile/features/pattern_naming/pattern_name_store.dart';
 import 'package:voicememory_mobile/features/pattern_review_inbox/pattern_review_inbox_analytics.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
+import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_analytics.dart';
+import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
 import 'package:voicememory_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_analytics.dart';
 import 'package:voicememory_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_analytics.dart';
-import 'package:voicememory_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import 'package:voicememory_mobile/features/quiet_signal/quiet_signal_analytics.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_environment.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
@@ -29,6 +30,8 @@ abstract final class ReleaseSuiteStaticStateReset {
     QuietSignalAnalytics.resetForTest();
     ProEvidenceValueAnalytics.resetForTest();
     ProEvidenceValueDismissStore.invalidateSessionForTest();
+    ProLockMomentAnalytics.resetForTest();
+    ProLockMomentDismissStore.invalidateSessionForTest();
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     BetaFeedbackIntelligenceStore.invalidateSessionForTest();
   }

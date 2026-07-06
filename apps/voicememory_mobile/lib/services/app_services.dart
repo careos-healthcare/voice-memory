@@ -36,6 +36,7 @@ import '../features/first_proof_truth/first_proof_truth_store.dart';
 import '../features/helped_tracking/helped_tracking_store.dart';
 import '../features/pattern_naming/pattern_name_store.dart';
 import '../features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
+import '../features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
 import '../features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import '../features/quiet_signal/quiet_signal_analytics.dart';
 import '../features/voice_capture/microphone_permission_environment.dart';
@@ -363,6 +364,7 @@ class AppServices {
     MicrophonePermissionEnvironment.resetForTest();
     QuietSignalAnalytics.resetForTest();
     await ProEvidenceValueDismissStore.resetForTest();
+    await ProLockMomentDismissStore.resetForTest();
     await BetaFeedbackIntelligenceStore.resetForTest();
   }
 }
